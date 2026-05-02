@@ -246,9 +246,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--timeframe",
-        choices=["hourly", "daily"],
+        choices=["hourly", "daily", "switch"],
         default="hourly",
-        help="Chart timeframe. Hourly keeps aspects up to --hourly-max-aspect-hours; daily keeps longer aspects.",
+        help="Chart timeframe. Use switch for one HTML with hourly/daily buttons.",
     )
     parser.add_argument(
         "--hourly-max-aspect-hours",
@@ -955,20 +955,17 @@ def build_user_facing_export_frame(visible: pd.DataFrame) -> pd.DataFrame:
     return export_df
 
 
-def export_full_year_chart(
+def build_full_year_timeframe_figure(
     price: pd.DataFrame,
     touches: pd.DataFrame,
-    output_dir: str | Path,
-    max_lines: int = 60,
-    timeframe: str = "hourly",
-    hourly_max_aspect_hours: float = 24.0,
-    daily_min_aspect_hours: float = 24.0,
-) -> tuple[Path, Path, pd.DataFrame]:
+    max_lines: int,
+    timeframe: str,
+    hourly_max_aspect_hours: float,
+    daily_min_aspect_hours: float,
+) -> tuple[go.Figure, pd.DataFrame, pd.Timestamp, pd.Timestamp]:
     chart_price = resample_price_for_timeframe(price, timeframe)
     end = chart_price.index.max()
     start = end - pd.Timedelta(days=365)
-    relayout_data = {"xaxis.range[0]": start.isoformat(), "xaxis.range[1]": end.isoformat()}
-    # simple range parse to support legacy logic
     visible = apply_filters(touches, ["bullish", "bearish"], ["confluence", "nearest_line"], ALL_FILTER_VALUE, ALL_FILTER_VALUE)
     visible = filter_touches_for_timeframe(
         visible,
@@ -983,6 +980,26 @@ def export_full_year_chart(
         line_limit=int(max_lines or 0),
         timeframe=timeframe,
     )
+    return fig, visible, start, end
+
+
+def export_full_year_chart(
+    price: pd.DataFrame,
+    touches: pd.DataFrame,
+    output_dir: str | Path,
+    max_lines: int = 60,
+    timeframe: str = "hourly",
+    hourly_max_aspect_hours: float = 24.0,
+    daily_min_aspect_hours: float = 24.0,
+) -> tuple[Path, Path, pd.DataFrame]:
+    fig, visible, _, _ = build_full_year_timeframe_figure(
+        price=price,
+        touches=touches,
+        max_lines=max_lines,
+        timeframe=timeframe,
+        hourly_max_aspect_hours=hourly_max_aspect_hours,
+        daily_min_aspect_hours=daily_min_aspect_hours,
+    )
 
     export_root = Path(output_dir)
     export_root.mkdir(parents=True, exist_ok=True)
@@ -993,6 +1010,104 @@ def export_full_year_chart(
     fig.write_html(str(html_path), include_plotlyjs=True)
     build_user_facing_export_frame(visible).to_csv(csv_path, index=False)
     return html_path, csv_path, visible
+
+
+def export_switchable_timeframe_chart(
+    price: pd.DataFrame,
+    touches: pd.DataFrame,
+    output_dir: str | Path,
+    max_lines: int = 60,
+    hourly_max_aspect_hours: float = 24.0,
+    daily_min_aspect_hours: float = 24.0,
+) -> tuple[Path, Path, pd.DataFrame]:
+    combined = go.Figure()
+    groups: list[dict[str, Any]] = []
+    visible_frames: list[pd.DataFrame] = []
+    trace_start = 0
+
+    for timeframe in ("hourly", "daily"):
+        fig, visible, start, end = build_full_year_timeframe_figure(
+            price=price,
+            touches=touches,
+            max_lines=max_lines,
+            timeframe=timeframe,
+            hourly_max_aspect_hours=hourly_max_aspect_hours,
+            daily_min_aspect_hours=daily_min_aspect_hours,
+        )
+        if not groups:
+            combined.update_layout(fig.layout)
+
+        is_default = timeframe == "hourly"
+        for trace in fig.data:
+            trace.visible = is_default
+            combined.add_trace(trace)
+
+        frame = visible.copy()
+        frame.insert(0, "chart_timeframe", timeframe)
+        visible_frames.append(frame)
+
+        groups.append(
+            {
+                "timeframe": timeframe,
+                "start": trace_start,
+                "stop": trace_start + len(fig.data),
+                "title": fig.layout.title.text if fig.layout.title else "",
+                "yaxis_range": list(fig.layout.yaxis.range) if fig.layout.yaxis.range else None,
+                "xaxis_range": [start.isoformat(), end.isoformat()],
+                "rows": len(visible),
+            }
+        )
+        trace_start += len(fig.data)
+
+    buttons = []
+    total_traces = len(combined.data)
+    for group in groups:
+        mask = [False] * total_traces
+        for idx in range(int(group["start"]), int(group["stop"])):
+            mask[idx] = True
+        relayout = {
+            "title.text": group["title"],
+            "xaxis.range": group["xaxis_range"],
+        }
+        if group["yaxis_range"] is not None:
+            relayout["yaxis.range"] = group["yaxis_range"]
+        buttons.append(
+            {
+                "label": f"{str(group['timeframe']).upper()} ({group['rows']})",
+                "method": "update",
+                "args": [{"visible": mask}, relayout],
+            }
+        )
+
+    combined.update_layout(
+        height=980,
+        updatemenus=[
+            {
+                "type": "buttons",
+                "direction": "right",
+                "x": 0.01,
+                "xanchor": "left",
+                "y": 1.08,
+                "yanchor": "top",
+                "buttons": buttons,
+                "bgcolor": "rgba(15,23,42,0.95)",
+                "bordercolor": "rgba(148,163,184,0.6)",
+                "borderwidth": 1,
+                "font": {"color": "#e5e7eb", "size": 12},
+                "pad": {"r": 8, "t": 4, "b": 4, "l": 8},
+            }
+        ],
+    )
+
+    export_root = Path(output_dir)
+    export_root.mkdir(parents=True, exist_ok=True)
+    stamp = pd.Timestamp.now(tz=IST).strftime("%Y%m%d_%H%M%S")
+    html_path = export_root / f"sr_touch_full_1year_switch_{stamp}.html"
+    csv_path = export_root / f"sr_touch_full_1year_switch_{stamp}.csv"
+    combined.write_html(str(html_path), include_plotlyjs=True)
+    all_visible = pd.concat(visible_frames, ignore_index=True) if visible_frames else pd.DataFrame()
+    build_user_facing_export_frame(all_visible).to_csv(csv_path, index=False)
+    return html_path, csv_path, all_visible
 
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
@@ -1016,15 +1131,25 @@ def main() -> None:
     cfg = parse_sr_config(touches["sr_config_json"].iloc[0]) if "sr_config_json" in touches.columns and not touches["sr_config_json"].dropna().empty else parse_sr_config(None)
     _ = cfg
     if args.export_full_year:
-        html_path, csv_path, visible = export_full_year_chart(
-            price=price,
-            touches=touches,
-            output_dir=args.export_dir,
-            max_lines=int(args.export_max_lines or 0),
-            timeframe=args.timeframe,
-            hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
-            daily_min_aspect_hours=float(args.daily_min_aspect_hours),
-        )
+        if args.timeframe == "switch":
+            html_path, csv_path, visible = export_switchable_timeframe_chart(
+                price=price,
+                touches=touches,
+                output_dir=args.export_dir,
+                max_lines=int(args.export_max_lines or 0),
+                hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
+                daily_min_aspect_hours=float(args.daily_min_aspect_hours),
+            )
+        else:
+            html_path, csv_path, visible = export_full_year_chart(
+                price=price,
+                touches=touches,
+                output_dir=args.export_dir,
+                max_lines=int(args.export_max_lines or 0),
+                timeframe=args.timeframe,
+                hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
+                daily_min_aspect_hours=float(args.daily_min_aspect_hours),
+            )
         print(f"Exported HTML: {html_path}")
         print(f"Exported CSV: {csv_path}")
         print(f"Visible rows in export window: {len(visible)}")
