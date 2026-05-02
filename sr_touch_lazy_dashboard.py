@@ -246,9 +246,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--timeframe",
-        choices=["hourly", "daily", "switch"],
+        choices=["hourly", "daily", "merged", "switch"],
         default="hourly",
-        help="Chart timeframe. Use switch for one HTML with hourly/daily buttons.",
+        help="Chart timeframe. Use merged for H1 candles with all aspect durations, or switch for hourly/daily buttons.",
     )
     parser.add_argument(
         "--hourly-max-aspect-hours",
@@ -311,7 +311,7 @@ def load_price(path: str) -> pd.DataFrame:
 
 
 def resample_price_for_timeframe(price: pd.DataFrame, timeframe: str) -> pd.DataFrame:
-    if timeframe == "hourly":
+    if timeframe in {"hourly", "merged"}:
         return price.copy()
     if timeframe != "daily":
         raise ValueError(f"Unsupported timeframe: {timeframe}")
@@ -342,6 +342,8 @@ def filter_touches_for_timeframe(
         return touches.copy()
 
     duration = pd.to_numeric(touches["event_duration_minutes"], errors="coerce")
+    if timeframe == "merged":
+        return touches.copy()
     if timeframe == "hourly":
         return touches[duration.le(float(hourly_max_aspect_hours) * 60.0)].copy()
     if timeframe == "daily":
@@ -350,6 +352,8 @@ def filter_touches_for_timeframe(
 
 
 def timeframe_candle_label(timeframe: str) -> str:
+    if timeframe == "merged":
+        return "USDJPY H1 merged"
     return "USDJPY 1D" if timeframe == "daily" else "USDJPY H1"
 
 
