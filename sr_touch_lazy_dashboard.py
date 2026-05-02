@@ -246,9 +246,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--timeframe",
-        choices=["hourly", "daily", "merged", "switch"],
+        choices=["m30", "hourly", "daily", "merged", "switch"],
         default="hourly",
-        help="Chart timeframe. Use merged for H1 candles with all aspect durations, or switch for hourly/daily buttons.",
+        help="Chart timeframe. M30/hourly share the <=24h aspect bucket; merged uses H1 with all durations.",
     )
     parser.add_argument(
         "--hourly-max-aspect-hours",
@@ -310,12 +310,16 @@ def load_price(path: str) -> pd.DataFrame:
     return price
 
 
-def resample_price_for_timeframe(price: pd.DataFrame, timeframe: str) -> pd.DataFrame:
-    if timeframe in {"hourly", "merged"}:
-        return price.copy()
-    if timeframe != "daily":
-        raise ValueError(f"Unsupported timeframe: {timeframe}")
+def infer_price_interval_minutes(price: pd.DataFrame) -> float | None:
+    if len(price.index) < 2:
+        return None
+    diffs = pd.Series(price.index).sort_values().diff().dropna()
+    if diffs.empty:
+        return None
+    return float(diffs.median().total_seconds() / 60.0)
 
+
+def resample_ohlc(price: pd.DataFrame, rule: str) -> pd.DataFrame:
     agg: dict[str, str] = {}
     for col, fn in (
         ("open", "first"),
@@ -328,8 +332,28 @@ def resample_price_for_timeframe(price: pd.DataFrame, timeframe: str) -> pd.Data
     ):
         if col in price.columns:
             agg[col] = fn
-    daily = price.resample("1D").agg(agg)
-    return daily.dropna(subset=["open", "high", "low", "close"])
+    resampled = price.resample(rule).agg(agg)
+    return resampled.dropna(subset=["open", "high", "low", "close"])
+
+
+def resample_price_for_timeframe(price: pd.DataFrame, timeframe: str) -> pd.DataFrame:
+    interval_minutes = infer_price_interval_minutes(price)
+    if timeframe == "m30":
+        if interval_minutes is not None and interval_minutes > 30.0:
+            raise RuntimeError(
+                f"M30 chart needs real 30-minute-or-finer price data; current price file interval is about {interval_minutes:g} minutes."
+            )
+        if interval_minutes is not None and interval_minutes < 30.0:
+            return resample_ohlc(price, "30min")
+        return price.copy()
+    if timeframe in {"hourly", "merged"}:
+        if interval_minutes is not None and interval_minutes < 60.0:
+            return resample_ohlc(price, "1h")
+        return price.copy()
+    if timeframe != "daily":
+        raise ValueError(f"Unsupported timeframe: {timeframe}")
+
+    return resample_ohlc(price, "1D")
 
 
 def filter_touches_for_timeframe(
@@ -344,7 +368,7 @@ def filter_touches_for_timeframe(
     duration = pd.to_numeric(touches["event_duration_minutes"], errors="coerce")
     if timeframe == "merged":
         return touches.copy()
-    if timeframe == "hourly":
+    if timeframe in {"m30", "hourly"}:
         return touches[duration.le(float(hourly_max_aspect_hours) * 60.0)].copy()
     if timeframe == "daily":
         return touches[duration.gt(float(daily_min_aspect_hours) * 60.0)].copy()
@@ -352,6 +376,8 @@ def filter_touches_for_timeframe(
 
 
 def timeframe_candle_label(timeframe: str) -> str:
+    if timeframe == "m30":
+        return "USDJPY M30"
     if timeframe == "merged":
         return "USDJPY H1 merged"
     return "USDJPY 1D" if timeframe == "daily" else "USDJPY H1"
@@ -1041,8 +1067,12 @@ def export_switchable_timeframe_chart(
     groups: list[dict[str, Any]] = []
     visible_frames: list[pd.DataFrame] = []
     trace_start = 0
+    interval_minutes = infer_price_interval_minutes(price)
+    timeframes = ["hourly", "daily"]
+    if interval_minutes is not None and interval_minutes <= 30.0:
+        timeframes.insert(0, "m30")
 
-    for timeframe in ("hourly", "daily"):
+    for timeframe in timeframes:
         fig, visible, start, end = build_full_year_timeframe_figure(
             price=price,
             touches=touches,
@@ -1054,7 +1084,7 @@ def export_switchable_timeframe_chart(
         if not groups:
             combined.update_layout(fig.layout)
 
-        is_default = timeframe == "hourly"
+        is_default = timeframe == timeframes[0]
         for trace in fig.data:
             trace.visible = is_default
             combined.add_trace(trace)
