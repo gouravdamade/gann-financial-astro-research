@@ -697,13 +697,20 @@ def display_planet_label(planet: str) -> str:
     return planet_key
 
 
-def collect_identities(touches: pd.DataFrame, max_lines: int) -> list[tuple[str, str, float, float, int]]:
+def collect_identities(
+    touches: pd.DataFrame,
+    max_lines: int,
+    excluded_planets: set[str] | None = None,
+) -> list[tuple[str, str, float, float, int]]:
     identities: list[tuple[str, str, float, float, int]] = []
+    excluded = {normalize_body_name(p) for p in (excluded_planets or set())}
     limit = None if int(max_lines or 0) <= 0 else int(max_lines)
     for _, row in touches.sort_values(["edge_score", "touch_time_local"], ascending=[False, False]).iterrows():
         for which in (1, 2):
             ident = identity_from_columns(row, which)
             if ident is None:
+                continue
+            if normalize_body_name(ident[0]) in excluded:
                 continue
             if ident not in identities:
                 identities.append(ident)
@@ -715,17 +722,22 @@ def collect_identities(touches: pd.DataFrame, max_lines: int) -> list[tuple[str,
 def filter_touches_to_rendered_identities(
     touches: pd.DataFrame,
     identities: list[tuple[str, str, float, float, int]],
+    excluded_planets: set[str] | None = None,
 ) -> pd.DataFrame:
     if touches.empty or not identities:
         return touches.copy()
 
     identity_set = set(identities)
+    excluded = {normalize_body_name(p) for p in (excluded_planets or set())}
 
     def row_supported(row: pd.Series) -> bool:
         row_identities = [identity_from_columns(row, which) for which in (1, 2)]
         row_identities = [ident for ident in row_identities if ident is not None]
         if not row_identities:
             return False
+        row_identities = [ident for ident in row_identities if normalize_body_name(ident[0]) not in excluded]
+        if not row_identities:
+            return True
         return all(ident in identity_set for ident in row_identities)
 
     return touches[touches.apply(row_supported, axis=1)].copy()
@@ -809,8 +821,9 @@ def build_detail_figure(
     )
 
     # Draw planetary SR lines based on touched identities
-    identities = collect_identities(visible_all, max_lines=line_limit)
-    visible = filter_touches_to_rendered_identities(visible_all, identities)
+    excluded_line_planets = {"MOON"} if timeframe == "daily" else set()
+    identities = collect_identities(visible_all, max_lines=line_limit, excluded_planets=excluded_line_planets)
+    visible = filter_touches_to_rendered_identities(visible_all, identities, excluded_planets=excluded_line_planets)
     if identities:
         needed_planets = tuple(sorted({identity[0] for identity in identities}))
         lon_map = build_adaptive_longitude_map(
