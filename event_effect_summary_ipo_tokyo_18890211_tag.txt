@@ -1,0 +1,19 @@
+=== Directional Event Family Ranking ===
+Data rows used: 6679
+Baseline UP probability (non-flat): 0.5239
+Baseline DOWN probability (non-flat): 0.4761
+Grouping: aspect, pair, shadbala_tag
+Min samples: 30
+
+Top 10 families by score:
+ grp_aspect     grp_pair grp_shadbala_tag  samples_total  samples_nonflat  up_prob_nonflat  up_lift_vs_baseline  edge_abs_from_50  ztest_p_value    score
+conjunction MERCURY|MOON          Neutral             72               59         0.745763             0.221903          0.245763       0.000643 1.886526
+ opposition  MOON|SATURN          Benefic             51               47         0.680851             0.156991          0.180851       0.031161 1.201218
+      trine  MOON|SATURN          Neutral            158              135         0.607407             0.083548          0.107407       0.051933 1.183151
+    sextile  MOON|SATURN          Benefic             81               67         0.641791             0.117931          0.141791       0.053258 1.098798
+ opposition    MARS|MOON          Neutral             82               72         0.375000            -0.148860          0.125000       0.011435 1.048531
+ opposition MERCURY|MOON          Neutral             74               66         0.393939            -0.129920          0.106061       0.034570 0.831854
+ opposition JUPITER|MOON          Neutral             72               61         0.606557             0.082698          0.106557       0.195924 0.669184
+    sextile   MOON|VENUS          Neutral            155              138         0.572464             0.048604          0.072464       0.252939 0.635941
+     square MERCURY|MOON          Benefic             99               84         0.428571            -0.095288          0.071429       0.080351 0.602052
+      trine     MOON|SUN          Neutral            154              128         0.445312            -0.078547          0.054688       0.075183 0.572201

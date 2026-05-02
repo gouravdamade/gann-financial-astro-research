@@ -1,0 +1,34 @@
+# Python/cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# IDE/local state
+.idea/
+*.log
+
+# Generated market/astro datasets and exports
+*.csv
+*.parquet
+*.pkl
+*.html
+*.zip
+*.bsp
+
+# Recovered chats, reports, extracted documents, generated app folders
+acp_temp_logs_extracted/
+astro_evidence_report*/
+astro_ledger_report*/
+astro_sr_analysis_report/
+astro_sr_chart_pack/
+astro_sr_exports/
+chat_recovery_2026-03-03/
+pdf_extracts/
+pycharm_acp_broken_chat_backup_2026-04-29/
+swiss/
+tmp*/
+untitled/
+
+# Separate web/app projects kept under this parent folder
+orliva-static-deploy/
+orliva-storefront/
