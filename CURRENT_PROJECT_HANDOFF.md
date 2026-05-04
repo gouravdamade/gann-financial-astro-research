@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-04 20:15 IST
+Last updated: 2026-05-04 21:38 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -88,8 +88,8 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parque
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.csv
 ```
 
 M30 data download:
@@ -215,11 +215,27 @@ Active hard/soft
 Note: heuristic v1; ML must validate weights.
 ```
 
-Cluster cache version in `sr_touch_lazy_dashboard.py` was bumped to `_clustered_v6.parquet`.
+Cluster cache version in `sr_touch_lazy_dashboard.py` is `_clustered_v7.parquet`.
+
+Important scoring fix on 2026-05-04:
+
+- Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
+- That caused unrelated hits such as `NEPTUNE>RAHU:square` to appear as dominant on `MARS|MOON` or `MERCURY|MOON` hovers.
+- The scorer now scopes dominant hits to the hovered row's `pair_key` planets and prefers the hovered aspect type when available.
+- If no scoped hit exists, the hypothesis shows `UNKNOWN`/blank instead of using an unrelated dominant hit.
+
+Validation for latest export:
+
+```text
+unrelated NEPTUNE>RAHU square count on non-Neptune/Rahu pairs: 0
+M30/H1 rows: 424 each, duration 60-1440 min
+Daily rows: 116, duration 1500-6660 min
+hover rows with rule block: 964/964
+```
 
 If the chart still shows old hover details, verify the opened file is the latest export:
 
-`C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.html`
+`C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.html`
 
 Validation for that export:
 
@@ -277,7 +293,7 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.csv `
   --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parquet

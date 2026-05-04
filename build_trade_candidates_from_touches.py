@@ -138,6 +138,20 @@ def aspect_family(aspect: Any) -> str:
     return "other"
 
 
+def comparable_aspect_name(aspect: Any) -> str:
+    name = str(aspect or "").strip().lower()
+    if name.endswith("_orb"):
+        name = name[: -len("_orb")]
+    return name
+
+
+def pair_bodies(pair_key: Any) -> set[str]:
+    text = str(pair_key or "").strip()
+    if not text:
+        return set()
+    return {normalize_body(part) for part in text.split("|") if str(part).strip()}
+
+
 def duration_bucket(minutes: Any) -> str:
     try:
         value = float(minutes)
@@ -184,8 +198,22 @@ def hit_strength(hit: dict[str, Any]) -> float:
     return 0.0
 
 
-def score_transit_natal_hits(value: Any) -> dict[str, Any]:
+def score_transit_natal_hits(
+    value: Any,
+    event_aspect: Any = None,
+    event_bodies: set[str] | None = None,
+) -> dict[str, Any]:
     hits = safe_json_list(value)
+    bodies = {normalize_body(body) for body in (event_bodies or set()) if normalize_body(body)}
+    aspect_name = comparable_aspect_name(event_aspect)
+    if bodies:
+        body_hits = [hit for hit in hits if normalize_body(hit.get("transit_planet")) in bodies]
+        aspect_hits = [
+            hit for hit in body_hits
+            if aspect_name and comparable_aspect_name(hit.get("aspect")) == aspect_name
+        ]
+        hits = aspect_hits or body_hits
+
     bullish = 0.0
     bearish = 0.0
     strongest_id = ""
@@ -240,6 +268,14 @@ def score_transit_natal_hits(value: Any) -> dict[str, Any]:
         "dominant_aspect_signed_score": float(strongest_signed),
         "dominant_aspect_abs_score": float(strongest_abs),
     }
+
+
+def score_transit_natal_hits_for_row(row: pd.Series) -> dict[str, Any]:
+    return score_transit_natal_hits(
+        row.get("tn_hits_json"),
+        event_aspect=row.get("aspect"),
+        event_bodies=pair_bodies(row.get("pair_key")),
+    )
 
 
 def aspect_stats_from_event_json(value: Any) -> dict[str, Any]:
@@ -433,8 +469,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         df["has_moon_trigger"] = np.maximum(df["has_moon_trigger"], df["event_json_has_moon"].fillna(0).astype(int))
         df["has_outer_or_node"] = np.maximum(df["has_outer_or_node"], df["event_json_has_outer_or_node"].fillna(0).astype(int))
 
-    score_basis = df.get("tn_hits_json", pd.Series(index=df.index, dtype=object))
-    scored = pd.DataFrame(score_basis.map(score_transit_natal_hits).tolist())
+    scored = pd.DataFrame(df.apply(score_transit_natal_hits_for_row, axis=1).tolist())
     if not scored.empty:
         df = df.drop(columns=[col for col in scored.columns if col in df.columns], errors="ignore")
         df = pd.concat([df.reset_index(drop=True), scored.reset_index(drop=True)], axis=1)

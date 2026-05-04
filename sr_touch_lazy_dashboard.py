@@ -26,7 +26,7 @@ from build_trade_candidates_from_touches import (
     aspect_family,
     aspect_stats_from_event_json,
     duration_bucket,
-    score_transit_natal_hits,
+    score_transit_natal_hits_for_row,
 )
 from planetary_sr_engine import DEFAULT_SR_PLANETS
 
@@ -519,8 +519,7 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
             for col in aspect_stats.columns:
                 df[col] = aspect_stats[col].values
 
-    score_basis = df.get("tn_hits_json", pd.Series(index=df.index, dtype=object))
-    scored = pd.DataFrame(score_basis.map(score_transit_natal_hits).tolist())
+    scored = pd.DataFrame(df.apply(score_transit_natal_hits_for_row, axis=1).tolist())
     if not scored.empty:
         for col in scored.columns:
             df[col] = scored[col].values
@@ -1308,7 +1307,7 @@ def export_switchable_timeframe_chart(
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
-    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v6.parquet")
+    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v7.parquet")
     if cache_path.exists() and cache_path.stat().st_mtime >= source_path.stat().st_mtime:
         return pd.read_parquet(cache_path)
 
