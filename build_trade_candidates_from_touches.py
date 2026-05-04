@@ -428,6 +428,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         df.get("event_aspects_json", pd.Series(index=df.index, dtype=object)).map(aspect_stats_from_event_json).tolist()
     )
     if not aspect_stats.empty:
+        df = df.drop(columns=[col for col in aspect_stats.columns if col in df.columns], errors="ignore")
         df = pd.concat([df.reset_index(drop=True), aspect_stats.reset_index(drop=True)], axis=1)
         df["has_moon_trigger"] = np.maximum(df["has_moon_trigger"], df["event_json_has_moon"].fillna(0).astype(int))
         df["has_outer_or_node"] = np.maximum(df["has_outer_or_node"], df["event_json_has_outer_or_node"].fillna(0).astype(int))
@@ -435,6 +436,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
     score_basis = df.get("tn_hits_json", pd.Series(index=df.index, dtype=object))
     scored = pd.DataFrame(score_basis.map(score_transit_natal_hits).tolist())
     if not scored.empty:
+        df = df.drop(columns=[col for col in scored.columns if col in df.columns], errors="ignore")
         df = pd.concat([df.reset_index(drop=True), scored.reset_index(drop=True)], axis=1)
     else:
         for col in (
@@ -470,7 +472,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         0,
     )
     df["rule_layer_notes"] = (
-        "heuristic_v1_no_currency_birth_chart;"
+        "heuristic_v1_yen_ipo_tokyo_1889_reference;"
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
         "ml_must_validate"
     )

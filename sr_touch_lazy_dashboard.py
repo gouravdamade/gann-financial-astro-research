@@ -16,9 +16,18 @@ import requests
 PROJECT_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
+THIS_DIR = Path(__file__).resolve().parent
+if str(THIS_DIR) not in sys.path:
+    sys.path.insert(0, str(THIS_DIR))
 
 from adaptive_ephemeris_engine import build_adaptive_longitude_map
 from JDML4 import fetch_planetary_longitude
+from build_trade_candidates_from_touches import (
+    aspect_family,
+    aspect_stats_from_event_json,
+    duration_bucket,
+    score_transit_natal_hits,
+)
 from planetary_sr_engine import DEFAULT_SR_PLANETS
 
 IST = "Asia/Kolkata"
@@ -435,6 +444,16 @@ def load_touch_log(path: str) -> pd.DataFrame:
         "tn_touch1_score",
         "tn_touch1_bphs_strength",
         "tn_touch2_bphs_strength",
+        "jyotish_bullish_score",
+        "jyotish_bearish_score",
+        "jyotish_net_score",
+        "jyotish_conflict_score",
+        "jyotish_scored_hit_count",
+        "dominant_aspect_signed_score",
+        "dominant_aspect_abs_score",
+        "rule_layer_total_strength",
+        "rule_layer_conflict_ratio",
+        "sr_confirmation_score",
     ]
     for col in numeric_cols:
         if col in df.columns:
@@ -468,9 +487,69 @@ def load_touch_log(path: str) -> pd.DataFrame:
     df["zone_kind"] = df["ret_after_72h_dir"].map({"UP": "bullish", "DOWN": "bearish"})
     df["zone_label"] = df["touch_kind"].map({"confluence": "Confluence", "nearest_line": "Nearest Line"}) + " " + df["zone_kind"].str.title() + " 72h"
     df["edge_score"] = pd.to_numeric(df["ret_after_72h_pct"], errors="coerce").abs()
+    add_rule_layer_scores(df)
     df["hover_text"] = df.apply(build_hover_text, axis=1)
     df["touch_event_label"] = df["pair_key"].astype(str) + " | " + df["aspect"].astype(str)
     return df.reset_index(drop=True)
+
+
+def add_rule_layer_scores(df: pd.DataFrame) -> None:
+    if df.empty:
+        return
+
+    df["aspect_family"] = df.get("aspect", pd.Series(index=df.index, dtype=object)).map(aspect_family)
+    df["duration_bucket"] = df.get("event_duration_minutes", pd.Series(index=df.index, dtype=object)).map(duration_bucket)
+    df["sr_confirmation_score"] = (
+        df.get("touch_kind", pd.Series(index=df.index, dtype=object))
+        .fillna("")
+        .astype(str)
+        .map({"confluence": 1.0, "nearest_line": 0.6})
+        .fillna(0.0)
+    )
+
+    if "event_aspects_json" in df.columns:
+        aspect_stats = pd.DataFrame(df["event_aspects_json"].map(aspect_stats_from_event_json).tolist())
+        if not aspect_stats.empty:
+            for col in aspect_stats.columns:
+                df[col] = aspect_stats[col].values
+
+    score_basis = df.get("tn_hits_json", pd.Series(index=df.index, dtype=object))
+    scored = pd.DataFrame(score_basis.map(score_transit_natal_hits).tolist())
+    if not scored.empty:
+        for col in scored.columns:
+            df[col] = scored[col].values
+    else:
+        df["jyotish_hypothesis_direction"] = "UNKNOWN"
+        df["dominant_aspect_id"] = ""
+        for col in (
+            "jyotish_bullish_score",
+            "jyotish_bearish_score",
+            "jyotish_net_score",
+            "jyotish_conflict_score",
+            "jyotish_scored_hit_count",
+            "dominant_aspect_signed_score",
+            "dominant_aspect_abs_score",
+        ):
+            df[col] = 0.0
+
+    event_strength = pd.to_numeric(df.get("event_bphs_strength"), errors="coerce").fillna(0.0)
+    df["geometric_strength_score"] = event_strength
+    df["rule_layer_total_strength"] = (
+        pd.to_numeric(df.get("dominant_aspect_abs_score"), errors="coerce").fillna(0.0)
+        + 0.35 * event_strength
+        + 0.25 * pd.to_numeric(df.get("sr_confirmation_score"), errors="coerce").fillna(0.0)
+    )
+    total_directional = (
+        pd.to_numeric(df.get("jyotish_bullish_score"), errors="coerce").fillna(0.0)
+        + pd.to_numeric(df.get("jyotish_bearish_score"), errors="coerce").fillna(0.0)
+    )
+    conflict = pd.to_numeric(df.get("jyotish_conflict_score"), errors="coerce").fillna(0.0)
+    df["rule_layer_conflict_ratio"] = np.where(total_directional > 0.0, conflict / total_directional, 0.0)
+    df["rule_layer_notes"] = (
+        "heuristic_v1_yen_ipo_tokyo_1889_reference;"
+        "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
+        "ml_must_validate"
+    )
 
 
 def infer_aspect_system(aspect: Any) -> str:
@@ -499,6 +578,13 @@ def _format_float(value: Any) -> str:
     if num is None:
         return "n/a"
     return f"{num:.3f}"
+
+
+def _format_pct(value: Any) -> str:
+    num = _safe_float(value)
+    if num is None:
+        return "n/a"
+    return f"{num:.1%}"
 
 
 def format_duration_minutes(value: Any) -> str:
@@ -540,6 +626,47 @@ def build_event_hover_lines(row: pd.Series) -> list[str]:
     if event_bphs_strength is not None:
         virupa_text = f" ({event_bphs_virupa:.1f}/60)" if event_bphs_virupa is not None else ""
         lines.append(f"BPHS-like strength: {event_bphs_strength:.3f}{virupa_text}")
+    lines.extend(build_rule_layer_hover_lines(row))
+    return lines
+
+
+def build_rule_layer_hover_lines(row: pd.Series) -> list[str]:
+    if "jyotish_hypothesis_direction" not in row.index:
+        return []
+    reference_time = str(row.get("reference_time_ist", row.get("tn_reference_dt_local", ""))).strip()
+    source_time = str(row.get("source_reference_time", row.get("tn_reference_dt_source", ""))).strip()
+    source_tz = str(row.get("source_reference_tz", row.get("tn_reference_source_tz", ""))).strip()
+    ref_text = source_time
+    if source_tz:
+        ref_text = f"{ref_text} {source_tz}".strip()
+    if not ref_text and reference_time:
+        ref_text = reference_time
+
+    lines = [
+        "--- Rule-layer hypothesis ---",
+        "Reference chart: Yen IPO Tokyo 1889-02-11 00:00 Asia/Tokyo",
+    ]
+    if ref_text:
+        lines.append(f"Source ref in row: {ref_text}")
+    lines.extend(
+        [
+            f"Hypothesis: {str(row.get('jyotish_hypothesis_direction', 'UNKNOWN'))}",
+            (
+                "Scores B/Bear/Net/Conflict: "
+                f"{_format_float(row.get('jyotish_bullish_score'))} / "
+                f"{_format_float(row.get('jyotish_bearish_score'))} / "
+                f"{_format_float(row.get('jyotish_net_score'))} / "
+                f"{_format_float(row.get('jyotish_conflict_score'))}"
+            ),
+            f"Dominant hit: {str(row.get('dominant_aspect_id', '')).strip() or 'n/a'}",
+            f"Dominant strength: {_format_float(row.get('dominant_aspect_abs_score'))}",
+            f"Rule total strength: {_format_float(row.get('rule_layer_total_strength'))}",
+            f"Conflict ratio: {_format_pct(row.get('rule_layer_conflict_ratio'))}",
+            f"Aspect family / duration: {str(row.get('aspect_family', ''))} / {str(row.get('duration_bucket', ''))}",
+            f"Active hard/soft: {_format_float(row.get('active_hard_aspect_count'))} / {_format_float(row.get('active_soft_aspect_count'))}",
+            "Note: heuristic v1; ML must validate weights.",
+        ]
+    )
     return lines
 
 
@@ -1159,7 +1286,7 @@ def export_switchable_timeframe_chart(
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
-    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v5.parquet")
+    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v6.parquet")
     if cache_path.exists() and cache_path.stat().st_mtime >= source_path.stat().st_mtime:
         return pd.read_parquet(cache_path)
 
