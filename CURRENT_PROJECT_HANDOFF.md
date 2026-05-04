@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-04
+Last updated: 2026-05-04 20:15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -88,8 +88,8 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parque
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_194432.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_194432.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.csv
 ```
 
 M30 data download:
@@ -198,7 +198,7 @@ Do not treat this as proof; M30 and H1 duplicate short-aspect rows in switch exp
 
 ### Chart Hover Details
 
-Latest chart hover now shows:
+Latest chart hover now shows the score block on both interaction markers and shaded aspect windows:
 
 ```text
 Rule-layer hypothesis
@@ -216,6 +216,17 @@ Note: heuristic v1; ML must validate weights.
 ```
 
 Cluster cache version in `sr_touch_lazy_dashboard.py` was bumped to `_clustered_v6.parquet`.
+
+If the chart still shows old hover details, verify the opened file is the latest export:
+
+`C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.html`
+
+Validation for that export:
+
+```text
+M30 marker hover rows with rule block: 424/424
+M30 figure traces with rule text: 477
+```
 
 ## PDF Study Artifacts
 
@@ -266,7 +277,7 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_194432.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_201522.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.csv `
   --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parquet

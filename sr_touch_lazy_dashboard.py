@@ -454,6 +454,12 @@ def load_touch_log(path: str) -> pd.DataFrame:
         "rule_layer_total_strength",
         "rule_layer_conflict_ratio",
         "sr_confirmation_score",
+        "active_hard_aspect_count",
+        "active_soft_aspect_count",
+        "has_mixed_hard_soft_aspects",
+        "event_json_has_moon",
+        "event_json_has_outer_or_node",
+        "event_json_max_duration_minutes",
     ]
     for col in numeric_cols:
         if col in df.columns:
@@ -950,6 +956,22 @@ def build_detail_figure(
         "event_orb_limit_deg",
         "event_bphs_strength",
         "event_bphs_virupa",
+        "aspect_family",
+        "duration_bucket",
+        "active_hard_aspect_count",
+        "active_soft_aspect_count",
+        "jyotish_hypothesis_direction",
+        "jyotish_bullish_score",
+        "jyotish_bearish_score",
+        "jyotish_net_score",
+        "jyotish_conflict_score",
+        "dominant_aspect_id",
+        "dominant_aspect_abs_score",
+        "rule_layer_total_strength",
+        "rule_layer_conflict_ratio",
+        "reference_time_ist",
+        "source_reference_time",
+        "source_reference_tz",
     ):
         if extra_col in visible.columns:
             aspect_window_cols.append(extra_col)
