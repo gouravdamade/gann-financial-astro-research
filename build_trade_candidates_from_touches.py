@@ -12,6 +12,39 @@ import pandas as pd
 IST = "Asia/Kolkata"
 UTC = "UTC"
 
+HARD_ASPECTS = {"conjunction", "conjunction_orb", "square", "opposition", "opposition_orb"}
+SOFT_ASPECTS = {"sextile", "trine"}
+OUTER_OR_NODE_BODIES = {"RAHU", "KETU", "URANUS", "NEPTUNE", "PLUTO"}
+FAST_BODIES = {"MOON", "MERCURY", "VENUS", "SUN", "MARS"}
+NATURAL_PLANET_BIAS = {
+    "JUPITER": 1.0,
+    "VENUS": 0.8,
+    "MERCURY": 0.3,
+    "MOON": 0.2,
+    "SUN": -0.1,
+    "MARS": -0.6,
+    "SATURN": -0.8,
+    "RAHU": -0.7,
+    "KETU": -0.5,
+    "URANUS": -0.4,
+    "NEPTUNE": -0.4,
+    "PLUTO": -0.6,
+}
+NATAL_HOUSE_BIAS = {
+    1: 0.4,
+    2: 0.9,
+    3: 0.3,
+    4: 0.2,
+    5: 0.8,
+    6: -0.5,
+    7: 0.1,
+    8: -1.0,
+    9: 0.8,
+    10: 0.7,
+    11: 1.0,
+    12: -0.9,
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -78,6 +111,166 @@ def parse_event_aspect_count(value: Any) -> int:
     if isinstance(parsed, list):
         return len(parsed)
     return 0
+
+
+def safe_json_list(value: Any) -> list[dict[str, Any]]:
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return []
+    try:
+        parsed = json.loads(str(value))
+    except Exception:
+        return []
+    if not isinstance(parsed, list):
+        return []
+    return [item for item in parsed if isinstance(item, dict)]
+
+
+def normalize_body(value: Any) -> str:
+    return str(value or "").strip().upper()
+
+
+def aspect_family(aspect: Any) -> str:
+    name = str(aspect or "").strip().lower()
+    if name in HARD_ASPECTS or name.startswith("rashi_"):
+        return "hard"
+    if name in SOFT_ASPECTS:
+        return "soft"
+    return "other"
+
+
+def duration_bucket(minutes: Any) -> str:
+    try:
+        value = float(minutes)
+    except Exception:
+        return "unknown"
+    if not np.isfinite(value):
+        return "unknown"
+    if value <= 24.0 * 60.0:
+        return "trigger_le_1d"
+    if value <= 5.0 * 24.0 * 60.0:
+        return "swing_1d_to_5d"
+    return "position_gt_5d"
+
+
+def body_bias(body: Any) -> float:
+    return float(NATURAL_PLANET_BIAS.get(normalize_body(body), 0.0))
+
+
+def house_bias(house: Any) -> float:
+    try:
+        key = int(float(house))
+    except Exception:
+        return 0.0
+    return float(NATAL_HOUSE_BIAS.get(key, 0.0))
+
+
+def aspect_family_bias(aspect: Any) -> float:
+    family = aspect_family(aspect)
+    if family == "soft":
+        return 0.25
+    if family == "hard":
+        return -0.25
+    return 0.0
+
+
+def hit_strength(hit: dict[str, Any]) -> float:
+    for key in ("bphs_strength", "score"):
+        try:
+            value = float(hit.get(key))
+        except Exception:
+            continue
+        if np.isfinite(value):
+            return max(0.0, value)
+    return 0.0
+
+
+def score_transit_natal_hits(value: Any) -> dict[str, Any]:
+    hits = safe_json_list(value)
+    bullish = 0.0
+    bearish = 0.0
+    strongest_id = ""
+    strongest_signed = 0.0
+    strongest_abs = 0.0
+    scored_hits = 0
+
+    for hit in hits:
+        strength = hit_strength(hit)
+        if strength <= 0:
+            continue
+        scored_hits += 1
+        directional_bias = (
+            house_bias(hit.get("natal_house"))
+            + 0.50 * body_bias(hit.get("natal_planet"))
+            + 0.25 * body_bias(hit.get("transit_planet"))
+            + aspect_family_bias(hit.get("aspect"))
+        )
+        signed = strength * directional_bias
+        if signed >= 0:
+            bullish += signed
+        else:
+            bearish += abs(signed)
+        if abs(signed) > strongest_abs:
+            strongest_abs = abs(signed)
+            strongest_signed = signed
+            strongest_id = (
+                f"{normalize_body(hit.get('transit_planet'))}>"
+                f"{normalize_body(hit.get('natal_planet'))}:"
+                f"{str(hit.get('aspect', '')).strip().lower()}"
+            )
+
+    net = bullish - bearish
+    conflict = min(bullish, bearish)
+    if scored_hits <= 0:
+        direction = "UNKNOWN"
+    elif bullish > bearish * 1.25:
+        direction = "BULLISH"
+    elif bearish > bullish * 1.25:
+        direction = "BEARISH"
+    else:
+        direction = "CONFLICT"
+
+    return {
+        "jyotish_bullish_score": float(bullish),
+        "jyotish_bearish_score": float(bearish),
+        "jyotish_net_score": float(net),
+        "jyotish_conflict_score": float(conflict),
+        "jyotish_hypothesis_direction": direction,
+        "jyotish_scored_hit_count": int(scored_hits),
+        "dominant_aspect_id": strongest_id,
+        "dominant_aspect_signed_score": float(strongest_signed),
+        "dominant_aspect_abs_score": float(strongest_abs),
+    }
+
+
+def aspect_stats_from_event_json(value: Any) -> dict[str, Any]:
+    aspects = safe_json_list(value)
+    hard = 0
+    soft = 0
+    has_moon = False
+    has_outer_or_node = False
+    max_duration = 0.0
+    for item in aspects:
+        family = aspect_family(item.get("aspect"))
+        hard += int(family == "hard")
+        soft += int(family == "soft")
+        bodies = [normalize_body(b) for b in item.get("bodies", []) if str(b or "").strip()]
+        has_moon = has_moon or ("MOON" in bodies)
+        has_outer_or_node = has_outer_or_node or any(body in OUTER_OR_NODE_BODIES for body in bodies)
+        try:
+            dur = float(item.get("duration_min"))
+        except Exception:
+            dur = 0.0
+        if np.isfinite(dur):
+            max_duration = max(max_duration, dur)
+
+    return {
+        "active_hard_aspect_count": int(hard),
+        "active_soft_aspect_count": int(soft),
+        "has_mixed_hard_soft_aspects": int(hard > 0 and soft > 0),
+        "event_json_has_moon": int(has_moon),
+        "event_json_has_outer_or_node": int(has_outer_or_node),
+        "event_json_max_duration_minutes": float(max_duration),
+    }
 
 
 def normalize_touch_time(value: Any) -> pd.Timestamp | pd.NaT:
@@ -213,11 +406,74 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
     df["entry_time_local"] = pd.to_datetime(df["touch_time_local"], errors="coerce")
     df["entry_price"] = pd.to_numeric(df.get("close_touch"), errors="coerce")
     df["signal_direction"] = df.get("zone_kind", "").map(signal_direction)
+    df["aspect_family"] = df.get("aspect", "").map(aspect_family)
+    df["duration_bucket"] = df.get("event_duration_minutes", pd.Series(index=df.index, dtype=object)).map(duration_bucket)
+    df["sr_confirmation_type"] = df.get("touch_kind", "").fillna("").astype(str)
+    df["sr_confirmation_score"] = df["sr_confirmation_type"].map({"confluence": 1.0, "nearest_line": 0.6}).fillna(0.0)
 
     active_count = pd.to_numeric(df.get("aspect_regime_active_count"), errors="coerce")
     event_json_count = df.get("event_aspects_json", pd.Series(index=df.index, dtype=object)).map(parse_event_aspect_count)
     df["active_aspect_count"] = active_count.fillna(event_json_count).fillna(0).astype(int)
     df["trade_category"] = np.where(df["active_aspect_count"] > 1, "multiple_aspects", "single_aspect")
+    df["is_multiple_active"] = (df["active_aspect_count"] > 1).astype(int)
+    df["has_moon_trigger"] = pd.to_numeric(df.get("touch_has_moon"), errors="coerce").fillna(0).astype(int)
+    touch_planets_text = df.get("touch_planets", pd.Series(index=df.index, dtype=object)).fillna("").astype(str).str.upper()
+    pair_text = df.get("pair_key", pd.Series(index=df.index, dtype=object)).fillna("").astype(str).str.upper()
+    df["has_outer_or_node"] = (
+        touch_planets_text.apply(lambda text: any(body in text for body in OUTER_OR_NODE_BODIES))
+        | pair_text.apply(lambda text: any(body in text for body in OUTER_OR_NODE_BODIES))
+    ).astype(int)
+
+    aspect_stats = pd.DataFrame(
+        df.get("event_aspects_json", pd.Series(index=df.index, dtype=object)).map(aspect_stats_from_event_json).tolist()
+    )
+    if not aspect_stats.empty:
+        df = pd.concat([df.reset_index(drop=True), aspect_stats.reset_index(drop=True)], axis=1)
+        df["has_moon_trigger"] = np.maximum(df["has_moon_trigger"], df["event_json_has_moon"].fillna(0).astype(int))
+        df["has_outer_or_node"] = np.maximum(df["has_outer_or_node"], df["event_json_has_outer_or_node"].fillna(0).astype(int))
+
+    score_basis = df.get("tn_hits_json", pd.Series(index=df.index, dtype=object))
+    scored = pd.DataFrame(score_basis.map(score_transit_natal_hits).tolist())
+    if not scored.empty:
+        df = pd.concat([df.reset_index(drop=True), scored.reset_index(drop=True)], axis=1)
+    else:
+        for col in (
+            "jyotish_bullish_score",
+            "jyotish_bearish_score",
+            "jyotish_net_score",
+            "jyotish_conflict_score",
+            "jyotish_scored_hit_count",
+            "dominant_aspect_signed_score",
+            "dominant_aspect_abs_score",
+        ):
+            df[col] = 0.0
+        df["jyotish_hypothesis_direction"] = "UNKNOWN"
+        df["dominant_aspect_id"] = ""
+
+    event_strength = pd.to_numeric(df.get("event_bphs_strength"), errors="coerce").fillna(0.0)
+    natal_strength = pd.to_numeric(df.get("tn_bphs_total"), errors="coerce").fillna(0.0)
+    df["geometric_strength_score"] = event_strength
+    df["natal_relevance_score"] = natal_strength
+    df["rule_layer_total_strength"] = (
+        df["dominant_aspect_abs_score"].fillna(0.0)
+        + 0.35 * df["geometric_strength_score"]
+        + 0.25 * df["sr_confirmation_score"]
+    )
+    df["rule_layer_conflict_ratio"] = np.where(
+        (df["jyotish_bullish_score"] + df["jyotish_bearish_score"]) > 0,
+        df["jyotish_conflict_score"] / (df["jyotish_bullish_score"] + df["jyotish_bearish_score"]),
+        0.0,
+    )
+    df["rule_layer_ignore_hint"] = np.where(
+        df["jyotish_hypothesis_direction"].isin(["CONFLICT", "UNKNOWN"]) | (df["rule_layer_total_strength"] < 0.25),
+        1,
+        0,
+    )
+    df["rule_layer_notes"] = (
+        "heuristic_v1_no_currency_birth_chart;"
+        "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
+        "ml_must_validate"
+    )
 
     exits: list[dict[str, Any]] = []
     for row in df.itertuples(index=False):
