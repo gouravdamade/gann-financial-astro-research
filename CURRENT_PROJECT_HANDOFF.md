@@ -29,14 +29,13 @@ Git executable:
 Latest commits:
 
 ```text
+2098242 Add USDJPY base quote rule scoring
 6c3dbf2 Scope dominant rule hit to hovered aspect
 356ee20 Add rule scores to aspect window hovers
 6780c08 Add current project handoff notes
 dbe81c0 Show Yen IPO rule scores in chart hovers
 04d65f0 Add rule-layer aspect strength scoring
 8094136 Add PDF-derived astro feature inventory
-d6004ac Add M30 chart timeframe support
-9082584 Add merged hourly chart mode
 ```
 
 Git user email is repo-local:
@@ -281,10 +280,28 @@ PDF text extraction folder:
 
 `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts`
 
+PDFs currently registered for project reference:
+
+- `Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf`
+- `Strict Jyotish Prediction Engine with Local LLM & ML Calibration2.pdf`
+- `pdfcoffee.com_financial-astrology-pdf-free.pdf`
+- `pdfcoffee.com_futuretec-financial-astrology-set-2-dhruvank-pdf-free.pdf`
+- `pdfcoffee.com_gann-financial-astrology-pdf-free.pdf`
+- `jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf`
+
 Feature inventory files:
 
 - `astro_feature_inventory_from_pdfs.md`
 - `astro_feature_inventory_from_pdfs.yaml`
+
+Shad Bala update on 2026-05-05:
+
+- `C:\Users\ADMIN\Desktop\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf` was verified as readable text.
+- Extracted text was generated at:
+  `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt`
+- Extraction summary: 179 pages, all pages nonempty, about 222k extracted characters.
+- Inventory source ID added: `SHADBALA_JAYA`.
+- `SHADBALA_GATE` now cites `SHADBALA_JAYA:p23-p101` as the detailed doctrine reference.
 
 PyYAML installed:
 
@@ -295,7 +312,7 @@ PyYAML 6.0.3
 YAML validation:
 
 ```text
-sources: 5
+sources: 6
 doctrine_locks: 4
 features: 17
 ```
@@ -303,6 +320,7 @@ features: 17
 Important PDF conclusion:
 
 - The two strict Jyotish PDFs are architecture/doctrine-control docs.
+- The Shad Bala PDF is the detailed strength-reference source for future `SHADBALA_GATE` implementation.
 - AstroEcon and Futuretek/Dhruvank are experimental feature sources.
 - Gann PDF did not extract readable body text; OCR is needed before implementing Gann rules.
 

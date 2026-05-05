@@ -19,6 +19,10 @@ sources:
     file: "pdfcoffee.com_gann-financial-astrology-pdf-free.pdf"
     role: "pending_ocr"
     extraction_status: "headings_only"
+  SHADBALA_JAYA:
+    file: "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf"
+    role: "detailed_shadbala_doctrine_reference"
+    extraction_status: "readable_text"
 
 doctrine_locks:
   - id: LOCK_TIME_UTC
@@ -152,5 +156,5 @@ features:
     timeframes: ["daily", "weekly"]
     signal_intent: "strength_filter_or_context"
     inputs: ["shadbala_components", "planet"]
-    sources: ["STRICT_JYOTISH_ML:p3", "STRICT_VEDIC_LLM:p4"]
+    sources: ["STRICT_JYOTISH_ML:p3", "STRICT_VEDIC_LLM:p4", "SHADBALA_JAYA:p23-p101"]
     implementation_status: "not_implemented"

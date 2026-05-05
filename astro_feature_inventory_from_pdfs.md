@@ -1,6 +1,6 @@
 # Astro Feature Inventory From Attached PDFs
 
-Created from the five PDFs supplied on 2026-05-04. The two strict-Jyotish PDFs are treated as architecture/doctrine-control documents. The financial astrology PDFs are treated as experimental feature sources until validated out of sample.
+Created from the project PDFs supplied on 2026-05-04 and updated with the Shad Bala PDF supplied on 2026-05-05. The strict-Jyotish PDFs are treated as architecture/doctrine-control documents. The financial astrology PDFs are treated as experimental feature sources until validated out of sample.
 
 ## Source IDs
 
@@ -11,6 +11,7 @@ Created from the five PDFs supplied on 2026-05-04. The two strict-Jyotish PDFs a
 | ASTROECON | `pdfcoffee.com_financial-astrology-pdf-free.pdf` | readable text, 104 pages | Experimental financial astrology feature rules |
 | FUTURETEK_DHRUVANK | `pdfcoffee.com_futuretec-financial-astrology-set-2-dhruvank-pdf-free.pdf` | readable text, 17 pages | Experimental daily Dhruvank feature |
 | GANN_VOL2 | `pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` | body text not extracted | Pending OCR; do not implement yet |
+| SHADBALA_JAYA | `jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf` | readable text, 179 pages | Detailed Shadbala doctrine/reference |
 
 Extracted text folder:
 
@@ -56,7 +57,7 @@ Extracted text folder:
 | DHRUVANK_REMAINDER_SIGNAL | Experimental Vedic financial astrology | Daily/weekly | Rise/fall/no-change signal from Dhruvank remainder | Commodity/share code, city, nakshatra, tithi, weekday, lunar month, sun sign, yoga | FUTURETEK_DHRUVANK p2-p17 | Not implemented |
 | JYOTISH_NAKSHATRA_PADA | Strict Jyotish core feature | All | Feature/context only until rulebook exists | Sidereal longitude mapped to 27 nakshatras and 4 padas | STRICT_JYOTISH_ML p3 | Not implemented as reusable feature table |
 | BPHS_DRISHTI_STRENGTH | Strict Jyotish core feature | All | Doctrine feature, not Western orb | BPHS drishti virupa/rupa/strength norm | STRICT_JYOTISH_ML p2-p4 | Existing script has BPHS-like fields; verify against doctrine |
-| SHADBALA_GATE | Strict Jyotish core feature | Daily/weekly initially | Strength filter/context for rule layer | Shadbala totals/components and thresholds | STRICT_JYOTISH_ML p3, STRICT_VEDIC_LLM p4 | Not implemented |
+| SHADBALA_GATE | Strict Jyotish core feature | Daily/weekly initially | Strength filter/context for rule layer | Shadbala totals/components and thresholds | STRICT_JYOTISH_ML p3, STRICT_VEDIC_LLM p4, SHADBALA_JAYA p23-p101 | Not implemented |
 
 ## Priority Implementation Plan
 
