@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-04 21:38 IST
+Last updated: 2026-05-05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -29,14 +29,14 @@ Git executable:
 Latest commits:
 
 ```text
+6c3dbf2 Scope dominant rule hit to hovered aspect
+356ee20 Add rule scores to aspect window hovers
+6780c08 Add current project handoff notes
 dbe81c0 Show Yen IPO rule scores in chart hovers
 04d65f0 Add rule-layer aspect strength scoring
 8094136 Add PDF-derived astro feature inventory
 d6004ac Add M30 chart timeframe support
 9082584 Add merged hourly chart mode
-1805b9c Hide moon SR lines on daily chart
-3eb2454 Add switchable hourly daily chart export
-395bd84 Initial astro trading scripts checkpoint
 ```
 
 Git user email is repo-local:
@@ -56,7 +56,7 @@ Tracked in Git:
 
 ## Reference Chart
 
-The current natal/reference chart is the Japanese Yen/Tokyo IPO style reference:
+The quote/reference chart is the Japanese Yen/Tokyo IPO style reference:
 
 ```text
 ipo-date: 1889-02-11
@@ -72,6 +72,23 @@ This is used by `build_aspect_sr_touch_log.py` for transit-to-natal fields such 
 - `tn_primary_*`
 - `tn_bphs_total`
 - `touch_planet_*_natal_*`
+
+The base/reference chart added on 2026-05-05 is the USD birth reference supplied by the user:
+
+```text
+base-reference-label: USD
+base-reference-date: 1776-07-04
+base-reference-time: 12:00
+base-reference-tz: America/New_York
+base-reference-lat: 39.9526
+base-reference-lon: -75.1652
+```
+
+This is implemented as additional `base_tn_*` fields. The pair hypothesis is:
+
+```text
+USDJPY score = USD reference score - JPY reference score
+```
 
 ## Current Data Files
 
@@ -183,6 +200,7 @@ Notes field:
 ```text
 heuristic_v1_yen_ipo_tokyo_1889_reference;
 uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;
+fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;
 ml_must_validate
 ```
 
@@ -216,6 +234,19 @@ Note: heuristic v1; ML must validate weights.
 ```
 
 Cluster cache version in `sr_touch_lazy_dashboard.py` is `_clustered_v7.parquet`.
+
+Update on 2026-05-05:
+
+- `build_aspect_sr_touch_log.py` now supports base/quote reference labels and USD base-reference CLI options.
+- Default USD base reference is `1776-07-04 12:00 America/New_York`, Philadelphia lat/lon.
+- `build_trade_candidates_from_touches.py` adds `score_currency_pair_for_row`.
+- `sr_touch_lazy_dashboard.py` adds `FX pair hypothesis` hover lines and `fx_*` export columns.
+- Dashboard clustered cache version is now `_clustered_v8.parquet`.
+- Older touch logs without `base_tn_hits_json` intentionally show `fx_hypothesis_direction=UNKNOWN` with `base_reference_missing;pair_hypothesis_not_scored`.
+- Syntax check passed:
+  `python -m py_compile build_aspect_sr_touch_log.py build_trade_candidates_from_touches.py sr_touch_lazy_dashboard.py`
+- Smoke load passed on `aspect_sr_touch_log_72h_smoke.csv`: 1854 rows, all old rows `UNKNOWN` for FX pair scoring.
+- Synthetic row with both USD and JPY hits produced `BULLISH` with positive `fx_pair_net_score`.
 
 Important scoring fix on 2026-05-04:
 
@@ -308,12 +339,12 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User checks latest chart hover scoring.
-2. If hover is acceptable, implement base/quote currency scoring design:
-   `USDJPY score = USD reference score - JPY reference score`.
-3. Make `max-event-days` configurable in dashboard loader and builder, then add weekly mode.
-4. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored.parquet`.
-5. Add feature columns from the PDF inventory one group at a time:
+1. Regenerate the full touch log so it includes the new `base_tn_*` USD reference fields.
+2. Export a fresh switch chart from that regenerated touch log and inspect the new `FX pair hypothesis` hover block.
+3. Rebuild scored trade candidates and compare `fx_hypothesis_direction` against outcomes.
+4. Make `max-event-days` configurable in dashboard loader and builder, then add weekly mode.
+5. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored.parquet`.
+6. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
 
 ## Recovery Prompt For A New Chat

@@ -6,6 +6,7 @@ import sys
 from datetime import timedelta, timezone as dt_timezone
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
@@ -33,6 +34,11 @@ UTC = "UTC"
 REFERENCE_TZ_DEFAULT = "Asia/Tokyo"
 REFERENCE_LAT_DEFAULT = 35.6762
 REFERENCE_LON_DEFAULT = 139.6503
+BASE_REFERENCE_DATE_DEFAULT = "1776-07-04"
+BASE_REFERENCE_TIME_DEFAULT = "12:00"
+BASE_REFERENCE_TZ_DEFAULT = "America/New_York"
+BASE_REFERENCE_LAT_DEFAULT = 39.9526
+BASE_REFERENCE_LON_DEFAULT = -75.1652
 FIXED_TIMEZONE_OFFSETS = {
     "Asia/Kolkata": 330,
     "Asia/Tokyo": 540,
@@ -268,6 +274,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reference-tz", default=REFERENCE_TZ_DEFAULT)
     parser.add_argument("--reference-lat", type=float, default=REFERENCE_LAT_DEFAULT)
     parser.add_argument("--reference-lon", type=float, default=REFERENCE_LON_DEFAULT)
+    parser.add_argument("--quote-reference-label", default="JPY")
+    parser.add_argument("--base-reference-label", default="USD")
+    parser.add_argument("--base-reference-date", default=BASE_REFERENCE_DATE_DEFAULT)
+    parser.add_argument("--base-reference-time", default=BASE_REFERENCE_TIME_DEFAULT)
+    parser.add_argument("--base-reference-tz", default=BASE_REFERENCE_TZ_DEFAULT)
+    parser.add_argument("--base-reference-lat", type=float, default=BASE_REFERENCE_LAT_DEFAULT)
+    parser.add_argument("--base-reference-lon", type=float, default=BASE_REFERENCE_LON_DEFAULT)
+    parser.add_argument(
+        "--disable-base-reference",
+        action="store_true",
+        help="Do not add base-currency transit-to-natal fields.",
+    )
     parser.add_argument(
         "--max-event-days",
         type=float,
@@ -509,10 +527,16 @@ def to_ist_series(ts: pd.Series) -> pd.Series:
     return parsed.dt.tz_convert(IST)
 
 
+def reference_timezone(tz_name: str) -> dt_timezone | ZoneInfo:
+    tz_key = str(tz_name or "").strip()
+    if tz_key in FIXED_TIMEZONE_OFFSETS:
+        return dt_timezone(timedelta(minutes=int(FIXED_TIMEZONE_OFFSETS[tz_key])))
+    return ZoneInfo(tz_key)
+
+
 def parse_reference_datetime(date_text: str, time_text: str, tz_name: str) -> pd.Timestamp:
     ref = pd.Timestamp(f"{str(date_text).strip()} {str(time_text).strip()}")
-    source_minutes = int(FIXED_TIMEZONE_OFFSETS.get(str(tz_name), FIXED_TIMEZONE_OFFSETS["Asia/Kolkata"]))
-    source_tz = dt_timezone(timedelta(minutes=source_minutes))
+    source_tz = reference_timezone(tz_name)
     ist_tz = dt_timezone(timedelta(minutes=FIXED_TIMEZONE_OFFSETS["Asia/Kolkata"]))
     if ref.tzinfo is None:
         ref = ref.tz_localize(source_tz)
@@ -795,11 +819,19 @@ def build_identity_frame(cfg: dict[str, Any]) -> pd.DataFrame:
     return out.reset_index(drop=True)
 
 
-def build_natal_context(args: argparse.Namespace, planets: tuple[str, ...]) -> dict[str, Any]:
-    source_minutes = int(FIXED_TIMEZONE_OFFSETS.get(str(args.reference_tz), FIXED_TIMEZONE_OFFSETS["Asia/Kolkata"]))
-    source_tz = dt_timezone(timedelta(minutes=source_minutes))
+def build_reference_context(
+    *,
+    date_text: str,
+    time_text: str,
+    tz_name: str,
+    lat: float,
+    lon: float,
+    planets: tuple[str, ...],
+    label: str,
+) -> dict[str, Any]:
+    source_tz = reference_timezone(tz_name)
     ist_tz = dt_timezone(timedelta(minutes=FIXED_TIMEZONE_OFFSETS["Asia/Kolkata"]))
-    ref_dt_source = pd.Timestamp(f"{str(args.ipo_date).strip()} {str(args.ipo_time).strip()}")
+    ref_dt_source = pd.Timestamp(f"{str(date_text).strip()} {str(time_text).strip()}")
     if ref_dt_source.tzinfo is None:
         ref_dt_source = ref_dt_source.tz_localize(source_tz)
     else:
@@ -808,8 +840,8 @@ def build_natal_context(args: argparse.Namespace, planets: tuple[str, ...]) -> d
     engine = ReferenceChartEngine(
         chart_type="ipo",
         dt_ist=ref_dt.to_pydatetime(),
-        lat=float(args.reference_lat),
-        lon=float(args.reference_lon),
+        lat=float(lat),
+        lon=float(lon),
     )
     engine.compute_all()
     natal_longitudes: dict[str, float] = {}
@@ -838,16 +870,33 @@ def build_natal_context(args: argparse.Namespace, planets: tuple[str, ...]) -> d
         natal_signs[store_key] = str(get_zodiac_sign(lon_f))
         natal_houses[store_key] = get_house_of_planet(lon_f, engine.houses)
     return {
+        "reference_label": str(label),
         "reference_dt": ref_dt,
         "reference_tz": str(IST),
         "reference_source_dt": ref_dt_source,
-        "reference_source_tz": str(args.reference_tz),
-        "reference_lat": float(args.reference_lat),
-        "reference_lon": float(args.reference_lon),
+        "reference_source_tz": str(tz_name),
+        "reference_lat": float(lat),
+        "reference_lon": float(lon),
         "longitudes": natal_longitudes,
         "signs": natal_signs,
         "houses": natal_houses,
     }
+
+
+def build_natal_context(args: argparse.Namespace, planets: tuple[str, ...]) -> dict[str, Any]:
+    return build_reference_context(
+        date_text=args.ipo_date,
+        time_text=args.ipo_time,
+        tz_name=args.reference_tz,
+        lat=float(args.reference_lat),
+        lon=float(args.reference_lon),
+        planets=planets,
+        label=str(args.quote_reference_label),
+    )
+
+
+def prefix_dict(data: dict[str, Any], prefix: str) -> dict[str, Any]:
+    return {f"{prefix}{key}": value for key, value in data.items()}
 
 
 def build_user_facing_touch_log(out: pd.DataFrame) -> pd.DataFrame:
@@ -860,6 +909,10 @@ def build_user_facing_touch_log(out: pd.DataFrame) -> pd.DataFrame:
         "tn_reference_tz": "reference_time_tz",
         "tn_reference_dt_source": "source_reference_time",
         "tn_reference_source_tz": "source_reference_tz",
+        "base_tn_reference_dt_local": "base_reference_time_ist",
+        "base_tn_reference_tz": "base_reference_time_tz",
+        "base_tn_reference_dt_source": "base_source_reference_time",
+        "base_tn_reference_source_tz": "base_source_reference_tz",
     }
     present_map = {src: dst for src, dst in rename_map.items() if src in export_df.columns}
     if present_map:
@@ -1243,6 +1296,25 @@ def main() -> None:
         f"lat={float(args.reference_lat):.4f}",
         f"lon={float(args.reference_lon):.4f}",
     )
+    base_natal_ctx = None
+    if not args.disable_base_reference:
+        base_natal_ctx = build_reference_context(
+            date_text=args.base_reference_date,
+            time_text=args.base_reference_time,
+            tz_name=args.base_reference_tz,
+            lat=float(args.base_reference_lat),
+            lon=float(args.base_reference_lon),
+            planets=cfg["planets"],
+            label=str(args.base_reference_label),
+        )
+        print(
+            "Base reference ready:",
+            f"{args.base_reference_date} {args.base_reference_time} {args.base_reference_tz}",
+            "->",
+            f"{base_natal_ctx['reference_dt'].strftime('%Y-%m-%d %H:%M:%S')} {base_natal_ctx['reference_tz']}",
+            f"lat={float(args.base_reference_lat):.4f}",
+            f"lon={float(args.base_reference_lon):.4f}",
+        )
     print(f"Building adaptive longitude map for {len(cfg['planets'])} planets on analysis bars...")
     lon_map = build_adaptive_longitude_map(
         planets=list(cfg["planets"]),
@@ -1254,6 +1326,11 @@ def main() -> None:
     print("Longitude map ready. Building touch analyzer...")
     compute_bar_touches, _, _, _, _ = build_bar_analyzer(analysis_price, lon_map, cfg)
     compute_natal_features = build_natal_feature_builder(lon_map, cfg, natal_ctx, args.aspect_mode)
+    compute_base_natal_features = (
+        build_natal_feature_builder(lon_map, cfg, base_natal_ctx, args.aspect_mode)
+        if base_natal_ctx is not None
+        else None
+    )
 
     open_arr = price["open"].to_numpy(dtype=np.float64)
     high_arr = price["high"].to_numpy(dtype=np.float64)
@@ -1316,6 +1393,9 @@ def main() -> None:
                 touch_planet_2 = identity_2[0] if identity_2 else ""
                 touch_planet_set = {p for p in [touch_planet_1, touch_planet_2] if str(p).strip()}
                 natal_features, summarize_for_touch = compute_natal_features(analysis_idx, touch_planet_set)
+                base_natal_features: dict[str, Any] = {}
+                if compute_base_natal_features is not None:
+                    base_natal_features, _ = compute_base_natal_features(analysis_idx, touch_planet_set)
                 regime_meta = regime_map.get(int(bar_idx), {})
                 natal_touch1 = summarize_for_touch(touch_planet_1)
                 natal_touch2 = summarize_for_touch(touch_planet_2)
@@ -1423,12 +1503,20 @@ def main() -> None:
                     "sr_epsilon": float(cfg["epsilon"]),
                     "sr_price_zone": float(cfg["price_zone"]),
                     "sr_moon_factor": float(cfg["moon_factor"]),
+                    "quote_reference_label": str(natal_ctx.get("reference_label", args.quote_reference_label)),
                     "tn_reference_tz": str(natal_ctx["reference_tz"]),
                     "tn_reference_source_tz": str(natal_ctx.get("reference_source_tz", "")),
                     "tn_reference_lat": float(natal_ctx["reference_lat"]),
                     "tn_reference_lon": float(natal_ctx["reference_lon"]),
                     "tn_reference_dt_local": natal_ctx["reference_dt"],
                     "tn_reference_dt_source": natal_ctx.get("reference_source_dt"),
+                    "base_reference_label": str(base_natal_ctx.get("reference_label", args.base_reference_label)) if base_natal_ctx else "",
+                    "base_tn_reference_tz": str(base_natal_ctx["reference_tz"]) if base_natal_ctx else "",
+                    "base_tn_reference_source_tz": str(base_natal_ctx.get("reference_source_tz", "")) if base_natal_ctx else "",
+                    "base_tn_reference_lat": float(base_natal_ctx["reference_lat"]) if base_natal_ctx else np.nan,
+                    "base_tn_reference_lon": float(base_natal_ctx["reference_lon"]) if base_natal_ctx else np.nan,
+                    "base_tn_reference_dt_local": base_natal_ctx["reference_dt"] if base_natal_ctx else pd.NaT,
+                    "base_tn_reference_dt_source": base_natal_ctx.get("reference_source_dt") if base_natal_ctx else pd.NaT,
                     "tn_touch1_active_count": int(natal_touch1["active_count"]),
                     "tn_touch1_best_aspect": str(natal_touch1["best_aspect"]),
                     "tn_touch1_best_natal_target": str(natal_touch1["best_natal_target"]),
@@ -1443,6 +1531,8 @@ def main() -> None:
                     "tn_touch2_bphs_strength": float(natal_touch2["bphs_strength"]),
                 }
                 row.update(natal_features)
+                if base_natal_features:
+                    row.update(prefix_dict(base_natal_features, "base_"))
                 rows.append(row)
 
     if not rows:

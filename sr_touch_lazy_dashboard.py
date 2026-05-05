@@ -26,6 +26,7 @@ from build_trade_candidates_from_touches import (
     aspect_family,
     aspect_stats_from_event_json,
     duration_bucket,
+    score_currency_pair_for_row,
     score_transit_natal_hits_for_row,
 )
 from planetary_sr_engine import DEFAULT_SR_PLANETS
@@ -407,6 +408,8 @@ def load_touch_log(path: str) -> pd.DataFrame:
         "after72_time_utc",
         "aspect_regime_start_local",
         "aspect_regime_end_local",
+        "base_tn_reference_dt_local",
+        "base_tn_reference_dt_source",
     ]
     for col in dt_cols:
         if col in df.columns:
@@ -444,11 +447,31 @@ def load_touch_log(path: str) -> pd.DataFrame:
         "tn_touch1_score",
         "tn_touch1_bphs_strength",
         "tn_touch2_bphs_strength",
+        "base_tn_reference_lat",
+        "base_tn_reference_lon",
         "jyotish_bullish_score",
         "jyotish_bearish_score",
         "jyotish_net_score",
         "jyotish_conflict_score",
         "jyotish_scored_hit_count",
+        "base_jyotish_bullish_score",
+        "base_jyotish_bearish_score",
+        "base_jyotish_net_score",
+        "base_jyotish_conflict_score",
+        "base_jyotish_scored_hit_count",
+        "quote_jyotish_bullish_score",
+        "quote_jyotish_bearish_score",
+        "quote_jyotish_net_score",
+        "quote_jyotish_conflict_score",
+        "quote_jyotish_scored_hit_count",
+        "fx_base_net_score",
+        "fx_quote_net_score",
+        "fx_pair_net_score",
+        "fx_pair_conflict_score",
+        "fx_pair_conflict_ratio",
+        "fx_base_scored_hit_count",
+        "fx_quote_scored_hit_count",
+        "fx_rule_layer_total_strength",
         "dominant_aspect_signed_score",
         "dominant_aspect_abs_score",
         "rule_layer_total_strength",
@@ -537,22 +560,39 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         ):
             df[col] = 0.0
 
-    event_strength = pd.to_numeric(df.get("event_bphs_strength"), errors="coerce").fillna(0.0)
+    fx_scored = pd.DataFrame(df.apply(score_currency_pair_for_row, axis=1).tolist())
+    if not fx_scored.empty:
+        for col in fx_scored.columns:
+            df[col] = fx_scored[col].values
+    else:
+        df["fx_hypothesis_direction"] = "UNKNOWN"
+        df["fx_pair_net_score"] = 0.0
+        df["fx_pair_conflict_score"] = 0.0
+        df["fx_pair_conflict_ratio"] = 0.0
+        df["fx_scoring_notes"] = "base_reference_missing;pair_hypothesis_not_scored"
+
+    event_strength = numeric_series(df, "event_bphs_strength")
     df["geometric_strength_score"] = event_strength
     df["rule_layer_total_strength"] = (
-        pd.to_numeric(df.get("dominant_aspect_abs_score"), errors="coerce").fillna(0.0)
+        numeric_series(df, "dominant_aspect_abs_score")
         + 0.35 * event_strength
-        + 0.25 * pd.to_numeric(df.get("sr_confirmation_score"), errors="coerce").fillna(0.0)
+        + 0.25 * numeric_series(df, "sr_confirmation_score")
+    )
+    df["fx_rule_layer_total_strength"] = (
+        numeric_series(df, "fx_pair_net_score").abs()
+        + 0.35 * event_strength
+        + 0.25 * numeric_series(df, "sr_confirmation_score")
     )
     total_directional = (
-        pd.to_numeric(df.get("jyotish_bullish_score"), errors="coerce").fillna(0.0)
-        + pd.to_numeric(df.get("jyotish_bearish_score"), errors="coerce").fillna(0.0)
+        numeric_series(df, "jyotish_bullish_score")
+        + numeric_series(df, "jyotish_bearish_score")
     )
-    conflict = pd.to_numeric(df.get("jyotish_conflict_score"), errors="coerce").fillna(0.0)
+    conflict = numeric_series(df, "jyotish_conflict_score")
     df["rule_layer_conflict_ratio"] = np.where(total_directional > 0.0, conflict / total_directional, 0.0)
     df["rule_layer_notes"] = (
         "heuristic_v1_yen_ipo_tokyo_1889_reference;"
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
+        "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "ml_must_validate"
     )
 
@@ -576,6 +616,12 @@ def _safe_float(value: Any) -> float | None:
     if pd.isna(val):
         return None
     return val
+
+
+def numeric_series(df: pd.DataFrame, col: str, default: float = 0.0) -> pd.Series:
+    if col not in df.columns:
+        return pd.Series(default, index=df.index, dtype=float)
+    return pd.to_numeric(df[col], errors="coerce").fillna(default)
 
 
 def _format_float(value: Any) -> str:
@@ -672,6 +718,34 @@ def build_rule_layer_hover_lines(row: pd.Series) -> list[str]:
             "Note: heuristic v1; ML must validate weights.",
         ]
     )
+    if "fx_hypothesis_direction" in row.index:
+        base_label = str(row.get("fx_base_reference_label", row.get("base_reference_label", "USD")) or "USD").strip()
+        quote_label = str(row.get("fx_quote_reference_label", row.get("quote_reference_label", "JPY")) or "JPY").strip()
+        base_source_time = str(row.get("base_tn_reference_dt_source", "")).strip()
+        base_source_tz = str(row.get("base_tn_reference_source_tz", "")).strip()
+        base_ref_text = f"{base_source_time} {base_source_tz}".strip()
+        if not base_ref_text:
+            base_ref_text = str(row.get("base_tn_reference_dt_local", "")).strip()
+        lines.extend(
+            [
+                "--- FX pair hypothesis ---",
+                f"Pair model: {base_label}/{quote_label} = base score - quote score",
+                f"Base ref: {base_ref_text or 'n/a'}",
+                f"Quote ref: {ref_text or 'n/a'}",
+                f"FX hypothesis: {str(row.get('fx_hypothesis_direction', 'UNKNOWN'))}",
+                (
+                    "FX base/quote/net/conflict: "
+                    f"{_format_float(row.get('fx_base_net_score'))} / "
+                    f"{_format_float(row.get('fx_quote_net_score'))} / "
+                    f"{_format_float(row.get('fx_pair_net_score'))} / "
+                    f"{_format_float(row.get('fx_pair_conflict_score'))}"
+                ),
+                f"FX conflict ratio: {_format_pct(row.get('fx_pair_conflict_ratio'))}",
+                f"Dominant base hit: {str(row.get('fx_dominant_base_hit', '')).strip() or 'n/a'}",
+                f"Dominant quote hit: {str(row.get('fx_dominant_quote_hit', '')).strip() or 'n/a'}",
+                f"FX rule total strength: {_format_float(row.get('fx_rule_layer_total_strength'))}",
+            ]
+        )
     return lines
 
 
@@ -966,11 +1040,27 @@ def build_detail_figure(
         "jyotish_conflict_score",
         "dominant_aspect_id",
         "dominant_aspect_abs_score",
+        "fx_hypothesis_direction",
+        "fx_base_reference_label",
+        "fx_quote_reference_label",
+        "fx_base_net_score",
+        "fx_quote_net_score",
+        "fx_pair_net_score",
+        "fx_pair_conflict_score",
+        "fx_pair_conflict_ratio",
+        "fx_dominant_base_hit",
+        "fx_dominant_quote_hit",
+        "fx_rule_layer_total_strength",
         "rule_layer_total_strength",
         "rule_layer_conflict_ratio",
         "reference_time_ist",
         "source_reference_time",
         "source_reference_tz",
+        "base_reference_label",
+        "quote_reference_label",
+        "base_tn_reference_dt_local",
+        "base_tn_reference_dt_source",
+        "base_tn_reference_source_tz",
     ):
         if extra_col in visible.columns:
             aspect_window_cols.append(extra_col)
@@ -1141,6 +1231,14 @@ def build_user_facing_export_frame(visible: pd.DataFrame) -> pd.DataFrame:
         rename_map["tn_reference_dt_source"] = "source_reference_time"
     if "tn_reference_source_tz" in export_df.columns:
         rename_map["tn_reference_source_tz"] = "source_reference_tz"
+    if "base_tn_reference_dt_local" in export_df.columns:
+        rename_map["base_tn_reference_dt_local"] = "base_reference_time_ist"
+    if "base_tn_reference_tz" in export_df.columns:
+        rename_map["base_tn_reference_tz"] = "base_reference_time_tz"
+    if "base_tn_reference_dt_source" in export_df.columns:
+        rename_map["base_tn_reference_dt_source"] = "base_source_reference_time"
+    if "base_tn_reference_source_tz" in export_df.columns:
+        rename_map["base_tn_reference_source_tz"] = "base_source_reference_tz"
     if rename_map:
         export_df = export_df.rename(columns=rename_map)
     return export_df
@@ -1307,7 +1405,7 @@ def export_switchable_timeframe_chart(
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
-    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v7.parquet")
+    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v8.parquet")
     if cache_path.exists() and cache_path.stat().st_mtime >= source_path.stat().st_mtime:
         return pd.read_parquet(cache_path)
 

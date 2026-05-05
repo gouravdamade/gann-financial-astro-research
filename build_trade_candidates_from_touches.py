@@ -125,6 +125,12 @@ def safe_json_list(value: Any) -> list[dict[str, Any]]:
     return [item for item in parsed if isinstance(item, dict)]
 
 
+def numeric_series(df: pd.DataFrame, col: str, default: float = 0.0) -> pd.Series:
+    if col not in df.columns:
+        return pd.Series(default, index=df.index, dtype=float)
+    return pd.to_numeric(df[col], errors="coerce").fillna(default)
+
+
 def normalize_body(value: Any) -> str:
     return str(value or "").strip().upper()
 
@@ -276,6 +282,86 @@ def score_transit_natal_hits_for_row(row: pd.Series) -> dict[str, Any]:
         event_aspect=row.get("aspect"),
         event_bodies=pair_bodies(row.get("pair_key")),
     )
+
+
+def prefixed_score(data: dict[str, Any], prefix: str) -> dict[str, Any]:
+    return {f"{prefix}{key}": value for key, value in data.items()}
+
+
+def direction_from_net_score(net: float, conflict_ratio: float = 0.0) -> str:
+    if not np.isfinite(net):
+        return "UNKNOWN"
+    if abs(net) <= 0.05:
+        return "CONFLICT"
+    if conflict_ratio >= 0.45:
+        return "CONFLICT"
+    return "BULLISH" if net > 0 else "BEARISH"
+
+
+def has_nonempty_value(value: Any) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return value.strip().lower() not in {"", "nan", "none", "nat"}
+    try:
+        return bool(pd.notna(value))
+    except Exception:
+        return True
+
+
+def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
+    event_aspect = row.get("aspect")
+    bodies = pair_bodies(row.get("pair_key"))
+    base_hits_raw = row.get("base_tn_hits_json")
+    has_base_reference = has_nonempty_value(base_hits_raw)
+    quote = score_transit_natal_hits(
+        row.get("tn_hits_json"),
+        event_aspect=event_aspect,
+        event_bodies=bodies,
+    )
+    base = score_transit_natal_hits(
+        row.get("base_tn_hits_json"),
+        event_aspect=event_aspect,
+        event_bodies=bodies,
+    )
+
+    base_net = float(base["jyotish_net_score"])
+    quote_net = float(quote["jyotish_net_score"])
+    pair_net = base_net - quote_net if has_base_reference else 0.0
+    base_total = float(base["jyotish_bullish_score"]) + float(base["jyotish_bearish_score"])
+    quote_total = float(quote["jyotish_bullish_score"]) + float(quote["jyotish_bearish_score"])
+    conflict = float(base["jyotish_conflict_score"]) + float(quote["jyotish_conflict_score"])
+    total_directional = base_total + quote_total
+    conflict_ratio = conflict / total_directional if has_base_reference and total_directional > 0 else 0.0
+    direction = (
+        "UNKNOWN"
+        if not has_base_reference
+        or (int(base["jyotish_scored_hit_count"]) <= 0 and int(quote["jyotish_scored_hit_count"]) <= 0)
+        else direction_from_net_score(pair_net, conflict_ratio)
+    )
+
+    out = {
+        "fx_base_reference_label": str(row.get("base_reference_label", "USD") or "USD"),
+        "fx_quote_reference_label": str(row.get("quote_reference_label", "JPY") or "JPY"),
+        "fx_base_net_score": base_net,
+        "fx_quote_net_score": quote_net,
+        "fx_pair_net_score": float(pair_net),
+        "fx_pair_conflict_score": float(conflict),
+        "fx_pair_conflict_ratio": float(conflict_ratio),
+        "fx_hypothesis_direction": direction,
+        "fx_base_scored_hit_count": int(base["jyotish_scored_hit_count"]),
+        "fx_quote_scored_hit_count": int(quote["jyotish_scored_hit_count"]),
+        "fx_dominant_base_hit": str(base["dominant_aspect_id"]),
+        "fx_dominant_quote_hit": str(quote["dominant_aspect_id"]),
+        "fx_scoring_notes": (
+            "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;ml_must_validate"
+            if has_base_reference
+            else "base_reference_missing;pair_hypothesis_not_scored"
+        ),
+    }
+    out.update(prefixed_score(base, "base_"))
+    out.update(prefixed_score(quote, "quote_"))
+    return out
 
 
 def aspect_stats_from_event_json(value: Any) -> dict[str, Any]:
@@ -487,18 +573,34 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         df["jyotish_hypothesis_direction"] = "UNKNOWN"
         df["dominant_aspect_id"] = ""
 
-    event_strength = pd.to_numeric(df.get("event_bphs_strength"), errors="coerce").fillna(0.0)
-    natal_strength = pd.to_numeric(df.get("tn_bphs_total"), errors="coerce").fillna(0.0)
+    fx_scored = pd.DataFrame(df.apply(score_currency_pair_for_row, axis=1).tolist())
+    if not fx_scored.empty:
+        df = df.drop(columns=[col for col in fx_scored.columns if col in df.columns], errors="ignore")
+        df = pd.concat([df.reset_index(drop=True), fx_scored.reset_index(drop=True)], axis=1)
+    else:
+        df["fx_hypothesis_direction"] = "UNKNOWN"
+        df["fx_pair_net_score"] = 0.0
+        df["fx_pair_conflict_score"] = 0.0
+        df["fx_pair_conflict_ratio"] = 0.0
+
+    event_strength = numeric_series(df, "event_bphs_strength")
+    natal_strength = numeric_series(df, "tn_bphs_total")
     df["geometric_strength_score"] = event_strength
     df["natal_relevance_score"] = natal_strength
     df["rule_layer_total_strength"] = (
-        df["dominant_aspect_abs_score"].fillna(0.0)
-        + 0.35 * df["geometric_strength_score"]
-        + 0.25 * df["sr_confirmation_score"]
+        numeric_series(df, "dominant_aspect_abs_score")
+        + 0.35 * event_strength
+        + 0.25 * numeric_series(df, "sr_confirmation_score")
     )
+    df["fx_rule_layer_total_strength"] = (
+        numeric_series(df, "fx_pair_net_score").abs()
+        + 0.35 * event_strength
+        + 0.25 * numeric_series(df, "sr_confirmation_score")
+    )
+    directional_total = numeric_series(df, "jyotish_bullish_score") + numeric_series(df, "jyotish_bearish_score")
     df["rule_layer_conflict_ratio"] = np.where(
-        (df["jyotish_bullish_score"] + df["jyotish_bearish_score"]) > 0,
-        df["jyotish_conflict_score"] / (df["jyotish_bullish_score"] + df["jyotish_bearish_score"]),
+        directional_total > 0,
+        numeric_series(df, "jyotish_conflict_score") / directional_total,
         0.0,
     )
     df["rule_layer_ignore_hint"] = np.where(
@@ -509,6 +611,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
     df["rule_layer_notes"] = (
         "heuristic_v1_yen_ipo_tokyo_1889_reference;"
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
+        "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "ml_must_validate"
     )
 
