@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-05 IST
+Last updated: 2026-05-05 23:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -95,17 +95,20 @@ Generated/ignored by Git:
 
 ```text
 C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst.csv
+C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote.csv
 C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet
 C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.csv
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parquet
+C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.csv
+C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet
 ```
 
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.csv
 ```
 
 M30 data download:
@@ -247,6 +250,29 @@ Update on 2026-05-05:
 - Smoke load passed on `aspect_sr_touch_log_72h_smoke.csv`: 1854 rows, all old rows `UNKNOWN` for FX pair scoring.
 - Synthetic row with both USD and JPY hits produced `BULLISH` with positive `fx_pair_net_score`.
 
+Regenerated artifact update on 2026-05-05:
+
+- New touch log with USD base-reference fields:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote.csv`
+- Builder command used `--include-natal --aspect-mode orb --max-event-days 5`.
+- Output rows: 604.
+- Base reference printed by builder:
+  `1776-07-04 12:00 America/New_York -> 1776-07-04 22:26:02 Asia/Kolkata`.
+- Validation:
+  `base_tn_hits_json` present, `base_hits_nonempty=603/604`.
+- Fresh switch chart with FX hover block:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.html`
+- Chart CSV rows: 964; M30 424, H1 424, Daily 116.
+- `FX pair hypothesis` hover block rows: 964/964.
+- FX direction counts in chart CSV:
+  `BULLISH=403`, `BEARISH=331`, `CONFLICT=118`, `UNKNOWN=112`.
+- Rebuilt candidates:
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.csv`
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet`
+- Quick non-purged sanity result, not proof:
+  `BEARISH win_rate=52.57%`, `BULLISH win_rate=46.65%`, `CONFLICT win_rate=54.24%`, `UNKNOWN win_rate=53.57%`.
+- Initial read: base-minus-quote score is now implemented and visible, but the naive directional mapping still needs ML/purged walk-forward validation and may need inversion/reweighting.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -326,11 +352,11 @@ Important PDF conclusion:
 
 ## Useful Commands
 
-Export latest switch chart with M30/H1/Daily and hover scores:
+Export latest switch chart with M30/H1/Daily and FX hover scores:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\sr_touch_lazy_dashboard.py `
-  --touch-log C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst.csv `
+  --touch-log C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --export-full-year `
   --export-dir C:\Users\ADMIN\Desktop\doc `
@@ -342,10 +368,10 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260504_213821.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
-  --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.csv `
-  --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parquet
+  --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.csv `
+  --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet
 ```
 
 Check Git:
@@ -357,12 +383,11 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. Regenerate the full touch log so it includes the new `base_tn_*` USD reference fields.
-2. Export a fresh switch chart from that regenerated touch log and inspect the new `FX pair hypothesis` hover block.
-3. Rebuild scored trade candidates and compare `fx_hypothesis_direction` against outcomes.
+1. User inspects `sr_touch_full_1year_switch_20260505_230311.html`, especially the `FX pair hypothesis` block.
+2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet`.
+3. Test whether `fx_pair_net_score` should be inverted, thresholded, or used only as an ML feature.
 4. Make `max-event-days` configurable in dashboard loader and builder, then add weekly mode.
-5. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored.parquet`.
-6. Add feature columns from the PDF inventory one group at a time:
+5. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
 
 ## Recovery Prompt For A New Chat
