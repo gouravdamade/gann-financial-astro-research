@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import os
 import re
@@ -81,6 +82,31 @@ ZONE_COLORS = {"bullish": "rgba(79,70,229,0.12)", "bearish": "rgba(245,158,11,0.
 ZONE_BORDER_COLORS = {"bullish": "rgba(79,70,229,0.45)", "bearish": "rgba(245,158,11,0.45)"}
 REGIME_ZONE_COLORS = {"single": "rgba(59,130,246,0.045)", "overlap": "rgba(245,158,11,0.095)"}
 REGIME_ZONE_BORDER_COLORS = {"single": "rgba(96,165,250,0.38)", "overlap": "rgba(251,191,36,0.70)"}
+DETAIL_PANEL_POST_SCRIPT = r"""
+(function () {
+  var gd = document.getElementById('{plot_id}');
+  if (!gd || gd.__srDetailsPanelAttached) return;
+  gd.__srDetailsPanelAttached = true;
+  var panel = document.createElement('div');
+  panel.id = gd.id + '-sr-details-panel';
+  panel.style.cssText = 'margin:12px 0 0 0;padding:12px 14px;background:#0b1220;color:#dbeafe;border:1px solid #334155;border-radius:6px;font:13px/1.45 Arial,sans-serif;max-height:360px;overflow:auto;';
+  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Click an event, marker, or active regime zone for quote/JPY diagnostics.</span>';
+  gd.parentNode.insertBefore(panel, gd.nextSibling);
+  function detailFromCustomData(customdata) {
+    if (Array.isArray(customdata)) {
+      if (customdata.length > 1 && customdata[1]) return customdata[1];
+      if (customdata.length > 0) return customdata[0];
+    }
+    return customdata;
+  }
+  gd.on('plotly_click', function (eventData) {
+    if (!eventData || !eventData.points || !eventData.points.length) return;
+    var detail = detailFromCustomData(eventData.points[0].customdata);
+    if (!detail) return;
+    panel.innerHTML = String(detail);
+  });
+}());
+"""
 
 ASPECT_WINDOW_COLORS = {
     "conjunction": "rgba(0,255,0,0.12)",
@@ -640,6 +666,11 @@ def _format_pct(value: Any) -> str:
     return f"{num:.1%}"
 
 
+def html_lines(title: str, lines: list[str]) -> str:
+    body = "<br>".join(html.escape(str(line)) for line in lines)
+    return f"<b>{html.escape(title)}</b><br>{body}"
+
+
 def format_duration_minutes(value: Any) -> str:
     minutes = _safe_float(value)
     if minutes is None:
@@ -684,7 +715,7 @@ def build_event_hover_lines(row: pd.Series) -> list[str]:
 
 
 def build_rule_layer_hover_lines(row: pd.Series) -> list[str]:
-    if "jyotish_hypothesis_direction" not in row.index:
+    if "fx_hypothesis_direction" not in row.index:
         return []
     reference_time = str(row.get("reference_time_ist", row.get("tn_reference_dt_local", ""))).strip()
     source_time = str(row.get("source_reference_time", row.get("tn_reference_dt_source", ""))).strip()
@@ -695,60 +726,64 @@ def build_rule_layer_hover_lines(row: pd.Series) -> list[str]:
     if not ref_text and reference_time:
         ref_text = reference_time
 
+    base_label = str(row.get("fx_base_reference_label", row.get("base_reference_label", "USD")) or "USD").strip()
+    quote_label = str(row.get("fx_quote_reference_label", row.get("quote_reference_label", "JPY")) or "JPY").strip()
+    base_source_time = str(row.get("base_tn_reference_dt_source", "")).strip()
+    base_source_tz = str(row.get("base_tn_reference_source_tz", "")).strip()
+    base_ref_text = f"{base_source_time} {base_source_tz}".strip()
+    if not base_ref_text:
+        base_ref_text = str(row.get("base_tn_reference_dt_local", "")).strip()
     lines = [
-        "--- Rule-layer hypothesis ---",
-        "Reference chart: Yen IPO Tokyo 1889-02-11 00:00 Asia/Tokyo",
+        "--- USDJPY hypothesis ---",
+        f"Pair model: {base_label}/{quote_label} = base score - quote score",
+        f"Hypothesis: {str(row.get('fx_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "USD/JPY/net/conflict: "
+            f"{_format_float(row.get('fx_base_net_score'))} / "
+            f"{_format_float(row.get('fx_quote_net_score'))} / "
+            f"{_format_float(row.get('fx_pair_net_score'))} / "
+            f"{_format_float(row.get('fx_pair_conflict_score'))}"
+        ),
+        f"Conflict ratio: {_format_pct(row.get('fx_pair_conflict_ratio'))}",
+        f"Dominant USD hit: {str(row.get('fx_dominant_base_hit', '')).strip() or 'n/a'}",
+        f"Dominant JPY hit: {str(row.get('fx_dominant_quote_hit', '')).strip() or 'n/a'}",
+        f"FX absolute strength: {_format_float(row.get('fx_rule_layer_total_strength'))}",
+        "Click for quote/JPY details.",
     ]
-    if ref_text:
-        lines.append(f"Source ref in row: {ref_text}")
-    lines.extend(
-        [
-            f"Hypothesis: {str(row.get('jyotish_hypothesis_direction', 'UNKNOWN'))}",
-            (
-                "Scores B/Bear/Net/Conflict: "
-                f"{_format_float(row.get('jyotish_bullish_score'))} / "
-                f"{_format_float(row.get('jyotish_bearish_score'))} / "
-                f"{_format_float(row.get('jyotish_net_score'))} / "
-                f"{_format_float(row.get('jyotish_conflict_score'))}"
-            ),
-            f"Dominant hit: {str(row.get('dominant_aspect_id', '')).strip() or 'n/a'}",
-            f"Dominant strength: {_format_float(row.get('dominant_aspect_abs_score'))}",
-            f"Rule total strength: {_format_float(row.get('rule_layer_total_strength'))}",
-            f"Conflict ratio: {_format_pct(row.get('rule_layer_conflict_ratio'))}",
-            f"Aspect family / duration: {str(row.get('aspect_family', ''))} / {str(row.get('duration_bucket', ''))}",
-            f"Active hard/soft: {_format_float(row.get('active_hard_aspect_count'))} / {_format_float(row.get('active_soft_aspect_count'))}",
-            "Note: heuristic v1; ML must validate weights.",
-        ]
-    )
-    if "fx_hypothesis_direction" in row.index:
-        base_label = str(row.get("fx_base_reference_label", row.get("base_reference_label", "USD")) or "USD").strip()
-        quote_label = str(row.get("fx_quote_reference_label", row.get("quote_reference_label", "JPY")) or "JPY").strip()
-        base_source_time = str(row.get("base_tn_reference_dt_source", "")).strip()
-        base_source_tz = str(row.get("base_tn_reference_source_tz", "")).strip()
-        base_ref_text = f"{base_source_time} {base_source_tz}".strip()
-        if not base_ref_text:
-            base_ref_text = str(row.get("base_tn_reference_dt_local", "")).strip()
-        lines.extend(
-            [
-                "--- FX pair hypothesis ---",
-                f"Pair model: {base_label}/{quote_label} = base score - quote score",
-                f"Base ref: {base_ref_text or 'n/a'}",
-                f"Quote ref: {ref_text or 'n/a'}",
-                f"FX hypothesis: {str(row.get('fx_hypothesis_direction', 'UNKNOWN'))}",
-                (
-                    "FX base/quote/net/conflict: "
-                    f"{_format_float(row.get('fx_base_net_score'))} / "
-                    f"{_format_float(row.get('fx_quote_net_score'))} / "
-                    f"{_format_float(row.get('fx_pair_net_score'))} / "
-                    f"{_format_float(row.get('fx_pair_conflict_score'))}"
-                ),
-                f"FX conflict ratio: {_format_pct(row.get('fx_pair_conflict_ratio'))}",
-                f"Dominant base hit: {str(row.get('fx_dominant_base_hit', '')).strip() or 'n/a'}",
-                f"Dominant quote hit: {str(row.get('fx_dominant_quote_hit', '')).strip() or 'n/a'}",
-                f"FX rule total strength: {_format_float(row.get('fx_rule_layer_total_strength'))}",
-            ]
-        )
     return lines
+
+
+def build_quote_detail_lines(row: pd.Series) -> list[str]:
+    reference_time = str(row.get("reference_time_ist", row.get("tn_reference_dt_local", ""))).strip()
+    source_time = str(row.get("source_reference_time", row.get("tn_reference_dt_source", ""))).strip()
+    source_tz = str(row.get("source_reference_tz", row.get("tn_reference_source_tz", ""))).strip()
+    ref_text = f"{source_time} {source_tz}".strip()
+    if not ref_text and reference_time:
+        ref_text = reference_time
+    return [
+        f"Pair: {str(row.get('pair_key', '')).strip()}",
+        f"Aspect: {str(row.get('aspect_label', '')).strip() or str(row.get('aspect', '')).strip()}",
+        f"Quote reference: {ref_text or 'Yen IPO Tokyo 1889-02-11 00:00 Asia/Tokyo'}",
+        f"Quote/JPY hypothesis: {str(row.get('jyotish_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "JPY scores B/Bear/Net/Conflict: "
+            f"{_format_float(row.get('jyotish_bullish_score'))} / "
+            f"{_format_float(row.get('jyotish_bearish_score'))} / "
+            f"{_format_float(row.get('jyotish_net_score'))} / "
+            f"{_format_float(row.get('jyotish_conflict_score'))}"
+        ),
+        f"JPY dominant hit: {str(row.get('dominant_aspect_id', '')).strip() or 'n/a'}",
+        f"JPY dominant strength: {_format_float(row.get('dominant_aspect_abs_score'))}",
+        f"JPY rule total strength: {_format_float(row.get('rule_layer_total_strength'))}",
+        f"JPY conflict ratio: {_format_pct(row.get('rule_layer_conflict_ratio'))}",
+        f"Aspect family / duration: {str(row.get('aspect_family', ''))} / {str(row.get('duration_bucket', ''))}",
+        f"Active hard/soft: {_format_float(row.get('active_hard_aspect_count'))} / {_format_float(row.get('active_soft_aspect_count'))}",
+        "Note: quote/JPY details are diagnostics; USDJPY direction comes from the FX score.",
+    ]
+
+
+def build_event_detail_html(row: pd.Series) -> str:
+    return html_lines("Quote/JPY Details", build_quote_detail_lines(row))
 
 
 def build_hover_text(row: pd.Series) -> str:
@@ -865,6 +900,7 @@ def build_aspect_window_polygon(row: pd.Series, y0: float, y1: float) -> go.Scat
         fillcolor=ASPECT_WINDOW_COLORS.get(aspect, "rgba(148,163,184,0.05)"),
         hoveron="fills",
         text="<br>".join(hover_lines),
+        customdata=[build_event_detail_html(row)] * 5,
         hovertemplate="%{text}<extra></extra>",
         name=f"{aspect_label} window",
         showlegend=False,
@@ -996,7 +1032,31 @@ def build_regime_zone_hover_lines(row: pd.Series) -> list[str]:
         f"Window: {row.get('regime_window_start_local')} to {row.get('regime_window_end_local')}",
         f"Active events: {int(_num(row.get('regime_active_event_count')))}",
         f"Events: {str(row.get('regime_active_events_text', '')).strip() or 'n/a'}",
-        f"JPY hypothesis: {str(row.get('regime_jyotish_hypothesis_direction', 'UNKNOWN'))}",
+        "--- USDJPY regime hypothesis ---",
+        "Pair model: USDJPY = base score - quote score",
+        f"Hypothesis: {str(row.get('regime_fx_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "USD/JPY/net/conflict: "
+            f"{_format_float(row.get('regime_fx_base_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_quote_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_pair_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_pair_conflict_score'))}"
+        ),
+        f"Conflict ratio: {_format_pct(row.get('regime_fx_pair_conflict_ratio'))}",
+        f"Dominant event: {str(row.get('regime_fx_dominant_event', '')).strip() or 'n/a'}",
+        f"Dominant USD hit: {str(row.get('regime_fx_dominant_base_hit', '')).strip() or 'n/a'}",
+        f"Dominant JPY hit: {str(row.get('regime_fx_dominant_quote_hit', '')).strip() or 'n/a'}",
+        f"FX absolute strength: {_format_float(row.get('regime_fx_rule_total_strength'))}",
+        "Click for quote/JPY details.",
+    ]
+
+
+def build_regime_zone_detail_lines(row: pd.Series) -> list[str]:
+    return [
+        f"Window: {row.get('regime_window_start_local')} to {row.get('regime_window_end_local')}",
+        f"Active events: {int(_num(row.get('regime_active_event_count')))}",
+        f"Events: {str(row.get('regime_active_events_text', '')).strip() or 'n/a'}",
+        f"Quote/JPY hypothesis: {str(row.get('regime_jyotish_hypothesis_direction', 'UNKNOWN'))}",
         (
             "JPY scores B/Bear/Net/Conflict: "
             f"{_format_float(row.get('regime_jyotish_bullish_score'))} / "
@@ -1004,26 +1064,16 @@ def build_regime_zone_hover_lines(row: pd.Series) -> list[str]:
             f"{_format_float(row.get('regime_jyotish_net_score'))} / "
             f"{_format_float(row.get('regime_jyotish_conflict_score'))}"
         ),
-        f"Zone dominant hit: {str(row.get('regime_dominant_hit', '')).strip() or 'n/a'}",
+        f"JPY dominant hit: {str(row.get('regime_dominant_hit', '')).strip() or 'n/a'}",
         f"Dominant event: {str(row.get('regime_dominant_event', '')).strip() or 'n/a'}",
-        f"Zone dominant strength: {_format_float(row.get('regime_dominant_strength'))}",
-        f"Zone rule total strength: {_format_float(row.get('regime_rule_total_strength'))}",
-        "--- FX regime hypothesis ---",
-        "Pair model: USDJPY = base score - quote score",
-        f"FX hypothesis: {str(row.get('regime_fx_hypothesis_direction', 'UNKNOWN'))}",
-        (
-            "FX base/quote/net/conflict: "
-            f"{_format_float(row.get('regime_fx_base_net_score'))} / "
-            f"{_format_float(row.get('regime_fx_quote_net_score'))} / "
-            f"{_format_float(row.get('regime_fx_pair_net_score'))} / "
-            f"{_format_float(row.get('regime_fx_pair_conflict_score'))}"
-        ),
-        f"FX conflict ratio: {_format_pct(row.get('regime_fx_pair_conflict_ratio'))}",
-        f"FX dominant event: {str(row.get('regime_fx_dominant_event', '')).strip() or 'n/a'}",
-        f"Dominant base hit: {str(row.get('regime_fx_dominant_base_hit', '')).strip() or 'n/a'}",
-        f"Dominant quote hit: {str(row.get('regime_fx_dominant_quote_hit', '')).strip() or 'n/a'}",
-        f"FX zone total strength: {_format_float(row.get('regime_fx_rule_total_strength'))}",
+        f"JPY dominant strength: {_format_float(row.get('regime_dominant_strength'))}",
+        f"JPY rule total strength: {_format_float(row.get('regime_rule_total_strength'))}",
+        "Note: quote/JPY details are diagnostics; USDJPY direction comes from the FX score.",
     ]
+
+
+def build_regime_zone_detail_html(row: pd.Series) -> str:
+    return html_lines("Quote/JPY Regime Details", build_regime_zone_detail_lines(row))
 
 
 def build_regime_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
@@ -1039,6 +1089,7 @@ def build_regime_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatte
         fillcolor=REGIME_ZONE_COLORS.get(kind, "rgba(148,163,184,0.05)"),
         hoveron="fills",
         text="<br>".join(build_regime_zone_hover_lines(row)),
+        customdata=[build_regime_zone_detail_html(row)] * 5,
         hovertemplate="%{text}<extra></extra>",
         name="Active regime zone",
         showlegend=False,
@@ -1058,6 +1109,7 @@ def build_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
         fillcolor=ZONE_COLORS.get(zone_kind, "rgba(107,114,128,0.18)"),
         hoveron="fills",
         text=row["hover_text"],
+        customdata=[build_event_detail_html(row)] * 5,
         hovertemplate="%{text}<extra></extra>",
         name=row["zone_label"],
         showlegend=False,
@@ -1301,13 +1353,17 @@ def build_detail_figure(
             )
 
     if not visible.empty:
+        marker_customdata = [
+            [str(row.get("touch_id", "")), build_event_detail_html(row)]
+            for _, row in visible.iterrows()
+        ]
         fig.add_trace(
             go.Scattergl(
                 x=visible["touch_time_local"],
                 y=visible["touch_price"],
                 mode="markers",
                 name="Interactions",
-                customdata=visible["touch_id"],
+                customdata=marker_customdata,
                 marker=dict(
                     size=7,
                     color=[MARKER_COLORS.get(v, "#94a3b8") for v in visible["zone_kind"]],
@@ -1334,7 +1390,7 @@ def build_detail_figure(
                     marker=dict(size=13, color="#111827", symbol="star"),
                     text=[row["zone_label"]],
                     textposition="top center",
-                    customdata=[row["touch_id"]],
+                    customdata=[[str(row["touch_id"]), build_event_detail_html(row)]],
                     hovertemplate=row["hover_text"] + "<extra></extra>",
                     showlegend=False,
                 )
@@ -1476,7 +1532,7 @@ def export_full_year_chart(
     html_path = export_root / f"sr_touch_full_1year_{timeframe}_{stamp}.html"
     csv_path = export_root / f"sr_touch_full_1year_{timeframe}_{stamp}.csv"
     fig.update_layout(height=980)
-    fig.write_html(str(html_path), include_plotlyjs=True)
+    fig.write_html(str(html_path), include_plotlyjs=True, post_script=DETAIL_PANEL_POST_SCRIPT)
     build_user_facing_export_frame(visible).to_csv(csv_path, index=False)
     return html_path, csv_path, visible
 
@@ -1577,7 +1633,7 @@ def export_switchable_timeframe_chart(
     stamp = pd.Timestamp.now(tz=IST).strftime("%Y%m%d_%H%M%S")
     html_path = export_root / f"sr_touch_full_1year_switch_{stamp}.html"
     csv_path = export_root / f"sr_touch_full_1year_switch_{stamp}.csv"
-    combined.write_html(str(html_path), include_plotlyjs=True)
+    combined.write_html(str(html_path), include_plotlyjs=True, post_script=DETAIL_PANEL_POST_SCRIPT)
     all_visible = pd.concat(visible_frames, ignore_index=True) if visible_frames else pd.DataFrame()
     build_user_facing_export_frame(all_visible).to_csv(csv_path, index=False)
     return html_path, csv_path, all_visible
@@ -1585,7 +1641,7 @@ def export_switchable_timeframe_chart(
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
-    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v9.parquet")
+    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v10.parquet")
     if cache_path.exists() and cache_path.stat().st_mtime >= source_path.stat().st_mtime:
         return pd.read_parquet(cache_path)
 

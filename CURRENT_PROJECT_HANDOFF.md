@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-06 22:55 IST
+Last updated: 2026-05-07 00:40 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -111,8 +111,8 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.csv
 ```
 
 M30 data download:
@@ -318,6 +318,18 @@ Active regime-zone update on 2026-05-06:
   `Daily regime zones=193, overlap zones=137`.
 - Latest CSV still contains the 1032 touch rows; regime zones are rendered into the HTML chart layer, not exported as separate CSV rows yet.
 
+Hover simplification update on 2026-05-07:
+
+- Default hovers now show the USDJPY/FX hypothesis only.
+- Quote/JPY-only diagnostics are hidden from the default hover because a bullish JPY quote signal usually implies USDJPY bearish unless USD strength offsets it.
+- Hovers now show `Click for quote/JPY details`.
+- The exported HTML includes a click details panel below the chart. Clicking an event, marker, or active regime zone fills that panel with quote/JPY diagnostics.
+- Clustered touch cache version is now `_clustered_v10.parquet` to force regenerated marker hover text.
+- Latest chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.html`
+- Validation:
+  CSV rows `1032`; `USDJPY hypothesis` hover rows `1032/1032`; old `Rule-layer hypothesis` rows `0`; visible `Quote/JPY hypothesis` hover rows `0`.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -413,7 +425,7 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv `
   --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
@@ -428,7 +440,7 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User inspects `sr_touch_full_1year_switch_20260506_225211.html`, especially active-regime overlap hovers.
+1. User inspects `sr_touch_full_1year_switch_20260507_003720.html`, especially USDJPY-only hover text and click-for-details quote/JPY panel.
 2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`.
 3. Test whether `fx_pair_net_score` should be inverted, thresholded, or used only as an ML feature.
 4. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.
