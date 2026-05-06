@@ -290,7 +290,7 @@ def parse_args() -> argparse.Namespace:
         "--max-event-days",
         type=float,
         default=5.0,
-        help="Exclude aspect events whose duration exceeds this many days.",
+        help="Exclude aspect events longer than this many days. Use 0 or a negative value for no duration cap.",
     )
     return parser.parse_args()
 
@@ -1242,10 +1242,11 @@ def main() -> None:
     events["event_end"] = events["timestamp"] + pd.to_timedelta(events["duration_minutes"], unit="m")
     events["pair_key"] = [canonical_pair(a, b) for a, b in zip(events["b1"], events["b2"], strict=False)]
     events = merge_overlapping_event_windows(events)
-    max_event_minutes = float(args.max_event_days) * 1440.0
-    events = events[events["duration_minutes"] <= max_event_minutes].copy()
-    if events.empty:
-        raise RuntimeError(f"No events remain after applying max-event-days={float(args.max_event_days):g}.")
+    if float(args.max_event_days) > 0.0:
+        max_event_minutes = float(args.max_event_days) * 1440.0
+        events = events[events["duration_minutes"] <= max_event_minutes].copy()
+        if events.empty:
+            raise RuntimeError(f"No events remain after applying max-event-days={float(args.max_event_days):g}.")
 
     price = pd.read_parquet(args.price).sort_index()
     if price.index.tz is None:

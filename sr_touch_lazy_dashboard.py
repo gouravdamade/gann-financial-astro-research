@@ -258,13 +258,13 @@ def parse_args() -> argparse.Namespace:
         "--timeframe",
         choices=["m30", "hourly", "daily", "merged", "switch"],
         default="hourly",
-        help="Chart timeframe. M30/hourly share the <=24h aspect bucket; merged uses H1 with all durations.",
+        help="Chart timeframe. M30 uses short aspects, hourly/merged use all durations, daily uses long aspects.",
     )
     parser.add_argument(
         "--hourly-max-aspect-hours",
         type=float,
         default=24.0,
-        help="Maximum aspect duration, in hours, included in hourly charts.",
+        help="Maximum aspect duration, in hours, included in M30 charts.",
     )
     parser.add_argument(
         "--daily-min-aspect-hours",
@@ -378,8 +378,10 @@ def filter_touches_for_timeframe(
     duration = pd.to_numeric(touches["event_duration_minutes"], errors="coerce")
     if timeframe == "merged":
         return touches.copy()
-    if timeframe in {"m30", "hourly"}:
+    if timeframe == "m30":
         return touches[duration.le(float(hourly_max_aspect_hours) * 60.0)].copy()
+    if timeframe == "hourly":
+        return touches.copy()
     if timeframe == "daily":
         return touches[duration.gt(float(daily_min_aspect_hours) * 60.0)].copy()
     raise ValueError(f"Unsupported timeframe: {timeframe}")
@@ -496,9 +498,7 @@ def load_touch_log(path: str) -> pd.DataFrame:
         df["touch_has_moon"] = pd.to_numeric(df["touch_has_moon"], errors="coerce").fillna(0).astype(int)
 
     if "event_duration_minutes" in df.columns:
-        max_event_minutes = 5.0 * 1440.0
         df["event_duration_minutes"] = pd.to_numeric(df["event_duration_minutes"], errors="coerce")
-        df = df[df["event_duration_minutes"].le(max_event_minutes)].copy()
 
     if {"b1", "b2"}.issubset(df.columns):
         b1 = df["b1"].astype(str).str.strip().str.upper()
@@ -971,9 +971,8 @@ def filter_touches_to_rendered_identities(
         row_identities = [ident for ident in row_identities if ident is not None]
         if not row_identities:
             return False
-        row_identities = [ident for ident in row_identities if normalize_body_name(ident[0]) not in excluded]
-        if not row_identities:
-            return True
+        if any(normalize_body_name(ident[0]) in excluded for ident in row_identities):
+            return False
         return all(ident in identity_set for ident in row_identities)
 
     return touches[touches.apply(row_supported, axis=1)].copy()
@@ -1405,7 +1404,7 @@ def export_switchable_timeframe_chart(
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
-    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v8.parquet")
+    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v9.parquet")
     if cache_path.exists() and cache_path.stat().st_mtime >= source_path.stat().st_mtime:
         return pd.read_parquet(cache_path)
 

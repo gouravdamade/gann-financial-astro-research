@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-05 23:10 IST
+Last updated: 2026-05-06 21:45 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -10,9 +10,10 @@ Build a deterministic financial astrology research pipeline for USDJPY that:
 
 1. Computes aspect/SR touch events using a Japanese Yen reference chart.
 2. Splits chart views by timeframe:
-   - M30/H1 for short aspects `<= 24h`
-   - Daily for longer aspects `> 24h` and currently `<= 5d`
-   - Merged H1 for the original all-aspects view
+   - M30 for short aspects `<= 24h`
+   - H1 for all aspect durations
+   - Daily for longer aspects `> 24h`
+   - Daily hides Moon SR planetary lines
 3. Adds transparent rule-layer hypothesis scores before ML.
 4. Later uses ML to validate/calibrate those hypothesis scores with walk-forward validation.
 
@@ -96,19 +97,22 @@ Generated/ignored by Git:
 ```text
 C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst.csv
 C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote.csv
+C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations.csv
 C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet
 C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.csv
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored.parquet
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.csv
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet
+C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv
+C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
 ```
 
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.csv
 ```
 
 M30 data download:
@@ -151,25 +155,26 @@ neptune aspect pair rows: 0
 Behavior:
 
 - `m30`: real M30 candles required; short aspects `<= 24h`; Moon lines included.
-- `hourly`: H1 candles; short aspects `<= 24h`; Moon lines included.
-- `daily`: daily candles; long aspects `> 24h`; Moon SR lines hidden.
+- `hourly`: H1 candles; all aspect durations; Moon lines included.
+- `daily`: daily candles; long aspects `> 24h`; Moon SR lines hidden and Moon SR touch rows excluded.
 - `merged`: H1 candles; all aspect durations together; Moon lines included.
 - `switch`: one HTML with buttons. If M30 price file is supplied, buttons are M30/H1/Daily.
 
 Latest switch validation:
 
 ```text
-M30:    424 rows, 60-1440 minutes
-Hourly: 424 rows, 60-1440 minutes
-Daily:  116 rows, 1500-6660 minutes
+M30:    416 rows, 60-1440 minutes, Moon SR identity rows 80
+Hourly: 520 rows, 60-42720 minutes, Moon SR identity rows 107
+Daily:   96 rows, 1500-102180 minutes, Moon SR identity rows 0
 ```
 
-### Current 5-Day Cap
+### Event Duration Cap
 
-Events longer than 5 days are currently filtered in two places:
+Builder duration cap:
 
 - `build_aspect_sr_touch_log.py`: `--max-event-days`, default `5.0`
-- `sr_touch_lazy_dashboard.py`: loader filters `event_duration_minutes <= 5 * 1440`
+- Use `--max-event-days 0` to disable the cap and include all durations available in the event source.
+- `sr_touch_lazy_dashboard.py` no longer applies its own hard 5-day loader cap.
 
 Weekly mode requires making this configurable end-to-end before adding `> 5d` weekly buckets.
 
@@ -273,6 +278,29 @@ Regenerated artifact update on 2026-05-05:
   `BEARISH win_rate=52.57%`, `BULLISH win_rate=46.65%`, `CONFLICT win_rate=54.24%`, `UNKNOWN win_rate=53.57%`.
 - Initial read: base-minus-quote score is now implemented and visible, but the naive directional mapping still needs ML/purged walk-forward validation and may need inversion/reweighting.
 
+Timeframe split update on 2026-05-06:
+
+- User requested: M30 `<=24h`, Hourly all aspects including `>24h`, Daily only `>24h`, Daily no Moon planetary SR lines.
+- `sr_touch_lazy_dashboard.py` now implements that split.
+- Daily also excludes marker rows whose SR touch identity contains Moon, so hidden Moon lines do not still appear as daily marker explanations.
+- `build_aspect_sr_touch_log.py` accepts `--max-event-days 0` for uncapped event duration generation.
+- New uncapped base/quote touch log:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations.csv`
+- Builder command used `--include-natal --aspect-mode orb --max-event-days 0`.
+- Output rows: 619.
+- Latest switch chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.html`
+- Latest switch CSV validation:
+  `M30=416 rows, 60-1440 min, >24h=0`;
+  `Hourly=520 rows, 60-42720 min, >24h=106`;
+  `Daily=96 rows, 1500-102180 min, Moon SR identity rows=0`;
+  `FX pair hypothesis hover rows=1032/1032`.
+- Rebuilt all-duration candidates:
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv`
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`
+- Quick non-purged FX sanity result:
+  `BEARISH win_rate=53.54%`, `BULLISH win_rate=46.93%`, `CONFLICT win_rate=53.47%`, `UNKNOWN win_rate=55.47%`.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -356,7 +384,7 @@ Export latest switch chart with M30/H1/Daily and FX hover scores:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\sr_touch_lazy_dashboard.py `
-  --touch-log C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote.csv `
+  --touch-log C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --export-full-year `
   --export-dir C:\Users\ADMIN\Desktop\doc `
@@ -368,10 +396,10 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260505_230311.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
-  --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.csv `
-  --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet
+  --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv `
+  --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
 ```
 
 Check Git:
@@ -383,10 +411,10 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User inspects `sr_touch_full_1year_switch_20260505_230311.html`, especially the `FX pair hypothesis` block.
-2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet`.
+1. User inspects `sr_touch_full_1year_switch_20260506_214025.html`, especially the Hourly all-duration view and Daily no-Moon-line behavior.
+2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`.
 3. Test whether `fx_pair_net_score` should be inverted, thresholded, or used only as an ML feature.
-4. Make `max-event-days` configurable in dashboard loader and builder, then add weekly mode.
+4. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.
 5. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
 
