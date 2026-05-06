@@ -79,6 +79,8 @@ MARKER_COLORS = {"bullish": "#818cf8", "bearish": "#fbbf24"}
 MARKER_SYMBOLS = {"bullish": "triangle-up", "bearish": "triangle-down"}
 ZONE_COLORS = {"bullish": "rgba(79,70,229,0.12)", "bearish": "rgba(245,158,11,0.12)"}
 ZONE_BORDER_COLORS = {"bullish": "rgba(79,70,229,0.45)", "bearish": "rgba(245,158,11,0.45)"}
+REGIME_ZONE_COLORS = {"single": "rgba(59,130,246,0.045)", "overlap": "rgba(245,158,11,0.095)"}
+REGIME_ZONE_BORDER_COLORS = {"single": "rgba(96,165,250,0.38)", "overlap": "rgba(251,191,36,0.70)"}
 
 ASPECT_WINDOW_COLORS = {
     "conjunction": "rgba(0,255,0,0.12)",
@@ -869,6 +871,180 @@ def build_aspect_window_polygon(row: pd.Series, y0: float, y1: float) -> go.Scat
     )
 
 
+def _score_direction(bullish: float, bearish: float) -> str:
+    if bullish <= 0.0 and bearish <= 0.0:
+        return "UNKNOWN"
+    if bullish > bearish * 1.25:
+        return "BULLISH"
+    if bearish > bullish * 1.25:
+        return "BEARISH"
+    return "CONFLICT"
+
+
+def _fx_direction(net: float, conflict_ratio: float) -> str:
+    if not np.isfinite(net):
+        return "UNKNOWN"
+    if abs(net) <= 0.05:
+        return "CONFLICT"
+    if conflict_ratio >= 0.45:
+        return "CONFLICT"
+    return "BULLISH" if net > 0 else "BEARISH"
+
+
+def _num(value: Any, default: float = 0.0) -> float:
+    try:
+        out = float(value)
+    except Exception:
+        return default
+    return out if np.isfinite(out) else default
+
+
+def _strongest_row(rows: pd.DataFrame, strength_col: str) -> pd.Series | None:
+    if rows.empty or strength_col not in rows.columns:
+        return None
+    strength = pd.to_numeric(rows[strength_col], errors="coerce").abs().fillna(0.0)
+    if strength.max() <= 0.0:
+        return None
+    return rows.loc[strength.idxmax()]
+
+
+def event_brief(row: pd.Series) -> str:
+    pair = str(row.get("pair_key", "")).strip()
+    aspect = str(row.get("aspect_label", "")).strip() or str(row.get("aspect", "")).strip()
+    return f"{pair} {aspect}".strip()
+
+
+def build_regime_zones(aspect_windows: pd.DataFrame) -> pd.DataFrame:
+    if aspect_windows.empty:
+        return pd.DataFrame()
+    required = {"event_window_start_local", "event_window_end_local", "pair_key", "aspect"}
+    if not required.issubset(aspect_windows.columns):
+        return pd.DataFrame()
+
+    work = aspect_windows.copy()
+    work["event_window_start_local"] = pd.to_datetime(work["event_window_start_local"], errors="coerce")
+    work["event_window_end_local"] = pd.to_datetime(work["event_window_end_local"], errors="coerce")
+    work = work.dropna(subset=["event_window_start_local", "event_window_end_local"])
+    work = work[work["event_window_end_local"].gt(work["event_window_start_local"])].copy()
+    if work.empty:
+        return pd.DataFrame()
+
+    bounds = sorted(set(work["event_window_start_local"].tolist() + work["event_window_end_local"].tolist()))
+    zones: list[dict[str, Any]] = []
+    for left, right in zip(bounds, bounds[1:], strict=False):
+        if pd.Timestamp(right) <= pd.Timestamp(left):
+            continue
+        active = work[
+            work["event_window_start_local"].lt(right)
+            & work["event_window_end_local"].gt(left)
+        ].copy()
+        if active.empty:
+            continue
+
+        jy_bull = pd.to_numeric(active.get("jyotish_bullish_score"), errors="coerce").fillna(0.0).sum()
+        jy_bear = pd.to_numeric(active.get("jyotish_bearish_score"), errors="coerce").fillna(0.0).sum()
+        jy_conflict = min(float(jy_bull), float(jy_bear))
+        fx_base = pd.to_numeric(active.get("fx_base_net_score"), errors="coerce").fillna(0.0).sum()
+        fx_quote = pd.to_numeric(active.get("fx_quote_net_score"), errors="coerce").fillna(0.0).sum()
+        fx_net = pd.to_numeric(active.get("fx_pair_net_score"), errors="coerce").fillna(0.0).sum()
+        fx_conflict = pd.to_numeric(active.get("fx_pair_conflict_score"), errors="coerce").fillna(0.0).sum()
+        fx_total = (
+            pd.to_numeric(active.get("fx_base_net_score"), errors="coerce").fillna(0.0).abs()
+            + pd.to_numeric(active.get("fx_quote_net_score"), errors="coerce").fillna(0.0).abs()
+        ).sum()
+        fx_conflict_ratio = float(fx_conflict / fx_total) if fx_total > 0.0 else 0.0
+        dominant = _strongest_row(active, "dominant_aspect_abs_score")
+        fx_dominant = _strongest_row(active, "fx_pair_net_score")
+        event_lines = [event_brief(row) for _, row in active.head(10).iterrows()]
+        if len(active) > 10:
+            event_lines.append(f"... +{len(active) - 10} more")
+
+        zones.append(
+            {
+                "regime_window_start_local": pd.Timestamp(left),
+                "regime_window_end_local": pd.Timestamp(right),
+                "regime_active_event_count": int(len(active)),
+                "regime_kind": "overlap" if len(active) > 1 else "single",
+                "regime_active_events_text": " | ".join(event_lines),
+                "regime_jyotish_bullish_score": float(jy_bull),
+                "regime_jyotish_bearish_score": float(jy_bear),
+                "regime_jyotish_net_score": float(jy_bull - jy_bear),
+                "regime_jyotish_conflict_score": float(jy_conflict),
+                "regime_jyotish_hypothesis_direction": _score_direction(float(jy_bull), float(jy_bear)),
+                "regime_dominant_hit": str(dominant.get("dominant_aspect_id", "")) if dominant is not None else "",
+                "regime_dominant_strength": _num(dominant.get("dominant_aspect_abs_score")) if dominant is not None else 0.0,
+                "regime_dominant_event": event_brief(dominant) if dominant is not None else "",
+                "regime_rule_total_strength": pd.to_numeric(active.get("rule_layer_total_strength"), errors="coerce").fillna(0.0).sum(),
+                "regime_fx_base_net_score": float(fx_base),
+                "regime_fx_quote_net_score": float(fx_quote),
+                "regime_fx_pair_net_score": float(fx_net),
+                "regime_fx_pair_conflict_score": float(fx_conflict),
+                "regime_fx_pair_conflict_ratio": float(fx_conflict_ratio),
+                "regime_fx_hypothesis_direction": _fx_direction(float(fx_net), float(fx_conflict_ratio)) if fx_total > 0.0 else "UNKNOWN",
+                "regime_fx_dominant_event": event_brief(fx_dominant) if fx_dominant is not None else "",
+                "regime_fx_dominant_base_hit": str(fx_dominant.get("fx_dominant_base_hit", "")) if fx_dominant is not None else "",
+                "regime_fx_dominant_quote_hit": str(fx_dominant.get("fx_dominant_quote_hit", "")) if fx_dominant is not None else "",
+                "regime_fx_rule_total_strength": pd.to_numeric(active.get("fx_rule_layer_total_strength"), errors="coerce").fillna(0.0).sum(),
+            }
+        )
+    return pd.DataFrame(zones)
+
+
+def build_regime_zone_hover_lines(row: pd.Series) -> list[str]:
+    return [
+        "--- Active regime zone ---",
+        f"Window: {row.get('regime_window_start_local')} to {row.get('regime_window_end_local')}",
+        f"Active events: {int(_num(row.get('regime_active_event_count')))}",
+        f"Events: {str(row.get('regime_active_events_text', '')).strip() or 'n/a'}",
+        f"JPY hypothesis: {str(row.get('regime_jyotish_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "JPY scores B/Bear/Net/Conflict: "
+            f"{_format_float(row.get('regime_jyotish_bullish_score'))} / "
+            f"{_format_float(row.get('regime_jyotish_bearish_score'))} / "
+            f"{_format_float(row.get('regime_jyotish_net_score'))} / "
+            f"{_format_float(row.get('regime_jyotish_conflict_score'))}"
+        ),
+        f"Zone dominant hit: {str(row.get('regime_dominant_hit', '')).strip() or 'n/a'}",
+        f"Dominant event: {str(row.get('regime_dominant_event', '')).strip() or 'n/a'}",
+        f"Zone dominant strength: {_format_float(row.get('regime_dominant_strength'))}",
+        f"Zone rule total strength: {_format_float(row.get('regime_rule_total_strength'))}",
+        "--- FX regime hypothesis ---",
+        "Pair model: USDJPY = base score - quote score",
+        f"FX hypothesis: {str(row.get('regime_fx_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "FX base/quote/net/conflict: "
+            f"{_format_float(row.get('regime_fx_base_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_quote_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_pair_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_pair_conflict_score'))}"
+        ),
+        f"FX conflict ratio: {_format_pct(row.get('regime_fx_pair_conflict_ratio'))}",
+        f"FX dominant event: {str(row.get('regime_fx_dominant_event', '')).strip() or 'n/a'}",
+        f"Dominant base hit: {str(row.get('regime_fx_dominant_base_hit', '')).strip() or 'n/a'}",
+        f"Dominant quote hit: {str(row.get('regime_fx_dominant_quote_hit', '')).strip() or 'n/a'}",
+        f"FX zone total strength: {_format_float(row.get('regime_fx_rule_total_strength'))}",
+    ]
+
+
+def build_regime_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
+    x0 = row["regime_window_start_local"]
+    x1 = row["regime_window_end_local"]
+    kind = str(row.get("regime_kind", "single"))
+    return go.Scatter(
+        x=[x0, x0, x1, x1, x0],
+        y=[y0, y1, y1, y0, y0],
+        mode="lines",
+        line=dict(color=REGIME_ZONE_BORDER_COLORS.get(kind, "rgba(148,163,184,0.45)"), width=1.4),
+        fill="toself",
+        fillcolor=REGIME_ZONE_COLORS.get(kind, "rgba(148,163,184,0.05)"),
+        hoveron="fills",
+        text="<br>".join(build_regime_zone_hover_lines(row)),
+        hovertemplate="%{text}<extra></extra>",
+        name="Active regime zone",
+        showlegend=False,
+    )
+
+
 def build_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
     x0 = row["touch_time_local"]
     x1 = row["after72_time_local"]
@@ -1037,7 +1213,9 @@ def build_detail_figure(
         "jyotish_bearish_score",
         "jyotish_net_score",
         "jyotish_conflict_score",
+        "jyotish_scored_hit_count",
         "dominant_aspect_id",
+        "dominant_aspect_signed_score",
         "dominant_aspect_abs_score",
         "fx_hypothesis_direction",
         "fx_base_reference_label",
@@ -1071,6 +1249,9 @@ def build_detail_figure(
     )
     for _, row in aspect_windows.iterrows():
         fig.add_trace(build_aspect_window_polygon(row, y0, y1))
+    regime_zones = build_regime_zones(aspect_windows)
+    for _, row in regime_zones.iterrows():
+        fig.add_trace(build_regime_zone_polygon(row, y0, y1))
 
     fig.add_trace(
         go.Candlestick(
@@ -1170,7 +1351,7 @@ def build_detail_figure(
         showlegend=False,
         title=(
             f"Visible window (IST): {window_start.strftime('%Y-%m-%d %H:%M')} to {window_end.strftime('%Y-%m-%d %H:%M')} | "
-            f"timeframe={timeframe} | interactions={len(visible)} | aspect_windows={len(aspect_windows)} | mode=visible_touched"
+            f"timeframe={timeframe} | interactions={len(visible)} | aspect_windows={len(aspect_windows)} | regime_zones={len(regime_zones)} | mode=visible_touched"
         ),
         uirevision="touch-detail",
     )

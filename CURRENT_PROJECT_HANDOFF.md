@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-06 21:45 IST
+Last updated: 2026-05-06 22:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -111,8 +111,8 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.csv
 ```
 
 M30 data download:
@@ -301,6 +301,23 @@ Timeframe split update on 2026-05-06:
 - Quick non-purged FX sanity result:
   `BEARISH win_rate=53.54%`, `BULLISH win_rate=46.93%`, `CONFLICT win_rate=53.47%`, `UNKNOWN win_rate=55.47%`.
 
+Active regime-zone update on 2026-05-06:
+
+- `sr_touch_lazy_dashboard.py` now draws a separate active-regime zone layer.
+- Regime zones split overlapping event windows at every event start/end boundary.
+- Example behavior:
+  event X `22/03-25/03` and event Y `24/03-28/03` become:
+  `22/03-24/03 X only`, `24/03-25/03 X+Y`, `25/03-28/03 Y only`.
+- Each regime zone has its own hover:
+  active event list, active count, combined JPY hypothesis, combined JPY scores, zone dominant hit/event/strength, combined FX hypothesis, FX base/quote/net/conflict, FX dominant event/base-hit/quote-hit.
+- Latest chart with regime zones:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.html`
+- Validation from in-memory figures:
+  `M30 regime zones=514, overlap zones=156`;
+  `Hourly regime zones=916, overlap zones=667`;
+  `Daily regime zones=193, overlap zones=137`.
+- Latest CSV still contains the 1032 touch rows; regime zones are rendered into the HTML chart layer, not exported as separate CSV rows yet.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -396,7 +413,7 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_214025.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260506_225211.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv `
   --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
@@ -411,7 +428,7 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User inspects `sr_touch_full_1year_switch_20260506_214025.html`, especially the Hourly all-duration view and Daily no-Moon-line behavior.
+1. User inspects `sr_touch_full_1year_switch_20260506_225211.html`, especially active-regime overlap hovers.
 2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`.
 3. Test whether `fx_pair_net_score` should be inverted, thresholded, or used only as an ML feature.
 4. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.
