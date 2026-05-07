@@ -61,6 +61,7 @@ AVG_ALL_PLANETS = (
 )
 AVG_ALL_PLANET_SET = set(AVG_ALL_PLANETS)
 SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES = {"JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"}
+SHORT_TERM_EXCLUDED_CONTEXT_PAIR_BODIES = {AVG_ALL_LABEL, "RAHU", "KETU"}
 
 PLANET_COLORS = {
     "MOON": "#60a5fa",
@@ -411,8 +412,12 @@ def filter_short_term_slow_pairs(touches: pd.DataFrame) -> pd.DataFrame:
     if touches.empty:
         return touches.copy()
     left, right = pair_body_columns(touches)
-    slow_pair = left.isin(SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES) & right.isin(SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES)
-    return touches[~slow_pair].copy()
+    slow_left = left.isin(SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES)
+    slow_right = right.isin(SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES)
+    context_left = left.isin(SHORT_TERM_EXCLUDED_CONTEXT_PAIR_BODIES)
+    context_right = right.isin(SHORT_TERM_EXCLUDED_CONTEXT_PAIR_BODIES)
+    excluded_pair = (slow_left & slow_right) | (context_left & slow_right) | (slow_left & context_right)
+    return touches[~excluded_pair].copy()
 
 
 def filter_touches_for_timeframe(
