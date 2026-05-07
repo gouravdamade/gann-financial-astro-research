@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-07 00:40 IST
+Last updated: 2026-05-07 20:00 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -111,8 +111,8 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_195718.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_195718.csv
 ```
 
 M30 data download:
@@ -330,6 +330,25 @@ Hover simplification update on 2026-05-07:
 - Validation:
   CSV rows `1032`; `USDJPY hypothesis` hover rows `1032/1032`; old `Rule-layer hypothesis` rows `0`; visible `Quote/JPY hypothesis` hover rows `0`.
 
+Short-term slow-pair exclusion update on 2026-05-07:
+
+- M30 and Hourly now exclude aspect events where both bodies are in:
+  `JUPITER`, `SATURN`, `URANUS`, `NEPTUNE`, `PLUTO`.
+- Rationale: slow-planet-only combinations should not drive short-term M30/H1 trend views.
+- Daily and merged modes do not apply this short-term slow-pair filter.
+- Latest chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_195718.html`
+- Latest switch CSV validation:
+  `M30=416 rows, slow-slow rows=0`;
+  `Hourly=519 rows, slow-slow rows=0`;
+  `Daily=96 rows`;
+  `USDJPY hypothesis hover rows=1031/1031`.
+- Candidate file rebuilt from latest chart CSV:
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv`
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`
+- Quick non-purged FX sanity result:
+  `BEARISH win_rate=53.54%`, `BULLISH win_rate=46.93%`, `CONFLICT win_rate=53.15%`, `UNKNOWN win_rate=55.47%`.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -425,7 +444,7 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_003720.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260507_195718.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv `
   --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
@@ -440,7 +459,7 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User inspects `sr_touch_full_1year_switch_20260507_003720.html`, especially USDJPY-only hover text and click-for-details quote/JPY panel.
+1. User inspects `sr_touch_full_1year_switch_20260507_195718.html`, especially short-term views without slow-planet-only pairs.
 2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`.
 3. Test whether `fx_pair_net_score` should be inverted, thresholded, or used only as an ML feature.
 4. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.

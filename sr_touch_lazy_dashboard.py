@@ -60,6 +60,7 @@ AVG_ALL_PLANETS = (
     "PLUTO",
 )
 AVG_ALL_PLANET_SET = set(AVG_ALL_PLANETS)
+SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES = {"JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"}
 
 PLANET_COLORS = {
     "MOON": "#60a5fa",
@@ -394,6 +395,26 @@ def resample_price_for_timeframe(price: pd.DataFrame, timeframe: str) -> pd.Data
     return resample_ohlc(price, "1D")
 
 
+def pair_body_columns(touches: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
+    if {"b1", "b2"}.issubset(touches.columns):
+        return (
+            touches["b1"].fillna("").astype(str).str.strip().str.upper(),
+            touches["b2"].fillna("").astype(str).str.strip().str.upper(),
+        )
+    pair_parts = touches.get("pair_key", pd.Series(index=touches.index, dtype=object)).fillna("").astype(str).str.split("|", n=1, expand=True)
+    left = pair_parts[0].astype(str).str.strip().str.upper() if 0 in pair_parts.columns else pd.Series("", index=touches.index)
+    right = pair_parts[1].astype(str).str.strip().str.upper() if 1 in pair_parts.columns else pd.Series("", index=touches.index)
+    return left, right
+
+
+def filter_short_term_slow_pairs(touches: pd.DataFrame) -> pd.DataFrame:
+    if touches.empty:
+        return touches.copy()
+    left, right = pair_body_columns(touches)
+    slow_pair = left.isin(SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES) & right.isin(SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES)
+    return touches[~slow_pair].copy()
+
+
 def filter_touches_for_timeframe(
     touches: pd.DataFrame,
     timeframe: str,
@@ -407,9 +428,10 @@ def filter_touches_for_timeframe(
     if timeframe == "merged":
         return touches.copy()
     if timeframe == "m30":
-        return touches[duration.le(float(hourly_max_aspect_hours) * 60.0)].copy()
+        short = touches[duration.le(float(hourly_max_aspect_hours) * 60.0)].copy()
+        return filter_short_term_slow_pairs(short)
     if timeframe == "hourly":
-        return touches.copy()
+        return filter_short_term_slow_pairs(touches)
     if timeframe == "daily":
         return touches[duration.gt(float(daily_min_aspect_hours) * 60.0)].copy()
     raise ValueError(f"Unsupported timeframe: {timeframe}")
