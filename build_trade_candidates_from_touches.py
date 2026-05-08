@@ -44,6 +44,114 @@ NATAL_HOUSE_BIAS = {
     11: 1.0,
     12: -0.9,
 }
+SIGN_ALIASES = {
+    "AR": "ARIES",
+    "ARIES": "ARIES",
+    "MESHA": "ARIES",
+    "TA": "TAURUS",
+    "TAURUS": "TAURUS",
+    "VRISHABHA": "TAURUS",
+    "GE": "GEMINI",
+    "GEMINI": "GEMINI",
+    "MITHUNA": "GEMINI",
+    "CN": "CANCER",
+    "CANCER": "CANCER",
+    "KARKATA": "CANCER",
+    "LE": "LEO",
+    "LEO": "LEO",
+    "SIMHA": "LEO",
+    "VI": "VIRGO",
+    "VIRGO": "VIRGO",
+    "KANYA": "VIRGO",
+    "LI": "LIBRA",
+    "LIBRA": "LIBRA",
+    "TULA": "LIBRA",
+    "THULA": "LIBRA",
+    "SC": "SCORPIO",
+    "SCORPIO": "SCORPIO",
+    "VRISHCHIKA": "SCORPIO",
+    "SG": "SAGITTARIUS",
+    "SAGITTARIUS": "SAGITTARIUS",
+    "DHANUS": "SAGITTARIUS",
+    "CP": "CAPRICORN",
+    "CAPRICORN": "CAPRICORN",
+    "MAKARA": "CAPRICORN",
+    "AQ": "AQUARIUS",
+    "AQUARIUS": "AQUARIUS",
+    "KUMBHA": "AQUARIUS",
+    "PI": "PISCES",
+    "PISCES": "PISCES",
+    "MEENA": "PISCES",
+}
+SIGN_LORDS = {
+    "ARIES": "MARS",
+    "TAURUS": "VENUS",
+    "GEMINI": "MERCURY",
+    "CANCER": "MOON",
+    "LEO": "SUN",
+    "VIRGO": "MERCURY",
+    "LIBRA": "VENUS",
+    "SCORPIO": "MARS",
+    "SAGITTARIUS": "JUPITER",
+    "CAPRICORN": "SATURN",
+    "AQUARIUS": "SATURN",
+    "PISCES": "JUPITER",
+}
+OWN_SIGNS = {
+    "SUN": {"LEO"},
+    "MOON": {"CANCER"},
+    "MARS": {"ARIES", "SCORPIO"},
+    "MERCURY": {"GEMINI", "VIRGO"},
+    "JUPITER": {"SAGITTARIUS", "PISCES"},
+    "VENUS": {"TAURUS", "LIBRA"},
+    "SATURN": {"CAPRICORN", "AQUARIUS"},
+}
+EXALTATION_SIGNS = {
+    "SUN": "ARIES",
+    "MOON": "TAURUS",
+    "MARS": "CAPRICORN",
+    "MERCURY": "VIRGO",
+    "JUPITER": "CANCER",
+    "VENUS": "PISCES",
+    "SATURN": "LIBRA",
+}
+DEBILITATION_SIGNS = {
+    "SUN": "LIBRA",
+    "MOON": "SCORPIO",
+    "MARS": "CANCER",
+    "MERCURY": "PISCES",
+    "JUPITER": "CAPRICORN",
+    "VENUS": "VIRGO",
+    "SATURN": "ARIES",
+}
+MOOLATRIKONA_SIGNS = {
+    "SUN": "LEO",
+    "MOON": "TAURUS",
+    "MARS": "ARIES",
+    "MERCURY": "VIRGO",
+    "JUPITER": "SAGITTARIUS",
+    "VENUS": "LIBRA",
+    "SATURN": "AQUARIUS",
+}
+NATURAL_RELATIONSHIPS = {
+    "SUN": {"friend": {"MOON", "MARS", "JUPITER"}, "neutral": {"MERCURY"}, "enemy": {"VENUS", "SATURN"}},
+    "MOON": {"friend": {"SUN", "MERCURY"}, "neutral": {"MARS", "JUPITER", "VENUS", "SATURN"}, "enemy": set()},
+    "MARS": {"friend": {"SUN", "MOON", "JUPITER"}, "neutral": {"VENUS", "SATURN"}, "enemy": {"MERCURY"}},
+    "MERCURY": {"friend": {"SUN", "VENUS"}, "neutral": {"MARS", "JUPITER", "SATURN"}, "enemy": {"MOON"}},
+    "JUPITER": {"friend": {"SUN", "MOON", "MARS"}, "neutral": {"SATURN"}, "enemy": {"MERCURY", "VENUS"}},
+    "VENUS": {"friend": {"MERCURY", "SATURN"}, "neutral": {"MARS", "JUPITER"}, "enemy": {"SUN", "MOON"}},
+    "SATURN": {"friend": {"MERCURY", "VENUS"}, "neutral": {"JUPITER"}, "enemy": {"SUN", "MOON", "MARS"}},
+}
+STHANA_VIRUPA_BY_DIGNITY = {
+    "exaltation": 60.0,
+    "moolatrikona": 45.0,
+    "own": 30.0,
+    "friend": 15.0,
+    "neutral": 10.0,
+    "enemy": 4.0,
+    "debilitation": 0.0,
+    "unknown": 0.0,
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -135,6 +243,12 @@ def normalize_body(value: Any) -> str:
     return str(value or "").strip().upper()
 
 
+def normalize_sign(value: Any) -> str:
+    text = str(value or "").strip().upper().replace("-", " ").replace("_", " ")
+    text = " ".join(text.split())
+    return SIGN_ALIASES.get(text, text)
+
+
 def aspect_family(aspect: Any) -> str:
     name = str(aspect or "").strip().lower()
     if name in HARD_ASPECTS or name.startswith("rashi_"):
@@ -184,6 +298,69 @@ def house_bias(house: Any) -> float:
     return float(NATAL_HOUSE_BIAS.get(key, 0.0))
 
 
+def dignity_for_planet_in_sign(planet: Any, sign: Any) -> dict[str, Any]:
+    body = normalize_body(planet)
+    sign_name = normalize_sign(sign)
+    if body not in OWN_SIGNS or sign_name not in SIGN_LORDS:
+        return {
+            "dignity_label": "unknown",
+            "dignity_virupa": 0.0,
+            "sign_lord": SIGN_LORDS.get(sign_name, ""),
+            "sign_relation": "unknown",
+        }
+    if sign_name == DEBILITATION_SIGNS.get(body):
+        label = "debilitation"
+        relation = "enemy"
+    elif sign_name == EXALTATION_SIGNS.get(body):
+        label = "exaltation"
+        relation = "friend"
+    elif sign_name == MOOLATRIKONA_SIGNS.get(body):
+        label = "moolatrikona"
+        relation = "own"
+    elif sign_name in OWN_SIGNS.get(body, set()):
+        label = "own"
+        relation = "own"
+    else:
+        lord = SIGN_LORDS.get(sign_name, "")
+        relationships = NATURAL_RELATIONSHIPS.get(body, {})
+        if lord in relationships.get("friend", set()):
+            label = "friend"
+            relation = "friend"
+        elif lord in relationships.get("enemy", set()):
+            label = "enemy"
+            relation = "enemy"
+        else:
+            label = "neutral"
+            relation = "neutral"
+    return {
+        "dignity_label": label,
+        "dignity_virupa": float(STHANA_VIRUPA_BY_DIGNITY[label]),
+        "sign_lord": SIGN_LORDS.get(sign_name, ""),
+        "sign_relation": relation,
+    }
+
+
+def hit_dignity_context(hit: dict[str, Any]) -> dict[str, Any]:
+    natal = dignity_for_planet_in_sign(hit.get("natal_planet"), hit.get("natal_sign"))
+    transit = dignity_for_planet_in_sign(hit.get("transit_planet"), hit.get("transit_sign"))
+    virupas = [float(natal["dignity_virupa"])]
+    if str(hit.get("transit_sign", "")).strip():
+        virupas.append(float(transit["dignity_virupa"]))
+    avg_virupa = float(np.mean(virupas)) if virupas else 0.0
+    return {
+        "natal_dignity_label": str(natal["dignity_label"]),
+        "natal_dignity_virupa": float(natal["dignity_virupa"]),
+        "natal_sign_lord": str(natal["sign_lord"]),
+        "natal_sign_relation": str(natal["sign_relation"]),
+        "transit_dignity_label": str(transit["dignity_label"]),
+        "transit_dignity_virupa": float(transit["dignity_virupa"]),
+        "transit_sign_lord": str(transit["sign_lord"]),
+        "transit_sign_relation": str(transit["sign_relation"]),
+        "avg_dignity_virupa": avg_virupa,
+        "strength_factor": 0.5 + avg_virupa / 60.0,
+    }
+
+
 def aspect_family_bias(aspect: Any) -> float:
     family = aspect_family(aspect)
     if family == "soft":
@@ -225,6 +402,14 @@ def score_transit_natal_hits(
     strongest_id = ""
     strongest_signed = 0.0
     strongest_abs = 0.0
+    doctrine_bullish = 0.0
+    doctrine_bearish = 0.0
+    doctrine_strongest_id = ""
+    doctrine_strongest_signed = 0.0
+    doctrine_strongest_abs = 0.0
+    doctrine_strongest_dignity = ""
+    dignity_virupa_weighted = 0.0
+    dignity_weight = 0.0
     scored_hits = 0
 
     for hit in hits:
@@ -232,6 +417,7 @@ def score_transit_natal_hits(
         if strength <= 0:
             continue
         scored_hits += 1
+        dignity = hit_dignity_context(hit)
         directional_bias = (
             house_bias(hit.get("natal_house"))
             + 0.50 * body_bias(hit.get("natal_planet"))
@@ -239,29 +425,60 @@ def score_transit_natal_hits(
             + aspect_family_bias(hit.get("aspect"))
         )
         signed = strength * directional_bias
+        doctrine_signed = signed * float(dignity["strength_factor"])
         if signed >= 0:
             bullish += signed
         else:
             bearish += abs(signed)
+        if doctrine_signed >= 0:
+            doctrine_bullish += doctrine_signed
+        else:
+            doctrine_bearish += abs(doctrine_signed)
+        dignity_virupa_weighted += strength * float(dignity["avg_dignity_virupa"])
+        dignity_weight += strength
+        hit_id = (
+            f"{normalize_body(hit.get('transit_planet'))}>"
+            f"{normalize_body(hit.get('natal_planet'))}:"
+            f"{str(hit.get('aspect', '')).strip().lower()}"
+        )
         if abs(signed) > strongest_abs:
             strongest_abs = abs(signed)
             strongest_signed = signed
-            strongest_id = (
-                f"{normalize_body(hit.get('transit_planet'))}>"
-                f"{normalize_body(hit.get('natal_planet'))}:"
-                f"{str(hit.get('aspect', '')).strip().lower()}"
+            strongest_id = hit_id
+        if abs(doctrine_signed) > doctrine_strongest_abs:
+            doctrine_strongest_abs = abs(doctrine_signed)
+            doctrine_strongest_signed = doctrine_signed
+            doctrine_strongest_id = hit_id
+            doctrine_strongest_dignity = (
+                f"natal {dignity['natal_dignity_label']} "
+                f"{dignity['natal_dignity_virupa']:.0f}V"
+                + (
+                    f"; transit {dignity['transit_dignity_label']} "
+                    f"{dignity['transit_dignity_virupa']:.0f}V"
+                    if str(hit.get("transit_sign", "")).strip()
+                    else ""
+                )
             )
 
     net = bullish - bearish
     conflict = min(bullish, bearish)
+    doctrine_net = doctrine_bullish - doctrine_bearish
+    doctrine_conflict = min(doctrine_bullish, doctrine_bearish)
+    dignity_avg = dignity_virupa_weighted / dignity_weight if dignity_weight > 0 else 0.0
     if scored_hits <= 0:
         direction = "UNKNOWN"
+        doctrine_direction = "UNKNOWN"
     elif bullish > bearish * 1.25:
         direction = "BULLISH"
-    elif bearish > bullish * 1.25:
-        direction = "BEARISH"
     else:
-        direction = "CONFLICT"
+        direction = "BEARISH" if bearish > bullish * 1.25 else "CONFLICT"
+    if scored_hits > 0:
+        if doctrine_bullish > doctrine_bearish * 1.25:
+            doctrine_direction = "BULLISH"
+        elif doctrine_bearish > doctrine_bullish * 1.25:
+            doctrine_direction = "BEARISH"
+        else:
+            doctrine_direction = "CONFLICT"
 
     return {
         "jyotish_bullish_score": float(bullish),
@@ -273,6 +490,17 @@ def score_transit_natal_hits(
         "dominant_aspect_id": strongest_id,
         "dominant_aspect_signed_score": float(strongest_signed),
         "dominant_aspect_abs_score": float(strongest_abs),
+        "doctrine_bullish_score": float(doctrine_bullish),
+        "doctrine_bearish_score": float(doctrine_bearish),
+        "doctrine_net_score": float(doctrine_net),
+        "doctrine_conflict_score": float(doctrine_conflict),
+        "doctrine_hypothesis_direction": doctrine_direction,
+        "doctrine_dignity_virupa_avg": float(dignity_avg),
+        "doctrine_dignity_strength_factor_avg": float(0.5 + dignity_avg / 60.0),
+        "doctrine_dominant_aspect_id": doctrine_strongest_id,
+        "doctrine_dominant_aspect_signed_score": float(doctrine_strongest_signed),
+        "doctrine_dominant_aspect_abs_score": float(doctrine_strongest_abs),
+        "doctrine_dominant_dignity": doctrine_strongest_dignity,
     }
 
 
@@ -328,16 +556,34 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
     base_net = float(base["jyotish_net_score"])
     quote_net = float(quote["jyotish_net_score"])
     pair_net = base_net - quote_net if has_base_reference else 0.0
+    doctrine_base_net = float(base["doctrine_net_score"])
+    doctrine_quote_net = float(quote["doctrine_net_score"])
+    doctrine_pair_net = doctrine_base_net - doctrine_quote_net if has_base_reference else 0.0
     base_total = float(base["jyotish_bullish_score"]) + float(base["jyotish_bearish_score"])
     quote_total = float(quote["jyotish_bullish_score"]) + float(quote["jyotish_bearish_score"])
     conflict = float(base["jyotish_conflict_score"]) + float(quote["jyotish_conflict_score"])
     total_directional = base_total + quote_total
     conflict_ratio = conflict / total_directional if has_base_reference and total_directional > 0 else 0.0
+    doctrine_base_total = float(base["doctrine_bullish_score"]) + float(base["doctrine_bearish_score"])
+    doctrine_quote_total = float(quote["doctrine_bullish_score"]) + float(quote["doctrine_bearish_score"])
+    doctrine_conflict = float(base["doctrine_conflict_score"]) + float(quote["doctrine_conflict_score"])
+    doctrine_total_directional = doctrine_base_total + doctrine_quote_total
+    doctrine_conflict_ratio = (
+        doctrine_conflict / doctrine_total_directional
+        if has_base_reference and doctrine_total_directional > 0
+        else 0.0
+    )
     direction = (
         "UNKNOWN"
         if not has_base_reference
         or (int(base["jyotish_scored_hit_count"]) <= 0 and int(quote["jyotish_scored_hit_count"]) <= 0)
         else direction_from_net_score(pair_net, conflict_ratio)
+    )
+    doctrine_direction = (
+        "UNKNOWN"
+        if not has_base_reference
+        or (int(base["jyotish_scored_hit_count"]) <= 0 and int(quote["jyotish_scored_hit_count"]) <= 0)
+        else direction_from_net_score(doctrine_pair_net, doctrine_conflict_ratio)
     )
 
     out = {
@@ -349,12 +595,25 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         "fx_pair_conflict_score": float(conflict),
         "fx_pair_conflict_ratio": float(conflict_ratio),
         "fx_hypothesis_direction": direction,
+        "fx_doctrine_base_net_score": doctrine_base_net,
+        "fx_doctrine_quote_net_score": doctrine_quote_net,
+        "fx_doctrine_pair_net_score": float(doctrine_pair_net),
+        "fx_doctrine_pair_conflict_score": float(doctrine_conflict),
+        "fx_doctrine_pair_conflict_ratio": float(doctrine_conflict_ratio),
+        "fx_doctrine_hypothesis_direction": doctrine_direction,
+        "fx_doctrine_base_dignity_virupa_avg": float(base["doctrine_dignity_virupa_avg"]),
+        "fx_doctrine_quote_dignity_virupa_avg": float(quote["doctrine_dignity_virupa_avg"]),
         "fx_base_scored_hit_count": int(base["jyotish_scored_hit_count"]),
         "fx_quote_scored_hit_count": int(quote["jyotish_scored_hit_count"]),
         "fx_dominant_base_hit": str(base["dominant_aspect_id"]),
         "fx_dominant_quote_hit": str(quote["dominant_aspect_id"]),
+        "fx_doctrine_dominant_base_hit": str(base["doctrine_dominant_aspect_id"]),
+        "fx_doctrine_dominant_quote_hit": str(quote["doctrine_dominant_aspect_id"]),
+        "fx_doctrine_dominant_base_dignity": str(base["doctrine_dominant_dignity"]),
+        "fx_doctrine_dominant_quote_dignity": str(quote["doctrine_dominant_dignity"]),
         "fx_scoring_notes": (
-            "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;ml_must_validate"
+            "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;"
+            "doctrine_v1_adds_sign_dignity_friendship_sthana_bala;ml_must_validate"
             if has_base_reference
             else "base_reference_missing;pair_hypothesis_not_scored"
         ),
@@ -568,10 +827,21 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
             "jyotish_scored_hit_count",
             "dominant_aspect_signed_score",
             "dominant_aspect_abs_score",
+            "doctrine_bullish_score",
+            "doctrine_bearish_score",
+            "doctrine_net_score",
+            "doctrine_conflict_score",
+            "doctrine_dignity_virupa_avg",
+            "doctrine_dignity_strength_factor_avg",
+            "doctrine_dominant_aspect_signed_score",
+            "doctrine_dominant_aspect_abs_score",
         ):
             df[col] = 0.0
         df["jyotish_hypothesis_direction"] = "UNKNOWN"
         df["dominant_aspect_id"] = ""
+        df["doctrine_hypothesis_direction"] = "UNKNOWN"
+        df["doctrine_dominant_aspect_id"] = ""
+        df["doctrine_dominant_dignity"] = ""
 
     fx_scored = pd.DataFrame(df.apply(score_currency_pair_for_row, axis=1).tolist())
     if not fx_scored.empty:
@@ -582,6 +852,10 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         df["fx_pair_net_score"] = 0.0
         df["fx_pair_conflict_score"] = 0.0
         df["fx_pair_conflict_ratio"] = 0.0
+        df["fx_doctrine_hypothesis_direction"] = "UNKNOWN"
+        df["fx_doctrine_pair_net_score"] = 0.0
+        df["fx_doctrine_pair_conflict_score"] = 0.0
+        df["fx_doctrine_pair_conflict_ratio"] = 0.0
 
     event_strength = numeric_series(df, "event_bphs_strength")
     natal_strength = numeric_series(df, "tn_bphs_total")
@@ -594,6 +868,11 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
     )
     df["fx_rule_layer_total_strength"] = (
         numeric_series(df, "fx_pair_net_score").abs()
+        + 0.35 * event_strength
+        + 0.25 * numeric_series(df, "sr_confirmation_score")
+    )
+    df["fx_doctrine_rule_layer_total_strength"] = (
+        numeric_series(df, "fx_doctrine_pair_net_score").abs()
         + 0.35 * event_strength
         + 0.25 * numeric_series(df, "sr_confirmation_score")
     )
@@ -612,6 +891,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         "heuristic_v1_yen_ipo_tokyo_1889_reference;"
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
+        "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
         "ml_must_validate"
     )
 

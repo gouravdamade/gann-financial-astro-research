@@ -521,6 +521,14 @@ def load_touch_log(path: str) -> pd.DataFrame:
         "quote_jyotish_net_score",
         "quote_jyotish_conflict_score",
         "quote_jyotish_scored_hit_count",
+        "doctrine_bullish_score",
+        "doctrine_bearish_score",
+        "doctrine_net_score",
+        "doctrine_conflict_score",
+        "doctrine_dignity_virupa_avg",
+        "doctrine_dignity_strength_factor_avg",
+        "base_doctrine_net_score",
+        "quote_doctrine_net_score",
         "fx_base_net_score",
         "fx_quote_net_score",
         "fx_pair_net_score",
@@ -529,6 +537,14 @@ def load_touch_log(path: str) -> pd.DataFrame:
         "fx_base_scored_hit_count",
         "fx_quote_scored_hit_count",
         "fx_rule_layer_total_strength",
+        "fx_doctrine_base_net_score",
+        "fx_doctrine_quote_net_score",
+        "fx_doctrine_pair_net_score",
+        "fx_doctrine_pair_conflict_score",
+        "fx_doctrine_pair_conflict_ratio",
+        "fx_doctrine_base_dignity_virupa_avg",
+        "fx_doctrine_quote_dignity_virupa_avg",
+        "fx_doctrine_rule_layer_total_strength",
         "dominant_aspect_signed_score",
         "dominant_aspect_abs_score",
         "rule_layer_total_strength",
@@ -612,8 +628,19 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
             "jyotish_scored_hit_count",
             "dominant_aspect_signed_score",
             "dominant_aspect_abs_score",
+            "doctrine_bullish_score",
+            "doctrine_bearish_score",
+            "doctrine_net_score",
+            "doctrine_conflict_score",
+            "doctrine_dignity_virupa_avg",
+            "doctrine_dignity_strength_factor_avg",
+            "doctrine_dominant_aspect_signed_score",
+            "doctrine_dominant_aspect_abs_score",
         ):
             df[col] = 0.0
+        df["doctrine_hypothesis_direction"] = "UNKNOWN"
+        df["doctrine_dominant_aspect_id"] = ""
+        df["doctrine_dominant_dignity"] = ""
 
     fx_scored = pd.DataFrame(df.apply(score_currency_pair_for_row, axis=1).tolist())
     if not fx_scored.empty:
@@ -624,6 +651,10 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         df["fx_pair_net_score"] = 0.0
         df["fx_pair_conflict_score"] = 0.0
         df["fx_pair_conflict_ratio"] = 0.0
+        df["fx_doctrine_hypothesis_direction"] = "UNKNOWN"
+        df["fx_doctrine_pair_net_score"] = 0.0
+        df["fx_doctrine_pair_conflict_score"] = 0.0
+        df["fx_doctrine_pair_conflict_ratio"] = 0.0
         df["fx_scoring_notes"] = "base_reference_missing;pair_hypothesis_not_scored"
 
     event_strength = numeric_series(df, "event_bphs_strength")
@@ -638,6 +669,11 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         + 0.35 * event_strength
         + 0.25 * numeric_series(df, "sr_confirmation_score")
     )
+    df["fx_doctrine_rule_layer_total_strength"] = (
+        numeric_series(df, "fx_doctrine_pair_net_score").abs()
+        + 0.35 * event_strength
+        + 0.25 * numeric_series(df, "sr_confirmation_score")
+    )
     total_directional = (
         numeric_series(df, "jyotish_bullish_score")
         + numeric_series(df, "jyotish_bearish_score")
@@ -648,6 +684,7 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         "heuristic_v1_yen_ipo_tokyo_1889_reference;"
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
+        "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
         "ml_must_validate"
     )
 
@@ -771,10 +808,26 @@ def build_rule_layer_hover_lines(row: pd.Series) -> list[str]:
             f"{_format_float(row.get('fx_pair_net_score'))} / "
             f"{_format_float(row.get('fx_pair_conflict_score'))}"
         ),
+        f"Doctrine hypothesis: {str(row.get('fx_doctrine_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "Doctrine USD/JPY/net/conflict: "
+            f"{_format_float(row.get('fx_doctrine_base_net_score'))} / "
+            f"{_format_float(row.get('fx_doctrine_quote_net_score'))} / "
+            f"{_format_float(row.get('fx_doctrine_pair_net_score'))} / "
+            f"{_format_float(row.get('fx_doctrine_pair_conflict_score'))}"
+        ),
+        (
+            "Dignity avg USD/JPY: "
+            f"{_format_float(row.get('fx_doctrine_base_dignity_virupa_avg'))}V / "
+            f"{_format_float(row.get('fx_doctrine_quote_dignity_virupa_avg'))}V"
+        ),
         f"Conflict ratio: {_format_pct(row.get('fx_pair_conflict_ratio'))}",
         f"Dominant USD hit: {str(row.get('fx_dominant_base_hit', '')).strip() or 'n/a'}",
         f"Dominant JPY hit: {str(row.get('fx_dominant_quote_hit', '')).strip() or 'n/a'}",
+        f"Doctrine dominant USD: {str(row.get('fx_doctrine_dominant_base_dignity', '')).strip() or 'n/a'}",
+        f"Doctrine dominant JPY: {str(row.get('fx_doctrine_dominant_quote_dignity', '')).strip() or 'n/a'}",
         f"FX absolute strength: {_format_float(row.get('fx_rule_layer_total_strength'))}",
+        f"Doctrine FX strength: {_format_float(row.get('fx_doctrine_rule_layer_total_strength'))}",
         "Click for quote/JPY details.",
     ]
     return lines
@@ -799,8 +852,18 @@ def build_quote_detail_lines(row: pd.Series) -> list[str]:
             f"{_format_float(row.get('jyotish_net_score'))} / "
             f"{_format_float(row.get('jyotish_conflict_score'))}"
         ),
+        f"JPY doctrine hypothesis: {str(row.get('doctrine_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "JPY doctrine B/Bear/Net/Conflict: "
+            f"{_format_float(row.get('doctrine_bullish_score'))} / "
+            f"{_format_float(row.get('doctrine_bearish_score'))} / "
+            f"{_format_float(row.get('doctrine_net_score'))} / "
+            f"{_format_float(row.get('doctrine_conflict_score'))}"
+        ),
+        f"JPY dignity avg: {_format_float(row.get('doctrine_dignity_virupa_avg'))}V",
         f"JPY dominant hit: {str(row.get('dominant_aspect_id', '')).strip() or 'n/a'}",
         f"JPY dominant strength: {_format_float(row.get('dominant_aspect_abs_score'))}",
+        f"JPY doctrine dominant dignity: {str(row.get('doctrine_dominant_dignity', '')).strip() or 'n/a'}",
         f"JPY rule total strength: {_format_float(row.get('rule_layer_total_strength'))}",
         f"JPY conflict ratio: {_format_pct(row.get('rule_layer_conflict_ratio'))}",
         f"Aspect family / duration: {str(row.get('aspect_family', ''))} / {str(row.get('duration_bucket', ''))}",
@@ -1011,13 +1074,23 @@ def build_regime_zones(aspect_windows: pd.DataFrame) -> pd.DataFrame:
         fx_quote = pd.to_numeric(active.get("fx_quote_net_score"), errors="coerce").fillna(0.0).sum()
         fx_net = pd.to_numeric(active.get("fx_pair_net_score"), errors="coerce").fillna(0.0).sum()
         fx_conflict = pd.to_numeric(active.get("fx_pair_conflict_score"), errors="coerce").fillna(0.0).sum()
+        fx_doctrine_base = pd.to_numeric(active.get("fx_doctrine_base_net_score"), errors="coerce").fillna(0.0).sum()
+        fx_doctrine_quote = pd.to_numeric(active.get("fx_doctrine_quote_net_score"), errors="coerce").fillna(0.0).sum()
+        fx_doctrine_net = pd.to_numeric(active.get("fx_doctrine_pair_net_score"), errors="coerce").fillna(0.0).sum()
+        fx_doctrine_conflict = pd.to_numeric(active.get("fx_doctrine_pair_conflict_score"), errors="coerce").fillna(0.0).sum()
         fx_total = (
             pd.to_numeric(active.get("fx_base_net_score"), errors="coerce").fillna(0.0).abs()
             + pd.to_numeric(active.get("fx_quote_net_score"), errors="coerce").fillna(0.0).abs()
         ).sum()
+        fx_doctrine_total = (
+            pd.to_numeric(active.get("fx_doctrine_base_net_score"), errors="coerce").fillna(0.0).abs()
+            + pd.to_numeric(active.get("fx_doctrine_quote_net_score"), errors="coerce").fillna(0.0).abs()
+        ).sum()
         fx_conflict_ratio = float(fx_conflict / fx_total) if fx_total > 0.0 else 0.0
+        fx_doctrine_conflict_ratio = float(fx_doctrine_conflict / fx_doctrine_total) if fx_doctrine_total > 0.0 else 0.0
         dominant = _strongest_row(active, "dominant_aspect_abs_score")
         fx_dominant = _strongest_row(active, "fx_pair_net_score")
+        fx_doctrine_dominant = _strongest_row(active, "fx_doctrine_pair_net_score")
         event_lines = [event_brief(row) for _, row in active.head(10).iterrows()]
         if len(active) > 10:
             event_lines.append(f"... +{len(active) - 10} more")
@@ -1044,10 +1117,20 @@ def build_regime_zones(aspect_windows: pd.DataFrame) -> pd.DataFrame:
                 "regime_fx_pair_conflict_score": float(fx_conflict),
                 "regime_fx_pair_conflict_ratio": float(fx_conflict_ratio),
                 "regime_fx_hypothesis_direction": _fx_direction(float(fx_net), float(fx_conflict_ratio)) if fx_total > 0.0 else "UNKNOWN",
+                "regime_fx_doctrine_base_net_score": float(fx_doctrine_base),
+                "regime_fx_doctrine_quote_net_score": float(fx_doctrine_quote),
+                "regime_fx_doctrine_pair_net_score": float(fx_doctrine_net),
+                "regime_fx_doctrine_pair_conflict_score": float(fx_doctrine_conflict),
+                "regime_fx_doctrine_pair_conflict_ratio": float(fx_doctrine_conflict_ratio),
+                "regime_fx_doctrine_hypothesis_direction": _fx_direction(float(fx_doctrine_net), float(fx_doctrine_conflict_ratio)) if fx_doctrine_total > 0.0 else "UNKNOWN",
                 "regime_fx_dominant_event": event_brief(fx_dominant) if fx_dominant is not None else "",
                 "regime_fx_dominant_base_hit": str(fx_dominant.get("fx_dominant_base_hit", "")) if fx_dominant is not None else "",
                 "regime_fx_dominant_quote_hit": str(fx_dominant.get("fx_dominant_quote_hit", "")) if fx_dominant is not None else "",
+                "regime_fx_doctrine_dominant_event": event_brief(fx_doctrine_dominant) if fx_doctrine_dominant is not None else "",
+                "regime_fx_doctrine_dominant_base_dignity": str(fx_doctrine_dominant.get("fx_doctrine_dominant_base_dignity", "")) if fx_doctrine_dominant is not None else "",
+                "regime_fx_doctrine_dominant_quote_dignity": str(fx_doctrine_dominant.get("fx_doctrine_dominant_quote_dignity", "")) if fx_doctrine_dominant is not None else "",
                 "regime_fx_rule_total_strength": pd.to_numeric(active.get("fx_rule_layer_total_strength"), errors="coerce").fillna(0.0).sum(),
+                "regime_fx_doctrine_rule_total_strength": pd.to_numeric(active.get("fx_doctrine_rule_layer_total_strength"), errors="coerce").fillna(0.0).sum(),
             }
         )
     return pd.DataFrame(zones)
@@ -1069,11 +1152,23 @@ def build_regime_zone_hover_lines(row: pd.Series) -> list[str]:
             f"{_format_float(row.get('regime_fx_pair_net_score'))} / "
             f"{_format_float(row.get('regime_fx_pair_conflict_score'))}"
         ),
+        f"Doctrine hypothesis: {str(row.get('regime_fx_doctrine_hypothesis_direction', 'UNKNOWN'))}",
+        (
+            "Doctrine USD/JPY/net/conflict: "
+            f"{_format_float(row.get('regime_fx_doctrine_base_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_doctrine_quote_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_doctrine_pair_net_score'))} / "
+            f"{_format_float(row.get('regime_fx_doctrine_pair_conflict_score'))}"
+        ),
         f"Conflict ratio: {_format_pct(row.get('regime_fx_pair_conflict_ratio'))}",
         f"Dominant event: {str(row.get('regime_fx_dominant_event', '')).strip() or 'n/a'}",
         f"Dominant USD hit: {str(row.get('regime_fx_dominant_base_hit', '')).strip() or 'n/a'}",
         f"Dominant JPY hit: {str(row.get('regime_fx_dominant_quote_hit', '')).strip() or 'n/a'}",
+        f"Doctrine dominant event: {str(row.get('regime_fx_doctrine_dominant_event', '')).strip() or 'n/a'}",
+        f"Doctrine dominant USD: {str(row.get('regime_fx_doctrine_dominant_base_dignity', '')).strip() or 'n/a'}",
+        f"Doctrine dominant JPY: {str(row.get('regime_fx_doctrine_dominant_quote_dignity', '')).strip() or 'n/a'}",
         f"FX absolute strength: {_format_float(row.get('regime_fx_rule_total_strength'))}",
+        f"Doctrine FX strength: {_format_float(row.get('regime_fx_doctrine_rule_total_strength'))}",
         "Click for quote/JPY details.",
     ]
 
@@ -1296,6 +1391,16 @@ def build_detail_figure(
         "dominant_aspect_id",
         "dominant_aspect_signed_score",
         "dominant_aspect_abs_score",
+        "doctrine_hypothesis_direction",
+        "doctrine_bullish_score",
+        "doctrine_bearish_score",
+        "doctrine_net_score",
+        "doctrine_conflict_score",
+        "doctrine_dignity_virupa_avg",
+        "doctrine_dominant_aspect_id",
+        "doctrine_dominant_aspect_signed_score",
+        "doctrine_dominant_aspect_abs_score",
+        "doctrine_dominant_dignity",
         "fx_hypothesis_direction",
         "fx_base_reference_label",
         "fx_quote_reference_label",
@@ -1307,6 +1412,19 @@ def build_detail_figure(
         "fx_dominant_base_hit",
         "fx_dominant_quote_hit",
         "fx_rule_layer_total_strength",
+        "fx_doctrine_hypothesis_direction",
+        "fx_doctrine_base_net_score",
+        "fx_doctrine_quote_net_score",
+        "fx_doctrine_pair_net_score",
+        "fx_doctrine_pair_conflict_score",
+        "fx_doctrine_pair_conflict_ratio",
+        "fx_doctrine_base_dignity_virupa_avg",
+        "fx_doctrine_quote_dignity_virupa_avg",
+        "fx_doctrine_dominant_base_hit",
+        "fx_doctrine_dominant_quote_hit",
+        "fx_doctrine_dominant_base_dignity",
+        "fx_doctrine_dominant_quote_dignity",
+        "fx_doctrine_rule_layer_total_strength",
         "rule_layer_total_strength",
         "rule_layer_conflict_ratio",
         "reference_time_ist",
@@ -1668,7 +1786,7 @@ def export_switchable_timeframe_chart(
 
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
-    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v10.parquet")
+    cache_path = source_path.with_name(f"{source_path.stem}_clustered_v11.parquet")
     if cache_path.exists() and cache_path.stat().st_mtime >= source_path.stat().st_mtime:
         return pd.read_parquet(cache_path)
 

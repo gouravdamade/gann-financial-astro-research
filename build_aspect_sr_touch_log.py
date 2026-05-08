@@ -1023,6 +1023,9 @@ def build_natal_feature_builder(
                                 "bphs_strength": float(bphs_strength if kind != "rashi" else 1.0),
                                 "bphs_virupa": float(bphs_virupa_from_strength(bphs_strength if kind != "rashi" else 1.0)),
                                 "transit_retro": transit_retro,
+                                "transit_lon": float(transit_lon),
+                                "transit_sign": str(get_zodiac_sign(transit_lon)),
+                                "natal_lon": float(target["lon"]),
                                 "natal_sign": target["sign"],
                                 "natal_house": int(target["house"]) if target["house"] is not None else np.nan,
                             }

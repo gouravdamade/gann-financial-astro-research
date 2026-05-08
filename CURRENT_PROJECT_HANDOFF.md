@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-08 04:15 IST
+Last updated: 2026-05-09 05:20 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -30,10 +30,10 @@ Git executable:
 Latest commits before this handoff update:
 
 ```text
+9ea6dbf Exclude context slow pairs from short term views
 376e779 Exclude slow planet pairs from short term views
 97e2091 Show USDJPY hypothesis by default in hovers
 7375df8 Add active regime zone hovers
-45626a6 Make hourly chart include all aspect durations
 ```
 
 Git user email is repo-local:
@@ -108,8 +108,8 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260508_041401.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260508_041401.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.csv
 ```
 
 M30 data download:
@@ -164,6 +164,7 @@ M30:    403 rows, 60-1440 minutes, context/slow excluded rows 0
 Hourly: 506 rows, 60-42720 minutes, context/slow excluded rows 0
 Daily:   96 rows, 1500-102180 minutes, context/slow excluded rows 3
 USDJPY hypothesis hover rows: 1005/1005
+Doctrine hypothesis hover rows: 1005/1005
 ```
 
 ### Event Duration Cap
@@ -348,6 +349,32 @@ Short-term slow/context-pair exclusion update on 2026-05-08:
 - Quick non-purged FX sanity result:
   `BEARISH win_rate=53.16%`, `BULLISH win_rate=46.53%`, `CONFLICT win_rate=53.90%`, `UNKNOWN win_rate=54.33%`.
 
+Doctrine dignity scoring update on 2026-05-09:
+
+- Added separate doctrine-v1 score fields without replacing the legacy heuristic `fx_pair_*` fields.
+- Doctrine-v1 applies sign dignity/friendship Sthana Bala style modifiers for the seven classical planets:
+  exaltation `60V`, moolatrikona `45V`, own sign `30V`, friendly sign `15V`, neutral sign `10V`, enemy sign `4V`, debilitation `0V`.
+- Rahu, Ketu, Uranus, Neptune, Pluto remain dignity `unknown` in v1 because sign ownership/exaltation varies by tradition or is not classical.
+- Existing touch logs contain natal/reference sign in each hit, so the current chart uses natal/reference dignity. `build_aspect_sr_touch_log.py` now also writes `transit_lon`, `transit_sign`, and `natal_lon` into future hit JSONs when a full touch-log rebuild is run.
+- Dashboard clustered cache version is now `_clustered_v11.parquet`.
+- Latest chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.html`
+- Latest switch CSV validation:
+  `rows=1005`;
+  `M30=403 rows, slow-slow/context-slow rows=0`;
+  `Hourly=506 rows, slow-slow/context-slow rows=0`;
+  `Daily=96 rows, slow-slow/context-slow rows=3`;
+  `USDJPY hypothesis hover rows=1005/1005`;
+  `Doctrine hypothesis hover rows=1005/1005`.
+- Doctrine direction counts:
+  `BULLISH=380`, `BEARISH=302`, `CONFLICT=196`, `UNKNOWN=127`.
+- Candidate file rebuilt from latest chart CSV:
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv`
+  `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`
+- Quick non-purged doctrine sanity result:
+  `BEARISH win_rate=52.32%`, `BULLISH win_rate=43.95%`, `CONFLICT win_rate=59.69%`, `UNKNOWN win_rate=54.33%`.
+- Note: a full doctrine-v1 touch-log rebuild was attempted after laptop restarts but did not leave a complete new file. Current artifacts use the existing complete all-duration touch log plus the new scorer.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -443,7 +470,7 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260508_041401.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv `
   --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
@@ -458,11 +485,12 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User inspects `sr_touch_full_1year_switch_20260508_041401.html`, especially short-term views without slow-only or context-slow pairs.
+1. User inspects `sr_touch_full_1year_switch_20260509_051836.html`, especially doctrine score lines in hovers.
 2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`.
-3. Test whether `fx_pair_net_score` should be inverted, thresholded, or used only as an ML feature.
-4. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.
-5. Add feature columns from the PDF inventory one group at a time:
+3. Test whether `fx_pair_net_score` and `fx_doctrine_pair_net_score` should be inverted, thresholded, blended, or used only as ML features.
+4. Run a full touch-log rebuild when machine runtime is stable so future hit JSONs include `transit_sign` dignity.
+5. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.
+6. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
 
 ## Recovery Prompt For A New Chat
