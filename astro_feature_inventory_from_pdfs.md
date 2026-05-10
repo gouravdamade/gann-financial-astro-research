@@ -10,7 +10,7 @@ Created from the project PDFs supplied on 2026-05-04 and updated with the Shad B
 | STRICT_VEDIC_LLM | `Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf` | readable text, 9 pages | Core architecture, rule layer, RAG/LLM separation |
 | ASTROECON | `pdfcoffee.com_financial-astrology-pdf-free.pdf` | readable text, 104 pages | Experimental financial astrology feature rules |
 | FUTURETEK_DHRUVANK | `pdfcoffee.com_futuretec-financial-astrology-set-2-dhruvank-pdf-free.pdf` | readable text, 17 pages | Experimental daily Dhruvank feature |
-| GANN_VOL2 | `pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` | body text not extracted | Pending OCR; do not implement yet |
+| GANN_VOL2 | `pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` | OCR text, 177 pages, about 210k chars | Experimental Gann price/time/longitude feature source; verify page OCR before implementation |
 | SHADBALA_JAYA | `jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf` | readable text, 179 pages | Detailed Shadbala doctrine/reference |
 
 Extracted text folder:
@@ -53,6 +53,9 @@ Extracted text folder:
 | GRAND_TRINE_PATTERN | Experimental financial astrology | Daily/weekly | Trend continuation / inertia | Three trines in triangular pattern | ASTROECON p37-p38 | Not implemented |
 | YOD_PATTERN | Experimental financial astrology | M30/H1/daily | Focused turning-point candidate, especially near SR | Sextile base plus focal opposition/quincunx-style focus or midpoint focus | ASTROECON p38-p39, p52-p53 | Not implemented |
 | MIDPOINT_DIRECT_HIT | Experimental financial astrology | M30/H1/daily/weekly | Important when a planet directly contacts midpoint/opposite midpoint | Planet longitudes; midpoint pairs; orb/time window | ASTROECON p58-p59 | Not implemented |
+| GANN_PRICE_LONGITUDE_HIT | Experimental Gann financial astrology | M30/H1/daily/weekly | Planetary longitude converted to price can mark support/resistance/turning points | Planet geocentric/heliocentric longitude; price scale; modulo/add-360 price mapping; touch distance | GANN_VOL2 OCR p11-p14, p19-p20 | Not implemented; requires scale policy and page verification |
+| GANN_OUTER_PLANET_AVERAGE | Experimental Gann financial astrology | Daily/weekly | Average geocentric/heliocentric longitudes of outer planets may define time/price resistance zones | Mars/Jupiter/Saturn/Uranus/Neptune/Pluto longitudes; smoothed 0/360 crossing handling; price conversion | GANN_VOL2 OCR p20-p30 | Not implemented; higher-timeframe feature candidate |
+| GANN_CIRCLE_ACTIVE_ANGLE | Experimental Gann financial astrology | Daily/weekly | Circle Chart / active-angle projections can mark future time periods and resistance levels | Circle chart degree grid; selected origin; projected time periods; price/resistance levels | GANN_VOL2 OCR p7-p10, p34+ | Not implemented; needs rule extraction |
 | ANGULAR_INTRADAY_HIT | Location-specific experimental feature | M30/H1 | Intraday timing when planets hit Asc/MC/Desc/IC for market location | Exchange location; house/angle calculation; planet angular hit times | ASTROECON p52-p53, p65+ | Not implemented; requires location policy |
 | DHRUVANK_REMAINDER_SIGNAL | Experimental Vedic financial astrology | Daily/weekly | Rise/fall/no-change signal from Dhruvank remainder | Commodity/share code, city, nakshatra, tithi, weekday, lunar month, sun sign, yoga | FUTURETEK_DHRUVANK p2-p17 | Not implemented |
 | JYOTISH_NAKSHATRA_PADA | Strict Jyotish core feature | All | Feature/context only until rulebook exists | Sidereal longitude mapped to 27 nakshatras and 4 padas | STRICT_JYOTISH_ML p3 | Not implemented as reusable feature table |
@@ -72,7 +75,7 @@ Extracted text folder:
 4. Only after baseline ML/evaluation works, add new pattern detectors:
    midpoint direct hits, stellium, T-square/grand-cross/grand-trine, then Dhruvank daily feature.
 
-5. Do not implement Gann rules until OCR produces usable page-anchored text.
+5. Gann OCR is now available at `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`; do not implement Gann rules until each rule is manually checked against the page OCR/source image and given source IDs.
 
 ## Notes For Weekly Extension
 

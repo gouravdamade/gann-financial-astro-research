@@ -292,6 +292,23 @@ def parse_args() -> argparse.Namespace:
         default=5.0,
         help="Exclude aspect events longer than this many days. Use 0 or a negative value for no duration cap.",
     )
+    parser.add_argument(
+        "--event-slice-start",
+        type=int,
+        default=0,
+        help="Process events starting at this zero-based index after filtering and price overlap checks.",
+    )
+    parser.add_argument(
+        "--event-slice-size",
+        type=int,
+        default=0,
+        help="Process at most this many events after --event-slice-start. Use 0 for all remaining events.",
+    )
+    parser.add_argument(
+        "--dry-run-count",
+        action="store_true",
+        help="Print the number of events available after filtering and price overlap checks, then exit.",
+    )
     return parser.parse_args()
 
 
@@ -1282,7 +1299,37 @@ def main() -> None:
     if events.empty:
         raise RuntimeError("No events with valid start/end index mapping.")
 
-    unique_bar_indices = sorted({i for a, b in zip(idx_start, idx_end, strict=False) for i in range(min(a, b), max(a, b) + 1)})
+    events = events.reset_index(drop=True)
+    if args.dry_run_count:
+        print(f"Filtered events available: {len(events)}")
+        return
+
+    slice_start = max(0, int(args.event_slice_start))
+    slice_size = max(0, int(args.event_slice_size))
+    if slice_start:
+        events = events.iloc[slice_start:].copy()
+    if slice_size:
+        events = events.iloc[:slice_size].copy()
+    events = events.reset_index(drop=True)
+    if events.empty:
+        raise RuntimeError(
+            f"No events remain after event slicing: start={slice_start}, size={slice_size or 'all'}."
+        )
+    if slice_start or slice_size:
+        print(
+            "Event slice:",
+            f"start={slice_start}",
+            f"size={slice_size or 'all'}",
+            f"events={len(events)}",
+        )
+
+    unique_bar_indices = sorted(
+        {
+            i
+            for a, b in zip(events["idx_start"].to_numpy(), events["idx_end"].to_numpy(), strict=False)
+            for i in range(min(int(a), int(b)), max(int(a), int(b)) + 1)
+        }
+    )
     if not unique_bar_indices:
         raise RuntimeError("No price bars found inside aspect windows.")
 

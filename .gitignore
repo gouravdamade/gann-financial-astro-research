@@ -23,11 +23,18 @@ astro_sr_analysis_report/
 astro_sr_chart_pack/
 astro_sr_exports/
 chat_recovery_2026-03-03/
+chat_session_backups/
+gann_thread_backup_*/
 pdf_extracts/
 pycharm_acp_broken_chat_backup_2026-04-29/
 swiss/
 tmp*/
 untitled/
+
+# Local recovery snapshots, rebuild checkpoints, and evaluation outputs
+state_5_before_*.sqlite*
+touchlog_rebuild_checkpoints*/
+walk_forward_eval_*/
 
 # Separate web/app projects kept under this parent folder
 orliva-static-deploy/

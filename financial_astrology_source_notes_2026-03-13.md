@@ -183,12 +183,28 @@ Unsafe use:
 
 ### Gann PDF
 
-`pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` appears to be image-heavy or scanned.
-Current text extraction gave mostly headers and page markers.
+`pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` is image-heavy/scanned. OCR was completed on 2026-05-10.
+
+OCR outputs:
+- `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`
+- `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json`
+- per-page checkpoints: `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\gann_ocr_pages`
+
+OCR summary:
+- 177 pages
+- about 210k OCR body characters
+- about 8.2k OCR lines
+
+Initial candidate rule families visible in OCR:
+- price and longitude conversion for support/resistance/turning points
+- geocentric/heliocentric planetary longitude paths
+- outer-planet longitude averages with 0/360 smoothing
+- Circle Chart / active-angle time and resistance projections
+- fourth-dimension / intraday and double-numbered price-time chart material
 
 Consequence:
-- I cannot claim a thorough text study of that one yet.
-- It needs OCR or manual page review before extracting implementable rules from it.
+- OCR is now usable for page-anchored study.
+- Do not implement Gann rules directly from OCR snippets alone; verify against the page OCR JSON/source image and attach source page IDs to each encoded rule.
 
 ## What this means for our codebase now
 

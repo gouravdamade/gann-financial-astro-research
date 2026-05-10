@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-09 05:20 IST
+Last updated: 2026-05-11 02:08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -103,13 +103,16 @@ C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote.parquet
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv
 C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
+C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv
+C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv
+C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.parquet
 ```
 
 Latest chart export with score hovers:
 
 ```text
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.html
-C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.csv
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_015700.html
+C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_015700.csv
 ```
 
 M30 data download:
@@ -373,7 +376,62 @@ Doctrine dignity scoring update on 2026-05-09:
   `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`
 - Quick non-purged doctrine sanity result:
   `BEARISH win_rate=52.32%`, `BULLISH win_rate=43.95%`, `CONFLICT win_rate=59.69%`, `UNKNOWN win_rate=54.33%`.
-- Note: a full doctrine-v1 touch-log rebuild was attempted after laptop restarts but did not leave a complete new file. Current artifacts use the existing complete all-duration touch log plus the new scorer.
+- Note: a full doctrine-v1 touch-log rebuild was attempted after laptop restarts but did not leave a complete new file. The likely cause, from the lost prior Gann thread, was heavy memory pressure during the full touch-log build, reportedly rising to about 10 GB before the laptop restarted/crashed. Current artifacts use the existing complete all-duration touch log plus the new scorer.
+- Verified on 2026-05-10: `aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations.csv` still has no `transit_sign`, `transit_lon`, or `natal_lon` entries inside `tn_hits_json` / `base_tn_hits_json`. A stable-machine rebuild is still required before transit-sign dignity can be used from the touch log itself.
+
+Transit-sign touch-log/candidate update on 2026-05-11:
+
+- Validated transitsign touch log:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+- Rows: `619`; unique event IDs: `619`; event-id set equals the old all-duration touch log.
+- Hit JSON validation on the touch log:
+  `9356` hits checked across `tn_hits_json` and `base_tn_hits_json`; missing `transit_lon`, `transit_sign`, or `natal_lon`: `0`.
+- Latest transitsign switch chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_015700.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_015700.csv`
+- Chart CSV rows: `1005`; chart hit JSON validation:
+  `15241` hits checked; missing `transit_lon`, `transit_sign`, or `natal_lon`: `0`.
+- Rebuilt transitsign candidates:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv`
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.parquet`
+- Candidate summary:
+  rows `1005`; `potential_trade=1005`; `ignored=6`;
+  categories `multiple_aspects=925`, `single_aspect=80`;
+  close actions `TAKE_PROFIT=506`, `STOP_LOSS=486`, `TIME_CLOSE_72H=13`;
+  ML outcomes `WIN=511`, `LOSS=488`, `IGNORE=6`.
+- Doctrine direction counts after transit-sign dignity:
+  `BULLISH=377`, `BEARISH=319`, `CONFLICT=182`, `UNKNOWN=127`.
+- Compared with prior non-transitsign candidates by `chart_timeframe + touch_id`:
+  doctrine pair net score changed on `769/1005` rows;
+  base dignity average changed on `540/1005`;
+  quote dignity average changed on `550/1005`;
+  doctrine direction changed on `52/1005`.
+  This confirms the scorer is consuming `transit_sign` from hit JSON, not only natal/reference sign dignity.
+
+Purged walk-forward evaluation on 2026-05-11:
+
+- Added evaluator:
+  `C:\Users\ADMIN\PycharmProjects\evaluate_transitsign_walk_forward.py`
+- Input:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.parquet`
+- Output directory:
+  `C:\Users\ADMIN\PycharmProjects\walk_forward_eval_transitsign_20260511`
+- Files:
+  `summary.json`, `model_summary.csv`, `fold_metrics.csv`, `predictions.csv`
+- Setup:
+  `999` WIN/LOSS rows used; `5` expanding chronological folds; training rows purged if their `72h` close time overlaps the test fold start; future/outcome columns excluded, including `close_after72`, `ret_after_72h_pct`, exit fields, `ml_outcome`, and source `delta_1d/3d/7d`.
+- Feature set after leakage exclusions:
+  `179` numeric features and `46` categorical features.
+- Best simple ML result:
+  `random_forest_balanced` accuracy `54.33%`, balanced accuracy `53.94%`, win precision `55.97%`, win recall `59.32%`.
+- Other baselines:
+  `logistic_l2_balanced` accuracy `53.00%`, balanced accuracy `51.53%`;
+  `dummy_most_frequent` balanced accuracy `50.00%`.
+- Raw rule direction win rates on WIN/LOSS rows:
+  legacy FX `BULLISH=47.01%`, `BEARISH=53.47%`, `CONFLICT=53.90%`, `UNKNOWN=54.33%`;
+  doctrine FX `BULLISH=45.31%`, `BEARISH=53.00%`, `CONFLICT=57.69%`, `UNKNOWN=54.33%`.
+- Read:
+  The transit-sign doctrine score is not directly usable as a standalone directional signal yet. Treat it as a feature for calibration; inversion, thresholding, and blending should be tested in the purged walk-forward framework before trusting direction labels.
 
 Important scoring fix on 2026-05-04:
 
@@ -442,7 +500,7 @@ YAML validation:
 ```text
 sources: 6
 doctrine_locks: 4
-features: 17
+features: 20
 ```
 
 Important PDF conclusion:
@@ -450,7 +508,16 @@ Important PDF conclusion:
 - The two strict Jyotish PDFs are architecture/doctrine-control docs.
 - The Shad Bala PDF is the detailed strength-reference source for future `SHADBALA_GATE` implementation.
 - AstroEcon and Futuretek/Dhruvank are experimental feature sources.
-- Gann PDF did not extract readable body text; OCR is needed before implementing Gann rules.
+- Gann PDF now has OCR text; implementable rules still require manual page verification before coding.
+- Gann PDF OCR was completed on 2026-05-10:
+  `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`
+  Summary JSON:
+  `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json`
+  Per-page OCR checkpoints:
+  `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\gann_ocr_pages`
+- Initial Gann candidate feature families were added to the inventory:
+  `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, `GANN_CIRCLE_ACTIVE_ANGLE`.
+  These remain experimental and not implemented; verify page OCR/source images before encoding rules.
 
 ## Useful Commands
 
@@ -458,7 +525,7 @@ Export latest switch chart with M30/H1/Daily and FX hover scores:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\sr_touch_lazy_dashboard.py `
-  --touch-log C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations.csv `
+  --touch-log C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
   --export-full-year `
   --export-dir C:\Users\ADMIN\Desktop\doc `
@@ -470,10 +537,10 @@ Rebuild scored trade candidates from latest switch CSV:
 
 ```powershell
 python C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py `
-  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260509_051836.csv `
+  --touch-log C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_015700.csv `
   --price C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet `
-  --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.csv `
-  --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet
+  --output-csv C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv `
+  --output-parquet C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.parquet
 ```
 
 Check Git:
@@ -485,13 +552,92 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. User inspects `sr_touch_full_1year_switch_20260509_051836.html`, especially doctrine score lines in hovers.
-2. Add purged walk-forward ML evaluation for `trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations.parquet`.
-3. Test whether `fx_pair_net_score` and `fx_doctrine_pair_net_score` should be inverted, thresholded, blended, or used only as ML features.
-4. Run a full touch-log rebuild when machine runtime is stable so future hit JSONs include `transit_sign` dignity.
-5. Add weekly mode using the uncapped touch log and a `>5d` duration bucket.
-6. Add feature columns from the PDF inventory one group at a time:
+1. User inspects `sr_touch_full_1year_switch_20260511_015700.html`, especially doctrine score lines in hovers after transit-sign dignity was added.
+2. Extend `evaluate_transitsign_walk_forward.py` with walk-forward rule calibration tests for `fx_pair_net_score` and `fx_doctrine_pair_net_score`: normal vs inverted, train-selected thresholds, and blended score variants.
+3. Add weekly mode using the uncapped transitsign touch log and a `>5d` duration bucket.
+4. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
+5. For Gann: manually review OCR pages for `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`; only then implement deterministic feature columns with source-page metadata.
+
+## Memory-Safe Touch-Log Rebuild Plan
+
+Reason:
+- The prior full touch-log rebuild appears to have crashed/restarted the laptop during high memory use, reportedly around 10 GB.
+- `build_aspect_sr_touch_log.py` currently accumulates generated rows in memory and creates one final DataFrame before writing output. That is risky for full all-duration rebuilds with transit-sign hit JSON.
+
+Preferred fix before another full rebuild:
+- Add chunked/checkpointed output to `build_aspect_sr_touch_log.py`.
+- Process events in small batches, for example 25-50 events per batch.
+- Write each batch to `*.partNNNN.parquet` or append-safe CSV immediately after the batch completes.
+- Persist a small manifest with batch number, event id range, row count, timestamp, and command args.
+- Add `--resume-from-checkpoints` so a laptop restart does not lose completed batches.
+- Concatenate checkpoint parquet files only at the end, or let downstream scripts read a checkpoint directory.
+- Keep memory bounded by clearing batch row lists/DataFrames after each write.
+- Prefer parquet checkpoints over one giant CSV during rebuild; write the final CSV only after successful validation.
+- Add a smoke option that rebuilds the first few events with `transit_sign`, `transit_lon`, and `natal_lon`, then verifies those keys before the full run.
+
+Operational fallback:
+- If code changes are not desired first, run multiple smaller date/event slices manually and merge after validation.
+- Monitor memory during the first full attempt; abort if memory rises steadily instead of plateauing.
+- Keep the existing complete all-duration touch log as the fallback source until the new checkpointed rebuild is complete and validated.
+
+Implementation started on 2026-05-10:
+- `build_aspect_sr_touch_log.py` now accepts `--event-slice-start`, `--event-slice-size`, and `--dry-run-count`.
+- Added `run_touchlog_rebuild_checkpoints.py`, a resumable checkpoint runner.
+- Smoke rebuild of 5 events produced hit JSON with `transit_lon`, `transit_sign`, `natal_lon`, and `natal_sign`.
+- First real checkpoints:
+  `part_00000_00049.csv` completed, 49 rows.
+  `part_00050_00099.csv` completed, validated.
+- Full background checkpoint runner was started at 2026-05-10 23:36 IST:
+  checkpoint dir: `C:\Users\ADMIN\PycharmProjects\touchlog_rebuild_checkpoints_transitsign_20260510`
+  final target: `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  total filtered events: `11668`
+  batch size: `50`
+  runner process observed: `python.exe` running `run_touchlog_rebuild_checkpoints.py`
+- Progress check at 2026-05-11 00:04 IST:
+  92 checkpoint CSV parts complete, latest complete part `part_04550_04599.csv`, runner processing event slice `4600-4649`.
+- Telegram progress monitor started on 2026-05-11:
+  script: `C:\Users\ADMIN\PycharmProjects\monitor_touchlog_rebuild_telegram.py`
+  interval: 15 minutes
+  monitor process observed: `python.exe` PID `7252`
+  monitor log: `C:\Users\ADMIN\PycharmProjects\touchlog_rebuild_telegram_monitor.log`
+  The monitor uses `C:\Users\ADMIN\Desktop\Trading_Algo\New folder\telegram_remote_control.py` for Telegram config/client support.
+  Note: two initial test messages incorrectly said `stopped` because Windows liveness detection used `os.kill(pid, 0)`; this was fixed and corrected `running` messages were sent.
+- At 2026-05-11 00:16 IST the runner stopped on `failed_validation` for slice `6100-6149`; the batch generated a valid header-only CSV with zero touch rows, so there were no hit JSON records to validate. This was not a data/schema failure.
+- `run_touchlog_rebuild_checkpoints.py` was updated to accept legitimate zero-row/header-only checkpoint parts and non-empty parts with no TN hits, while still rejecting malformed JSON or hit records missing required keys.
+- Runner was resumed at 2026-05-11 00:30 IST. Corrected Telegram monitor messages were sent at 00:31 IST with status `running`.
+- Progress check at 2026-05-11 00:31 IST:
+  126 checkpoint CSV parts complete, latest complete part `part_06250_06299.csv`, runner processing event slice `6300-6349`.
+- Completion/correction on 2026-05-11 01:50 IST:
+  The broad checkpoint run completed, but it was invalid for the intended file because it used the builder default event source
+  `astro_training_data_ipo_tokyo_18890211.parquet` instead of the intended
+  `astro_training_data_ipo_tokyo_18890211_orb_1y_nodes.parquet`.
+  Resulting broad merge had `11094` rows from `11668` filtered events and must not be used downstream.
+- Correct source universe:
+  `C:\Users\ADMIN\PycharmProjects\astro_training_data_ipo_tokyo_18890211_orb_1y_nodes.parquet`
+  with `787` filtered events.
+- Corrected checkpoint test directory:
+  `C:\Users\ADMIN\PycharmProjects\touchlog_rebuild_checkpoints_transitsign_nodes_20260511`
+  produced 16 parts, but the slice merge produced `641` rows. A single-pass control on the same 787 events produced `619` rows, matching the old all-duration touch log. Cause: event slicing changes slice-local SR/longitude/regime context, so checkpoint part merges are not semantically equivalent to a single-pass build.
+- `run_touchlog_rebuild_checkpoints.py` now refuses to merge event-sliced parts by default unless `--allow-slice-merge` is passed. Treat merged checkpoint parts as diagnostic only until the builder is redesigned to preserve global context while streaming rows.
+- Validated final transitsign touch log:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  rows: `619`
+  unique `event_id`: `619`
+  time range: `2025-03-03 12:30:00+05:30` to `2026-03-06 18:30:00+05:30`
+  aspect counts: `trine=207`, `square=201`, `opposition_orb=106`, `conjunction_orb=105`
+  event-id set equals the old all-duration touch log.
+  JSON validation: `9356` hit records checked across `tn_hits_json` and `base_tn_hits_json`; missing required `transit_lon`, `transit_sign`, or `natal_lon`: `0`; malformed JSON: `0`.
+- Correct final rebuild command used:
+  `python C:\Users\ADMIN\PycharmProjects\build_aspect_sr_touch_log.py --events C:\Users\ADMIN\PycharmProjects\astro_training_data_ipo_tokyo_18890211_orb_1y_nodes.parquet --price C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet --include-natal --aspect-mode orb --max-event-days 0 --output C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+- Do not resume the old broad checkpoint directory `touchlog_rebuild_checkpoints_transitsign_20260510` for final artifacts.
+
+## Session Recovery Discipline
+
+- Update this handoff after each meaningful work session, especially after long-running builds, generated artifacts, failed rebuild attempts, or chat/session recovery work.
+- Create a local chat/session backup after each important response or before ending a session. Include the active rollout JSONL, `state_5.sqlite`, and any relevant `state_5.sqlite-wal` / `state_5.sqlite-shm` files when present.
+- Include a copy of `CURRENT_PROJECT_HANDOFF.md`, `astro_feature_inventory_from_pdfs.md`, `astro_feature_inventory_from_pdfs.yaml`, and `financial_astrology_source_notes_2026-03-13.md` in chat/session backups when project context changes.
+- Do not rely on PyCharm chat history alone for recovery; use this handoff and timestamped backups as the durable record.
 
 ## Recovery Prompt For A New Chat
 
