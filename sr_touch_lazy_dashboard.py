@@ -685,6 +685,7 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
+        "avg_all_scoring_expands_to_7_classical_planets;"
         "ml_must_validate"
     )
 

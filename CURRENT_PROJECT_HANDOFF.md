@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-11 02:08 IST
+Last updated: 2026-05-11 22:15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -433,6 +433,45 @@ Purged walk-forward evaluation on 2026-05-11:
 - Read:
   The transit-sign doctrine score is not directly usable as a standalone directional signal yet. Treat it as a feature for calibration; inversion, thresholding, and blending should be tested in the purged walk-forward framework before trusting direction labels.
 
+AVG(ALL) 7-classical scoring experiment on 2026-05-11:
+
+- Implemented in:
+  `C:\Users\ADMIN\PycharmProjects\build_trade_candidates_from_touches.py`
+  and picked up by `sr_touch_lazy_dashboard.py` through its imported scoring functions.
+- Rule:
+  when a scored event body is `AVG(ALL)`, scoped hit matching expands it to the seven classical bodies:
+  `SUN`, `MOON`, `MERCURY`, `VENUS`, `MARS`, `JUPITER`, `SATURN`.
+- Rationale:
+  `AVG(ALL)` is an artificial basket and should not be assigned a fixed benefic/malefic nature. Expansion lets member-planet transit-natal hits explain the regime instead of showing `n/a`.
+- New chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_220046.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260511_220046.csv`
+- New candidate variant:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign_avg7classical.csv`
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign_avg7classical.parquet`
+- Targeted screenshot case:
+  `AVG(ALL)|MARS trine`, 2025-04-01 to 2025-04-07, changed from `UNKNOWN/n/a` to:
+  `BEARISH`, pair net `-1.235`, dominant USD `SATURN>AVG(ALL):square`, dominant JPY `SATURN>SATURN:trine`.
+- Coverage comparison vs prior transitsign candidates:
+  base dominant blank `393 -> 320`, quote dominant blank `432 -> 338`;
+  `fx_pair_net_score` changed on `228/1005` rows;
+  `fx_doctrine_pair_net_score` changed on `228/1005` rows;
+  doctrine direction changed on `150/1005` rows.
+- Direction counts:
+  previous doctrine `BULLISH=377`, `BEARISH=319`, `CONFLICT=182`, `UNKNOWN=127`;
+  avg7classical doctrine `BULLISH=389`, `BEARISH=360`, `CONFLICT=160`, `UNKNOWN=96`.
+- Purged walk-forward output:
+  `C:\Users\ADMIN\PycharmProjects\walk_forward_eval_transitsign_avg7classical_20260511`
+- Purged walk-forward result:
+  `random_forest_balanced` accuracy `48.33%`, balanced accuracy `48.41%`;
+  `logistic_l2_balanced` accuracy `50.67%`, balanced accuracy `49.85%`;
+  dummy baseline balanced accuracy `50.00%`.
+- Rule direction win rates for avg7classical:
+  legacy FX `BULLISH=48.36%`, `BEARISH=50.39%`, `CONFLICT=62.40%`, `UNKNOWN=51.04%`;
+  doctrine FX `BULLISH=47.79%`, `BEARISH=50.00%`, `CONFLICT=61.88%`, `UNKNOWN=51.04%`.
+- Read:
+  The 7-classical expansion improves hover explainability and reduces `n/a`, but it did not improve simple purged walk-forward accuracy. Treat as experimental; use it for chart interpretation and as a candidate feature, not as a direct replacement for the prior transitsign scoring baseline.
+
 Important scoring fix on 2026-05-04:
 
 - Earlier hover scores used the strongest active `tn_hits_json` hit in the whole bar.
@@ -553,11 +592,12 @@ Check Git:
 ## Next Recommended Steps
 
 1. User inspects `sr_touch_full_1year_switch_20260511_015700.html`, especially doctrine score lines in hovers after transit-sign dignity was added.
-2. Extend `evaluate_transitsign_walk_forward.py` with walk-forward rule calibration tests for `fx_pair_net_score` and `fx_doctrine_pair_net_score`: normal vs inverted, train-selected thresholds, and blended score variants.
-3. Add weekly mode using the uncapped transitsign touch log and a `>5d` duration bucket.
-4. Add feature columns from the PDF inventory one group at a time:
+2. Compare the prior transitsign baseline chart against `sr_touch_full_1year_switch_20260511_220046.html` for AVG(ALL) regimes. If the expanded hovers are useful visually, keep the AVG(ALL) expansion as an explainability feature but calibrate it separately from directional ML.
+3. Extend `evaluate_transitsign_walk_forward.py` with walk-forward rule calibration tests for `fx_pair_net_score` and `fx_doctrine_pair_net_score`: normal vs inverted, train-selected thresholds, and blended score variants.
+4. Add weekly mode using the uncapped transitsign touch log and a `>5d` duration bucket.
+5. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
-5. For Gann: manually review OCR pages for `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`; only then implement deterministic feature columns with source-page metadata.
+6. For Gann: manually review OCR pages for `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`; only then implement deterministic feature columns with source-page metadata.
 
 ## Memory-Safe Touch-Log Rebuild Plan
 

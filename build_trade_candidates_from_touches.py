@@ -16,6 +16,8 @@ HARD_ASPECTS = {"conjunction", "conjunction_orb", "square", "opposition", "oppos
 SOFT_ASPECTS = {"sextile", "trine"}
 OUTER_OR_NODE_BODIES = {"RAHU", "KETU", "URANUS", "NEPTUNE", "PLUTO"}
 FAST_BODIES = {"MOON", "MERCURY", "VENUS", "SUN", "MARS"}
+AVG_ALL_LABEL = "AVG(ALL)"
+AVG_ALL_CLASSICAL_SCORING_MEMBERS = ("SUN", "MOON", "MERCURY", "VENUS", "MARS", "JUPITER", "SATURN")
 NATURAL_PLANET_BIAS = {
     "JUPITER": 1.0,
     "VENUS": 0.8,
@@ -272,6 +274,19 @@ def pair_bodies(pair_key: Any) -> set[str]:
     return {normalize_body(part) for part in text.split("|") if str(part).strip()}
 
 
+def expand_scoring_bodies(bodies: set[str] | None) -> set[str]:
+    expanded: set[str] = set()
+    for body in bodies or set():
+        normalized = normalize_body(body)
+        if not normalized:
+            continue
+        if normalized == AVG_ALL_LABEL:
+            expanded.update(AVG_ALL_CLASSICAL_SCORING_MEMBERS)
+        else:
+            expanded.add(normalized)
+    return expanded
+
+
 def duration_bucket(minutes: Any) -> str:
     try:
         value = float(minutes)
@@ -387,7 +402,7 @@ def score_transit_natal_hits(
     event_bodies: set[str] | None = None,
 ) -> dict[str, Any]:
     hits = safe_json_list(value)
-    bodies = {normalize_body(body) for body in (event_bodies or set()) if normalize_body(body)}
+    bodies = expand_scoring_bodies(event_bodies)
     aspect_name = comparable_aspect_name(event_aspect)
     if bodies:
         body_hits = [hit for hit in hits if normalize_body(hit.get("transit_planet")) in bodies]
@@ -614,6 +629,7 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         "fx_scoring_notes": (
             "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;"
             "doctrine_v1_adds_sign_dignity_friendship_sthana_bala;ml_must_validate"
+            ";avg_all_scoring_expands_to_7_classical_planets"
             if has_base_reference
             else "base_reference_missing;pair_hypothesis_not_scored"
         ),
