@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-12 22:25 IST
+Last updated: 2026-05-12 22:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -488,6 +488,14 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with red hover/click interval selection:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_222118.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_222118.csv`
+- Second follow-up after user reported hover/click still did not work, and that
+  "click for quote/JPY details" never worked on aspect shaded areas:
+  `sr_touch_lazy_dashboard.py` now adds transparent click/hover hitbox traces above the candlesticks and planetary SR lines, but below the touch markers.
+  This avoids top visual traces swallowing mouse events before the aspect/regime window can receive them.
+- The browser script now unwraps nested Plotly `customdata` before reading details, so aspect-window clicks can populate the Quote/JPY details panel instead of losing the payload.
+- Fresh chart export with hitbox interaction layer:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_224942.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_224942.csv`
 
 Important scoring fix on 2026-05-04:
 

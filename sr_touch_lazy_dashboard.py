@@ -94,7 +94,14 @@ DETAIL_PANEL_POST_SCRIPT = r"""
   panel.style.cssText = 'margin:12px 0 0 0;padding:12px 14px;background:#0b1220;color:#dbeafe;border:1px solid #334155;border-radius:6px;font:13px/1.45 Arial,sans-serif;max-height:360px;overflow:auto;';
   panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Hover or click an event, marker, or active regime zone to isolate its start/end window.</span>';
   gd.parentNode.insertBefore(panel, gd.nextSibling);
+  function unwrapCustomData(customdata) {
+    while (Array.isArray(customdata) && customdata.length === 1 && Array.isArray(customdata[0])) {
+      customdata = customdata[0];
+    }
+    return customdata;
+  }
   function detailFromCustomData(customdata) {
+    customdata = unwrapCustomData(customdata);
     if (Array.isArray(customdata)) {
       if (customdata.length > 1 && customdata[1]) return customdata[1];
       if (customdata.length > 0) return customdata[0];
@@ -102,9 +109,7 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     return customdata;
   }
   function selectionFromCustomData(customdata) {
-    if (Array.isArray(customdata) && customdata.length === 1 && Array.isArray(customdata[0])) {
-      customdata = customdata[0];
-    }
+    customdata = unwrapCustomData(customdata);
     if (!Array.isArray(customdata) || customdata.length < 4) return null;
     var start = customdata[2];
     var end = customdata[3];
@@ -132,6 +137,19 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     if (!Array.isArray(items)) return [];
     return items.filter(function (item) {
       return !(item && item.name === selectedName);
+    });
+  }
+  function disableSelectionPointerEvents() {
+    var nodes = gd.querySelectorAll('.shapelayer path, .annotation');
+    nodes.forEach(function (node) {
+      var text = (node.textContent || '');
+      if (
+        node.getAttribute('data-index') !== null ||
+        text.indexOf('Start') !== -1 ||
+        text.indexOf('End') !== -1
+      ) {
+        node.style.pointerEvents = 'none';
+      }
     });
   }
   function setSelectedWindow(selection) {
@@ -216,7 +234,9 @@ DETAIL_PANEL_POST_SCRIPT = r"""
         font: {color: '#fee2e2', size: 11}
       }
     );
-    Plotly.relayout(gd, {shapes: shapes, annotations: annotations});
+    Plotly.relayout(gd, {shapes: shapes, annotations: annotations}).then(function () {
+      setTimeout(disableSelectionPointerEvents, 0);
+    });
   }
   function handleSelectionEvent(eventData, updateDetails) {
     if (!eventData || !eventData.points || !eventData.points.length) return;
@@ -1030,6 +1050,31 @@ def event_selection_customdata(
     ]
 
 
+def build_selection_hitbox_polygon(
+    x0: Any,
+    x1: Any,
+    y0: float,
+    y1: float,
+    hover_text: str,
+    customdata: list[str],
+    name: str,
+) -> go.Scatter:
+    return go.Scatter(
+        x=[x0, x0, x1, x1, x0],
+        y=[y0, y1, y1, y0, y0],
+        mode="lines",
+        line=dict(color="rgba(255,255,255,0)", width=0.1),
+        fill="toself",
+        fillcolor="rgba(255,255,255,0.001)",
+        hoveron="fills",
+        text=hover_text,
+        customdata=[customdata] * 5,
+        hovertemplate="%{text}<extra></extra>",
+        name=name,
+        showlegend=False,
+    )
+
+
 def build_hover_text(row: pd.Series) -> str:
     return "<br>".join(build_event_hover_lines(row))
 
@@ -1158,6 +1203,30 @@ def build_aspect_window_polygon(row: pd.Series, y0: float, y1: float) -> go.Scat
         hovertemplate="%{text}<extra></extra>",
         name=f"{aspect_label} window",
         showlegend=False,
+    )
+
+
+def build_aspect_window_hitbox_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
+    aspect = str(row.get("aspect", "")).strip().lower()
+    aspect_label = str(row.get("aspect_label", "")).strip() or ASPECT_NAME_LABELS.get(aspect, str(row.get("aspect", "")))
+    detail_html = build_event_detail_html(row)
+    customdata = event_selection_customdata(
+        row,
+        detail_html,
+        "event_window_start_local",
+        "event_window_end_local",
+        f"{str(row.get('pair_key', '')).strip()} {aspect_label}",
+        "aspect_window",
+        str(row.get("event_id", "")).strip(),
+    )
+    return build_selection_hitbox_polygon(
+        row["event_window_start_local"],
+        row["event_window_end_local"],
+        y0,
+        y1,
+        "<br>".join(build_event_hover_lines(row)),
+        customdata,
+        f"{aspect_label} click/hover hitbox",
     )
 
 
@@ -1389,6 +1458,29 @@ def build_regime_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatte
         hovertemplate="%{text}<extra></extra>",
         name="Active regime zone",
         showlegend=False,
+    )
+
+
+def build_regime_zone_hitbox_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
+    kind = str(row.get("regime_kind", "single"))
+    detail_html = build_regime_zone_detail_html(row)
+    customdata = event_selection_customdata(
+        row,
+        detail_html,
+        "regime_window_start_local",
+        "regime_window_end_local",
+        f"Active regime zone ({kind})",
+        "regime_zone",
+        "regime_zone",
+    )
+    return build_selection_hitbox_polygon(
+        row["regime_window_start_local"],
+        row["regime_window_end_local"],
+        y0,
+        y1,
+        "<br>".join(build_regime_zone_hover_lines(row)),
+        customdata,
+        "Active regime zone click/hover hitbox",
     )
 
 
@@ -1680,6 +1772,11 @@ def build_detail_figure(
                     showlegend=False,
                 )
             )
+
+    for _, row in aspect_windows.iterrows():
+        fig.add_trace(build_aspect_window_hitbox_polygon(row, y0, y1))
+    for _, row in regime_zones.iterrows():
+        fig.add_trace(build_regime_zone_hitbox_polygon(row, y0, y1))
 
     if not visible.empty:
         marker_customdata = [
