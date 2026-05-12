@@ -101,10 +101,47 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     }
     return customdata;
   }
+  function selectionFromCustomData(customdata) {
+    if (!Array.isArray(customdata) || customdata.length < 4) return null;
+    var start = customdata[2];
+    var end = customdata[3];
+    if (!start || !end) return null;
+    return {
+      start: start,
+      end: end,
+      label: customdata[4] || 'Selected event',
+      kind: customdata[5] || 'event'
+    };
+  }
+  function setSelectedWindow(selection) {
+    var shapes = [];
+    if (gd.layout && Array.isArray(gd.layout.shapes)) {
+      shapes = gd.layout.shapes.filter(function (shape) {
+        return !(shape && shape.name === 'selected-event-window');
+      });
+    }
+    shapes.push({
+      type: 'rect',
+      name: 'selected-event-window',
+      xref: 'x',
+      yref: 'paper',
+      x0: selection.start,
+      x1: selection.end,
+      y0: 0,
+      y1: 1,
+      fillcolor: 'rgba(250, 204, 21, 0.14)',
+      line: {color: 'rgba(250, 204, 21, 0.98)', width: 2.4},
+      layer: 'above'
+    });
+    Plotly.relayout(gd, {shapes: shapes});
+  }
   gd.on('plotly_click', function (eventData) {
     if (!eventData || !eventData.points || !eventData.points.length) return;
-    var detail = detailFromCustomData(eventData.points[0].customdata);
+    var customdata = eventData.points[0].customdata;
+    var detail = detailFromCustomData(customdata);
     if (!detail) return;
+    var selection = selectionFromCustomData(customdata);
+    if (selection) setSelectedWindow(selection);
     panel.innerHTML = String(detail);
   });
 }());
@@ -877,6 +914,32 @@ def build_event_detail_html(row: pd.Series) -> str:
     return html_lines("Quote/JPY Details", build_quote_detail_lines(row))
 
 
+def _selection_timestamp(value: Any) -> str:
+    ts = pd.to_datetime(value, errors="coerce")
+    if pd.isna(ts):
+        return ""
+    return pd.Timestamp(ts).isoformat()
+
+
+def event_selection_customdata(
+    row: pd.Series,
+    detail_html: str,
+    start_col: str,
+    end_col: str,
+    label: str,
+    kind: str,
+    identity: str = "",
+) -> list[str]:
+    return [
+        identity or kind,
+        detail_html,
+        _selection_timestamp(row.get(start_col)),
+        _selection_timestamp(row.get(end_col)),
+        label,
+        kind,
+    ]
+
+
 def build_hover_text(row: pd.Series) -> str:
     return "<br>".join(build_event_hover_lines(row))
 
@@ -982,6 +1045,16 @@ def build_aspect_window_polygon(row: pd.Series, y0: float, y1: float) -> go.Scat
     aspect = str(row.get("aspect", "")).strip().lower()
     aspect_label = str(row.get("aspect_label", "")).strip() or ASPECT_NAME_LABELS.get(aspect, str(row.get("aspect", "")))
     hover_lines = build_event_hover_lines(row)
+    detail_html = build_event_detail_html(row)
+    customdata = event_selection_customdata(
+        row,
+        detail_html,
+        "event_window_start_local",
+        "event_window_end_local",
+        f"{str(row.get('pair_key', '')).strip()} {aspect_label}",
+        "aspect_window",
+        str(row.get("event_id", "")).strip(),
+    )
     return go.Scatter(
         x=[x0, x0, x1, x1, x0],
         y=[y0, y1, y1, y0, y0],
@@ -991,7 +1064,7 @@ def build_aspect_window_polygon(row: pd.Series, y0: float, y1: float) -> go.Scat
         fillcolor=ASPECT_WINDOW_COLORS.get(aspect, "rgba(148,163,184,0.05)"),
         hoveron="fills",
         text="<br>".join(hover_lines),
-        customdata=[build_event_detail_html(row)] * 5,
+        customdata=[customdata] * 5,
         hovertemplate="%{text}<extra></extra>",
         name=f"{aspect_label} window",
         showlegend=False,
@@ -1203,6 +1276,16 @@ def build_regime_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatte
     x0 = row["regime_window_start_local"]
     x1 = row["regime_window_end_local"]
     kind = str(row.get("regime_kind", "single"))
+    detail_html = build_regime_zone_detail_html(row)
+    customdata = event_selection_customdata(
+        row,
+        detail_html,
+        "regime_window_start_local",
+        "regime_window_end_local",
+        f"Active regime zone ({kind})",
+        "regime_zone",
+        "regime_zone",
+    )
     return go.Scatter(
         x=[x0, x0, x1, x1, x0],
         y=[y0, y1, y1, y0, y0],
@@ -1212,7 +1295,7 @@ def build_regime_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatte
         fillcolor=REGIME_ZONE_COLORS.get(kind, "rgba(148,163,184,0.05)"),
         hoveron="fills",
         text="<br>".join(build_regime_zone_hover_lines(row)),
-        customdata=[build_regime_zone_detail_html(row)] * 5,
+        customdata=[customdata] * 5,
         hovertemplate="%{text}<extra></extra>",
         name="Active regime zone",
         showlegend=False,
@@ -1223,6 +1306,16 @@ def build_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
     x0 = row["touch_time_local"]
     x1 = row["after72_time_local"]
     zone_kind = str(row["zone_kind"])
+    detail_html = build_event_detail_html(row)
+    customdata = event_selection_customdata(
+        row,
+        detail_html,
+        "event_window_start_local",
+        "event_window_end_local",
+        str(row.get("touch_event_label", "")).strip() or str(row.get("zone_label", "")).strip(),
+        "touch_event",
+        str(row.get("touch_id", "")).strip(),
+    )
     return go.Scatter(
         x=[x0, x0, x1, x1, x0],
         y=[y0, y1, y1, y0, y0],
@@ -1232,7 +1325,7 @@ def build_zone_polygon(row: pd.Series, y0: float, y1: float) -> go.Scatter:
         fillcolor=ZONE_COLORS.get(zone_kind, "rgba(107,114,128,0.18)"),
         hoveron="fills",
         text=row["hover_text"],
-        customdata=[build_event_detail_html(row)] * 5,
+        customdata=[customdata] * 5,
         hovertemplate="%{text}<extra></extra>",
         name=row["zone_label"],
         showlegend=False,
@@ -1500,7 +1593,15 @@ def build_detail_figure(
 
     if not visible.empty:
         marker_customdata = [
-            [str(row.get("touch_id", "")), build_event_detail_html(row)]
+            event_selection_customdata(
+                row,
+                build_event_detail_html(row),
+                "event_window_start_local",
+                "event_window_end_local",
+                str(row.get("touch_event_label", "")).strip() or str(row.get("zone_label", "")).strip(),
+                "touch_marker",
+                str(row.get("touch_id", "")).strip(),
+            )
             for _, row in visible.iterrows()
         ]
         fig.add_trace(
@@ -1536,7 +1637,17 @@ def build_detail_figure(
                     marker=dict(size=13, color="#111827", symbol="star"),
                     text=[row["zone_label"]],
                     textposition="top center",
-                    customdata=[[str(row["touch_id"]), build_event_detail_html(row)]],
+                    customdata=[
+                        event_selection_customdata(
+                            row,
+                            build_event_detail_html(row),
+                            "event_window_start_local",
+                            "event_window_end_local",
+                            str(row.get("touch_event_label", "")).strip() or str(row.get("zone_label", "")).strip(),
+                            "selected_marker",
+                            str(row.get("touch_id", "")).strip(),
+                        )
+                    ],
                     hovertemplate=row["hover_text"] + "<extra></extra>",
                     showlegend=False,
                 )

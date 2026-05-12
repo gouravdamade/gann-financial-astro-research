@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-11 22:15 IST
+Last updated: 2026-05-12 22:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -471,6 +471,18 @@ AVG(ALL) 7-classical scoring experiment on 2026-05-11:
   doctrine FX `BULLISH=47.79%`, `BEARISH=50.00%`, `CONFLICT=61.88%`, `UNKNOWN=51.04%`.
 - Read:
   The 7-classical expansion improves hover explainability and reduces `n/a`, but it did not improve simple purged walk-forward accuracy. Treat as experimental; use it for chart interpretation and as a candidate feature, not as a direct replacement for the prior transitsign scoring baseline.
+
+Chart click-selection update on 2026-05-12:
+
+- `sr_touch_lazy_dashboard.py` now lets the exported Plotly chart highlight the clicked event/regime interval.
+- Clicking an aspect shaded window, active regime zone, touch result zone, normal marker, or selected star marker draws a bright yellow selection rectangle from the event/regime start to end across the whole chart height.
+- The selection uses a layout shape named `selected-event-window`; each new click replaces the previous highlight.
+- Purpose:
+  make one specific aspect/regime interval easy to distinguish when multiple shaded windows overlap.
+- Fresh chart export with this behavior:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_220048.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_220048.csv`
+- CSV visible rows remained `1005`; this was a chart interaction/export change only, not a scoring rebuild.
 
 Important scoring fix on 2026-05-04:
 
