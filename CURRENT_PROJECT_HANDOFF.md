@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-12 22:05 IST
+Last updated: 2026-05-12 22:25 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -483,6 +483,11 @@ Chart click-selection update on 2026-05-12:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_220048.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_220048.csv`
 - CSV visible rows remained `1005`; this was a chart interaction/export change only, not a scoring rebuild.
+- Follow-up fix after user reported the yellow click highlight was not visible/working:
+  the exported chart now updates the selected interval on `plotly_hover` as well as click, uses a bright red border, red start/end vertical lines, and top annotations showing start/end date-time.
+- Fresh chart export with red hover/click interval selection:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_222118.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_222118.csv`
 
 Important scoring fix on 2026-05-04:
 

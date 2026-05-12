@@ -92,7 +92,7 @@ DETAIL_PANEL_POST_SCRIPT = r"""
   var panel = document.createElement('div');
   panel.id = gd.id + '-sr-details-panel';
   panel.style.cssText = 'margin:12px 0 0 0;padding:12px 14px;background:#0b1220;color:#dbeafe;border:1px solid #334155;border-radius:6px;font:13px/1.45 Arial,sans-serif;max-height:360px;overflow:auto;';
-  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Click an event, marker, or active regime zone for quote/JPY diagnostics.</span>';
+  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Hover or click an event, marker, or active regime zone to isolate its start/end window.</span>';
   gd.parentNode.insertBefore(panel, gd.nextSibling);
   function detailFromCustomData(customdata) {
     if (Array.isArray(customdata)) {
@@ -102,6 +102,9 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     return customdata;
   }
   function selectionFromCustomData(customdata) {
+    if (Array.isArray(customdata) && customdata.length === 1 && Array.isArray(customdata[0])) {
+      customdata = customdata[0];
+    }
     if (!Array.isArray(customdata) || customdata.length < 4) return null;
     var start = customdata[2];
     var end = customdata[3];
@@ -113,36 +116,123 @@ DETAIL_PANEL_POST_SCRIPT = r"""
       kind: customdata[5] || 'event'
     };
   }
+  function formatTs(value) {
+    var d = new Date(value);
+    if (isNaN(d.getTime())) return String(value);
+    return d.toLocaleString('en-GB', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+  function clearSelectionDecorations(items, selectedName) {
+    if (!Array.isArray(items)) return [];
+    return items.filter(function (item) {
+      return !(item && item.name === selectedName);
+    });
+  }
   function setSelectedWindow(selection) {
     var shapes = [];
     if (gd.layout && Array.isArray(gd.layout.shapes)) {
-      shapes = gd.layout.shapes.filter(function (shape) {
-        return !(shape && shape.name === 'selected-event-window');
-      });
+      shapes = clearSelectionDecorations(gd.layout.shapes, 'selected-event-window');
     }
-    shapes.push({
-      type: 'rect',
-      name: 'selected-event-window',
-      xref: 'x',
-      yref: 'paper',
-      x0: selection.start,
-      x1: selection.end,
-      y0: 0,
-      y1: 1,
-      fillcolor: 'rgba(250, 204, 21, 0.14)',
-      line: {color: 'rgba(250, 204, 21, 0.98)', width: 2.4},
-      layer: 'above'
-    });
-    Plotly.relayout(gd, {shapes: shapes});
+    shapes.push(
+      {
+        type: 'rect',
+        name: 'selected-event-window',
+        xref: 'x',
+        yref: 'paper',
+        x0: selection.start,
+        x1: selection.end,
+        y0: 0,
+        y1: 1,
+        fillcolor: 'rgba(239, 68, 68, 0.055)',
+        line: {color: 'rgba(248, 113, 113, 1)', width: 4},
+        layer: 'above'
+      },
+      {
+        type: 'line',
+        name: 'selected-event-window',
+        xref: 'x',
+        yref: 'paper',
+        x0: selection.start,
+        x1: selection.start,
+        y0: 0,
+        y1: 1,
+        line: {color: 'rgba(239, 68, 68, 1)', width: 2.5, dash: 'solid'},
+        layer: 'above'
+      },
+      {
+        type: 'line',
+        name: 'selected-event-window',
+        xref: 'x',
+        yref: 'paper',
+        x0: selection.end,
+        x1: selection.end,
+        y0: 0,
+        y1: 1,
+        line: {color: 'rgba(239, 68, 68, 1)', width: 2.5, dash: 'solid'},
+        layer: 'above'
+      }
+    );
+    var annotations = [];
+    if (gd.layout && Array.isArray(gd.layout.annotations)) {
+      annotations = clearSelectionDecorations(gd.layout.annotations, 'selected-event-window');
+    }
+    annotations.push(
+      {
+        name: 'selected-event-window',
+        xref: 'x',
+        yref: 'paper',
+        x: selection.start,
+        y: 1,
+        text: 'Start<br>' + formatTs(selection.start),
+        showarrow: true,
+        arrowhead: 2,
+        ax: 0,
+        ay: -38,
+        bgcolor: 'rgba(127, 29, 29, 0.92)',
+        bordercolor: 'rgba(248, 113, 113, 1)',
+        borderwidth: 1,
+        font: {color: '#fee2e2', size: 11}
+      },
+      {
+        name: 'selected-event-window',
+        xref: 'x',
+        yref: 'paper',
+        x: selection.end,
+        y: 1,
+        text: 'End<br>' + formatTs(selection.end),
+        showarrow: true,
+        arrowhead: 2,
+        ax: 0,
+        ay: -38,
+        bgcolor: 'rgba(127, 29, 29, 0.92)',
+        bordercolor: 'rgba(248, 113, 113, 1)',
+        borderwidth: 1,
+        font: {color: '#fee2e2', size: 11}
+      }
+    );
+    Plotly.relayout(gd, {shapes: shapes, annotations: annotations});
   }
-  gd.on('plotly_click', function (eventData) {
+  function handleSelectionEvent(eventData, updateDetails) {
     if (!eventData || !eventData.points || !eventData.points.length) return;
     var customdata = eventData.points[0].customdata;
-    var detail = detailFromCustomData(customdata);
-    if (!detail) return;
     var selection = selectionFromCustomData(customdata);
     if (selection) setSelectedWindow(selection);
-    panel.innerHTML = String(detail);
+    if (updateDetails) {
+      var detail = detailFromCustomData(customdata);
+      if (detail) panel.innerHTML = String(detail);
+    }
+  }
+  gd.on('plotly_click', function (eventData) {
+    handleSelectionEvent(eventData, true);
+  });
+  gd.on('plotly_hover', function (eventData) {
+    handleSelectionEvent(eventData, false);
   });
 }());
 """
