@@ -32,6 +32,7 @@ tmp*/
 untitled/
 
 # Local recovery snapshots, rebuild checkpoints, and evaluation outputs
+gann_aspect_annotations.sqlite*
 state_5_before_*.sqlite*
 touchlog_rebuild_checkpoints*/
 walk_forward_eval_*/

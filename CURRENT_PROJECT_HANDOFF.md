@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 00:44 IST
+Last updated: 2026-05-15 00:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -550,6 +550,15 @@ Chart click-selection update on 2026-05-12:
   Future implementation must be guided like a beginner walkthrough with no assumed knowledge:
   explain each new tool in plain language, introduce one concept at a time, and avoid asking the user to make low-level architecture choices without a recommendation.
   Codex should lead the migration step-by-step and keep the current Python research engine as the familiar anchor.
+- First annotation database step on 2026-05-15:
+  added `aspect_annotation_store.py`, a beginner-friendly Python helper for creating and testing the local SQLite annotation store.
+  Local database path created by default:
+  `C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite`
+  The database is intentionally local data and is ignored by git via `.gitignore`.
+  Tables created: `aspect_cases`, `trade_annotations`, `ignore_regions`, `rule_notes`, and `schema_meta`.
+  Smoke test command passed:
+  `python .\aspect_annotation_store.py --init-db --smoke-test`
+  Smoke test inserted/read/deleted one sample `MARS|JUPITER opposition` bullish annotation; final annotation tables were empty after cleanup.
 
 Important scoring fix on 2026-05-04:
 
