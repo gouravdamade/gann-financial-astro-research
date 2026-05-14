@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import csv
+import json
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,6 +11,56 @@ from typing import Any
 
 DEFAULT_DB_PATH = Path(__file__).resolve().with_name("gann_aspect_annotations.sqlite")
 VALID_OUTCOME_LABELS = ("bullish", "bearish", "sideways", "unclear")
+DEFAULT_TOUCH_LOG = Path(__file__).resolve().with_name(
+    "aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv"
+)
+CASE_CONTEXT_COLUMNS = (
+    "touch_id",
+    "event_id",
+    "pair_key",
+    "b1",
+    "b2",
+    "aspect",
+    "aspect_system",
+    "aspect_label",
+    "event_time_local",
+    "event_window_start_local",
+    "event_window_end_local",
+    "event_duration_minutes",
+    "aspect_regime_id",
+    "aspect_regime_active_count",
+    "aspect_regime_signature",
+    "event_pair_sep_deg",
+    "event_orb_deg",
+    "event_orb_limit_deg",
+    "event_orb_strength",
+    "event_bphs_strength",
+    "event_bphs_virupa",
+    "event_best_time_local",
+    "ret_after_72h_pct",
+    "ret_after_72h_dir",
+    "shadbala_tag",
+    "shadbala_avg",
+    "moon_nakshatra",
+    "reference_time_ist",
+    "base_reference_time_ist",
+    "tn_primary_transit_planet",
+    "tn_primary_natal_planet",
+    "tn_primary_aspect",
+    "tn_primary_orb_deg",
+    "tn_primary_bphs_strength",
+    "tn_primary_bphs_virupa",
+    "tn_primary_natal_sign",
+    "tn_primary_transit_sign",
+    "base_tn_primary_transit_planet",
+    "base_tn_primary_natal_planet",
+    "base_tn_primary_aspect",
+    "base_tn_primary_orb_deg",
+    "base_tn_primary_bphs_strength",
+    "base_tn_primary_bphs_virupa",
+    "base_tn_primary_natal_sign",
+    "base_tn_primary_transit_sign",
+)
 
 
 SCHEMA_SQL = """
@@ -162,6 +214,126 @@ def upsert_aspect_case(conn: sqlite3.Connection, case_data: dict[str, Any]) -> i
     if row is None:
         raise RuntimeError("Failed to read inserted aspect case.")
     return int(row["case_id"])
+
+
+def case_exists(conn: sqlite3.Connection, case_data: dict[str, Any]) -> bool:
+    row = conn.execute(
+        """
+        SELECT 1
+        FROM aspect_cases
+        WHERE IFNULL(source_event_id, '') = IFNULL(?, '')
+          AND pair_key = ?
+          AND aspect = ?
+          AND window_start_ist = ?
+          AND window_end_ist = ?
+        LIMIT 1
+        """,
+        (
+            case_data.get("source_event_id"),
+            case_data["pair_key"],
+            case_data["aspect"],
+            case_data["window_start_ist"],
+            case_data["window_end_ist"],
+        ),
+    ).fetchone()
+    return row is not None
+
+
+def row_to_context_json(row: dict[str, str]) -> str:
+    context = {key: row.get(key, "") for key in CASE_CONTEXT_COLUMNS if key in row}
+    return json.dumps(context, ensure_ascii=True, sort_keys=True)
+
+
+def timeframe_bucket(row: dict[str, str]) -> str:
+    try:
+        duration = float(row.get("event_duration_minutes") or "")
+    except ValueError:
+        return ""
+    if duration <= 24.0 * 60.0:
+        return "m30_h1"
+    return "daily"
+
+
+def case_data_from_touch_log_row(row: dict[str, str], source_csv: Path) -> dict[str, Any] | None:
+    pair_key = str(row.get("pair_key") or "").strip()
+    aspect = str(row.get("aspect") or "").strip()
+    start = str(row.get("event_window_start_local") or "").strip()
+    end = str(row.get("event_window_end_local") or "").strip()
+    if not pair_key or not aspect or not start or not end:
+        return None
+    return {
+        "source_event_id": str(row.get("event_id") or "").strip() or None,
+        "pair_key": pair_key,
+        "aspect": aspect,
+        "aspect_label": str(row.get("aspect_label") or "").strip() or f"{pair_key} {aspect}",
+        "window_start_ist": start,
+        "window_end_ist": end,
+        "timeframe": timeframe_bucket(row),
+        "source_csv": str(source_csv),
+        "context_json": row_to_context_json(row),
+    }
+
+
+def import_aspect_cases_from_csv(db_path: Path, source_csv: Path) -> tuple[int, int, int]:
+    initialize_database(db_path)
+    source_csv = source_csv.resolve()
+    attempted = 0
+    inserted = 0
+    skipped = 0
+    seen: set[tuple[str, str, str, str, str]] = set()
+    with source_csv.open("r", encoding="utf-8-sig", newline="") as fh, connect(db_path) as conn:
+        reader = csv.DictReader(fh)
+        for row in reader:
+            case_data = case_data_from_touch_log_row(row, source_csv)
+            if case_data is None:
+                skipped += 1
+                continue
+            key = (
+                str(case_data.get("source_event_id") or ""),
+                case_data["pair_key"],
+                case_data["aspect"],
+                case_data["window_start_ist"],
+                case_data["window_end_ist"],
+            )
+            if key in seen:
+                skipped += 1
+                continue
+            seen.add(key)
+            attempted += 1
+            existed = case_exists(conn, case_data)
+            upsert_aspect_case(conn, case_data)
+            if existed:
+                skipped += 1
+            else:
+                inserted += 1
+    return attempted, inserted, skipped
+
+
+def list_aspects(conn: sqlite3.Connection, limit: int) -> list[sqlite3.Row]:
+    return conn.execute(
+        """
+        SELECT pair_key, aspect, COALESCE(aspect_label, pair_key || ' ' || aspect) AS aspect_label, COUNT(*) AS case_count
+        FROM aspect_cases
+        GROUP BY pair_key, aspect
+        ORDER BY case_count DESC, pair_key, aspect
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+
+
+def list_cases(conn: sqlite3.Connection, pair_key: str, aspect: str, limit: int) -> list[sqlite3.Row]:
+    return conn.execute(
+        """
+        SELECT case_id, source_event_id, pair_key, aspect, aspect_label, window_start_ist, window_end_ist, timeframe
+        FROM aspect_cases
+        WHERE pair_key = ?
+          AND aspect = ?
+        ORDER BY window_start_ist
+        LIMIT ?
+        """,
+        (pair_key, aspect, limit),
+    ).fetchall()
 
 
 def add_trade_annotation(
@@ -320,18 +492,61 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--db", type=Path, default=DEFAULT_DB_PATH, help="SQLite database path.")
     parser.add_argument("--init-db", action="store_true", help="Create or update the annotation database schema.")
     parser.add_argument("--smoke-test", action="store_true", help="Insert/read/delete one sample annotation.")
+    parser.add_argument(
+        "--import-cases-from-csv",
+        type=Path,
+        help="Import aspect cases from a touch-log CSV. Defaults are kept in the local SQLite DB.",
+    )
+    parser.add_argument("--list-aspects", action="store_true", help="Show imported pair_key + aspect groups.")
+    parser.add_argument("--list-cases", action="store_true", help="Show imported cases for --pair-key and --aspect.")
+    parser.add_argument("--pair-key", help="Pair key for --list-cases, for example MARS|JUPITER.")
+    parser.add_argument("--aspect", help="Aspect for --list-cases, for example opposition.")
+    parser.add_argument("--limit", type=int, default=20, help="Maximum rows to show for list commands.")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    if not args.init_db and not args.smoke_test:
-        raise SystemExit("Use --init-db and/or --smoke-test.")
+    if not any((args.init_db, args.smoke_test, args.import_cases_from_csv, args.list_aspects, args.list_cases)):
+        raise SystemExit(
+            "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, or --list-cases."
+        )
     if args.init_db:
         initialize_database(args.db)
         print(f"Initialized annotation database: {args.db}")
+    if args.import_cases_from_csv:
+        attempted, inserted, skipped = import_aspect_cases_from_csv(args.db, args.import_cases_from_csv)
+        print(f"Imported aspect cases from: {args.import_cases_from_csv}")
+        print(f"Attempted unique cases: {attempted}")
+        print(f"Inserted new cases: {inserted}")
+        print(f"Skipped existing/invalid/duplicate rows: {skipped}")
     if args.smoke_test:
         run_smoke_test(args.db)
+    if args.list_aspects:
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            rows = list_aspects(conn, max(1, args.limit))
+        if not rows:
+            print("No aspect cases imported yet.")
+        else:
+            print("Imported aspect groups:")
+            for row in rows:
+                print(f"- {row['pair_key']} | {row['aspect']} | cases={row['case_count']}")
+    if args.list_cases:
+        if not args.pair_key or not args.aspect:
+            raise SystemExit("--list-cases requires --pair-key and --aspect.")
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            rows = list_cases(conn, args.pair_key, args.aspect, max(1, args.limit))
+        if not rows:
+            print(f"No cases found for pair_key={args.pair_key} aspect={args.aspect}.")
+        else:
+            print(f"Cases for {args.pair_key} | {args.aspect}:")
+            for row in rows:
+                print(
+                    f"- case_id={row['case_id']} event_id={row['source_event_id']} "
+                    f"{row['window_start_ist']} -> {row['window_end_ist']} timeframe={row['timeframe']}"
+                )
 
 
 if __name__ == "__main__":

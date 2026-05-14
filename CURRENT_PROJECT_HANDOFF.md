@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 00:55 IST
+Last updated: 2026-05-15 01:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -559,6 +559,16 @@ Chart click-selection update on 2026-05-12:
   Smoke test command passed:
   `python .\aspect_annotation_store.py --init-db --smoke-test`
   Smoke test inserted/read/deleted one sample `MARS|JUPITER opposition` bullish annotation; final annotation tables were empty after cleanup.
+- Second annotation database step on 2026-05-15:
+  `aspect_annotation_store.py` can now import real aspect cases from a touch-log CSV and list same-aspect occurrences by exact `pair_key + aspect`.
+  Import command used:
+  `python .\aspect_annotation_store.py --import-cases-from-csv .\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  Result: attempted unique cases `619`, inserted new cases `619`, skipped `0`.
+  Database now has `619` `aspect_cases`, `143` exact `pair_key + aspect` groups, and `0` trade annotations.
+  Listing commands verified:
+  `python .\aspect_annotation_store.py --list-aspects --limit 15`
+  `python .\aspect_annotation_store.py --list-cases --pair-key "AVG(ALL)|MOON" --aspect square --limit 5`
+  Sample group `AVG(ALL)|MOON + square` had `18` historical cases.
 
 Important scoring fix on 2026-05-04:
 
