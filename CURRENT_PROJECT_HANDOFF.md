@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 01:18 IST
+Last updated: 2026-05-15 01:32 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -577,6 +577,16 @@ Chart click-selection update on 2026-05-12:
   `python .\aspect_annotation_store.py --list-annotations --case-id 11 --limit 5`
   CLI smoke test saved and listed annotation `annotation_id=3` for `case_id=11`, then deleted it.
   Final `trade_annotations` count after cleanup: `0`.
+- Fourth annotation database step on 2026-05-15:
+  user clarified auto price/pip calculation should support both M30 and H1; Daily will be handled later.
+  `aspect_annotation_store.py` now supports `--price-timeframe m30` and `--price-timeframe h1` for auto-calculating entry close, exit close, pips, MFE pips, and MAE pips.
+  Default price files:
+  `m30`: `C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet`
+  `h1`: `C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet`
+  Trade markers are now validated to sit inside the selected aspect window.
+  H1 smoke test passed on `case_id=11`; M30 smoke test passed on `case_id=15`.
+  An out-of-window M30 test on `case_id=11` was rejected with a clean message, no traceback.
+  Temporary smoke annotations were deleted; final `trade_annotations` count after cleanup: `0`.
 
 Important scoring fix on 2026-05-04:
 

@@ -8,9 +8,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 
 DEFAULT_DB_PATH = Path(__file__).resolve().with_name("gann_aspect_annotations.sqlite")
 VALID_OUTCOME_LABELS = ("bullish", "bearish", "sideways", "unclear")
+IST = "Asia/Kolkata"
+USDJPY_PIP_SIZE = 0.01
+DEFAULT_M30_PRICE_PATH = Path(__file__).resolve().with_name("usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
+DEFAULT_H1_PRICE_PATH = Path(__file__).resolve().with_name("usd_jpy_h1_mt5_metaquotes_demo_full.parquet")
+DEFAULT_PRICE_PATHS = {
+    "m30": DEFAULT_M30_PRICE_PATH,
+    "h1": DEFAULT_H1_PRICE_PATH,
+}
 DEFAULT_TOUCH_LOG = Path(__file__).resolve().with_name(
     "aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv"
 )
@@ -252,6 +262,97 @@ def timeframe_bucket(row: dict[str, str]) -> str:
     if duration <= 24.0 * 60.0:
         return "m30_h1"
     return "daily"
+
+
+def load_price_frame(path: Path) -> pd.DataFrame:
+    price = pd.read_parquet(path).sort_index()
+    if price.index.tz is None:
+        price.index = price.index.tz_localize("UTC")
+    price = price.tz_convert(IST)
+    price.columns = [str(col).lower() for col in price.columns]
+    required = {"open", "high", "low", "close"}
+    missing = required.difference(price.columns)
+    if missing:
+        raise ValueError(f"Price file missing columns: {', '.join(sorted(missing))}")
+    return price
+
+
+def parse_ist_timestamp(value: str) -> pd.Timestamp:
+    ts = pd.to_datetime(value, errors="raise")
+    if ts.tzinfo is None:
+        ts = ts.tz_localize(IST)
+    else:
+        ts = ts.tz_convert(IST)
+    return pd.Timestamp(ts)
+
+
+def nearest_bar(price: pd.DataFrame, ts: pd.Timestamp) -> pd.Series:
+    if price.empty:
+        raise ValueError("Price frame is empty.")
+    pos = price.index.get_indexer([ts], method="nearest")[0]
+    if pos < 0:
+        raise ValueError(f"No nearest price bar found for {ts}.")
+    return price.iloc[int(pos)]
+
+
+def calculate_trade_prices(
+    price: pd.DataFrame,
+    trade_start_ist: str,
+    trade_end_ist: str,
+    outcome_label: str,
+) -> dict[str, float]:
+    start_ts = parse_ist_timestamp(trade_start_ist)
+    end_ts = parse_ist_timestamp(trade_end_ist)
+    if end_ts < start_ts:
+        raise ValueError("trade_end must be after trade_start.")
+    start_bar = nearest_bar(price, start_ts)
+    end_bar = nearest_bar(price, end_ts)
+    entry_price = float(start_bar["close"])
+    exit_price = float(end_bar["close"])
+    window = price.loc[(price.index >= start_ts) & (price.index <= end_ts)]
+    if window.empty:
+        window = pd.DataFrame([start_bar, end_bar])
+    high = float(window["high"].max())
+    low = float(window["low"].min())
+    direction = 0
+    if outcome_label == "bullish":
+        direction = 1
+    elif outcome_label == "bearish":
+        direction = -1
+    if direction == 1:
+        pips = (exit_price - entry_price) / USDJPY_PIP_SIZE
+        mfe = (high - entry_price) / USDJPY_PIP_SIZE
+        mae = (low - entry_price) / USDJPY_PIP_SIZE
+    elif direction == -1:
+        pips = (entry_price - exit_price) / USDJPY_PIP_SIZE
+        mfe = (entry_price - low) / USDJPY_PIP_SIZE
+        mae = (entry_price - high) / USDJPY_PIP_SIZE
+    else:
+        pips = (exit_price - entry_price) / USDJPY_PIP_SIZE
+        mfe = (high - entry_price) / USDJPY_PIP_SIZE
+        mae = (low - entry_price) / USDJPY_PIP_SIZE
+    return {
+        "entry_price": round(entry_price, 5),
+        "exit_price": round(exit_price, 5),
+        "pips": round(float(pips), 2),
+        "mfe_pips": round(float(mfe), 2),
+        "mae_pips": round(float(mae), 2),
+    }
+
+
+def validate_trade_inside_case(case: sqlite3.Row, trade_start_ist: str, trade_end_ist: str) -> None:
+    case_start = parse_ist_timestamp(str(case["window_start_ist"]))
+    case_end = parse_ist_timestamp(str(case["window_end_ist"]))
+    trade_start = parse_ist_timestamp(trade_start_ist)
+    trade_end = parse_ist_timestamp(trade_end_ist)
+    if trade_end < trade_start:
+        raise ValueError("trade_end must be after trade_start.")
+    if trade_start < case_start or trade_end > case_end:
+        raise ValueError(
+            "Trade markers must be inside the selected aspect window: "
+            f"{case_start} -> {case_end}. "
+            f"Received {trade_start} -> {trade_end}."
+        )
 
 
 def case_data_from_touch_log_row(row: dict[str, str], source_csv: Path) -> dict[str, Any] | None:
@@ -593,6 +694,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pips", type=float, help="Optional manual pips result.")
     parser.add_argument("--mfe-pips", type=float, help="Optional maximum favorable excursion in pips.")
     parser.add_argument("--mae-pips", type=float, help="Optional maximum adverse excursion in pips.")
+    parser.add_argument(
+        "--price-timeframe",
+        choices=tuple(DEFAULT_PRICE_PATHS),
+        help="Use a default price file to auto-calculate entry/exit/pips, currently m30 or h1.",
+    )
+    parser.add_argument("--price-file", type=Path, help="Optional custom price parquet for auto-calculation.")
     parser.add_argument("--why", default="", help="Free-form reason/rule note for the annotation.")
     parser.add_argument("--pair-key", help="Pair key for --list-cases, for example MARS|JUPITER.")
     parser.add_argument("--aspect", help="Aspect for --list-cases, for example opposition.")
@@ -646,6 +753,33 @@ def main() -> None:
             case = get_aspect_case(conn, int(args.case_id))
             if case is None:
                 raise SystemExit(f"No aspect case found for case_id={args.case_id}.")
+            try:
+                validate_trade_inside_case(case, str(args.trade_start), str(args.trade_end))
+            except ValueError as exc:
+                raise SystemExit(str(exc)) from exc
+            entry_price = args.entry_price
+            exit_price = args.exit_price
+            pips = args.pips
+            mfe_pips = args.mfe_pips
+            mae_pips = args.mae_pips
+            auto_prices = None
+            if args.price_timeframe or args.price_file:
+                price_path = args.price_file or DEFAULT_PRICE_PATHS[str(args.price_timeframe)]
+                try:
+                    price = load_price_frame(price_path)
+                    auto_prices = calculate_trade_prices(
+                        price,
+                        trade_start_ist=str(args.trade_start),
+                        trade_end_ist=str(args.trade_end),
+                        outcome_label=str(args.outcome_label),
+                    )
+                except (ValueError, FileNotFoundError) as exc:
+                    raise SystemExit(str(exc)) from exc
+                entry_price = entry_price if entry_price is not None else auto_prices["entry_price"]
+                exit_price = exit_price if exit_price is not None else auto_prices["exit_price"]
+                pips = pips if pips is not None else auto_prices["pips"]
+                mfe_pips = mfe_pips if mfe_pips is not None else auto_prices["mfe_pips"]
+                mae_pips = mae_pips if mae_pips is not None else auto_prices["mae_pips"]
             annotation_id = add_trade_annotation(
                 conn,
                 case_id=int(args.case_id),
@@ -653,17 +787,23 @@ def main() -> None:
                 trade_end_ist=str(args.trade_end),
                 outcome_label=str(args.outcome_label),
                 why_text=str(args.why or ""),
-                entry_price=args.entry_price,
-                exit_price=args.exit_price,
-                pips=args.pips,
-                mfe_pips=args.mfe_pips,
-                mae_pips=args.mae_pips,
+                entry_price=entry_price,
+                exit_price=exit_price,
+                pips=pips,
+                mfe_pips=mfe_pips,
+                mae_pips=mae_pips,
             )
         print(f"Saved annotation_id={annotation_id} for case_id={args.case_id}.")
         print(
             f"Case: {case['pair_key']} | {case['aspect']} | "
             f"{case['window_start_ist']} -> {case['window_end_ist']}"
         )
+        if auto_prices is not None:
+            print(
+                "Auto-calculated from price file: "
+                f"entry={entry_price} exit={exit_price} pips={pips} "
+                f"mfe={mfe_pips} mae={mae_pips}"
+            )
     if args.list_aspects:
         initialize_database(args.db)
         with connect(args.db) as conn:
