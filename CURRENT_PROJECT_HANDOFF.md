@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 02:00 IST
+Last updated: 2026-05-15 02:15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -605,6 +605,17 @@ Chart click-selection update on 2026-05-12:
   `python .\aspect_annotation_store.py --list-rule-notes --case-id 11 --limit 5`
   Ignore regions are validated to stay inside the selected aspect window; out-of-window test was rejected with a clean message.
   Temporary smoke ignore/note rows were deleted; final counts after cleanup: `trade_annotations=0`, `ignore_regions=0`, `rule_notes=0`.
+- Seventh annotation database step on 2026-05-15:
+  `aspect_annotation_store.py` now supports `--export-review-case --case-id N` to write a JSON snapshot for a future UI/app bridge.
+  Default output path shape:
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_<case_id>.json`
+  Verified command:
+  `python .\aspect_annotation_store.py --export-review-case --case-id 11`
+  Output:
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11.json`
+  Snapshot top-level keys: `case`, `same_aspect`, `saved`, `suggestions`, `exported_at_utc`.
+  For `case_id=11`, same-aspect total was `18`, case index was `1`, and saved annotation/note counts were all `0`.
+  This JSON is the planned bridge from the Python research/annotation engine into a later React/Tauri review UI.
 
 Important scoring fix on 2026-05-04:
 

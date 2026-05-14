@@ -12,6 +12,7 @@ import pandas as pd
 
 
 DEFAULT_DB_PATH = Path(__file__).resolve().with_name("gann_aspect_annotations.sqlite")
+DEFAULT_REVIEW_EXPORT_DIR = Path(r"C:\Users\ADMIN\Desktop\doc")
 VALID_OUTCOME_LABELS = ("bullish", "bearish", "sideways", "unclear")
 IST = "Asia/Kolkata"
 USDJPY_PIP_SIZE = 0.01
@@ -507,6 +508,10 @@ def command_quote(value: Any) -> str:
     return '"' + str(value).replace('"', '\\"') + '"'
 
 
+def row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
+    return {key: row[key] for key in row.keys()}
+
+
 def print_review_case(case: sqlite3.Row, prefix: str = "Next unreviewed") -> None:
     label = str(case["aspect_label"] or "").strip()
     if label and str(case["pair_key"]) not in label:
@@ -537,6 +542,41 @@ def print_annotation_command_template(case: sqlite3.Row, price_timeframe: str) -
     )
     print("")
     print("Change --outcome-label to one of: bullish, bearish, sideways, unclear.")
+
+
+def annotation_command_template(case: sqlite3.Row, price_timeframe: str) -> str:
+    return (
+        "python .\\aspect_annotation_store.py --add-trade-annotation "
+        f"--case-id {case['case_id']} "
+        f"--trade-start {command_quote(case['window_start_ist'])} "
+        f"--trade-end {command_quote(case['window_end_ist'])} "
+        "--outcome-label bullish "
+        f"--price-timeframe {price_timeframe} "
+        "--why \"type reason here\""
+    )
+
+
+def ignore_region_command_template(case: sqlite3.Row) -> str:
+    return (
+        "python .\\aspect_annotation_store.py --mark-ignore-region "
+        f"--case-id {case['case_id']} "
+        f"--region-start {command_quote(case['window_start_ist'])} "
+        f"--region-end {command_quote(case['window_end_ist'])} "
+        "--why \"type reason here\""
+    )
+
+
+def rule_note_command_template(case: sqlite3.Row) -> str:
+    return (
+        "python .\\aspect_annotation_store.py --add-rule-note "
+        f"--case-id {case['case_id']} "
+        "--note-type general "
+        "--note \"type note here\""
+    )
+
+
+def default_review_export_path(case_id: int) -> Path:
+    return DEFAULT_REVIEW_EXPORT_DIR / f"aspect_review_case_{case_id}.json"
 
 
 def get_aspect_case(conn: sqlite3.Connection, case_id: int) -> sqlite3.Row | None:
@@ -816,6 +856,55 @@ def print_rule_note(row: sqlite3.Row) -> None:
     print(f"  note: {note}")
 
 
+def export_review_case_snapshot(db_path: Path, case_id: int, output_path: Path | None = None) -> Path:
+    initialize_database(db_path)
+    with connect(db_path) as conn:
+        case = get_aspect_case(conn, case_id)
+        if case is None:
+            raise ValueError(f"No aspect case found for case_id={case_id}.")
+        same_aspect_rows = review_aspect_cases(conn, str(case["pair_key"]), str(case["aspect"]))
+        status = review_status(same_aspect_rows)
+        trade_rows = list_trade_annotations(conn, case_id, limit=1000)
+        ignore_rows = list_ignore_regions(conn, case_id, limit=1000)
+        note_rows = list_rule_notes(conn, case_id, limit=1000)
+
+    same_aspect_cases = [row_to_dict(row) for row in same_aspect_rows]
+    case_index = next(
+        (idx for idx, row in enumerate(same_aspect_cases, start=1) if int(row["case_id"]) == int(case_id)),
+        None,
+    )
+    price_timeframe = suggested_price_timeframe(case)
+    payload = {
+        "exported_at_utc": utc_now(),
+        "case": row_to_dict(case),
+        "same_aspect": {
+            "pair_key": case["pair_key"],
+            "aspect": case["aspect"],
+            "case_index": case_index,
+            "total_cases": status["total"],
+            "annotated_cases": status["annotated"],
+            "unreviewed_cases": status["unreviewed"],
+            "cases": same_aspect_cases,
+        },
+        "saved": {
+            "trade_annotations": [row_to_dict(row) for row in trade_rows],
+            "ignore_regions": [row_to_dict(row) for row in ignore_rows],
+            "rule_notes": [row_to_dict(row) for row in note_rows],
+        },
+        "suggestions": {
+            "price_timeframe": price_timeframe,
+            "outcome_labels": list(VALID_OUTCOME_LABELS),
+            "add_trade_annotation_command": annotation_command_template(case, price_timeframe),
+            "mark_ignore_region_command": ignore_region_command_template(case),
+            "add_rule_note_command": rule_note_command_template(case),
+        },
+    }
+    output_path = output_path or default_review_export_path(case_id)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(payload, indent=2, ensure_ascii=True), encoding="utf-8")
+    return output_path
+
+
 def run_smoke_test(db_path: Path) -> None:
     initialize_database(db_path)
     with connect(db_path) as conn:
@@ -899,6 +988,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--list-ignore-regions", action="store_true", help="Show saved ignored time regions.")
     parser.add_argument("--add-rule-note", action="store_true", help="Save a free-form rule note for a case.")
     parser.add_argument("--list-rule-notes", action="store_true", help="Show saved rule notes.")
+    parser.add_argument("--export-review-case", action="store_true", help="Write one case review snapshot JSON.")
     parser.add_argument("--case-id", type=int, help="Aspect case id for annotation commands.")
     parser.add_argument("--annotation-id", type=int, help="Optional trade annotation id for a rule note.")
     parser.add_argument("--trade-start", help="Trade start timestamp in IST, copied from the chart/candle.")
@@ -920,6 +1010,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--why", default="", help="Free-form reason/rule note for the annotation.")
     parser.add_argument("--note-type", default="general", help="Rule note type, for example sr_ignore_reason.")
     parser.add_argument("--note", default="", help="Free-form note text for --add-rule-note.")
+    parser.add_argument("--output-json", type=Path, help="Output path for --export-review-case.")
     parser.add_argument("--pair-key", help="Pair key for --list-cases, for example MARS|JUPITER.")
     parser.add_argument("--aspect", help="Aspect for --list-cases, for example opposition.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum rows to show for list commands.")
@@ -942,12 +1033,13 @@ def main() -> None:
             args.list_ignore_regions,
             args.add_rule_note,
             args.list_rule_notes,
+            args.export_review_case,
         )
     ):
         raise SystemExit(
             "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, --list-cases, --review-aspect, "
             "--add-trade-annotation, --list-annotations, --mark-ignore-region, --list-ignore-regions, "
-            "--add-rule-note, or --list-rule-notes."
+            "--add-rule-note, --list-rule-notes, or --export-review-case."
         )
     if args.init_db:
         initialize_database(args.db)
@@ -1187,6 +1279,14 @@ def main() -> None:
             print("Saved rule notes:")
             for row in rows:
                 print_rule_note(row)
+    if args.export_review_case:
+        if args.case_id is None:
+            raise SystemExit("--export-review-case requires --case-id.")
+        try:
+            output_path = export_review_case_snapshot(args.db, int(args.case_id), args.output_json)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        print(f"Exported review snapshot: {output_path}")
 
 
 if __name__ == "__main__":
