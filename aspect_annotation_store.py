@@ -336,6 +336,17 @@ def list_cases(conn: sqlite3.Connection, pair_key: str, aspect: str, limit: int)
     ).fetchall()
 
 
+def get_aspect_case(conn: sqlite3.Connection, case_id: int) -> sqlite3.Row | None:
+    return conn.execute(
+        """
+        SELECT case_id, source_event_id, pair_key, aspect, aspect_label, window_start_ist, window_end_ist, timeframe
+        FROM aspect_cases
+        WHERE case_id = ?
+        """,
+        (case_id,),
+    ).fetchone()
+
+
 def add_trade_annotation(
     conn: sqlite3.Connection,
     case_id: int,
@@ -387,6 +398,78 @@ def add_trade_annotation(
         ),
     )
     return int(cur.lastrowid)
+
+
+def list_trade_annotations(conn: sqlite3.Connection, case_id: int | None, limit: int) -> list[sqlite3.Row]:
+    if case_id is None:
+        return conn.execute(
+            """
+            SELECT
+                a.annotation_id,
+                a.case_id,
+                c.pair_key,
+                c.aspect,
+                c.aspect_label,
+                a.trade_start_ist,
+                a.trade_end_ist,
+                a.outcome_label,
+                a.entry_price,
+                a.exit_price,
+                a.pips,
+                a.why_text,
+                a.created_at_utc
+            FROM trade_annotations a
+            JOIN aspect_cases c ON c.case_id = a.case_id
+            ORDER BY a.created_at_utc DESC, a.annotation_id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    return conn.execute(
+        """
+        SELECT
+            a.annotation_id,
+            a.case_id,
+            c.pair_key,
+            c.aspect,
+            c.aspect_label,
+            a.trade_start_ist,
+            a.trade_end_ist,
+            a.outcome_label,
+            a.entry_price,
+            a.exit_price,
+            a.pips,
+            a.why_text,
+            a.created_at_utc
+        FROM trade_annotations a
+        JOIN aspect_cases c ON c.case_id = a.case_id
+        WHERE a.case_id = ?
+        ORDER BY a.trade_start_ist, a.annotation_id
+        LIMIT ?
+        """,
+        (case_id, limit),
+    ).fetchall()
+
+
+def print_annotation(row: sqlite3.Row) -> None:
+    prices = []
+    if row["entry_price"] is not None:
+        prices.append(f"entry={row['entry_price']}")
+    if row["exit_price"] is not None:
+        prices.append(f"exit={row['exit_price']}")
+    if row["pips"] is not None:
+        prices.append(f"pips={row['pips']}")
+    price_text = " ".join(prices) if prices else "prices=n/a"
+    why = str(row["why_text"] or "").strip()
+    if len(why) > 120:
+        why = why[:117] + "..."
+    print(
+        f"- annotation_id={row['annotation_id']} case_id={row['case_id']} "
+        f"{row['pair_key']} | {row['aspect']} | {row['outcome_label']} | "
+        f"{row['trade_start_ist']} -> {row['trade_end_ist']} | {price_text}"
+    )
+    if why:
+        print(f"  why: {why}")
 
 
 def add_ignore_region(
@@ -499,6 +582,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--list-aspects", action="store_true", help="Show imported pair_key + aspect groups.")
     parser.add_argument("--list-cases", action="store_true", help="Show imported cases for --pair-key and --aspect.")
+    parser.add_argument("--add-trade-annotation", action="store_true", help="Save one manual trade annotation.")
+    parser.add_argument("--list-annotations", action="store_true", help="Show saved trade annotations.")
+    parser.add_argument("--case-id", type=int, help="Aspect case id for annotation commands.")
+    parser.add_argument("--trade-start", help="Trade start timestamp in IST, copied from the chart/candle.")
+    parser.add_argument("--trade-end", help="Trade end timestamp in IST, copied from the chart/candle.")
+    parser.add_argument("--outcome-label", choices=VALID_OUTCOME_LABELS, help="bullish, bearish, sideways, or unclear.")
+    parser.add_argument("--entry-price", type=float, help="Optional manual entry price.")
+    parser.add_argument("--exit-price", type=float, help="Optional manual exit price.")
+    parser.add_argument("--pips", type=float, help="Optional manual pips result.")
+    parser.add_argument("--mfe-pips", type=float, help="Optional maximum favorable excursion in pips.")
+    parser.add_argument("--mae-pips", type=float, help="Optional maximum adverse excursion in pips.")
+    parser.add_argument("--why", default="", help="Free-form reason/rule note for the annotation.")
     parser.add_argument("--pair-key", help="Pair key for --list-cases, for example MARS|JUPITER.")
     parser.add_argument("--aspect", help="Aspect for --list-cases, for example opposition.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum rows to show for list commands.")
@@ -507,9 +602,20 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    if not any((args.init_db, args.smoke_test, args.import_cases_from_csv, args.list_aspects, args.list_cases)):
+    if not any(
+        (
+            args.init_db,
+            args.smoke_test,
+            args.import_cases_from_csv,
+            args.list_aspects,
+            args.list_cases,
+            args.add_trade_annotation,
+            args.list_annotations,
+        )
+    ):
         raise SystemExit(
-            "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, or --list-cases."
+            "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, --list-cases, "
+            "--add-trade-annotation, or --list-annotations."
         )
     if args.init_db:
         initialize_database(args.db)
@@ -522,6 +628,42 @@ def main() -> None:
         print(f"Skipped existing/invalid/duplicate rows: {skipped}")
     if args.smoke_test:
         run_smoke_test(args.db)
+    if args.add_trade_annotation:
+        missing = [
+            name
+            for name, value in (
+                ("--case-id", args.case_id),
+                ("--trade-start", args.trade_start),
+                ("--trade-end", args.trade_end),
+                ("--outcome-label", args.outcome_label),
+            )
+            if value in (None, "")
+        ]
+        if missing:
+            raise SystemExit("--add-trade-annotation requires " + ", ".join(missing))
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            case = get_aspect_case(conn, int(args.case_id))
+            if case is None:
+                raise SystemExit(f"No aspect case found for case_id={args.case_id}.")
+            annotation_id = add_trade_annotation(
+                conn,
+                case_id=int(args.case_id),
+                trade_start_ist=str(args.trade_start),
+                trade_end_ist=str(args.trade_end),
+                outcome_label=str(args.outcome_label),
+                why_text=str(args.why or ""),
+                entry_price=args.entry_price,
+                exit_price=args.exit_price,
+                pips=args.pips,
+                mfe_pips=args.mfe_pips,
+                mae_pips=args.mae_pips,
+            )
+        print(f"Saved annotation_id={annotation_id} for case_id={args.case_id}.")
+        print(
+            f"Case: {case['pair_key']} | {case['aspect']} | "
+            f"{case['window_start_ist']} -> {case['window_end_ist']}"
+        )
     if args.list_aspects:
         initialize_database(args.db)
         with connect(args.db) as conn:
@@ -547,6 +689,19 @@ def main() -> None:
                     f"- case_id={row['case_id']} event_id={row['source_event_id']} "
                     f"{row['window_start_ist']} -> {row['window_end_ist']} timeframe={row['timeframe']}"
                 )
+    if args.list_annotations:
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            rows = list_trade_annotations(conn, args.case_id, max(1, args.limit))
+        if not rows:
+            if args.case_id is None:
+                print("No trade annotations saved yet.")
+            else:
+                print(f"No trade annotations saved for case_id={args.case_id}.")
+        else:
+            print("Saved trade annotations:")
+            for row in rows:
+                print_annotation(row)
 
 
 if __name__ == "__main__":

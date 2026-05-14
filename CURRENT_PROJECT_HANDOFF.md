@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 01:05 IST
+Last updated: 2026-05-15 01:18 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -569,6 +569,14 @@ Chart click-selection update on 2026-05-12:
   `python .\aspect_annotation_store.py --list-aspects --limit 15`
   `python .\aspect_annotation_store.py --list-cases --pair-key "AVG(ALL)|MOON" --aspect square --limit 5`
   Sample group `AVG(ALL)|MOON + square` had `18` historical cases.
+- Third annotation database step on 2026-05-15:
+  `aspect_annotation_store.py` can now save and list manual trade annotations for an imported `case_id`.
+  New save command shape:
+  `python .\aspect_annotation_store.py --add-trade-annotation --case-id 11 --trade-start "2025-03-07 12:00:00+05:30" --trade-end "2025-03-07 13:00:00+05:30" --outcome-label bullish --entry-price 147.10 --exit-price 147.30 --pips 20 --why "reason text"`
+  New list command:
+  `python .\aspect_annotation_store.py --list-annotations --case-id 11 --limit 5`
+  CLI smoke test saved and listed annotation `annotation_id=3` for `case_id=11`, then deleted it.
+  Final `trade_annotations` count after cleanup: `0`.
 
 Important scoring fix on 2026-05-04:
 
