@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-14 21:06 IST
+Last updated: 2026-05-15 00:00 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -533,6 +533,13 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with aspect/window name in start/end labels:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_210417.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_210417.csv`
+- Follow-up note from user on 2026-05-15:
+  latest chart interaction works, but the red `Start` label can sometimes hide behind the M30/H1/Daily soft buttons.
+  Next chart UI tweak should move selected-window labels lower/sideways or constrain them away from the timeframe button row.
+- New workflow idea from user:
+  instead of only asking ML to walk-forward all aspects globally, build an aspect-review agent/workbench.
+  When user clicks aspect X, the tool should find same/similar aspects in the generated chart and navigate through them one by one.
+  User should be able to mark proposed trade begin/end and ignore regions; system calculates gain/loss, labels bullish/bearish/ignore, and compares divergent outcomes against context factors such as enemy sign, dignity/shadbala strength, multiple overlapping aspects, and other active regimes.
 
 Important scoring fix on 2026-05-04:
 
