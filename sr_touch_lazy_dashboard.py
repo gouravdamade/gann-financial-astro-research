@@ -139,6 +139,14 @@ DETAIL_PANEL_POST_SCRIPT = r"""
       hour12: false
     });
   }
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
   function clearSelectionDecorations(items, selectedName) {
     if (!Array.isArray(items)) return [];
     return items.filter(function (item) {
@@ -206,6 +214,7 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     if (gd.layout && Array.isArray(gd.layout.annotations)) {
       annotations = clearSelectionDecorations(gd.layout.annotations, 'selected-event-window');
     }
+    var selectionLabel = escapeHtml(selection.label || 'Selected event');
     annotations.push(
       {
         name: 'selected-event-window',
@@ -213,7 +222,7 @@ DETAIL_PANEL_POST_SCRIPT = r"""
         yref: 'paper',
         x: selection.start,
         y: 1,
-        text: 'Start<br>' + formatTs(selection.start),
+        text: 'Start<br><b>' + selectionLabel + '</b><br>' + formatTs(selection.start),
         showarrow: true,
         arrowhead: 2,
         ax: -92,
@@ -231,7 +240,7 @@ DETAIL_PANEL_POST_SCRIPT = r"""
         yref: 'paper',
         x: selection.end,
         y: 1,
-        text: 'End<br>' + formatTs(selection.end),
+        text: 'End<br><b>' + selectionLabel + '</b><br>' + formatTs(selection.end),
         showarrow: true,
         arrowhead: 2,
         ax: 92,

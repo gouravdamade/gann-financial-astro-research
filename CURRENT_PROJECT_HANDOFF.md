@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-14 20:56 IST
+Last updated: 2026-05-14 21:06 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -526,6 +526,13 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with aspect-first shaded-area selection:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_205344.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_205344.csv`
+- Follow-up on 2026-05-14:
+  user asked to add the aspect name to the red start/end labels for selected shaded zones.
+  The selected-window annotations now show `Start`/`End`, then the selected aspect/window label in bold, then the date-time.
+  The label is HTML-escaped in the browser script before insertion.
+- Fresh chart export with aspect/window name in start/end labels:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_210417.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_210417.csv`
 
 Important scoring fix on 2026-05-04:
 
