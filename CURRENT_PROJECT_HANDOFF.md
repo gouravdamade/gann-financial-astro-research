@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-14 18:57 IST
+Last updated: 2026-05-14 20:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -510,6 +510,15 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with double-click disabled and outward start/end labels:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_185353.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_185353.csv`
+- Follow-up on 2026-05-14:
+  user reported two interaction problems:
+  hovering over markers still triggered selection, and shaded aspect areas without markers could not be selected.
+  The browser script no longer registers a `plotly_hover` selection handler; hover only shows Plotly's native tooltip.
+  Selection is now single-click only.
+  If Plotly does not emit a point click, the DOM click fallback converts the clicked pixel to chart x/y coordinates and scans visible shaded aspect/regime polygons for the containing window, preferring click/hover hitbox traces and shorter windows when overlaps exist.
+- Fresh chart export with single-click-only selection and markerless shaded-area fallback:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_201400.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_201400.csv`
 
 Important scoring fix on 2026-05-04:
 

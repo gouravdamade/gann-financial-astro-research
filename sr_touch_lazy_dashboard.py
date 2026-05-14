@@ -96,9 +96,9 @@ DETAIL_PANEL_POST_SCRIPT = r"""
   var panel = document.createElement('div');
   panel.id = gd.id + '-sr-details-panel';
   panel.style.cssText = 'margin:12px 0 0 0;padding:12px 14px;background:#0b1220;color:#dbeafe;border:1px solid #334155;border-radius:6px;font:13px/1.45 Arial,sans-serif;max-height:360px;overflow:auto;';
-  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Hover an event window to isolate it; single-click while highlighted to lock Quote/JPY details.</span>';
+  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Single-click an event, marker, or shaded aspect/regime window to select it and show Quote/JPY details.</span>';
   gd.parentNode.insertBefore(panel, gd.nextSibling);
-  var lastHoverPayload = null;
+  var lastAppliedClickAt = 0;
   function unwrapCustomData(customdata) {
     while (Array.isArray(customdata) && customdata.length === 1 && Array.isArray(customdata[0])) {
       customdata = customdata[0];
@@ -259,6 +259,16 @@ DETAIL_PANEL_POST_SCRIPT = r"""
       touchedAt: Date.now()
     };
   }
+  function payloadFromCustomData(customdata) {
+    var selection = selectionFromCustomData(customdata);
+    var detail = detailFromCustomData(customdata);
+    if (!selection && !detail) return null;
+    return {
+      selection: selection,
+      detail: detail,
+      touchedAt: Date.now()
+    };
+  }
   function applyPayload(payload, updateDetails) {
     if (!payload) return false;
     var selection = payload.selection;
@@ -269,22 +279,81 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     }
     return Boolean(selection || payload.detail);
   }
-  function handleSelectionEvent(eventData, updateDetails) {
+  function handleSelectionEvent(eventData) {
     var payload = payloadFromEvent(eventData);
     if (!payload) return;
-    lastHoverPayload = payload;
-    applyPayload(payload, updateDetails);
+    if (applyPayload(payload, true)) lastAppliedClickAt = Date.now();
+  }
+  function valueMs(value) {
+    if (value === null || value === undefined) return NaN;
+    if (typeof value === 'number') return value;
+    var ms = Date.parse(value);
+    return Number.isFinite(ms) ? ms : NaN;
+  }
+  function isTraceVisible(trace) {
+    return trace && trace.visible !== false && trace.visible !== 'legendonly';
+  }
+  function axisValue(axis, pixel) {
+    if (!axis) return null;
+    if (typeof axis.p2d === 'function') return axis.p2d(pixel);
+    if (typeof axis.p2c === 'function') return axis.p2c(pixel);
+    return null;
+  }
+  function firstPointPayload(trace) {
+    if (!trace || !trace.customdata) return null;
+    if (Array.isArray(trace.customdata)) return payloadFromCustomData(trace.customdata[0]);
+    return payloadFromCustomData(trace.customdata);
+  }
+  function payloadFromClickPosition(evt) {
+    if (!gd._fullLayout || !gd._fullLayout.xaxis || !gd._fullLayout.yaxis) return null;
+    var xa = gd._fullLayout.xaxis;
+    var ya = gd._fullLayout.yaxis;
+    var rect = gd.getBoundingClientRect();
+    var plotX = evt.clientX - rect.left - xa._offset;
+    var plotY = evt.clientY - rect.top - ya._offset;
+    if (plotX < 0 || plotX > xa._length || plotY < 0 || plotY > ya._length) return null;
+    var clickedX = axisValue(xa, plotX);
+    var clickedY = axisValue(ya, plotY);
+    var clickedMs = valueMs(clickedX);
+    var clickedYNum = Number(clickedY);
+    if (!Number.isFinite(clickedMs) || !Number.isFinite(clickedYNum)) return null;
+    var best = null;
+    var traces = gd.data || [];
+    for (var i = 0; i < traces.length; i += 1) {
+      var trace = traces[i];
+      if (!isTraceVisible(trace) || !Array.isArray(trace.x) || !Array.isArray(trace.y)) continue;
+      var payload = firstPointPayload(trace);
+      if (!payload || !payload.selection) continue;
+      var xVals = trace.x.map(valueMs).filter(Number.isFinite);
+      var yVals = trace.y.map(Number).filter(Number.isFinite);
+      if (!xVals.length || !yVals.length) continue;
+      var x0 = Math.min.apply(null, xVals);
+      var x1 = Math.max.apply(null, xVals);
+      var y0 = Math.min.apply(null, yVals);
+      var y1 = Math.max.apply(null, yVals);
+      if (clickedMs < x0 || clickedMs > x1 || clickedYNum < y0 || clickedYNum > y1) continue;
+      var duration = x1 - x0;
+      var name = String(trace.name || '');
+      var priority = name.indexOf('click/hover hitbox') !== -1 ? 0 : 1;
+      var score = [priority, duration, -i];
+      if (
+        !best ||
+        score[0] < best.score[0] ||
+        (score[0] === best.score[0] && score[1] < best.score[1]) ||
+        (score[0] === best.score[0] && score[1] === best.score[1] && score[2] < best.score[2])
+      ) {
+        best = {payload: payload, score: score};
+      }
+    }
+    return best ? best.payload : null;
   }
   gd.on('plotly_click', function (eventData) {
-    handleSelectionEvent(eventData, true);
+    handleSelectionEvent(eventData);
   });
-  gd.on('plotly_hover', function (eventData) {
-    handleSelectionEvent(eventData, false);
-  });
-  gd.addEventListener('click', function () {
-    if (!lastHoverPayload) return;
-    if (Date.now() - lastHoverPayload.touchedAt > 3500) return;
-    applyPayload(lastHoverPayload, true);
+  gd.addEventListener('click', function (evt) {
+    if (Date.now() - lastAppliedClickAt < 80) return;
+    var payload = payloadFromClickPosition(evt);
+    if (applyPayload(payload, true)) lastAppliedClickAt = Date.now();
   });
 }());
 """
