@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 00:15 IST
+Last updated: 2026-05-15 00:44 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -546,6 +546,10 @@ Chart click-selection update on 2026-05-12:
   User may add rules such as why a first SR line after the start marker was ignored, for example because it was too close.
   One aspect window may contain multiple trades/annotations and ignore regions.
   Outcome labels should include `bullish`, `bearish`, `sideways`, and `unclear`.
+- User agreed with moving beyond Dash for the annotation workbench, but clarified that they do not know SQLite, Tauri, or React.
+  Future implementation must be guided like a beginner walkthrough with no assumed knowledge:
+  explain each new tool in plain language, introduce one concept at a time, and avoid asking the user to make low-level architecture choices without a recommendation.
+  Codex should lead the migration step-by-step and keep the current Python research engine as the familiar anchor.
 
 Important scoring fix on 2026-05-04:
 
