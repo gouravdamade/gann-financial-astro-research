@@ -437,6 +437,93 @@ def list_cases(conn: sqlite3.Connection, pair_key: str, aspect: str, limit: int)
     ).fetchall()
 
 
+def review_aspect_cases(conn: sqlite3.Connection, pair_key: str, aspect: str) -> list[sqlite3.Row]:
+    return conn.execute(
+        """
+        SELECT
+            c.case_id,
+            c.source_event_id,
+            c.pair_key,
+            c.aspect,
+            c.aspect_label,
+            c.window_start_ist,
+            c.window_end_ist,
+            c.timeframe,
+            COUNT(a.annotation_id) AS annotation_count
+        FROM aspect_cases c
+        LEFT JOIN trade_annotations a ON a.case_id = c.case_id
+        WHERE c.pair_key = ?
+          AND c.aspect = ?
+        GROUP BY
+            c.case_id,
+            c.source_event_id,
+            c.pair_key,
+            c.aspect,
+            c.aspect_label,
+            c.window_start_ist,
+            c.window_end_ist,
+            c.timeframe
+        ORDER BY c.window_start_ist
+        """,
+        (pair_key, aspect),
+    ).fetchall()
+
+
+def review_status(rows: list[sqlite3.Row]) -> dict[str, Any]:
+    total = len(rows)
+    annotated = sum(1 for row in rows if int(row["annotation_count"]) > 0)
+    next_unreviewed = next((row for row in rows if int(row["annotation_count"]) == 0), None)
+    return {
+        "total": total,
+        "annotated": annotated,
+        "unreviewed": total - annotated,
+        "next_unreviewed": next_unreviewed,
+    }
+
+
+def suggested_price_timeframe(case: sqlite3.Row) -> str:
+    timeframe = str(case["timeframe"] or "").lower()
+    if timeframe == "daily":
+        return "h1"
+    return "m30"
+
+
+def command_quote(value: Any) -> str:
+    return '"' + str(value).replace('"', '\\"') + '"'
+
+
+def print_review_case(case: sqlite3.Row, prefix: str = "Next unreviewed") -> None:
+    label = str(case["aspect_label"] or "").strip()
+    if label and str(case["pair_key"]) not in label:
+        label = f"{case['pair_key']} {label}"
+    elif not label:
+        label = f"{case['pair_key']} {case['aspect']}"
+    print(f"{prefix}:")
+    print(f"- case_id: {case['case_id']}")
+    print(f"- event_id: {case['source_event_id']}")
+    print(f"- aspect: {case['pair_key']} | {case['aspect']}")
+    print(f"- label: {label}")
+    print(f"- window: {case['window_start_ist']} -> {case['window_end_ist']}")
+    print(f"- timeframe bucket: {case['timeframe']}")
+    print(f"- existing annotations: {case['annotation_count']}")
+
+
+def print_annotation_command_template(case: sqlite3.Row, price_timeframe: str) -> None:
+    print("")
+    print("Copy/edit this after you choose trade start/end and label:")
+    print(
+        "python .\\aspect_annotation_store.py --add-trade-annotation "
+        f"--case-id {case['case_id']} "
+        f"--trade-start {command_quote(case['window_start_ist'])} "
+        f"--trade-end {command_quote(case['window_end_ist'])} "
+        "--outcome-label bullish "
+        f"--price-timeframe {price_timeframe} "
+        "--why \"type reason here\""
+    )
+    print("")
+    print("Change --outcome-label to one of: bullish, bearish, sideways, unclear.")
+
+
 def get_aspect_case(conn: sqlite3.Connection, case_id: int) -> sqlite3.Row | None:
     return conn.execute(
         """
@@ -683,6 +770,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--list-aspects", action="store_true", help="Show imported pair_key + aspect groups.")
     parser.add_argument("--list-cases", action="store_true", help="Show imported cases for --pair-key and --aspect.")
+    parser.add_argument("--review-aspect", action="store_true", help="Show review progress and next unreviewed case.")
     parser.add_argument("--add-trade-annotation", action="store_true", help="Save one manual trade annotation.")
     parser.add_argument("--list-annotations", action="store_true", help="Show saved trade annotations.")
     parser.add_argument("--case-id", type=int, help="Aspect case id for annotation commands.")
@@ -716,12 +804,13 @@ def main() -> None:
             args.import_cases_from_csv,
             args.list_aspects,
             args.list_cases,
+            args.review_aspect,
             args.add_trade_annotation,
             args.list_annotations,
         )
     ):
         raise SystemExit(
-            "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, --list-cases, "
+            "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, --list-cases, --review-aspect, "
             "--add-trade-annotation, or --list-annotations."
         )
     if args.init_db:
@@ -829,6 +918,28 @@ def main() -> None:
                     f"- case_id={row['case_id']} event_id={row['source_event_id']} "
                     f"{row['window_start_ist']} -> {row['window_end_ist']} timeframe={row['timeframe']}"
                 )
+    if args.review_aspect:
+        if not args.pair_key or not args.aspect:
+            raise SystemExit("--review-aspect requires --pair-key and --aspect.")
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            rows = review_aspect_cases(conn, args.pair_key, args.aspect)
+        if not rows:
+            print(f"No cases found for pair_key={args.pair_key} aspect={args.aspect}.")
+        else:
+            status = review_status(rows)
+            print(f"Review queue: {args.pair_key} | {args.aspect}")
+            print(f"Total cases: {status['total']}")
+            print(f"Annotated cases: {status['annotated']}")
+            print(f"Unreviewed cases: {status['unreviewed']}")
+            print("")
+            next_case = status["next_unreviewed"]
+            if next_case is None:
+                print("All cases currently have at least one annotation.")
+                print_review_case(rows[-1], prefix="Last case")
+            else:
+                print_review_case(next_case)
+                print_annotation_command_template(next_case, suggested_price_timeframe(next_case))
     if args.list_annotations:
         initialize_database(args.db)
         with connect(args.db) as conn:

@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 01:32 IST
+Last updated: 2026-05-15 01:45 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -587,6 +587,12 @@ Chart click-selection update on 2026-05-12:
   H1 smoke test passed on `case_id=11`; M30 smoke test passed on `case_id=15`.
   An out-of-window M30 test on `case_id=11` was rejected with a clean message, no traceback.
   Temporary smoke annotations were deleted; final `trade_annotations` count after cleanup: `0`.
+- Fifth annotation database step on 2026-05-15:
+  `aspect_annotation_store.py` now has a read-only review queue command:
+  `python .\aspect_annotation_store.py --review-aspect --pair-key "AVG(ALL)|MOON" --aspect square`
+  It prints total cases, annotated cases, unreviewed cases, the next unreviewed `case_id`, its event/window details, and a copy/edit `--add-trade-annotation` command template.
+  Verified sample output for `AVG(ALL)|MOON + square`: total `18`, annotated `0`, unreviewed `18`, next unreviewed `case_id=11`.
+  This is the first CLI version of "take user through same aspect one by one."
 
 Important scoring fix on 2026-05-04:
 
