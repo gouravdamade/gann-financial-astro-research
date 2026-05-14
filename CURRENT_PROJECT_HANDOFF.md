@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 01:45 IST
+Last updated: 2026-05-15 02:00 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -593,6 +593,18 @@ Chart click-selection update on 2026-05-12:
   It prints total cases, annotated cases, unreviewed cases, the next unreviewed `case_id`, its event/window details, and a copy/edit `--add-trade-annotation` command template.
   Verified sample output for `AVG(ALL)|MOON + square`: total `18`, annotated `0`, unreviewed `18`, next unreviewed `case_id=11`.
   This is the first CLI version of "take user through same aspect one by one."
+- Sixth annotation database step on 2026-05-15:
+  `aspect_annotation_store.py` now supports ignore regions and free-form rule notes.
+  Ignore-region command shape:
+  `python .\aspect_annotation_store.py --mark-ignore-region --case-id 11 --region-start "2025-03-07 12:00:00+05:30" --region-end "2025-03-07 12:30:00+05:30" --why "reason text"`
+  List ignore regions:
+  `python .\aspect_annotation_store.py --list-ignore-regions --case-id 11 --limit 5`
+  Rule-note command shape:
+  `python .\aspect_annotation_store.py --add-rule-note --case-id 11 --note-type sr_ignore_reason --note "reason text"`
+  List rule notes:
+  `python .\aspect_annotation_store.py --list-rule-notes --case-id 11 --limit 5`
+  Ignore regions are validated to stay inside the selected aspect window; out-of-window test was rejected with a clean message.
+  Temporary smoke ignore/note rows were deleted; final counts after cleanup: `trade_annotations=0`, `ignore_regions=0`, `rule_notes=0`.
 
 Important scoring fix on 2026-05-04:
 

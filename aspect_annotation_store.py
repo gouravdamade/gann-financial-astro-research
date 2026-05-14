@@ -355,6 +355,21 @@ def validate_trade_inside_case(case: sqlite3.Row, trade_start_ist: str, trade_en
         )
 
 
+def validate_region_inside_case(case: sqlite3.Row, region_start_ist: str, region_end_ist: str) -> None:
+    case_start = parse_ist_timestamp(str(case["window_start_ist"]))
+    case_end = parse_ist_timestamp(str(case["window_end_ist"]))
+    region_start = parse_ist_timestamp(region_start_ist)
+    region_end = parse_ist_timestamp(region_end_ist)
+    if region_end < region_start:
+        raise ValueError("region_end must be after region_start.")
+    if region_start < case_start or region_end > case_end:
+        raise ValueError(
+            "Ignore region must be inside the selected aspect window: "
+            f"{case_start} -> {case_end}. "
+            f"Received {region_start} -> {region_end}."
+        )
+
+
 def case_data_from_touch_log_row(row: dict[str, str], source_csv: Path) -> dict[str, Any] | None:
     pair_key = str(row.get("pair_key") or "").strip()
     aspect = str(row.get("aspect") or "").strip()
@@ -660,6 +675,60 @@ def print_annotation(row: sqlite3.Row) -> None:
         print(f"  why: {why}")
 
 
+def list_ignore_regions(conn: sqlite3.Connection, case_id: int | None, limit: int) -> list[sqlite3.Row]:
+    if case_id is None:
+        return conn.execute(
+            """
+            SELECT
+                i.ignore_id,
+                i.case_id,
+                c.pair_key,
+                c.aspect,
+                i.region_start_ist,
+                i.region_end_ist,
+                i.why_text,
+                i.created_at_utc
+            FROM ignore_regions i
+            JOIN aspect_cases c ON c.case_id = i.case_id
+            ORDER BY i.created_at_utc DESC, i.ignore_id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    return conn.execute(
+        """
+        SELECT
+            i.ignore_id,
+            i.case_id,
+            c.pair_key,
+            c.aspect,
+            i.region_start_ist,
+            i.region_end_ist,
+            i.why_text,
+            i.created_at_utc
+        FROM ignore_regions i
+        JOIN aspect_cases c ON c.case_id = i.case_id
+        WHERE i.case_id = ?
+        ORDER BY i.region_start_ist, i.ignore_id
+        LIMIT ?
+        """,
+        (case_id, limit),
+    ).fetchall()
+
+
+def print_ignore_region(row: sqlite3.Row) -> None:
+    why = str(row["why_text"] or "").strip()
+    if len(why) > 120:
+        why = why[:117] + "..."
+    print(
+        f"- ignore_id={row['ignore_id']} case_id={row['case_id']} "
+        f"{row['pair_key']} | {row['aspect']} | "
+        f"{row['region_start_ist']} -> {row['region_end_ist']}"
+    )
+    if why:
+        print(f"  why: {why}")
+
+
 def add_ignore_region(
     conn: sqlite3.Connection,
     case_id: int,
@@ -692,6 +761,59 @@ def add_rule_note(
         (case_id, annotation_id, note_type, note_text, utc_now()),
     )
     return int(cur.lastrowid)
+
+
+def list_rule_notes(conn: sqlite3.Connection, case_id: int | None, limit: int) -> list[sqlite3.Row]:
+    if case_id is None:
+        return conn.execute(
+            """
+            SELECT
+                n.note_id,
+                n.case_id,
+                n.annotation_id,
+                c.pair_key,
+                c.aspect,
+                n.note_type,
+                n.note_text,
+                n.created_at_utc
+            FROM rule_notes n
+            JOIN aspect_cases c ON c.case_id = n.case_id
+            ORDER BY n.created_at_utc DESC, n.note_id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    return conn.execute(
+        """
+        SELECT
+            n.note_id,
+            n.case_id,
+            n.annotation_id,
+            c.pair_key,
+            c.aspect,
+            n.note_type,
+            n.note_text,
+            n.created_at_utc
+        FROM rule_notes n
+        JOIN aspect_cases c ON c.case_id = n.case_id
+        WHERE n.case_id = ?
+        ORDER BY n.created_at_utc, n.note_id
+        LIMIT ?
+        """,
+        (case_id, limit),
+    ).fetchall()
+
+
+def print_rule_note(row: sqlite3.Row) -> None:
+    note = str(row["note_text"] or "").strip()
+    if len(note) > 140:
+        note = note[:137] + "..."
+    annotation_part = f" annotation_id={row['annotation_id']}" if row["annotation_id"] is not None else ""
+    print(
+        f"- note_id={row['note_id']} case_id={row['case_id']}{annotation_part} "
+        f"{row['pair_key']} | {row['aspect']} | type={row['note_type']}"
+    )
+    print(f"  note: {note}")
 
 
 def run_smoke_test(db_path: Path) -> None:
@@ -773,9 +895,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--review-aspect", action="store_true", help="Show review progress and next unreviewed case.")
     parser.add_argument("--add-trade-annotation", action="store_true", help="Save one manual trade annotation.")
     parser.add_argument("--list-annotations", action="store_true", help="Show saved trade annotations.")
+    parser.add_argument("--mark-ignore-region", action="store_true", help="Save an ignored time region inside a case.")
+    parser.add_argument("--list-ignore-regions", action="store_true", help="Show saved ignored time regions.")
+    parser.add_argument("--add-rule-note", action="store_true", help="Save a free-form rule note for a case.")
+    parser.add_argument("--list-rule-notes", action="store_true", help="Show saved rule notes.")
     parser.add_argument("--case-id", type=int, help="Aspect case id for annotation commands.")
+    parser.add_argument("--annotation-id", type=int, help="Optional trade annotation id for a rule note.")
     parser.add_argument("--trade-start", help="Trade start timestamp in IST, copied from the chart/candle.")
     parser.add_argument("--trade-end", help="Trade end timestamp in IST, copied from the chart/candle.")
+    parser.add_argument("--region-start", help="Ignored region start timestamp in IST.")
+    parser.add_argument("--region-end", help="Ignored region end timestamp in IST.")
     parser.add_argument("--outcome-label", choices=VALID_OUTCOME_LABELS, help="bullish, bearish, sideways, or unclear.")
     parser.add_argument("--entry-price", type=float, help="Optional manual entry price.")
     parser.add_argument("--exit-price", type=float, help="Optional manual exit price.")
@@ -789,6 +918,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--price-file", type=Path, help="Optional custom price parquet for auto-calculation.")
     parser.add_argument("--why", default="", help="Free-form reason/rule note for the annotation.")
+    parser.add_argument("--note-type", default="general", help="Rule note type, for example sr_ignore_reason.")
+    parser.add_argument("--note", default="", help="Free-form note text for --add-rule-note.")
     parser.add_argument("--pair-key", help="Pair key for --list-cases, for example MARS|JUPITER.")
     parser.add_argument("--aspect", help="Aspect for --list-cases, for example opposition.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum rows to show for list commands.")
@@ -807,11 +938,16 @@ def main() -> None:
             args.review_aspect,
             args.add_trade_annotation,
             args.list_annotations,
+            args.mark_ignore_region,
+            args.list_ignore_regions,
+            args.add_rule_note,
+            args.list_rule_notes,
         )
     ):
         raise SystemExit(
             "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, --list-cases, --review-aspect, "
-            "--add-trade-annotation, or --list-annotations."
+            "--add-trade-annotation, --list-annotations, --mark-ignore-region, --list-ignore-regions, "
+            "--add-rule-note, or --list-rule-notes."
         )
     if args.init_db:
         initialize_database(args.db)
@@ -893,6 +1029,78 @@ def main() -> None:
                 f"entry={entry_price} exit={exit_price} pips={pips} "
                 f"mfe={mfe_pips} mae={mae_pips}"
             )
+    if args.mark_ignore_region:
+        missing = [
+            name
+            for name, value in (
+                ("--case-id", args.case_id),
+                ("--region-start", args.region_start),
+                ("--region-end", args.region_end),
+                ("--why", args.why),
+            )
+            if value in (None, "")
+        ]
+        if missing:
+            raise SystemExit("--mark-ignore-region requires " + ", ".join(missing))
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            case = get_aspect_case(conn, int(args.case_id))
+            if case is None:
+                raise SystemExit(f"No aspect case found for case_id={args.case_id}.")
+            try:
+                validate_region_inside_case(case, str(args.region_start), str(args.region_end))
+            except ValueError as exc:
+                raise SystemExit(str(exc)) from exc
+            ignore_id = add_ignore_region(
+                conn,
+                case_id=int(args.case_id),
+                region_start_ist=str(args.region_start),
+                region_end_ist=str(args.region_end),
+                why_text=str(args.why),
+            )
+        print(f"Saved ignore_id={ignore_id} for case_id={args.case_id}.")
+        print(
+            f"Case: {case['pair_key']} | {case['aspect']} | "
+            f"{case['window_start_ist']} -> {case['window_end_ist']}"
+        )
+    if args.add_rule_note:
+        missing = [
+            name
+            for name, value in (
+                ("--case-id", args.case_id),
+                ("--note", args.note),
+            )
+            if value in (None, "")
+        ]
+        if missing:
+            raise SystemExit("--add-rule-note requires " + ", ".join(missing))
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            case = get_aspect_case(conn, int(args.case_id))
+            if case is None:
+                raise SystemExit(f"No aspect case found for case_id={args.case_id}.")
+            if args.annotation_id is not None:
+                annotation = conn.execute(
+                    """
+                    SELECT 1
+                    FROM trade_annotations
+                    WHERE annotation_id = ?
+                      AND case_id = ?
+                    """,
+                    (int(args.annotation_id), int(args.case_id)),
+                ).fetchone()
+                if annotation is None:
+                    raise SystemExit(
+                        f"No annotation_id={args.annotation_id} found for case_id={args.case_id}."
+                    )
+            note_id = add_rule_note(
+                conn,
+                case_id=int(args.case_id),
+                annotation_id=args.annotation_id,
+                note_type=str(args.note_type or "general"),
+                note_text=str(args.note),
+            )
+        print(f"Saved note_id={note_id} for case_id={args.case_id}.")
     if args.list_aspects:
         initialize_database(args.db)
         with connect(args.db) as conn:
@@ -953,6 +1161,32 @@ def main() -> None:
             print("Saved trade annotations:")
             for row in rows:
                 print_annotation(row)
+    if args.list_ignore_regions:
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            rows = list_ignore_regions(conn, args.case_id, max(1, args.limit))
+        if not rows:
+            if args.case_id is None:
+                print("No ignore regions saved yet.")
+            else:
+                print(f"No ignore regions saved for case_id={args.case_id}.")
+        else:
+            print("Saved ignore regions:")
+            for row in rows:
+                print_ignore_region(row)
+    if args.list_rule_notes:
+        initialize_database(args.db)
+        with connect(args.db) as conn:
+            rows = list_rule_notes(conn, args.case_id, max(1, args.limit))
+        if not rows:
+            if args.case_id is None:
+                print("No rule notes saved yet.")
+            else:
+                print(f"No rule notes saved for case_id={args.case_id}.")
+        else:
+            print("Saved rule notes:")
+            for row in rows:
+                print_rule_note(row)
 
 
 if __name__ == "__main__":
