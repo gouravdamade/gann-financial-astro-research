@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 02:15 IST
+Last updated: 2026-05-15 02:22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -616,6 +616,16 @@ Chart click-selection update on 2026-05-12:
   Snapshot top-level keys: `case`, `same_aspect`, `saved`, `suggestions`, `exported_at_utc`.
   For `case_id=11`, same-aspect total was `18`, case index was `1`, and saved annotation/note counts were all `0`.
   This JSON is the planned bridge from the Python research/annotation engine into a later React/Tauri review UI.
+- Eighth annotation database step on 2026-05-15:
+  `aspect_annotation_store.py` now supports `--export-review-html --case-id N` to write a plain static HTML review page from the same review-case payload.
+  Default output path shape:
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_<case_id>.html`
+  Verified command:
+  `python .\aspect_annotation_store.py --export-review-html --case-id 11`
+  Output:
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11.html`
+  Page sections: current case, progress, action command templates, saved trade annotations, saved ignore regions, saved rule notes, same-aspect queue, and raw JSON snapshot.
+  This is the first no-install visual review page before React/Tauri.
 
 Important scoring fix on 2026-05-04:
 

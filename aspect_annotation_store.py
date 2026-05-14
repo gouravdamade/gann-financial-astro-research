@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import html
 import json
 import sqlite3
 from datetime import datetime, timezone
@@ -512,6 +513,10 @@ def row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
     return {key: row[key] for key in row.keys()}
 
 
+def h(value: Any) -> str:
+    return html.escape("" if value is None else str(value), quote=True)
+
+
 def print_review_case(case: sqlite3.Row, prefix: str = "Next unreviewed") -> None:
     label = str(case["aspect_label"] or "").strip()
     if label and str(case["pair_key"]) not in label:
@@ -577,6 +582,10 @@ def rule_note_command_template(case: sqlite3.Row) -> str:
 
 def default_review_export_path(case_id: int) -> Path:
     return DEFAULT_REVIEW_EXPORT_DIR / f"aspect_review_case_{case_id}.json"
+
+
+def default_review_html_path(case_id: int) -> Path:
+    return DEFAULT_REVIEW_EXPORT_DIR / f"aspect_review_case_{case_id}.html"
 
 
 def get_aspect_case(conn: sqlite3.Connection, case_id: int) -> sqlite3.Row | None:
@@ -856,7 +865,7 @@ def print_rule_note(row: sqlite3.Row) -> None:
     print(f"  note: {note}")
 
 
-def export_review_case_snapshot(db_path: Path, case_id: int, output_path: Path | None = None) -> Path:
+def build_review_case_payload(db_path: Path, case_id: int) -> dict[str, Any]:
     initialize_database(db_path)
     with connect(db_path) as conn:
         case = get_aspect_case(conn, case_id)
@@ -874,7 +883,7 @@ def export_review_case_snapshot(db_path: Path, case_id: int, output_path: Path |
         None,
     )
     price_timeframe = suggested_price_timeframe(case)
-    payload = {
+    return {
         "exported_at_utc": utc_now(),
         "case": row_to_dict(case),
         "same_aspect": {
@@ -899,9 +908,240 @@ def export_review_case_snapshot(db_path: Path, case_id: int, output_path: Path |
             "add_rule_note_command": rule_note_command_template(case),
         },
     }
+
+
+def export_review_case_snapshot(db_path: Path, case_id: int, output_path: Path | None = None) -> Path:
+    payload = build_review_case_payload(db_path, case_id)
     output_path = output_path or default_review_export_path(case_id)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(payload, indent=2, ensure_ascii=True), encoding="utf-8")
+    return output_path
+
+
+def rows_table(headers: list[str], rows: list[list[Any]], empty_text: str) -> str:
+    if not rows:
+        return f'<p class="empty">{h(empty_text)}</p>'
+    head = "".join(f"<th>{h(header)}</th>" for header in headers)
+    body_rows = []
+    for row in rows:
+        body_rows.append("<tr>" + "".join(f"<td>{h(value)}</td>" for value in row) + "</tr>")
+    return f"<table><thead><tr>{head}</tr></thead><tbody>{''.join(body_rows)}</tbody></table>"
+
+
+def render_review_case_html(payload: dict[str, Any]) -> str:
+    case = payload["case"]
+    same = payload["same_aspect"]
+    saved = payload["saved"]
+    suggestions = payload["suggestions"]
+    cases = same["cases"]
+    case_rows = [
+        [
+            row["case_id"],
+            "yes" if int(row.get("annotation_count") or 0) > 0 else "",
+            row["window_start_ist"],
+            row["window_end_ist"],
+            row.get("timeframe", ""),
+        ]
+        for row in cases
+    ]
+    annotation_rows = [
+        [
+            row["annotation_id"],
+            row["outcome_label"],
+            row["trade_start_ist"],
+            row["trade_end_ist"],
+            row.get("entry_price", ""),
+            row.get("exit_price", ""),
+            row.get("pips", ""),
+            row.get("why_text", ""),
+        ]
+        for row in saved["trade_annotations"]
+    ]
+    ignore_rows = [
+        [row["ignore_id"], row["region_start_ist"], row["region_end_ist"], row.get("why_text", "")]
+        for row in saved["ignore_regions"]
+    ]
+    note_rows = [
+        [row["note_id"], row.get("annotation_id", ""), row["note_type"], row["note_text"]]
+        for row in saved["rule_notes"]
+    ]
+    context_json = json.dumps(payload, indent=2, ensure_ascii=True)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aspect Review Case {h(case['case_id'])}</title>
+  <style>
+    :root {{
+      color-scheme: dark;
+      --bg: #101820;
+      --panel: #17212b;
+      --panel2: #1f2b37;
+      --text: #e6edf3;
+      --muted: #9fb0c0;
+      --line: #3a4b5e;
+      --accent: #ff5a5f;
+      --accent2: #2dd4bf;
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }}
+    header {{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #0c131a;
+      border-bottom: 1px solid var(--line);
+      padding: 14px 20px;
+    }}
+    main {{ max-width: 1380px; margin: 0 auto; padding: 18px 20px 36px; }}
+    h1 {{ margin: 0 0 4px; font-size: 21px; font-weight: 700; letter-spacing: 0; }}
+    h2 {{ margin: 0 0 10px; font-size: 16px; font-weight: 700; letter-spacing: 0; }}
+    section {{
+      border-top: 1px solid var(--line);
+      padding: 18px 0;
+    }}
+    .meta {{
+      display: grid;
+      grid-template-columns: repeat(4, minmax(170px, 1fr));
+      gap: 10px;
+    }}
+    .stat {{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      min-height: 70px;
+    }}
+    .label {{ color: var(--muted); font-size: 12px; margin-bottom: 3px; }}
+    .value {{ font-size: 14px; word-break: break-word; }}
+    .progress {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }}
+    .pill {{
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 13px;
+    }}
+    .pill strong {{ color: var(--accent2); }}
+    pre {{
+      margin: 8px 0 14px;
+      padding: 12px;
+      background: #071018;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: #dbeafe;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+    }}
+    table {{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }}
+    th, td {{
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: top;
+    }}
+    th {{
+      color: #cfe2f3;
+      background: #13202c;
+      position: sticky;
+      top: 64px;
+      z-index: 1;
+    }}
+    tr.current td {{ border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); }}
+    .empty {{ color: var(--muted); margin: 0; }}
+    details {{ margin-top: 10px; }}
+    summary {{ cursor: pointer; color: #cfe2f3; }}
+    @media (max-width: 900px) {{
+      .meta {{ grid-template-columns: 1fr; }}
+      header {{ position: static; }}
+      th {{ position: static; }}
+    }}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{h(case['pair_key'])} | {h(case['aspect'])}</h1>
+    <div class="label">Case {h(case['case_id'])} · exported {h(payload['exported_at_utc'])}</div>
+  </header>
+  <main>
+    <section>
+      <h2>Current Case</h2>
+      <div class="meta">
+        <div class="stat"><div class="label">Case ID</div><div class="value">{h(case['case_id'])}</div></div>
+        <div class="stat"><div class="label">Aspect Label</div><div class="value">{h(case.get('aspect_label', ''))}</div></div>
+        <div class="stat"><div class="label">Window Start</div><div class="value">{h(case['window_start_ist'])}</div></div>
+        <div class="stat"><div class="label">Window End</div><div class="value">{h(case['window_end_ist'])}</div></div>
+      </div>
+      <div class="progress">
+        <div class="pill">Position <strong>{h(same['case_index'])}</strong> / {h(same['total_cases'])}</div>
+        <div class="pill">Annotated <strong>{h(same['annotated_cases'])}</strong></div>
+        <div class="pill">Unreviewed <strong>{h(same['unreviewed_cases'])}</strong></div>
+        <div class="pill">Suggested price timeframe <strong>{h(suggestions['price_timeframe'])}</strong></div>
+      </div>
+    </section>
+    <section>
+      <h2>Action Commands</h2>
+      <div class="label">Trade annotation</div>
+      <pre>{h(suggestions['add_trade_annotation_command'])}</pre>
+      <div class="label">Ignore region</div>
+      <pre>{h(suggestions['mark_ignore_region_command'])}</pre>
+      <div class="label">Rule note</div>
+      <pre>{h(suggestions['add_rule_note_command'])}</pre>
+    </section>
+    <section>
+      <h2>Saved Trade Annotations</h2>
+      {rows_table(['ID', 'Label', 'Start', 'End', 'Entry', 'Exit', 'Pips', 'Why'], annotation_rows, 'No trade annotations saved for this case.')}
+    </section>
+    <section>
+      <h2>Saved Ignore Regions</h2>
+      {rows_table(['ID', 'Start', 'End', 'Why'], ignore_rows, 'No ignore regions saved for this case.')}
+    </section>
+    <section>
+      <h2>Saved Rule Notes</h2>
+      {rows_table(['ID', 'Annotation', 'Type', 'Note'], note_rows, 'No rule notes saved for this case.')}
+    </section>
+    <section>
+      <h2>Same Aspect Queue</h2>
+      {rows_table(['Case ID', 'Reviewed', 'Start', 'End', 'Timeframe'], case_rows, 'No same-aspect cases found.')}
+    </section>
+    <section>
+      <h2>Raw Snapshot</h2>
+      <details>
+        <summary>Show JSON</summary>
+        <pre>{h(context_json)}</pre>
+      </details>
+    </section>
+  </main>
+</body>
+</html>
+"""
+
+
+def export_review_case_html(db_path: Path, case_id: int, output_path: Path | None = None) -> Path:
+    payload = build_review_case_payload(db_path, case_id)
+    output_path = output_path or default_review_html_path(case_id)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(render_review_case_html(payload), encoding="utf-8")
     return output_path
 
 
@@ -989,6 +1229,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--add-rule-note", action="store_true", help="Save a free-form rule note for a case.")
     parser.add_argument("--list-rule-notes", action="store_true", help="Show saved rule notes.")
     parser.add_argument("--export-review-case", action="store_true", help="Write one case review snapshot JSON.")
+    parser.add_argument("--export-review-html", action="store_true", help="Write one static HTML review page.")
     parser.add_argument("--case-id", type=int, help="Aspect case id for annotation commands.")
     parser.add_argument("--annotation-id", type=int, help="Optional trade annotation id for a rule note.")
     parser.add_argument("--trade-start", help="Trade start timestamp in IST, copied from the chart/candle.")
@@ -1011,6 +1252,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--note-type", default="general", help="Rule note type, for example sr_ignore_reason.")
     parser.add_argument("--note", default="", help="Free-form note text for --add-rule-note.")
     parser.add_argument("--output-json", type=Path, help="Output path for --export-review-case.")
+    parser.add_argument("--output-html", type=Path, help="Output path for --export-review-html.")
     parser.add_argument("--pair-key", help="Pair key for --list-cases, for example MARS|JUPITER.")
     parser.add_argument("--aspect", help="Aspect for --list-cases, for example opposition.")
     parser.add_argument("--limit", type=int, default=20, help="Maximum rows to show for list commands.")
@@ -1034,12 +1276,13 @@ def main() -> None:
             args.add_rule_note,
             args.list_rule_notes,
             args.export_review_case,
+            args.export_review_html,
         )
     ):
         raise SystemExit(
             "Use --init-db, --smoke-test, --import-cases-from-csv, --list-aspects, --list-cases, --review-aspect, "
             "--add-trade-annotation, --list-annotations, --mark-ignore-region, --list-ignore-regions, "
-            "--add-rule-note, --list-rule-notes, or --export-review-case."
+            "--add-rule-note, --list-rule-notes, --export-review-case, or --export-review-html."
         )
     if args.init_db:
         initialize_database(args.db)
@@ -1287,6 +1530,14 @@ def main() -> None:
         except ValueError as exc:
             raise SystemExit(str(exc)) from exc
         print(f"Exported review snapshot: {output_path}")
+    if args.export_review_html:
+        if args.case_id is None:
+            raise SystemExit("--export-review-html requires --case-id.")
+        try:
+            output_path = export_review_case_html(args.db, int(args.case_id), args.output_html)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        print(f"Exported review HTML: {output_path}")
 
 
 if __name__ == "__main__":
