@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-14 20:17 IST
+Last updated: 2026-05-14 20:56 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -519,6 +519,13 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with single-click-only selection and markerless shaded-area fallback:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_201400.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_201400.csv`
+- Follow-up on 2026-05-14:
+  user clarified that shaded-area selection must select the full clicked aspect window, not stop at the next split regime/aspect boundary like a paint-bucket fill.
+  The click-coordinate fallback now ranks full `aspect_window` hitboxes above split `regime_zone` segments, so intermediate regime/aspect boundaries should be skipped for aspect selection.
+  Marker clicks are still protected from being overwritten by the underlying shaded-area fallback.
+- Fresh chart export with aspect-first shaded-area selection:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_205344.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_205344.csv`
 
 Important scoring fix on 2026-05-04:
 

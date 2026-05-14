@@ -98,7 +98,8 @@ DETAIL_PANEL_POST_SCRIPT = r"""
   panel.style.cssText = 'margin:12px 0 0 0;padding:12px 14px;background:#0b1220;color:#dbeafe;border:1px solid #334155;border-radius:6px;font:13px/1.45 Arial,sans-serif;max-height:360px;overflow:auto;';
   panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Single-click an event, marker, or shaded aspect/regime window to select it and show Quote/JPY details.</span>';
   gd.parentNode.insertBefore(panel, gd.nextSibling);
-  var lastAppliedClickAt = 0;
+  var lastPlotlyClickAt = 0;
+  var lastPlotlyClickKind = '';
   function unwrapCustomData(customdata) {
     while (Array.isArray(customdata) && customdata.length === 1 && Array.isArray(customdata[0])) {
       customdata = customdata[0];
@@ -282,7 +283,10 @@ DETAIL_PANEL_POST_SCRIPT = r"""
   function handleSelectionEvent(eventData) {
     var payload = payloadFromEvent(eventData);
     if (!payload) return;
-    if (applyPayload(payload, true)) lastAppliedClickAt = Date.now();
+    if (applyPayload(payload, true)) {
+      lastPlotlyClickAt = Date.now();
+      lastPlotlyClickKind = payload.selection ? String(payload.selection.kind || '') : '';
+    }
   }
   function valueMs(value) {
     if (value === null || value === undefined) return NaN;
@@ -303,6 +307,19 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     if (!trace || !trace.customdata) return null;
     if (Array.isArray(trace.customdata)) return payloadFromCustomData(trace.customdata[0]);
     return payloadFromCustomData(trace.customdata);
+  }
+  function fallbackPriority(payload, traceName) {
+    var kind = payload && payload.selection ? String(payload.selection.kind || '') : '';
+    var isHitbox = String(traceName || '').indexOf('click/hover hitbox') !== -1;
+    if (kind === 'aspect_window' && isHitbox) return 0;
+    if (kind === 'aspect_window') return 1;
+    if (kind === 'touch_event') return 2;
+    if (kind === 'regime_zone') return 3;
+    if (isHitbox) return 4;
+    return 5;
+  }
+  function isMarkerKind(kind) {
+    return kind === 'touch_marker' || kind === 'selected_marker';
   }
   function payloadFromClickPosition(evt) {
     if (!gd._fullLayout || !gd._fullLayout.xaxis || !gd._fullLayout.yaxis) return null;
@@ -334,7 +351,7 @@ DETAIL_PANEL_POST_SCRIPT = r"""
       if (clickedMs < x0 || clickedMs > x1 || clickedYNum < y0 || clickedYNum > y1) continue;
       var duration = x1 - x0;
       var name = String(trace.name || '');
-      var priority = name.indexOf('click/hover hitbox') !== -1 ? 0 : 1;
+      var priority = fallbackPriority(payload, name);
       var score = [priority, duration, -i];
       if (
         !best ||
@@ -351,9 +368,9 @@ DETAIL_PANEL_POST_SCRIPT = r"""
     handleSelectionEvent(eventData);
   });
   gd.addEventListener('click', function (evt) {
-    if (Date.now() - lastAppliedClickAt < 80) return;
+    if (Date.now() - lastPlotlyClickAt < 80 && isMarkerKind(lastPlotlyClickKind)) return;
     var payload = payloadFromClickPosition(evt);
-    if (applyPayload(payload, true)) lastAppliedClickAt = Date.now();
+    applyPayload(payload, true);
   });
 }());
 """
