@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 00:00 IST
+Last updated: 2026-05-15 00:15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -540,6 +540,12 @@ Chart click-selection update on 2026-05-12:
   instead of only asking ML to walk-forward all aspects globally, build an aspect-review agent/workbench.
   When user clicks aspect X, the tool should find same/similar aspects in the generated chart and navigate through them one by one.
   User should be able to mark proposed trade begin/end and ignore regions; system calculates gain/loss, labels bullish/bearish/ignore, and compares divergent outcomes against context factors such as enemy sign, dignity/shadbala strength, multiple overlapping aspects, and other active regimes.
+- User clarified aspect-review requirements:
+  same aspect means exact same `pair_key + aspect`, and search should cover the full CSV/history, not only the currently visible chart window.
+  User wants free placement of start/stop markers inside the selected shaded area and free-form `why` notes so ML can learn from both outcome labels and human rule notes.
+  User may add rules such as why a first SR line after the start marker was ignored, for example because it was too close.
+  One aspect window may contain multiple trades/annotations and ignore regions.
+  Outcome labels should include `bullish`, `bearish`, `sideways`, and `unclear`.
 
 Important scoring fix on 2026-05-04:
 
