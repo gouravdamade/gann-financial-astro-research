@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-14 18:02 IST
+Last updated: 2026-05-14 18:57 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -503,6 +503,13 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with hover-target + single-click details fallback:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_180116.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_180116.csv`
+- Follow-up on 2026-05-14:
+  user asked to disable double-click zoom/reset in the chart and reduce overlap for very short selected aspect windows.
+  `sr_touch_lazy_dashboard.py` now writes Plotly HTML with `config={"doubleClick": False, "displaylogo": False}` for both single-timeframe and switch exports.
+  Selected-window start/end labels now sit outward from the borders: start label offset left with right alignment, end label offset right with left alignment.
+- Fresh chart export with double-click disabled and outward start/end labels:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_185353.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_185353.csv`
 
 Important scoring fix on 2026-05-04:
 

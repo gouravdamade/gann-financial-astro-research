@@ -84,6 +84,10 @@ ZONE_COLORS = {"bullish": "rgba(79,70,229,0.12)", "bearish": "rgba(245,158,11,0.
 ZONE_BORDER_COLORS = {"bullish": "rgba(79,70,229,0.45)", "bearish": "rgba(245,158,11,0.45)"}
 REGIME_ZONE_COLORS = {"single": "rgba(59,130,246,0.045)", "overlap": "rgba(245,158,11,0.095)"}
 REGIME_ZONE_BORDER_COLORS = {"single": "rgba(96,165,250,0.38)", "overlap": "rgba(251,191,36,0.70)"}
+PLOTLY_CHART_CONFIG = {
+    "doubleClick": False,
+    "displaylogo": False,
+}
 DETAIL_PANEL_POST_SCRIPT = r"""
 (function () {
   var gd = document.getElementById('{plot_id}');
@@ -211,8 +215,10 @@ DETAIL_PANEL_POST_SCRIPT = r"""
         text: 'Start<br>' + formatTs(selection.start),
         showarrow: true,
         arrowhead: 2,
-        ax: 0,
-        ay: -38,
+        ax: -92,
+        ay: -32,
+        xanchor: 'right',
+        align: 'right',
         bgcolor: 'rgba(127, 29, 29, 0.92)',
         bordercolor: 'rgba(248, 113, 113, 1)',
         borderwidth: 1,
@@ -227,8 +233,10 @@ DETAIL_PANEL_POST_SCRIPT = r"""
         text: 'End<br>' + formatTs(selection.end),
         showarrow: true,
         arrowhead: 2,
-        ax: 0,
-        ay: -38,
+        ax: 92,
+        ay: -32,
+        xanchor: 'left',
+        align: 'left',
         bgcolor: 'rgba(127, 29, 29, 0.92)',
         bordercolor: 'rgba(248, 113, 113, 1)',
         borderwidth: 1,
@@ -2000,7 +2008,12 @@ def export_full_year_chart(
     html_path = export_root / f"sr_touch_full_1year_{timeframe}_{stamp}.html"
     csv_path = export_root / f"sr_touch_full_1year_{timeframe}_{stamp}.csv"
     fig.update_layout(height=980)
-    fig.write_html(str(html_path), include_plotlyjs=True, post_script=DETAIL_PANEL_POST_SCRIPT)
+    fig.write_html(
+        str(html_path),
+        include_plotlyjs=True,
+        post_script=DETAIL_PANEL_POST_SCRIPT,
+        config=PLOTLY_CHART_CONFIG,
+    )
     build_user_facing_export_frame(visible).to_csv(csv_path, index=False)
     return html_path, csv_path, visible
 
@@ -2101,7 +2114,12 @@ def export_switchable_timeframe_chart(
     stamp = pd.Timestamp.now(tz=IST).strftime("%Y%m%d_%H%M%S")
     html_path = export_root / f"sr_touch_full_1year_switch_{stamp}.html"
     csv_path = export_root / f"sr_touch_full_1year_switch_{stamp}.csv"
-    combined.write_html(str(html_path), include_plotlyjs=True, post_script=DETAIL_PANEL_POST_SCRIPT)
+    combined.write_html(
+        str(html_path),
+        include_plotlyjs=True,
+        post_script=DETAIL_PANEL_POST_SCRIPT,
+        config=PLOTLY_CHART_CONFIG,
+    )
     all_visible = pd.concat(visible_frames, ignore_index=True) if visible_frames else pd.DataFrame()
     build_user_facing_export_frame(all_visible).to_csv(csv_path, index=False)
     return html_path, csv_path, all_visible
