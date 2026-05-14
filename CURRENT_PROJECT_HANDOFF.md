@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-12 22:55 IST
+Last updated: 2026-05-14 18:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -496,6 +496,13 @@ Chart click-selection update on 2026-05-12:
 - Fresh chart export with hitbox interaction layer:
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_224942.html`
   `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260512_224942.csv`
+- Follow-up on 2026-05-14 after user confirmed highlight works but was unsure
+  whether details require single click/double click or only certain points:
+  the browser script now remembers the most recent hovered event/regime payload.
+  A normal single click within a short hover window locks/updates the Quote/JPY details panel from that remembered payload, so the user should hover until the red window appears, then single-click; no double-click is intended.
+- Fresh chart export with hover-target + single-click details fallback:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_180116.html`
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260514_180116.csv`
 
 Important scoring fix on 2026-05-04:
 

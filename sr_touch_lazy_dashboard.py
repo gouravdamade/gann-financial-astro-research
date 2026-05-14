@@ -92,8 +92,9 @@ DETAIL_PANEL_POST_SCRIPT = r"""
   var panel = document.createElement('div');
   panel.id = gd.id + '-sr-details-panel';
   panel.style.cssText = 'margin:12px 0 0 0;padding:12px 14px;background:#0b1220;color:#dbeafe;border:1px solid #334155;border-radius:6px;font:13px/1.45 Arial,sans-serif;max-height:360px;overflow:auto;';
-  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Hover or click an event, marker, or active regime zone to isolate its start/end window.</span>';
+  panel.innerHTML = '<b>Details</b><br><span style="color:#94a3b8">Hover an event window to isolate it; single-click while highlighted to lock Quote/JPY details.</span>';
   gd.parentNode.insertBefore(panel, gd.nextSibling);
+  var lastHoverPayload = null;
   function unwrapCustomData(customdata) {
     while (Array.isArray(customdata) && customdata.length === 1 && Array.isArray(customdata[0])) {
       customdata = customdata[0];
@@ -238,21 +239,44 @@ DETAIL_PANEL_POST_SCRIPT = r"""
       setTimeout(disableSelectionPointerEvents, 0);
     });
   }
-  function handleSelectionEvent(eventData, updateDetails) {
-    if (!eventData || !eventData.points || !eventData.points.length) return;
+  function payloadFromEvent(eventData) {
+    if (!eventData || !eventData.points || !eventData.points.length) return null;
     var customdata = eventData.points[0].customdata;
     var selection = selectionFromCustomData(customdata);
+    var detail = detailFromCustomData(customdata);
+    if (!selection && !detail) return null;
+    return {
+      selection: selection,
+      detail: detail,
+      touchedAt: Date.now()
+    };
+  }
+  function applyPayload(payload, updateDetails) {
+    if (!payload) return false;
+    var selection = payload.selection;
     if (selection) setSelectedWindow(selection);
     if (updateDetails) {
-      var detail = detailFromCustomData(customdata);
+      var detail = payload.detail;
       if (detail) panel.innerHTML = String(detail);
     }
+    return Boolean(selection || payload.detail);
+  }
+  function handleSelectionEvent(eventData, updateDetails) {
+    var payload = payloadFromEvent(eventData);
+    if (!payload) return;
+    lastHoverPayload = payload;
+    applyPayload(payload, updateDetails);
   }
   gd.on('plotly_click', function (eventData) {
     handleSelectionEvent(eventData, true);
   });
   gd.on('plotly_hover', function (eventData) {
     handleSelectionEvent(eventData, false);
+  });
+  gd.addEventListener('click', function () {
+    if (!lastHoverPayload) return;
+    if (Date.now() - lastHoverPayload.touchedAt > 3500) return;
+    applyPayload(lastHoverPayload, true);
   });
 }());
 """
