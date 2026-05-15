@@ -1,0 +1,5 @@
+﻿backup_created_ist=2026-05-16 00:47:16 +05:30
+source_repo=C:\Users\ADMIN\PycharmProjects
+codex_generated_folder=C:\Users\ADMIN\Documents\Codex\2026-05-16\this-is-my-private-gann-financial
+recovery_repo=https://github.com/gouravdamade/gann-financial-astro-research
+note=Codex app generated folder was not a git repo and refused Documents writes; canonical PyCharm repo was writable and clean.

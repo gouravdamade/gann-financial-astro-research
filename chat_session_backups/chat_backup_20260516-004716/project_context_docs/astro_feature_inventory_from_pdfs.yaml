@@ -1,0 +1,183 @@
+sources:
+  STRICT_JYOTISH_ML:
+    file: "Strict Jyotish Prediction Engine with Local LLM & ML Calibration2.pdf"
+    role: "core_architecture"
+    extraction_status: "readable_text"
+  STRICT_VEDIC_LLM:
+    file: "Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf"
+    role: "core_architecture"
+    extraction_status: "readable_text"
+  ASTROECON:
+    file: "pdfcoffee.com_financial-astrology-pdf-free.pdf"
+    role: "experimental_financial_astrology"
+    extraction_status: "readable_text"
+  FUTURETEK_DHRUVANK:
+    file: "pdfcoffee.com_futuretec-financial-astrology-set-2-dhruvank-pdf-free.pdf"
+    role: "experimental_vedic_financial_astrology"
+    extraction_status: "readable_text"
+  GANN_VOL2:
+    file: "pdfcoffee.com_gann-financial-astrology-pdf-free.pdf"
+    role: "experimental_gann_financial_astrology"
+    extraction_status: "ocr_text_177_pages"
+    extracted_text: "C:\\Users\\ADMIN\\Desktop\\doc\\pdf_text_extracts\\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt"
+    ocr_summary: "C:\\Users\\ADMIN\\Desktop\\doc\\pdf_text_extracts\\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json"
+  SHADBALA_JAYA:
+    file: "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf"
+    role: "detailed_shadbala_doctrine_reference"
+    extraction_status: "readable_text"
+
+doctrine_locks:
+  - id: LOCK_TIME_UTC
+    requirement: "Use UTC internally and preserve display timezone separately."
+    sources: ["STRICT_JYOTISH_ML:p1-p2", "STRICT_VEDIC_LLM:p3"]
+  - id: LOCK_DOCTRINE_CONFIG
+    requirement: "Version ayanamsa, zodiac, graha set, node type, aspect/drishti method, and ephemeris path."
+    sources: ["STRICT_JYOTISH_ML:p1-p4", "STRICT_VEDIC_LLM:p3-p4"]
+  - id: NO_LLM_IN_LOGIC
+    requirement: "LLM may explain only; it must not compute events, labels, or trades."
+    sources: ["STRICT_JYOTISH_ML:p1,p5-p7", "STRICT_VEDIC_LLM:p1-p3"]
+  - id: ML_CALIBRATION_SCOPE
+    requirement: "ML may tune weights, thresholds, windows, and interactions, not invent astrology."
+    sources: ["STRICT_JYOTISH_ML:p6-p8", "STRICT_VEDIC_LLM:p6-p8"]
+
+features:
+  - id: ASP_HARD_EVENT
+    bucket: experimental_financial_astrology
+    timeframes: ["m30", "hourly", "daily"]
+    signal_intent: "trend_change_or_volatility"
+    inputs: ["aspect", "event_duration_minutes", "aspect_regime_active_count"]
+    sources: ["ASTROECON:p24-p25"]
+    implementation_status: "partial_existing"
+  - id: ASP_SOFT_EVENT
+    bucket: experimental_financial_astrology
+    timeframes: ["m30", "hourly", "daily"]
+    signal_intent: "continuation_or_inertia"
+    inputs: ["aspect", "event_duration_minutes", "aspect_regime_active_count"]
+    sources: ["ASTROECON:p25-p26"]
+    implementation_status: "partial_existing"
+  - id: ASP_DURATION_BUCKET
+    bucket: architecture_derived
+    timeframes: ["m30", "hourly", "daily", "weekly"]
+    signal_intent: "separate_trigger_swing_position_context"
+    inputs: ["event_duration_minutes"]
+    sources: ["ASTROECON:p4-p5", "STRICT_JYOTISH_ML:p6-p8"]
+    implementation_status: "partial_existing"
+  - id: SR_TOUCH_CONFIRMATION
+    bucket: experimental_financial_astrology
+    timeframes: ["m30", "hourly", "daily"]
+    signal_intent: "only_action_aspect_when_price_near_sr"
+    inputs: ["touch_kind", "touch_distance_pct", "touch_identity_1_text", "touch_identity_2_text"]
+    sources: ["ASTROECON:p4-p5", "ASTROECON:p52-p53"]
+    implementation_status: "existing"
+  - id: MOON_FAST_TRIGGER
+    bucket: experimental_financial_astrology
+    timeframes: ["m30", "hourly"]
+    signal_intent: "short_term_trigger"
+    inputs: ["pair_key", "b1", "b2", "touch_planet_1", "touch_planet_2", "touch_has_moon"]
+    sources: ["ASTROECON:p4-p5", "ASTROECON:p52-p53"]
+    implementation_status: "partial_existing"
+  - id: SLOW_PLANET_CONTEXT
+    bucket: experimental_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "higher_timeframe_context"
+    inputs: ["b1", "b2", "pair_key", "event_duration_minutes"]
+    sources: ["ASTROECON:p4-p5", "ASTROECON:p58-p59"]
+    implementation_status: "partial_existing"
+  - id: STELLIUM_PATTERN
+    bucket: experimental_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "major_cycle_or_turn_risk"
+    inputs: ["planet_longitudes", "cluster_span_degrees", "cluster_planet_count"]
+    sources: ["ASTROECON:p34-p35"]
+    implementation_status: "not_implemented"
+  - id: T_SQUARE_PATTERN
+    bucket: experimental_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "stress_volatility_or_trend_change"
+    inputs: ["planet_longitudes", "oppositions", "squares"]
+    sources: ["ASTROECON:p36-p37"]
+    implementation_status: "not_implemented"
+  - id: GRAND_CROSS_PATTERN
+    bucket: experimental_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "strong_stress_volatility"
+    inputs: ["planet_longitudes", "oppositions", "squares"]
+    sources: ["ASTROECON:p36-p37"]
+    implementation_status: "not_implemented"
+  - id: GRAND_TRINE_PATTERN
+    bucket: experimental_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "trend_continuation_or_inertia"
+    inputs: ["planet_longitudes", "trines"]
+    sources: ["ASTROECON:p37-p38"]
+    implementation_status: "not_implemented"
+  - id: YOD_PATTERN
+    bucket: experimental_financial_astrology
+    timeframes: ["m30", "hourly", "daily"]
+    signal_intent: "focused_turning_point_candidate"
+    inputs: ["planet_longitudes", "sextiles", "midpoints", "oppositions"]
+    sources: ["ASTROECON:p38-p39", "ASTROECON:p52-p53"]
+    implementation_status: "not_implemented"
+  - id: MIDPOINT_DIRECT_HIT
+    bucket: experimental_financial_astrology
+    timeframes: ["m30", "hourly", "daily", "weekly"]
+    signal_intent: "focused_timing"
+    inputs: ["planet_longitudes", "midpoint_pairs", "orb_or_time_window"]
+    sources: ["ASTROECON:p58-p59"]
+    implementation_status: "not_implemented"
+  - id: GANN_PRICE_LONGITUDE_HIT
+    bucket: experimental_gann_financial_astrology
+    timeframes: ["m30", "hourly", "daily", "weekly"]
+    signal_intent: "support_resistance_or_turning_point"
+    inputs: ["geocentric_longitude", "heliocentric_longitude", "price_scale", "price_modulo_360", "touch_distance"]
+    sources: ["GANN_VOL2:ocr_p11-p14", "GANN_VOL2:ocr_p19-p20"]
+    implementation_status: "not_implemented_verify_ocr"
+  - id: GANN_OUTER_PLANET_AVERAGE
+    bucket: experimental_gann_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "higher_timeframe_resistance_zone"
+    inputs: ["mars_longitude", "jupiter_longitude", "saturn_longitude", "uranus_longitude", "neptune_longitude", "pluto_longitude", "geo_helio_average", "zero_crossing_smoothing"]
+    sources: ["GANN_VOL2:ocr_p20-p30"]
+    implementation_status: "not_implemented_verify_ocr"
+  - id: GANN_CIRCLE_ACTIVE_ANGLE
+    bucket: experimental_gann_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "future_time_period_or_resistance_projection"
+    inputs: ["circle_degree_grid", "origin_policy", "active_angle", "projected_time", "projected_resistance"]
+    sources: ["GANN_VOL2:ocr_p7-p10", "GANN_VOL2:ocr_p34"]
+    implementation_status: "not_implemented_rule_extraction_needed"
+  - id: ANGULAR_INTRADAY_HIT
+    bucket: location_specific_experimental
+    timeframes: ["m30", "hourly"]
+    signal_intent: "intraday_timing_near_sr"
+    inputs: ["exchange_location", "planet_positions", "asc_mc_desc_ic_hits"]
+    sources: ["ASTROECON:p52-p53", "ASTROECON:p65"]
+    implementation_status: "not_implemented"
+  - id: DHRUVANK_REMAINDER_SIGNAL
+    bucket: experimental_vedic_financial_astrology
+    timeframes: ["daily", "weekly"]
+    signal_intent: "rise_fall_no_change"
+    inputs: ["commodity_or_share", "city", "nakshatra", "tithi", "weekday", "lunar_month", "sun_sign", "yoga"]
+    sources: ["FUTURETEK_DHRUVANK:p2-p17"]
+    implementation_status: "not_implemented"
+  - id: JYOTISH_NAKSHATRA_PADA
+    bucket: strict_jyotish_core
+    timeframes: ["m30", "hourly", "daily", "weekly"]
+    signal_intent: "doctrine_context_feature"
+    inputs: ["sidereal_longitude"]
+    sources: ["STRICT_JYOTISH_ML:p3"]
+    implementation_status: "not_implemented"
+  - id: BPHS_DRISHTI_STRENGTH
+    bucket: strict_jyotish_core
+    timeframes: ["m30", "hourly", "daily", "weekly"]
+    signal_intent: "doctrine_strength_feature"
+    inputs: ["planet_longitudes", "graha_pair"]
+    sources: ["STRICT_JYOTISH_ML:p2-p4"]
+    implementation_status: "partial_existing_verify"
+  - id: SHADBALA_GATE
+    bucket: strict_jyotish_core
+    timeframes: ["daily", "weekly"]
+    signal_intent: "strength_filter_or_context"
+    inputs: ["shadbala_components", "planet"]
+    sources: ["STRICT_JYOTISH_ML:p3", "STRICT_VEDIC_LLM:p4", "SHADBALA_JAYA:p23-p101"]
+    implementation_status: "not_implemented"
