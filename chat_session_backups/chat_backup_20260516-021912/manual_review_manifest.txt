@@ -1,0 +1,8 @@
+﻿backup_created_ist=2026-05-16 02:19:12 +05:30
+source_repo=C:\Users\ADMIN\PycharmProjects
+task=manual case review sheet for recurring aspect behavior analysis
+full_csv=manual_case_review_sheet_transitsign_20260516_0145.csv
+focus_csv=manual_case_review_focus_transitsign_20260516_0145.csv
+focus_xlsx=manual_case_review_focus_transitsign_20260516_0145.xlsx
+rows=619
+recurrence_groups=143

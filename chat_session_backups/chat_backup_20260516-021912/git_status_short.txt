@@ -1,0 +1,3 @@
+﻿ M CURRENT_PROJECT_HANDOFF.md
+?? build_manual_case_review_sheet.py
+?? manual_case_review_focus_transitsign_20260516_0145.xlsx
