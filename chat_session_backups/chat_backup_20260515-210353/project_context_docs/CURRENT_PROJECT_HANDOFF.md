@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-16 00:24 IST
+Last updated: 2026-05-15 21:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -859,13 +859,6 @@ Implementation started on 2026-05-10:
 
 ## Session Recovery Discipline
 
-- GitHub recovery preparation on 2026-05-16:
-  local git user email and connected GitHub account are `gourav.damade@gmail.com`; GitHub username is `gouravdamade`.
-  `README.md` was added with the resume prompt, key files, common commands, and privacy note.
-  The workspace is prepared as a private GitHub recovery repo with core scripts, handoff, source notes, current curated data files, annotation SQLite database, and latest curated chat/session backup.
-  The local machine does not currently have GitHub CLI `gh` installed and this checkout had no remote configured, so creating the remote GitHub repository still requires either an empty private repo URL from GitHub or installing/authenticating `gh`.
-  Recommended repo name: `gann-financial-astro-research`.
-  Recommended visibility: private.
 - Update this handoff after each meaningful work session, especially after long-running builds, generated artifacts, failed rebuild attempts, or chat/session recovery work.
 - Create a local chat/session backup after each important response or before ending a session. Include the active rollout JSONL, `state_5.sqlite`, and any relevant `state_5.sqlite-wal` / `state_5.sqlite-shm` files when present.
 - Include a copy of `CURRENT_PROJECT_HANDOFF.md`, `astro_feature_inventory_from_pdfs.md`, `astro_feature_inventory_from_pdfs.yaml`, and `financial_astrology_source_notes_2026-03-13.md` in chat/session backups when project context changes.
