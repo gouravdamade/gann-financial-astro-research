@@ -1,0 +1,8 @@
+﻿backup_created_ist=2026-05-16 03:09:49 +05:30
+source_repo=C:\Users\ADMIN\PycharmProjects
+task=repeatation marker UI injection for case_id=11 AVG(ALL)|MOON square
+local_full_pack=C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548
+index=C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548\repeatation_review_index.html
+repeatation_count=18
+tracked_copy=repeatation_review_packs\case_11_avg_all_moon_square_ui_20260516_030548
+browser_note=Codex in-app browser blocked file:// visual test; JS syntax was validated statically.

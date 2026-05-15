@@ -1,0 +1,4 @@
+﻿ M CURRENT_PROJECT_HANDOFF.md
+ M build_repeatation_review_pack.py
+?? repeatation_review_packs/case_11_avg_all_moon_square_20260516_030201/
+?? repeatation_review_packs/case_11_avg_all_moon_square_ui_20260516_030548/
