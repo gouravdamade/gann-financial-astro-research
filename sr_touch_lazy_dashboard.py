@@ -5,6 +5,7 @@ import html
 import json
 import os
 import re
+import sqlite3
 import sys
 from pathlib import Path
 from typing import Any
@@ -36,6 +37,7 @@ IST = "Asia/Kolkata"
 UTC = "UTC"
 ALL_FILTER_VALUE = "__ALL__"
 DEFAULT_DETAIL_DAYS = 365
+DEFAULT_ANNOTATION_DB = Path(r"C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite")
 APP_BG = "#0f172a"
 PANEL_BG = "#111827"
 GRID_COLOR = "rgba(148,163,184,0.15)"
@@ -547,6 +549,32 @@ def parse_args() -> argparse.Namespace:
         default=r"C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
     )
     parser.add_argument("--export-full-year", action="store_true", help="Export a 1-year history HTML and exit.")
+    parser.add_argument("--export-case-chart", action="store_true", help="Export a real generated chart snapshot for one annotation case_id.")
+    parser.add_argument("--export-all-case-charts", action="store_true", help="Export real generated chart snapshots for annotation case_ids.")
+    parser.add_argument("--case-id", type=int, help="Annotation case_id to export when using --export-case-chart.")
+    parser.add_argument(
+        "--annotation-db",
+        default=str(DEFAULT_ANNOTATION_DB),
+        help="SQLite annotation database containing aspect_cases.",
+    )
+    parser.add_argument(
+        "--case-context-hours",
+        type=float,
+        default=72.0,
+        help="Hours of chart context before and after the selected case window.",
+    )
+    parser.add_argument(
+        "--case-limit",
+        type=int,
+        default=0,
+        help="Optional maximum number of case charts to export with --export-all-case-charts. 0 means all.",
+    )
+    parser.add_argument(
+        "--case-timeframe",
+        choices=["auto", "m30", "hourly", "daily", "switch"],
+        default="auto",
+        help="Timeframe for case chart snapshots. auto uses M30/H1 switch for m30_h1 cases and Daily for daily cases.",
+    )
     parser.add_argument(
         "--export-dir",
         default=r"C:\Users\ADMIN\Desktop\doc",
@@ -1737,16 +1765,33 @@ def build_detail_figure(
     line_limit: int = 60,
     selected_touch_id: str | None = None,
     timeframe: str = "hourly",
+    window_start_override: pd.Timestamp | None = None,
+    window_end_override: pd.Timestamp | None = None,
+    selected_event_id: str | None = None,
+    selected_case_label: str | None = None,
 ) -> tuple[go.Figure, pd.DataFrame]:
     window_end = price.index.max()
     window_start = window_end - pd.Timedelta(days=DEFAULT_DETAIL_DAYS)
+    if window_start_override is not None and window_end_override is not None:
+        window_start = pd.Timestamp(window_start_override)
+        window_end = pd.Timestamp(window_end_override)
     visible = touches.copy()
-    if selected_touch_id:
+    if selected_touch_id and window_start_override is None and window_end_override is None:
         selected = touches[touches["touch_id"].astype(str) == str(selected_touch_id)].copy()
         if not selected.empty:
             anchor = selected.iloc[0]
             half = pd.Timedelta(days=DEFAULT_DETAIL_DAYS / 2)
             center = pd.Timestamp(anchor["touch_time_local"])
+            window_start = center - half
+            window_end = center + half
+    if selected_event_id and window_start_override is None and window_end_override is None and "event_id" in touches.columns:
+        selected_event = touches[touches["event_id"].astype(str) == str(selected_event_id)].copy()
+        if not selected_event.empty:
+            anchor = selected_event.iloc[0]
+            start = pd.Timestamp(anchor["event_window_start_local"])
+            end = pd.Timestamp(anchor["event_window_end_local"])
+            half = max((end - start) * 2, pd.Timedelta(days=3))
+            center = start + ((end - start) / 2)
             window_start = center - half
             window_end = center + half
 
@@ -1905,6 +1950,55 @@ def build_detail_figure(
     for _, row in regime_zones.iterrows():
         fig.add_trace(build_regime_zone_hitbox_polygon(row, y0, y1))
 
+    if selected_event_id:
+        selected_windows = aspect_windows[aspect_windows["event_id"].astype(str).eq(str(selected_event_id))]
+        if not selected_windows.empty:
+            selected_row = selected_windows.iloc[0]
+            x0 = selected_row["event_window_start_local"]
+            x1 = selected_row["event_window_end_local"]
+            label = selected_case_label or event_brief(selected_row)
+            fig.add_shape(
+                type="rect",
+                xref="x",
+                yref="paper",
+                x0=x0,
+                x1=x1,
+                y0=0,
+                y1=1,
+                fillcolor="rgba(239,68,68,0.06)",
+                line=dict(color="rgba(248,113,113,1)", width=4),
+                layer="above",
+                name="selected-case-window",
+            )
+            fig.add_annotation(
+                x=x0,
+                y=1.02,
+                xref="x",
+                yref="paper",
+                text=f"Selected case start<br><b>{html.escape(str(label))}</b>",
+                showarrow=False,
+                xanchor="left",
+                yanchor="bottom",
+                bgcolor="rgba(127,29,29,0.96)",
+                bordercolor="rgba(248,113,113,1)",
+                font=dict(color="#fee2e2", size=11),
+                name="selected-case-window",
+            )
+            fig.add_annotation(
+                x=x1,
+                y=1.02,
+                xref="x",
+                yref="paper",
+                text=f"Selected case end<br><b>{html.escape(str(label))}</b>",
+                showarrow=False,
+                xanchor="right",
+                yanchor="bottom",
+                bgcolor="rgba(127,29,29,0.96)",
+                bordercolor="rgba(248,113,113,1)",
+                font=dict(color="#fee2e2", size=11),
+                name="selected-case-window",
+            )
+
     if not visible.empty:
         marker_customdata = [
             event_selection_customdata(
@@ -1963,6 +2057,26 @@ def build_detail_figure(
                         )
                     ],
                     hovertemplate=row["hover_text"] + "<extra></extra>",
+                    showlegend=False,
+                )
+            )
+    if selected_event_id and "event_id" in visible.columns:
+        sel_event = visible[visible["event_id"].astype(str).eq(str(selected_event_id))]
+        if not sel_event.empty:
+            fig.add_trace(
+                go.Scatter(
+                    x=sel_event["touch_time_local"],
+                    y=sel_event["touch_price"],
+                    mode="markers",
+                    marker=dict(
+                        size=15,
+                        color="rgba(0,0,0,0)",
+                        symbol="circle",
+                        line=dict(color="rgba(248,113,113,1)", width=3),
+                    ),
+                    text=sel_event["hover_text"],
+                    hovertemplate="%{text}<extra>Selected case touch</extra>",
+                    name="Selected case touches",
                     showlegend=False,
                 )
             )
@@ -2220,6 +2334,222 @@ def export_switchable_timeframe_chart(
     return html_path, csv_path, all_visible
 
 
+def load_annotation_case(db_path: str | Path, case_id: int) -> dict[str, Any]:
+    with sqlite3.connect(str(db_path)) as conn:
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            """
+            SELECT case_id, source_event_id, pair_key, aspect, aspect_label,
+                   window_start_ist, window_end_ist, timeframe
+            FROM aspect_cases
+            WHERE case_id = ?
+            """,
+            (int(case_id),),
+        ).fetchone()
+    if row is None:
+        raise RuntimeError(f"No annotation case found for case_id={case_id}.")
+    return dict(row)
+
+
+def load_annotation_cases(db_path: str | Path, limit: int = 0) -> list[dict[str, Any]]:
+    sql = """
+        SELECT case_id, source_event_id, pair_key, aspect, aspect_label,
+               window_start_ist, window_end_ist, timeframe
+        FROM aspect_cases
+        ORDER BY case_id
+    """
+    params: tuple[Any, ...] = ()
+    if int(limit or 0) > 0:
+        sql += " LIMIT ?"
+        params = (int(limit),)
+    with sqlite3.connect(str(db_path)) as conn:
+        conn.row_factory = sqlite3.Row
+        return [dict(row) for row in conn.execute(sql, params).fetchall()]
+
+
+def case_window(case: dict[str, Any], context_hours: float) -> tuple[pd.Timestamp, pd.Timestamp]:
+    start = pd.Timestamp(case["window_start_ist"])
+    end = pd.Timestamp(case["window_end_ist"])
+    context = pd.Timedelta(hours=max(float(context_hours), 0.0))
+    duration = max(end - start, pd.Timedelta(minutes=30))
+    pad = max(context, duration * 1.5)
+    return start - pad, end + pad
+
+
+def case_label(case: dict[str, Any]) -> str:
+    aspect = str(case.get("aspect_label") or case.get("aspect") or "").strip()
+    return f"case_id={case['case_id']} | {case.get('pair_key', '')} {aspect}".strip()
+
+
+def case_snapshot_timeframes(case: dict[str, Any], requested: str, price: pd.DataFrame) -> list[str]:
+    if requested != "auto":
+        return ["m30", "hourly"] if requested == "switch" else [requested]
+    stored = str(case.get("timeframe") or "").strip().lower()
+    interval_minutes = infer_price_interval_minutes(price)
+    can_m30 = interval_minutes is not None and interval_minutes <= 30.0
+    if stored == "daily":
+        return ["daily"]
+    if can_m30:
+        return ["m30", "hourly"]
+    return ["hourly"]
+
+
+def build_case_timeframe_figure(
+    price: pd.DataFrame,
+    touches: pd.DataFrame,
+    case: dict[str, Any],
+    max_lines: int,
+    timeframe: str,
+    context_hours: float,
+    hourly_max_aspect_hours: float,
+    daily_min_aspect_hours: float,
+) -> tuple[go.Figure, pd.DataFrame, pd.Timestamp, pd.Timestamp] | None:
+    chart_price = resample_price_for_timeframe(price, timeframe)
+    start, end = case_window(case, context_hours)
+    price_window = chart_price[(chart_price.index >= start) & (chart_price.index <= end)].copy()
+    if price_window.empty:
+        return None
+    visible = apply_filters(touches, ["bullish", "bearish"], ["confluence", "nearest_line"], ALL_FILTER_VALUE, ALL_FILTER_VALUE)
+    visible = filter_touches_for_timeframe(
+        visible,
+        timeframe=timeframe,
+        hourly_max_aspect_hours=hourly_max_aspect_hours,
+        daily_min_aspect_hours=daily_min_aspect_hours,
+    )
+    fig, visible = build_detail_figure(
+        price=chart_price,
+        touches=visible,
+        line_limit=int(max_lines or 0),
+        timeframe=timeframe,
+        window_start_override=start,
+        window_end_override=end,
+        selected_event_id=str(case.get("source_event_id") or ""),
+        selected_case_label=case_label(case),
+    )
+    return fig, visible, start, end
+
+
+def export_case_chart(
+    price: pd.DataFrame,
+    touches: pd.DataFrame,
+    case: dict[str, Any],
+    output_dir: str | Path,
+    max_lines: int = 60,
+    case_timeframe: str = "auto",
+    context_hours: float = 72.0,
+    hourly_max_aspect_hours: float = 24.0,
+    daily_min_aspect_hours: float = 24.0,
+    include_plotlyjs: bool | str = "directory",
+) -> tuple[Path, Path, pd.DataFrame]:
+    export_root = Path(output_dir)
+    export_root.mkdir(parents=True, exist_ok=True)
+    frames: list[pd.DataFrame] = []
+    figures: list[tuple[str, go.Figure, pd.DataFrame, pd.Timestamp, pd.Timestamp]] = []
+    for timeframe in case_snapshot_timeframes(case, case_timeframe, price):
+        result = build_case_timeframe_figure(
+            price=price,
+            touches=touches,
+            case=case,
+            max_lines=max_lines,
+            timeframe=timeframe,
+            context_hours=context_hours,
+            hourly_max_aspect_hours=hourly_max_aspect_hours,
+            daily_min_aspect_hours=daily_min_aspect_hours,
+        )
+        if result is None:
+            continue
+        fig, visible, start, end = result
+        figures.append((timeframe, fig, visible, start, end))
+        frame = visible.copy()
+        frame.insert(0, "chart_timeframe", timeframe)
+        frame.insert(0, "case_id", int(case["case_id"]))
+        frames.append(frame)
+
+    if not figures:
+        raise RuntimeError(f"No price bars found for case_id={case['case_id']} in requested chart window.")
+
+    if len(figures) == 1:
+        timeframe, fig, visible, _, _ = figures[0]
+        fig.update_layout(
+            height=980,
+            title=f"{case_label(case)} | timeframe={timeframe} | real generated chart snapshot",
+        )
+        combined = fig
+    else:
+        combined = go.Figure()
+        groups: list[dict[str, Any]] = []
+        trace_start = 0
+        for timeframe, fig, visible, start, end in figures:
+            if not groups:
+                combined.update_layout(fig.layout)
+            is_default = len(groups) == 0
+            for trace in fig.data:
+                trace.visible = is_default
+                combined.add_trace(trace)
+            groups.append(
+                {
+                    "timeframe": timeframe,
+                    "start": trace_start,
+                    "stop": trace_start + len(fig.data),
+                    "title": f"{case_label(case)} | timeframe={timeframe} | rows={len(visible)}",
+                    "yaxis_range": list(fig.layout.yaxis.range) if fig.layout.yaxis.range else None,
+                    "xaxis_range": [start.isoformat(), end.isoformat()],
+                    "rows": len(visible),
+                }
+            )
+            trace_start += len(fig.data)
+
+        buttons = []
+        total_traces = len(combined.data)
+        for group in groups:
+            mask = [False] * total_traces
+            for idx in range(int(group["start"]), int(group["stop"])):
+                mask[idx] = True
+            relayout = {"title.text": group["title"], "xaxis.range": group["xaxis_range"]}
+            if group["yaxis_range"] is not None:
+                relayout["yaxis.range"] = group["yaxis_range"]
+            buttons.append(
+                {
+                    "label": f"{str(group['timeframe']).upper()} ({group['rows']})",
+                    "method": "update",
+                    "args": [{"visible": mask}, relayout],
+                }
+            )
+        combined.update_layout(
+            height=980,
+            title=groups[0]["title"],
+            updatemenus=[
+                {
+                    "type": "buttons",
+                    "direction": "right",
+                    "x": 0.01,
+                    "xanchor": "left",
+                    "y": 1.08,
+                    "yanchor": "top",
+                    "buttons": buttons,
+                    "bgcolor": "rgba(15,23,42,0.95)",
+                    "bordercolor": "rgba(148,163,184,0.6)",
+                    "borderwidth": 1,
+                    "font": {"color": "#e5e7eb", "size": 12},
+                    "pad": {"r": 8, "t": 4, "b": 4, "l": 8},
+                }
+            ],
+        )
+
+    case_id = int(case["case_id"])
+    html_path = export_root / f"aspect_review_case_{case_id}_chart.html"
+    csv_path = export_root / f"aspect_review_case_{case_id}_chart_visible.csv"
+    combined.write_html(
+        str(html_path),
+        include_plotlyjs=include_plotlyjs,
+        post_script=DETAIL_PANEL_POST_SCRIPT,
+        config=PLOTLY_CHART_CONFIG,
+    )
+    all_visible = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+    build_user_facing_export_frame(all_visible).to_csv(csv_path, index=False)
+    return html_path, csv_path, all_visible
+
+
 def load_clustered_touch_log(path: str) -> pd.DataFrame:
     source_path = Path(path)
     cache_path = source_path.with_name(f"{source_path.stem}_clustered_v11.parquet")
@@ -2240,6 +2570,47 @@ def main() -> None:
         raise RuntimeError("Touch log is empty.")
     cfg = parse_sr_config(touches["sr_config_json"].iloc[0]) if "sr_config_json" in touches.columns and not touches["sr_config_json"].dropna().empty else parse_sr_config(None)
     _ = cfg
+    if args.export_case_chart:
+        if args.case_id is None:
+            raise RuntimeError("--case-id is required with --export-case-chart.")
+        case = load_annotation_case(args.annotation_db, int(args.case_id))
+        html_path, csv_path, visible = export_case_chart(
+            price=price,
+            touches=touches,
+            case=case,
+            output_dir=args.export_dir,
+            max_lines=int(args.export_max_lines or 0),
+            case_timeframe=args.case_timeframe,
+            context_hours=float(args.case_context_hours),
+            hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
+            daily_min_aspect_hours=float(args.daily_min_aspect_hours),
+            include_plotlyjs="directory",
+        )
+        print(f"Exported case chart HTML: {html_path}")
+        print(f"Exported case chart CSV: {csv_path}")
+        print(f"Visible rows in case chart: {len(visible)}")
+        return
+    if args.export_all_case_charts:
+        cases = load_annotation_cases(args.annotation_db, int(args.case_limit or 0))
+        if not cases:
+            raise RuntimeError("No annotation cases found.")
+        exported = 0
+        for case in cases:
+            html_path, csv_path, visible = export_case_chart(
+                price=price,
+                touches=touches,
+                case=case,
+                output_dir=args.export_dir,
+                max_lines=int(args.export_max_lines or 0),
+                case_timeframe=args.case_timeframe,
+                context_hours=float(args.case_context_hours),
+                hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
+                daily_min_aspect_hours=float(args.daily_min_aspect_hours),
+                include_plotlyjs="directory",
+            )
+            exported += 1
+            print(f"[{exported}/{len(cases)}] case_id={case['case_id']} rows={len(visible)} html={html_path} csv={csv_path}")
+        return
     if args.export_full_year:
         if args.timeframe == "switch":
             html_path, csv_path, visible = export_switchable_timeframe_chart(

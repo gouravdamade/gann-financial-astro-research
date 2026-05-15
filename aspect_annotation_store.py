@@ -588,50 +588,8 @@ def default_review_html_path(case_id: int) -> Path:
     return DEFAULT_REVIEW_EXPORT_DIR / f"aspect_review_case_{case_id}.html"
 
 
-def price_chart_for_case(case: sqlite3.Row, preferred_timeframe: str) -> dict[str, Any]:
-    case_start = parse_ist_timestamp(str(case["window_start_ist"]))
-    case_end = parse_ist_timestamp(str(case["window_end_ist"]))
-    duration = case_end - case_start
-    pad = max(duration * 0.5, pd.Timedelta(hours=2))
-    chart_start = case_start - pad
-    chart_end = case_end + pad
-    timeframes = [preferred_timeframe] + [tf for tf in DEFAULT_PRICE_PATHS if tf != preferred_timeframe]
-    for timeframe in timeframes:
-        path = DEFAULT_PRICE_PATHS[timeframe]
-        if not path.exists():
-            continue
-        price = load_price_frame(path)
-        window = price.loc[(price.index >= chart_start) & (price.index <= chart_end)].copy()
-        if window.empty:
-            continue
-        bars = []
-        for ts, row in window.iterrows():
-            bars.append(
-                {
-                    "time_ist": pd.Timestamp(ts).isoformat(),
-                    "open": round(float(row["open"]), 5),
-                    "high": round(float(row["high"]), 5),
-                    "low": round(float(row["low"]), 5),
-                    "close": round(float(row["close"]), 5),
-                }
-            )
-        return {
-            "available": True,
-            "timeframe": timeframe,
-            "price_file": str(path),
-            "chart_start_ist": pd.Timestamp(window.index.min()).isoformat(),
-            "chart_end_ist": pd.Timestamp(window.index.max()).isoformat(),
-            "case_window_start_ist": case_start.isoformat(),
-            "case_window_end_ist": case_end.isoformat(),
-            "bars": bars,
-        }
-    return {
-        "available": False,
-        "timeframe": preferred_timeframe,
-        "price_file": "",
-        "message": "No M30/H1 price bars found for this case window.",
-        "bars": [],
-    }
+def default_review_chart_path(case_id: int) -> Path:
+    return DEFAULT_REVIEW_EXPORT_DIR / f"aspect_review_case_{case_id}_chart.html"
 
 
 def get_aspect_case(conn: sqlite3.Connection, case_id: int) -> sqlite3.Row | None:
@@ -929,7 +887,6 @@ def build_review_case_payload(db_path: Path, case_id: int) -> dict[str, Any]:
         None,
     )
     price_timeframe = suggested_price_timeframe(case)
-    price_chart = price_chart_for_case(case, price_timeframe)
     return {
         "exported_at_utc": utc_now(),
         "case": row_to_dict(case),
@@ -947,7 +904,6 @@ def build_review_case_payload(db_path: Path, case_id: int) -> dict[str, Any]:
             "ignore_regions": [row_to_dict(row) for row in ignore_rows],
             "rule_notes": [row_to_dict(row) for row in note_rows],
         },
-        "price_chart": price_chart,
         "suggestions": {
             "price_timeframe": price_timeframe,
             "outcome_labels": list(VALID_OUTCOME_LABELS),
@@ -976,101 +932,29 @@ def rows_table(headers: list[str], rows: list[list[Any]], empty_text: str) -> st
     return f"<table><thead><tr>{head}</tr></thead><tbody>{''.join(body_rows)}</tbody></table>"
 
 
-def svg_points(points: list[tuple[float, float]]) -> str:
-    return " ".join(f"{x:.2f},{y:.2f}" for x, y in points)
-
-
-def render_price_svg(payload: dict[str, Any]) -> str:
-    chart = payload.get("price_chart") or {}
-    if not chart.get("available"):
-        return f'<p class="empty">{h(chart.get("message", "No price chart available."))}</p>'
-    bars = chart.get("bars") or []
-    if len(bars) < 2:
-        return '<p class="empty">Not enough price bars for a chart.</p>'
-    width = 1180
-    height = 340
-    pad_l = 54
-    pad_r = 18
-    pad_t = 18
-    pad_b = 34
-    plot_w = width - pad_l - pad_r
-    plot_h = height - pad_t - pad_b
-    times = [parse_ist_timestamp(str(bar["time_ist"])).value / 1_000_000 for bar in bars]
-    lows = [float(bar["low"]) for bar in bars]
-    highs = [float(bar["high"]) for bar in bars]
-    closes = [float(bar["close"]) for bar in bars]
-    min_t = min(times)
-    max_t = max(times)
-    min_p = min(lows)
-    max_p = max(highs)
-    price_pad = max((max_p - min_p) * 0.08, 0.01)
-    min_p -= price_pad
-    max_p += price_pad
-
-    def x_for(ms: float) -> float:
-        if max_t == min_t:
-            return pad_l + plot_w / 2.0
-        return pad_l + ((ms - min_t) / (max_t - min_t)) * plot_w
-
-    def y_for(price: float) -> float:
-        if max_p == min_p:
-            return pad_t + plot_h / 2.0
-        return pad_t + ((max_p - price) / (max_p - min_p)) * plot_h
-
-    def x_for_ts(value: str) -> float:
-        return x_for(parse_ist_timestamp(value).value / 1_000_000)
-
-    line_points = [(x_for(ts), y_for(close)) for ts, close in zip(times, closes)]
-    wick_lines = []
-    for ts, low, high in zip(times, lows, highs):
-        x = x_for(ts)
-        wick_lines.append(
-            f'<line x1="{x:.2f}" y1="{y_for(low):.2f}" x2="{x:.2f}" y2="{y_for(high):.2f}" class="wick"/>'
-        )
-    grid = []
-    for i in range(5):
-        y = pad_t + (plot_h * i / 4)
-        price = max_p - ((max_p - min_p) * i / 4)
-        grid.append(f'<line x1="{pad_l}" y1="{y:.2f}" x2="{width - pad_r}" y2="{y:.2f}" class="grid"/>')
-        grid.append(f'<text x="8" y="{y + 4:.2f}" class="axis">{price:.3f}</text>')
-    case_x0 = x_for_ts(str(chart["case_window_start_ist"]))
-    case_x1 = x_for_ts(str(chart["case_window_end_ist"]))
-    overlays = [
-        f'<rect x="{min(case_x0, case_x1):.2f}" y="{pad_t}" width="{abs(case_x1 - case_x0):.2f}" height="{plot_h}" class="case-window"/>',
-        f'<line x1="{case_x0:.2f}" y1="{pad_t}" x2="{case_x0:.2f}" y2="{pad_t + plot_h}" class="case-edge"/>',
-        f'<line x1="{case_x1:.2f}" y1="{pad_t}" x2="{case_x1:.2f}" y2="{pad_t + plot_h}" class="case-edge"/>',
-    ]
-    for row in payload["saved"]["ignore_regions"]:
-        x0 = x_for_ts(str(row["region_start_ist"]))
-        x1 = x_for_ts(str(row["region_end_ist"]))
-        overlays.append(
-            f'<rect x="{min(x0, x1):.2f}" y="{pad_t}" width="{abs(x1 - x0):.2f}" height="{plot_h}" class="ignore-window"/>'
-        )
-    for row in payload["saved"]["trade_annotations"]:
-        x0 = x_for_ts(str(row["trade_start_ist"]))
-        x1 = x_for_ts(str(row["trade_end_ist"]))
-        cls = "trade-window trade-bearish" if row["outcome_label"] == "bearish" else "trade-window"
-        overlays.append(
-            f'<rect x="{min(x0, x1):.2f}" y="{pad_t}" width="{abs(x1 - x0):.2f}" height="{plot_h}" class="{cls}"/>'
-        )
-        overlays.append(f'<line x1="{x0:.2f}" y1="{pad_t}" x2="{x0:.2f}" y2="{pad_t + plot_h}" class="trade-edge"/>')
-        overlays.append(f'<line x1="{x1:.2f}" y1="{pad_t}" x2="{x1:.2f}" y2="{pad_t + plot_h}" class="trade-edge"/>')
-    start_label = pd.Timestamp(bars[0]["time_ist"]).strftime("%Y-%m-%d %H:%M")
-    end_label = pd.Timestamp(bars[-1]["time_ist"]).strftime("%Y-%m-%d %H:%M")
+def render_generated_chart_snapshot(case_id: int) -> str:
+    chart_path = default_review_chart_path(case_id)
+    export_cmd = (
+        "python .\\sr_touch_lazy_dashboard.py "
+        "--touch-log .\\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv "
+        "--price .\\usd_jpy_h1_mt5_metaquotes_demo_full.parquet "
+        "--export-case-chart "
+        f"--case-id {int(case_id)} "
+        "--case-timeframe auto "
+        "--export-dir C:\\Users\\ADMIN\\Desktop\\doc "
+        "--export-max-lines 60"
+    )
+    if not chart_path.exists():
+        return f"""
+        <p class="empty">Generated chart snapshot has not been exported yet.</p>
+        <div class="label">Export command</div>
+        <pre><code>{h(export_cmd)}</code></pre>
+        """
     return f"""
-      <div class="chart-meta">
-        Price timeframe: <strong>{h(chart['timeframe'])}</strong> - bars: <strong>{len(bars)}</strong> - file: {h(Path(chart['price_file']).name)}
+      <div class="chart-actions">
+        <a href="{h(chart_path.name)}" target="_blank" rel="noopener">Open generated chart snapshot</a>
       </div>
-      <svg class="price-chart" viewBox="0 0 {width} {height}" role="img" aria-label="Price chart for selected aspect case">
-        <rect x="0" y="0" width="{width}" height="{height}" class="chart-bg"/>
-        {''.join(grid)}
-        {''.join(overlays)}
-        {''.join(wick_lines)}
-        <polyline points="{svg_points(line_points)}" class="close-line"/>
-        <line x1="{pad_l}" y1="{pad_t + plot_h}" x2="{width - pad_r}" y2="{pad_t + plot_h}" class="axis-line"/>
-        <text x="{pad_l}" y="{height - 10}" class="axis">{h(start_label)}</text>
-        <text x="{width - pad_r - 125}" y="{height - 10}" class="axis">{h(end_label)}</text>
-      </svg>
+      <iframe class="generated-chart" src="{h(chart_path.name)}" title="Generated chart snapshot for case {int(case_id)}"></iframe>
     """
 
 
@@ -1079,7 +963,7 @@ def render_review_case_html(payload: dict[str, Any]) -> str:
     same = payload["same_aspect"]
     saved = payload["saved"]
     suggestions = payload["suggestions"]
-    price_svg = render_price_svg(payload)
+    generated_chart = render_generated_chart_snapshot(int(case["case_id"]))
     cases = same["cases"]
     case_rows = [
         [
@@ -1246,6 +1130,15 @@ def render_review_case_html(payload: dict[str, Any]) -> str:
     .trade-bearish {{ fill: rgba(251,191,36,0.18); }}
     .trade-edge {{ stroke: #2dd4bf; stroke-width: 2; }}
     .ignore-window {{ fill: rgba(148,163,184,0.20); }}
+    .chart-actions {{ margin: 0 0 10px; }}
+    .chart-actions a {{ color: #93c5fd; text-decoration: none; font-weight: 700; }}
+    .generated-chart {{
+      width: 100%;
+      height: 980px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0b1118;
+    }}
     details {{ margin-top: 10px; }}
     summary {{ cursor: pointer; color: #cfe2f3; }}
     @media (max-width: 900px) {{
@@ -1277,9 +1170,9 @@ def render_review_case_html(payload: dict[str, Any]) -> str:
       </div>
     </section>
     <section>
-      <h2>Price Chart</h2>
+      <h2>Generated Chart Snapshot</h2>
       <div class="chart-wrap">
-        {price_svg}
+        {generated_chart}
       </div>
     </section>
     <section>

@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-15 02:35 IST
+Last updated: 2026-05-15 21:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -631,17 +631,28 @@ Chart click-selection update on 2026-05-12:
   Page sections: current case, progress, action command templates, saved trade annotations, saved ignore regions, saved rule notes, same-aspect queue, and raw JSON snapshot.
   This is the first no-install visual review page before React/Tauri.
 - Ninth annotation database step on 2026-05-15:
-  `--export-review-html` now embeds a lightweight SVG price chart directly inside the static review page.
-  The chart uses the suggested timeframe first and falls back between M30 and H1 when the preferred price file does not cover the case window.
-  It overlays the selected aspect window in red, plots high/low wicks plus the close line, and will show saved trade annotations plus saved ignore regions when present.
+  The lightweight SVG price chart preview was rejected because it does not show candlestick patterns, planetary/SR lines, or multiple overlapping events.
+  It is no longer part of the review JSON payload or the visible review HTML.
+  `sr_touch_lazy_dashboard.py` now supports real generated case chart snapshots from the existing Plotly dashboard renderer:
+  `--export-case-chart --case-id N`
+  and bulk export:
+  `--export-all-case-charts`
+  Case snapshots are centered around the selected aspect window, keep candlesticks, SR planetary lines, all overlapping aspect/regime windows, quote/JPY detail click behavior, and add a red selected-case border plus selected touch rings.
+  `aspect_annotation_store.py --export-review-html` now embeds/links `aspect_review_case_<case_id>_chart.html` when that chart snapshot exists, instead of rendering a simplified local SVG chart.
   Verified commands:
+  `python .\sr_touch_lazy_dashboard.py --touch-log .\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv --price .\usd_jpy_h1_mt5_metaquotes_demo_full.parquet --export-case-chart --case-id 11 --case-timeframe auto --export-dir C:\Users\ADMIN\Desktop\doc --export-max-lines 60`
+  `python .\sr_touch_lazy_dashboard.py --touch-log .\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv --price .\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet --export-case-chart --case-id 15 --case-timeframe auto --export-dir C:\Users\ADMIN\Desktop\doc --export-max-lines 60`
   `python .\aspect_annotation_store.py --export-review-html --case-id 11`
   `python .\aspect_annotation_store.py --export-review-case --case-id 11`
   Regenerated outputs:
   `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11.html`
   `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11.json`
-  Verification result: price chart available, actual chart timeframe `h1`, bars `7`.
-  Case `11` fell back to H1 because the M30 file starts later than that aspect window.
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11_chart.html`
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11_chart_visible.csv`
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_15_chart.html`
+  `C:\Users\ADMIN\Desktop\doc\aspect_review_case_15_chart_visible.csv`
+  Verification result: `case_id=11` real chart contains candlestick, selected-case highlight, aspect windows, regime zones, and detail panel; visible rows `12`.
+  `case_id=15` with M30 price contains M30 and Hourly switch buttons plus the same real chart context; visible rows `24`.
 
 Important scoring fix on 2026-05-04:
 
@@ -762,15 +773,16 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. Open `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11.html` and inspect whether the static review page is enough for first manual annotation practice.
-2. Next annotation workbench step: add simple previous/next same-aspect navigation to exported review pages, then add a low-friction way to create trade/ignore/rule-note commands from the page.
-3. User inspects `sr_touch_full_1year_switch_20260511_015700.html`, especially doctrine score lines in hovers after transit-sign dignity was added.
-4. Compare the prior transitsign baseline chart against `sr_touch_full_1year_switch_20260511_220046.html` for AVG(ALL) regimes. If the expanded hovers are useful visually, keep the AVG(ALL) expansion as an explainability feature but calibrate it separately from directional ML.
-5. Extend `evaluate_transitsign_walk_forward.py` with walk-forward rule calibration tests for `fx_pair_net_score` and `fx_doctrine_pair_net_score`: normal vs inverted, train-selected thresholds, and blended score variants.
-6. Add weekly mode using the uncapped transitsign touch log and a `>5d` duration bucket.
-7. Add feature columns from the PDF inventory one group at a time:
+1. Open `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11_chart.html` and `C:\Users\ADMIN\Desktop\doc\aspect_review_case_15_chart.html` to confirm the real case snapshots have the right chart context for manual review.
+2. If accepted, run `--export-all-case-charts` in batches rather than all 619 at once, because each snapshot recomputes chart/SR context and can take several seconds.
+3. Next annotation workbench step: add simple previous/next same-aspect navigation to exported review pages, then add a low-friction way to create trade/ignore/rule-note commands from the page.
+4. User inspects `sr_touch_full_1year_switch_20260511_015700.html`, especially doctrine score lines in hovers after transit-sign dignity was added.
+5. Compare the prior transitsign baseline chart against `sr_touch_full_1year_switch_20260511_220046.html` for AVG(ALL) regimes. If the expanded hovers are useful visually, keep the AVG(ALL) expansion as an explainability feature but calibrate it separately from directional ML.
+6. Extend `evaluate_transitsign_walk_forward.py` with walk-forward rule calibration tests for `fx_pair_net_score` and `fx_doctrine_pair_net_score`: normal vs inverted, train-selected thresholds, and blended score variants.
+7. Add weekly mode using the uncapped transitsign touch log and a `>5d` duration bucket.
+8. Add feature columns from the PDF inventory one group at a time:
    midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
-8. For Gann: manually review OCR pages for `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`; only then implement deterministic feature columns with source-page metadata.
+9. For Gann: manually review OCR pages for `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`; only then implement deterministic feature columns with source-page metadata.
 
 ## Memory-Safe Touch-Log Rebuild Plan
 
