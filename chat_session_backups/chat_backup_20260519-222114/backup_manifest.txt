@@ -1,0 +1,4 @@
+﻿backup=C:\Users\ADMIN\PycharmProjects\chat_session_backups\chat_backup_20260519-222114
+created=2026-05-19 22:21:15 +05:30
+purpose=repeatation one-shot marker tool disarm and plotly control pass-through
+server=http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260519_tool_disarm_v7

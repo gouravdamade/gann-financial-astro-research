@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260519_marker_capture_v6"
+REPEATATION_UI_VERSION = "repeatation_ui_20260519_tool_disarm_v7"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -437,7 +437,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function place(point) {{
       if (!point || !point.x) return;
-      setStatePoint(activeStateKey(), point);
+      var key = activeStateKey();
+      if (!key) return;
+      setStatePoint(key, point);
+      setTool('', false);
       drawMarkers();
       render();
       saveDraft();
@@ -938,7 +941,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-note').value = draft.note || '';
       if (state.selectedIgnoreTypes.length) syncIgnoreNotes();
       setCollapsed(draft.collapsed !== false, false);
-      setTool(draft.tool || 'trade_start', false);
+      setTool('', false);
       state.draftLoaded = true;
       state.lastSavedAt = draft.saved_at || '';
       drawMarkers();
@@ -962,7 +965,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-outcome').value = 'bullish';
       panel.querySelector('#repeatation-note-type').value = 'manual_repeatation_note';
       panel.querySelector('#repeatation-note').value = '';
-      setTool('trade_start', false);
+      setTool('', false);
       drawMarkers();
       render();
       updateSaveStatus('local draft cleared');
@@ -988,6 +991,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreEnd = null;
       state.tradeIgnored = false;
       state.lastPoint = null;
+      setTool('', false);
       drawMarkers();
       render();
       saveDraft();
@@ -1000,6 +1004,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (nextTypes.indexOf('ignore_trade_nearby_event') === -1) nextTypes.unshift('ignore_trade_nearby_event');
       setIgnoreTypes(nextTypes, true);
       if (!panel.querySelector('#repeatation-note-type').value.trim()) panel.querySelector('#repeatation-note-type').value = 'ignore_trade_nearby_event';
+      setTool('', false);
       drawMarkers();
       render();
       saveDraft();
@@ -1129,11 +1134,19 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       toggle.setAttribute('title', collapsed ? 'Expand marker drawer' : 'Collapse marker drawer');
       if (persist !== false) saveDraft();
     }}
+    function isPanelOrPlotlyControl(evt) {{
+      var target = evt && evt.target;
+      if (!target || !target.closest) return false;
+      return !!target.closest('#repeatation-marker-panel,.modebar,.modebar-container,[data-title],button,a,input,select,textarea');
+    }}
     panel.querySelector('#repeatation-toggle').addEventListener('click', function () {{
       setCollapsed(!panel.classList.contains('collapsed'));
     }});
     panel.querySelectorAll('[data-tool]').forEach(function (button) {{
-      button.addEventListener('click', function () {{ setTool(button.getAttribute('data-tool')); }});
+      button.addEventListener('click', function () {{
+        var tool = button.getAttribute('data-tool');
+        setTool(state.tool === tool ? '' : tool);
+      }});
     }});
     panel.querySelector('#repeatation-clear').addEventListener('click', clearMarkers);
     panel.querySelector('#repeatation-clear-draft').addEventListener('click', clearSavedDraft);
@@ -1155,10 +1168,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (hasDraftableContent()) saveDraft();
     }}, 2000);
     gd.addEventListener('mousedown', function (evt) {{
-      if (evt.target && panel.contains(evt.target)) return;
+      if (isPanelOrPlotlyControl(evt)) return;
       var ref = nearestManualMarkerRef(evt, 20);
       if (ref) state.draggingMarkerKey = ref.key;
-      else state.pendingMarkerClick = true;
+      else if (activeStateKey()) state.pendingMarkerClick = true;
+      else return;
+      state.suppressNextClick = true;
       evt.preventDefault();
       evt.stopImmediatePropagation();
     }}, true);
@@ -1181,17 +1196,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         if (point) place(point);
       }}
       state.pendingMarkerClick = false;
+      state.suppressNextClick = true;
       saveDraft();
       evt.preventDefault();
       evt.stopImmediatePropagation();
     }}, true);
     gd.addEventListener('click', function (evt) {{
-      if (evt.target && panel.contains(evt.target)) return;
+      if (isPanelOrPlotlyControl(evt)) return;
+      if (!state.suppressNextClick) return;
+      state.suppressNextClick = false;
       evt.preventDefault();
       evt.stopImmediatePropagation();
     }}, true);
     if (!restoreDraft()) {{
-      setTool('trade_start', false);
+      setTool('', false);
       render();
     }}
   }});
