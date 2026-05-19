@@ -1,0 +1,347 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Repeatation Review Pack - case 11</title>
+  <style>
+    body { margin: 0; font-family: Segoe UI, Arial, sans-serif; background: #f8fafc; color: #111827; }
+    header { padding: 18px 24px; background: #111827; color: #f8fafc; }
+    main { padding: 20px 24px 36px; }
+    table { border-collapse: collapse; width: 100%; background: white; font-size: 12px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px; vertical-align: top; }
+    th { background: #e5e7eb; position: sticky; top: 0; z-index: 1; }
+    pre { margin: 0; white-space: pre-wrap; max-width: 360px; font-size: 11px; }
+    .meta { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; color: #d1d5db; }
+    .note { max-width: 1100px; line-height: 1.45; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Repeatation Review Pack</h1>
+    <div>AVG(ALL)|MOON :: square</div>
+    <div class="meta">
+      <span>seed case_id=11</span>
+      <span>repeatations=18</span>
+      <span>folder=C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548</span>
+    </div>
+  </header>
+  <main>
+    <p class="note"><a href="repeatation_reviewer.html?v=repeatation_ui_20260519_marker_adopt_v3"><b>Open single repeatation reviewer</b></a></p>
+    <p class="note">
+      Open each chart link and expand the small <b>Markers</b> drawer. Choose trade start,
+      trade end, ignore start, or ignore end, then click the chart to place a crosshair marker at the
+      selected time/price. Use <b>Ignore Trade</b> when a nearby/overlapping event contaminates the
+      whole case window, then keep the Why note specific enough for ML/script review. Use
+      <b>Add Ignore Signal</b> and <b>Add Rule Note</b> to build a structured ML annotation ledger
+      from what you see on the chart; entries include scope, type, note, and marker context in the
+      downloaded JSON. Use <b>Reset Cursor</b> if browser annotation mode leaves the page cursor
+      visually stuck after disabling annotations. The chart overlays crosshair markers/ignore regions
+      and generates Python commands for saving trade annotations, ignore regions, and rule notes. The annotation command
+      auto-calculates entry, exit, pips, MFE, and MAE from the selected price timeframe. In-progress
+      marker drafts autosave in the browser for each case and restore after reloads as long as local
+      browser site data remains available.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Case</th><th>Window IST</th><th>TF</th><th>Visible Rows</th>
+          <th>Full Window Direction</th><th>Bullish Pips</th><th>Bearish Pips</th>
+          <th>Script Group Bias</th><th>Probable Factor Tags</th><th>Snapshot</th>
+          <th>Trade Marker Command</th><th>Ignore Marker Command</th><th>Rule Note Command</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+            <tr>
+              <td>11</td>
+              <td>2025-03-07 11:30:00+05:30<br>2025-03-07 13:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>12</td>
+              <td>bearish</td>
+              <td>-17.4</td>
+              <td>17.4</td>
+              <td>BEARISH</td>
+              <td>not_in_current_candidate_csv; high_recurrence_group; quote_enemy_sign; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_11_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_11_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 11 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe h1 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 11 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 11 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>44</td>
+              <td>2025-04-03 18:30:00+05:30<br>2025-04-03 20:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>25</td>
+              <td>bearish</td>
+              <td>-26.2</td>
+              <td>26.2</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; quote_enemy_sign; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_44_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_44_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 44 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 44 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 44 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>97</td>
+              <td>2025-05-15 13:30:00+05:30<br>2025-05-15 16:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>18</td>
+              <td>bearish</td>
+              <td>-19.2</td>
+              <td>19.2</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; strong_shadbala; quote_debilitation; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_97_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_97_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 97 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 97 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 97 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>120</td>
+              <td>2025-05-28 13:30:00+05:30<br>2025-05-28 15:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>37</td>
+              <td>bearish</td>
+              <td>-33.7</td>
+              <td>33.7</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; crowded_regime; quote_enemy_sign; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_120_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_120_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 120 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 120 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 120 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>150</td>
+              <td>2025-06-11 19:30:00+05:30<br>2025-06-11 22:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>22</td>
+              <td>bearish</td>
+              <td>-31.6</td>
+              <td>31.6</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; strong_shadbala; quote_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_150_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_150_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 150 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 150 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 150 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>169</td>
+              <td>2025-06-24 23:30:00+05:30<br>2025-06-25 01:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>44</td>
+              <td>bearish</td>
+              <td>-10.2</td>
+              <td>10.2</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; quote_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_169_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_169_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 169 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 169 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 169 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>196</td>
+              <td>2025-07-09 02:30:00+05:30<br>2025-07-09 05:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>21</td>
+              <td>bearish</td>
+              <td>-20.0</td>
+              <td>20.0</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; crowded_regime; quote_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_196_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_196_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 196 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 196 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 196 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>250</td>
+              <td>2025-08-05 10:30:00+05:30<br>2025-08-05 13:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>31</td>
+              <td>bearish</td>
+              <td>-5.0</td>
+              <td>5.0</td>
+              <td>BEARISH</td>
+              <td>high_recurrence_group; multiple_active_aspects; crowded_regime; quote_enemy_sign; base_enemy_sign; base_debilitation; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_250_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_250_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 250 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 250 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 250 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>269</td>
+              <td>2025-08-18 14:30:00+05:30<br>2025-08-18 16:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>40</td>
+              <td>bearish</td>
+              <td>-9.4</td>
+              <td>9.4</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; crowded_regime; quote_enemy_sign; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_269_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_269_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 269 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 269 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 269 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>304</td>
+              <td>2025-09-01 19:30:00+05:30<br>2025-09-01 22:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>28</td>
+              <td>bullish</td>
+              <td>10.2</td>
+              <td>-10.2</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; quote_enemy_sign; base_enemy_sign; base_debilitation; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_304_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_304_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 304 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 304 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 304 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>378</td>
+              <td>2025-10-10 21:30:00+05:30<br>2025-10-11 01:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>28</td>
+              <td>bearish</td>
+              <td>-80.7</td>
+              <td>80.7</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; crowded_regime; quote_debilitation; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_378_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_378_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 378 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 378 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 378 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>500</td>
+              <td>2025-12-19 22:30:00+05:30<br>2025-12-20 01:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>25</td>
+              <td>bullish</td>
+              <td>0.7</td>
+              <td>-0.7</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; crowded_regime; strong_shadbala; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_500_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_500_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 500 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 500 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 500 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>515</td>
+              <td>2025-12-30 07:30:00+05:30<br>2026-01-03 04:30:00+05:30</td>
+              <td>daily</td>
+              <td>5</td>
+              <td>bullish</td>
+              <td>56.3</td>
+              <td>-56.3</td>
+              <td>BEARISH</td>
+              <td>high_recurrence_group; multiple_active_aspects; crowded_regime; low_shadbala; quote_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; swing_duration_1d_to_5d; hard_aspect</td>
+              <td><a href="aspect_review_case_515_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_515_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 515 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe h1 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 515 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 515 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>543</td>
+              <td>2026-01-16 05:30:00+05:30<br>2026-01-16 08:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>24</td>
+              <td>bearish</td>
+              <td>-11.0</td>
+              <td>11.0</td>
+              <td>BEARISH</td>
+              <td>not_in_current_candidate_csv; high_recurrence_group; multiple_active_aspects; quote_enemy_sign; base_enemy_sign; base_debilitation; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_543_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_543_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 543 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 543 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 543 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>548</td>
+              <td>2026-01-19 15:30:00+05:30<br>2026-01-20 09:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>24</td>
+              <td>bearish</td>
+              <td>-10.6</td>
+              <td>10.6</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; crowded_regime; low_shadbala; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_548_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_548_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 548 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 548 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 548 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>560</td>
+              <td>2026-01-29 18:30:00+05:30<br>2026-01-29 20:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>14</td>
+              <td>bearish</td>
+              <td>-26.4</td>
+              <td>26.4</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; low_shadbala; quote_enemy_sign; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_560_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_560_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 560 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 560 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 560 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>578</td>
+              <td>2026-02-12 13:30:00+05:30<br>2026-02-12 16:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>20</td>
+              <td>bearish</td>
+              <td>-48.6</td>
+              <td>48.6</td>
+              <td>BEARISH</td>
+              <td>repeated_across_timeframes; high_recurrence_group; multiple_active_aspects; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_578_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_578_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 578 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 578 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 578 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+            <tr>
+              <td>603</td>
+              <td>2026-02-26 00:30:00+05:30<br>2026-02-26 02:30:00+05:30</td>
+              <td>m30_h1</td>
+              <td>37</td>
+              <td>bullish</td>
+              <td>20.5</td>
+              <td>-20.5</td>
+              <td>BEARISH</td>
+              <td>not_in_current_candidate_csv; high_recurrence_group; multiple_active_aspects; base_enemy_sign; unknown_outer_or_node_dignity; avg_all_composite; hard_aspect</td>
+              <td><a href="aspect_review_case_603_chart.html?v=repeatation_ui_20260519_marker_adopt_v3">chart</a><br><a href="aspect_review_case_603_chart_visible.csv">visible csv</a></td>
+              <td><pre>python .\aspect_annotation_store.py --add-trade-annotation --case-id 603 --trade-start &quot;&lt;marker_start_ist&gt;&quot; --trade-end &quot;&lt;marker_end_ist&gt;&quot; --outcome-label &lt;bullish|bearish|sideways|unclear&gt; --price-timeframe m30 --why &quot;&lt;why this marker placement&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --mark-ignore-region --case-id 603 --region-start &quot;&lt;ignore_start_ist&gt;&quot; --region-end &quot;&lt;ignore_end_ist&gt;&quot; --why &quot;&lt;why ignored&gt;&quot;</pre></td>
+              <td><pre>python .\aspect_annotation_store.py --add-rule-note --case-id 603 --note-type &lt;note_type&gt; --note &quot;&lt;rule note / ML learning note&gt;&quot;</pre></td>
+            </tr>
+            
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

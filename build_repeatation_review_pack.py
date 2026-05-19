@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260519_hover_v2"
+REPEATATION_UI_VERSION = "repeatation_ui_20260519_marker_adopt_v3"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -257,13 +257,35 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var price = Number(point.y);
       return toIST(point.x) + (Number.isFinite(price) ? ' @ ' + price.toFixed(3) : '');
     }}
+    function traceLooksLikeMarker(trace) {{
+      var mode = String(trace && trace.mode || '').toLowerCase();
+      var name = String(trace && trace.name || '').toLowerCase();
+      return mode.indexOf('markers') !== -1 || name.indexOf('touch') !== -1 || name.indexOf('interaction') !== -1;
+    }}
+    function customDataLabel(customdata) {{
+      if (!customdata) return '';
+      if (Array.isArray(customdata)) {{
+        return String(customdata[4] || customdata[5] || customdata[0] || '').slice(0, 160);
+      }}
+      return String(customdata).slice(0, 160);
+    }}
     function pointFromPlotly(eventData) {{
       if (!eventData || !eventData.points || !eventData.points.length) return null;
       var p = eventData.points[0];
       var y = p.y;
       if (y == null && p.close != null) y = p.close;
       if (y == null && p.high != null && p.low != null) y = (Number(p.high) + Number(p.low)) / 2;
-      return {{ x: p.x, y: y, source: 'plotly_click' }};
+      var trace = p.data || p.fullData || {{}};
+      var isMarker = traceLooksLikeMarker(trace);
+      return {{
+        x: p.x,
+        y: y,
+        source: isMarker ? 'chart_marker' : 'plotly_click',
+        traceName: trace.name || '',
+        curveNumber: p.curveNumber,
+        pointNumber: p.pointNumber,
+        markerLabel: customDataLabel(p.customdata) || String(p.text || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim().slice(0, 160)
+      }};
     }}
     function axisValue(axis, pixel) {{
       if (!axis) return null;
@@ -302,6 +324,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (!a || !b) return [a, b];
       return Date.parse(a.x) <= Date.parse(b.x) ? [a, b] : [b, a];
     }}
+    function isChartMarkerPoint(point) {{
+      return point && point.source === 'chart_marker';
+    }}
     function setTool(tool, persist) {{
       state.tool = tool;
       panel.querySelectorAll('[data-tool]').forEach(function (button) {{
@@ -332,7 +357,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       return {{
         x: point.x,
         y: point.y,
-        source: point.source || 'draft_restore'
+        source: point.source || 'draft_restore',
+        traceName: point.traceName || '',
+        curveNumber: point.curveNumber,
+        pointNumber: point.pointNumber,
+        markerLabel: point.markerLabel || ''
       }};
     }}
     function restorePoint(point) {{
@@ -341,6 +370,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         x: point.x,
         y: point.y,
         source: point.source || 'draft_restore',
+        traceName: point.traceName || '',
+        curveNumber: point.curveNumber,
+        pointNumber: point.pointNumber,
+        markerLabel: point.markerLabel || '',
         placedAt: 0
       }};
     }}
@@ -373,6 +406,37 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       function crosshair(point, color, dash, name) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
         var isTrade = name.indexOf('trade') !== -1;
+        if (isChartMarkerPoint(point)) {{
+          var glowXs = xAround(point.x, isTrade ? 0.01 : 0.007);
+          var glowYs = yAround(point.y, isTrade ? 0.027 : 0.02);
+          shapes.push({{
+            type: 'circle',
+            name: name + '-adopted-marker-glow',
+            xref: 'x',
+            yref: 'y',
+            x0: glowXs[0],
+            x1: glowXs[1],
+            y0: glowYs[0],
+            y1: glowYs[1],
+            fillcolor: color === '#22c55e' ? 'rgba(34,197,94,0.14)' : (color === '#ef4444' ? 'rgba(239,68,68,0.14)' : 'rgba(249,115,22,0.12)'),
+            line: {{ color: '#f8fafc', width: isTrade ? 3.5 : 2.5 }},
+            layer: 'above'
+          }});
+          shapes.push({{
+            type: 'circle',
+            name: name + '-adopted-marker-ring',
+            xref: 'x',
+            yref: 'y',
+            x0: glowXs[0],
+            x1: glowXs[1],
+            y0: glowYs[0],
+            y1: glowYs[1],
+            fillcolor: 'rgba(0,0,0,0)',
+            line: {{ color: color, width: isTrade ? 5 : 3, dash: dash || 'solid' }},
+            layer: 'above'
+          }});
+          return;
+        }}
         var xs = xAround(point.x, isTrade ? 0.011 : 0.006);
         var ys = yAround(point.y, isTrade ? 0.03 : 0.018);
         var line = {{ color: color, width: isTrade ? 4 : 2.5, dash: dash || 'solid' }};
@@ -458,6 +522,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         .filter(function (ann) {{ return !(ann && String(ann.name || '').indexOf('repeatation-marker') === 0); }});
       function tradeLabel(point, label, color, bg, ax) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
+        if (isChartMarkerPoint(point)) return;
         annotations.push({{
           name: 'repeatation-marker-' + label.toLowerCase().replace(/\\s+/g, '-') + '-label',
           xref: 'x',

@@ -1,0 +1,4 @@
+﻿backup=C:\Users\ADMIN\PycharmProjects\chat_session_backups\chat_backup_20260519-212001
+created=2026-05-19 21:20:02 +05:30
+purpose=repeatation adopted chart marker selection UI
+server=http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260519_marker_adopt_v3
