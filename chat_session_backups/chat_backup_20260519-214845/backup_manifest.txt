@@ -1,0 +1,4 @@
+﻿backup=C:\Users\ADMIN\PycharmProjects\chat_session_backups\chat_backup_20260519-214845
+created=2026-05-19 21:48:46 +05:30
+purpose=repeatation marker capture drag adjustment thin crosshair UI
+server=http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260519_marker_capture_v6

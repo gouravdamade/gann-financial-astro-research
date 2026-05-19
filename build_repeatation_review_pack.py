@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260519_marker_magnet_v4"
+REPEATATION_UI_VERSION = "repeatation_ui_20260519_marker_capture_v6"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -348,6 +348,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       return null;
     }}
     function pointFromMouse(evt) {{
+      return pointFromMouseAt(evt, true);
+    }}
+    function pointFromMouseAt(evt, useMagnet) {{
       if (!gd._fullLayout || !gd._fullLayout.xaxis || !gd._fullLayout.yaxis) return null;
       var xa = gd._fullLayout.xaxis;
       var ya = gd._fullLayout.yaxis;
@@ -355,7 +358,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var plotX = evt.clientX - rect.left - xa._offset;
       var plotY = evt.clientY - rect.top - ya._offset;
       if (plotX < 0 || plotX > xa._length || plotY < 0 || plotY > ya._length) return null;
-      var marker = nearestChartMarker(plotX, plotY, 34);
+      var marker = useMagnet !== false ? nearestChartMarker(plotX, plotY, 34) : null;
       if (marker) return marker;
       return {{ x: axisValue(xa, plotX), y: axisValue(ya, plotY), source: 'chart_click' }};
     }}
@@ -383,6 +386,48 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function isChartMarkerPoint(point) {{
       return point && point.source === 'chart_marker';
     }}
+    function activeStateKey() {{
+      if (state.tool === 'trade_start') return 'tradeStart';
+      if (state.tool === 'trade_end') return 'tradeEnd';
+      if (state.tool === 'ignore_start') return 'ignoreStart';
+      if (state.tool === 'ignore_end') return 'ignoreEnd';
+      return '';
+    }}
+    function markerRefs() {{
+      return [
+        {{ key: 'tradeStart', point: state.tradeStart }},
+        {{ key: 'tradeEnd', point: state.tradeEnd }},
+        {{ key: 'ignoreStart', point: state.ignoreStart }},
+        {{ key: 'ignoreEnd', point: state.ignoreEnd }}
+      ];
+    }}
+    function markerDistancePx(evt, point) {{
+      if (!point || isChartMarkerPoint(point) || !gd._fullLayout || !gd._fullLayout.xaxis || !gd._fullLayout.yaxis) return Infinity;
+      var xa = gd._fullLayout.xaxis;
+      var ya = gd._fullLayout.yaxis;
+      var rect = gd.getBoundingClientRect();
+      var plotX = evt.clientX - rect.left - xa._offset;
+      var plotY = evt.clientY - rect.top - ya._offset;
+      var px = axisPixel(xa, point.x);
+      var py = axisPixel(ya, point.y);
+      if (!Number.isFinite(px) || !Number.isFinite(py)) return Infinity;
+      return Math.hypot(px - plotX, py - plotY);
+    }}
+    function nearestManualMarkerRef(evt, thresholdPx) {{
+      var best = null;
+      markerRefs().forEach(function (ref) {{
+        var dist = markerDistancePx(evt, ref.point);
+        if (dist <= (thresholdPx || 22) && (!best || dist < best.dist)) best = {{ key: ref.key, dist: dist }};
+      }});
+      return best;
+    }}
+    function setStatePoint(key, point) {{
+      if (!key || !point) return;
+      point.placedAt = Date.now();
+      state[key] = point;
+      state.lastPoint = point;
+      if (key === 'ignoreStart' || key === 'ignoreEnd') state.tradeIgnored = false;
+    }}
     function setTool(tool, persist) {{
       state.tool = tool;
       panel.querySelectorAll('[data-tool]').forEach(function (button) {{
@@ -392,18 +437,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function place(point) {{
       if (!point || !point.x) return;
-      point.placedAt = Date.now();
-      state.lastPoint = point;
-      if (state.tool === 'trade_start') state.tradeStart = point;
-      if (state.tool === 'trade_end') state.tradeEnd = point;
-      if (state.tool === 'ignore_start') {{
-        state.ignoreStart = point;
-        state.tradeIgnored = false;
-      }}
-      if (state.tool === 'ignore_end') {{
-        state.ignoreEnd = point;
-        state.tradeIgnored = false;
-      }}
+      setStatePoint(activeStateKey(), point);
       drawMarkers();
       render();
       saveDraft();
@@ -463,8 +497,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
         var isTrade = name.indexOf('trade') !== -1;
         if (isChartMarkerPoint(point)) {{
-          var glowXs = xAround(point.x, isTrade ? 0.01 : 0.007);
-          var glowYs = yAround(point.y, isTrade ? 0.027 : 0.02);
+          var glowXs = xAround(point.x, isTrade ? 0.007 : 0.0055);
+          var glowYs = yAround(point.y, isTrade ? 0.019 : 0.015);
           shapes.push({{
             type: 'circle',
             name: name + '-adopted-marker-glow',
@@ -475,7 +509,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             y0: glowYs[0],
             y1: glowYs[1],
             fillcolor: color === '#22c55e' ? 'rgba(34,197,94,0.14)' : (color === '#ef4444' ? 'rgba(239,68,68,0.14)' : 'rgba(249,115,22,0.12)'),
-            line: {{ color: '#f8fafc', width: isTrade ? 3.5 : 2.5 }},
+            line: {{ color: '#f8fafc', width: isTrade ? 2 : 1.5 }},
             layer: 'above'
           }});
           shapes.push({{
@@ -488,14 +522,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             y0: glowYs[0],
             y1: glowYs[1],
             fillcolor: 'rgba(0,0,0,0)',
-            line: {{ color: color, width: isTrade ? 5 : 3, dash: dash || 'solid' }},
+            line: {{ color: color, width: isTrade ? 2.4 : 2, dash: dash || 'solid' }},
             layer: 'above'
           }});
           return;
         }}
-        var xs = xAround(point.x, isTrade ? 0.0045 : 0.0035);
-        var ys = yAround(point.y, isTrade ? 0.012 : 0.01);
-        var line = {{ color: color, width: isTrade ? 3 : 2.5, dash: dash || 'solid' }};
+        var xs = xAround(point.x, isTrade ? 0.0029 : 0.0024);
+        var ys = yAround(point.y, isTrade ? 0.008 : 0.007);
+        var line = {{ color: color, width: isTrade ? 1.5 : 1.4, dash: dash || 'solid' }};
         shapes.push({{
           type: 'line',
           name: name + '-v',
@@ -529,13 +563,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           x1: xs[1],
           y0: ys[0],
           y1: ys[1],
-          fillcolor: isTrade ? (color === '#22c55e' ? 'rgba(34,197,94,0.18)' : 'rgba(239,68,68,0.18)') : 'rgba(0,0,0,0)',
-          line: {{ color: color, width: isTrade ? 3 : 1.5, dash: dash || 'solid' }},
+          fillcolor: isTrade ? (color === '#22c55e' ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)') : 'rgba(0,0,0,0)',
+          line: {{ color: color, width: isTrade ? 1.2 : 1, dash: dash || 'solid' }},
           layer: 'above'
         }});
         if (isTrade) {{
-          var innerXs = xAround(point.x, 0.0024);
-          var innerYs = yAround(point.y, 0.006);
+          var innerXs = xAround(point.x, 0.0015);
+          var innerYs = yAround(point.y, 0.004);
           shapes.push({{
             type: 'circle',
             name: name + '-core',
@@ -546,7 +580,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             y0: innerYs[0],
             y1: innerYs[1],
             fillcolor: color,
-            line: {{ color: '#f8fafc', width: 2 }},
+            line: {{ color: '#f8fafc', width: 0.9 }},
             layer: 'above'
           }});
         }}
@@ -1120,15 +1154,42 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     window.setInterval(function () {{
       if (hasDraftableContent()) saveDraft();
     }}, 2000);
-    gd.on('plotly_click', function (eventData) {{
-      place(pointFromPlotly(eventData));
-    }});
+    gd.addEventListener('mousedown', function (evt) {{
+      if (evt.target && panel.contains(evt.target)) return;
+      var ref = nearestManualMarkerRef(evt, 20);
+      if (ref) state.draggingMarkerKey = ref.key;
+      else state.pendingMarkerClick = true;
+      evt.preventDefault();
+      evt.stopImmediatePropagation();
+    }}, true);
+    window.addEventListener('mousemove', function (evt) {{
+      if (!state.draggingMarkerKey) return;
+      var point = pointFromMouseAt(evt, false);
+      if (!point) return;
+      setStatePoint(state.draggingMarkerKey, point);
+      drawMarkers();
+      render();
+      evt.preventDefault();
+    }}, true);
+    window.addEventListener('mouseup', function (evt) {{
+      if (!state.draggingMarkerKey && !state.pendingMarkerClick) return;
+      if (state.draggingMarkerKey) {{
+        state.draggingMarkerKey = '';
+        saveDraft();
+      }} else if (state.pendingMarkerClick) {{
+        var point = pointFromMouse(evt);
+        if (point) place(point);
+      }}
+      state.pendingMarkerClick = false;
+      saveDraft();
+      evt.preventDefault();
+      evt.stopImmediatePropagation();
+    }}, true);
     gd.addEventListener('click', function (evt) {{
       if (evt.target && panel.contains(evt.target)) return;
-      if (state.lastPoint && Date.now() - (state.lastPoint.placedAt || 0) < 80) return;
-      var point = pointFromMouse(evt);
-      if (point) place(point);
-    }});
+      evt.preventDefault();
+      evt.stopImmediatePropagation();
+    }}, true);
     if (!restoreDraft()) {{
       setTool('trade_start', false);
       render();
