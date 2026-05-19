@@ -1,0 +1,4 @@
+﻿backup=C:\Users\ADMIN\PycharmProjects\chat_session_backups\chat_backup_20260519-210255
+created=2026-05-19 21:02:56 +05:30
+purpose=repeatation reviewer cache-busting/no-cache universal marker UI follow-up
+server=http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260519_hover_v2

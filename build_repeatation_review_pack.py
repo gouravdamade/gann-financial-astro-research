@@ -27,6 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
+REPEATATION_UI_VERSION = "repeatation_ui_20260519_hover_v2"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -60,6 +61,10 @@ def slugify(value: str) -> str:
 
 def command_quote(value: Any) -> str:
     return '"' + str(value).replace('"', '\\"') + '"'
+
+
+def html_cache_href(name: str) -> str:
+    return f"{name}?v={REPEATATION_UI_VERSION}"
 
 
 def read_case_group(db_path: Path, case_id: int) -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -1176,12 +1181,12 @@ def attach_repeatation_navigation(cases: list[dict[str, Any]]) -> None:
         case["repeatation_index"] = idx + 1
         case["repeatation_count"] = total
         case["previous_chart_href"] = (
-            f"aspect_review_case_{int(prev_case['case_id'])}_chart.html" if prev_case else ""
+            html_cache_href(f"aspect_review_case_{int(prev_case['case_id'])}_chart.html") if prev_case else ""
         )
         case["next_chart_href"] = (
-            f"aspect_review_case_{int(next_case['case_id'])}_chart.html" if next_case else ""
+            html_cache_href(f"aspect_review_case_{int(next_case['case_id'])}_chart.html") if next_case else ""
         )
-        case["reviewer_href"] = "repeatation_reviewer.html"
+        case["reviewer_href"] = html_cache_href("repeatation_reviewer.html")
 
 
 def render_index(seed: dict[str, Any], rows: list[dict[str, Any]], output_dir: Path) -> str:
@@ -1201,7 +1206,7 @@ def render_index(seed: dict[str, Any], rows: list[dict[str, Any]], output_dir: P
               <td>{h(row.get('full_window_bearish_pips'))}</td>
               <td>{h(row.get('group_script_direction_mode'))}</td>
               <td>{h(row.get('probable_factor_tags'))}</td>
-              <td><a href="{h(chart_name)}">chart</a><br><a href="{h(visible_name)}">visible csv</a></td>
+              <td><a href="{h(html_cache_href(chart_name))}">chart</a><br><a href="{h(visible_name)}">visible csv</a></td>
               <td><pre>{h(row.get('trade_command'))}</pre></td>
               <td><pre>{h(row.get('ignore_command'))}</pre></td>
               <td><pre>{h(row.get('rule_note_command'))}</pre></td>
@@ -1236,7 +1241,7 @@ def render_index(seed: dict[str, Any], rows: list[dict[str, Any]], output_dir: P
     </div>
   </header>
   <main>
-    <p class="note"><a href="repeatation_reviewer.html"><b>Open single repeatation reviewer</b></a></p>
+    <p class="note"><a href="{h(html_cache_href('repeatation_reviewer.html'))}"><b>Open single repeatation reviewer</b></a></p>
     <p class="note">
       Open each chart link and expand the small <b>Markers</b> drawer. Choose trade start,
       trade end, ignore start, or ignore end, then click the chart to place a crosshair marker at the
@@ -1279,7 +1284,7 @@ def render_reviewer_shell(seed: dict[str, Any], rows: list[dict[str, Any]], outp
         pips = row.get("full_window_bullish_pips", "")
         nav_rows.append(
             f"""
-            <a class="case-link" href="{h(chart_name)}" target="chartFrame">
+            <a class="case-link" href="{h(html_cache_href(chart_name))}" target="chartFrame">
               <span class="case-index">{idx}</span>
               <span>
                 <b>case {h(row.get('case_id'))}</b>
@@ -1326,7 +1331,7 @@ def render_reviewer_shell(seed: dict[str, Any], rows: list[dict[str, Any]], outp
     </nav>
   </aside>
   <main>
-    <iframe name="chartFrame" src="{h(first_chart)}" title="Repeatation chart"></iframe>
+    <iframe name="chartFrame" src="{h(html_cache_href(first_chart))}" title="Repeatation chart"></iframe>
   </main>
 </body>
 </html>
