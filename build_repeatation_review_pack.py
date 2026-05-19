@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260519_marker_adopt_v3"
+REPEATATION_UI_VERSION = "repeatation_ui_20260519_marker_magnet_v4"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -269,6 +269,56 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       return String(customdata).slice(0, 160);
     }}
+    function axisPixel(axis, value) {{
+      if (!axis) return null;
+      if (typeof axis.d2p === 'function') return axis.d2p(value);
+      if (typeof axis.d2c === 'function' && typeof axis.c2p === 'function') return axis.c2p(axis.d2c(value));
+      if (typeof axis.l2p === 'function' && typeof axis.d2l === 'function') return axis.l2p(axis.d2l(value));
+      return null;
+    }}
+    function arrayValue(values, index) {{
+      if (!values) return null;
+      if (Array.isArray(values)) return values[index];
+      if (typeof values.length === 'number') return values[index];
+      return null;
+    }}
+    function chartMarkerPoint(trace, curveNumber, pointNumber, fallbackLabel) {{
+      var x = arrayValue(trace && trace.x, pointNumber);
+      var y = arrayValue(trace && trace.y, pointNumber);
+      if (y == null) return null;
+      return {{
+        x: x,
+        y: y,
+        source: 'chart_marker',
+        traceName: trace.name || '',
+        curveNumber: curveNumber,
+        pointNumber: pointNumber,
+        markerLabel: customDataLabel(arrayValue(trace.customdata, pointNumber)) || String(fallbackLabel || arrayValue(trace.text, pointNumber) || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim().slice(0, 160)
+      }};
+    }}
+    function nearestChartMarker(plotX, plotY, thresholdPx) {{
+      var xa = gd._fullLayout && gd._fullLayout.xaxis;
+      var ya = gd._fullLayout && gd._fullLayout.yaxis;
+      var traces = Array.isArray(gd._fullData) ? gd._fullData : (Array.isArray(gd.data) ? gd.data : []);
+      var best = null;
+      traces.forEach(function (trace, curveNumber) {{
+        if (!traceLooksLikeMarker(trace) || !trace.visible || !trace.x || !trace.y) return;
+        var len = Number(trace.x.length || 0);
+        for (var i = 0; i < len; i += 1) {{
+          var x = arrayValue(trace.x, i);
+          var y = arrayValue(trace.y, i);
+          if (x == null || y == null) continue;
+          var px = axisPixel(xa, x);
+          var py = axisPixel(ya, y);
+          if (!Number.isFinite(px) || !Number.isFinite(py)) continue;
+          var dist = Math.hypot(px - plotX, py - plotY);
+          if (dist <= (thresholdPx || 32) && (!best || dist < best.dist)) {{
+            best = {{ dist: dist, point: chartMarkerPoint(trace, curveNumber, i) }};
+          }}
+        }}
+      }});
+      return best && best.point ? best.point : null;
+    }}
     function pointFromPlotly(eventData) {{
       if (!eventData || !eventData.points || !eventData.points.length) return null;
       var p = eventData.points[0];
@@ -277,6 +327,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (y == null && p.high != null && p.low != null) y = (Number(p.high) + Number(p.low)) / 2;
       var trace = p.data || p.fullData || {{}};
       var isMarker = traceLooksLikeMarker(trace);
+      if (isMarker) {{
+        var adopted = chartMarkerPoint(trace, p.curveNumber, p.pointNumber, p.text);
+        if (adopted) return adopted;
+      }}
       return {{
         x: p.x,
         y: y,
@@ -301,6 +355,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var plotX = evt.clientX - rect.left - xa._offset;
       var plotY = evt.clientY - rect.top - ya._offset;
       if (plotX < 0 || plotX > xa._length || plotY < 0 || plotY > ya._length) return null;
+      var marker = nearestChartMarker(plotX, plotY, 34);
+      if (marker) return marker;
       return {{ x: axisValue(xa, plotX), y: axisValue(ya, plotY), source: 'chart_click' }};
     }}
     function yAxisMidpoint() {{
@@ -437,9 +493,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           }});
           return;
         }}
-        var xs = xAround(point.x, isTrade ? 0.011 : 0.006);
-        var ys = yAround(point.y, isTrade ? 0.03 : 0.018);
-        var line = {{ color: color, width: isTrade ? 4 : 2.5, dash: dash || 'solid' }};
+        var xs = xAround(point.x, isTrade ? 0.0045 : 0.0035);
+        var ys = yAround(point.y, isTrade ? 0.012 : 0.01);
+        var line = {{ color: color, width: isTrade ? 3 : 2.5, dash: dash || 'solid' }};
         shapes.push({{
           type: 'line',
           name: name + '-v',
@@ -478,8 +534,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           layer: 'above'
         }});
         if (isTrade) {{
-          var innerXs = xAround(point.x, 0.004);
-          var innerYs = yAround(point.y, 0.011);
+          var innerXs = xAround(point.x, 0.0024);
+          var innerYs = yAround(point.y, 0.006);
           shapes.push({{
             type: 'circle',
             name: name + '-core',
@@ -545,8 +601,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           align: 'left'
         }});
       }}
-      tradeLabel(state.tradeStart, 'Trade start', '#22c55e', 'rgba(20,83,45,0.68)', -74);
-      tradeLabel(state.tradeEnd, 'Trade end', '#ef4444', 'rgba(127,29,29,0.68)', 74);
+      // Keep marker placement as a compact chart mark; exact values remain in the drawer/JSON.
       return annotations;
     }}
     function drawMarkers() {{

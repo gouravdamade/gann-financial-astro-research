@@ -1,0 +1,4 @@
+﻿backup=C:\Users\ADMIN\PycharmProjects\chat_session_backups\chat_backup_20260519-213147
+created=2026-05-19 21:31:48 +05:30
+purpose=repeatation marker magnet and compact fallback UI
+server=http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260519_marker_magnet_v4
