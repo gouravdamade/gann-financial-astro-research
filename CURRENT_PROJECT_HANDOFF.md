@@ -1,10 +1,21 @@
 # Current Project Handoff
 
-Last updated: 2026-05-20 23:53 IST
+Last updated: 2026-05-21 00:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 doctrine hardening foundation:
+
+- Added `C:\Users\ADMIN\PycharmProjects\doctrine_config.yaml`.
+- Added `C:\Users\ADMIN\PycharmProjects\doctrine_config.py`.
+- Future generated touch logs / trade candidates / dashboard exports now carry doctrine metadata columns including `doctrine_config_id`, `doctrine_drishti_status`, `doctrine_shadbala_method`, `doctrine_rule_citation_status`, and `experimental_layer_flags`.
+- Current BPHS strength fields are preserved for compatibility, but explicit proxy aliases were added: `event_bphs_like_orb_strength`, `event_bphs_like_orb_virupa`, and `event_strength_doctrine_status=bphs_like_orb_proxy_not_full_drik_bala`.
+- Shadbala tags/averages now carry `shadbala_doctrine_status=source_or_proxy_pending_full_six_bala_calculation`.
+- Added seven-classical-planet minimum Shadbala total virupa thresholds from the Shadbala PDF text extraction: Sun 300, Moon 360, Mars 300, Mercury 420, Jupiter 390, Venus 330, Saturn 300. Future rows with `b1`, `b2`, and `shadbala_avg` get `event_shadbala_minimum_total_virupa_avg` and `event_shadbala_avg_minus_minimum_virupa`.
+- `astro_feature_inventory_from_pdfs.md` and `vedic_pdf_alignment_review_20260520.md` were updated so LOCK_DOCTRINE_CONFIG is no longer marked as completely missing.
+- Smoke checks passed: `python -m py_compile doctrine_config.py build_aspect_sr_touch_log.py build_trade_candidates_from_touches.py sr_touch_lazy_dashboard.py aspect_annotation_store.py`; metadata append tested against the current touch log.
 
 The repeatation review UI is now at:
 

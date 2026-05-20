@@ -1,0 +1,73 @@
+config_id: doctrine_v1_20260521
+status: foundation
+description: >
+  Doctrine lock for the USDJPY Gann / Vedic financial astrology research
+  pipeline. Current BPHS/Shadbala fields are explicitly marked as proxy
+  features until full Shadbala and strict Drik Bala are implemented.
+
+time_standard:
+  internal_time: UTC/JD_UT
+  display_time: Asia/Kolkata
+
+astronomy:
+  zodiac: sidereal
+  ayanamsa: swiss_ephemeris_default
+  coordinate_system: geocentric
+  ephemeris_provider: swiss_ephemeris
+  house_system: existing_reference_engine
+
+graha_set:
+  classical: [SUN, MOON, MARS, MERCURY, JUPITER, VENUS, SATURN]
+  nodes: [RAHU, KETU]
+  experimental_outer: [URANUS, NEPTUNE, PLUTO]
+  avg_all_policy: experimental_context_feature
+
+drishti:
+  method: bphs_like_longitudinal
+  status: proxy_pending_strict_drik_bala
+  current_strength_field: event_bphs_like_orb_strength
+  current_virupa_field: event_bphs_like_orb_virupa
+  missing:
+    - exact_drik_bala_formula
+    - benefic_malefic_signed_aspect_energy
+    - drik_correction_to_sthana_and_kala
+
+shadbala:
+  method: proxy_pending_full_shadbala
+  current_fields: [shadbala_tag, shadbala_avg]
+  minimum_total_virupa:
+    SUN: 300
+    MOON: 360
+    MARS: 300
+    MERCURY: 420
+    JUPITER: 390
+    VENUS: 330
+    SATURN: 300
+  minimum_total_source: SHADBALA_JAYA lines 743-745
+  missing:
+    - naisargika_bala
+    - sthana_bala_full_components
+    - kala_bala
+    - dig_bala
+    - drik_bala
+    - chesta_bala
+    - eighteen_sub_balas
+    - planet_minimum_thresholds
+    - ishta_kashta_phala
+
+rule_layer:
+  status: heuristic_doctrine_v1
+  ml_scope: calibrate_weights_thresholds_and_interactions_only
+  llm_scope: explanation_with_citations_only
+  rule_citation_status: pending
+
+experimental_layers:
+  - financial_astrology_orb_windows
+  - support_resistance_planetary_lines
+  - gann_research_context
+  - usdjpy_base_minus_quote_score
+  - repeatation_manual_marker_review
+
+source_ids:
+  - STRICT_VEDIC_LLM
+  - SHADBALA_JAYA

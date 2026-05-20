@@ -8,6 +8,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from doctrine_config import append_doctrine_metadata
 
 IST = "Asia/Kolkata"
 UTC = "UTC"
@@ -628,7 +629,8 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         "fx_doctrine_dominant_quote_dignity": str(quote["doctrine_dominant_dignity"]),
         "fx_scoring_notes": (
             "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;"
-            "doctrine_v1_adds_sign_dignity_friendship_sthana_bala;ml_must_validate"
+            "doctrine_v1_adds_sign_dignity_friendship_sthana_bala;"
+            "full_shadbala_and_strict_drik_bala_pending;ml_must_validate"
             ";avg_all_scoring_expands_to_7_classical_planets"
             if has_base_reference
             else "base_reference_missing;pair_hypothesis_not_scored"
@@ -873,7 +875,8 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         df["fx_doctrine_pair_conflict_score"] = 0.0
         df["fx_doctrine_pair_conflict_ratio"] = 0.0
 
-    event_strength = numeric_series(df, "event_bphs_strength")
+    df = append_doctrine_metadata(df)
+    event_strength = numeric_series(df, "event_bphs_like_orb_strength")
     natal_strength = numeric_series(df, "tn_bphs_total")
     df["geometric_strength_score"] = event_strength
     df["natal_relevance_score"] = natal_strength
@@ -905,9 +908,10 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
     )
     df["rule_layer_notes"] = (
         "heuristic_v1_yen_ipo_tokyo_1889_reference;"
-        "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
+        "uses_transit_natal_house_planet_nature_aspect_family_bphs_like_orb_proxy_sr;"
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
+        "full_shadbala_and_strict_drik_bala_pending;"
         "ml_must_validate"
     )
 

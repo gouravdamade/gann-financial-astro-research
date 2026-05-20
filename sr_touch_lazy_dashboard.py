@@ -31,6 +31,7 @@ from build_trade_candidates_from_touches import (
     score_currency_pair_for_row,
     score_transit_natal_hits_for_row,
 )
+from doctrine_config import append_doctrine_metadata
 from planetary_sr_engine import DEFAULT_SR_PLANETS
 
 IST = "Asia/Kolkata"
@@ -959,7 +960,8 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         df["fx_doctrine_pair_conflict_ratio"] = 0.0
         df["fx_scoring_notes"] = "base_reference_missing;pair_hypothesis_not_scored"
 
-    event_strength = numeric_series(df, "event_bphs_strength")
+    df = append_doctrine_metadata(df)
+    event_strength = numeric_series(df, "event_bphs_like_orb_strength")
     df["geometric_strength_score"] = event_strength
     df["rule_layer_total_strength"] = (
         numeric_series(df, "dominant_aspect_abs_score")
@@ -984,10 +986,11 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
     df["rule_layer_conflict_ratio"] = np.where(total_directional > 0.0, conflict / total_directional, 0.0)
     df["rule_layer_notes"] = (
         "heuristic_v1_yen_ipo_tokyo_1889_reference;"
-        "uses_transit_natal_house_planet_nature_aspect_family_bphs_sr;"
+        "uses_transit_natal_house_planet_nature_aspect_family_bphs_like_orb_proxy_sr;"
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
         "avg_all_scoring_expands_to_7_classical_planets;"
+        "full_shadbala_and_strict_drik_bala_pending;"
         "ml_must_validate"
     )
 
@@ -1076,7 +1079,7 @@ def build_event_hover_lines(row: pd.Series) -> list[str]:
             lines.append(f"Orb: +/-{event_orb_limit:.3f}deg")
     if event_bphs_strength is not None:
         virupa_text = f" ({event_bphs_virupa:.1f}/60)" if event_bphs_virupa is not None else ""
-        lines.append(f"BPHS-like strength: {event_bphs_strength:.3f}{virupa_text}")
+        lines.append(f"BPHS-like orb proxy: {event_bphs_strength:.3f}{virupa_text}")
     lines.extend(build_rule_layer_hover_lines(row))
     return lines
 

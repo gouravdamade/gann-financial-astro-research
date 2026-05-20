@@ -22,7 +22,7 @@ Extracted text folder:
 | ID | Requirement | Source | Implementation status |
 |---|---|---|---|
 | LOCK_TIME_UTC | Internal calculations must standardize timestamps to UTC/JD UT and preserve display timezone separately. | STRICT_JYOTISH_ML p1-p2, STRICT_VEDIC_LLM p3 | Mostly aligned: existing logs carry local/UTC columns. Needs config record in output metadata. |
-| LOCK_DOCTRINE_CONFIG | Version ayanamsa, zodiac, graha set, node type, drishti/aspect method, ephemeris path. | STRICT_JYOTISH_ML p1-p4, STRICT_VEDIC_LLM p3-p4 | Partial: scripts accept method flags, but no standalone doctrine config artifact yet. |
+| LOCK_DOCTRINE_CONFIG | Version ayanamsa, zodiac, graha set, node type, drishti/aspect method, ephemeris path. | STRICT_JYOTISH_ML p1-p4, STRICT_VEDIC_LLM p3-p4 | Foundation added: `doctrine_config.yaml` plus output metadata columns. Still needs exact ayanamsa policy review and rule citations. |
 | NO_LLM_IN_LOGIC | LLM must not compute ephemeris, aspects, labels, or trades; explanation only. | STRICT_JYOTISH_ML p1, p5-p7; STRICT_VEDIC_LLM p1-p3 | Not implemented yet; future RAG layer only. |
 | RULES_WITH_CITATIONS | Every doctrine/interpretation rule should carry source/page metadata. | STRICT_JYOTISH_ML p3-p5; STRICT_VEDIC_LLM p5-p6 | New feature inventory starts this. Code rules still need citation fields. |
 | ML_CALIBRATION_SCOPE | ML may tune weights, thresholds, windows, and interactions, not invent astrology. | STRICT_JYOTISH_ML p6-p8; STRICT_VEDIC_LLM p6-p8 | Trade candidate file exists; purged walk-forward and anti-overfit checks remain. |
@@ -67,7 +67,7 @@ Extracted text folder:
 1. Add explicit feature columns to `build_trade_candidates_from_touches.py` from fields already available:
    `aspect_hard_soft`, `duration_bucket`, `is_multiple_active`, `has_moon_trigger`, `has_outer_planet`, `sr_confirmation_type`.
 
-2. Add a small doctrine/config metadata block to generated logs:
+2. Extend the doctrine/config metadata block to all generated logs and review exports:
    ephemeris source, zodiac/coordinate system, aspect mode, node mode, SR planets, max event days.
 
 3. Build a first ML evaluation script with purged walk-forward splits over `trade_candidates_aspect_sr_1y_outer.parquet`.

@@ -138,7 +138,15 @@ Current code has BPHS-like orb strength and virupa. Missing:
 
 ### Doctrine Config
 
-The PDFs emphasize doctrine locking. Current scripts use choices, but the repo still needs a formal config artifact that is emitted with every generated log:
+The PDFs emphasize doctrine locking. A first foundation was added on 2026-05-21:
+
+- `doctrine_config.yaml`;
+- `doctrine_config.py`;
+- output metadata columns such as `doctrine_config_id`, `doctrine_drishti_status`, `doctrine_shadbala_method`, and `experimental_layer_flags`;
+- explicit proxy aliases `event_bphs_like_orb_strength` and `event_bphs_like_orb_virupa`;
+- Shadbala minimum total virupa table for the seven classical planets from the Shadbala source text.
+
+Still pending:
 
 - zodiac: sidereal;
 - ayanamsa;
@@ -184,9 +192,9 @@ The PDF warns against overfitting. Missing:
 
 ## Recommended Next Build Order
 
-1. Add a formal `doctrine_config.yaml` and write its version into every generated CSV/HTML metadata block.
-2. Rename current BPHS/Shadbala proxy fields clearly where needed, e.g. `bphs_like_orb_strength`, so we do not mistake them for full Shadbala.
-3. Create a source-cited Shadbala module with minimum thresholds and sign dignity first.
+1. Extend the first `doctrine_config.yaml` foundation with exact ayanamsa/node/house policy.
+2. Keep current BPHS/Shadbala proxy fields clearly labelled, so we do not mistake them for full Shadbala.
+3. Build a source-cited Shadbala module with the six balas and component thresholds.
 4. Add Drik Bala as signed benefic/malefic aspect energy, then wire it into Sthana/Kala correction.
 5. Add rule IDs and citations to the rule-layer output.
 6. Keep the repeatation reviewer as the manual ML-labeling layer, but tag every note/rule as `manual_observation`, `doctrine_rule`, or `experimental_rule`.

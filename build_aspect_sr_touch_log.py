@@ -27,6 +27,7 @@ from JDML4 import (
     get_vedic_aspect_angles_for_planet,
     drishti_aspect_name_for_angle,
 )
+from doctrine_config import append_doctrine_metadata
 
 
 IST = "Asia/Kolkata"
@@ -1497,6 +1498,9 @@ def main() -> None:
                     "event_orb_strength": event_metrics["event_orb_strength"],
                     "event_bphs_strength": event_metrics["event_bphs_strength"],
                     "event_bphs_virupa": event_metrics["event_bphs_virupa"],
+                    "event_bphs_like_orb_strength": event_metrics["event_bphs_strength"],
+                    "event_bphs_like_orb_virupa": event_metrics["event_bphs_virupa"],
+                    "event_strength_doctrine_status": "bphs_like_orb_proxy_not_full_drik_bala",
                     "event_best_time_local": event_metrics["event_best_time_local"],
                     "event_best_time_utc": event_metrics["event_best_time_utc"],
                     "event_best_hour_offset": event_metrics["event_best_hour_offset"],
@@ -1546,6 +1550,7 @@ def main() -> None:
                     "ret_after_72h_dir": direction_from_change(ret_after72),
                     "shadbala_tag": event.get("shadbala_tag"),
                     "shadbala_avg": event.get("avg_shadbala"),
+                    "shadbala_doctrine_status": "source_or_proxy_pending_full_six_bala_calculation",
                     "moon_nakshatra": event.get("moon_nakshatra"),
                     "delta_1d": event.get("delta_1d"),
                     "delta_3d": event.get("delta_3d"),
@@ -1606,6 +1611,7 @@ def main() -> None:
     # are not applied in the final export path.
     out = gate_one_touch_per_event(out)
     out = out.sort_values(["touch_time_local", "pair_key", "aspect", "touch_kind"]).reset_index(drop=True)
+    out = append_doctrine_metadata(out)
     export_out = build_user_facing_touch_log(out)
     export_out.to_csv(args.output, index=False)
     print(f"Generated rows: {len(export_out)}")
