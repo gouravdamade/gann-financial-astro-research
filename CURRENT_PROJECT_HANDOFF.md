@@ -1,8 +1,57 @@
 # Current Project Handoff
 
-Last updated: 2026-05-19 20:43 IST
+Last updated: 2026-05-20 23:53 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-05-20
+
+The repeatation review UI is now at:
+
+```text
+repeatation_ui_20260520_traits_v12
+```
+
+Latest verified local URL:
+
+```text
+http://localhost:8765/aspect_review_case_120_chart.html?v=repeatation_ui_20260520_traits_v12
+```
+
+Active local server:
+
+```text
+python serve_repeatation_pack.py
+http://127.0.0.1:8765/
+```
+
+Recent pushed commits:
+
+```text
+616908d Add repeatation trait hints
+8aff6a0 Add repeatation auto suggest markers
+582503c Move repeatation profit callout
+6075b55 Add live repeatation trade profit
+e877261 Use plus repeatation markers
+c32f499 Disarm repeatation marker tools
+bf51cb7 Capture and drag repeatation markers
+c1a3ca4 Make repeatation marker selection magnetic
+```
+
+Latest feature state:
+
+- Marker drawer supports repeatation navigation, draggable plus-style trade/ignore markers, ignore trade signal types, live P/L, auto-suggested start/end, and manual override tracking.
+- Auto Suggest places trade start at the first selected-case hardcoded marker and trade end at the next subsequent hardcoded marker when available.
+- `ML trait hints` compare a repeatation against its same unique case group and highlight rare/common/direction-linked traits from Shadbala tags, signs/houses, BPHS-like fields, active regimes, and edge-score buckets.
+- Plotly Pan is the intended default interaction mode so marker placement does not fight zoom/pan tools.
+
+PDF alignment review added:
+
+```text
+C:\Users\ADMIN\PycharmProjects\vedic_pdf_alignment_review_20260520.md
+```
+
+Conclusion from the PDF check: current scripts follow the uploaded strict-engine architecture, but current BPHS/Shadbala fields are still simplified proxies. Full Shadbala, exact Drik Bala, doctrine config, rule citations, RAG/local LLM explanation layer, and purged walk-forward validation remain pending.
 
 ## Project Goal
 
