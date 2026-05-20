@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260519_tool_disarm_v7"
+REPEATATION_UI_VERSION = "repeatation_ui_20260520_plus_callouts_v8"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -499,94 +499,57 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       function crosshair(point, color, dash, name) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
         var isTrade = name.indexOf('trade') !== -1;
+        function plusShape(sizeX, sizeY, width, fillAlpha) {{
+          var xs = xAround(point.x, sizeX);
+          var ys = yAround(point.y, sizeY);
+          var line = {{ color: color, width: width, dash: dash || 'solid' }};
+          shapes.push({{
+            type: 'line',
+            name: name + '-plus-v',
+            xref: 'x',
+            yref: 'y',
+            x0: point.x,
+            x1: point.x,
+            y0: ys[0],
+            y1: ys[1],
+            line: line,
+            layer: 'above'
+          }});
+          shapes.push({{
+            type: 'line',
+            name: name + '-plus-h',
+            xref: 'x',
+            yref: 'y',
+            x0: xs[0],
+            x1: xs[1],
+            y0: point.y,
+            y1: point.y,
+            line: line,
+            layer: 'above'
+          }});
+          if (fillAlpha) {{
+            var haloXs = xAround(point.x, sizeX * 1.35);
+            var haloYs = yAround(point.y, sizeY * 1.35);
+            shapes.push({{
+              type: 'circle',
+              name: name + '-plus-glow',
+              xref: 'x',
+              yref: 'y',
+              x0: haloXs[0],
+              x1: haloXs[1],
+              y0: haloYs[0],
+              y1: haloYs[1],
+              fillcolor: color === '#22c55e' ? 'rgba(34,197,94,' + fillAlpha + ')' : (color === '#ef4444' ? 'rgba(239,68,68,' + fillAlpha + ')' : 'rgba(249,115,22,' + fillAlpha + ')'),
+              line: {{ color: 'rgba(248,250,252,0.55)', width: 0.7 }},
+              layer: 'above'
+            }});
+          }}
+        }}
         if (isChartMarkerPoint(point)) {{
-          var glowXs = xAround(point.x, isTrade ? 0.007 : 0.0055);
-          var glowYs = yAround(point.y, isTrade ? 0.019 : 0.015);
-          shapes.push({{
-            type: 'circle',
-            name: name + '-adopted-marker-glow',
-            xref: 'x',
-            yref: 'y',
-            x0: glowXs[0],
-            x1: glowXs[1],
-            y0: glowYs[0],
-            y1: glowYs[1],
-            fillcolor: color === '#22c55e' ? 'rgba(34,197,94,0.14)' : (color === '#ef4444' ? 'rgba(239,68,68,0.14)' : 'rgba(249,115,22,0.12)'),
-            line: {{ color: '#f8fafc', width: isTrade ? 2 : 1.5 }},
-            layer: 'above'
-          }});
-          shapes.push({{
-            type: 'circle',
-            name: name + '-adopted-marker-ring',
-            xref: 'x',
-            yref: 'y',
-            x0: glowXs[0],
-            x1: glowXs[1],
-            y0: glowYs[0],
-            y1: glowYs[1],
-            fillcolor: 'rgba(0,0,0,0)',
-            line: {{ color: color, width: isTrade ? 2.4 : 2, dash: dash || 'solid' }},
-            layer: 'above'
-          }});
+          plusShape(isTrade ? 0.0048 : 0.004, isTrade ? 0.014 : 0.012, isTrade ? 1.8 : 1.5, isTrade ? '0.10' : '0.08');
           return;
         }}
-        var xs = xAround(point.x, isTrade ? 0.0029 : 0.0024);
-        var ys = yAround(point.y, isTrade ? 0.008 : 0.007);
-        var line = {{ color: color, width: isTrade ? 1.5 : 1.4, dash: dash || 'solid' }};
-        shapes.push({{
-          type: 'line',
-          name: name + '-v',
-          xref: 'x',
-          yref: 'y',
-          x0: point.x,
-          x1: point.x,
-          y0: ys[0],
-          y1: ys[1],
-          line: line,
-          layer: 'above'
-        }});
-        shapes.push({{
-          type: 'line',
-          name: name + '-h',
-          xref: 'x',
-          yref: 'y',
-          x0: xs[0],
-          x1: xs[1],
-          y0: point.y,
-          y1: point.y,
-          line: line,
-          layer: 'above'
-        }});
-        shapes.push({{
-          type: 'circle',
-          name: name + '-halo',
-          xref: 'x',
-          yref: 'y',
-          x0: xs[0],
-          x1: xs[1],
-          y0: ys[0],
-          y1: ys[1],
-          fillcolor: isTrade ? (color === '#22c55e' ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)') : 'rgba(0,0,0,0)',
-          line: {{ color: color, width: isTrade ? 1.2 : 1, dash: dash || 'solid' }},
-          layer: 'above'
-        }});
-        if (isTrade) {{
-          var innerXs = xAround(point.x, 0.0015);
-          var innerYs = yAround(point.y, 0.004);
-          shapes.push({{
-            type: 'circle',
-            name: name + '-core',
-            xref: 'x',
-            yref: 'y',
-            x0: innerXs[0],
-            x1: innerXs[1],
-            y0: innerYs[0],
-            y1: innerYs[1],
-            fillcolor: color,
-            line: {{ color: '#f8fafc', width: 0.9 }},
-            layer: 'above'
-          }});
-        }}
+        plusShape(isTrade ? 0.0028 : 0.0023, isTrade ? 0.007 : 0.006, isTrade ? 1.25 : 1.15, isTrade ? '0.05' : '');
       }}
       crosshair(state.tradeStart, '#22c55e', 'solid', 'repeatation-marker-trade-start');
       crosshair(state.tradeEnd, '#ef4444', 'solid', 'repeatation-marker-trade-end');
@@ -613,32 +576,39 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function markerAnnotations() {{
       var annotations = (gd.layout && Array.isArray(gd.layout.annotations) ? gd.layout.annotations : [])
         .filter(function (ann) {{ return !(ann && String(ann.name || '').indexOf('repeatation-marker') === 0); }});
-      function tradeLabel(point, label, color, bg, ax) {{
+      function shortTime(point) {{
+        var ist = toIST(point && point.x);
+        return ist ? ist.slice(5, 16) : '';
+      }}
+      function markerLabel(point, label, color, bg, ax, ay) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
-        if (isChartMarkerPoint(point)) return;
+        var price = Number(point.y);
         annotations.push({{
           name: 'repeatation-marker-' + label.toLowerCase().replace(/\\s+/g, '-') + '-label',
           xref: 'x',
           yref: 'y',
           x: point.x,
           y: point.y,
-          text: '<b>' + label + '</b><br>' + esc(fmtPoint(point)),
+          text: '<b>' + esc(label) + '</b><br>' + esc(shortTime(point)) + (Number.isFinite(price) ? ' @ ' + price.toFixed(3) : ''),
           showarrow: true,
-          arrowhead: 2,
-          arrowsize: 1,
-          arrowwidth: 2.5,
-          arrowcolor: color,
+          arrowhead: 1,
+          arrowsize: 0.8,
+          arrowwidth: 1.2,
+          arrowcolor: 'rgba(248,250,252,0.72)',
           ax: ax,
-          ay: -56,
+          ay: ay,
           bgcolor: bg,
           bordercolor: color,
-          borderwidth: 2,
-          borderpad: 4,
-          font: {{ color: '#f8fafc', size: 12 }},
+          borderwidth: 1,
+          borderpad: 3,
+          font: {{ color: '#f8fafc', size: 10 }},
           align: 'left'
         }});
       }}
-      // Keep marker placement as a compact chart mark; exact values remain in the drawer/JSON.
+      markerLabel(state.tradeStart, 'Start', '#22c55e', 'rgba(20,83,45,0.46)', -44, -38);
+      markerLabel(state.tradeEnd, 'End', '#ef4444', 'rgba(127,29,29,0.46)', 44, -38);
+      markerLabel(state.ignoreStart, 'Ignore start', '#f97316', 'rgba(124,45,18,0.42)', -50, 36);
+      markerLabel(state.ignoreEnd, 'Ignore end', '#f97316', 'rgba(124,45,18,0.42)', 50, 36);
       return annotations;
     }}
     function drawMarkers() {{

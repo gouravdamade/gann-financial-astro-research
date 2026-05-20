@@ -1,0 +1,4 @@
+﻿backup=C:\Users\ADMIN\PycharmProjects\chat_session_backups\chat_backup_20260520-222634
+created=2026-05-20 22:26:35 +05:30
+purpose=repeatation plus markers and restored lightweight callouts
+server=http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260520_plus_callouts_v8
