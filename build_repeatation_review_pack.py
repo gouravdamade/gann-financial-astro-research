@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260520_auto_suggest_v11"
+REPEATATION_UI_VERSION = "repeatation_ui_20260520_traits_v12"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -104,6 +104,211 @@ def load_focus_rows(path: Path) -> dict[int, dict[str, Any]]:
     return {int(row["case_id"]): dict(row) for _, row in df.iterrows()}
 
 
+def clean_value(value: Any) -> str:
+    if value is None:
+        return ""
+    try:
+        if pd.isna(value):
+            return ""
+    except Exception:
+        pass
+    text = str(value).strip()
+    return "" if text.lower() in {"", "nan", "none", "null"} else text
+
+
+def numeric_value(value: Any) -> float | None:
+    try:
+        out = float(value)
+    except Exception:
+        return None
+    return out if pd.notna(out) else None
+
+
+def trait_row_for_events(touch_log: Path, cases: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    if not touch_log.exists():
+        return {}
+    event_ids = {clean_value(case.get("source_event_id")) for case in cases}
+    event_ids.discard("")
+    if not event_ids:
+        return {}
+    df = pd.read_csv(touch_log, low_memory=False)
+    if "event_id" not in df.columns:
+        return {}
+    sub = df[df["event_id"].astype(str).isin(event_ids)].copy()
+    if sub.empty:
+        return {}
+    sort_cols = [col for col in ["event_id", "edge_score", "touch_time_local"] if col in sub.columns]
+    if sort_cols:
+        ascending = [True] + [False if col == "edge_score" else True for col in sort_cols[1:]]
+        sub = sub.sort_values(sort_cols, ascending=ascending)
+    rows: dict[str, dict[str, Any]] = {}
+    for event_id, group in sub.groupby(sub["event_id"].astype(str), sort=False):
+        rows[str(event_id)] = dict(group.iloc[0])
+    return rows
+
+
+def duration_bucket(minutes: float | None) -> str:
+    if minutes is None:
+        return ""
+    if minutes <= 120:
+        return "short_duration"
+    if minutes <= 240:
+        return "medium_duration"
+    return "long_duration"
+
+
+def numeric_bucket(name: str, value: float | None, low: float, high: float) -> str:
+    if value is None:
+        return ""
+    if value <= low:
+        return f"{name}_low"
+    if value >= high:
+        return f"{name}_high"
+    return f"{name}_mid"
+
+
+def trait_label(key: str) -> str:
+    return key.replace("_", " ")
+
+
+def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
+    if not row:
+        return []
+    raw: list[tuple[str, str]] = []
+    for col, prefix in [
+        ("shadbala_tag", "shadbala"),
+        ("touch_planets", "touch planets"),
+        ("touch_planet_1_natal_sign", "touch planet 1 sign"),
+        ("touch_planet_2_natal_sign", "touch planet 2 sign"),
+        ("tn_primary_transit_planet", "primary transit"),
+        ("tn_primary_natal_planet", "primary natal"),
+        ("tn_primary_aspect", "primary aspect"),
+        ("tn_primary_natal_sign", "primary natal sign"),
+        ("base_tn_primary_transit_planet", "base primary transit"),
+        ("base_tn_primary_natal_planet", "base primary natal"),
+        ("base_tn_primary_aspect", "base primary aspect"),
+        ("base_tn_primary_natal_sign", "base primary natal sign"),
+    ]:
+        value = clean_value(row.get(col))
+        if value:
+            raw.append((f"{col}:{value}", f"{prefix}: {value}"))
+    for col, prefix in [
+        ("touch_planet_1_natal_house", "touch planet 1 house"),
+        ("touch_planet_2_natal_house", "touch planet 2 house"),
+        ("tn_primary_natal_house", "primary natal house"),
+        ("base_tn_primary_natal_house", "base primary natal house"),
+        ("aspect_regime_active_count", "active regime count"),
+    ]:
+        value = numeric_value(row.get(col))
+        if value is not None:
+            raw.append((f"{col}:{int(value)}", f"{prefix}: {int(value)}"))
+    dur = duration_bucket(numeric_value(row.get("event_duration_minutes")))
+    if dur:
+        raw.append((f"event_duration:{dur}", trait_label(dur)))
+    for key, label, low, high in [
+        ("shadbala_avg", "shadbala", 54.0, 59.0),
+        ("tn_score_total", "TN score", 3.0, 5.0),
+        ("base_tn_score_total", "base TN score", 3.0, 5.0),
+        ("edge_score", "edge score", 0.20, 0.75),
+        ("event_orb_deg", "event orb", 45.0, 75.0),
+    ]:
+        bucket = numeric_bucket(key, numeric_value(row.get(key)), low, high)
+        if bucket:
+            raw.append((f"{key}:{bucket}", trait_label(bucket)))
+    seen = set()
+    tokens = []
+    for key, label in raw:
+        norm = re.sub(r"\s+", " ", str(key)).strip()
+        if not norm or norm in seen:
+            continue
+        seen.add(norm)
+        tokens.append({"key": norm, "label": label})
+    return tokens
+
+
+def compute_special_traits(
+    cases: list[dict[str, Any]],
+    stats_by_case: dict[int, dict[str, Any]],
+    touch_rows_by_event: dict[str, dict[str, Any]],
+) -> dict[int, dict[str, Any]]:
+    case_tokens: dict[int, list[dict[str, str]]] = {}
+    token_cases: dict[str, set[int]] = {}
+    token_labels: dict[str, str] = {}
+    pips_by_case: dict[int, float] = {}
+    for case in cases:
+        case_id = int(case["case_id"])
+        event_id = clean_value(case.get("source_event_id"))
+        tokens = event_trait_tokens(touch_rows_by_event.get(event_id, {}))
+        case_tokens[case_id] = tokens
+        for token in tokens:
+            token_cases.setdefault(token["key"], set()).add(case_id)
+            token_labels[token["key"]] = token["label"]
+        pips_by_case[case_id] = float(stats_by_case.get(case_id, {}).get("full_window_bullish_pips") or 0.0)
+    group_pips = list(pips_by_case.values())
+    group_avg = sum(group_pips) / len(group_pips) if group_pips else 0.0
+    bullish_count = sum(1 for value in group_pips if value > 0)
+    bearish_count = sum(1 for value in group_pips if value < 0)
+    total = max(1, len(cases))
+    out: dict[int, dict[str, Any]] = {}
+    for case in cases:
+        case_id = int(case["case_id"])
+        scored: list[dict[str, Any]] = []
+        for token in case_tokens.get(case_id, []):
+            peers = sorted(token_cases.get(token["key"], set()))
+            peer_pips = [pips_by_case[peer] for peer in peers if peer in pips_by_case]
+            avg = sum(peer_pips) / len(peer_pips) if peer_pips else 0.0
+            positives = sum(1 for value in peer_pips if value > 0)
+            negatives = sum(1 for value in peer_pips if value < 0)
+            delta = avg - group_avg
+            tags: list[str] = []
+            if len(peers) >= max(2, total // 4) and abs(delta) >= 8.0:
+                tags.append("direction linked")
+            if len(peers) <= 2:
+                tags.append("rare")
+            elif len(peers) >= max(3, int(total * 0.60)):
+                tags.append("common")
+            if positives and not negatives:
+                tags.append("only bullish samples")
+            elif negatives and not positives:
+                tags.append("only bearish samples")
+            if not tags:
+                tags.append("context")
+            scored.append(
+                {
+                    "key": token["key"],
+                    "label": token_labels.get(token["key"], token["label"]),
+                    "tags": tags,
+                    "occurrences": len(peers),
+                    "repeatation_count": total,
+                    "avg_bullish_pips": round(avg, 1),
+                    "group_avg_bullish_pips": round(group_avg, 1),
+                    "delta_vs_group_pips": round(delta, 1),
+                    "bullish_samples": positives,
+                    "bearish_samples": negatives,
+                    "peer_case_ids": peers[:12],
+                }
+            )
+        scored.sort(
+            key=lambda item: (
+                0 if "direction linked" in item["tags"] else 1,
+                0 if "rare" in item["tags"] else 1,
+                -abs(float(item["delta_vs_group_pips"])),
+                -int(item["occurrences"]),
+            )
+        )
+        out[case_id] = {
+            "method": "current recurrence traits compared against same pair_key/aspect repeatation group using full-window bullish pips; hints are associative, not causal proof",
+            "group_repeatation_count": total,
+            "group_bullish_count": bullish_count,
+            "group_bearish_count": bearish_count,
+            "group_avg_bullish_pips": round(group_avg, 1),
+            "case_full_window_bullish_pips": round(pips_by_case.get(case_id, 0.0), 1),
+            "case_full_window_direction": stats_by_case.get(case_id, {}).get("full_window_direction", ""),
+            "traits": scored[:10],
+        }
+    return out
+
+
 def chart_command(args: argparse.Namespace, case_id: int, output_dir: Path) -> list[str]:
     return [
         sys.executable,
@@ -160,6 +365,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "previousHref": str(case.get("previous_chart_href", "")),
         "nextHref": str(case.get("next_chart_href", "")),
         "reviewerHref": str(case.get("reviewer_href", "repeatation_reviewer.html")),
+        "specialTraits": case.get("special_traits", {}),
     }
     metadata_json = json.dumps(metadata)
     return f"""
@@ -806,6 +1012,27 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
     }}
+    function specialTraitsHtml() {{
+      var data = meta.specialTraits || {{}};
+      var traits = Array.isArray(data.traits) ? data.traits : [];
+      if (!traits.length) return '<div class="rm-traits muted">No trait hints available for this recurrence yet.</div>';
+      var rows = traits.slice(0, 6).map(function (trait) {{
+        var tags = Array.isArray(trait.tags) ? trait.tags.join(', ') : '';
+        var delta = Number(trait.delta_vs_group_pips);
+        var deltaText = Number.isFinite(delta) ? (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' pips vs group' : '';
+        return '<div class="rm-trait-item">'
+          + '<div><b>' + esc(trait.label || trait.key || '') + '</b><span>' + esc(tags) + '</span></div>'
+          + '<div>' + esc(trait.occurrences) + '/' + esc(trait.repeatation_count) + ' repeatations'
+          + (deltaText ? ' | ' + esc(deltaText) : '')
+          + '</div>'
+          + '</div>';
+      }}).join('');
+      return '<div class="rm-traits">'
+        + '<div><b>ML trait hints</b><span>' + esc(data.case_full_window_direction || '') + ' ' + esc(data.case_full_window_bullish_pips || '') + ' pips</span></div>'
+        + '<div class="rm-trait-method">' + esc(data.method || '') + '</div>'
+        + rows
+        + '</div>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -957,6 +1184,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-ignore-trade').classList.toggle('active', state.tradeIgnored);
       panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
+      panel.querySelector('#repeatation-special-traits').innerHTML = specialTraitsHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
       panel.querySelector('#repeatation-ignore-definitions').innerHTML = selectedIgnoreDefinitionsHtml();
       panel.querySelector('#repeatation-commands').innerHTML =
@@ -1246,6 +1474,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
       + '<div id="repeatation-profit-summary"></div>'
+      + '<div id="repeatation-special-traits"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
       + '<label>Note type</label><input id="repeatation-note-type" value="manual_repeatation_note">'
       + '<label>Notes / why</label><textarea id="repeatation-note" placeholder="Why this start/end or ignore marker?"></textarea>'
@@ -1296,6 +1525,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-auto.clean{{border-color:#38bdf8;}}'
       + '#repeatation-marker-panel .rm-auto.fallback,.rm-auto.weak,.rm-auto.incomplete{{border-color:#fbbf24;}}'
       + '#repeatation-marker-panel .rm-warning{{color:#fbbf24;margin-top:4px;}}'
+      + '#repeatation-marker-panel .rm-traits{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-traits>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
+      + '#repeatation-marker-panel .rm-traits span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-trait-method{{color:#94a3b8;font-size:11px;margin:4px 0 6px;}}'
+      + '#repeatation-marker-panel .rm-trait-item{{border-top:1px solid #1e293b;padding-top:5px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-trait-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
       + '#repeatation-marker-panel .rm-ledger-item{{background:#020617;border:1px solid #334155;border-radius:5px;padding:6px;margin:5px 0;}}'
       + '#repeatation-marker-panel .rm-ledger-item span{{color:#93c5fd;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-ledger-item button{{margin-top:5px;padding:3px 6px;}}'
@@ -1591,6 +1826,7 @@ def render_index(seed: dict[str, Any], rows: list[dict[str, Any]], output_dir: P
               <td>{h(row.get('full_window_bearish_pips'))}</td>
               <td>{h(row.get('group_script_direction_mode'))}</td>
               <td>{h(row.get('probable_factor_tags'))}</td>
+              <td>{h(row.get('special_trait_summary'))}</td>
               <td><a href="{h(html_cache_href(chart_name))}">chart</a><br><a href="{h(visible_name)}">visible csv</a></td>
               <td><pre>{h(row.get('trade_command'))}</pre></td>
               <td><pre>{h(row.get('ignore_command'))}</pre></td>
@@ -1646,7 +1882,7 @@ def render_index(seed: dict[str, Any], rows: list[dict[str, Any]], output_dir: P
         <tr>
           <th>Case</th><th>Window IST</th><th>TF</th><th>Visible Rows</th>
           <th>Full Window Direction</th><th>Bullish Pips</th><th>Bearish Pips</th>
-          <th>Script Group Bias</th><th>Probable Factor Tags</th><th>Snapshot</th>
+          <th>Script Group Bias</th><th>Probable Factor Tags</th><th>Special Trait Hints</th><th>Snapshot</th>
           <th>Trade Marker Command</th><th>Ignore Marker Command</th><th>Rule Note Command</th>
         </tr>
       </thead>
@@ -1732,12 +1968,17 @@ def main() -> None:
     output_dir = args.export_root / f"repeatation_review_case_{int(seed['case_id'])}_{group_slug}_{stamp}"
     output_dir.mkdir(parents=True, exist_ok=True)
     focus_rows = load_focus_rows(args.review_focus)
+    stats_by_case = {int(case["case_id"]): full_window_trade_stats(case) for case in cases}
+    touch_rows_by_event = trait_row_for_events(args.touch_log, cases)
+    special_traits_by_case = compute_special_traits(cases, stats_by_case, touch_rows_by_event)
+    for case in cases:
+        case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
 
     records: list[dict[str, Any]] = []
     for idx, case in enumerate(cases, start=1):
         print(f"[{idx}/{len(cases)}] exporting case_id={case['case_id']} {case['window_start_ist']}")
         html_path, csv_path, visible_rows = export_chart(args, case, output_dir)
-        stats = full_window_trade_stats(case)
+        stats = stats_by_case[int(case["case_id"])]
         focus = focus_rows.get(int(case["case_id"]), {})
         export_case = {
             key: value
@@ -1749,6 +1990,7 @@ def main() -> None:
                 "previous_chart_href",
                 "next_chart_href",
                 "reviewer_href",
+                "special_traits",
             }
         }
         record = {
@@ -1767,6 +2009,11 @@ def main() -> None:
             "group_ml_outcomes": focus.get("group_ml_outcomes", ""),
             "probable_factor_tags": focus.get("probable_factor_tags", ""),
             "probable_factor_note": focus.get("probable_factor_note", ""),
+            "special_trait_summary": "; ".join(
+                f"{trait.get('label')} [{', '.join(trait.get('tags', []))}]"
+                for trait in case.get("special_traits", {}).get("traits", [])[:4]
+            ),
+            "special_trait_json": json.dumps(case.get("special_traits", {}), ensure_ascii=False),
         }
         records.append(record)
 
