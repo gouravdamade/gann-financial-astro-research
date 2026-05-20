@@ -1,0 +1,4 @@
+﻿Backup purpose: repeatation v11 auto-suggested trade markers from hardcoded chart markers.
+Created: 2026-05-20 23:38:11 +05:30
+Served pack: C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548
+UI version: repeatation_ui_20260520_auto_suggest_v11

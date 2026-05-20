@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260520_profit_corner_v10"
+REPEATATION_UI_VERSION = "repeatation_ui_20260520_auto_suggest_v11"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -184,6 +184,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       tradeIgnored: false,
       selectedIgnoreTypes: [],
       annotations: [],
+      autoSuggestion: null,
       lastPoint: null,
       draftLoaded: false
     }};
@@ -309,6 +310,55 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         pointNumber: pointNumber,
         markerLabel: customDataLabel(arrayValue(trace.customdata, pointNumber)) || String(fallbackLabel || arrayValue(trace.text, pointNumber) || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim().slice(0, 160)
       }};
+    }}
+    function markerTime(point) {{
+      var value = Date.parse(point && point.x);
+      return Number.isFinite(value) ? value : NaN;
+    }}
+    function markerIdentity(point) {{
+      var t = markerTime(point);
+      var y = Number(point && point.y);
+      return (Number.isFinite(t) ? Math.round(t / 60000) : String(point && point.x)) + ':' + (Number.isFinite(y) ? y.toFixed(4) : '');
+    }}
+    function collectChartMarkers() {{
+      var traces = Array.isArray(gd._fullData) ? gd._fullData : (Array.isArray(gd.data) ? gd.data : []);
+      var out = [];
+      var seen = {{}};
+      traces.forEach(function (trace, curveNumber) {{
+        if (!traceLooksLikeMarker(trace) || trace.visible === false || !trace.x || !trace.y) return;
+        var traceName = String(trace.name || '');
+        var isSelectedCaseTouch = traceName.toLowerCase().indexOf('selected case touch') !== -1;
+        var len = Number(trace.x.length || 0);
+        for (var i = 0; i < len; i += 1) {{
+          var point = chartMarkerPoint(trace, curveNumber, i);
+          if (!point || !Number.isFinite(markerTime(point))) continue;
+          point.isSelectedCaseTouch = isSelectedCaseTouch;
+          point.autoCandidate = true;
+          point.markerLabel = point.markerLabel || traceName;
+          var id = markerIdentity(point);
+          if (seen[id] && !isSelectedCaseTouch) continue;
+          if (seen[id] && isSelectedCaseTouch) {{
+            out = out.filter(function (item) {{ return markerIdentity(item) !== id; }});
+          }}
+          seen[id] = true;
+          out.push(point);
+        }}
+      }});
+      return out.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
+    }}
+    function pointInCaseWindow(point) {{
+      var t = markerTime(point);
+      var start = Date.parse(meta.windowStart);
+      var end = Date.parse(meta.windowEnd);
+      if (!Number.isFinite(t) || !Number.isFinite(start) || !Number.isFinite(end)) return false;
+      return t >= start && t <= end;
+    }}
+    function autoSuggestedPoint(point, role) {{
+      var copy = Object.assign({{}}, point || {{}});
+      copy.source = 'chart_marker';
+      copy.autoSuggested = true;
+      copy.autoRole = role;
+      return copy;
     }}
     function nearestChartMarker(plotX, plotY, thresholdPx) {{
       var xa = gd._fullLayout && gd._fullLayout.xaxis;
@@ -437,6 +487,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function setStatePoint(key, point) {{
       if (!key || !point) return;
+      if (state.autoSuggestion && state.autoSuggestion.active && (key === 'tradeStart' || key === 'tradeEnd') && !point.autoSuggested) {{
+        state.autoSuggestion.manual_override = true;
+        if (state.autoSuggestion.overridden_keys.indexOf(key) === -1) state.autoSuggestion.overridden_keys.push(key);
+      }}
       point.placedAt = Date.now();
       state[key] = point;
       state.lastPoint = point;
@@ -468,7 +522,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         traceName: point.traceName || '',
         curveNumber: point.curveNumber,
         pointNumber: point.pointNumber,
-        markerLabel: point.markerLabel || ''
+        markerLabel: point.markerLabel || '',
+        autoSuggested: !!point.autoSuggested,
+        autoRole: point.autoRole || ''
       }};
     }}
     function restorePoint(point) {{
@@ -481,6 +537,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         curveNumber: point.curveNumber,
         pointNumber: point.pointNumber,
         markerLabel: point.markerLabel || '',
+        autoSuggested: !!point.autoSuggested,
+        autoRole: point.autoRole || '',
         placedAt: 0
       }};
     }}
@@ -739,6 +797,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         midPrice: (entry + exit) / 2
       }};
     }}
+    function autoSuggestionHtml() {{
+      if (!state.autoSuggestion) return '<div class="rm-auto muted">Auto Suggest has not been run for this repeatation.</div>';
+      var s = state.autoSuggestion;
+      return '<div class="rm-auto ' + esc(s.confidence || '') + '">'
+        + '<div><b>Auto suggestion</b><span>' + esc(s.confidence || 'unknown') + '</span></div>'
+        + '<div>' + esc(s.reason || '') + '</div>'
+        + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
+        + '</div>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -889,6 +956,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         : 'Ignore Trade is off';
       panel.querySelector('#repeatation-ignore-trade').classList.toggle('active', state.tradeIgnored);
       panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
+      panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
       panel.querySelector('#repeatation-ignore-definitions').innerHTML = selectedIgnoreDefinitionsHtml();
       panel.querySelector('#repeatation-commands').innerHTML =
@@ -932,6 +1000,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ignore_start: serialPoint(state.ignoreStart),
         ignore_end: serialPoint(state.ignoreEnd),
         trade_ignored: state.tradeIgnored,
+        auto_suggestion: state.autoSuggestion,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
         last_point: serialPoint(state.lastPoint),
@@ -971,6 +1040,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreStart = restorePoint(draft.ignore_start);
       state.ignoreEnd = restorePoint(draft.ignore_end);
       state.tradeIgnored = !!draft.trade_ignored;
+      state.autoSuggestion = draft.auto_suggestion || null;
       setIgnoreTypes(Array.isArray(draft.selected_ignore_types) ? draft.selected_ignore_types : [], false);
       state.annotations = Array.isArray(draft.ml_annotations) ? draft.ml_annotations : [];
       state.lastPoint = restorePoint(draft.last_point) || state.tradeStart || state.tradeEnd || state.ignoreStart || state.ignoreEnd;
@@ -995,6 +1065,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreStart = null;
       state.ignoreEnd = null;
       state.tradeIgnored = false;
+      state.autoSuggestion = null;
       state.selectedIgnoreTypes = [];
       state.annotations = [];
       state.lastPoint = null;
@@ -1028,11 +1099,66 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreStart = null;
       state.ignoreEnd = null;
       state.tradeIgnored = false;
+      state.autoSuggestion = null;
       state.lastPoint = null;
       setTool('', false);
       drawMarkers();
       render();
       saveDraft();
+    }}
+    function autoSuggestTrade() {{
+      var markers = collectChartMarkers();
+      if (!markers.length) {{
+        state.autoSuggestion = {{
+          active: false,
+          confidence: 'no marker',
+          reason: 'No hardcoded chart markers were available in this chart.',
+          manual_override: false,
+          overridden_keys: [],
+          created_at: new Date().toISOString()
+        }};
+        render();
+        saveDraft();
+        updateSaveStatus('auto suggest: no hardcoded chart markers found');
+        return;
+      }}
+      var selected = markers.filter(function (point) {{ return point.isSelectedCaseTouch; }});
+      var windowMarkers = markers.filter(pointInCaseWindow);
+      var start = selected[0] || windowMarkers[0] || markers[0];
+      var startTime = markerTime(start);
+      var minGapMs = 60000;
+      var end = markers.find(function (point) {{
+        return markerTime(point) > startTime + minGapMs;
+      }});
+      var confidence = selected[0] ? 'clean' : (windowMarkers[0] ? 'fallback' : 'weak');
+      var reason = selected[0]
+        ? 'Start used the first selected-case hardcoded touch; end used the next later hardcoded marker.'
+        : (windowMarkers[0]
+          ? 'No selected-case touch marker was found, so start used the first marker inside the case window; end used the next later marker.'
+          : 'No marker inside the case window was found, so start used the first visible marker; review carefully.');
+      if (!end) {{
+        confidence = 'incomplete';
+        reason += ' No later marker was found for trade end.';
+      }}
+      setTool('', false);
+      state.autoSuggestion = {{
+        active: !!(start && end),
+        confidence: confidence,
+        reason: reason,
+        marker_count: markers.length,
+        selected_case_marker_count: selected.length,
+        start_rule: selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'),
+        end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
+        manual_override: false,
+        overridden_keys: [],
+        created_at: new Date().toISOString()
+      }};
+      if (start) setStatePoint('tradeStart', autoSuggestedPoint(start, 'auto_trade_start'));
+      if (end) setStatePoint('tradeEnd', autoSuggestedPoint(end, 'auto_trade_end'));
+      drawMarkers();
+      render();
+      saveDraft();
+      updateSaveStatus(end ? 'auto suggested trade start/end from hardcoded markers' : 'auto suggested start only; no later end marker found');
     }}
     function markIgnoreTrade() {{
       state.ignoreStart = caseWindowPoint(meta.windowStart, 'case_window_ignore_trade_start');
@@ -1072,6 +1198,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ignore_start_ist: state.ignoreStart ? toIST(state.ignoreStart.x) : '',
         ignore_end_ist: state.ignoreEnd ? toIST(state.ignoreEnd.x) : '',
         trade_ignored: state.tradeIgnored,
+        auto_suggestion: state.autoSuggestion,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
         trade_profit: tradeProfit(),
@@ -1114,6 +1241,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<button data-tool="ignore_start">Ignore start</button>'
       + '<button data-tool="ignore_end">Ignore end</button>'
       + '</div>'
+      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><span class="rm-status-inline">hardcoded marker start -> next marker end</span></div>'
+      + '<div id="repeatation-auto-summary"></div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
       + '<div id="repeatation-profit-summary"></div>'
@@ -1161,6 +1290,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-profit>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
       + '#repeatation-marker-panel .rm-profit span{{color:#fde68a;}}'
       + '#repeatation-marker-panel .rm-profit-value{{font-size:18px;font-weight:700;color:#fef3c7;margin:4px 0;}}'
+      + '#repeatation-marker-panel .rm-auto{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-auto>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
+      + '#repeatation-marker-panel .rm-auto span{{color:#fde68a;}}'
+      + '#repeatation-marker-panel .rm-auto.clean{{border-color:#38bdf8;}}'
+      + '#repeatation-marker-panel .rm-auto.fallback,.rm-auto.weak,.rm-auto.incomplete{{border-color:#fbbf24;}}'
+      + '#repeatation-marker-panel .rm-warning{{color:#fbbf24;margin-top:4px;}}'
       + '#repeatation-marker-panel .rm-ledger-item{{background:#020617;border:1px solid #334155;border-radius:5px;padding:6px;margin:5px 0;}}'
       + '#repeatation-marker-panel .rm-ledger-item span{{color:#93c5fd;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-ledger-item button{{margin-top:5px;padding:3px 6px;}}'
@@ -1199,6 +1334,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }});
     panel.querySelector('#repeatation-clear').addEventListener('click', clearMarkers);
     panel.querySelector('#repeatation-clear-draft').addEventListener('click', clearSavedDraft);
+    panel.querySelector('#repeatation-auto-suggest').addEventListener('click', autoSuggestTrade);
     panel.querySelector('#repeatation-ignore-trade').addEventListener('click', markIgnoreTrade);
     panel.querySelector('#repeatation-add-ignore-signal').addEventListener('click', function () {{ addAnnotation('ignore_signal'); }});
     panel.querySelector('#repeatation-add-rule-note').addEventListener('click', function () {{ addAnnotation('rule_note'); }});
