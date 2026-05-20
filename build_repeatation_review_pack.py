@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260520_profit_pan_v9"
+REPEATATION_UI_VERSION = "repeatation_ui_20260520_profit_corner_v10"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -619,29 +619,19 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           align: 'left'
         }});
       }}
-      function midpointX(a, b) {{
-        var ta = Date.parse(a && a.x);
-        var tb = Date.parse(b && b.x);
-        if (!Number.isFinite(ta) || !Number.isFinite(tb)) return a && a.x;
-        return new Date((ta + tb) / 2).toISOString();
-      }}
       function tradeProfitLabel() {{
         var result = tradeProfit();
         if (!result) return;
         annotations.push({{
           name: 'repeatation-marker-profit-label',
-          xref: 'x',
-          yref: 'y',
-          x: midpointX(state.tradeStart, state.tradeEnd),
-          y: result.midPrice,
+          xref: 'paper',
+          yref: 'paper',
+          x: 0.012,
+          y: 0.975,
           text: '<b>Trade result</b><br>' + esc(result.outcomeLabel) + ' ' + esc(result.signedPipsText) + ' pips<br>' + esc(result.status),
-          showarrow: true,
-          arrowhead: 1,
-          arrowsize: 0.75,
-          arrowwidth: 1,
-          arrowcolor: 'rgba(216,180,254,0.70)',
-          ax: 0,
-          ay: -58,
+          showarrow: false,
+          xanchor: 'left',
+          yanchor: 'top',
           bgcolor: 'rgba(88,28,135,0.42)',
           bordercolor: MARKER_COLORS.profit,
           borderwidth: 1,
