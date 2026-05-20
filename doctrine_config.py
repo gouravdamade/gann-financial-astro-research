@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 
 DOCTRINE_CONFIG_PATH = Path(__file__).resolve().with_name("doctrine_config.yaml")
 
@@ -109,26 +111,35 @@ def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str,
 
 
 def append_doctrine_metadata(frame: Any, config: dict[str, Any] | None = None) -> Any:
-    for col, value in doctrine_metadata_columns(config).items():
-        frame[col] = value
+    additions: dict[str, Any] = {col: value for col, value in doctrine_metadata_columns(config).items()}
     if "event_bphs_strength" in frame.columns and "event_bphs_like_orb_strength" not in frame.columns:
-        frame["event_bphs_like_orb_strength"] = frame["event_bphs_strength"]
+        additions["event_bphs_like_orb_strength"] = frame["event_bphs_strength"]
     if "event_bphs_virupa" in frame.columns and "event_bphs_like_orb_virupa" not in frame.columns:
-        frame["event_bphs_like_orb_virupa"] = frame["event_bphs_virupa"]
+        additions["event_bphs_like_orb_virupa"] = frame["event_bphs_virupa"]
     if "event_bphs_strength" in frame.columns:
-        frame["event_strength_doctrine_status"] = "bphs_like_orb_proxy_not_full_drik_bala"
+        additions["event_strength_doctrine_status"] = "bphs_like_orb_proxy_not_full_drik_bala"
     if "shadbala_tag" in frame.columns or "shadbala_avg" in frame.columns:
-        frame["shadbala_doctrine_status"] = "source_or_proxy_pending_full_six_bala_calculation"
+        additions["shadbala_doctrine_status"] = "source_or_proxy_pending_full_six_bala_calculation"
     if {"b1", "b2", "shadbala_avg"}.issubset(set(frame.columns)):
-        frame["event_shadbala_minimum_total_virupa_avg"] = frame.apply(_row_minimum_shadbala_avg, axis=1)
+        minimum_avg = frame.apply(_row_minimum_shadbala_avg, axis=1)
+        additions["event_shadbala_minimum_total_virupa_avg"] = minimum_avg
         try:
-            frame["event_shadbala_avg_minus_minimum_virupa"] = (
-                frame["shadbala_avg"].astype(float) - frame["event_shadbala_minimum_total_virupa_avg"].astype(float)
+            shadbala_avg = frame["shadbala_avg"].astype(float)
+            comparable = shadbala_avg > 100.0
+            additions["event_shadbala_avg_minus_minimum_virupa"] = (
+                shadbala_avg - pd.Series(minimum_avg, index=frame.index).astype(float)
+            ).where(comparable, "")
+            additions["event_shadbala_avg_scale_status"] = comparable.map(
+                {True: "total_virupa_comparable", False: "not_total_virupa_or_unknown"}
             )
         except Exception:
-            frame["event_shadbala_avg_minus_minimum_virupa"] = ""
-        frame["event_shadbala_minimum_source"] = "SHADBALA_JAYA_lines_743_745"
-    return frame
+            additions["event_shadbala_avg_minus_minimum_virupa"] = ""
+            additions["event_shadbala_avg_scale_status"] = "not_total_virupa_or_unknown"
+        additions["event_shadbala_minimum_source"] = "SHADBALA_JAYA_lines_743_745"
+    additions = {key: value for key, value in additions.items() if key not in frame.columns}
+    if not additions:
+        return frame
+    return pd.concat([frame, pd.DataFrame(additions, index=frame.index)], axis=1)
 
 
 def _minimum_shadbala_for_body(value: Any) -> float | None:

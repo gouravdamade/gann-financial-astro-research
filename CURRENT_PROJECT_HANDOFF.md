@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 00:17 IST
+Last updated: 2026-05-21 00:37 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -16,6 +16,21 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Added seven-classical-planet minimum Shadbala total virupa thresholds from the Shadbala PDF text extraction: Sun 300, Moon 360, Mars 300, Mercury 420, Jupiter 390, Venus 330, Saturn 300. Future rows with `b1`, `b2`, and `shadbala_avg` get `event_shadbala_minimum_total_virupa_avg` and `event_shadbala_avg_minus_minimum_virupa`.
 - `astro_feature_inventory_from_pdfs.md` and `vedic_pdf_alignment_review_20260520.md` were updated so LOCK_DOCTRINE_CONFIG is no longer marked as completely missing.
 - Smoke checks passed: `python -m py_compile doctrine_config.py build_aspect_sr_touch_log.py build_trade_candidates_from_touches.py sr_touch_lazy_dashboard.py aspect_annotation_store.py`; metadata append tested against the current touch log.
+
+2026-05-21 Shadbala doctrine foundation:
+
+- Added `C:\Users\ADMIN\PycharmProjects\shadbala_doctrine.py`.
+- The module defines source-cited Shadbala/Sthana constants:
+  - `SHADBALA_MINIMUM_TOTAL_VIRUPA`: Sun 300, Moon 360, Mars 300, Mercury 420, Jupiter 390, Venus 330, Saturn 300.
+  - basic Sthana sign dignity rules: exaltation, moolatrikona, own, friend, neutral, enemy, debilitation.
+  - rule IDs: `STHANA_SIGN_DIGNITY_V1`, `SHADBALA_MIN_TOTAL_GATE`.
+- `build_aspect_sr_touch_log.py` now computes event best-time signs and adds event-level Sthana/minimum fields when logs are regenerated:
+  - `event_b1_sign`, `event_b1_sthana_dignity_label`, `event_b1_sthana_dignity_virupa`, `event_b1_sign_relation`, `event_b1_shadbala_minimum_total_virupa`
+  - matching `event_b2_*` fields
+  - `event_sthana_dignity_virupa_avg`, `event_shadbala_minimum_total_virupa_avg`, `event_sthana_rule_ids`, `event_doctrine_feature_status`
+- `build_repeatation_review_pack.py` now appends doctrine metadata while building ML trait hints, so existing touch logs can at least expose Shadbala status/minimum metadata and future regenerated logs will expose event dignity traits too.
+- `aspect_annotation_store.py` context columns were extended for the new doctrine fields.
+- Compile and smoke tests passed; server still returned HTTP 200.
 
 The repeatation review UI is now at:
 

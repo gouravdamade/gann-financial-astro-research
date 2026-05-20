@@ -28,6 +28,7 @@ from JDML4 import (
     drishti_aspect_name_for_angle,
 )
 from doctrine_config import append_doctrine_metadata
+from shadbala_doctrine import event_pair_sthana_context
 
 
 IST = "Asia/Kolkata"
@@ -1587,6 +1588,17 @@ def main() -> None:
                     "tn_touch2_bphs_strength": float(natal_touch2["bphs_strength"]),
                 }
                 row.update(natal_features)
+                row.update(
+                    {
+                        key: value
+                        for key, value in event_metrics.items()
+                        if key.startswith("event_b1_")
+                        or key.startswith("event_b2_")
+                        or key.startswith("event_sthana_")
+                        or key.startswith("event_shadbala_minimum")
+                        or key == "event_doctrine_feature_status"
+                    }
+                )
                 if base_natal_features:
                     row.update(prefix_dict(base_natal_features, "base_"))
                 rows.append(row)
@@ -1693,6 +1705,8 @@ def compute_event_aspect_metrics(
         "event_best_time_local": pd.NaT,
         "event_best_time_utc": pd.NaT,
         "event_best_hour_offset": np.nan,
+        "event_b1_sign": "",
+        "event_b2_sign": "",
     }
 
     if cfg["kind"] == "rashi":
@@ -1710,6 +1724,8 @@ def compute_event_aspect_metrics(
             sep = angular_separation(left_lon, right_lon)
             if is_rashi_aspect_hit(left_lon, right_lon, str(cfg.get("mode", ""))):
                 event_time_local = price_index[bar_idx]
+                left_sign = str(get_zodiac_sign(float(left_lon)))
+                right_sign = str(get_zodiac_sign(float(right_lon)))
                 out["event_pair_sep_deg"] = float(sep)
                 out["event_orb_deg"] = 0.0
                 out["event_orb_limit_deg"] = float(cfg.get("orb", 1.0))
@@ -1719,6 +1735,7 @@ def compute_event_aspect_metrics(
                 out["event_best_time_local"] = event_time_local
                 out["event_best_time_utc"] = event_time_local.tz_convert(UTC)
                 out["event_best_hour_offset"] = int(bar_idx - start_idx)
+                out.update(event_pair_sthana_context(left_name, left_sign, right_name, right_sign))
                 break
         return out
 
@@ -1731,6 +1748,8 @@ def compute_event_aspect_metrics(
     best_sep = np.nan
     best_time_local = pd.NaT
     best_hour_offset = np.nan
+    best_left_lon = np.nan
+    best_right_lon = np.nan
     for bar_idx in range(start_idx, end_idx + 1):
         analysis_idx = full_to_analysis_idx.get(int(bar_idx))
         if analysis_idx is None:
@@ -1749,6 +1768,8 @@ def compute_event_aspect_metrics(
             best_sep = float(sep)
             best_time_local = price_index[bar_idx]
             best_hour_offset = int(bar_idx - start_idx)
+            best_left_lon = float(left_lon)
+            best_right_lon = float(right_lon)
 
     if not np.isfinite(best_orb_deg):
         return out
@@ -1766,6 +1787,10 @@ def compute_event_aspect_metrics(
     if pd.notna(best_time_local):
         out["event_best_time_utc"] = best_time_local.tz_convert(UTC)
     out["event_best_hour_offset"] = best_hour_offset
+    if np.isfinite(best_left_lon) and np.isfinite(best_right_lon):
+        left_sign = str(get_zodiac_sign(float(best_left_lon)))
+        right_sign = str(get_zodiac_sign(float(best_right_lon)))
+        out.update(event_pair_sthana_context(left_name, left_sign, right_name, right_sign))
     return out
 
 

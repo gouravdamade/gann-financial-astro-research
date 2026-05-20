@@ -18,6 +18,7 @@ from aspect_annotation_store import (
     load_price_frame,
     suggested_price_timeframe,
 )
+from doctrine_config import append_doctrine_metadata
 
 
 DEFAULT_DB = Path(r"C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite")
@@ -132,6 +133,7 @@ def trait_row_for_events(touch_log: Path, cases: list[dict[str, Any]]) -> dict[s
     if not event_ids:
         return {}
     df = pd.read_csv(touch_log, low_memory=False)
+    df = append_doctrine_metadata(df)
     if "event_id" not in df.columns:
         return {}
     sub = df[df["event_id"].astype(str).isin(event_ids)].copy()
@@ -177,6 +179,12 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
     raw: list[tuple[str, str]] = []
     for col, prefix in [
         ("shadbala_tag", "shadbala"),
+        ("shadbala_doctrine_status", "shadbala status"),
+        ("event_b1_sthana_dignity_label", "event b1 dignity"),
+        ("event_b2_sthana_dignity_label", "event b2 dignity"),
+        ("event_b1_sign_relation", "event b1 sign relation"),
+        ("event_b2_sign_relation", "event b2 sign relation"),
+        ("event_doctrine_feature_status", "doctrine feature status"),
         ("touch_planets", "touch planets"),
         ("touch_planet_1_natal_sign", "touch planet 1 sign"),
         ("touch_planet_2_natal_sign", "touch planet 2 sign"),
@@ -211,6 +219,7 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("base_tn_score_total", "base TN score", 3.0, 5.0),
         ("edge_score", "edge score", 0.20, 0.75),
         ("event_orb_deg", "event orb", 45.0, 75.0),
+        ("event_sthana_dignity_virupa_avg", "event sthana dignity", 8.0, 30.0),
     ]:
         bucket = numeric_bucket(key, numeric_value(row.get(key)), low, high)
         if bucket:

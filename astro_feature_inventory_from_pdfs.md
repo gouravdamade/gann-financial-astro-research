@@ -60,7 +60,7 @@ Extracted text folder:
 | DHRUVANK_REMAINDER_SIGNAL | Experimental Vedic financial astrology | Daily/weekly | Rise/fall/no-change signal from Dhruvank remainder | Commodity/share code, city, nakshatra, tithi, weekday, lunar month, sun sign, yoga | FUTURETEK_DHRUVANK p2-p17 | Not implemented |
 | JYOTISH_NAKSHATRA_PADA | Strict Jyotish core feature | All | Feature/context only until rulebook exists | Sidereal longitude mapped to 27 nakshatras and 4 padas | STRICT_JYOTISH_ML p3 | Not implemented as reusable feature table |
 | BPHS_DRISHTI_STRENGTH | Strict Jyotish core feature | All | Doctrine feature, not Western orb | BPHS drishti virupa/rupa/strength norm | STRICT_JYOTISH_ML p2-p4 | Existing script has BPHS-like fields; verify against doctrine |
-| SHADBALA_GATE | Strict Jyotish core feature | Daily/weekly initially | Strength filter/context for rule layer | Shadbala totals/components and thresholds | STRICT_JYOTISH_ML p3, STRICT_VEDIC_LLM p4, SHADBALA_JAYA p23-p101 | Not implemented |
+| SHADBALA_GATE | Strict Jyotish core feature | Daily/weekly initially | Strength filter/context for rule layer | Shadbala totals/components and thresholds | STRICT_JYOTISH_ML p3, STRICT_VEDIC_LLM p4, SHADBALA_JAYA p23-p101 | Foundation partial: `shadbala_doctrine.py` adds seven-classical minimum total thresholds and basic Sthana sign dignity context. Full six-bala calculation still pending. |
 
 ## Priority Implementation Plan
 
