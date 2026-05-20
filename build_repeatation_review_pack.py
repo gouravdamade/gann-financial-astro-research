@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260520_plus_callouts_v8"
+REPEATATION_UI_VERSION = "repeatation_ui_20260520_profit_pan_v9"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -216,6 +216,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       sr_rule: 'Support/resistance planetary line, touch, rejection, break, or confluence note.',
       ml_feature_hint: 'Reviewer hint that a feature should be engineered or tested in walk-forward validation.'
     }};
+    var MARKER_COLORS = {{
+      tradeStart: '#38bdf8',
+      tradeEnd: '#fbbf24',
+      ignore: '#c084fc',
+      profit: '#a78bfa'
+    }};
     function esc(value) {{
       return String(value == null ? '' : value)
         .replace(/&/g, '&amp;')
@@ -226,6 +232,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function shellQuote(value) {{
       return '"' + String(value == null ? '' : value).replace(/"/g, '\\\\\\"') + '"';
+    }}
+    function hexToRgba(hex, alpha) {{
+      var value = String(hex || '').replace('#', '');
+      if (value.length !== 6) return 'rgba(148,163,184,' + alpha + ')';
+      var r = parseInt(value.slice(0, 2), 16);
+      var g = parseInt(value.slice(2, 4), 16);
+      var b = parseInt(value.slice(4, 6), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     }}
     function pad(n) {{ return String(n).padStart(2, '0'); }}
     function toIST(value) {{
@@ -539,7 +553,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
               x1: haloXs[1],
               y0: haloYs[0],
               y1: haloYs[1],
-              fillcolor: color === '#22c55e' ? 'rgba(34,197,94,' + fillAlpha + ')' : (color === '#ef4444' ? 'rgba(239,68,68,' + fillAlpha + ')' : 'rgba(249,115,22,' + fillAlpha + ')'),
+              fillcolor: hexToRgba(color, fillAlpha),
               line: {{ color: 'rgba(248,250,252,0.55)', width: 0.7 }},
               layer: 'above'
             }});
@@ -551,10 +565,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }}
         plusShape(isTrade ? 0.0028 : 0.0023, isTrade ? 0.007 : 0.006, isTrade ? 1.25 : 1.15, isTrade ? '0.05' : '');
       }}
-      crosshair(state.tradeStart, '#22c55e', 'solid', 'repeatation-marker-trade-start');
-      crosshair(state.tradeEnd, '#ef4444', 'solid', 'repeatation-marker-trade-end');
-      crosshair(state.ignoreStart, '#f97316', 'dash', 'repeatation-marker-ignore-start');
-      crosshair(state.ignoreEnd, '#f97316', 'dash', 'repeatation-marker-ignore-end');
+      crosshair(state.tradeStart, MARKER_COLORS.tradeStart, 'solid', 'repeatation-marker-trade-start');
+      crosshair(state.tradeEnd, MARKER_COLORS.tradeEnd, 'solid', 'repeatation-marker-trade-end');
+      crosshair(state.ignoreStart, MARKER_COLORS.ignore, 'dash', 'repeatation-marker-ignore-start');
+      crosshair(state.ignoreEnd, MARKER_COLORS.ignore, 'dash', 'repeatation-marker-ignore-end');
       if (state.ignoreStart && state.ignoreEnd) {{
         var pair = sortPoints(state.ignoreStart, state.ignoreEnd);
         shapes.push({{
@@ -566,8 +580,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           x1: pair[1].x,
           y0: 0,
           y1: 1,
-          fillcolor: 'rgba(249,115,22,0.12)',
-          line: {{ color: 'rgba(249,115,22,0.9)', width: 2, dash: 'dash' }},
+          fillcolor: 'rgba(192,132,252,0.12)',
+          line: {{ color: 'rgba(192,132,252,0.9)', width: 2, dash: 'dash' }},
           layer: 'above'
         }});
       }}
@@ -605,10 +619,42 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           align: 'left'
         }});
       }}
-      markerLabel(state.tradeStart, 'Start', '#22c55e', 'rgba(20,83,45,0.46)', -44, -38);
-      markerLabel(state.tradeEnd, 'End', '#ef4444', 'rgba(127,29,29,0.46)', 44, -38);
-      markerLabel(state.ignoreStart, 'Ignore start', '#f97316', 'rgba(124,45,18,0.42)', -50, 36);
-      markerLabel(state.ignoreEnd, 'Ignore end', '#f97316', 'rgba(124,45,18,0.42)', 50, 36);
+      function midpointX(a, b) {{
+        var ta = Date.parse(a && a.x);
+        var tb = Date.parse(b && b.x);
+        if (!Number.isFinite(ta) || !Number.isFinite(tb)) return a && a.x;
+        return new Date((ta + tb) / 2).toISOString();
+      }}
+      function tradeProfitLabel() {{
+        var result = tradeProfit();
+        if (!result) return;
+        annotations.push({{
+          name: 'repeatation-marker-profit-label',
+          xref: 'x',
+          yref: 'y',
+          x: midpointX(state.tradeStart, state.tradeEnd),
+          y: result.midPrice,
+          text: '<b>Trade result</b><br>' + esc(result.outcomeLabel) + ' ' + esc(result.signedPipsText) + ' pips<br>' + esc(result.status),
+          showarrow: true,
+          arrowhead: 1,
+          arrowsize: 0.75,
+          arrowwidth: 1,
+          arrowcolor: 'rgba(216,180,254,0.70)',
+          ax: 0,
+          ay: -58,
+          bgcolor: 'rgba(88,28,135,0.42)',
+          bordercolor: MARKER_COLORS.profit,
+          borderwidth: 1,
+          borderpad: 3,
+          font: {{ color: '#f8fafc', size: 10 }},
+          align: 'left'
+        }});
+      }}
+      markerLabel(state.tradeStart, 'Start', MARKER_COLORS.tradeStart, 'rgba(8,47,73,0.46)', -44, -38);
+      markerLabel(state.tradeEnd, 'End', MARKER_COLORS.tradeEnd, 'rgba(113,63,18,0.46)', 44, -38);
+      markerLabel(state.ignoreStart, 'Ignore start', MARKER_COLORS.ignore, 'rgba(88,28,135,0.38)', -50, 36);
+      markerLabel(state.ignoreEnd, 'Ignore end', MARKER_COLORS.ignore, 'rgba(88,28,135,0.38)', 50, 36);
+      tradeProfitLabel();
       return annotations;
     }}
     function drawMarkers() {{
@@ -681,6 +727,37 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function outcome() {{
       return panel.querySelector('#repeatation-outcome').value;
+    }}
+    function tradeProfit() {{
+      if (!state.tradeStart || !state.tradeEnd) return null;
+      var entry = Number(state.tradeStart.y);
+      var exit = Number(state.tradeEnd.y);
+      if (!Number.isFinite(entry) || !Number.isFinite(exit)) return null;
+      var rawPips = (exit - entry) * 100;
+      var selected = outcome();
+      var signedPips = selected === 'bearish' ? -rawPips : rawPips;
+      var status = signedPips > 0 ? 'favorable move' : (signedPips < 0 ? 'adverse move' : 'flat move');
+      return {{
+        entry: entry,
+        exit: exit,
+        rawPips: rawPips,
+        signedPips: signedPips,
+        signedPipsText: (signedPips >= 0 ? '+' : '') + signedPips.toFixed(1),
+        rawPipsText: (rawPips >= 0 ? '+' : '') + rawPips.toFixed(1),
+        outcomeLabel: selected,
+        status: status,
+        midPrice: (entry + exit) / 2
+      }};
+    }}
+    function profitHtml() {{
+      var result = tradeProfit();
+      if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
+      return '<div class="rm-profit">'
+        + '<div><b>Live trade result</b><span>' + esc(result.outcomeLabel) + '</span></div>'
+        + '<div class="rm-profit-value">' + esc(result.signedPipsText) + ' pips</div>'
+        + '<div>Entry ' + esc(result.entry.toFixed(3)) + ' -> Exit ' + esc(result.exit.toFixed(3)) + ' | raw move ' + esc(result.rawPipsText) + ' pips</div>'
+        + '<div>' + esc(result.status) + '</div>'
+        + '</div>';
     }}
     function tradeCommand() {{
       if (!state.tradeStart || !state.tradeEnd) return '';
@@ -821,6 +898,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ? 'Ignore Trade is ON for this case window'
         : 'Ignore Trade is off';
       panel.querySelector('#repeatation-ignore-trade').classList.toggle('active', state.tradeIgnored);
+      panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
       panel.querySelector('#repeatation-ignore-definitions').innerHTML = selectedIgnoreDefinitionsHtml();
       panel.querySelector('#repeatation-commands').innerHTML =
@@ -1006,6 +1084,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         trade_ignored: state.tradeIgnored,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
+        trade_profit: tradeProfit(),
         annotation_definitions: {{
           ignore_signal_types: IGNORE_SIGNAL_DEFINITIONS,
           rule_scopes: RULE_SCOPE_DEFINITIONS,
@@ -1047,6 +1126,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '</div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
+      + '<div id="repeatation-profit-summary"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
       + '<label>Note type</label><input id="repeatation-note-type" value="manual_repeatation_note">'
       + '<label>Notes / why</label><textarea id="repeatation-note" placeholder="Why this start/end or ignore marker?"></textarea>'
@@ -1087,6 +1167,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-def-list div{{margin:3px 0;}}'
       + '#repeatation-marker-panel .rm-grid{{display:grid;grid-template-columns:88px 1fr;gap:4px 8px;background:#111827;border:1px solid #1e293b;border-radius:6px;padding:8px;}}'
       + '#repeatation-marker-panel .rm-grid span{{color:#94a3b8;}}'
+      + '#repeatation-marker-panel .rm-profit{{background:#111827;border:1px solid #334155;border-radius:6px;padding:8px;margin:8px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-profit>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
+      + '#repeatation-marker-panel .rm-profit span{{color:#fde68a;}}'
+      + '#repeatation-marker-panel .rm-profit-value{{font-size:18px;font-weight:700;color:#fef3c7;margin:4px 0;}}'
       + '#repeatation-marker-panel .rm-ledger-item{{background:#020617;border:1px solid #334155;border-radius:5px;padding:6px;margin:5px 0;}}'
       + '#repeatation-marker-panel .rm-ledger-item span{{color:#93c5fd;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-ledger-item button{{margin-top:5px;padding:3px 6px;}}'
@@ -1109,6 +1193,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (!target || !target.closest) return false;
       return !!target.closest('#repeatation-marker-panel,.modebar,.modebar-container,[data-title],button,a,input,select,textarea');
     }}
+    function setDefaultPanMode() {{
+      try {{
+        Plotly.relayout(gd, {{ dragmode: 'pan' }});
+      }} catch (err) {{}}
+    }}
     panel.querySelector('#repeatation-toggle').addEventListener('click', function () {{
       setCollapsed(!panel.classList.contains('collapsed'));
     }});
@@ -1128,7 +1217,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-download').addEventListener('click', downloadMarkers);
     panel.querySelector('#repeatation-note').addEventListener('input', function () {{ render(); saveDraft(); }});
     panel.querySelector('#repeatation-note-type').addEventListener('input', function () {{ render(); saveDraft(); }});
-    panel.querySelector('#repeatation-outcome').addEventListener('change', function () {{ render(); saveDraft(); }});
+    panel.querySelector('#repeatation-outcome').addEventListener('change', function () {{ drawMarkers(); render(); saveDraft(); }});
     panel.querySelector('#repeatation-rule-scope').addEventListener('change', saveDraft);
     panel.querySelector('#repeatation-rule-type').addEventListener('change', saveDraft);
     window.addEventListener('beforeunload', function () {{
@@ -1182,6 +1271,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       setTool('', false);
       render();
     }}
+    setDefaultPanMode();
   }});
 }}());
 </script>

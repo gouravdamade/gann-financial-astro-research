@@ -1,0 +1,4 @@
+﻿Backup purpose: repeatation v9 trade colors, default pan mode, and live signed pips/profit callout.
+Created: 2026-05-20 22:42:23 +05:30
+Served pack: C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548
+UI version: repeatation_ui_20260520_profit_pan_v9
