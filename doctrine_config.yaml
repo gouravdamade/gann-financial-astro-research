@@ -35,8 +35,16 @@ drishti:
     - drik_correction_to_sthana_and_kala
 
 shadbala:
-  method: proxy_pending_full_shadbala
+  method: strict_shadbala_v2_partial_components
+  status: partial_high_confidence_components_pending_full_six_bala
   current_fields: [shadbala_tag, shadbala_avg]
+  implemented_components:
+    - naisargika_bala
+    - uchcha_bala
+    - kendradi_bala
+    - drekkana_bala
+    - dig_bala
+    - strict_drik_bala
   minimum_total_virupa:
     SUN: 300
     MOON: 360
@@ -47,15 +55,24 @@ shadbala:
     SATURN: 300
   minimum_total_source: SHADBALA_JAYA lines 743-745
   missing:
-    - naisargika_bala
-    - sthana_bala_full_components
-    - kala_bala
-    - dig_bala
-    - drik_bala
+    - saptavargaja_bala
+    - ojayugma_bala
+    - full_kaala_bala
     - chesta_bala
     - eighteen_sub_balas
-    - planet_minimum_thresholds
+    - yuddha_bala
     - ishta_kashta_phala
+
+drik_bala:
+  method: parashara_sripati_six_formula_signed
+  status: strict_formula_foundation
+  rule_id: PARASHARA_SRIPATI_DRIK_BALA_SIX_FORMULA_V1
+  natural_benefics: [JUPITER, VENUS, MERCURY, waxing_MOON]
+  natural_malefics: [SUN, MARS, SATURN, waning_MOON]
+  special_aspects:
+    JUPITER: [120, 240]
+    SATURN: [60, 270]
+    MARS: [90, 210]
 
 panchanga:
   method: deterministic_sidereal_sun_moon

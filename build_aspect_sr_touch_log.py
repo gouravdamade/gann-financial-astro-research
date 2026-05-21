@@ -30,6 +30,8 @@ from JDML4 import (
 from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
 from panchanga_doctrine import panchanga_change_flags, panchanga_context
 from shadbala_doctrine import event_pair_sthana_context
+from strict_shadbala_doctrine import CLASSICAL_PLANETS as STRICT_SHADBALA_PLANETS
+from strict_shadbala_doctrine import event_strict_shadbala_context
 
 
 IST = "Asia/Kolkata"
@@ -984,6 +986,69 @@ def build_event_panchanga_context(
     return out
 
 
+def sidereal_house_cusps_for_time(timestamp: Any, lat: float, lon: float) -> dict[int, float]:
+    try:
+        ts = pd.Timestamp(timestamp)
+        if pd.isna(ts):
+            return {}
+        utc_ts = ts.tz_convert(UTC) if ts.tzinfo is not None else ts.tz_localize(IST).tz_convert(UTC)
+        hour = utc_ts.hour + (utc_ts.minute / 60.0) + (utc_ts.second / 3600.0)
+        jd_ut = swe.julday(utc_ts.year, utc_ts.month, utc_ts.day, hour)
+        houses, _ = swe.houses(jd_ut, float(lat), float(lon))
+        ayanamsa = float(swe.get_ayanamsa_ut(jd_ut))
+        return {i + 1: (float(cusp) - ayanamsa) % 360.0 for i, cusp in enumerate(houses)}
+    except Exception:
+        return {}
+
+
+def build_event_strict_shadbala_context(
+    event: pd.Series,
+    event_metrics: dict[str, Any],
+    start_idx: int,
+    end_idx: int,
+    full_to_analysis_idx: dict[int, int],
+    price_index: pd.DatetimeIndex,
+    lon_map: dict[str, pd.Series],
+    lat: float,
+    lon: float,
+) -> dict[str, Any]:
+    try:
+        offset = float(event_metrics.get("event_best_hour_offset", np.nan))
+    except (TypeError, ValueError):
+        offset = np.nan
+    if np.isfinite(offset):
+        best_idx = int(start_idx + round(offset))
+    else:
+        best_idx = int(start_idx + ((end_idx - start_idx) // 2))
+    best_idx = max(int(start_idx), min(int(end_idx), best_idx))
+    analysis_idx = full_to_analysis_idx.get(int(best_idx))
+    if analysis_idx is None:
+        return {}
+    longitudes: dict[str, float] = {}
+    for planet in STRICT_SHADBALA_PLANETS:
+        series = lon_map.get(planet)
+        if series is None:
+            continue
+        try:
+            value = float(series.iloc[analysis_idx])
+        except Exception:
+            continue
+        if np.isfinite(value):
+            longitudes[planet] = value % 360.0
+    if not longitudes:
+        return {}
+    timestamp = price_index[int(best_idx)]
+    houses = sidereal_house_cusps_for_time(timestamp, lat, lon)
+    asc_lon = houses.get(1, np.nan)
+    return event_strict_shadbala_context(
+        event.get("b1"),
+        event.get("b2"),
+        longitudes,
+        asc_lon,
+        houses,
+    )
+
+
 def natal_attrs_for_planet(planet: str | None, natal_ctx: dict[str, Any]) -> dict[str, Any]:
     planet_key = normalize_body_name(planet)
     avg_members = parse_avg_members(planet_key)
@@ -1470,6 +1535,17 @@ def main() -> None:
             price.index,
             lon_map,
         )
+        event_strict_shadbala = build_event_strict_shadbala_context(
+            event,
+            event_metrics,
+            start_idx,
+            end_idx,
+            full_to_analysis_idx,
+            price.index,
+            lon_map,
+            float(args.reference_lat),
+            float(args.reference_lon),
+        )
 
         for bar_idx in range(start_idx, end_idx + 1):
             future72_idx = future72_lookup.get(bar_idx, -1)
@@ -1604,7 +1680,7 @@ def main() -> None:
                     "ret_after_72h_dir": direction_from_change(ret_after72),
                     "shadbala_tag": event.get("shadbala_tag"),
                     "shadbala_avg": event.get("avg_shadbala"),
-                    "shadbala_doctrine_status": "source_or_proxy_pending_full_six_bala_calculation",
+                    "shadbala_doctrine_status": "partial_high_confidence_components_pending_full_six_bala",
                     "moon_nakshatra": event.get("moon_nakshatra"),
                     "delta_1d": event.get("delta_1d"),
                     "delta_3d": event.get("delta_3d"),
@@ -1642,6 +1718,7 @@ def main() -> None:
                 }
                 row.update(natal_features)
                 row.update(event_panchanga)
+                row.update(event_strict_shadbala)
                 row.update(
                     {
                         key: value

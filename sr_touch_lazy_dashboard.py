@@ -1084,8 +1084,30 @@ def build_event_hover_lines(row: pd.Series) -> list[str]:
     panchanga_line = build_panchanga_hover_line(row)
     if panchanga_line:
         lines.append(panchanga_line)
+    shadbala_line = build_strict_shadbala_hover_line(row)
+    if shadbala_line:
+        lines.append(shadbala_line)
     lines.extend(build_rule_layer_hover_lines(row))
     return lines
+
+
+def build_strict_shadbala_hover_line(row: pd.Series) -> str:
+    drik = _safe_float(row.get("event_strict_drik_bala_virupa_avg"))
+    total = _safe_float(row.get("event_strict_shadbala_implemented_total_virupa_avg"))
+    ratio = _safe_float(row.get("event_strict_shadbala_implemented_total_ratio_avg"))
+    status = str(row.get("event_strict_shadbala_status", "")).strip()
+    if drik is None and total is None and not status:
+        return ""
+    parts = []
+    if drik is not None:
+        parts.append(f"Drik {drik:.1f}V")
+    if total is not None:
+        parts.append(f"partial total {total:.1f}V")
+    if ratio is not None:
+        parts.append(f"ratio {ratio:.2f}")
+    if status:
+        parts.append(status)
+    return "Strict Shadbala: " + " | ".join(parts)
 
 
 def build_panchanga_hover_line(row: pd.Series) -> str:
@@ -1177,6 +1199,7 @@ def build_quote_detail_lines(row: pd.Series) -> list[str]:
         f"Aspect: {str(row.get('aspect_label', '')).strip() or str(row.get('aspect', '')).strip()}",
         f"Quote reference: {ref_text or 'Yen IPO Tokyo 1889-02-11 00:00 Asia/Tokyo'}",
         build_panchanga_hover_line(row) or "Panchanga: n/a",
+        build_strict_shadbala_hover_line(row) or "Strict Shadbala: n/a",
         f"Quote/JPY hypothesis: {str(row.get('jyotish_hypothesis_direction', 'UNKNOWN'))}",
         (
             "JPY scores B/Bear/Net/Conflict: "

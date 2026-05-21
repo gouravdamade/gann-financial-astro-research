@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_panchanga_v14"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_strict_shadbala_v15"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -185,6 +185,12 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("event_b1_sign_relation", "event b1 sign relation"),
         ("event_b2_sign_relation", "event b2 sign relation"),
         ("event_doctrine_feature_status", "doctrine feature status"),
+        ("event_strict_shadbala_status", "strict shadbala status"),
+        ("event_strict_drik_status", "strict drik status"),
+        ("event_b1_strict_dignity_label", "event b1 strict dignity"),
+        ("event_b2_strict_dignity_label", "event b2 strict dignity"),
+        ("event_b1_strict_sign", "event b1 strict sign"),
+        ("event_b2_strict_sign", "event b2 strict sign"),
         ("event_panchanga_status", "panchanga status"),
         ("event_weekday", "weekday"),
         ("event_weekday_lord", "weekday lord"),
@@ -239,6 +245,9 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("edge_score", "edge score", 0.20, 0.75),
         ("event_orb_deg", "event orb", 45.0, 75.0),
         ("event_sthana_dignity_virupa_avg", "event sthana dignity", 8.0, 30.0),
+        ("event_strict_drik_bala_virupa_avg", "strict drik", -40.0, 30.0),
+        ("event_strict_shadbala_implemented_total_virupa_avg", "strict shadbala implemented", 120.0, 230.0),
+        ("event_strict_shadbala_implemented_total_ratio_avg", "strict shadbala ratio", 0.35, 0.65),
     ]:
         bucket = numeric_bucket(key, numeric_value(row.get(key)), low, high)
         if bucket:

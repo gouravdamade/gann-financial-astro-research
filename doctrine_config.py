@@ -48,10 +48,24 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "current_virupa_field": "event_bphs_like_orb_virupa",
     },
     "shadbala": {
-        "method": "proxy_pending_full_shadbala",
+        "method": "strict_shadbala_v2_partial_components",
+        "status": "partial_high_confidence_components_pending_full_six_bala",
         "current_fields": ["shadbala_tag", "shadbala_avg"],
+        "implemented_components": [
+            "naisargika_bala",
+            "uchcha_bala",
+            "kendradi_bala",
+            "drekkana_bala",
+            "dig_bala",
+            "strict_drik_bala",
+        ],
         "minimum_total_virupa": SHADBALA_MINIMUM_TOTAL_VIRUPA,
         "minimum_total_source": "SHADBALA_JAYA lines 743-745",
+    },
+    "drik_bala": {
+        "method": "parashara_sripati_six_formula_signed",
+        "status": "strict_formula_foundation",
+        "rule_id": "PARASHARA_SRIPATI_DRIK_BALA_SIX_FORMULA_V1",
     },
     "panchanga": {
         "method": "deterministic_sidereal_sun_moon",
@@ -138,6 +152,7 @@ def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str,
     astronomy = cfg.get("astronomy", {}) if isinstance(cfg.get("astronomy"), dict) else {}
     drishti = cfg.get("drishti", {}) if isinstance(cfg.get("drishti"), dict) else {}
     shadbala = cfg.get("shadbala", {}) if isinstance(cfg.get("shadbala"), dict) else {}
+    drik_bala = cfg.get("drik_bala", {}) if isinstance(cfg.get("drik_bala"), dict) else {}
     panchanga = cfg.get("panchanga", {}) if isinstance(cfg.get("panchanga"), dict) else {}
     rule_layer = cfg.get("rule_layer", {}) if isinstance(cfg.get("rule_layer"), dict) else {}
     experimental_layers = cfg.get("experimental_layers", [])
@@ -155,6 +170,13 @@ def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str,
         "doctrine_drishti_method": str(drishti.get("method", "")),
         "doctrine_drishti_status": str(drishti.get("status", "")),
         "doctrine_shadbala_method": str(shadbala.get("method", "")),
+        "doctrine_shadbala_status": str(shadbala.get("status", "")),
+        "doctrine_shadbala_implemented_components": "|".join(
+            str(item) for item in shadbala.get("implemented_components", [])
+        ),
+        "doctrine_strict_drik_bala_method": str(drik_bala.get("method", "")),
+        "doctrine_strict_drik_bala_status": str(drik_bala.get("status", "")),
+        "doctrine_strict_drik_bala_rule_id": str(drik_bala.get("rule_id", "")),
         "doctrine_panchanga_method": str(panchanga.get("method", "")),
         "doctrine_panchanga_status": str(panchanga.get("status", "")),
         "doctrine_panchanga_rule_id": str(panchanga.get("rule_id", "")),
@@ -176,7 +198,12 @@ def append_doctrine_metadata(frame: Any, config: dict[str, Any] | None = None) -
     if "event_bphs_strength" in frame.columns:
         additions["event_strength_doctrine_status"] = "bphs_like_orb_proxy_not_full_drik_bala"
     if "shadbala_tag" in frame.columns or "shadbala_avg" in frame.columns:
-        additions["shadbala_doctrine_status"] = "source_or_proxy_pending_full_six_bala_calculation"
+        additions["shadbala_doctrine_status"] = str(
+            (config or load_doctrine_config()).get("shadbala", {}).get(
+                "status",
+                "partial_high_confidence_components_pending_full_six_bala",
+            )
+        )
     if {"b1", "b2", "shadbala_avg"}.issubset(set(frame.columns)):
         minimum_avg = frame.apply(_row_minimum_shadbala_avg, axis=1)
         additions["event_shadbala_minimum_total_virupa_avg"] = minimum_avg

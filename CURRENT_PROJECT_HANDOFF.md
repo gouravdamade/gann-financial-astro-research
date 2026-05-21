@@ -1,10 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 12:25 IST
+Last updated: 2026-05-21 16:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 strict Drik Bala / Shadbala v2 foundation:
+
+- Added `C:\Users\ADMIN\PycharmProjects\strict_shadbala_doctrine.py`.
+- Implemented strict formula-foundation Drik Bala using the six Sripati/Parasara aspect-strength formula segments:
+  no aspect under 30 degrees or over 300 degrees forward, base strength over the 30-300 degree range,
+  and special exact aspect bonuses for Jupiter `120/240`, Saturn `60/270`, and Mars `90/210`.
+- Drik Bala is signed by natural benefic/malefic policy:
+  Jupiter/Venus/Mercury and waxing Moon positive, Sun/Mars/Saturn and waning Moon negative.
+- Added event-chart partial Shadbala v2 components for classical planets:
+  Naisargika Bala, Uchcha Bala, Kendradi Bala, Drekkana Bala, Dig Bala, and strict Drik Bala.
+- Added explicit non-fake status:
+  `partial_high_confidence_components_pending_saptavargaja_kaala_chesta_yuddha`.
+  Pending pieces remain visible as missing components: Saptavargaja, Ojayugma, full Kaala Bala, Chesta Bala, and Yuddha Bala.
+- `doctrine_config.yaml` / `doctrine_config.py` now advertise:
+  `shadbala.method=strict_shadbala_v2_partial_components`,
+  `drik_bala.method=parashara_sripati_six_formula_signed`,
+  and `PARASHARA_SRIPATI_DRIK_BALA_SIX_FORMULA_V1`.
+- `build_aspect_sr_touch_log.py` now computes strict Drik/Shadbala event context at the event best-aspect time using the Raman sidereal longitudes and Tokyo reference event houses.
+- `aspect_annotation_store.py` context columns were extended for strict Shadbala/Drik fields.
+- `build_repeatation_review_pack.py` now includes strict dignity, strict Drik, and partial Shadbala totals in ML trait hints.
+  Repeatation UI version advanced to:
+  `repeatation_ui_20260521_strict_shadbala_v15`.
+- `sr_touch_lazy_dashboard.py` now shows compact strict Shadbala hover/detail text.
+- Regenerated the Raman touch log:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  with `656` rows and `656` unique events.
+- Re-imported cases into `gann_aspect_annotations.sqlite`; no new cases inserted, existing contexts refreshed.
+- Exported fresh strict-Shadbala-aware full-year switch chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_162717.html`
+  and CSV:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_162717.csv`
+  with `732` visible rows.
+- Rebuilt scored candidates:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv`
+  and `.parquet`, with `732` rows, `WIN=402`, `LOSS=327`, `IGNORE=3`.
+- Rebuilt and synced the AVG(ALL)|MOON square repeatation pack into:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_strict_shadbala_v15`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260521_strict_shadbala_v15`
+- Verification passed:
+  Python compile, strict Drik formula sanity check, slice smoke build, full regeneration, DB context check for case 8,
+  localhost HTTP `200`, and in-app browser direct chart check for strict Shadbala hover content.
 
 2026-05-21 Panchanga doctrine foundation:
 
