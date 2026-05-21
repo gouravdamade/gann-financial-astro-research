@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_plain_traits_v18"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_strength_panel_v19"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -215,6 +215,73 @@ def numeric_trait_token(key: str, label: str, value: float | None, low: float, h
         "high_cutoff": float(high),
         "bucket": bucket_name,
     }
+
+
+def strength_item(row: dict[str, Any], key: str, label: str, low: float, high: float, help_text: str) -> dict[str, Any] | None:
+    value = numeric_value(row.get(key))
+    if value is None:
+        return None
+    token = numeric_trait_token(key, label, value, low, high)
+    if token is None:
+        return None
+    token["help"] = help_text
+    return token
+
+
+def event_strength_summary(row: dict[str, Any]) -> list[dict[str, Any]]:
+    if not row:
+        return []
+    items = [
+        strength_item(
+            row,
+            "event_strict_shadbala_implemented_total_virupa_avg",
+            "Total planet strength",
+            240.0,
+            480.0,
+            "Overall strength from the implemented Shadbala parts. Higher means the planet signal is stronger.",
+        ),
+        strength_item(
+            row,
+            "event_strict_shadbala_implemented_total_ratio_avg",
+            "Strength vs minimum",
+            0.70,
+            1.25,
+            "Total strength divided by the expected minimum. Above 1.00 means above minimum.",
+        ),
+        strength_item(
+            row,
+            "event_strict_saptavargaja_bala_virupa_avg",
+            "Multi-chart planet strength",
+            80.0,
+            180.0,
+            "Strength checked across several chart divisions. Higher means more repeated support.",
+        ),
+        strength_item(
+            row,
+            "event_strict_kaala_9_bala_virupa_avg",
+            "Timing strength",
+            80.0,
+            220.0,
+            "Whether the event time gives the planets more force. Higher means stronger timing support.",
+        ),
+        strength_item(
+            row,
+            "event_strict_drik_bala_virupa_avg",
+            "Aspect pressure strength",
+            -40.0,
+            30.0,
+            "Pressure from other planets. Negative leans stressful/downward; positive leans supportive/upward.",
+        ),
+        strength_item(
+            row,
+            "event_strict_chesta_bala_virupa_avg",
+            "Motion strength",
+            5.0,
+            35.0,
+            "Slow, stopped, or backward-moving planets can act more strongly in this rule.",
+        ),
+    ]
+    return [item for item in items if item]
 
 
 def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
@@ -404,6 +471,7 @@ def compute_special_traits(
         )
         out[case_id] = {
             "method": "These are pattern clues from the same repeated setup. They compare what happened after similar cases. They are useful hints, not proof.",
+            "strength_summary": event_strength_summary(touch_rows_by_event.get(clean_value(case.get("source_event_id")), {})),
             "group_repeatation_count": total,
             "group_bullish_count": bullish_count,
             "group_bearish_count": bearish_count,
@@ -1184,10 +1252,34 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         return tag + ': ' + (TRAIT_TAG_DEFINITIONS[tag] || 'Trait ranking tag.');
       }}).join(' ');
     }}
+    function strengthSummaryHtml(data) {{
+      var items = Array.isArray(data.strength_summary) ? data.strength_summary : [];
+      if (!items.length) return '';
+      var rows = items.map(function (item) {{
+        var value = Number(item.value);
+        var low = Number(item.low_cutoff);
+        var high = Number(item.high_cutoff);
+        var valueText = Number.isFinite(value) ? value.toFixed(2) : '';
+        var cutoffText = Number.isFinite(low) && Number.isFinite(high)
+          ? 'low <= ' + low.toFixed(2) + ' | high >= ' + high.toFixed(2)
+          : '';
+        return '<div class="rm-strength-item">'
+          + '<div><b>' + esc(item.plain_name || item.label || '') + '</b><span>' + esc(item.bucket || '') + '</span></div>'
+          + '<div class="rm-trait-number">Value ' + esc(valueText) + (cutoffText ? ' | ' + esc(cutoffText) : '') + '</div>'
+          + '<div class="rm-trait-explain">' + esc(item.help || traitFieldExplanation(item)) + '</div>'
+          + '</div>';
+      }}).join('');
+      return '<div class="rm-strength">'
+        + '<div><b>Planet strength</b><span>always shown</span></div>'
+        + '<div class="rm-trait-method">This block is fixed. It does not disappear when ranked traits change.</div>'
+        + rows
+        + '</div>';
+    }}
     function specialTraitsHtml() {{
       var data = meta.specialTraits || {{}};
       var traits = Array.isArray(data.traits) ? data.traits : [];
-      if (!traits.length) return '<div class="rm-traits muted">No trait hints available for this recurrence yet.</div>';
+      var strengthHtml = strengthSummaryHtml(data);
+      if (!traits.length) return strengthHtml + '<div class="rm-traits muted">No trait hints available for this recurrence yet.</div>';
       var rows = traits.slice(0, 6).map(function (trait) {{
         var tagList = Array.isArray(trait.tags) ? trait.tags : [];
         var tags = tagList.join(', ');
@@ -1205,7 +1297,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + '<div class="rm-trait-explain">' + esc(explanation) + '</div>'
           + '</div>';
       }}).join('');
-      return '<div class="rm-traits">'
+      return strengthHtml + '<div class="rm-traits">'
         + '<div><b>ML trait hints</b><span>' + esc(data.case_full_window_direction || '') + ' ' + esc(data.case_full_window_bullish_pips || '') + ' pips</span></div>'
         + '<div><a class="rm-guide-link" href="' + esc(meta.traitGuideHref || 'trait_guide.html') + '" target="_blank" rel="noopener">Open trait guide</a></div>'
         + '<div class="rm-trait-method">' + esc(data.method || '') + '</div>'
@@ -1711,6 +1803,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-auto.clean{{border-color:#38bdf8;}}'
       + '#repeatation-marker-panel .rm-auto.fallback,.rm-auto.weak,.rm-auto.incomplete{{border-color:#fbbf24;}}'
       + '#repeatation-marker-panel .rm-warning{{color:#fbbf24;margin-top:4px;}}'
+      + '#repeatation-marker-panel .rm-strength{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-strength>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
+      + '#repeatation-marker-panel .rm-strength span{{color:#67e8f9;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-strength-item{{border-top:1px solid #1e3a5f;padding-top:5px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-strength-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
       + '#repeatation-marker-panel .rm-traits{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-traits>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
       + '#repeatation-marker-panel .rm-traits span{{color:#fde68a;font-size:11px;}}'

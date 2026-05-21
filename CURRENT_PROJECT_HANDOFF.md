@@ -1,10 +1,38 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 20:14 IST
+Last updated: 2026-05-21 20:50 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 fixed planet-strength/Shadbala side-panel v19:
+
+- User could not find Shadbala strength in the hover or side menu because the side menu only showed the top six ranked ML traits; full Shadbala total/ratio could be pushed out of the visible list.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260521_strength_panel_v19`.
+- Added a fixed `Planet strength` block above the ranked ML trait hints, so Shadbala/strength values are always shown regardless of trait ranking.
+- The block currently shows:
+  `Total planet strength`, `Strength vs minimum`, `Multi-chart planet strength`, `Timing strength`,
+  `Aspect pressure strength`, and `Motion strength`.
+- For case 8, verified side-panel values include:
+  `Total planet strength: 384.47 (middle)`,
+  `Strength vs minimum: 1.12 (middle)`,
+  `Multi-chart planet strength: 107.64 (middle)`,
+  `Timing strength: 115.16 (middle)`,
+  `Aspect pressure strength: -7.04 (middle)`,
+  `Motion strength: 9.11 (middle)`.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260521_204659`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_strength_panel_v19`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260521_strength_panel_v19`
+- Verification passed:
+  Python compile, repeatation pack rebuild/sync, chart HTTP `200`, served HTML content check, and in-app browser check confirming the side panel contains `Planet strength`, `Total planet strength`, and `Strength vs minimum`.
 
 2026-05-21 plain-language trait hints v18:
 
