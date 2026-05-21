@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 10:55 IST
+Last updated: 2026-05-21 11:18 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -34,6 +34,38 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   and `rebuild_dataset_mt5_ipo_allpairs.py`.
 - The Rahu/Ketu branch in `build_aspect_sr_touch_log.py` now avoids double sidereal correction by calculating the true node tropically and then applying the configured Raman ayanamsa correction once.
 - Important implication: future serious ML training should regenerate the event dataset, touch log, candidates, annotation context, and repeatation review pack under `doctrine_ayanamsa=Raman`. Do not silently mix old default/Lahiri-style artifacts with Raman-derived features.
+
+2026-05-21 Raman artifact regeneration:
+
+- Regenerated the event source under the Raman doctrine lock with:
+  `python rebuild_dataset_mt5_ipo_allpairs.py --ticker USDJPY --interval 1h --start-date 2025-03-01 --end-date 2026-03-10 --future-end-date 2026-04-10 --analysis-mode natal --reference-chart-type ipo --coordinate-system geo --astrology-method sidereal --aspect-mode orb --ipo-date 1889-02-11 --ipo-time 00:00 --hq-city Tokyo --hq-country Japan --output-file C:\Users\ADMIN\PycharmProjects\astro_training_data_ipo_tokyo_18890211_orb_1y_nodes.parquet --price-parquet C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet`
+- The Raman event dataset now has `804` rows, date range `2025-03-01 00:30:00+05:30 -> 2026-03-09 14:30:00+05:30`, aspect counts `square=274`, `trine=252`, `opposition_orb=142`, `conjunction_orb=136`.
+- Backed up pre-Raman generated artifacts to:
+  `C:\Users\ADMIN\PycharmProjects\generated_artifact_backups\pre_raman_regen_20260521-110658`.
+- Rebuilt the canonical all-duration transitsign touch log from the Raman event dataset:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  with `656` rows and `656` unique `event_id` values. Its doctrine metadata is `doctrine_ayanamsa=Raman`, `doctrine_ayanamsa_swiss_ephemeris_id=SIDM_RAMAN`, `doctrine_node_type=true_node`.
+- Reset/re-imported `gann_aspect_annotations.sqlite` from the Raman touch log because the old case table would mix doctrines. There were no saved trade/rule annotations in the DB before reset. New case count: `656`.
+- Exported fresh Raman switch chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_111526.html`
+  and CSV:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_111526.csv`
+  with `1078` visible rows.
+- Rebuilt scored candidates from the Raman switch CSV:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv`
+  and `.parquet`, with `1078` rows, `1078` potential trades, `4` ignored, `WIN=582`, `LOSS=492`, `IGNORE=4`.
+- Fixed `build_trade_candidates_from_touches.py` so raw touch logs missing `zone_kind` / `touch_kind` no longer crash on string fallback. Candidate scoring should still use the switch CSV when trade direction labels are needed.
+- The AVG(ALL)|MOON square family shifted under Raman from old seed `case_id=11` / old selected `case_id=120` to new seed `case_id=8`; repeatation count is now `16`.
+- Rebuilt the Raman repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260521_111637`.
+- Synced the Raman pack into the currently served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`
+  after clearing stale old case files.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260520_traits_v12_raman`
+- Direct first Raman case URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260520_traits_v12_raman`
+- The old direct URL `aspect_review_case_120_chart.html` now contains a local redirect note to the updated reviewer so the browser does not show stale pre-Raman content.
 
 2026-05-21 doctrine hardening foundation:
 

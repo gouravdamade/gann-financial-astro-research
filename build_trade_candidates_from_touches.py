@@ -801,13 +801,14 @@ def ignore_reason(row: pd.Series, flat_pct: float) -> str:
 
 def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
     df = touches.copy()
+    empty_text = pd.Series("", index=df.index, dtype=object)
     df["entry_time_utc"] = df["touch_time_local"].map(normalize_touch_time)
     df["entry_time_local"] = pd.to_datetime(df["touch_time_local"], errors="coerce")
     df["entry_price"] = pd.to_numeric(df.get("close_touch"), errors="coerce")
-    df["signal_direction"] = df.get("zone_kind", "").map(signal_direction)
-    df["aspect_family"] = df.get("aspect", "").map(aspect_family)
+    df["signal_direction"] = df.get("zone_kind", empty_text).map(signal_direction)
+    df["aspect_family"] = df.get("aspect", empty_text).map(aspect_family)
     df["duration_bucket"] = df.get("event_duration_minutes", pd.Series(index=df.index, dtype=object)).map(duration_bucket)
-    df["sr_confirmation_type"] = df.get("touch_kind", "").fillna("").astype(str)
+    df["sr_confirmation_type"] = df.get("touch_kind", empty_text).fillna("").astype(str)
     df["sr_confirmation_score"] = df["sr_confirmation_type"].map({"confluence": 1.0, "nearest_line": 0.6}).fillna(0.0)
 
     active_count = pd.to_numeric(df.get("aspect_regime_active_count"), errors="coerce")
