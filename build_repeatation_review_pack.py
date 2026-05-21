@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_trait_guide_v17"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_plain_traits_v18"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -173,10 +173,54 @@ def trait_label(key: str) -> str:
     return key.replace("_", " ")
 
 
-def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
+PLAIN_TRAIT_NAMES = {
+    "shadbala_avg": "Old strength score",
+    "tn_score_total": "Quote-side pressure score",
+    "base_tn_score_total": "Base-side pressure score",
+    "edge_score": "Overall setup score",
+    "event_orb_deg": "Aspect distance from exact",
+    "event_sthana_dignity_virupa_avg": "Basic planet strength",
+    "event_strict_drik_bala_virupa_avg": "Aspect pressure strength",
+    "event_strict_saptavargaja_bala_virupa_avg": "Multi-chart planet strength",
+    "event_strict_ojayugma_bala_virupa_avg": "Odd/even sign strength",
+    "event_strict_kaala_9_bala_virupa_avg": "Timing strength",
+    "event_strict_chesta_bala_virupa_avg": "Motion strength",
+    "event_strict_shadbala_implemented_total_virupa_avg": "Total planet strength",
+    "event_strict_shadbala_implemented_total_ratio_avg": "Strength vs minimum",
+}
+
+
+def bucket_word(bucket: str) -> str:
+    if bucket.endswith("_low"):
+        return "low"
+    if bucket.endswith("_high"):
+        return "high"
+    if bucket.endswith("_mid"):
+        return "middle"
+    return ""
+
+
+def numeric_trait_token(key: str, label: str, value: float | None, low: float, high: float) -> dict[str, Any] | None:
+    bucket = numeric_bucket(key, value, low, high)
+    if not bucket or value is None:
+        return None
+    plain = PLAIN_TRAIT_NAMES.get(key, label)
+    bucket_name = bucket_word(bucket)
+    return {
+        "key": f"{key}:{bucket}",
+        "label": f"{plain}: {value:.2f} ({bucket_name})",
+        "plain_name": plain,
+        "value": round(float(value), 4),
+        "low_cutoff": float(low),
+        "high_cutoff": float(high),
+        "bucket": bucket_name,
+    }
+
+
+def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
     if not row:
         return []
-    raw: list[tuple[str, str]] = []
+    raw: list[dict[str, Any]] = []
     for col, prefix in [
         ("shadbala_tag", "shadbala"),
         ("shadbala_doctrine_status", "shadbala status"),
@@ -220,7 +264,7 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
     ]:
         value = clean_value(row.get(col))
         if value:
-            raw.append((f"{col}:{value}", f"{prefix}: {value}"))
+            raw.append({"key": f"{col}:{value}", "label": f"{prefix}: {value}"})
     for col, prefix in [
         ("touch_planet_1_natal_house", "touch planet 1 house"),
         ("touch_planet_2_natal_house", "touch planet 2 house"),
@@ -240,10 +284,18 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
     ]:
         value = numeric_value(row.get(col))
         if value is not None:
-            raw.append((f"{col}:{int(value)}", f"{prefix}: {int(value)}"))
+            raw.append({"key": f"{col}:{int(value)}", "label": f"{prefix}: {int(value)}"})
     dur = duration_bucket(numeric_value(row.get("event_duration_minutes")))
     if dur:
-        raw.append((f"event_duration:{dur}", trait_label(dur)))
+        minutes = numeric_value(row.get("event_duration_minutes"))
+        raw.append(
+            {
+                "key": f"event_duration:{dur}",
+                "label": f"Event length: {minutes:.0f} minutes ({trait_label(dur).replace('event duration ', '')})"
+                if minutes is not None
+                else trait_label(dur),
+            }
+        )
     for key, label, low, high in [
         ("shadbala_avg", "shadbala", 54.0, 59.0),
         ("tn_score_total", "TN score", 3.0, 5.0),
@@ -259,17 +311,19 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("event_strict_shadbala_implemented_total_virupa_avg", "strict shadbala v1 total", 240.0, 480.0),
         ("event_strict_shadbala_implemented_total_ratio_avg", "strict shadbala ratio", 0.70, 1.25),
     ]:
-        bucket = numeric_bucket(key, numeric_value(row.get(key)), low, high)
-        if bucket:
-            raw.append((f"{key}:{bucket}", trait_label(bucket)))
+        token = numeric_trait_token(key, label, numeric_value(row.get(key)), low, high)
+        if token:
+            raw.append(token)
     seen = set()
     tokens = []
-    for key, label in raw:
-        norm = re.sub(r"\s+", " ", str(key)).strip()
+    for item in raw:
+        norm = re.sub(r"\s+", " ", str(item.get("key", ""))).strip()
         if not norm or norm in seen:
             continue
         seen.add(norm)
-        tokens.append({"key": norm, "label": label})
+        token = dict(item)
+        token["key"] = norm
+        tokens.append(token)
     return tokens
 
 
@@ -278,9 +332,9 @@ def compute_special_traits(
     stats_by_case: dict[int, dict[str, Any]],
     touch_rows_by_event: dict[str, dict[str, Any]],
 ) -> dict[int, dict[str, Any]]:
-    case_tokens: dict[int, list[dict[str, str]]] = {}
+    case_tokens: dict[int, list[dict[str, Any]]] = {}
     token_cases: dict[str, set[int]] = {}
-    token_labels: dict[str, str] = {}
+    token_payloads: dict[str, dict[str, Any]] = {}
     pips_by_case: dict[int, float] = {}
     for case in cases:
         case_id = int(case["case_id"])
@@ -289,7 +343,7 @@ def compute_special_traits(
         case_tokens[case_id] = tokens
         for token in tokens:
             token_cases.setdefault(token["key"], set()).add(case_id)
-            token_labels[token["key"]] = token["label"]
+            token_payloads[token["key"]] = token
         pips_by_case[case_id] = float(stats_by_case.get(case_id, {}).get("full_window_bullish_pips") or 0.0)
     group_pips = list(pips_by_case.values())
     group_avg = sum(group_pips) / len(group_pips) if group_pips else 0.0
@@ -323,7 +377,12 @@ def compute_special_traits(
             scored.append(
                 {
                     "key": token["key"],
-                    "label": token_labels.get(token["key"], token["label"]),
+                    "label": token_payloads.get(token["key"], token).get("label", token["label"]),
+                    "plain_name": token_payloads.get(token["key"], token).get("plain_name", ""),
+                    "value": token_payloads.get(token["key"], token).get("value", ""),
+                    "low_cutoff": token_payloads.get(token["key"], token).get("low_cutoff", ""),
+                    "high_cutoff": token_payloads.get(token["key"], token).get("high_cutoff", ""),
+                    "bucket": token_payloads.get(token["key"], token).get("bucket", ""),
                     "tags": tags,
                     "occurrences": len(peers),
                     "repeatation_count": total,
@@ -344,7 +403,7 @@ def compute_special_traits(
             )
         )
         out[case_id] = {
-            "method": "current recurrence traits compared against same pair_key/aspect repeatation group using full-window bullish pips; hints are associative, not causal proof",
+            "method": "These are pattern clues from the same repeated setup. They compare what happened after similar cases. They are useful hints, not proof.",
             "group_repeatation_count": total,
             "group_bullish_count": bullish_count,
             "group_bearish_count": bearish_count,
@@ -1071,34 +1130,34 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + '</div>';
     }}
     var TRAIT_TAG_DEFINITIONS = {{
-      'direction linked': 'This trait appears often enough in this repeatation family and its average full-window pips differ from the group average by at least 8 pips. It is an associative hint, not proof.',
-      'rare': 'This trait appears in only one or two repeatations, so it may be a special exception worth reading carefully.',
-      'common': 'This trait appears in most repeatations, so it describes broad context more than a unique edge.',
-      'only bullish samples': 'Within this repeatation family, all recurrences carrying this trait had positive bullish-window pips.',
-      'only bearish samples': 'Within this repeatation family, all recurrences carrying this trait had negative bullish-window pips.',
-      'context': 'Useful chart or doctrine context, but not currently strong enough to call direction linked.'
+      'direction linked': 'This clue has repeatedly shown a clear lean in this same setup. The average result is at least 8 pips away from the group average.',
+      'rare': 'This clue appears only 1 or 2 times. Treat it as a possible exception, not a rule.',
+      'common': 'This clue appears in most repeats. It is background context, not a special edge by itself.',
+      'only bullish samples': 'Every repeat with this clue moved upward for the full window.',
+      'only bearish samples': 'Every repeat with this clue moved downward for the full window.',
+      'context': 'Useful background clue, but not strong enough yet to call directional.'
     }};
     var TRAIT_FIELD_DEFINITIONS = {{
-      event_duration: 'Aspect window length bucket. Short/medium/long tells whether the event was brief or persisted across more candles.',
-      event_orb_deg: 'How far the exact aspect is from perfect at the scored moment. Low is tighter; mid is moderate; high is loose/noisier.',
-      shadbala_avg: 'Existing source/proxy Shadbala average bucket retained for continuity.',
-      event_sthana_dignity_virupa_avg: 'Average basic dignity strength of the event bodies in virupas.',
-      event_strict_drik_bala_virupa_avg: 'Average strict Drik Bala from benefic/malefic aspect pressure. Negative means malefic pressure dominates.',
-      event_strict_saptavargaja_bala_virupa_avg: 'Average seven-varga dignity strength across D1/D2/D3/D7/D9/D12/D30.',
-      event_strict_ojayugma_bala_virupa_avg: 'Odd/even Rashi and Navamsa strength for the involved planet/body.',
-      event_strict_kaala_9_bala_virupa_avg: 'Nine-part Kaala Bala v1: Nathonnatha, Paksha, Tribhaga, Abda, Masa, Vara, Hora, Ayana, Yuddha.',
-      event_strict_chesta_bala_virupa_avg: 'Motion-state strength. Retrograde/stationary planets score stronger in this v1 rule.',
-      event_strict_shadbala_implemented_total_virupa_avg: 'Current full component v1 Shadbala total from implemented components.',
-      event_strict_shadbala_implemented_total_ratio_avg: 'Implemented Shadbala total divided by the classical minimum threshold.',
-      edge_score: 'Trade candidate scoring strength from the SR/aspect scoring layer.',
-      tn_score_total: 'Transit-to-natal score total for the quote/reference side.',
-      base_tn_score_total: 'Transit-to-natal score total for the base/reference side.',
-      aspect_regime_active_count: 'Number of active aspect/regime windows at this recurrence. Higher means more overlap and less clean attribution.',
-      touch_planets: 'Planetary SR touch participants visible near this event.',
-      event_paksha: 'Moon phase half: Shukla/waxing or Krishna/waning.',
-      event_tithi_name: 'Panchanga lunar day at the event moment.',
-      event_moon_nakshatra: 'Moon nakshatra at the event moment.',
-      event_weekday_lord: 'Planetary weekday lord at the event moment.'
+      event_duration: 'How long this setup stayed active. Short means fewer candles; long means more time for other events to interfere.',
+      event_orb_deg: 'How far the aspect is from exact. Smaller usually means cleaner. Middle means not tight and not very loose.',
+      shadbala_avg: 'Older planet-strength score kept for comparison.',
+      event_sthana_dignity_virupa_avg: 'Basic strength of the involved planets. Higher means the planets are in a more supportive position.',
+      event_strict_drik_bala_virupa_avg: 'Pressure from other planets. Negative leans stressful/downward; positive leans supportive/upward.',
+      event_strict_saptavargaja_bala_virupa_avg: 'Planet strength checked across several chart divisions. Higher means stronger repeated support.',
+      event_strict_ojayugma_bala_virupa_avg: 'A simple odd/even sign strength check. Higher means this condition supports the planet more.',
+      event_strict_kaala_9_bala_virupa_avg: 'Timing strength. Higher means the event happens at a time that gives the planets more force.',
+      event_strict_chesta_bala_virupa_avg: 'Motion strength. A slow, stopped, or backward-moving planet can act more strongly.',
+      event_strict_shadbala_implemented_total_virupa_avg: 'Overall planet strength from all implemented parts. Higher means stronger planet signal.',
+      event_strict_shadbala_implemented_total_ratio_avg: 'Overall strength compared with the minimum expected strength. Above 1.00 means above minimum.',
+      edge_score: 'Overall setup score from the chart/scoring system. Higher means the setup looked stronger to the script.',
+      tn_score_total: 'Quote-side pressure score. In USDJPY, this is the JPY side.',
+      base_tn_score_total: 'Base-side pressure score. In USDJPY, this is the USD side.',
+      aspect_regime_active_count: 'How many other event windows are active nearby. More overlap means harder to know which event moved price.',
+      touch_planets: 'Which planet lines price touched near this event.',
+      event_paksha: 'Moon phase half. Waxing means growing Moon; waning means shrinking Moon.',
+      event_tithi_name: 'Lunar day name at the event time.',
+      event_moon_nakshatra: 'Moon background zone at the event time.',
+      event_weekday_lord: 'Planet linked with that weekday.'
     }};
     function traitBaseKey(trait) {{
       var key = String((trait && trait.key) || '').split(':')[0];
@@ -1108,10 +1167,17 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var base = traitBaseKey(trait);
       if (TRAIT_FIELD_DEFINITIONS[base]) return TRAIT_FIELD_DEFINITIONS[base];
       var label = String((trait && trait.label) || '').toLowerCase();
-      if (label.indexOf(' mid') > -1) return 'A middle bucket: this value sits between the configured low and high cutoffs for the feature.';
-      if (label.indexOf(' high') > -1) return 'A high bucket: this value is above the configured high cutoff for the feature.';
-      if (label.indexOf(' low') > -1) return 'A low bucket: this value is below the configured low cutoff for the feature.';
-      return 'A recurrence trait extracted from the event context and compared against the same pair/aspect repeatation family.';
+      if (label.indexOf('middle') > -1 || label.indexOf(' mid') > -1) return 'Middle means the number is between the low and high cutoffs.';
+      if (label.indexOf('high') > -1) return 'High means the number is at or above the high cutoff.';
+      if (label.indexOf('low') > -1) return 'Low means the number is at or below the low cutoff.';
+      return 'A clue from this event compared with the same repeated setup.';
+    }}
+    function traitNumberLine(trait) {{
+      var value = Number(trait.value);
+      var low = Number(trait.low_cutoff);
+      var high = Number(trait.high_cutoff);
+      if (!Number.isFinite(value) || !Number.isFinite(low) || !Number.isFinite(high)) return '';
+      return 'Value ' + value.toFixed(2) + ' | low <= ' + low.toFixed(2) + ' | high >= ' + high.toFixed(2);
     }}
     function traitTagExplanation(tags) {{
       return (tags || []).map(function (tag) {{
@@ -1129,11 +1195,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var deltaText = Number.isFinite(delta) ? (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' pips vs group' : '';
         var explanation = traitFieldExplanation(trait);
         var tagHelp = traitTagExplanation(tagList);
+        var numberLine = traitNumberLine(trait);
         return '<div class="rm-trait-item" title="' + esc(explanation + ' ' + tagHelp) + '">'
           + '<div><b>' + esc(trait.label || trait.key || '') + '</b><span title="' + esc(tagHelp) + '">' + esc(tags) + '</span></div>'
           + '<div>' + esc(trait.occurrences) + '/' + esc(trait.repeatation_count) + ' repeatations'
           + (deltaText ? ' | ' + esc(deltaText) : '')
           + '</div>'
+          + (numberLine ? '<div class="rm-trait-number">' + esc(numberLine) + '</div>' : '')
           + '<div class="rm-trait-explain">' + esc(explanation) + '</div>'
           + '</div>';
       }}).join('');
@@ -1650,6 +1718,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-trait-method{{color:#94a3b8;font-size:11px;margin:4px 0 6px;}}'
       + '#repeatation-marker-panel .rm-trait-item{{border-top:1px solid #1e293b;padding-top:5px;margin-top:5px;}}'
       + '#repeatation-marker-panel .rm-trait-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-trait-number{{color:#f8fafc;font-size:11px;margin-top:2px;}}'
       + '#repeatation-marker-panel .rm-trait-explain{{color:#93a4b8;font-size:11px;margin-top:2px;}}'
       + '#repeatation-marker-panel .rm-ledger-item{{background:#020617;border:1px solid #334155;border-radius:5px;padding:6px;margin:5px 0;}}'
       + '#repeatation-marker-panel .rm-ledger-item span{{color:#93c5fd;font-size:11px;}}'
@@ -1932,22 +2001,24 @@ def attach_repeatation_navigation(cases: list[dict[str, Any]]) -> None:
 
 def render_trait_guide() -> str:
     rows = [
-        ("event orb deg low/mid/high", "Aspect looseness bucket. Lower is tighter and usually cleaner; mid is moderate; high is loose/noisier."),
-        ("direction linked", "Trait appears often enough in this repeatation family and its average full-window pips differ from group average by at least 8 pips."),
-        ("rare", "Trait appears in only one or two repeatations. Treat as an exception candidate, not a general rule."),
-        ("common", "Trait appears in most repeatations. It describes shared background context more than a unique edge."),
-        ("only bullish samples", "Every recurrence with this trait had positive bullish-window pips inside this family."),
-        ("only bearish samples", "Every recurrence with this trait had negative bullish-window pips inside this family."),
-        ("x/y repeatations", "How many repeatations in this same pair/aspect family also have the same trait."),
-        ("pips vs group", "Average bullish-window pips for repeatations with the trait minus the family average. Negative favors bearish behavior; positive favors bullish behavior."),
-        ("active regime count", "Number of active overlapping aspect/regime windows. Higher count means attribution is less clean."),
-        ("shadbala avg / strict shadbala ratio", "Strength bucket from the Shadbala layer. Ratio is current implemented total divided by the classical minimum threshold."),
-        ("strict drik", "Signed Drik Bala pressure. Negative means malefic pressure dominates; positive means benefic pressure dominates."),
-        ("strict saptavargaja", "Seven-varga dignity strength across D1, D2, D3, D7, D9, D12, and D30."),
-        ("strict kaala", "Nine-part Kaala Bala v1: Nathonnatha, Paksha, Tribhaga, Abda, Masa, Vara, Hora, Ayana, and Yuddha."),
-        ("strict chesta", "Motion-state strength. Retrograde or near-stationary non-luminary classical planets score stronger in v1."),
-        ("TN/base TN score", "Transit-to-natal score totals used by the market scoring layer for quote/base context."),
-        ("touch planets", "Planetary support/resistance touch participants visible around the event."),
+        ("Aspect distance from exact", "How far the setup is from perfect alignment. Example: value 51.36, low <= 45, high >= 75 means this one is in the middle zone. Smaller is usually cleaner."),
+        ("direction linked", "This clue has repeatedly leaned one way in the same setup. Rule used here: average result is at least 8 pips away from the group average."),
+        ("rare", "This clue appears only 1 or 2 times. Treat it as a possible exception, not a rule."),
+        ("common", "This clue appears in most repeats. It is background context, not a special edge by itself."),
+        ("only bullish samples", "Every repeat with this clue moved upward for the full window."),
+        ("only bearish samples", "Every repeat with this clue moved downward for the full window."),
+        ("x/y repeatations", "How many repeats in this same setup also have the same clue."),
+        ("pips vs group", "Average result for repeats with this clue minus the family average. Negative leans bearish; positive leans bullish."),
+        ("active regime count", "How many other event windows are active nearby. More overlap means it is harder to know which event moved price."),
+        ("Basic planet strength", "Simple planet strength. Higher means the involved planets are in a more supportive position."),
+        ("Aspect pressure strength", "Pressure from other planets. Negative leans stressful/downward; positive leans supportive/upward."),
+        ("Multi-chart planet strength", "Planet strength checked across several chart divisions. Higher means stronger repeated support."),
+        ("Timing strength", "Whether the event happens at a time that gives the planets more force. Higher means stronger timing support."),
+        ("Motion strength", "Slow, stopped, or backward-moving planets can act more strongly in this rule."),
+        ("Total planet strength", "Overall planet strength from all implemented parts. Higher means a stronger planet signal."),
+        ("Strength vs minimum", "Overall strength divided by expected minimum. Above 1.00 means above minimum."),
+        ("Base/quote pressure score", "In USDJPY, base means USD and quote means JPY. The script compares both sides."),
+        ("touch planets", "Which planet lines price touched near this event."),
     ]
     row_html = "\n".join(
         f"<tr><td>{h(term)}</td><td>{h(desc)}</td></tr>"
@@ -1974,8 +2045,8 @@ def render_trait_guide() -> str:
   <main>
     <h1>ML Trait Guide</h1>
     <p class="note">
-      These hints compare the current recurrence against the same pair_key/aspect repeatation family using full-window bullish pips.
-      They are associative review clues, not causal proof. Use them to decide what to inspect and what rule/exception notes to write.
+      These hints compare the current repeat against other repeats of the same setup.
+      They are pattern clues, not proof. Use them to decide what to inspect and what rule or exception note to write.
     </p>
     <table>
       <thead><tr><th>Term</th><th>Meaning</th></tr></thead>

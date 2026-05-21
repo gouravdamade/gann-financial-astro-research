@@ -1,10 +1,42 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 20:00 IST
+Last updated: 2026-05-21 20:14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 plain-language trait hints v18:
+
+- Reworked the ML trait hints language in `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py` so non-astrology users can understand the panel.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260521_plain_traits_v18`.
+- Numeric trait labels now show actual values and bucket meaning, for example:
+  `Aspect distance from exact: 51.36 (middle)`.
+- Numeric rows also show cutoff lines where available:
+  `Value 51.36 | low <= 45.00 | high >= 75.00`.
+- Jargon was softened:
+  `event orb deg` -> `Aspect distance from exact`;
+  `strict drik` -> `Aspect pressure strength`;
+  `strict saptavargaja` -> `Multi-chart planet strength`;
+  `strict kaala` -> `Timing strength`;
+  `strict chesta` -> `Motion strength`;
+  `shadbala total` -> `Total planet strength`.
+- Tag explanations were simplified:
+  `direction linked` now means this clue has repeatedly leaned one way and is at least 8 pips away from the group average.
+- Trait guide language was simplified and now includes numeric examples.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260521_201252`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_plain_traits_v18`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260521_plain_traits_v18`
+- Trait guide URL:
+  `http://localhost:8765/trait_guide.html?v=repeatation_ui_20260521_plain_traits_v18`
+- Verification passed:
+  Python compile, repeatation pack rebuild/sync, chart HTTP `200`, plain-language/numeric content check, and trait guide HTTP `200`.
 
 2026-05-21 repeatation trait guide v17:
 
