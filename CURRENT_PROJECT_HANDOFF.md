@@ -1,10 +1,34 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 20:50 IST
+Last updated: 2026-05-22 00:51 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-22 all-astro repeatation evidence table v20:
+
+- User asked whether enemy sign, friendly house, and other astro features are being compared across repeatations of the same case family, with only the most distinguishable features shown.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260522_astro_evidence_v20`.
+- Added an expandable `All astro feature comparison` block under the ML trait hints. It compares the current repeatation against the same case family across all scored astro/context features, not just the top hints.
+- Added plain feature categories:
+  `sign / house`, `planet strength`, `timing / moon calendar`, `overlap / cleanliness`, `market-score context`, and `other context`.
+- Added house-quality derived features for the aspect planets, using whole-sign house context:
+  `supportive/angular-or-luck house`, `growth/action house`, `difficult/hidden house`, `money/relationship pressure house`, and `neutral house`.
+- Evidence rows now include repeat count, bullish/bearish split, average pips for matching repeatations, delta versus the full group, group average, and clue tags such as `rare`, `common`, `direction linked`, or `only bearish samples`.
+- The fixed `Planet strength` block remains above the ranked hints so Shadbala/strength is always visible.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260522_004530`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260522_astro_evidence_v20`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260522_astro_evidence_v20`
+- Verification passed:
+  Python compile, repeatation pack rebuild/sync, chart HTTP `200`, served HTML content check, and in-app browser check confirming `All astro feature comparison`, `Planet 2 house`, `Planet 2 sign relationship`, `Total planet strength`, and `sign / house`.
 
 2026-05-21 fixed planet-strength/Shadbala side-panel v19:
 

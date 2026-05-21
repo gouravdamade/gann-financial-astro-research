@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_strength_panel_v19"
+REPEATATION_UI_VERSION = "repeatation_ui_20260522_astro_evidence_v20"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -188,6 +188,42 @@ PLAIN_TRAIT_NAMES = {
     "event_strict_shadbala_implemented_total_virupa_avg": "Total planet strength",
     "event_strict_shadbala_implemented_total_ratio_avg": "Strength vs minimum",
 }
+PLAIN_CATEGORICAL_NAMES = {
+    "event_b1_sign_relation": "Planet 1 sign relationship",
+    "event_b2_sign_relation": "Planet 2 sign relationship",
+    "event_b1_sthana_dignity_label": "Planet 1 sign strength",
+    "event_b2_sthana_dignity_label": "Planet 2 sign strength",
+    "event_b1_strict_dignity_label": "Planet 1 strict strength",
+    "event_b2_strict_dignity_label": "Planet 2 strict strength",
+    "event_b1_strict_sign": "Planet 1 sign",
+    "event_b2_strict_sign": "Planet 2 sign",
+    "event_weekday_lord": "Weekday planet",
+    "event_tithi_name": "Lunar day",
+    "event_paksha": "Moon phase half",
+    "event_karana_name": "Karana",
+    "event_yoga_name": "Yoga",
+    "event_moon_nakshatra": "Moon zone",
+    "event_sun_nakshatra": "Sun zone",
+    "touch_planets": "Touched planet lines",
+    "aspect_regime_active_count": "Nearby event count",
+}
+
+
+FEATURE_HELP = {
+    "event_b1_sign_relation": "Friend/enemy relationship between planet 1 and the sign it occupies.",
+    "event_b2_sign_relation": "Friend/enemy relationship between planet 2 and the sign it occupies.",
+    "event_b1_sthana_dignity_label": "Whether planet 1 is in own, friendly, enemy, exalted, or weak sign condition.",
+    "event_b2_sthana_dignity_label": "Whether planet 2 is in own, friendly, enemy, exalted, or weak sign condition.",
+    "event_b1_strict_whole_sign_house": "House location for planet 1 in the event chart.",
+    "event_b2_strict_whole_sign_house": "House location for planet 2 in the event chart.",
+    "event_b1_house_quality": "Plain-language house group for planet 1.",
+    "event_b2_house_quality": "Plain-language house group for planet 2.",
+    "aspect_regime_active_count": "How many other event windows are active nearby. More overlap means less clean attribution.",
+    "event_weekday_lord": "Planet linked with the weekday at event time.",
+    "event_tithi_name": "Lunar day at event time.",
+    "event_paksha": "Waxing or waning Moon half.",
+    "event_moon_nakshatra": "Moon background zone at event time.",
+}
 
 
 def bucket_word(bucket: str) -> str:
@@ -198,6 +234,45 @@ def bucket_word(bucket: str) -> str:
     if bucket.endswith("_mid"):
         return "middle"
     return ""
+
+
+def house_quality(house: float | int | None) -> str:
+    if house is None:
+        return ""
+    try:
+        value = int(float(house))
+    except Exception:
+        return ""
+    if value in {1, 4, 5, 7, 9, 10}:
+        return "supportive/angular-or-luck house"
+    if value in {3, 6, 10, 11}:
+        return "growth/action house"
+    if value in {6, 8, 12}:
+        return "difficult/hidden house"
+    if value in {2, 7}:
+        return "money/relationship pressure house"
+    return "neutral house"
+
+
+def feature_category_for_key(key: str) -> str:
+    base = str(key or "").split(":", 1)[0]
+    if any(part in base for part in ["dignity", "relation", "strict_sign", "house_quality", "whole_sign_house", "natal_house", "natal_sign"]):
+        return "sign / house"
+    if any(part in base for part in ["shadbala", "drik", "saptavargaja", "ojayugma", "kaala", "chesta", "sthana"]):
+        return "planet strength"
+    if any(part in base for part in ["weekday", "tithi", "paksha", "karana", "yoga", "nakshatra", "pada", "new_moon", "full_moon"]):
+        return "timing / moon calendar"
+    if any(part in base for part in ["regime", "orb", "duration"]):
+        return "overlap / cleanliness"
+    if any(part in base for part in ["touch", "tn_", "base_tn", "edge_score", "score"]):
+        return "market-score context"
+    return "other context"
+
+
+def plain_categorical_label(col: str, value: str, fallback_prefix: str) -> str:
+    label = PLAIN_CATEGORICAL_NAMES.get(col, fallback_prefix)
+    cleaned = str(value).replace("_", " ").strip()
+    return f"{label}: {cleaned}"
 
 
 def numeric_trait_token(key: str, label: str, value: float | None, low: float, high: float) -> dict[str, Any] | None:
@@ -214,6 +289,8 @@ def numeric_trait_token(key: str, label: str, value: float | None, low: float, h
         "low_cutoff": float(low),
         "high_cutoff": float(high),
         "bucket": bucket_name,
+        "category": feature_category_for_key(key),
+        "help": FEATURE_HELP.get(key, ""),
     }
 
 
@@ -331,7 +408,14 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
     ]:
         value = clean_value(row.get(col))
         if value:
-            raw.append({"key": f"{col}:{value}", "label": f"{prefix}: {value}"})
+            raw.append(
+                {
+                    "key": f"{col}:{value}",
+                    "label": plain_categorical_label(col, value, prefix),
+                    "category": feature_category_for_key(col),
+                    "help": FEATURE_HELP.get(col, ""),
+                }
+            )
     for col, prefix in [
         ("touch_planet_1_natal_house", "touch planet 1 house"),
         ("touch_planet_2_natal_house", "touch planet 2 house"),
@@ -351,7 +435,39 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
     ]:
         value = numeric_value(row.get(col))
         if value is not None:
-            raw.append({"key": f"{col}:{int(value)}", "label": f"{prefix}: {int(value)}"})
+            raw.append(
+                {
+                    "key": f"{col}:{int(value)}",
+                    "label": plain_categorical_label(col, str(int(value)), prefix),
+                    "category": feature_category_for_key(col),
+                    "help": FEATURE_HELP.get(col, ""),
+                }
+            )
+    for col, label in [
+        ("event_b1_strict_whole_sign_house", "Planet 1 house"),
+        ("event_b2_strict_whole_sign_house", "Planet 2 house"),
+    ]:
+        value = numeric_value(row.get(col))
+        quality = house_quality(value)
+        if value is not None:
+            raw.append(
+                {
+                    "key": f"{col}:{int(value)}",
+                    "label": f"{label}: {int(value)}",
+                    "category": "sign / house",
+                    "help": FEATURE_HELP.get(col, ""),
+                }
+            )
+        if quality:
+            quality_key = col.replace("strict_whole_sign_house", "house_quality")
+            raw.append(
+                {
+                    "key": f"{quality_key}:{quality}",
+                    "label": f"{label} group: {quality}",
+                    "category": "sign / house",
+                    "help": FEATURE_HELP.get(quality_key, ""),
+                }
+            )
     dur = duration_bucket(numeric_value(row.get("event_duration_minutes")))
     if dur:
         minutes = numeric_value(row.get("event_duration_minutes"))
@@ -361,6 +477,8 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
                 "label": f"Event length: {minutes:.0f} minutes ({trait_label(dur).replace('event duration ', '')})"
                 if minutes is not None
                 else trait_label(dur),
+                "category": "overlap / cleanliness",
+                "help": "How long this event window stayed active.",
             }
         )
     for key, label, low, high in [
@@ -450,6 +568,10 @@ def compute_special_traits(
                     "low_cutoff": token_payloads.get(token["key"], token).get("low_cutoff", ""),
                     "high_cutoff": token_payloads.get(token["key"], token).get("high_cutoff", ""),
                     "bucket": token_payloads.get(token["key"], token).get("bucket", ""),
+                    "category": token_payloads.get(token["key"], token).get(
+                        "category", feature_category_for_key(token["key"])
+                    ),
+                    "help": token_payloads.get(token["key"], token).get("help", ""),
                     "tags": tags,
                     "occurrences": len(peers),
                     "repeatation_count": total,
@@ -469,9 +591,20 @@ def compute_special_traits(
                 -int(item["occurrences"]),
             )
         )
+        evidence = sorted(
+            scored,
+            key=lambda item: (
+                str(item.get("category", "")),
+                0 if "direction linked" in item["tags"] else 1,
+                0 if "rare" in item["tags"] else 1,
+                -abs(float(item["delta_vs_group_pips"])),
+                str(item.get("label", "")),
+            ),
+        )
         out[case_id] = {
             "method": "These are pattern clues from the same repeated setup. They compare what happened after similar cases. They are useful hints, not proof.",
             "strength_summary": event_strength_summary(touch_rows_by_event.get(clean_value(case.get("source_event_id")), {})),
+            "astro_feature_evidence": evidence[:120],
             "group_repeatation_count": total,
             "group_bullish_count": bullish_count,
             "group_bearish_count": bearish_count,
@@ -1275,11 +1408,51 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + rows
         + '</div>';
     }}
+    function astroFeatureEvidenceHtml(data) {{
+      var items = Array.isArray(data.astro_feature_evidence) ? data.astro_feature_evidence : [];
+      if (!items.length) return '';
+      var groups = {{}};
+      items.forEach(function (item) {{
+        var category = item.category || 'other context';
+        if (!groups[category]) groups[category] = [];
+        groups[category].push(item);
+      }});
+      var order = ['sign / house', 'planet strength', 'timing / moon calendar', 'overlap / cleanliness', 'market-score context', 'other context'];
+      var groupHtml = order.filter(function (category) {{ return groups[category] && groups[category].length; }}).map(function (category) {{
+        var rows = groups[category].slice(0, 24).map(function (item) {{
+          var tags = Array.isArray(item.tags) ? item.tags.join(', ') : '';
+          var avg = Number(item.avg_bullish_pips);
+          var groupAvg = Number(item.group_avg_bullish_pips);
+          var delta = Number(item.delta_vs_group_pips);
+          var resultText = (Number.isFinite(avg) ? 'avg ' + avg.toFixed(1) + ' pips' : '')
+            + (Number.isFinite(delta) ? ' | ' + (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' vs group' : '')
+            + (Number.isFinite(groupAvg) ? ' | group ' + groupAvg.toFixed(1) : '');
+          var splitText = 'bullish ' + esc(item.bullish_samples || 0) + ' / bearish ' + esc(item.bearish_samples || 0);
+          var numberLine = traitNumberLine(item);
+          return '<tr title="' + esc(item.help || traitFieldExplanation(item)) + '">'
+            + '<td>' + esc(item.label || item.key || '') + (numberLine ? '<div class="rm-table-sub">' + esc(numberLine) + '</div>' : '') + '</td>'
+            + '<td>' + esc(item.occurrences || 0) + '/' + esc(item.repeatation_count || '') + '<div class="rm-table-sub">' + splitText + '</div></td>'
+            + '<td>' + esc(resultText) + '</td>'
+            + '<td>' + esc(tags) + '</td>'
+            + '</tr>';
+        }}).join('');
+        return '<div class="rm-evidence-group"><div class="rm-evidence-title">' + esc(category) + '</div>'
+          + '<table class="rm-evidence-table"><thead><tr><th>Feature</th><th>Repeats</th><th>Result</th><th>Tag</th></tr></thead><tbody>'
+          + rows
+          + '</tbody></table></div>';
+      }}).join('');
+      return '<details class="rm-evidence" open>'
+        + '<summary>All astro feature comparison</summary>'
+        + '<div class="rm-trait-method">Full current-case feature evidence, not just the top ranked hints. Negative pips lean bearish; positive pips lean bullish.</div>'
+        + groupHtml
+        + '</details>';
+    }}
     function specialTraitsHtml() {{
       var data = meta.specialTraits || {{}};
       var traits = Array.isArray(data.traits) ? data.traits : [];
       var strengthHtml = strengthSummaryHtml(data);
-      if (!traits.length) return strengthHtml + '<div class="rm-traits muted">No trait hints available for this recurrence yet.</div>';
+      var evidenceHtml = astroFeatureEvidenceHtml(data);
+      if (!traits.length) return strengthHtml + evidenceHtml + '<div class="rm-traits muted">No trait hints available for this recurrence yet.</div>';
       var rows = traits.slice(0, 6).map(function (trait) {{
         var tagList = Array.isArray(trait.tags) ? trait.tags : [];
         var tags = tagList.join(', ');
@@ -1302,7 +1475,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + '<div><a class="rm-guide-link" href="' + esc(meta.traitGuideHref || 'trait_guide.html') + '" target="_blank" rel="noopener">Open trait guide</a></div>'
         + '<div class="rm-trait-method">' + esc(data.method || '') + '</div>'
         + rows
-        + '</div>';
+        + '</div>' + evidenceHtml;
     }}
     function profitHtml() {{
       var result = tradeProfit();
@@ -1808,6 +1981,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-strength span{{color:#67e8f9;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-strength-item{{border-top:1px solid #1e3a5f;padding-top:5px;margin-top:5px;}}'
       + '#repeatation-marker-panel .rm-strength-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-evidence{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-evidence summary{{cursor:pointer;color:#bfdbfe;font-weight:700;}}'
+      + '#repeatation-marker-panel .rm-evidence-group{{margin-top:8px;}}'
+      + '#repeatation-marker-panel .rm-evidence-title{{color:#fde68a;font-weight:700;margin:4px 0;}}'
+      + '#repeatation-marker-panel .rm-evidence-table{{width:100%;border-collapse:collapse;font-size:10.5px;}}'
+      + '#repeatation-marker-panel .rm-evidence-table th,#repeatation-marker-panel .rm-evidence-table td{{border:1px solid #1e293b;padding:4px;vertical-align:top;}}'
+      + '#repeatation-marker-panel .rm-evidence-table th{{color:#bfdbfe;background:#0f172a;text-align:left;}}'
+      + '#repeatation-marker-panel .rm-table-sub{{color:#94a3b8;font-size:10px;margin-top:2px;}}'
       + '#repeatation-marker-panel .rm-traits{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-traits>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
       + '#repeatation-marker-panel .rm-traits span{{color:#fde68a;font-size:11px;}}'
