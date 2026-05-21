@@ -72,6 +72,34 @@ CASE_CONTEXT_COLUMNS = (
     "event_sthana_source_locator",
     "event_shadbala_minimum_source_locator",
     "event_doctrine_feature_status",
+    "event_panchanga_method",
+    "event_panchanga_rule_ids",
+    "event_panchanga_status",
+    "event_weekday",
+    "event_weekday_lord",
+    "event_lunar_phase_angle_deg",
+    "event_tithi_index",
+    "event_tithi_name",
+    "event_paksha",
+    "event_karana_index",
+    "event_karana_name",
+    "event_yoga_angle_deg",
+    "event_yoga_index",
+    "event_yoga_name",
+    "event_moon_nakshatra_index",
+    "event_moon_nakshatra",
+    "event_moon_pada",
+    "event_sun_nakshatra_index",
+    "event_sun_nakshatra",
+    "event_sun_pada",
+    "event_near_new_moon_flag",
+    "event_near_full_moon_flag",
+    "event_tithi_changed_flag",
+    "event_karana_changed_flag",
+    "event_yoga_changed_flag",
+    "event_moon_nakshatra_changed_flag",
+    "event_moon_pada_changed_flag",
+    "event_weekday_changed_flag",
     "event_best_time_local",
     "ret_after_72h_pct",
     "ret_after_72h_dir",
@@ -81,6 +109,9 @@ CASE_CONTEXT_COLUMNS = (
     "doctrine_config_id",
     "doctrine_drishti_status",
     "doctrine_shadbala_method",
+    "doctrine_panchanga_method",
+    "doctrine_panchanga_status",
+    "doctrine_panchanga_rule_id",
     "doctrine_rule_citation_status",
     "moon_nakshatra",
     "reference_time_ist",
@@ -232,6 +263,31 @@ def upsert_aspect_case(conn: sqlite3.Connection, case_data: dict[str, Any]) -> i
             case_data.get("source_csv"),
             case_data.get("context_json"),
             now,
+        ),
+    )
+    conn.execute(
+        """
+        UPDATE aspect_cases
+        SET aspect_label = ?,
+            timeframe = ?,
+            source_csv = ?,
+            context_json = ?
+        WHERE IFNULL(source_event_id, '') = IFNULL(?, '')
+          AND pair_key = ?
+          AND aspect = ?
+          AND window_start_ist = ?
+          AND window_end_ist = ?
+        """,
+        (
+            case_data.get("aspect_label"),
+            case_data.get("timeframe"),
+            case_data.get("source_csv"),
+            case_data.get("context_json"),
+            case_data.get("source_event_id"),
+            case_data["pair_key"],
+            case_data["aspect"],
+            case_data["window_start_ist"],
+            case_data["window_end_ist"],
         ),
     )
     row = conn.execute(

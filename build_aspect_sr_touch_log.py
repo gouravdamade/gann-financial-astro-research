@@ -28,6 +28,7 @@ from JDML4 import (
     drishti_aspect_name_for_angle,
 )
 from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
+from panchanga_doctrine import panchanga_change_flags, panchanga_context
 from shadbala_doctrine import event_pair_sthana_context
 
 
@@ -938,6 +939,51 @@ def build_user_facing_touch_log(out: pd.DataFrame) -> pd.DataFrame:
     return export_df
 
 
+def build_event_panchanga_context(
+    event_metrics: dict[str, Any],
+    start_idx: int,
+    end_idx: int,
+    full_to_analysis_idx: dict[int, int],
+    price_index: pd.DatetimeIndex,
+    lon_map: dict[str, pd.Series],
+) -> dict[str, Any]:
+    sun_series = lon_map.get("SUN")
+    moon_series = lon_map.get("MOON")
+    if sun_series is None or moon_series is None:
+        return {}
+
+    def context_at_bar(prefix: str, bar_idx: int) -> dict[str, Any]:
+        analysis_idx = full_to_analysis_idx.get(int(bar_idx))
+        if analysis_idx is None:
+            return panchanga_context(prefix, pd.NaT, np.nan, np.nan)
+        try:
+            sun_lon = float(sun_series.iloc[analysis_idx])
+            moon_lon = float(moon_series.iloc[analysis_idx])
+        except Exception:
+            sun_lon = np.nan
+            moon_lon = np.nan
+        return panchanga_context(prefix, price_index[int(bar_idx)], sun_lon, moon_lon)
+
+    try:
+        offset = float(event_metrics.get("event_best_hour_offset", np.nan))
+    except (TypeError, ValueError):
+        offset = np.nan
+    if np.isfinite(offset):
+        best_idx = int(start_idx + round(offset))
+    else:
+        best_idx = int(start_idx + ((end_idx - start_idx) // 2))
+    best_idx = max(int(start_idx), min(int(end_idx), best_idx))
+
+    best_context = context_at_bar("event", best_idx)
+    start_context = context_at_bar("event_start", start_idx)
+    end_context = context_at_bar("event_end", end_idx)
+    out = dict(best_context)
+    out.update(start_context)
+    out.update(end_context)
+    out.update(panchanga_change_flags("event", start_context, end_context))
+    return out
+
+
 def natal_attrs_for_planet(planet: str | None, natal_ctx: dict[str, Any]) -> dict[str, Any]:
     planet_key = normalize_body_name(planet)
     avg_members = parse_avg_members(planet_key)
@@ -1416,6 +1462,14 @@ def main() -> None:
             lon_map,
             natal_ctx,
         )
+        event_panchanga = build_event_panchanga_context(
+            event_metrics,
+            start_idx,
+            end_idx,
+            full_to_analysis_idx,
+            price.index,
+            lon_map,
+        )
 
         for bar_idx in range(start_idx, end_idx + 1):
             future72_idx = future72_lookup.get(bar_idx, -1)
@@ -1587,6 +1641,7 @@ def main() -> None:
                     "tn_touch2_bphs_strength": float(natal_touch2["bphs_strength"]),
                 }
                 row.update(natal_features)
+                row.update(event_panchanga)
                 row.update(
                     {
                         key: value

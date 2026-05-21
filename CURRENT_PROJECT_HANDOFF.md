@@ -1,10 +1,44 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 11:35 IST
+Last updated: 2026-05-21 12:25 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 Panchanga doctrine foundation:
+
+- Added `C:\Users\ADMIN\PycharmProjects\panchanga_doctrine.py`.
+- Panchanga is now computed deterministically from Raman sidereal Sun/Moon longitude at the event best-aspect moment, plus event start/end change flags.
+- New touch-log/context fields include:
+  `event_weekday`, `event_weekday_lord`, `event_tithi_name`, `event_paksha`, `event_karana_name`,
+  `event_yoga_name`, `event_moon_nakshatra`, `event_moon_pada`, `event_sun_nakshatra`, `event_sun_pada`,
+  `event_near_new_moon_flag`, `event_near_full_moon_flag`, and tithi/karana/yoga/nakshatra change flags.
+- `doctrine_config.yaml` and `doctrine_config.py` now expose `panchanga.method=deterministic_sidereal_sun_moon`,
+  `panchanga.status=formula_foundation_pending_traditional_validation`, and `PANCHANGA_SIDEREAL_SUN_MOON_V1`.
+- `aspect_annotation_store.py` now refreshes existing case `context_json` on import while preserving case IDs and annotations. This prevents stale case context after doctrine-field additions.
+- `build_repeatation_review_pack.py` now includes Panchanga fields in ML trait hints. Repeatation UI version advanced to:
+  `repeatation_ui_20260521_panchanga_v14`.
+- `sr_touch_lazy_dashboard.py` now displays compact Panchanga lines in event hover/detail text.
+- Regenerated the Raman touch log:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  with `656` rows and `656` unique events.
+- Re-imported the touch log into `gann_aspect_annotations.sqlite`; no new cases inserted, but all existing case contexts were refreshed with Panchanga fields.
+- Rebuilt and synced the AVG(ALL)|MOON square repeatation pack into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_panchanga_v14`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260521_panchanga_v14`
+- Browser smoke check verified the direct chart contains Panchanga hover data and Panchanga ML trait tokens.
+- Exported fresh Panchanga-aware full-year switch chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_122019.html`
+  and CSV:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_122019.csv`
+  with `732` visible rows.
+- Rebuilt scored candidates from the fresh switch CSV:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv`
+  and `.parquet`, with `732` rows, `WIN=402`, `LOSS=327`, `IGNORE=3`.
 
 2026-05-21 astro function / web research audit:
 

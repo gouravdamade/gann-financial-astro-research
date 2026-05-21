@@ -1081,8 +1081,33 @@ def build_event_hover_lines(row: pd.Series) -> list[str]:
     if event_bphs_strength is not None:
         virupa_text = f" ({event_bphs_virupa:.1f}/60)" if event_bphs_virupa is not None else ""
         lines.append(f"BPHS-like orb proxy: {event_bphs_strength:.3f}{virupa_text}")
+    panchanga_line = build_panchanga_hover_line(row)
+    if panchanga_line:
+        lines.append(panchanga_line)
     lines.extend(build_rule_layer_hover_lines(row))
     return lines
+
+
+def build_panchanga_hover_line(row: pd.Series) -> str:
+    parts = []
+    weekday_lord = str(row.get("event_weekday_lord", "")).strip()
+    weekday = str(row.get("event_weekday", "")).strip()
+    if weekday_lord or weekday:
+        parts.append(" ".join(item for item in [weekday, weekday_lord] if item))
+    paksha = str(row.get("event_paksha", "")).strip()
+    tithi = str(row.get("event_tithi_name", "")).strip()
+    if paksha or tithi:
+        parts.append(" ".join(item for item in [paksha, tithi] if item))
+    moon_nak = str(row.get("event_moon_nakshatra", "")).strip()
+    moon_pada = str(row.get("event_moon_pada", "")).strip()
+    if moon_nak:
+        pada_text = f"p{moon_pada}" if moon_pada else ""
+        parts.append(f"Moon {moon_nak} {pada_text}".strip())
+    yoga = str(row.get("event_yoga_name", "")).strip()
+    karana = str(row.get("event_karana_name", "")).strip()
+    if yoga or karana:
+        parts.append(" / ".join(item for item in [yoga, karana] if item))
+    return f"Panchanga: {' | '.join(parts)}" if parts else ""
 
 
 def build_rule_layer_hover_lines(row: pd.Series) -> list[str]:
@@ -1151,6 +1176,7 @@ def build_quote_detail_lines(row: pd.Series) -> list[str]:
         f"Pair: {str(row.get('pair_key', '')).strip()}",
         f"Aspect: {str(row.get('aspect_label', '')).strip() or str(row.get('aspect', '')).strip()}",
         f"Quote reference: {ref_text or 'Yen IPO Tokyo 1889-02-11 00:00 Asia/Tokyo'}",
+        build_panchanga_hover_line(row) or "Panchanga: n/a",
         f"Quote/JPY hypothesis: {str(row.get('jyotish_hypothesis_direction', 'UNKNOWN'))}",
         (
             "JPY scores B/Bear/Net/Conflict: "

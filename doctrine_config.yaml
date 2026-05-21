@@ -57,6 +57,25 @@ shadbala:
     - planet_minimum_thresholds
     - ishta_kashta_phala
 
+panchanga:
+  method: deterministic_sidereal_sun_moon
+  status: formula_foundation_pending_traditional_validation
+  current_fields:
+    - event_tithi_name
+    - event_paksha
+    - event_weekday_lord
+    - event_moon_nakshatra
+    - event_moon_pada
+    - event_yoga_name
+    - event_karana_name
+  rule_id: PANCHANGA_SIDEREAL_SUN_MOON_V1
+  missing:
+    - timezone_policy_validation_against_traditional_panchanga
+    - rahu_kala_yamaganda_gulika
+    - tara_bala
+    - chandra_bala
+    - muhurta_quality_rules
+
 rule_layer:
   status: heuristic_doctrine_v1
   ml_scope: calibrate_weights_thresholds_and_interactions_only

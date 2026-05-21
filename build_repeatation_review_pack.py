@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_outcome_default_v13"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_panchanga_v14"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -185,6 +185,15 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("event_b1_sign_relation", "event b1 sign relation"),
         ("event_b2_sign_relation", "event b2 sign relation"),
         ("event_doctrine_feature_status", "doctrine feature status"),
+        ("event_panchanga_status", "panchanga status"),
+        ("event_weekday", "weekday"),
+        ("event_weekday_lord", "weekday lord"),
+        ("event_tithi_name", "tithi"),
+        ("event_paksha", "paksha"),
+        ("event_karana_name", "karana"),
+        ("event_yoga_name", "yoga"),
+        ("event_moon_nakshatra", "moon nakshatra"),
+        ("event_sun_nakshatra", "sun nakshatra"),
         ("touch_planets", "touch planets"),
         ("touch_planet_1_natal_sign", "touch planet 1 sign"),
         ("touch_planet_2_natal_sign", "touch planet 2 sign"),
@@ -206,6 +215,16 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("tn_primary_natal_house", "primary natal house"),
         ("base_tn_primary_natal_house", "base primary natal house"),
         ("aspect_regime_active_count", "active regime count"),
+        ("event_moon_pada", "moon pada"),
+        ("event_sun_pada", "sun pada"),
+        ("event_tithi_changed_flag", "tithi changed"),
+        ("event_karana_changed_flag", "karana changed"),
+        ("event_yoga_changed_flag", "yoga changed"),
+        ("event_moon_nakshatra_changed_flag", "moon nakshatra changed"),
+        ("event_moon_pada_changed_flag", "moon pada changed"),
+        ("event_weekday_changed_flag", "weekday changed"),
+        ("event_near_new_moon_flag", "near new moon"),
+        ("event_near_full_moon_flag", "near full moon"),
     ]:
         value = numeric_value(row.get(col))
         if value is not None:

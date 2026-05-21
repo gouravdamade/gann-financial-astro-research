@@ -53,6 +53,20 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "minimum_total_virupa": SHADBALA_MINIMUM_TOTAL_VIRUPA,
         "minimum_total_source": "SHADBALA_JAYA lines 743-745",
     },
+    "panchanga": {
+        "method": "deterministic_sidereal_sun_moon",
+        "status": "formula_foundation_pending_traditional_validation",
+        "current_fields": [
+            "event_tithi_name",
+            "event_paksha",
+            "event_weekday_lord",
+            "event_moon_nakshatra",
+            "event_moon_pada",
+            "event_yoga_name",
+            "event_karana_name",
+        ],
+        "rule_id": "PANCHANGA_SIDEREAL_SUN_MOON_V1",
+    },
     "rule_layer": {
         "status": "heuristic_doctrine_v1",
         "ml_scope": "calibrate_weights_thresholds_and_interactions_only",
@@ -124,6 +138,7 @@ def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str,
     astronomy = cfg.get("astronomy", {}) if isinstance(cfg.get("astronomy"), dict) else {}
     drishti = cfg.get("drishti", {}) if isinstance(cfg.get("drishti"), dict) else {}
     shadbala = cfg.get("shadbala", {}) if isinstance(cfg.get("shadbala"), dict) else {}
+    panchanga = cfg.get("panchanga", {}) if isinstance(cfg.get("panchanga"), dict) else {}
     rule_layer = cfg.get("rule_layer", {}) if isinstance(cfg.get("rule_layer"), dict) else {}
     experimental_layers = cfg.get("experimental_layers", [])
     source_ids = cfg.get("source_ids", [])
@@ -140,6 +155,9 @@ def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str,
         "doctrine_drishti_method": str(drishti.get("method", "")),
         "doctrine_drishti_status": str(drishti.get("status", "")),
         "doctrine_shadbala_method": str(shadbala.get("method", "")),
+        "doctrine_panchanga_method": str(panchanga.get("method", "")),
+        "doctrine_panchanga_status": str(panchanga.get("status", "")),
+        "doctrine_panchanga_rule_id": str(panchanga.get("rule_id", "")),
         "doctrine_rule_layer_status": str(rule_layer.get("status", "")),
         "doctrine_rule_citation_status": str(rule_layer.get("rule_citation_status", "")),
         "doctrine_ml_scope": str(rule_layer.get("ml_scope", "")),
