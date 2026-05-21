@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_strict_shadbala_v15"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_full_shadbala_v16"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -187,6 +187,12 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("event_doctrine_feature_status", "doctrine feature status"),
         ("event_strict_shadbala_status", "strict shadbala status"),
         ("event_strict_drik_status", "strict drik status"),
+        ("event_strict_shadbala_missing_components", "strict shadbala validation gap"),
+        ("event_strict_shadbala_component_rule_ids", "strict shadbala rule ids"),
+        ("event_b1_strict_chesta_status", "event b1 chesta"),
+        ("event_b2_strict_chesta_status", "event b2 chesta"),
+        ("event_b1_strict_yuddha_status", "event b1 yuddha"),
+        ("event_b2_strict_yuddha_status", "event b2 yuddha"),
         ("event_b1_strict_dignity_label", "event b1 strict dignity"),
         ("event_b2_strict_dignity_label", "event b2 strict dignity"),
         ("event_b1_strict_sign", "event b1 strict sign"),
@@ -246,8 +252,12 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, str]]:
         ("event_orb_deg", "event orb", 45.0, 75.0),
         ("event_sthana_dignity_virupa_avg", "event sthana dignity", 8.0, 30.0),
         ("event_strict_drik_bala_virupa_avg", "strict drik", -40.0, 30.0),
-        ("event_strict_shadbala_implemented_total_virupa_avg", "strict shadbala implemented", 120.0, 230.0),
-        ("event_strict_shadbala_implemented_total_ratio_avg", "strict shadbala ratio", 0.35, 0.65),
+        ("event_strict_saptavargaja_bala_virupa_avg", "strict saptavargaja", 80.0, 180.0),
+        ("event_strict_ojayugma_bala_virupa_avg", "strict ojayugma", 5.0, 25.0),
+        ("event_strict_kaala_9_bala_virupa_avg", "strict kaala", 80.0, 220.0),
+        ("event_strict_chesta_bala_virupa_avg", "strict chesta", 5.0, 35.0),
+        ("event_strict_shadbala_implemented_total_virupa_avg", "strict shadbala v1 total", 240.0, 480.0),
+        ("event_strict_shadbala_implemented_total_ratio_avg", "strict shadbala ratio", 0.70, 1.25),
     ]:
         bucket = numeric_bucket(key, numeric_value(row.get(key)), low, high)
         if bucket:

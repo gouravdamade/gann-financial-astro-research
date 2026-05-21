@@ -1093,6 +1093,9 @@ def build_event_hover_lines(row: pd.Series) -> list[str]:
 
 def build_strict_shadbala_hover_line(row: pd.Series) -> str:
     drik = _safe_float(row.get("event_strict_drik_bala_virupa_avg"))
+    saptavargaja = _safe_float(row.get("event_strict_saptavargaja_bala_virupa_avg"))
+    kaala = _safe_float(row.get("event_strict_kaala_9_bala_virupa_avg"))
+    chesta = _safe_float(row.get("event_strict_chesta_bala_virupa_avg"))
     total = _safe_float(row.get("event_strict_shadbala_implemented_total_virupa_avg"))
     ratio = _safe_float(row.get("event_strict_shadbala_implemented_total_ratio_avg"))
     status = str(row.get("event_strict_shadbala_status", "")).strip()
@@ -1101,8 +1104,14 @@ def build_strict_shadbala_hover_line(row: pd.Series) -> str:
     parts = []
     if drik is not None:
         parts.append(f"Drik {drik:.1f}V")
+    if saptavargaja is not None:
+        parts.append(f"Saptavargaja {saptavargaja:.1f}V")
+    if kaala is not None:
+        parts.append(f"Kaala {kaala:.1f}V")
+    if chesta is not None:
+        parts.append(f"Chesta {chesta:.1f}V")
     if total is not None:
-        parts.append(f"partial total {total:.1f}V")
+        parts.append(f"v1 total {total:.1f}V")
     if ratio is not None:
         parts.append(f"ratio {ratio:.2f}")
     if status:

@@ -1,10 +1,56 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 16:35 IST
+Last updated: 2026-05-21 17:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 full Shadbala component v1 expansion:
+
+- Expanded `C:\Users\ADMIN\PycharmProjects\strict_shadbala_doctrine.py` from the strict Drik foundation into `STRICT_SHADBALA_V3_FULL_COMPONENT_V1`.
+- Implemented Saptavargaja Bala over D1/D2/D3/D7/D9/D12/D30 using compound temporary + natural relationship scoring, with per-varga detail JSON.
+- Implemented Ojayugma Bala using odd/even Rashi and Navamsa logic.
+- Added explicit Kaala Bala v1 subcomponents:
+  Nathonnatha, Paksha, Tribhaga, Abda, Masa, Vara, Hora, Ayana, and Yuddha.
+- Added Chesta Bala speed-state v1 for non-luminary classical planets.
+- Added Graha Yuddha detector for Mars/Mercury/Jupiter/Venus/Saturn within 1 degree, using ecliptic latitude as the v1 tie-breaker where available.
+- Kept Rahu/Ketu out of Shadbala totals as proxy shadow nodes. `AVG(ALL)` remains a seven-classical-planet component-wise mean, not a node/outer-planet average.
+- `build_aspect_sr_touch_log.py` now passes Swiss Ephemeris speed, latitude, declination, timestamp, and Tokyo longitude into strict Shadbala context.
+- `doctrine_config.yaml` / `doctrine_config.py` now document the v16 decisions:
+  seven-classical `AVG(ALL)`, Saptavargaja compound relationship policy, deterministic Abda/Masa epoch-day policy pending cross-validation, speed-state Chesta v1, and Yuddha within-1-degree policy.
+- `aspect_annotation_store.py` now preserves the new strict Shadbala context fields in case JSON.
+- `build_repeatation_review_pack.py` advanced to:
+  `repeatation_ui_20260521_full_shadbala_v16`
+  and now includes strict Saptavargaja, Ojayugma, Kaala, Chesta, Yuddha, rule IDs, and validation-gap tokens in ML trait hints.
+- `sr_touch_lazy_dashboard.py` hover/detail lines now show compact:
+  Drik, Saptavargaja, Kaala, Chesta, v1 total, ratio, and status.
+- Added doctrine regression tests:
+  `C:\Users\ADMIN\PycharmProjects\test_strict_shadbala_doctrine.py`
+  covering Drik formula checkpoints, Navamsa/Ojayugma, Saptavargaja detail shape, Nathonnatha local mean time, Chesta/Yuddha decisions, and `AVG(ALL)` context output.
+- Rebuilt canonical Raman touch log:
+  `C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv`
+  with `656` rows.
+- Refreshed `gann_aspect_annotations.sqlite`; no new case IDs inserted.
+- Exported fresh v16-aware full-year switch chart:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_165758.html`
+  and CSV:
+  `C:\Users\ADMIN\Desktop\doc\sr_touch_full_1year_switch_20260521_165758.csv`
+  with `732` visible rows.
+- Rebuilt scored candidates:
+  `C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv`
+  and `.parquet`, with `732` rows, `WIN=402`, `LOSS=327`, `IGNORE=3`.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260521_165838`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_full_shadbala_v16`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260521_full_shadbala_v16`
+- Verification passed:
+  Python compile, `python test_strict_shadbala_doctrine.py`, smoke touch-log build, full touch-log regeneration, DB context refresh,
+  switch export, candidate rebuild, repeatation pack rebuild/sync, localhost HTTP `200`, and served chart content check for v16 strict Shadbala hover text.
 
 2026-05-21 strict Drik Bala / Shadbala v2 foundation:
 

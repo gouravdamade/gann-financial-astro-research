@@ -1001,6 +1001,42 @@ def sidereal_house_cusps_for_time(timestamp: Any, lat: float, lon: float) -> dic
         return {}
 
 
+STRICT_SHADBALA_SWISSEPH_IDS = {
+    "SUN": swe.SUN,
+    "MOON": swe.MOON,
+    "MARS": swe.MARS,
+    "MERCURY": swe.MERCURY,
+    "JUPITER": swe.JUPITER,
+    "VENUS": swe.VENUS,
+    "SATURN": swe.SATURN,
+}
+
+
+def strict_shadbala_observables_for_time(timestamp: Any) -> dict[str, dict[str, float]]:
+    out = {"speeds": {}, "latitudes": {}, "declinations": {}}
+    try:
+        ts = pd.Timestamp(timestamp)
+        if pd.isna(ts):
+            return out
+        utc_ts = ts.tz_convert(UTC) if ts.tzinfo is not None else ts.tz_localize(IST).tz_convert(UTC)
+        hour = utc_ts.hour + (utc_ts.minute / 60.0) + (utc_ts.second / 3600.0) + (utc_ts.microsecond / 3_600_000_000.0)
+        jd_ut = swe.julday(utc_ts.year, utc_ts.month, utc_ts.day, hour)
+        sidereal_flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL | swe.FLG_SPEED
+        equatorial_flags = swe.FLG_SWIEPH | swe.FLG_EQUATORIAL | swe.FLG_SPEED
+        for planet, swe_id in STRICT_SHADBALA_SWISSEPH_IDS.items():
+            try:
+                ecl, _ = swe.calc_ut(jd_ut, swe_id, sidereal_flags)
+                eq, _ = swe.calc_ut(jd_ut, swe_id, equatorial_flags)
+            except Exception:
+                continue
+            out["latitudes"][planet] = float(ecl[1])
+            out["speeds"][planet] = float(ecl[3])
+            out["declinations"][planet] = float(eq[1])
+    except Exception:
+        return out
+    return out
+
+
 def build_event_strict_shadbala_context(
     event: pd.Series,
     event_metrics: dict[str, Any],
@@ -1040,12 +1076,18 @@ def build_event_strict_shadbala_context(
     timestamp = price_index[int(best_idx)]
     houses = sidereal_house_cusps_for_time(timestamp, lat, lon)
     asc_lon = houses.get(1, np.nan)
+    observables = strict_shadbala_observables_for_time(timestamp)
     return event_strict_shadbala_context(
         event.get("b1"),
         event.get("b2"),
         longitudes,
         asc_lon,
         houses,
+        timestamp,
+        lon,
+        observables.get("speeds", {}),
+        observables.get("latitudes", {}),
+        observables.get("declinations", {}),
     )
 
 

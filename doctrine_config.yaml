@@ -35,16 +35,35 @@ drishti:
     - drik_correction_to_sthana_and_kala
 
 shadbala:
-  method: strict_shadbala_v2_partial_components
-  status: partial_high_confidence_components_pending_full_six_bala
+  method: strict_shadbala_v3_full_component_v1
+  status: full_component_v1_with_explicit_kaala_chesta_yuddha_decisions_pending_external_calculator_validation
   current_fields: [shadbala_tag, shadbala_avg]
   implemented_components:
     - naisargika_bala
     - uchcha_bala
+    - saptavargaja_bala
+    - ojayugma_bala
     - kendradi_bala
     - drekkana_bala
     - dig_bala
     - strict_drik_bala
+    - nathonnatha_bala
+    - paksha_bala
+    - tribhaga_bala
+    - abda_bala
+    - masa_bala
+    - vara_bala
+    - hora_bala
+    - ayana_bala
+    - yuddha_bala
+    - chesta_bala
+  doctrine_decisions:
+    rahu_ketu_shadbala_policy: excluded_proxy_nodes_not_classical_shadbala_members
+    avg_all_policy: seven_classical_planet_component_mean
+    saptavargaja_policy: D1_D2_D3_D7_D9_D12_D30_compound_relationship_v1
+    kaala_abda_masa_policy: deterministic_epoch_day_lords_pending_cross_validation
+    chesta_policy: speed_state_v1_for_non_luminary_classical_planets
+    yuddha_policy: non_luminary_classical_longitude_within_1deg_latitude_tiebreak
   minimum_total_virupa:
     SUN: 300
     MOON: 360
@@ -55,12 +74,9 @@ shadbala:
     SATURN: 300
   minimum_total_source: SHADBALA_JAYA lines 743-745
   missing:
-    - saptavargaja_bala
-    - ojayugma_bala
-    - full_kaala_bala
-    - chesta_bala
-    - eighteen_sub_balas
-    - yuddha_bala
+    - external_canonical_calculator_validation
+    - exact_traditional_abda_masa_epoch_crosscheck
+    - chesta_bala_classical_avasta_crosscheck
     - ishta_kashta_phala
 
 drik_bala:
