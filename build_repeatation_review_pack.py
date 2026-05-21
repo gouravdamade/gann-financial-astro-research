@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260520_traits_v12"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_outcome_default_v13"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -369,6 +369,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "windowEnd": window_end,
         "pairKey": pair_key,
         "aspect": aspect,
+        "defaultOutcome": str(case.get("default_outcome", "bullish") or "bullish"),
         "repeatationIndex": int(case.get("repeatation_index", 1)),
         "repeatationCount": int(case.get("repeatation_count", 1)),
         "previousHref": str(case.get("previous_chart_href", "")),
@@ -400,6 +401,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       selectedIgnoreTypes: [],
       annotations: [],
       autoSuggestion: null,
+      outcomeTouched: false,
       lastPoint: null,
       draftLoaded: false
     }};
@@ -991,6 +993,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function outcome() {{
       return panel.querySelector('#repeatation-outcome').value;
     }}
+    function defaultOutcome() {{
+      var value = String(meta.defaultOutcome || 'bullish').toLowerCase();
+      if (['bullish', 'bearish', 'sideways', 'unclear'].indexOf(value) === -1) return 'bullish';
+      return value;
+    }}
+    function setOutcome(value) {{
+      panel.querySelector('#repeatation-outcome').value = value || defaultOutcome();
+    }}
     function tradeProfit() {{
       if (!state.tradeStart || !state.tradeEnd) return null;
       var entry = Number(state.tradeStart.y);
@@ -1222,7 +1232,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function draftPayload() {{
       return {{
-        version: 1,
+        version: 2,
         saved_at: new Date().toISOString(),
         case_id: meta.caseId,
         pair_key: meta.pairKey,
@@ -1242,6 +1252,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ml_annotations: state.annotations,
         last_point: serialPoint(state.lastPoint),
         outcome_label: outcome(),
+        outcome_touched: state.outcomeTouched,
         note_type: noteType(),
         note: noteText()
       }};
@@ -1278,10 +1289,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreEnd = restorePoint(draft.ignore_end);
       state.tradeIgnored = !!draft.trade_ignored;
       state.autoSuggestion = draft.auto_suggestion || null;
+      state.outcomeTouched = !!draft.outcome_touched;
       setIgnoreTypes(Array.isArray(draft.selected_ignore_types) ? draft.selected_ignore_types : [], false);
       state.annotations = Array.isArray(draft.ml_annotations) ? draft.ml_annotations : [];
       state.lastPoint = restorePoint(draft.last_point) || state.tradeStart || state.tradeEnd || state.ignoreStart || state.ignoreEnd;
-      panel.querySelector('#repeatation-outcome').value = draft.outcome_label || 'bullish';
+      var restoredOutcome = draft.outcome_label || defaultOutcome();
+      if (!state.outcomeTouched && Number(draft.version || 1) < 2 && restoredOutcome === 'bullish' && defaultOutcome() !== 'bullish') {{
+        restoredOutcome = defaultOutcome();
+      }}
+      setOutcome(restoredOutcome);
       panel.querySelector('#repeatation-note-type').value = draft.note_type || 'manual_repeatation_note';
       panel.querySelector('#repeatation-note').value = draft.note || '';
       if (state.selectedIgnoreTypes.length) syncIgnoreNotes();
@@ -1305,10 +1321,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.autoSuggestion = null;
       state.selectedIgnoreTypes = [];
       state.annotations = [];
+      state.outcomeTouched = false;
       state.lastPoint = null;
       state.draftLoaded = false;
       state.lastSavedAt = '';
-      panel.querySelector('#repeatation-outcome').value = 'bullish';
+      setOutcome(defaultOutcome());
       panel.querySelector('#repeatation-note-type').value = 'manual_repeatation_note';
       panel.querySelector('#repeatation-note').value = '';
       setTool('', false);
@@ -1587,7 +1604,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-download').addEventListener('click', downloadMarkers);
     panel.querySelector('#repeatation-note').addEventListener('input', function () {{ render(); saveDraft(); }});
     panel.querySelector('#repeatation-note-type').addEventListener('input', function () {{ render(); saveDraft(); }});
-    panel.querySelector('#repeatation-outcome').addEventListener('change', function () {{ drawMarkers(); render(); saveDraft(); }});
+    setOutcome(defaultOutcome());
+    panel.querySelector('#repeatation-outcome').addEventListener('change', function () {{ state.outcomeTouched = true; drawMarkers(); render(); saveDraft(); }});
     panel.querySelector('#repeatation-rule-scope').addEventListener('change', saveDraft);
     panel.querySelector('#repeatation-rule-type').addEventListener('change', saveDraft);
     window.addEventListener('beforeunload', function () {{
@@ -1981,6 +1999,9 @@ def main() -> None:
     touch_rows_by_event = trait_row_for_events(args.touch_log, cases)
     special_traits_by_case = compute_special_traits(cases, stats_by_case, touch_rows_by_event)
     for case in cases:
+        stats = stats_by_case[int(case["case_id"])]
+        direction = str(stats.get("full_window_direction", "") or "").strip().lower()
+        case["default_outcome"] = direction if direction in {"bullish", "bearish"} else "unclear"
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
 
     records: list[dict[str, Any]] = []

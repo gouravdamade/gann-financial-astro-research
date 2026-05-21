@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 11:18 IST
+Last updated: 2026-05-21 11:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -66,6 +66,22 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Direct first Raman case URL:
   `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260520_traits_v12_raman`
 - The old direct URL `aspect_review_case_120_chart.html` now contains a local redirect note to the updated reviewer so the browser does not show stale pre-Raman content.
+
+2026-05-21 repeatation outcome default fix:
+
+- User observed case 8 live trade result/callout still showed `bullish` while `ML trait hints` correctly showed bearish behavior.
+- Root cause: marker drawer `Outcome` selector had a hardcoded `bullish` default, and old autosaved drafts could preserve that default even when the case full-window direction was bearish.
+- `build_repeatation_review_pack.py` now injects `defaultOutcome` into each chart's marker UI metadata based on `full_window_direction`.
+- Initial outcome now defaults to the recurrence's full-window direction (`bullish` or `bearish`; otherwise `unclear`) while still allowing manual override.
+- Draft schema advanced to version `2` with `outcome_touched`; old version-1 drafts that only inherited the hardcoded bullish default are migrated to the case default when the case default is not bullish.
+- `Clear saved draft` now resets to case default outcome instead of hardcoded bullish.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260521_outcome_default_v13`
+- Rebuilt and re-synced the Raman AVG(ALL)|MOON square review pack into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Verified served `aspect_review_case_8_chart.html` contains `defaultOutcome: "bearish"`, `outcomeTouched`, and v13 cache links; reviewer URL returned HTTP `200`.
+- Current reviewer URL after this fix:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_outcome_default_v13`
 
 2026-05-21 doctrine hardening foundation:
 
