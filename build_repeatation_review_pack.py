@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260521_full_shadbala_v16"
+REPEATATION_UI_VERSION = "repeatation_ui_20260521_trait_guide_v17"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -413,6 +413,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "previousHref": str(case.get("previous_chart_href", "")),
         "nextHref": str(case.get("next_chart_href", "")),
         "reviewerHref": str(case.get("reviewer_href", "repeatation_reviewer.html")),
+        "traitGuideHref": html_cache_href("trait_guide.html"),
         "specialTraits": case.get("special_traits", {}),
     }
     metadata_json = json.dumps(metadata)
@@ -1069,23 +1070,76 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
     }}
+    var TRAIT_TAG_DEFINITIONS = {{
+      'direction linked': 'This trait appears often enough in this repeatation family and its average full-window pips differ from the group average by at least 8 pips. It is an associative hint, not proof.',
+      'rare': 'This trait appears in only one or two repeatations, so it may be a special exception worth reading carefully.',
+      'common': 'This trait appears in most repeatations, so it describes broad context more than a unique edge.',
+      'only bullish samples': 'Within this repeatation family, all recurrences carrying this trait had positive bullish-window pips.',
+      'only bearish samples': 'Within this repeatation family, all recurrences carrying this trait had negative bullish-window pips.',
+      'context': 'Useful chart or doctrine context, but not currently strong enough to call direction linked.'
+    }};
+    var TRAIT_FIELD_DEFINITIONS = {{
+      event_duration: 'Aspect window length bucket. Short/medium/long tells whether the event was brief or persisted across more candles.',
+      event_orb_deg: 'How far the exact aspect is from perfect at the scored moment. Low is tighter; mid is moderate; high is loose/noisier.',
+      shadbala_avg: 'Existing source/proxy Shadbala average bucket retained for continuity.',
+      event_sthana_dignity_virupa_avg: 'Average basic dignity strength of the event bodies in virupas.',
+      event_strict_drik_bala_virupa_avg: 'Average strict Drik Bala from benefic/malefic aspect pressure. Negative means malefic pressure dominates.',
+      event_strict_saptavargaja_bala_virupa_avg: 'Average seven-varga dignity strength across D1/D2/D3/D7/D9/D12/D30.',
+      event_strict_ojayugma_bala_virupa_avg: 'Odd/even Rashi and Navamsa strength for the involved planet/body.',
+      event_strict_kaala_9_bala_virupa_avg: 'Nine-part Kaala Bala v1: Nathonnatha, Paksha, Tribhaga, Abda, Masa, Vara, Hora, Ayana, Yuddha.',
+      event_strict_chesta_bala_virupa_avg: 'Motion-state strength. Retrograde/stationary planets score stronger in this v1 rule.',
+      event_strict_shadbala_implemented_total_virupa_avg: 'Current full component v1 Shadbala total from implemented components.',
+      event_strict_shadbala_implemented_total_ratio_avg: 'Implemented Shadbala total divided by the classical minimum threshold.',
+      edge_score: 'Trade candidate scoring strength from the SR/aspect scoring layer.',
+      tn_score_total: 'Transit-to-natal score total for the quote/reference side.',
+      base_tn_score_total: 'Transit-to-natal score total for the base/reference side.',
+      aspect_regime_active_count: 'Number of active aspect/regime windows at this recurrence. Higher means more overlap and less clean attribution.',
+      touch_planets: 'Planetary SR touch participants visible near this event.',
+      event_paksha: 'Moon phase half: Shukla/waxing or Krishna/waning.',
+      event_tithi_name: 'Panchanga lunar day at the event moment.',
+      event_moon_nakshatra: 'Moon nakshatra at the event moment.',
+      event_weekday_lord: 'Planetary weekday lord at the event moment.'
+    }};
+    function traitBaseKey(trait) {{
+      var key = String((trait && trait.key) || '').split(':')[0];
+      return key || String((trait && trait.label) || '').replace(/\\s+/g, '_').toLowerCase();
+    }}
+    function traitFieldExplanation(trait) {{
+      var base = traitBaseKey(trait);
+      if (TRAIT_FIELD_DEFINITIONS[base]) return TRAIT_FIELD_DEFINITIONS[base];
+      var label = String((trait && trait.label) || '').toLowerCase();
+      if (label.indexOf(' mid') > -1) return 'A middle bucket: this value sits between the configured low and high cutoffs for the feature.';
+      if (label.indexOf(' high') > -1) return 'A high bucket: this value is above the configured high cutoff for the feature.';
+      if (label.indexOf(' low') > -1) return 'A low bucket: this value is below the configured low cutoff for the feature.';
+      return 'A recurrence trait extracted from the event context and compared against the same pair/aspect repeatation family.';
+    }}
+    function traitTagExplanation(tags) {{
+      return (tags || []).map(function (tag) {{
+        return tag + ': ' + (TRAIT_TAG_DEFINITIONS[tag] || 'Trait ranking tag.');
+      }}).join(' ');
+    }}
     function specialTraitsHtml() {{
       var data = meta.specialTraits || {{}};
       var traits = Array.isArray(data.traits) ? data.traits : [];
       if (!traits.length) return '<div class="rm-traits muted">No trait hints available for this recurrence yet.</div>';
       var rows = traits.slice(0, 6).map(function (trait) {{
-        var tags = Array.isArray(trait.tags) ? trait.tags.join(', ') : '';
+        var tagList = Array.isArray(trait.tags) ? trait.tags : [];
+        var tags = tagList.join(', ');
         var delta = Number(trait.delta_vs_group_pips);
         var deltaText = Number.isFinite(delta) ? (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' pips vs group' : '';
-        return '<div class="rm-trait-item">'
-          + '<div><b>' + esc(trait.label || trait.key || '') + '</b><span>' + esc(tags) + '</span></div>'
+        var explanation = traitFieldExplanation(trait);
+        var tagHelp = traitTagExplanation(tagList);
+        return '<div class="rm-trait-item" title="' + esc(explanation + ' ' + tagHelp) + '">'
+          + '<div><b>' + esc(trait.label || trait.key || '') + '</b><span title="' + esc(tagHelp) + '">' + esc(tags) + '</span></div>'
           + '<div>' + esc(trait.occurrences) + '/' + esc(trait.repeatation_count) + ' repeatations'
           + (deltaText ? ' | ' + esc(deltaText) : '')
           + '</div>'
+          + '<div class="rm-trait-explain">' + esc(explanation) + '</div>'
           + '</div>';
       }}).join('');
       return '<div class="rm-traits">'
         + '<div><b>ML trait hints</b><span>' + esc(data.case_full_window_direction || '') + ' ' + esc(data.case_full_window_bullish_pips || '') + ' pips</span></div>'
+        + '<div><a class="rm-guide-link" href="' + esc(meta.traitGuideHref || 'trait_guide.html') + '" target="_blank" rel="noopener">Open trait guide</a></div>'
         + '<div class="rm-trait-method">' + esc(data.method || '') + '</div>'
         + rows
         + '</div>';
@@ -1592,9 +1646,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-traits{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-traits>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
       + '#repeatation-marker-panel .rm-traits span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-guide-link{{display:inline-flex;margin:4px 0 2px;color:#93c5fd;text-decoration:underline;text-underline-offset:2px;}}'
       + '#repeatation-marker-panel .rm-trait-method{{color:#94a3b8;font-size:11px;margin:4px 0 6px;}}'
       + '#repeatation-marker-panel .rm-trait-item{{border-top:1px solid #1e293b;padding-top:5px;margin-top:5px;}}'
       + '#repeatation-marker-panel .rm-trait-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-trait-explain{{color:#93a4b8;font-size:11px;margin-top:2px;}}'
       + '#repeatation-marker-panel .rm-ledger-item{{background:#020617;border:1px solid #334155;border-radius:5px;padding:6px;margin:5px 0;}}'
       + '#repeatation-marker-panel .rm-ledger-item span{{color:#93c5fd;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-ledger-item button{{margin-top:5px;padding:3px 6px;}}'
@@ -1874,6 +1930,63 @@ def attach_repeatation_navigation(cases: list[dict[str, Any]]) -> None:
         case["reviewer_href"] = html_cache_href("repeatation_reviewer.html")
 
 
+def render_trait_guide() -> str:
+    rows = [
+        ("event orb deg low/mid/high", "Aspect looseness bucket. Lower is tighter and usually cleaner; mid is moderate; high is loose/noisier."),
+        ("direction linked", "Trait appears often enough in this repeatation family and its average full-window pips differ from group average by at least 8 pips."),
+        ("rare", "Trait appears in only one or two repeatations. Treat as an exception candidate, not a general rule."),
+        ("common", "Trait appears in most repeatations. It describes shared background context more than a unique edge."),
+        ("only bullish samples", "Every recurrence with this trait had positive bullish-window pips inside this family."),
+        ("only bearish samples", "Every recurrence with this trait had negative bullish-window pips inside this family."),
+        ("x/y repeatations", "How many repeatations in this same pair/aspect family also have the same trait."),
+        ("pips vs group", "Average bullish-window pips for repeatations with the trait minus the family average. Negative favors bearish behavior; positive favors bullish behavior."),
+        ("active regime count", "Number of active overlapping aspect/regime windows. Higher count means attribution is less clean."),
+        ("shadbala avg / strict shadbala ratio", "Strength bucket from the Shadbala layer. Ratio is current implemented total divided by the classical minimum threshold."),
+        ("strict drik", "Signed Drik Bala pressure. Negative means malefic pressure dominates; positive means benefic pressure dominates."),
+        ("strict saptavargaja", "Seven-varga dignity strength across D1, D2, D3, D7, D9, D12, and D30."),
+        ("strict kaala", "Nine-part Kaala Bala v1: Nathonnatha, Paksha, Tribhaga, Abda, Masa, Vara, Hora, Ayana, and Yuddha."),
+        ("strict chesta", "Motion-state strength. Retrograde or near-stationary non-luminary classical planets score stronger in v1."),
+        ("TN/base TN score", "Transit-to-natal score totals used by the market scoring layer for quote/base context."),
+        ("touch planets", "Planetary support/resistance touch participants visible around the event."),
+    ]
+    row_html = "\n".join(
+        f"<tr><td>{h(term)}</td><td>{h(desc)}</td></tr>"
+        for term, desc in rows
+    )
+    return f"""<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ML Trait Guide</title>
+  <style>
+    body {{ margin: 0; font-family: Segoe UI, Arial, sans-serif; background: #0f172a; color: #e5e7eb; }}
+    main {{ max-width: 980px; margin: 0 auto; padding: 26px; }}
+    h1 {{ margin: 0 0 8px; font-size: 24px; }}
+    p {{ color: #cbd5e1; line-height: 1.55; }}
+    table {{ width: 100%; border-collapse: collapse; background: #111827; margin-top: 18px; }}
+    th, td {{ border: 1px solid #334155; padding: 10px; vertical-align: top; }}
+    th {{ background: #1e293b; color: #bfdbfe; text-align: left; }}
+    td:first-child {{ width: 260px; color: #fde68a; font-weight: 700; }}
+    .note {{ border: 1px solid #334155; border-radius: 8px; padding: 12px; background: #020617; }}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ML Trait Guide</h1>
+    <p class="note">
+      These hints compare the current recurrence against the same pair_key/aspect repeatation family using full-window bullish pips.
+      They are associative review clues, not causal proof. Use them to decide what to inspect and what rule/exception notes to write.
+    </p>
+    <table>
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>{row_html}</tbody>
+    </table>
+  </main>
+</body>
+</html>
+"""
+
+
 def render_index(seed: dict[str, Any], rows: list[dict[str, Any]], output_dir: Path) -> str:
     table_rows = []
     for row in rows:
@@ -2091,9 +2204,12 @@ def main() -> None:
     index_path.write_text(render_index(seed, records, output_dir), encoding="utf-8")
     reviewer_path = output_dir / "repeatation_reviewer.html"
     reviewer_path.write_text(render_reviewer_shell(seed, records, output_dir), encoding="utf-8")
+    guide_path = output_dir / "trait_guide.html"
+    guide_path.write_text(render_trait_guide(), encoding="utf-8")
     print(f"Wrote marker template: {marker_template}")
     print(f"Wrote index: {index_path}")
     print(f"Wrote reviewer: {reviewer_path}")
+    print(f"Wrote trait guide: {guide_path}")
     print(f"repeatation_count={len(records)}")
 
 

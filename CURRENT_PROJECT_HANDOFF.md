@@ -1,10 +1,36 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 17:02 IST
+Last updated: 2026-05-21 20:00 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 repeatation trait guide v17:
+
+- Improved the ML trait hints panel in `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260521_trait_guide_v17`.
+- Each trait row now includes a short inline explanation and browser tooltip.
+- Added an `Open trait guide` link in the marker drawer that opens:
+  `trait_guide.html`
+  in a separate tab/window.
+- The guide explains review terms such as:
+  `event orb deg low/mid/high`, `direction linked`, `rare`, `common`, `only bullish samples`,
+  `only bearish samples`, `x/y repeatations`, `pips vs group`, `active regime count`,
+  strict Drik, Saptavargaja, Kaala, Chesta, TN/base TN score, and touch planets.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260521_195842`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260521_trait_guide_v17`
+- Direct seed chart URL:
+  `http://localhost:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260521_trait_guide_v17`
+- Trait guide URL:
+  `http://localhost:8765/trait_guide.html?v=repeatation_ui_20260521_trait_guide_v17`
+- Verification passed:
+  Python compile, repeatation pack rebuild/sync, chart HTTP `200`, and trait guide HTTP `200`.
 
 2026-05-21 full Shadbala component v1 expansion:
 
