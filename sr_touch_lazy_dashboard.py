@@ -23,7 +23,7 @@ if str(THIS_DIR) not in sys.path:
     sys.path.insert(0, str(THIS_DIR))
 
 from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude
+from JDML4 import fetch_planetary_longitude, swe
 from build_trade_candidates_from_touches import (
     aspect_family,
     aspect_stats_from_event_json,
@@ -31,7 +31,7 @@ from build_trade_candidates_from_touches import (
     score_currency_pair_for_row,
     score_transit_natal_hits_for_row,
 )
-from doctrine_config import append_doctrine_metadata
+from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
 from planetary_sr_engine import DEFAULT_SR_PLANETS
 
 IST = "Asia/Kolkata"
@@ -65,6 +65,7 @@ AVG_ALL_PLANETS = (
 AVG_ALL_PLANET_SET = set(AVG_ALL_PLANETS)
 SHORT_TERM_EXCLUDED_SLOW_PAIR_BODIES = {"JUPITER", "SATURN", "URANUS", "NEPTUNE", "PLUTO"}
 SHORT_TERM_EXCLUDED_CONTEXT_PAIR_BODIES = {AVG_ALL_LABEL, "RAHU", "KETU"}
+DOCTRINE_AYANAMSA = configure_swiss_ephemeris_sidereal(swe)
 
 PLANET_COLORS = {
     "MOON": "#60a5fa",

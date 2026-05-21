@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 10:37 IST
+Last updated: 2026-05-21 10:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -22,7 +22,18 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   4. rebuild candidates with doctrine metadata;
   5. add purged/embargoed walk-forward validation;
   6. later add full Shadbala, strict Drik Bala, combustion/station/speed, functional benefic/malefic, Vargas, Dasha, and Gann scale/harmonic variants.
-- Recommended doctrine decision: lock Vedic sidereal calculations to explicit Lahiri/Chitrapaksha ayanamsa with true Rahu/Ketu, unless user chooses otherwise. Current `doctrine_config.yaml` still says `swiss_ephemeris_default`, which is too vague for final ML training.
+- User chose Raman ayanamsa as personal doctrine preference after the audit.
+- `doctrine_config.yaml` now locks:
+  - `ayanamsa: Raman`
+  - `ayanamsa_swiss_ephemeris_id: SIDM_RAMAN`
+  - `node_type: true_node`
+- `doctrine_config.py` now exposes `configure_swiss_ephemeris_sidereal()`, which applies `swe.set_sid_mode(swe.SIDM_RAMAN)`.
+- Raman sidereal mode is now applied in the core rebuild/export scripts:
+  `build_aspect_sr_touch_log.py`, `sr_touch_lazy_dashboard.py`, `build_pair_aspect_market_log.py`,
+  `build_sr_anchor_reversal_log.py`, `generate_sr_candidate_chart_pack.py`, `sr_lazy_reactive_dashboard.py`,
+  and `rebuild_dataset_mt5_ipo_allpairs.py`.
+- The Rahu/Ketu branch in `build_aspect_sr_touch_log.py` now avoids double sidereal correction by calculating the true node tropically and then applying the configured Raman ayanamsa correction once.
+- Important implication: future serious ML training should regenerate the event dataset, touch log, candidates, annotation context, and repeatation review pack under `doctrine_ayanamsa=Raman`. Do not silently mix old default/Lahiri-style artifacts with Raman-derived features.
 
 2026-05-21 doctrine hardening foundation:
 

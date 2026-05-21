@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from doctrine_config import configure_swiss_ephemeris_sidereal
+
 
 PROJECT_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
 IST = "Asia/Kolkata"
@@ -124,7 +126,9 @@ def parse_args() -> argparse.Namespace:
 def load_jdml4():
     if str(PROJECT_DIR) not in sys.path:
         sys.path.insert(0, str(PROJECT_DIR))
-    return importlib.import_module("JDML4")
+    jdml4 = importlib.import_module("JDML4")
+    configure_swiss_ephemeris_sidereal(jdml4.swe)
+    return jdml4
 
 
 def patch_avg_all_parser(jdml4: object) -> None:

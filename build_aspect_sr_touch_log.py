@@ -27,7 +27,7 @@ from JDML4 import (
     get_vedic_aspect_angles_for_planet,
     drishti_aspect_name_for_angle,
 )
-from doctrine_config import append_doctrine_metadata
+from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
 from shadbala_doctrine import event_pair_sthana_context
 
 
@@ -105,6 +105,7 @@ RASHI_SIGN_TYPES = {1: "movable", 2: "fixed", 3: "dual", 4: "movable", 5: "fixed
 MOVABLE_SIGNS = {1, 4, 7, 10}
 FIXED_SIGNS = {2, 5, 8, 11}
 DUAL_SIGNS = {3, 6, 9, 12}
+DOCTRINE_AYANAMSA = configure_swiss_ephemeris_sidereal(swe)
 
 
 def normalize_body_name(name: Any) -> str:
@@ -432,8 +433,6 @@ def fetch_planetary_longitude_fast(
                 )
                 jd_ut = swe.julday(int(utc_ts.year), int(utc_ts.month), int(utc_ts.day), hour)
                 flags = swe.FLG_SWIEPH | swe.FLG_SPEED
-                if astrology_method == "sidereal":
-                    flags |= swe.FLG_SIDEREAL
                 node_res = swe.calc_ut(jd_ut, swe.TRUE_NODE, flags=flags)
                 lon = float(node_res[0][0]) % 360.0
                 if planet == "KETU":

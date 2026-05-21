@@ -28,7 +28,9 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
     },
     "astronomy": {
         "zodiac": "sidereal",
-        "ayanamsa": "swiss_ephemeris_default",
+        "ayanamsa": "Raman",
+        "ayanamsa_swiss_ephemeris_id": "SIDM_RAMAN",
+        "node_type": "true_node",
         "coordinate_system": "geocentric",
         "ephemeris_provider": "swiss_ephemeris",
         "house_system": "existing_reference_engine",
@@ -67,6 +69,14 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
     "source_ids": ["STRICT_VEDIC_LLM", "SHADBALA_JAYA"],
 }
 
+AYANAMSA_SWISSEPH_IDS: dict[str, str] = {
+    "fagan": "SIDM_FAGAN_BRADLEY",
+    "fagan_bradley": "SIDM_FAGAN_BRADLEY",
+    "lahiri": "SIDM_LAHIRI",
+    "chitrapaksha": "SIDM_LAHIRI",
+    "raman": "SIDM_RAMAN",
+}
+
 
 def load_doctrine_config(path: Path | None = None) -> dict[str, Any]:
     cfg_path = path or DOCTRINE_CONFIG_PATH
@@ -82,6 +92,33 @@ def load_doctrine_config(path: Path | None = None) -> dict[str, Any]:
     return DEFAULT_DOCTRINE_CONFIG.copy()
 
 
+def doctrine_ayanamsa_name(config: dict[str, Any] | None = None) -> str:
+    cfg = config or load_doctrine_config()
+    astronomy = cfg.get("astronomy", {}) if isinstance(cfg.get("astronomy"), dict) else {}
+    name = str(astronomy.get("ayanamsa", "Raman")).strip()
+    return name or "Raman"
+
+
+def doctrine_ayanamsa_swe_id(config: dict[str, Any] | None = None) -> str:
+    cfg = config or load_doctrine_config()
+    astronomy = cfg.get("astronomy", {}) if isinstance(cfg.get("astronomy"), dict) else {}
+    explicit = str(astronomy.get("ayanamsa_swiss_ephemeris_id", "")).strip()
+    if explicit:
+        return explicit
+    key = doctrine_ayanamsa_name(cfg).strip().lower().replace("-", "_").replace(" ", "_")
+    return AYANAMSA_SWISSEPH_IDS.get(key, "SIDM_RAMAN")
+
+
+def configure_swiss_ephemeris_sidereal(swe_module: Any, config: dict[str, Any] | None = None) -> str:
+    """Apply the doctrine-locked sidereal mode to a Swiss Ephemeris module."""
+    swe_id = doctrine_ayanamsa_swe_id(config)
+    mode = getattr(swe_module, swe_id, None)
+    if mode is None:
+        raise ValueError(f"Swiss Ephemeris ayanamsa constant not available: {swe_id}")
+    swe_module.set_sid_mode(mode)
+    return doctrine_ayanamsa_name(config)
+
+
 def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str, str]:
     cfg = config or load_doctrine_config()
     astronomy = cfg.get("astronomy", {}) if isinstance(cfg.get("astronomy"), dict) else {}
@@ -95,6 +132,8 @@ def doctrine_metadata_columns(config: dict[str, Any] | None = None) -> dict[str,
         "doctrine_config_status": str(cfg.get("status", "")),
         "doctrine_zodiac": str(astronomy.get("zodiac", "")),
         "doctrine_ayanamsa": str(astronomy.get("ayanamsa", "")),
+        "doctrine_ayanamsa_swiss_ephemeris_id": str(astronomy.get("ayanamsa_swiss_ephemeris_id", "")),
+        "doctrine_node_type": str(astronomy.get("node_type", "")),
         "doctrine_coordinate_system": str(astronomy.get("coordinate_system", "")),
         "doctrine_ephemeris_provider": str(astronomy.get("ephemeris_provider", "")),
         "doctrine_house_system": str(astronomy.get("house_system", "")),

@@ -16,11 +16,13 @@ if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
 from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude
+from JDML4 import fetch_planetary_longitude, swe
+from doctrine_config import configure_swiss_ephemeris_sidereal
 
 
 IST = "Asia/Kolkata"
 UTC = "UTC"
+DOCTRINE_AYANAMSA = configure_swiss_ephemeris_sidereal(swe)
 ZONE_SOURCE_OPTIONS = [
     ("holdout_24h", "Holdout 24h"),
     ("holdout_72h", "Holdout 72h"),

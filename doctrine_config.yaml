@@ -11,7 +11,9 @@ time_standard:
 
 astronomy:
   zodiac: sidereal
-  ayanamsa: swiss_ephemeris_default
+  ayanamsa: Raman
+  ayanamsa_swiss_ephemeris_id: SIDM_RAMAN
+  node_type: true_node
   coordinate_system: geocentric
   ephemeris_provider: swiss_ephemeris
   house_system: existing_reference_engine

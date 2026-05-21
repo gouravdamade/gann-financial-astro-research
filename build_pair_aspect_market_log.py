@@ -19,10 +19,12 @@ if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
 from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude
+from JDML4 import fetch_planetary_longitude, swe
+from doctrine_config import configure_swiss_ephemeris_sidereal
 
 IST = "Asia/Kolkata"
 UTC = "UTC"
+DOCTRINE_AYANAMSA = configure_swiss_ephemeris_sidereal(swe)
 DEFAULT_HARMONICS = (0.12, 0.18)
 DEFAULT_N_VALUES = (1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8)
 DEFAULT_DEGREES = (360, 180, 90, 45)

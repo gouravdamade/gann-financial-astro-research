@@ -70,12 +70,14 @@ Current strength is mainly a smooth orb/exactness proxy. Strict Drik Bala requir
 
 ### 1. Ayanamsa / Node / House Policy Must Be Locked
 
-The doctrine config currently says `ayanamsa: swiss_ephemeris_default`. Swiss Ephemeris documentation says sidereal mode should be set explicitly with `swe_set_sid_mode()` unless the default Fagan/Bradley ayanamsha is desired. For a Vedic/Jyotish engine, the likely policy should be explicit Lahiri/Chitrapaksha, but this needs a deliberate project decision.
+Update on 2026-05-21: the user chose Raman ayanamsa as the project doctrine preference. The doctrine config is now locked to `ayanamsa: Raman`, `ayanamsa_swiss_ephemeris_id: SIDM_RAMAN`, and `node_type: true_node`.
+
+Swiss Ephemeris documentation says sidereal mode should be set explicitly with `swe_set_sid_mode()` unless the default Fagan/Bradley ayanamsha is desired. The project now applies `swe.set_sid_mode(swe.SIDM_RAMAN)` through `configure_swiss_ephemeris_sidereal()`.
 
 Recommended additions:
 
-- `ayanamsa: Lahiri` or another chosen value, not `swiss_ephemeris_default`.
-- `node_type: true_node` or `mean_node`, explicitly.
+- `ayanamsa: Raman`, not `swiss_ephemeris_default`.
+- `node_type: true_node`, explicitly.
 - `house_system: whole_sign` or the exact existing `jyotish_engine` house system.
 - `coordinate_system: geocentric` with any heliocentric/Gann features clearly experimental.
 
@@ -293,10 +295,12 @@ But before training a model that will be used for walk-forward inference, do a s
 
 That gives the ML something more stable and less hallucination-prone to learn from.
 
-## Open Decision For User
+## Doctrine Decision
 
-The main doctrine choice to confirm is:
+The main doctrine choice is now resolved:
 
-Should the project lock Vedic sidereal calculations to Lahiri/Chitrapaksha ayanamsa with true Rahu/Ketu, unless a specific source says otherwise?
+- Use Raman ayanamsa.
+- Use true Rahu/Ketu.
+- Treat alternative ayanamsa/node policies as separate feature variants, not mixed with the Raman dataset.
 
-My current recommendation: yes, use Lahiri plus true node as the default doctrine lock, and mark any alternative ayanamsa/node experiments as separate feature variants.
+Next implication: regenerate the event dataset, touch log, candidates, annotation context, and repeatation review pack so all future ML/review artifacts carry `doctrine_ayanamsa=Raman`.
