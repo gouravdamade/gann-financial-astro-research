@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 00:37 IST
+Last updated: 2026-05-21 10:24 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -31,6 +31,32 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - `build_repeatation_review_pack.py` now appends doctrine metadata while building ML trait hints, so existing touch logs can at least expose Shadbala status/minimum metadata and future regenerated logs will expose event dignity traits too.
 - `aspect_annotation_store.py` context columns were extended for the new doctrine fields.
 - Compile and smoke tests passed; server still returned HTTP 200.
+
+2026-05-21 doctrine data regeneration:
+
+- Regenerated the canonical all-duration transitsign touch log with the Shadbala/Sthana doctrine fields:
+
+```powershell
+python C:\Users\ADMIN\PycharmProjects\build_aspect_sr_touch_log.py `
+  --events C:\Users\ADMIN\PycharmProjects\astro_training_data_ipo_tokyo_18890211_orb_1y_nodes.parquet `
+  --price C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet `
+  --include-natal `
+  --aspect-mode orb `
+  --max-event-days 0 `
+  --output C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv
+```
+
+- Rebuild output stayed stable at `619` rows and `619` unique `event_id` values.
+- New columns verified present in the touch log and case 120 visible chart CSV:
+  `doctrine_config_id`, `event_b1_sthana_dignity_label`, `event_b2_sthana_dignity_label`,
+  `event_sthana_dignity_virupa_avg`, `event_shadbala_minimum_total_virupa_avg`,
+  `event_doctrine_feature_status`.
+- Re-imported the regenerated touch log into `gann_aspect_annotations.sqlite`; no new case IDs were inserted, preserving existing case numbering.
+- Rebuilt the case 11 `AVG(ALL)|MOON square` repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_20260521_102109`.
+- Synced that rebuilt pack into the currently served folder so the existing browser URL keeps working:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Server verification: `http://127.0.0.1:8765/aspect_review_case_120_chart.html?v=repeatation_ui_20260520_traits_v12_doctrine` returned HTTP `200`, and the served HTML contains the new trait UI tokens.
 
 The repeatation review UI is now at:
 
