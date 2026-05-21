@@ -1,10 +1,28 @@
 # Current Project Handoff
 
-Last updated: 2026-05-21 10:24 IST
+Last updated: 2026-05-21 10:37 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-21 astro function / web research audit:
+
+- Added `C:\Users\ADMIN\PycharmProjects\astro_function_research_audit_20260521.md`.
+- The audit reviewed current Python astro functionality against local PDF extracts and web sources:
+  Swiss Ephemeris programmer docs, PySwisseph package reference, Shadbala overview cross-check, Panchanga references, Tithi definition, and Gann/financial astrology feature references.
+- Current implementation assessment:
+  - strong foundation: sidereal transit/event pipeline, graha/rashi aspects, SR/Gann-style planetary lines, JPY/USD reference scoring, repeatation marker UI, ML trait hints, and doctrine metadata;
+  - proxy fields: BPHS-like orb strength is useful but not strict Drik Bala; current Shadbala is still minimum-threshold/basic-Sthana foundation only;
+  - duplicate risk: `build_trade_candidates_from_touches.py` still has its own dignity tables and should be unified through `shadbala_doctrine.py`.
+- Key missing doctrine/features before serious ML training:
+  1. lock ayanamsa/node/house policy in `doctrine_config.yaml`;
+  2. unify dignity logic through `shadbala_doctrine.py`;
+  3. add Panchanga core: tithi, paksha, vara, nakshatra/pada, yoga, karana;
+  4. rebuild candidates with doctrine metadata;
+  5. add purged/embargoed walk-forward validation;
+  6. later add full Shadbala, strict Drik Bala, combustion/station/speed, functional benefic/malefic, Vargas, Dasha, and Gann scale/harmonic variants.
+- Recommended doctrine decision: lock Vedic sidereal calculations to explicit Lahiri/Chitrapaksha ayanamsa with true Rahu/Ketu, unless user chooses otherwise. Current `doctrine_config.yaml` still says `swiss_ephemeris_default`, which is too vague for final ML training.
 
 2026-05-21 doctrine hardening foundation:
 
