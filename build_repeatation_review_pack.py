@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260522_family_rules_v23"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_rule_automarker_v24"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -726,6 +726,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "pairKey": pair_key,
         "aspect": aspect,
         "defaultOutcome": str(case.get("default_outcome", "bullish") or "bullish"),
+        "fullWindowEntryPrice": case.get("full_window_entry_price", ""),
+        "fullWindowExitPrice": case.get("full_window_exit_price", ""),
         "repeatationIndex": int(case.get("repeatation_index", 1)),
         "repeatationCount": int(case.get("repeatation_count", 1)),
         "previousHref": str(case.get("previous_chart_href", "")),
@@ -1017,6 +1019,39 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         source: source || 'case_window_ignore_trade',
         placedAt: Date.now()
       }};
+    }}
+    function appliedRule(label) {{
+      var rules = Array.isArray(meta.appliedFamilyRules) ? meta.appliedFamilyRules : [];
+      return rules.find(function (rule) {{
+        return String(rule.label || '').toLowerCase() === String(label || '').toLowerCase();
+      }}) || null;
+    }}
+    function numericMeta(name) {{
+      var value = Number(meta[name]);
+      return Number.isFinite(value) ? value : null;
+    }}
+    function caseEntryPoint(label) {{
+      var price = numericMeta('fullWindowEntryPrice');
+      if (price == null) return null;
+      return {{
+        x: meta.windowStart,
+        y: price,
+        source: 'auto_case_window_entry',
+        markerLabel: label || 'case window entry/open price',
+        placedAt: Date.now()
+      }};
+    }}
+    function uniqueMarkers(points) {{
+      var out = [];
+      var seen = {{}};
+      (points || []).forEach(function (point) {{
+        if (!point) return;
+        var id = markerIdentity(point);
+        if (seen[id]) return;
+        seen[id] = true;
+        out.push(point);
+      }});
+      return out.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
     }}
     function sortPoints(a, b) {{
       if (!a || !b) return [a, b];
@@ -1878,6 +1913,46 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       var selected = markers.filter(function (point) {{ return point.isSelectedCaseTouch; }});
       var windowMarkers = markers.filter(pointInCaseWindow);
+      var supportBarrierRule = appliedRule('bearish_bias_support_barrier');
+      var entryPoint = caseEntryPoint('case window entry/open price');
+      if (supportBarrierRule && outcome() === 'bearish' && entryPoint) {{
+        var entryTime = markerTime(entryPoint);
+        var entryPrice = Number(entryPoint.y);
+        var targetCandidates = uniqueMarkers(selected.concat(windowMarkers).concat(markers)).filter(function (point) {{
+          var t = markerTime(point);
+          var y = Number(point && point.y);
+          return Number.isFinite(t)
+            && Number.isFinite(y)
+            && t >= entryTime
+            && y < entryPrice;
+        }});
+        var target = targetCandidates[0] || null;
+        var ruleConfidence = target ? (selected.indexOf(target) !== -1 ? 'rule clean' : 'rule fallback') : 'incomplete';
+        var ruleReason = target
+          ? 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support instead of expecting an immediate support break.'
+          : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
+        setTool('', false);
+        state.autoSuggestion = {{
+          active: !!target,
+          confidence: ruleConfidence,
+          reason: ruleReason,
+          applied_family_rule: 'bearish_bias_support_barrier',
+          marker_count: markers.length,
+          selected_case_marker_count: selected.length,
+          start_rule: 'family_rule_case_window_entry_open_price',
+          end_rule: target ? 'family_rule_first_lower_hardcoded_sr_or_marker' : 'not_found',
+          manual_override: false,
+          overridden_keys: [],
+          created_at: new Date().toISOString()
+        }};
+        setStatePoint('tradeStart', autoSuggestedPoint(entryPoint, 'auto_trade_start_family_rule'));
+        if (target) setStatePoint('tradeEnd', autoSuggestedPoint(target, 'auto_trade_end_family_rule'));
+        drawMarkers();
+        render();
+        saveDraft();
+        updateSaveStatus(target ? 'auto suggested using applied family SR rule' : 'auto suggested entry only; no lower SR marker found');
+        return;
+      }}
       var start = selected[0] || windowMarkers[0] || markers[0];
       var startTime = markerTime(start);
       var minGapMs = 60000;
@@ -1995,7 +2070,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<button data-tool="ignore_start">Ignore start</button>'
       + '<button data-tool="ignore_end">Ignore end</button>'
       + '</div>'
-      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><span class="rm-status-inline">hardcoded marker start -> next marker end</span></div>'
+      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><span class="rm-status-inline">family rule if available; otherwise marker -> next marker</span></div>'
       + '<div id="repeatation-auto-summary"></div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
@@ -2582,6 +2657,7 @@ def main() -> None:
     family_rules = load_case_family_rules(args.db, seed)
     for case in cases:
         stats = stats_by_case[int(case["case_id"])]
+        case.update(stats)
         direction = str(stats.get("full_window_direction", "") or "").strip().lower()
         case["default_outcome"] = direction if direction in {"bullish", "bearish"} else "unclear"
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})

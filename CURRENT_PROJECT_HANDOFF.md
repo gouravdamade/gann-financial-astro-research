@@ -1,10 +1,38 @@
 # Current Project Handoff
 
-Last updated: 2026-05-22 23:56 IST
+Last updated: 2026-05-23 00:12 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-23 family-rule automarker v24:
+
+- User asked to wire the applied family rule into `Auto Suggest`.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260523_rule_automarker_v24`.
+- Auto Suggest now checks applied family rules before the old fallback.
+- For `bearish_bias_support_barrier`, when outcome is bearish and the rule is applied:
+  - trade start uses the case-window entry/open price from `full_window_entry_price`;
+  - trade end uses the first lower hardcoded SR/marker after the case-window entry;
+  - the suggestion reason explicitly says it is treating SR below price as target/support instead of assuming immediate support break.
+- The old fallback remains for charts/families without this rule:
+  selected hardcoded marker -> next later marker.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260523_001034`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current direct case 43 URL:
+  `http://127.0.0.1:8765/aspect_review_case_43_chart.html?v=repeatation_ui_20260523_rule_automarker_v24`
+- Verification passed:
+  Python compile, full repeatation pack rebuild/sync, served HTML checks, and in-app browser test clicking `Auto Suggest` on case `43`.
+- Browser test result for case `43`:
+  auto suggestion `rule clean`,
+  start `2025-04-04 02:30:00+05:30 @ 146.158`,
+  end `2025-04-04 02:30:00+05:30 @ 145.879`,
+  live bearish P/L `+27.9 pips`,
+  no WebGL overlay.
 
 2026-05-22 applied case-family rule v23:
 
