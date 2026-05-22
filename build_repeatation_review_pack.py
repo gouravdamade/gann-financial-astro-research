@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_sr_geometry_v25"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_break_confirm_v26"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -923,6 +923,50 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }});
       return out.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
     }}
+    function collectCandles() {{
+      var traces = Array.isArray(gd._fullData) ? gd._fullData : (Array.isArray(gd.data) ? gd.data : []);
+      var candles = [];
+      traces.forEach(function (trace) {{
+        if (String(trace && trace.type || '').toLowerCase() !== 'candlestick') return;
+        var len = Number((trace.x && trace.x.length) || 0);
+        for (var i = 0; i < len; i += 1) {{
+          var x = arrayValue(trace.x, i);
+          var t = Date.parse(x);
+          var high = Number(arrayValue(trace.high, i));
+          var low = Number(arrayValue(trace.low, i));
+          var close = Number(arrayValue(trace.close, i));
+          var open = Number(arrayValue(trace.open, i));
+          if (!Number.isFinite(t) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
+          candles.push({{ x: x, t: t, open: open, high: high, low: low, close: close }});
+        }}
+      }});
+      return candles.sort(function (a, b) {{ return a.t - b.t; }});
+    }}
+    function atrPipsAt(candles, timeMs, period) {{
+      var before = (candles || []).filter(function (c) {{ return Number.isFinite(c.t) && c.t <= timeMs; }});
+      if (before.length < 2) return null;
+      var trs = [];
+      for (var i = 1; i < before.length; i += 1) {{
+        var c = before[i];
+        var prev = before[i - 1];
+        var tr = Math.max(c.high - c.low, Math.abs(c.high - prev.close), Math.abs(c.low - prev.close));
+        if (Number.isFinite(tr)) trs.push(tr * 100);
+      }}
+      var sample = trs.slice(-Math.max(1, period || 14));
+      if (!sample.length) return null;
+      return sample.reduce(function (sum, value) {{ return sum + value; }}, 0) / sample.length;
+    }}
+    function breakThresholdPips(candles, timeMs) {{
+      var base = String(meta.priceTimeframe || '').toLowerCase() === 'h1' ? 8 : 5;
+      var atr = atrPipsAt(candles, timeMs, 14);
+      var threshold = Number.isFinite(atr) ? Math.max(base, 0.25 * atr) : base;
+      return {{
+        base_pips: base,
+        atr14_pips: Number.isFinite(atr) ? Number(atr.toFixed(1)) : null,
+        threshold_pips: Number(threshold.toFixed(1)),
+        method: 'max(' + base + ' pips, 0.25 * ATR14)'
+      }};
+    }}
     function pointInCaseWindow(point) {{
       var t = markerTime(point);
       var start = Date.parse(meta.windowStart);
@@ -1426,6 +1470,107 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         label: 'SR is ' + (position === 'below_entry' ? 'below entry' : (position === 'above_entry' ? 'above entry' : 'at entry')) + ': ' + role
       }};
     }}
+    function candleLabel(candle) {{
+      return candle && candle.x ? toIST(candle.x) + ' close ' + Number(candle.close).toFixed(3) : '';
+    }}
+    function breakConfirmationForGeometry(geometry, srPoint, referencePoint, selectedOutcome) {{
+      if (!geometry || !srPoint || !referencePoint) return null;
+      var role = String(geometry.role || '');
+      if (role.indexOf('target') === -1) {{
+        return {{
+          status: 'not_applicable',
+          label: 'Break confirmation not needed for this SR role.',
+          reason: 'This SR is being treated as an entry/rejection area, not a target barrier.'
+        }};
+      }}
+      var direction = selectedOutcome || outcome();
+      var sr = Number(srPoint.y);
+      var startTime = markerTime(referencePoint);
+      if (!Number.isFinite(sr) || !Number.isFinite(startTime)) return null;
+      var candles = collectCandles();
+      var threshold = breakThresholdPips(candles, startTime);
+      var thresholdPrice = threshold.threshold_pips / 100;
+      var after = candles.filter(function (c) {{ return c.t >= startTime; }});
+      var breakCandle = null;
+      var retestCandle = null;
+      var continuationCandle = null;
+      var continuationStep = Math.max(2, threshold.threshold_pips / 2) / 100;
+      if (direction === 'bearish' && geometry.position === 'below_entry') {{
+        var breakLine = sr - thresholdPrice;
+        breakCandle = after.find(function (c) {{ return c.close <= breakLine; }}) || null;
+        if (breakCandle) {{
+          var afterBreak = after.filter(function (c) {{ return c.t > breakCandle.t; }});
+          retestCandle = afterBreak.find(function (c) {{
+            return c.high >= sr - thresholdPrice && c.close < sr;
+          }}) || null;
+          if (retestCandle) {{
+            continuationCandle = afterBreak.find(function (c) {{
+              return c.t > retestCandle.t && (c.close <= retestCandle.close - continuationStep || c.low < retestCandle.low);
+            }}) || null;
+          }}
+        }}
+        return {{
+          status: breakCandle && retestCandle && continuationCandle ? 'confirmed' : (breakCandle ? 'break_candidate' : 'not_confirmed'),
+          label: breakCandle && retestCandle && continuationCandle
+            ? 'Support break confirmed'
+            : 'Support break not confirmed',
+          threshold_pips: threshold.threshold_pips,
+          base_pips: threshold.base_pips,
+          atr14_pips: threshold.atr14_pips,
+          method: threshold.method,
+          sr_price: sr,
+          break_line: Number(breakLine.toFixed(3)),
+          break_candle: candleLabel(breakCandle),
+          retest_candle: candleLabel(retestCandle),
+          continuation_candle: candleLabel(continuationCandle),
+          reason: breakCandle
+            ? (retestCandle && continuationCandle
+              ? 'Close broke below SR by threshold, then retest failed and price continued lower.'
+              : 'Close broke below threshold, but retest/fail/continuation is not complete.')
+            : 'No candle closed far enough below support. Wick/touch alone does not count.'
+        }};
+      }}
+      if (direction === 'bullish' && geometry.position === 'above_entry') {{
+        var breakLineUp = sr + thresholdPrice;
+        breakCandle = after.find(function (c) {{ return c.close >= breakLineUp; }}) || null;
+        if (breakCandle) {{
+          var afterBreakUp = after.filter(function (c) {{ return c.t > breakCandle.t; }});
+          retestCandle = afterBreakUp.find(function (c) {{
+            return c.low <= sr + thresholdPrice && c.close > sr;
+          }}) || null;
+          if (retestCandle) {{
+            continuationCandle = afterBreakUp.find(function (c) {{
+              return c.t > retestCandle.t && (c.close >= retestCandle.close + continuationStep || c.high > retestCandle.high);
+            }}) || null;
+          }}
+        }}
+        return {{
+          status: breakCandle && retestCandle && continuationCandle ? 'confirmed' : (breakCandle ? 'break_candidate' : 'not_confirmed'),
+          label: breakCandle && retestCandle && continuationCandle
+            ? 'Resistance break confirmed'
+            : 'Resistance break not confirmed',
+          threshold_pips: threshold.threshold_pips,
+          base_pips: threshold.base_pips,
+          atr14_pips: threshold.atr14_pips,
+          method: threshold.method,
+          sr_price: sr,
+          break_line: Number(breakLineUp.toFixed(3)),
+          break_candle: candleLabel(breakCandle),
+          retest_candle: candleLabel(retestCandle),
+          continuation_candle: candleLabel(continuationCandle),
+          reason: breakCandle
+            ? (retestCandle && continuationCandle
+              ? 'Close broke above SR by threshold, then retest held and price continued higher.'
+              : 'Close broke above threshold, but retest/hold/continuation is not complete.')
+            : 'No candle closed far enough above resistance. Wick/touch alone does not count.'
+        }};
+      }}
+      return {{
+        status: 'not_applicable',
+        label: 'Break confirmation not applicable',
+        reason: 'Current direction and SR geometry do not form a target-barrier breakout check.'
+      }};
+    }}
     function tradeProfit() {{
       if (!state.tradeStart || !state.tradeEnd) return null;
       var entry = Number(state.tradeStart.y);
@@ -1459,11 +1604,24 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + ' vs old default ' + esc(signedPipsText(s.outcome_tracking.default_signed_pips))
           + ' | difference ' + esc(signedPipsText(s.outcome_tracking.delta_signed_pips)) + '</div>';
       }}
+      var breakHtml = '';
+      if (s.break_confirmation) {{
+        var b = s.break_confirmation;
+        var thresholdText = Number.isFinite(Number(b.threshold_pips))
+          ? ' threshold ' + Number(b.threshold_pips).toFixed(1) + ' pips'
+            + (Number.isFinite(Number(b.atr14_pips)) ? ' (ATR14 ' + Number(b.atr14_pips).toFixed(1) + ')' : '')
+          : '';
+        breakHtml = '<div><b>Break confirmation</b>: ' + esc(b.label || b.status || '')
+          + esc(thresholdText)
+          + (b.break_line ? ' | break close line ' + esc(Number(b.break_line).toFixed(3)) : '')
+          + '</div><div class="rm-table-sub">' + esc(b.reason || '') + '</div>';
+      }}
       return '<div class="rm-auto ' + esc(s.confidence || '') + '">'
         + '<div><b>Auto suggestion</b><span>' + esc(s.confidence || 'unknown') + '</span></div>'
         + '<div>' + esc(s.reason || '') + '</div>'
         + geometry
         + tracking
+        + breakHtml
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
     }}
@@ -1980,6 +2138,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var ruleReason = target
           ? 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support instead of expecting an immediate support break.'
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
+        var geometry = srGeometryForPoint(target, entryPoint, outcome());
+        var breakConfirmation = breakConfirmationForGeometry(geometry, target, entryPoint, outcome());
         var ruleSignedPips = signedPipsForPoints(entryPoint, target, outcome());
         var defaultSignedPips = signedPipsForPoints(defaultStart, defaultEnd, outcome());
         var tracking = (ruleSignedPips != null && defaultSignedPips != null) ? {{
@@ -1995,7 +2155,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           confidence: ruleConfidence,
           reason: ruleReason,
           applied_family_rule: 'bearish_bias_support_barrier',
-          sr_geometry: srGeometryForPoint(target, entryPoint, outcome()),
+          sr_geometry: geometry,
+          break_confirmation: breakConfirmation,
           outcome_tracking: tracking,
           marker_count: markers.length,
           selected_case_marker_count: selected.length,
@@ -2034,6 +2195,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         marker_count: markers.length,
         selected_case_marker_count: selected.length,
         sr_geometry: srGeometryForPoint(end, start, outcome()),
+        break_confirmation: breakConfirmationForGeometry(srGeometryForPoint(end, start, outcome()), end, start, outcome()),
         start_rule: selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'),
         end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
         manual_override: false,
