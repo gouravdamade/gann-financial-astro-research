@@ -1,10 +1,31 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 00:12 IST
+Last updated: 2026-05-23 00:30 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-23 case 43 ML astro-reason note:
+
+- User asked whether the detailed astro reasoning for case `43` had been saved as an ML note.
+- Added a dedicated rule note in `C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite`:
+  `note_id=2`, `case_id=43`, `note_type=ml_astro_reason`.
+- Note label:
+  `astro_reason_not_strong_enough_to_break_support`.
+- Linked family rule:
+  `bearish_bias_support_barrier`.
+- The note records:
+  price entered the event/zone, touched SR below price, and reverted instead of breaking support.
+- The note captures these ML learning reasons:
+  total planet strength is middle (`~383`, ratio `~1.09`), above minimum but not forceful-break strength;
+  aspect pressure is middle/slightly positive, not sharply negative;
+  motion strength is middle/low-ish, so no strong Chesta-style force clue;
+  aspect distance is middle, not very tight/exact;
+  touched SR is Jupiter, a benefic/supportive line, so falling into Jupiter SR below price can act as support/floor;
+  Moon condition is not badly damaged and common Moon friend/exaltation clues are not special bearish-break clues.
+- Trading implication captured:
+  bearish bias into support should prefer earlier short entry and target/support exit, not late continuation short after support touch unless break-and-retest confirms.
 
 2026-05-23 family-rule automarker v24:
 
