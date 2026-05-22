@@ -1996,7 +1996,7 @@ def build_detail_figure(
             planet_label = display_planet_label(planet)
             line_name = f"{planet_label} {mode} h={harmonic:g} n={n_value:g} d={int(degree)}"
             fig.add_trace(
-                go.Scattergl(
+                go.Scatter(
                     x=price_window.index,
                     y=line_series.values,
                     mode="lines",
@@ -2075,7 +2075,7 @@ def build_detail_figure(
             for _, row in visible.iterrows()
         ]
         fig.add_trace(
-            go.Scattergl(
+            go.Scatter(
                 x=visible["touch_time_local"],
                 y=visible["touch_price"],
                 mode="markers",

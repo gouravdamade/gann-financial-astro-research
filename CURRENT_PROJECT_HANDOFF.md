@@ -1,10 +1,29 @@
 # Current Project Handoff
 
-Last updated: 2026-05-22 00:51 IST
+Last updated: 2026-05-22 17:36 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-22 WebGL-free Plotly reviewer v21:
+
+- User saw `WebGL is not supported by your browser` in the Codex in-app browser after opening the v20 chart.
+- Root cause: `sr_touch_lazy_dashboard.py` still used Plotly `go.Scattergl` traces for planetary SR lines and interaction markers. Chrome can render these, but the Codex in-app browser may not expose WebGL.
+- Updated `C:\Users\ADMIN\PycharmProjects\sr_touch_lazy_dashboard.py` to use regular SVG-safe `go.Scatter` for those traces.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260522_svg_plotly_v21`.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260522_173238`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current reviewer URL:
+  `http://localhost:8765/repeatation_reviewer.html?v=repeatation_ui_20260522_svg_plotly_v21`
+- Direct seed chart URL:
+  `http://127.0.0.1:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260522_svg_plotly_v21`
+- Verification passed:
+  Python compile, repeatation pack rebuild/sync, exported chart data trace parse showing `52` SVG `scatter` traces and `1` candlestick trace with no active `scattergl` data traces, and in-app browser check confirming the chart renders with `noWebglVisible=false`.
 
 2026-05-22 all-astro repeatation evidence table v20:
 

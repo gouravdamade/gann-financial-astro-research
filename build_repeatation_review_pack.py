@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260522_astro_evidence_v20"
+REPEATATION_UI_VERSION = "repeatation_ui_20260522_svg_plotly_v21"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
