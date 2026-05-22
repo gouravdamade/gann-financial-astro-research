@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_break_confirm_v26"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_fan_v27"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -798,7 +798,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       tradeStart: '#38bdf8',
       tradeEnd: '#fbbf24',
       ignore: '#c084fc',
-      profit: '#a78bfa'
+      profit: '#a78bfa',
+      gann: '#f59e0b',
+      gannAnchor: '#f97316'
     }};
     function esc(value) {{
       return String(value == null ? '' : value)
@@ -941,6 +943,69 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }}
       }});
       return candles.sort(function (a, b) {{ return a.t - b.t; }});
+    }}
+    function timeframeMinutes() {{
+      return String(meta.priceTimeframe || '').toLowerCase() === 'h1' ? 60 : 30;
+    }}
+    function candleMs() {{
+      return timeframeMinutes() * 60 * 1000;
+    }}
+    function candleAtOrAfter(candles, timeMs) {{
+      if (!Array.isArray(candles) || !Number.isFinite(timeMs)) return null;
+      var interval = candleMs();
+      var nearest = candles.reduce(function (best, c) {{
+          var dist = Math.abs(c.t - timeMs);
+          return !best || dist < best.dist ? {{ candle: c, dist: dist }} : best;
+        }}, null);
+      return candles.find(function (c) {{ return c.t >= timeMs - interval * 0.25; }})
+        || (nearest ? nearest.candle : null);
+    }}
+    function gannFanForStart(startPoint, selectedOutcome, reason) {{
+      var direction = selectedOutcome || outcome();
+      var directionSign = direction === 'bearish' ? -1 : (direction === 'bullish' ? 1 : 0);
+      if (!startPoint || !Number.isFinite(directionSign) || directionSign === 0) return null;
+      var startTime = markerTime(startPoint);
+      if (!Number.isFinite(startTime)) return null;
+      var candles = collectCandles();
+      var candle = candleAtOrAfter(candles, startTime);
+      if (!candle) return null;
+      var anchorPrice = directionSign < 0 ? candle.high : candle.low;
+      if (!Number.isFinite(anchorPrice)) return null;
+      return {{
+        active: true,
+        direction: direction,
+        direction_sign: directionSign,
+        anchor: {{
+          x: candle.x,
+          y: Number(anchorPrice.toFixed(3)),
+          source: directionSign < 0 ? 'gann_fan_top_wick' : 'gann_fan_bottom_wick',
+          markerLabel: directionSign < 0 ? 'Gann fan top wick anchor' : 'Gann fan bottom wick anchor'
+        }},
+        anchor_candle: {{
+          x: candle.x,
+          open: Number(candle.open.toFixed(3)),
+          high: Number(candle.high.toFixed(3)),
+          low: Number(candle.low.toFixed(3)),
+          close: Number(candle.close.toFixed(3))
+        }},
+        anchor_rule: directionSign < 0
+          ? 'bearish auto-start: top wick of first candle at/after start marker'
+          : 'bullish auto-start: bottom wick of first candle at/after start marker',
+        timeframe_minutes: timeframeMinutes(),
+        base_pips_per_candle: 1,
+        ratios: [
+          {{ label: '1x4', slope: 0.25 }},
+          {{ label: '1x2', slope: 0.5 }},
+          {{ label: '1x1', slope: 1 }},
+          {{ label: '2x1', slope: 2 }},
+          {{ label: '4x1', slope: 4 }}
+        ],
+        reason: reason || 'auto suggestion start marker'
+      }};
+    }}
+    function refreshGannFanFromTradeStart(reason) {{
+      if (!state.autoSuggestion || !state.tradeStart) return;
+      state.autoSuggestion.gann_fan = gannFanForStart(state.tradeStart, outcome(), reason);
     }}
     function atrPipsAt(candles, timeMs, period) {{
       var before = (candles || []).filter(function (c) {{ return Number.isFinite(c.t) && c.t <= timeMs; }});
@@ -1149,6 +1214,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state[key] = point;
       state.lastPoint = point;
       if (key === 'ignoreStart' || key === 'ignoreEnd') state.tradeIgnored = false;
+      if (key === 'tradeStart') refreshGannFanFromTradeStart(point.autoSuggested ? 'auto suggestion start marker' : 'manual trade start adjustment');
     }}
     function setTool(tool, persist) {{
       state.tool = tool;
@@ -1222,6 +1288,68 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var half = Math.abs(end - start) * (fraction || 0.018);
         return [center - half, center + half];
       }}
+      function gannFanEndTime(fan) {{
+        var candles = collectCandles();
+        var anchorTime = Date.parse(fan && fan.anchor && fan.anchor.x);
+        var range = axisRange('xaxis') || [];
+        var rangeEnd = Date.parse(range[1]);
+        var candleEnd = candles.length ? candles[candles.length - 1].t : NaN;
+        var endTime = Math.max(
+          Number.isFinite(rangeEnd) ? rangeEnd : 0,
+          Number.isFinite(candleEnd) ? candleEnd : 0,
+          Number.isFinite(anchorTime) ? anchorTime + candleMs() * 24 : 0
+        );
+        if (!Number.isFinite(anchorTime) || endTime <= anchorTime) endTime = anchorTime + candleMs() * 24;
+        return endTime;
+      }}
+      function drawGannFan() {{
+        var fan = state.autoSuggestion && state.autoSuggestion.gann_fan;
+        if (!fan || !fan.active || !fan.anchor) return;
+        var anchorTime = Date.parse(fan.anchor.x);
+        var anchorPrice = Number(fan.anchor.y);
+        var directionSign = Number(fan.direction_sign || 0);
+        if (!Number.isFinite(anchorTime) || !Number.isFinite(anchorPrice) || !directionSign) return;
+        var endTime = gannFanEndTime(fan);
+        var elapsedCandles = (endTime - anchorTime) / candleMs();
+        var basePips = Number(fan.base_pips_per_candle || 1);
+        var ratios = Array.isArray(fan.ratios) ? fan.ratios : [];
+        var anchorXs = xAround(fan.anchor.x, 0.004);
+        var anchorYs = yAround(anchorPrice, 0.011);
+        shapes.push({{
+          type: 'circle',
+          name: 'repeatation-marker-gann-anchor',
+          xref: 'x',
+          yref: 'y',
+          x0: anchorXs[0],
+          x1: anchorXs[1],
+          y0: anchorYs[0],
+          y1: anchorYs[1],
+          fillcolor: 'rgba(249,115,22,0.12)',
+          line: {{ color: 'rgba(249,115,22,0.92)', width: 1.2 }},
+          layer: 'above'
+        }});
+        ratios.forEach(function (ratio) {{
+          var slope = Number(ratio.slope);
+          if (!Number.isFinite(slope)) return;
+          var y1 = anchorPrice + directionSign * elapsedCandles * basePips * slope / 100;
+          shapes.push({{
+            type: 'line',
+            name: 'repeatation-marker-gann-' + String(ratio.label || '').toLowerCase(),
+            xref: 'x',
+            yref: 'y',
+            x0: fan.anchor.x,
+            x1: new Date(endTime).toISOString(),
+            y0: anchorPrice,
+            y1: y1,
+            line: {{
+              color: ratio.label === '1x1' ? 'rgba(251,191,36,0.90)' : 'rgba(245,158,11,0.52)',
+              width: ratio.label === '1x1' ? 1.6 : 1.05,
+              dash: ratio.label === '1x1' ? 'solid' : 'dot'
+            }},
+            layer: 'above'
+          }});
+        }});
+      }}
       function crosshair(point, color, dash, name) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
         var isTrade = name.indexOf('trade') !== -1;
@@ -1277,6 +1405,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }}
         plusShape(isTrade ? 0.0028 : 0.0023, isTrade ? 0.007 : 0.006, isTrade ? 1.25 : 1.15, isTrade ? '0.05' : '');
       }}
+      drawGannFan();
       crosshair(state.tradeStart, MARKER_COLORS.tradeStart, 'solid', 'repeatation-marker-trade-start');
       crosshair(state.tradeEnd, MARKER_COLORS.tradeEnd, 'solid', 'repeatation-marker-trade-end');
       crosshair(state.ignoreStart, MARKER_COLORS.ignore, 'dash', 'repeatation-marker-ignore-start');
@@ -1352,10 +1481,36 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           align: 'left'
         }});
       }}
+      function gannFanLabel() {{
+        var fan = state.autoSuggestion && state.autoSuggestion.gann_fan;
+        if (!fan || !fan.active || !fan.anchor) return;
+        annotations.push({{
+          name: 'repeatation-marker-gann-anchor-label',
+          xref: 'x',
+          yref: 'y',
+          x: fan.anchor.x,
+          y: fan.anchor.y,
+          text: '<b>Gann fan</b><br>' + esc(fan.direction === 'bearish' ? 'top wick anchor' : 'bottom wick anchor') + '<br>1x1 = 1 pip/candle',
+          showarrow: true,
+          arrowhead: 1,
+          arrowsize: 0.75,
+          arrowwidth: 1,
+          arrowcolor: 'rgba(251,191,36,0.75)',
+          ax: fan.direction === 'bearish' ? -54 : 54,
+          ay: fan.direction === 'bearish' ? -42 : 42,
+          bgcolor: 'rgba(69,26,3,0.46)',
+          bordercolor: MARKER_COLORS.gannAnchor,
+          borderwidth: 1,
+          borderpad: 3,
+          font: {{ color: '#fef3c7', size: 10 }},
+          align: 'left'
+        }});
+      }}
       markerLabel(state.tradeStart, 'Start', MARKER_COLORS.tradeStart, 'rgba(8,47,73,0.46)', -44, -38);
       markerLabel(state.tradeEnd, 'End', MARKER_COLORS.tradeEnd, 'rgba(113,63,18,0.46)', 44, -38);
       markerLabel(state.ignoreStart, 'Ignore start', MARKER_COLORS.ignore, 'rgba(88,28,135,0.38)', -50, 36);
       markerLabel(state.ignoreEnd, 'Ignore end', MARKER_COLORS.ignore, 'rgba(88,28,135,0.38)', 50, 36);
+      gannFanLabel();
       tradeProfitLabel();
       return annotations;
     }}
@@ -1616,12 +1771,24 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + (b.break_line ? ' | break close line ' + esc(Number(b.break_line).toFixed(3)) : '')
           + '</div><div class="rm-table-sub">' + esc(b.reason || '') + '</div>';
       }}
+      var fanHtml = '';
+      if (s.gann_fan && s.gann_fan.active) {{
+        var fan = s.gann_fan;
+        var wick = fan.direction === 'bearish' ? 'top wick' : 'bottom wick';
+        fanHtml = '<div><b>Gann fan</b>: anchored at ' + esc(wick)
+          + ' ' + esc(toIST(fan.anchor && fan.anchor.x))
+          + ' @ ' + esc(Number(fan.anchor && fan.anchor.y).toFixed(3))
+          + '</div><div class="rm-table-sub">Scale: 1x1 = '
+          + esc(fan.base_pips_per_candle || 1)
+          + ' pip per ' + esc(fan.timeframe_minutes || timeframeMinutes()) + ' minute candle; fan stays data-based during zoom/pan.</div>';
+      }}
       return '<div class="rm-auto ' + esc(s.confidence || '') + '">'
         + '<div><b>Auto suggestion</b><span>' + esc(s.confidence || 'unknown') + '</span></div>'
         + '<div>' + esc(s.reason || '') + '</div>'
         + geometry
         + tracking
         + breakHtml
+        + fanHtml
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
     }}
@@ -2034,6 +2201,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         restoredOutcome = defaultOutcome();
       }}
       setOutcome(restoredOutcome);
+      if (state.autoSuggestion && state.tradeStart && !state.autoSuggestion.gann_fan) refreshGannFanFromTradeStart('restored auto suggestion start marker');
       panel.querySelector('#repeatation-note-type').value = draft.note_type || 'manual_repeatation_note';
       panel.querySelector('#repeatation-note').value = draft.note || '';
       if (state.selectedIgnoreTypes.length) syncIgnoreNotes();
@@ -2422,7 +2590,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-note').addEventListener('input', function () {{ render(); saveDraft(); }});
     panel.querySelector('#repeatation-note-type').addEventListener('input', function () {{ render(); saveDraft(); }});
     setOutcome(defaultOutcome());
-    panel.querySelector('#repeatation-outcome').addEventListener('change', function () {{ state.outcomeTouched = true; drawMarkers(); render(); saveDraft(); }});
+    panel.querySelector('#repeatation-outcome').addEventListener('change', function () {{ state.outcomeTouched = true; refreshGannFanFromTradeStart('outcome changed'); drawMarkers(); render(); saveDraft(); }});
     panel.querySelector('#repeatation-rule-scope').addEventListener('change', saveDraft);
     panel.querySelector('#repeatation-rule-type').addEventListener('change', saveDraft);
     window.addEventListener('beforeunload', function () {{
