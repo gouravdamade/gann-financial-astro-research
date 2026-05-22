@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260522_svg_plotly_v21"
+REPEATATION_UI_VERSION = "repeatation_ui_20260522_family_rules_v23"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -616,6 +616,64 @@ def compute_special_traits(
     return out
 
 
+def parse_rule_note_fields(note_text: str) -> dict[str, str]:
+    fields: dict[str, str] = {}
+    for part in str(note_text or "").split(";"):
+        if "=" not in part:
+            continue
+        key, value = part.split("=", 1)
+        fields[key.strip().lower()] = value.strip()
+    return fields
+
+
+def load_case_family_rules(db_path: Path, seed: dict[str, Any]) -> list[dict[str, Any]]:
+    with sqlite3.connect(str(db_path)) as conn:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            """
+            SELECT
+                n.note_id,
+                n.case_id AS seed_case_id,
+                c.pair_key,
+                c.aspect,
+                n.note_type,
+                n.note_text,
+                n.created_at_utc
+            FROM rule_notes n
+            JOIN aspect_cases c ON c.case_id = n.case_id
+            WHERE c.pair_key = ?
+              AND c.aspect = ?
+            ORDER BY n.created_at_utc, n.note_id
+            """,
+            (seed["pair_key"], seed["aspect"]),
+        ).fetchall()
+    rules: list[dict[str, Any]] = []
+    for row in rows:
+        note_text = str(row["note_text"] or "")
+        fields = parse_rule_note_fields(note_text)
+        scope = fields.get("scope", "")
+        if "case_family" not in scope and not str(row["note_type"] or "").startswith("family_"):
+            continue
+        rules.append(
+            {
+                "note_id": int(row["note_id"]),
+                "seed_case_id": int(row["seed_case_id"]),
+                "family_key": f"{row['pair_key']}::{row['aspect']}",
+                "pair_key": str(row["pair_key"]),
+                "aspect": str(row["aspect"]),
+                "note_type": str(row["note_type"] or ""),
+                "scope": scope or "case_family",
+                "status": fields.get("status", "provisional"),
+                "rule_type": fields.get("type", str(row["note_type"] or "")),
+                "label": fields.get("ml_label") or fields.get("label") or fields.get("rule_label") or "",
+                "direction": fields.get("direction", ""),
+                "note_text": note_text,
+                "created_at_utc": str(row["created_at_utc"] or ""),
+            }
+        )
+    return rules
+
+
 def chart_command(args: argparse.Namespace, case_id: int, output_dir: Path) -> list[str]:
     return [
         sys.executable,
@@ -675,6 +733,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "reviewerHref": str(case.get("reviewer_href", "repeatation_reviewer.html")),
         "traitGuideHref": html_cache_href("trait_guide.html"),
         "specialTraits": case.get("special_traits", {}),
+        "appliedFamilyRules": case.get("applied_family_rules", []),
     }
     metadata_json = json.dumps(metadata)
     return f"""
@@ -1477,6 +1536,21 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + rows
         + '</div>' + evidenceHtml;
     }}
+    function appliedFamilyRulesHtml() {{
+      var rules = Array.isArray(meta.appliedFamilyRules) ? meta.appliedFamilyRules : [];
+      if (!rules.length) return '<div class="rm-rules muted">No applied family rules yet.</div>';
+      var rows = rules.map(function (rule) {{
+        var title = rule.label || rule.rule_type || rule.note_type || 'family rule';
+        var note = rule.note_text || '';
+        var shortNote = note.length > 360 ? note.slice(0, 357) + '...' : note;
+        return '<div class="rm-rule-item">'
+          + '<div><b>' + esc(title) + '</b><span>' + esc(rule.status || 'provisional') + '</span></div>'
+          + '<div class="rm-table-sub">scope=' + esc(rule.scope || 'case_family') + ' | seed case=' + esc(rule.seed_case_id || '') + ' | family=' + esc(rule.family_key || '') + '</div>'
+          + '<div>' + esc(shortNote) + '</div>'
+          + '</div>';
+      }}).join('');
+      return '<div class="rm-rules"><div><b>Applied family rules</b><span>' + esc(rules.length) + '</span></div>' + rows + '</div>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -1628,6 +1702,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-ignore-trade').classList.toggle('active', state.tradeIgnored);
       panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
+      panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
       panel.querySelector('#repeatation-special-traits').innerHTML = specialTraitsHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
       panel.querySelector('#repeatation-ignore-definitions').innerHTML = selectedIgnoreDefinitionsHtml();
@@ -1925,6 +2000,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
       + '<div id="repeatation-profit-summary"></div>'
+      + '<div id="repeatation-applied-rules"></div>'
       + '<div id="repeatation-special-traits"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
       + '<label>Note type</label><input id="repeatation-note-type" value="manual_repeatation_note">'
@@ -1981,6 +2057,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-strength span{{color:#67e8f9;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-strength-item{{border-top:1px solid #1e3a5f;padding-top:5px;margin-top:5px;}}'
       + '#repeatation-marker-panel .rm-strength-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-rules{{background:#102016;border:1px solid #22c55e;border-radius:6px;padding:7px;margin:6px 0;color:#d1fae5;}}'
+      + '#repeatation-marker-panel .rm-rules>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bbf7d0;}}'
+      + '#repeatation-marker-panel .rm-rules span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-rule-item{{border-top:1px solid #14532d;padding-top:5px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-rule-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
       + '#repeatation-marker-panel .rm-evidence{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-evidence summary{{cursor:pointer;color:#bfdbfe;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-evidence-group{{margin-top:8px;}}'
@@ -2498,11 +2579,13 @@ def main() -> None:
     stats_by_case = {int(case["case_id"]): full_window_trade_stats(case) for case in cases}
     touch_rows_by_event = trait_row_for_events(args.touch_log, cases)
     special_traits_by_case = compute_special_traits(cases, stats_by_case, touch_rows_by_event)
+    family_rules = load_case_family_rules(args.db, seed)
     for case in cases:
         stats = stats_by_case[int(case["case_id"])]
         direction = str(stats.get("full_window_direction", "") or "").strip().lower()
         case["default_outcome"] = direction if direction in {"bullish", "bearish"} else "unclear"
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
+        case["applied_family_rules"] = family_rules
 
     records: list[dict[str, Any]] = []
     for idx, case in enumerate(cases, start=1):
@@ -2521,6 +2604,7 @@ def main() -> None:
                 "next_chart_href",
                 "reviewer_href",
                 "special_traits",
+                "applied_family_rules",
             }
         }
         record = {
@@ -2544,6 +2628,7 @@ def main() -> None:
                 for trait in case.get("special_traits", {}).get("traits", [])[:4]
             ),
             "special_trait_json": json.dumps(case.get("special_traits", {}), ensure_ascii=False),
+            "applied_family_rules_json": json.dumps(case.get("applied_family_rules", []), ensure_ascii=False),
         }
         records.append(record)
 

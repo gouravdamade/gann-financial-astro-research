@@ -1,10 +1,36 @@
 # Current Project Handoff
 
-Last updated: 2026-05-22 23:41 IST
+Last updated: 2026-05-22 23:56 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-22 applied case-family rule v23:
+
+- User clarified that a local rule should apply to the unique case family with all repeatations, not only one occurrence.
+- Updated rule note `note_id=1` in `C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite`:
+  `note_type=family_sr_rule`,
+  `scope=case_family/local`,
+  `status=provisional_until_all_repeatations_reviewed`,
+  `rule_label=bearish_bias_support_barrier`,
+  `seed_case_id=43`,
+  `family=AVG(ALL)|MOON::square`.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260522_family_rules_v23`.
+- The reviewer pack now loads case-family scoped rule notes from SQLite and injects them into every chart in the same `pair_key + aspect` family as `appliedFamilyRules`.
+- The marker drawer now shows an `Applied family rules` block above ML trait hints; for this family it displays:
+  `bearish_bias_support_barrier`, provisional status, seed case `43`, and family `AVG(ALL)|MOON::square`.
+- `repeatation_marker_template.csv` now includes `applied_family_rules_json` so ML exports can consume the same family rule.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260522_235321`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current direct case 43 URL:
+  `http://127.0.0.1:8765/aspect_review_case_43_chart.html?v=repeatation_ui_20260522_family_rules_v23`
+- Verification passed:
+  Python compile, full repeatation pack rebuild/sync, HTTP checks confirming the rule appears in both case `43` and case `8`, and in-app browser check confirming the drawer shows `Applied family rules` and `bearish_bias_support_barrier`.
 
 2026-05-22 case 43 local SR rule note:
 
