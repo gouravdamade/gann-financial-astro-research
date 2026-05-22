@@ -1,10 +1,27 @@
 # Current Project Handoff
 
-Last updated: 2026-05-22 17:36 IST
+Last updated: 2026-05-22 23:41 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-22 case 43 local SR rule note:
+
+- User reviewed case `43` and observed price entered the selected zone, touched SR below price, and reverted instead of breaking support.
+- Case context:
+  `case_id=43`, `AVG(ALL)|MOON square`, default/full-window direction `bearish`, but full-window bearish result was only about `+1.0 pip`.
+- Interpretation captured:
+  case 43 is a local example of bearish pressure into support, not a clean bearish breakdown.
+- Saved local DB rule note in `C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite`:
+  `note_id=1`, `case_id=43`, `note_type=local_sr_rule`.
+- Rule note text records:
+  `scope=case_id/local; type=sr_rule; direction=bearish; if active/nearest SR is below current price, treat it first as target/support and expect touch-revert unless a candle closes below SR and retests/fails. Preferred trade plan is earlier short entry when price enters the selected event/zone, take profit at first lower SR or next hardcoded marker, and avoid chasing continuation after support touch without break confirmation.`
+- Astrology reason recorded:
+  total planet strength middle (`~383`, ratio `~1.09`), aspect pressure middle/slightly positive, motion strength middle, aspect not tight/exact, and touched SR is Jupiter/benefic support.
+- ML label recorded:
+  `bearish_bias_support_barrier`.
+- This is intentionally a local/case rule until more case_ids are manually reviewed.
 
 2026-05-22 WebGL-free Plotly reviewer v21:
 
