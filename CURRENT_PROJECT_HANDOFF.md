@@ -1,10 +1,40 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 00:30 IST
+Last updated: 2026-05-23 00:49 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-20
+
+2026-05-23 SR geometry + rule outcome tracking v25:
+
+- User liked two ideas and asked if they could be implemented:
+  explicit SR geometry classification and rule outcome tracking.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260523_sr_geometry_v25`.
+- Auto Suggest now records `sr_geometry`:
+  whether the chosen SR/marker is below/above entry, its role for the selected direction, and distance in pips.
+- Directional SR geometry currently labels:
+  bearish + SR below entry = `support/target`;
+  bearish + SR above entry = `resistance/entry`;
+  bullish + SR above entry = `resistance/target`;
+  bullish + SR below entry = `support/entry`.
+- Auto Suggest now records `outcome_tracking` when a family rule changes the suggestion:
+  rule signed pips, old/default signed pips, and delta.
+- Rebuilt case 8 AVG(ALL)|MOON square repeatation pack:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_8_avg_all_moon_square_20260523_004714`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current direct case 43 URL:
+  `http://127.0.0.1:8765/aspect_review_case_43_chart.html?v=repeatation_ui_20260523_sr_geometry_v25`
+- Browser verification on case `43` after clicking `Auto Suggest`:
+  `SR geometry: SR is below entry: support/target (-27.9 pips from entry)`;
+  `Rule tracking: rule +27.9 pips vs old default +2.2 pips | difference +25.8 pips`;
+  live bearish P/L remains `+27.9 pips`;
+  no WebGL overlay.
+- Reminder after finishing this `AVG(ALL)|MOON square` case-family review:
+  implement rule status lifecycle (`provisional -> accepted/revised/discarded`) and automate/draft astro reason extraction with a local Jyotish explanation agent.
 
 2026-05-23 case 43 ML astro-reason note:
 

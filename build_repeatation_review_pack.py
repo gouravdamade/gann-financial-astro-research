@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_rule_automarker_v24"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_sr_geometry_v25"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1394,6 +1394,38 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function setOutcome(value) {{
       panel.querySelector('#repeatation-outcome').value = value || defaultOutcome();
     }}
+    function signedPipsForPoints(start, end, selectedOutcome) {{
+      if (!start || !end) return null;
+      var entry = Number(start.y);
+      var exit = Number(end.y);
+      if (!Number.isFinite(entry) || !Number.isFinite(exit)) return null;
+      var rawPips = (exit - entry) * 100;
+      var direction = selectedOutcome || outcome();
+      return direction === 'bearish' ? -rawPips : rawPips;
+    }}
+    function signedPipsText(value) {{
+      return Number.isFinite(Number(value)) ? (Number(value) >= 0 ? '+' : '') + Number(value).toFixed(1) + ' pips' : '';
+    }}
+    function srGeometryForPoint(point, referencePoint, selectedOutcome) {{
+      var ref = Number(referencePoint && referencePoint.y);
+      var y = Number(point && point.y);
+      if (!Number.isFinite(ref) || !Number.isFinite(y)) return null;
+      var diffPips = (y - ref) * 100;
+      var position = Math.abs(diffPips) < 0.2 ? 'same_as_entry' : (diffPips < 0 ? 'below_entry' : 'above_entry');
+      var direction = selectedOutcome || outcome();
+      var role = 'neutral';
+      if (position === 'below_entry') role = direction === 'bearish' ? 'support/target' : 'support/entry';
+      if (position === 'above_entry') role = direction === 'bearish' ? 'resistance/entry' : 'resistance/target';
+      if (position === 'same_as_entry') role = 'same level';
+      return {{
+        position: position,
+        role: role,
+        reference_price: ref,
+        sr_price: y,
+        distance_pips: diffPips,
+        label: 'SR is ' + (position === 'below_entry' ? 'below entry' : (position === 'above_entry' ? 'above entry' : 'at entry')) + ': ' + role
+      }};
+    }}
     function tradeProfit() {{
       if (!state.tradeStart || !state.tradeEnd) return null;
       var entry = Number(state.tradeStart.y);
@@ -1401,7 +1433,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (!Number.isFinite(entry) || !Number.isFinite(exit)) return null;
       var rawPips = (exit - entry) * 100;
       var selected = outcome();
-      var signedPips = selected === 'bearish' ? -rawPips : rawPips;
+      var signedPips = signedPipsForPoints(state.tradeStart, state.tradeEnd, selected);
       var status = signedPips > 0 ? 'favorable move' : (signedPips < 0 ? 'adverse move' : 'flat move');
       return {{
         entry: entry,
@@ -1418,9 +1450,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function autoSuggestionHtml() {{
       if (!state.autoSuggestion) return '<div class="rm-auto muted">Auto Suggest has not been run for this repeatation.</div>';
       var s = state.autoSuggestion;
+      var geometry = s.sr_geometry
+        ? '<div><b>SR geometry</b>: ' + esc(s.sr_geometry.label || '') + ' (' + esc(signedPipsText(s.sr_geometry.distance_pips)) + ' from entry)</div>'
+        : '';
+      var tracking = '';
+      if (s.outcome_tracking) {{
+        tracking = '<div><b>Rule tracking</b>: rule ' + esc(signedPipsText(s.outcome_tracking.rule_signed_pips))
+          + ' vs old default ' + esc(signedPipsText(s.outcome_tracking.default_signed_pips))
+          + ' | difference ' + esc(signedPipsText(s.outcome_tracking.delta_signed_pips)) + '</div>';
+      }}
       return '<div class="rm-auto ' + esc(s.confidence || '') + '">'
         + '<div><b>Auto suggestion</b><span>' + esc(s.confidence || 'unknown') + '</span></div>'
         + '<div>' + esc(s.reason || '') + '</div>'
+        + geometry
+        + tracking
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
     }}
@@ -1913,6 +1956,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       var selected = markers.filter(function (point) {{ return point.isSelectedCaseTouch; }});
       var windowMarkers = markers.filter(pointInCaseWindow);
+      var defaultStart = selected[0] || windowMarkers[0] || markers[0];
+      var defaultStartTime = markerTime(defaultStart);
+      var minGapMs = 60000;
+      var defaultEnd = markers.find(function (point) {{
+        return markerTime(point) > defaultStartTime + minGapMs;
+      }});
       var supportBarrierRule = appliedRule('bearish_bias_support_barrier');
       var entryPoint = caseEntryPoint('case window entry/open price');
       if (supportBarrierRule && outcome() === 'bearish' && entryPoint) {{
@@ -1931,12 +1980,23 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var ruleReason = target
           ? 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support instead of expecting an immediate support break.'
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
+        var ruleSignedPips = signedPipsForPoints(entryPoint, target, outcome());
+        var defaultSignedPips = signedPipsForPoints(defaultStart, defaultEnd, outcome());
+        var tracking = (ruleSignedPips != null && defaultSignedPips != null) ? {{
+          rule_signed_pips: Number(ruleSignedPips.toFixed(1)),
+          default_signed_pips: Number(defaultSignedPips.toFixed(1)),
+          delta_signed_pips: Number((ruleSignedPips - defaultSignedPips).toFixed(1)),
+          default_start_rule: selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'),
+          default_end_rule: defaultEnd ? 'next_later_hardcoded_marker' : 'not_found'
+        }} : null;
         setTool('', false);
         state.autoSuggestion = {{
           active: !!target,
           confidence: ruleConfidence,
           reason: ruleReason,
           applied_family_rule: 'bearish_bias_support_barrier',
+          sr_geometry: srGeometryForPoint(target, entryPoint, outcome()),
+          outcome_tracking: tracking,
           marker_count: markers.length,
           selected_case_marker_count: selected.length,
           start_rule: 'family_rule_case_window_entry_open_price',
@@ -1953,12 +2013,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         updateSaveStatus(target ? 'auto suggested using applied family SR rule' : 'auto suggested entry only; no lower SR marker found');
         return;
       }}
-      var start = selected[0] || windowMarkers[0] || markers[0];
+      var start = defaultStart;
       var startTime = markerTime(start);
-      var minGapMs = 60000;
-      var end = markers.find(function (point) {{
-        return markerTime(point) > startTime + minGapMs;
-      }});
+      var end = defaultEnd;
       var confidence = selected[0] ? 'clean' : (windowMarkers[0] ? 'fallback' : 'weak');
       var reason = selected[0]
         ? 'Start used the first selected-case hardcoded touch; end used the next later hardcoded marker.'
@@ -1976,6 +2033,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         reason: reason,
         marker_count: markers.length,
         selected_case_marker_count: selected.length,
+        sr_geometry: srGeometryForPoint(end, start, outcome()),
         start_rule: selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'),
         end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
         manual_override: false,
