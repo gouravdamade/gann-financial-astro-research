@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_fan_v28"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_fan_v29"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1450,7 +1450,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var ist = toIST(point && point.x);
         return ist ? ist.slice(5, 16) : '';
       }}
-      function markerLabel(point, label, color, bg, ax, ay) {{
+      function markerLabel(point, label, color, bg, ax, ay, strong) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
         var price = Number(point.y);
         annotations.push({{
@@ -1461,17 +1461,17 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           y: point.y,
           text: '<b>' + esc(label) + '</b><br>' + esc(shortTime(point)) + (Number.isFinite(price) ? ' @ ' + price.toFixed(3) : ''),
           showarrow: true,
-          arrowhead: 1,
-          arrowsize: 0.8,
-          arrowwidth: 1.2,
-          arrowcolor: 'rgba(248,250,252,0.72)',
+          arrowhead: strong ? 2 : 1,
+          arrowsize: strong ? 1.15 : 0.8,
+          arrowwidth: strong ? 2.4 : 1.2,
+          arrowcolor: strong ? hexToRgba(color, 0.96) : 'rgba(248,250,252,0.72)',
           ax: ax,
           ay: ay,
           bgcolor: bg,
           bordercolor: color,
-          borderwidth: 1,
-          borderpad: 3,
-          font: {{ color: '#f8fafc', size: 10 }},
+          borderwidth: strong ? 1.5 : 1,
+          borderpad: strong ? 4 : 3,
+          font: {{ color: '#f8fafc', size: strong ? 11 : 10 }},
           align: 'left'
         }});
       }}
@@ -1497,8 +1497,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }});
       }}
       if (!panel.classList.contains('collapsed')) {{
-        markerLabel(state.tradeStart, 'Start', MARKER_COLORS.tradeStart, 'rgba(8,47,73,0.38)', -44, -38);
-        markerLabel(state.tradeEnd, 'End', MARKER_COLORS.tradeEnd, 'rgba(113,63,18,0.38)', 44, -38);
+        markerLabel(state.tradeStart, 'Start', MARKER_COLORS.tradeStart, 'rgba(8,47,73,0.42)', -118, -76, true);
+        markerLabel(state.tradeEnd, 'End', MARKER_COLORS.tradeEnd, 'rgba(113,63,18,0.42)', 118, 54, true);
         markerLabel(state.ignoreStart, 'Ignore start', MARKER_COLORS.ignore, 'rgba(88,28,135,0.34)', -50, 36);
         markerLabel(state.ignoreEnd, 'Ignore end', MARKER_COLORS.ignore, 'rgba(88,28,135,0.34)', 50, 36);
       }}
