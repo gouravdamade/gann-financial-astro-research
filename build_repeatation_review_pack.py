@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_attribution_boundary_v31"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_anchor_fix_v32"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1289,6 +1289,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var axis = gd._fullLayout && gd._fullLayout[axisName];
         return axis && Array.isArray(axis.range) ? axis.range : null;
       }}
+      function chartIsoFromMs(ms) {{
+        if (!Number.isFinite(ms)) return '';
+        var shifted = new Date(ms + 5.5 * 60 * 60 * 1000);
+        return shifted.toISOString().replace('Z', '+05:30');
+      }}
       function xAround(x, fraction) {{
         var range = axisRange('xaxis') || [meta.windowStart, meta.windowEnd];
         var start = Date.parse(range[0]);
@@ -1296,7 +1301,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var center = Date.parse(x);
         if (!Number.isFinite(start) || !Number.isFinite(end) || !Number.isFinite(center) || start === end) return [x, x];
         var half = Math.abs(end - start) * (fraction || 0.006);
-        return [new Date(center - half).toISOString(), new Date(center + half).toISOString()];
+        return [chartIsoFromMs(center - half), chartIsoFromMs(center + half)];
       }}
       function yAround(y, fraction) {{
         var range = axisRange('yaxis');
@@ -1373,7 +1378,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             xref: 'x',
             yref: 'y',
             x0: fan.anchor.x,
-            x1: new Date(endTime).toISOString(),
+            x1: chartIsoFromMs(endTime),
             y0: anchorPrice,
             y1: y1,
             line: {{
