@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_fan_v29"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_barrier_epsilon_v30"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1032,6 +1032,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         method: 'max(' + base + ' pips, 0.25 * ATR14)'
       }};
     }}
+    function srGeometryEpsilonPips(referencePoint) {{
+      var timeMs = markerTime(referencePoint);
+      var atr = Number.isFinite(timeMs) ? atrPipsAt(collectCandles(), timeMs, 14) : null;
+      var epsilon = Number.isFinite(atr) ? Math.max(1.5, Math.min(5, 0.05 * atr)) : 1.5;
+      return Number(epsilon.toFixed(1));
+    }}
     function pointInCaseWindow(point) {{
       var t = markerTime(point);
       var start = Date.parse(meta.windowStart);
@@ -1601,19 +1607,21 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var y = Number(point && point.y);
       if (!Number.isFinite(ref) || !Number.isFinite(y)) return null;
       var diffPips = (y - ref) * 100;
-      var position = Math.abs(diffPips) < 0.2 ? 'same_as_entry' : (diffPips < 0 ? 'below_entry' : 'above_entry');
+      var epsilonPips = srGeometryEpsilonPips(referencePoint);
+      var position = Math.abs(diffPips) <= epsilonPips ? 'same_as_entry' : (diffPips < 0 ? 'below_entry' : 'above_entry');
       var direction = selectedOutcome || outcome();
       var role = 'neutral';
       if (position === 'below_entry') role = direction === 'bearish' ? 'support/target' : 'support/entry';
       if (position === 'above_entry') role = direction === 'bearish' ? 'resistance/entry' : 'resistance/target';
-      if (position === 'same_as_entry') role = 'same level';
+      if (position === 'same_as_entry') role = 'at SR / use marker flow';
       return {{
         position: position,
         role: role,
         reference_price: ref,
         sr_price: y,
         distance_pips: diffPips,
-        label: 'SR is ' + (position === 'below_entry' ? 'below entry' : (position === 'above_entry' ? 'above entry' : 'at entry')) + ': ' + role
+        epsilon_pips: epsilonPips,
+        label: 'SR is ' + (position === 'below_entry' ? 'below entry' : (position === 'above_entry' ? 'above entry' : 'at entry within ' + epsilonPips + ' pips')) + ': ' + role
       }};
     }}
     function candleLabel(candle) {{
@@ -1669,6 +1677,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           break_candle: candleLabel(breakCandle),
           retest_candle: candleLabel(retestCandle),
           continuation_candle: candleLabel(continuationCandle),
+          break_time: breakCandle ? breakCandle.x : '',
+          retest_time: retestCandle ? retestCandle.x : '',
+          continuation_time: continuationCandle ? continuationCandle.x : '',
           reason: breakCandle
             ? (retestCandle && continuationCandle
               ? 'Close broke below SR by threshold, then retest failed and price continued lower.'
@@ -1704,6 +1715,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           break_candle: candleLabel(breakCandle),
           retest_candle: candleLabel(retestCandle),
           continuation_candle: candleLabel(continuationCandle),
+          break_time: breakCandle ? breakCandle.x : '',
+          retest_time: retestCandle ? retestCandle.x : '',
+          continuation_time: continuationCandle ? continuationCandle.x : '',
           reason: breakCandle
             ? (retestCandle && continuationCandle
               ? 'Close broke above SR by threshold, then retest held and price continued higher.'
@@ -1744,6 +1758,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var geometry = s.sr_geometry
         ? '<div><b>SR geometry</b>: ' + esc(s.sr_geometry.label || '') + ' (' + esc(signedPipsText(s.sr_geometry.distance_pips)) + ' from entry)</div>'
         : '';
+      if (s.sr_geometry_epsilon_pips) {{
+        geometry += '<div class="rm-table-sub">At-SR band: within +/-' + esc(Number(s.sr_geometry_epsilon_pips).toFixed(1))
+          + ' pips uses normal marker flow; outside that band can trigger support/resistance barrier logic.</div>';
+      }}
+      if (s.barrier_sr_geometry && s.sr_geometry && Math.abs(Number(s.barrier_sr_geometry.sr_price) - Number(s.sr_geometry.sr_price)) > 0.0001) {{
+        geometry += '<div class="rm-table-sub">First barrier checked: '
+          + esc(Number(s.barrier_sr_geometry.sr_price).toFixed(3))
+          + ' (' + esc(signedPipsText(s.barrier_sr_geometry.distance_pips)) + ' from entry)</div>';
+      }}
       var tracking = '';
       if (s.outcome_tracking) {{
         tracking = '<div><b>Rule tracking</b>: rule ' + esc(signedPipsText(s.outcome_tracking.rule_signed_pips))
@@ -2281,24 +2304,58 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }});
       var supportBarrierRule = appliedRule('bearish_bias_support_barrier');
       var entryPoint = caseEntryPoint('case window entry/open price');
-      if (supportBarrierRule && outcome() === 'bearish' && entryPoint) {{
+      var defaultStartGeometry = srGeometryForPoint(defaultStart, entryPoint, outcome());
+      var useDefaultMarkerFlow = defaultStartGeometry && defaultStartGeometry.position === 'same_as_entry';
+      if (supportBarrierRule && outcome() === 'bearish' && entryPoint && !useDefaultMarkerFlow) {{
         var entryTime = markerTime(entryPoint);
         var entryPrice = Number(entryPoint.y);
+        var clearancePips = srGeometryEpsilonPips(entryPoint);
+        var clearancePrice = clearancePips / 100;
         var targetCandidates = uniqueMarkers(selected.concat(windowMarkers).concat(markers)).filter(function (point) {{
           var t = markerTime(point);
           var y = Number(point && point.y);
           return Number.isFinite(t)
             && Number.isFinite(y)
             && t >= entryTime
-            && y < entryPrice;
+            && y < entryPrice - clearancePrice;
         }});
-        var target = targetCandidates[0] || null;
+        var firstBarrier = targetCandidates[0] || null;
+        var target = firstBarrier;
+        var barrierGeometry = srGeometryForPoint(firstBarrier, entryPoint, outcome());
+        var barrierBreakConfirmation = breakConfirmationForGeometry(barrierGeometry, firstBarrier, entryPoint, outcome());
+        var endRule = target ? 'family_rule_first_lower_hardcoded_sr_or_marker' : 'not_found';
+        if (target && barrierBreakConfirmation && barrierBreakConfirmation.status === 'confirmed') {{
+          var continuationTime = Date.parse(barrierBreakConfirmation.continuation_time || barrierBreakConfirmation.break_time);
+          var barrierPrice = Number(firstBarrier.y);
+          var nextTarget = targetCandidates.find(function (point) {{
+            var t = markerTime(point);
+            var y = Number(point && point.y);
+            return Number.isFinite(t)
+              && Number.isFinite(y)
+              && Number.isFinite(continuationTime)
+              && t > continuationTime + minGapMs
+              && y < barrierPrice - clearancePrice;
+          }}) || targetCandidates.find(function (point) {{
+            var t = markerTime(point);
+            var y = Number(point && point.y);
+            return Number.isFinite(t)
+              && Number.isFinite(y)
+              && t > markerTime(firstBarrier) + minGapMs
+              && y < barrierPrice - clearancePrice;
+          }}) || null;
+          if (nextTarget) {{
+            target = nextTarget;
+            endRule = 'family_rule_next_lower_marker_after_confirmed_support_break';
+          }}
+        }}
         var ruleConfidence = target ? (selected.indexOf(target) !== -1 ? 'rule clean' : 'rule fallback') : 'incomplete';
         var ruleReason = target
-          ? 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support instead of expecting an immediate support break.'
+          ? (endRule === 'family_rule_next_lower_marker_after_confirmed_support_break'
+            ? 'Applied family rule bearish_bias_support_barrier with confirmed support break: first lower SR was broken/retested/continued, so end moved to the next lower hardcoded SR/marker.'
+            : 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support unless a confirmed support break opens the next target.')
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
         var geometry = srGeometryForPoint(target, entryPoint, outcome());
-        var breakConfirmation = breakConfirmationForGeometry(geometry, target, entryPoint, outcome());
+        var breakConfirmation = barrierBreakConfirmation;
         var ruleSignedPips = signedPipsForPoints(entryPoint, target, outcome());
         var defaultSignedPips = signedPipsForPoints(defaultStart, defaultEnd, outcome());
         var tracking = (ruleSignedPips != null && defaultSignedPips != null) ? {{
@@ -2314,13 +2371,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           confidence: ruleConfidence,
           reason: ruleReason,
           applied_family_rule: 'bearish_bias_support_barrier',
+          barrier_sr_geometry: barrierGeometry,
           sr_geometry: geometry,
           break_confirmation: breakConfirmation,
+          sr_geometry_epsilon_pips: clearancePips,
           outcome_tracking: tracking,
           marker_count: markers.length,
           selected_case_marker_count: selected.length,
           start_rule: 'family_rule_case_window_entry_open_price',
-          end_rule: target ? 'family_rule_first_lower_hardcoded_sr_or_marker' : 'not_found',
+          end_rule: target ? endRule : 'not_found',
           manual_override: false,
           overridden_keys: [],
           created_at: new Date().toISOString()
