@@ -1,10 +1,32 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 14:45 IST
+Last updated: 2026-05-23 14:57 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-23
+
+2026-05-23 local LLM runtime options + Telegram test:
+
+- User confirmed:
+  extracted corpus/index should stay local and uncommitted,
+  Telegram test message is allowed,
+  laptop is a gaming laptop with space on `D:\`.
+- Sent Telegram test message through:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\telegram_notify.py`.
+- Telegram result:
+  `Telegram message sent.`
+- Local hardware check:
+  CPU `Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz`,
+  `6` cores / `12` logical processors,
+  RAM about `16 GB`,
+  GPU `NVIDIA GeForce GTX 1060` with about `4 GB` VRAM,
+  `D:\` free space about `819 GB`.
+- Recommendation:
+  start with quantized `3B` to `8B` models and keep generated local corpus/index/model cache on `D:\` if it grows.
+- Best first runtime option remains `Ollama` for simplest local API integration with `explain_case.py`;
+  `LM Studio` is the friendliest manual/model-browsing option;
+  raw `llama.cpp` is best only if later optimization/control becomes more important than setup simplicity.
 
 2026-05-23 local Jyotish RAG agent CLI v1:
 
