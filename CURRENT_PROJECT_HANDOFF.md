@@ -1,10 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 13:52 IST
+Last updated: 2026-05-23 14:45 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-23
+
+2026-05-23 local Jyotish RAG agent CLI v1:
+
+- User asked to start with the pending list and create the local LLM/Jyotish agent, and pointed to Telegram scripts under:
+  `C:\Users\ADMIN\Desktop\Trading_Algo\New folder`.
+- Added local agent scripts under:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent`.
+- Added `build_corpus_index.py`:
+  builds a local TF-IDF retrieval index from allowed/local sources.
+- Current indexed sources:
+  local PDF alignment extracts from `pdf_alignment_extracts`,
+  SQLite review/rule notes from `gann_aspect_annotations.sqlite`,
+  and a schema/sample slice from the SR touch-log CSV.
+- Generated local-only artifacts are intentionally ignored by git:
+  `jyotish_agent\corpus_chunks.jsonl`,
+  `jyotish_agent\index\tfidf_index.joblib`,
+  and `jyotish_agent\case_explanations\*`.
+- Added `explain_case.py`:
+  gathers case evidence from SQLite, retrieves supporting Jyotish/trading notes, and writes a plain-English ML/Jyotish explanation packet.
+- `explain_case.py` can use a local Ollama-compatible runtime if available at:
+  `http://127.0.0.1:11434/api/generate`;
+  otherwise it falls back to deterministic extractive RAG output so work is not blocked.
+- Generated a local explanation for case `43`:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\case_explanations\case_43_jyotish_explanation.md`.
+- Case `43` explanation currently says:
+  bearish family behavior is present, but support did not break cleanly because total strength is middle, Drik pressure is not strongly bearish, Chesta is only middle, aspect exactness is not tight, touched SR is Jupiter/benefic support, and Moon condition is not unusually damaged.
+- Added `telegram_notify.py`:
+  reuses the existing Telegram runner/config from `C:\Users\ADMIN\Desktop\Trading_Algo\New folder\telegram_job_runner.py`.
+- Telegram dry-run passed without sending a message:
+  `telegram_configured=True`, runner exists, chat id present, token present.
+- Smoke verification passed:
+  Python compile for all new scripts,
+  `explain_case.py --case-id 43 --no-llm`,
+  and `telegram_notify.py --dry-run`.
+- Pending before calling this a real local LLM agent:
+  choose the local runtime default (`Ollama` recommended unless user prefers LM Studio/llama.cpp),
+  install/select the model,
+  connect a `Draft ML Reason` UI button to `explain_case.py`,
+  decide when Telegram notifications should be sent,
+  and keep full extracted book text/index files local-only unless user explicitly wants them committed.
+- Pending after the current AVG(ALL)|MOON square family review:
+  rule lifecycle (`provisional -> accepted/revised/discarded`),
+  automated astro reason extraction into SQLite notes,
+  bullish mirrored SR-barrier family rules,
+  and wider public-domain Jyotish corpus ingestion after rights/source review.
 
 2026-05-23 ML Notes drawer + Jyotish agent groundwork v33:
 

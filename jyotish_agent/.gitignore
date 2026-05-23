@@ -1,0 +1,8 @@
+corpus_text/*.txt
+corpus_chunks.jsonl
+index/*
+!index/.gitkeep
+*.joblib
+*.pkl
+*.tmp
+case_explanations/
