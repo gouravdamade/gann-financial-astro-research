@@ -1,10 +1,40 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 14:57 IST
+Last updated: 2026-05-23 16:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-23
+
+2026-05-23 Telegram -> Codex relay pivot:
+
+- User clarified the desired Telegram behavior:
+  not a local LLM chatbot, but a middleman relay from Telegram into the current Codex/project workflow.
+- Stopped the in-progress `winget install Ollama.Ollama` attempt from the previous interpretation.
+- Added a local Telegram relay inbox:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\telegram_codex_relay.py`.
+- The relay does not use OpenAI, does not use a local LLM, and does not execute arbitrary Telegram commands.
+- Relay behavior:
+  `/codex <message>` queues a normal message for Codex;
+  `/urgent <message>` queues a high-priority message for Codex;
+  plain text is also saved as a relay message;
+  `/status`, `/last`, `/ping`, and `/help` are supported.
+- Relay inbox path:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\codex_telegram_inbox.jsonl`.
+- Added reader helper:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\read_codex_relay_inbox.py`.
+- Start/stop scripts:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\start_telegram_codex_relay.ps1`,
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\stop_telegram_codex_relay.ps1`.
+- Relay is currently running as a background Python process:
+  `telegram_codex_relay.py --announce-start`.
+- Important limitation:
+  the Telegram bot cannot directly inject messages into the live Codex app/session unless Codex exposes a supported local session API/websocket. Current implementation creates a durable local inbox that Codex reads during active work.
+- Smoke verification passed:
+  Python compile,
+  one-shot backlog-safe poll,
+  background process running,
+  and `read_codex_relay_inbox.py` reports no pending messages initially.
 
 2026-05-23 local LLM runtime options + Telegram test:
 

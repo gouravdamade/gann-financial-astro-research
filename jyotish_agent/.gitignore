@@ -6,3 +6,8 @@ index/*
 *.pkl
 *.tmp
 case_explanations/
+telegram_codex_relay_state.json
+telegram_codex_relay_stdout.log
+telegram_codex_relay_stderr.log
+codex_telegram_inbox.jsonl
+codex_telegram_inbox_seen.json
