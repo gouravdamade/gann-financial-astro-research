@@ -1,10 +1,49 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 00:49 IST
+Last updated: 2026-05-23 13:52 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-20
+## Latest Update - 2026-05-23
+
+2026-05-23 ML Notes drawer + Jyotish agent groundwork v33:
+
+- User asked where ML notes can be read in the marker drawer, then asked to add a clear ML Notes collapsible/dropdown section.
+- Updated `C:\Users\ADMIN\PycharmProjects\build_repeatation_review_pack.py`.
+- Repeatation UI version advanced to:
+  `repeatation_ui_20260523_ml_notes_v33`.
+- Marker drawer now has a dedicated `ML Notes` collapsible section below `Applied family rules`.
+- The new section loads ML notes from SQLite by same `pair_key + aspect` family:
+  exact-case ML notes show as `this case`;
+  family-scoped ML notes show as `case family`.
+- The section renders note id, source case, note type, parsed key fields, and the full saved note body in a wrapped scrollable block.
+- Rebuilt AVG(ALL)|MOON square repeatation pack from seed case `43`:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_43_avg_all_moon_square_20260523_103509`
+  and synced it into the served folder:
+  `C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Current direct case 43 URL:
+  `http://127.0.0.1:8765/aspect_review_case_43_chart.html?v=repeatation_ui_20260523_ml_notes_v33`.
+- In-app browser verification passed:
+  panel exists, `ML Notes` exists, case `43` shows `astro_reason_not_strong_enough_to_break_support`,
+  family note from case `8` shows `confirmed_support_break_but_stop_at_next_event_boundary`,
+  and `noWebglVisible=false`.
+- Started local Jyotish agent groundwork in:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent`.
+- Added `corpus_manifest.csv` with public-domain/open-access candidates, user-owned PDFs, SQLite notes, and touch-log data sources.
+- Added `local_jyotish_agent_plan.md` documenting the strict architecture:
+  deterministic Python owns calculations/trades, local LLM explains from retrieved evidence and citations.
+- Added `prepare_corpus_skeleton.py` and generated `ingestion_queue.json`.
+- Current ingestion queue:
+  `6` allowed/local/public-domain-candidate items and `16` manual-review-required items.
+- Web/source starting points recorded:
+  Dekho Panchang library index (`https://www.dekhopanchang.com/en/learn/library`),
+  Surya Siddhanta archive candidate (`https://archive.org/details/surya-siddhanta-translation`),
+  Vedanga Jyotisha archive candidate (`https://archive.org/details/VedangaJyotisa`).
+- Important policy decision:
+  start with local RAG/explanation, not model weight training. Use user-owned/local PDFs and workspace-generated notes; verify rights before ingesting modern translations.
+- User asked for Telegram ping if needed; no Telegram connector is available in this Codex workspace, so blockers should be preserved in this handoff and chat instead.
+
+2026-05-23 SR geometry + rule outcome tracking v25:
 
 2026-05-23 SR geometry + rule outcome tracking v25:
 

@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_anchor_fix_v32"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_ml_notes_v33"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -674,6 +674,80 @@ def load_case_family_rules(db_path: Path, seed: dict[str, Any]) -> list[dict[str
     return rules
 
 
+def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[str, Any]]]:
+    with sqlite3.connect(str(db_path)) as conn:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            """
+            SELECT
+                n.note_id,
+                n.case_id AS seed_case_id,
+                c.pair_key,
+                c.aspect,
+                n.note_type,
+                n.note_text,
+                n.created_at_utc
+            FROM rule_notes n
+            JOIN aspect_cases c ON c.case_id = n.case_id
+            WHERE c.pair_key = ?
+              AND c.aspect = ?
+            ORDER BY n.created_at_utc, n.note_id
+            """,
+            (seed["pair_key"], seed["aspect"]),
+        ).fetchall()
+    notes_by_case: dict[int, list[dict[str, Any]]] = {}
+    family_notes: list[dict[str, Any]] = []
+    for row in rows:
+        note_text = str(row["note_text"] or "")
+        fields = parse_rule_note_fields(note_text)
+        note_type = str(row["note_type"] or "")
+        rule_type = fields.get("type", "")
+        label = fields.get("ml_label") or fields.get("label") or fields.get("rule_label") or note_type
+        is_ml_note = (
+            "ml" in note_type.lower()
+            or rule_type.lower().startswith("ml")
+            or "ml_label" in fields
+            or "ml" in label.lower()
+        )
+        if not is_ml_note:
+            continue
+        note = {
+            "note_id": int(row["note_id"]),
+            "seed_case_id": int(row["seed_case_id"]),
+            "family_key": f"{row['pair_key']}::{row['aspect']}",
+            "pair_key": str(row["pair_key"]),
+            "aspect": str(row["aspect"]),
+            "note_type": note_type,
+            "scope": fields.get("scope", ""),
+            "status": fields.get("status", ""),
+            "rule_type": rule_type,
+            "label": label,
+            "direction": fields.get("direction", ""),
+            "note_text": note_text,
+            "fields": fields,
+            "created_at_utc": str(row["created_at_utc"] or ""),
+        }
+        notes_by_case.setdefault(int(row["seed_case_id"]), []).append({**note, "match_scope": "this case"})
+        scope = fields.get("scope", "")
+        if "case_family" in scope or note_type.startswith("family_"):
+            family_notes.append({**note, "match_scope": "case family"})
+    if family_notes:
+        notes_by_case[0] = family_notes
+    for case_id in {int(seed["case_id"]), *notes_by_case.keys()}:
+        if case_id == 0:
+            continue
+        merged = list(notes_by_case.get(case_id, []))
+        seen = {int(note["note_id"]) for note in merged}
+        for note in family_notes:
+            if int(note["note_id"]) in seen:
+                continue
+            merged.append(note)
+            seen.add(int(note["note_id"]))
+        if merged:
+            notes_by_case[case_id] = merged
+    return notes_by_case
+
+
 def chart_command(args: argparse.Namespace, case_id: int, output_dir: Path) -> list[str]:
     return [
         sys.executable,
@@ -736,6 +810,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "traitGuideHref": html_cache_href("trait_guide.html"),
         "specialTraits": case.get("special_traits", {}),
         "appliedFamilyRules": case.get("applied_family_rules", []),
+        "mlNotes": case.get("ml_notes", []),
     }
     metadata_json = json.dumps(metadata)
     return f"""
@@ -1993,6 +2068,54 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}).join('');
       return '<div class="rm-rules"><div><b>Applied family rules</b><span>' + esc(rules.length) + '</span></div>' + rows + '</div>';
     }}
+    function mlNotePrettyText(note) {{
+      var fields = note && note.fields && typeof note.fields === 'object' ? note.fields : null;
+      var text = String((note && note.note_text) || '').trim();
+      var rows = [];
+      if (fields) {{
+        var preferred = [
+          'learning',
+          'trade_implication',
+          'astro_reasons',
+          'rule_note',
+          'context',
+          'trigger',
+          'break_confirmation',
+          'gann_fan',
+          'label',
+          'ml_label'
+        ];
+        var used = {{}};
+        rows = preferred.filter(function (key) {{ return fields[key]; }}).map(function (key) {{
+          used[key] = true;
+          return '<li><b>' + esc(key.replace(/_/g, ' ')) + '</b>: ' + esc(fields[key]) + '</li>';
+        }});
+        Object.keys(fields).filter(function (key) {{
+          return !used[key] && ['scope', 'status', 'type', 'rule_label', 'family', 'seed_case_id'].indexOf(key) < 0;
+        }}).slice(0, 12).forEach(function (key) {{
+          rows.push('<li><b>' + esc(key.replace(/_/g, ' ')) + '</b>: ' + esc(fields[key]) + '</li>');
+        }});
+      }}
+      var fieldHtml = rows.length ? '<ul>' + rows.join('') + '</ul>' : '';
+      if (!text) return fieldHtml || '<div class="muted">No note body saved.</div>';
+      var bodyParts = text.split(/\\n\\s*\\n/).map(function (part) {{ return part.trim(); }}).filter(Boolean);
+      var bodyText = bodyParts.length > 1 ? bodyParts.slice(1).join('\\n\\n') : text;
+      return fieldHtml + '<div class="rm-ml-note-body">' + esc(bodyText) + '</div>';
+    }}
+    function mlNotesHtml() {{
+      var notes = Array.isArray(meta.mlNotes) ? meta.mlNotes : [];
+      if (!notes.length) return '<details class="rm-ml-notes"><summary>ML Notes <span>0</span></summary><div class="muted">No ML notes saved for this case/family yet.</div></details>';
+      var rows = notes.map(function (note) {{
+        var title = note.label || note.note_type || 'ML note';
+        var scope = note.match_scope || note.scope || 'saved note';
+        return '<div class="rm-ml-note-item">'
+          + '<div><b>' + esc(title) + '</b><span>' + esc(scope) + '</span></div>'
+          + '<div class="rm-table-sub">note_id=' + esc(note.note_id || '') + ' | source case=' + esc(note.seed_case_id || '') + ' | type=' + esc(note.note_type || '') + '</div>'
+          + mlNotePrettyText(note)
+          + '</div>';
+      }}).join('');
+      return '<details class="rm-ml-notes" open><summary>ML Notes <span>' + esc(notes.length) + '</span></summary>' + rows + '</details>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -2145,6 +2268,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
+      panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
       panel.querySelector('#repeatation-special-traits').innerHTML = specialTraitsHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
       panel.querySelector('#repeatation-ignore-definitions').innerHTML = selectedIgnoreDefinitionsHtml();
@@ -2547,6 +2671,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
       + '<div id="repeatation-profit-summary"></div>'
       + '<div id="repeatation-applied-rules"></div>'
+      + '<div id="repeatation-ml-notes"></div>'
       + '<div id="repeatation-special-traits"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
       + '<label>Note type</label><input id="repeatation-note-type" value="manual_repeatation_note">'
@@ -2608,6 +2733,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-rules span{{color:#fde68a;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-rule-item{{border-top:1px solid #14532d;padding-top:5px;margin-top:5px;}}'
       + '#repeatation-marker-panel .rm-rule-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-ml-notes{{background:#111827;border:1px solid #a855f7;border-radius:6px;padding:7px;margin:6px 0;color:#ddd6fe;}}'
+      + '#repeatation-marker-panel .rm-ml-notes summary{{cursor:pointer;color:#f5d0fe;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-ml-notes summary span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-ml-note-item{{border-top:1px solid #581c87;padding-top:5px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-ml-note-item>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#f0abfc;}}'
+      + '#repeatation-marker-panel .rm-ml-note-item span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-ml-note-item ul{{margin:5px 0 0 16px;padding:0;}}'
+      + '#repeatation-marker-panel .rm-ml-note-item li{{margin:3px 0;}}'
+      + '#repeatation-marker-panel .rm-ml-note-body{{white-space:pre-wrap;background:#020617;border:1px solid #312e81;border-radius:5px;padding:6px;margin-top:6px;color:#e9d5ff;max-height:220px;overflow:auto;}}'
       + '#repeatation-marker-panel .rm-evidence{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-evidence summary{{cursor:pointer;color:#bfdbfe;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-evidence-group{{margin-top:8px;}}'
@@ -3127,6 +3261,7 @@ def main() -> None:
     touch_rows_by_event = trait_row_for_events(args.touch_log, cases)
     special_traits_by_case = compute_special_traits(cases, stats_by_case, touch_rows_by_event)
     family_rules = load_case_family_rules(args.db, seed)
+    ml_notes_by_case = load_ml_notes(args.db, seed)
     for case in cases:
         stats = stats_by_case[int(case["case_id"])]
         case.update(stats)
@@ -3134,6 +3269,7 @@ def main() -> None:
         case["default_outcome"] = direction if direction in {"bullish", "bearish"} else "unclear"
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
         case["applied_family_rules"] = family_rules
+        case["ml_notes"] = ml_notes_by_case.get(int(case["case_id"]), ml_notes_by_case.get(0, []))
 
     records: list[dict[str, Any]] = []
     for idx, case in enumerate(cases, start=1):
@@ -3153,6 +3289,7 @@ def main() -> None:
                 "reviewer_href",
                 "special_traits",
                 "applied_family_rules",
+                "ml_notes",
             }
         }
         record = {
@@ -3177,6 +3314,7 @@ def main() -> None:
             ),
             "special_trait_json": json.dumps(case.get("special_traits", {}), ensure_ascii=False),
             "applied_family_rules_json": json.dumps(case.get("applied_family_rules", []), ensure_ascii=False),
+            "ml_notes_json": json.dumps(case.get("ml_notes", []), ensure_ascii=False),
         }
         records.append(record)
 

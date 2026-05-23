@@ -1,0 +1,183 @@
+{
+  "policy_note": "Queue includes only local/user-owned structured references and public-domain candidates. RAG-only modern translations must be manually approved before extraction.",
+  "queue": [
+    {
+      "source_id": "SURYA_SIDDHANTA",
+      "title": "Surya Siddhanta",
+      "source_url": "https://archive.org/details/surya-siddhanta-translation",
+      "ingestion_policy": "public_domain_candidate",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\SURYA_SIDDHANTA.txt"
+    },
+    {
+      "source_id": "VEDANGA_JYOTISHA",
+      "title": "Vedanga Jyotisha",
+      "source_url": "https://archive.org/details/VedangaJyotisa",
+      "ingestion_policy": "public_domain_candidate",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\VEDANGA_JYOTISHA.txt"
+    },
+    {
+      "source_id": "SHADBALA_JAYA",
+      "title": "Best Way to Use Shad Bala",
+      "source_url": "C:/Users/ADMIN/Desktop/jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf",
+      "ingestion_policy": "local_user_reference",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\SHADBALA_JAYA.txt"
+    },
+    {
+      "source_id": "STRICT_VEDIC_LLM",
+      "title": "Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer",
+      "source_url": "C:/Users/ADMIN/Desktop/doc/Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf",
+      "ingestion_policy": "local_user_reference",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\STRICT_VEDIC_LLM.txt"
+    },
+    {
+      "source_id": "CURRENT_RULE_NOTES",
+      "title": "Gann aspect annotation rule notes",
+      "source_url": "C:/Users/ADMIN/PycharmProjects/gann_aspect_annotations.sqlite",
+      "ingestion_policy": "local_structured_training_reference",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\CURRENT_RULE_NOTES.txt"
+    },
+    {
+      "source_id": "TOUCH_LOG",
+      "title": "USDJPY aspect SR touch log",
+      "source_url": "C:/Users/ADMIN/PycharmProjects/aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv",
+      "ingestion_policy": "local_structured_training_reference",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\TOUCH_LOG.txt"
+    }
+  ],
+  "manual_review_required": [
+    {
+      "source_id": "BPHS",
+      "title": "Brihat Parashara Hora Shastra",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\BPHS.txt"
+    },
+    {
+      "source_id": "BRIHAT_JATAKA",
+      "title": "Brihat Jataka",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\BRIHAT_JATAKA.txt"
+    },
+    {
+      "source_id": "PHALADEEPIKA",
+      "title": "Phaladeepika",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\PHALADEEPIKA.txt"
+    },
+    {
+      "source_id": "SARAVALI",
+      "title": "Saravali",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\SARAVALI.txt"
+    },
+    {
+      "source_id": "JATAKA_PARJATA",
+      "title": "Jataka Parijata",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\JATAKA_PARJATA.txt"
+    },
+    {
+      "source_id": "HORA_SARA",
+      "title": "Hora Sara",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\HORA_SARA.txt"
+    },
+    {
+      "source_id": "UTTARA_KALAMRITA",
+      "title": "Uttara Kalamrita",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\UTTARA_KALAMRITA.txt"
+    },
+    {
+      "source_id": "BHRIGU_SUTRAS",
+      "title": "Bhrigu Sutras",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\BHRIGU_SUTRAS.txt"
+    },
+    {
+      "source_id": "LAGHU_PARASHARI",
+      "title": "Laghu Parashari",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\LAGHU_PARASHARI.txt"
+    },
+    {
+      "source_id": "PRASNA_MARGA",
+      "title": "Prasna Marga",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "3",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\PRASNA_MARGA.txt"
+    },
+    {
+      "source_id": "MUHURTA_CHINTAMANI",
+      "title": "Muhurta Chintamani",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\MUHURTA_CHINTAMANI.txt"
+    },
+    {
+      "source_id": "BRIHAT_SAMHITA",
+      "title": "Brihat Samhita",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "1",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\BRIHAT_SAMHITA.txt"
+    },
+    {
+      "source_id": "PANCHA_SIDDHANTIKA",
+      "title": "Panchasiddhantika",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "public_domain_candidate_if_old_translation",
+      "priority": "2",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\PANCHA_SIDDHANTIKA.txt"
+    },
+    {
+      "source_id": "GRAHA_LAGHAVA",
+      "title": "Graha Laghava",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "3",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\GRAHA_LAGHAVA.txt"
+    },
+    {
+      "source_id": "MANSAGARI",
+      "title": "Mansagari",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "3",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\MANSAGARI.txt"
+    },
+    {
+      "source_id": "JATAKA_TATTVA",
+      "title": "Jataka Tattva",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "3",
+      "text_path": "C:\\Users\\ADMIN\\PycharmProjects\\jyotish_agent\\corpus_text\\JATAKA_TATTVA.txt"
+    }
+  ]
+}
