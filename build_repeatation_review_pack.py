@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_ml_notes_v33"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_draft_ml_reason_v34"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -836,6 +836,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       selectedIgnoreTypes: [],
       annotations: [],
       autoSuggestion: null,
+      mlDraft: null,
       outcomeTouched: false,
       lastPoint: null,
       draftLoaded: false
@@ -2116,6 +2117,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}).join('');
       return '<details class="rm-ml-notes" open><summary>ML Notes <span>' + esc(notes.length) + '</span></summary>' + rows + '</details>';
     }}
+    function mlDraftHtml() {{
+      if (!state.mlDraft) return '<div class="rm-draft muted">No local draft generated yet.</div>';
+      var title = state.mlDraft.ok ? 'Local Draft ML Reason' : 'Local Draft Failed';
+      var body = state.mlDraft.markdown || state.mlDraft.error || '';
+      return '<details class="rm-draft" open><summary>' + esc(title) + '</summary>'
+        + '<div class="rm-table-sub">' + esc(state.mlDraft.path || '') + '</div>'
+        + '<pre>' + esc(body.slice(0, 9000)) + '</pre>'
+        + '</details>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -2255,6 +2265,45 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (!href) return '<span class="rm-soft disabled">' + esc(label) + '</span>';
       return '<a class="rm-soft ' + esc(className || '') + '" href="' + esc(href) + '">' + esc(label) + '</a>';
     }}
+    function draftQuestion() {{
+      var result = tradeProfit();
+      var pieces = [
+        'Explain case ' + meta.caseId + ' ' + meta.pairKey + ' ' + meta.aspect + ' for ML review.',
+        'Use deterministic case evidence as ground truth.',
+        'Explain probable astro/trading reasons, SR geometry, rule status, and ML features to test.'
+      ];
+      if (state.autoSuggestion) pieces.push('Auto Suggest summary: ' + JSON.stringify(state.autoSuggestion).slice(0, 1800));
+      if (result) pieces.push('Current manual/auto trade result: ' + result.outcomeLabel + ' ' + result.signedPipsText + ' pips; entry=' + result.entry.toFixed(3) + '; exit=' + result.exit.toFixed(3));
+      if (noteText()) pieces.push('Reviewer note: ' + noteText().slice(0, 900));
+      return pieces.join('\\n');
+    }}
+    function draftMlReason() {{
+      var button = panel.querySelector('#repeatation-draft-ml-reason');
+      var status = panel.querySelector('#repeatation-draft-ml-status');
+      button.disabled = true;
+      status.textContent = 'drafting locally...';
+      state.mlDraft = {{ ok: true, markdown: 'Drafting local ML reason for case ' + meta.caseId + '...' }};
+      render();
+      fetch('/api/draft_ml_reason', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{ case_id: meta.caseId, question: draftQuestion() }})
+      }})
+        .then(function (res) {{ return res.json().then(function (data) {{ data.http_status = res.status; return data; }}); }})
+        .then(function (data) {{
+          state.mlDraft = data;
+          status.textContent = data.ok ? 'local draft ready' : 'local draft failed';
+          render();
+        }})
+        .catch(function (err) {{
+          state.mlDraft = {{ ok: false, error: String(err && err.message ? err.message : err) }};
+          status.textContent = 'local draft failed';
+          render();
+        }})
+        .finally(function () {{
+          button.disabled = false;
+        }});
+    }}
     function render() {{
       panel.querySelector('#repeatation-last').textContent = fmtPoint(state.lastPoint);
       panel.querySelector('#repeatation-trade-start').textContent = fmtPoint(state.tradeStart);
@@ -2269,6 +2318,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
+      panel.querySelector('#repeatation-ml-draft').innerHTML = mlDraftHtml();
       panel.querySelector('#repeatation-special-traits').innerHTML = specialTraitsHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
       panel.querySelector('#repeatation-ignore-definitions').innerHTML = selectedIgnoreDefinitionsHtml();
@@ -2672,6 +2722,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div id="repeatation-profit-summary"></div>'
       + '<div id="repeatation-applied-rules"></div>'
       + '<div id="repeatation-ml-notes"></div>'
+      + '<div class="rm-actions"><button id="repeatation-draft-ml-reason" type="button">Draft ML Reason</button><span id="repeatation-draft-ml-status" class="rm-status-inline">uses local Ollama/RAG if server is running</span></div>'
+      + '<div id="repeatation-ml-draft"></div>'
       + '<div id="repeatation-special-traits"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
       + '<label>Note type</label><input id="repeatation-note-type" value="manual_repeatation_note">'
@@ -2742,6 +2794,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-ml-note-item ul{{margin:5px 0 0 16px;padding:0;}}'
       + '#repeatation-marker-panel .rm-ml-note-item li{{margin:3px 0;}}'
       + '#repeatation-marker-panel .rm-ml-note-body{{white-space:pre-wrap;background:#020617;border:1px solid #312e81;border-radius:5px;padding:6px;margin-top:6px;color:#e9d5ff;max-height:220px;overflow:auto;}}'
+      + '#repeatation-marker-panel .rm-draft{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:6px 0;color:#dbeafe;}}'
+      + '#repeatation-marker-panel .rm-draft summary{{cursor:pointer;color:#bae6fd;font-weight:700;}}'
+      + '#repeatation-marker-panel .rm-draft pre{{max-height:280px;border-color:#164e63;color:#e0f2fe;}}'
       + '#repeatation-marker-panel .rm-evidence{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-evidence summary{{cursor:pointer;color:#bfdbfe;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-evidence-group{{margin-top:8px;}}'
@@ -2799,6 +2854,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-clear').addEventListener('click', clearMarkers);
     panel.querySelector('#repeatation-clear-draft').addEventListener('click', clearSavedDraft);
     panel.querySelector('#repeatation-auto-suggest').addEventListener('click', autoSuggestTrade);
+    panel.querySelector('#repeatation-draft-ml-reason').addEventListener('click', draftMlReason);
     panel.querySelector('#repeatation-ignore-trade').addEventListener('click', markIgnoreTrade);
     panel.querySelector('#repeatation-add-ignore-signal').addEventListener('click', function () {{ addAnnotation('ignore_signal'); }});
     panel.querySelector('#repeatation-add-rule-note').addEventListener('click', function () {{ addAnnotation('rule_note'); }});

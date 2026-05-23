@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import json
+import subprocess
+import sys
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from functools import partial
@@ -9,6 +12,7 @@ from functools import partial
 DEFAULT_PACK_DIR = Path(
     r"C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548"
 )
+PROJECT_ROOT = Path(__file__).resolve().parent
 
 
 class NoCacheRequestHandler(SimpleHTTPRequestHandler):
@@ -17,6 +21,68 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Pragma", "no-cache")
         self.send_header("Expires", "0")
         super().end_headers()
+
+    def _send_json(self, status: int, payload: dict) -> None:
+        body = json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_POST(self) -> None:
+        if self.path.split("?", 1)[0] != "/api/draft_ml_reason":
+            self._send_json(404, {"ok": False, "error": "unknown API endpoint"})
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            raw = self.rfile.read(length).decode("utf-8", errors="replace")
+            payload = json.loads(raw or "{}")
+            case_id = int(payload.get("case_id"))
+            question = str(payload.get("question") or "").strip()
+            if not question:
+                question = f"Explain case {case_id} behavior and propose ML features/rules to test."
+        except Exception as exc:
+            self._send_json(400, {"ok": False, "error": f"bad request: {exc}"})
+            return
+
+        out_path = PROJECT_ROOT / "jyotish_agent" / "case_explanations" / f"case_{case_id}_jyotish_explanation.md"
+        cmd = [
+            sys.executable,
+            str(PROJECT_ROOT / "jyotish_agent" / "explain_case.py"),
+            "--case-id",
+            str(case_id),
+            "--question",
+            question,
+        ]
+        try:
+            proc = subprocess.run(
+                cmd,
+                cwd=str(PROJECT_ROOT),
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+        except subprocess.TimeoutExpired:
+            self._send_json(504, {"ok": False, "error": "local explanation timed out"})
+            return
+        if proc.returncode != 0:
+            self._send_json(500, {"ok": False, "error": (proc.stderr or proc.stdout or "explain_case failed")[:4000]})
+            return
+        try:
+            markdown = out_path.read_text(encoding="utf-8", errors="replace")
+        except Exception as exc:
+            self._send_json(500, {"ok": False, "error": f"could not read explanation: {exc}"})
+            return
+        self._send_json(
+            200,
+            {
+                "ok": True,
+                "case_id": case_id,
+                "path": str(out_path),
+                "markdown": markdown,
+            },
+        )
 
 
 def parse_args() -> argparse.Namespace:
