@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_fan_v27"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_gann_fan_v28"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1313,11 +1313,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var elapsedCandles = (endTime - anchorTime) / candleMs();
         var basePips = Number(fan.base_pips_per_candle || 1);
         var ratios = Array.isArray(fan.ratios) ? fan.ratios : [];
-        var anchorXs = xAround(fan.anchor.x, 0.004);
-        var anchorYs = yAround(anchorPrice, 0.011);
+        var anchorXs = xAround(fan.anchor.x, 0.0045);
+        var anchorYs = yAround(anchorPrice, 0.013);
+        var anchorDotXs = xAround(fan.anchor.x, 0.0024);
+        var anchorDotYs = yAround(anchorPrice, 0.007);
         shapes.push({{
           type: 'circle',
-          name: 'repeatation-marker-gann-anchor',
+          name: 'repeatation-marker-gann-anchor-ring',
           xref: 'x',
           yref: 'y',
           x0: anchorXs[0],
@@ -1325,7 +1327,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           y0: anchorYs[0],
           y1: anchorYs[1],
           fillcolor: 'rgba(249,115,22,0.12)',
-          line: {{ color: 'rgba(249,115,22,0.92)', width: 1.2 }},
+          line: {{ color: 'rgba(254,243,199,0.95)', width: 1.5 }},
+          layer: 'above'
+        }});
+        shapes.push({{
+          type: 'circle',
+          name: 'repeatation-marker-gann-anchor-dot',
+          xref: 'x',
+          yref: 'y',
+          x0: anchorDotXs[0],
+          x1: anchorDotXs[1],
+          y0: anchorDotYs[0],
+          y1: anchorDotYs[1],
+          fillcolor: 'rgba(249,115,22,0.96)',
+          line: {{ color: 'rgba(15,23,42,0.95)', width: 0.8 }},
           layer: 'above'
         }});
         ratios.forEach(function (ratio) {{
@@ -1481,36 +1496,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           align: 'left'
         }});
       }}
-      function gannFanLabel() {{
-        var fan = state.autoSuggestion && state.autoSuggestion.gann_fan;
-        if (!fan || !fan.active || !fan.anchor) return;
-        annotations.push({{
-          name: 'repeatation-marker-gann-anchor-label',
-          xref: 'x',
-          yref: 'y',
-          x: fan.anchor.x,
-          y: fan.anchor.y,
-          text: '<b>Gann fan</b><br>' + esc(fan.direction === 'bearish' ? 'top wick anchor' : 'bottom wick anchor') + '<br>1x1 = 1 pip/candle',
-          showarrow: true,
-          arrowhead: 1,
-          arrowsize: 0.75,
-          arrowwidth: 1,
-          arrowcolor: 'rgba(251,191,36,0.75)',
-          ax: fan.direction === 'bearish' ? -54 : 54,
-          ay: fan.direction === 'bearish' ? -42 : 42,
-          bgcolor: 'rgba(69,26,3,0.46)',
-          bordercolor: MARKER_COLORS.gannAnchor,
-          borderwidth: 1,
-          borderpad: 3,
-          font: {{ color: '#fef3c7', size: 10 }},
-          align: 'left'
-        }});
+      if (!panel.classList.contains('collapsed')) {{
+        markerLabel(state.tradeStart, 'Start', MARKER_COLORS.tradeStart, 'rgba(8,47,73,0.38)', -44, -38);
+        markerLabel(state.tradeEnd, 'End', MARKER_COLORS.tradeEnd, 'rgba(113,63,18,0.38)', 44, -38);
+        markerLabel(state.ignoreStart, 'Ignore start', MARKER_COLORS.ignore, 'rgba(88,28,135,0.34)', -50, 36);
+        markerLabel(state.ignoreEnd, 'Ignore end', MARKER_COLORS.ignore, 'rgba(88,28,135,0.34)', 50, 36);
       }}
-      markerLabel(state.tradeStart, 'Start', MARKER_COLORS.tradeStart, 'rgba(8,47,73,0.46)', -44, -38);
-      markerLabel(state.tradeEnd, 'End', MARKER_COLORS.tradeEnd, 'rgba(113,63,18,0.46)', 44, -38);
-      markerLabel(state.ignoreStart, 'Ignore start', MARKER_COLORS.ignore, 'rgba(88,28,135,0.38)', -50, 36);
-      markerLabel(state.ignoreEnd, 'Ignore end', MARKER_COLORS.ignore, 'rgba(88,28,135,0.38)', 50, 36);
-      gannFanLabel();
       tradeProfitLabel();
       return annotations;
     }}
@@ -2557,6 +2548,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var toggle = panel.querySelector('#repeatation-toggle');
       toggle.textContent = collapsed ? 'Open' : 'Hide';
       toggle.setAttribute('title', collapsed ? 'Expand marker drawer' : 'Collapse marker drawer');
+      drawMarkers();
       if (persist !== false) saveDraft();
     }}
     function isPanelOrPlotlyControl(evt) {{
