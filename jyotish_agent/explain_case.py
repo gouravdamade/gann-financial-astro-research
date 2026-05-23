@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sqlite3
 from pathlib import Path
 from typing import Any
@@ -189,7 +190,11 @@ def llm_drift_warning(case_id: int, case_summary: str, llm_text: str | None) -> 
         "JUPITER" not in case_summary.upper() or "jupiter" in llm_text.lower(),
     ]
     banned_generic = ("sun, mercury, venus", "nepture", "economic indicators")
-    if not all(checks) or any(item in llm_text.lower() for item in banned_generic):
+    direction_conflict = (
+        ("ret_after_72h_dir=DOWN" in case_summary or "direction=bearish" in case_summary.lower())
+        and "bullish bias" in llm_text.lower()
+    )
+    if direction_conflict or not all(checks) or any(item in llm_text.lower() for item in banned_generic):
         return (
             "Local LLM commentary may have drifted from the evidence. "
             "Use the deterministic analysis below as ground truth and treat the LLM section as untrusted draft text."
@@ -214,9 +219,37 @@ def bucket_strength(value: float | None, low: float, high: float) -> str:
     return "middle"
 
 
-def deterministic_analysis(packet: dict[str, Any]) -> str:
+def extract_auto_suggest(question: str) -> dict[str, Any]:
+    marker = "Auto Suggest summary:"
+    idx = question.find(marker)
+    if idx < 0:
+        return {}
+    raw = question[idx + len(marker):].lstrip()
+    decoder = json.JSONDecoder()
+    try:
+        parsed, _ = decoder.raw_decode(raw)
+    except json.JSONDecodeError:
+        return {}
+    return parsed if isinstance(parsed, dict) else {}
+
+
+def extract_trade_result(question: str) -> str:
+    match = re.search(r"Current manual/auto trade result:\s*(.+)", question)
+    return match.group(1).strip() if match else ""
+
+
+def fmt_pips(value: Any) -> str:
+    num = as_float(value)
+    if num is None:
+        return "unknown"
+    return f"{num:+.1f} pips"
+
+
+def deterministic_analysis(packet: dict[str, Any], question: str = "") -> str:
     case = packet["case"]
     ctx = packet["context"]
+    auto = extract_auto_suggest(question)
+    trade_result = extract_trade_result(question)
     shad = as_float(ctx.get("event_strict_shadbala_implemented_total_virupa_avg"))
     ratio = as_float(ctx.get("event_strict_shadbala_implemented_total_ratio_avg"))
     drik = as_float(ctx.get("event_strict_drik_bala_virupa_avg"))
@@ -231,6 +264,46 @@ def deterministic_analysis(packet: dict[str, Any]) -> str:
     moon_relation = ctx.get("event_b2_sign_relation", "unknown")
     moon_dignity = ctx.get("event_b2_sthana_dignity_label", "unknown")
     notes = "\n".join(str(n.get("note_text", "")) for n in packet["exact_notes"] + packet["family_notes"])
+    break_info = auto.get("break_confirmation") if isinstance(auto.get("break_confirmation"), dict) else {}
+    sr_geom = auto.get("sr_geometry") if isinstance(auto.get("sr_geometry"), dict) else {}
+    barrier_geom = auto.get("barrier_sr_geometry") if isinstance(auto.get("barrier_sr_geometry"), dict) else {}
+    attribution = auto.get("attribution_boundary") if isinstance(auto.get("attribution_boundary"), dict) else {}
+    tracking = auto.get("outcome_tracking") if isinstance(auto.get("outcome_tracking"), dict) else {}
+
+    setup_lines = []
+    if auto:
+        setup_lines.append(f"Auto Suggest confidence is `{auto.get('confidence', 'unknown')}`.")
+        if auto.get("applied_family_rule"):
+            setup_lines.append(f"Applied family rule: `{auto.get('applied_family_rule')}`.")
+        if sr_geom:
+            setup_lines.append(
+                f"Final SR geometry: {sr_geom.get('label', 'unknown')} "
+                f"({fmt_pips(sr_geom.get('distance_pips'))} from entry; epsilon {fmt_pips(sr_geom.get('epsilon_pips')).replace('+', '')})."
+            )
+        if barrier_geom and barrier_geom != sr_geom:
+            setup_lines.append(
+                f"First barrier checked: {barrier_geom.get('label', 'unknown')} "
+                f"({fmt_pips(barrier_geom.get('distance_pips'))} from entry)."
+            )
+        if break_info:
+            setup_lines.append(
+                f"Break confirmation: {break_info.get('label', break_info.get('status', 'unknown'))}; "
+                f"threshold {fmt_pips(break_info.get('threshold_pips')).replace('+', '')}; "
+                f"break line {break_info.get('break_line', 'unknown')}."
+            )
+        if attribution:
+            setup_lines.append(
+                "Attribution boundary: exit at the next hardcoded marker/event "
+                f"`{attribution.get('markerLabel', attribution.get('traceName', 'unknown'))}` "
+                f"near `{attribution.get('x', 'unknown')}` @ `{attribution.get('y', 'unknown')}`."
+            )
+        if tracking:
+            setup_lines.append(
+                f"Rule tracking: rule {fmt_pips(tracking.get('rule_signed_pips'))} vs default "
+                f"{fmt_pips(tracking.get('default_signed_pips'))}; delta {fmt_pips(tracking.get('delta_signed_pips'))}."
+            )
+    if trade_result:
+        setup_lines.append(f"Current marker result from drawer: {trade_result}.")
 
     reasons = []
     if shad is not None:
@@ -258,8 +331,10 @@ def deterministic_analysis(packet: dict[str, Any]) -> str:
 
     feature_list = [
         "sr_geometry_role and distance in pips",
+        "sr_geometry_epsilon_pips / at-SR band",
         "support_break_threshold_pips and break_line",
         "break/retest/continuation status",
+        "attribution_boundary marker/time/aspect",
         "touched SR planet and benefic/malefic nature",
         "Shadbala total and ratio bucket",
         "Drik Bala signed pressure plus benefic/malefic split",
@@ -268,21 +343,32 @@ def deterministic_analysis(packet: dict[str, Any]) -> str:
         "active nearby regime count",
         "rule_vs_default_pips_delta",
     ]
+    if break_info.get("status") == "confirmed":
+        behavior_label = "Probable reason this bearish family rule can continue after support breaks, while still stopping at the next attribution boundary:"
+    elif str(sr_geom.get("position", "")).startswith("below"):
+        behavior_label = "Probable reason this can be bearish into support, but should not assume a clean support break without confirmation:"
+    else:
+        behavior_label = "Probable astro/trading reasons to test:"
 
-    return "\n".join(
-        [
+    lines = [
             "## Deterministic Plain-English Analysis",
             "",
             f"- Case `{case['case_id']}` is `{case['pair_key']}::{case['aspect']}` from `{case['window_start_ist']}` to `{case['window_end_ist']}`.",
             f"- The stored 72h outcome direction is `{ret_dir}` with return `{ret_pct}`.",
             f"- Nearby active regime count is `{regime_count}`, so attribution remains important.",
-            "- Probable reason this can be bearish without cleanly breaking support:",
+        ]
+    if setup_lines:
+        lines.extend(["- Current UI / rule evidence:", *[f"  - {item}" for item in setup_lines]])
+    lines.extend(
+        [
+            f"- {behavior_label}",
             *[f"  - {reason}" for reason in reasons],
             "- ML features to log/test:",
             *[f"  - {item}" for item in feature_list],
             "- Rule status suggestion: keep `bearish_bias_support_barrier` provisional until all family repeatations are reviewed and rule-vs-default tracking shows improvement.",
         ]
     )
+    return "\n".join(lines)
 
 
 def extractive_answer(packet: dict[str, Any], case_summary: str, retrieved: list[dict[str, Any]], question: str) -> str:
@@ -294,7 +380,7 @@ def extractive_answer(packet: dict[str, Any], case_summary: str, retrieved: list
         "## Question",
         question,
         "",
-        deterministic_analysis(packet),
+        deterministic_analysis(packet, question),
         "",
         "## Deterministic Case Evidence",
         "```text",
@@ -337,15 +423,24 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
             "## Question",
             question,
             "",
-            deterministic_analysis(packet),
+            deterministic_analysis(packet, question),
             "",
             "## Local LLM Commentary",
         ]
         if warning:
-            text_parts.extend(["", f"**Warning:** {warning}", ""])
+            text_parts.extend(
+                [
+                    "",
+                    f"**Omitted:** {warning}",
+                    "",
+                    "The local model produced commentary that failed the evidence checks, so this draft keeps only deterministic analysis and retrieved local notes.",
+                    "",
+                ]
+            )
+        else:
+            text_parts.extend(["", llm_text, ""])
         text_parts.extend(
             [
-                llm_text,
                 "",
                 "## Deterministic Case Evidence",
                 "```text",

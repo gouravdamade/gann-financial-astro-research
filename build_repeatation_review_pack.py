@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_draft_ml_reason_v34"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_draft_ml_reason_v35"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -2272,7 +2272,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         'Use deterministic case evidence as ground truth.',
         'Explain probable astro/trading reasons, SR geometry, rule status, and ML features to test.'
       ];
-      if (state.autoSuggestion) pieces.push('Auto Suggest summary: ' + JSON.stringify(state.autoSuggestion).slice(0, 1800));
+      if (state.autoSuggestion) pieces.push('Auto Suggest summary: ' + JSON.stringify(state.autoSuggestion));
       if (result) pieces.push('Current manual/auto trade result: ' + result.outcomeLabel + ' ' + result.signedPipsText + ' pips; entry=' + result.entry.toFixed(3) + '; exit=' + result.exit.toFixed(3));
       if (noteText()) pieces.push('Reviewer note: ' + noteText().slice(0, 900));
       return pieces.join('\\n');
