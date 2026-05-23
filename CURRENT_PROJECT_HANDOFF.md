@@ -1,10 +1,36 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 16:02 IST
+Last updated: 2026-05-23 16:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-23
+
+2026-05-23 Telegram relay received messages + 5-minute Codex heartbeat:
+
+- User sent Telegram relay messages and asked Codex to check.
+- Verified `codex_telegram_inbox.jsonl` contained two messages:
+  `/codex`
+  and `if you get this please go with your recommendation of local llm model and install softwares you require`.
+- Sent Telegram confirmation:
+  `Codex received your Telegram relay message. Proceeding with recommended local LLM setup now.`
+- Marked both relay messages seen with:
+  `python jyotish_agent\read_codex_relay_inbox.py --mark-seen`.
+- Attempted to install Ollama after setting:
+  `OLLAMA_MODELS=D:\Ollama\models`.
+- Ollama install did not complete:
+  winget reported `You cancelled the installation`, installer exit code `5`.
+- User then asked to check relay messages every 5 minutes as an automation before hibernating.
+- Created active Codex heartbeat automation:
+  `check-telegram-codex-relay-inbox`,
+  schedule every 5 minutes,
+  attached to this thread.
+- Automation task:
+  check `C:\Users\ADMIN\PycharmProjects\jyotish_agent\codex_telegram_inbox.jsonl`,
+  use `read_codex_relay_inbox.py`,
+  mark pending messages seen,
+  summarize/act in this Codex thread,
+  and preserve the normal handoff/backup/commit/push workflow after meaningful changes.
 
 2026-05-23 Telegram -> Codex relay pivot:
 
