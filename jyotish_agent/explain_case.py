@@ -133,7 +133,7 @@ def compact_case_summary(packet: dict[str, Any]) -> str:
 
 def ollama_generate(prompt: str) -> str | None:
     endpoint = os.getenv("OLLAMA_ENDPOINT", "http://127.0.0.1:11434/api/generate")
-    model = os.getenv("OLLAMA_MODEL", "llama3.1")
+    model = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
     try:
         resp = requests.post(endpoint, json={"model": model, "prompt": prompt, "stream": False}, timeout=120)
         if resp.status_code >= 400:
@@ -158,6 +158,9 @@ Rules:
 - Separate doctrine/source hints from observed case-family evidence.
 - Say when a citation is only a local note or when doctrine citation is missing.
 - Output practical ML features/rules to test, not trading advice.
+- Keep the answer about the exact case in the evidence. Do not drift to generic planets or unrelated aspects.
+- If the evidence does not mention a planet/aspect, do not mention it.
+- Use the exact numeric fields from the evidence when available.
 
 Question:
 {question}
@@ -175,6 +178,23 @@ Draft a concise explanation with:
 4. Rule candidate/status.
 5. Missing citations or uncertainty.
 """
+
+
+def llm_drift_warning(case_id: int, case_summary: str, llm_text: str | None) -> str | None:
+    if not llm_text:
+        return "Local LLM did not return text."
+    checks = [
+        f"case_id={case_id}" in case_summary and str(case_id) in llm_text,
+        "MOON" not in case_summary.upper() or "moon" in llm_text.lower(),
+        "JUPITER" not in case_summary.upper() or "jupiter" in llm_text.lower(),
+    ]
+    banned_generic = ("sun, mercury, venus", "nepture", "economic indicators")
+    if not all(checks) or any(item in llm_text.lower() for item in banned_generic):
+        return (
+            "Local LLM commentary may have drifted from the evidence. "
+            "Use the deterministic analysis below as ground truth and treat the LLM section as untrusted draft text."
+        )
+    return None
 
 
 def as_float(value: Any) -> float | None:
@@ -309,7 +329,43 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
     retrieved = retrieve(case_summary + "\n" + question, top_k=8)
     prompt = build_prompt(case_summary, retrieved, question)
     llm_text = ollama_generate(prompt) if use_llm else None
-    text = llm_text or extractive_answer(packet, case_summary, retrieved, question)
+    if llm_text:
+        warning = llm_drift_warning(case_id, case_summary, llm_text)
+        text_parts = [
+            "# Local Jyotish Agent Draft",
+            "",
+            "## Question",
+            question,
+            "",
+            deterministic_analysis(packet),
+            "",
+            "## Local LLM Commentary",
+        ]
+        if warning:
+            text_parts.extend(["", f"**Warning:** {warning}", ""])
+        text_parts.extend(
+            [
+                llm_text,
+                "",
+                "## Deterministic Case Evidence",
+                "```text",
+                case_summary[:5000],
+                "```",
+                "",
+                "## Retrieved Sources",
+            ]
+        )
+        for item in retrieved:
+            text_parts.extend(
+                [
+                    f"### {item['chunk_id']} | {item['title']} | score={item['score']:.3f}",
+                    item["text"][:1400],
+                    "",
+                ]
+            )
+        text = "\n".join(text_parts)
+    else:
+        text = extractive_answer(packet, case_summary, retrieved, question)
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"case_{case_id}_jyotish_explanation.md"
     out_path.write_text(text, encoding="utf-8")

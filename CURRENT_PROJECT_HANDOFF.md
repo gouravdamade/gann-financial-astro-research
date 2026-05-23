@@ -1,10 +1,53 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 16:10 IST
+Last updated: 2026-05-23 17:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-23
+
+2026-05-23 portable Ollama + local model setup:
+
+- User asked Codex to continue with the recommended local LLM setup.
+- Normal `Ollama.Ollama` installer had previously failed/cancelled.
+- Checked portable package:
+  `Ollama.Ollama.Portable` version `0.20.2`, zip installer from GitHub release.
+- `winget install Ollama.Ollama.Portable` downloaded and verified the package but failed during extraction.
+- Downloaded the portable zip directly to:
+  `D:\Ollama\downloads\ollama-windows-amd64-v0.20.2.zip`
+  with size about `1.87 GB`.
+- Extracted manually into:
+  `D:\Ollama\app`.
+- Portable binary path:
+  `D:\Ollama\app\ollama.exe`.
+- Model storage path:
+  `D:\Ollama\models`.
+- Set user environment variable:
+  `OLLAMA_MODELS=D:\Ollama\models`.
+- Started Ollama server:
+  `D:\Ollama\app\ollama.exe serve`.
+- API verified at:
+  `http://127.0.0.1:11434/api/tags`.
+- Ollama detected GPU:
+  `NVIDIA GeForce GTX 1060` through CUDA, total VRAM reported by Ollama as `6.0 GiB`, available about `5.1 GiB`.
+- Pulled model:
+  `qwen2.5:3b`, `3.1B`, `Q4_K_M`, size about `1.9 GB`.
+- Added helper scripts:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\start_ollama_portable.ps1`,
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\stop_ollama_portable.ps1`.
+- Updated `explain_case.py` default local model from `llama3.1` to:
+  `qwen2.5:3b`.
+- Ran LLM-backed case explanation smoke test for case `43`; output wrote to:
+  `C:\Users\ADMIN\PycharmProjects\jyotish_agent\case_explanations\case_43_jyotish_explanation.md`.
+- Important quality finding:
+  the local 3B model can run, but it drifted into generic astrology text in the commentary section.
+- Mitigation added:
+  `explain_case.py` now always puts deterministic plain-English evidence first, then local LLM commentary second, and adds a warning when LLM commentary appears to drift.
+- Current intended behavior:
+  deterministic Python/evidence remains ground truth;
+  local LLM is only a draft explanatory layer until we improve prompts/model quality.
+- Sent Telegram progress confirmation:
+  portable Ollama is running from `D:\Ollama`, `qwen2.5:3b` is installed, and case explanation now uses deterministic evidence first.
 
 2026-05-23 Telegram relay received messages + 5-minute Codex heartbeat:
 
