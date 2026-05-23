@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_barrier_epsilon_v30"
+REPEATATION_UI_VERSION = "repeatation_ui_20260523_attribution_boundary_v31"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1168,6 +1168,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }});
       return out.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
     }}
+    function attributionBoundaryAfter(markers, afterTime, minGapMs) {{
+      var windowEnd = Date.parse(meta.windowEnd);
+      var minTime = Math.max(
+        Number.isFinite(Number(afterTime)) ? Number(afterTime) : 0,
+        Number.isFinite(windowEnd) ? windowEnd : 0
+      ) + (minGapMs || 0);
+      return uniqueMarkers(markers).find(function (point) {{
+        var t = markerTime(point);
+        if (!Number.isFinite(t) || t < minTime) return false;
+        if (point.isSelectedCaseTouch) return false;
+        if (point.source === 'auto_case_window_entry') return false;
+        return true;
+      }}) || null;
+    }}
     function sortPoints(a, b) {{
       if (!a || !b) return [a, b];
       return Date.parse(a.x) <= Date.parse(b.x) ? [a, b] : [b, a];
@@ -1767,6 +1781,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + esc(Number(s.barrier_sr_geometry.sr_price).toFixed(3))
           + ' (' + esc(signedPipsText(s.barrier_sr_geometry.distance_pips)) + ' from entry)</div>';
       }}
+      if (s.attribution_boundary) {{
+        geometry += '<div class="rm-table-sub">Attribution boundary stop: '
+          + esc(toIST(s.attribution_boundary.x))
+          + (Number.isFinite(Number(s.attribution_boundary.y)) ? ' @ ' + esc(Number(s.attribution_boundary.y).toFixed(3)) : '')
+          + ' before next event/zone takes over.</div>';
+      }}
       var tracking = '';
       if (s.outcome_tracking) {{
         tracking = '<div><b>Rule tracking</b>: rule ' + esc(signedPipsText(s.outcome_tracking.rule_signed_pips))
@@ -2324,9 +2344,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var barrierGeometry = srGeometryForPoint(firstBarrier, entryPoint, outcome());
         var barrierBreakConfirmation = breakConfirmationForGeometry(barrierGeometry, firstBarrier, entryPoint, outcome());
         var endRule = target ? 'family_rule_first_lower_hardcoded_sr_or_marker' : 'not_found';
+        var attributionBoundary = null;
         if (target && barrierBreakConfirmation && barrierBreakConfirmation.status === 'confirmed') {{
           var continuationTime = Date.parse(barrierBreakConfirmation.continuation_time || barrierBreakConfirmation.break_time);
           var barrierPrice = Number(firstBarrier.y);
+          attributionBoundary = attributionBoundaryAfter(markers, markerTime(firstBarrier), minGapMs);
           var nextTarget = targetCandidates.find(function (point) {{
             var t = markerTime(point);
             var y = Number(point && point.y);
@@ -2343,7 +2365,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
               && t > markerTime(firstBarrier) + minGapMs
               && y < barrierPrice - clearancePrice;
           }}) || null;
-          if (nextTarget) {{
+          if (attributionBoundary && (!nextTarget || markerTime(attributionBoundary) <= markerTime(nextTarget))) {{
+            target = attributionBoundary;
+            endRule = 'family_rule_next_event_boundary_after_confirmed_support_break';
+          }} else if (nextTarget) {{
             target = nextTarget;
             endRule = 'family_rule_next_lower_marker_after_confirmed_support_break';
           }}
@@ -2352,7 +2377,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var ruleReason = target
           ? (endRule === 'family_rule_next_lower_marker_after_confirmed_support_break'
             ? 'Applied family rule bearish_bias_support_barrier with confirmed support break: first lower SR was broken/retested/continued, so end moved to the next lower hardcoded SR/marker.'
-            : 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support unless a confirmed support break opens the next target.')
+            : (endRule === 'family_rule_next_event_boundary_after_confirmed_support_break'
+              ? 'Applied family rule bearish_bias_support_barrier with confirmed support break, but the first later hardcoded marker starts another event/zone. End stops at that attribution boundary before entering uncharted territory.'
+              : 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support unless a confirmed support break opens the next target.'))
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
         var geometry = srGeometryForPoint(target, entryPoint, outcome());
         var breakConfirmation = barrierBreakConfirmation;
@@ -2372,6 +2399,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           reason: ruleReason,
           applied_family_rule: 'bearish_bias_support_barrier',
           barrier_sr_geometry: barrierGeometry,
+          attribution_boundary: serialPoint(attributionBoundary),
           sr_geometry: geometry,
           break_confirmation: breakConfirmation,
           sr_geometry_epsilon_pips: clearancePips,
