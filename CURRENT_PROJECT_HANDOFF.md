@@ -1,10 +1,42 @@
 # Current Project Handoff
 
-Last updated: 2026-05-23 17:55 IST
+Last updated: 2026-05-24 19:40 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-23
+## Latest Update - 2026-05-24
+
+2026-05-24 D-drive migration:
+
+- User wanted the project moved off C: before uninstalling PyCharm because C: was almost full and the laptop was lagging.
+- Migrated the full active repo/project folder:
+  `C:\Users\ADMIN\PycharmProjects` -> `D:\PycharmProjects`.
+- Migrated generated review/export docs:
+  `C:\Users\ADMIN\Desktop\doc` -> `D:\GannFinancialAstro\doc`.
+- Replaced the old C: paths with Windows junctions so existing hardcoded scripts and browser links keep working:
+  `C:\Users\ADMIN\PycharmProjects` -> `D:\PycharmProjects`
+  `C:\Users\ADMIN\Desktop\doc` -> `D:\GannFinancialAstro\doc`
+- Verified the D: repo copy:
+  `git status`, latest commits, key scripts/data, and `python -m py_compile build_repeatation_review_pack.py serve_repeatation_pack.py jyotish_agent\explain_case.py`.
+- Restarted the repeatation review server from D:
+  PID `12308`, command rooted at `D:\PycharmProjects\serve_repeatation_pack.py`, serving `D:\GannFinancialAstro\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Verified live case link returns HTTP 200:
+  `http://127.0.0.1:8765/aspect_review_case_103_chart.html?v=repeatation_ui_20260523_draft_ml_reason_v35`.
+- C: free space improved from about `1.8 GB` to about `12.2 GB`.
+
+2026-05-24 handoff cleanup:
+
+- Refreshed this recovery handoff after reviewing it from a new Codex app session.
+- Confirmed the file is the canonical handoff at:
+  `D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md`.
+  The old C: path is now a junction and remains usable for compatibility.
+- Main correction:
+  the older `Next Recommended Steps` list had become stale because later entries already implemented much of the review UI navigation, marker drawer, local draft ML reason workflow, and Ollama/Jyotish agent setup.
+- Updated `Git State` with the latest local commits visible at cleanup time.
+- Replaced the stale next-step list with the current continuation path:
+  continue AVG(ALL)|MOON square repeatation review, use deterministic evidence plus `Draft ML Reason`, promote/revise/discard provisional ML notes, improve local LLM prompt/model quality only after more cases are reviewed, and then move toward walk-forward validation.
+
+## Previous Update - 2026-05-23
 
 2026-05-23 portable Ollama + local model setup:
 
@@ -786,17 +818,17 @@ Git executable:
 
 `C:\Program Files\Git\cmd\git.exe`
 
-Latest commits before this handoff update:
+Latest commits at the 2026-05-24 handoff cleanup:
 
 ```text
-950ae29 Add Codex app recovery instructions
-e548df5 Add latest recovery handoff backup
-ad0021a Record GitHub recovery remote
-c6e70b9 Prepare GitHub recovery package
-278182d Export generated charts for aspect cases
-83935b7 Embed price chart in review page
-258ad73 Export static review pages
-73f2aac Export aspect review snapshots
+121ed63 Align local ML drafts with auto suggest evidence
+dfac27b Add local ML reason draft button
+5ca777a Configure portable Ollama local model
+60fd655 Record Telegram relay heartbeat
+5ec5b39 Add Telegram relay inbox for Codex
+fa46c4e Record LLM options and Telegram test
+153fbb6 Add local jyotish RAG agent CLI
+9897b21 Show ML notes and scaffold jyotish agent
 ```
 
 Git user email is repo-local:
@@ -1619,16 +1651,21 @@ Check Git:
 
 ## Next Recommended Steps
 
-1. Open `C:\Users\ADMIN\Desktop\doc\aspect_review_case_11_chart.html` and `C:\Users\ADMIN\Desktop\doc\aspect_review_case_15_chart.html` to confirm the real case snapshots have the right chart context for manual review.
-2. If accepted, run `--export-all-case-charts` in batches rather than all 619 at once, because each snapshot recomputes chart/SR context and can take several seconds.
-3. Next annotation workbench step: add simple previous/next same-aspect navigation to exported review pages, then add a low-friction way to create trade/ignore/rule-note commands from the page.
-4. User inspects `sr_touch_full_1year_switch_20260511_015700.html`, especially doctrine score lines in hovers after transit-sign dignity was added.
-5. Compare the prior transitsign baseline chart against `sr_touch_full_1year_switch_20260511_220046.html` for AVG(ALL) regimes. If the expanded hovers are useful visually, keep the AVG(ALL) expansion as an explainability feature but calibrate it separately from directional ML.
-6. Extend `evaluate_transitsign_walk_forward.py` with walk-forward rule calibration tests for `fx_pair_net_score` and `fx_doctrine_pair_net_score`: normal vs inverted, train-selected thresholds, and blended score variants.
-7. Add weekly mode using the uncapped transitsign touch log and a `>5d` duration bucket.
-8. Add feature columns from the PDF inventory one group at a time:
-   midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal.
-9. For Gann: manually review OCR pages for `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`; only then implement deterministic feature columns with source-page metadata.
+1. Resume manual review of the `AVG(ALL)|MOON + square` repeatation family in the served review pack, starting from the currently interesting cases `8`, `43`, and the next unreviewed repeatations in the same family.
+2. For each reviewed case, use the marker drawer workflow:
+   `Auto Suggest`, manual marker adjustment when needed, saved trade/ignore/rule notes, `ML Notes`, and `Draft ML Reason`.
+3. Treat deterministic Python evidence, saved annotations, SR geometry, break confirmation, attribution boundary, and rule-vs-default pips as ground truth. Treat local LLM output as a draft explanatory layer only.
+4. When `Draft ML Reason` agrees with deterministic evidence, use it to speed up note writing. When it drifts, keep the deterministic section and either omit or revise the LLM commentary.
+5. Promote, revise, or discard provisional family notes after enough repeatations are reviewed. Current important local ideas include:
+   `bearish_bias_support_barrier`,
+   `bearish_confirmed_support_break_attribution_boundary`,
+   and the related support-break / next-event-boundary behavior.
+6. After the AVG(ALL)|MOON square family has enough reviewed examples, generalize the same review loop to mirrored bullish SR-barrier families and other high-value aspect families.
+7. Only after more reviewed labels exist, extend walk-forward validation for rule calibration:
+   `fx_pair_net_score`, `fx_doctrine_pair_net_score`, SR geometry classes, break-confirmation features, attribution-boundary features, and blended deterministic score variants.
+8. Improve local model quality only after the annotation loop exposes repeated explanation failures. Candidate next moves are tighter prompts, a better local model than `qwen2.5:3b`, or richer local RAG retrieval. Keep deterministic evidence first in all cases.
+9. Later, add PDF/Gann feature columns one group at a time only after manual source review:
+   midpoint hits, stellium, T-square/grand-cross/grand-trine, Dhruvank daily signal, `GANN_PRICE_LONGITUDE_HIT`, `GANN_OUTER_PLANET_AVERAGE`, and `GANN_CIRCLE_ACTIVE_ANGLE`.
 
 ## Memory-Safe Touch-Log Rebuild Plan
 
