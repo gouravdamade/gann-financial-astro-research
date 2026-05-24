@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260523_draft_ml_reason_v35"
+REPEATATION_UI_VERSION = "repeatation_ui_20260524_gann_clean_sr_v36"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1082,6 +1082,17 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function refreshGannFanFromTradeStart(reason) {{
       if (!state.autoSuggestion || !state.tradeStart) return;
       state.autoSuggestion.gann_fan = gannFanForStart(state.tradeStart, outcome(), reason);
+    }}
+    function showGannFan() {{
+      if (!state.autoSuggestion || !state.tradeStart) {{
+        autoSuggestTrade();
+        return;
+      }}
+      refreshGannFanFromTradeStart('manual gann fan refresh');
+      drawMarkers();
+      render();
+      saveDraft();
+      updateSaveStatus(state.autoSuggestion && state.autoSuggestion.gann_fan ? 'gann fan refreshed' : 'gann fan unavailable: check trade start/outcome');
     }}
     function atrPipsAt(candles, timeMs, period) {{
       var before = (candles || []).filter(function (c) {{ return Number.isFinite(c.t) && c.t <= timeMs; }});
@@ -2544,7 +2555,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
               && t > markerTime(firstBarrier) + minGapMs
               && y < barrierPrice - clearancePrice;
           }}) || null;
-          if (attributionBoundary && (!nextTarget || markerTime(attributionBoundary) <= markerTime(nextTarget))) {{
+          if (!attributionBoundary) {{
+            endRule = 'family_rule_clean_first_sr_touch_target';
+          }} else if (!nextTarget || markerTime(attributionBoundary) <= markerTime(nextTarget)) {{
             target = attributionBoundary;
             endRule = 'family_rule_next_event_boundary_after_confirmed_support_break';
           }} else if (nextTarget) {{
@@ -2558,7 +2571,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             ? 'Applied family rule bearish_bias_support_barrier with confirmed support break: first lower SR was broken/retested/continued, so end moved to the next lower hardcoded SR/marker.'
             : (endRule === 'family_rule_next_event_boundary_after_confirmed_support_break'
               ? 'Applied family rule bearish_bias_support_barrier with confirmed support break, but the first later hardcoded marker starts another event/zone. End stops at that attribution boundary before entering uncharted territory.'
-              : 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support unless a confirmed support break opens the next target.'))
+              : (endRule === 'family_rule_clean_first_sr_touch_target'
+                ? 'Applied family rule bearish_bias_support_barrier: this recurrence has no earlier attribution-boundary marker after the first lower SR, so the clean review target is the first SR touch instead of extending the trade after support break.'
+                : 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support unless a separate attribution-boundary/extension rule applies.')))
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
         var geometry = srGeometryForPoint(target, entryPoint, outcome());
         var breakConfirmation = barrierBreakConfirmation;
@@ -2715,7 +2730,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<button data-tool="ignore_start">Ignore start</button>'
       + '<button data-tool="ignore_end">Ignore end</button>'
       + '</div>'
-      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><span class="rm-status-inline">family rule if available; otherwise marker -> next marker</span></div>'
+      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><button id="repeatation-show-gann" type="button">Show Gann Fan</button><span class="rm-status-inline">family rule if available; otherwise marker -> next marker</span></div>'
       + '<div id="repeatation-auto-summary"></div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
@@ -2854,6 +2869,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-clear').addEventListener('click', clearMarkers);
     panel.querySelector('#repeatation-clear-draft').addEventListener('click', clearSavedDraft);
     panel.querySelector('#repeatation-auto-suggest').addEventListener('click', autoSuggestTrade);
+    panel.querySelector('#repeatation-show-gann').addEventListener('click', showGannFan);
     panel.querySelector('#repeatation-draft-ml-reason').addEventListener('click', draftMlReason);
     panel.querySelector('#repeatation-ignore-trade').addEventListener('click', markIgnoreTrade);
     panel.querySelector('#repeatation-add-ignore-signal').addEventListener('click', function () {{ addAnnotation('ignore_signal'); }});

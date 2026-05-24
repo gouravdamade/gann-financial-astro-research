@@ -1,10 +1,25 @@
 # Current Project Handoff
 
-Last updated: 2026-05-24 19:40 IST
+Last updated: 2026-05-24 23:58 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-24
+
+2026-05-24 Gann fan visibility / clean SR close:
+
+- User reported on case `103` that the Gann fan was not visible, and earlier noted this recurrence is clean enough that trade should close when price touches SR rather than extending after break confirmation.
+- `build_repeatation_review_pack.py` cache key advanced to `repeatation_ui_20260524_gann_clean_sr_v36`.
+- Added `Show Gann Fan` button beside `Auto Suggest` in the marker drawer. If Auto Suggest has not run, it runs Auto Suggest; if markers already exist, it refreshes the Gann fan from the current trade start/outcome.
+- Adjusted `bearish_bias_support_barrier` Auto Suggest behavior:
+  when first support break is confirmed but there is no later attribution-boundary marker/event before extension logic, the clean recurrence target remains the first lower SR touch. New end rule: `family_rule_clean_first_sr_touch_target`.
+- Rebuilt the AVG(ALL)|MOON square repeatation pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_43_avg_all_moon_square_20260524_235119`
+  and synced it into the served folder:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`.
+- Live URL:
+  `http://127.0.0.1:8765/aspect_review_case_103_chart.html?v=repeatation_ui_20260524_gann_clean_sr_v36`.
+- Verification: `python -m py_compile build_repeatation_review_pack.py` passed. Live case 103 HTML contains v36, `Show Gann Fan`, `family_rule_clean_first_sr_touch_target`, clean first-SR target text, and Gann anchor-dot code.
 
 2026-05-24 D-drive migration:
 
