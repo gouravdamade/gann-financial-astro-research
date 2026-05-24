@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260524_gann_clean_sr_v36"
+REPEATATION_UI_VERSION = "repeatation_ui_20260525_global_exit_v37"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -932,6 +932,30 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var name = String(trace && trace.name || '').toLowerCase();
       return mode.indexOf('markers') !== -1 || name.indexOf('touch') !== -1 || name.indexOf('interaction') !== -1;
     }}
+    function traceLooksLikeZone(trace) {{
+      if (!trace || trace.visible === false || !trace.x || !trace.y) return false;
+      var fill = String(trace.fill || '').toLowerCase();
+      var name = String(trace.name || '').toLowerCase();
+      var label = '';
+      if (trace.customdata && trace.customdata.length) {{
+        label = customDataLabel(arrayValue(trace.customdata, 0)).toLowerCase();
+      }}
+      return fill === 'toself'
+        && (name.indexOf('window') !== -1
+          || name.indexOf('zone') !== -1
+          || label.indexOf('aspect_window') !== -1
+          || label.indexOf('regime') !== -1);
+    }}
+    function traceLooksLikeSrLine(trace) {{
+      if (!trace || trace.visible === false || !trace.x || !trace.y) return false;
+      var type = String(trace.type || '').toLowerCase();
+      var mode = String(trace.mode || '').toLowerCase();
+      var fill = String(trace.fill || '').toLowerCase();
+      var name = String(trace.name || '').toLowerCase();
+      if (type !== 'scatter' || mode.indexOf('lines') === -1 || fill) return false;
+      if (name.indexOf('selected case') !== -1 || name.indexOf('gann') !== -1) return false;
+      return Number(trace.x.length || 0) > 1;
+    }}
     function customDataLabel(customdata) {{
       if (!customdata) return '';
       if (Array.isArray(customdata)) {{
@@ -949,8 +973,126 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function arrayValue(values, index) {{
       if (!values) return null;
       if (Array.isArray(values)) return values[index];
+      if (false && values && values.dtype && values.bdata && typeof atob === 'function') {{
+        if (!values._repeatationDecoded) {{
+          var bytes = Uint8Array.from(atob(values.bdata), function (ch) {{ return ch.charCodeAt(0); }});
+          var view = new DataView(bytes.buffer);
+          var dtype = String(values.dtype || '').toLowerCase();
+          var decoded = [];
+          if (dtype === 'f8' || dtype === 'float64') {{
+            for (var i = 0; i + 8 <= bytes.length; i += 8) decoded.push(view.getFloat64(i, true));
+          }} else if (dtype === 'f4' || dtype === 'float32') {{
+            for (var j = 0; j + 4 <= bytes.length; j += 4) decoded.push(view.getFloat32(j, true));
+          }} else if (dtype === 'i4' || dtype === 'int32') {{
+            for (var k = 0; k + 4 <= bytes.length; k += 4) decoded.push(view.getInt32(k, true));
+          }} else if (dtype === 'u4' || dtype === 'uint32') {{
+            for (var m = 0; m + 4 <= bytes.length; m += 4) decoded.push(view.getUint32(m, true));
+          }}
+          values._repeatationDecoded = decoded;
+        }}
+        return values._repeatationDecoded[index];
+      }}
+      if (values && values.dtype && values.bdata) {{
+        if (!values._repeatationDecoded) {{
+          var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+          var raw = String(values.bdata || '').replace(/=+$/, '');
+          var bytesPlain = [];
+          var bufferBits = 0;
+          var bitCount = 0;
+          for (var bi = 0; bi < raw.length; bi += 1) {{
+            var val = alphabet.indexOf(raw[bi]);
+            if (val < 0) continue;
+            bufferBits = (bufferBits << 6) | val;
+            bitCount += 6;
+            if (bitCount >= 8) {{
+              bitCount -= 8;
+              bytesPlain.push((bufferBits >> bitCount) & 255);
+            }}
+          }}
+          function readFloat64LE(offset) {{
+            var b0 = bytesPlain[offset] || 0;
+            var b1 = bytesPlain[offset + 1] || 0;
+            var b2 = bytesPlain[offset + 2] || 0;
+            var b3 = bytesPlain[offset + 3] || 0;
+            var b4 = bytesPlain[offset + 4] || 0;
+            var b5 = bytesPlain[offset + 5] || 0;
+            var b6 = bytesPlain[offset + 6] || 0;
+            var b7 = bytesPlain[offset + 7] || 0;
+            var sign = (b7 & 128) ? -1 : 1;
+            var exponent = ((b7 & 127) << 4) | (b6 >> 4);
+            var fraction = (b6 & 15) * Math.pow(2, 48)
+              + b5 * Math.pow(2, 40)
+              + b4 * Math.pow(2, 32)
+              + b3 * Math.pow(2, 24)
+              + b2 * Math.pow(2, 16)
+              + b1 * Math.pow(2, 8)
+              + b0;
+            if (exponent === 0) return sign * Math.pow(2, -1022) * (fraction / Math.pow(2, 52));
+            if (exponent === 2047) return fraction ? NaN : sign * Infinity;
+            return sign * Math.pow(2, exponent - 1023) * (1 + fraction / Math.pow(2, 52));
+          }}
+          var dtypePlain = String(values.dtype || '').toLowerCase();
+          var decodedPlain = [];
+          if (dtypePlain === 'f8' || dtypePlain === 'float64') {{
+            for (var fi = 0; fi + 8 <= bytesPlain.length; fi += 8) decodedPlain.push(readFloat64LE(fi));
+          }}
+          values._repeatationDecoded = decodedPlain;
+        }}
+        return values._repeatationDecoded[index];
+      }}
       if (typeof values.length === 'number') return values[index];
       return null;
+    }}
+    var parsedPlotlyTraces = null;
+    function parseBracketedJson(text, startIndex) {{
+      var depth = 0;
+      var inString = false;
+      var escaped = false;
+      for (var i = startIndex; i < text.length; i += 1) {{
+        var ch = text[i];
+        if (inString) {{
+          if (escaped) escaped = false;
+          else if (ch === '\\\\') escaped = true;
+          else if (ch === '"') inString = false;
+          continue;
+        }}
+        if (ch === '"') inString = true;
+        else if (ch === '[') depth += 1;
+        else if (ch === ']') {{
+          depth -= 1;
+          if (depth === 0) return text.slice(startIndex, i + 1);
+        }}
+      }}
+      return '';
+    }}
+    function parsePlotlyTracesFromHtml() {{
+      if (parsedPlotlyTraces) return parsedPlotlyTraces;
+      parsedPlotlyTraces = [];
+      var scripts = Array.prototype.slice.call(document.scripts || []);
+      for (var s = 0; s < scripts.length; s += 1) {{
+        var text = scripts[s].textContent || '';
+        var plotIndex = text.indexOf('Plotly.newPlot');
+        if (plotIndex === -1) continue;
+        var arrayStart = text.indexOf('[', plotIndex);
+        if (arrayStart === -1) continue;
+        var jsonText = parseBracketedJson(text, arrayStart);
+        if (!jsonText) continue;
+        try {{
+          var traces = JSON.parse(jsonText);
+          if (Array.isArray(traces) && traces.length) {{
+            parsedPlotlyTraces = traces;
+            return parsedPlotlyTraces;
+          }}
+        }} catch (err) {{}}
+      }}
+      return parsedPlotlyTraces;
+    }}
+    function chartTraces() {{
+      var parsed = parsePlotlyTracesFromHtml();
+      if (Array.isArray(parsed) && parsed.length) return parsed;
+      if (gd && Array.isArray(gd._fullData) && gd._fullData.length) return gd._fullData;
+      if (gd && Array.isArray(gd.data) && gd.data.length) return gd.data;
+      return [];
     }}
     function chartMarkerPoint(trace, curveNumber, pointNumber, fallbackLabel) {{
       var x = arrayValue(trace && trace.x, pointNumber);
@@ -976,7 +1118,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       return (Number.isFinite(t) ? Math.round(t / 60000) : String(point && point.x)) + ':' + (Number.isFinite(y) ? y.toFixed(4) : '');
     }}
     function collectChartMarkers() {{
-      var traces = Array.isArray(gd._fullData) ? gd._fullData : (Array.isArray(gd.data) ? gd.data : []);
+      var traces = chartTraces();
       var out = [];
       var seen = {{}};
       traces.forEach(function (trace, curveNumber) {{
@@ -1002,7 +1144,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       return out.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
     }}
     function collectCandles() {{
-      var traces = Array.isArray(gd._fullData) ? gd._fullData : (Array.isArray(gd.data) ? gd.data : []);
+      var traces = chartTraces();
       var candles = [];
       traces.forEach(function (trace) {{
         if (String(trace && trace.type || '').toLowerCase() !== 'candlestick') return;
@@ -1035,6 +1177,112 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }}, null);
       return candles.find(function (c) {{ return c.t >= timeMs - interval * 0.25; }})
         || (nearest ? nearest.candle : null);
+    }}
+    function candlePricePointAt(timeMs, label, source) {{
+      var candle = candleAtOrAfter(collectCandles(), timeMs);
+      if (candle) {{
+        return {{
+          x: candle.x,
+          y: Number.isFinite(Number(candle.open)) ? candle.open : candle.close,
+          source: source || 'auto_market_boundary',
+          markerLabel: label || 'market boundary at candle open'
+        }};
+      }}
+      return {{
+        x: new Date(timeMs).toISOString(),
+        y: numericMeta('fullWindowEntryPrice'),
+        source: source || 'auto_market_boundary',
+        markerLabel: label || 'market boundary'
+      }};
+    }}
+    function collectZoneBoundaries() {{
+      var traces = chartTraces();
+      var zones = [];
+      var seen = {{}};
+      traces.forEach(function (trace, curveNumber) {{
+        if (!traceLooksLikeZone(trace)) return;
+        var times = [];
+        var len = Number(trace.x.length || 0);
+        for (var i = 0; i < len; i += 1) {{
+          var t = Date.parse(arrayValue(trace.x, i));
+          if (Number.isFinite(t)) times.push(t);
+        }}
+        if (!times.length) return;
+        var startTime = Math.min.apply(null, times);
+        var endTime = Math.max.apply(null, times);
+        if (!Number.isFinite(startTime) || !Number.isFinite(endTime) || startTime === endTime) return;
+        var label = customDataLabel(arrayValue(trace.customdata, 0)) || String(trace.name || 'shaded zone');
+        var id = Math.round(startTime / 60000) + ':' + Math.round(endTime / 60000) + ':' + label;
+        if (seen[id]) return;
+        seen[id] = true;
+        var startPoint = candlePricePointAt(startTime, 'next shaded zone start: ' + label, 'auto_zone_boundary');
+        startPoint.zoneStart = new Date(startTime).toISOString();
+        startPoint.zoneEnd = new Date(endTime).toISOString();
+        startPoint.traceName = trace.name || '';
+        startPoint.curveNumber = curveNumber;
+        startPoint.markerLabel = 'next shaded zone start: ' + label;
+        zones.push(startPoint);
+      }});
+      return zones.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
+    }}
+    function srLineValueAt(trace, timeMs) {{
+      var len = Number((trace.x && trace.x.length) || 0);
+      var bestIndex = -1;
+      var bestDist = Infinity;
+      for (var i = 0; i < len; i += 1) {{
+        var t = Date.parse(arrayValue(trace.x, i));
+        if (!Number.isFinite(t)) continue;
+        var dist = Math.abs(t - timeMs);
+        if (dist < bestDist) {{
+          bestDist = dist;
+          bestIndex = i;
+        }}
+      }}
+      if (bestIndex < 0) return null;
+      var y = Number(arrayValue(trace.y, bestIndex));
+      return Number.isFinite(y) ? y : null;
+    }}
+    function collectSrLineTouches(referencePoint, selectedOutcome) {{
+      var entryTime = markerTime(referencePoint);
+      var entryPrice = Number(referencePoint && referencePoint.y);
+      if (!Number.isFinite(entryTime) || !Number.isFinite(entryPrice)) return [];
+      var direction = selectedOutcome || outcome();
+      var traces = chartTraces();
+      var candles = collectCandles();
+      var clearancePips = srGeometryEpsilonPips(referencePoint);
+      var touchPad = Math.max(clearancePips, 2) / 100;
+      var start = Date.parse(meta.windowStart);
+      var minTime = Number.isFinite(start) ? Math.max(entryTime, start) : entryTime;
+      var out = [];
+      traces.forEach(function (trace, curveNumber) {{
+        if (!traceLooksLikeSrLine(trace)) return;
+        var label = String(trace.name || 'SR line').replace(/\\s+/g, ' ').trim();
+        var previousSide = null;
+        for (var i = 0; i < candles.length; i += 1) {{
+          var c = candles[i];
+          if (!c || !Number.isFinite(c.t) || c.t < minTime) continue;
+          var sr = srLineValueAt(trace, c.t);
+          if (!Number.isFinite(sr)) continue;
+          if (direction === 'bearish' && sr >= entryPrice - touchPad) continue;
+          if (direction === 'bullish' && sr <= entryPrice + touchPad) continue;
+          var side = c.close >= sr ? 1 : -1;
+          var touched = c.low <= sr + touchPad && c.high >= sr - touchPad;
+          var crossed = previousSide != null && side !== previousSide;
+          previousSide = side;
+          if (!touched && !crossed) continue;
+          out.push({{
+            x: c.x,
+            y: sr,
+            source: 'auto_sr_line_touch',
+            traceName: trace.name || '',
+            curveNumber: curveNumber,
+            pointNumber: i,
+            markerLabel: label + ' SR touch'
+          }});
+          break;
+        }}
+      }});
+      return uniqueMarkers(out);
     }}
     function gannFanForStart(startPoint, selectedOutcome, reason) {{
       var direction = selectedOutcome || outcome();
@@ -1142,7 +1390,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function nearestChartMarker(plotX, plotY, thresholdPx) {{
       var xa = gd._fullLayout && gd._fullLayout.xaxis;
       var ya = gd._fullLayout && gd._fullLayout.yaxis;
-      var traces = Array.isArray(gd._fullData) ? gd._fullData : (Array.isArray(gd.data) ? gd.data : []);
+      var traces = chartTraces();
       var best = null;
       traces.forEach(function (trace, curveNumber) {{
         if (!traceLooksLikeMarker(trace) || !trace.visible || !trace.x || !trace.y) return;
@@ -1269,12 +1517,30 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         return true;
       }}) || null;
     }}
+    function zoneBoundaryAfter(zones, afterTime, minGapMs) {{
+      var windowStart = Date.parse(meta.windowStart);
+      var windowEnd = Date.parse(meta.windowEnd);
+      var minTime = (Number.isFinite(Number(afterTime)) ? Number(afterTime) : 0) + (minGapMs || 0);
+      return (zones || []).find(function (point) {{
+        var t = markerTime(point);
+        if (!Number.isFinite(t) || t < minTime) return false;
+        if (Number.isFinite(windowStart) && Number.isFinite(windowEnd) && t >= windowStart && t <= windowEnd) return false;
+        return true;
+      }}) || null;
+    }}
+    function earliestTimedPoint(points) {{
+      return (points || []).filter(function (point) {{
+        return point && Number.isFinite(markerTime(point));
+      }}).sort(function (a, b) {{
+        return markerTime(a) - markerTime(b);
+      }})[0] || null;
+    }}
     function sortPoints(a, b) {{
       if (!a || !b) return [a, b];
       return Date.parse(a.x) <= Date.parse(b.x) ? [a, b] : [b, a];
     }}
     function isChartMarkerPoint(point) {{
-      return point && point.source === 'chart_marker';
+      return point && (point.source === 'chart_marker' || point.source === 'auto_sr_line_touch');
     }}
     function activeStateKey() {{
       if (state.tool === 'trade_start') return 'tradeStart';
@@ -1878,6 +2144,23 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + esc(toIST(s.attribution_boundary.x))
           + (Number.isFinite(Number(s.attribution_boundary.y)) ? ' @ ' + esc(Number(s.attribution_boundary.y).toFixed(3)) : '')
           + ' before next event/zone takes over.</div>';
+      }}
+      if (s.next_shaded_zone_boundary) {{
+        geometry += '<div class="rm-table-sub">Next shaded zone boundary: '
+          + esc(toIST(s.next_shaded_zone_boundary.x))
+          + (Number.isFinite(Number(s.next_shaded_zone_boundary.y)) ? ' @ market open ' + esc(Number(s.next_shaded_zone_boundary.y).toFixed(3)) : '')
+          + '.</div>';
+      }}
+      if (s.global_exit_boundary) {{
+        geometry += '<div class="rm-table-sub">Global exit chosen: '
+          + esc(toIST(s.global_exit_boundary.x))
+          + (Number.isFinite(Number(s.global_exit_boundary.y)) ? ' @ ' + esc(Number(s.global_exit_boundary.y).toFixed(3)) : '')
+          + ' from first SR touch / next shaded zone / next hardcoded marker, whichever appeared first.</div>';
+      }}
+      if (Array.isArray(s.sr_line_touch_candidates) && s.sr_line_touch_candidates.length) {{
+        geometry += '<div class="rm-table-sub">SR line touches detected: '
+          + esc(String(s.sr_line_touch_candidates.length))
+          + ' candidate(s), including line touches that do not have a hardcoded dot.</div>';
       }}
       var tracking = '';
       if (s.outcome_tracking) {{
@@ -2504,6 +2787,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         updateSaveStatus('auto suggest: no hardcoded chart markers found');
         return;
       }}
+      var zones = collectZoneBoundaries();
       var selected = markers.filter(function (point) {{ return point.isSelectedCaseTouch; }});
       var windowMarkers = markers.filter(pointInCaseWindow);
       var defaultStart = selected[0] || windowMarkers[0] || markers[0];
@@ -2521,7 +2805,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var entryPrice = Number(entryPoint.y);
         var clearancePips = srGeometryEpsilonPips(entryPoint);
         var clearancePrice = clearancePips / 100;
-        var targetCandidates = uniqueMarkers(selected.concat(windowMarkers).concat(markers)).filter(function (point) {{
+        var srLineTouches = collectSrLineTouches(entryPoint, outcome());
+        var targetCandidates = uniqueMarkers(selected.concat(windowMarkers).concat(markers).concat(srLineTouches)).filter(function (point) {{
           var t = markerTime(point);
           var y = Number(point && point.y);
           return Number.isFinite(t)
@@ -2530,50 +2815,28 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             && y < entryPrice - clearancePrice;
         }});
         var firstBarrier = targetCandidates[0] || null;
-        var target = firstBarrier;
         var barrierGeometry = srGeometryForPoint(firstBarrier, entryPoint, outcome());
         var barrierBreakConfirmation = breakConfirmationForGeometry(barrierGeometry, firstBarrier, entryPoint, outcome());
-        var endRule = target ? 'family_rule_first_lower_hardcoded_sr_or_marker' : 'not_found';
-        var attributionBoundary = null;
-        if (target && barrierBreakConfirmation && barrierBreakConfirmation.status === 'confirmed') {{
-          var continuationTime = Date.parse(barrierBreakConfirmation.continuation_time || barrierBreakConfirmation.break_time);
-          var barrierPrice = Number(firstBarrier.y);
-          attributionBoundary = attributionBoundaryAfter(markers, markerTime(firstBarrier), minGapMs);
-          var nextTarget = targetCandidates.find(function (point) {{
-            var t = markerTime(point);
-            var y = Number(point && point.y);
-            return Number.isFinite(t)
-              && Number.isFinite(y)
-              && Number.isFinite(continuationTime)
-              && t > continuationTime + minGapMs
-              && y < barrierPrice - clearancePrice;
-          }}) || targetCandidates.find(function (point) {{
-            var t = markerTime(point);
-            var y = Number(point && point.y);
-            return Number.isFinite(t)
-              && Number.isFinite(y)
-              && t > markerTime(firstBarrier) + minGapMs
-              && y < barrierPrice - clearancePrice;
-          }}) || null;
-          if (!attributionBoundary) {{
-            endRule = 'family_rule_clean_first_sr_touch_target';
-          }} else if (!nextTarget || markerTime(attributionBoundary) <= markerTime(nextTarget)) {{
-            target = attributionBoundary;
-            endRule = 'family_rule_next_event_boundary_after_confirmed_support_break';
-          }} else if (nextTarget) {{
-            target = nextTarget;
-            endRule = 'family_rule_next_lower_marker_after_confirmed_support_break';
-          }}
+        var zoneBoundary = zoneBoundaryAfter(zones, entryTime, minGapMs);
+        var attributionBoundary = attributionBoundaryAfter(markers, entryTime, minGapMs);
+        var target = earliestTimedPoint([firstBarrier, zoneBoundary, attributionBoundary]);
+        var endRule = target ? 'global_first_boundary_after_entry' : 'not_found';
+        if (target && firstBarrier && markerIdentity(target) === markerIdentity(firstBarrier)) {{
+          endRule = 'global_first_sr_touch_target';
+        }} else if (target && zoneBoundary && markerIdentity(target) === markerIdentity(zoneBoundary)) {{
+          endRule = 'global_next_shaded_zone_boundary';
+        }} else if (target && attributionBoundary && markerIdentity(target) === markerIdentity(attributionBoundary)) {{
+          endRule = 'global_next_hardcoded_marker_boundary';
         }}
         var ruleConfidence = target ? (selected.indexOf(target) !== -1 ? 'rule clean' : 'rule fallback') : 'incomplete';
         var ruleReason = target
-          ? (endRule === 'family_rule_next_lower_marker_after_confirmed_support_break'
-            ? 'Applied family rule bearish_bias_support_barrier with confirmed support break: first lower SR was broken/retested/continued, so end moved to the next lower hardcoded SR/marker.'
-            : (endRule === 'family_rule_next_event_boundary_after_confirmed_support_break'
-              ? 'Applied family rule bearish_bias_support_barrier with confirmed support break, but the first later hardcoded marker starts another event/zone. End stops at that attribution boundary before entering uncharted territory.'
-              : (endRule === 'family_rule_clean_first_sr_touch_target'
-                ? 'Applied family rule bearish_bias_support_barrier: this recurrence has no earlier attribution-boundary marker after the first lower SR, so the clean review target is the first SR touch instead of extending the trade after support break.'
-                : 'Applied family rule bearish_bias_support_barrier: bearish bias with SR below price. Start uses the case-window entry/open price; end uses the first lower hardcoded SR/marker as target/support unless a separate attribution-boundary/extension rule applies.')))
+          ? (endRule === 'global_first_sr_touch_target'
+            ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first lower SR touch because SR is the first clean boundary after entry.'
+            : (endRule === 'global_next_shaded_zone_boundary'
+              ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first subsequent shaded zone boundary before entering a new event/regime context.'
+              : (endRule === 'global_next_hardcoded_marker_boundary'
+                ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first later hardcoded marker before entering uncharted attribution.'
+                : 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at whichever deterministic boundary comes first after entry: SR touch, next shaded zone, or next hardcoded marker.')))
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
         var geometry = srGeometryForPoint(target, entryPoint, outcome());
         var breakConfirmation = barrierBreakConfirmation;
@@ -2594,6 +2857,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           applied_family_rule: 'bearish_bias_support_barrier',
           barrier_sr_geometry: barrierGeometry,
           attribution_boundary: serialPoint(attributionBoundary),
+          next_shaded_zone_boundary: serialPoint(zoneBoundary),
+          global_exit_boundary: serialPoint(target),
+          sr_line_touch_candidates: srLineTouches.map(serialPoint),
+          debug_counts: {{
+            markers: markers.length,
+            zones: zones.length,
+            sr_line_touches: srLineTouches.length,
+            target_candidates: targetCandidates.length
+          }},
           sr_geometry: geometry,
           break_confirmation: breakConfirmation,
           sr_geometry_epsilon_pips: clearancePips,
