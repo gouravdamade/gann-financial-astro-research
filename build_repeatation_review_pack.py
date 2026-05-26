@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260526_dream_review_v39"
+REPEATATION_UI_VERSION = "repeatation_ui_20260526_confirmed_break_exit_v40"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -3025,9 +3025,16 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var barrierBreakConfirmation = breakConfirmationForGeometry(barrierGeometry, firstBarrier, entryPoint, outcome());
         var zoneBoundary = zoneBoundaryAfter(zones, entryTime, minGapMs);
         var attributionBoundary = attributionBoundaryAfter(markers, entryTime, minGapMs);
-        var target = earliestTimedPoint([firstBarrier, zoneBoundary, attributionBoundary]);
+        var barrierConfirmedBreak = barrierBreakConfirmation && barrierBreakConfirmation.status === 'confirmed';
+        var target = barrierConfirmedBreak
+          ? (earliestTimedPoint([zoneBoundary, attributionBoundary]) || firstBarrier)
+          : earliestTimedPoint([firstBarrier, zoneBoundary, attributionBoundary]);
         var endRule = target ? 'global_first_boundary_after_entry' : 'not_found';
-        if (target && firstBarrier && markerIdentity(target) === markerIdentity(firstBarrier)) {{
+        if (barrierConfirmedBreak && target && zoneBoundary && markerIdentity(target) === markerIdentity(zoneBoundary)) {{
+          endRule = 'confirmed_break_next_shaded_zone_boundary';
+        }} else if (barrierConfirmedBreak && target && attributionBoundary && markerIdentity(target) === markerIdentity(attributionBoundary)) {{
+          endRule = 'confirmed_break_next_hardcoded_marker_boundary';
+        }} else if (target && firstBarrier && markerIdentity(target) === markerIdentity(firstBarrier)) {{
           endRule = 'global_first_sr_touch_target';
         }} else if (target && zoneBoundary && markerIdentity(target) === markerIdentity(zoneBoundary)) {{
           endRule = 'global_next_shaded_zone_boundary';
@@ -3036,13 +3043,17 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }}
         var ruleConfidence = target ? (selected.indexOf(target) !== -1 ? 'rule clean' : 'rule fallback') : 'incomplete';
         var ruleReason = target
-          ? (endRule === 'global_first_sr_touch_target'
+          ? (endRule === 'confirmed_break_next_shaded_zone_boundary'
+            ? 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next shaded-zone boundary before a new regime takes over.'
+            : (endRule === 'confirmed_break_next_hardcoded_marker_boundary'
+              ? 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next hardcoded marker before attribution changes.'
+              : (endRule === 'global_first_sr_touch_target'
             ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first lower SR touch because SR is the first clean boundary after entry.'
             : (endRule === 'global_next_shaded_zone_boundary'
               ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first subsequent shaded zone boundary before entering a new event/regime context.'
               : (endRule === 'global_next_hardcoded_marker_boundary'
                 ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first later hardcoded marker before entering uncharted attribution.'
-                : 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at whichever deterministic boundary comes first after entry: SR touch, next shaded zone, or next hardcoded marker.')))
+                : 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at whichever deterministic boundary comes first after entry: SR touch, next shaded zone, or next hardcoded marker.'))))
           : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
         var geometry = srGeometryForPoint(target, entryPoint, outcome());
         var breakConfirmation = barrierBreakConfirmation;
