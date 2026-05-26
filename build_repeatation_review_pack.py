@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260526_confirmed_break_exit_v40"
+REPEATATION_UI_VERSION = "repeatation_ui_20260526_rule_lesson_ledger_v41"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -748,6 +748,66 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
     return notes_by_case
 
 
+def load_rule_lessons(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[str, Any]]]:
+    family_key = f"{seed['pair_key']}::{seed['aspect']}"
+    try:
+        with sqlite3.connect(str(db_path)) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                """
+                SELECT lesson_id, case_id, family_key, lesson_key, conflict_type, old_rule,
+                       new_rule, winner_rule, outcome_label, status, lesson_text,
+                       astro_hints_json, created_at_utc, updated_at_utc
+                FROM rule_lessons
+                WHERE family_key = ?
+                ORDER BY updated_at_utc DESC, lesson_id DESC
+                """,
+                (family_key,),
+            ).fetchall()
+    except sqlite3.OperationalError:
+        return {}
+    lessons_by_case: dict[int, list[dict[str, Any]]] = {}
+    family_lessons: list[dict[str, Any]] = []
+    for row in rows:
+        try:
+            astro_hints = json.loads(row["astro_hints_json"] or "[]")
+        except Exception:
+            astro_hints = []
+        lesson = {
+            "lesson_id": int(row["lesson_id"]),
+            "case_id": int(row["case_id"]),
+            "family_key": str(row["family_key"] or ""),
+            "lesson_key": str(row["lesson_key"] or ""),
+            "conflict_type": str(row["conflict_type"] or ""),
+            "old_rule": str(row["old_rule"] or ""),
+            "new_rule": str(row["new_rule"] or ""),
+            "winner_rule": str(row["winner_rule"] or ""),
+            "outcome_label": str(row["outcome_label"] or ""),
+            "status": str(row["status"] or ""),
+            "lesson_text": str(row["lesson_text"] or ""),
+            "astro_hints": astro_hints,
+            "created_at_utc": str(row["created_at_utc"] or ""),
+            "updated_at_utc": str(row["updated_at_utc"] or ""),
+        }
+        lessons_by_case.setdefault(int(row["case_id"]), []).append({**lesson, "match_scope": "this case"})
+        family_lessons.append({**lesson, "match_scope": "case family"})
+    if family_lessons:
+        lessons_by_case[0] = family_lessons
+    for case_id in {int(seed["case_id"]), *lessons_by_case.keys()}:
+        if case_id == 0:
+            continue
+        merged = list(lessons_by_case.get(case_id, []))
+        seen = {int(item["lesson_id"]) for item in merged}
+        for item in family_lessons[:12]:
+            if int(item["lesson_id"]) in seen:
+                continue
+            merged.append(item)
+            seen.add(int(item["lesson_id"]))
+        if merged:
+            lessons_by_case[case_id] = merged
+    return lessons_by_case
+
+
 def chart_command(args: argparse.Namespace, case_id: int, output_dir: Path) -> list[str]:
     return [
         sys.executable,
@@ -811,6 +871,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "specialTraits": case.get("special_traits", {}),
         "appliedFamilyRules": case.get("applied_family_rules", []),
         "mlNotes": case.get("ml_notes", []),
+        "ruleLessons": case.get("rule_lessons", []),
     }
     metadata_json = json.dumps(metadata)
     return f"""
@@ -838,6 +899,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       autoSuggestion: null,
       mlDraft: null,
       dreamReview: null,
+      lessonSave: null,
       outcomeTouched: false,
       lastPoint: null,
       draftLoaded: false
@@ -2412,6 +2474,89 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}).join('');
       return '<details class="rm-ml-notes" open><summary>ML Notes <span>' + esc(notes.length) + '</span></summary>' + rows + '</details>';
     }}
+    function topAstroHintLabels() {{
+      var traits = meta.specialTraits && Array.isArray(meta.specialTraits.traits) ? meta.specialTraits.traits : [];
+      return traits.slice(0, 8).map(function (trait) {{
+        var tags = Array.isArray(trait.tags) && trait.tags.length ? ' [' + trait.tags.join(', ') + ']' : '';
+        return String(trait.label || trait.key || '') + tags;
+      }}).filter(Boolean);
+    }}
+    function currentLessonDraft() {{
+      var s = state.autoSuggestion || null;
+      if (!s) return null;
+      var endRule = String(s.end_rule || '');
+      var breakStatus = s.break_confirmation && s.break_confirmation.status;
+      var conflictType = 'boundary_choice';
+      var oldRule = 'default_marker_to_next_marker';
+      var newRule = 'use_current_auto_suggestion_boundary_logic';
+      if (endRule.indexOf('confirmed_break_next_') === 0) {{
+        conflictType = 'sr_touch_exit_vs_confirmed_break_hold';
+        oldRule = 'close_at_first_sr_touch';
+        newRule = 'if first SR has confirmed break/retest/continuation, treat SR as passed barrier and exit at next context boundary';
+      }} else if (endRule === 'global_first_sr_touch_target') {{
+        conflictType = 'support_target_exit_without_confirmed_break_hold';
+        oldRule = 'hold_to_next_aspect_or_shaded_zone';
+        newRule = 'close at first SR touch when break confirmation is not sufficient';
+      }} else if (endRule.indexOf('global_next_') === 0) {{
+        conflictType = 'first_context_boundary_exit';
+        oldRule = 'hold_to_later_sr_target';
+        newRule = 'close at first context boundary before attribution changes';
+      }}
+      var hints = topAstroHintLabels();
+      var parts = [
+        'case_id=' + meta.caseId + ' family=' + meta.pairKey + '::' + meta.aspect,
+        'conflict=' + conflictType,
+        'old_rule=' + oldRule,
+        'new_rule=' + newRule,
+        'winner=' + (endRule || 'unknown'),
+        'outcome=' + outcome(),
+        'auto_reason=' + String(s.reason || ''),
+        'break_status=' + String(breakStatus || ''),
+        'sr_geometry=' + String((s.sr_geometry && s.sr_geometry.label) || ''),
+        'rule_tracking=' + (s.outcome_tracking ? JSON.stringify(s.outcome_tracking) : 'n/a')
+      ];
+      if (hints.length) parts.push('astro_hints=' + hints.join(' | '));
+      return {{
+        case_id: meta.caseId,
+        family_key: String(meta.pairKey || '') + '::' + String(meta.aspect || ''),
+        lesson_key: conflictType + '|' + String(s.applied_family_rule || '') + '|' + endRule,
+        conflict_type: conflictType,
+        old_rule: oldRule,
+        new_rule: newRule,
+        winner_rule: endRule || 'unknown',
+        outcome_label: outcome(),
+        status: 'provisional',
+        lesson_text: parts.join('\\n'),
+        astro_hints: hints,
+        auto_suggestion: s,
+        verifier_report: verifyReasonText(),
+        dream_review: state.dreamReview || null
+      }};
+    }}
+    function ruleLessonsHtml() {{
+      var saved = Array.isArray(meta.ruleLessons) ? meta.ruleLessons : [];
+      var draft = currentLessonDraft();
+      var rows = [];
+      if (draft) {{
+        rows.push('<div class="rm-lesson-draft"><div><b>Current lesson draft</b><span>' + esc(draft.conflict_type) + '</span></div><pre>' + esc(draft.lesson_text.slice(0, 1800)) + '</pre></div>');
+      }} else {{
+        rows.push('<div class="muted">Run Auto Suggest to draft a rule-conflict lesson.</div>');
+      }}
+      if (state.lessonSave) {{
+        rows.push('<div class="' + (state.lessonSave.ok ? 'rm-verifier-pass' : 'rm-warning') + '">' + esc(state.lessonSave.message || state.lessonSave.error || '') + '</div>');
+      }}
+      saved.slice(0, 10).forEach(function (item) {{
+        rows.push('<div class="rm-lesson-item">'
+          + '<div><b>' + esc(item.conflict_type || item.lesson_key || 'lesson') + '</b><span>' + esc(item.match_scope || item.status || '') + '</span></div>'
+          + '<div class="rm-table-sub">lesson_id=' + esc(item.lesson_id || '') + ' | case=' + esc(item.case_id || '') + ' | winner=' + esc(item.winner_rule || '') + '</div>'
+          + '<div>' + esc(String(item.lesson_text || '').slice(0, 700)) + '</div>'
+          + '</div>');
+      }});
+      return '<details class="rm-lessons" open><summary>Rule Conflict Lessons <span>' + esc(saved.length) + ' saved</span></summary>'
+        + '<div class="rm-table-sub">Training ledger for rule conflicts: SR touch vs confirmed break, shaded-zone boundary, attribution boundary, and similar decisions.</div>'
+        + rows.join('')
+        + '</details>';
+    }}
     function mlDraftHtml() {{
       if (!state.mlDraft) return '<div class="rm-draft muted">No local draft generated yet.</div>';
       var title = state.mlDraft.ok ? 'Local Draft ML Reason' : 'Local Draft Failed';
@@ -2802,6 +2947,52 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           render();
         }});
     }}
+    function saveRuleLesson() {{
+      var draft = currentLessonDraft();
+      if (!draft) {{
+        state.lessonSave = {{ ok: false, error: 'Run Auto Suggest before saving a rule lesson.' }};
+        render();
+        return;
+      }}
+      state.lessonSave = {{ ok: true, message: 'saving lesson...' }};
+      render();
+      fetch('/api/save_rule_lesson', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify(draft)
+      }})
+        .then(function (res) {{ return res.json().then(function (data) {{ data.http_status = res.status; return data; }}); }})
+        .then(function (data) {{
+          state.lessonSave = data;
+          if (data.ok) {{
+            if (!Array.isArray(meta.ruleLessons)) meta.ruleLessons = [];
+            var existing = meta.ruleLessons.find(function (item) {{ return String(item.lesson_id) === String(data.lesson_id); }});
+            if (!existing) {{
+              meta.ruleLessons.unshift({{
+                lesson_id: data.lesson_id,
+                case_id: draft.case_id,
+                family_key: draft.family_key,
+                lesson_key: draft.lesson_key,
+                conflict_type: draft.conflict_type,
+                old_rule: draft.old_rule,
+                new_rule: draft.new_rule,
+                winner_rule: draft.winner_rule,
+                outcome_label: draft.outcome_label,
+                status: draft.status,
+                lesson_text: draft.lesson_text,
+                astro_hints: draft.astro_hints,
+                match_scope: 'this case'
+              }});
+            }}
+            state.lessonSave.message = data.message + ' #' + data.lesson_id;
+          }}
+          render();
+        }})
+        .catch(function (err) {{
+          state.lessonSave = {{ ok: false, error: String(err && err.message ? err.message : err) }};
+          render();
+        }});
+    }}
     function render() {{
       panel.querySelector('#repeatation-last').textContent = fmtPoint(state.lastPoint);
       panel.querySelector('#repeatation-trade-start').textContent = fmtPoint(state.tradeStart);
@@ -2816,6 +3007,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
+      panel.querySelector('#repeatation-rule-lessons').innerHTML = ruleLessonsHtml();
       panel.querySelector('#repeatation-ml-verifier').innerHTML = mlVerifierHtml();
       panel.querySelector('#repeatation-dream-review').innerHTML = dreamReviewHtml();
       panel.querySelector('#repeatation-ml-draft').innerHTML = mlDraftHtml();
@@ -3226,6 +3418,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div id="repeatation-profit-summary"></div>'
       + '<div id="repeatation-applied-rules"></div>'
       + '<div id="repeatation-ml-notes"></div>'
+      + '<div id="repeatation-rule-lessons"></div>'
+      + '<div class="rm-actions"><button id="repeatation-save-rule-lesson" type="button">Save Rule Lesson</button><span class="rm-status-inline">logs current conflict for ML</span></div>'
       + '<div class="rm-actions"><button id="repeatation-draft-ml-reason" type="button">Draft ML Reason</button><span id="repeatation-draft-ml-status" class="rm-status-inline">uses local Ollama/RAG if server is running</span></div>'
       + '<div id="repeatation-ml-verifier"></div>'
       + '<div id="repeatation-dream-review"></div>'
@@ -3300,6 +3494,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-ml-note-item ul{{margin:5px 0 0 16px;padding:0;}}'
       + '#repeatation-marker-panel .rm-ml-note-item li{{margin:3px 0;}}'
       + '#repeatation-marker-panel .rm-ml-note-body{{white-space:pre-wrap;background:#020617;border:1px solid #312e81;border-radius:5px;padding:6px;margin-top:6px;color:#e9d5ff;max-height:220px;overflow:auto;}}'
+      + '#repeatation-marker-panel .rm-lessons{{background:#101827;border:1px solid #14b8a6;border-radius:6px;padding:7px;margin:6px 0;color:#ccfbf1;}}'
+      + '#repeatation-marker-panel .rm-lessons summary{{cursor:pointer;color:#99f6e4;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-lessons summary span,.rm-lesson-item span,.rm-lesson-draft span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-lesson-item,.rm-lesson-draft{{border-top:1px solid #115e59;padding-top:5px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-lesson-item>div:first-child,.rm-lesson-draft>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ccfbf1;}}'
       + '#repeatation-marker-panel .rm-draft{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:6px 0;color:#dbeafe;}}'
       + '#repeatation-marker-panel .rm-draft summary{{cursor:pointer;color:#bae6fd;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-draft pre{{max-height:280px;border-color:#164e63;color:#e0f2fe;}}'
@@ -3376,6 +3575,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-clear-draft').addEventListener('click', clearSavedDraft);
     panel.querySelector('#repeatation-auto-suggest').addEventListener('click', autoSuggestTrade);
     panel.querySelector('#repeatation-show-gann').addEventListener('click', showGannFan);
+    panel.querySelector('#repeatation-save-rule-lesson').addEventListener('click', saveRuleLesson);
     panel.querySelector('#repeatation-draft-ml-reason').addEventListener('click', draftMlReason);
     panel.querySelector('#repeatation-ignore-trade').addEventListener('click', markIgnoreTrade);
     panel.querySelector('#repeatation-add-ignore-signal').addEventListener('click', function () {{ addAnnotation('ignore_signal'); }});
@@ -3840,6 +4040,7 @@ def main() -> None:
     special_traits_by_case = compute_special_traits(cases, stats_by_case, touch_rows_by_event)
     family_rules = load_case_family_rules(args.db, seed)
     ml_notes_by_case = load_ml_notes(args.db, seed)
+    lessons_by_case = load_rule_lessons(args.db, seed)
     for case in cases:
         stats = stats_by_case[int(case["case_id"])]
         case.update(stats)
@@ -3848,6 +4049,7 @@ def main() -> None:
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
         case["applied_family_rules"] = family_rules
         case["ml_notes"] = ml_notes_by_case.get(int(case["case_id"]), ml_notes_by_case.get(0, []))
+        case["rule_lessons"] = lessons_by_case.get(int(case["case_id"]), lessons_by_case.get(0, []))
 
     records: list[dict[str, Any]] = []
     for idx, case in enumerate(cases, start=1):
@@ -3868,6 +4070,7 @@ def main() -> None:
                 "special_traits",
                 "applied_family_rules",
                 "ml_notes",
+                "rule_lessons",
             }
         }
         record = {
@@ -3893,6 +4096,7 @@ def main() -> None:
             "special_trait_json": json.dumps(case.get("special_traits", {}), ensure_ascii=False),
             "applied_family_rules_json": json.dumps(case.get("applied_family_rules", []), ensure_ascii=False),
             "ml_notes_json": json.dumps(case.get("ml_notes", []), ensure_ascii=False),
+            "rule_lessons_json": json.dumps(case.get("rule_lessons", []), ensure_ascii=False),
         }
         records.append(record)
 

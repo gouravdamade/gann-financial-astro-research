@@ -293,6 +293,30 @@ CREATE TABLE IF NOT EXISTS rule_notes (
 
 CREATE INDEX IF NOT EXISTS idx_rule_notes_case
 ON rule_notes(case_id, created_at_utc);
+
+CREATE TABLE IF NOT EXISTS rule_lessons (
+    lesson_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    case_id INTEGER NOT NULL REFERENCES aspect_cases(case_id) ON DELETE CASCADE,
+    family_key TEXT NOT NULL,
+    lesson_key TEXT NOT NULL,
+    conflict_type TEXT NOT NULL,
+    old_rule TEXT,
+    new_rule TEXT,
+    winner_rule TEXT,
+    outcome_label TEXT,
+    status TEXT NOT NULL DEFAULT 'provisional',
+    lesson_text TEXT NOT NULL,
+    astro_hints_json TEXT,
+    auto_suggestion_json TEXT,
+    verifier_json TEXT,
+    dream_review_json TEXT,
+    created_at_utc TEXT NOT NULL,
+    updated_at_utc TEXT NOT NULL,
+    UNIQUE(case_id, lesson_key, winner_rule)
+);
+
+CREATE INDEX IF NOT EXISTS idx_rule_lessons_family
+ON rule_lessons(family_key, conflict_type, case_id);
 """
 
 
@@ -988,6 +1012,76 @@ def add_rule_note(
         (case_id, annotation_id, note_type, note_text, utc_now()),
     )
     return int(cur.lastrowid)
+
+
+def add_rule_lesson(
+    conn: sqlite3.Connection,
+    *,
+    case_id: int,
+    family_key: str,
+    lesson_key: str,
+    conflict_type: str,
+    lesson_text: str,
+    old_rule: str = "",
+    new_rule: str = "",
+    winner_rule: str = "",
+    outcome_label: str = "",
+    status: str = "provisional",
+    astro_hints_json: str = "",
+    auto_suggestion_json: str = "",
+    verifier_json: str = "",
+    dream_review_json: str = "",
+) -> tuple[int, bool]:
+    now = utc_now()
+    cur = conn.execute(
+        """
+        INSERT INTO rule_lessons(
+            case_id, family_key, lesson_key, conflict_type, old_rule, new_rule,
+            winner_rule, outcome_label, status, lesson_text, astro_hints_json,
+            auto_suggestion_json, verifier_json, dream_review_json, created_at_utc, updated_at_utc
+        )
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(case_id, lesson_key, winner_rule) DO UPDATE SET
+            conflict_type = excluded.conflict_type,
+            old_rule = excluded.old_rule,
+            new_rule = excluded.new_rule,
+            outcome_label = excluded.outcome_label,
+            status = excluded.status,
+            lesson_text = excluded.lesson_text,
+            astro_hints_json = excluded.astro_hints_json,
+            auto_suggestion_json = excluded.auto_suggestion_json,
+            verifier_json = excluded.verifier_json,
+            dream_review_json = excluded.dream_review_json,
+            updated_at_utc = excluded.updated_at_utc
+        """,
+        (
+            int(case_id),
+            family_key,
+            lesson_key,
+            conflict_type,
+            old_rule,
+            new_rule,
+            winner_rule,
+            outcome_label,
+            status,
+            lesson_text,
+            astro_hints_json,
+            auto_suggestion_json,
+            verifier_json,
+            dream_review_json,
+            now,
+            now,
+        ),
+    )
+    row = conn.execute(
+        """
+        SELECT lesson_id, created_at_utc = updated_at_utc AS inserted
+        FROM rule_lessons
+        WHERE case_id = ? AND lesson_key = ? AND winner_rule = ?
+        """,
+        (int(case_id), lesson_key, winner_rule),
+    ).fetchone()
+    return int(row["lesson_id"] if row else cur.lastrowid), bool(row["inserted"] if row else True)
 
 
 def list_rule_notes(conn: sqlite3.Connection, case_id: int | None, limit: int) -> list[sqlite3.Row]:

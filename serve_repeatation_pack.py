@@ -9,6 +9,8 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from functools import partial
 
+from aspect_annotation_store import add_rule_lesson, connect, initialize_database
+
 
 DEFAULT_PACK_DIR = Path(
     r"C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548"
@@ -35,6 +37,9 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
         endpoint = self.path.split("?", 1)[0]
         if endpoint == "/api/dream_review":
             self._handle_dream_review()
+            return
+        if endpoint == "/api/save_rule_lesson":
+            self._handle_save_rule_lesson()
             return
         if endpoint != "/api/draft_ml_reason":
             self._send_json(404, {"ok": False, "error": "unknown API endpoint"})
@@ -134,6 +139,58 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             self._send_json(500, {"ok": False, "error": f"could not parse dream review: {exc}", "stdout": proc.stdout[:4000]})
             return
         self._send_json(200, result)
+
+    def _handle_save_rule_lesson(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            raw = self.rfile.read(length).decode("utf-8", errors="replace")
+            payload = json.loads(raw or "{}")
+            case_id = int(payload.get("case_id"))
+            family_key = str(payload.get("family_key") or "").strip()
+            lesson_key = str(payload.get("lesson_key") or "").strip()
+            conflict_type = str(payload.get("conflict_type") or "").strip()
+            lesson_text = str(payload.get("lesson_text") or "").strip()
+            if not family_key or not lesson_key or not conflict_type or not lesson_text:
+                raise ValueError("case_id, family_key, lesson_key, conflict_type, and lesson_text are required")
+        except Exception as exc:
+            self._send_json(400, {"ok": False, "error": f"bad rule lesson request: {exc}"})
+            return
+
+        db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+        try:
+            initialize_database(db_path)
+            with connect(db_path) as conn:
+                lesson_id, inserted = add_rule_lesson(
+                    conn,
+                    case_id=case_id,
+                    family_key=family_key,
+                    lesson_key=lesson_key,
+                    conflict_type=conflict_type,
+                    old_rule=str(payload.get("old_rule") or ""),
+                    new_rule=str(payload.get("new_rule") or ""),
+                    winner_rule=str(payload.get("winner_rule") or ""),
+                    outcome_label=str(payload.get("outcome_label") or ""),
+                    status=str(payload.get("status") or "provisional"),
+                    lesson_text=lesson_text,
+                    astro_hints_json=json.dumps(payload.get("astro_hints") or [], ensure_ascii=False, default=str),
+                    auto_suggestion_json=json.dumps(payload.get("auto_suggestion") or {}, ensure_ascii=False, default=str),
+                    verifier_json=json.dumps(payload.get("verifier_report") or {}, ensure_ascii=False, default=str),
+                    dream_review_json=json.dumps(payload.get("dream_review") or {}, ensure_ascii=False, default=str),
+                )
+                conn.commit()
+        except Exception as exc:
+            self._send_json(500, {"ok": False, "error": f"could not save rule lesson: {exc}"})
+            return
+        self._send_json(
+            200,
+            {
+                "ok": True,
+                "lesson_id": lesson_id,
+                "inserted": inserted,
+                "case_id": case_id,
+                "message": "lesson saved" if inserted else "lesson updated",
+            },
+        )
 
 
 def parse_args() -> argparse.Namespace:
