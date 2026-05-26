@@ -1371,6 +1371,54 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }});
       return uniqueMarkers(out);
     }}
+    function collectCaseWindowSrTouches() {{
+      var traces = chartTraces();
+      var candles = collectCandles();
+      var start = Date.parse(meta.windowStart);
+      var end = Date.parse(meta.windowEnd);
+      if (!Number.isFinite(start) || !Number.isFinite(end)) return [];
+      var referencePoint = caseEntryPoint('case window entry/open price');
+      var clearancePips = srGeometryEpsilonPips(referencePoint);
+      var touchBandPips = Math.max(clearancePips, 3);
+      var touchPad = touchBandPips / 100;
+      var out = [];
+      traces.forEach(function (trace, curveNumber) {{
+        if (!traceLooksLikeSrLine(trace)) return;
+        var label = String(trace.name || 'SR line').replace(/\s+/g, ' ').trim();
+        candles.forEach(function (c, candleIndex) {{
+          if (!c || !Number.isFinite(c.t) || c.t < start || c.t > end) return;
+          var sr = srLineValueAt(trace, c.t);
+          if (!Number.isFinite(sr)) return;
+          var highGap = Math.abs(c.high - sr);
+          var lowGap = Math.abs(c.low - sr);
+          var closeGap = Math.abs(c.close - sr);
+          var rangeGap = c.low <= sr && c.high >= sr ? 0 : Math.min(highGap, lowGap, closeGap);
+          if (rangeGap > touchPad) return;
+          var useTop = highGap <= lowGap;
+          var y = useTop ? c.high : c.low;
+          if (!Number.isFinite(y)) y = sr;
+          out.push({{
+            x: c.x,
+            y: Number(y.toFixed(3)),
+            sr_price: Number(sr.toFixed(6)),
+            source: 'auto_selected_case_sr_touch',
+            traceName: trace.name || '',
+            curveNumber: curveNumber,
+            pointNumber: candleIndex,
+            markerLabel: label + ' selected-case SR touch',
+            touch_gap_pips: Number((rangeGap * 100).toFixed(2)),
+            touch_band_pips: Number(touchBandPips.toFixed(1)),
+            touch_side: useTop ? 'top_wick' : 'bottom_wick',
+            gann_anchor_side: useTop ? 'top' : 'bottom'
+          }});
+        }});
+      }});
+      return uniqueMarkers(out).sort(function (a, b) {{
+        var dt = markerTime(a) - markerTime(b);
+        if (dt !== 0) return dt;
+        return Number(a.touch_gap_pips || 0) - Number(b.touch_gap_pips || 0);
+      }});
+    }}
     function gannFanForStart(startPoint, selectedOutcome, reason) {{
       var direction = selectedOutcome || outcome();
       var directionSign = direction === 'bearish' ? -1 : (direction === 'bullish' ? 1 : 0);
@@ -1380,7 +1428,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var candles = collectCandles();
       var candle = candleAtOrAfter(candles, startTime);
       if (!candle) return null;
-      var anchorPrice = directionSign < 0 ? candle.high : candle.low;
+      var anchorSide = String(startPoint.gann_anchor_side || '').toLowerCase();
+      var anchorPrice = anchorSide === 'top' ? candle.high : (anchorSide === 'bottom' ? candle.low : (directionSign < 0 ? candle.high : candle.low));
       if (!Number.isFinite(anchorPrice)) return null;
       return {{
         active: true,
@@ -1389,8 +1438,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         anchor: {{
           x: candle.x,
           y: Number(anchorPrice.toFixed(3)),
-          source: directionSign < 0 ? 'gann_fan_top_wick' : 'gann_fan_bottom_wick',
-          markerLabel: directionSign < 0 ? 'Gann fan top wick anchor' : 'Gann fan bottom wick anchor'
+          source: anchorSide === 'top' ? 'gann_fan_top_wick' : (anchorSide === 'bottom' ? 'gann_fan_bottom_wick' : (directionSign < 0 ? 'gann_fan_top_wick' : 'gann_fan_bottom_wick')),
+          markerLabel: anchorSide === 'top' ? 'Gann fan top wick anchor' : (anchorSide === 'bottom' ? 'Gann fan bottom wick anchor' : (directionSign < 0 ? 'Gann fan top wick anchor' : 'Gann fan bottom wick anchor'))
         }},
         anchor_candle: {{
           x: candle.x,
@@ -2272,6 +2321,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + esc(String(s.sr_line_touch_candidates.length))
           + ' candidate(s), including line touches that do not have a hardcoded dot.</div>';
       }}
+      if (Array.isArray(s.case_window_sr_touch_candidates) && s.case_window_sr_touch_candidates.length) {{
+        geometry += '<div class="rm-table-sub">Case-window SR touch candidates: '
+          + esc(String(s.case_window_sr_touch_candidates.length))
+          + ' candidate(s); first wick touch inside the tight SR band is preferred over a later confluence dot.</div>';
+      }}
       var tracking = '';
       if (s.outcome_tracking) {{
         tracking = '<div><b>Rule tracking</b>: rule ' + esc(signedPipsText(s.outcome_tracking.rule_signed_pips))
@@ -2293,7 +2347,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var fanHtml = '';
       if (s.gann_fan && s.gann_fan.active) {{
         var fan = s.gann_fan;
-        var wick = fan.direction === 'bearish' ? 'top wick' : 'bottom wick';
+        var source = String((fan.anchor && fan.anchor.source) || '').toLowerCase();
+        var wick = source.indexOf('top') !== -1 ? 'top wick' : (source.indexOf('bottom') !== -1 ? 'bottom wick' : (fan.direction === 'bearish' ? 'top wick' : 'bottom wick'));
         fanHtml = '<div><b>Gann fan</b>: anchored at ' + esc(wick)
           + ' ' + esc(toIST(fan.anchor && fan.anchor.x))
           + ' @ ' + esc(Number(fan.anchor && fan.anchor.y).toFixed(3))
@@ -3235,7 +3290,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var zones = collectZoneBoundaries();
       var selected = markers.filter(function (point) {{ return point.isSelectedCaseTouch; }});
       var windowMarkers = markers.filter(pointInCaseWindow);
-      var defaultStart = selected[0] || windowMarkers[0] || markers[0];
+      var caseWindowSrTouches = collectCaseWindowSrTouches();
+      var firstCaseWindowSrTouch = caseWindowSrTouches[0] || null;
+      var defaultStart = firstCaseWindowSrTouch || selected[0] || windowMarkers[0] || markers[0];
       var defaultStartTime = markerTime(defaultStart);
       var minGapMs = 60000;
       var defaultEnd = markers.find(function (point) {{
@@ -3349,18 +3406,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var wickStart = null;
       var defaultFlowGeometry = srGeometryForPoint(defaultEnd, defaultStart, outcome());
       var defaultFlowAtSr = defaultFlowGeometry && defaultFlowGeometry.position === 'same_as_entry';
-      if (selected[0] && defaultFlowAtSr && (outcome() === 'bullish' || outcome() === 'bearish')) {{
+      if (!firstCaseWindowSrTouch && selected[0] && defaultFlowAtSr && (outcome() === 'bullish' || outcome() === 'bearish')) {{
         wickStart = wickEntryPointForStart(defaultStart, outcome(), 'selected-case marker is at SR / entry band');
         if (wickStart) start = wickStart;
       }}
       var startTime = markerTime(start);
       var end = defaultEnd;
-      var confidence = selected[0] ? 'clean' : (windowMarkers[0] ? 'fallback' : 'weak');
-      var reason = selected[0]
-        ? 'Start used the first selected-case hardcoded touch; end used the next later hardcoded marker.'
-        : (windowMarkers[0]
-          ? 'No selected-case touch marker was found, so start used the first marker inside the case window; end used the next later marker.'
-          : 'No marker inside the case window was found, so start used the first visible marker; review carefully.');
+      var confidence = firstCaseWindowSrTouch ? 'clean' : (selected[0] ? 'clean' : (windowMarkers[0] ? 'fallback' : 'weak'));
+      var reason = firstCaseWindowSrTouch
+        ? 'Start used the first actual SR-line wick touch inside the selected case window; end used the next later hardcoded marker/confluence boundary.'
+        : (selected[0]
+          ? 'Start used the first selected-case hardcoded touch; end used the next later hardcoded marker.'
+          : (windowMarkers[0]
+            ? 'No selected-case touch marker was found, so start used the first marker inside the case window; end used the next later marker.'
+            : 'No marker inside the case window was found, so start used the first visible marker; review carefully.'));
       if (!end) {{
         confidence = 'incomplete';
         reason += ' No later marker was found for trade end.';
@@ -3379,8 +3438,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         sr_geometry: srGeometryForPoint(end, start, outcome()),
         break_confirmation: breakConfirmationForGeometry(srGeometryForPoint(end, start, outcome()), end, start, outcome()),
         default_marker_flow_sr_geometry: defaultFlowGeometry,
-        reference_start_marker: wickStart ? serialPoint(defaultStart) : null,
-        start_rule: wickStart ? 'wick_entry_from_selected_case_sr_marker' : (selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker')),
+        reference_start_marker: (wickStart || firstCaseWindowSrTouch) ? serialPoint(selected[0] || defaultStart) : null,
+        case_window_sr_touch_candidates: caseWindowSrTouches.map(serialPoint),
+        start_rule: firstCaseWindowSrTouch ? 'first_case_window_sr_line_touch' : (wickStart ? 'wick_entry_from_selected_case_sr_marker' : (selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'))),
         end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
         manual_override: false,
         overridden_keys: [],

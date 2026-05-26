@@ -1,10 +1,42 @@
 # Current Project Handoff
 
-Last updated: 2026-05-24 23:58 IST
+Last updated: 2026-05-27 04:22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-24
+## Latest Update - 2026-05-27
+
+2026-05-27 case 127 first SR wick-touch Auto Suggest:
+
+- User pointed out that case `127` should not start at the later exported hardcoded confluence marker; the earlier `2025-05-28 22:00` candle wick was already close enough to the SR line.
+- Root cause found:
+  upstream hardcoded selected-case marker export prioritizes confluence dots, so the later `23:30` confluence marker hid the earlier plain SR-line wick touch.
+- `build_repeatation_review_pack.py` now adds reviewer-side selected-window SR wick-touch detection:
+  it scans candles inside the selected case window against visible SR lines, uses a tight SR band of `max(at-SR epsilon, 3 pips)`, and prefers the first valid wick touch over a later confluence dot for default Auto Suggest start.
+- `gannFanForStart()` now respects an explicit `gann_anchor_side` from the chosen start candidate, so case `127` anchors at the top wick even though the reviewed outcome is bullish.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260527_041655`
+- Restarted server from that pack:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260527_case_sr_touch_v46b`
+- Browser verification after Clear markers + Auto Suggest:
+  start `2025-05-28 22:00:00+05:30 @ 144.965`;
+  end `2025-05-28 23:30:00+05:30 @ 145.125`;
+  result bullish `+16.0 pips`;
+  Gann fan anchored at top wick `2025-05-28 22:00:00+05:30 @ 144.965`.
+- Added research/audit addendum:
+  `astro_function_research_audit_20260527.md`.
+  It records the case-127 finding, candidate-inspector recommendation, source cross-check notes, and next audit gates for Shadbala/Drik/Panchanga/rule replay.
+- Verification:
+  `python -m py_compile build_repeatation_review_pack.py` passed.
+
+Next suggested work:
+
+- Add a marker candidate inspector to the drawer so each Auto Suggest shows all start/end candidates and why one won.
+- Build deterministic rule replay/regression checks for teaching cases `8`, `43`, `103`, and `127`.
+- Continue the source-backed Jyotish audit: mark each astro feature as implemented, proxy, missing, disputed, externally validated, or needing validation.
+- Keep local LLM output contained: deterministic evidence + manual notes + verified dream corrections should be training truth, not raw LLM prose.
+
+## Previous Update - 2026-05-24
 
 2026-05-24 Gann fan visibility / clean SR close:
 
