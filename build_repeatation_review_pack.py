@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260526_rule_lesson_ledger_v41"
+REPEATATION_UI_VERSION = "repeatation_ui_20260527_marker_attach_fallback_v43"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -884,9 +884,33 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
     else fn();
   }}
-  ready(function () {{
+  function waitForPlotlyGraph(fn, attempt) {{
+    attempt = attempt || 0;
     var gd = document.querySelector('.js-plotly-plot');
-    if (!gd || !window.Plotly) return;
+    var plotlyApi = window.Plotly;
+    if (gd) {{
+      if (!plotlyApi) {{
+        plotlyApi = {{
+          relayout: function () {{
+            return Promise.resolve();
+          }}
+        }};
+      }}
+      fn(gd, plotlyApi);
+      return;
+    }}
+    if (attempt < 120) {{
+      window.setTimeout(function () {{ waitForPlotlyGraph(fn, attempt + 1); }}, 250);
+      return;
+    }}
+    var fallbackGd = document.querySelector('.plotly-graph-div');
+    if (fallbackGd) {{
+      console.warn('Repeatation marker UI could not attach because Plotly was not ready.');
+    }}
+  }}
+  ready(function () {{
+    waitForPlotlyGraph(function (gd, plotlyApi) {{
+    var Plotly = plotlyApi;
     var state = {{
       tool: 'trade_start',
       tradeStart: null,
@@ -3234,19 +3258,22 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           endRule = 'global_next_hardcoded_marker_boundary';
         }}
         var ruleConfidence = target ? (selected.indexOf(target) !== -1 ? 'rule clean' : 'rule fallback') : 'incomplete';
-        var ruleReason = target
-          ? (endRule === 'confirmed_break_next_shaded_zone_boundary'
-            ? 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next shaded-zone boundary before a new regime takes over.'
-            : (endRule === 'confirmed_break_next_hardcoded_marker_boundary'
-              ? 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next hardcoded marker before attribution changes.'
-              : (endRule === 'global_first_sr_touch_target'
-            ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first lower SR touch because SR is the first clean boundary after entry.'
-            : (endRule === 'global_next_shaded_zone_boundary'
-              ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first subsequent shaded zone boundary before entering a new event/regime context.'
-              : (endRule === 'global_next_hardcoded_marker_boundary'
-                ? 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first later hardcoded marker before entering uncharted attribution.'
-                : 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at whichever deterministic boundary comes first after entry: SR touch, next shaded zone, or next hardcoded marker.'))))
-          : 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
+        var ruleReason = 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
+        if (target) {{
+          if (endRule === 'confirmed_break_next_shaded_zone_boundary') {{
+            ruleReason = 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next shaded-zone boundary before a new regime takes over.';
+          }} else if (endRule === 'confirmed_break_next_hardcoded_marker_boundary') {{
+            ruleReason = 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next hardcoded marker before attribution changes.';
+          }} else if (endRule === 'global_first_sr_touch_target') {{
+            ruleReason = 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first lower SR touch because SR is the first clean boundary after entry.';
+          }} else if (endRule === 'global_next_shaded_zone_boundary') {{
+            ruleReason = 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first subsequent shaded zone boundary before entering a new event/regime context.';
+          }} else if (endRule === 'global_next_hardcoded_marker_boundary') {{
+            ruleReason = 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at the first later hardcoded marker before entering uncharted attribution.';
+          }} else {{
+            ruleReason = 'Applied family rule bearish_bias_support_barrier plus global exit rule: close at whichever deterministic boundary comes first after entry: SR touch, next shaded zone, or next hardcoded marker.';
+          }}
+        }}
         var geometry = srGeometryForPoint(target, entryPoint, outcome());
         var breakConfirmation = barrierBreakConfirmation;
         var ruleSignedPips = signedPipsForPoints(entryPoint, target, outcome());
@@ -3641,6 +3668,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       render();
     }}
     setDefaultPanMode();
+    }});
   }});
 }}());
 </script>
