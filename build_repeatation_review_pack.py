@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260525_global_exit_v37"
+REPEATATION_UI_VERSION = "repeatation_ui_20260526_reason_verifier_v38"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -2420,6 +2420,145 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + '<pre>' + esc(body.slice(0, 9000)) + '</pre>'
         + '</details>';
     }}
+    function mlNotesPlainText() {{
+      var notes = Array.isArray(meta.mlNotes) ? meta.mlNotes : [];
+      return notes.map(function (note) {{
+        var fields = note && note.fields && typeof note.fields === 'object' ? JSON.stringify(note.fields) : '';
+        return [
+          note && note.label,
+          note && note.note_type,
+          note && note.note_text,
+          fields
+        ].filter(Boolean).join('\\n');
+      }}).join('\\n\\n');
+    }}
+    function verifierEvidence() {{
+      var result = tradeProfit();
+      var s = state.autoSuggestion || {{}};
+      var sr = s.sr_geometry || {{}};
+      var barrier = s.barrier_sr_geometry || {{}};
+      var breakInfo = s.break_confirmation || {{}};
+      return {{
+        outcome: outcome(),
+        trade_result: result,
+        auto_reason: s.reason || '',
+        family_rule: s.applied_family_rule || '',
+        sr_position: sr.position || '',
+        sr_role: sr.role || '',
+        sr_label: sr.label || '',
+        sr_distance_pips: sr.distance_pips,
+        barrier_position: barrier.position || '',
+        barrier_role: barrier.role || '',
+        break_status: breakInfo.status || '',
+        break_label: breakInfo.label || '',
+        attribution_boundary: s.attribution_boundary || null,
+        global_exit_boundary: s.global_exit_boundary || null,
+        sr_touch_count: Array.isArray(s.sr_line_touch_candidates) ? s.sr_line_touch_candidates.length : 0
+      }};
+    }}
+    function addVerifierIssue(list, severity, title, detail) {{
+      list.push({{ severity: severity, title: title, detail: detail }});
+    }}
+    function hasAny(text, needles) {{
+      return needles.some(function (needle) {{ return text.indexOf(needle) >= 0; }});
+    }}
+    function verifyReasonText() {{
+      var draftText = String((state.mlDraft && (state.mlDraft.markdown || state.mlDraft.error)) || '');
+      var notesText = mlNotesPlainText();
+      var combined = (draftText + '\\n\\n' + notesText).toLowerCase();
+      var draftLower = draftText.toLowerCase();
+      var evidence = verifierEvidence();
+      var issues = [];
+      var checks = [];
+      if (!draftText.trim()) {{
+        addVerifierIssue(issues, 'info', 'No draft to verify yet', 'Click Draft ML Reason after Auto Suggest. Stored ML notes are still checked for doctrine caveats.');
+      }} else {{
+        checks.push('Local draft text present');
+      }}
+      if (state.autoSuggestion) checks.push('Auto Suggest evidence available');
+      else addVerifierIssue(issues, 'missing', 'Auto Suggest not available', 'Run Auto Suggest first so the verifier can check SR geometry, break confirmation, attribution boundary, and rule-vs-default evidence.');
+      if (draftText && draftLower.indexOf('deterministic plain-english analysis') < 0) {{
+        addVerifierIssue(issues, 'missing', 'Draft lacks deterministic section', 'The draft should include deterministic analysis before any local LLM commentary.');
+      }}
+      var expectedBearish = evidence.outcome === 'bearish' || /bearish/.test(String(evidence.family_rule + ' ' + evidence.auto_reason).toLowerCase());
+      var expectedBullish = evidence.outcome === 'bullish' || /bullish/.test(String(evidence.family_rule + ' ' + evidence.auto_reason).toLowerCase());
+      if (draftText && expectedBearish && hasAny(draftLower, ['bullish bias', 'bullish case', 'upward bias', 'expected upward'])) {{
+        addVerifierIssue(issues, 'contradiction', 'Direction conflict', 'Evidence says this review is bearish, but the draft uses bullish-bias language.');
+      }}
+      if (draftText && expectedBullish && hasAny(draftLower, ['bearish bias', 'bearish case', 'downward bias', 'expected downward'])) {{
+        addVerifierIssue(issues, 'contradiction', 'Direction conflict', 'Evidence says this review is bullish, but the draft uses bearish-bias language.');
+      }}
+      if (evidence.trade_result && Number.isFinite(Number(evidence.trade_result.signedPips))) {{
+        checks.push('Live P/L checked: ' + evidence.trade_result.signedPipsText + ' pips for ' + evidence.trade_result.outcomeLabel);
+        if (Number(evidence.trade_result.signedPips) > 0 && hasAny(draftLower, ['adverse move', 'loss trade', 'negative p/l'])) {{
+          addVerifierIssue(issues, 'contradiction', 'P/L conflict', 'Live trade result is favorable, but the draft describes it as adverse or losing.');
+        }}
+      }}
+      if (evidence.sr_position === 'below_entry') {{
+        checks.push('SR geometry checked: below entry means support/target for bearish review');
+        if (hasAny(draftLower, ['sr is above', 'resistance above', 'upper sr target', 'upper barrier']) && !hasAny(draftLower, ['not above'])) {{
+          addVerifierIssue(issues, 'contradiction', 'SR geometry conflict', 'Auto Suggest says SR is below entry, but the draft talks as if the relevant SR is above/resistance.');
+        }}
+      }}
+      if (evidence.sr_position === 'above_entry') {{
+        checks.push('SR geometry checked: above entry means resistance/target for bullish review');
+        if (hasAny(draftLower, ['sr is below', 'support below', 'lower sr target', 'lower barrier']) && !hasAny(draftLower, ['not below'])) {{
+          addVerifierIssue(issues, 'contradiction', 'SR geometry conflict', 'Auto Suggest says SR is above entry, but the draft talks as if the relevant SR is below/support.');
+        }}
+      }}
+      if (evidence.break_status === 'confirmed') {{
+        checks.push('Break confirmation checked: confirmed');
+        if (hasAny(draftLower, ['no clean break', 'did not break', 'failed to break', 'without break confirmation'])) {{
+          addVerifierIssue(issues, 'contradiction', 'Break-confirmation conflict', 'Evidence says break/retest/continuation is confirmed, but the draft says the break failed or was missing.');
+        }}
+      }} else if (evidence.break_status && evidence.break_status !== 'not_applicable') {{
+        checks.push('Break confirmation checked: ' + evidence.break_status);
+        if (hasAny(draftLower, ['break confirmed', 'confirmed support break', 'confirmed resistance break'])) {{
+          addVerifierIssue(issues, 'contradiction', 'Break-confirmation conflict', 'Evidence does not show a confirmed break, but the draft claims one.');
+        }}
+      }}
+      if (evidence.attribution_boundary && draftText && !hasAny(draftLower, ['attribution boundary', 'next hardcoded marker', 'next event', 'new zone'])) {{
+        addVerifierIssue(issues, 'missing', 'Missing attribution boundary', 'Auto Suggest stops at a later event/zone boundary, but the draft does not mention attribution control.');
+      }}
+      if (evidence.global_exit_boundary && draftText && !hasAny(draftLower, ['global exit', 'first sr touch', 'sr touch', 'next shaded zone', 'whichever appeared first'])) {{
+        addVerifierIssue(issues, 'missing', 'Missing global-exit rule', 'Auto Suggest used the first boundary among SR touch, shaded zone, and hardcoded marker; the draft should say that.');
+      }}
+      if (evidence.sr_touch_count > 0) checks.push('SR-line touch candidates checked: ' + evidence.sr_touch_count);
+      var syntheticAvg = String(meta.pairKey || '').toUpperCase().indexOf('AVG(ALL)') >= 0;
+      var nonClassicalAspect = String(meta.aspect || '').toLowerCase().indexOf('square') >= 0;
+      if ((syntheticAvg || nonClassicalAspect) && combined.indexOf('bphs-like orb strength') >= 0 && combined.indexOf('0.0') >= 0) {{
+        addVerifierIssue(issues, 'caution', 'BPHS-like orb field is not proof', 'AVG(ALL) is synthetic and square is not a clean classical BPHS graha-drishti measure. Treat 0.0 as not-applicable/low-confidence, not as a real doctrinal zero.');
+      }}
+      if (draftText && hasAny(draftLower, ['economic indicators', 'investor sentiment', 'market conditions']) && !hasAny(draftLower, ['not in evidence', 'missing citation'])) {{
+        addVerifierIssue(issues, 'unsupported', 'Generic market claim', 'The draft mentions macro/sentiment style reasons that are not present in this case evidence.');
+      }}
+      var contradictionCount = issues.filter(function (i) {{ return i.severity === 'contradiction'; }}).length;
+      var seriousCount = issues.filter(function (i) {{ return i.severity === 'missing' || i.severity === 'unsupported'; }}).length;
+      var cautionCount = issues.filter(function (i) {{ return i.severity === 'caution'; }}).length;
+      var verdict = contradictionCount ? 'contradiction found' : (seriousCount || cautionCount ? 'partly verified' : 'verified');
+      return {{
+        verdict: verdict,
+        issues: issues,
+        checks: checks,
+        evidence: evidence
+      }};
+    }}
+    function mlVerifierHtml() {{
+      var report = verifyReasonText();
+      var issueRows = report.issues.length
+        ? report.issues.map(function (item) {{
+            return '<div class="rm-verifier-issue ' + esc(item.severity) + '"><b>' + esc(item.title) + '</b><span>' + esc(item.severity) + '</span><div>' + esc(item.detail) + '</div></div>';
+          }}).join('')
+        : '<div class="rm-verifier-pass">No contradictions found against current deterministic evidence.</div>';
+      var checkRows = report.checks.length
+        ? '<ul>' + report.checks.slice(0, 8).map(function (item) {{ return '<li>' + esc(item) + '</li>'; }}).join('') + '</ul>'
+        : '<div class="muted">Run Auto Suggest and Draft ML Reason for stronger checks.</div>';
+      return '<details class="rm-verifier" open><summary>Reason verifier <span>' + esc(report.verdict) + '</span></summary>'
+        + '<div class="rm-table-sub">Rule-based truth gate for local draft and saved ML notes. It does not decide Jyotish doctrine; it catches evidence conflicts before ML training.</div>'
+        + issueRows
+        + '<div class="rm-verifier-checks"><b>Checks run</b>' + checkRows + '</div>'
+        + '</details>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -2612,6 +2751,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
+      panel.querySelector('#repeatation-ml-verifier').innerHTML = mlVerifierHtml();
       panel.querySelector('#repeatation-ml-draft').innerHTML = mlDraftHtml();
       panel.querySelector('#repeatation-special-traits').innerHTML = specialTraitsHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
@@ -3010,6 +3150,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div id="repeatation-applied-rules"></div>'
       + '<div id="repeatation-ml-notes"></div>'
       + '<div class="rm-actions"><button id="repeatation-draft-ml-reason" type="button">Draft ML Reason</button><span id="repeatation-draft-ml-status" class="rm-status-inline">uses local Ollama/RAG if server is running</span></div>'
+      + '<div id="repeatation-ml-verifier"></div>'
       + '<div id="repeatation-ml-draft"></div>'
       + '<div id="repeatation-special-traits"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
@@ -3084,6 +3225,18 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-draft{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:6px 0;color:#dbeafe;}}'
       + '#repeatation-marker-panel .rm-draft summary{{cursor:pointer;color:#bae6fd;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-draft pre{{max-height:280px;border-color:#164e63;color:#e0f2fe;}}'
+      + '#repeatation-marker-panel .rm-verifier{{background:#111827;border:1px solid #22d3ee;border-radius:6px;padding:7px;margin:6px 0;color:#cffafe;}}'
+      + '#repeatation-marker-panel .rm-verifier summary{{cursor:pointer;color:#a5f3fc;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-verifier summary span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-verifier-issue{{border-top:1px solid #164e63;padding-top:5px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-verifier-issue>b{{color:#fef3c7;}}'
+      + '#repeatation-marker-panel .rm-verifier-issue span{{float:right;font-size:10px;text-transform:uppercase;color:#fde68a;}}'
+      + '#repeatation-marker-panel .rm-verifier-issue.contradiction{{color:#fecaca;border-color:#7f1d1d;}}'
+      + '#repeatation-marker-panel .rm-verifier-issue.unsupported,#repeatation-marker-panel .rm-verifier-issue.missing{{color:#fed7aa;border-color:#7c2d12;}}'
+      + '#repeatation-marker-panel .rm-verifier-issue.caution{{color:#fde68a;border-color:#713f12;}}'
+      + '#repeatation-marker-panel .rm-verifier-pass{{border-top:1px solid #164e63;margin-top:6px;padding-top:6px;color:#bbf7d0;}}'
+      + '#repeatation-marker-panel .rm-verifier-checks{{border-top:1px solid #164e63;margin-top:6px;padding-top:6px;color:#bae6fd;}}'
+      + '#repeatation-marker-panel .rm-verifier-checks ul{{margin:5px 0 0 16px;padding:0;color:#cffafe;}}'
       + '#repeatation-marker-panel .rm-evidence{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-evidence summary{{cursor:pointer;color:#bfdbfe;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-evidence-group{{margin-top:8px;}}'

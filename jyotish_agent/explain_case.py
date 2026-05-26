@@ -104,6 +104,7 @@ def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
 def compact_case_summary(packet: dict[str, Any]) -> str:
     case = packet["case"]
     context = packet["context"]
+    synthetic_avg_square = "AVG(ALL)" in str(case.get("pair_key", "")).upper() or str(case.get("aspect", "")).lower() == "square"
     lines = [
         f"case_id={case['case_id']} family={case['pair_key']}::{case['aspect']}",
         f"window={case['window_start_ist']} -> {case['window_end_ist']} timeframe={case.get('timeframe')}",
@@ -111,6 +112,12 @@ def compact_case_summary(packet: dict[str, Any]) -> str:
     for key in IMPORTANT_CONTEXT_KEYS:
         value = context.get(key)
         if value not in (None, ""):
+            if key == "event_bphs_like_orb_strength" and synthetic_avg_square:
+                lines.append(
+                    "event_bphs_like_orb_strength=not_applicable_for_synthetic_AVG_ALL_square "
+                    f"(raw={value}; do not treat raw 0.0 as a doctrinal BPHS zero)"
+                )
+                continue
             lines.append(f"{key}={value}")
     if packet["exact_notes"]:
         lines.append("Exact-case notes:")
@@ -324,6 +331,11 @@ def deterministic_analysis(packet: dict[str, Any], question: str = "") -> str:
         reasons.append(f"Chesta/motion strength is {chesta:.2f} ({bucket_strength(chesta, 5, 35)}), so unusual motion force is not the main driver.")
     if orb is not None:
         reasons.append(f"Aspect distance from exact is {orb:.2f} degrees ({bucket_strength(orb, 45, 75)} in current feature buckets), so this is not a very tight exact-aspect hit.")
+    if "AVG(ALL)" in str(case.get("pair_key", "")).upper() or str(case.get("aspect", "")).lower() == "square":
+        reasons.append(
+            "BPHS-like orb strength is not treated as a clean doctrine field here because AVG(ALL) is synthetic "
+            "and square is not a direct classical BPHS graha-drishti measure; use event_orb_deg and observed family behavior instead."
+        )
     if "JUPITER" in touch_planets.upper() or "JUPITER" in notes.upper():
         reasons.append("Touched SR involves Jupiter; in this workspace note logic that is treated as a benefic/supportive floor unless price closes through it decisively.")
     if moon_relation or moon_dignity:
