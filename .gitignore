@@ -24,6 +24,8 @@ astro_sr_chart_pack/
 astro_sr_exports/
 chat_recovery_2026-03-03/
 chat_session_backups/
+jyotish_agent/dream_review_reports/
+jyotish_agent/dream_review_*.jsonl
 gann_thread_backup_*/
 pdf_extracts/
 pycharm_acp_broken_chat_backup_2026-04-29/

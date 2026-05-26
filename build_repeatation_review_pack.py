@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260526_reason_verifier_v38"
+REPEATATION_UI_VERSION = "repeatation_ui_20260526_dream_review_v39"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -837,6 +837,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       annotations: [],
       autoSuggestion: null,
       mlDraft: null,
+      dreamReview: null,
       outcomeTouched: false,
       lastPoint: null,
       draftLoaded: false
@@ -2565,6 +2566,26 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + '<div class="rm-verifier-checks"><b>Checks run</b>' + checkRows + '</div>'
         + '</details>';
     }}
+    function dreamReviewHtml() {{
+      if (!state.dreamReview) {{
+        return '<div class="rm-dream muted">Dream review runs after Draft ML Reason.</div>';
+      }}
+      var status = state.dreamReview.status || (state.dreamReview.ok ? 'done' : 'failed');
+      var title = state.dreamReview.ok === false ? 'Dream Review Failed' : 'Dream Review';
+      var issueCount = Array.isArray(state.dreamReview.issues) ? state.dreamReview.issues.length : 0;
+      var appliedCount = Array.isArray(state.dreamReview.applied) ? state.dreamReview.applied.length : 0;
+      var reviewCount = Array.isArray(state.dreamReview.needs_review) ? state.dreamReview.needs_review.length : 0;
+      var rows = [];
+      if (state.dreamReview.message) rows.push('<div>' + esc(state.dreamReview.message) + '</div>');
+      if (state.dreamReview.error) rows.push('<div class="rm-warning">' + esc(state.dreamReview.error) + '</div>');
+      if (appliedCount) rows.push('<div><b>Auto-corrected:</b> ' + esc(appliedCount) + ' stale deterministic note(s).</div>');
+      if (reviewCount) rows.push('<div><b>Queued:</b> ' + esc(reviewCount) + ' item(s) need Codex/human review.</div>');
+      if (state.dreamReview.report_path) rows.push('<div class="rm-table-sub">' + esc(state.dreamReview.report_path) + '</div>');
+      return '<details class="rm-dream" open><summary>' + esc(title) + ' <span>' + esc(status) + ' | issues ' + esc(issueCount) + '</span></summary>'
+        + '<div class="rm-table-sub">Triggered by Draft ML Reason. Applies only narrow deterministic corrections; ambiguous conflicts are queued.</div>'
+        + (rows.length ? rows.join('') : '<div>Dream review completed.</div>')
+        + '</details>';
+    }}
     function profitHtml() {{
       var result = tradeProfit();
       if (!result) return '<div class="rm-profit muted">Select trade start and trade end to calculate live pips.</div>';
@@ -2722,6 +2743,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       button.disabled = true;
       status.textContent = 'drafting locally...';
       state.mlDraft = {{ ok: true, markdown: 'Drafting local ML reason for case ' + meta.caseId + '...' }};
+      state.dreamReview = null;
       render();
       fetch('/api/draft_ml_reason', {{
         method: 'POST',
@@ -2733,6 +2755,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           state.mlDraft = data;
           status.textContent = data.ok ? 'local draft ready' : 'local draft failed';
           render();
+          if (data.ok) runDreamReview();
         }})
         .catch(function (err) {{
           state.mlDraft = {{ ok: false, error: String(err && err.message ? err.message : err) }};
@@ -2741,6 +2764,42 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }})
         .finally(function () {{
           button.disabled = false;
+        }});
+    }}
+    function dreamReviewPayload() {{
+      return {{
+        case_id: meta.caseId,
+        family: String(meta.pairKey || '') + '::' + String(meta.aspect || ''),
+        pair_key: meta.pairKey,
+        aspect: meta.aspect,
+        window_start: meta.windowStart,
+        window_end: meta.windowEnd,
+        price_timeframe: meta.priceTimeframe,
+        draft_path: state.mlDraft && state.mlDraft.path,
+        draft_markdown: state.mlDraft && state.mlDraft.markdown,
+        verifier_report: verifyReasonText(),
+        auto_suggestion: state.autoSuggestion,
+        trade_result: tradeProfit(),
+        reviewer_note: noteText(),
+        ml_notes: meta.mlNotes || []
+      }};
+    }}
+    function runDreamReview() {{
+      state.dreamReview = {{ ok: true, status: 'running', message: 'Dream review checking draft against deterministic evidence...' }};
+      render();
+      fetch('/api/dream_review', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify(dreamReviewPayload())
+      }})
+        .then(function (res) {{ return res.json().then(function (data) {{ data.http_status = res.status; return data; }}); }})
+        .then(function (data) {{
+          state.dreamReview = data;
+          render();
+        }})
+        .catch(function (err) {{
+          state.dreamReview = {{ ok: false, status: 'failed', error: String(err && err.message ? err.message : err) }};
+          render();
         }});
     }}
     function render() {{
@@ -2758,6 +2817,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
       panel.querySelector('#repeatation-ml-verifier').innerHTML = mlVerifierHtml();
+      panel.querySelector('#repeatation-dream-review').innerHTML = dreamReviewHtml();
       panel.querySelector('#repeatation-ml-draft').innerHTML = mlDraftHtml();
       panel.querySelector('#repeatation-special-traits').innerHTML = specialTraitsHtml();
       panel.querySelector('#repeatation-ignore-type-buttons').innerHTML = ignoreTypeButtonsHtml();
@@ -3157,6 +3217,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div id="repeatation-ml-notes"></div>'
       + '<div class="rm-actions"><button id="repeatation-draft-ml-reason" type="button">Draft ML Reason</button><span id="repeatation-draft-ml-status" class="rm-status-inline">uses local Ollama/RAG if server is running</span></div>'
       + '<div id="repeatation-ml-verifier"></div>'
+      + '<div id="repeatation-dream-review"></div>'
       + '<div id="repeatation-ml-draft"></div>'
       + '<div id="repeatation-special-traits"></div>'
       + '<label>Outcome</label><select id="repeatation-outcome"><option value="bullish">bullish</option><option value="bearish">bearish</option><option value="sideways">sideways</option><option value="unclear">unclear</option></select>'
@@ -3243,6 +3304,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-verifier-pass{{border-top:1px solid #164e63;margin-top:6px;padding-top:6px;color:#bbf7d0;}}'
       + '#repeatation-marker-panel .rm-verifier-checks{{border-top:1px solid #164e63;margin-top:6px;padding-top:6px;color:#bae6fd;}}'
       + '#repeatation-marker-panel .rm-verifier-checks ul{{margin:5px 0 0 16px;padding:0;color:#cffafe;}}'
+      + '#repeatation-marker-panel .rm-dream{{background:#111827;border:1px solid #f97316;border-radius:6px;padding:7px;margin:6px 0;color:#fed7aa;}}'
+      + '#repeatation-marker-panel .rm-dream summary{{cursor:pointer;color:#fdba74;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-dream summary span{{color:#fef3c7;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-evidence{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-evidence summary{{cursor:pointer;color:#bfdbfe;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-evidence-group{{margin-top:8px;}}'

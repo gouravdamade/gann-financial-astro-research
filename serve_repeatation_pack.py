@@ -4,6 +4,7 @@ import argparse
 import json
 import subprocess
 import sys
+import tempfile
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from functools import partial
@@ -31,7 +32,11 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self) -> None:
-        if self.path.split("?", 1)[0] != "/api/draft_ml_reason":
+        endpoint = self.path.split("?", 1)[0]
+        if endpoint == "/api/dream_review":
+            self._handle_dream_review()
+            return
+        if endpoint != "/api/draft_ml_reason":
             self._send_json(404, {"ok": False, "error": "unknown API endpoint"})
             return
         try:
@@ -83,6 +88,52 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 "markdown": markdown,
             },
         )
+
+    def _handle_dream_review(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            raw = self.rfile.read(length).decode("utf-8", errors="replace")
+            payload = json.loads(raw or "{}")
+            int(payload.get("case_id"))
+        except Exception as exc:
+            self._send_json(400, {"ok": False, "error": f"bad dream review request: {exc}"})
+            return
+
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", suffix=".json", delete=False) as handle:
+            json.dump(payload, handle, ensure_ascii=False, default=str)
+            payload_path = Path(handle.name)
+        cmd = [
+            sys.executable,
+            str(PROJECT_ROOT / "jyotish_agent" / "dream_review_agent.py"),
+            "--payload",
+            str(payload_path),
+            "--apply-safe",
+        ]
+        try:
+            proc = subprocess.run(
+                cmd,
+                cwd=str(PROJECT_ROOT),
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+        except subprocess.TimeoutExpired:
+            self._send_json(504, {"ok": False, "error": "dream review timed out"})
+            return
+        finally:
+            try:
+                payload_path.unlink(missing_ok=True)
+            except Exception:
+                pass
+        if proc.returncode != 0:
+            self._send_json(500, {"ok": False, "error": (proc.stderr or proc.stdout or "dream review failed")[:4000]})
+            return
+        try:
+            result = json.loads(proc.stdout.strip().splitlines()[-1])
+        except Exception as exc:
+            self._send_json(500, {"ok": False, "error": f"could not parse dream review: {exc}", "stdout": proc.stdout[:4000]})
+            return
+        self._send_json(200, result)
 
 
 def parse_args() -> argparse.Namespace:
