@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import tempfile
+import time
+import urllib.error
+import urllib.request
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from functools import partial
@@ -16,6 +20,50 @@ DEFAULT_PACK_DIR = Path(
     r"C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548"
 )
 PROJECT_ROOT = Path(__file__).resolve().parent
+OLLAMA_EXE = Path(r"D:\ollama\app\ollama.exe")
+OLLAMA_TAGS_URL = "http://127.0.0.1:11434/api/tags"
+
+
+def ollama_available(timeout: float = 2.0) -> bool:
+    try:
+        with urllib.request.urlopen(OLLAMA_TAGS_URL, timeout=timeout) as response:
+            return int(getattr(response, "status", 0) or 0) < 400
+    except (OSError, urllib.error.URLError):
+        return False
+
+
+def ensure_ollama_running() -> dict:
+    if ollama_available():
+        return {"available": True, "started": False, "message": "Ollama already running"}
+    if not OLLAMA_EXE.exists():
+        return {"available": False, "started": False, "message": f"Ollama executable not found: {OLLAMA_EXE}"}
+
+    env = os.environ.copy()
+    env.setdefault("OLLAMA_MODELS", r"D:\ollama\models")
+    log_dir = OLLAMA_EXE.parent.parent
+    stdout = open(log_dir / "ollama_stdout.log", "a", encoding="utf-8", errors="replace")
+    stderr = open(log_dir / "ollama_stderr.log", "a", encoding="utf-8", errors="replace")
+    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    try:
+        subprocess.Popen(
+            [str(OLLAMA_EXE), "serve"],
+            cwd=str(OLLAMA_EXE.parent),
+            env=env,
+            stdout=stdout,
+            stderr=stderr,
+            creationflags=creationflags,
+        )
+    except Exception as exc:
+        return {"available": False, "started": False, "message": f"Could not start Ollama: {exc}"}
+    finally:
+        stdout.close()
+        stderr.close()
+
+    for _ in range(30):
+        time.sleep(0.5)
+        if ollama_available(timeout=1.5):
+            return {"available": True, "started": True, "message": "Ollama started for Draft ML Reason"}
+    return {"available": False, "started": True, "message": "Ollama start requested, but API did not become ready"}
 
 
 class NoCacheRequestHandler(SimpleHTTPRequestHandler):
@@ -57,6 +105,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             return
 
         out_path = PROJECT_ROOT / "jyotish_agent" / "case_explanations" / f"case_{case_id}_jyotish_explanation.md"
+        llm_runtime = ensure_ollama_running()
         cmd = [
             sys.executable,
             str(PROJECT_ROOT / "jyotish_agent" / "explain_case.py"),
@@ -91,6 +140,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 "case_id": case_id,
                 "path": str(out_path),
                 "markdown": markdown,
+                "llm_runtime": llm_runtime,
             },
         )
 

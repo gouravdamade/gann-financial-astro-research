@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = ROOT.parent
 DB_PATH = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
 OUT_DIR = ROOT / "case_explanations"
+DREAM_CORRECTIONS_PATH = ROOT / "dream_review_corrections.jsonl"
 
 IMPORTANT_CONTEXT_KEYS = [
     "event_strict_shadbala_implemented_total_virupa_avg",
@@ -64,6 +65,36 @@ def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any]:
     return dict(row) if row is not None else {}
 
 
+def parse_json_field(value: Any, fallback: Any) -> Any:
+    if value in (None, ""):
+        return fallback
+    if isinstance(value, (dict, list)):
+        return value
+    try:
+        return json.loads(str(value))
+    except Exception:
+        return fallback
+
+
+def load_dream_corrections(case_id: int, family_key: str, limit: int = 8) -> list[dict[str, Any]]:
+    if not DREAM_CORRECTIONS_PATH.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in DREAM_CORRECTIONS_PATH.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        summary = row.get("payload_summary") if isinstance(row.get("payload_summary"), dict) else {}
+        row_case = int(row.get("case_id") or summary.get("case_id") or 0)
+        row_family = str(row.get("family") or summary.get("family") or "")
+        if row_case == int(case_id) or row_family == family_key:
+            rows.append(row)
+    return rows[-limit:]
+
+
 def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
     with sqlite3.connect(str(db_path)) as conn:
         conn.row_factory = sqlite3.Row
@@ -86,6 +117,23 @@ def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
                 (case["pair_key"], case["aspect"]),
             )
         ]
+        family_key = f"{case['pair_key']}::{case['aspect']}"
+        try:
+            rule_lessons = [
+                row_to_dict(r)
+                for r in conn.execute(
+                    """
+                    SELECT *
+                    FROM rule_lessons
+                    WHERE case_id = ? OR family_key = ?
+                    ORDER BY updated_at_utc DESC, lesson_id DESC
+                    LIMIT 24
+                    """,
+                    (case_id, family_key),
+                )
+            ]
+        except sqlite3.OperationalError:
+            rule_lessons = []
     context = {}
     try:
         context = json.loads(case.get("context_json") or "{}")
@@ -96,6 +144,8 @@ def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
         "context": context,
         "exact_notes": exact_notes,
         "family_notes": family_notes,
+        "rule_lessons": rule_lessons,
+        "dream_corrections": load_dream_corrections(case_id, f"{case['pair_key']}::{case['aspect']}"),
         "trades": trades,
         "ignores": ignores,
     }
@@ -128,6 +178,30 @@ def compact_case_summary(packet: dict[str, Any]) -> str:
         lines.append("Family ML notes:")
         for note in family_ml[:4]:
             lines.append(f"- note_id={note['note_id']} case_id={note['case_id']} type={note['note_type']} {note['note_text'][:900]}")
+    if packet.get("rule_lessons"):
+        lines.append("Rule conflict lessons / training memory:")
+        for lesson in packet["rule_lessons"][:8]:
+            hints = parse_json_field(lesson.get("astro_hints_json"), [])
+            hint_text = "; ".join(str(item) for item in hints[:6]) if isinstance(hints, list) else str(hints)[:500]
+            lines.append(
+                "- "
+                f"lesson_id={lesson.get('lesson_id')} case_id={lesson.get('case_id')} "
+                f"conflict={lesson.get('conflict_type')} winner={lesson.get('winner_rule')} "
+                f"status={lesson.get('status')} text={str(lesson.get('lesson_text') or '')[:900]} "
+                f"astro_hints={hint_text}"
+            )
+    if packet.get("dream_corrections"):
+        lines.append("Dream Review corrections / verifier memory:")
+        for correction in packet["dream_corrections"][-6:]:
+            applied = correction.get("applied") if isinstance(correction.get("applied"), list) else []
+            issues = correction.get("issues") if isinstance(correction.get("issues"), list) else []
+            lines.append(
+                "- "
+                f"created_at={correction.get('created_at')} status={correction.get('status')} "
+                f"message={str(correction.get('message') or '')[:500]} "
+                f"applied={json.dumps(applied[:3], ensure_ascii=False, default=str)[:600]} "
+                f"issues={json.dumps(issues[:3], ensure_ascii=False, default=str)[:600]}"
+            )
     if packet["trades"]:
         lines.append("Saved trades:")
         for trade in packet["trades"]:
@@ -163,6 +237,8 @@ def build_prompt(case_summary: str, retrieved: list[dict[str, Any]], question: s
 Rules:
 - Do not invent ephemeris, Shadbala, trades, or marker positions.
 - Use the deterministic case evidence as ground truth.
+- Treat "Rule conflict lessons / training memory" and "Dream Review corrections / verifier memory" as high-priority local memory.
+- If Dream Review corrected an older note, follow the correction and say the older wording is stale.
 - Separate doctrine/source hints from observed case-family evidence.
 - Say when a citation is only a local note or when doctrine citation is missing.
 - Output practical ML features/rules to test, not trading advice.
