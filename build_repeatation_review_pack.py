@@ -1469,10 +1469,33 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function autoSuggestedPoint(point, role) {{
       var copy = Object.assign({{}}, point || {{}});
-      copy.source = 'chart_marker';
+      copy.source = copy.source || 'chart_marker';
       copy.autoSuggested = true;
       copy.autoRole = role;
       return copy;
+    }}
+    function wickEntryPointForStart(startPoint, selectedOutcome, reason) {{
+      var direction = selectedOutcome || outcome();
+      var directionSign = direction === 'bearish' ? -1 : (direction === 'bullish' ? 1 : 0);
+      var startTime = markerTime(startPoint);
+      if (!startPoint || !Number.isFinite(directionSign) || directionSign === 0 || !Number.isFinite(startTime)) return null;
+      var candle = candleAtOrAfter(collectCandles(), startTime);
+      if (!candle) return null;
+      var y = directionSign < 0 ? candle.high : candle.low;
+      if (!Number.isFinite(y)) return null;
+      return {{
+        x: candle.x,
+        y: Number(y.toFixed(3)),
+        source: directionSign < 0 ? 'auto_wick_entry_top' : 'auto_wick_entry_bottom',
+        traceName: startPoint.traceName || '',
+        curveNumber: startPoint.curveNumber,
+        pointNumber: startPoint.pointNumber,
+        markerLabel: directionSign < 0
+          ? 'wick entry: bearish top wick from selected-case marker candle'
+          : 'wick entry: bullish bottom wick from selected-case marker candle',
+        reference_marker: serialPoint(startPoint),
+        reason: reason || 'selected-case marker is at SR; use candle wick as executable entry'
+      }};
     }}
     function nearestChartMarker(plotX, plotY, thresholdPx) {{
       var xa = gd._fullLayout && gd._fullLayout.xaxis;
@@ -3323,6 +3346,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         return;
       }}
       var start = defaultStart;
+      var wickStart = null;
+      var defaultFlowGeometry = srGeometryForPoint(defaultEnd, defaultStart, outcome());
+      var defaultFlowAtSr = defaultFlowGeometry && defaultFlowGeometry.position === 'same_as_entry';
+      if (selected[0] && defaultFlowAtSr && (outcome() === 'bullish' || outcome() === 'bearish')) {{
+        wickStart = wickEntryPointForStart(defaultStart, outcome(), 'selected-case marker is at SR / entry band');
+        if (wickStart) start = wickStart;
+      }}
       var startTime = markerTime(start);
       var end = defaultEnd;
       var confidence = selected[0] ? 'clean' : (windowMarkers[0] ? 'fallback' : 'weak');
@@ -3335,6 +3365,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         confidence = 'incomplete';
         reason += ' No later marker was found for trade end.';
       }}
+      if (wickStart) {{
+        reason = 'Selected-case hardcoded marker is at the SR/entry band, so Auto Suggest used the candle wick as executable entry and kept the hardcoded marker as signal/reference. '
+          + reason;
+      }}
       setTool('', false);
       state.autoSuggestion = {{
         active: !!(start && end),
@@ -3344,7 +3378,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         selected_case_marker_count: selected.length,
         sr_geometry: srGeometryForPoint(end, start, outcome()),
         break_confirmation: breakConfirmationForGeometry(srGeometryForPoint(end, start, outcome()), end, start, outcome()),
-        start_rule: selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'),
+        default_marker_flow_sr_geometry: defaultFlowGeometry,
+        reference_start_marker: wickStart ? serialPoint(defaultStart) : null,
+        start_rule: wickStart ? 'wick_entry_from_selected_case_sr_marker' : (selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker')),
         end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
         manual_override: false,
         overridden_keys: [],
