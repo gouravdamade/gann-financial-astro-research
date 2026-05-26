@@ -2508,7 +2508,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       if (evidence.break_status === 'confirmed') {{
         checks.push('Break confirmation checked: confirmed');
-        if (hasAny(draftLower, ['no clean break', 'did not break', 'failed to break', 'without break confirmation'])) {{
+        var noConfirmationPhrase = draftLower.indexOf('without break confirmation') >= 0;
+        var cautionaryConfirmationRule = noConfirmationPhrase && (
+          draftLower.indexOf('do not chase') >= 0 ||
+          draftLower.indexOf('unless a candle closes') >= 0 ||
+          draftLower.indexOf('require price/sr confirmation') >= 0
+        );
+        if (hasAny(draftLower, ['no clean break', 'did not break', 'failed to break']) || (noConfirmationPhrase && !cautionaryConfirmationRule)) {{
           addVerifierIssue(issues, 'contradiction', 'Break-confirmation conflict', 'Evidence says break/retest/continuation is confirmed, but the draft says the break failed or was missing.');
         }}
       }} else if (evidence.break_status && evidence.break_status !== 'not_applicable') {{
