@@ -1,10 +1,34 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 11:50 IST
+Last updated: 2026-05-27 13:22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 trusted external source intake workflow:
+
+- User asked where outside trusted values should come from and approved the recommendation.
+- Added `trusted_external_sources.md`.
+- Source tiers now documented:
+  - Tier A: Swiss Ephemeris documentation and Raman ephemeris samples for astronomy/position checks.
+  - Tier B: Jagannatha Hora as preferred Shadbala/Jyotish cross-check; PyJHora as secondary automated checker.
+  - Tier C: Drik Panchang and secondary Panchanga calculators for Panchanga limb checks.
+- Updated `astro_function_certification.py` so Gate 3 is an actual intake loop:
+  - reruns preserve existing values in `astro_external_validation_template_20260527.csv`;
+  - filled `external_expected_value` and `external_source` values are carried forward;
+  - longitude rows compare with `<= 0.02 deg` tolerance;
+  - Shadbala/Drik/Virupa rows compare with `<= 0.5 virupa` tolerance;
+  - categorical Panchanga rows compare with exact case-insensitive text match.
+- Reran certification:
+  Gate 3 now reports `0 pass / 0 fail / 35 pending`, which is expected until external expected values are entered.
+- Updated `astro_function_research_audit_20260527.md` with the intake workflow.
+- Verification:
+  `python -m py_compile astro_function_certification.py`
+  `python astro_function_certification.py`
+  `python reviewer_rule_replay.py`
+  `python test_strict_shadbala_doctrine.py`
+  all passed.
 
 2026-05-27 4-gate astro/trading certification runner:
 

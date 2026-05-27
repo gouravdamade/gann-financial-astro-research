@@ -1,7 +1,7 @@
 # Astro Function Certification 4-Gate Report
 
 - Report version: `astro_certification_4_gate_v1_20260527`
-- Generated: `2026-05-27T11:44:36+05:30`
+- Generated: `2026-05-27T13:18:13+05:30`
 - Important interpretation: this report certifies traceability and local reproducibility first. External Jyotish/ephemeris validation remains explicitly pending where marked.
 
 ## Gate Summary
@@ -10,7 +10,7 @@
 | --- | --- |
 | Gate 1 - Formula inventory | 9 feature rows inventoried |
 | Gate 2 - Astronomical baseline | 45 planet/node rows generated with Raman ayanamsa |
-| Gate 3 - External validation template | 35 expected-value rows pending external fill |
+| Gate 3 - External validation template | 0 pass / 0 fail / 35 pending |
 | Gate 4 - Trading replay | passed |
 
 ## Certification Labels
@@ -73,7 +73,13 @@
 
 ## Gate 3 - External Validation
 
-The external template is intentionally blank in the expected-value columns. Fill it from trusted ephemeris, Panchanga, and Shadbala examples, then compare before upgrading any field to `externally_validated`.
+Fill the expected-value columns from trusted ephemeris, Panchanga, and Shadbala examples. On each run, the script preserves those entries and computes pass/fail where a direct comparison is possible.
+
+| Status | Rows |
+| --- | --- |
+| pass | 0 |
+| fail | 0 |
+| pending | 35 |
 
 ## Gate 4 - Trading Replay
 

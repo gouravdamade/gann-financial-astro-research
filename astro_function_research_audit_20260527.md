@@ -256,3 +256,31 @@ Important verdict:
 - The 4-gate process is active but not complete.
 - Shadbala, Drik Bala, and Panchanga should remain `implemented_unvalidated` / `formula_foundation_pending_traditional_validation`.
 - Raw local LLM prose remains `do_not_train_raw_text`; only deterministic evidence, manual notes, verified corrections, and rule lessons should enter ML truth.
+
+## Trusted Source Intake Workflow Added - 2026-05-27
+
+Added `trusted_external_sources.md` to define external certification sources and their use:
+
+- Tier A:
+  Swiss Ephemeris documentation and Raman ephemeris samples for astronomy / position checks.
+- Tier B:
+  Jagannatha Hora as the preferred Shadbala/Jyotish calculator cross-check, with PyJHora as a secondary automated checker.
+- Tier C:
+  Drik Panchang and secondary Panchanga calculators for Tithi, Vara, Nakshatra, Yoga, and Karana checks.
+
+Updated `astro_function_certification.py` so Gate 3 is now an intake loop:
+
+- If `astro_external_validation_template_20260527.csv` already exists, rerunning the script preserves any filled `external_expected_value` and `external_source` entries.
+- The script compares external values automatically:
+  - longitude tolerance: `<= 0.02 deg`;
+  - Shadbala/Drik/Virupa tolerance: `<= 0.5 virupa`;
+  - categorical Panchanga values: exact case-insensitive match.
+- Gate 3 report now summarizes pass/fail/pending counts.
+
+Current Gate 3 state after rerun:
+
+- `0 pass`
+- `0 fail`
+- `35 pending`
+
+This is expected because no external expected values have been entered yet.

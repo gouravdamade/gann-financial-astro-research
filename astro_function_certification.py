@@ -103,6 +103,14 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build the four-gate astro/trading certification report.")
     parser.add_argument("--out-dir", default=".", help="Output directory for report and CSV ledgers.")
     parser.add_argument("--date-tag", default="20260527", help="Date tag for output files.")
+    parser.add_argument(
+        "--external-values",
+        default="",
+        help=(
+            "Optional CSV with external_expected_value/external_source filled. "
+            "When omitted, an existing output template for the same date tag is reused if present."
+        ),
+    )
     parser.add_argument("--skip-replay", action="store_true", help="Skip reviewer_rule_replay.py execution.")
     return parser.parse_args()
 
@@ -117,6 +125,86 @@ def csv_write(path: Path, rows: list[Any]) -> None:
         writer.writeheader()
         for row in rows:
             writer.writerow(asdict(row))
+
+
+def csv_dict_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open("r", newline="", encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+
+
+def external_key(row: dict[str, Any] | ExternalTemplateRow) -> tuple[str, str, str]:
+    if isinstance(row, ExternalTemplateRow):
+        return row.gate, row.sample_id, row.feature_key
+    return row.get("gate", ""), row.get("sample_id", ""), row.get("feature_key", "")
+
+
+def as_float(value: str) -> float | None:
+    try:
+        return float(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def tolerance_for(feature_key: str) -> float | None:
+    key = feature_key.lower()
+    if "lon_deg" in key:
+        return 0.02
+    if "shadbala" in key or "drik_bala" in key or "virupa" in key:
+        return 0.5
+    return None
+
+
+def compare_external_value(feature_key: str, local_value: str, expected_value: str) -> tuple[str, str]:
+    expected = str(expected_value).strip()
+    local = str(local_value).strip()
+    if not expected:
+        return "pending", "No external expected value entered."
+    if local.startswith("needs "):
+        return "pending_manual_context", "Local value requires row-specific event context before comparison."
+
+    local_num = as_float(local)
+    expected_num = as_float(expected)
+    tol = tolerance_for(feature_key)
+    if local_num is not None and expected_num is not None and tol is not None:
+        delta = abs(local_num - expected_num)
+        status = "pass" if delta <= tol else "fail"
+        return status, f"numeric delta={delta:.9f}; tolerance={tol}"
+
+    status = "pass" if local.casefold() == expected.casefold() else "fail"
+    return status, "categorical exact compare"
+
+
+def merge_external_values(
+    templates: list[ExternalTemplateRow],
+    external_rows: list[dict[str, str]],
+) -> list[ExternalTemplateRow]:
+    external_by_key = {external_key(row): row for row in external_rows}
+    merged: list[ExternalTemplateRow] = []
+    for row in templates:
+        source = external_by_key.get(external_key(row), {})
+        expected = source.get("external_expected_value", row.external_expected_value)
+        external_source = source.get("external_source", row.external_source)
+        notes = source.get("notes", row.notes)
+        pass_fail, compare_note = compare_external_value(row.feature_key, row.local_value, expected)
+        if notes:
+            notes = f"{notes} | {compare_note}"
+        else:
+            notes = compare_note
+        merged.append(
+            ExternalTemplateRow(
+                gate=row.gate,
+                sample_id=row.sample_id,
+                feature_key=row.feature_key,
+                local_value=row.local_value,
+                external_expected_value=expected,
+                external_source=external_source,
+                pass_fail=pass_fail,
+                notes=notes,
+            )
+        )
+    return merged
 
 
 def markdown_table(headers: list[str], rows: list[list[Any]]) -> str:
@@ -417,7 +505,9 @@ def render_report(
         for row in inventory
     ]
 
-    pending_external = sum(1 for row in templates if row.pass_fail == "pending")
+    pending_external = sum(1 for row in templates if row.pass_fail.startswith("pending"))
+    passed_external = sum(1 for row in templates if row.pass_fail == "pass")
+    failed_external = sum(1 for row in templates if row.pass_fail == "fail")
     lines = [
         f"# Astro Function Certification 4-Gate Report",
         "",
@@ -432,7 +522,10 @@ def render_report(
             [
                 ["Gate 1 - Formula inventory", f"{len(inventory)} feature rows inventoried"],
                 ["Gate 2 - Astronomical baseline", f"{len(positions)} planet/node rows generated with Raman ayanamsa"],
-                ["Gate 3 - External validation template", f"{pending_external} expected-value rows pending external fill"],
+                [
+                    "Gate 3 - External validation template",
+                    f"{passed_external} pass / {failed_external} fail / {pending_external} pending",
+                ],
                 ["Gate 4 - Trading replay", replay_status],
             ],
         ),
@@ -461,7 +554,12 @@ def render_report(
         "",
         "## Gate 3 - External Validation",
         "",
-        "The external template is intentionally blank in the expected-value columns. Fill it from trusted ephemeris, Panchanga, and Shadbala examples, then compare before upgrading any field to `externally_validated`.",
+        "Fill the expected-value columns from trusted ephemeris, Panchanga, and Shadbala examples. On each run, the script preserves those entries and computes pass/fail where a direct comparison is possible.",
+        "",
+        markdown_table(
+            ["Status", "Rows"],
+            [["pass", passed_external], ["fail", failed_external], ["pending", pending_external]],
+        ),
         "",
         "## Gate 4 - Trading Replay",
         "",
@@ -505,6 +603,11 @@ def main() -> None:
     template_path = out_dir / f"astro_external_validation_template_{args.date_tag}.csv"
     replay_path = out_dir / f"trading_rule_replay_result_{args.date_tag}.json"
     report_path = out_dir / f"astro_function_certification_report_{args.date_tag}.md"
+
+    external_values_path = Path(args.external_values) if args.external_values else template_path
+    if external_values_path and not external_values_path.is_absolute():
+        external_values_path = root / external_values_path
+    templates = merge_external_values(templates, csv_dict_rows(external_values_path))
 
     csv_write(inventory_path, inventory)
     csv_write(positions_path, positions)
