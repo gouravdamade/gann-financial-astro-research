@@ -1,10 +1,36 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 08:17 IST
+Last updated: 2026-05-27 11:34 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 replay guard + astro certification plan:
+
+- User asked to proceed with the next guardrail and asked how to certify the astro functions.
+- Added `reviewer_rule_replay.py`.
+- Replay v1 behavior:
+  - discovers latest AVG(ALL)|MOON square review pack unless `--pack-dir` is supplied;
+  - parses generated Plotly HTML directly;
+  - decodes typed Plotly arrays;
+  - fully replays case `127` selected-window SR wick-touch detection without needing the browser;
+  - asserts start rule `first_case_window_sr_line_touch`;
+  - asserts start `2025-05-28T22:00:00+05:30`;
+  - asserts end `2025-05-28T23:30:00+05:30`;
+  - asserts Gann anchor side `top`;
+  - asserts at least three selected-window SR touches.
+- Replay v1 also adds source guards for teaching cases `8`, `43`, and `103` so the family-rule strings/candidate branches remain present until that browser-side logic is factored into reusable Python.
+- Added an Astro Function Certification Plan to `astro_function_research_audit_20260527.md`.
+  Proposed gates:
+  formula inventory, astronomical position certification, Jyotish doctrine calculator certification, and trading-feature certification.
+- Certification labels proposed:
+  `implemented_unvalidated`, `proxy_research_feature`, `externally_validated`, `disputed_tradition`, and `do_not_train`.
+- Verification:
+  `python -m py_compile reviewer_rule_replay.py build_repeatation_review_pack.py strict_shadbala_doctrine.py panchanga_doctrine.py`
+  `python test_strict_shadbala_doctrine.py`
+  `python reviewer_rule_replay.py`
+  all passed.
 
 2026-05-27 Auto Suggest candidate inspector / audit truth pass:
 

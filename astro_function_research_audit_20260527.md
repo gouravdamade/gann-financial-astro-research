@@ -151,3 +151,74 @@ Not fully reviewed yet:
 
 8. `BPHS-like orb strength` wording needs continued caution:
    For composite pairs such as `AVG(ALL)|MOON`, a zero value may be a proxy artifact rather than a pure doctrinal claim. Keep this label as a feature to test, not a final Jyotish judgment.
+
+## Astro Function Certification Plan
+
+The current astro layer should be treated as `research-validating`, not certified. To certify it for walk-forward trading, use a four-stage gate:
+
+1. Formula inventory:
+   Create a table for every feature column:
+   feature name, source doctrine, exact formula, code function, strict/proxy status, known assumptions, and validation status.
+   This must include Raman ayanamsa, sidereal longitudes, true node policy, whole-sign houses, Shadbala components, Drik Bala, Panchanga limbs, and any AVG(ALL) composite rule.
+
+2. Astronomical position certification:
+   For a fixed sample set of timestamps and locations, compare our Swiss Ephemeris outputs against an independent Swiss Ephemeris tool/reference.
+   Required checks:
+   - tropical longitude;
+   - Raman ayanamsa value;
+   - sidereal longitude after subtracting ayanamsa;
+   - true Rahu/Ketu node longitude;
+   - timezone conversion to IST and Tokyo reference charts.
+
+3. Jyotish doctrine calculator certification:
+   For the same fixed sample set, compare Shadbala and Panchanga outputs against at least one trusted Jyotish calculator/export.
+   Pass/fail tolerance should be explicit:
+   - exact categorical match for tithi, paksha, nakshatra, pada, yoga, karana, weekday;
+   - numeric tolerance for Virupa values, e.g. <= 0.5V for simple components and a separately documented tolerance for complex or tradition-dependent components.
+
+4. Trading-feature certification:
+   Once astro math is validated, certify its use inside market rules:
+   - same feature value appears in touch-log CSV, reviewer drawer, ML notes, and local RAG evidence;
+   - each feature carries `strict`, `proxy`, `missing`, or `externally_validated`;
+   - rule replay confirms that cases `8`, `43`, `103`, and `127` still make the expected marker/exit decisions after any astro-function change.
+
+Certification status labels to use:
+
+- `implemented_unvalidated`: formula exists but has not been checked against external examples.
+- `proxy_research_feature`: useful for ML experiments, but not a classical doctrine value.
+- `externally_validated`: passed fixed sample checks against an independent source.
+- `disputed_tradition`: valid only under a named doctrine choice.
+- `do_not_train`: visible for review but excluded from ML labels until resolved.
+
+Recommended first certification sample set:
+
+- `2025-03-07 19:30 IST` case `8`;
+- `2025-04-04 02:30 IST` case `43`;
+- `2025-05-15 22:30 IST` case `103`;
+- `2025-05-28 22:00 IST` case `127`;
+- one known natal/epoch reference: `1889-02-11 00:00 Asia/Tokyo`.
+
+Source anchors used for this plan:
+
+- Swiss Ephemeris documentation: sidereal positions are derived by subtracting ayanamsa, and Raman is a documented ayanamsa mode.
+- Shadbala references agree on six major strengths: Sthana, Dig, Kala, Chesta, Naisargika, and Drik.
+- Panchanga references agree on the five limbs: Tithi, Vara, Nakshatra, Yoga, and Karana.
+
+## Deterministic Replay Added - 2026-05-27
+
+Added `reviewer_rule_replay.py`:
+
+- Parses generated Plotly chart HTML directly.
+- Decodes typed Plotly arrays.
+- Replays case `127` selected-window SR wick-touch detection without needing the browser.
+- Asserts:
+  - start rule is `first_case_window_sr_line_touch`;
+  - start is `2025-05-28T22:00:00+05:30`;
+  - end is `2025-05-28T23:30:00+05:30`;
+  - Gann anchor side is `top`;
+  - at least three selected-window SR touches are found.
+- Adds source guards for teaching cases `8`, `43`, and `103` until the family-rule browser logic is factored into reusable Python.
+
+Current limitation:
+
+- The full family-rule Auto Suggest branch still lives in browser-side JavaScript. `reviewer_rule_replay.py` checks its source guards today, but the next improvement should be to factor the Auto Suggest decision engine into shared JSON/Python logic so cases `8`, `43`, and `103` can be replayed at the same depth as case `127`.
