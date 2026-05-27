@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260527_gann_wick_direction_v48"
+REPEATATION_UI_VERSION = "repeatation_ui_20260527_multi_aspect_gann_exit_v49"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1022,6 +1022,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (Number.isFinite(Number(point.touch_gap_pips))) extras.push('gap ' + Number(point.touch_gap_pips).toFixed(1) + ' pips');
       if (Number.isFinite(Number(point.touch_band_pips))) extras.push('band ' + Number(point.touch_band_pips).toFixed(1) + ' pips');
       if (point.touch_side) extras.push(String(point.touch_side).replace(/_/g, ' '));
+      if (point.fan_ratio_label) extras.push('fan ' + point.fan_ratio_label);
+      if (Number.isFinite(Number(point.gann_epsilon_pips))) extras.push('epsilon ' + Number(point.gann_epsilon_pips).toFixed(1) + ' pips');
       return {{
         role: role || '',
         status: status || '',
@@ -1051,6 +1053,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           || name.indexOf('zone') !== -1
           || label.indexOf('aspect_window') !== -1
           || label.indexOf('regime') !== -1);
+    }}
+    function traceLooksLikeAspectWindow(trace) {{
+      if (!trace || trace.visible === false || !trace.x || !trace.y) return false;
+      var fill = String(trace.fill || '').toLowerCase();
+      if (fill !== 'toself') return false;
+      var name = String(trace.name || '').toLowerCase();
+      var label = '';
+      if (trace.customdata && trace.customdata.length) {{
+        label = customDataLabel(arrayValue(trace.customdata, 0)).toLowerCase();
+      }}
+      if (label.indexOf('regime') !== -1 || name.indexOf('regime') !== -1) return false;
+      return label.indexOf('aspect_window') !== -1
+        || name.indexOf('aspect') !== -1
+        || name.indexOf('window') !== -1;
     }}
     function traceLooksLikeSrLine(trace) {{
       if (!trace || trace.visible === false || !trace.x || !trace.y) return false;
@@ -1331,6 +1347,73 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }});
       return zones.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
     }}
+    function collectAspectWindows() {{
+      var windows = [];
+      var seen = {{}};
+      chartTraces().forEach(function (trace, curveNumber) {{
+        if (!traceLooksLikeAspectWindow(trace)) return;
+        var times = [];
+        var len = Number(trace.x.length || 0);
+        for (var i = 0; i < len; i += 1) {{
+          var t = Date.parse(arrayValue(trace.x, i));
+          if (Number.isFinite(t)) times.push(t);
+        }}
+        if (!times.length) return;
+        var startTime = Math.min.apply(null, times);
+        var endTime = Math.max.apply(null, times);
+        if (!Number.isFinite(startTime) || !Number.isFinite(endTime) || startTime === endTime) return;
+        var label = customDataLabel(arrayValue(trace.customdata, 0)) || String(trace.name || 'aspect window');
+        var id = startTime + '|' + endTime + '|' + label;
+        if (seen[id]) return;
+        seen[id] = true;
+        windows.push({{
+          start: startTime,
+          end: endTime,
+          label: String(label || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim().slice(0, 120),
+          curveNumber: curveNumber
+        }});
+      }});
+      return windows.sort(function (a, b) {{ return a.start - b.start; }});
+    }}
+    function multiAspectOverlapEvidence(candles, aspectWindows) {{
+      var caseStart = Date.parse(meta.windowStart);
+      var caseEnd = Date.parse(meta.windowEnd);
+      var interval = candleMs();
+      var evidence = {{
+        active: false,
+        definition: 'multiple aspect = at least one reviewed candle has two or more aspect windows overlapping it',
+        min_required_aspects: 2,
+        min_required_candles: 1,
+        candle_minutes: timeframeMinutes(),
+        qualifying_candle_count: 0,
+        max_overlap_count: 0,
+        first_qualifying_candle: null
+      }};
+      if (!Number.isFinite(caseStart) || !Number.isFinite(caseEnd)) return evidence;
+      (candles || []).forEach(function (c) {{
+        if (!c || !Number.isFinite(c.t)) return;
+        var candleStart = c.t;
+        var candleEnd = c.t + interval;
+        if (candleEnd <= caseStart || candleStart >= caseEnd) return;
+        var overlaps = (aspectWindows || []).filter(function (win) {{
+          if (!win || !Number.isFinite(win.start) || !Number.isFinite(win.end)) return false;
+          return win.start < candleEnd && win.end > candleStart;
+        }});
+        if (overlaps.length > evidence.max_overlap_count) evidence.max_overlap_count = overlaps.length;
+        if (overlaps.length >= 2) {{
+          evidence.qualifying_candle_count += 1;
+          if (!evidence.first_qualifying_candle) {{
+            evidence.first_qualifying_candle = {{
+              x: c.x,
+              overlap_count: overlaps.length,
+              event_labels: overlaps.slice(0, 6).map(function (win) {{ return win.label; }})
+            }};
+          }}
+        }}
+      }});
+      evidence.active = evidence.qualifying_candle_count >= 1;
+      return evidence;
+    }}
     function srLineValueAt(trace, timeMs) {{
       var len = Number((trace.x && trace.x.length) || 0);
       var bestIndex = -1;
@@ -1483,6 +1566,68 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ],
         reason: reason || 'auto suggestion start marker'
       }};
+    }}
+    function gannFanLineValueAt(fan, ratioLabel, timeMs) {{
+      if (!fan || !fan.anchor || !ratioLabel || !Number.isFinite(timeMs)) return null;
+      var anchorTime = markerTime(fan.anchor);
+      var anchorPrice = Number(fan.anchor.y);
+      var directionSign = Number(fan.direction_sign || 0);
+      if (!Number.isFinite(anchorTime) || !Number.isFinite(anchorPrice) || !directionSign || timeMs < anchorTime) return null;
+      var ratio = (Array.isArray(fan.ratios) ? fan.ratios : []).find(function (item) {{
+        return String(item.label || '') === String(ratioLabel);
+      }});
+      if (!ratio || !Number.isFinite(Number(ratio.slope))) return null;
+      var elapsedCandles = (timeMs - anchorTime) / candleMs();
+      return anchorPrice + directionSign * elapsedCandles * Number(fan.base_pips_per_candle || 1) * Number(ratio.slope) / 100;
+    }}
+    function secondFromBottomGannRatio(fan) {{
+      if (!fan) return null;
+      var directionSign = Number(fan.direction_sign || 0);
+      if (directionSign < 0) {{
+        return {{ label: '2x1', explanation: 'bearish/top-wick fan: 4x1 is lowest, 2x1 is second from bottom' }};
+      }}
+      if (directionSign > 0) {{
+        return {{ label: '1x2', explanation: 'bullish/bottom-wick fan: 1x4 is lowest, 1x2 is second from bottom' }};
+      }}
+      return null;
+    }}
+    function gannFanSecondFromBottomTouch(fan, startPoint, multiAspectEvidence) {{
+      if (!multiAspectEvidence || !multiAspectEvidence.active) return null;
+      if (!fan || !fan.active || !fan.anchor) return null;
+      var targetRatio = secondFromBottomGannRatio(fan);
+      if (!targetRatio) return null;
+      var startTime = markerTime(startPoint || fan.anchor);
+      if (!Number.isFinite(startTime)) return null;
+      var epsilonPips = 0.5;
+      var epsilonPrice = epsilonPips / 100;
+      var candles = collectCandles();
+      var interval = candleMs();
+      for (var i = 0; i < candles.length; i += 1) {{
+        var c = candles[i];
+        if (!c || !Number.isFinite(c.t) || c.t <= startTime + interval * 0.25) continue;
+        var lineY = gannFanLineValueAt(fan, targetRatio.label, c.t);
+        if (!Number.isFinite(lineY)) continue;
+        var touched = c.low <= lineY + epsilonPrice && c.high >= lineY - epsilonPrice;
+        if (!touched) continue;
+        var closeGap = Math.abs(Number(c.close) - lineY);
+        var highGap = Math.abs(Number(c.high) - lineY);
+        var lowGap = Math.abs(Number(c.low) - lineY);
+        var bestGap = Math.min(closeGap, highGap, lowGap);
+        return {{
+          x: c.x,
+          y: Number(lineY.toFixed(3)),
+          source: 'auto_gann_fan_second_from_bottom_touch',
+          traceName: 'Gann fan',
+          markerLabel: 'Gann fan 2nd-from-bottom touch (' + targetRatio.label + ')',
+          fan_ratio_label: targetRatio.label,
+          fan_line_rank: 'second_from_bottom',
+          fan_rule_explanation: targetRatio.explanation,
+          gann_epsilon_pips: epsilonPips,
+          touch_gap_pips: Number((bestGap * 100).toFixed(2)),
+          multi_aspect_gate: true
+        }};
+      }}
+      return null;
     }}
     function refreshGannFanFromTradeStart(reason) {{
       if (!state.autoSuggestion || !state.tradeStart) return;
@@ -1801,6 +1946,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         touch_band_pips: point.touch_band_pips,
         touch_side: point.touch_side || '',
         gann_anchor_side: point.gann_anchor_side || '',
+        fan_ratio_label: point.fan_ratio_label || '',
+        fan_line_rank: point.fan_line_rank || '',
+        fan_rule_explanation: point.fan_rule_explanation || '',
+        gann_epsilon_pips: point.gann_epsilon_pips,
+        multi_aspect_gate: !!point.multi_aspect_gate,
         isSelectedCaseTouch: !!point.isSelectedCaseTouch,
         autoSuggested: !!point.autoSuggested,
         autoRole: point.autoRole || ''
@@ -3343,6 +3493,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         return;
       }}
       var zones = collectZoneBoundaries();
+      var candles = collectCandles();
+      var aspectWindows = collectAspectWindows();
+      var multiAspectEvidence = multiAspectOverlapEvidence(candles, aspectWindows);
       var selected = markers.filter(function (point) {{ return point.isSelectedCaseTouch; }});
       var windowMarkers = markers.filter(pointInCaseWindow);
       var caseWindowSrTouches = collectCaseWindowSrTouches();
@@ -3392,10 +3545,20 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }} else if (target && attributionBoundary && markerIdentity(target) === markerIdentity(attributionBoundary)) {{
           endRule = 'global_next_hardcoded_marker_boundary';
         }}
+        var familyGannFan = gannFanForStart(entryPoint, outcome(), 'family rule case-window entry');
+        var familyGannExit = gannFanSecondFromBottomTouch(familyGannFan, entryPoint, multiAspectEvidence);
+        var gannExitUsed = false;
+        if (familyGannExit && (!target || markerTime(familyGannExit) < markerTime(target))) {{
+          target = familyGannExit;
+          endRule = 'gann_second_from_bottom_touch_multi_aspect';
+          gannExitUsed = true;
+        }}
         var ruleConfidence = target ? (selected.indexOf(target) !== -1 ? 'rule clean' : 'rule fallback') : 'incomplete';
         var ruleReason = 'Applied family rule bearish_bias_support_barrier, but no lower hardcoded SR/marker was found after the case-window entry. Review manually.';
         if (target) {{
-          if (endRule === 'confirmed_break_next_shaded_zone_boundary') {{
+          if (endRule === 'gann_second_from_bottom_touch_multi_aspect') {{
+            ruleReason = 'Applied provisional Gann fan exit because the multi-aspect gate passed: at least one reviewed candle had two or more aspect windows overlapping it. Close at the second-from-bottom fan-line touch before other boundaries.';
+          }} else if (endRule === 'confirmed_break_next_shaded_zone_boundary') {{
             ruleReason = 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next shaded-zone boundary before a new regime takes over.';
           }} else if (endRule === 'confirmed_break_next_hardcoded_marker_boundary') {{
             ruleReason = 'Applied family rule bearish_bias_support_barrier plus confirmed-break logic: first lower SR was broken/retested, so close at the next hardcoded marker before attribution changes.';
@@ -3426,6 +3589,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           candidateAuditItem('first SR target', target && firstBarrier && markerIdentity(target) === markerIdentity(firstBarrier) ? 'chosen' : 'checked', firstBarrier, barrierConfirmedBreak ? 'First lower SR was checked, but confirmed break logic can extend to the next attribution boundary.' : 'First lower SR is the clean target unless another earlier boundary appears.'),
           candidateAuditItem('next shaded zone', target && zoneBoundary && markerIdentity(target) === markerIdentity(zoneBoundary) ? 'chosen' : 'checked', zoneBoundary, 'Boundary where a later shaded regime/window starts; used to avoid entering new attribution territory.'),
           candidateAuditItem('next hardcoded marker', target && attributionBoundary && markerIdentity(target) === markerIdentity(attributionBoundary) ? 'chosen' : 'checked', attributionBoundary, 'Next chart marker after the case window; used when it appears before/at the next attribution change.'),
+          candidateAuditItem('gann fan 2nd-from-bottom exit', gannExitUsed ? 'chosen' : (familyGannExit ? 'checked' : (multiAspectEvidence.active ? 'not found' : 'blocked')), familyGannExit || entryPoint, multiAspectEvidence.active ? 'Eligible because multiple-aspect gate passed: at least one candle has two or more aspect windows overlapping. Uses 2x1 for bearish/top-wick fans and 1x2 for bullish/bottom-wick fans.' : 'Blocked: no reviewed candle had two or more aspect windows overlapping.'),
           candidateAuditItem('old default end', 'reference', defaultEnd, 'Old marker-flow end used only for rule-vs-default tracking.')
         ].filter(Boolean);
         setTool('', false);
@@ -3438,6 +3602,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           attribution_boundary: serialPoint(attributionBoundary),
           next_shaded_zone_boundary: serialPoint(zoneBoundary),
           global_exit_boundary: serialPoint(target),
+          multi_aspect_overlap_evidence: multiAspectEvidence,
+          gann_fan: familyGannFan,
+          gann_fan_exit_candidate: serialPoint(familyGannExit),
+          gann_fan_exit_rule_status: familyGannExit ? 'provisional_review_required' : (multiAspectEvidence.active ? 'eligible_but_no_touch_found' : 'blocked_no_multi_aspect_overlap'),
           sr_line_touch_candidates: srLineTouches.map(serialPoint),
           candidate_audit: ruleCandidateAudit,
           debug_counts: {{
@@ -3492,6 +3660,19 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         reason = 'Selected-case hardcoded marker is at the SR/entry band, so Auto Suggest used the candle wick as executable entry and kept the hardcoded marker as signal/reference. '
           + reason;
       }}
+      var markerFlowGannFan = gannFanForStart(start, outcome(), 'marker-flow auto suggestion start');
+      var markerFlowGannExit = gannFanSecondFromBottomTouch(markerFlowGannFan, start, multiAspectEvidence);
+      var markerFlowGannExitUsed = false;
+      var markerFlowOriginalEnd = end;
+      var endRule = end ? 'next_later_hardcoded_marker' : 'not_found';
+      if (markerFlowGannExit && (!end || markerTime(markerFlowGannExit) < markerTime(end))) {{
+        end = markerFlowGannExit;
+        endRule = 'gann_second_from_bottom_touch_multi_aspect';
+        markerFlowGannExitUsed = true;
+        confidence = confidence === 'incomplete' ? 'rule fallback' : confidence;
+        reason = 'Provisional Gann fan exit won because the multi-aspect gate passed: at least one reviewed candle had two or more aspect windows overlapping it. '
+          + reason;
+      }}
       var markerCandidateAudit = [];
       if (firstCaseWindowSrTouch) {{
         markerCandidateAudit.push(candidateAuditItem('start', 'chosen', firstCaseWindowSrTouch, 'Earliest wick touch inside the selected case window and tight SR band.'));
@@ -3509,7 +3690,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }} else {{
         markerCandidateAudit.push(candidateAuditItem('start', 'chosen', markers[0], 'No in-window marker; first visible marker is a weak fallback.'));
       }}
-      markerCandidateAudit.push(candidateAuditItem('end', end ? 'chosen' : 'missing', end, 'First later hardcoded marker after the chosen start.'));
+      markerCandidateAudit.push(candidateAuditItem('end', end ? 'chosen' : 'missing', end, markerFlowGannExitUsed ? 'Provisional Gann fan second-from-bottom line touch won under the multiple-aspect gate.' : 'First later hardcoded marker after the chosen start.'));
+      markerCandidateAudit.push(candidateAuditItem('gann fan 2nd-from-bottom exit', markerFlowGannExitUsed ? 'chosen' : (markerFlowGannExit ? 'checked' : (multiAspectEvidence.active ? 'not found' : 'blocked')), markerFlowGannExit || start, multiAspectEvidence.active ? 'Eligible because multiple-aspect gate passed: at least one candle has two or more aspect windows overlapping. Uses 2x1 for bearish/top-wick fans and 1x2 for bullish/bottom-wick fans.' : 'Blocked: no reviewed candle had two or more aspect windows overlapping.'));
+      markerCandidateAudit.push(candidateAuditItem('old marker-flow end', 'reference', markerFlowOriginalEnd, 'Original next-later hardcoded marker before the provisional Gann fan exit check.'));
       setTool('', false);
       state.autoSuggestion = {{
         active: !!(start && end),
@@ -3522,9 +3705,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         default_marker_flow_sr_geometry: defaultFlowGeometry,
         reference_start_marker: (wickStart || firstCaseWindowSrTouch) ? serialPoint(selected[0] || defaultStart) : null,
         case_window_sr_touch_candidates: caseWindowSrTouches.map(serialPoint),
+        multi_aspect_overlap_evidence: multiAspectEvidence,
+        gann_fan: markerFlowGannFan,
+        gann_fan_exit_candidate: serialPoint(markerFlowGannExit),
+        gann_fan_exit_rule_status: markerFlowGannExit ? 'provisional_review_required' : (multiAspectEvidence.active ? 'eligible_but_no_touch_found' : 'blocked_no_multi_aspect_overlap'),
         candidate_audit: markerCandidateAudit,
         start_rule: firstCaseWindowSrTouch ? 'first_case_window_sr_line_touch' : (wickStart ? 'wick_entry_from_selected_case_sr_marker' : (selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'))),
-        end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
+        end_rule: endRule,
         manual_override: false,
         overridden_keys: [],
         created_at: new Date().toISOString()

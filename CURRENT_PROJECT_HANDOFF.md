@@ -1,10 +1,40 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 13:48 IST
+Last updated: 2026-05-27 16:25 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 multi-aspect Gann fan exit gate:
+
+- User requested that the provisional Gann fan close-marker rule apply exclusively when multiple aspect windows overlap.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260527_multi_aspect_gann_exit_v49`;
+  - added `collectAspectWindows()` and `multiAspectOverlapEvidence()`;
+  - formal definition: multiple aspect = at least one reviewed candle has two or more aspect windows overlapping it;
+  - for M30 review this means at least one 30-minute candle overlaps at least two aspect windows;
+  - added provisional `gann_second_from_bottom_touch_multi_aspect` exit rule;
+  - the rule is blocked unless the multiple-aspect gate passes;
+  - if eligible, Auto Suggest can close at the first touch of the second-from-bottom Gann fan line;
+  - for bearish/top-wick fans, second-from-bottom is `2x1` because `4x1` is lowest;
+  - for bullish/bottom-wick fans, second-from-bottom is `1x2` because `1x4` is lowest;
+  - the candidate audit now shows whether the Gann fan exit was chosen, checked, not found, or blocked.
+- Added structured case `127` ML note in `gann_aspect_annotations.sqlite`:
+  - Saturn SR/resistance caused temporary hesitation;
+  - bullish FX/doctrine scores with zero conflict, friendly Moon condition, non-low Shadbala, and high Saptavargaja explain why reversal stayed limited;
+  - weak Chesta and negative Drik explain hesitation/retest rather than full reversal;
+  - new Gann fan exit is explicitly marked provisional and gated by multi-aspect overlap.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260527_162034`
+- Restarted API-aware server on port `8765`, PID `19824`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260527_multi_aspect_gann_exit_v49&fresh=multi`
+- Verification:
+  `python -m py_compile build_repeatation_review_pack.py reviewer_rule_replay.py serve_repeatation_pack.py aspect_annotation_store.py`
+  `python reviewer_rule_replay.py`
+  `python test_strict_shadbala_doctrine.py`
+  all passed.
 
 2026-05-27 Gann fan wick-direction fix:
 
