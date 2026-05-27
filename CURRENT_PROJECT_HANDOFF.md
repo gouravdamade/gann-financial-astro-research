@@ -1,10 +1,37 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 13:22 IST
+Last updated: 2026-05-27 13:48 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 Gann fan wick-direction fix:
+
+- User reported case `127` Gann fan direction was wrong.
+- Root cause:
+  Gann fan slope followed the selected trade outcome, so a top-wick anchor could still draw bullish/upward if the trade outcome was bullish.
+- Updated `build_repeatation_review_pack.py`:
+  - `gannFanForStart()` now sets fan projection from the wick anchor side:
+    top wick -> bearish/downward projection;
+    bottom wick -> bullish/upward projection.
+  - Added a render/draw compatibility guard so older restored draft state is corrected too:
+    if stored fan anchor source contains `top`, direction is forced bearish;
+    if it contains `bottom`, direction is forced bullish.
+  - Drawer now displays fan projection explicitly.
+  - Cache version advanced to `repeatation_ui_20260527_gann_wick_direction_v48`.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260527_134039`
+- Restarted server on port `8765` from that pack.
+- Browser verification:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260527_gann_wick_direction_v48&fresh=wickdir2`
+  shows:
+  `Gann fan: anchored at top wick 2025-05-28 22:00:00+05:30 @ 144.965; projection bearish`.
+- Verification:
+  `python -m py_compile build_repeatation_review_pack.py reviewer_rule_replay.py`
+  `python reviewer_rule_replay.py`
+  `python test_strict_shadbala_doctrine.py`
+  all passed.
 
 2026-05-27 trusted external source intake workflow:
 

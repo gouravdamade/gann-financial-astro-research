@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260527_candidate_inspector_v47"
+REPEATATION_UI_VERSION = "repeatation_ui_20260527_gann_wick_direction_v48"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1440,25 +1440,27 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function gannFanForStart(startPoint, selectedOutcome, reason) {{
       var direction = selectedOutcome || outcome();
-      var directionSign = direction === 'bearish' ? -1 : (direction === 'bullish' ? 1 : 0);
-      if (!startPoint || !Number.isFinite(directionSign) || directionSign === 0) return null;
+      var outcomeDirectionSign = direction === 'bearish' ? -1 : (direction === 'bullish' ? 1 : 0);
+      if (!startPoint || !Number.isFinite(outcomeDirectionSign) || outcomeDirectionSign === 0) return null;
       var startTime = markerTime(startPoint);
       if (!Number.isFinite(startTime)) return null;
       var candles = collectCandles();
       var candle = candleAtOrAfter(candles, startTime);
       if (!candle) return null;
       var anchorSide = String(startPoint.gann_anchor_side || '').toLowerCase();
-      var anchorPrice = anchorSide === 'top' ? candle.high : (anchorSide === 'bottom' ? candle.low : (directionSign < 0 ? candle.high : candle.low));
+      var fanDirectionSign = anchorSide === 'top' ? -1 : (anchorSide === 'bottom' ? 1 : outcomeDirectionSign);
+      var anchorPrice = anchorSide === 'top' ? candle.high : (anchorSide === 'bottom' ? candle.low : (fanDirectionSign < 0 ? candle.high : candle.low));
       if (!Number.isFinite(anchorPrice)) return null;
       return {{
         active: true,
         direction: direction,
-        direction_sign: directionSign,
+        fan_direction: fanDirectionSign < 0 ? 'bearish' : 'bullish',
+        direction_sign: fanDirectionSign,
         anchor: {{
           x: candle.x,
           y: Number(anchorPrice.toFixed(3)),
-          source: anchorSide === 'top' ? 'gann_fan_top_wick' : (anchorSide === 'bottom' ? 'gann_fan_bottom_wick' : (directionSign < 0 ? 'gann_fan_top_wick' : 'gann_fan_bottom_wick')),
-          markerLabel: anchorSide === 'top' ? 'Gann fan top wick anchor' : (anchorSide === 'bottom' ? 'Gann fan bottom wick anchor' : (directionSign < 0 ? 'Gann fan top wick anchor' : 'Gann fan bottom wick anchor'))
+          source: anchorSide === 'top' ? 'gann_fan_top_wick' : (anchorSide === 'bottom' ? 'gann_fan_bottom_wick' : (fanDirectionSign < 0 ? 'gann_fan_top_wick' : 'gann_fan_bottom_wick')),
+          markerLabel: anchorSide === 'top' ? 'Gann fan top wick anchor' : (anchorSide === 'bottom' ? 'Gann fan bottom wick anchor' : (fanDirectionSign < 0 ? 'Gann fan top wick anchor' : 'Gann fan bottom wick anchor'))
         }},
         anchor_candle: {{
           x: candle.x,
@@ -1467,9 +1469,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           low: Number(candle.low.toFixed(3)),
           close: Number(candle.close.toFixed(3))
         }},
-        anchor_rule: directionSign < 0
-          ? 'bearish auto-start: top wick of first candle at/after start marker'
-          : 'bullish auto-start: bottom wick of first candle at/after start marker',
+        anchor_rule: fanDirectionSign < 0
+          ? 'top wick anchor: bearish/downward fan projection'
+          : 'bottom wick anchor: bullish/upward fan projection',
         timeframe_minutes: timeframeMinutes(),
         base_pips_per_candle: 1,
         ratios: [
@@ -1870,6 +1872,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var anchorTime = Date.parse(fan.anchor.x);
         var anchorPrice = Number(fan.anchor.y);
         var directionSign = Number(fan.direction_sign || 0);
+        var anchorSource = String((fan.anchor && fan.anchor.source) || '').toLowerCase();
+        if (anchorSource.indexOf('top') !== -1) directionSign = -1;
+        if (anchorSource.indexOf('bottom') !== -1) directionSign = 1;
+        fan.direction_sign = directionSign;
+        fan.fan_direction = directionSign < 0 ? 'bearish' : 'bullish';
         if (!Number.isFinite(anchorTime) || !Number.isFinite(anchorPrice) || !directionSign) return;
         var endTime = gannFanEndTime(fan);
         var elapsedCandles = (endTime - anchorTime) / candleMs();
@@ -2394,9 +2401,11 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var fan = s.gann_fan;
         var source = String((fan.anchor && fan.anchor.source) || '').toLowerCase();
         var wick = source.indexOf('top') !== -1 ? 'top wick' : (source.indexOf('bottom') !== -1 ? 'bottom wick' : (fan.direction === 'bearish' ? 'top wick' : 'bottom wick'));
+        var projection = source.indexOf('top') !== -1 ? 'bearish' : (source.indexOf('bottom') !== -1 ? 'bullish' : (fan.fan_direction || fan.direction || ''));
         fanHtml = '<div><b>Gann fan</b>: anchored at ' + esc(wick)
           + ' ' + esc(toIST(fan.anchor && fan.anchor.x))
           + ' @ ' + esc(Number(fan.anchor && fan.anchor.y).toFixed(3))
+          + '; projection ' + esc(projection)
           + '</div><div class="rm-table-sub">Scale: 1x1 = '
           + esc(fan.base_pips_per_candle || 1)
           + ' pip per ' + esc(fan.timeframe_minutes || timeframeMinutes()) + ' minute candle; fan stays data-based during zoom/pan.</div>';
