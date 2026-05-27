@@ -1,10 +1,45 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 11:34 IST
+Last updated: 2026-05-27 11:50 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 4-gate astro/trading certification runner:
+
+- User asked to proceed with the 4-gate certification process.
+- Added `astro_function_certification.py`.
+- Generated first certification artifacts:
+  - `astro_function_certification_report_20260527.md`
+  - `astro_function_certification_inventory_20260527.csv`
+  - `astro_position_baseline_20260527.csv`
+  - `panchanga_baseline_20260527.csv`
+  - `astro_external_validation_template_20260527.csv`
+  - `trading_rule_replay_result_20260527.json`
+- Gate 1 formula inventory:
+  9 feature families now have source anchor, implementation file/function, status label, strict/proxy label, validation status, current gap, next action, and ML training policy.
+- Gate 2 astronomical baseline:
+  Raman ayanamsa Swiss Ephemeris baselines generated for sample cases `8`, `43`, `103`, `127`, and `1889-02-11 00:00 Asia/Tokyo`.
+  These are reproducibility baselines, not external validation yet.
+- Gate 2 Panchanga baseline:
+  generated local Tithi/Paksha/Nakshatra/Pada/Yoga/Karana/weekday baseline rows for the same samples.
+- Gate 3 external validation:
+  template created with blank expected-value columns for trusted ephemeris/Panchanga/Shadbala/Drik comparison.
+- Gate 4 trading replay:
+  `reviewer_rule_replay.py` passed.
+  Case `127` has data-level replay; cases `8`, `43`, and `103` are still source-guarded pending shared Auto Suggest replay logic.
+- Updated `astro_function_research_audit_20260527.md` with the certification runner results.
+- Current verdict:
+  Shadbala/Drik/Panchanga are `implemented_unvalidated`, not externally certified.
+  Raw local LLM prose remains `do_not_train_raw_text`; train only from deterministic evidence, manual notes, verified corrections, and rule lessons.
+- Verification:
+  `python -m py_compile astro_function_certification.py`
+  `python astro_function_certification.py`
+  `python -m py_compile astro_function_certification.py reviewer_rule_replay.py build_repeatation_review_pack.py strict_shadbala_doctrine.py panchanga_doctrine.py`
+  `python test_strict_shadbala_doctrine.py`
+  `python reviewer_rule_replay.py`
+  all passed.
 
 2026-05-27 replay guard + astro certification plan:
 

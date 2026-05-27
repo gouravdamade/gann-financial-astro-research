@@ -222,3 +222,37 @@ Added `reviewer_rule_replay.py`:
 Current limitation:
 
 - The full family-rule Auto Suggest branch still lives in browser-side JavaScript. `reviewer_rule_replay.py` checks its source guards today, but the next improvement should be to factor the Auto Suggest decision engine into shared JSON/Python logic so cases `8`, `43`, and `103` can be replayed at the same depth as case `127`.
+
+## 4-Gate Certification Runner Added - 2026-05-27
+
+Added `astro_function_certification.py` and generated the first certification snapshot:
+
+- `astro_function_certification_report_20260527.md`
+- `astro_function_certification_inventory_20260527.csv`
+- `astro_position_baseline_20260527.csv`
+- `panchanga_baseline_20260527.csv`
+- `astro_external_validation_template_20260527.csv`
+- `trading_rule_replay_result_20260527.json`
+
+Gate results:
+
+- Gate 1 formula inventory:
+  9 feature families are now explicitly inventoried with source anchor, implementation file/function, strict/proxy label, validation status, current gap, next action, and ML training policy.
+- Gate 2 astronomical baseline:
+  Raman ayanamsa Swiss Ephemeris baselines were generated for cases `8`, `43`, `103`, `127`, and the Tokyo Gann reference sample.
+  These are local reproducibility baselines, not external validation.
+- Gate 2 Panchanga baseline:
+  Tithi, Paksha, Moon Nakshatra/Pada, Yoga, Karana, weekday, and weekday lord were generated for the same sample set.
+  These remain pending traditional Panchanga cross-check.
+- Gate 3 external validation:
+  A blank expected-value template was generated for ephemeris, Panchanga, Shadbala, and Drik values.
+  The expected-value columns must be filled from trusted external sources before any doctrine field can be promoted to `externally_validated`.
+- Gate 4 trading replay:
+  `reviewer_rule_replay.py` passed.
+  Case `127` has data-level replay; cases `8`, `43`, and `103` remain source-guarded until the browser Auto Suggest branch is factored into reusable Python.
+
+Important verdict:
+
+- The 4-gate process is active but not complete.
+- Shadbala, Drik Bala, and Panchanga should remain `implemented_unvalidated` / `formula_foundation_pending_traditional_validation`.
+- Raw local LLM prose remains `do_not_train_raw_text`; only deterministic evidence, manual notes, verified corrections, and rule lessons should enter ML truth.
