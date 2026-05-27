@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260527_marker_attach_fallback_v43"
+REPEATATION_UI_VERSION = "repeatation_ui_20260527_candidate_inspector_v47"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -1014,6 +1014,25 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var price = Number(point.y);
       return toIST(point.x) + (Number.isFinite(price) ? ' @ ' + price.toFixed(3) : '');
     }}
+    function candidateAuditItem(role, status, point, reason) {{
+      if (!point) return null;
+      var price = Number(point.y);
+      var extras = [];
+      if (Number.isFinite(Number(point.sr_price))) extras.push('SR ' + Number(point.sr_price).toFixed(3));
+      if (Number.isFinite(Number(point.touch_gap_pips))) extras.push('gap ' + Number(point.touch_gap_pips).toFixed(1) + ' pips');
+      if (Number.isFinite(Number(point.touch_band_pips))) extras.push('band ' + Number(point.touch_band_pips).toFixed(1) + ' pips');
+      if (point.touch_side) extras.push(String(point.touch_side).replace(/_/g, ' '));
+      return {{
+        role: role || '',
+        status: status || '',
+        x: point.x,
+        y: Number.isFinite(price) ? Number(price.toFixed(3)) : point.y,
+        source: point.source || '',
+        label: point.markerLabel || point.traceName || '',
+        reason: reason || '',
+        extras: extras.join(' | ')
+      }};
+    }}
     function traceLooksLikeMarker(trace) {{
       var mode = String(trace && trace.mode || '').toLowerCase();
       var name = String(trace && trace.name || '').toLowerCase();
@@ -1384,7 +1403,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var out = [];
       traces.forEach(function (trace, curveNumber) {{
         if (!traceLooksLikeSrLine(trace)) return;
-        var label = String(trace.name || 'SR line').replace(/\s+/g, ' ').trim();
+        var label = String(trace.name || 'SR line').replace(/\\s+/g, ' ').trim();
         candles.forEach(function (c, candleIndex) {{
           if (!c || !Number.isFinite(c.t) || c.t < start || c.t > end) return;
           var sr = srLineValueAt(trace, c.t);
@@ -1775,6 +1794,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         curveNumber: point.curveNumber,
         pointNumber: point.pointNumber,
         markerLabel: point.markerLabel || '',
+        sr_price: point.sr_price,
+        touch_gap_pips: point.touch_gap_pips,
+        touch_band_pips: point.touch_band_pips,
+        touch_side: point.touch_side || '',
+        gann_anchor_side: point.gann_anchor_side || '',
+        isSelectedCaseTouch: !!point.isSelectedCaseTouch,
         autoSuggested: !!point.autoSuggested,
         autoRole: point.autoRole || ''
       }};
@@ -2283,6 +2308,26 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         midPrice: (entry + exit) / 2
       }};
     }}
+    function autoCandidateInspectorHtml(s) {{
+      var items = Array.isArray(s && s.candidate_audit) ? s.candidate_audit.filter(Boolean) : [];
+      if (!items.length) return '';
+      var rows = items.slice(0, 18).map(function (item) {{
+        var price = Number(item.y);
+        var status = String(item.status || '');
+        return '<tr class="rm-candidate-' + esc(status.replace(/[^a-z0-9_-]/gi, '').toLowerCase()) + '">'
+          + '<td><b>' + esc(item.role || '') + '</b><div class="rm-table-sub">' + esc(status || '') + '</div></td>'
+          + '<td>' + esc(toIST(item.x)) + (Number.isFinite(price) ? '<div class="rm-table-sub">@ ' + esc(price.toFixed(3)) + '</div>' : '') + '</td>'
+          + '<td>' + esc(item.reason || '') + (item.extras ? '<div class="rm-table-sub">' + esc(item.extras) + '</div>' : '') + '</td>'
+          + '</tr>';
+      }}).join('');
+      return '<details class="rm-candidates" open>'
+        + '<summary>Auto Suggest candidates <span>' + esc(String(items.length)) + '</span></summary>'
+        + '<table class="rm-candidate-table"><thead><tr><th>Role</th><th>Point</th><th>Why</th></tr></thead><tbody>'
+        + rows
+        + '</tbody></table>'
+        + '<div class="rm-table-sub">This is the deterministic decision trail. It shows what the script chose and what it rejected.</div>'
+        + '</details>';
+    }}
     function autoSuggestionHtml() {{
       if (!state.autoSuggestion) return '<div class="rm-auto muted">Auto Suggest has not been run for this repeatation.</div>';
       var s = state.autoSuggestion;
@@ -2363,6 +2408,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + tracking
         + breakHtml
         + fanHtml
+        + autoCandidateInspectorHtml(s)
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
     }}
@@ -3365,6 +3411,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           default_start_rule: selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'),
           default_end_rule: defaultEnd ? 'next_later_hardcoded_marker' : 'not_found'
         }} : null;
+        var ruleCandidateAudit = [
+          candidateAuditItem('start', 'chosen', entryPoint, 'Family rule starts from the case-window entry/open price.'),
+          candidateAuditItem('old default start', 'reference', defaultStart, 'Old marker-flow start used only for rule-vs-default tracking.'),
+          candidateAuditItem('first SR target', target && firstBarrier && markerIdentity(target) === markerIdentity(firstBarrier) ? 'chosen' : 'checked', firstBarrier, barrierConfirmedBreak ? 'First lower SR was checked, but confirmed break logic can extend to the next attribution boundary.' : 'First lower SR is the clean target unless another earlier boundary appears.'),
+          candidateAuditItem('next shaded zone', target && zoneBoundary && markerIdentity(target) === markerIdentity(zoneBoundary) ? 'chosen' : 'checked', zoneBoundary, 'Boundary where a later shaded regime/window starts; used to avoid entering new attribution territory.'),
+          candidateAuditItem('next hardcoded marker', target && attributionBoundary && markerIdentity(target) === markerIdentity(attributionBoundary) ? 'chosen' : 'checked', attributionBoundary, 'Next chart marker after the case window; used when it appears before/at the next attribution change.'),
+          candidateAuditItem('old default end', 'reference', defaultEnd, 'Old marker-flow end used only for rule-vs-default tracking.')
+        ].filter(Boolean);
         setTool('', false);
         state.autoSuggestion = {{
           active: !!target,
@@ -3376,6 +3430,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           next_shaded_zone_boundary: serialPoint(zoneBoundary),
           global_exit_boundary: serialPoint(target),
           sr_line_touch_candidates: srLineTouches.map(serialPoint),
+          candidate_audit: ruleCandidateAudit,
           debug_counts: {{
             markers: markers.length,
             zones: zones.length,
@@ -3428,6 +3483,24 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         reason = 'Selected-case hardcoded marker is at the SR/entry band, so Auto Suggest used the candle wick as executable entry and kept the hardcoded marker as signal/reference. '
           + reason;
       }}
+      var markerCandidateAudit = [];
+      if (firstCaseWindowSrTouch) {{
+        markerCandidateAudit.push(candidateAuditItem('start', 'chosen', firstCaseWindowSrTouch, 'Earliest wick touch inside the selected case window and tight SR band.'));
+        caseWindowSrTouches.slice(1, 6).forEach(function (point) {{
+          markerCandidateAudit.push(candidateAuditItem('start', 'rejected', point, 'Later SR wick touch; earlier valid touch already won.'));
+        }});
+        if (selected[0]) markerCandidateAudit.push(candidateAuditItem('hardcoded confluence', 'reference', selected[0], 'Exported selected-case dot is later; kept as reference/end boundary, not start.'));
+      }} else if (wickStart) {{
+        markerCandidateAudit.push(candidateAuditItem('start', 'chosen', wickStart, 'Hardcoded marker sat at the SR/entry band, so the candle wick became executable entry.'));
+        markerCandidateAudit.push(candidateAuditItem('hardcoded confluence', 'reference', defaultStart, 'Original hardcoded marker kept as signal/reference.'));
+      }} else if (selected[0]) {{
+        markerCandidateAudit.push(candidateAuditItem('start', 'chosen', selected[0], 'First exported selected-case hardcoded touch.'));
+      }} else if (windowMarkers[0]) {{
+        markerCandidateAudit.push(candidateAuditItem('start', 'chosen', windowMarkers[0], 'No selected-case dot; first marker inside the case window wins.'));
+      }} else {{
+        markerCandidateAudit.push(candidateAuditItem('start', 'chosen', markers[0], 'No in-window marker; first visible marker is a weak fallback.'));
+      }}
+      markerCandidateAudit.push(candidateAuditItem('end', end ? 'chosen' : 'missing', end, 'First later hardcoded marker after the chosen start.'));
       setTool('', false);
       state.autoSuggestion = {{
         active: !!(start && end),
@@ -3440,6 +3513,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         default_marker_flow_sr_geometry: defaultFlowGeometry,
         reference_start_marker: (wickStart || firstCaseWindowSrTouch) ? serialPoint(selected[0] || defaultStart) : null,
         case_window_sr_touch_candidates: caseWindowSrTouches.map(serialPoint),
+        candidate_audit: markerCandidateAudit,
         start_rule: firstCaseWindowSrTouch ? 'first_case_window_sr_line_touch' : (wickStart ? 'wick_entry_from_selected_case_sr_marker' : (selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'))),
         end_rule: end ? 'next_later_hardcoded_marker' : 'not_found',
         manual_override: false,
@@ -3598,6 +3672,15 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-auto.clean{{border-color:#38bdf8;}}'
       + '#repeatation-marker-panel .rm-auto.fallback,.rm-auto.weak,.rm-auto.incomplete{{border-color:#fbbf24;}}'
       + '#repeatation-marker-panel .rm-warning{{color:#fbbf24;margin-top:4px;}}'
+      + '#repeatation-marker-panel .rm-candidates{{background:#07111f;border:1px solid #1e3a5f;border-radius:6px;padding:6px;margin:7px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-candidates summary{{cursor:pointer;color:#bae6fd;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
+      + '#repeatation-marker-panel .rm-candidates summary span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-candidate-table{{width:100%;border-collapse:collapse;font-size:10px;margin-top:5px;}}'
+      + '#repeatation-marker-panel .rm-candidate-table th,#repeatation-marker-panel .rm-candidate-table td{{border:1px solid #1e293b;padding:4px;vertical-align:top;}}'
+      + '#repeatation-marker-panel .rm-candidate-table th{{color:#bfdbfe;background:#0f172a;text-align:left;}}'
+      + '#repeatation-marker-panel .rm-candidate-chosen td{{background:rgba(34,197,94,0.10);}}'
+      + '#repeatation-marker-panel .rm-candidate-rejected td{{background:rgba(248,113,113,0.08);}}'
+      + '#repeatation-marker-panel .rm-candidate-reference td,#repeatation-marker-panel .rm-candidate-checked td{{background:rgba(148,163,184,0.06);}}'
       + '#repeatation-marker-panel .rm-strength{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-strength>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
       + '#repeatation-marker-panel .rm-strength span{{color:#67e8f9;font-size:11px;}}'

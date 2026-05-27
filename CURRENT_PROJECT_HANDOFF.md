@@ -1,10 +1,35 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 04:22 IST
+Last updated: 2026-05-27 08:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 Auto Suggest candidate inspector / audit truth pass:
+
+- User asked to implement the candidate inspector and to say plainly what was reviewed and what still has shortcomings.
+- `build_repeatation_review_pack.py` now uses cache version:
+  `repeatation_ui_20260527_candidate_inspector_v47`.
+- Added an Auto Suggest `Candidate check` / `Auto Suggest candidates` table in the marker drawer.
+- The table records deterministic start/end decision trails:
+  chosen candidate, rejected candidates, reference hardcoded confluence markers, first SR target, next shaded-zone boundary, next hardcoded marker / attribution boundary, time, price, SR price, SR gap, touch band, wick side, and plain-English reason.
+- Case `127` browser verification after Clear markers + Auto Suggest:
+  start `2025-05-28 22:00:00+05:30 @ 144.965`;
+  end `2025-05-28 23:30:00+05:30 @ 145.125`;
+  result bullish about `+16.0 pips`;
+  Gann fan anchored at top wick;
+  candidate table shows 5 candidates and explicitly rejects the later `23:00` / `23:30` SR touches because `22:00` already won.
+- Fixed Python compile warning by escaping the generated JavaScript `\s` regex inside the Python string.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260527_081226`.
+- Restarted server from that pack:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260527_candidate_inspector_v47`.
+- Updated `astro_function_research_audit_20260527.md` with:
+  what was reviewed, what was not exhaustively reviewed, the candidate-inspector implementation, and remaining risk register.
+- Verification:
+  `python -m py_compile build_repeatation_review_pack.py` passed with no warning.
+  Browser check confirmed candidate table, `2025-05-28 22:00`, `gap 2.2 pips`, and top-wick Gann fan text.
 
 2026-05-27 case 127 first SR wick-touch Auto Suggest:
 
