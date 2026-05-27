@@ -1,10 +1,41 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 16:25 IST
+Last updated: 2026-05-27 18:04 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-27 case-specific ML Notes cleanup + Auto Suggest replay:
+
+- User reported that case `103` still showed ML notes from case `8`.
+- Root cause:
+  `load_ml_notes()` merged case-family notes into every repeatation's visible `ML Notes` section.
+- Updated `build_repeatation_review_pack.py`:
+  - visible `meta.mlNotes` now includes only exact-case ML notes;
+  - case-family notes remain available through `meta.appliedFamilyRules` / training memory;
+  - case-family notes no longer appear as if they are exact notes for unrelated repeatations.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260527_170507`
+- Restarted server on port `8765`, PID `16764`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_103_chart.html?v=repeatation_ui_20260527_multi_aspect_gann_exit_v49&fresh=notesfix`
+- Verified generated case `103` chart now has `"mlNotes": []`.
+  Case-family teaching notes still appear in `appliedFamilyRules`, which is intentional training/rule context rather than visible exact-case ML notes.
+- Replayed Auto Suggest v48 pack vs v49 pack after the provisional multi-aspect Gann fan exit rule.
+  Changed P/L cases:
+  - case `127`: `+16.0` -> `-4.0` pips, delta `-20.0`; exit changed to `gann_second_from_bottom_touch_multi_aspect`.
+  - case `185`: `+4.7` -> `+0.5` pips, delta `-4.2`; exit changed to `gann_second_from_bottom_touch_multi_aspect`.
+  - case `216`: `+31.2` -> `-4.2` pips, delta `-35.4`; exit changed to `gann_second_from_bottom_touch_multi_aspect`.
+  - case `384`: `+37.1` -> `-1.2` pips, delta `-38.3`; exit changed to `gann_second_from_bottom_touch_multi_aspect`.
+- Interpretation:
+  the new Gann fan exit remains provisional and needs manual review before promotion because it currently worsens all four changed repeatations in replay.
+- Telegram status was sent with the case `103` note fix and the four replay deltas.
+- Verification:
+  `python -m py_compile build_repeatation_review_pack.py reviewer_rule_replay.py serve_repeatation_pack.py aspect_annotation_store.py`
+  `python reviewer_rule_replay.py`
+  `python test_strict_shadbala_doctrine.py`
+  all passed.
 
 2026-05-27 multi-aspect Gann fan exit gate:
 

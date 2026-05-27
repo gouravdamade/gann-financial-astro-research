@@ -696,13 +696,15 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
             (seed["pair_key"], seed["aspect"]),
         ).fetchall()
     notes_by_case: dict[int, list[dict[str, Any]]] = {}
-    family_notes: list[dict[str, Any]] = []
     for row in rows:
         note_text = str(row["note_text"] or "")
         fields = parse_rule_note_fields(note_text)
         note_type = str(row["note_type"] or "")
         rule_type = fields.get("type", "")
+        scope = fields.get("scope", "")
         label = fields.get("ml_label") or fields.get("label") or fields.get("rule_label") or note_type
+        if "case_family" in scope or note_type.startswith("family_"):
+            continue
         is_ml_note = (
             "ml" in note_type.lower()
             or rule_type.lower().startswith("ml")
@@ -728,23 +730,6 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
             "created_at_utc": str(row["created_at_utc"] or ""),
         }
         notes_by_case.setdefault(int(row["seed_case_id"]), []).append({**note, "match_scope": "this case"})
-        scope = fields.get("scope", "")
-        if "case_family" in scope or note_type.startswith("family_"):
-            family_notes.append({**note, "match_scope": "case family"})
-    if family_notes:
-        notes_by_case[0] = family_notes
-    for case_id in {int(seed["case_id"]), *notes_by_case.keys()}:
-        if case_id == 0:
-            continue
-        merged = list(notes_by_case.get(case_id, []))
-        seen = {int(note["note_id"]) for note in merged}
-        for note in family_notes:
-            if int(note["note_id"]) in seen:
-                continue
-            merged.append(note)
-            seen.add(int(note["note_id"]))
-        if merged:
-            notes_by_case[case_id] = merged
     return notes_by_case
 
 
