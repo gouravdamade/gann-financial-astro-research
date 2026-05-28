@@ -409,6 +409,41 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
         except Exception as exc:
             self._send_json(500, {"ok": False, "error": f"could not parse dream review: {exc}", "stdout": proc.stdout[:4000]})
             return
+        codex_task_ids: list[int] = []
+        if result.get("status") == "queued_for_codex" or result.get("needs_review"):
+            try:
+                db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+                initialize_database(db_path)
+                with connect(db_path) as conn:
+                    codex_task_ids.append(
+                        enqueue_codex_review_task(
+                            conn,
+                            task_type="dream_review_correction",
+                            case_id=int(result.get("case_id") or payload.get("case_id")),
+                            family_key=str(result.get("family") or payload.get("family") or ""),
+                            priority="high",
+                            source="dream_review",
+                            trigger_reason=str(result.get("message") or "Dream Review queued a contradiction for Codex review."),
+                            payload={
+                                "case_id": int(result.get("case_id") or payload.get("case_id")),
+                                "family_key": str(result.get("family") or payload.get("family") or ""),
+                                "dream_review_payload": payload,
+                                "dream_review_result": result,
+                                "policy": "dream_review_contradictions_codex_owned",
+                                "instruction": (
+                                    "Inspect the local draft, verifier evidence, Auto Suggest evidence, current marker ML note, "
+                                    "saved official ML note, rule lessons, and dream-review report. If deterministic evidence is clear, "
+                                    "replace the official ML note through codex_review_task_queue.py --write-official-note. "
+                                    "Treat local LLM text as draft only."
+                                ),
+                            },
+                        )
+                    )
+                    conn.commit()
+            except Exception as exc:
+                result["codex_queue_error"] = str(exc)
+        if codex_task_ids:
+            result["codex_task_ids"] = codex_task_ids
         self._send_json(200, result)
 
     def _handle_save_rule_lesson(self) -> None:

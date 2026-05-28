@@ -207,7 +207,7 @@ def dream_message(
     if status == "auto_corrected":
         return f"Dream review auto-corrected {len(applied)} stale note(s). Rebuild/reload to embed corrected notes."
     if status == "queued_for_codex":
-        return "Dream review found contradiction(s) but did not auto-apply; queued for Codex/human review."
+        return "Dream review found contradiction(s) but did not auto-apply; queued for Codex review-agent correction."
     if status == "caution_only":
         return "Dream review found only caution-level issues; no correction needed."
     if status == "verified":

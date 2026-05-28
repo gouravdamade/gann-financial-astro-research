@@ -1,10 +1,56 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 03:36 IST
+Last updated: 2026-05-29 03:57 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-29
+
+2026-05-29 Dream Review queue -> Codex review-agent correction:
+
+- User reported the browser warning:
+  `Dream review found contradiction(s) but did not auto-apply; queued for Codex/human review.`
+  and requested the Codex agent to check queued Dream Review drafts and auto-apply/correct when deterministic evidence is clear.
+- Root cause:
+  `jyotish_agent\dream_review_agent.py` wrote contradiction drafts to `jyotish_agent\dream_review_queue.jsonl`, but the Codex heartbeat automation only watched SQLite `codex_review_tasks`.
+- Updated `serve_repeatation_pack.py`:
+  - when `/api/dream_review` returns `queued_for_codex` / `needs_review`, it now enqueues a durable SQLite `dream_review_correction` task;
+  - browser response includes `codex_task_ids` for queued Dream Review corrections.
+- Updated `codex_review_task_queue.py`:
+  - added `--ingest-dream-queue`;
+  - imports existing `dream_review_queue.jsonl` rows into `codex_review_tasks`;
+  - dedupes by Dream Review report filename;
+  - `dream_review_correction` tasks now carry the original payload, dream result, report path, and correction policy.
+- Updated `jyotish_agent\dream_review_agent.py` and `build_repeatation_review_pack.py` copy:
+  - warning text now says the contradiction is queued for Codex review-agent correction, not left as vague human-only review.
+  - cache key advanced to `repeatation_ui_20260529_dream_queue_v53`.
+- Imported existing queued Dream Review contradiction:
+  - task `#5`, case `8`, report:
+    `D:\PycharmProjects\jyotish_agent\dream_review_reports\case_8_20260529_034136_dream_review.md`
+- Resolved task `#5`:
+  - Dream Review contradiction was a break-confirmation conflict;
+  - local draft said failed/missing support break;
+  - deterministic Auto Suggest/verifier evidence confirmed support break, failed retest, and continuation;
+  - Codex replaced the official ML note with note `#7`, status `codex_verified_dream_review_resolved`;
+  - note explicitly rejects contradictory local LLM draft wording and tells ML to use deterministic evidence.
+- Cleared stale duplicate pending official-note tasks `#2`, `#3`, and `#4` for case `8` as skipped.
+- Updated heartbeat automation `process-codex-review-agent-queue`:
+  - first runs `codex_review_task_queue.py --ingest-dream-queue`;
+  - then processes `dream_review_correction`, `official_ml_note`, and `rule_replay_review` tasks;
+  - auto-applies deterministic corrections through official notes when evidence is clear;
+  - leaves uncertain cases marked for review instead of letting local LLM text become official.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_035153`
+- Restarted server on port `8765`, PID `16628`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260529_dream_queue_v53&fresh=dreamqueue`
+- Verification:
+  - `python -m py_compile serve_repeatation_pack.py codex_review_task_queue.py jyotish_agent\dream_review_agent.py build_repeatation_review_pack.py`
+  - `python codex_review_task_queue.py --ingest-dream-queue`
+  - `python codex_review_task_queue.py --list-pending --limit 20`
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_035153`
+  - HTTP `200` from the v53 case `8` chart
+  all passed; pending Codex review task queue is empty.
 
 2026-05-29 Gate 3 external certification pass:
 

@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_historical_replay_v52"
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_dream_queue_v53"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -3212,10 +3212,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (state.dreamReview.message) rows.push('<div>' + esc(state.dreamReview.message) + '</div>');
       if (state.dreamReview.error) rows.push('<div class="rm-warning">' + esc(state.dreamReview.error) + '</div>');
       if (appliedCount) rows.push('<div><b>Auto-corrected:</b> ' + esc(appliedCount) + ' stale deterministic note(s).</div>');
-      if (reviewCount) rows.push('<div><b>Queued:</b> ' + esc(reviewCount) + ' item(s) need Codex/human review.</div>');
+      if (reviewCount) rows.push('<div><b>Queued:</b> ' + esc(reviewCount) + ' item(s) need Codex review-agent correction.</div>');
       if (state.dreamReview.report_path) rows.push('<div class="rm-table-sub">' + esc(state.dreamReview.report_path) + '</div>');
       return '<details class="rm-dream" open><summary>' + esc(title) + ' <span>' + esc(status) + ' | issues ' + esc(issueCount) + '</span></summary>'
-        + '<div class="rm-table-sub">Triggered by Draft ML Reason. Applies only narrow deterministic corrections; ambiguous conflicts are queued.</div>'
+        + '<div class="rm-table-sub">Triggered by Draft ML Reason. Applies only narrow deterministic corrections; ambiguous conflicts are queued for Codex review-agent correction.</div>'
         + (rows.length ? rows.join('') : '<div>Dream review completed.</div>')
         + '</details>';
     }}

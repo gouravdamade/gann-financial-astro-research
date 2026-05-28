@@ -8,6 +8,7 @@ from typing import Any
 from aspect_annotation_store import (
     DEFAULT_DB_PATH,
     connect,
+    enqueue_codex_review_task,
     initialize_database,
     list_codex_review_tasks,
     replace_rule_note_type,
@@ -48,6 +49,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mark-task", type=int, metavar="TASK_ID", help="Mark a task without writing a note.")
     parser.add_argument("--mark-status", default="done", choices=("pending", "in_progress", "done", "failed", "skipped"))
     parser.add_argument("--result-json", default="{}", help="Small JSON result summary for --mark-task.")
+    parser.add_argument(
+        "--ingest-dream-queue",
+        action="store_true",
+        help="Import queued Dream Review contradiction rows into codex_review_tasks.",
+    )
+    parser.add_argument(
+        "--dream-queue-path",
+        type=Path,
+        default=Path("jyotish_agent") / "dream_review_queue.jsonl",
+        help="Path to dream_review_queue.jsonl for --ingest-dream-queue.",
+    )
     return parser.parse_args()
 
 
@@ -57,10 +69,89 @@ def load_note_text(args: argparse.Namespace) -> str:
     return str(args.note_text or "").strip()
 
 
+def iter_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            value = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(value, dict):
+            rows.append(value)
+    return rows
+
+
+def dream_task_already_imported(conn: Any, report_path: str) -> bool:
+    if not report_path:
+        return False
+    marker = Path(report_path).name or report_path
+    row = conn.execute(
+        """
+        SELECT task_id
+        FROM codex_review_tasks
+        WHERE task_type = 'dream_review_correction'
+          AND payload_json LIKE ?
+        LIMIT 1
+        """,
+        (f"%{marker}%",),
+    ).fetchone()
+    return row is not None
+
+
+def ingest_dream_queue(conn: Any, path: Path) -> dict[str, Any]:
+    imported: list[int] = []
+    skipped: list[dict[str, Any]] = []
+    for row in iter_jsonl(path):
+        status = str(row.get("status") or "")
+        report_path = str(row.get("report_path") or "")
+        if status != "queued_for_codex":
+            skipped.append({"report_path": report_path, "reason": f"status={status or 'missing'}"})
+            continue
+        if dream_task_already_imported(conn, report_path):
+            skipped.append({"report_path": report_path, "reason": "already_imported"})
+            continue
+        case_id = int(row.get("case_id") or 0)
+        task_id = enqueue_codex_review_task(
+            conn,
+            task_type="dream_review_correction",
+            case_id=case_id or None,
+            family_key=str(row.get("family") or ""),
+            priority="high",
+            source="dream_review_jsonl",
+            trigger_reason=str(row.get("message") or "Dream Review queued a contradiction for Codex review."),
+            payload={
+                "case_id": case_id,
+                "family_key": str(row.get("family") or ""),
+                "dream_review_result": row,
+                "source_queue_path": str(path),
+                "policy": "dream_review_contradictions_codex_owned",
+                "instruction": (
+                    "Inspect the queued Dream Review contradiction, local draft/verifier evidence, Auto Suggest evidence, "
+                    "completed review and current official ML note. If deterministic evidence is clear, replace the official "
+                    "ML note through --write-official-note; otherwise mark the task failed/skipped with the blocker."
+                ),
+            },
+        )
+        imported.append(task_id)
+    conn.commit()
+    return {"imported_task_ids": imported, "skipped": skipped, "source": str(path)}
+
+
 def main() -> None:
     args = parse_args()
     initialize_database(args.db)
     with connect(args.db) as conn:
+        if args.ingest_dream_queue:
+            dream_path = args.dream_queue_path
+            if not dream_path.is_absolute():
+                dream_path = Path(__file__).resolve().parent / dream_path
+            print(json.dumps(ingest_dream_queue(conn, dream_path), ensure_ascii=False, indent=2, default=str))
+            return
+
         if args.list_pending:
             tasks = [row_to_dict(row) for row in list_codex_review_tasks(conn, status=args.status, limit=args.limit)]
             print(json.dumps({"tasks": tasks}, ensure_ascii=False, indent=2, default=str))
