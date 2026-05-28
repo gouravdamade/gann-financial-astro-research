@@ -21,14 +21,13 @@ from aspect_annotation_store import (
 from doctrine_config import append_doctrine_metadata
 
 
-DEFAULT_DB = Path(r"C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite")
-DEFAULT_TOUCH_LOG = Path(
-    r"C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv"
-)
-DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
-DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
-DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_live_marker_ml_notes_v50"
+PROJECT_ROOT = Path(__file__).resolve().parent
+DEFAULT_DB = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv"
+DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
+DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
+DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_review_agent_v51"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -793,6 +792,43 @@ def load_rule_lessons(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dic
     return lessons_by_case
 
 
+def load_completed_reviews(db_path: Path, seed: dict[str, Any]) -> dict[int, dict[str, Any]]:
+    family_key = f"{seed['pair_key']}::{seed['aspect']}"
+    try:
+        with sqlite3.connect(str(db_path)) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                """
+                SELECT *
+                FROM completed_reviews
+                WHERE family_key = ?
+                ORDER BY updated_at_utc DESC, review_id DESC
+                """,
+                (family_key,),
+            ).fetchall()
+    except sqlite3.OperationalError:
+        return {}
+    out: dict[int, dict[str, Any]] = {}
+    json_fields = {
+        "auto_suggestion_json": "auto_suggestion",
+        "marker_ml_note_json": "marker_ml_note",
+        "rule_impact_json": "rule_impact",
+    }
+    for row in rows:
+        item = {key: row[key] for key in row.keys()}
+        for source_key, target_key in json_fields.items():
+            raw = item.pop(source_key, "")
+            try:
+                item[target_key] = json.loads(raw or "{}")
+            except Exception:
+                item[target_key] = {}
+        try:
+            out[int(row["case_id"])] = item
+        except Exception:
+            continue
+    return out
+
+
 def chart_command(args: argparse.Namespace, case_id: int, output_dir: Path) -> list[str]:
     return [
         sys.executable,
@@ -853,10 +889,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "nextHref": str(case.get("next_chart_href", "")),
         "reviewerHref": str(case.get("reviewer_href", "repeatation_reviewer.html")),
         "traitGuideHref": html_cache_href("trait_guide.html"),
+        "uiVersion": REPEATATION_UI_VERSION,
         "specialTraits": case.get("special_traits", {}),
         "appliedFamilyRules": case.get("applied_family_rules", []),
         "mlNotes": case.get("ml_notes", []),
         "ruleLessons": case.get("rule_lessons", []),
+        "completedReview": case.get("completed_review", None),
     }
     metadata_json = json.dumps(metadata)
     return f"""
@@ -909,6 +947,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       mlDraft: null,
       dreamReview: null,
       lessonSave: null,
+      reviewSave: null,
+      replayImpact: null,
+      completedReview: meta.completedReview || null,
       outcomeTouched: false,
       lastPoint: null,
       draftLoaded: false
@@ -2918,6 +2959,72 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + rows.join('')
         + '</details>';
     }}
+    function completeReviewPayload() {{
+      var result = tradeProfit();
+      if (!result || !state.tradeStart || !state.tradeEnd) return null;
+      return {{
+        case_id: meta.caseId,
+        family_key: String(meta.pairKey || '') + '::' + String(meta.aspect || ''),
+        pair_key: meta.pairKey,
+        aspect: meta.aspect,
+        price_timeframe: meta.priceTimeframe,
+        outcome_label: outcome(),
+        trade_start: serialPoint(state.tradeStart),
+        trade_end: serialPoint(state.tradeEnd),
+        trade_start_ist: state.tradeStart ? toIST(state.tradeStart.x) : '',
+        trade_end_ist: state.tradeEnd ? toIST(state.tradeEnd.x) : '',
+        trade_profit: result,
+        auto_suggestion: state.autoSuggestion || {{}},
+        current_marker_ml_note: currentMarkerMlNote(),
+        reviewer_note: noteText(),
+        review_status: 'complete',
+        rule_version: meta.uiVersion || ''
+      }};
+    }}
+    function impactSummaryHtml(impact) {{
+      if (!impact || typeof impact !== 'object') return '<div class="muted">No replay impact summary yet.</div>';
+      var affected = Array.isArray(impact.affected_or_needs_replay) ? impact.affected_or_needs_replay : [];
+      var rows = affected.slice(0, 12).map(function (item) {{
+        return '<div class="rm-review-impact-item">'
+          + '<b>case ' + esc(item.case_id || '') + '</b>'
+          + '<div class="rm-table-sub">stored ' + esc(item.stored_pips != null ? item.stored_pips : '') + ' pips | ' + esc(item.reason || 'needs replay check') + '</div>'
+          + '<div>old: ' + esc((item.stored_start_rule || '') + ' -> ' + (item.stored_end_rule || '')) + '</div>'
+          + '<div>new: ' + esc((item.current_start_rule || '') + ' -> ' + (item.current_end_rule || '')) + '</div>'
+          + '</div>';
+      }}).join('');
+      return '<div class="rm-table-sub">' + esc(impact.message || '') + '</div>'
+        + '<div class="rm-table-sub">previous reviewed=' + esc(impact.previous_reviewed_count || 0)
+        + ' | same rule path=' + esc(impact.same_rule_path_count || 0)
+        + ' | needs replay=' + esc(affected.length) + '</div>'
+        + rows;
+    }}
+    function completedReviewHtml() {{
+      var saved = state.completedReview || meta.completedReview || null;
+      var result = tradeProfit();
+      var status = state.reviewSave;
+      var body = '';
+      if (status) {{
+        body += '<div class="' + (status.ok ? 'rm-verifier-pass' : 'rm-warning') + '">'
+          + esc(status.message || status.error || '')
+          + (status.review_id ? ' #' + esc(status.review_id) : '')
+          + '</div>';
+      }}
+      if (saved) {{
+        body += '<div><b>Completed review</b><span>' + esc(saved.review_status || 'complete') + '</span></div>'
+          + '<div class="rm-table-sub">review_id=' + esc(saved.review_id || '') + ' | updated=' + esc(saved.updated_at_utc || '') + '</div>'
+          + '<div>Saved P/L: <b>' + esc(saved.signed_pips != null ? Number(saved.signed_pips).toFixed(1) : '') + ' pips</b></div>'
+          + '<div class="rm-table-sub">rules: ' + esc((saved.start_rule || '') + ' -> ' + (saved.end_rule || '')) + '</div>';
+      }} else {{
+        body += '<div><b>Review not completed</b><span>open</span></div>'
+          + '<div class="rm-table-sub">Run Auto Suggest or place start/end, confirm P/L, then click Review Complete to write this recurrence into the training ledger.</div>';
+      }}
+      if (result) {{
+        body += '<div class="rm-table-sub">current marker result: ' + esc(result.outcomeLabel) + ' ' + esc(result.signedPipsText) + ' pips</div>';
+      }}
+      var impact = (state.replayImpact || (saved && saved.rule_impact) || (status && status.impact_summary) || null);
+      body += '<details class="rm-review-impact" open><summary>Replay impact</summary>' + impactSummaryHtml(impact) + '</details>';
+      return '<div class="rm-review">' + body + '</div>';
+    }}
     function mlDraftHtml() {{
       if (!state.mlDraft) return '<div class="rm-draft muted">No local draft generated yet.</div>';
       var title = state.mlDraft.ok ? 'Local Draft ML Reason' : 'Local Draft Failed';
@@ -3356,6 +3463,60 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           render();
         }});
     }}
+    function completeReview() {{
+      var payload = completeReviewPayload();
+      if (!payload) {{
+        state.reviewSave = {{ ok: false, error: 'Place trade start and trade end before completing review.' }};
+        render();
+        return;
+      }}
+      state.reviewSave = {{ ok: true, message: 'saving completed review...' }};
+      render();
+      fetch('/api/complete_review', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify(payload)
+      }})
+        .then(function (res) {{ return res.json().then(function (data) {{ data.http_status = res.status; return data; }}); }})
+        .then(function (data) {{
+          state.reviewSave = data;
+          if (data.ok) {{
+            state.replayImpact = data.impact_summary || null;
+            state.completedReview = {{
+              review_id: data.review_id,
+              case_id: meta.caseId,
+              family_key: payload.family_key,
+              pair_key: payload.pair_key,
+              aspect: payload.aspect,
+              price_timeframe: payload.price_timeframe,
+              outcome_label: payload.outcome_label,
+              trade_start_ist: payload.trade_start_ist,
+              trade_end_ist: payload.trade_end_ist,
+              entry_price: payload.trade_profit.entry,
+              exit_price: payload.trade_profit.exit,
+              signed_pips: payload.trade_profit.signedPips,
+              raw_pips: payload.trade_profit.rawPips,
+              review_status: payload.review_status,
+              rule_version: payload.rule_version,
+              start_rule: (payload.auto_suggestion || {{}}).start_rule || '',
+              end_rule: (payload.auto_suggestion || {{}}).end_rule || '',
+              auto_suggestion: payload.auto_suggestion,
+              marker_ml_note: payload.current_marker_ml_note,
+              rule_impact: data.impact_summary || null,
+              reviewer_note: payload.reviewer_note,
+              updated_at_utc: new Date().toISOString()
+            }};
+            meta.completedReview = state.completedReview;
+            updateSaveStatus('completed review saved to DB');
+          }}
+          render();
+          saveDraft();
+        }})
+        .catch(function (err) {{
+          state.reviewSave = {{ ok: false, error: String(err && err.message ? err.message : err) }};
+          render();
+        }});
+    }}
     function render() {{
       panel.querySelector('#repeatation-last').textContent = fmtPoint(state.lastPoint);
       panel.querySelector('#repeatation-trade-start').textContent = fmtPoint(state.tradeStart);
@@ -3371,6 +3532,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
       panel.querySelector('#repeatation-rule-lessons').innerHTML = ruleLessonsHtml();
+      panel.querySelector('#repeatation-completed-review').innerHTML = completedReviewHtml();
       panel.querySelector('#repeatation-ml-verifier').innerHTML = mlVerifierHtml();
       panel.querySelector('#repeatation-dream-review').innerHTML = dreamReviewHtml();
       panel.querySelector('#repeatation-ml-draft').innerHTML = mlDraftHtml();
@@ -3422,6 +3584,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
         current_marker_ml_note: currentMarkerMlNote(),
+        review_save: state.reviewSave,
+        replay_impact: state.replayImpact,
+        completed_review: state.completedReview,
         last_point: serialPoint(state.lastPoint),
         outcome_label: outcome(),
         outcome_touched: state.outcomeTouched,
@@ -3461,6 +3626,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreEnd = restorePoint(draft.ignore_end);
       state.tradeIgnored = !!draft.trade_ignored;
       state.autoSuggestion = draft.auto_suggestion || null;
+      state.reviewSave = draft.review_save || null;
+      state.replayImpact = draft.replay_impact || null;
+      state.completedReview = draft.completed_review || meta.completedReview || null;
       state.outcomeTouched = !!draft.outcome_touched;
       setIgnoreTypes(Array.isArray(draft.selected_ignore_types) ? draft.selected_ignore_types : [], false);
       state.annotations = Array.isArray(draft.ml_annotations) ? draft.ml_annotations : [];
@@ -3494,6 +3662,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.autoSuggestion = null;
       state.selectedIgnoreTypes = [];
       state.annotations = [];
+      state.reviewSave = null;
+      state.replayImpact = null;
       state.outcomeTouched = false;
       state.lastPoint = null;
       state.draftLoaded = false;
@@ -3871,6 +4041,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<div id="repeatation-ml-notes"></div>'
       + '<div id="repeatation-rule-lessons"></div>'
       + '<div class="rm-actions"><button id="repeatation-save-rule-lesson" type="button">Save Rule Lesson</button><span class="rm-status-inline">logs current conflict for ML</span></div>'
+      + '<div id="repeatation-completed-review"></div>'
+      + '<div class="rm-actions"><button id="repeatation-complete-review" type="button">Review Complete</button><span class="rm-status-inline">locks this recurrence into training ledger</span></div>'
       + '<div class="rm-actions"><button id="repeatation-draft-ml-reason" type="button">Draft ML Reason</button><span id="repeatation-draft-ml-status" class="rm-status-inline">uses local Ollama/RAG if server is running</span></div>'
       + '<div id="repeatation-ml-verifier"></div>'
       + '<div id="repeatation-dream-review"></div>'
@@ -3959,6 +4131,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-lessons summary span,.rm-lesson-item span,.rm-lesson-draft span{{color:#fde68a;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-lesson-item,.rm-lesson-draft{{border-top:1px solid #115e59;padding-top:5px;margin-top:5px;}}'
       + '#repeatation-marker-panel .rm-lesson-item>div:first-child,.rm-lesson-draft>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ccfbf1;}}'
+      + '#repeatation-marker-panel .rm-review{{background:#07140f;border:1px solid #22c55e;border-radius:6px;padding:7px;margin:6px 0;color:#dcfce7;}}'
+      + '#repeatation-marker-panel .rm-review>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bbf7d0;}}'
+      + '#repeatation-marker-panel .rm-review span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-review-impact{{background:#020617;border:1px solid #14532d;border-radius:5px;padding:6px;margin-top:6px;}}'
+      + '#repeatation-marker-panel .rm-review-impact summary{{cursor:pointer;color:#bbf7d0;font-weight:700;}}'
+      + '#repeatation-marker-panel .rm-review-impact-item{{border-top:1px solid #14532d;padding-top:5px;margin-top:5px;color:#d1fae5;}}'
       + '#repeatation-marker-panel .rm-draft{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:6px 0;color:#dbeafe;}}'
       + '#repeatation-marker-panel .rm-draft summary{{cursor:pointer;color:#bae6fd;font-weight:700;}}'
       + '#repeatation-marker-panel .rm-draft pre{{max-height:280px;border-color:#164e63;color:#e0f2fe;}}'
@@ -4036,6 +4214,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-auto-suggest').addEventListener('click', autoSuggestTrade);
     panel.querySelector('#repeatation-show-gann').addEventListener('click', showGannFan);
     panel.querySelector('#repeatation-save-rule-lesson').addEventListener('click', saveRuleLesson);
+    panel.querySelector('#repeatation-complete-review').addEventListener('click', completeReview);
     panel.querySelector('#repeatation-draft-ml-reason').addEventListener('click', draftMlReason);
     panel.querySelector('#repeatation-ignore-trade').addEventListener('click', markIgnoreTrade);
     panel.querySelector('#repeatation-add-ignore-signal').addEventListener('click', function () {{ addAnnotation('ignore_signal'); }});
@@ -4502,6 +4681,7 @@ def main() -> None:
     family_rules = load_case_family_rules(args.db, seed)
     ml_notes_by_case = load_ml_notes(args.db, seed)
     lessons_by_case = load_rule_lessons(args.db, seed)
+    completed_reviews_by_case = load_completed_reviews(args.db, seed)
     for case in cases:
         stats = stats_by_case[int(case["case_id"])]
         case.update(stats)
@@ -4511,6 +4691,7 @@ def main() -> None:
         case["applied_family_rules"] = family_rules
         case["ml_notes"] = ml_notes_by_case.get(int(case["case_id"]), ml_notes_by_case.get(0, []))
         case["rule_lessons"] = lessons_by_case.get(int(case["case_id"]), lessons_by_case.get(0, []))
+        case["completed_review"] = completed_reviews_by_case.get(int(case["case_id"]))
 
     records: list[dict[str, Any]] = []
     for idx, case in enumerate(cases, start=1):
@@ -4532,6 +4713,7 @@ def main() -> None:
                 "applied_family_rules",
                 "ml_notes",
                 "rule_lessons",
+                "completed_review",
             }
         }
         record = {

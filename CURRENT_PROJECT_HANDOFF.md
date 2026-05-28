@@ -1,10 +1,48 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 01:08 IST
+Last updated: 2026-05-29 01:46 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-27
+## Latest Update - 2026-05-29
+
+2026-05-29 review-completion agent ledger:
+
+- User requested automated agents that work alongside manual review:
+  - after start/end markers and P/L are available, create ML notes automatically;
+  - mark a recurrence reviewed;
+  - compare new rule paths against already reviewed repeatations;
+  - give future rule changes a deterministic place to report earlier cases that need replay/correction.
+- Updated `aspect_annotation_store.py`:
+  - added durable `completed_reviews` table;
+  - added `upsert_completed_review()` and `list_completed_reviews()`;
+  - each completed review stores case/family, timeframe, outcome, start/end times, entry/exit, signed/raw pips, rule version, Auto Suggest start/end rule, full Auto Suggest JSON, live marker ML note JSON, replay-impact JSON, and reviewer note.
+- Updated `serve_repeatation_pack.py`:
+  - added `/api/complete_review`;
+  - endpoint saves/updates one completed review and returns a replay-impact summary for the same family;
+  - current first replay-impact pass flags previous completed reviews whose stored rule path or rule version differs from the new completed review, so they can be replay-checked after rule changes.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260529_review_agent_v51`;
+  - builder defaults now use project-local `D:\PycharmProjects` paths and `D:\GannFinancialAstro\doc` export root instead of stale C-drive defaults;
+  - generated chart metadata loads any existing completed review for each case;
+  - marker drawer now has `Review Complete`;
+  - completion payload includes live marker ML note, exact P/L, start/end rules, Auto Suggest evidence, reviewer note, and UI rule version;
+  - drawer shows completed status plus replay-impact summary.
+- Initialized `D:\PycharmProjects\gann_aspect_annotations.sqlite` with the new schema.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_014054`
+- Restarted server on port `8765`, PID `16016`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260529_review_agent_v51&fresh=reviewagent`
+- Verification:
+  - HTTP `200` from case `8` chart.
+  - Browser opened the new case `8` chart.
+  - `Review Complete` saved case `8` to `completed_reviews` as review `#1`.
+  - Saved review: `bearish +23.3 pips`, start rule `family_rule_case_window_entry_open_price`, end rule `confirmed_break_next_shaded_zone_boundary`, rule version `repeatation_ui_20260529_review_agent_v51`.
+  - Replay impact shows no previous completed reviews in this family yet.
+  - `python -m py_compile build_repeatation_review_pack.py aspect_annotation_store.py serve_repeatation_pack.py reviewer_rule_replay.py` passed.
+
+## Previous Update - 2026-05-29
 
 2026-05-29 live marker-derived ML Notes:
 

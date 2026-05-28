@@ -317,6 +317,36 @@ CREATE TABLE IF NOT EXISTS rule_lessons (
 
 CREATE INDEX IF NOT EXISTS idx_rule_lessons_family
 ON rule_lessons(family_key, conflict_type, case_id);
+
+CREATE TABLE IF NOT EXISTS completed_reviews (
+    review_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    case_id INTEGER NOT NULL REFERENCES aspect_cases(case_id) ON DELETE CASCADE,
+    family_key TEXT NOT NULL,
+    pair_key TEXT,
+    aspect TEXT,
+    price_timeframe TEXT,
+    outcome_label TEXT,
+    trade_start_ist TEXT,
+    trade_end_ist TEXT,
+    entry_price REAL,
+    exit_price REAL,
+    signed_pips REAL,
+    raw_pips REAL,
+    review_status TEXT NOT NULL DEFAULT 'complete',
+    rule_version TEXT,
+    start_rule TEXT,
+    end_rule TEXT,
+    auto_suggestion_json TEXT,
+    marker_ml_note_json TEXT,
+    rule_impact_json TEXT,
+    reviewer_note TEXT,
+    completed_at_utc TEXT NOT NULL,
+    updated_at_utc TEXT NOT NULL,
+    UNIQUE(case_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_completed_reviews_family
+ON completed_reviews(family_key, completed_at_utc);
 """
 
 
@@ -1082,6 +1112,135 @@ def add_rule_lesson(
         (int(case_id), lesson_key, winner_rule),
     ).fetchone()
     return int(row["lesson_id"] if row else cur.lastrowid), bool(row["inserted"] if row else True)
+
+
+def upsert_completed_review(
+    conn: sqlite3.Connection,
+    *,
+    case_id: int,
+    family_key: str,
+    pair_key: str = "",
+    aspect: str = "",
+    price_timeframe: str = "",
+    outcome_label: str = "",
+    trade_start_ist: str = "",
+    trade_end_ist: str = "",
+    entry_price: float | None = None,
+    exit_price: float | None = None,
+    signed_pips: float | None = None,
+    raw_pips: float | None = None,
+    review_status: str = "complete",
+    rule_version: str = "",
+    start_rule: str = "",
+    end_rule: str = "",
+    auto_suggestion_json: str = "",
+    marker_ml_note_json: str = "",
+    rule_impact_json: str = "",
+    reviewer_note: str = "",
+) -> tuple[int, bool]:
+    now = utc_now()
+    conn.execute(
+        """
+        INSERT INTO completed_reviews(
+            case_id, family_key, pair_key, aspect, price_timeframe, outcome_label,
+            trade_start_ist, trade_end_ist, entry_price, exit_price, signed_pips, raw_pips,
+            review_status, rule_version, start_rule, end_rule, auto_suggestion_json,
+            marker_ml_note_json, rule_impact_json, reviewer_note, completed_at_utc, updated_at_utc
+        )
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(case_id) DO UPDATE SET
+            family_key = excluded.family_key,
+            pair_key = excluded.pair_key,
+            aspect = excluded.aspect,
+            price_timeframe = excluded.price_timeframe,
+            outcome_label = excluded.outcome_label,
+            trade_start_ist = excluded.trade_start_ist,
+            trade_end_ist = excluded.trade_end_ist,
+            entry_price = excluded.entry_price,
+            exit_price = excluded.exit_price,
+            signed_pips = excluded.signed_pips,
+            raw_pips = excluded.raw_pips,
+            review_status = excluded.review_status,
+            rule_version = excluded.rule_version,
+            start_rule = excluded.start_rule,
+            end_rule = excluded.end_rule,
+            auto_suggestion_json = excluded.auto_suggestion_json,
+            marker_ml_note_json = excluded.marker_ml_note_json,
+            rule_impact_json = excluded.rule_impact_json,
+            reviewer_note = excluded.reviewer_note,
+            updated_at_utc = excluded.updated_at_utc
+        """,
+        (
+            int(case_id),
+            family_key,
+            pair_key,
+            aspect,
+            price_timeframe,
+            outcome_label,
+            trade_start_ist,
+            trade_end_ist,
+            entry_price,
+            exit_price,
+            signed_pips,
+            raw_pips,
+            review_status,
+            rule_version,
+            start_rule,
+            end_rule,
+            auto_suggestion_json,
+            marker_ml_note_json,
+            rule_impact_json,
+            reviewer_note,
+            now,
+            now,
+        ),
+    )
+    row = conn.execute(
+        """
+        SELECT review_id, completed_at_utc = updated_at_utc AS inserted
+        FROM completed_reviews
+        WHERE case_id = ?
+        """,
+        (int(case_id),),
+    ).fetchone()
+    return int(row["review_id"]), bool(row["inserted"])
+
+
+def list_completed_reviews(
+    conn: sqlite3.Connection,
+    *,
+    family_key: str | None = None,
+    case_id: int | None = None,
+    limit: int = 1000,
+) -> list[sqlite3.Row]:
+    if case_id is not None:
+        return conn.execute(
+            """
+            SELECT * FROM completed_reviews
+            WHERE case_id = ?
+            ORDER BY completed_at_utc DESC, review_id DESC
+            LIMIT ?
+            """,
+            (int(case_id), int(limit)),
+        ).fetchall()
+    if family_key:
+        return conn.execute(
+            """
+            SELECT * FROM completed_reviews
+            WHERE family_key = ?
+            ORDER BY completed_at_utc DESC, review_id DESC
+            LIMIT ?
+            """,
+            (family_key, int(limit)),
+        ).fetchall()
+    return conn.execute(
+        """
+        SELECT * FROM completed_reviews
+        ORDER BY completed_at_utc DESC, review_id DESC
+        LIMIT ?
+        """,
+        (int(limit),),
+    ).fetchall()
 
 
 def list_rule_notes(conn: sqlite3.Connection, case_id: int | None, limit: int) -> list[sqlite3.Row]:

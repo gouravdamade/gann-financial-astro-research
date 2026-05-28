@@ -13,7 +13,13 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from functools import partial
 
-from aspect_annotation_store import add_rule_lesson, connect, initialize_database
+from aspect_annotation_store import (
+    add_rule_lesson,
+    connect,
+    initialize_database,
+    list_completed_reviews,
+    upsert_completed_review,
+)
 
 
 DEFAULT_PACK_DIR = Path(
@@ -89,6 +95,9 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
         if endpoint == "/api/save_rule_lesson":
             self._handle_save_rule_lesson()
             return
+        if endpoint == "/api/complete_review":
+            self._handle_complete_review()
+            return
         if endpoint != "/api/draft_ml_reason":
             self._send_json(404, {"ok": False, "error": "unknown API endpoint"})
             return
@@ -141,6 +150,130 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 "path": str(out_path),
                 "markdown": markdown,
                 "llm_runtime": llm_runtime,
+            },
+        )
+
+    def _completed_row_to_dict(self, row) -> dict:
+        out = dict(row)
+        for key in ("auto_suggestion_json", "marker_ml_note_json", "rule_impact_json"):
+            raw = out.pop(key, "") or ""
+            out[key.replace("_json", "")] = {}
+            if raw:
+                try:
+                    out[key.replace("_json", "")] = json.loads(raw)
+                except Exception:
+                    out[key.replace("_json", "")] = {"raw": raw}
+        return out
+
+    def _review_impact_summary(self, payload: dict, previous_rows: list) -> dict:
+        auto = payload.get("auto_suggestion") or {}
+        current_start_rule = str(auto.get("start_rule") or payload.get("start_rule") or "")
+        current_end_rule = str(auto.get("end_rule") or payload.get("end_rule") or "")
+        current_version = str(payload.get("rule_version") or "")
+        changed = []
+        same = 0
+        for row in previous_rows:
+            old_start = str(row["start_rule"] or "")
+            old_end = str(row["end_rule"] or "")
+            old_version = str(row["rule_version"] or "")
+            differs = old_start != current_start_rule or old_end != current_end_rule
+            version_differs = bool(current_version and old_version and current_version != old_version)
+            if differs or version_differs:
+                changed.append(
+                    {
+                        "case_id": int(row["case_id"]),
+                        "stored_pips": row["signed_pips"],
+                        "stored_start_rule": old_start,
+                        "stored_end_rule": old_end,
+                        "stored_rule_version": old_version,
+                        "current_start_rule": current_start_rule,
+                        "current_end_rule": current_end_rule,
+                        "current_rule_version": current_version,
+                        "reason": "rule path differs" if differs else "rule version differs",
+                    }
+                )
+            else:
+                same += 1
+        return {
+            "current_start_rule": current_start_rule,
+            "current_end_rule": current_end_rule,
+            "current_rule_version": current_version,
+            "previous_reviewed_count": len(previous_rows),
+            "same_rule_path_count": same,
+            "affected_or_needs_replay": changed,
+            "message": (
+                "No previous completed reviews in this family yet."
+                if not previous_rows
+                else f"{len(changed)} previous completed review(s) have a different rule path/version and should be replay-checked."
+            ),
+        }
+
+    def _handle_complete_review(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            raw = self.rfile.read(length).decode("utf-8", errors="replace")
+            payload = json.loads(raw or "{}")
+            case_id = int(payload.get("case_id"))
+            family_key = str(payload.get("family_key") or "").strip()
+            if not family_key:
+                raise ValueError("family_key is required")
+            trade = payload.get("trade_profit") or {}
+            auto = payload.get("auto_suggestion") or {}
+            start = payload.get("trade_start") or {}
+            end = payload.get("trade_end") or {}
+        except Exception as exc:
+            self._send_json(400, {"ok": False, "error": f"bad complete review request: {exc}"})
+            return
+
+        db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+        try:
+            initialize_database(db_path)
+            with connect(db_path) as conn:
+                previous_rows = [
+                    row
+                    for row in list_completed_reviews(conn, family_key=family_key, limit=1000)
+                    if int(row["case_id"]) != case_id
+                ]
+                impact = self._review_impact_summary(payload, previous_rows)
+                review_id, inserted = upsert_completed_review(
+                    conn,
+                    case_id=case_id,
+                    family_key=family_key,
+                    pair_key=str(payload.get("pair_key") or ""),
+                    aspect=str(payload.get("aspect") or ""),
+                    price_timeframe=str(payload.get("price_timeframe") or ""),
+                    outcome_label=str(payload.get("outcome_label") or trade.get("outcomeLabel") or ""),
+                    trade_start_ist=str(payload.get("trade_start_ist") or ""),
+                    trade_end_ist=str(payload.get("trade_end_ist") or ""),
+                    entry_price=trade.get("entry"),
+                    exit_price=trade.get("exit"),
+                    signed_pips=trade.get("signedPips"),
+                    raw_pips=trade.get("rawPips"),
+                    review_status=str(payload.get("review_status") or "complete"),
+                    rule_version=str(payload.get("rule_version") or ""),
+                    start_rule=str(auto.get("start_rule") or ""),
+                    end_rule=str(auto.get("end_rule") or ""),
+                    auto_suggestion_json=json.dumps(auto, ensure_ascii=False, default=str),
+                    marker_ml_note_json=json.dumps(payload.get("current_marker_ml_note") or {}, ensure_ascii=False, default=str),
+                    rule_impact_json=json.dumps(impact, ensure_ascii=False, default=str),
+                    reviewer_note=str(payload.get("reviewer_note") or ""),
+                )
+                conn.commit()
+                current_rows = list_completed_reviews(conn, family_key=family_key, limit=1000)
+        except Exception as exc:
+            self._send_json(500, {"ok": False, "error": f"could not complete review: {exc}"})
+            return
+
+        self._send_json(
+            200,
+            {
+                "ok": True,
+                "review_id": review_id,
+                "inserted": inserted,
+                "case_id": case_id,
+                "message": "review completed" if inserted else "review completion updated",
+                "impact_summary": impact,
+                "completed_reviews": [self._completed_row_to_dict(row) for row in current_rows[:50]],
             },
         )
 
