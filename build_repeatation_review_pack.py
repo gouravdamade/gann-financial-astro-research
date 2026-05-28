@@ -28,7 +28,7 @@ DEFAULT_TOUCH_LOG = Path(
 DEFAULT_PRICE = Path(r"C:\Users\ADMIN\PycharmProjects\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet")
 DEFAULT_REVIEW_FOCUS = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv")
 DEFAULT_EXPORT_ROOT = Path(r"C:\Users\ADMIN\Desktop\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260527_multi_aspect_gann_exit_v49"
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_live_marker_ml_notes_v50"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -2752,10 +2752,77 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var bodyText = bodyParts.length > 1 ? bodyParts.slice(1).join('\\n\\n') : text;
       return fieldHtml + '<div class="rm-ml-note-body">' + esc(bodyText) + '</div>';
     }}
+    function currentMarkerMlNote() {{
+      var result = tradeProfit();
+      if (!result || !state.tradeStart || !state.tradeEnd) return null;
+      var s = state.autoSuggestion || {{}};
+      var startLabel = state.tradeStart.markerLabel || state.tradeStart.traceName || state.tradeStart.source || 'manual marker';
+      var endLabel = state.tradeEnd.markerLabel || state.tradeEnd.traceName || state.tradeEnd.source || 'manual marker';
+      var geometry = s.sr_geometry || s.default_marker_flow_sr_geometry || null;
+      var breakInfo = s.break_confirmation || null;
+      var hints = topAstroHintLabels();
+      var source = state.autoSuggestion ? 'auto_suggest_or_adjusted_markers' : 'manual_markers';
+      var lines = [
+        'scope=current_marker_draft/local',
+        'status=live_autosaved_not_db_committed',
+        'type=marker_ml_note',
+        'case_id=' + meta.caseId,
+        'family=' + meta.pairKey + '::' + meta.aspect,
+        'outcome=' + result.outcomeLabel,
+        'signed_pips=' + result.signedPips.toFixed(1),
+        'raw_pips=' + result.rawPips.toFixed(1),
+        'trade_result=' + result.status,
+        'entry=' + toIST(state.tradeStart.x) + ' @ ' + result.entry.toFixed(3),
+        'exit=' + toIST(state.tradeEnd.x) + ' @ ' + result.exit.toFixed(3),
+        'start_source=' + startLabel,
+        'end_source=' + endLabel
+      ];
+      if (s.start_rule || s.end_rule) {{
+        lines.push('auto_rules=' + String(s.start_rule || 'manual_start') + ' -> ' + String(s.end_rule || 'manual_end'));
+      }}
+      if (s.reason) lines.push('auto_reason=' + String(s.reason));
+      if (geometry && geometry.label) {{
+        lines.push('sr_geometry=' + geometry.label + ' | distance=' + signedPipsText(geometry.distance_pips));
+      }}
+      if (breakInfo && breakInfo.label) {{
+        lines.push('break_confirmation=' + breakInfo.label + ' | ' + String(breakInfo.reason || ''));
+      }}
+      if (s.gann_fan_exit_rule_status) {{
+        lines.push('gann_fan_exit_status=' + String(s.gann_fan_exit_rule_status));
+      }}
+      if (s.multi_aspect_overlap_evidence) {{
+        lines.push('multi_aspect_gate=' + (s.multi_aspect_overlap_evidence.active ? 'active' : 'inactive'));
+      }}
+      if (s.outcome_tracking) lines.push('rule_vs_default=' + JSON.stringify(s.outcome_tracking));
+      if (hints.length) lines.push('astro_hints=' + hints.join(' | '));
+      if (noteText()) lines.push('reviewer_note=' + noteText());
+      return {{
+        note_id: 'live-marker',
+        seed_case_id: meta.caseId,
+        note_type: 'current_marker_ml_note',
+        label: 'Current marker ML note',
+        match_scope: source,
+        status: 'live_autosaved_not_db_committed',
+        fields: {{
+          pips: result.signedPips.toFixed(1),
+          outcome: result.outcomeLabel,
+          trade_result: result.status,
+          start_rule: s.start_rule || 'manual_start',
+          end_rule: s.end_rule || 'manual_end',
+          sr_geometry: geometry && geometry.label ? geometry.label : '',
+          break_confirmation: breakInfo && breakInfo.label ? breakInfo.label : '',
+          gann_fan_exit_status: s.gann_fan_exit_rule_status || ''
+        }},
+        note_text: lines.join('\\n'),
+        created_at_utc: new Date().toISOString()
+      }};
+    }}
     function mlNotesHtml() {{
       var notes = Array.isArray(meta.mlNotes) ? meta.mlNotes : [];
-      if (!notes.length) return '<details class="rm-ml-notes"><summary>ML Notes <span>0</span></summary><div class="muted">No ML notes saved for this case/family yet.</div></details>';
-      var rows = notes.map(function (note) {{
+      var liveNote = currentMarkerMlNote();
+      var allNotes = liveNote ? [liveNote].concat(notes) : notes;
+      if (!allNotes.length) return '<details class="rm-ml-notes"><summary>ML Notes <span>0</span></summary><div class="muted">Place trade start/end or run Auto Suggest to create a live marker ML note.</div></details>';
+      var rows = allNotes.map(function (note) {{
         var title = note.label || note.note_type || 'ML note';
         var scope = note.match_scope || note.scope || 'saved note';
         return '<div class="rm-ml-note-item">'
@@ -2764,7 +2831,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + mlNotePrettyText(note)
           + '</div>';
       }}).join('');
-      return '<details class="rm-ml-notes" open><summary>ML Notes <span>' + esc(notes.length) + '</span></summary>' + rows + '</details>';
+      return '<details class="rm-ml-notes" open><summary>ML Notes <span>' + esc(allNotes.length) + '</span></summary>'
+        + '<div class="rm-table-sub">Live marker notes are generated from current start/end, P/L, rule path, and chart evidence. They autosave in this draft and feed Draft ML Reason, but are not permanent DB notes until saved separately.</div>'
+        + rows + '</details>';
     }}
     function topAstroHintLabels() {{
       var traits = meta.specialTraits && Array.isArray(meta.specialTraits.traits) ? meta.specialTraits.traits : [];
@@ -2860,6 +2929,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function mlNotesPlainText() {{
       var notes = Array.isArray(meta.mlNotes) ? meta.mlNotes : [];
+      var liveNote = currentMarkerMlNote();
+      if (liveNote) notes = [liveNote].concat(notes);
       return notes.map(function (note) {{
         var fields = note && note.fields && typeof note.fields === 'object' ? JSON.stringify(note.fields) : '';
         return [
@@ -3350,6 +3421,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         auto_suggestion: state.autoSuggestion,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
+        current_marker_ml_note: currentMarkerMlNote(),
         last_point: serialPoint(state.lastPoint),
         outcome_label: outcome(),
         outcome_touched: state.outcomeTouched,
@@ -3749,6 +3821,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         auto_suggestion: state.autoSuggestion,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
+        current_marker_ml_note: currentMarkerMlNote(),
         trade_profit: tradeProfit(),
         annotation_definitions: {{
           ignore_signal_types: IGNORE_SIGNAL_DEFINITIONS,

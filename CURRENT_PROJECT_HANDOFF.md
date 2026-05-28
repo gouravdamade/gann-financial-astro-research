@@ -1,10 +1,39 @@
 # Current Project Handoff
 
-Last updated: 2026-05-27 18:04 IST
+Last updated: 2026-05-29 01:08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-27
+
+2026-05-29 live marker-derived ML Notes:
+
+- User reported case `8` had no visible ML Notes after family notes were correctly separated from exact-case notes.
+- Design decision:
+  - saved DB ML notes remain strict/exact-case only;
+  - family notes remain in `Applied family rules` / training memory;
+  - marker-derived ML notes are now generated live from the actual current trade start/end markers and P/L.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260529_live_marker_ml_notes_v50`;
+  - added `currentMarkerMlNote()`;
+  - `ML Notes` now shows `Current marker ML note` as soon as trade start/end exist, whether placed manually or by Auto Suggest;
+  - live note includes case/family, outcome, signed/raw pips, entry/exit times/prices, start/end sources, Auto Suggest start/end rules, Auto Suggest reason, SR geometry, break confirmation, Gann fan status, multi-aspect gate status, rule-vs-default tracking, top astro hints, and any reviewer note;
+  - live note is included in `mlNotesPlainText()` so Draft ML Reason and dream/verifier context can consume it;
+  - live note is included in autosaved browser draft and downloaded marker JSON as `current_marker_ml_note`.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_010327`
+- Restarted server on port `8765`, PID `21572`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260529_live_marker_ml_notes_v50&fresh=mlnotes`
+- Verification:
+  - HTTP `200` from case `8` chart.
+  - Playwright/Edge ran Auto Suggest on case `8`.
+  - `ML Notes` panel showed one live note:
+    `Current marker ML note`, outcome `bearish`, `+23.3 pips`, start rule `family_rule_case_window_entry_open_price`, end rule `confirmed_break_next_shaded_zone_boundary`, SR geometry `SR is below entry: support/target`, break confirmation `Support break confirmed`, Gann fan exit `blocked_no_multi_aspect_overlap`.
+  - Browser draft localStorage contained `current_marker_ml_note`.
+  - `python -m py_compile build_repeatation_review_pack.py reviewer_rule_replay.py serve_repeatation_pack.py aspect_annotation_store.py` passed.
+
+## Previous Update - 2026-05-27
 
 2026-05-27 case-specific ML Notes cleanup + Auto Suggest replay:
 
