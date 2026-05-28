@@ -1,10 +1,49 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 02:27 IST
+Last updated: 2026-05-29 03:36 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-29
+
+2026-05-29 Gate 3 external certification pass:
+
+- User requested certification of the above-mentioned review cases after discussing Gate 3 trusted sources.
+- Installed PyJHora `4.8.6` as a local Tier B external witness under:
+  `D:\GannFinancialAstro\external_tools\pyjhora`
+  - This is intentionally outside the git repo and should remain local/uncommitted.
+  - First dependency install hit low C-drive temp/cache space; rerun used D-drive temp/cache and succeeded.
+- Used PyJHora with:
+  - Raman ayanamsa;
+  - true node / Rahu;
+  - event timezone;
+  - `drik.sidereal_longitude`, `drik.tithi`, and `drik.nakshatra`.
+- Filled Gate 3 external expected values in:
+  `D:\PycharmProjects\astro_external_validation_template_20260527.csv`
+- Certified 25 astronomy/Panchanga rows:
+  - `case_8_event_start`
+  - `case_43_event_start`
+  - `case_103_event_start`
+  - `case_127_sr_touch_start`
+  - `gann_reference_tokyo`
+  - each with Sun/Moon/Rahu Raman sidereal longitude, Tithi, and Moon Nakshatra/Pada.
+- Updated `astro_function_certification.py`:
+  - certification notes are now idempotent;
+  - repeated runs no longer append duplicate `numeric delta` / `categorical exact compare` / pending compare text.
+- Reran:
+  `python astro_function_certification.py`
+- Current Gate 3 result:
+  `25 pass / 0 fail / 10 pending`
+- Remaining pending Gate 3 rows:
+  Shadbala and Drik Bala rows for each sample remain intentionally pending until we have row-specific JHora/book-style exports.
+- Updated:
+  `D:\PycharmProjects\astro_function_certification_report_20260527.md`
+  `D:\PycharmProjects\trading_rule_replay_result_20260527.json`
+- Verification:
+  - `python -m py_compile astro_function_certification.py`
+  - `python test_strict_shadbala_doctrine.py`
+  - `python codex_review_task_queue.py --list-pending --limit 10`
+  all passed.
 
 2026-05-29 historical re-simulation + Codex-owned ML notes:
 

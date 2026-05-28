@@ -176,6 +176,22 @@ def compare_external_value(feature_key: str, local_value: str, expected_value: s
     return status, "categorical exact compare"
 
 
+def is_compare_note_fragment(fragment: str) -> bool:
+    fragment = fragment.strip()
+    return (
+        fragment.startswith("numeric delta=")
+        or fragment == "categorical exact compare"
+        or fragment == "No external expected value entered."
+        or fragment == "Local value requires row-specific event context before comparison."
+    )
+
+
+def append_compare_note(notes: str, compare_note: str) -> str:
+    parts = [part.strip() for part in str(notes).split(" | ") if part.strip()]
+    base_parts = [part for part in parts if not is_compare_note_fragment(part)]
+    return " | ".join(base_parts + [compare_note])
+
+
 def merge_external_values(
     templates: list[ExternalTemplateRow],
     external_rows: list[dict[str, str]],
@@ -188,10 +204,7 @@ def merge_external_values(
         external_source = source.get("external_source", row.external_source)
         notes = source.get("notes", row.notes)
         pass_fail, compare_note = compare_external_value(row.feature_key, row.local_value, expected)
-        if notes:
-            notes = f"{notes} | {compare_note}"
-        else:
-            notes = compare_note
+        notes = append_compare_note(notes, compare_note)
         merged.append(
             ExternalTemplateRow(
                 gate=row.gate,

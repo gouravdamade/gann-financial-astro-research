@@ -1,7 +1,7 @@
 # Astro Function Certification 4-Gate Report
 
 - Report version: `astro_certification_4_gate_v1_20260527`
-- Generated: `2026-05-27T13:18:13+05:30`
+- Generated: `2026-05-29T03:27:59+05:30`
 - Important interpretation: this report certifies traceability and local reproducibility first. External Jyotish/ephemeris validation remains explicitly pending where marked.
 
 ## Gate Summary
@@ -10,7 +10,7 @@
 | --- | --- |
 | Gate 1 - Formula inventory | 9 feature rows inventoried |
 | Gate 2 - Astronomical baseline | 45 planet/node rows generated with Raman ayanamsa |
-| Gate 3 - External validation template | 0 pass / 0 fail / 35 pending |
+| Gate 3 - External validation template | 25 pass / 0 fail / 10 pending |
 | Gate 4 - Trading replay | passed |
 
 ## Certification Labels
@@ -77,9 +77,9 @@ Fill the expected-value columns from trusted ephemeris, Panchanga, and Shadbala 
 
 | Status | Rows |
 | --- | --- |
-| pass | 0 |
+| pass | 25 |
 | fail | 0 |
-| pending | 35 |
+| pending | 10 |
 
 ## Gate 4 - Trading Replay
 
@@ -87,7 +87,7 @@ Status: `passed`
 
 ```text
 {
-  "pack_dir": "D:\\GannFinancialAstro\\doc\\repeatation_review_case_8_avg_all_moon_square_20260527_081226",
+  "pack_dir": "D:\\GannFinancialAstro\\doc\\repeatation_review_case_8_avg_all_moon_square_20260529_022249",
   "results": [
     {
       "case_id": 127,
@@ -109,7 +109,10 @@ Status: `passed`
         "y": 145.12528246460198,
         "trace_name": "Selected case touches",
         "marker_label": "Pair: AVG(ALL)|MOON Aspect: Square Duration: 3h 0m Orb: 76.850deg / 1.000deg BPHS-like orb proxy: 0.000 (0.0/60) Panchanga: Wednesday MERCURY | Shukla Dvitiya |",
-        "is_selected_case_touch": true
+        "is_selected_case_touch": true,
+        "curveNumber": 106,
+        "pointNumber": 0,
+        "autoCandidate": true
       },
       "case_window_sr_touch_count": 3
     },
