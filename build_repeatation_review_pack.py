@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_review_agent_v51"
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_historical_replay_v52"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -2873,7 +2873,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + '</div>';
       }}).join('');
       return '<details class="rm-ml-notes" open><summary>ML Notes <span>' + esc(allNotes.length) + '</span></summary>'
-        + '<div class="rm-table-sub">Live marker notes are generated from current start/end, P/L, rule path, and chart evidence. They autosave in this draft and feed Draft ML Reason, but are not permanent DB notes until saved separately.</div>'
+        + '<div class="rm-table-sub">Live marker notes are draft evidence from current start/end, P/L, rule path, and chart evidence. Permanent official ML notes are created/edited only by Codex after Review Complete queues a task.</div>'
         + rows + '</details>';
     }}
     function topAstroHintLabels() {{
@@ -2985,17 +2985,30 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (!impact || typeof impact !== 'object') return '<div class="muted">No replay impact summary yet.</div>';
       var affected = Array.isArray(impact.affected_or_needs_replay) ? impact.affected_or_needs_replay : [];
       var rows = affected.slice(0, 12).map(function (item) {{
+        var storedPips = item.stored_pips != null ? item.stored_pips : item.old_signed_pips;
+        var replayedPips = item.replayed_pips != null ? item.replayed_pips : (item.new_signed_pips != null ? item.new_signed_pips : item.current_pips);
+        var deltaPips = item.pips_delta != null ? item.pips_delta : item.delta_signed_pips;
+        var oldStart = item.stored_start_rule || item.old_start_rule || '';
+        var oldEnd = item.stored_end_rule || item.old_end_rule || '';
+        var newStart = item.replayed_start_rule || item.current_start_rule || item.new_start_rule || '';
+        var newEnd = item.replayed_end_rule || item.current_end_rule || item.new_end_rule || '';
         return '<div class="rm-review-impact-item">'
           + '<b>case ' + esc(item.case_id || '') + '</b>'
-          + '<div class="rm-table-sub">stored ' + esc(item.stored_pips != null ? item.stored_pips : '') + ' pips | ' + esc(item.reason || 'needs replay check') + '</div>'
-          + '<div>old: ' + esc((item.stored_start_rule || '') + ' -> ' + (item.stored_end_rule || '')) + '</div>'
-          + '<div>new: ' + esc((item.current_start_rule || '') + ' -> ' + (item.current_end_rule || '')) + '</div>'
+          + '<div class="rm-table-sub">stored ' + esc(storedPips != null ? storedPips : '') + ' pips'
+          + (replayedPips != null ? ' | replay ' + esc(replayedPips) + ' pips' : '')
+          + (deltaPips != null ? ' | delta ' + esc(deltaPips) : '')
+          + ' | ' + esc(item.reason || 'needs replay check') + '</div>'
+          + '<div>old: ' + esc(oldStart + ' -> ' + oldEnd) + '</div>'
+          + '<div>replay: ' + esc(newStart + ' -> ' + newEnd) + '</div>'
           + '</div>';
       }}).join('');
       return '<div class="rm-table-sub">' + esc(impact.message || '') + '</div>'
-        + '<div class="rm-table-sub">previous reviewed=' + esc(impact.previous_reviewed_count || 0)
-        + ' | same rule path=' + esc(impact.same_rule_path_count || 0)
-        + ' | needs replay=' + esc(affected.length) + '</div>'
+        + '<div class="rm-table-sub">mode=' + esc(impact.mode || 'rule_path')
+        + ' | previous reviewed=' + esc(impact.previous_reviewed_count || impact.reviewed_count || 0)
+        + ' | stable=' + esc(impact.same_rule_path_count || impact.unchanged_count || 0)
+        + ' | affected=' + esc(impact.affected_count != null ? impact.affected_count : affected.length) + '</div>'
+        + (impact.official_note_policy ? '<div class="rm-table-sub">' + esc(impact.official_note_policy) + '</div>' : '')
+        + (impact.replay_error ? '<div class="rm-warning">Replay fallback: ' + esc(impact.replay_error) + '</div>' : '')
         + rows;
     }}
     function completedReviewHtml() {{
@@ -3004,10 +3017,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var status = state.reviewSave;
       var body = '';
       if (status) {{
+        var taskIds = Array.isArray(status.codex_task_ids) ? status.codex_task_ids : [];
         body += '<div class="' + (status.ok ? 'rm-verifier-pass' : 'rm-warning') + '">'
           + esc(status.message || status.error || '')
           + (status.review_id ? ' #' + esc(status.review_id) : '')
           + '</div>';
+        if (taskIds.length) {{
+          body += '<div class="rm-table-sub">Codex official ML-note task queued: #' + esc(taskIds.join(', #')) + '</div>';
+        }}
       }}
       if (saved) {{
         body += '<div><b>Completed review</b><span>' + esc(saved.review_status || 'complete') + '</span></div>'
@@ -3021,6 +3038,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (result) {{
         body += '<div class="rm-table-sub">current marker result: ' + esc(result.outcomeLabel) + ' ' + esc(result.signedPipsText) + ' pips</div>';
       }}
+      body += '<div class="rm-table-sub">Official ML notes are Codex-owned: this page queues evidence; Codex reviews and writes/corrects the permanent note.</div>';
       var impact = (state.replayImpact || (saved && saved.rule_impact) || (status && status.impact_summary) || null);
       body += '<details class="rm-review-impact" open><summary>Replay impact</summary>' + impactSummaryHtml(impact) + '</details>';
       return '<div class="rm-review">' + body + '</div>';
@@ -3503,6 +3521,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
               auto_suggestion: payload.auto_suggestion,
               marker_ml_note: payload.current_marker_ml_note,
               rule_impact: data.impact_summary || null,
+              codex_task_ids: data.codex_task_ids || [],
               reviewer_note: payload.reviewer_note,
               updated_at_utc: new Date().toISOString()
             }};

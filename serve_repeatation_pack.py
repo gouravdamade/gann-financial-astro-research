@@ -16,10 +16,12 @@ from functools import partial
 from aspect_annotation_store import (
     add_rule_lesson,
     connect,
+    enqueue_codex_review_task,
     initialize_database,
     list_completed_reviews,
     upsert_completed_review,
 )
+from reviewer_rule_replay import replay_completed_review_impacts
 
 
 DEFAULT_PACK_DIR = Path(
@@ -165,11 +167,27 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                     out[key.replace("_json", "")] = {"raw": raw}
         return out
 
-    def _review_impact_summary(self, payload: dict, previous_rows: list) -> dict:
+    def _review_impact_summary(self, payload: dict, previous_rows: list, pack_dir: Path | None = None) -> dict:
         auto = payload.get("auto_suggestion") or {}
         current_start_rule = str(auto.get("start_rule") or payload.get("start_rule") or "")
         current_end_rule = str(auto.get("end_rule") or payload.get("end_rule") or "")
         current_version = str(payload.get("rule_version") or "")
+        if pack_dir is not None:
+            try:
+                replay = replay_completed_review_impacts(pack_dir, previous_rows, current_rule_version=current_version)
+                replay["current_start_rule"] = current_start_rule
+                replay["current_end_rule"] = current_end_rule
+                replay["current_rule_version"] = current_version
+                replay["previous_reviewed_count"] = replay.get("reviewed_count", len(previous_rows))
+                replay["same_rule_path_count"] = replay.get("unchanged_count", 0)
+                replay["official_note_policy"] = (
+                    "Official ML notes are queued for Codex review; local browser notes are draft evidence only."
+                )
+                return replay
+            except Exception as exc:
+                replay_error = str(exc)
+        else:
+            replay_error = "pack_dir unavailable"
         changed = []
         same = 0
         for row in previous_rows:
@@ -195,18 +213,81 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             else:
                 same += 1
         return {
+            "mode": "rule_path_fallback",
             "current_start_rule": current_start_rule,
             "current_end_rule": current_end_rule,
             "current_rule_version": current_version,
             "previous_reviewed_count": len(previous_rows),
             "same_rule_path_count": same,
             "affected_or_needs_replay": changed,
+            "replay_error": replay_error,
+            "official_note_policy": "Official ML notes are queued for Codex review; local browser notes are draft evidence only.",
             "message": (
                 "No previous completed reviews in this family yet."
                 if not previous_rows
                 else f"{len(changed)} previous completed review(s) have a different rule path/version and should be replay-checked."
             ),
         }
+
+    def _enqueue_codex_review_tasks(
+        self,
+        conn,
+        *,
+        review_id: int,
+        payload: dict,
+        impact: dict,
+    ) -> list[int]:
+        case_id = int(payload.get("case_id"))
+        family_key = str(payload.get("family_key") or "")
+        task_payload = {
+            "review_id": review_id,
+            "case_id": case_id,
+            "family_key": family_key,
+            "completed_review_payload": payload,
+            "impact_summary": impact,
+            "policy": "official_ml_notes_codex_owned",
+            "instruction": (
+                "Create or update official ML notes only after checking deterministic evidence, "
+                "replay impact, verifier output, manual notes, and rule lessons. Treat local LLM output as draft only."
+            ),
+        }
+        task_ids = [
+            enqueue_codex_review_task(
+                conn,
+                task_type="official_ml_note",
+                case_id=case_id,
+                family_key=family_key,
+                priority="normal",
+                source="review_complete",
+                trigger_reason="Review Complete saved with start/end markers and P/L.",
+                payload=task_payload,
+            )
+        ]
+        affected = impact.get("affected_or_needs_replay") if isinstance(impact, dict) else []
+        if isinstance(affected, list) and affected:
+            task_ids.append(
+                enqueue_codex_review_task(
+                    conn,
+                    task_type="rule_replay_review",
+                    case_id=case_id,
+                    family_key=family_key,
+                    priority="high",
+                    source="historical_resimulation",
+                    trigger_reason="Current review/rule replay changed previously completed cases.",
+                    payload={
+                        "review_id": review_id,
+                        "case_id": case_id,
+                        "family_key": family_key,
+                        "affected_cases": affected,
+                        "impact_summary": impact,
+                        "instruction": (
+                            "Inspect affected prior cases, correct stale official notes if needed, "
+                            "and edit deterministic rule code only when replay exposes a real logic contradiction."
+                        ),
+                    },
+                )
+            )
+        return task_ids
 
     def _handle_complete_review(self) -> None:
         try:
@@ -234,7 +315,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                     for row in list_completed_reviews(conn, family_key=family_key, limit=1000)
                     if int(row["case_id"]) != case_id
                 ]
-                impact = self._review_impact_summary(payload, previous_rows)
+                impact = self._review_impact_summary(payload, previous_rows, pack_dir=Path(self.directory))
                 review_id, inserted = upsert_completed_review(
                     conn,
                     case_id=case_id,
@@ -258,6 +339,12 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                     rule_impact_json=json.dumps(impact, ensure_ascii=False, default=str),
                     reviewer_note=str(payload.get("reviewer_note") or ""),
                 )
+                codex_task_ids = self._enqueue_codex_review_tasks(
+                    conn,
+                    review_id=review_id,
+                    payload=payload,
+                    impact=impact,
+                )
                 conn.commit()
                 current_rows = list_completed_reviews(conn, family_key=family_key, limit=1000)
         except Exception as exc:
@@ -273,6 +360,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 "case_id": case_id,
                 "message": "review completed" if inserted else "review completion updated",
                 "impact_summary": impact,
+                "codex_task_ids": codex_task_ids,
                 "completed_reviews": [self._completed_row_to_dict(row) for row in current_rows[:50]],
             },
         )

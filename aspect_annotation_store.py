@@ -347,6 +347,28 @@ CREATE TABLE IF NOT EXISTS completed_reviews (
 
 CREATE INDEX IF NOT EXISTS idx_completed_reviews_family
 ON completed_reviews(family_key, completed_at_utc);
+
+CREATE TABLE IF NOT EXISTS codex_review_tasks (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_type TEXT NOT NULL,
+    case_id INTEGER REFERENCES aspect_cases(case_id) ON DELETE SET NULL,
+    family_key TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    priority TEXT NOT NULL DEFAULT 'normal',
+    source TEXT,
+    trigger_reason TEXT,
+    payload_json TEXT,
+    result_json TEXT,
+    created_at_utc TEXT NOT NULL,
+    updated_at_utc TEXT NOT NULL,
+    completed_at_utc TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_codex_review_tasks_status
+ON codex_review_tasks(status, priority, created_at_utc);
+
+CREATE INDEX IF NOT EXISTS idx_codex_review_tasks_case
+ON codex_review_tasks(case_id, task_type, status);
 """
 
 
@@ -1044,6 +1066,32 @@ def add_rule_note(
     return int(cur.lastrowid)
 
 
+def replace_rule_note_type(
+    conn: sqlite3.Connection,
+    *,
+    case_id: int,
+    note_type: str,
+    note_text: str,
+    annotation_id: int | None = None,
+) -> int:
+    """Replace the latest machine-consumable note type for a case while keeping creation explicit."""
+    conn.execute(
+        """
+        DELETE FROM rule_notes
+        WHERE case_id = ?
+          AND note_type = ?
+        """,
+        (int(case_id), note_type),
+    )
+    return add_rule_note(
+        conn,
+        case_id=int(case_id),
+        annotation_id=annotation_id,
+        note_type=note_type,
+        note_text=note_text,
+    )
+
+
 def add_rule_lesson(
     conn: sqlite3.Connection,
     *,
@@ -1241,6 +1289,105 @@ def list_completed_reviews(
         """,
         (int(limit),),
     ).fetchall()
+
+
+def enqueue_codex_review_task(
+    conn: sqlite3.Connection,
+    *,
+    task_type: str,
+    case_id: int | None = None,
+    family_key: str = "",
+    priority: str = "normal",
+    source: str = "",
+    trigger_reason: str = "",
+    payload: dict[str, Any] | None = None,
+) -> int:
+    now = utc_now()
+    cur = conn.execute(
+        """
+        INSERT INTO codex_review_tasks(
+            task_type, case_id, family_key, status, priority, source,
+            trigger_reason, payload_json, result_json, created_at_utc, updated_at_utc
+        )
+        VALUES(?, ?, ?, 'pending', ?, ?, ?, ?, '', ?, ?)
+        """,
+        (
+            task_type,
+            int(case_id) if case_id is not None else None,
+            family_key,
+            priority,
+            source,
+            trigger_reason,
+            json.dumps(payload or {}, ensure_ascii=False, default=str),
+            now,
+            now,
+        ),
+    )
+    return int(cur.lastrowid)
+
+
+def list_codex_review_tasks(
+    conn: sqlite3.Connection,
+    *,
+    status: str | None = "pending",
+    task_type: str | None = None,
+    limit: int = 100,
+) -> list[sqlite3.Row]:
+    clauses: list[str] = []
+    params: list[Any] = []
+    if status:
+        clauses.append("status = ?")
+        params.append(status)
+    if task_type:
+        clauses.append("task_type = ?")
+        params.append(task_type)
+    where_sql = "WHERE " + " AND ".join(clauses) if clauses else ""
+    return conn.execute(
+        f"""
+        SELECT *
+        FROM codex_review_tasks
+        {where_sql}
+        ORDER BY
+            CASE priority
+                WHEN 'high' THEN 0
+                WHEN 'normal' THEN 1
+                WHEN 'low' THEN 2
+                ELSE 3
+            END,
+            created_at_utc ASC,
+            task_id ASC
+        LIMIT ?
+        """,
+        (*params, int(limit)),
+    ).fetchall()
+
+
+def update_codex_review_task(
+    conn: sqlite3.Connection,
+    task_id: int,
+    *,
+    status: str,
+    result: dict[str, Any] | None = None,
+) -> None:
+    now = utc_now()
+    completed_at = now if status in {"done", "failed", "skipped"} else None
+    conn.execute(
+        """
+        UPDATE codex_review_tasks
+        SET status = ?,
+            result_json = ?,
+            updated_at_utc = ?,
+            completed_at_utc = COALESCE(?, completed_at_utc)
+        WHERE task_id = ?
+        """,
+        (
+            status,
+            json.dumps(result or {}, ensure_ascii=False, default=str),
+            now,
+            completed_at,
+            int(task_id),
+        ),
+    )
 
 
 def list_rule_notes(conn: sqlite3.Connection, case_id: int | None, limit: int) -> list[sqlite3.Row]:

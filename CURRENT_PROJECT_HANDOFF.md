@@ -1,10 +1,65 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 01:46 IST
+Last updated: 2026-05-29 02:27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-29
+
+2026-05-29 historical re-simulation + Codex-owned ML notes:
+
+- User requested:
+  - historical re-simulation after new rules;
+  - affected prior reviewed cases listed when replay changes P/L or rule path;
+  - official ML notes created/altered only by Codex, not silently by the local LLM/page;
+  - low-credit automation to process those note/replay tasks.
+- Updated `reviewer_rule_replay.py`:
+  - added deterministic `auto_suggest_case()` replay for generated packs;
+  - added `replay_completed_review_impacts()` for historical re-simulation of completed reviews;
+  - replay now parses chart markers, candles, SR line touches, shaded/aspect windows, multi-aspect overlap, support/resistance geometry, break confirmation, attribution boundaries, zone boundaries, and provisional multi-aspect Gann fan exits;
+  - existing case `127` SR-touch regression and family rule source guards still pass.
+- Updated `serve_repeatation_pack.py`:
+  - `/api/complete_review` now runs historical re-simulation against previously completed reviews in the same family;
+  - response lists affected/stable cases and replay deltas when a current rule path would alter old completed reviews;
+  - local browser/live ML notes are treated as draft evidence only.
+- Updated `aspect_annotation_store.py`:
+  - added durable `codex_review_tasks` queue table;
+  - added queue helpers: `enqueue_codex_review_task()`, `list_codex_review_tasks()`, `update_codex_review_task()`;
+  - added `replace_rule_note_type()` so Codex can update one official ML note for a case without accumulating stale duplicates.
+- Added `codex_review_task_queue.py`:
+  - `--list-pending` shows queued Codex tasks;
+  - `--write-official-note TASK_ID` writes a Codex-approved permanent `official_ml_note`;
+  - `--mark-task` can mark replay/code-review tasks done/failed/skipped with a JSON result.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260529_historical_replay_v52`;
+  - Replay Impact drawer now shows historical replay mode, stable/affected counts, replayed pips/rules, and fallback errors;
+  - ML Notes drawer now states live marker notes are draft evidence and permanent official notes are Codex-owned;
+  - Review Complete shows queued Codex task ids.
+- Processed first Codex-owned official note:
+  - Review Complete for case `8` queued task `#1`;
+  - Codex wrote/replaced `official_ml_note` note `#6` for case `8`;
+  - task `#1` marked `done`;
+  - pending queue verified empty.
+- Created heartbeat automation:
+  - id `process-codex-review-agent-queue`;
+  - runs every 30 minutes;
+  - checks `codex_review_tasks`, writes official notes only after Codex review, inspects replay impacts, corrects stale notes/code when deterministic evidence supports it, and commits/pushes meaningful changes.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_022249`
+- Restarted server on port `8765`, PID `22428`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260529_historical_replay_v52&fresh=officialnote2`
+- Browser verification:
+  - drawer shows official Codex ML note plus live marker draft note;
+  - drawer shows policy: official ML notes are Codex-owned;
+  - Review Complete queue/replay UI rendered correctly.
+- Verification:
+  - `python -m py_compile build_repeatation_review_pack.py aspect_annotation_store.py serve_repeatation_pack.py reviewer_rule_replay.py codex_review_task_queue.py`
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_022249`
+  - direct historical replay against saved SQLite completed review returned `affected=0`, `unchanged=1`, `failed=0`
+  - `python test_strict_shadbala_doctrine.py`
+  - `python codex_review_task_queue.py --list-pending --limit 10`
+  all passed.
 
 2026-05-29 review-completion agent ledger:
 
