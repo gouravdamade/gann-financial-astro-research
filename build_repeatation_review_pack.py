@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_dream_queue_v53"
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_immediate_dream_agent_v54"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -3101,6 +3101,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var notesText = mlNotesPlainText();
       var combined = (draftText + '\\n\\n' + notesText).toLowerCase();
       var draftLower = draftText.toLowerCase();
+      var analysisLower = draftLower;
+      var analysisStart = analysisLower.indexOf('## deterministic plain-english analysis');
+      if (analysisStart >= 0) {{
+        analysisLower = analysisLower.slice(analysisStart);
+        var analysisEnd = analysisLower.indexOf('## local llm commentary');
+        if (analysisEnd < 0) analysisEnd = analysisLower.indexOf('## deterministic case evidence');
+        if (analysisEnd > 0) analysisLower = analysisLower.slice(0, analysisEnd);
+      }}
       var evidence = verifierEvidence();
       var issues = [];
       var checks = [];
@@ -3116,10 +3124,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       var expectedBearish = evidence.outcome === 'bearish' || /bearish/.test(String(evidence.family_rule + ' ' + evidence.auto_reason).toLowerCase());
       var expectedBullish = evidence.outcome === 'bullish' || /bullish/.test(String(evidence.family_rule + ' ' + evidence.auto_reason).toLowerCase());
-      if (draftText && expectedBearish && hasAny(draftLower, ['bullish bias', 'bullish case', 'upward bias', 'expected upward'])) {{
+      if (draftText && expectedBearish && hasAny(analysisLower, ['bullish bias', 'bullish case', 'upward bias', 'expected upward'])) {{
         addVerifierIssue(issues, 'contradiction', 'Direction conflict', 'Evidence says this review is bearish, but the draft uses bullish-bias language.');
       }}
-      if (draftText && expectedBullish && hasAny(draftLower, ['bearish bias', 'bearish case', 'downward bias', 'expected downward'])) {{
+      if (draftText && expectedBullish && hasAny(analysisLower, ['bearish bias', 'bearish case', 'downward bias', 'expected downward', 'probable reason this can be bearish'])) {{
         addVerifierIssue(issues, 'contradiction', 'Direction conflict', 'Evidence says this review is bullish, but the draft uses bearish-bias language.');
       }}
       if (evidence.trade_result && Number.isFinite(Number(evidence.trade_result.signedPips))) {{
@@ -3129,14 +3137,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }}
       }}
       if (evidence.sr_position === 'below_entry') {{
-        checks.push('SR geometry checked: below entry means support/target for bearish review');
-        if (hasAny(draftLower, ['sr is above', 'resistance above', 'upper sr target', 'upper barrier']) && !hasAny(draftLower, ['not above'])) {{
+        checks.push('SR geometry checked: below entry means ' + (evidence.sr_role || 'support-side geometry'));
+        if (hasAny(analysisLower, ['sr is above', 'resistance above', 'upper sr target', 'upper barrier']) && !hasAny(analysisLower, ['not above', 'reference geometry', 'marker-flow'])) {{
           addVerifierIssue(issues, 'contradiction', 'SR geometry conflict', 'Auto Suggest says SR is below entry, but the draft talks as if the relevant SR is above/resistance.');
         }}
       }}
       if (evidence.sr_position === 'above_entry') {{
-        checks.push('SR geometry checked: above entry means resistance/target for bullish review');
-        if (hasAny(draftLower, ['sr is below', 'support below', 'lower sr target', 'lower barrier']) && !hasAny(draftLower, ['not below'])) {{
+        checks.push('SR geometry checked: above entry means ' + (evidence.sr_role || 'resistance-side geometry'));
+        if (hasAny(analysisLower, ['sr is below', 'support below', 'lower sr target', 'lower barrier']) && !hasAny(analysisLower, ['not below', 'reference geometry', 'marker-flow'])) {{
           addVerifierIssue(issues, 'contradiction', 'SR geometry conflict', 'Auto Suggest says SR is above entry, but the draft talks as if the relevant SR is below/support.');
         }}
       }}
@@ -3213,6 +3221,17 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (state.dreamReview.error) rows.push('<div class="rm-warning">' + esc(state.dreamReview.error) + '</div>');
       if (appliedCount) rows.push('<div><b>Auto-corrected:</b> ' + esc(appliedCount) + ' stale deterministic note(s).</div>');
       if (reviewCount) rows.push('<div><b>Queued:</b> ' + esc(reviewCount) + ' item(s) need Codex review-agent correction.</div>');
+      if (state.dreamReview.codex_agent_result) {{
+        var agent = state.dreamReview.codex_agent_result || {{}};
+        var processed = Array.isArray(agent.processed) ? agent.processed : [];
+        rows.push('<div><b>Codex review-agent:</b> processed ' + esc(agent.processed_count || processed.length || 0) + ' queued task(s) immediately.</div>');
+        if (processed.length) {{
+          rows.push('<ul>' + processed.slice(0, 6).map(function (item) {{
+            return '<li>task ' + esc(item.task_id || '') + ': ' + esc(item.action || item.status || '') + '</li>';
+          }}).join('') + '</ul>');
+        }}
+      }}
+      if (state.dreamReview.codex_agent_error) rows.push('<div class="rm-warning">Codex review-agent error: ' + esc(state.dreamReview.codex_agent_error) + '</div>');
       if (state.dreamReview.report_path) rows.push('<div class="rm-table-sub">' + esc(state.dreamReview.report_path) + '</div>');
       return '<details class="rm-dream" open><summary>' + esc(title) + ' <span>' + esc(status) + ' | issues ' + esc(issueCount) + '</span></summary>'
         + '<div class="rm-table-sub">Triggered by Draft ML Reason. Applies only narrow deterministic corrections; ambiguous conflicts are queued for Codex review-agent correction.</div>'

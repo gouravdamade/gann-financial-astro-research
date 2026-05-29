@@ -1,10 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 03:57 IST
+Last updated: 2026-05-29 08:53 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-29
+
+2026-05-29 immediate Dream Review agent trigger:
+
+- User reported case `127` had a Dream Review contradiction and requested:
+  - stop relying on the 30-minute review-agent heartbeat;
+  - trigger the agent immediately once `Draft ML Reason` has produced a draft and Dream Review has run.
+- Deleted heartbeat automation:
+  `process-codex-review-agent-queue`
+- Updated `codex_review_task_queue.py`:
+  - added `--process-pending`;
+  - added deterministic queue processor for:
+    - `official_ml_note`: writes a Codex review-agent official note from completed-review payload/Auto Suggest evidence;
+    - `dream_review_correction`: writes a corrected official note from verifier/Dream Review evidence;
+    - `rule_replay_review`: skips non-material replay changes where only rule version metadata changed; flags material replay changes for Codex.
+- Updated `serve_repeatation_pack.py`:
+  - `/api/dream_review` now calls `process_pending_tasks()` immediately after queuing a Dream Review correction;
+  - browser response includes `codex_agent_result` / `codex_agent_error`.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260529_immediate_dream_agent_v54`;
+  - Dream Review panel now reports immediate Codex review-agent processed task count/actions;
+  - verifier direction/SR checks now inspect the deterministic analysis section instead of matching raw Auto Suggest JSON/RAG snippets, reducing false contradictions from reference geometry or old family notes.
+- Processed current pending queue:
+  - task `#10`, case `127` Dream Review correction -> official note `#8`;
+  - task `#6`, case `43` official note -> note `#9`;
+  - task `#8`, case `103` official note -> note `#10`;
+  - tasks `#7` and `#9` replay reviews skipped because replay showed only rule-version metadata drift, not material P/L/rule-path changes.
+- Case `127` official correction:
+  - deterministic evidence wins over draft wording;
+  - outcome is `bullish`;
+  - live trade result is `-4.0` pips;
+  - active SR geometry is `SR is below entry: support/entry`;
+  - marker-flow/reference geometry separately records `SR is above entry: resistance/target`;
+  - future drafts must name which SR reference they mean before training.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_084521`
+- Restarted server on port `8765`, PID `20768`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260529_immediate_dream_agent_v54&fresh=immediate4`
+- Verification:
+  - `python -m py_compile codex_review_task_queue.py serve_repeatation_pack.py build_repeatation_review_pack.py`
+  - `python codex_review_task_queue.py --process-pending --limit 20`
+  - `python codex_review_task_queue.py --list-pending --limit 20`
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_084521`
+  - HTTP `200` and browser load for case `127` v54
+  all passed; pending Codex review task queue is empty.
 
 2026-05-29 Dream Review queue -> Codex review-agent correction:
 

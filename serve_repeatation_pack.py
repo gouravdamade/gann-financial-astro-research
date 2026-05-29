@@ -21,6 +21,7 @@ from aspect_annotation_store import (
     list_completed_reviews,
     upsert_completed_review,
 )
+from codex_review_task_queue import process_pending_tasks
 from reviewer_rule_replay import replay_completed_review_impacts
 
 
@@ -444,6 +445,13 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 result["codex_queue_error"] = str(exc)
         if codex_task_ids:
             result["codex_task_ids"] = codex_task_ids
+            try:
+                result["codex_agent_result"] = process_pending_tasks(
+                    PROJECT_ROOT / "gann_aspect_annotations.sqlite",
+                    limit=20,
+                )
+            except Exception as exc:
+                result["codex_agent_error"] = str(exc)
         self._send_json(200, result)
 
     def _handle_save_rule_lesson(self) -> None:

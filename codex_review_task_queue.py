@@ -60,6 +60,11 @@ def parse_args() -> argparse.Namespace:
         default=Path("jyotish_agent") / "dream_review_queue.jsonl",
         help="Path to dream_review_queue.jsonl for --ingest-dream-queue.",
     )
+    parser.add_argument(
+        "--process-pending",
+        action="store_true",
+        help="Process deterministic Codex review-agent tasks immediately.",
+    )
     return parser.parse_args()
 
 
@@ -141,6 +146,154 @@ def ingest_dream_queue(conn: Any, path: Path) -> dict[str, Any]:
     return {"imported_task_ids": imported, "skipped": skipped, "source": str(path)}
 
 
+def _fmt_pips(value: Any) -> str:
+    try:
+        return f"{float(value):+.1f}"
+    except Exception:
+        return "unknown"
+
+
+def _jget(data: dict[str, Any], *path: str, default: Any = None) -> Any:
+    cur: Any = data
+    for key in path:
+        if not isinstance(cur, dict):
+            return default
+        cur = cur.get(key)
+    return default if cur is None else cur
+
+
+def _marker_note_excerpt(marker_note: dict[str, Any]) -> str:
+    text = str(marker_note.get("note_text") or "").strip()
+    if not text:
+        return ""
+    lines = [line for line in text.splitlines() if line.strip()]
+    keep = []
+    for line in lines:
+        if line.startswith(("astro_hints=", "rule_vs_default=", "auto_reason=", "sr_geometry=", "break_confirmation=", "gann_fan_exit_status=", "multi_aspect_gate=")):
+            keep.append(line)
+    return "\n".join(keep[:8])
+
+
+def compose_official_note_from_review(task: dict[str, Any]) -> str:
+    payload = task.get("payload") or {}
+    review = payload.get("completed_review_payload") or {}
+    auto = review.get("auto_suggestion") or {}
+    trade = review.get("trade_profit") or {}
+    marker_note = review.get("current_marker_ml_note") or {}
+    case_id = int(task.get("case_id") or review.get("case_id") or payload.get("case_id"))
+    family = str(task.get("family_key") or review.get("family_key") or payload.get("family_key") or "")
+    outcome = str(review.get("outcome_label") or trade.get("outcomeLabel") or "unknown")
+    signed_pips = _fmt_pips(trade.get("signedPips"))
+    start_rule = str(auto.get("start_rule") or "")
+    end_rule = str(auto.get("end_rule") or "")
+    sr_label = _jget(auto, "sr_geometry", "label", default="SR geometry unavailable")
+    break_label = _jget(auto, "break_confirmation", "label", default="break confirmation unavailable")
+    reason = str(auto.get("reason") or "")
+    extras = _marker_note_excerpt(marker_note)
+    return (
+        f"scope=case_id/local; type=official_ml_note; status=codex_review_agent_official; "
+        f"case_id={case_id}; family={family}; outcome={outcome}; signed_pips={signed_pips};\n\n"
+        f"Official Codex review-agent note: this recurrence is recorded as {outcome} with {signed_pips} signed pips. "
+        f"Auto Suggest used `{start_rule or 'unknown_start_rule'}` -> `{end_rule or 'unknown_end_rule'}`. "
+        f"{reason}\n\n"
+        f"Deterministic geometry: {sr_label}. Break/hold test: {break_label}. "
+        "Treat local LLM prose as draft only; train from this official note plus the stored Auto Suggest JSON.\n\n"
+        f"Entry: {review.get('trade_start_ist') or _jget(review, 'trade_start', 'x', default='unknown')} @ {trade.get('entry', 'unknown')}\n"
+        f"Exit: {review.get('trade_end_ist') or _jget(review, 'trade_end', 'x', default='unknown')} @ {trade.get('exit', 'unknown')}\n"
+        + (f"\nKey extracted marker evidence:\n{extras}\n" if extras else "")
+    )
+
+
+def compose_dream_correction_note(task: dict[str, Any]) -> str:
+    payload = task.get("payload") or {}
+    dream_payload = payload.get("dream_review_payload") or {}
+    dream_result = payload.get("dream_review_result") or {}
+    report = dream_payload.get("verifier_report") if isinstance(dream_payload.get("verifier_report"), dict) else {}
+    evidence = report.get("evidence") if isinstance(report.get("evidence"), dict) else {}
+    auto = dream_payload.get("auto_suggestion") or {}
+    trade = evidence.get("trade_result") or dream_payload.get("trade_result") or {}
+    case_id = int(task.get("case_id") or dream_payload.get("case_id") or payload.get("case_id"))
+    family = str(task.get("family_key") or dream_payload.get("family") or payload.get("family_key") or "")
+    issues = dream_result.get("issues") or report.get("issues") or []
+    issue_text = "; ".join(f"{item.get('title')}: {item.get('detail')}" for item in issues if isinstance(item, dict))
+    outcome = str(evidence.get("outcome") or trade.get("outcomeLabel") or "unknown")
+    signed_pips = _fmt_pips(trade.get("signedPips"))
+    sr_label = str(evidence.get("sr_label") or _jget(auto, "sr_geometry", "label", default="SR geometry unavailable"))
+    default_sr_label = _jget(auto, "default_marker_flow_sr_geometry", "label", default="")
+    break_label = str(evidence.get("break_label") or _jget(auto, "break_confirmation", "label", default="break confirmation unavailable"))
+    reason = str(auto.get("reason") or evidence.get("auto_reason") or "")
+    return (
+        f"scope=case_id/local; type=official_ml_note; status=codex_verified_dream_review_resolved; "
+        f"case_id={case_id}; family={family}; outcome={outcome}; signed_pips={signed_pips};\n\n"
+        "Dream Review correction: queued draft contradictions were resolved in favor of deterministic evidence, "
+        "not local LLM wording. The contradictory draft language must not be used for ML training.\n\n"
+        f"Resolved issues: {issue_text or 'queued Dream Review contradiction'}\n\n"
+        f"Correct deterministic reading: outcome is `{outcome}`, trade result is {signed_pips} pips, active SR geometry is `{sr_label}`, "
+        f"and break status is `{break_label}`. {reason}\n\n"
+        + (f"Important nuance: marker-flow/reference geometry also records `{default_sr_label}`. That is a separate reference marker context, "
+           "not the final active exit geometry, so future verifier/draft text must name which SR reference it means.\n\n" if default_sr_label else "")
+        + "Training instruction: store this as a correction example. When Draft ML Reason mixes old family/RAG notes with current Auto Suggest evidence, "
+        "the deterministic Auto Suggest/trade-result fields win. BPHS-like orb strength for AVG(ALL) synthetic square remains a low-confidence proxy, "
+        "not doctrinal proof.\n"
+    )
+
+
+def replay_change_is_material(item: dict[str, Any]) -> bool:
+    try:
+        if abs(float(item.get("pips_delta") or 0.0)) >= 0.1:
+            return True
+    except Exception:
+        pass
+    return str(item.get("stored_start_rule") or "") != str(item.get("replayed_start_rule") or "") or str(item.get("stored_end_rule") or "") != str(item.get("replayed_end_rule") or "")
+
+
+def process_task(conn: Any, row: Any) -> dict[str, Any]:
+    task = row_to_dict(row)
+    task_id = int(task["task_id"])
+    task_type = str(task.get("task_type") or "")
+    if task_type == "official_ml_note":
+        note = compose_official_note_from_review(task)
+        note_id = replace_rule_note_type(conn, case_id=int(task["case_id"]), note_type="official_ml_note", note_text=note)
+        update_codex_review_task(conn, task_id, status="done", result={"action": "official_note_written", "note_id": note_id})
+        return {"task_id": task_id, "status": "done", "action": "official_note_written", "note_id": note_id}
+    if task_type == "dream_review_correction":
+        note = compose_dream_correction_note(task)
+        note_id = replace_rule_note_type(conn, case_id=int(task["case_id"]), note_type="official_ml_note", note_text=note)
+        update_codex_review_task(conn, task_id, status="done", result={"action": "dream_review_correction_applied", "note_id": note_id})
+        return {"task_id": task_id, "status": "done", "action": "dream_review_correction_applied", "note_id": note_id}
+    if task_type == "rule_replay_review":
+        payload = task.get("payload") or {}
+        affected = payload.get("affected_cases") or []
+        material = [item for item in affected if isinstance(item, dict) and replay_change_is_material(item)]
+        if not material:
+            update_codex_review_task(
+                conn,
+                task_id,
+                status="skipped",
+                result={"action": "no_material_replay_change", "reason": "Only rule-version metadata changed; pips/rule path unchanged."},
+            )
+            return {"task_id": task_id, "status": "skipped", "action": "no_material_replay_change"}
+        update_codex_review_task(
+            conn,
+            task_id,
+            status="failed",
+            result={"action": "material_replay_change_needs_codex", "affected_cases": material},
+        )
+        return {"task_id": task_id, "status": "failed", "action": "material_replay_change_needs_codex", "affected_count": len(material)}
+    update_codex_review_task(conn, task_id, status="skipped", result={"action": "unsupported_task_type", "task_type": task_type})
+    return {"task_id": task_id, "status": "skipped", "action": "unsupported_task_type", "task_type": task_type}
+
+
+def process_pending_tasks(db_path: Path = DEFAULT_DB_PATH, limit: int = 20) -> dict[str, Any]:
+    initialize_database(db_path)
+    processed: list[dict[str, Any]] = []
+    with connect(db_path) as conn:
+        for row in list_codex_review_tasks(conn, status="pending", limit=limit):
+            processed.append(process_task(conn, row))
+        conn.commit()
+    return {"processed": processed, "processed_count": len(processed)}
+
+
 def main() -> None:
     args = parse_args()
     initialize_database(args.db)
@@ -150,6 +303,10 @@ def main() -> None:
             if not dream_path.is_absolute():
                 dream_path = Path(__file__).resolve().parent / dream_path
             print(json.dumps(ingest_dream_queue(conn, dream_path), ensure_ascii=False, indent=2, default=str))
+            return
+
+        if args.process_pending:
+            print(json.dumps(process_pending_tasks(args.db, limit=args.limit), ensure_ascii=False, indent=2, default=str))
             return
 
         if args.list_pending:
