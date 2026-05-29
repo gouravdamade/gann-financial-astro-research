@@ -1,10 +1,41 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 08:53 IST
+Last updated: 2026-05-29 20:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-29
+
+2026-05-29 case 127 Gann fan outcome correction:
+
+- User reported case `127` still displayed `bullish -4.0 pips` in both the plot callout and marker drawer, but the executed Auto Suggest path is a top-wick Gann fan/downward projection and should score as `bearish +4.0 pips`.
+- Root cause:
+  - the marker-flow Gann fan exit correctly stored `gann_fan.fan_direction = bearish`;
+  - profit display still inherited the family/default `bullish` outcome, including from an older autosaved draft.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260529_case127_gann_outcome_v55`;
+  - added `autoOutcomeFromSuggestion(...)` and `setAutoOutcome(...)`;
+  - when `end_rule === gann_second_from_bottom_touch_multi_aspect`, Auto Suggest now scores by the fan direction:
+    - top-wick/down fan -> `bearish`;
+    - bottom-wick/up fan -> `bullish`;
+  - restored drafts with that Gann fan rule now also auto-correct the outcome, so stale localStorage cannot keep the old bullish label.
+- Updated SQLite official ML note for case `127`:
+  - new `official_ml_note` id `12`;
+  - outcome corrected to `bearish`;
+  - signed pips corrected to `+4.0`;
+  - note explains that raw move `-4.0` pips is favorable for the top-wick bearish fan path.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_200807`
+- Restarted server on port `8765`, PID `1340`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260529_case127_gann_outcome_v55&fresh=outcome2`
+- Verification:
+  - `python -m py_compile build_repeatation_review_pack.py codex_review_task_queue.py serve_repeatation_pack.py`
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_200807`
+  - `python codex_review_task_queue.py --list-pending --limit 20`
+  - browser check on case `127` confirmed:
+    `Live trade result bearish +4.0 pips`, selected outcome `bearish`, entry `144.965`, exit `144.925`.
+  Pending Codex review task queue is empty.
 
 2026-05-29 immediate Dream Review agent trigger:
 

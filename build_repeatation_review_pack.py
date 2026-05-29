@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_immediate_dream_agent_v54"
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_case127_gann_outcome_v55"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -2329,6 +2329,25 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function setOutcome(value) {{
       panel.querySelector('#repeatation-outcome').value = value || defaultOutcome();
     }}
+    function autoOutcomeFromSuggestion(suggestion) {{
+      if (!suggestion) return '';
+      var fan = suggestion.gann_fan || {{}};
+      var fanDirection = fan.fan_direction || suggestion.auto_outcome || '';
+      if (suggestion.end_rule === 'gann_second_from_bottom_touch_multi_aspect'
+        && ['bullish', 'bearish'].indexOf(fanDirection) !== -1) {{
+        return fanDirection;
+      }}
+      return '';
+    }}
+    function setAutoOutcome(value, reason) {{
+      if (['bullish', 'bearish'].indexOf(value) === -1) return;
+      setOutcome(value);
+      state.outcomeTouched = false;
+      if (state.autoSuggestion) {{
+        state.autoSuggestion.auto_outcome = value;
+        state.autoSuggestion.auto_outcome_reason = reason || '';
+      }}
+    }}
     function signedPipsForPoints(start, end, selectedOutcome) {{
       if (!start || !end) return null;
       var entry = Number(start.y);
@@ -3676,6 +3695,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         restoredOutcome = defaultOutcome();
       }}
       setOutcome(restoredOutcome);
+      var restoredAutoOutcome = autoOutcomeFromSuggestion(state.autoSuggestion);
+      if (restoredAutoOutcome) {{
+        setAutoOutcome(restoredAutoOutcome, 'Restored Gann fan auto-suggested trade direction.');
+      }}
       if (state.autoSuggestion && state.tradeStart && !state.autoSuggestion.gann_fan) refreshGannFanFromTradeStart('restored auto suggestion start marker');
       panel.querySelector('#repeatation-note-type').value = draft.note_type || 'manual_repeatation_note';
       panel.querySelector('#repeatation-note').value = draft.note || '';
@@ -3938,6 +3961,14 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         reason = 'Provisional Gann fan exit won because the multi-aspect gate passed: at least one reviewed candle had two or more aspect windows overlapping it. '
           + reason;
       }}
+      var effectiveOutcome = outcome();
+      var autoOutcomeReason = '';
+      if (markerFlowGannExitUsed && markerFlowGannFan && ['bullish', 'bearish'].indexOf(markerFlowGannFan.fan_direction) !== -1) {{
+        effectiveOutcome = markerFlowGannFan.fan_direction;
+        autoOutcomeReason = 'Gann fan exit controls trade direction: top-wick/down fan is bearish, bottom-wick/up fan is bullish.';
+        setOutcome(effectiveOutcome);
+        state.outcomeTouched = false;
+      }}
       var markerCandidateAudit = [];
       if (firstCaseWindowSrTouch) {{
         markerCandidateAudit.push(candidateAuditItem('start', 'chosen', firstCaseWindowSrTouch, 'Earliest wick touch inside the selected case window and tight SR band.'));
@@ -3965,8 +3996,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         reason: reason,
         marker_count: markers.length,
         selected_case_marker_count: selected.length,
-        sr_geometry: srGeometryForPoint(end, start, outcome()),
-        break_confirmation: breakConfirmationForGeometry(srGeometryForPoint(end, start, outcome()), end, start, outcome()),
+        sr_geometry: srGeometryForPoint(end, start, effectiveOutcome),
+        break_confirmation: breakConfirmationForGeometry(srGeometryForPoint(end, start, effectiveOutcome), end, start, effectiveOutcome),
         default_marker_flow_sr_geometry: defaultFlowGeometry,
         reference_start_marker: (wickStart || firstCaseWindowSrTouch) ? serialPoint(selected[0] || defaultStart) : null,
         case_window_sr_touch_candidates: caseWindowSrTouches.map(serialPoint),
@@ -3977,10 +4008,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         candidate_audit: markerCandidateAudit,
         start_rule: firstCaseWindowSrTouch ? 'first_case_window_sr_line_touch' : (wickStart ? 'wick_entry_from_selected_case_sr_marker' : (selected[0] ? 'first_selected_case_touch' : (windowMarkers[0] ? 'first_marker_inside_case_window' : 'first_visible_marker'))),
         end_rule: endRule,
+        auto_outcome: effectiveOutcome,
+        auto_outcome_reason: autoOutcomeReason,
         manual_override: false,
         overridden_keys: [],
         created_at: new Date().toISOString()
       }};
+      if (autoOutcomeReason) setAutoOutcome(effectiveOutcome, autoOutcomeReason);
       if (start) setStatePoint('tradeStart', autoSuggestedPoint(start, 'auto_trade_start'));
       if (end) setStatePoint('tradeEnd', autoSuggestedPoint(end, 'auto_trade_end'));
       drawMarkers();
