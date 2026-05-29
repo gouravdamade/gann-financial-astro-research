@@ -238,6 +238,25 @@ def compose_dream_correction_note(task: dict[str, Any]) -> str:
     )
 
 
+def dream_sr_geometry_only_mixed_reference(task: dict[str, Any]) -> bool:
+    payload = task.get("payload") or {}
+    dream_payload = payload.get("dream_review_payload") or {}
+    dream_result = payload.get("dream_review_result") or {}
+    report = dream_payload.get("verifier_report") if isinstance(dream_payload.get("verifier_report"), dict) else {}
+    auto = dream_payload.get("auto_suggestion") or {}
+    issues = dream_result.get("issues") or report.get("issues") or []
+    contradiction_titles = [
+        str(item.get("title") or "")
+        for item in issues
+        if isinstance(item, dict) and str(item.get("severity") or "") == "contradiction"
+    ]
+    if not contradiction_titles or any(title != "SR geometry conflict" for title in contradiction_titles):
+        return False
+    sr_position = _jget(auto, "sr_geometry", "position", default="")
+    barrier_position = _jget(auto, "barrier_sr_geometry", "position", default="")
+    return bool(sr_position and barrier_position and sr_position != barrier_position)
+
+
 def replay_change_is_material(item: dict[str, Any]) -> bool:
     try:
         if abs(float(item.get("pips_delta") or 0.0)) >= 0.1:
@@ -257,6 +276,17 @@ def process_task(conn: Any, row: Any) -> dict[str, Any]:
         update_codex_review_task(conn, task_id, status="done", result={"action": "official_note_written", "note_id": note_id})
         return {"task_id": task_id, "status": "done", "action": "official_note_written", "note_id": note_id}
     if task_type == "dream_review_correction":
+        if dream_sr_geometry_only_mixed_reference(task):
+            update_codex_review_task(
+                conn,
+                task_id,
+                status="skipped",
+                result={
+                    "action": "mixed_sr_reference_no_official_rewrite",
+                    "reason": "Dream Review SR-geometry issue came from final SR geometry and first-barrier/reference geometry both being present.",
+                },
+            )
+            return {"task_id": task_id, "status": "skipped", "action": "mixed_sr_reference_no_official_rewrite"}
         note = compose_dream_correction_note(task)
         note_id = replace_rule_note_type(conn, case_id=int(task["case_id"]), note_type="official_ml_note", note_text=note)
         update_codex_review_task(conn, task_id, status="done", result={"action": "dream_review_correction_applied", "note_id": note_id})

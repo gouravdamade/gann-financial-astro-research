@@ -1,10 +1,44 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 20:17 IST
+Last updated: 2026-05-29 20:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-29
+
+2026-05-29 mixed SR-reference verifier fix:
+
+- User reported that case `127` still showed Dream Review:
+  `queued_for_codex | issues 2` and `SR geometry conflict`, specifically:
+  `Auto Suggest says SR is above entry, but the draft talks as if the relevant SR is below/support.`
+- Diagnosis:
+  - this was not a true contradiction;
+  - current Auto Suggest can legitimately contain two SR contexts:
+    - `sr_geometry`: the executed/final exit context, currently `SR is above entry: resistance/entry`;
+    - `barrier_sr_geometry`: the first barrier/reference being tested, currently `SR is below entry: support/target`;
+  - the verifier was treating mention of the lower first barrier as contradiction against the final exit geometry.
+- Updated `build_repeatation_review_pack.py`:
+  - cache key advanced to `repeatation_ui_20260529_mixed_sr_verifier_v56`;
+  - verifier evidence now includes `barrier_label` and `mixed_sr_references`;
+  - SR-geometry contradiction checks now allow opposite-side language when it matches `barrier_sr_geometry`;
+  - verifier check log now explicitly prints:
+    `Mixed SR references checked: final geometry is ...; first barrier/reference is ...`
+- Updated `codex_review_task_queue.py`:
+  - Dream Review correction tasks that contain only an SR-geometry conflict caused by mixed `sr_geometry` vs `barrier_sr_geometry` are skipped instead of replacing the official ML note.
+- Replaced the bad case `127` official note written by task `12` with official note `#14`:
+  - status `codex_verified_mixed_sr_reference_no_contradiction`;
+  - records current outcome `bearish`, current marker result `-6.0` pips for that draft/review state;
+  - explicitly says not to train `SR geometry conflict` from mixed final/barrier SR references.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_202527`
+- Restarted server on port `8765`, PID `21004`.
+- Current review URL:
+  `http://127.0.0.1:8765/aspect_review_case_127_chart.html?v=repeatation_ui_20260529_mixed_sr_verifier_v56&fresh=mixedsr`
+- Verification:
+  - `python -m py_compile build_repeatation_review_pack.py codex_review_task_queue.py serve_repeatation_pack.py jyotish_agent\dream_review_agent.py jyotish_agent\explain_case.py`
+  - `python codex_review_task_queue.py --list-pending --limit 20`
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260529_202527`
+  - browser: after `Draft ML Reason`, Dream Review returned `caution_only | issues 1`, no `SR geometry conflict`; only BPHS synthetic-orb caution remains.
 
 2026-05-29 case 127 Gann fan outcome correction:
 

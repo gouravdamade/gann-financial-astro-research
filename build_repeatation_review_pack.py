@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_case127_gann_outcome_v55"
+REPEATATION_UI_VERSION = "repeatation_ui_20260529_mixed_sr_verifier_v56"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -3102,6 +3102,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         sr_distance_pips: sr.distance_pips,
         barrier_position: barrier.position || '',
         barrier_role: barrier.role || '',
+        barrier_label: barrier.label || '',
+        mixed_sr_references: !!(sr.position && barrier.position && sr.position !== barrier.position),
         break_status: breakInfo.status || '',
         break_label: breakInfo.label || '',
         attribution_boundary: s.attribution_boundary || null,
@@ -3157,15 +3159,22 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       if (evidence.sr_position === 'below_entry') {{
         checks.push('SR geometry checked: below entry means ' + (evidence.sr_role || 'support-side geometry'));
-        if (hasAny(analysisLower, ['sr is above', 'resistance above', 'upper sr target', 'upper barrier']) && !hasAny(analysisLower, ['not above', 'reference geometry', 'marker-flow'])) {{
+        if (hasAny(analysisLower, ['sr is above', 'resistance above', 'upper sr target', 'upper barrier'])
+          && evidence.barrier_position !== 'above_entry'
+          && !hasAny(analysisLower, ['not above', 'reference geometry', 'marker-flow', 'final sr geometry', 'final exit geometry'])) {{
           addVerifierIssue(issues, 'contradiction', 'SR geometry conflict', 'Auto Suggest says SR is below entry, but the draft talks as if the relevant SR is above/resistance.');
         }}
       }}
       if (evidence.sr_position === 'above_entry') {{
         checks.push('SR geometry checked: above entry means ' + (evidence.sr_role || 'resistance-side geometry'));
-        if (hasAny(analysisLower, ['sr is below', 'support below', 'lower sr target', 'lower barrier']) && !hasAny(analysisLower, ['not below', 'reference geometry', 'marker-flow'])) {{
+        if (hasAny(analysisLower, ['sr is below', 'support below', 'lower sr target', 'lower barrier'])
+          && evidence.barrier_position !== 'below_entry'
+          && !hasAny(analysisLower, ['not below', 'reference geometry', 'marker-flow', 'first barrier', 'barrier checked'])) {{
           addVerifierIssue(issues, 'contradiction', 'SR geometry conflict', 'Auto Suggest says SR is above entry, but the draft talks as if the relevant SR is below/support.');
         }}
+      }}
+      if (evidence.mixed_sr_references) {{
+        checks.push('Mixed SR references checked: final geometry is ' + evidence.sr_label + '; first barrier/reference is ' + evidence.barrier_label);
       }}
       if (evidence.break_status === 'confirmed') {{
         checks.push('Break confirmation checked: confirmed');
