@@ -1,10 +1,34 @@
 # Current Project Handoff
 
-Last updated: 2026-05-30 01:59 IST
+Last updated: 2026-05-30 03:58 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-30
+
+2026-05-30 visible-viewport Gann envelope fans:
+
+- User clarified the new two extra Gann fans should use the whole currently visible Plotly/browser chart span, not only the selected aspect-review window.
+- `build_repeatation_review_pack.py` now adds a `Viewport Fans` soft button in the marker drawer:
+  - finds the highest visible candlestick top wick and anchors a bearish/downward context fan there;
+  - finds the lowest visible candlestick bottom wick and anchors a bullish/upward context fan there;
+  - stores them in `viewport_fans` autosave/download payloads and includes them in `current_marker_ml_note`;
+  - displays a drawer summary labelled `visual/ML context only`, so these fans do not alter Auto Suggest trade start/end logic yet.
+- The fan traces use the same ratios as the main Gann fan: `1x4`, `1x2`, `1x1`, `2x1`, `4x1`.
+- Robustness fixes:
+  - marker UI now waits for real `window.Plotly.relayout` before attaching; it no longer immediately binds a no-op Plotly shim just because the graph div exists;
+  - exported case charts now inline Plotly JS instead of relying on external `plotly.min.js`, because the in-app browser was rendering the SVG but not exposing external Plotly reliably;
+  - a fallback SVG drawing path was added for viewport fans when live Plotly is unavailable in the in-app browser;
+  - candlestick collection now ignores traces with `visible === false`, so hidden timeframe candles do not pollute the highest/lowest visible wick scan.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260530_035143`
+- Restarted server on port `8765`, PID `20544`.
+- Current case 185 URL:
+  `http://127.0.0.1:8765/aspect_review_case_185_chart.html?v=repeatation_ui_20260530_viewport_fans_v64&fresh=verify10`
+- Verification:
+  - `python -m py_compile build_repeatation_review_pack.py sr_touch_lazy_dashboard.py reviewer_rule_replay.py codex_review_task_queue.py serve_repeatation_pack.py`
+  - rebuilt all 16 AVG(ALL)|MOON square repeatation charts;
+  - browser screenshot confirmed the drawer summary and the extra context fan lines are visible on the chart. In-app browser DOM inspection remains sandboxed and does not reliably expose the injected SVG/Plotly runtime, so screenshot verification is the useful check for this feature.
 
 2026-05-30 case 185 ignore-trade / intrabar SR sandwich:
 

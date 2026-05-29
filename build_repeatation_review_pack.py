@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260530_ignore_intrabar_v57"
+REPEATATION_UI_VERSION = "repeatation_ui_20260530_viewport_fans_v64"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -911,8 +911,16 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     attempt = attempt || 0;
     var gd = document.querySelector('.js-plotly-plot');
     var plotlyApi = window.Plotly;
+    if (gd && plotlyApi && typeof plotlyApi.relayout === 'function') {{
+      fn(gd, plotlyApi);
+      return;
+    }}
+    if (attempt < 120) {{
+      window.setTimeout(function () {{ waitForPlotlyGraph(fn, attempt + 1); }}, 250);
+      return;
+    }}
     if (gd) {{
-      if (!plotlyApi) {{
+      if (!plotlyApi || typeof plotlyApi.relayout !== 'function') {{
         plotlyApi = {{
           relayout: function () {{
             return Promise.resolve();
@@ -920,10 +928,6 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         }};
       }}
       fn(gd, plotlyApi);
-      return;
-    }}
-    if (attempt < 120) {{
-      window.setTimeout(function () {{ waitForPlotlyGraph(fn, attempt + 1); }}, 250);
       return;
     }}
     var fallbackGd = document.querySelector('.plotly-graph-div');
@@ -950,6 +954,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       reviewSave: null,
       replayImpact: null,
       completedReview: meta.completedReview || null,
+      viewportFans: null,
       outcomeTouched: false,
       lastPoint: null,
       draftLoaded: false
@@ -991,7 +996,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       ignore: '#c084fc',
       profit: '#a78bfa',
       gann: '#f59e0b',
-      gannAnchor: '#f97316'
+      gannAnchor: '#f97316',
+      viewportHigh: '#fb7185',
+      viewportLow: '#22d3ee'
     }};
     function esc(value) {{
       return String(value == null ? '' : value)
@@ -1298,6 +1305,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var candles = [];
       traces.forEach(function (trace) {{
         if (String(trace && trace.type || '').toLowerCase() !== 'candlestick') return;
+        if (trace.visible === false) return;
         var len = Number((trace.x && trace.x.length) || 0);
         for (var i = 0; i < len; i += 1) {{
           var x = arrayValue(trace.x, i);
@@ -1594,6 +1602,104 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ],
         reason: reason || 'auto suggestion start marker'
       }};
+    }}
+    function gannFanFromCandle(candle, directionSign, role, reason) {{
+      if (!candle || !Number.isFinite(Number(candle.t)) || !Number.isFinite(Number(candle.high)) || !Number.isFinite(Number(candle.low))) return null;
+      var sign = Number(directionSign || 0);
+      if (!sign) return null;
+      var anchorPrice = sign < 0 ? Number(candle.high) : Number(candle.low);
+      var anchorSource = sign < 0 ? 'viewport_gann_high_top_wick' : 'viewport_gann_low_bottom_wick';
+      return {{
+        active: true,
+        context: 'visible_plotly_viewport',
+        role: role || (sign < 0 ? 'viewport_high_resistance_fan' : 'viewport_low_support_fan'),
+        direction: sign < 0 ? 'bearish' : 'bullish',
+        fan_direction: sign < 0 ? 'bearish' : 'bullish',
+        direction_sign: sign,
+        anchor: {{
+          x: candle.x,
+          y: Number(anchorPrice.toFixed(3)),
+          source: anchorSource,
+          markerLabel: sign < 0 ? 'Viewport highest high top wick anchor' : 'Viewport lowest low bottom wick anchor'
+        }},
+        anchor_candle: {{
+          x: candle.x,
+          open: Number(candle.open.toFixed(3)),
+          high: Number(candle.high.toFixed(3)),
+          low: Number(candle.low.toFixed(3)),
+          close: Number(candle.close.toFixed(3))
+        }},
+        anchor_rule: sign < 0
+          ? 'visible viewport highest high: bearish/downward envelope fan'
+          : 'visible viewport lowest low: bullish/upward envelope fan',
+        timeframe_minutes: timeframeMinutes(),
+        base_pips_per_candle: 1,
+        ratios: [
+          {{ label: '1x4', slope: 0.25 }},
+          {{ label: '1x2', slope: 0.5 }},
+          {{ label: '1x1', slope: 1 }},
+          {{ label: '2x1', slope: 2 }},
+          {{ label: '4x1', slope: 4 }}
+        ],
+        reason: reason || 'visible Plotly viewport envelope fan'
+      }};
+    }}
+    function currentViewportRange() {{
+      var axis = gd._fullLayout && gd._fullLayout.xaxis;
+      var range = axis && Array.isArray(axis.range) ? axis.range : null;
+      var candles = collectCandles();
+      var fallbackStart = candles.length ? candles[0].t : Date.parse(meta.windowStart);
+      var fallbackEnd = candles.length ? candles[candles.length - 1].t : Date.parse(meta.windowEnd);
+      var start = range ? Date.parse(range[0]) : fallbackStart;
+      var end = range ? Date.parse(range[1]) : fallbackEnd;
+      if (!Number.isFinite(start) || !Number.isFinite(end) || start === end) return null;
+      if (start > end) {{ var tmp = start; start = end; end = tmp; }}
+      return {{
+        start_ms: start,
+        end_ms: end,
+        start: new Date(start).toISOString(),
+        end: new Date(end).toISOString()
+      }};
+    }}
+    function visibleViewportCandles() {{
+      var range = currentViewportRange();
+      var candles = collectCandles();
+      if (!range) return candles;
+      var interval = candleMs();
+      return candles.filter(function (c) {{
+        return Number.isFinite(c.t) && c.t >= range.start_ms - interval * 0.5 && c.t <= range.end_ms + interval * 0.5;
+      }});
+    }}
+    function viewportEnvelopeFans() {{
+      var range = currentViewportRange();
+      var candles = visibleViewportCandles();
+      if (!candles.length) return null;
+      var highCandle = candles.reduce(function (best, c) {{
+        return !best || Number(c.high) > Number(best.high) ? c : best;
+      }}, null);
+      var lowCandle = candles.reduce(function (best, c) {{
+        return !best || Number(c.low) < Number(best.low) ? c : best;
+      }}, null);
+      var highFan = gannFanFromCandle(highCandle, -1, 'viewport_high_resistance_fan', 'highest top wick in current visible Plotly viewport');
+      var lowFan = gannFanFromCandle(lowCandle, 1, 'viewport_low_support_fan', 'lowest bottom wick in current visible Plotly viewport');
+      return {{
+        active: !!(highFan && lowFan),
+        mode: 'manual_visible_plotly_viewport',
+        viewport_start: range ? range.start : '',
+        viewport_end: range ? range.end : '',
+        candle_count: candles.length,
+        high_fan: highFan,
+        low_fan: lowFan,
+        created_at: new Date().toISOString(),
+        usage: 'visual_and_ml_context_only_not_auto_suggest_trade_logic'
+      }};
+    }}
+    function refreshViewportFans() {{
+      state.viewportFans = viewportEnvelopeFans();
+      drawMarkers();
+      render();
+      saveDraft();
+      updateSaveStatus(state.viewportFans && state.viewportFans.active ? 'viewport fans refreshed from visible chart span' : 'viewport fans unavailable');
     }}
     function gannFanLineValueAt(fan, ratioLabel, timeMs) {{
       if (!fan || !fan.anchor || !ratioLabel || !Number.isFinite(timeMs)) return null;
@@ -2044,8 +2150,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         if (!Number.isFinite(anchorTime) || endTime <= anchorTime) endTime = anchorTime + candleMs() * 24;
         return endTime;
       }}
-      function drawGannFan() {{
-        var fan = state.autoSuggestion && state.autoSuggestion.gann_fan;
+      function drawSingleGannFan(fan, opts) {{
+        opts = opts || {{}};
         if (!fan || !fan.active || !fan.anchor) return;
         var anchorTime = Date.parse(fan.anchor.x);
         var anchorPrice = Number(fan.anchor.y);
@@ -2064,29 +2170,36 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         var anchorYs = yAround(anchorPrice, 0.013);
         var anchorDotXs = xAround(fan.anchor.x, 0.0024);
         var anchorDotYs = yAround(anchorPrice, 0.007);
+        var prefix = opts.prefix || 'repeatation-marker-gann';
+        var ringFill = opts.ringFill || 'rgba(249,115,22,0.12)';
+        var ringLine = opts.ringLine || 'rgba(254,243,199,0.95)';
+        var dotFill = opts.dotFill || 'rgba(249,115,22,0.96)';
+        var oneLine = opts.oneLine || 'rgba(251,191,36,0.90)';
+        var otherLine = opts.otherLine || 'rgba(245,158,11,0.52)';
+        var lineWidth = Number(opts.lineWidth || 1.05);
         shapes.push({{
           type: 'circle',
-          name: 'repeatation-marker-gann-anchor-ring',
+          name: prefix + '-anchor-ring',
           xref: 'x',
           yref: 'y',
           x0: anchorXs[0],
           x1: anchorXs[1],
           y0: anchorYs[0],
           y1: anchorYs[1],
-          fillcolor: 'rgba(249,115,22,0.12)',
-          line: {{ color: 'rgba(254,243,199,0.95)', width: 1.5 }},
+          fillcolor: ringFill,
+          line: {{ color: ringLine, width: 1.5 }},
           layer: 'above'
         }});
         shapes.push({{
           type: 'circle',
-          name: 'repeatation-marker-gann-anchor-dot',
+          name: prefix + '-anchor-dot',
           xref: 'x',
           yref: 'y',
           x0: anchorDotXs[0],
           x1: anchorDotXs[1],
           y0: anchorDotYs[0],
           y1: anchorDotYs[1],
-          fillcolor: 'rgba(249,115,22,0.96)',
+          fillcolor: dotFill,
           line: {{ color: 'rgba(15,23,42,0.95)', width: 0.8 }},
           layer: 'above'
         }});
@@ -2096,7 +2209,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           var y1 = anchorPrice + directionSign * elapsedCandles * basePips * slope / 100;
           shapes.push({{
             type: 'line',
-            name: 'repeatation-marker-gann-' + String(ratio.label || '').toLowerCase(),
+            name: prefix + '-' + String(ratio.label || '').toLowerCase(),
             xref: 'x',
             yref: 'y',
             x0: fan.anchor.x,
@@ -2104,13 +2217,39 @@ def marker_ui_script(case: dict[str, Any]) -> str:
             y0: anchorPrice,
             y1: y1,
             line: {{
-              color: ratio.label === '1x1' ? 'rgba(251,191,36,0.90)' : 'rgba(245,158,11,0.52)',
-              width: ratio.label === '1x1' ? 1.6 : 1.05,
+              color: ratio.label === '1x1' ? oneLine : otherLine,
+              width: ratio.label === '1x1' ? Math.max(1.6, lineWidth + 0.5) : lineWidth,
               dash: ratio.label === '1x1' ? 'solid' : 'dot'
             }},
             layer: 'above'
           }});
         }});
+      }}
+      function drawGannFan() {{
+        drawSingleGannFan(state.autoSuggestion && state.autoSuggestion.gann_fan, {{
+          prefix: 'repeatation-marker-gann'
+        }});
+        var viewport = state.viewportFans || null;
+        if (viewport && viewport.active) {{
+          drawSingleGannFan(viewport.high_fan, {{
+            prefix: 'repeatation-marker-viewport-high-gann',
+            ringFill: 'rgba(251,113,133,0.10)',
+            ringLine: 'rgba(251,113,133,0.95)',
+            dotFill: 'rgba(251,113,133,0.95)',
+            oneLine: 'rgba(251,113,133,0.86)',
+            otherLine: 'rgba(251,113,133,0.34)',
+            lineWidth: 0.95
+          }});
+          drawSingleGannFan(viewport.low_fan, {{
+            prefix: 'repeatation-marker-viewport-low-gann',
+            ringFill: 'rgba(34,211,238,0.10)',
+            ringLine: 'rgba(34,211,238,0.95)',
+            dotFill: 'rgba(34,211,238,0.95)',
+            oneLine: 'rgba(34,211,238,0.86)',
+            otherLine: 'rgba(34,211,238,0.34)',
+            lineWidth: 0.95
+          }});
+        }}
       }}
       function crosshair(point, color, dash, name) {{
         if (!point || !point.x || !Number.isFinite(Number(point.y))) return;
@@ -2252,8 +2391,211 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       tradeProfitLabel();
       return annotations;
     }}
+    function svgTranslateValue(value, axis) {{
+      var match = String(value || '').match(axis === 'x' ? /translate\\(([-0-9.]+)/ : /translate\\([^,]+,([-0-9.]+)/);
+      return match ? Number(match[1]) : NaN;
+    }}
+    function clearSvgFallbackMarkers() {{
+      var svg = gd.querySelector('svg.main-svg');
+      var layer = svg && svg.querySelector('#repeatation-svg-fallback-layer');
+      if (layer) {{
+        try {{ layer.outerHTML = ''; return; }} catch (err) {{}}
+        if (layer.parentNode && layer.parentNode.removeChild) layer.parentNode.removeChild(layer);
+      }}
+    }}
+    function tickDateMs(textNode, fallbackYear) {{
+      if (!textNode) return NaN;
+      var parts = Array.prototype.slice.call(textNode.querySelectorAll('tspan')).map(function (t) {{
+        return (t.textContent || '').trim();
+      }}).filter(Boolean);
+      if (!parts.length) parts = [(textNode.textContent || '').trim()];
+      var label = parts.join(' ').replace(/\\s+/g, ' ').trim();
+      var year = String(fallbackYear || (new Date(meta.windowStart)).getFullYear() || '2025');
+      if (/\\b\\d{{4}}\\b/.test(label)) {{
+        year = (label.match(/\\b\\d{{4}}\\b/) || [year])[0];
+      }} else {{
+        label = label + ' ' + year;
+      }}
+      var parsed = Date.parse(label + ' 00:00:00 GMT+0530');
+      return Number.isFinite(parsed) ? parsed : NaN;
+    }}
+    function svgAxisMapper() {{
+      var svg = gd.querySelector('svg.main-svg');
+      if (!svg) return null;
+      var bg = svg.querySelector('rect.bg') || svg.querySelector('.bg');
+      if (!bg) return null;
+      var plot = {{
+        x: Number(bg.getAttribute('x') || 0),
+        y: Number(bg.getAttribute('y') || 0),
+        w: Number(bg.getAttribute('width') || 0),
+        h: Number(bg.getAttribute('height') || 0)
+      }};
+      if (!Number.isFinite(plot.w) || !Number.isFinite(plot.h) || plot.w <= 0 || plot.h <= 0) return null;
+      var year = (new Date(meta.windowStart)).getFullYear() || 2025;
+      var xticks = Array.prototype.slice.call(svg.querySelectorAll('g.xtick text')).map(function (text) {{
+        return {{ ms: tickDateMs(text, year), px: svgTranslateValue(text.getAttribute('transform'), 'x') }};
+      }}).filter(function (t) {{ return Number.isFinite(t.ms) && Number.isFinite(t.px); }});
+      var yticks = Array.prototype.slice.call(svg.querySelectorAll('g.ytick text')).map(function (text) {{
+        return {{ value: Number((text.textContent || '').replace(/,/g, '')), py: svgTranslateValue(text.getAttribute('transform'), 'y') }};
+      }}).filter(function (t) {{ return Number.isFinite(t.value) && Number.isFinite(t.py); }});
+      if (xticks.length < 2) {{
+        var candles = collectCandles();
+        if (candles.length >= 2) {{
+          xticks = [
+            {{ ms: candles[0].t, px: plot.x }},
+            {{ ms: candles[candles.length - 1].t, px: plot.x + plot.w }}
+          ];
+        }}
+      }}
+      if (yticks.length < 2) {{
+        var visible = visibleViewportCandles();
+        if (visible.length) {{
+          var minY = Math.min.apply(null, visible.map(function (c) {{ return Number(c.low); }}));
+          var maxY = Math.max.apply(null, visible.map(function (c) {{ return Number(c.high); }}));
+          yticks = [
+            {{ value: maxY, py: plot.y }},
+            {{ value: minY, py: plot.y + plot.h }}
+          ];
+        }}
+      }}
+      if (xticks.length < 2 || yticks.length < 2) return null;
+      xticks.sort(function (a, b) {{ return a.ms - b.ms; }});
+      yticks.sort(function (a, b) {{ return a.value - b.value; }});
+      var x0 = xticks[0], x1 = xticks[xticks.length - 1];
+      var y0 = yticks[0], y1 = yticks[yticks.length - 1];
+      if (x0.ms === x1.ms || y0.value === y1.value) return null;
+      return {{
+        svg: svg,
+        plot: plot,
+        xMinMs: x0.ms,
+        xMaxMs: x1.ms,
+        x: function (ms) {{ return x0.px + (Number(ms) - x0.ms) * (x1.px - x0.px) / (x1.ms - x0.ms); }},
+        y: function (value) {{ return y0.py + (Number(value) - y0.value) * (y1.py - y0.py) / (y1.value - y0.value); }}
+      }};
+    }}
+    function drawSvgFallbackFan(layer, mapper, fan, opts) {{
+      opts = opts || {{}};
+      if (!fan || !fan.active || !fan.anchor || !mapper) return;
+      var anchorTime = Date.parse(fan.anchor.x);
+      var anchorPrice = Number(fan.anchor.y);
+      var directionSign = Number(fan.direction_sign || 0);
+      if (!Number.isFinite(anchorTime) || !Number.isFinite(anchorPrice) || !directionSign) return;
+      var endTime = Math.max(mapper.xMaxMs, anchorTime + candleMs() * 24);
+      var elapsedCandles = (endTime - anchorTime) / candleMs();
+      var basePips = Number(fan.base_pips_per_candle || 1);
+      var ax = mapper.x(anchorTime);
+      var ay = mapper.y(anchorPrice);
+      var ns = 'http://www.w3.org/2000/svg';
+      function addLine(x1, y1, x2, y2, color, width, dash) {{
+        var line = document.createElementNS(ns, 'line');
+        line.setAttribute('x1', x1.toFixed(2));
+        line.setAttribute('y1', y1.toFixed(2));
+        line.setAttribute('x2', x2.toFixed(2));
+        line.setAttribute('y2', y2.toFixed(2));
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', String(width || 1));
+        line.setAttribute('fill', 'none');
+        if (dash) line.setAttribute('stroke-dasharray', dash);
+        line.setAttribute('pointer-events', 'none');
+        layer.appendChild(line);
+      }}
+      function addCircle(r, fill, stroke, width) {{
+        var circle = document.createElementNS(ns, 'circle');
+        circle.setAttribute('cx', ax.toFixed(2));
+        circle.setAttribute('cy', ay.toFixed(2));
+        circle.setAttribute('r', String(r));
+        circle.setAttribute('fill', fill);
+        circle.setAttribute('stroke', stroke);
+        circle.setAttribute('stroke-width', String(width || 1));
+        circle.setAttribute('pointer-events', 'none');
+        layer.appendChild(circle);
+      }}
+      addCircle(opts.ringRadius || 13, opts.ringFill || 'rgba(249,115,22,0.10)', opts.ringLine || 'rgba(254,243,199,0.95)', 1.6);
+      addCircle(opts.dotRadius || 4.2, opts.dotFill || 'rgba(249,115,22,0.96)', 'rgba(15,23,42,0.95)', 0.9);
+      (Array.isArray(fan.ratios) ? fan.ratios : []).forEach(function (ratio) {{
+        var slope = Number(ratio.slope);
+        if (!Number.isFinite(slope)) return;
+        var yData = anchorPrice + directionSign * elapsedCandles * basePips * slope / 100;
+        var lineColor = ratio.label === '1x1' ? (opts.oneLine || 'rgba(251,191,36,0.90)') : (opts.otherLine || 'rgba(245,158,11,0.52)');
+        var width = ratio.label === '1x1' ? 1.8 : 1.05;
+        addLine(ax, ay, mapper.x(endTime), mapper.y(yData), lineColor, width, ratio.label === '1x1' ? '' : '3 4');
+      }});
+    }}
+    function drawSvgFallbackMarkers() {{
+      clearSvgFallbackMarkers();
+      var mapper = svgAxisMapper();
+      if (!mapper) {{
+        window.__repeatationSvgFallbackDebug = 'no svg axis mapper';
+        return;
+      }}
+      if (!state.viewportFans || !state.viewportFans.active) {{
+        window.__repeatationSvgFallbackDebug = 'no active viewport fans';
+        return;
+      }}
+      function svgAttr(value) {{
+        return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      }}
+      function fanMarkup(fan, opts) {{
+        opts = opts || {{}};
+        if (!fan || !fan.active || !fan.anchor) return '';
+        var anchorTime = Date.parse(fan.anchor.x);
+        var anchorPrice = Number(fan.anchor.y);
+        var directionSign = Number(fan.direction_sign || 0);
+        if (!Number.isFinite(anchorTime) || !Number.isFinite(anchorPrice) || !directionSign) return '';
+        var endTime = Math.max(mapper.xMaxMs, anchorTime + candleMs() * 24);
+        var elapsedCandles = (endTime - anchorTime) / candleMs();
+        var basePips = Number(fan.base_pips_per_candle || 1);
+        var ax = mapper.x(anchorTime);
+        var ay = mapper.y(anchorPrice);
+        var html = '';
+        function line(x1, y1, x2, y2, color, width, dash) {{
+          html += '<line x1="' + x1.toFixed(2) + '" y1="' + y1.toFixed(2) + '" x2="' + x2.toFixed(2) + '" y2="' + y2.toFixed(2) + '" stroke="' + svgAttr(color) + '" stroke-width="' + svgAttr(width || 1) + '" fill="none" pointer-events="none"' + (dash ? ' stroke-dasharray="' + svgAttr(dash) + '"' : '') + '></line>';
+        }}
+        function circle(r, fill, stroke, width) {{
+          html += '<circle cx="' + ax.toFixed(2) + '" cy="' + ay.toFixed(2) + '" r="' + svgAttr(r) + '" fill="' + svgAttr(fill) + '" stroke="' + svgAttr(stroke) + '" stroke-width="' + svgAttr(width || 1) + '" pointer-events="none"></circle>';
+        }}
+        circle(opts.ringRadius || 13, opts.ringFill || 'rgba(249,115,22,0.10)', opts.ringLine || 'rgba(254,243,199,0.95)', 1.6);
+        circle(opts.dotRadius || 4.2, opts.dotFill || 'rgba(249,115,22,0.96)', 'rgba(15,23,42,0.95)', 0.9);
+        (Array.isArray(fan.ratios) ? fan.ratios : []).forEach(function (ratio) {{
+          var slope = Number(ratio.slope);
+          if (!Number.isFinite(slope)) return;
+          var yData = anchorPrice + directionSign * elapsedCandles * basePips * slope / 100;
+          var color = ratio.label === '1x1' ? (opts.oneLine || 'rgba(251,191,36,0.90)') : (opts.otherLine || 'rgba(245,158,11,0.52)');
+          line(ax, ay, mapper.x(endTime), mapper.y(yData), color, ratio.label === '1x1' ? 1.8 : 1.05, ratio.label === '1x1' ? '' : '3 4');
+        }});
+        return html;
+      }}
+      var markup = '<g id="repeatation-svg-fallback-layer" class="repeatation-svg-fallback-layer" pointer-events="none">'
+        + fanMarkup(state.viewportFans.high_fan, {{
+          ringFill: 'rgba(251,113,133,0.10)',
+          ringLine: 'rgba(251,113,133,0.95)',
+          dotFill: 'rgba(251,113,133,0.95)',
+          oneLine: 'rgba(251,113,133,0.88)',
+          otherLine: 'rgba(251,113,133,0.38)'
+        }})
+        + fanMarkup(state.viewportFans.low_fan, {{
+          ringFill: 'rgba(34,211,238,0.10)',
+          ringLine: 'rgba(34,211,238,0.95)',
+          dotFill: 'rgba(34,211,238,0.95)',
+          oneLine: 'rgba(34,211,238,0.88)',
+          otherLine: 'rgba(34,211,238,0.38)'
+        }})
+        + '</g>';
+      if (mapper.svg.insertAdjacentHTML) mapper.svg.insertAdjacentHTML('beforeend', markup);
+      else mapper.svg.innerHTML = mapper.svg.innerHTML + markup;
+      window.__repeatationSvgFallbackDebug = 'drawn fallback viewport fans';
+    }}
     function drawMarkers() {{
       Plotly.relayout(gd, {{ shapes: markerShapes(), annotations: markerAnnotations() }});
+      if (window.Plotly && gd._fullLayout) clearSvgFallbackMarkers();
+      else {{
+        try {{
+          drawSvgFallbackMarkers();
+          window.__repeatationSvgFallbackError = '';
+        }} catch (err) {{
+          window.__repeatationSvgFallbackError = String(err && (err.stack || err.message) || err);
+        }}
+      }}
     }}
     function noteText() {{
       return panel.querySelector('#repeatation-note').value.trim();
@@ -2532,8 +2874,29 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + '<div class="rm-table-sub">This is the deterministic decision trail. It shows what the script chose and what it rejected.</div>'
         + '</details>';
     }}
+    function viewportFansSummaryHtml() {{
+      var vf = state.viewportFans || null;
+      if (!vf || !vf.active) return '';
+      function fanLine(label, fan) {{
+        if (!fan || !fan.anchor) return '';
+        return '<div><b>' + esc(label) + '</b>: '
+          + esc(toIST(fan.anchor.x))
+          + ' @ ' + esc(Number(fan.anchor.y).toFixed(3))
+          + ' | ' + esc(fan.fan_direction || '')
+          + '</div>';
+      }}
+      return '<div class="rm-viewport-fans">'
+        + '<div><b>Viewport fans</b><span>visual/ML context only</span></div>'
+        + '<div class="rm-table-sub">Calculated from the currently visible Plotly x-axis range, not the selected aspect window.</div>'
+        + '<div class="rm-table-sub">Viewport: ' + esc(toIST(vf.viewport_start)) + ' -> ' + esc(toIST(vf.viewport_end))
+        + ' | candles=' + esc(vf.candle_count || 0) + '</div>'
+        + fanLine('Highest visible wick fan', vf.high_fan)
+        + fanLine('Lowest visible wick fan', vf.low_fan)
+        + '</div>';
+    }}
     function autoSuggestionHtml() {{
-      if (!state.autoSuggestion) return '<div class="rm-auto muted">Auto Suggest has not been run for this repeatation.</div>';
+      var viewportHtml = viewportFansSummaryHtml();
+      if (!state.autoSuggestion) return '<div class="rm-auto muted">Auto Suggest has not been run for this repeatation.</div>' + viewportHtml;
       var s = state.autoSuggestion;
       var geometry = s.sr_geometry
         ? '<div><b>SR geometry</b>: ' + esc(s.sr_geometry.label || '') + ' (' + esc(signedPipsText(s.sr_geometry.distance_pips)) + ' from entry)</div>'
@@ -2614,6 +2977,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + tracking
         + breakHtml
         + fanHtml
+        + viewportHtml
         + autoCandidateInspectorHtml(s)
         + (s.manual_override ? '<div class="rm-warning">Manual override recorded: add a Rule Note explaining why.</div>' : '')
         + '</div>';
@@ -2855,6 +3219,16 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (s.multi_aspect_overlap_evidence) {{
         lines.push('multi_aspect_gate=' + (s.multi_aspect_overlap_evidence.active ? 'active' : 'inactive'));
       }}
+      if (state.viewportFans && state.viewportFans.active) {{
+        var vf = state.viewportFans;
+        if (vf.high_fan && vf.high_fan.anchor) {{
+          lines.push('viewport_high_fan=' + toIST(vf.high_fan.anchor.x) + ' @ ' + Number(vf.high_fan.anchor.y).toFixed(3) + ' downward');
+        }}
+        if (vf.low_fan && vf.low_fan.anchor) {{
+          lines.push('viewport_low_fan=' + toIST(vf.low_fan.anchor.x) + ' @ ' + Number(vf.low_fan.anchor.y).toFixed(3) + ' upward');
+        }}
+        lines.push('viewport_fan_usage=visual_and_ml_context_only_not_auto_suggest_trade_logic');
+      }}
       if (s.outcome_tracking) lines.push('rule_vs_default=' + JSON.stringify(s.outcome_tracking));
       if (hints.length) lines.push('astro_hints=' + hints.join(' | '));
       if (noteText()) lines.push('reviewer_note=' + noteText());
@@ -2873,7 +3247,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           end_rule: s.end_rule || 'manual_end',
           sr_geometry: geometry && geometry.label ? geometry.label : '',
           break_confirmation: breakInfo && breakInfo.label ? breakInfo.label : '',
-          gann_fan_exit_status: s.gann_fan_exit_rule_status || ''
+          gann_fan_exit_status: s.gann_fan_exit_rule_status || '',
+          viewport_high_fan: state.viewportFans && state.viewportFans.high_fan && state.viewportFans.high_fan.anchor ? toIST(state.viewportFans.high_fan.anchor.x) + ' @ ' + Number(state.viewportFans.high_fan.anchor.y).toFixed(3) : '',
+          viewport_low_fan: state.viewportFans && state.viewportFans.low_fan && state.viewportFans.low_fan.anchor ? toIST(state.viewportFans.low_fan.anchor.x) + ' @ ' + Number(state.viewportFans.low_fan.anchor.y).toFixed(3) : ''
         }},
         note_text: lines.join('\\n'),
         created_at_utc: new Date().toISOString()
@@ -2996,6 +3372,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         trade_end_ist: state.tradeEnd ? toIST(state.tradeEnd.x) : '',
         trade_profit: result,
         auto_suggestion: state.autoSuggestion || {{}},
+        viewport_fans: state.viewportFans || null,
         current_marker_ml_note: currentMarkerMlNote(),
         reviewer_note: noteText(),
         review_status: 'complete',
@@ -3629,6 +4006,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           toggleIgnoreType(button.getAttribute('data-ignore-type') || '');
         }});
       }});
+      if (state.viewportFans && state.viewportFans.active) {{
+        window.setTimeout(function () {{ drawMarkers(); }}, 0);
+      }}
       updateSaveStatus();
     }}
     function draftPayload() {{
@@ -3649,6 +4029,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ignore_end: serialPoint(state.ignoreEnd),
         trade_ignored: state.tradeIgnored,
         auto_suggestion: state.autoSuggestion,
+        viewport_fans: state.viewportFans,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
         current_marker_ml_note: currentMarkerMlNote(),
@@ -3674,7 +4055,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
     }}
     function hasDraftableContent() {{
-      return !!(state.tradeStart || state.tradeEnd || state.ignoreStart || state.ignoreEnd || state.tradeIgnored || state.annotations.length || noteText() || state.draftLoaded);
+      return !!(state.tradeStart || state.tradeEnd || state.ignoreStart || state.ignoreEnd || state.tradeIgnored || state.viewportFans || state.annotations.length || noteText() || state.draftLoaded);
     }}
     function loadDraft() {{
       if (!window.localStorage) return null;
@@ -3694,6 +4075,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreEnd = restorePoint(draft.ignore_end);
       state.tradeIgnored = !!draft.trade_ignored;
       state.autoSuggestion = draft.auto_suggestion || null;
+      state.viewportFans = draft.viewport_fans || null;
       state.reviewSave = draft.review_save || null;
       state.replayImpact = draft.replay_impact || null;
       state.completedReview = draft.completed_review || meta.completedReview || null;
@@ -3732,6 +4114,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state.ignoreEnd = null;
       state.tradeIgnored = false;
       state.autoSuggestion = null;
+      state.viewportFans = null;
       state.selectedIgnoreTypes = [];
       state.annotations = [];
       state.reviewSave = null;
@@ -4072,6 +4455,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         ignore_end_ist: state.ignoreEnd ? toIST(state.ignoreEnd.x) : '',
         trade_ignored: state.tradeIgnored,
         auto_suggestion: state.autoSuggestion,
+        viewport_fans: state.viewportFans,
         selected_ignore_types: state.selectedIgnoreTypes,
         ml_annotations: state.annotations,
         current_marker_ml_note: currentMarkerMlNote(),
@@ -4115,7 +4499,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<button data-tool="ignore_start">Ignore start</button>'
       + '<button data-tool="ignore_end">Ignore end</button>'
       + '</div>'
-      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><button id="repeatation-show-gann" type="button">Show Gann Fan</button><span class="rm-status-inline">family rule if available; otherwise marker -> next marker</span></div>'
+      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><button id="repeatation-show-gann" type="button">Show Gann Fan</button><button id="repeatation-viewport-fans" type="button">Viewport Fans</button><span class="rm-status-inline">family rule if available; viewport fans are context only</span></div>'
       + '<div id="repeatation-auto-summary"></div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
@@ -4181,6 +4565,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-auto.clean{{border-color:#38bdf8;}}'
       + '#repeatation-marker-panel .rm-auto.fallback,.rm-auto.weak,.rm-auto.incomplete{{border-color:#fbbf24;}}'
       + '#repeatation-marker-panel .rm-warning{{color:#fbbf24;margin-top:4px;}}'
+      + '#repeatation-marker-panel .rm-viewport-fans{{background:#07111f;border:1px solid #38bdf8;border-radius:6px;padding:7px;margin:7px 0;color:#cbd5e1;}}'
+      + '#repeatation-marker-panel .rm-viewport-fans>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bae6fd;}}'
+      + '#repeatation-marker-panel .rm-viewport-fans span{{color:#fde68a;font-size:11px;}}'
       + '#repeatation-marker-panel .rm-candidates{{background:#07111f;border:1px solid #1e3a5f;border-radius:6px;padding:6px;margin:7px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-candidates summary{{cursor:pointer;color:#bae6fd;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px;}}'
       + '#repeatation-marker-panel .rm-candidates summary span{{color:#fde68a;font-size:11px;}}'
@@ -4296,6 +4683,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     panel.querySelector('#repeatation-clear-draft').addEventListener('click', clearSavedDraft);
     panel.querySelector('#repeatation-auto-suggest').addEventListener('click', autoSuggestTrade);
     panel.querySelector('#repeatation-show-gann').addEventListener('click', showGannFan);
+    panel.querySelector('#repeatation-viewport-fans').addEventListener('click', refreshViewportFans);
     panel.querySelector('#repeatation-save-rule-lesson').addEventListener('click', saveRuleLesson);
     panel.querySelector('#repeatation-complete-review').addEventListener('click', completeReview);
     panel.querySelector('#repeatation-draft-ml-reason').addEventListener('click', draftMlReason);

@@ -2646,7 +2646,7 @@ def main() -> None:
             context_hours=float(args.case_context_hours),
             hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
             daily_min_aspect_hours=float(args.daily_min_aspect_hours),
-            include_plotlyjs="directory",
+            include_plotlyjs=True,
         )
         print(f"Exported case chart HTML: {html_path}")
         print(f"Exported case chart CSV: {csv_path}")
@@ -2668,7 +2668,7 @@ def main() -> None:
                 context_hours=float(args.case_context_hours),
                 hourly_max_aspect_hours=float(args.hourly_max_aspect_hours),
                 daily_min_aspect_hours=float(args.daily_min_aspect_hours),
-                include_plotlyjs="directory",
+                include_plotlyjs=True,
             )
             exported += 1
             print(f"[{exported}/{len(cases)}] case_id={case['case_id']} rows={len(visible)} html={html_path} csv={csv_path}")
