@@ -1,10 +1,54 @@
 # Current Project Handoff
 
-Last updated: 2026-05-29 20:35 IST
+Last updated: 2026-05-30 01:59 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-29
+## Latest Update - 2026-05-30
+
+2026-05-30 case 185 ignore-trade / intrabar SR sandwich:
+
+- User reviewed case `185` in `AVG(ALL)|MOON::square` and chose to follow Codex recommendation to mark it ignored.
+- Decision saved:
+  - completed review `review_id=9`;
+  - official ML note `note_id=18`;
+  - `review_status=ignored`;
+  - `outcome_label=ignore_trade`;
+  - rules `ignore_trade_multi_sr_same_candle_intrabar_unknown -> ignore_trade_multi_sr_same_candle_intrabar_unknown`.
+- Added first-class UI ignore signal definitions in `build_repeatation_review_pack.py`:
+  - `multi_sr_same_candle`;
+  - `ambiguous_intrabar_order`.
+- Case `185` official note says:
+  - exact selected AVG(ALL)|MOON row stores MARS/MERCURY SR confluence, not Neptune/Saturn for the selected-case touch;
+  - stored SR prices are MARS `144.800108` and MERCURY `144.913239`, around `11.3` pips apart;
+  - 2025-06-25 07:30 and 08:00 M30 candles span both SRs, so OHLC cannot prove whether upper entry/rejection SR or lower target/support was touched first;
+  - astro pressure leans bearish (Drik `-32.1V`, malefic `-45.0V` vs benefic `+12.8V`, doctrine bearish) but Shadbala is weak/below threshold (`321.2V`, ratio `0.929`), Chesta is low, regime count is crowded, and FX heuristic conflicts bullish.
+- Important ML instruction:
+  - train case `185` as `ignore_trade_multi_sr_same_candle_intrabar_unknown`;
+  - do not label it as failed bullish or bearish;
+  - live trading may use lower timeframe/tick sequence, but historical M30 review should not invent intrabar order.
+- Fixed `reviewer_rule_replay.py` historical replay:
+  - when `gann_second_from_bottom_touch_multi_aspect` wins, replay now applies the Gann fan direction to `outcome_label` and signed pips just like the browser Auto Suggest;
+  - this resolved the stale replay contradiction on case `127`.
+- Case `127` was replay-corrected:
+  - completed review `review_id=8`;
+  - official ML note `note_id=19`;
+  - current replay is `bearish +4.0 pips`;
+  - rules `first_case_window_sr_line_touch -> gann_second_from_bottom_touch_multi_aspect`.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260530_015348`
+- Restarted server on port `8765`, PID `4900`.
+- Current case 185 review URL:
+  `http://127.0.0.1:8765/aspect_review_case_185_chart.html?v=repeatation_ui_20260530_ignore_intrabar_v57&fresh=case185done`
+- Verification:
+  - `python -m py_compile build_repeatation_review_pack.py reviewer_rule_replay.py codex_review_task_queue.py serve_repeatation_pack.py`
+  - `python codex_review_task_queue.py --list-pending --limit 20` returned no pending tasks.
+  - Browser verification after clearing stale local draft shows:
+    `Completed review: ignored`,
+    `rules: ignore_trade_multi_sr_same_candle_intrabar_unknown -> ignore_trade_multi_sr_same_candle_intrabar_unknown`,
+    and the official note starts with `Decision: Ignore Trade`.
+
+## Previous Update - 2026-05-29
 
 2026-05-29 mixed SR-reference verifier fix:
 

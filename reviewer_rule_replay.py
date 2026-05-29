@@ -1120,11 +1120,23 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
             else ("eligible_but_no_touch_found" if multi_aspect.get("active") else "blocked_no_multi_aspect_overlap"),
         }
 
-    signed = signed_pips_for_points(start, end, outcome)
+    effective_outcome = outcome
+    auto_outcome_reason = ""
+    if (
+        end_rule == "gann_second_from_bottom_touch_multi_aspect"
+        and fan
+        and fan.get("fan_direction") in {"bullish", "bearish"}
+    ):
+        effective_outcome = str(fan["fan_direction"])
+        auto_outcome_reason = (
+            "Gann fan exit controls trade direction: top-wick/down fan is bearish, "
+            "bottom-wick/up fan is bullish."
+        )
+    signed = signed_pips_for_points(start, end, effective_outcome)
     raw = None
     if start and end and safe_float(start.get("y")) is not None and safe_float(end.get("y")) is not None:
         raw = (float(end["y"]) - float(start["y"])) * 100
-    sr_geometry = sr_geometry_for_point(end, start, outcome, candles, case)
+    sr_geometry = sr_geometry_for_point(end, start, effective_outcome, candles, case)
     auto.update(
         {
             "active": bool(start and end),
@@ -1135,13 +1147,15 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
             "sr_geometry": sr_geometry,
             "start_rule": start_rule,
             "end_rule": end_rule,
+            "auto_outcome": effective_outcome,
+            "auto_outcome_reason": auto_outcome_reason,
             "created_at": datetime.utcnow().isoformat() + "Z",
         }
     )
     return {
         "case_id": int(case_id),
         "family_key": f"{case.get('pair_key')}::{case.get('aspect')}",
-        "outcome_label": outcome,
+        "outcome_label": effective_outcome,
         "trade_start": start,
         "trade_end": end,
         "entry_price": safe_float(start.get("y") if start else None),

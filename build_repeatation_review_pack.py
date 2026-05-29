@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260529_mixed_sr_verifier_v56"
+REPEATATION_UI_VERSION = "repeatation_ui_20260530_ignore_intrabar_v57"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -962,6 +962,8 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       nearby_aspect: 'A separate aspect/event starts or ends near the reviewed window but does not materially overlap it.',
       overlapping_aspect: 'A separate aspect/event overlaps the reviewed window and may be driving the same candles.',
       crowded_regime: 'Several aspect windows, SR lines, or regime zones are active together, so the isolated case_id effect is unclear.',
+      multi_sr_same_candle: 'Two or more SR lines are close enough that one candle spans them; without lower-timeframe order, trade attribution is unsafe.',
+      ambiguous_intrabar_order: 'The reviewed candle touches both possible entry and target/boundary zones, but OHLC data cannot prove which was touched first.',
       bad_price_data: 'Candles are missing, stale, misaligned, outside available data coverage, or otherwise unsuitable for annotation.',
       abnormal_candle: 'A candle spike/gap/one-off move dominates the result and may not represent the aspect behavior.',
       session_gap: 'Market close, weekend, rollover, or session transition interrupts clean start/end interpretation.',
