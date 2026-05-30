@@ -33,7 +33,7 @@ EXPECTATIONS: dict[int, ReplayExpectation] = {
         start_ist="2025-05-28T22:00:00+05:30",
         end_ist="2025-05-28T23:30:00+05:30",
         gann_anchor_side="top",
-        min_case_window_sr_touches=3,
+        min_case_window_sr_touches=2,
     ),
 }
 
@@ -263,6 +263,8 @@ def collect_candles(traces: list[dict[str, Any]]) -> list[dict[str, Any]]:
     candles: list[dict[str, Any]] = []
     for trace in traces:
         if str(trace.get("type") or "").lower() != "candlestick":
+            continue
+        if trace.get("visible") is False:
             continue
         xs = trace_array(trace.get("x"))
         for index, x in enumerate(xs):

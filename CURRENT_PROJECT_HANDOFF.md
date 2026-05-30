@@ -1,10 +1,44 @@
 # Current Project Handoff
 
-Last updated: 2026-05-30 23:55 IST
+Last updated: 2026-05-31 01:09 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-30
+## Latest Update - 2026-05-31
+
+2026-05-31 case 127 viewport-fan trading split-brain fix:
+
+- User asked whether the newly added two visible-viewport Gann fans were being used in trading, because case `127` looked like the close marker had moved to a bottom-most viewport-fan intersection instead of the remembered `23:30` close marker.
+- Current intended rule is confirmed:
+  - the two viewport fans are visual / ML-context only;
+  - Auto Suggest trading logic must not use them as start/end candidates.
+- Browser drawer / current HTML evidence showed case `127` should be:
+  - start `2025-05-28 22:00:00+05:30 @ 144.965`;
+  - end `2025-05-28 23:30:00+05:30 @ 145.125`;
+  - outcome `bullish +16.0 pips`;
+  - start rule `first_case_window_sr_line_touch`;
+  - end rule `next_later_hardcoded_marker`;
+  - viewport fan status `visual_and_ml_context_only_not_auto_suggest_trade_logic`.
+- Root cause of the stale contradiction:
+  - browser-side candle collection already ignored hidden candlestick traces;
+  - `reviewer_rule_replay.py` still included `trace.visible == false` candlestick traces, so historical replay could reproduce the older Gann-exit path even though the browser Auto Suggest no longer used it.
+- Fixed `reviewer_rule_replay.py`:
+  - `collect_candles()` now skips hidden candlestick traces;
+  - case `127` expectation now requires `2` selected-window SR touch candidates, matching the browser drawer.
+- Updated SQLite `D:\PycharmProjects\gann_aspect_annotations.sqlite`:
+  - completed review for case `127` now stores the current `bullish +16.0` marker-flow decision;
+  - replaced stale official ML note with current `official_ml_note` `note_id=21`, status `codex_verified_current_replay`;
+  - note explicitly says not to train the old `gann_second_from_bottom_touch_multi_aspect` / `bearish +4.0` path as the current decision.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260531_010132`
+- Server status:
+  - API-aware server listening on `127.0.0.1:8765`, PID `18460`;
+  - curl verification for case `127` returned HTTP `200`.
+- Verification:
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260531_010132 --case-id 127`
+  - result passed with start `22:00 @ 144.965`, end `23:30 @ 145.12528246460198`, and `case_window_sr_touch_count=2`.
+
+## Previous Update - 2026-05-30
 
 2026-05-30 C-drive storage cleanup / D-drive path hardening:
 
