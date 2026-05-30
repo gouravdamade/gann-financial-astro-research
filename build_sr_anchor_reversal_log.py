@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -17,7 +17,7 @@ except Exception:
 
 
 # Use the original JDML4 environment for the same longitude engine.
-PROJECT_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
+PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
@@ -47,22 +47,22 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--events",
-        default=r"C:\Users\ADMIN\PycharmProjects\astro_training_data_ipo_tokyo_18890211.parquet",
+        default=r"D:\PycharmProjects\astro_training_data_ipo_tokyo_18890211.parquet",
         help="Event parquet (JDML-style output with sr_snapshot_json).",
     )
     parser.add_argument(
         "--price",
-        default=r"C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+        default=r"D:\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
         help="USDJPY OHLC parquet indexed by datetime.",
     )
     parser.add_argument(
         "--output",
-        default=r"C:\Users\ADMIN\PycharmProjects\sr_anchor_reversal_log_ipo_tokyo_18890211.csv",
+        default=r"D:\PycharmProjects\sr_anchor_reversal_log_ipo_tokyo_18890211.csv",
         help="Event-level output CSV.",
     )
     parser.add_argument(
         "--summary",
-        default=r"C:\Users\ADMIN\PycharmProjects\sr_anchor_reversal_summary_ipo_tokyo_18890211.csv",
+        default=r"D:\PycharmProjects\sr_anchor_reversal_summary_ipo_tokyo_18890211.csv",
         help="Family-level summary CSV.",
     )
     parser.add_argument("--interval", default="1h")

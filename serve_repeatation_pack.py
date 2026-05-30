@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -26,7 +26,7 @@ from reviewer_rule_replay import replay_completed_review_impacts
 
 
 DEFAULT_PACK_DIR = Path(
-    r"C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548"
+    r"D:\GannFinancialAstro\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548"
 )
 PROJECT_ROOT = Path(__file__).resolve().parent
 OLLAMA_EXE = Path(r"D:\ollama\app\ollama.exe")

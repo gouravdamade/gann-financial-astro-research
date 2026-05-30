@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -31,7 +31,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--token", default=os.getenv("TELEGRAM_BOT_TOKEN"))
     parser.add_argument("--chat-id", default=os.getenv("TELEGRAM_CHAT_ID"))
-    parser.add_argument("--legacy-bot-file", default=r"C:\Users\ADMIN\Desktop\WD GANN\telegram_bot.py")
+    parser.add_argument("--legacy-bot-file", default=r"D:\Trading_Algo\WD GANN\telegram_bot.py")
     parser.add_argument("--runner", type=Path, default=DEFAULT_RUNNER)
     parser.add_argument("--state-file", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--inbox-file", type=Path, default=DEFAULT_INBOX)

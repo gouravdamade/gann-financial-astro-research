@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import csv
@@ -13,7 +13,7 @@ from pathlib import Path
 import pandas as pd
 
 
-PROJECT_DIR = Path(r"C:\Users\ADMIN\PycharmProjects")
+PROJECT_DIR = Path(r"D:\PycharmProjects")
 BUILDER = PROJECT_DIR / "build_aspect_sr_touch_log.py"
 DEFAULT_EVENTS = PROJECT_DIR / "astro_training_data_ipo_tokyo_18890211_orb_1y_nodes.parquet"
 DEFAULT_PRICE = PROJECT_DIR / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet"

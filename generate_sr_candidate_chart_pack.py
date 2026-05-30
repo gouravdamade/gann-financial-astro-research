@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import html
@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-PROJECT_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
+PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
@@ -82,17 +82,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--input",
-        default=r"C:\Users\ADMIN\PycharmProjects\planetary_pair_aspect_market_log_sr.csv",
+        default=r"D:\PycharmProjects\planetary_pair_aspect_market_log_sr.csv",
         help="Input SR event CSV.",
     )
     parser.add_argument(
         "--price",
-        default=r"C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+        default=r"D:\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
         help="Hourly MT5 OHLC parquet.",
     )
     parser.add_argument(
         "--output-dir",
-        default=r"C:\Users\ADMIN\PycharmProjects\astro_sr_chart_pack",
+        default=r"D:\PycharmProjects\astro_sr_chart_pack",
         help="Directory for generated HTML charts.",
     )
     parser.add_argument(

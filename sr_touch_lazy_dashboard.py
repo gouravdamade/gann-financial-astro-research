@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import html
@@ -15,7 +15,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import requests
 
-PROJECT_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
+PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
 if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 THIS_DIR = Path(__file__).resolve().parent
@@ -38,7 +38,7 @@ IST = "Asia/Kolkata"
 UTC = "UTC"
 ALL_FILTER_VALUE = "__ALL__"
 DEFAULT_DETAIL_DAYS = 365
-DEFAULT_ANNOTATION_DB = Path(r"C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite")
+DEFAULT_ANNOTATION_DB = Path(r"D:\PycharmProjects\gann_aspect_annotations.sqlite")
 APP_BG = "#0f172a"
 PANEL_BG = "#111827"
 GRID_COLOR = "rgba(148,163,184,0.15)"
@@ -544,11 +544,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Export SR touch chart with enriched hovers.")
     parser.add_argument(
         "--touch-log",
-        default=r"C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h.csv",
+        default=r"D:\PycharmProjects\aspect_sr_touch_log_72h.csv",
     )
     parser.add_argument(
         "--price",
-        default=r"C:\Users\ADMIN\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+        default=r"D:\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
     )
     parser.add_argument("--export-full-year", action="store_true", help="Export a 1-year history HTML and exit.")
     parser.add_argument("--export-case-chart", action="store_true", help="Export a real generated chart snapshot for one annotation case_id.")
@@ -579,7 +579,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--export-dir",
-        default=r"C:\Users\ADMIN\Desktop\doc",
+        default=r"D:\GannFinancialAstro\doc",
         help="Directory where exported html/csv are saved.",
     )
     parser.add_argument(
@@ -611,7 +611,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--telegram-chat-id", default=os.getenv("TELEGRAM_CHAT_ID"))
     parser.add_argument(
         "--telegram-legacy-file",
-        default=r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder\cw6.py",
+        default=r"D:\Trading_Algo\New folder\cw6.py",
         help="Optional legacy telegram script for fallback credentials.",
     )
     return parser.parse_args()

@@ -1,4 +1,4 @@
-# Gann / Financial Astrology Research Workspace
+﻿# Gann / Financial Astrology Research Workspace
 
 Private recovery repository for the USDJPY financial astrology research pipeline.
 
@@ -7,7 +7,7 @@ Private recovery repository for the USDJPY financial astrology research pipeline
 Use this prompt:
 
 ```text
-Please read C:\Users\ADMIN\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from there. Also inspect git log/status before editing.
+Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from there. Also inspect git log/status before editing.
 ```
 
 On another machine, clone the repository first, then point the assistant to the cloned `CURRENT_PROJECT_HANDOFF.md`.
@@ -23,7 +23,7 @@ This is my private Gann / financial astrology USDJPY research workspace. Please 
 If the app starts outside this folder, open or clone:
 
 ```text
-C:\Users\ADMIN\PycharmProjects
+D:\PycharmProjects
 ```
 
 GitHub remote:
@@ -54,7 +54,7 @@ https://github.com/gouravdamade/gann-financial-astro-research.git
 Export a real generated chart snapshot for one annotation case:
 
 ```powershell
-python .\sr_touch_lazy_dashboard.py --touch-log .\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv --price .\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet --export-case-chart --case-id 15 --case-timeframe auto --export-dir C:\Users\ADMIN\Desktop\doc --export-max-lines 60
+python .\sr_touch_lazy_dashboard.py --touch-log .\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv --price .\usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet --export-case-chart --case-id 15 --case-timeframe auto --export-dir D:\GannFinancialAstro\doc --export-max-lines 60
 ```
 
 Export a static review page:

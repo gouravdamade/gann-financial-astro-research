@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -68,18 +68,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--data",
-        default=r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder\astro_training_data.parquet",
+        default=r"D:\Trading_Algo\New folder\astro_training_data.parquet",
     )
     parser.add_argument(
         "--windows",
         default=(
-            r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder"
+            r"D:\Trading_Algo\New folder"
             r"\transit_impact_deep_report\event_windows_with_regimes.csv"
         ),
     )
     parser.add_argument(
         "--output-dir",
-        default=r"C:\Users\ADMIN\PycharmProjects\astro_evidence_report",
+        default=r"D:\PycharmProjects\astro_evidence_report",
     )
     parser.add_argument("--interval", default="1h")
     parser.add_argument("--direction-target", default="y_dir_1d")

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import math
@@ -22,12 +22,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--input",
-        default=r"C:\Users\ADMIN\PycharmProjects\planetary_pair_aspect_market_log_sr.csv",
+        default=r"D:\PycharmProjects\planetary_pair_aspect_market_log_sr.csv",
         help="Input SR event log CSV.",
     )
     parser.add_argument(
         "--output-dir",
-        default=r"C:\Users\ADMIN\PycharmProjects\astro_sr_analysis_report",
+        default=r"D:\PycharmProjects\astro_sr_analysis_report",
         help="Folder to save evidence CSVs and summary.",
     )
     parser.add_argument("--min-n", type=int, default=25)

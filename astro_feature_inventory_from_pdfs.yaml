@@ -1,4 +1,4 @@
-sources:
+﻿sources:
   STRICT_JYOTISH_ML:
     file: "Strict Jyotish Prediction Engine with Local LLM & ML Calibration2.pdf"
     role: "core_architecture"
@@ -19,8 +19,8 @@ sources:
     file: "pdfcoffee.com_gann-financial-astrology-pdf-free.pdf"
     role: "experimental_gann_financial_astrology"
     extraction_status: "ocr_text_177_pages"
-    extracted_text: "C:\\Users\\ADMIN\\Desktop\\doc\\pdf_text_extracts\\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt"
-    ocr_summary: "C:\\Users\\ADMIN\\Desktop\\doc\\pdf_text_extracts\\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json"
+    extracted_text: "D:\\GannFinancialAstro\\doc\\pdf_text_extracts\\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt"
+    ocr_summary: "D:\\GannFinancialAstro\\doc\\pdf_text_extracts\\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json"
   SHADBALA_JAYA:
     file: "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf"
     role: "detailed_shadbala_doctrine_reference"

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 from collections import Counter
@@ -9,10 +9,10 @@ import numpy as np
 import pandas as pd
 
 
-DEFAULT_INVENTORY = Path(r"C:\Users\ADMIN\PycharmProjects\case_id_feature_inventory_transitsign_20260516_0132.csv")
-DEFAULT_OUTPUT = Path(r"C:\Users\ADMIN\PycharmProjects\manual_case_review_sheet_transitsign_20260516_0145.csv")
+DEFAULT_INVENTORY = Path(r"D:\PycharmProjects\case_id_feature_inventory_transitsign_20260516_0132.csv")
+DEFAULT_OUTPUT = Path(r"D:\PycharmProjects\manual_case_review_sheet_transitsign_20260516_0145.csv")
 DEFAULT_FOCUS_OUTPUT = Path(
-    r"C:\Users\ADMIN\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv"
+    r"D:\PycharmProjects\manual_case_review_focus_transitsign_20260516_0145.csv"
 )
 
 MANUAL_COLUMNS = [

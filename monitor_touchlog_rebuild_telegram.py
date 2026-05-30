@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -8,21 +8,21 @@ from datetime import datetime
 from pathlib import Path
 
 
-TELEGRAM_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
+TELEGRAM_DIR = Path(r"D:\Trading_Algo\New folder")
 if str(TELEGRAM_DIR) not in sys.path:
     sys.path.insert(0, str(TELEGRAM_DIR))
 
 from telegram_remote_control import TelegramClient, load_legacy_telegram_config, load_state, process_alive
 
 
-PROJECT_DIR = Path(r"C:\Users\ADMIN\PycharmProjects")
+PROJECT_DIR = Path(r"D:\PycharmProjects")
 DEFAULT_CHECKPOINT_DIR = PROJECT_DIR / "touchlog_rebuild_checkpoints_transitsign_nodes_20260511"
 DEFAULT_FINAL_OUTPUT = PROJECT_DIR / (
     "aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_"
     "usdjpy_basequote_all_durations_transitsign.csv"
 )
 DEFAULT_STATE_FILE = TELEGRAM_DIR / ".telegram_remote_control_state.json"
-DEFAULT_LEGACY_BOT_FILE = Path(r"C:\Users\ADMIN\Desktop\WD GANN\telegram_bot.py")
+DEFAULT_LEGACY_BOT_FILE = Path(r"D:\Trading_Algo\WD GANN\telegram_bot.py")
 
 
 def parse_args() -> argparse.Namespace:

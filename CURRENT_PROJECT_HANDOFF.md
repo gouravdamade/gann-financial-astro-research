@@ -1,10 +1,31 @@
 # Current Project Handoff
 
-Last updated: 2026-05-30 03:58 IST
+Last updated: 2026-05-30 23:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-05-30
+
+2026-05-30 C-drive storage cleanup / D-drive path hardening:
+
+- User reported severe C-drive storage pressure and asked to move/delete project duplicates from C.
+- Moved project-owned C paths off C:
+  - `C:\Users\ADMIN\Desktop\doc` -> `D:\GannFinancialAstro\doc`
+  - `C:\Users\ADMIN\Desktop\Trading_Algo\New folder` -> `D:\Trading_Algo\New folder`
+  - `C:\Users\ADMIN\Desktop\WD GANN` -> `D:\Trading_Algo\WD GANN`
+  - `C:\Users\ADMIN\Desktop\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf` -> `D:\GannFinancialAstro\sources\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf`
+- Important recovery detail:
+  - the old `C:\Users\ADMIN\PycharmProjects` contained the live `.git` repo, while `D:\PycharmProjects` was empty after the move;
+  - moved that migrated repo into `D:\PycharmProjects` as the canonical active repo, then removed the temporary `D:\C_Drive_Migrated` duplicate.
+- Active code/config path defaults now use D-drive locations:
+  - project data/root: `D:\PycharmProjects`
+  - chart export/root: `D:\GannFinancialAstro\doc`
+  - Telegram helpers: `D:\Trading_Algo\New folder`
+  - legacy Telegram bot fallback: `D:\Trading_Algo\WD GANN`
+- Active Python/JSON/YAML/PS1 scan now has no `C:\Users\ADMIN...` path references outside historical handoff/backup text.
+- Verified:
+  - `python -m py_compile aspect_annotation_store.py serve_repeatation_pack.py sr_touch_lazy_dashboard.py build_aspect_sr_touch_log.py build_pair_aspect_market_log.py build_sr_anchor_reversal_log.py rebuild_dataset_mt5_ipo_allpairs.py jyotish_agent\telegram_notify.py jyotish_agent\telegram_codex_relay.py`
+  - `python jyotish_agent\telegram_notify.py --dry-run` confirmed Telegram config/runner are available from D.
 
 2026-05-30 visible-viewport Gann envelope fans:
 

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -18,9 +18,9 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 DEFAULT_INPUT = Path(
-    r"C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.parquet"
+    r"D:\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.parquet"
 )
-DEFAULT_OUTPUT_DIR = Path(r"C:\Users\ADMIN\PycharmProjects\walk_forward_eval_transitsign_20260511")
+DEFAULT_OUTPUT_DIR = Path(r"D:\PycharmProjects\walk_forward_eval_transitsign_20260511")
 
 EXCLUDED_EXACT = {
     "ml_outcome",

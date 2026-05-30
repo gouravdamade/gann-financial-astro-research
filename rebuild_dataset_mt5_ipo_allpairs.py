@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import importlib
@@ -11,7 +11,7 @@ import pandas as pd
 from doctrine_config import configure_swiss_ephemeris_sidereal
 
 
-PROJECT_DIR = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder")
+PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
 IST = "Asia/Kolkata"
 UTC = "UTC"
 
@@ -103,15 +103,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--output-file",
-        default=str(Path(r"C:\Users\ADMIN\PycharmProjects") / "astro_training_data_ipo_tokyo_18890211.parquet"),
+        default=str(Path(r"D:\PycharmProjects") / "astro_training_data_ipo_tokyo_18890211.parquet"),
     )
     parser.add_argument(
         "--signal-file",
-        default=str(Path(r"C:\Users\ADMIN\PycharmProjects") / "direction_trade_signals_ipo_tokyo_18890211.parquet"),
+        default=str(Path(r"D:\PycharmProjects") / "direction_trade_signals_ipo_tokyo_18890211.parquet"),
     )
     parser.add_argument(
         "--price-parquet",
-        default=str(Path(r"C:\Users\ADMIN\PycharmProjects") / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet"),
+        default=str(Path(r"D:\PycharmProjects") / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet"),
         help="Optional local OHLC parquet used instead of live MT5/Yahoo fetch inside JDML4.",
     )
     parser.add_argument(

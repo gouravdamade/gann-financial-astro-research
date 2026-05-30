@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -23,14 +23,14 @@ from build_trade_candidates_from_touches import (
 )
 
 
-DEFAULT_DB = Path(r"C:\Users\ADMIN\PycharmProjects\gann_aspect_annotations.sqlite")
+DEFAULT_DB = Path(r"D:\PycharmProjects\gann_aspect_annotations.sqlite")
 DEFAULT_TOUCH_LOG = Path(
-    r"C:\Users\ADMIN\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv"
+    r"D:\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign.csv"
 )
 DEFAULT_CANDIDATES = Path(
-    r"C:\Users\ADMIN\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv"
+    r"D:\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign.csv"
 )
-DEFAULT_OUTPUT = Path(r"C:\Users\ADMIN\PycharmProjects\case_id_feature_inventory_transitsign.csv")
+DEFAULT_OUTPUT = Path(r"D:\PycharmProjects\case_id_feature_inventory_transitsign.csv")
 
 
 def parse_args() -> argparse.Namespace:

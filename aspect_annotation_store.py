@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import csv
@@ -13,7 +13,7 @@ import pandas as pd
 
 
 DEFAULT_DB_PATH = Path(__file__).resolve().with_name("gann_aspect_annotations.sqlite")
-DEFAULT_REVIEW_EXPORT_DIR = Path(r"C:\Users\ADMIN\Desktop\doc")
+DEFAULT_REVIEW_EXPORT_DIR = Path(r"D:\GannFinancialAstro\doc")
 VALID_OUTCOME_LABELS = ("bullish", "bearish", "sideways", "unclear")
 IST = "Asia/Kolkata"
 USDJPY_PIP_SIZE = 0.01
@@ -1515,7 +1515,7 @@ def render_generated_chart_snapshot(case_id: int) -> str:
         "--export-case-chart "
         f"--case-id {int(case_id)} "
         "--case-timeframe auto "
-        "--export-dir C:\\Users\\ADMIN\\Desktop\\doc "
+        "--export-dir D:\\GannFinancialAstro\\doc "
         "--export-max-lines 60"
     )
     if not chart_path.exists():

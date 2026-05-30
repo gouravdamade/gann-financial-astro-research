@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import importlib.util
@@ -7,8 +7,8 @@ import sys
 from pathlib import Path
 
 
-DEFAULT_RUNNER = Path(r"C:\Users\ADMIN\Desktop\Trading_Algo\New folder\telegram_job_runner.py")
-DEFAULT_STATE = Path(r"C:\Users\ADMIN\PycharmProjects\jyotish_agent\telegram_notify_state.json")
+DEFAULT_RUNNER = Path(r"D:\Trading_Algo\New folder\telegram_job_runner.py")
+DEFAULT_STATE = Path(r"D:\PycharmProjects\jyotish_agent\telegram_notify_state.json")
 
 
 def load_runner(path: Path):
@@ -25,7 +25,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Send a short Codex/Jyotish-agent notification through the existing Telegram runner.")
     parser.add_argument("--message", default="")
     parser.add_argument("--runner", type=Path, default=DEFAULT_RUNNER)
-    parser.add_argument("--legacy-bot-file", default=r"C:\Users\ADMIN\Desktop\WD GANN\telegram_bot.py")
+    parser.add_argument("--legacy-bot-file", default=r"D:\Trading_Algo\WD GANN\telegram_bot.py")
     parser.add_argument("--state-file", type=Path, default=DEFAULT_STATE)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
