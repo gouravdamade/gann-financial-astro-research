@@ -1,4 +1,4 @@
-# Financial Astrology Source Notes
+﻿# Financial Astrology Source Notes
 
 Date: 2026-03-13
 
@@ -186,9 +186,9 @@ Unsafe use:
 `pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` is image-heavy/scanned. OCR was completed on 2026-05-10.
 
 OCR outputs:
-- `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`
-- `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json`
-- per-page checkpoints: `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\gann_ocr_pages`
+- `D:\GannFinancialAstro\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`
+- `D:\GannFinancialAstro\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr_summary.json`
+- per-page checkpoints: `D:\GannFinancialAstro\doc\pdf_text_extracts\gann_ocr_pages`
 
 OCR summary:
 - 177 pages

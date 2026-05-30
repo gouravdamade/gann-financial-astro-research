@@ -12,6 +12,7 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Moved project-owned C paths off C:
   - `C:\Users\ADMIN\Desktop\doc` -> `D:\GannFinancialAstro\doc`
   - `C:\Users\ADMIN\Desktop\Trading_Algo\New folder` -> `D:\Trading_Algo\New folder`
+  - remaining `C:\Users\ADMIN\Desktop\Trading_Algo` root files -> `D:\Trading_Algo\Desktop_Trading_Algo_root_legacy_20260530`
   - `C:\Users\ADMIN\Desktop\WD GANN` -> `D:\Trading_Algo\WD GANN`
   - `C:\Users\ADMIN\Desktop\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf` -> `D:\GannFinancialAstro\sources\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf`
 - Important recovery detail:
@@ -22,7 +23,8 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   - chart export/root: `D:\GannFinancialAstro\doc`
   - Telegram helpers: `D:\Trading_Algo\New folder`
   - legacy Telegram bot fallback: `D:\Trading_Algo\WD GANN`
-- Active Python/JSON/YAML/PS1 scan now has no `C:\Users\ADMIN...` path references outside historical handoff/backup text.
+- Active Python/JSON/YAML/PS1 and non-handoff Markdown scans now have no `C:\Users\ADMIN...` path references outside historical handoff/backup text.
+- Confirmed the leftover `C:\Users\ADMIN\Desktop\New folder (3)` is photo/image content, not this project, so it was not moved automatically.
 - Verified:
   - `python -m py_compile aspect_annotation_store.py serve_repeatation_pack.py sr_touch_lazy_dashboard.py build_aspect_sr_touch_log.py build_pair_aspect_market_log.py build_sr_anchor_reversal_log.py rebuild_dataset_mt5_ipo_allpairs.py jyotish_agent\telegram_notify.py jyotish_agent\telegram_codex_relay.py`
   - `python jyotish_agent\telegram_notify.py --dry-run` confirmed Telegram config/runner are available from D.

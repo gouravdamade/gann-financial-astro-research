@@ -1,4 +1,4 @@
-# Astro Function Research Audit - 2026-05-21
+﻿# Astro Function Research Audit - 2026-05-21
 
 Private USDJPY Gann / Vedic financial astrology workspace.
 
@@ -12,7 +12,7 @@ Local project sources:
 - `pdf_alignment_extracts\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt`
 - `astro_feature_inventory_from_pdfs.md`
 - `vedic_pdf_alignment_review_20260520.md`
-- Current Python files in `C:\Users\ADMIN\PycharmProjects`
+- Current Python files in `D:\PycharmProjects`
 
 Web sources:
 

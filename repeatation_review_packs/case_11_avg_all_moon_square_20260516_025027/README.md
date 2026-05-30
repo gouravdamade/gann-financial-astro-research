@@ -4,7 +4,7 @@ Group: `AVG(ALL)|MOON :: square`
 
 Local full chart pack:
 
-`C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_20260516_025027`
+`D:\GannFinancialAstro\doc\repeatation_review_case_11_avg_all_moon_square_20260516_025027`
 
 Tracked here:
 

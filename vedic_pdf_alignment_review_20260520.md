@@ -1,14 +1,14 @@
-# Vedic PDF Alignment Review - 2026-05-20
+﻿# Vedic PDF Alignment Review - 2026-05-20
 
 ## Sources Checked
 
-- `C:\Users\ADMIN\Desktop\doc\Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf`
-- `C:\Users\ADMIN\Desktop\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf`
+- `D:\GannFinancialAstro\doc\Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf`
+- `D:\GannFinancialAstro\sources\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf`
 
 Extracted text copies for this review:
 
-- `C:\Users\ADMIN\PycharmProjects\pdf_alignment_extracts\Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.txt`
-- `C:\Users\ADMIN\PycharmProjects\pdf_alignment_extracts\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt`
+- `D:\PycharmProjects\pdf_alignment_extracts\Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.txt`
+- `D:\PycharmProjects\pdf_alignment_extracts\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt`
 
 ## Short Verdict
 

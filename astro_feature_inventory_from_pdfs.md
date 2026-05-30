@@ -1,4 +1,4 @@
-# Astro Feature Inventory From Attached PDFs
+﻿# Astro Feature Inventory From Attached PDFs
 
 Created from the project PDFs supplied on 2026-05-04 and updated with the Shad Bala PDF supplied on 2026-05-05. The strict-Jyotish PDFs are treated as architecture/doctrine-control documents. The financial astrology PDFs are treated as experimental feature sources until validated out of sample.
 
@@ -15,7 +15,7 @@ Created from the project PDFs supplied on 2026-05-04 and updated with the Shad B
 
 Extracted text folder:
 
-`C:\Users\ADMIN\Desktop\doc\pdf_text_extracts`
+`D:\GannFinancialAstro\doc\pdf_text_extracts`
 
 ## Doctrine And Architecture Locks
 
@@ -75,7 +75,7 @@ Extracted text folder:
 4. Only after baseline ML/evaluation works, add new pattern detectors:
    midpoint direct hits, stellium, T-square/grand-cross/grand-trine, then Dhruvank daily feature.
 
-5. Gann OCR is now available at `C:\Users\ADMIN\Desktop\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`; do not implement Gann rules until each rule is manually checked against the page OCR/source image and given source IDs.
+5. Gann OCR is now available at `D:\GannFinancialAstro\doc\pdf_text_extracts\pdfcoffee.com_gann-financial-astrology-pdf-free.ocr.txt`; do not implement Gann rules until each rule is manually checked against the page OCR/source image and given source IDs.
 
 ## Notes For Weekly Extension
 

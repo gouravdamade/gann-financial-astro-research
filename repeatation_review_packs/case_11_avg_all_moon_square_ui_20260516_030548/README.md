@@ -4,11 +4,11 @@ Group: `AVG(ALL)|MOON :: square`
 
 Local full chart pack with click-to-place marker UI:
 
-`C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`
+`D:\GannFinancialAstro\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548`
 
 Open the index first:
 
-`C:\Users\ADMIN\Desktop\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548\repeatation_review_index.html`
+`D:\GannFinancialAstro\doc\repeatation_review_case_11_avg_all_moon_square_ui_20260516_030548\repeatation_review_index.html`
 
 Each chart page includes a fixed `Repeatation Marker UI` panel. Use the panel buttons to choose trade start, trade end, ignore start, or ignore end, then click the chart to place the marker. The page overlays marker lines/ignore regions and generates Python commands for saving trade annotations, ignore regions, and rule notes.
 
