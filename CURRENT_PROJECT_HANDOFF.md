@@ -1,10 +1,32 @@
 # Current Project Handoff
 
-Last updated: 2026-07-04 04:45 IST
+Last updated: 2026-07-04 05:16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-07-04
+
+2026-07-04 Mercury-Moon trine review start:
+
+- User decided to begin reviewing the upcoming `MERCURY|MOON::trine` family before the next live/demo market event.
+- Upcoming scan shows `MERCURY|MOON::trine` windows:
+  - `2026-07-06 10:00 -> 12:00 IST`, peak `11:00`, orb delta `0.082065`;
+  - `2026-07-23 02:00 -> 05:00 IST`, peak `03:00`;
+  - `2026-08-02 07:00 -> 10:00 IST`, peak `08:00`.
+- Existing historical review DB has `16` `MERCURY|MOON::trine` repeatations:
+  `95, 124, 147, 241, 255, 306, 360, 367, 425, 454, 492, 554, 586, 599, 632, 653`.
+- Stored 72h touch-log direction sketch before manual review:
+  - `11` UP;
+  - `5` DOWN;
+  - no completed manual review/official ML history yet for this family.
+- Built Mercury-Moon trine pack from seed `case_id=95`:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_95_mercury_moon_trine_20260704_051106`
+- Server status:
+  - API-aware server listening on `127.0.0.1:8765`, PID `13652`;
+  - reviewer URL: `http://127.0.0.1:8765/repeatation_reviewer.html`;
+  - HTTP checks returned `200` for both `repeatation_reviewer.html` and `aspect_review_case_95_chart.html`.
+
+## Previous Update - 2026-07-04
 
 2026-07-04 future-aspect generator / MT5 bridge / case 127 correction:
 
