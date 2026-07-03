@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-07-04 04:35 IST
+Last updated: 2026-07-04 04:45 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -28,8 +28,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   - computes symbol pip size from MT5 digits and runs `order_check()` before dry-run output.
 - MT5 local status test:
   - `MetaTrader5` Python package is installed (`5.0.5640`);
-  - `python mt5_trade_executor.py --status --symbol USDJPY` reached the package but failed terminal initialization with `Terminal: Authorization failed`;
-  - next live-prep step is to open/log into the MT5 terminal or pass exact terminal/account/server details for a demo account.
+  - first unauthenticated `python mt5_trade_executor.py --status --symbol USDJPY` reached the package but failed terminal initialization with `Terminal: Authorization failed`;
+  - user provided demo account details for `MetaQuotes-Demo`; credential was used only as a temporary process environment variable and was not written to repo files;
+  - authenticated status check succeeded: account connected, balance `100000.00 USD`, `USDJPY` selected, min volume `0.01`, pip size `0.01`;
+  - live trading is **not ready yet** because MT5 terminal status reports `trade_allowed=false` even though account `trade_allowed=true`;
+  - USDJPY tick returned by the terminal appears stale, so before order dry-runs/live testing, open MT5, enable AutoTrading/algo trading, and confirm current live quotes are updating.
 - Corrected the case `127` split-brain state:
   - viewport fans remain visual/ML-context only;
   - trade replay uses the full exported trade-candle universe, not only visible candles;
@@ -47,7 +50,8 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   - `python -m py_compile mt5_trade_executor.py generate_upcoming_aspects.py reviewer_rule_replay.py build_repeatation_review_pack.py`
   - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260704_042319 --case-id 127`
   - `python generate_upcoming_aspects.py --start 2026-07-04 --days 30 --step-minutes 60 --output-csv D:\PycharmProjects\upcoming_aspects_20260704_30d.csv --output-json D:\PycharmProjects\upcoming_aspects_20260704_30d.json --top 12`
-  - `python mt5_trade_executor.py --status --symbol USDJPY` failed only at terminal authorization, not Python/package import.
+  - authenticated `python mt5_trade_executor.py --status --symbol USDJPY --login <demo_login> --server MetaQuotes-Demo` succeeded after password was supplied via temporary `MT5_PASSWORD`;
+  - live order dry-run is intentionally deferred until terminal AutoTrading and current tick freshness are confirmed.
 
 ## Previous Update - 2026-05-31
 
