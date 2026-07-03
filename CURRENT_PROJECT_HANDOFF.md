@@ -1,10 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-05-31 01:09 IST
+Last updated: 2026-07-04 04:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-05-31
+## Latest Update - 2026-07-04
+
+2026-07-04 future-aspect generator / MT5 bridge / case 127 correction:
+
+- Added `generate_upcoming_aspects.py`:
+  - price-independent upcoming sidereal aspect window generator;
+  - uses doctrine-locked Raman ayanamsa through Swiss Ephemeris;
+  - default bodies: `AVG(ALL)`, seven classical planets, `RAHU`, `KETU`;
+  - default aspects match the review pipeline: `conjunction_orb`, `square`, `trine`, `opposition_orb`;
+  - enriches rows from `gann_aspect_annotations.sqlite` completed reviews and latest `official_ml_note` snippets by `family_key`.
+- Generated local planning exports:
+  - `D:\PycharmProjects\upcoming_aspects_20260704_30d.csv`
+  - `D:\PycharmProjects\upcoming_aspects_20260704_30d.json`
+  - these are local/generated outputs, not intended for commit.
+- First upcoming 30-day scan from `2026-07-04 00:00 IST` found `73` aspect windows.
+  - `AVG(ALL)|MOON::square` appears on `2026-07-04 12:00 -> 15:00 IST`, peak `13:00 IST`, orb delta `0.160969`.
+  - The same family has `5` completed reviews in the DB: `4` bearish, `1` ignored, average signed pips `+24.68`, latest official note from corrected case `127`.
+- Added `mt5_trade_executor.py`:
+  - dry-run-first MT5 bridge for `status`, `buy`, `sell`, and `close`;
+  - live trading is refused unless both `--live` and `--confirm LIVE` are passed;
+  - supports exact terminal path, optional `--login/--server`, and password via an environment variable such as `MT5_PASSWORD`;
+  - computes symbol pip size from MT5 digits and runs `order_check()` before dry-run output.
+- MT5 local status test:
+  - `MetaTrader5` Python package is installed (`5.0.5640`);
+  - `python mt5_trade_executor.py --status --symbol USDJPY` reached the package but failed terminal initialization with `Terminal: Authorization failed`;
+  - next live-prep step is to open/log into the MT5 terminal or pass exact terminal/account/server details for a demo account.
+- Corrected the case `127` split-brain state:
+  - viewport fans remain visual/ML-context only;
+  - trade replay uses the full exported trade-candle universe, not only visible candles;
+  - case `127` is restored as `bearish +4.0 pips`;
+  - start `2025-05-28T22:00:00+05:30 @ 144.965`;
+  - end `2025-05-28T23:00:00+05:30 @ 144.925`;
+  - rules `first_case_window_sr_line_touch -> gann_second_from_bottom_touch_multi_aspect`;
+  - official ML note replaced with note `#22`, status `codex_verified_trade_gann_exit_restored`.
+- Rebuilt AVG(ALL)|MOON square pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260704_042319`
+- Server status:
+  - API-aware server listening on `127.0.0.1:8765`, PID `13400`;
+  - HTTP check for case `127` returned `200`.
+- Verification:
+  - `python -m py_compile mt5_trade_executor.py generate_upcoming_aspects.py reviewer_rule_replay.py build_repeatation_review_pack.py`
+  - `python reviewer_rule_replay.py --pack-dir D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260704_042319 --case-id 127`
+  - `python generate_upcoming_aspects.py --start 2026-07-04 --days 30 --step-minutes 60 --output-csv D:\PycharmProjects\upcoming_aspects_20260704_30d.csv --output-json D:\PycharmProjects\upcoming_aspects_20260704_30d.json --top 12`
+  - `python mt5_trade_executor.py --status --symbol USDJPY` failed only at terminal authorization, not Python/package import.
+
+## Previous Update - 2026-05-31
 
 2026-05-31 case 127 viewport-fan trading split-brain fix:
 

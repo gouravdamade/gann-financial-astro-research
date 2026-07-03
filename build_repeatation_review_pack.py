@@ -1300,12 +1300,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }});
       return out.sort(function (a, b) {{ return markerTime(a) - markerTime(b); }});
     }}
-    function collectCandles() {{
+    function collectCandles(options) {{
+      var opts = options || {{}};
       var traces = chartTraces();
       var candles = [];
       traces.forEach(function (trace) {{
         if (String(trace && trace.type || '').toLowerCase() !== 'candlestick') return;
-        if (trace.visible === false) return;
+        if (opts.visibleOnly && trace.visible === false) return;
         var len = Number((trace.x && trace.x.length) || 0);
         for (var i = 0; i < len; i += 1) {{
           var x = arrayValue(trace.x, i);
@@ -1663,7 +1664,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     }}
     function visibleViewportCandles() {{
       var range = currentViewportRange();
-      var candles = collectCandles();
+      var candles = collectCandles({{ visibleOnly: true }});
       if (!range) return candles;
       var interval = candleMs();
       return candles.filter(function (c) {{

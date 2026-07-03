@@ -22,6 +22,9 @@ class ReplayExpectation:
     start_rule: str
     start_ist: str
     end_ist: str | None = None
+    end_rule: str | None = None
+    outcome_label: str | None = None
+    signed_pips: float | None = None
     gann_anchor_side: str | None = None
     min_case_window_sr_touches: int | None = None
 
@@ -31,9 +34,12 @@ EXPECTATIONS: dict[int, ReplayExpectation] = {
         case_id=127,
         start_rule="first_case_window_sr_line_touch",
         start_ist="2025-05-28T22:00:00+05:30",
-        end_ist="2025-05-28T23:30:00+05:30",
+        end_ist="2025-05-28T23:00:00+05:30",
+        end_rule="gann_second_from_bottom_touch_multi_aspect",
+        outcome_label="bearish",
+        signed_pips=4.0,
         gann_anchor_side="top",
-        min_case_window_sr_touches=2,
+        min_case_window_sr_touches=3,
     ),
 }
 
@@ -263,8 +269,6 @@ def collect_candles(traces: list[dict[str, Any]]) -> list[dict[str, Any]]:
     candles: list[dict[str, Any]] = []
     for trace in traces:
         if str(trace.get("type") or "").lower() != "candlestick":
-            continue
-        if trace.get("visible") is False:
             continue
         xs = trace_array(trace.get("x"))
         for index, x in enumerate(xs):
@@ -959,30 +963,21 @@ def gann_fan_second_from_bottom_touch(
 
 
 def replay_case_127(pack_dir: Path) -> dict[str, Any]:
-    case_id = 127
-    html_path = pack_dir / f"aspect_review_case_{case_id}_chart.html"
-    html_text = html_path.read_text(encoding="utf-8", errors="ignore")
-    traces = plotly_data(html_text)
-    case = case_metadata_from_template(pack_dir, case_id)
-    markers = collect_markers(traces)
-    selected = [
-        marker
-        for marker in markers
-        if marker["is_selected_case_touch"]
-        and iso_ms(case["window_start_ist"]) <= iso_ms(marker["x"]) <= iso_ms(case["window_end_ist"])
-    ]
-    touches = collect_case_window_sr_touches(traces, case, touch_band_pips=3.0)
+    replay = auto_suggest_case(pack_dir, 127)
+    auto = replay.get("auto_suggestion") or {}
+    touches = auto.get("case_window_sr_touch_candidates") or []
     if not touches:
         raise AssertionError("case 127 expected at least one selected-window SR touch")
-    start = touches[0]
-    later_markers = [marker for marker in markers if iso_ms(marker["x"]) > iso_ms(start["x"])]
-    end = later_markers[0] if later_markers else None
     return {
-        "case_id": case_id,
-        "start_rule": "first_case_window_sr_line_touch",
-        "start": start,
-        "end": end,
-        "selected_hardcoded_reference": selected[0] if selected else None,
+        "case_id": 127,
+        "start_rule": replay.get("start_rule"),
+        "end_rule": replay.get("end_rule"),
+        "start": replay.get("trade_start"),
+        "end": replay.get("trade_end"),
+        "outcome_label": replay.get("outcome_label"),
+        "signed_pips": replay.get("signed_pips"),
+        "raw_pips": replay.get("raw_pips"),
+        "gann_fan_exit_rule_status": auto.get("gann_fan_exit_rule_status"),
         "case_window_sr_touch_count": len(touches),
     }
 
@@ -1259,6 +1254,12 @@ def assert_case_127(pack_dir: Path) -> dict[str, Any]:
     failures: list[str] = []
     if replay["start_rule"] != expected.start_rule:
         failures.append(f"start_rule {replay['start_rule']} != {expected.start_rule}")
+    if expected.end_rule and replay.get("end_rule") != expected.end_rule:
+        failures.append(f"end_rule {replay.get('end_rule')} != {expected.end_rule}")
+    if expected.outcome_label and replay.get("outcome_label") != expected.outcome_label:
+        failures.append(f"outcome_label {replay.get('outcome_label')} != {expected.outcome_label}")
+    if expected.signed_pips is not None and replay.get("signed_pips") != expected.signed_pips:
+        failures.append(f"signed_pips {replay.get('signed_pips')} != {expected.signed_pips}")
     if start["x"] != expected.start_ist:
         failures.append(f"start {start['x']} != {expected.start_ist}")
     if expected.end_ist and (not end or end["x"] != expected.end_ist):

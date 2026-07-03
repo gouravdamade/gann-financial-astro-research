@@ -14,6 +14,7 @@ __pycache__/
 *.html
 *.zip
 *.bsp
+upcoming_aspects_*.json
 
 # Recovered chats, reports, extracted documents, generated app folders
 acp_temp_logs_extracted/
