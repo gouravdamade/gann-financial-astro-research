@@ -1,10 +1,43 @@
 # Current Project Handoff
 
-Last updated: 2026-07-04 05:16 IST
+Last updated: 2026-07-04 23:28 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-07-04
+
+2026-07-04 global carryover rules for Mercury-Moon trine review:
+
+- User asked whether the previous reviewed family learning could carry over into the current `MERCURY|MOON::trine` review family.
+- Implemented neutral/global carryover templates in `build_repeatation_review_pack.py`:
+  - `global_sr_geometry_classifier`;
+  - `global_first_boundary_exit`;
+  - `global_confirmed_break_extension`;
+  - `global_multi_aspect_gann_exit_gate`;
+  - `global_intrabar_ambiguity_ignore`.
+- Important boundary:
+  - these templates carry over SR/boundary/ignore mechanics from `AVG(ALL)|MOON::square`;
+  - they do **not** carry over the old family direction, case personality, or `bearish_bias_support_barrier` as a Mercury-Moon trine family truth.
+- Updated neutral marker-flow Auto Suggest so families without their own rule can still use global carryover:
+  - after choosing start, it checks directional SR touches, next shaded/aspect zone, next hardcoded marker, and eligible multi-aspect Gann fan exit;
+  - if the first SR has confirmed close/retest/continuation break, the SR is treated as a passed barrier and exit moves to the next attribution boundary;
+  - otherwise the first clean boundary wins.
+- Kept `reviewer_rule_replay.py` in sync with browser Auto Suggest so review-agent/replay memory does not split from the UI.
+- Bumped UI cache key to `repeatation_ui_20260704_global_carryover_v65`.
+- Rebuilt Mercury-Moon trine pack:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_95_mercury_moon_trine_20260704_232331`
+- Removed incomplete timeout folder:
+  `D:\GannFinancialAstro\doc\repeatation_review_case_95_mercury_moon_trine_20260704_232022`
+- Server status:
+  - API-aware server listening on `127.0.0.1:8765`, PID `23108`;
+  - reviewer URL: `http://127.0.0.1:8765/repeatation_reviewer.html`;
+  - HTTP checks returned `200` for both `repeatation_reviewer.html` and `aspect_review_case_95_chart.html`.
+- Verification:
+  - `python -m py_compile build_repeatation_review_pack.py reviewer_rule_replay.py serve_repeatation_pack.py`
+  - direct replay checks via `reviewer_rule_replay.auto_suggest_case(...)`:
+    - case `95`: global carryover active, end rule `confirmed_break_next_shaded_zone_boundary`, signed pips `+45.7`;
+    - case `124`: global carryover active and multi-aspect Gann exit won, end rule `gann_second_from_bottom_touch_multi_aspect`, signed pips `+2.0`;
+    - case `147`: global carryover active, end rule `confirmed_break_next_shaded_zone_boundary`, signed pips `+217.3`.
 
 2026-07-04 Mercury-Moon trine review start:
 

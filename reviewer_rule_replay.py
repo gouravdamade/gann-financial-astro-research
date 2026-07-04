@@ -1103,6 +1103,53 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
         )
         fan = gann_fan_for_start(start, outcome, candles, case, "marker-flow auto suggestion start")
         fan_exit = gann_fan_second_from_bottom_touch(fan, start, multi_aspect, candles, case)
+        global_carryover_used = False
+        global_sr_line_touches: list[dict[str, Any]] = []
+        global_first_sr_touch = None
+        global_zone_boundary = None
+        global_attribution_boundary = None
+        global_boundary = None
+        global_break = None
+        if start and outcome in {"bullish", "bearish"}:
+            start_time = point_time(start)
+            global_sr_line_touches = [
+                point
+                for point in collect_sr_line_touches(traces, candles, start, outcome, case)
+                if point_time(point) > start_time + min_gap_ms
+            ]
+            global_first_sr_touch = global_sr_line_touches[0] if global_sr_line_touches else None
+            global_zone_boundary = zone_boundary_after(zones, start_time, case, min_gap_ms)
+            global_attribution_boundary = attribution_boundary_after(markers, start_time, case, min_gap_ms)
+            global_geometry = sr_geometry_for_point(global_first_sr_touch, start, outcome, candles, case)
+            global_break = break_confirmation_for_geometry(global_geometry, global_first_sr_touch, start, outcome, candles, case)
+            global_break_confirmed = bool(global_break and global_break.get("status") == "confirmed")
+            if global_break_confirmed:
+                global_boundary = earliest_timed_point([global_zone_boundary, global_attribution_boundary, end]) or global_first_sr_touch
+            else:
+                global_boundary = earliest_timed_point([global_first_sr_touch, global_zone_boundary, global_attribution_boundary, end])
+            if global_boundary:
+                boundary_was_old_end = bool(end and marker_identity(global_boundary) == marker_identity(end))
+                if (
+                    global_break_confirmed
+                    and global_zone_boundary
+                    and marker_identity(global_boundary) == marker_identity(global_zone_boundary)
+                ):
+                    end_rule = "confirmed_break_next_shaded_zone_boundary"
+                elif (
+                    global_break_confirmed
+                    and global_attribution_boundary
+                    and marker_identity(global_boundary) == marker_identity(global_attribution_boundary)
+                ):
+                    end_rule = "confirmed_break_next_hardcoded_marker_boundary"
+                elif global_first_sr_touch and marker_identity(global_boundary) == marker_identity(global_first_sr_touch):
+                    end_rule = "global_first_sr_touch_target"
+                elif global_zone_boundary and marker_identity(global_boundary) == marker_identity(global_zone_boundary):
+                    end_rule = "global_next_shaded_zone_boundary"
+                elif global_attribution_boundary and marker_identity(global_boundary) == marker_identity(global_attribution_boundary):
+                    end_rule = "global_next_hardcoded_marker_boundary"
+                if not boundary_was_old_end or end_rule != "next_later_hardcoded_marker":
+                    end = global_boundary
+                    global_carryover_used = True
         if fan_exit and (not end or point_time(fan_exit) < point_time(end)):
             end = fan_exit
             end_rule = "gann_second_from_bottom_touch_multi_aspect"
@@ -1110,6 +1157,13 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
         auto = {
             "default_marker_flow_sr_geometry": default_flow_geometry,
             "case_window_sr_touch_candidates": case_window_sr_touches,
+            "global_rule_templates_applied": global_carryover_used,
+            "global_exit_boundary": global_boundary,
+            "global_first_sr_touch": global_first_sr_touch,
+            "next_shaded_zone_boundary": global_zone_boundary,
+            "attribution_boundary": global_attribution_boundary,
+            "break_confirmation": global_break,
+            "sr_line_touch_candidates": global_sr_line_touches,
             "multi_aspect_overlap_evidence": multi_aspect,
             "gann_fan_exit_candidate": fan_exit,
             "gann_fan_exit_rule_status": "provisional_review_required"

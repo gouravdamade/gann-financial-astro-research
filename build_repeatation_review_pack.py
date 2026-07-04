@@ -27,7 +27,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260530_viewport_fans_v64"
+REPEATATION_UI_VERSION = "repeatation_ui_20260704_global_carryover_v65"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -673,6 +673,67 @@ def load_case_family_rules(db_path: Path, seed: dict[str, Any]) -> list[dict[str
     return rules
 
 
+def global_rule_templates() -> list[dict[str, Any]]:
+    """Transferable rule memory from reviewed families, without family direction bias."""
+    return [
+        {
+            "label": "global_sr_geometry_classifier",
+            "scope": "global",
+            "status": "active_template",
+            "rule_type": "sr_rule",
+            "source_family": "AVG(ALL)|MOON::square",
+            "note_text": (
+                "Classify SR relative to entry: below price is support/target for bearish paths; "
+                "above price is resistance/target for bullish paths; within epsilon is at-SR and should use marker flow."
+            ),
+        },
+        {
+            "label": "global_first_boundary_exit",
+            "scope": "global",
+            "status": "active_template",
+            "rule_type": "sr_rule",
+            "source_family": "AVG(ALL)|MOON::square",
+            "note_text": (
+                "For a neutral family with no direction-specific rule yet, close at the first clean boundary after entry: "
+                "directional SR touch, next shaded/aspect zone, or next hardcoded marker, whichever appears first."
+            ),
+        },
+        {
+            "label": "global_confirmed_break_extension",
+            "scope": "global",
+            "status": "active_template",
+            "rule_type": "sr_rule",
+            "source_family": "AVG(ALL)|MOON::square",
+            "note_text": (
+                "A first SR touch is not automatically the exit if close/retest/continuation confirms a break. "
+                "When confirmed, treat that SR as a passed barrier and exit at the next attribution boundary."
+            ),
+        },
+        {
+            "label": "global_multi_aspect_gann_exit_gate",
+            "scope": "global",
+            "status": "provisional_template",
+            "rule_type": "regime_rule",
+            "source_family": "AVG(ALL)|MOON::square",
+            "note_text": (
+                "The Gann fan second-line exit is only eligible when at least one reviewed candle has two or more "
+                "aspect windows overlapping; otherwise it remains blocked."
+            ),
+        },
+        {
+            "label": "global_intrabar_ambiguity_ignore",
+            "scope": "global",
+            "status": "active_template",
+            "rule_type": "exception_rule",
+            "source_family": "AVG(ALL)|MOON::square",
+            "note_text": (
+                "If a single OHLC candle spans competing SR/entry/exit levels and the intrabar order cannot be known, "
+                "mark ignore_trade instead of inventing a deterministic sequence."
+            ),
+        },
+    ]
+
+
 def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[str, Any]]]:
     with sqlite3.connect(str(db_path)) as conn:
         conn.row_factory = sqlite3.Row
@@ -892,6 +953,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "uiVersion": REPEATATION_UI_VERSION,
         "specialTraits": case.get("special_traits", {}),
         "appliedFamilyRules": case.get("applied_family_rules", []),
+        "globalRuleTemplates": case.get("global_rule_templates", []),
         "mlNotes": case.get("ml_notes", []),
         "ruleLessons": case.get("rule_lessons", []),
         "completedReview": case.get("completed_review", None),
@@ -3145,6 +3207,23 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}).join('');
       return '<div class="rm-rules"><div><b>Applied family rules</b><span>' + esc(rules.length) + '</span></div>' + rows + '</div>';
     }}
+    function globalRuleTemplatesHtml() {{
+      var rules = Array.isArray(meta.globalRuleTemplates) ? meta.globalRuleTemplates : [];
+      if (!rules.length) return '';
+      var rows = rules.map(function (rule) {{
+        var title = rule.label || rule.rule_type || 'global template';
+        var note = rule.note_text || '';
+        var shortNote = note.length > 300 ? note.slice(0, 297) + '...' : note;
+        return '<div class="rm-rule-item">'
+          + '<div><b>' + esc(title) + '</b><span>' + esc(rule.status || 'template') + '</span></div>'
+          + '<div class="rm-table-sub">scope=global | source=' + esc(rule.source_family || 'review memory') + ' | type=' + esc(rule.rule_type || '') + '</div>'
+          + '<div>' + esc(shortNote) + '</div>'
+          + '</div>';
+      }}).join('');
+      return '<details class="rm-rules rm-global-rules" open><summary>Global carryover rules <span>' + esc(rules.length) + '</span></summary>'
+        + '<div class="rm-table-sub">These are transferable lessons from earlier reviewed families. They do not carry over the old family direction or case-specific personality.</div>'
+        + rows + '</details>';
+    }}
     function mlNotePrettyText(note) {{
       var fields = note && note.fields && typeof note.fields === 'object' ? note.fields : null;
       var text = String((note && note.note_text) || '').trim();
@@ -3975,7 +4054,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-ignore-trade').classList.toggle('active', state.tradeIgnored);
       panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
-      panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml();
+      panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml() + globalRuleTemplatesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
       panel.querySelector('#repeatation-rule-lessons').innerHTML = ruleLessonsHtml();
       panel.querySelector('#repeatation-completed-review').innerHTML = completedReviewHtml();
@@ -4348,6 +4427,56 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       var markerFlowGannExitUsed = false;
       var markerFlowOriginalEnd = end;
       var endRule = end ? 'next_later_hardcoded_marker' : 'not_found';
+      var globalCarryoverUsed = false;
+      var globalSrLineTouches = [];
+      var globalFirstSrTouch = null;
+      var globalBoundary = null;
+      var globalZoneBoundary = null;
+      var globalAttributionBoundary = null;
+      var globalBreakConfirmation = null;
+      var globalBoundaryReason = '';
+      if (start && (outcome() === 'bullish' || outcome() === 'bearish')) {{
+        var startTimeForGlobal = markerTime(start);
+        globalSrLineTouches = collectSrLineTouches(start, outcome()).filter(function (point) {{
+          return markerTime(point) > startTimeForGlobal + minGapMs;
+        }});
+        globalFirstSrTouch = globalSrLineTouches[0] || null;
+        globalZoneBoundary = zoneBoundaryAfter(zones, startTimeForGlobal, minGapMs);
+        globalAttributionBoundary = attributionBoundaryAfter(markers, startTimeForGlobal, minGapMs);
+        var globalGeometry = srGeometryForPoint(globalFirstSrTouch, start, outcome());
+        globalBreakConfirmation = breakConfirmationForGeometry(globalGeometry, globalFirstSrTouch, start, outcome());
+        var globalBreakConfirmed = globalBreakConfirmation && globalBreakConfirmation.status === 'confirmed';
+        globalBoundary = globalBreakConfirmed
+          ? (earliestTimedPoint([globalZoneBoundary, globalAttributionBoundary, end]) || globalFirstSrTouch)
+          : earliestTimedPoint([globalFirstSrTouch, globalZoneBoundary, globalAttributionBoundary, end]);
+        if (globalBoundary) {{
+          var boundaryWasOldEnd = end && markerIdentity(globalBoundary) === markerIdentity(end);
+          if (globalBreakConfirmed && globalZoneBoundary && markerIdentity(globalBoundary) === markerIdentity(globalZoneBoundary)) {{
+            endRule = 'confirmed_break_next_shaded_zone_boundary';
+            globalBoundaryReason = 'Global carryover confirmed-break rule: first SR touch was treated as a passed barrier, so exit moved to the next shaded-zone boundary.';
+          }} else if (globalBreakConfirmed && globalAttributionBoundary && markerIdentity(globalBoundary) === markerIdentity(globalAttributionBoundary)) {{
+            endRule = 'confirmed_break_next_hardcoded_marker_boundary';
+            globalBoundaryReason = 'Global carryover confirmed-break rule: first SR touch was treated as a passed barrier, so exit moved to the next hardcoded marker/attribution boundary.';
+          }} else if (globalFirstSrTouch && markerIdentity(globalBoundary) === markerIdentity(globalFirstSrTouch)) {{
+            endRule = 'global_first_sr_touch_target';
+            globalBoundaryReason = 'Global carryover first-boundary rule: close at the first directional SR touch because it is the first clean boundary after entry.';
+          }} else if (globalZoneBoundary && markerIdentity(globalBoundary) === markerIdentity(globalZoneBoundary)) {{
+            endRule = 'global_next_shaded_zone_boundary';
+            globalBoundaryReason = 'Global carryover first-boundary rule: close at the next shaded-zone boundary before attribution changes.';
+          }} else if (globalAttributionBoundary && markerIdentity(globalBoundary) === markerIdentity(globalAttributionBoundary)) {{
+            endRule = 'global_next_hardcoded_marker_boundary';
+            globalBoundaryReason = 'Global carryover first-boundary rule: close at the next hardcoded marker before attribution changes.';
+          }} else {{
+            globalBoundaryReason = 'Global carryover first-boundary rule: close at the earliest clean boundary after entry.';
+          }}
+          if (!boundaryWasOldEnd || endRule !== 'next_later_hardcoded_marker') {{
+            end = globalBoundary;
+            globalCarryoverUsed = true;
+            confidence = confidence === 'incomplete' ? 'rule fallback' : confidence;
+            reason = globalBoundaryReason + ' ' + reason;
+          }}
+        }}
+      }}
       if (markerFlowGannExit && (!end || markerTime(markerFlowGannExit) < markerTime(end))) {{
         end = markerFlowGannExit;
         endRule = 'gann_second_from_bottom_touch_multi_aspect';
@@ -4381,7 +4510,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }} else {{
         markerCandidateAudit.push(candidateAuditItem('start', 'chosen', markers[0], 'No in-window marker; first visible marker is a weak fallback.'));
       }}
-      markerCandidateAudit.push(candidateAuditItem('end', end ? 'chosen' : 'missing', end, markerFlowGannExitUsed ? 'Provisional Gann fan second-from-bottom line touch won under the multiple-aspect gate.' : 'First later hardcoded marker after the chosen start.'));
+      markerCandidateAudit.push(candidateAuditItem('end', end ? 'chosen' : 'missing', end, markerFlowGannExitUsed ? 'Provisional Gann fan second-from-bottom line touch won under the multiple-aspect gate.' : (globalCarryoverUsed ? globalBoundaryReason : 'First later hardcoded marker after the chosen start.')));
+      markerCandidateAudit.push(candidateAuditItem('global SR touch', globalFirstSrTouch && end && markerIdentity(globalFirstSrTouch) === markerIdentity(end) ? 'chosen' : (globalFirstSrTouch ? 'checked' : 'not found'), globalFirstSrTouch, 'Transfer template: directional SR touch can be the first clean boundary unless confirmed-break logic extends the trade.'));
+      markerCandidateAudit.push(candidateAuditItem('global next shaded zone', globalZoneBoundary && end && markerIdentity(globalZoneBoundary) === markerIdentity(end) ? 'chosen' : (globalZoneBoundary ? 'checked' : 'not found'), globalZoneBoundary, 'Transfer template: next shaded/aspect zone is an attribution boundary.'));
+      markerCandidateAudit.push(candidateAuditItem('global next hardcoded marker', globalAttributionBoundary && end && markerIdentity(globalAttributionBoundary) === markerIdentity(end) ? 'chosen' : (globalAttributionBoundary ? 'checked' : 'not found'), globalAttributionBoundary, 'Transfer template: next hardcoded marker can end the trade before attribution changes.'));
       markerCandidateAudit.push(candidateAuditItem('gann fan 2nd-from-bottom exit', markerFlowGannExitUsed ? 'chosen' : (markerFlowGannExit ? 'checked' : (multiAspectEvidence.active ? 'not found' : 'blocked')), markerFlowGannExit || start, multiAspectEvidence.active ? 'Eligible because multiple-aspect gate passed: at least one candle has two or more aspect windows overlapping. Uses 2x1 for bearish/top-wick fans and 1x2 for bullish/bottom-wick fans.' : 'Blocked: no reviewed candle had two or more aspect windows overlapping.'));
       markerCandidateAudit.push(candidateAuditItem('old marker-flow end', 'reference', markerFlowOriginalEnd, 'Original next-later hardcoded marker before the provisional Gann fan exit check.'));
       setTool('', false);
@@ -4396,6 +4528,13 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         default_marker_flow_sr_geometry: defaultFlowGeometry,
         reference_start_marker: (wickStart || firstCaseWindowSrTouch) ? serialPoint(selected[0] || defaultStart) : null,
         case_window_sr_touch_candidates: caseWindowSrTouches.map(serialPoint),
+        global_rule_templates_applied: globalCarryoverUsed,
+        global_carryover_reason: globalBoundaryReason,
+        global_exit_boundary: serialPoint(globalBoundary),
+        global_first_sr_touch: serialPoint(globalFirstSrTouch),
+        next_shaded_zone_boundary: serialPoint(globalZoneBoundary),
+        attribution_boundary: serialPoint(globalAttributionBoundary),
+        sr_line_touch_candidates: globalSrLineTouches.map(serialPoint),
         multi_aspect_overlap_evidence: multiAspectEvidence,
         gann_fan: markerFlowGannFan,
         gann_fan_exit_candidate: serialPoint(markerFlowGannExit),
@@ -4500,7 +4639,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '<button data-tool="ignore_start">Ignore start</button>'
       + '<button data-tool="ignore_end">Ignore end</button>'
       + '</div>'
-      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><button id="repeatation-show-gann" type="button">Show Gann Fan</button><button id="repeatation-viewport-fans" type="button">Viewport Fans</button><span class="rm-status-inline">family rule if available; viewport fans are context only</span></div>'
+      + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><button id="repeatation-show-gann" type="button">Show Gann Fan</button><button id="repeatation-viewport-fans" type="button">Viewport Fans</button><span class="rm-status-inline">family rule if available; otherwise global carryover; viewport fans are context only</span></div>'
       + '<div id="repeatation-auto-summary"></div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
@@ -5151,6 +5290,7 @@ def main() -> None:
     touch_rows_by_event = trait_row_for_events(args.touch_log, cases)
     special_traits_by_case = compute_special_traits(cases, stats_by_case, touch_rows_by_event)
     family_rules = load_case_family_rules(args.db, seed)
+    transfer_templates = global_rule_templates()
     ml_notes_by_case = load_ml_notes(args.db, seed)
     lessons_by_case = load_rule_lessons(args.db, seed)
     completed_reviews_by_case = load_completed_reviews(args.db, seed)
@@ -5161,6 +5301,7 @@ def main() -> None:
         case["default_outcome"] = direction if direction in {"bullish", "bearish"} else "unclear"
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
         case["applied_family_rules"] = family_rules
+        case["global_rule_templates"] = transfer_templates
         case["ml_notes"] = ml_notes_by_case.get(int(case["case_id"]), ml_notes_by_case.get(0, []))
         case["rule_lessons"] = lessons_by_case.get(int(case["case_id"]), lessons_by_case.get(0, []))
         case["completed_review"] = completed_reviews_by_case.get(int(case["case_id"]))
@@ -5183,6 +5324,7 @@ def main() -> None:
                 "reviewer_href",
                 "special_traits",
                 "applied_family_rules",
+                "global_rule_templates",
                 "ml_notes",
                 "rule_lessons",
                 "completed_review",
@@ -5210,6 +5352,7 @@ def main() -> None:
             ),
             "special_trait_json": json.dumps(case.get("special_traits", {}), ensure_ascii=False),
             "applied_family_rules_json": json.dumps(case.get("applied_family_rules", []), ensure_ascii=False),
+            "global_rule_templates_json": json.dumps(case.get("global_rule_templates", []), ensure_ascii=False),
             "ml_notes_json": json.dumps(case.get("ml_notes", []), ensure_ascii=False),
             "rule_lessons_json": json.dumps(case.get("rule_lessons", []), ensure_ascii=False),
         }
