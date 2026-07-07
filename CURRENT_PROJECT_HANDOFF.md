@@ -1,10 +1,45 @@
-# Current Project Handoff
+﻿# Current Project Handoff
 
-Last updated: 2026-07-07 22:13 IST
+Last updated: 2026-07-07 22:41 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-07-07
+
+2026-07-07 BTC weekly chart v2:
+
+- User requested BTC weekly chart refinements:
+  - filter out aspects shorter than two weeks;
+  - show aspects after Jan 2025 and extend future astro windows through Jan 2030;
+  - change SR `n` values to `30..150`;
+  - keep closest-point hover rather than a vertical hover line.
+- Updated `build_btc_weekly_astro_chart.py`:
+  - default `--min-window-days` is now `14.0`;
+  - added `--aspect-end`, default `2030-01-31`;
+  - default `--n-values` is now `30,40,50,60,70,80,90,100,110,120,130,140,150`;
+  - default `--max-aspect-windows` increased to `1000`, fixing the missing-post-Jan-2025 display caused by only drawing the first 180 windows;
+  - daily transit/aspect generation now runs to `--aspect-end` instead of stopping at latest price candle;
+  - bottom aspect-density panel extends through the future aspect endpoint;
+  - x-axis range now spans price start through the future aspect endpoint;
+  - SR visibility upper band widened to `1.80x` historical high so `n=140/150` levels can participate in forward research.
+- Rebuilt BTC chart pack:
+  `D:\GannFinancialAstro\doc\btc_weekly_astro_20260707_223919`
+- Main chart URL:
+  `http://127.0.0.1:8766/btc_weekly_astro_chart.html?v=2030_14d_n30_150_final`
+- Generated counts:
+  - weekly candles: `465`;
+  - filtered astro windows >= 14 days: `216`;
+  - SR candidate lines in/near extended forward price range: `572`;
+  - SR touches: `8841`.
+- Verification:
+  - `python -m py_compile build_btc_weekly_astro_chart.py`;
+  - filter audit returned `moon_rows=0`, `rahu_ketu_pair_rows=0`, `shorter_than_14_days=0`;
+  - future audit returned `after_2025_01=90`, `after_2026_07=63`, latest window ending `2030-02-01 00:00 UTC`;
+  - all requested `n` values `30..150` appear in `btc_weekly_sr_lines.csv`;
+  - server on `127.0.0.1:8766` returned HTTP `200`;
+  - in-app browser opened the final chart and console logs had no errors.
+
+## Previous Update - 2026-07-07
 
 2026-07-07 BTC weekly astro chart:
 

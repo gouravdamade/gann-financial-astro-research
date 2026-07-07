@@ -119,11 +119,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--place", choices=sorted(PLACE_HYPOTHESES), default="van_nuys")
     parser.add_argument("--start", default="2017-08-01", help="UTC start date. Binance spot BTCUSDT begins Aug 2017.")
     parser.add_argument("--end", default=(pd.Timestamp.now(tz="UTC") + pd.Timedelta(days=8)).strftime("%Y-%m-%d"))
-    parser.add_argument("--n-values", default="10,20,30,40,50,60,70,80,90")
+    parser.add_argument("--aspect-end", default="2030-01-31", help="UTC date through which future astro windows are calculated.")
+    parser.add_argument("--n-values", default="30,40,50,60,70,80,90,100,110,120,130,140,150")
     parser.add_argument("--factors", default="1.6,1.8")
-    parser.add_argument("--min-window-days", type=float, default=7.0)
+    parser.add_argument("--min-window-days", type=float, default=14.0)
     parser.add_argument("--max-sr-lines", type=int, default=90)
-    parser.add_argument("--max-aspect-windows", type=int, default=180)
+    parser.add_argument("--max-aspect-windows", type=int, default=1000)
     return parser.parse_args()
 
 
@@ -339,7 +340,7 @@ def build_sr_lines(
     price_low = float(price["low"].min())
     price_high = float(price["high"].max())
     price_pad_low = price_low * 0.70
-    price_pad_high = price_high * 1.20
+    price_pad_high = price_high * 1.80
     line_rows: list[dict[str, Any]] = []
     touch_rows: list[dict[str, Any]] = []
     for body in BODY_ORDER:
@@ -459,7 +460,7 @@ def make_chart(
     bull_windows = [
         ("2017 peak tail (Binance data starts)", "2017-08-14", "2018-01-08", "rgba(251,146,60,0.08)"),
         ("2020-21 bull run", "2020-03-09", "2021-11-15", "rgba(34,197,94,0.08)"),
-        ("2022-current cycle", "2022-11-21", metadata["chart_end_ist"][:10], "rgba(59,130,246,0.08)"),
+        ("2022-current cycle", "2022-11-21", metadata["price_end_ist"][:10], "rgba(59,130,246,0.08)"),
     ]
     for label, start, end, color in bull_windows:
         fig.add_vrect(
@@ -546,9 +547,18 @@ def make_chart(
             col=1,
         )
 
-    counts = active_window_counts(price, windows)
+    chart_start_ist = pd.Timestamp(price["open_time_ist"].min()).tz_convert(IST).normalize()
+    aspect_end_ist = pd.Timestamp(metadata["aspect_end_ist"]).tz_convert(IST).normalize()
+    density_times = pd.date_range(chart_start_ist, aspect_end_ist, freq="7D")
+    density_axis = pd.DataFrame(
+        {
+            "open_time_ist": density_times,
+            "open_time_utc": density_times.tz_convert("UTC"),
+        }
+    )
+    counts = active_window_counts(density_axis, windows)
     fig.add_trace(
-        go.Bar(x=x, y=counts, name="Active astro windows", marker_color="#8b5cf6", opacity=0.75),
+        go.Bar(x=density_axis["open_time_ist"], y=counts, name="Active astro windows", marker_color="#8b5cf6", opacity=0.75),
         row=2,
         col=1,
     )
@@ -575,8 +585,18 @@ def make_chart(
     fig.update_yaxes(title_text="BTCUSDT", type="log", row=1, col=1)
     fig.update_yaxes(title_text="Count", row=2, col=1)
     fig.update_xaxes(title_text="IST", row=2, col=1)
+    fig.update_xaxes(
+        range=[chart_start_ist, aspect_end_ist],
+        row=1,
+        col=1,
+    )
+    fig.update_xaxes(
+        range=[chart_start_ist, aspect_end_ist],
+        row=2,
+        col=1,
+    )
     note = (
-        "Filters: Moon skipped; transit Rahu<->Ketu pair skipped; aspect windows under 7 days removed. "
+        f"Filters: Moon skipped; transit Rahu<->Ketu pair skipped; aspect windows under {metadata['min_window_days']:g} days removed. "
         f"SR grid uses n={metadata['n_values']} and f={metadata['factors']} with BTC scale degree {BTC_SCALE_DEGREE}."
     )
     fig.add_annotation(
@@ -605,7 +625,8 @@ Chart: `btc_weekly_astro_chart.html`
 ## Assumptions
 
 - BTC price source: Binance spot `BTCUSDT` weekly klines.
-- Date range: `{metadata['chart_start_ist']}` to `{metadata['chart_end_ist']}` in IST.
+- Price candle range: `{metadata['chart_start_ist']}` to `{metadata['price_end_ist']}` in IST.
+- Astro window range: `{metadata['chart_start_ist']}` to `{metadata['aspect_end_ist']}` in IST.
 - Genesis block timestamp: `{metadata['genesis_utc']}` UTC = `{metadata['genesis_ist']}` IST.
 - Primary place hypothesis: `{place['city']}`.
 - Place status: unverified; used only as an experimental astrological anchor.
@@ -639,6 +660,9 @@ def main() -> None:
     place = PLACE_HYPOTHESES[args.place]
     start = pd.Timestamp(args.start, tz="UTC")
     end = pd.Timestamp(args.end, tz="UTC")
+    aspect_end = pd.Timestamp(args.aspect_end, tz="UTC")
+    if aspect_end < end:
+        raise ValueError("--aspect-end must be on or after --end so future astro windows cover the full chart.")
     n_values = parse_float_list(args.n_values)
     factors = parse_float_list(args.factors)
     stamp = pd.Timestamp.now(tz=IST).strftime("%Y%m%d_%H%M%S")
@@ -646,14 +670,16 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     price = fetch_binance_weekly(start, end)
-    daily = build_daily_transits(price["open_time_utc"].min(), price["open_time_utc"].max())
+    daily = build_daily_transits(price["open_time_utc"].min(), aspect_end)
     weekly_transits = build_weekly_transits(price)
     metadata = birth_chart(place)
     metadata.update(
         {
             "generated_at_ist": pd.Timestamp.now(tz=IST).isoformat(),
             "chart_start_ist": price["open_time_ist"].min().isoformat(),
-            "chart_end_ist": price["open_time_ist"].max().isoformat(),
+            "chart_end_ist": aspect_end.tz_convert(IST).isoformat(),
+            "price_end_ist": price["open_time_ist"].max().isoformat(),
+            "aspect_end_ist": aspect_end.tz_convert(IST).isoformat(),
             "n_values": n_values,
             "factors": factors,
             "scale_degree": BTC_SCALE_DEGREE,
