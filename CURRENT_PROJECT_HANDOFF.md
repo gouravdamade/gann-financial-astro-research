@@ -1,10 +1,62 @@
 # Current Project Handoff
 
-Last updated: 2026-07-04 23:28 IST
+Last updated: 2026-07-07 22:13 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-04
+## Latest Update - 2026-07-07
+
+2026-07-07 BTC weekly astro chart:
+
+- User requested a Bitcoin weekly chart covering the last three bull-run/cycle spans through current data, with astrological overlays.
+- Added `build_btc_weekly_astro_chart.py` as a separate BTC research generator so it does not disturb the USDJPY repeatation reviewer.
+- Data/source decisions:
+  - BTC price source is Binance public weekly `BTCUSDT` klines; available chart range starts `2017-08-14 05:30 IST`, so the first displayed bull-run span is the late-2017 peak tail, followed by the 2020-21 run and 2022-current cycle.
+  - Genesis block timestamp is fixed as `2009-01-03 18:15:05 UTC` = `2009-01-03 23:45:05 IST`.
+  - Primary birthplace hypothesis is `Van Nuys / Los Angeles`; this is explicitly marked unverified/experimental in metadata.
+  - Alternate place hypotheses recorded in metadata: London and Dublin.
+  - Ayanamsa uses the project doctrine setting: Raman.
+- User filters implemented:
+  - Moon excluded from natal/transit/aspect windows.
+  - Rahu/Ketu mutual interaction excluded because they are always 180 degrees apart.
+  - Aspect windows shorter than `7` days filtered out.
+  - SR grid uses requested `n=10,20,30,40,50,60,70,80,90` and `f=1.6,1.8`.
+- BTC scale note:
+  - SR projection uses explicit `BTC_SCALE_DEGREE=720` so the requested `n/f` grid reaches the current BTC weekly price band; this assumption is written to README/metadata.
+- Output pack:
+  `D:\GannFinancialAstro\doc\btc_weekly_astro_20260707_220921`
+- Main chart:
+  `D:\GannFinancialAstro\doc\btc_weekly_astro_20260707_220921\btc_weekly_astro_chart.html`
+- Supporting outputs:
+  - `btc_weekly_price_binance.csv`
+  - `btc_daily_transit_longitudes.csv`
+  - `btc_weekly_transit_longitudes.csv`
+  - `btc_weekly_astro_windows.csv`
+  - `btc_weekly_sr_lines.csv`
+  - `btc_weekly_sr_touches.csv`
+  - `btc_weekly_metadata.json`
+  - `README.md`
+- Generated counts:
+  - weekly candles: `465`;
+  - filtered astro windows >= 7 days: `219`;
+  - SR candidate lines in/near price range: `396`;
+  - SR touches: `10134`.
+- UI/chart polish:
+  - dense SR line traces and filtered astro marker traces are hidden from legend;
+  - chart HTML is responsive;
+  - hover is forced to closest-point mode and Plotly spike/crosshair lines are disabled via post-render relayout so cursor hover does not create a full vertical read line.
+- Server status:
+  - separate static server listening on `127.0.0.1:8766`;
+  - URL: `http://127.0.0.1:8766/btc_weekly_astro_chart.html?v=closest_hover_v2`;
+  - HTTP check returned `200`.
+- Verification:
+  - `python -m py_compile build_btc_weekly_astro_chart.py`;
+  - generated output successfully;
+  - filter audit returned `moon_rows=0`, `rahu_ketu_pair_rows=0`, `shorter_than_7_days=0`;
+  - generated HTML contains the runtime closest-hover/spike-disable postscript;
+  - in-app browser opened the chart and browser console had no errors.
+
+## Previous Update - 2026-07-04
 
 2026-07-04 global carryover rules for Mercury-Moon trine review:
 
