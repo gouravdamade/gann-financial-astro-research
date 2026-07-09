@@ -1,10 +1,54 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-10 00:02 IST
+Last updated: 2026-07-10 00:23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-07-10
+
+2026-07-10 BTC 3-week aspect filter:
+
+- User clarified they meant removing aspects shorter than 3 weeks.
+- Updated both BTC scripts:
+  - `build_btc_weekly_astro_chart.py` default `--min-window-days` is now `21.0`;
+  - `analyze_btc_aspect_effectiveness.py` default `--min-window-days` is now `21.0`.
+- Reran evidence analyzer first so chart classification/noise exclusion uses the same 3-week filter:
+  `D:\GannFinancialAstro\doc\btc_aspect_effectiveness_20260710_002051`
+- Evidence counts with 3-week threshold:
+  - historical windows >= 21 days: `119`;
+  - analyzed events: `119`;
+  - families: `72`;
+  - `promising_candidate`: `2`;
+  - `inconclusive`: `12`;
+  - `inconclusive_low_repeatation`: `55`;
+  - `noise`: `3`.
+- Promising candidates remain:
+  - `PLUTO|JUPITER::conjunction_orb`;
+  - `NEPTUNE|SATURN::opposition_orb`.
+- Noise candidates with 3-week threshold:
+  - `SATURN|KETU::opposition_orb`;
+  - `SATURN|RAHU::conjunction_orb`;
+  - `URANUS|PLUTO::trine`.
+- Rebuilt chart pack:
+  `D:\GannFinancialAstro\doc\btc_weekly_astro_20260710_002116`
+- Main chart URL:
+  `http://127.0.0.1:8766/btc_weekly_astro_chart.html?v=min21d_noise_excluded`
+- Chart counts with 3-week threshold:
+  - all generated windows before noise exclusion: `164`;
+  - chart-visible windows after noise exclusion: `155`;
+  - noise-excluded windows: `9`;
+  - visible windows under 21 days: `0`;
+  - all windows under 21 days: `0`;
+  - minimum visible duration: `21.0` days.
+- Server:
+  - `127.0.0.1:8766` now serves `D:\GannFinancialAstro\doc\btc_weekly_astro_20260710_002116`;
+  - HTTP check returned `200`.
+- Verification:
+  - `python -m py_compile build_btc_weekly_astro_chart.py analyze_btc_aspect_effectiveness.py`;
+  - `python analyze_btc_aspect_effectiveness.py`;
+  - `python build_btc_weekly_astro_chart.py`.
+
+## Previous Update - 2026-07-10
 
 2026-07-10 BTC aspect family classification/noise exclusion:
 

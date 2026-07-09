@@ -43,7 +43,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--place", choices=sorted(PLACE_HYPOTHESES), default="van_nuys")
     parser.add_argument("--start", default="2017-08-01")
     parser.add_argument("--end", default=(pd.Timestamp.now(tz="UTC") + pd.Timedelta(days=8)).strftime("%Y-%m-%d"))
-    parser.add_argument("--min-window-days", type=float, default=14.0)
+    parser.add_argument("--min-window-days", type=float, default=21.0)
     parser.add_argument("--turn-context-weeks", type=int, default=7)
     parser.add_argument("--short-max-weeks", type=float, default=7.0)
     parser.add_argument("--long-min-weeks", type=float, default=8.0)

@@ -123,7 +123,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-values", default="30,40,50,60,70,80,90,100,110,120,130,140,150")
     parser.add_argument("--factors", default="1.6,1.8")
     parser.add_argument("--degree-scales", default="360,180")
-    parser.add_argument("--min-window-days", type=float, default=14.0)
+    parser.add_argument("--min-window-days", type=float, default=21.0)
     parser.add_argument("--max-sr-lines", type=int, default=360)
     parser.add_argument("--max-aspect-windows", type=int, default=1000)
     parser.add_argument(
