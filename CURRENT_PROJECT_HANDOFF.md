@@ -1,10 +1,72 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-07 22:41 IST
+Last updated: 2026-07-09 23:27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-07
+## Latest Update - 2026-07-09
+
+2026-07-09 BTC weekly SR/aspect noise R&D:
+
+- User reported BTC chart did not show planetary SR lines for `n > 60`, requested SR degree `d` be `360` and `180`, and asked for evidence/R&D to reduce noisy planet/aspect overlays.
+- Updated `build_btc_weekly_astro_chart.py`:
+  - removed hardcoded BTC SR degree `720`;
+  - added `--degree-scales`, default `360,180`;
+  - `sr_level(...)` now receives each degree scale explicitly;
+  - `btc_weekly_sr_lines.csv` and `btc_weekly_sr_touches.csv` now record `degree_scale` as `180` or `360`;
+  - chart SR selector now preserves coverage across `body + degree_scale + n_value` before filling by historical touch strength, so higher `n` groups are not hidden by low-n touch-heavy lines;
+  - default visible SR cap raised to `360`.
+- Rebuilt BTC weekly chart pack:
+  `D:\GannFinancialAstro\doc\btc_weekly_astro_20260709_231758`
+- Main chart URL:
+  `http://127.0.0.1:8766/btc_weekly_astro_chart.html?v=d360_d180_evidence`
+- Chart/SR verification:
+  - weekly candles: `465`;
+  - filtered astro windows >= 14 days: `216`;
+  - SR candidate lines in/near price range: `1144`;
+  - SR touches: `31378`;
+  - degree scales present in SR CSV: `180`, `360`;
+  - all requested `n=30..150` present;
+  - SR rows with `n > 60`: `792`;
+  - balanced chart selection uses `360` lines, including `240` lines with `n > 60`, both degree scales, and all `n` values;
+  - local server on `127.0.0.1:8766` returned HTTP `200`.
+- Added `analyze_btc_aspect_effectiveness.py`:
+  - fetches BTC weekly Binance candles;
+  - builds historical transit-to-natal aspect windows using the same Bitcoin Genesis/Raman setup;
+  - excludes Moon and Rahu/Ketu mutual pair via existing aspect generator;
+  - filters windows shorter than 14 days;
+  - logs every historical aspect event to `btc_aspect_effectiveness_events.csv`;
+  - summarizes every aspect family to `btc_aspect_effectiveness_summary.csv`;
+  - for windows `<= 7` weeks, evaluates whether a local crest/trough occurs inside the aspect window using a +/- 7-week context;
+  - for windows `>= 8` weeks, evaluates start-to-end return from aspect start candle open to aspect end candle close;
+  - adds deterministic weekly candlestick comments: doji, hammer-like, shooting-star-like, engulfing, inside/outside bar, large body;
+  - adds research buckets so web-prior macro families can be separated from likely weekly noise without silently deleting anything.
+- Evidence output pack:
+  `D:\GannFinancialAstro\doc\btc_aspect_effectiveness_20260709_232357`
+- Evidence counts:
+  - historical windows >= 14 days: `153`;
+  - analyzed events: `153`;
+  - aspect families: `96`.
+- Top reliability-weighted families from the first evidence run:
+  - `URANUS|SUN::trine`;
+  - `URANUS|RAHU::square`;
+  - `SATURN|MARS::conjunction_orb`;
+  - `NEPTUNE|URANUS::conjunction_orb`;
+  - `SATURN|JUPITER::conjunction_orb`;
+  - `URANUS|JUPITER::trine`;
+  - `PLUTO|JUPITER::conjunction_orb`.
+- Web/R&D priors recorded in the evidence note:
+  - AstroConnexions emphasizes Jupiter/Saturn/Uranus/Neptune/Pluto and Saturn/Uranus BTC themes;
+  - SG AppDev emphasizes Sun-Jupiter and Sun-to-Saturn/Uranus/Neptune/Pluto date studies;
+  - WIRED documents that practitioners disagree, while mentioning Saturn transits, BTC Sun/Mars/Pluto Capricorn themes, and Jupiter/outer-planet combinations.
+- Important boundary:
+  - this first evidence script analyzes transit-to-natal aspect windows only; it does not yet score pure transit-to-transit/inter-planet aspects or automatically hide chart families. Use the CSVs first, then decide the filter list.
+- Verification:
+  - `python -m py_compile build_btc_weekly_astro_chart.py analyze_btc_aspect_effectiveness.py`;
+  - `python build_btc_weekly_astro_chart.py`;
+  - `python analyze_btc_aspect_effectiveness.py`.
+
+## Previous Update - 2026-07-07
 
 2026-07-07 BTC weekly chart v2:
 

@@ -29,7 +29,7 @@ from doctrine_config import configure_swiss_ephemeris_sidereal, doctrine_ayanams
 IST = "Asia/Kolkata"
 UTC = timezone.utc
 GENESIS_UTC = pd.Timestamp("2009-01-03 18:15:05", tz="UTC")
-BTC_SCALE_DEGREE = 720
+DEFAULT_DEGREE_SCALES = (360.0, 180.0)
 DEFAULT_OUTPUT_ROOT = Path(r"D:\GannFinancialAstro\doc")
 BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines"
 
@@ -122,8 +122,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--aspect-end", default="2030-01-31", help="UTC date through which future astro windows are calculated.")
     parser.add_argument("--n-values", default="30,40,50,60,70,80,90,100,110,120,130,140,150")
     parser.add_argument("--factors", default="1.6,1.8")
+    parser.add_argument("--degree-scales", default="360,180")
     parser.add_argument("--min-window-days", type=float, default=14.0)
-    parser.add_argument("--max-sr-lines", type=int, default=90)
+    parser.add_argument("--max-sr-lines", type=int, default=360)
     parser.add_argument("--max-aspect-windows", type=int, default=1000)
     return parser.parse_args()
 
@@ -326,9 +327,27 @@ def build_aspect_windows(
     return out.sort_values(["start_utc", "duration_days", "peak_orb_deg"], ascending=[True, False, True]).reset_index(drop=True)
 
 
-def sr_level(lon: float, factor: float, n_value: float, mode: str) -> float:
+def sr_level(lon: float, factor: float, n_value: float, mode: str, degree_scale: float) -> float:
     src_lon = (360.0 - lon) if mode == "mirror" else lon
-    return float(factor) * float(n_value) * BTC_SCALE_DEGREE + float(factor) * float(src_lon)
+    return float(factor) * float(n_value) * float(degree_scale) + float(factor) * float(src_lon)
+
+
+def select_sr_lines_for_chart(sr_lines: pd.DataFrame, max_sr_lines: int) -> pd.DataFrame:
+    if sr_lines.empty:
+        return sr_lines
+    ranked = sr_lines.sort_values(["touch_count", "min_distance_usd"], ascending=[False, True])
+    if max_sr_lines <= 0 or len(ranked) <= max_sr_lines:
+        return ranked
+    # Preserve coverage across higher n-values and both degree scales, then fill by strongest historical touch.
+    required = (
+        ranked.groupby(["body", "degree_scale", "n_value"], as_index=False, group_keys=False)
+        .head(1)
+        .sort_values(["n_value", "degree_scale", "body"])
+    )
+    if len(required) >= max_sr_lines:
+        return required.head(max_sr_lines)
+    fill = ranked[~ranked.index.isin(required.index)].head(max_sr_lines - len(required))
+    return pd.concat([required, fill], ignore_index=False).drop_duplicates("identity")
 
 
 def build_sr_lines(
@@ -336,6 +355,7 @@ def build_sr_lines(
     weekly_transits: pd.DataFrame,
     n_values: list[float],
     factors: list[float],
+    degree_scales: list[float],
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     price_low = float(price["low"].min())
     price_high = float(price["high"].max())
@@ -348,62 +368,66 @@ def build_sr_lines(
         for mode in ("direct", "mirror"):
             for factor in factors:
                 for n_value in n_values:
-                    levels = np.array([sr_level(lon, factor, n_value, mode) for lon in lon_series], dtype=float)
-                    if np.nanmax(levels) < price_pad_low or np.nanmin(levels) > price_pad_high:
-                        continue
-                    ident = f"{body} {mode} f={factor:g} n={n_value:g} d={BTC_SCALE_DEGREE}"
-                    distance = np.minimum.reduce(
-                        [
-                            np.abs(price["high"].to_numpy(dtype=float) - levels),
-                            np.abs(price["low"].to_numpy(dtype=float) - levels),
-                            np.abs(price["close"].to_numpy(dtype=float) - levels),
-                        ]
-                    )
-                    atr_proxy = (price["high"] - price["low"]).rolling(14, min_periods=3).mean().bfill().to_numpy(dtype=float)
-                    touch_band = np.maximum(0.025 * price["close"].to_numpy(dtype=float), 0.20 * atr_proxy)
-                    touched = (
-                        (price["low"].to_numpy(dtype=float) <= levels)
-                        & (price["high"].to_numpy(dtype=float) >= levels)
-                    ) | (distance <= touch_band)
-                    touch_count = int(np.nansum(touched))
-                    min_distance = float(np.nanmin(distance))
-                    latest_level = float(levels[-1])
-                    line_rows.append(
-                        {
-                            "identity": ident,
-                            "body": body,
-                            "mode": mode,
-                            "factor": factor,
-                            "n_value": n_value,
-                            "degree_scale": BTC_SCALE_DEGREE,
-                            "touch_count": touch_count,
-                            "min_distance_usd": min_distance,
-                            "latest_level": latest_level,
-                            "level_min": float(np.nanmin(levels)),
-                            "level_max": float(np.nanmax(levels)),
-                        }
-                    )
-                    if touch_count:
-                        hit_idx = np.where(touched)[0]
-                        for ix in hit_idx:
-                            touch_rows.append(
-                                {
-                                    "identity": ident,
-                                    "body": body,
-                                    "mode": mode,
-                                    "factor": factor,
-                                    "n_value": n_value,
-                                    "degree_scale": BTC_SCALE_DEGREE,
-                                    "time_utc": price.iloc[ix]["open_time_utc"],
-                                    "time_ist": price.iloc[ix]["open_time_ist"],
-                                    "level": float(levels[ix]),
-                                    "open": float(price.iloc[ix]["open"]),
-                                    "high": float(price.iloc[ix]["high"]),
-                                    "low": float(price.iloc[ix]["low"]),
-                                    "close": float(price.iloc[ix]["close"]),
-                                    "distance_usd": float(distance[ix]),
-                                }
-                            )
+                    for degree_scale in degree_scales:
+                        levels = np.array(
+                            [sr_level(lon, factor, n_value, mode, degree_scale) for lon in lon_series],
+                            dtype=float,
+                        )
+                        if np.nanmax(levels) < price_pad_low or np.nanmin(levels) > price_pad_high:
+                            continue
+                        ident = f"{body} {mode} f={factor:g} n={n_value:g} d={degree_scale:g}"
+                        distance = np.minimum.reduce(
+                            [
+                                np.abs(price["high"].to_numpy(dtype=float) - levels),
+                                np.abs(price["low"].to_numpy(dtype=float) - levels),
+                                np.abs(price["close"].to_numpy(dtype=float) - levels),
+                            ]
+                        )
+                        atr_proxy = (price["high"] - price["low"]).rolling(14, min_periods=3).mean().bfill().to_numpy(dtype=float)
+                        touch_band = np.maximum(0.025 * price["close"].to_numpy(dtype=float), 0.20 * atr_proxy)
+                        touched = (
+                            (price["low"].to_numpy(dtype=float) <= levels)
+                            & (price["high"].to_numpy(dtype=float) >= levels)
+                        ) | (distance <= touch_band)
+                        touch_count = int(np.nansum(touched))
+                        min_distance = float(np.nanmin(distance))
+                        latest_level = float(levels[-1])
+                        line_rows.append(
+                            {
+                                "identity": ident,
+                                "body": body,
+                                "mode": mode,
+                                "factor": factor,
+                                "n_value": n_value,
+                                "degree_scale": degree_scale,
+                                "touch_count": touch_count,
+                                "min_distance_usd": min_distance,
+                                "latest_level": latest_level,
+                                "level_min": float(np.nanmin(levels)),
+                                "level_max": float(np.nanmax(levels)),
+                            }
+                        )
+                        if touch_count:
+                            hit_idx = np.where(touched)[0]
+                            for ix in hit_idx:
+                                touch_rows.append(
+                                    {
+                                        "identity": ident,
+                                        "body": body,
+                                        "mode": mode,
+                                        "factor": factor,
+                                        "n_value": n_value,
+                                        "degree_scale": degree_scale,
+                                        "time_utc": price.iloc[ix]["open_time_utc"],
+                                        "time_ist": price.iloc[ix]["open_time_ist"],
+                                        "level": float(levels[ix]),
+                                        "open": float(price.iloc[ix]["open"]),
+                                        "high": float(price.iloc[ix]["high"]),
+                                        "low": float(price.iloc[ix]["low"]),
+                                        "close": float(price.iloc[ix]["close"]),
+                                        "distance_usd": float(distance[ix]),
+                                    }
+                                )
     return pd.DataFrame(line_rows), pd.DataFrame(touch_rows)
 
 
@@ -476,17 +500,16 @@ def make_chart(
         )
 
     if not sr_lines.empty:
-        selected_lines = sr_lines.sort_values(
-            ["touch_count", "min_distance_usd"], ascending=[False, True]
-        ).head(max_sr_lines)
+        selected_lines = select_sr_lines_for_chart(sr_lines, max_sr_lines)
         price_times = weekly_transits["open_time_ist"]
         for _, line in selected_lines.iterrows():
             body = str(line["body"])
             mode = str(line["mode"])
             factor = float(line["factor"])
             n_value = float(line["n_value"])
+            degree_scale = float(line["degree_scale"])
             levels = [
-                sr_level(float(lon), factor, n_value, mode)
+                sr_level(float(lon), factor, n_value, mode, degree_scale)
                 for lon in weekly_transits[body].astype(float)
             ]
             fig.add_trace(
@@ -597,7 +620,7 @@ def make_chart(
     )
     note = (
         f"Filters: Moon skipped; transit Rahu<->Ketu pair skipped; aspect windows under {metadata['min_window_days']:g} days removed. "
-        f"SR grid uses n={metadata['n_values']} and f={metadata['factors']} with BTC scale degree {BTC_SCALE_DEGREE}."
+        f"SR grid uses n={metadata['n_values']}, f={metadata['factors']}, d={metadata['degree_scales']}."
     )
     fig.add_annotation(
         xref="paper",
@@ -634,7 +657,7 @@ Chart: `btc_weekly_astro_chart.html`
 - Moon is excluded.
 - Rahu/Ketu interaction with each other is excluded.
 - Aspect windows shorter than `{metadata['min_window_days']}` days are excluded.
-- SR grid uses `n={metadata['n_values']}`, `f={metadata['factors']}`, and BTC scale degree `{BTC_SCALE_DEGREE}`.
+- SR grid uses `n={metadata['n_values']}`, `f={metadata['factors']}`, and `d={metadata['degree_scales']}`.
 
 ## Outputs
 
@@ -665,6 +688,7 @@ def main() -> None:
         raise ValueError("--aspect-end must be on or after --end so future astro windows cover the full chart.")
     n_values = parse_float_list(args.n_values)
     factors = parse_float_list(args.factors)
+    degree_scales = parse_float_list(args.degree_scales)
     stamp = pd.Timestamp.now(tz=IST).strftime("%Y%m%d_%H%M%S")
     output_dir = Path(args.output_root) / f"btc_weekly_astro_{stamp}"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -682,7 +706,7 @@ def main() -> None:
             "aspect_end_ist": aspect_end.tz_convert(IST).isoformat(),
             "n_values": n_values,
             "factors": factors,
-            "scale_degree": BTC_SCALE_DEGREE,
+            "degree_scales": degree_scales,
             "min_window_days": args.min_window_days,
             "filters": {
                 "skip_moon": True,
@@ -703,7 +727,7 @@ def main() -> None:
     )
 
     windows = build_aspect_windows(daily, metadata["natal_longitudes"], args.min_window_days)
-    sr_lines, sr_touches = build_sr_lines(price, weekly_transits, n_values, factors)
+    sr_lines, sr_touches = build_sr_lines(price, weekly_transits, n_values, factors, degree_scales)
     fig = make_chart(price, weekly_transits, windows, sr_lines, metadata, args.max_sr_lines, args.max_aspect_windows)
 
     price.to_csv(output_dir / "btc_weekly_price_binance.csv", index=False)
