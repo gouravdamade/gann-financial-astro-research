@@ -126,6 +126,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-window-days", type=float, default=14.0)
     parser.add_argument("--max-sr-lines", type=int, default=360)
     parser.add_argument("--max-aspect-windows", type=int, default=1000)
+    parser.add_argument(
+        "--aspect-classification-csv",
+        default="auto",
+        help="Path to btc_aspect_effectiveness_summary.csv. Use 'auto' for latest output, or 'none' to disable noise filtering.",
+    )
     return parser.parse_args()
 
 
@@ -325,6 +330,75 @@ def build_aspect_windows(
     if out.empty:
         return out
     return out.sort_values(["start_utc", "duration_days", "peak_orb_deg"], ascending=[True, False, True]).reset_index(drop=True)
+
+
+def add_family_key(windows: pd.DataFrame) -> pd.DataFrame:
+    if windows.empty:
+        return windows
+    out = windows.copy()
+    out["family_key"] = (
+        out["transit_body"].astype(str) + "|" + out["natal_body"].astype(str) + "::" + out["aspect"].astype(str)
+    )
+    return out
+
+
+def latest_aspect_classification_csv(output_root: Path) -> Path | None:
+    candidates = sorted(
+        output_root.glob("btc_aspect_effectiveness_*/btc_aspect_effectiveness_summary.csv"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    return candidates[0] if candidates else None
+
+
+def filter_noise_aspect_windows(
+    windows: pd.DataFrame,
+    classification_arg: str,
+    output_root: Path,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    windows = add_family_key(windows)
+    meta: dict[str, Any] = {
+        "classification_filter": "disabled",
+        "classification_csv": "",
+        "noise_families_excluded": 0,
+        "windows_before_noise_filter": int(len(windows)),
+        "windows_after_noise_filter": int(len(windows)),
+    }
+    if windows.empty or str(classification_arg).lower() == "none":
+        return windows, meta
+    path: Path | None
+    if str(classification_arg).lower() == "auto":
+        path = latest_aspect_classification_csv(output_root)
+    else:
+        path = Path(classification_arg)
+    if path is None or not path.exists():
+        meta["classification_filter"] = "missing"
+        return windows, meta
+    summary = pd.read_csv(path)
+    if "family_key" not in summary.columns or "classification" not in summary.columns:
+        meta["classification_filter"] = "invalid_missing_columns"
+        meta["classification_csv"] = str(path)
+        return windows, meta
+    noise_families = set(summary.loc[summary["classification"] == "noise", "family_key"].astype(str))
+    if not noise_families:
+        meta.update(
+            {
+                "classification_filter": "active_no_noise_families",
+                "classification_csv": str(path),
+            }
+        )
+        return windows, meta
+    filtered = windows[~windows["family_key"].astype(str).isin(noise_families)].reset_index(drop=True)
+    meta.update(
+        {
+            "classification_filter": "active_excluding_noise",
+            "classification_csv": str(path),
+            "noise_families_excluded": int(len(noise_families)),
+            "noise_windows_excluded": int(len(windows) - len(filtered)),
+            "windows_after_noise_filter": int(len(filtered)),
+        }
+    )
+    return filtered, meta
 
 
 def sr_level(lon: float, factor: float, n_value: float, mode: str, degree_scale: float) -> float:
@@ -657,12 +731,15 @@ Chart: `btc_weekly_astro_chart.html`
 - Moon is excluded.
 - Rahu/Ketu interaction with each other is excluded.
 - Aspect windows shorter than `{metadata['min_window_days']}` days are excluded.
+- Noise aspect filter: `{metadata['filters']['noise_aspect_families']['classification_filter']}`.
+- Noise families excluded from chart overlays: `{metadata['filters']['noise_aspect_families'].get('noise_families_excluded', 0)}`.
 - SR grid uses `n={metadata['n_values']}`, `f={metadata['factors']}`, and `d={metadata['degree_scales']}`.
 
 ## Outputs
 
 - `btc_weekly_price_binance.csv`
-- `btc_weekly_astro_windows.csv` ({len(windows)} filtered windows)
+- `btc_weekly_astro_windows.csv` ({len(windows)} chart-visible filtered windows)
+- `btc_weekly_astro_windows_all.csv` (all generated windows before noise-family exclusion)
 - `btc_weekly_sr_lines.csv` ({len(sr_lines)} candidate lines inside/near price range)
 - `btc_weekly_sr_touches.csv`
 - `btc_weekly_metadata.json`
@@ -690,13 +767,20 @@ def main() -> None:
     factors = parse_float_list(args.factors)
     degree_scales = parse_float_list(args.degree_scales)
     stamp = pd.Timestamp.now(tz=IST).strftime("%Y%m%d_%H%M%S")
-    output_dir = Path(args.output_root) / f"btc_weekly_astro_{stamp}"
+    output_root = Path(args.output_root)
+    output_dir = output_root / f"btc_weekly_astro_{stamp}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     price = fetch_binance_weekly(start, end)
     daily = build_daily_transits(price["open_time_utc"].min(), aspect_end)
     weekly_transits = build_weekly_transits(price)
     metadata = birth_chart(place)
+    windows_all = build_aspect_windows(daily, metadata["natal_longitudes"], args.min_window_days)
+    windows, classification_meta = filter_noise_aspect_windows(
+        windows_all,
+        args.aspect_classification_csv,
+        output_root,
+    )
     metadata.update(
         {
             "generated_at_ist": pd.Timestamp.now(tz=IST).isoformat(),
@@ -712,6 +796,7 @@ def main() -> None:
                 "skip_moon": True,
                 "skip_rahu_ketu_pair": True,
                 "min_window_days": args.min_window_days,
+                "noise_aspect_families": classification_meta,
             },
             "alternate_place_hypotheses": {
                 key: value.__dict__ for key, value in PLACE_HYPOTHESES.items() if key != args.place
@@ -726,13 +811,13 @@ def main() -> None:
         }
     )
 
-    windows = build_aspect_windows(daily, metadata["natal_longitudes"], args.min_window_days)
     sr_lines, sr_touches = build_sr_lines(price, weekly_transits, n_values, factors, degree_scales)
     fig = make_chart(price, weekly_transits, windows, sr_lines, metadata, args.max_sr_lines, args.max_aspect_windows)
 
     price.to_csv(output_dir / "btc_weekly_price_binance.csv", index=False)
     daily.to_csv(output_dir / "btc_daily_transit_longitudes.csv", index=False)
     weekly_transits.to_csv(output_dir / "btc_weekly_transit_longitudes.csv", index=False)
+    add_family_key(windows_all).to_csv(output_dir / "btc_weekly_astro_windows_all.csv", index=False)
     windows.to_csv(output_dir / "btc_weekly_astro_windows.csv", index=False)
     sr_lines.to_csv(output_dir / "btc_weekly_sr_lines.csv", index=False)
     sr_touches.to_csv(output_dir / "btc_weekly_sr_touches.csv", index=False)

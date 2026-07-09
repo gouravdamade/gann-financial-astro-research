@@ -130,6 +130,22 @@ def label_return(value: float, threshold: float) -> str:
     return "flat"
 
 
+def behavior_signal(evaluation_mode: str, turn_role: str, start_end_direction: str) -> str:
+    if evaluation_mode == "turn_timing":
+        if turn_role == "trough":
+            return "bullish"
+        if turn_role == "crest":
+            return "bearish"
+        if turn_role == "crest_and_trough":
+            return "mixed"
+        return "no_signal"
+    if evaluation_mode == "trend_exposure":
+        if start_end_direction in {"bullish", "bearish"}:
+            return start_end_direction
+        return "no_signal"
+    return "no_signal"
+
+
 def analyze_event(price: pd.DataFrame, row: pd.Series, args: argparse.Namespace) -> dict[str, Any]:
     start_ts = pd.Timestamp(row["start_utc"])
     end_ts = pd.Timestamp(row["end_utc"])
@@ -181,6 +197,8 @@ def analyze_event(price: pd.DataFrame, row: pd.Series, args: argparse.Namespace)
         turn_role = "trough"
     else:
         turn_role = "no_local_turn_inside"
+    direction_label = label_return(start_end_return_pct, float(args.move_threshold_pct))
+    signal = behavior_signal(evaluation_mode, turn_role, direction_label)
 
     return {
         "analysis_status": "ok",
@@ -201,7 +219,8 @@ def analyze_event(price: pd.DataFrame, row: pd.Series, args: argparse.Namespace)
         "entry_open": entry_price,
         "exit_close": exit_price,
         "start_end_return_pct": start_end_return_pct,
-        "start_end_direction": label_return(start_end_return_pct, float(args.move_threshold_pct)),
+        "start_end_direction": direction_label,
+        "behavior_signal": signal,
         "local_high_time_ist": price.iloc[local_high_ix]["open_time_ist"],
         "local_high": float(price.iloc[local_high_ix]["high"]),
         "local_low_time_ist": price.iloc[local_low_ix]["open_time_ist"],
@@ -229,6 +248,28 @@ def top_patterns(values: pd.Series, limit: int = 3) -> str:
     return ", ".join(f"{name}:{count}" for name, count in counter.most_common(limit))
 
 
+def classify_family(occurrences: int, dominant_rate: float, directional_rate: float) -> tuple[str, str]:
+    if occurrences < 3:
+        return (
+            "inconclusive_low_repeatation",
+            "fewer than 3 repeatations; keep logged but do not suppress or promote yet",
+        )
+    if directional_rate < 0.30:
+        return (
+            "noise",
+            "less than 30% of repeatations produced a clear bullish/bearish behavior",
+        )
+    if dominant_rate >= 0.70:
+        return (
+            "promising_candidate",
+            "at least 70% of repeatations lean the same bullish/bearish way",
+        )
+    return (
+        "inconclusive",
+        "directional behavior exists, but dominance is below 70%; keep for more evidence",
+    )
+
+
 def summarize(events: pd.DataFrame) -> pd.DataFrame:
     ok = events[events["analysis_status"] == "ok"].copy()
     rows: list[dict[str, Any]] = []
@@ -251,12 +292,35 @@ def summarize(events: pd.DataFrame) -> pd.DataFrame:
         )
         sample_confidence = min(1.0, len(group) / 3.0)
         review_priority_score = evidence_score * sample_confidence
+        behavior_counts = group["behavior_signal"].fillna("no_signal").value_counts()
+        bullish_count = int(behavior_counts.get("bullish", 0))
+        bearish_count = int(behavior_counts.get("bearish", 0))
+        mixed_count = int(behavior_counts.get("mixed", 0))
+        no_signal_count = int(behavior_counts.get("no_signal", 0))
+        dominant_count = max(bullish_count, bearish_count)
+        dominant_behavior = "bullish" if bullish_count >= bearish_count else "bearish"
+        dominant_rate = dominant_count / len(group) if len(group) else np.nan
+        directional_rate = (bullish_count + bearish_count) / len(group) if len(group) else np.nan
+        classification, classification_reason = classify_family(
+            int(len(group)),
+            0.0 if math.isnan(dominant_rate) else dominant_rate,
+            0.0 if math.isnan(directional_rate) else directional_rate,
+        )
         sample = group.iloc[0]
         rows.append(
             {
                 "family_key": family,
                 "research_bucket": sample["research_bucket"],
                 "occurrences": int(len(group)),
+                "classification": classification,
+                "classification_reason": classification_reason,
+                "dominant_behavior": dominant_behavior,
+                "dominant_behavior_rate": dominant_rate,
+                "directional_signal_rate": directional_rate,
+                "bullish_behavior_count": bullish_count,
+                "bearish_behavior_count": bearish_count,
+                "mixed_behavior_count": mixed_count,
+                "no_signal_count": no_signal_count,
                 "sample_confidence": sample_confidence,
                 "avg_duration_days": float(pd.to_numeric(group["duration_days"], errors="coerce").mean()),
                 "short_turn_windows": int(len(short)),
@@ -282,7 +346,17 @@ def summarize(events: pd.DataFrame) -> pd.DataFrame:
     summary = pd.DataFrame.from_records(rows)
     if summary.empty:
         return summary
-    return summary.sort_values(["review_priority_score", "occurrences"], ascending=[False, False]).reset_index(drop=True)
+    classification_rank = {
+        "promising_candidate": 0,
+        "inconclusive": 1,
+        "inconclusive_low_repeatation": 2,
+        "noise": 3,
+    }
+    summary["classification_rank"] = summary["classification"].map(classification_rank).fillna(9).astype(int)
+    return summary.sort_values(
+        ["classification_rank", "review_priority_score", "occurrences"],
+        ascending=[True, False, False],
+    ).reset_index(drop=True)
 
 
 def write_notes(output_dir: Path, metadata: dict[str, Any], summary: pd.DataFrame) -> None:
@@ -299,9 +373,10 @@ def write_notes(output_dir: Path, metadata: dict[str, Any], summary: pd.DataFram
     rows = []
     for _, row in top.iterrows():
         rows.append(
-            f"| `{row['family_key']}` | {row['occurrences']} | {row['research_bucket']} | "
-            f"{fmt(row['short_turn_hit_rate'])} | {fmt(row['long_avg_return_pct'])} | "
-            f"{fmt(row['sample_confidence'])} | {fmt(row['review_priority_score'], 1)} |"
+            f"| `{row['family_key']}` | {row['occurrences']} | {row['classification']} | "
+            f"{row['dominant_behavior']} {fmt(row['dominant_behavior_rate'])} | "
+            f"{fmt(row['directional_signal_rate'])} | {row['research_bucket']} | "
+            f"{fmt(row['review_priority_score'], 1)} |"
         )
     table = "\n".join(rows)
     text = f"""# BTC Aspect Effectiveness Evidence
@@ -324,17 +399,25 @@ The script therefore logs all current non-Moon bodies first, then marks a `resea
 - Windows `<= {metadata['short_max_weeks']}` weeks are evaluated as turn timing: did a local crest or trough occur inside the aspect window, using a +/- `{metadata['turn_context_weeks']}` week context?
 - Windows `>= {metadata['long_min_weeks']}` weeks are evaluated as trend exposure: enter at the first weekly candle containing/after aspect start and exit at the candle containing/after aspect end.
 - Candlestick comments are simple deterministic labels: doji, hammer-like, shooting-star-like, engulfing, inside/outside bar, large body.
+- Family classification:
+  - `promising_candidate`: at least 3 repeatations and >= 70% dominance in one bullish/bearish behavior.
+  - `inconclusive`: at least 3 repeatations, not noise, but below 70% dominance.
+  - `inconclusive_low_repeatation`: fewer than 3 repeatations; kept logged because future data can change the classification.
+  - `noise`: at least 3 repeatations and less than 30% clear bullish/bearish behavior.
 
 ## Top Evidence Families
 
-| family | occurrences | bucket | short turn hit rate | long avg return % | sample confidence | review priority |
-|---|---:|---|---:|---:|---:|---:|
+| family | occurrences | classification | dominant behavior | directional signal rate | bucket | review priority |
+|---|---:|---|---:|---:|---|---:|
 {table}
 
 ## Outputs
 
 - `btc_aspect_effectiveness_events.csv`: event-level evidence.
 - `btc_aspect_effectiveness_summary.csv`: family-level ranking.
+- `btc_aspect_promising_candidates.csv`: families meeting the >= 70% dominance rule.
+- `btc_aspect_inconclusive_candidates.csv`: inconclusive families, including all repeatations < 3.
+- `btc_aspect_noise_candidates.csv`: families excluded from chart overlays.
 - `btc_aspect_effectiveness_metadata.json`: assumptions and source URLs.
 """
     (output_dir / "btc_aspect_effectiveness_notes.md").write_text(text, encoding="utf-8")
@@ -387,6 +470,18 @@ def main() -> None:
     windows.to_csv(output_dir / "btc_aspect_windows_historical.csv", index=False)
     events.to_csv(output_dir / "btc_aspect_effectiveness_events.csv", index=False)
     summary.to_csv(output_dir / "btc_aspect_effectiveness_summary.csv", index=False)
+    summary[summary["classification"] == "promising_candidate"].to_csv(
+        output_dir / "btc_aspect_promising_candidates.csv",
+        index=False,
+    )
+    summary[summary["classification"].isin(["inconclusive", "inconclusive_low_repeatation"])].to_csv(
+        output_dir / "btc_aspect_inconclusive_candidates.csv",
+        index=False,
+    )
+    summary[summary["classification"] == "noise"].to_csv(
+        output_dir / "btc_aspect_noise_candidates.csv",
+        index=False,
+    )
     (output_dir / "btc_aspect_effectiveness_metadata.json").write_text(
         json.dumps(metadata, indent=2, default=str),
         encoding="utf-8",
@@ -398,10 +493,21 @@ def main() -> None:
     print(f"Analyzed events: {len(events)}")
     print(f"Families: {len(summary)}")
     if not summary.empty:
+        counts = summary["classification"].value_counts().to_dict()
+        print(f"Classifications: {counts}")
+    if not summary.empty:
         print("Top families:")
         print(
             summary[
-                ["family_key", "occurrences", "research_bucket", "sample_confidence", "review_priority_score"]
+                [
+                    "family_key",
+                    "occurrences",
+                    "classification",
+                    "dominant_behavior",
+                    "dominant_behavior_rate",
+                    "directional_signal_rate",
+                    "review_priority_score",
+                ]
             ]
             .head(10)
             .to_string(index=False)

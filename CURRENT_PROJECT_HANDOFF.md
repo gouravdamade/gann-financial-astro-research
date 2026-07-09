@@ -1,10 +1,64 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-09 23:27 IST
+Last updated: 2026-07-10 00:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-09
+## Latest Update - 2026-07-10
+
+2026-07-10 BTC aspect family classification/noise exclusion:
+
+- User defined family classification thresholds:
+  - `promising_candidate`: at least 3 repeatations and >= 70% dominance in one clear bullish/bearish behavior;
+  - `inconclusive`: at least 3 repeatations, directional evidence exists, but dominance is below 70%;
+  - `noise`: at least 3 repeatations and less than 30% of repeatations produce any clear bullish/bearish behavior;
+  - `inconclusive_low_repeatation`: any aspect family with fewer than 3 repeatations, regardless of apparent behavior, because future data could move it into promising/inconclusive/noise.
+- Updated `analyze_btc_aspect_effectiveness.py`:
+  - event rows now include `behavior_signal`;
+  - short windows (`<= 7` weeks) map trough-only local turns to `bullish`, crest-only local turns to `bearish`, crest+trough to `mixed`, no turn to `no_signal`;
+  - long windows (`>= 8` weeks) map start-to-end return to bullish/bearish only if it clears the move threshold;
+  - summary rows now include `classification`, `classification_reason`, `dominant_behavior`, `dominant_behavior_rate`, `directional_signal_rate`, bullish/bearish/mixed/no-signal counts;
+  - writes separate candidate CSVs:
+    - `btc_aspect_promising_candidates.csv`;
+    - `btc_aspect_inconclusive_candidates.csv`, including all low-repeatation families;
+    - `btc_aspect_noise_candidates.csv`.
+- Updated `build_btc_weekly_astro_chart.py`:
+  - added `--aspect-classification-csv`, default `auto`;
+  - chart generator auto-loads the latest `btc_aspect_effectiveness_summary.csv`;
+  - aspect windows whose family classification is `noise` are excluded from chart overlays;
+  - all raw windows are still saved to `btc_weekly_astro_windows_all.csv`;
+  - chart-visible filtered windows remain in `btc_weekly_astro_windows.csv`;
+  - metadata records classification CSV path, noise family count, and windows-before/after filter counts.
+- New evidence output:
+  `D:\GannFinancialAstro\doc\btc_aspect_effectiveness_20260709_235843`
+- Classification counts from this run:
+  - `promising_candidate`: `2`;
+  - `inconclusive`: `13`;
+  - `inconclusive_low_repeatation`: `77`;
+  - `noise`: `4`.
+- Promising candidates:
+  - `PLUTO|JUPITER::conjunction_orb` bullish dominance `0.75`, directional signal rate `1.00`;
+  - `NEPTUNE|SATURN::opposition_orb` bullish dominance `0.75`, directional signal rate `1.00`.
+- Noise candidates excluded from chart overlays:
+  - `SATURN|KETU::opposition_orb`;
+  - `SATURN|RAHU::conjunction_orb`;
+  - `JUPITER|VENUS::conjunction_orb`;
+  - `URANUS|PLUTO::trine`.
+- Rebuilt BTC weekly chart pack:
+  `D:\GannFinancialAstro\doc\btc_weekly_astro_20260709_235914`
+- Main chart URL:
+  `http://127.0.0.1:8766/btc_weekly_astro_chart.html?v=classified_noise_excluded`
+- Chart filter verification:
+  - all generated windows before noise filter: `216`;
+  - chart-visible windows after excluding noise families: `204`;
+  - excluded windows: `12`;
+  - local server on `127.0.0.1:8766` returned HTTP `200`.
+- Verification:
+  - `python -m py_compile build_btc_weekly_astro_chart.py analyze_btc_aspect_effectiveness.py`;
+  - `python analyze_btc_aspect_effectiveness.py`;
+  - `python build_btc_weekly_astro_chart.py`.
+
+## Previous Update - 2026-07-09
 
 2026-07-09 BTC weekly SR/aspect noise R&D:
 
