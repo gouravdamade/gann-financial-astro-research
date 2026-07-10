@@ -3030,3 +3030,33 @@ Updated recovery prompt:
 ```text
 Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from there. Also inspect git log/status before editing.
 ```
+
+## Krushna Ashtakavarga Source Audit (2026-07-10)
+
+- User supplied the 185-page PDF `Timing of Events: A Research Work in Astrology with Krushna Ashtakvarga System` by Krushna Jugalkalani and requested a thorough read.
+- The complete PDF was extracted and key worksheets/diagrams were visually inspected. File SHA-256: `E18E021B84EE3A344EAC4DB11056D68C536B296E9D0CEFCFDBBE1B66455A9711`.
+- After hash verification, the source PDF was moved off C: to `D:\GannFinancialAstro\doc\Jyotish_Jugalkalani Krushna_Timing of Events_A Research Work -- Jyotish -- 2021.pdf`; the original Desktop copy was removed in accordance with the project's D:-drive storage policy.
+- This is a separate compilation of 36 KAS lessons originally circulated around 2000-2002. It is **not** R. A. Padmanabhan's 1985 article and does not recover Padmanabhan's missing Table 2.
+- Durable source audit: `krushna_ashtakavarga_source_review_20260710.md`.
+- Useful evidence candidates identified:
+  - classical seven-planet BAV/SAV transit values;
+  - KAS Lesson 11 seven-planet SAV transit sum centered on `196 = 7 x 28`;
+  - Lesson 35 Jupiter-plus-Saturn bindu sum centered on eight;
+  - explicit Rahu/Ketu Samdharmi proxies through sign, nakshatra and Navamsa dispositors.
+- KAS-specific mechanics identified but quarantined:
+  - inverse-aspect rule (`>4` negative, `<4` positive via `8-bindus`, `4` neutral);
+  - event-specific A/B/C/D/E house worksheet;
+  - 4:10 Samdharmi transfers, D/E +5 bonuses and score-12 threshold;
+  - Antardasha third-sector delay and solar fine-timing rules.
+- Source-quality findings:
+  - modern KAS Lesson 7 explicitly corrects calculations in the supplied original lesson, including tied transfers, exactly-four neutrality and Jupiter/Venus deductions;
+  - the PDF contains several internal date/formula/legend errors;
+  - claimed ~90% accuracy is unsupported by a published raw dataset, locked predictions or holdout evaluation;
+  - many examples are retrospective and create substantial overfitting risk;
+  - medical/fertility/sexuality claims are excluded permanently from this financial pipeline.
+- Doctrine conflict: source KAS uses a Krushna ayanamsa (and the current site mentions an improved KAS ayanamsa), while the user's project policy prefers Raman. Exact source reproduction and Raman-adapted market experiments must be separately labeled; BAV convention must also be versioned.
+- Classical cross-check: Phaladeepika Chapter 23 supports using BAV/SAV bindus to qualify transits, but does not establish the KAS inverse-aspect, event worksheet, bonuses or transfer mechanics.
+- Inventory updates added source `KRUSHNA_KAS_TIMING` and four feature records:
+  `CLASSICAL_ASHTAKAVARGA_TRANSIT`, `KRUSHNA_DAILY_SAV_INDEX`, `KRUSHNA_JS_TRANSIT_SUM`, and quarantined `KRUSHNA_EVENT_WORKSHEET`.
+- No USDJPY/BTC signal, Auto Suggest rule or MT5 execution behavior was changed. Recommended next implementation is a calculator-certified, evidence-only `ashtakavarga_evidence.py` followed by a separately namespaced KAS ablation module only after exact corrected specifications are frozen.
+- Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260710_233309`.

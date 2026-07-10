@@ -30,6 +30,12 @@
     author: "R. A. Padmanabhan"
     role: "experimental_gochara_dasha_quantitative_framework"
     extraction_status: "photographed_first_page_14_only_continuation_and_table_2_unavailable"
+  KRUSHNA_KAS_TIMING:
+    file: "Timing of Events: A Research Work in Astrology with Krushna Ashtakvarga System"
+    author: "Krushna Jugalkalani"
+    role: "experimental_classical_ashtakavarga_and_quarantined_kas_timing_hypotheses"
+    extraction_status: "readable_text_185_pages_original_worksheets_include_later_corrected_calculations"
+    sha256: "E18E021B84EE3A344EAC4DB11056D68C536B296E9D0CEFCFDBBE1B66455A9711"
   PHALADEEPIKA_26:
     file: "Phaladeepika Chapter 26 - Transits of Planets"
     role: "classical_gochara_vedha_reference"
@@ -57,6 +63,34 @@ features:
     inputs: ["natal_moon", "transit_longitudes", "vimshottari_mahadasha", "vimshottari_antardasha", "natal_shadbala_six_rupa_gate"]
     sources: ["PADMANABHAN_TIMING:p14_partial", "PHALADEEPIKA_26:v1-v8", "PHALADEEPIKA_26:v33-v34"]
     implementation_status: "implemented_evidence_only_source_incomplete_external_validation_and_walk_forward_pending"
+  - id: CLASSICAL_ASHTAKAVARGA_TRANSIT
+    bucket: classical_jyotish_evidence
+    timeframes: ["daily", "weekly"]
+    signal_intent: "measure_transit_sign_support_without_trade_direction"
+    inputs: ["seven_classical_bav", "sav_by_sign", "transit_signs", "ayanamsa", "bav_convention"]
+    sources: ["KRUSHNA_KAS_TIMING:lessons_1-4", "PHALADEEPIKA:chapter_23", "BRIHAT_JATAKA:chapter_9"]
+    implementation_status: "not_implemented_requires_two_calculator_certification_nodes_and_outer_planets_excluded"
+  - id: KRUSHNA_DAILY_SAV_INDEX
+    bucket: experimental_kas_evidence
+    timeframes: ["daily", "weekly"]
+    signal_intent: "seven_planet_natal_sav_transit_context_centered_on_196"
+    inputs: ["natal_sav_by_sign", "seven_classical_transit_signs"]
+    sources: ["KRUSHNA_KAS_TIMING:lesson_11"]
+    implementation_status: "not_implemented_evidence_only_no_direction_mapping"
+  - id: KRUSHNA_JS_TRANSIT_SUM
+    bucket: experimental_kas_evidence
+    timeframes: ["daily", "weekly"]
+    signal_intent: "jupiter_saturn_cashflow_context_centered_on_8_bindus"
+    inputs: ["bav_or_sav_convention", "jupiter_transit_sign", "saturn_transit_sign", "bindu_values"]
+    sources: ["KRUSHNA_KAS_TIMING:lesson_35"]
+    implementation_status: "not_implemented_evidence_only_export_separately_from_dasha_and_price"
+  - id: KRUSHNA_EVENT_WORKSHEET
+    bucket: quarantined_kas_specific_hypothesis
+    timeframes: ["event_dependent"]
+    signal_intent: "rank_event_significators_and_propose_dasha_timing"
+    inputs: ["corrected_event_houses_a_b_c_d_e", "inverse_aspects", "samdharmi_transfers", "d_e_bonuses", "vimshottari_periods"]
+    sources: ["KRUSHNA_KAS_TIMING:lessons_5-10", "KRUSHNA_KAS_TIMING:corrected_lesson_7"]
+    implementation_status: "not_implemented_original_pdf_obsolete_in_places_corrected_spec_and_walk_forward_ablation_required"
   - id: ASP_HARD_EVENT
     bucket: experimental_financial_astrology
     timeframes: ["m30", "hourly", "daily"]

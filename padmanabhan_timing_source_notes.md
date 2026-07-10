@@ -19,6 +19,10 @@ No lawful downloadable full copy was found as of 2026-07-10.
 
 Therefore the article has **not** been studied completely. The implementation is deliberately limited to the photographed first page plus independently checked Phaladeepika Chapter 26 rules. The remaining pages, tables, examples, and exact weights must be supplied or lawfully accessed before this doctrine can be called article-complete.
 
+### Separate Krushna Ashtakavarga book
+
+The subsequently supplied 185-page PDF `Timing of Events: A Research Work in Astrology with Krushna Ashtakvarga System` is a different work by Krushna Jugalkalani. It does not recover this Padmanabhan article's continuation or Table 2. Its Ashtakavarga hypotheses and source-quality audit are recorded separately in `krushna_ashtakavarga_source_review_20260710.md`.
+
 ## Recovered first-page model
 
 The photographed page establishes the following structure:
