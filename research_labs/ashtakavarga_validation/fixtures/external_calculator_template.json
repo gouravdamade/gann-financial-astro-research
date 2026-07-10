@@ -1,0 +1,17 @@
+{
+  "calculator_name": "REPLACE_WITH_CALCULATOR_NAME",
+  "calculator_version": "REPLACE_WITH_VERSION_OR_DATE",
+  "profile_id": "usd_reference",
+  "ayanamsa": "Raman",
+  "reductions": "unreduced",
+  "bav": {
+    "SUN": [],
+    "MOON": [],
+    "MARS": [],
+    "MERCURY": [],
+    "JUPITER": [],
+    "VENUS": [],
+    "SATURN": []
+  },
+  "sav": []
+}

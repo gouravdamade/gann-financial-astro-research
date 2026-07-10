@@ -69,21 +69,21 @@ features:
     signal_intent: "measure_transit_sign_support_without_trade_direction"
     inputs: ["seven_classical_bav", "sav_by_sign", "transit_signs", "ayanamsa", "bav_convention"]
     sources: ["KRUSHNA_KAS_TIMING:lessons_1-4", "PHALADEEPIKA:chapter_23", "BRIHAT_JATAKA:chapter_9"]
-    implementation_status: "not_implemented_requires_two_calculator_certification_nodes_and_outer_planets_excluded"
+    implementation_status: "isolated_lab_internal_fixture_pass_two_calculator_certification_pending_no_main_pipeline_integration"
   - id: KRUSHNA_DAILY_SAV_INDEX
     bucket: experimental_kas_evidence
     timeframes: ["daily", "weekly"]
     signal_intent: "seven_planet_natal_sav_transit_context_centered_on_196"
     inputs: ["natal_sav_by_sign", "seven_classical_transit_signs"]
     sources: ["KRUSHNA_KAS_TIMING:lesson_11"]
-    implementation_status: "not_implemented_evidence_only_no_direction_mapping"
+    implementation_status: "isolated_lab_first_usdjpy_walk_forward_near_chance_evidence_only_no_trade_integration"
   - id: KRUSHNA_JS_TRANSIT_SUM
     bucket: experimental_kas_evidence
     timeframes: ["daily", "weekly"]
     signal_intent: "jupiter_saturn_cashflow_context_centered_on_8_bindus"
     inputs: ["bav_or_sav_convention", "jupiter_transit_sign", "saturn_transit_sign", "bindu_values"]
     sources: ["KRUSHNA_KAS_TIMING:lesson_35"]
-    implementation_status: "not_implemented_evidence_only_export_separately_from_dasha_and_price"
+    implementation_status: "isolated_lab_own_bav_transit_sum_first_usdjpy_walk_forward_near_chance_no_trade_integration"
   - id: KRUSHNA_EVENT_WORKSHEET
     bucket: quarantined_kas_specific_hypothesis
     timeframes: ["event_dependent"]

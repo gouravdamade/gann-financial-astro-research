@@ -1,0 +1,102 @@
+lab_id: ashtakavarga_validation_v1_20260710
+status: isolated_evidence_only
+
+isolation:
+  import_main_project_modules: false
+  write_main_project_data: false
+  trading_enabled: false
+  mt5_enabled: false
+  auto_suggest_enabled: false
+  llm_enabled: false
+  allowed_output_directories:
+    - outputs
+    - reports
+
+doctrine:
+  zodiac: sidereal
+  ayanamsa: Raman
+  ayanamsa_status: user_policy_adaptation_not_exact_krushna_reproduction
+  bav_rule_set: bv_raman_unreduced_benefic_places_v1
+  bav_contributors:
+    - SUN
+    - MOON
+    - MARS
+    - MERCURY
+    - JUPITER
+    - VENUS
+    - SATURN
+    - LAGNA
+  bav_rows:
+    - SUN
+    - MOON
+    - MARS
+    - MERCURY
+    - JUPITER
+    - VENUS
+    - SATURN
+  nodes: excluded
+  outer_planets: excluded
+  reductions: none
+  kas_inverse_aspects: disabled
+  kas_event_worksheet: disabled
+
+ephemeris:
+  provider: Swiss Ephemeris
+  coordinate_system: geocentric
+  evaluation_time_utc: "00:00:00"
+  search_paths:
+    - D:\Trading_Algo\Desktop_Trading_Algo_root_legacy_20260530\sweph
+    - D:\Trading_Algo\New folder\sweph
+    - D:\PycharmProjects\sweph
+
+reference_profiles:
+  usd_reference:
+    label: USD reference
+    local_datetime: "1776-07-04 12:00:00"
+    timezone: America/New_York
+    latitude: 39.9526
+    longitude: -75.1652
+    location: Philadelphia, Pennsylvania, USA
+    status: workspace_reference_hypothesis
+  jpy_reference:
+    label: JPY reference
+    local_datetime: "1889-02-11 00:00:00"
+    timezone: Asia/Tokyo
+    latitude: 35.6762
+    longitude: 139.6503
+    location: Tokyo, Japan
+    status: workspace_reference_hypothesis
+  btc_van_nuys:
+    label: Bitcoin genesis - Van Nuys hypothesis
+    local_datetime: "2009-01-03 18:15:05"
+    timezone: UTC
+    latitude: 34.1899
+    longitude: -118.4514
+    location: Van Nuys, California, USA
+    status: unverified_location_hypothesis
+  btc_london:
+    label: Bitcoin genesis - London hypothesis
+    local_datetime: "2009-01-03 18:15:05"
+    timezone: UTC
+    latitude: 51.5074
+    longitude: -0.1278
+    location: London, England
+    status: unverified_location_hypothesis
+  btc_dublin:
+    label: Bitcoin genesis - Dublin hypothesis
+    local_datetime: "2009-01-03 18:15:05"
+    timezone: UTC
+    latitude: 53.3498
+    longitude: -6.2603
+    location: Dublin, Ireland
+    status: unverified_location_hypothesis
+
+evaluation:
+  horizons_trading_days: [1, 5, 20]
+  expanding_folds: 5
+  initial_train_fraction: 0.5
+  minimum_exploratory_observations: 30
+  minimum_promotion_observations: 100
+  fixed_fx_mapping: positive_base_minus_quote_predicts_pair_up
+  transaction_costs_included: false
+  promotion_allowed: false

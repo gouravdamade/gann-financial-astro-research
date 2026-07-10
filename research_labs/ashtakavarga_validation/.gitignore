@@ -1,0 +1,7 @@
+outputs/*
+!outputs/.gitkeep
+reports/*
+!reports/.gitkeep
+__pycache__/
+*.py[cod]
+.pytest_cache/

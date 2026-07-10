@@ -3060,3 +3060,37 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `CLASSICAL_ASHTAKAVARGA_TRANSIT`, `KRUSHNA_DAILY_SAV_INDEX`, `KRUSHNA_JS_TRANSIT_SUM`, and quarantined `KRUSHNA_EVENT_WORKSHEET`.
 - No USDJPY/BTC signal, Auto Suggest rule or MT5 execution behavior was changed. Recommended next implementation is a calculator-certified, evidence-only `ashtakavarga_evidence.py` followed by a separately namespaced KAS ablation module only after exact corrected specifications are frozen.
 - Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260710_233309`.
+
+## Isolated Ashtakavarga Validation Lab (2026-07-10)
+
+- User requested testing of the Krushna/Ashtakavarga ideas while keeping them separate from the main project.
+- Added self-contained tracked lab: `research_labs\ashtakavarga_validation`.
+- Isolation guarantees:
+  - package imports no main trading modules;
+  - all MT5, Auto Suggest, review-agent and LLM integrations are disabled;
+  - generated outputs are restricted to the lab's ignored `outputs/` and `reports/` directories;
+  - canonical market files are read-only inputs supplied explicitly;
+  - nothing can promote itself into the main pipeline.
+- Implemented:
+  - complete unreduced seven-classical BAV benefic-place tables with Lagna as the eighth contributor;
+  - SAV calculation, invariant validation and Raman-adapted Swiss Ephemeris reference profiles;
+  - daily seven-planet SAV sum/distance from 196;
+  - Jupiter-plus-Saturn own-BAV transit-sign sum/distance from eight;
+  - USD, JPY and three explicitly unverified Bitcoin-location reference profiles;
+  - expanding chronological evaluation with horizon gap, non-overlapping multi-day samples, Wilson intervals and price-momentum baseline;
+  - exact JSON comparison for future outside-calculator BAV/SAV exports;
+  - one-command reproduction via `research_labs\ashtakavarga_validation\run_first_usdjpy_test.ps1`.
+- Verification:
+  - 12 direct unit/isolation tests passed;
+  - all 84 BAV cells and 12 SAV cells matched the published B. V. Raman standard-horoscope fixture;
+  - expected BAV totals and SAV 337 matched;
+  - 250 randomized charts preserved all invariants;
+  - certification remains `partial_external_calculators_pending` because 0/2 independent calculators have been checked.
+- First isolated USDJPY result (2010-01-27 through 2026-03-09, 4,187 joined trading days):
+  - one-day fixed SAV base-minus-quote: 51.32% hit rate, 2,044 non-overlapping observations, 95% Wilson interval 49.15%-53.48%, unadjusted p=0.232;
+  - one-day fixed Jupiter-Saturn differential: 49.66%, 1,482 observations, p=0.795;
+  - five- and twenty-day variants also had confidence intervals spanning 50%; no simple feature was reliably distinguishable from chance.
+- Durable interpretation: arithmetic is internally sound against one published fixture, but predictive evidence is not established. No main USDJPY/BTC/MT5 behavior changed.
+- Full lab notes: `research_labs\ashtakavarga_validation\README.md` and `research_labs\ashtakavarga_validation\FIRST_RUN_FINDINGS.md`.
+- Next gates: fill two independent calculator exports using `fixtures\external_calculator_template.json`, then add circular-shift placebos and transaction-cost sensitivity before considering more KAS mechanics.
+- Recovery backup including lab code and local first-run reports: `D:\PycharmProjects\chat_session_backups\session_20260711_001352`.
