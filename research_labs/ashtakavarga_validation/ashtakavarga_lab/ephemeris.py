@@ -22,6 +22,13 @@ BODY_IDS = {
 }
 
 
+def sidereal_node_longitudes(value: datetime) -> dict[str, float]:
+    jd = julian_day_ut(value)
+    flags = swe.FLG_SWIEPH | swe.FLG_SIDEREAL
+    rahu = float(swe.calc_ut(jd, swe.MEAN_NODE, flags)[0][0] % 360.0)
+    return {"RAHU": rahu, "KETU": (rahu + 180.0) % 360.0}
+
+
 def configure(config: dict[str, Any]) -> None:
     ayanamsa = str(config.get("doctrine", {}).get("ayanamsa", "Raman")).strip().lower()
     if ayanamsa != "raman":

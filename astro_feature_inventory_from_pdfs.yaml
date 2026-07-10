@@ -88,9 +88,9 @@ features:
     bucket: quarantined_kas_specific_hypothesis
     timeframes: ["event_dependent"]
     signal_intent: "rank_event_significators_and_propose_dasha_timing"
-    inputs: ["corrected_event_houses_a_b_c_d_e", "inverse_aspects", "samdharmi_transfers", "d_e_bonuses", "vimshottari_periods"]
-    sources: ["KRUSHNA_KAS_TIMING:lessons_5-10", "KRUSHNA_KAS_TIMING:corrected_lesson_7"]
-    implementation_status: "not_implemented_original_pdf_obsolete_in_places_corrected_spec_and_walk_forward_ablation_required"
+    inputs: ["corrected_event_houses_a_b_c_d_e", "inverse_aspects", "samdharmi_transfers_and_restrictions", "d_e_bonuses", "vimshottari_periods_and_sectors", "node_proxies", "sun_timing", "lesson26_result_multipliers"]
+    sources: ["KRUSHNA_KAS_TIMING:lessons_5-11", "KRUSHNA_KAS_TIMING:lessons_25-27", "KRUSHNA_KAS_TIMING:corrected_lesson_7"]
+    implementation_status: "isolated_corrected_fixture_pass_all_12_house_usdjpy_ablation_no_robust_edge_exact_krushna_ayanamsa_and_two_calculator_checks_pending_no_trade_integration"
   - id: ASP_HARD_EVENT
     bucket: experimental_financial_astrology
     timeframes: ["m30", "hourly", "daily"]

@@ -1,0 +1,34 @@
+{
+  "source": "Krushna KAS Lesson 7 supplied PDF pages 39-47 plus corrected online Lesson 7 commentary",
+  "birth_data": "1966-04-10 12:08 +05:30, 19N36 77E40",
+  "lagna_sign": "GEMINI",
+  "house_b": 7,
+  "planet_signs": {
+    "SUN": "PISCES",
+    "MOON": "SCORPIO",
+    "MARS": "ARIES",
+    "MERCURY": "PISCES",
+    "JUPITER": "GEMINI",
+    "VENUS": "AQUARIUS",
+    "SATURN": "PISCES"
+  },
+  "bav": {
+    "SUN": [6, 3, 2, 3, 4, 4, 4, 6, 4, 6, 3, 3],
+    "MOON": [4, 7, 4, 2, 6, 5, 3, 3, 5, 6, 1, 3],
+    "MARS": [4, 4, 2, 4, 3, 3, 2, 4, 3, 6, 1, 3],
+    "MERCURY": [6, 4, 4, 4, 3, 4, 3, 6, 5, 6, 5, 4],
+    "JUPITER": [5, 4, 5, 7, 3, 4, 4, 5, 6, 4, 3, 6],
+    "VENUS": [3, 3, 5, 4, 3, 4, 6, 4, 4, 6, 6, 4],
+    "SATURN": [4, 2, 3, 2, 4, 4, 3, 3, 3, 6, 2, 3]
+  },
+  "expected": {
+    "event_houses": {"A": 2, "B": 7, "C": 11, "D": 4, "E": 12},
+    "row3": {"SUN": 13, "MOON": 11, "MARS": 11, "MERCURY": 15, "JUPITER": 18, "VENUS": 11, "SATURN": 9},
+    "row5": {"SUN": 18, "MOON": 0, "MARS": 0, "MERCURY": 0, "JUPITER": 0, "VENUS": 0, "SATURN": 18},
+    "row8": {"SUN": 0, "MOON": 0, "MARS": 0, "MERCURY": 5, "JUPITER": 0, "VENUS": 5, "SATURN": 0},
+    "row12": {"SUN": 0, "MOON": 0, "MARS": 0, "MERCURY": 0, "JUPITER": 0, "VENUS": 0, "SATURN": 5},
+    "row16": {"SUN": 0, "MOON": 0, "MARS": 0, "MERCURY": 0, "JUPITER": 0, "VENUS": 0, "SATURN": 0},
+    "row17": {"SUN": 31, "MOON": 11, "MARS": 11, "MERCURY": 20, "JUPITER": 18, "VENUS": 16, "SATURN": 32},
+    "ranking": ["SATURN", "SUN", "MERCURY", "JUPITER", "VENUS", "MOON", "MARS"]
+  }
+}

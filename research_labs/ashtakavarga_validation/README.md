@@ -26,7 +26,11 @@ It is tracked by the private recovery repository, but it is deliberately isolate
 | Nodes / outer planets | Excluded |
 | SAV | Sum of seven unreduced BAV rows |
 | Trikona/Ekadhipatya reductions | Not applied |
-| KAS inverse-aspect worksheet | Disabled |
+| KAS inverse-aspect worksheet | Corrected experimental implementation, isolated |
+| KAS event worksheet | All 12 House B mappings, isolated |
+| Vimshottari / three sectors | Implemented as evidence; no fitted delay choice |
+| Sun timing | Candidate sign/nakshatra gate |
+| Lesson 26 multipliers | Result-quality ablation only, not timing |
 | Trading permission | Disabled |
 
 The Raman setting follows the user's workspace policy. It is not an exact reproduction of the source's Krushna ayanamsa and is labeled accordingly.
@@ -42,6 +46,8 @@ The Raman setting follows the user's workspace policy. It is not an exact reprod
    - seven-planet SAV sum and distance from `196`;
    - Jupiter plus Saturn own-BAV sum and distance from `8`.
 5. A standalone USDJPY evaluator compares USD and JPY reference-chart evidence with future returns using expanding chronological folds and an embargo gap.
+6. The corrected Lesson 7 worksheet reproduces its published fixture row by row.
+7. Full KAS market experiments report all twelve event-house choices, Dasha, nodal proxies, Sun timing and component ablations without post-outcome house selection.
 
 ## Commands
 
@@ -54,6 +60,9 @@ python -m ashtakavarga_lab.cli natal --profile usd_reference
 python -m ashtakavarga_lab.cli compare-external --input fixtures/my_calculator_usd.json
 python -m ashtakavarga_lab.cli evidence --start 2010-01-27 --end 2026-03-10 --profiles usd_reference,jpy_reference
 python -m ashtakavarga_lab.cli evaluate --price D:\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet
+python -m ashtakavarga_lab.cli kas-fixture
+python -m ashtakavarga_lab.cli kas-evidence --start 2010-01-27 --end 2026-03-10 --profiles usd_reference,jpy_reference
+python -m ashtakavarga_lab.cli kas-evaluate --price D:\PycharmProjects\usd_jpy_h1_mt5_metaquotes_demo_full.parquet
 ```
 
 `certify` passing means the local arithmetic and one published fixture pass. It does **not** mean the engine has passed the required two-independent-calculator gate.
@@ -69,6 +78,8 @@ Nothing here is promoted automatically. A later promotion decision requires:
 3. purged chronological evaluation against price-only and randomized controls;
 4. positive results after spread/slippage across multiple periods;
 5. an explicit manual code review and separate integration commit.
+
+See `KAS_METHOD_SPEC.md` for the frozen implementation and unresolved source ambiguities. See `FULL_KAS_FIRST_RUN_FINDINGS.md` for the first complete isolated USDJPY experiment.
 
 ## Sources
 

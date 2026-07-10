@@ -3031,6 +3031,36 @@ Updated recovery prompt:
 Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from there. Also inspect git log/status before editing.
 ```
 
+## Full Corrected-KAS Isolated Experiment (2026-07-11)
+
+- User requested testing the complete Krushna methodology rather than stopping at classical BAV/SAV.
+- Expanded only `research_labs/ashtakavarga_validation`; canonical USDJPY/BTC, Auto Suggest, review-agent, ML-note and MT5 code remain untouched and inaccessible from the lab.
+- Added corrected KAS engine:
+  - `ashtakavarga_lab/kas.py`: all A/B/C/D/E event rotations, corrected Lesson 7 rows, inverse aspects, tied 4:10 transfers, D/E bonuses/exemptions, ranks, direct candidates, Samdharmi relations/restrictions and Lesson 26 result multipliers;
+  - `ashtakavarga_lab/dasha.py`: Vimshottari Mahadasha/Antardasha and three equal sectors;
+  - `ashtakavarga_lab/kas_evidence.py`: all 12 House B mappings, Rahu/Ketu proxies, Antardasha evidence, Sun sign/nakshatra timing, SAV-196 and Jupiter-Saturn-8 contexts;
+  - `ashtakavarga_lab/evaluation.py` / `cli.py`: all-house ablations, expanding chronological folds, horizon gaps, non-overlapping outcomes, circular-shift placebos, Bonferroni correction and 0/1/2/5-basis-point cost sensitivity.
+- Added published/corrected Lesson 7 fixture `fixtures/kas_lesson7_marriage_corrected.json`. It reproduces final corrected scores Saturn 32, Sun 31, Mercury 20, Jupiter 18, Venus 16, Moon 11 and Mars 11. All intermediate checked rows pass.
+- Added doctrine and result records:
+  - `research_labs/ashtakavarga_validation/KAS_METHOD_SPEC.md`;
+  - `research_labs/ashtakavarga_validation/FULL_KAS_FIRST_RUN_FINDINGS.md`.
+- Full local generated evidence/report (ignored by Git):
+  - `outputs/daily_kas_evidence.parquet`: 141,264 profile/house/day rows from 2010-01-27 through 2026-03-09;
+  - `reports/kas_lesson7_fixture.json`;
+  - `reports/usdjpy_kas_walk_forward.json`.
+- First full experiment evaluated 12 House B mappings, 12 feature/timing ablations, 3 horizons and 2 direction mappings: 864 comparisons in one correction family.
+- No robust edge passed:
+  - minimum Bonferroni p-value `0.2586`;
+  - strongest fixed full-method cell was House 2 + first Antardasha sector + Sun gate at one day: 904 observations, 55.42% hit, raw p `0.00112`, adjusted p `0.9645`, circular-shift p `0.13`, median `+0.0383%` gross and `-0.0117%` at 5 bps;
+  - simple House 1 Antardasha score was 53.86% over 1,359 observations but had adjusted p `1.0`, placebo p `0.935`, and negative median after 5 bps.
+- Verification: 18 unit/isolation tests pass; corrected fixture CLI passes; 141,264-row generation and 12-house evaluation complete.
+- Important limits:
+  - market run is a Raman adaptation, not exact improved-Krushna-ayanamsa reproduction;
+  - no source-defined currency event house exists, therefore all twelve are reported and no best house may be selected from this run;
+  - event-specific karaka and delay judgments do not have a defensible currency mapping and remain explicit unresolved evidence rather than invented rules;
+  - two outside BAV/SAV calculator checks remain pending.
+- Decision: retain as isolated research only; do not promote any KAS output into live or review logic.
+
 ## Krushna Ashtakavarga Source Audit (2026-07-10)
 
 - User supplied the 185-page PDF `Timing of Events: A Research Work in Astrology with Krushna Ashtakvarga System` by Krushna Jugalkalani and requested a thorough read.

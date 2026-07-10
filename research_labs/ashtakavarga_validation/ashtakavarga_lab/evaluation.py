@@ -73,11 +73,106 @@ def prepare_dataset(
     return merged
 
 
+def kas_pair_feature_frame(
+    evidence: pd.DataFrame,
+    base_profile: str,
+    quote_profile: str,
+    house_b: int,
+) -> pd.DataFrame:
+    value_columns = [
+        "antardasha_effective_score",
+        "antardasha_disposition",
+        "sav_disposition",
+        "js_disposition",
+        "kas_full_context_score",
+        "sun_trigger",
+        "antardasha_sector",
+    ]
+    filtered = evidence[
+        evidence["profile_id"].isin([base_profile, quote_profile])
+        & (evidence["house_b"].astype(int) == int(house_b))
+    ].copy()
+    if set(filtered["profile_id"].unique()) != {base_profile, quote_profile}:
+        raise ValueError("KAS evidence is missing the requested base or quote profile")
+    pivot = filtered.pivot(index="timestamp_utc", columns="profile_id", values=value_columns)
+    out = pd.DataFrame(index=pivot.index)
+    names = {
+        "antardasha_effective_score": "kas_ad_score",
+        "antardasha_disposition": "kas_ad_disposition",
+        "sav_disposition": "kas_sav_context",
+        "js_disposition": "kas_js_context",
+        "kas_full_context_score": "kas_full_context",
+    }
+    for source, destination in names.items():
+        out[f"{destination}_base"] = pivot[(source, base_profile)]
+        out[f"{destination}_quote"] = pivot[(source, quote_profile)]
+        out[f"{destination}_diff"] = out[f"{destination}_base"] - out[f"{destination}_quote"]
+    out["kas_sun_trigger_either"] = (
+        (pivot[("sun_trigger", base_profile)] > 0) | (pivot[("sun_trigger", quote_profile)] > 0)
+    ).astype(int)
+    out["kas_full_sun_gated_diff"] = out["kas_full_context_diff"] * out["kas_sun_trigger_either"]
+    for sector in (1, 2, 3):
+        active = (
+            (pivot[("antardasha_sector", base_profile)] == sector)
+            | (pivot[("antardasha_sector", quote_profile)] == sector)
+        ).astype(int)
+        out[f"kas_full_sector_{sector}_diff"] = out["kas_full_context_diff"] * active
+        out[f"kas_full_sun_sector_{sector}_diff"] = out["kas_full_context_diff"] * active * out[
+            "kas_sun_trigger_either"
+        ]
+    out["house_b"] = int(house_b)
+    return out.reset_index()
+
+
+def prepare_kas_dataset(
+    price: pd.DataFrame,
+    evidence: pd.DataFrame,
+    base_profile: str,
+    quote_profile: str,
+    house_b: int,
+    horizons: list[int],
+) -> pd.DataFrame:
+    features = kas_pair_feature_frame(evidence, base_profile, quote_profile, house_b)
+    merged = price.merge(features, on="timestamp_utc", how="inner").sort_values("timestamp_utc").reset_index(drop=True)
+    for horizon in horizons:
+        merged[f"return_{int(horizon)}d"] = merged["close"].shift(-(int(horizon) - 1)) / merged["open"] - 1.0
+        merged[f"past_return_{int(horizon)}d"] = merged["close"].shift(1) / merged["close"].shift(
+            int(horizon) + 1
+        ) - 1.0
+    return merged
+
+
 def _safe_corr(left: pd.Series, right: pd.Series) -> float:
     if left.nunique(dropna=True) < 2 or right.nunique(dropna=True) < 2:
         return 0.0
     value = left.corr(right)
     return 0.0 if pd.isna(value) else float(value)
+
+
+def circular_shift_placebo(
+    dataset: pd.DataFrame,
+    feature: str,
+    target: str,
+    horizon: int,
+    shifts: int = 199,
+) -> dict[str, Any]:
+    work = dataset[[feature, target]].dropna().iloc[:: max(1, int(horizon))].reset_index(drop=True)
+    if len(work) < 20:
+        return {"observations": len(work), "shifts": 0, "absolute_correlation": None, "pvalue": None}
+    left = work[feature].to_numpy(dtype=float)
+    right = work[target].to_numpy(dtype=float)
+    observed = abs(_safe_corr(pd.Series(left), pd.Series(right)))
+    minimum = max(1, int(horizon))
+    candidates = np.unique(np.linspace(minimum, len(work) - minimum, num=min(int(shifts), len(work) - 2), dtype=int))
+    null_values = [abs(_safe_corr(pd.Series(left), pd.Series(np.roll(right, int(shift))))) for shift in candidates]
+    pvalue = (1 + sum(value >= observed for value in null_values)) / (1 + len(null_values))
+    return {
+        "observations": int(len(work)),
+        "shifts": int(len(null_values)),
+        "absolute_correlation": observed,
+        "null_median_absolute_correlation": float(np.median(null_values)),
+        "pvalue": float(pvalue),
+    }
 
 
 def _wilson_interval(successes: int, observations: int, z: float = 1.959963984540054) -> tuple[float, float] | None:
@@ -110,10 +205,12 @@ def walk_forward_report(
     horizons: list[int],
     fold_count: int = 5,
     initial_train_fraction: float = 0.5,
+    features: list[str] | None = None,
 ) -> dict[str, Any]:
     results = []
     for horizon in horizons:
-        for feature in ("sav_diff", "js_diff", f"past_return_{int(horizon)}d"):
+        evaluated_features = features or ["sav_diff", "js_diff", f"past_return_{int(horizon)}d"]
+        for feature in evaluated_features:
             target = f"return_{int(horizon)}d"
             work = dataset[["timestamp_utc", feature, target]].dropna().reset_index(drop=True)
             fold_rows = []

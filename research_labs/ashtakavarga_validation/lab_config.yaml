@@ -37,8 +37,10 @@ doctrine:
   nodes: excluded
   outer_planets: excluded
   reductions: none
-  kas_inverse_aspects: disabled
-  kas_event_worksheet: disabled
+  kas_inverse_aspects: corrected_experimental_isolated
+  kas_event_worksheet: corrected_experimental_isolated
+  kas_source_reproduction_ayanamsa: unavailable_improved_krushna_value
+  kas_market_mode: raman_adaptation_all_12_house_ablation
 
 ephemeris:
   provider: Swiss Ephemeris
@@ -99,4 +101,5 @@ evaluation:
   minimum_promotion_observations: 100
   fixed_fx_mapping: positive_base_minus_quote_predicts_pair_up
   transaction_costs_included: false
+  round_trip_cost_bps_sensitivity: [0, 1, 2, 5]
   promotion_allowed: false
