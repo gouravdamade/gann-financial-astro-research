@@ -2974,3 +2974,59 @@ If starting a new chat, ask the assistant:
 ```text
 Please read C:\Users\ADMIN\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from there. Also inspect git log/status before editing.
 ```
+
+## Padmanabhan Gochara + Dasha/Bhukti Timing Evidence (2026-07-10)
+
+- User supplied a photographed first page of `Timing of Events - A Qualitative and Quantitative Study` by **R. A. Padmanabhan** and asked whether its concepts existed in the original USDJPY pipeline, then requested implementation and recovery of the complete article.
+- Source recovery findings:
+  - Google Books Volume 74 id `5uA5AAAAIAAJ` confirms the title/author and index start page `14`; the issue is reported as January 1985, but only snippet view is available and PDF download is disabled.
+  - No lawful downloadable complete copy was found through Google Books, Internet Archive/HathiTrust-focused searches, Astrolearn holdings, or the modern magazine archive.
+  - The LinkedIn post that surfaced the scan contains the same single page, not the continuation.
+  - Therefore the article has **not** been studied completely. Exact Table 2, later examples, temporal-quality rules, and weights remain unavailable. See `padmanabhan_timing_source_notes.md`.
+- Added `padmanabhan_timing_doctrine.py` with source-bounded, deterministic evidence:
+  - whole-sign Gochara counted from natal Moon;
+  - Phaladeepika 26.2 favorable houses;
+  - Phaladeepika 26.3-8 Vedha mappings and Sun/Saturn + Moon/Mercury exemptions;
+  - Phaladeepika 26.33-34 exceptional adverse flags;
+  - explicit neutral handling of the Mercury-house-4 source conflict;
+  - raw Rahu/Ketu houses, excluded from Vedha score because a reliable nodal Vedha table was not recovered;
+  - Vimshottari Mahadasha/Antardasha from natal Moon nakshatra;
+  - natural-quality and six-Rupa (`360 Virupa`) disposition components;
+  - temporal-quality and named Yogakaraka components held at zero with `article_table_missing` status rather than invented;
+  - provisional `I_reference=A_gochara+B_dasha_bhukti` and `I_USDJPY=I_USD-I_JPY`.
+- Safety locks:
+  - `event_padmanabhan_article_complete_flag=0`;
+  - `event_padmanabhan_trade_signal_enabled=0`;
+  - candidate rows carry `fx_padmanabhan_evidence_only=1`;
+  - legacy FX scores, Auto Suggest, and MT5 direction are not changed.
+- Pipeline integration:
+  - `build_aspect_sr_touch_log.py` computes natal strict-Shadbala totals for both reference charts and writes quote/base/pair timing evidence at event best time.
+  - `enrich_touch_log_padmanabhan_timing.py` attaches the same fields to existing touch/switch CSVs while preserving every row and `touch_id`.
+  - `build_trade_candidates_from_touches.py` carries evidence-only fields and now returns a stable schema for all-ignore exit batches.
+  - `build_repeatation_review_pack.py` exposes the pair index/direction and USD/JPY Dasha lords as plain-language comparison traits.
+  - Feature inventories were updated; validation report is `padmanabhan_timing_v1_validation_20260710.md`.
+- Local generated artifacts (not committed):
+  - `D:\PycharmProjects\aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventfirst_usdjpy_basequote_all_durations_transitsign_padmanabhan_v1.csv` (656 rows, original touch IDs preserved).
+  - `D:\GannFinancialAstro\doc\sr_touch_full_1year_switch_20260521_165758_padmanabhan_v1.csv` (732 rows, 638 unique events, original touch IDs preserved).
+  - `D:\PycharmProjects\trade_candidates_aspect_sr_1y_outer_scored_usdjpy_basequote_all_durations_transitsign_padmanabhan_v1.csv/.parquet` (732 rows).
+- Verification:
+  - `python test_padmanabhan_timing_doctrine.py` passed.
+  - `python test_strict_shadbala_doctrine.py` passed.
+  - `python -m py_compile` passed for all changed Python modules.
+  - PyYAML parsed the updated inventory and found both the source and feature entries.
+  - Full 804-event regeneration produced 656 rows and complete pair indices; it was kept in `tmp` because nine touch placements differ from the May canonical build after later touch-engine fixes.
+  - Preserved-ID enrichment + candidate rebuild produced zero differences in legacy `touch_id`, signal direction, FX hypotheses, exit action, and signed P/L.
+  - Descriptive in-sample check on 638 unique events: 550 non-neutral predictions, 50.0% raw UP/DOWN agreement, with a strong bearish imbalance (473 DOWN vs 77 UP). This confirms the evidence-only decision.
+  - `pytest` is not installed in the active Python 3.14 environment; the repository's direct test runners were used successfully.
+- Next doctrine work:
+  1. Obtain the article pages after page 14 from the user, a library, or another lawful source.
+  2. Cross-check Vimshottari boundaries and natal strict-Shadbala totals against an independent trusted calculator.
+  3. Recover/define temporal quality and named Yogakaraka rules with citations.
+  4. Run deduplicated purged chronological walk-forward tests for A, B, and A+B separately before enabling any signal.
+- Current canonical repo is `D:\PycharmProjects`; the old `C:\Users\ADMIN\PycharmProjects` recovery prompt above is historical/stale.
+
+Updated recovery prompt:
+
+```text
+Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from there. Also inspect git log/status before editing.
+```

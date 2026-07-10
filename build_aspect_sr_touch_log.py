@@ -28,10 +28,19 @@ from JDML4 import (
     drishti_aspect_name_for_angle,
 )
 from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
+from padmanabhan_timing_doctrine import (
+    CLASSICAL_TRANSIT_PLANETS as PADMANABHAN_CLASSICAL_PLANETS,
+    NODE_PLANETS as PADMANABHAN_NODE_PLANETS,
+    doctrine_metadata as padmanabhan_doctrine_metadata,
+    flatten_pair_timing,
+    flatten_reference_timing,
+    pair_timing_context,
+    reference_timing_context,
+)
 from panchanga_doctrine import panchanga_change_flags, panchanga_context
 from shadbala_doctrine import event_pair_sthana_context
 from strict_shadbala_doctrine import CLASSICAL_PLANETS as STRICT_SHADBALA_PLANETS
-from strict_shadbala_doctrine import event_strict_shadbala_context
+from strict_shadbala_doctrine import components_for_body, event_strict_shadbala_context
 
 
 IST = "Asia/Kolkata"
@@ -890,6 +899,34 @@ def build_reference_context(
         natal_longitudes[store_key] = lon_f
         natal_signs[store_key] = str(get_zodiac_sign(lon_f))
         natal_houses[store_key] = get_house_of_planet(lon_f, engine.houses)
+    timing_planets = tuple(dict.fromkeys(PADMANABHAN_CLASSICAL_PLANETS + PADMANABHAN_NODE_PLANETS))
+    timing_longitudes = {
+        planet: float(engine.planets_lon[planet]) % 360.0
+        for planet in timing_planets
+        if planet in engine.planets_lon and np.isfinite(float(engine.planets_lon[planet]))
+    }
+    strict_houses = sidereal_house_cusps_for_time(ref_dt, float(lat), float(lon))
+    strict_asc_lon = strict_houses.get(1, np.nan)
+    strict_observables = strict_shadbala_observables_for_time(ref_dt)
+    natal_shadbala_totals: dict[str, float] = {}
+    for planet in STRICT_SHADBALA_PLANETS:
+        components = components_for_body(
+            planet,
+            timing_longitudes,
+            strict_asc_lon,
+            strict_houses,
+            ref_dt,
+            float(lon),
+            strict_observables.get("speeds", {}),
+            strict_observables.get("latitudes", {}),
+            strict_observables.get("declinations", {}),
+        )
+        try:
+            total = float(components.get("implemented_total_virupa", np.nan))
+        except (TypeError, ValueError):
+            total = np.nan
+        if np.isfinite(total):
+            natal_shadbala_totals[planet] = total
     return {
         "reference_label": str(label),
         "reference_dt": ref_dt,
@@ -901,6 +938,8 @@ def build_reference_context(
         "longitudes": natal_longitudes,
         "signs": natal_signs,
         "houses": natal_houses,
+        "timing_longitudes": timing_longitudes,
+        "strict_shadbala_totals": natal_shadbala_totals,
     }
 
 
@@ -1089,6 +1128,69 @@ def build_event_strict_shadbala_context(
         observables.get("latitudes", {}),
         observables.get("declinations", {}),
     )
+
+
+def build_event_padmanabhan_timing_context(
+    event_metrics: dict[str, Any],
+    start_idx: int,
+    end_idx: int,
+    full_to_analysis_idx: dict[int, int],
+    price_index: pd.DatetimeIndex,
+    lon_map: dict[str, pd.Series],
+    quote_reference: dict[str, Any],
+    base_reference: dict[str, Any] | None,
+) -> dict[str, Any]:
+    try:
+        offset = float(event_metrics.get("event_best_hour_offset", np.nan))
+    except (TypeError, ValueError):
+        offset = np.nan
+    if np.isfinite(offset):
+        best_idx = int(start_idx + round(offset))
+    else:
+        best_idx = int(start_idx + ((end_idx - start_idx) // 2))
+    best_idx = max(int(start_idx), min(int(end_idx), best_idx))
+    analysis_idx = full_to_analysis_idx.get(int(best_idx))
+    if analysis_idx is None:
+        return padmanabhan_doctrine_metadata()
+
+    transit_longitudes: dict[str, float] = {}
+    for planet in tuple(dict.fromkeys(PADMANABHAN_CLASSICAL_PLANETS + PADMANABHAN_NODE_PLANETS)):
+        series = lon_map.get(planet)
+        if series is None:
+            continue
+        try:
+            value = float(series.iloc[analysis_idx])
+        except Exception:
+            continue
+        if np.isfinite(value):
+            transit_longitudes[planet] = value % 360.0
+    if not transit_longitudes:
+        return padmanabhan_doctrine_metadata()
+
+    event_time = price_index[int(best_idx)]
+    quote_context = reference_timing_context(
+        reference_label=str(quote_reference.get("reference_label", "QUOTE")),
+        reference_time=quote_reference.get("reference_dt"),
+        natal_longitudes=quote_reference.get("timing_longitudes", quote_reference.get("longitudes", {})),
+        transit_longitudes=transit_longitudes,
+        event_time=event_time,
+        natal_shadbala_totals=quote_reference.get("strict_shadbala_totals", {}),
+    )
+    out = padmanabhan_doctrine_metadata()
+    out["event_padmanabhan_evaluation_time_local"] = event_time
+    out.update(flatten_reference_timing("event_quote_padmanabhan", quote_context))
+    if base_reference is not None:
+        base_context = reference_timing_context(
+            reference_label=str(base_reference.get("reference_label", "BASE")),
+            reference_time=base_reference.get("reference_dt"),
+            natal_longitudes=base_reference.get("timing_longitudes", base_reference.get("longitudes", {})),
+            transit_longitudes=transit_longitudes,
+            event_time=event_time,
+            natal_shadbala_totals=base_reference.get("strict_shadbala_totals", {}),
+        )
+        out.update(flatten_reference_timing("event_base_padmanabhan", base_context))
+        out.update(flatten_pair_timing("event_padmanabhan", pair_timing_context(base_context, quote_context)))
+    return out
 
 
 def natal_attrs_for_planet(planet: str | None, natal_ctx: dict[str, Any]) -> dict[str, Any]:
@@ -1588,6 +1690,16 @@ def main() -> None:
             float(args.reference_lat),
             float(args.reference_lon),
         )
+        event_padmanabhan_timing = build_event_padmanabhan_timing_context(
+            event_metrics,
+            start_idx,
+            end_idx,
+            full_to_analysis_idx,
+            price.index,
+            lon_map,
+            natal_ctx,
+            base_natal_ctx,
+        )
 
         for bar_idx in range(start_idx, end_idx + 1):
             future72_idx = future72_lookup.get(bar_idx, -1)
@@ -1761,6 +1873,7 @@ def main() -> None:
                 row.update(natal_features)
                 row.update(event_panchanga)
                 row.update(event_strict_shadbala)
+                row.update(event_padmanabhan_timing)
                 row.update(
                     {
                         key: value

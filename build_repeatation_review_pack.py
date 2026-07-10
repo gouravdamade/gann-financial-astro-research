@@ -186,6 +186,9 @@ PLAIN_TRAIT_NAMES = {
     "event_strict_chesta_bala_virupa_avg": "Motion strength",
     "event_strict_shadbala_implemented_total_virupa_avg": "Total planet strength",
     "event_strict_shadbala_implemented_total_ratio_avg": "Strength vs minimum",
+    "event_padmanabhan_pair_prosperity_index_i": "USD minus JPY timing index",
+    "event_padmanabhan_base_prosperity_index_i": "USD timing index",
+    "event_padmanabhan_quote_prosperity_index_i": "JPY timing index",
 }
 PLAIN_CATEGORICAL_NAMES = {
     "event_b1_sign_relation": "Planet 1 sign relationship",
@@ -205,6 +208,11 @@ PLAIN_CATEGORICAL_NAMES = {
     "event_sun_nakshatra": "Sun zone",
     "touch_planets": "Touched planet lines",
     "aspect_regime_active_count": "Nearby event count",
+    "event_padmanabhan_pair_direction": "USD/JPY timing-index direction",
+    "event_base_padmanabhan_mahadasha_lord": "USD major-period planet",
+    "event_base_padmanabhan_antardasha_lord": "USD sub-period planet",
+    "event_quote_padmanabhan_mahadasha_lord": "JPY major-period planet",
+    "event_quote_padmanabhan_antardasha_lord": "JPY sub-period planet",
 }
 
 
@@ -222,6 +230,13 @@ FEATURE_HELP = {
     "event_tithi_name": "Lunar day at event time.",
     "event_paksha": "Waxing or waning Moon half.",
     "event_moon_nakshatra": "Moon background zone at event time.",
+    "event_padmanabhan_pair_prosperity_index_i": (
+        "Experimental source-bounded index: (USD Gochara + USD Dasha/Bhukti) minus "
+        "(JPY Gochara + JPY Dasha/Bhukti). It is evidence only until replay validation."
+    ),
+    "event_padmanabhan_pair_direction": (
+        "Direction implied by the experimental USD-minus-JPY timing index. It does not override Auto Suggest."
+    ),
 }
 
 
@@ -259,7 +274,7 @@ def feature_category_for_key(key: str) -> str:
         return "sign / house"
     if any(part in base for part in ["shadbala", "drik", "saptavargaja", "ojayugma", "kaala", "chesta", "sthana"]):
         return "planet strength"
-    if any(part in base for part in ["weekday", "tithi", "paksha", "karana", "yoga", "nakshatra", "pada", "new_moon", "full_moon"]):
+    if any(part in base for part in ["weekday", "tithi", "paksha", "karana", "yoga", "nakshatra", "pada", "new_moon", "full_moon", "padmanabhan", "gochara", "dasha"]):
         return "timing / moon calendar"
     if any(part in base for part in ["regime", "orb", "duration"]):
         return "overlap / cleanliness"
@@ -404,6 +419,11 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
         ("base_tn_primary_natal_planet", "base primary natal"),
         ("base_tn_primary_aspect", "base primary aspect"),
         ("base_tn_primary_natal_sign", "base primary natal sign"),
+        ("event_padmanabhan_pair_direction", "USD/JPY timing-index direction"),
+        ("event_base_padmanabhan_mahadasha_lord", "USD major-period planet"),
+        ("event_base_padmanabhan_antardasha_lord", "USD sub-period planet"),
+        ("event_quote_padmanabhan_mahadasha_lord", "JPY major-period planet"),
+        ("event_quote_padmanabhan_antardasha_lord", "JPY sub-period planet"),
     ]:
         value = clean_value(row.get(col))
         if value:
@@ -494,6 +514,9 @@ def event_trait_tokens(row: dict[str, Any]) -> list[dict[str, Any]]:
         ("event_strict_chesta_bala_virupa_avg", "strict chesta", 5.0, 35.0),
         ("event_strict_shadbala_implemented_total_virupa_avg", "strict shadbala v1 total", 240.0, 480.0),
         ("event_strict_shadbala_implemented_total_ratio_avg", "strict shadbala ratio", 0.70, 1.25),
+        ("event_padmanabhan_pair_prosperity_index_i", "USD minus JPY timing index", -2.0, 2.0),
+        ("event_padmanabhan_base_prosperity_index_i", "USD timing index", -2.0, 2.0),
+        ("event_padmanabhan_quote_prosperity_index_i", "JPY timing index", -2.0, 2.0),
     ]:
         token = numeric_trait_token(key, label, numeric_value(row.get(key)), low, high)
         if token:
@@ -3065,6 +3088,10 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       event_strict_chesta_bala_virupa_avg: 'Motion strength. A slow, stopped, or backward-moving planet can act more strongly.',
       event_strict_shadbala_implemented_total_virupa_avg: 'Overall planet strength from all implemented parts. Higher means stronger planet signal.',
       event_strict_shadbala_implemented_total_ratio_avg: 'Overall strength compared with the minimum expected strength. Above 1.00 means above minimum.',
+      event_padmanabhan_pair_prosperity_index_i: 'Experimental USD-minus-JPY timing index. Positive favors USD over JPY; negative favors JPY over USD. It is evidence only until replay validation.',
+      event_padmanabhan_base_prosperity_index_i: 'Experimental USD reference-chart Gochara plus Dasha/Bhukti index.',
+      event_padmanabhan_quote_prosperity_index_i: 'Experimental JPY reference-chart Gochara plus Dasha/Bhukti index.',
+      event_padmanabhan_pair_direction: 'Direction implied by the experimental timing index. It does not override Auto Suggest.',
       edge_score: 'Overall setup score from the chart/scoring system. Higher means the setup looked stronger to the script.',
       tn_score_total: 'Quote-side pressure score. In USDJPY, this is the JPY side.',
       base_tn_score_total: 'Base-side pressure score. In USDJPY, this is the USD side.',

@@ -553,11 +553,20 @@ def has_nonempty_value(value: Any) -> bool:
         return True
 
 
+def finite_number(value: Any, default: float = np.nan) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return float(default)
+    return number if np.isfinite(number) else float(default)
+
+
 def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
     event_aspect = row.get("aspect")
     bodies = pair_bodies(row.get("pair_key"))
     base_hits_raw = row.get("base_tn_hits_json")
     has_base_reference = has_nonempty_value(base_hits_raw)
+    has_padmanabhan_evidence = has_nonempty_value(row.get("event_padmanabhan_pair_prosperity_index_i"))
     quote = score_transit_natal_hits(
         row.get("tn_hits_json"),
         event_aspect=event_aspect,
@@ -627,9 +636,23 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         "fx_doctrine_dominant_quote_hit": str(quote["doctrine_dominant_aspect_id"]),
         "fx_doctrine_dominant_base_dignity": str(base["doctrine_dominant_dignity"]),
         "fx_doctrine_dominant_quote_dignity": str(quote["doctrine_dominant_dignity"]),
+        "fx_padmanabhan_base_prosperity_index": finite_number(
+            row.get("event_padmanabhan_base_prosperity_index_i")
+        ),
+        "fx_padmanabhan_quote_prosperity_index": finite_number(
+            row.get("event_padmanabhan_quote_prosperity_index_i")
+        ),
+        "fx_padmanabhan_pair_prosperity_index": finite_number(
+            row.get("event_padmanabhan_pair_prosperity_index_i")
+        ),
+        "fx_padmanabhan_pair_direction": str(row.get("event_padmanabhan_pair_direction", "") or ""),
+        "fx_padmanabhan_rule_id": str(row.get("event_padmanabhan_timing_rule_id", "") or ""),
+        "fx_padmanabhan_status": str(row.get("event_padmanabhan_timing_status", "") or ""),
+        "fx_padmanabhan_evidence_only": int(has_padmanabhan_evidence),
         "fx_scoring_notes": (
             "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;"
             "doctrine_v1_adds_sign_dignity_friendship_sthana_bala;"
+            "padmanabhan_timing_index_is_parallel_evidence_only_not_signal_input;"
             "full_shadbala_and_strict_drik_bala_pending;ml_must_validate"
             ";avg_all_scoring_expands_to_7_classical_planets"
             if has_base_reference
@@ -701,6 +724,18 @@ def signed_return_pct(direction: str, entry: float, close: float) -> float:
     return np.nan
 
 
+def ignored_exit(reason: str) -> dict[str, Any]:
+    return {
+        "close_action": "IGNORE",
+        "close_reason": str(reason),
+        "close_time_utc": pd.NaT,
+        "close_price": np.nan,
+        "signed_return_pct": np.nan,
+        "mfe_pct": np.nan,
+        "mae_pct": np.nan,
+    }
+
+
 def evaluate_exit(
     price: pd.DataFrame,
     entry_time: pd.Timestamp,
@@ -711,14 +746,14 @@ def evaluate_exit(
     sl_pct: float,
 ) -> dict[str, Any]:
     if direction not in {"LONG", "SHORT"}:
-        return {"close_action": "IGNORE", "close_reason": "missing_direction"}
+        return ignored_exit("missing_direction")
     if pd.isna(entry_time) or not np.isfinite(entry_price) or entry_price <= 0:
-        return {"close_action": "IGNORE", "close_reason": "missing_entry"}
+        return ignored_exit("missing_entry")
 
     end_time = entry_time + pd.Timedelta(hours=int(hold_hours))
     future = price[(price.index > entry_time) & (price.index <= end_time)].copy()
     if future.empty:
-        return {"close_action": "IGNORE", "close_reason": "no_future_data"}
+        return ignored_exit("no_future_data")
 
     entry = float(entry_price)
     tp = entry * (1.0 + tp_pct / 100.0) if direction == "LONG" else entry * (1.0 - tp_pct / 100.0)
@@ -912,6 +947,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         "uses_transit_natal_house_planet_nature_aspect_family_bphs_like_orb_proxy_sr;"
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
+        "padmanabhan_timing_v1_is_source_bounded_evidence_only_and_does_not_change_trade_direction;"
         "full_shadbala_and_strict_drik_bala_pending;"
         "ml_must_validate"
     )

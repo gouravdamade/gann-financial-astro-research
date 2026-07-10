@@ -25,6 +25,15 @@
     file: "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf"
     role: "detailed_shadbala_doctrine_reference"
     extraction_status: "readable_text"
+  PADMANABHAN_TIMING:
+    file: "Timing of Events - A Qualitative and Quantitative Study"
+    author: "R. A. Padmanabhan"
+    role: "experimental_gochara_dasha_quantitative_framework"
+    extraction_status: "photographed_first_page_14_only_continuation_and_table_2_unavailable"
+  PHALADEEPIKA_26:
+    file: "Phaladeepika Chapter 26 - Transits of Planets"
+    role: "classical_gochara_vedha_reference"
+    extraction_status: "complete_online_translation_checked_ocr_caveat"
 
 doctrine_locks:
   - id: LOCK_TIME_UTC
@@ -41,6 +50,13 @@ doctrine_locks:
     sources: ["STRICT_JYOTISH_ML:p6-p8", "STRICT_VEDIC_LLM:p6-p8"]
 
 features:
+  - id: PADMANABHAN_TIMING_INDEX
+    bucket: experimental_source_bounded_jyotish
+    timeframes: ["m30", "hourly", "daily", "weekly"]
+    signal_intent: "compare_base_and_quote_reference_chart_timing_context"
+    inputs: ["natal_moon", "transit_longitudes", "vimshottari_mahadasha", "vimshottari_antardasha", "natal_shadbala_six_rupa_gate"]
+    sources: ["PADMANABHAN_TIMING:p14_partial", "PHALADEEPIKA_26:v1-v8", "PHALADEEPIKA_26:v33-v34"]
+    implementation_status: "implemented_evidence_only_source_incomplete_external_validation_and_walk_forward_pending"
   - id: ASP_HARD_EVENT
     bucket: experimental_financial_astrology
     timeframes: ["m30", "hourly", "daily"]

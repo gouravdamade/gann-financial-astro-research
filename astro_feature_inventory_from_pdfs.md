@@ -12,6 +12,8 @@ Created from the project PDFs supplied on 2026-05-04 and updated with the Shad B
 | FUTURETEK_DHRUVANK | `pdfcoffee.com_futuretec-financial-astrology-set-2-dhruvank-pdf-free.pdf` | readable text, 17 pages | Experimental daily Dhruvank feature |
 | GANN_VOL2 | `pdfcoffee.com_gann-financial-astrology-pdf-free.pdf` | OCR text, 177 pages, about 210k chars | Experimental Gann price/time/longitude feature source; verify page OCR before implementation |
 | SHADBALA_JAYA | `jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.pdf` | readable text, 179 pages | Detailed Shadbala doctrine/reference |
+| PADMANABHAN_TIMING | `Timing of Events - A Qualitative and Quantitative Study`, R. A. Padmanabhan | photographed first page (p14) only; continuation/Table 2 unavailable | Experimental Gochara + Dasha/Bhukti quantitative framework |
+| PHALADEEPIKA_26 | Phaladeepika Chapter 26 | complete online translation checked; OCR caveat | Classical Moon-based Gochara and Vedha rules |
 
 Extracted text folder:
 
@@ -61,6 +63,7 @@ Extracted text folder:
 | JYOTISH_NAKSHATRA_PADA | Strict Jyotish core feature | All | Feature/context only until rulebook exists | Sidereal longitude mapped to 27 nakshatras and 4 padas | STRICT_JYOTISH_ML p3 | Not implemented as reusable feature table |
 | BPHS_DRISHTI_STRENGTH | Strict Jyotish core feature | All | Doctrine feature, not Western orb | BPHS drishti virupa/rupa/strength norm | STRICT_JYOTISH_ML p2-p4 | Existing script has BPHS-like fields; verify against doctrine |
 | SHADBALA_GATE | Strict Jyotish core feature | Daily/weekly initially | Strength filter/context for rule layer | Shadbala totals/components and thresholds | STRICT_JYOTISH_ML p3, STRICT_VEDIC_LLM p4, SHADBALA_JAYA p23-p101 | Foundation partial: `shadbala_doctrine.py` adds seven-classical minimum total thresholds and basic Sthana sign dignity context. Full six-bala calculation still pending. |
+| PADMANABHAN_TIMING_INDEX | Experimental source-bounded Jyotish | All | Compare reference-chart Gochara plus Dasha/Bhukti intensity for USD versus JPY | Natal Moon, transit longitudes, Vimshottari periods, six-Rupa Shadbala gate | PADMANABHAN_TIMING p14 partial; PHALADEEPIKA_26 v1-v8, v33-v34 | Implemented evidence-only in `padmanabhan_timing_doctrine.py`; article continuation, Table 2, temporal quality, Yogakaraka weights, external calculator validation, and walk-forward promotion remain pending. |
 
 ## Priority Implementation Plan
 
