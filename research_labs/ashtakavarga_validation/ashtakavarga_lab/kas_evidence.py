@@ -100,7 +100,7 @@ def _ordinal(value: float, center: float, exact_center_positive: bool = False) -
     return 0
 
 
-def _antardasha_evidence(worksheet: dict[str, Any], ad_lord: str, proxies: dict[str, Any]) -> dict[str, Any]:
+def antardasha_evidence(worksheet: dict[str, Any], ad_lord: str, proxies: dict[str, Any]) -> dict[str, Any]:
     scores = worksheet["row17_final_strength"]
     candidates = set(worksheet["direct_timing_candidates"]) | set(worksheet["samdharmi_substitute_candidates"])
     if ad_lord in scores:
@@ -147,7 +147,7 @@ def build_daily_kas_evidence(
             md_lord = dasha["mahadasha"]["lord"]
             ad_lord = dasha["antardasha"]["lord"]
             for house_b, worksheet in context["worksheets"].items():
-                ad = _antardasha_evidence(worksheet, ad_lord, context["node_proxies"])
+                ad = antardasha_evidence(worksheet, ad_lord, context["node_proxies"])
                 candidates = set(worksheet["direct_timing_candidates"]) | set(
                     worksheet["samdharmi_substitute_candidates"]
                 )

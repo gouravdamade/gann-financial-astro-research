@@ -13,6 +13,7 @@ It is tracked by the private recovery repository, but it is deliberately isolate
 - All generated files must stay under this lab's `outputs/` or `reports/` directories.
 - External price files may be read only when explicitly passed to the evaluator.
 - KAS evidence can never become a trade signal from inside this lab.
+- The root-level `krushna_kas_advisory.py` adapter may read lab calculations for a display-only review suggestion. Its output explicitly disables Auto Suggest, ML training, rule overrides, markers and MT5.
 
 ## Current doctrine lock
 

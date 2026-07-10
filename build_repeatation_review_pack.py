@@ -19,6 +19,7 @@ from aspect_annotation_store import (
     suggested_price_timeframe,
 )
 from doctrine_config import append_doctrine_metadata
+from krushna_kas_advisory import KrushnaKasAdvisoryEngine, unavailable_advisory
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -27,7 +28,7 @@ DEFAULT_TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_s
 DEFAULT_PRICE = PROJECT_ROOT / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet"
 DEFAULT_REVIEW_FOCUS = PROJECT_ROOT / "manual_case_review_focus_transitsign_20260516_0145.csv"
 DEFAULT_EXPORT_ROOT = Path(r"D:\GannFinancialAstro\doc")
-REPEATATION_UI_VERSION = "repeatation_ui_20260704_global_carryover_v65"
+REPEATATION_UI_VERSION = "repeatation_ui_20260711_kas_advisory_v66"
 _PRICE_COVERAGE_CACHE: dict[Path, tuple[pd.Timestamp, pd.Timestamp] | None] = {}
 
 
@@ -143,8 +144,32 @@ def trait_row_for_events(touch_log: Path, cases: list[dict[str, Any]]) -> dict[s
         ascending = [True] + [False if col == "edge_score" else True for col in sort_cols[1:]]
         sub = sub.sort_values(sort_cols, ascending=ascending)
     rows: dict[str, dict[str, Any]] = {}
+    try:
+        kas_advisor: KrushnaKasAdvisoryEngine | None = KrushnaKasAdvisoryEngine()
+        kas_init_error: Exception | None = None
+    except Exception as exc:
+        kas_advisor = None
+        kas_init_error = exc
     for event_id, group in sub.groupby(sub["event_id"].astype(str), sort=False):
-        rows[str(event_id)] = dict(group.iloc[0])
+        row = dict(group.iloc[0])
+        event_time = next(
+            (
+                clean_value(row.get(key))
+                for key in ("event_best_time_utc", "event_best_time_local", "event_time_utc", "event_time_local")
+                if clean_value(row.get(key))
+            ),
+            "",
+        )
+        if kas_advisor is None:
+            row["_krushna_kas_advisory"] = unavailable_advisory(kas_init_error or "advisor initialization failed")
+        elif not event_time:
+            row["_krushna_kas_advisory"] = unavailable_advisory("event evaluation time missing")
+        else:
+            try:
+                row["_krushna_kas_advisory"] = kas_advisor.advisory_at(event_time)
+            except Exception as exc:
+                row["_krushna_kas_advisory"] = unavailable_advisory(exc)
+        rows[str(event_id)] = row
     return rows
 
 
@@ -975,6 +1000,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "traitGuideHref": html_cache_href("trait_guide.html"),
         "uiVersion": REPEATATION_UI_VERSION,
         "specialTraits": case.get("special_traits", {}),
+        "krushnaKasAdvisory": case.get("krushna_kas_advisory", {}),
         "appliedFamilyRules": case.get("applied_family_rules", []),
         "globalRuleTemplates": case.get("global_rule_templates", []),
         "mlNotes": case.get("ml_notes", []),
@@ -3219,6 +3245,35 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         + rows
         + '</div>' + evidenceHtml;
     }}
+    function krushnaKasAdvisoryHtml() {{
+      var data = meta.krushnaKasAdvisory || {{}};
+      if (!data.status) return '';
+      if (data.status === 'unavailable') {{
+        return '<div class="rm-kas muted"><div><b>Experimental KAS suggestion</b><span>unavailable</span></div>'
+          + '<div class="rm-table-sub">' + esc(data.warning || 'No KAS advisory available.') + '</div></div>';
+      }}
+      var suggestion = String(data.suggestion || 'NEUTRAL');
+      var sunSuggestion = String(data.sun_timed_suggestion || 'NO_TRIGGER');
+      var usd = data.usd_timing || {{}};
+      var jpy = data.jpy_timing || {{}};
+      return '<div class="rm-kas ' + esc(suggestion.toLowerCase()) + '">'
+        + '<div><b>Experimental KAS suggestion</b><span>' + esc(suggestion) + '</span></div>'
+        + '<div class="rm-kas-votes">All 12 house mappings: bullish ' + esc(data.bullish_house_count || 0)
+        + ' | bearish ' + esc(data.bearish_house_count || 0)
+        + ' | neutral ' + esc(data.neutral_house_count || 0)
+        + ' | agreement ' + esc(data.agreement_percent || 0) + '%</div>'
+        + '<div class="rm-kas-votes">Sun-timed subset (' + esc(data.sun_timed_house_count || 0) + '): '
+        + esc(sunSuggestion) + ' | bullish ' + esc(data.sun_timed_bullish_count || 0)
+        + ' | bearish ' + esc(data.sun_timed_bearish_count || 0)
+        + ' | neutral ' + esc(data.sun_timed_neutral_count || 0) + '</div>'
+        + '<div class="rm-table-sub">USD period: ' + esc(usd.mahadasha_lord || '') + '-' + esc(usd.antardasha_lord || '')
+        + ' sector ' + esc(usd.antardasha_sector || '') + '; JPY period: '
+        + esc(jpy.mahadasha_lord || '') + '-' + esc(jpy.antardasha_lord || '')
+        + ' sector ' + esc(jpy.antardasha_sector || '') + '.</div>'
+        + '<div class="rm-warning">Suggestion only. It cannot change Auto Suggest, ML training, family rules, markers, or MT5.</div>'
+        + '<div class="rm-table-sub">First USDJPY validation found no robust KAS edge after multiple-testing, placebo, and cost checks.</div>'
+        + '</div>';
+    }}
     function appliedFamilyRulesHtml() {{
       var rules = Array.isArray(meta.appliedFamilyRules) ? meta.appliedFamilyRules : [];
       if (!rules.length) return '<div class="rm-rules muted">No applied family rules yet.</div>';
@@ -4081,6 +4136,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       panel.querySelector('#repeatation-ignore-trade').classList.toggle('active', state.tradeIgnored);
       panel.querySelector('#repeatation-profit-summary').innerHTML = profitHtml();
       panel.querySelector('#repeatation-auto-summary').innerHTML = autoSuggestionHtml();
+      panel.querySelector('#repeatation-kas-advisory').innerHTML = krushnaKasAdvisoryHtml();
       panel.querySelector('#repeatation-applied-rules').innerHTML = appliedFamilyRulesHtml() + globalRuleTemplatesHtml();
       panel.querySelector('#repeatation-ml-notes').innerHTML = mlNotesHtml();
       panel.querySelector('#repeatation-rule-lessons').innerHTML = ruleLessonsHtml();
@@ -4668,6 +4724,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '</div>'
       + '<div class="rm-actions"><button id="repeatation-auto-suggest" type="button">Auto Suggest</button><button id="repeatation-show-gann" type="button">Show Gann Fan</button><button id="repeatation-viewport-fans" type="button">Viewport Fans</button><span class="rm-status-inline">family rule if available; otherwise global carryover; viewport fans are context only</span></div>'
       + '<div id="repeatation-auto-summary"></div>'
+      + '<div id="repeatation-kas-advisory"></div>'
       + '<div class="rm-actions"><button id="repeatation-ignore-trade" type="button">Ignore Trade</button><span id="repeatation-ignore-trade-status" class="rm-status-inline">Ignore Trade is off</span></div>'
       + '<div class="rm-grid"><span>Last click</span><b id="repeatation-last">not set</b><span>Trade start</span><b id="repeatation-trade-start">not set</b><span>Trade end</span><b id="repeatation-trade-end">not set</b><span>Ignore start</span><b id="repeatation-ignore-start">not set</b><span>Ignore end</span><b id="repeatation-ignore-end">not set</b></div>'
       + '<div id="repeatation-profit-summary"></div>'
@@ -4803,6 +4860,12 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       + '#repeatation-marker-panel .rm-traits{{background:#020617;border:1px solid #334155;border-radius:6px;padding:7px;margin:6px 0;color:#cbd5e1;}}'
       + '#repeatation-marker-panel .rm-traits>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#bfdbfe;}}'
       + '#repeatation-marker-panel .rm-traits span{{color:#fde68a;font-size:11px;}}'
+      + '#repeatation-marker-panel .rm-kas{{background:#111827;border:1px solid #a16207;border-radius:6px;padding:7px;margin:6px 0;color:#dbeafe;}}'
+      + '#repeatation-marker-panel .rm-kas>div:first-child{{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#fef3c7;}}'
+      + '#repeatation-marker-panel .rm-kas>div:first-child span{{font-weight:700;color:#facc15;}}'
+      + '#repeatation-marker-panel .rm-kas.bullish>div:first-child span{{color:#22d3ee;}}'
+      + '#repeatation-marker-panel .rm-kas.bearish>div:first-child span{{color:#f59e0b;}}'
+      + '#repeatation-marker-panel .rm-kas-votes{{margin-top:4px;color:#e5e7eb;}}'
       + '#repeatation-marker-panel .rm-guide-link{{display:inline-flex;margin:4px 0 2px;color:#93c5fd;text-decoration:underline;text-underline-offset:2px;}}'
       + '#repeatation-marker-panel .rm-trait-method{{color:#94a3b8;font-size:11px;margin:4px 0 6px;}}'
       + '#repeatation-marker-panel .rm-trait-item{{border-top:1px solid #1e293b;padding-top:5px;margin-top:5px;}}'
@@ -5327,6 +5390,10 @@ def main() -> None:
         direction = str(stats.get("full_window_direction", "") or "").strip().lower()
         case["default_outcome"] = direction if direction in {"bullish", "bearish"} else "unclear"
         case["special_traits"] = special_traits_by_case.get(int(case["case_id"]), {})
+        trait_row = touch_rows_by_event.get(clean_value(case.get("source_event_id")), {})
+        case["krushna_kas_advisory"] = trait_row.get(
+            "_krushna_kas_advisory", unavailable_advisory("matching event evidence unavailable")
+        )
         case["applied_family_rules"] = family_rules
         case["global_rule_templates"] = transfer_templates
         case["ml_notes"] = ml_notes_by_case.get(int(case["case_id"]), ml_notes_by_case.get(0, []))
@@ -5350,6 +5417,7 @@ def main() -> None:
                 "next_chart_href",
                 "reviewer_href",
                 "special_traits",
+                "krushna_kas_advisory",
                 "applied_family_rules",
                 "global_rule_templates",
                 "ml_notes",
@@ -5378,6 +5446,7 @@ def main() -> None:
                 for trait in case.get("special_traits", {}).get("traits", [])[:4]
             ),
             "special_trait_json": json.dumps(case.get("special_traits", {}), ensure_ascii=False),
+            "krushna_kas_advisory_json": json.dumps(case.get("krushna_kas_advisory", {}), ensure_ascii=False),
             "applied_family_rules_json": json.dumps(case.get("applied_family_rules", []), ensure_ascii=False),
             "global_rule_templates_json": json.dumps(case.get("global_rule_templates", []), ensure_ascii=False),
             "ml_notes_json": json.dumps(case.get("ml_notes", []), ensure_ascii=False),

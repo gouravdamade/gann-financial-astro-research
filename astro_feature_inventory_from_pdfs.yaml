@@ -91,6 +91,13 @@ features:
     inputs: ["corrected_event_houses_a_b_c_d_e", "inverse_aspects", "samdharmi_transfers_and_restrictions", "d_e_bonuses", "vimshottari_periods_and_sectors", "node_proxies", "sun_timing", "lesson26_result_multipliers"]
     sources: ["KRUSHNA_KAS_TIMING:lessons_5-11", "KRUSHNA_KAS_TIMING:lessons_25-27", "KRUSHNA_KAS_TIMING:corrected_lesson_7"]
     implementation_status: "isolated_corrected_fixture_pass_all_12_house_usdjpy_ablation_no_robust_edge_exact_krushna_ayanamsa_and_two_calculator_checks_pending_no_trade_integration"
+  - id: KRUSHNA_KAS_REVIEW_ADVISORY
+    bucket: experimental_display_only_context
+    timeframes: ["event_time"]
+    signal_intent: "show_all_12_house_vote_without_selecting_or_executing_a_trade"
+    inputs: ["corrected_kas_profile_contexts", "event_time", "all_12_house_pair_scores", "sun_timed_subset"]
+    sources: ["KRUSHNA_KAS_TIMING:lessons_5-11", "KRUSHNA_KAS_TIMING:lessons_25-27", "LOCAL_FULL_KAS_VALIDATION:2026-07-11"]
+    implementation_status: "repeatation_review_display_only_explicit_auto_suggest_ml_rule_marker_mt5_locks_first_usdjpy_run_no_robust_edge"
   - id: ASP_HARD_EVENT
     bucket: experimental_financial_astrology
     timeframes: ["m30", "hourly", "daily"]

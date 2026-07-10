@@ -3059,7 +3059,22 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   - no source-defined currency event house exists, therefore all twelve are reported and no best house may be selected from this run;
   - event-specific karaka and delay judgments do not have a defensible currency mapping and remain explicit unresolved evidence rather than invented rules;
   - two outside BAV/SAV calculator checks remain pending.
-- Decision: retain as isolated research only; do not promote any KAS output into live or review logic.
+- Decision at first run: retain as isolated research only; do not promote any KAS output into trade, Auto Suggest, ML-note, rule, marker or MT5 logic. A later user-requested display-only review advisory is documented below.
+
+## Non-Binding KAS Review Suggestion (2026-07-11)
+
+- User requested that the full KAS result still be available as a mere suggestion.
+- Added root adapter `krushna_kas_advisory.py`, which reads the isolated corrected-KAS engine and computes a timestamp-specific USD-vs-JPY vote across all twelve House B mappings. It does not choose the best historical house.
+- Advisory output includes the all-house bullish/bearish/neutral count, agreement percentage, Sun-timed subset, USD and JPY Dasha/Antardasha sectors, and detailed per-house audit JSON.
+- Added mandatory locks: `evidence_only=1`, `trade_signal_enabled=0`, `trade_override_allowed=0`, `auto_suggest_input=0`, `ml_training_input=0`, and `mt5_input=0`.
+- `build_repeatation_review_pack.py` now calculates a separate advisory for each recurrence at its own event-best timestamp and renders it in a dedicated `Experimental KAS suggestion` drawer block. It is not added to special-trait ranking, ML notes, Auto Suggest, family rules, markers or candidate scoring.
+- Real family smoke check: all 16 AVG(ALL)-Moon-square recurrences received distinct timestamped advisories. Case 8 voted bearish 1/4/7 (bullish/bearish/neutral), while cases 43, 103, 127 and 185 voted 12/0/0 bullish. These contradictions are intentionally visible and cannot override reviewed behavior.
+- Added `test_krushna_kas_advisory.py`; three lock/coverage/status tests pass.
+- Repeatation UI version: `repeatation_ui_20260711_kas_advisory_v66`.
+- Rebuilt the complete 16-case pack at `D:\GannFinancialAstro\doc\repeatation_review_case_8_avg_all_moon_square_20260711_022803`.
+- Server restarted on `127.0.0.1:8765` (PID 8520). Verified URL: `http://127.0.0.1:8765/aspect_review_case_8_chart.html?v=repeatation_ui_20260711_kas_advisory_v66`.
+- Playwright/Chrome browser verification: advisory block visible, Auto Suggest remains separately present, no page JavaScript errors. Screenshot: `kas_advisory_browser_check.png` in the rebuilt pack.
+- Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260711_023554`.
 
 ## Krushna Ashtakavarga Source Audit (2026-07-10)
 

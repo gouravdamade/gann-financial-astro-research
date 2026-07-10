@@ -72,3 +72,15 @@ Evaluation uses expanding chronological folds, a gap equal to the forward horizo
 
 These limitations prevent “full methodology” from meaning “every sentence converted into a market rule.” It means every reproducible core and timing component is available for falsifiable testing, while non-transferable personal-event claims remain outside the financial experiment.
 
+## Non-binding review advisory
+
+The canonical project may read this isolated engine through `krushna_kas_advisory.py` for one display-only purpose: show an all-twelve-house vote in the repeatation-review drawer. The adapter does not select a best house and exports explicit locks:
+
+- `evidence_only=1`;
+- `trade_signal_enabled=0`;
+- `trade_override_allowed=0`;
+- `auto_suggest_input=0`;
+- `ml_training_input=0`;
+- `mt5_input=0`.
+
+The review advisory is not a promotion of KAS into the trading pipeline. It is a visible research suggestion that may disagree with deterministic rules or reviewed behavior.
