@@ -22,8 +22,8 @@ export function InspectorPanel({
     return (
       <aside className="inspector-panel empty-panel">
         <CircleDot size={22} />
-        <strong>Select an aspect</strong>
-        <span>Click a colored aspect ribbon or an event row.</span>
+        <strong>No aspect selected</strong>
+        <span>No corrected aspect overlaps this chart range.</span>
       </aside>
     )
   }

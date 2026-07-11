@@ -12,6 +12,10 @@ separate from live market-data concerns.
 - Planetary SR lines joined from the corrected 754-row touch artifact.
 - Clickable aspects with a detachable Analyze Aspect family window.
 - Previous/next recurrence navigation, evidence filters, and review progress.
+- Persistent parameter profiles covering market source, M30/H1/H4/D1, date range,
+  TN body/aspect filters, family exclusions, duration/touch filters, planetary SR
+  inputs, and birth/IPO reference coordinates.
+- Read-only MT5 live chart mode with 20-5,000 recent bars and five-second refresh.
 - Horizontal line, vertical line, Gann fan, and structured annotation tools.
 - Persistent chart annotations with exact time, price, family, event, and chart state.
 - Read-only MT5 connection supervisor with heartbeat and reconnect status.
@@ -57,6 +61,11 @@ development and installer builds still require Rust/Cargo and Microsoft C++
 build tools installed on `D:`. The Python backend and Node Codex bridge also need
 to be frozen as signed sidecars before the installer can be called portable.
 Until that packaging gate is completed, `npm run dev` is the supported runtime.
+
+Custom reference and SR values are persisted as rebuild inputs. The corrected TN
+generator accepts those inputs at the script layer, but the background generation
+job queue and loading generated artifacts back into Analyze Aspect remain the next
+application milestone. TT generation is still unavailable and remains disabled.
 
 ## Ports And Storage
 

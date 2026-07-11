@@ -22,6 +22,27 @@ class AstroRepositoryTests(unittest.TestCase):
         health = self.repository.health()
         self.assertEqual(health["touchCount"], 754)
 
+    def test_parameter_schema_exposes_supported_and_pending_modes(self) -> None:
+        schema = self.repository.parameter_schema()
+        self.assertIn("M30", schema["options"]["timeframes"])
+        self.assertEqual(schema["generation"]["correctedTn"], "generator_ready")
+        self.assertEqual(schema["generation"]["correctedTt"], "not_implemented")
+
+    def test_chart_filters_and_m30_source_are_applied(self) -> None:
+        payload = self.repository.chart_payload(
+            "2025-05-26",
+            "2025-05-30",
+            timeframe="M30",
+            transit_bodies=("MOON",),
+            aspects=("square",),
+            only_touched=True,
+        )
+        self.assertTrue(payload["candles"])
+        self.assertTrue(payload["aspects"])
+        self.assertTrue(all(item["transitBody"] == "MOON" for item in payload["aspects"]))
+        self.assertTrue(all(item["aspect"] == "square" for item in payload["aspects"]))
+        self.assertTrue(all(item["caseId"] is not None for item in payload["aspects"]))
+
     def test_family_payload_preserves_transit_natal_direction(self) -> None:
         payload = self.repository.family_payload("TN::MOON->MERCURY::square")
         self.assertEqual(payload["transitBody"], "MOON")

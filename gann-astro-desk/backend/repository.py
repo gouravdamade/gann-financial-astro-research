@@ -44,6 +44,36 @@ IMPORTANT_ASTRO_FIELDS = (
     ("aspect_regime_active_count", "Overlapping aspect count", "count"),
 )
 
+DEFAULT_CHART_PARAMETERS: dict[str, Any] = {
+    "symbol": "USDJPY",
+    "dataSource": "research",
+    "timeframe": "H1",
+    "start": "2025-05-25T00:00:00+05:30",
+    "end": "2025-05-31T23:59:59+05:30",
+    "mode": "TN",
+    "transitBodies": [],
+    "natalBodies": [],
+    "aspects": ["conjunction_orb", "square", "trine", "opposition_orb"],
+    "excludedFamilyKeys": [],
+    "onlyTouched": False,
+    "minDurationMinutes": 0.0,
+    "maxDurationMinutes": None,
+    "liveBarCount": 500,
+    "harmonics": [0.12, 0.18],
+    "nValues": [1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8],
+    "degrees": [360, 180, 90, 45],
+    "epsilon": 0.30,
+    "priceZone": 0.16,
+    "reference": {
+        "label": "Tokyo IPO hypothesis",
+        "date": "1889-02-11",
+        "time": "00:00:00",
+        "utcOffset": "+09:00",
+        "latitude": 35.6762,
+        "longitude": 139.6503,
+    },
+}
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -83,6 +113,7 @@ class DataPaths:
     source_events: Path
     touch_log: Path
     price_data: Path
+    price_data_m30: Path
     annotation_db: Path
     snapshots_dir: Path
 
@@ -94,6 +125,7 @@ class DataPaths:
             source_events=root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
             touch_log=root / "aspect_sr_touch_log_usdjpy_tn_raman_v2_20250301_20260310.csv",
             price_data=root / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+            price_data_m30=root / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet",
             annotation_db=root / "gann_aspect_annotations_raman_v2.sqlite",
             snapshots_dir=Path(r"D:\GannFinancialAstro\app_snapshots"),
         )
@@ -122,14 +154,44 @@ class AstroRepository:
             str(row["event_id"]): row
             for _, row in self.touches.iterrows()
         }
-        self.price = pd.read_parquet(self.paths.price_data).copy().sort_index()
-        if self.price.index.tz is None:
-            self.price.index = self.price.index.tz_localize(UTC)
-        else:
-            self.price.index = self.price.index.tz_convert(UTC)
+        self.price_by_timeframe = {
+            "H1": self._load_price_frame(self.paths.price_data),
+            "M30": self._load_price_frame(self.paths.price_data_m30),
+        }
+        self.price = self.price_by_timeframe["H1"]
+        self._resampled_price: dict[str, pd.DataFrame] = {}
         self._initialize_annotations()
         self._reload_case_maps()
         self.family_counts = self.events.groupby("event_family_key")["event_id"].count().astype(int).to_dict()
+
+    @staticmethod
+    def _load_price_frame(path: Path) -> pd.DataFrame:
+        frame = pd.read_parquet(path).copy().sort_index()
+        if frame.index.tz is None:
+            frame.index = frame.index.tz_localize(UTC)
+        else:
+            frame.index = frame.index.tz_convert(UTC)
+        return frame
+
+    def _price_for_timeframe(self, timeframe: str) -> pd.DataFrame:
+        normalized = timeframe.upper()
+        if normalized in self.price_by_timeframe:
+            return self.price_by_timeframe[normalized]
+        if normalized not in {"H4", "D1"}:
+            raise ValueError(f"Unsupported historical timeframe: {timeframe}")
+        if normalized not in self._resampled_price:
+            rule = "4h" if normalized == "H4" else "1D"
+            source = self.price_by_timeframe["H1"]
+            aggregations: dict[str, str] = {
+                "open": "first",
+                "high": "max",
+                "low": "min",
+                "close": "last",
+            }
+            if "tick_volume" in source.columns:
+                aggregations["tick_volume"] = "sum"
+            self._resampled_price[normalized] = source.resample(rule).agg(aggregations).dropna(subset=["open", "close"])
+        return self._resampled_price[normalized]
 
     def connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.paths.annotation_db, timeout=30)
@@ -178,12 +240,20 @@ class AstroRepository:
                 );
                 CREATE INDEX IF NOT EXISTS idx_app_occurrence_progress_family
                     ON app_occurrence_progress(family_key, status, updated_at_utc);
+                CREATE TABLE IF NOT EXISTS app_parameter_profiles (
+                    profile_id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    parameters_json TEXT NOT NULL,
+                    is_default INTEGER NOT NULL DEFAULT 0,
+                    created_at_utc TEXT NOT NULL,
+                    updated_at_utc TEXT NOT NULL
+                );
                 """
             )
             connection.execute(
                 """
                 INSERT INTO schema_meta(key, value, updated_at_utc)
-                VALUES('chart_annotation_schema_version', '2', ?)
+                VALUES('chart_annotation_schema_version', '3', ?)
                 ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at_utc=excluded.updated_at_utc
                 WHERE schema_meta.value <> excluded.value
                 """,
@@ -223,6 +293,105 @@ class AstroRepository:
             "priceEnd": self.price.index.max().isoformat(),
             "annotationDb": str(self.paths.annotation_db),
         }
+
+    def parameter_schema(self) -> dict[str, Any]:
+        ranges = {}
+        for timeframe in ("M30", "H1", "H4", "D1"):
+            frame = self._price_for_timeframe(timeframe)
+            ranges[timeframe] = {
+                "start": frame.index.min().isoformat(),
+                "end": frame.index.max().isoformat(),
+            }
+        transit_bodies = sorted({str(value) for value in self.events["event_transit_body"].dropna()})
+        natal_bodies = sorted({str(value) for value in self.events["event_natal_body"].dropna()})
+        aspects = [
+            value
+            for value in ("conjunction_orb", "square", "trine", "opposition_orb")
+            if value in set(self.events["aspect"].astype(str))
+        ]
+        return {
+            "defaults": DEFAULT_CHART_PARAMETERS,
+            "options": {
+                "symbols": ["USDJPY"],
+                "timeframes": ["M30", "H1", "H4", "D1"],
+                "modes": [
+                    {"id": "TN", "label": "Transit to natal", "available": True},
+                    {"id": "TT", "label": "Transit to transit", "available": False},
+                ],
+                "transitBodies": transit_bodies,
+                "natalBodies": natal_bodies,
+                "aspects": aspects,
+                "familyKeys": sorted(self.family_counts),
+            },
+            "dataRanges": ranges,
+            "generation": {
+                "correctedTn": "generator_ready",
+                "correctedTt": "not_implemented",
+                "customSrConfig": "builder_accepts_profile_config",
+                "profileJobQueue": "not_implemented",
+                "astronomyContract": ASTRO_CONTRACT,
+            },
+        }
+
+    def list_parameter_profiles(self) -> list[dict[str, Any]]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                "SELECT * FROM app_parameter_profiles ORDER BY is_default DESC, updated_at_utc DESC, name"
+            ).fetchall()
+        profiles = []
+        for row in rows:
+            item = dict(row)
+            try:
+                parameters = json.loads(str(item["parameters_json"]))
+            except json.JSONDecodeError:
+                parameters = {}
+            profiles.append(
+                {
+                    "profileId": str(item["profile_id"]),
+                    "name": str(item["name"]),
+                    "parameters": parameters if isinstance(parameters, dict) else {},
+                    "isDefault": bool(item["is_default"]),
+                    "createdAtUtc": str(item["created_at_utc"]),
+                    "updatedAtUtc": str(item["updated_at_utc"]),
+                }
+            )
+        return profiles
+
+    def save_parameter_profile(self, payload: dict[str, Any]) -> dict[str, Any]:
+        name = str(payload.get("name") or "").strip()[:80]
+        parameters = payload.get("parameters")
+        if not name or not isinstance(parameters, dict):
+            raise ValueError("profile name and parameters are required")
+        encoded = json.dumps(parameters, ensure_ascii=True, sort_keys=True, default=str)
+        if len(encoded) > 100_000:
+            raise ValueError("parameter profile exceeds 100 KB")
+        profile_id = str(payload.get("profileId") or uuid.uuid4())
+        is_default = bool(payload.get("isDefault", False))
+        now = utc_now()
+        with self.connect() as connection:
+            if is_default:
+                connection.execute("UPDATE app_parameter_profiles SET is_default = 0")
+            connection.execute(
+                """
+                INSERT INTO app_parameter_profiles(
+                    profile_id, name, parameters_json, is_default, created_at_utc, updated_at_utc
+                ) VALUES(?, ?, ?, ?, ?, ?)
+                ON CONFLICT(profile_id) DO UPDATE SET
+                    name=excluded.name,
+                    parameters_json=excluded.parameters_json,
+                    is_default=excluded.is_default,
+                    updated_at_utc=excluded.updated_at_utc
+                """,
+                (profile_id, name, encoded, int(is_default), now, now),
+            )
+            connection.commit()
+        return next(item for item in self.list_parameter_profiles() if item["profileId"] == profile_id)
+
+    def delete_parameter_profile(self, profile_id: str) -> bool:
+        with self.connect() as connection:
+            cursor = connection.execute("DELETE FROM app_parameter_profiles WHERE profile_id = ?", (profile_id,))
+            connection.commit()
+            return cursor.rowcount > 0
 
     def _case_context(self, case: dict[str, Any] | None) -> dict[str, Any]:
         if not case:
@@ -288,14 +457,28 @@ class AstroRepository:
         end: str | None = None,
         symbol: str = "USDJPY",
         timeframe: str = "H1",
+        transit_bodies: tuple[str, ...] | None = None,
+        natal_bodies: tuple[str, ...] | None = None,
+        aspects: tuple[str, ...] | None = None,
+        excluded_family_keys: tuple[str, ...] | None = None,
+        only_touched: bool = False,
+        min_duration_minutes: float = 0.0,
+        max_duration_minutes: float | None = None,
     ) -> dict[str, Any]:
+        symbol = symbol.upper().strip()
+        timeframe = timeframe.upper().strip()
+        if symbol != "USDJPY":
+            raise ValueError("The corrected historical source currently supports USDJPY only")
+        price_source = self._price_for_timeframe(timeframe)
         start_local = parse_local_timestamp(start, "2025-05-25T00:00:00+05:30")
         end_local = parse_local_timestamp(end, "2025-05-31T23:59:59+05:30")
         if end_local <= start_local:
             raise ValueError("end must be later than start")
         start_utc = start_local.tz_convert(UTC)
         end_utc = end_local.tz_convert(UTC)
-        price = self.price.loc[(self.price.index >= start_utc) & (self.price.index <= end_utc)]
+        price = price_source.loc[(price_source.index >= start_utc) & (price_source.index <= end_utc)]
+        if len(price) > 50_000:
+            raise ValueError("Chart request exceeds 50,000 candles; narrow the date range or use a larger timeframe")
         candles = [
             {
                 "time": int(index.timestamp()),
@@ -310,6 +493,21 @@ class AstroRepository:
         overlapping = self.events.loc[
             (self.events["timestamp"] <= end_local) & (self.events["event_end"] >= start_local)
         ]
+        if transit_bodies:
+            overlapping = overlapping.loc[overlapping["event_transit_body"].astype(str).isin(transit_bodies)]
+        if natal_bodies:
+            overlapping = overlapping.loc[overlapping["event_natal_body"].astype(str).isin(natal_bodies)]
+        if aspects:
+            overlapping = overlapping.loc[overlapping["aspect"].astype(str).isin(aspects)]
+        if excluded_family_keys:
+            overlapping = overlapping.loc[~overlapping["event_family_key"].astype(str).isin(excluded_family_keys)]
+        if only_touched:
+            overlapping = overlapping.loc[overlapping["event_id"].astype(str).isin(self.case_by_event)]
+        overlapping = overlapping.loc[pd.to_numeric(overlapping["duration_minutes"], errors="coerce") >= min_duration_minutes]
+        if max_duration_minutes is not None:
+            overlapping = overlapping.loc[
+                pd.to_numeric(overlapping["duration_minutes"], errors="coerce") <= max_duration_minutes
+            ]
         event_records = [self._event_record(row) for _, row in overlapping.iterrows()]
         self._assign_lanes(event_records)
         sr_lines: list[dict[str, Any]] = []
@@ -348,6 +546,16 @@ class AstroRepository:
             "aspects": event_records,
             "srLines": sr_lines[:8],
             "astronomyContract": ASTRO_CONTRACT,
+            "dataSource": "corrected_historical",
+            "parametersApplied": {
+                "transitBodies": list(transit_bodies or ()),
+                "natalBodies": list(natal_bodies or ()),
+                "aspects": list(aspects or ()),
+                "excludedFamilyKeys": list(excluded_family_keys or ()),
+                "onlyTouched": only_touched,
+                "minDurationMinutes": min_duration_minutes,
+                "maxDurationMinutes": max_duration_minutes,
+            },
             "generatedAt": utc_now(),
         }
 

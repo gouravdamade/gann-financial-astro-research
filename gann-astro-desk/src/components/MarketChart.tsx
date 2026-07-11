@@ -5,6 +5,7 @@ import {
   LineStyle,
   createChart,
   type IChartApi,
+  type IPriceLine,
   type ISeriesApi,
   type MouseEventParams,
   type Time,
@@ -91,8 +92,12 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const hostRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
+  const priceLinesRef = useRef<IPriceLine[]>([])
   const toolRef = useRef(activeTool)
   const selectedAspectIdRef = useRef(selectedAspectId)
+  const payloadRef = useRef(payload)
+  const createAnnotationRef = useRef(onCreateAnnotation)
+  const viewKeyRef = useRef('')
   const [bands, setBands] = useState<BandPosition[]>([])
   const [drawings, setDrawings] = useState<Drawing[]>([])
   const [pendingGann, setPendingGann] = useState<Point | null>(null)
@@ -108,6 +113,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   useEffect(() => {
     selectedAspectIdRef.current = selectedAspectId
   }, [selectedAspectId])
+
+  useEffect(() => {
+    payloadRef.current = payload
+    createAnnotationRef.current = onCreateAnnotation
+  }, [onCreateAnnotation, payload])
 
   useImperativeHandle(forwardedRef, () => ({
     capture: async () => {
@@ -129,7 +139,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   }))
 
   useEffect(() => {
-    if (!hostRef.current || !payload.candles.length) return
+    if (!hostRef.current) return
     const chart = createChart(hostRef.current, {
       autoSize: true,
       layout: {
@@ -173,26 +183,6 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       priceLineVisible: false,
       lastValueVisible: true,
     })
-    series.setData(
-      payload.candles.map((candle) => ({
-        time: candle.time as UTCTimestamp,
-        open: candle.open,
-        high: candle.high,
-        low: candle.low,
-        close: candle.close,
-      })),
-    )
-    for (const line of payload.srLines) {
-      series.createPriceLine({
-        price: line.price,
-        color: line.color,
-        lineWidth: 1,
-        lineStyle: LineStyle.Solid,
-        axisLabelVisible: true,
-        title: line.label,
-      })
-    }
-    chart.timeScale().fitContent()
     chartRef.current = chart
     seriesRef.current = series
 
@@ -227,10 +217,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           ])
           return null
         })
-      } else if (tool === 'annotation' && onCreateAnnotation) {
-        const selected = payload.aspects.find((item) => item.eventId === selectedAspectIdRef.current)
+      } else if (tool === 'annotation' && createAnnotationRef.current) {
+        const currentPayload = payloadRef.current
+        const selected = currentPayload.aspects.find((item) => item.eventId === selectedAspectIdRef.current)
         if (!selected) return
-        onCreateAnnotation({
+        createAnnotationRef.current({
           eventId: selected.eventId,
           familyKey: selected.familyKey,
           annotationType: 'point',
@@ -240,7 +231,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           targetId: '',
           note: 'Review this location',
           color: '#4bb7e5',
-          chartState: { timeframe: payload.timeframe, visibleStart: payload.start, visibleEnd: payload.end },
+          chartState: { timeframe: currentPayload.timeframe, visibleStart: currentPayload.start, visibleEnd: currentPayload.end },
         })
       }
     }
@@ -266,8 +257,41 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       chart.remove()
       chartRef.current = null
       seriesRef.current = null
+      priceLinesRef.current = []
     }
-  }, [compact, onCreateAnnotation, payload])
+  }, [compact])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    const series = seriesRef.current
+    if (!chart || !series) return
+    series.setData(
+      payload.candles.map((candle) => ({
+        time: candle.time as UTCTimestamp,
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+      })),
+    )
+    priceLinesRef.current.forEach((line) => series.removePriceLine(line))
+    priceLinesRef.current = payload.srLines.map((line) => series.createPriceLine({
+      price: line.price,
+      color: line.color,
+      lineWidth: 1,
+      lineStyle: LineStyle.Solid,
+      axisLabelVisible: true,
+      title: line.label,
+    }))
+    const viewKey = payload.dataSource === 'mt5_live'
+      ? `${payload.symbol}:${payload.timeframe}:live`
+      : `${payload.symbol}:${payload.timeframe}:${payload.start}:${payload.end}`
+    if (viewKeyRef.current !== viewKey) {
+      chart.timeScale().fitContent()
+      viewKeyRef.current = viewKey
+    }
+    setOverlayRevision((value) => value + 1)
+  }, [payload])
 
   useEffect(() => {
     const chart = chartRef.current

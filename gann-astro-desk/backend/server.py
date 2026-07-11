@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import atexit
 import os
+from datetime import datetime, timezone
 from typing import Any
 
 from flask import Flask, jsonify, request
@@ -18,6 +19,34 @@ gateway = Mt5Gateway(
 )
 gateway.start()
 atexit.register(gateway.stop)
+
+
+def list_argument(name: str) -> tuple[str, ...]:
+    values: list[str] = []
+    for raw in request.args.getlist(name):
+        values.extend(item.strip() for item in raw.split(",") if item.strip())
+    return tuple(dict.fromkeys(values))
+
+
+def optional_float_argument(name: str) -> float | None:
+    value = str(request.args.get(name) or "").strip()
+    return float(value) if value else None
+
+
+def bool_argument(name: str) -> bool:
+    return str(request.args.get(name) or "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def chart_filter_arguments() -> dict[str, Any]:
+    return {
+        "transit_bodies": list_argument("transitBody"),
+        "natal_bodies": list_argument("natalBody"),
+        "aspects": list_argument("aspect"),
+        "excluded_family_keys": list_argument("excludeFamily"),
+        "only_touched": bool_argument("onlyTouched"),
+        "min_duration_minutes": optional_float_argument("minDurationMinutes") or 0.0,
+        "max_duration_minutes": optional_float_argument("maxDurationMinutes"),
+    }
 
 
 @app.after_request
@@ -44,14 +73,87 @@ def mt5_status() -> Any:
     return jsonify({"ok": True, "mt5": gateway.status()})
 
 
+@app.get("/api/mt5/bars")
+def mt5_bars() -> Any:
+    try:
+        bars = gateway.bars(
+            symbol=request.args.get("symbol", "USDJPY"),
+            timeframe=request.args.get("timeframe", "H1"),
+            count=int(request.args.get("count", "500")),
+        )
+        return jsonify({"ok": True, "candles": bars, "mt5": gateway.status()})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.get("/api/parameters/schema")
+def parameter_schema() -> Any:
+    return jsonify({"ok": True, "schema": repository.parameter_schema()})
+
+
+@app.get("/api/parameter-profiles")
+def parameter_profiles() -> Any:
+    return jsonify({"ok": True, "profiles": repository.list_parameter_profiles()})
+
+
+@app.post("/api/parameter-profiles")
+def save_parameter_profile() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify({"ok": True, "profile": repository.save_parameter_profile(payload)})
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.delete("/api/parameter-profiles/<profile_id>")
+def delete_parameter_profile(profile_id: str) -> Any:
+    return jsonify({"ok": repository.delete_parameter_profile(profile_id)})
+
+
 @app.get("/api/chart")
 def chart() -> Any:
     try:
+        symbol = request.args.get("symbol", "USDJPY")
+        timeframe = request.args.get("timeframe", "H1")
+        source = str(request.args.get("source") or "research").strip().lower()
+        filters = chart_filter_arguments()
+        if source == "live":
+            bars = gateway.bars(
+                symbol=symbol,
+                timeframe=timeframe,
+                count=int(request.args.get("liveBarCount", "500")),
+            )
+            start_iso = datetime.fromtimestamp(bars[0]["time"], tz=timezone.utc).isoformat()
+            end_iso = datetime.fromtimestamp(bars[-1]["time"], tz=timezone.utc).isoformat()
+            if symbol.upper() == "USDJPY":
+                payload = repository.chart_payload(
+                    start=start_iso,
+                    end=end_iso,
+                    symbol=symbol,
+                    timeframe=timeframe,
+                    **filters,
+                )
+            else:
+                payload = {
+                    "symbol": symbol.upper(),
+                    "timeframe": timeframe.upper(),
+                    "start": start_iso,
+                    "end": end_iso,
+                    "aspects": [],
+                    "srLines": [],
+                    "astronomyContract": "NO_CORRECTED_EVENT_SOURCE_FOR_SYMBOL",
+                    "parametersApplied": filters,
+                }
+            payload["candles"] = bars
+            payload["dataSource"] = "mt5_live"
+            payload["generatedAt"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            return jsonify({"ok": True, "chart": payload})
         payload = repository.chart_payload(
             start=request.args.get("start"),
             end=request.args.get("end"),
-            symbol=request.args.get("symbol", "USDJPY"),
-            timeframe=request.args.get("timeframe", "H1"),
+            symbol=symbol,
+            timeframe=timeframe,
+            **filters,
         )
         return jsonify({"ok": True, "chart": payload})
     except Exception as exc:

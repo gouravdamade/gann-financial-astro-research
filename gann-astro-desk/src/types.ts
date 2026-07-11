@@ -6,6 +6,70 @@ export type ChartTool =
   | 'vertical'
   | 'gann'
 
+export type ChartDataSource = 'research' | 'live'
+
+export type ReferenceParameters = {
+  label: string
+  date: string
+  time: string
+  utcOffset: string
+  latitude: number
+  longitude: number
+}
+
+export type ChartParameters = {
+  symbol: string
+  dataSource: ChartDataSource
+  timeframe: 'M30' | 'H1' | 'H4' | 'D1'
+  start: string
+  end: string
+  mode: 'TN' | 'TT'
+  transitBodies: string[]
+  natalBodies: string[]
+  aspects: string[]
+  excludedFamilyKeys: string[]
+  onlyTouched: boolean
+  minDurationMinutes: number
+  maxDurationMinutes: number | null
+  liveBarCount: number
+  harmonics: number[]
+  nValues: number[]
+  degrees: number[]
+  epsilon: number
+  priceZone: number
+  reference: ReferenceParameters
+}
+
+export type ParameterSchema = {
+  defaults: ChartParameters
+  options: {
+    symbols: string[]
+    timeframes: ChartParameters['timeframe'][]
+    modes: Array<{ id: ChartParameters['mode']; label: string; available: boolean }>
+    transitBodies: string[]
+    natalBodies: string[]
+    aspects: string[]
+    familyKeys: string[]
+  }
+  dataRanges: Record<ChartParameters['timeframe'], { start: string; end: string }>
+  generation: {
+    correctedTn: string
+    correctedTt: string
+    customSrConfig: string
+    profileJobQueue: string
+    astronomyContract: string
+  }
+}
+
+export type SavedParameterProfile = {
+  profileId: string
+  name: string
+  parameters: ChartParameters
+  isDefault: boolean
+  createdAtUtc: string
+  updatedAtUtc: string
+}
+
 export type Candle = {
   time: number
   open: number
@@ -66,6 +130,8 @@ export type ChartPayload = {
   aspects: AspectWindow[]
   srLines: SrLine[]
   astronomyContract: string
+  dataSource: 'corrected_historical' | 'mt5_live'
+  parametersApplied: Record<string, unknown>
   generatedAt: string
 }
 

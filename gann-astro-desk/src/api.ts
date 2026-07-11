@@ -2,9 +2,12 @@ import type {
   AnnotationDraft,
   AspectFamily,
   ChartAnnotation,
+  ChartParameters,
   ChartPayload,
   EventDetail,
   Mt5Status,
+  ParameterSchema,
+  SavedParameterProfile,
 } from './types'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -39,13 +42,55 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return payload
 }
 
-export async function fetchChart(
-  start = '2025-05-25T00:00:00+05:30',
-  end = '2025-05-31T23:59:59+05:30',
-): Promise<ChartPayload> {
-  const query = new URLSearchParams({ start, end, symbol: 'USDJPY', timeframe: 'H1' })
+export async function fetchChart(parameters?: ChartParameters): Promise<ChartPayload> {
+  const query = new URLSearchParams({
+    start: parameters?.start ?? '2025-05-25T00:00:00+05:30',
+    end: parameters?.end ?? '2025-05-31T23:59:59+05:30',
+    symbol: parameters?.symbol ?? 'USDJPY',
+    timeframe: parameters?.timeframe ?? 'H1',
+    source: parameters?.dataSource ?? 'research',
+  })
+  if (parameters) {
+    parameters.transitBodies.forEach((value) => query.append('transitBody', value))
+    parameters.natalBodies.forEach((value) => query.append('natalBody', value))
+    parameters.aspects.forEach((value) => query.append('aspect', value))
+    parameters.excludedFamilyKeys.forEach((value) => query.append('excludeFamily', value))
+    query.set('onlyTouched', String(parameters.onlyTouched))
+    query.set('minDurationMinutes', String(parameters.minDurationMinutes))
+    if (parameters.maxDurationMinutes != null) query.set('maxDurationMinutes', String(parameters.maxDurationMinutes))
+    query.set('liveBarCount', String(parameters.liveBarCount))
+  }
   const payload = await request<{ chart: ChartPayload }>(`/api/chart?${query}`)
   return payload.chart
+}
+
+export async function fetchParameterSchema(): Promise<ParameterSchema> {
+  const payload = await request<{ schema: ParameterSchema }>('/api/parameters/schema')
+  return payload.schema
+}
+
+export async function fetchParameterProfiles(): Promise<SavedParameterProfile[]> {
+  const payload = await request<{ profiles: SavedParameterProfile[] }>('/api/parameter-profiles')
+  return payload.profiles
+}
+
+export async function saveParameterProfile(input: {
+  profileId?: string
+  name: string
+  parameters: ChartParameters
+  isDefault?: boolean
+}): Promise<SavedParameterProfile> {
+  const payload = await request<{ profile: SavedParameterProfile }>('/api/parameter-profiles', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.profile
+}
+
+export async function deleteParameterProfile(profileId: string): Promise<void> {
+  await request<Record<string, never>>(`/api/parameter-profiles/${encodeURIComponent(profileId)}`, {
+    method: 'DELETE',
+  })
 }
 
 export async function fetchMt5Status(): Promise<Mt5Status> {

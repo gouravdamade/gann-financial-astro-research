@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, Settings2, SlidersHorizontal } from 'lucide-react'
+import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, Settings2, SlidersHorizontal, X } from 'lucide-react'
 import {
   fetchChart,
   fetchEventDetail,
   fetchMt5Status,
+  fetchParameterProfiles,
+  fetchParameterSchema,
   saveAnnotation,
 } from '../api'
 import { openAnalyzeAspect } from '../desktop'
@@ -11,19 +13,34 @@ import { ConnectionBadge } from '../components/ConnectionBadge'
 import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
+import { ParameterDrawer } from '../components/ParameterDrawer'
 import { ToolRail } from '../components/ToolRail'
 import type {
   AnnotationDraft,
   AspectWindow,
   ChartAnnotation,
   ChartPayload,
+  ChartParameters,
   ChartTool,
   EventDetail,
   Mt5Status,
+  ParameterSchema,
+  SavedParameterProfile,
 } from '../types'
+
+function dateRangeLabel(parameters: ChartParameters | null): string {
+  if (!parameters) return 'Date range'
+  if (parameters.dataSource === 'live') return `Live ${parameters.liveBarCount} bars`
+  const start = new Date(parameters.start)
+  const end = new Date(parameters.end)
+  return `${start.toLocaleDateString([], { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`
+}
 
 export function MainWorkspace() {
   const [chart, setChart] = useState<ChartPayload | null>(null)
+  const [schema, setSchema] = useState<ParameterSchema | null>(null)
+  const [parameters, setParameters] = useState<ChartParameters | null>(null)
+  const [profiles, setProfiles] = useState<SavedParameterProfile[]>([])
   const [status, setStatus] = useState<Mt5Status | null>(null)
   const [selected, setSelected] = useState<AspectWindow | null>(null)
   const [detail, setDetail] = useState<EventDetail | null>(null)
@@ -31,17 +48,53 @@ export function MainWorkspace() {
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
   const [bottomTab, setBottomTab] = useState<'events' | 'positions' | 'logs'>('events')
   const [error, setError] = useState('')
+  const [parameterError, setParameterError] = useState('')
+  const [parametersOpen, setParametersOpen] = useState(false)
+  const [chartLoading, setChartLoading] = useState(false)
   const chartRef = useRef<MarketChartHandle>(null)
 
   useEffect(() => {
-    fetchChart()
-      .then((payload) => {
+    Promise.all([fetchParameterSchema(), fetchParameterProfiles()])
+      .then(async ([parameterSchema, savedProfiles]) => {
+        const preferredProfile = savedProfiles.find((item) => item.isDefault)
+        const initialParameters = preferredProfile?.parameters ?? parameterSchema.defaults
+        setSchema(parameterSchema)
+        setProfiles(savedProfiles)
+        setParameters(initialParameters)
+        const payload = await fetchChart(initialParameters)
         setChart(payload)
         const preferred = payload.aspects.find((item) => item.familyKey === 'TN::MOON->MERCURY::square')
         setSelected(preferred ?? payload.aspects[0] ?? null)
       })
       .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)))
   }, [])
+
+  const applyParameters = useCallback(async (nextParameters: ChartParameters) => {
+    setChartLoading(true)
+    setParameterError('')
+    try {
+      const payload = await fetchChart(nextParameters)
+      setChart(payload)
+      setParameters(nextParameters)
+      setSelected((current) => payload.aspects.find((item) => item.eventId === current?.eventId) ?? payload.aspects[0] ?? null)
+      setSelectedAnnotation(null)
+      setParametersOpen(false)
+    } catch (reason) {
+      setParameterError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setChartLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!parameters || parameters.dataSource !== 'live') return
+    const timer = window.setInterval(() => {
+      fetchChart(parameters)
+        .then((payload) => setChart(payload))
+        .catch((reason) => setParameterError(reason instanceof Error ? reason.message : String(reason)))
+    }, 5000)
+    return () => window.clearInterval(timer)
+  }, [parameters])
 
   useEffect(() => {
     let disposed = false
@@ -97,7 +150,7 @@ export function MainWorkspace() {
   if (error) {
     return <main className="fatal-state"><strong>Gann Astro Desk could not load</strong><span>{error}</span></main>
   }
-  if (!chart) {
+  if (!chart || !schema || !parameters) {
     return <main className="loading-state"><span className="loading-bar" /><strong>Starting Gann Astro Desk</strong></main>
   }
 
@@ -108,15 +161,15 @@ export function MainWorkspace() {
           <span className="product-glyph">GA</span>
           <div><strong>Gann Astro Desk</strong><span>Research workspace</span></div>
         </div>
-        <button className="symbol-control"><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
+        <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
         <div className="segmented-control" aria-label="Timeframe">
-          {['M30', 'H1', 'H4', 'D1'].map((timeframe) => <button key={timeframe} className={timeframe === chart.timeframe ? 'is-active' : ''}>{timeframe}</button>)}
+          {schema.options.timeframes.map((timeframe) => <button key={timeframe} className={timeframe === chart.timeframe ? 'is-active' : ''} disabled={chartLoading} onClick={() => applyParameters({ ...parameters, timeframe })}>{timeframe}</button>)}
         </div>
-        <button className="date-control"><CalendarDays size={15} /> May 25-31, 2025</button>
-        <div className="segmented-control mode-control"><button>TT</button><button className="is-active">TN</button></div>
+        <button className="date-control" onClick={() => setParametersOpen(true)}><CalendarDays size={15} /> {dateRangeLabel(parameters)}</button>
+        <div className="segmented-control mode-control"><button disabled title="Corrected TT generator pending">TT</button><button className="is-active">TN</button></div>
         <div className="topbar-spacer" />
         <ConnectionBadge status={status} />
-        <button className="icon-button" title="Astrology parameters"><SlidersHorizontal size={18} /></button>
+        <button className="icon-button" onClick={() => setParametersOpen(true)} title="Astrology parameters"><SlidersHorizontal size={18} /></button>
         <button className="icon-button" title="Application settings"><Settings2 size={18} /></button>
       </header>
       <section className="workspace-grid">
@@ -129,9 +182,11 @@ export function MainWorkspace() {
         <section className="chart-workspace">
           <div className="chart-context-strip">
             <span>Raman sidereal</span>
-            <span>Tokyo IPO hypothesis</span>
+            <span>{parameters.reference.label}</span>
             <span>{chart.aspects.length} visible aspects</span>
+            <span>{chart.dataSource === 'mt5_live' ? 'MT5 live bars' : chart.timeframe + ' archive'}</span>
             {selected && <strong style={{ color: selected.color }}>{selected.transitBody} to {selected.natalBody} {selected.aspectLabel}</strong>}
+            {chartLoading && <strong className="chart-loading-label">Updating chart</strong>}
           </div>
           <MarketChart
             ref={chartRef}
@@ -166,6 +221,17 @@ export function MainWorkspace() {
         {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}
         {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
       </section>
+      {parameterError && <div className="parameter-error" role="alert">{parameterError}<button onClick={() => setParameterError('')} title="Dismiss"><X size={14} /></button></div>}
+      <ParameterDrawer
+        open={parametersOpen}
+        busy={chartLoading}
+        schema={schema}
+        parameters={parameters}
+        profiles={profiles}
+        onClose={() => setParametersOpen(false)}
+        onApply={applyParameters}
+        onProfilesChange={setProfiles}
+      />
     </main>
   )
 }

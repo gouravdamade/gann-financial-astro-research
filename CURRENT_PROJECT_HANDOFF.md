@@ -1,10 +1,50 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-11 23:49 IST
+Last updated: 2026-07-12 01:29 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-11 (Gann Astro Desk)
+## Latest Update - 2026-07-12 (Parameterized Charts and Live MT5)
+
+2026-07-12 second Windows-app vertical slice:
+
+- Added a typed parameter contract and persistent SQLite parameter profiles for symbol,
+  research/live source, timeframe, date range, transit-to-natal body filters, aspects,
+  excluded families, touch linkage, duration, harmonics, n values, degrees, SR tolerances,
+  and birth/IPO reference metadata.
+- Added a responsive parameter drawer with saved profile create/load/delete, explicit
+  `rebuild input` labels for settings that require a new corrected source, and a disabled
+  transit-to-transit option until a corrected TT generator exists. Applying parameters never
+  silently claims to regenerate ephemeris data.
+- Historical chart loading now supports M30, H1, H4, and D1. M30 and H1 use versioned MT5
+  parquet sources; H4 and D1 are deterministically resampled from H1. Existing corrected TN
+  events can be filtered by transit body, natal body, aspect, family, touch linkage, and
+  duration without changing their astronomical identities.
+- Added read-only MT5 bar retrieval for M30/H1/H4/D1 and a five-second live chart refresh.
+  Live updates replace series data in place so zoom and pan state are not reset. The gateway
+  remains market-data only: `tradeAllowed=false`; no order method exists.
+- The live backend smoke check connected to `MetaQuotes-Demo` and returned 120 USDJPY H1 bars.
+  Current Jul-2026 live bars have no corrected aspect overlays because the versioned TN source
+  ends on 2026-03-10; future/upcoming corrected event generation is still required.
+- Updated the app database to schema version 3 with `app_parameter_profiles`. The profile API
+  create/list/delete smoke test passed and left no test profile behind.
+- Verification completed:
+  - frontend Vitest: 5 passed;
+  - backend unittest: 8 passed;
+  - Oxlint: passed;
+  - production TypeScript/Vite build: passed;
+  - browser checks: nonblank historical M30 chart, corrected event/body filters, saved drawer
+    state, nonblank MT5 live chart, and no post-refactor browser-console errors.
+- Remaining app work, in order:
+  1. add a background corrected-TN generation queue, progress/cancel states, artifact registry,
+     and atomic loading of generated datasets into the chart and Analyze Aspect workspace;
+  2. extend corrected event generation into the current/future live date range;
+  3. migrate deterministic Auto Suggest, trade markers, P/L, rule lessons, Dream Review,
+     and official-note queue into shared app/backend contracts;
+  4. consolidate browser and Python decision logic into one timestamp-safe no-lookahead engine;
+  5. complete native sidecar packaging after the Rust/MSVC toolchain gate is installed on `D:`.
+
+## Previous Update - 2026-07-11 (Gann Astro Desk)
 
 2026-07-11 first Windows-app vertical slice:
 
