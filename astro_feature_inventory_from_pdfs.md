@@ -19,6 +19,8 @@ Created from the project PDFs supplied on 2026-05-04 and updated with the Shad B
 | BRIHAT_JATAKA | `The Brihat Jataka`, Varahamihira; N. Chidambaram Aiyar, 1905 second edition | 306-page public-domain scan; page-structured IA OCR and visual checks | Root predictive text in a historical English translation with translator notes |
 | BRIHAT_SAMHITA | `The Brihat Samhita of Varaha Mihira`, N. C. Iyer, 1884-1885 | 496-page public-domain-mark scan; page-structured IA OCR and visual checks | Root mundane text in a historical English translation with translator notes |
 | SURYA_SIDDHANTA | `Translation of the Surya-Siddhanta`, Ebenezer Burgess, 1858 | 362-page public-domain-mark scan; page-structured IA OCR and visual checks | Historical astronomy/calculation doctrine; never replaces the operational ephemeris |
+| BPHS | `Brihat Parashara Hora Shastra, Purva and Uttara Khanda`, 1899 Sanskrit-Hindi edition | 745-page public-domain/CC0 scan; page-structured IA OCR and visual checks | Recension-specific root witness; English doctrinal claims require identified translation or human review |
+| PHALADEEPIKA | `Mantreswara's Phaladeepika`, V. Subrahmanya Sastri, first edition 1937 | 476-page Sanskrit-English scan; DLI catalog asserts public domain but title page says Copyright Registered | Local RAG root/translation reference with per-page rights caution; redistribution requires review |
 
 Extracted text folder:
 

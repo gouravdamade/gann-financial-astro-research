@@ -68,6 +68,22 @@
     role: "classical_astronomy_historical_translation_with_scholarly_notes"
     extraction_status: "public_domain_mark_362_pages_page_structured_ia_ocr_visual_spot_checks"
     sha256: "B555C7EAABF8F167CFAE4177180090059451610F547C1FB4A197A0B28DED41FA"
+  BPHS:
+    file: "BPHS_1899_GOVIND_SHARMA_SHASTRI.pdf"
+    author: "Parashara tradition"
+    editor_commentary: "Sridhara Jatashankara; corrected by Govinda Sharma Shastri"
+    role: "root_predictive_sanskrit_recension_witness_with_sanskrit_hindi_commentary"
+    extraction_status: "public_domain_745_pages_page_structured_ia_ocr_visual_spot_checks"
+    sha256: "BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4"
+    retrieval_caution: "No English translation; preserve Purva/Uttara identity and verify English claims manually."
+  PHALADEEPIKA:
+    file: "PHALADEEPIKA_1937_SUBRAHMANYA_SASTRI.pdf"
+    author: "Mantreswara"
+    translator: "Panditabhushana V. Subrahmanya Sastri"
+    role: "root_predictive_text_historical_translation_with_notes"
+    extraction_status: "476_pages_page_structured_ia_ocr_visual_spot_checks_repository_asserted_public_domain_conflicting_title_page_notice"
+    sha256: "795DDB67D7416188B2272D2021B2B798561FAAAC08067A986AF0FACFD0552FCB"
+    retrieval_caution: "Local research corpus only pending redistribution rights review; separate verse, translation and translator note."
 
 doctrine_locks:
   - id: LOCK_TIME_UTC

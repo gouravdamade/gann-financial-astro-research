@@ -2,6 +2,22 @@
   "policy_note": "Queue includes only local/user-owned structured references and public-domain candidates. RAG-only modern translations must be manually approved before extraction.",
   "queue": [
     {
+      "source_id": "BPHS",
+      "title": "Brihat Parashara Hora Shastra, Purva and Uttara Khanda",
+      "source_url": "https://archive.org/details/xpnh_brihat-parashara-hora-shastra-purva-uttara-khanda-subodhini-shridhar-jatash",
+      "ingestion_policy": "public_domain_1899_recension_witness_with_commentary",
+      "priority": "1",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\BPHS.txt"
+    },
+    {
+      "source_id": "PHALADEEPIKA",
+      "title": "Phaladeepika",
+      "source_url": "https://archive.org/details/in.ernet.dli.2015.92117",
+      "ingestion_policy": "repository_asserted_public_domain_historical_translation_local_only",
+      "priority": "1",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\PHALADEEPIKA.txt"
+    },
+    {
       "source_id": "SURYA_SIDDHANTA",
       "title": "Surya Siddhanta",
       "source_url": "https://commons.wikimedia.org/wiki/File:Translation_of_the_S%C3%BBrya-Siddh%C3%A2nta,_A_Text-Book_of_Hindu_Astronomy;_With_Notes,_and_an_Appendix_(IA_jstor-592174).pdf",
@@ -75,22 +91,6 @@
     }
   ],
   "manual_review_required": [
-    {
-      "source_id": "BPHS",
-      "title": "Brihat Parashara Hora Shastra",
-      "source_url": "https://www.dekhopanchang.com/en/learn/library",
-      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
-      "priority": "1",
-      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\BPHS.txt"
-    },
-    {
-      "source_id": "PHALADEEPIKA",
-      "title": "Phaladeepika",
-      "source_url": "https://www.dekhopanchang.com/en/learn/library",
-      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
-      "priority": "1",
-      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\PHALADEEPIKA.txt"
-    },
     {
       "source_id": "SARAVALI",
       "title": "Saravali",

@@ -22,10 +22,10 @@ These are the first sources to consult for planet, sign, house, dignity, Yoga an
 
 | Priority | Source | Main role | Initial source candidate |
 |---:|---|---|---|
-| 1 | Brihat Parashara Hora Shastra | Parashari houses, grahas, Vargas, strength and Dashas | Manual edition review through the [classical library index](https://dekhopanchang.com/en/learn/library) |
+| 1 | Brihat Parashara Hora Shastra | Parashari houses, grahas, Vargas, strength and Dashas | Ingested 2026-07-11: 1899 Sanskrit-Hindi Purva/Uttara witness; recension-specific and not an English translation |
 | 1 | Brihat Jataka | Compact foundational predictive cross-check | [1905 public-domain English scan](https://commons.wikimedia.org/wiki/File%3AThe_Brihat_jataka_%28IA_brihatjataka00varaiala%29.pdf) |
 | 1 | Saravali | Broad planet, sign and house condition corpus | Manual edition review through the [classical library index](https://dekhopanchang.com/en/learn/library) |
-| 1 | Phaladeepika | Practical interpretation, strength, transit and Ashtakavarga context | [1950 scan](https://www.wisdomlib.org/uploads/ocr/essays/phaladeepika/phaladeepika-2nd-ed-1950-by-v-subrahmanya-sastri-text.pdf) |
+| 1 | Phaladeepika | Practical interpretation, strength, transit and Ashtakavarga context | Ingested 2026-07-11: 1937 Subrahmanya Sastri first edition; DLI public-domain assertion conflicts with title-page copyright notice, so local-only pending rights review |
 | 2 | Jataka Parijata | Cross-source synthesis and exceptions | Public-domain edition/translation still requires language and metadata review |
 | 2 | Hora Sara | Compact additional cross-check | Manual edition review |
 | 2 | Uttara Kalamrita | Specialized rules and exceptions | Manual edition review |
@@ -90,8 +90,8 @@ Every corpus item must record:
 ## Acquisition order
 
 1. Completed 2026-07-11: Brihat Jataka, Brihat Samhita and Surya Siddhanta public-domain historical editions with page markers and edition hashes.
-2. Next: a certified BPHS edition and Phaladeepika edition.
-3. Saravali and Jataka Parijata.
+2. Completed 2026-07-11: recension-labeled 1899 BPHS Sanskrit-Hindi witness and 1937 Phaladeepika Sanskrit-English edition with explicit rights conflict and retrieval cautions.
+3. Next: Saravali and Jataka Parijata.
 4. Jaimini Upadesa Sutras and Laghu Parashari.
 5. Sarvartha Chintamani, Muhurta Chintamani and Prasna Marga.
 6. Tajika and additional mundane texts only after their doctrine namespaces exist.

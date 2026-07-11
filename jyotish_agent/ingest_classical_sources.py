@@ -53,16 +53,17 @@ def section_for(page: int, ranges: list[dict[str, Any]]) -> str:
 
 
 def normalized_for_matching(value: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "", value.lower())
+    return "".join(character for character in value.lower() if character.isalnum())
 
 
 def topics_for(text: str, patterns: dict[str, list[str]]) -> list[str]:
     compact = normalized_for_matching(text)
-    return [
-        topic
-        for topic, needles in patterns.items()
-        if any(normalized_for_matching(str(needle)) in compact for needle in needles)
-    ]
+    matches: list[str] = []
+    for topic, needles in patterns.items():
+        normalized_needles = [normalized_for_matching(str(needle)) for needle in needles]
+        if any(needle and needle in compact for needle in normalized_needles):
+            matches.append(topic)
+    return matches
 
 
 def render_source(source_id: str, config: dict[str, Any], minimum_chars: int = 20) -> dict[str, Any]:
@@ -92,6 +93,10 @@ def render_source(source_id: str, config: dict[str, Any], minimum_chars: int = 2
             f"[[TRANSLATOR: {config['translator']}]]",
             f"[[EDITION: {config['edition']}]]",
             f"[[AUTHORITY: {config['authority']}]]",
+            f"[[LANGUAGE: {config.get('language', 'unspecified')}]]",
+            f"[[RECENSION: {config.get('recension', 'not_applicable_or_unspecified')}]]",
+            f"[[RIGHTS_BASIS: {config.get('rights_basis', config.get('rights', 'unspecified'))}]]",
+            f"[[RETRIEVAL_CAUTION: {config.get('retrieval_caution', 'none')}]]",
             f"[[PDF_PAGE: {page:04d}]]",
             f"[[CONTENT_LAYER: {section_for(page, config['section_ranges'])}]]",
             f"[[TOPICS: {','.join(topics) if topics else 'general'}]]",

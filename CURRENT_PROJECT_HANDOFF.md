@@ -1,10 +1,41 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-11 07:05 IST
+Last updated: 2026-07-11 08:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-07-11
+
+2026-07-11 BPHS and Phaladeepika provenance-aware corpus ingestion:
+
+- Ingested `BPHS`, an 1899 Mumbai Sanskrit-Hindi `Brihat Parashara Hora Shastra` Purva/Uttara witness:
+  - 745 PDF/OCR pages retained;
+  - PDF SHA-256 `BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4`;
+  - explicitly labeled recension-specific rather than merged with modern 97-chapter English editions;
+  - English doctrinal claims require an identified translation or human verification.
+- Ingested `PHALADEEPIKA`, Mantreswara with V. Subrahmanya Sastri's first English translation edition, 1937:
+  - 476 PDF pages, 464 non-empty OCR page blocks retained;
+  - PDF SHA-256 `795DDB67D7416188B2272D2021B2B798561FAAAC08067A986AF0FACFD0552FCB`;
+  - all 28 adhyayas plus verse and subject indexes are present.
+- Rights caveat is permanent corpus metadata: the Digital Library of India catalog says `In Public Domain`, while the title page says `Copyright Registered`. Phaladeepika remains local research material pending any redistribution-rights review.
+- Source PDFs and IA DjVu OCR XML are archived under `D:\GannFinancialAstro\sources\classical`; generated page-marked corpus text remains local/uncommitted under `jyotish_agent\corpus_text`.
+- Extended every classical page block with `LANGUAGE`, `RECENSION`, `RIGHTS_BASIS`, and `RETRIEVAL_CAUTION` markers.
+- Fixed a Unicode topic-classification bug: the previous ASCII-only normalizer reduced Devanagari keywords to empty strings and falsely tagged every BPHS page with every topic. Matching now preserves Unicode alphanumeric characters and rejects empty normalized patterns.
+- Added `bphs_phaladeepika_source_review_20260711.md` with edition maps, rights findings, visual spot checks, hashes, retrieval locks, and promotion policy.
+- Visually inspected BPHS pages 4, 30, 326, 665, 741 and Phaladeepika pages 6, 38, 80, 229, 360, 394. BPHS has physical damage but readable text; Phaladeepika is clean enough for English retrieval, with Sanskrit exact quotes still requiring page-image checks.
+- Rebuilt private TF-IDF index:
+  - total `4,565` chunks;
+  - BPHS `1,351` chunks;
+  - Phaladeepika `684` chunks.
+- Retrieval checks:
+  - Devanagari Dasha/graha/bala/Ashtakavarga query returned BPHS in all top-six results;
+  - English strength/Drigbala/Dasa/transit query returned Phaladeepika in the top two;
+  - case 43 no-LLM smoke still returned structured workspace evidence plus page-cited doctrine/reference material.
+- Six stdlib ingestion/index tests pass.
+- Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260711_083631` (includes both generated corpus text files; the hashed source PDFs/OCR XML remain in the `D:` source archive).
+- No calculation, aspect event, trade label, Auto Suggest, official ML note, BTC/USDJPY strategy, or MT5 execution logic changed.
+
+## Previous Update - 2026-07-11
 
 2026-07-11 first classical public-domain corpus ingestion:
 

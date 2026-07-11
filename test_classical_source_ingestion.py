@@ -23,6 +23,10 @@ class ClassicalSourceIngestionTests(unittest.TestCase):
         self.assertEqual(section_for(2, ranges), "appendix")
         self.assertEqual(topics_for("A Dasa result", {"dasha": ["dasa"], "wealth": ["wealth"]}), ["dasha"])
 
+    def test_topic_classification_preserves_devanagari_and_ignores_empty_patterns(self) -> None:
+        patterns = {"dasha": ["dasa", "दशा"], "blank": ["---"]}
+        self.assertEqual(topics_for("ग्रह दशा फल", patterns), ["dasha"])
+
     def test_render_source_preserves_pdf_page_and_provenance(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -35,6 +39,10 @@ class ClassicalSourceIngestionTests(unittest.TestCase):
                 "translator": "Test Translator",
                 "edition": "Test Edition",
                 "authority": "root_translation_with_notes",
+                "language": "Sanskrit and English",
+                "recension": "test_recension",
+                "rights_basis": "repository_public_domain_assertion",
+                "retrieval_caution": "Do not merge commentary with root text.",
                 "ocr_xml_path": str(xml_path),
                 "output_path": str(output_path),
                 "expected_pages": 2,
@@ -53,6 +61,10 @@ class ClassicalSourceIngestionTests(unittest.TestCase):
             self.assertIn("[[PDF_PAGE: 0002]]", text)
             self.assertIn("[[CONTENT_LAYER: appendix]]", text)
             self.assertIn("[[TRANSLATOR: Test Translator]]", text)
+            self.assertIn("[[LANGUAGE: Sanskrit and English]]", text)
+            self.assertIn("[[RECENSION: test_recension]]", text)
+            self.assertIn("[[RIGHTS_BASIS: repository_public_domain_assertion]]", text)
+            self.assertIn("[[RETRIEVAL_CAUTION: Do not merge commentary with root text.]]", text)
             self.assertIn("[[TOPICS: dasha]]", text)
 
 

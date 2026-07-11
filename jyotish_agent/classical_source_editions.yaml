@@ -1,4 +1,84 @@
 sources:
+  BPHS:
+    title: "Brihat Parashara Hora Shastra, Purva and Uttara Khanda"
+    author: "Parashara tradition"
+    translator: "No English translation; Sanskrit commentary by Sridhara Jatashankara and Hindi exposition; corrected by Govinda Sharma Shastri"
+    edition: "Mumbai, 1899"
+    authority: "root_classical_sanskrit_recension_witness_with_sanskrit_hindi_commentary"
+    language: "Sanskrit and Hindi"
+    recension: "1899 Purva-Uttara Khanda witness; do not silently merge with modern 97-chapter BPHS editions"
+    pdf_path: 'D:\GannFinancialAstro\sources\classical\BPHS_1899_GOVIND_SHARMA_SHASTRI.pdf'
+    ocr_xml_path: 'D:\GannFinancialAstro\sources\classical\BPHS_1899_GOVIND_SHARMA_SHASTRI_djvu.xml'
+    output_path: 'D:\PycharmProjects\jyotish_agent\corpus_text\BPHS.txt'
+    expected_pages: 745
+    pdf_sha256: "BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4"
+    ocr_xml_md5: "DEF54500C55D90791CA8AA38BC4E1F38"
+    source_page_url: "https://archive.org/details/xpnh_brihat-parashara-hora-shastra-purva-uttara-khanda-subodhini-shridhar-jatash"
+    source_download_url: "https://archive.org/download/xpnh_brihat-parashara-hora-shastra-purva-uttara-khanda-subodhini-shridhar-jatash/Brihat%20Parashara%20Hora%20Shastra%20Purva%20Uttara%20Khanda%20Subodhini%20Shridhar%20Jatashankar%20By%20Parashara%20Govind%20Sharma%20Shastri%20Sanskrit%20Hindi%20Jyotisha%20Illustrated%20Mumbai%201899%20-%20Gyan.pdf"
+    rights: "public_domain_1899_edition_cc0_digitization"
+    rights_basis: "Publication year 1899; archive item carries CC0 and page watermark states In Public Domain"
+    retrieval_caution: "Recension-specific Sanskrit/Hindi OCR. Cite page, preserve Purva/Uttara identity, and require an identified translation or human review for English doctrinal claims."
+    section_ranges:
+      - {start: 1, end: 3, type: "repository_notice_or_front_leaf"}
+      - {start: 4, end: 29, type: "title_front_matter_and_contents"}
+      - {start: 30, end: 325, type: "purva_khanda_root_sanskrit_with_commentary"}
+      - {start: 326, end: 741, type: "uttara_khanda_root_sanskrit_with_commentary"}
+      - {start: 742, end: 745, type: "trailing_damaged_or_blank_leaves"}
+    topics:
+      graha: ["graha", "grahana", "ग्रह"]
+      rashi: ["rasi", "rashi", "राशि"]
+      bhava: ["bhava", "भाव"]
+      drishti: ["drishti", "दृष्टि"]
+      shadbala: ["shadbala", "षड्बल", "बल"]
+      varga: ["varga", "navamsa", "वर्ग", "नवांश"]
+      dasha: ["dasha", "dasa", "दशा"]
+      ashtakavarga: ["ashtakavarga", "अष्टकवर्ग"]
+      yoga: ["yoga", "योग"]
+      longevity: ["ayur", "ayu", "आयु"]
+      transit: ["gochara", "गोचर"]
+
+  PHALADEEPIKA:
+    title: "Mantreswara's Phaladeepika"
+    author: "Mantreswara"
+    translator: "Panditabhushana V. Subrahmanya Sastri"
+    edition: "First edition, Aruna Press, Bangalore, 1937"
+    authority: "root_classical_text_historical_english_translation_with_translator_notes"
+    language: "Sanskrit and English"
+    recension: "Subrahmanya Sastri 1937 edition, 28 adhyayas"
+    pdf_path: 'D:\GannFinancialAstro\sources\classical\PHALADEEPIKA_1937_SUBRAHMANYA_SASTRI.pdf'
+    ocr_xml_path: 'D:\GannFinancialAstro\sources\classical\PHALADEEPIKA_1937_SUBRAHMANYA_SASTRI_djvu.xml'
+    output_path: 'D:\PycharmProjects\jyotish_agent\corpus_text\PHALADEEPIKA.txt'
+    expected_pages: 476
+    pdf_sha256: "795DDB67D7416188B2272D2021B2B798561FAAAC08067A986AF0FACFD0552FCB"
+    ocr_xml_md5: "46AEDA92C571651B9F8F96416EFF1A3A"
+    source_page_url: "https://archive.org/details/in.ernet.dli.2015.92117"
+    source_download_url: "https://archive.org/download/in.ernet.dli.2015.92117/2015.92117.Mantreswaras-Phaladeepika.pdf"
+    rights: "repository_asserted_public_domain_historical_edition"
+    rights_basis: "Digital Library of India catalog says In Public Domain; title page says Copyright Registered, so redistribution rights require revalidation"
+    retrieval_caution: "Keep Sanskrit verse, English translation, and translator note distinct. Repository rights assertion conflicts with the title-page notice; local research corpus only unless independently cleared."
+    section_ranges:
+      - {start: 1, end: 5, type: "library_front_leaves"}
+      - {start: 6, end: 8, type: "title_and_publication_matter"}
+      - {start: 9, end: 13, type: "translator_prefaces"}
+      - {start: 14, end: 37, type: "descriptive_contents"}
+      - {start: 38, end: 361, type: "root_sanskrit_with_english_translation_and_notes"}
+      - {start: 362, end: 393, type: "verse_and_sanskrit_indexes"}
+      - {start: 394, end: 471, type: "english_subject_index"}
+      - {start: 472, end: 476, type: "trailing_blank_or_library_leaves"}
+    topics:
+      graha_nature: ["nature of planets", "characteristics of planets", "planet"]
+      dignity: ["exaltation", "depression", "own house", "enemy's house", "friendly"]
+      shadbala: ["shadbala", "sixfold strength", "rupas", "strength of planets"]
+      drig_bala: ["drigbala", "strength of aspect", "aspect"]
+      varga: ["dasavargas", "saptavargas", "shadvargas", "navamsa", "trimsamsa"]
+      bhava_strength: ["bhava", "strength of the lord of the bhava", "bhava karaka"]
+      dasha: ["dasa", "mahadasa", "bhukti", "antara"]
+      ashtakavarga: ["ashtakavarga", "benefic dots", "sarvashtakavarga"]
+      transit: ["transit", "gochara"]
+      nodes: ["rahu", "ketu"]
+      yoga: ["yoga", "rajayoga", "mahapurusha"]
+      profession_wealth: ["profession", "livelihood", "wealth"]
+
   BRIHAT_JATAKA:
     title: "The Brihat Jataka"
     author: "Varahamihira"
