@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import copy
+import warnings
 from pathlib import Path
 from typing import Any
 
@@ -20,8 +22,8 @@ SHADBALA_MINIMUM_TOTAL_VIRUPA: dict[str, float] = {
 AVG_ALL_CLASSICAL = ("SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN")
 
 DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
-    "config_id": "doctrine_v1_20260521",
-    "status": "foundation",
+    "config_id": "doctrine_v2_20260711_audit",
+    "status": "provisional_audited",
     "time_standard": {
         "internal_time": "UTC/JD_UT",
         "display_time": "Asia/Kolkata",
@@ -33,7 +35,7 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "node_type": "true_node",
         "coordinate_system": "geocentric",
         "ephemeris_provider": "swiss_ephemeris",
-        "house_system": "existing_reference_engine",
+        "house_system": "porphyry_sripati_like_for_bala_provisional",
     },
     "graha_set": {
         "classical": ["SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN"],
@@ -43,13 +45,13 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
     },
     "drishti": {
         "method": "bphs_like_longitudinal",
-        "status": "proxy_pending_strict_drik_bala",
+        "status": "event_orb_proxy_not_drik_bala",
         "current_strength_field": "event_bphs_like_orb_strength",
         "current_virupa_field": "event_bphs_like_orb_virupa",
     },
     "shadbala": {
-        "method": "strict_shadbala_v3_full_component_v1",
-        "status": "full_component_v1_with_explicit_kaala_chesta_yuddha_decisions_pending_external_calculator_validation",
+        "method": "strict_shadbala_v4_source_aligned_provisional",
+        "status": "provisional_source_aligned_components_pending_sunrise_abda_masa_chesta_yuddha_and_external_validation",
         "current_fields": ["shadbala_tag", "shadbala_avg"],
         "implemented_components": [
             "naisargika_bala",
@@ -76,8 +78,8 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
             "avg_all_policy": "seven_classical_planet_component_mean",
             "saptavargaja_policy": "D1_D2_D3_D7_D9_D12_D30_compound_relationship_v1",
             "kaala_abda_masa_policy": "deterministic_epoch_day_lords_pending_cross_validation",
-            "chesta_policy": "speed_state_v1_for_non_luminary_classical_planets",
-            "yuddha_policy": "non_luminary_classical_longitude_within_1deg_latitude_tiebreak",
+            "chesta_policy": "sun_equals_ayana_moon_equals_doubled_paksha_other_speed_buckets_provisional",
+            "yuddha_policy": "detect_close_candidates_but_score_zero_pending_source_and_calculator_certification",
         },
         "minimum_total_virupa": SHADBALA_MINIMUM_TOTAL_VIRUPA,
         "minimum_total_source": "SHADBALA_JAYA lines 743-745",
@@ -114,7 +116,7 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "usdjpy_base_minus_quote_score",
         "repeatation_manual_marker_review",
     ],
-    "source_ids": ["STRICT_VEDIC_LLM", "SHADBALA_JAYA"],
+    "source_ids": ["STRICT_VEDIC_LLM", "SHADBALA_JAYA", "BPHS", "PHALADEEPIKA", "SANJAY_RATH_CRUX_1998"],
 }
 
 AYANAMSA_SWISSEPH_IDS: dict[str, str] = {
@@ -131,13 +133,21 @@ def load_doctrine_config(path: Path | None = None) -> dict[str, Any]:
     if cfg_path.exists():
         try:
             import yaml  # type: ignore
-
+        except ImportError:
+            warnings.warn(
+                f"PyYAML is unavailable; using the embedded doctrine fallback instead of {cfg_path}",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            return copy.deepcopy(DEFAULT_DOCTRINE_CONFIG)
+        try:
             loaded = yaml.safe_load(cfg_path.read_text(encoding="utf-8"))
-            if isinstance(loaded, dict):
-                return loaded
-        except Exception:
-            pass
-    return DEFAULT_DOCTRINE_CONFIG.copy()
+        except Exception as exc:
+            raise RuntimeError(f"Doctrine config exists but could not be parsed: {cfg_path}") from exc
+        if not isinstance(loaded, dict):
+            raise RuntimeError(f"Doctrine config must contain a mapping: {cfg_path}")
+        return loaded
+    return copy.deepcopy(DEFAULT_DOCTRINE_CONFIG)
 
 
 def doctrine_ayanamsa_name(config: dict[str, Any] | None = None) -> str:
@@ -221,7 +231,7 @@ def append_doctrine_metadata(frame: Any, config: dict[str, Any] | None = None) -
         additions["shadbala_doctrine_status"] = str(
             (config or load_doctrine_config()).get("shadbala", {}).get(
                 "status",
-                "partial_high_confidence_components_pending_full_six_bala",
+                "provisional_source_aligned_components_pending_external_validation",
             )
         )
     if {"b1", "b2", "shadbala_avg"}.issubset(set(frame.columns)):

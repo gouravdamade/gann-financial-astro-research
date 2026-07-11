@@ -12,7 +12,7 @@ TELEGRAM_DIR = Path(r"D:\Trading_Algo\New folder")
 if str(TELEGRAM_DIR) not in sys.path:
     sys.path.insert(0, str(TELEGRAM_DIR))
 
-from telegram_remote_control import TelegramClient, load_legacy_telegram_config, load_state, process_alive
+from telegram_remote_control import TelegramClient, load_legacy_telegram_config, load_state  # noqa: E402
 
 
 PROJECT_DIR = Path(r"D:\PycharmProjects")

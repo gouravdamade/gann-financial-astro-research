@@ -1235,9 +1235,13 @@ def replay_completed_review_impacts(
 
     affected: list[dict[str, Any]] = []
     unchanged = 0
+    skipped_ignored = 0
     failed: list[dict[str, Any]] = []
     for row in completed_rows:
         try:
+            if str(row_get(row, "review_status") or "").strip().lower() == "ignored":
+                skipped_ignored += 1
+                continue
             case_id = int(row_get(row, "case_id"))
             replay = auto_suggest_case(pack_dir, case_id)
             old_pips = safe_float(row_get(row, "signed_pips"))
@@ -1288,6 +1292,7 @@ def replay_completed_review_impacts(
         "pack_dir": str(pack_dir),
         "reviewed_count": len(completed_rows),
         "unchanged_count": unchanged,
+        "skipped_ignored_count": skipped_ignored,
         "affected_count": len(affected),
         "affected_or_needs_replay": affected,
         "failed_count": len(failed),
@@ -1295,7 +1300,10 @@ def replay_completed_review_impacts(
         "message": (
             "No completed reviews available for historical re-simulation."
             if not completed_rows
-            else f"{len(affected)} completed review(s) changed under current deterministic replay."
+            else (
+                f"{len(affected)} completed review(s) changed under current deterministic replay; "
+                f"{skipped_ignored} ignored review(s) were preserved."
+            )
         ),
     }
 

@@ -8,7 +8,9 @@ from pathlib import Path
 
 import pandas as pd
 
+from astro_event_contract import enrich_event_roles_frame
 from doctrine_config import configure_swiss_ephemeris_sidereal
+from financial_astro_ephemeris import patch_legacy_jdml4_astronomy
 
 
 PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
@@ -218,7 +220,7 @@ def merge_overlapping_event_rows(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty or not {"timestamp", "duration_minutes", "aspect", "b1", "b2"}.issubset(df.columns):
         return df.copy()
 
-    work = df.copy()
+    work = enrich_event_roles_frame(df)
     work["timestamp"] = pd.to_datetime(work["timestamp"], errors="coerce")
     work = work.dropna(subset=["timestamp"]).copy()
     work["duration_minutes"] = pd.to_numeric(work["duration_minutes"], errors="coerce").fillna(60.0)
@@ -231,14 +233,15 @@ def merge_overlapping_event_rows(df: pd.DataFrame) -> pd.DataFrame:
         work["closeness"] = 0.0
     work["closeness"] = pd.to_numeric(work["closeness"], errors="coerce").fillna(0.0)
 
+    role_columns = ["event_scope", "event_transit_body", "event_natal_body"]
     work = work.sort_values(
-        ["pair_key", "aspect", "is_natal", "timestamp", "event_end", "closeness"],
-        ascending=[True, True, True, True, True, False],
+        ["pair_key", "aspect", "is_natal", *role_columns, "timestamp", "event_end", "closeness"],
+        ascending=[True, True, True, True, True, True, True, True, False],
     ).reset_index(drop=True)
 
     merged_rows: list[pd.Series] = []
     current_rows: list[pd.Series] = []
-    current_key: tuple[str, str, bool] | None = None
+    current_key: tuple[str, str, bool, str, str, str] | None = None
     current_start: pd.Timestamp | None = None
     current_end: pd.Timestamp | None = None
 
@@ -258,7 +261,14 @@ def merge_overlapping_event_rows(df: pd.DataFrame) -> pd.DataFrame:
         current_end = None
 
     for _, row in work.iterrows():
-        row_key = (str(row["pair_key"]), str(row["aspect"]), bool(row["is_natal"]))
+        row_key = (
+            str(row["pair_key"]),
+            str(row["aspect"]),
+            bool(row["is_natal"]),
+            str(row.get("event_scope", "")),
+            str(row.get("event_transit_body", "")),
+            str(row.get("event_natal_body", "")),
+        )
         row_start = pd.Timestamp(row["timestamp"])
         row_end = pd.Timestamp(row["event_end"])
         if current_key is None:
@@ -294,6 +304,7 @@ def merge_overlapping_event_rows(df: pd.DataFrame) -> pd.DataFrame:
 def main() -> None:
     args = parse_args()
     jdml4 = load_jdml4()
+    patch_legacy_jdml4_astronomy(jdml4)
     patch_avg_all_parser(jdml4)
 
     # Point outputs to explicit files so the Desktop project is not overwritten by accident.
@@ -364,8 +375,9 @@ def main() -> None:
     df = pd.read_parquet(out_path)
     before_rows = len(df)
     df = merge_overlapping_event_rows(df)
+    df["astronomy_contract_version"] = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_V1"
+    df.to_parquet(out_path, index=False)
     if len(df) != before_rows:
-        df.to_parquet(out_path, index=False)
         print(f"Merged overlapping same-pair windows: {before_rows} -> {len(df)} rows")
     print("Dataset rows:", len(df))
     if not df.empty:

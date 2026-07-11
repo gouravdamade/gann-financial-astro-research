@@ -1,31 +1,20 @@
 ﻿from __future__ import annotations
 
 import argparse
+import hashlib
 import json
-import sys
 from datetime import timedelta, timezone as dt_timezone
-from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
+import swisseph as swe
 
-PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
-if str(PROJECT_DIR) not in sys.path:
-    sys.path.insert(0, str(PROJECT_DIR))
-
-from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from planetary_sr_engine import DEFAULT_SR_PLANETS
-from JDML4 import (
-    TS,
-    eph,
-    swe,
-    ReferenceChartEngine,
-    get_house_of_planet,
-    get_zodiac_sign,
-    get_vedic_aspect_angles_for_planet,
-    drishti_aspect_name_for_angle,
+from astro_event_contract import enrich_event_roles_frame
+from financial_astro_ephemeris import (
+    fetch_planetary_longitude as canonical_planetary_longitude,
+    sidereal_house_cusps,
 )
 from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
 from padmanabhan_timing_doctrine import (
@@ -74,6 +63,7 @@ AVG_ALL_PLANETS = (
     "PLUTO",
 )
 AVG_ALL_PLANET_SET = set(AVG_ALL_PLANETS)
+DEFAULT_SR_PLANETS = ("MOON", "MERCURY", "VENUS", "SUN", "MARS", "JUPITER", "SATURN")
 SR_TOUCH_PLANETS = tuple(DEFAULT_SR_PLANETS) + ("RAHU", "KETU", "URANUS", "NEPTUNE", "PLUTO")
 HARD_ASPECTS = {"opposition", "opposition_orb", "square", "drishti_3", "drishti_4", "drishti_10"}
 SOFT_ASPECTS = {"conjunction", "conjunction_orb", "trine", "drishti_5", "drishti_8", "drishti_9"}
@@ -118,6 +108,57 @@ MOVABLE_SIGNS = {1, 4, 7, 10}
 FIXED_SIGNS = {2, 5, 8, 11}
 DUAL_SIGNS = {3, 6, 9, 12}
 DOCTRINE_AYANAMSA = configure_swiss_ephemeris_sidereal(swe)
+
+VEDIC_DRISHTI_HOUSE_MAP = {
+    "SUN": (7,),
+    "MOON": (7,),
+    "MERCURY": (7,),
+    "MARS": (4, 7, 8),
+    "JUPITER": (5, 7, 9),
+    "VENUS": (7,),
+    "SATURN": (3, 7, 10),
+    "RAHU": (5, 7, 9),
+    "KETU": (5, 7, 9),
+}
+
+
+def get_zodiac_sign(lon: float) -> str:
+    signs = ("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+    return signs[int((float(lon) % 360.0) // 30.0)]
+
+
+def get_house_of_planet(lon: float, houses: dict[int, float]) -> int | None:
+    value = float(lon) % 360.0
+    for house in range(1, 13):
+        start = houses.get(house)
+        end = houses.get(1 if house == 12 else house + 1)
+        if start is None or end is None:
+            continue
+        if start < end and start <= value < end:
+            return house
+        if start >= end and (value >= start or value < end):
+            return house
+    return None
+
+
+def drishti_aspect_name_for_angle(angle: float) -> str:
+    normalized = round(float(angle) % 360.0, 6)
+    if abs(normalized) < 1e-6:
+        return "conjunction"
+    if abs(normalized - 180.0) < 1e-6:
+        return "opposition"
+    return f"drishti_{int(normalized // 30.0) + 1}"
+
+
+def get_vedic_aspect_angles_for_planet(planet_name: str) -> set[float]:
+    houses = set(VEDIC_DRISHTI_HOUSE_MAP.get(normalize_body_name(planet_name), (7,))) | {7}
+    return {((house - 1) * 30.0) % 360.0 for house in houses}
+
+
+def datetime_index_digest(index: pd.DatetimeIndex) -> str:
+    idx = pd.DatetimeIndex(index)
+    payload = idx.asi8.tobytes() + str(idx.tz).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def normalize_body_name(name: Any) -> str:
@@ -241,20 +282,7 @@ def get_vedic_aspects_for_planet(planet_name: str, aspect_mode: str = "graha") -
         cfg["rashi_fixed"] = {"kind": "rashi", "mode": "fixed", "orb": 1.0}
         cfg["rashi_dual"] = {"kind": "rashi", "mode": "dual", "orb": 1.0}
     return cfg
-PLANET_KEYS = {
-    "MERCURY": "MERCURY",
-    "VENUS": "VENUS",
-    "MARS": "MARS",
-    "JUPITER": "JUPITER_BARYCENTER",
-    "SATURN": "SATURN_BARYCENTER",
-    "URANUS": "URANUS_BARYCENTER",
-    "NEPTUNE": "NEPTUNE_BARYCENTER",
-    "PLUTO": "PLUTO_BARYCENTER",
-    "SUN": "SUN",
-    "MOON": "MOON",
-    "EARTH": "EARTH",
-}
-LONGITUDE_CACHE: dict[tuple[str, str, str, str, str, int], pd.Series] = {}
+LONGITUDE_CACHE: dict[tuple[str, str, str, str], pd.Series] = {}
 
 
 def parse_args() -> argparse.Namespace:
@@ -331,11 +359,12 @@ def merge_overlapping_event_windows(events: pd.DataFrame) -> pd.DataFrame:
     if events.empty:
         return events.copy()
 
+    role_columns = ["event_scope", "event_transit_body", "event_natal_body"]
     work = (
         events.copy()
         .sort_values(
-            ["pair_key", "aspect", "is_natal", "timestamp", "event_end", "duration_minutes"],
-            ascending=[True, True, True, True, True, False],
+            ["pair_key", "aspect", "is_natal", *role_columns, "timestamp", "event_end", "duration_minutes"],
+            ascending=[True, True, True, True, True, True, True, True, False],
         )
         .reset_index(drop=True)
     )
@@ -354,6 +383,9 @@ def merge_overlapping_event_windows(events: pd.DataFrame) -> pd.DataFrame:
             str(current.get("pair_key", "")) == str(row_dict.get("pair_key", ""))
             and str(current.get("aspect", "")) == str(row_dict.get("aspect", ""))
             and bool(current.get("is_natal", False)) == bool(row_dict.get("is_natal", False))
+            and str(current.get("event_scope", "")) == str(row_dict.get("event_scope", ""))
+            and str(current.get("event_transit_body", "")) == str(row_dict.get("event_transit_body", ""))
+            and str(current.get("event_natal_body", "")) == str(row_dict.get("event_natal_body", ""))
         )
         current_end = pd.Timestamp(current["event_end"])
         if same_key and row_start <= current_end:
@@ -406,9 +438,7 @@ def fetch_planetary_longitude_fast(
         planet,
         str(astrology_method).lower(),
         str(coordinate_system).lower(),
-        str(idx[0]),
-        str(idx[-1]),
-        len(idx),
+        datetime_index_digest(idx),
     )
     cached = LONGITUDE_CACHE.get(cache_key)
     if cached is not None:
@@ -432,62 +462,14 @@ def fetch_planetary_longitude_fast(
         LONGITUDE_CACHE[cache_key] = out
         return out.reindex(idx, method="ffill")
 
-    if planet in {"RAHU", "KETU"}:
-        utc_idx = idx.tz_convert(UTC)
-        longs: list[float] = []
-        for local_ts, utc_ts in zip(idx, utc_idx, strict=False):
-            try:
-                hour = (
-                    float(utc_ts.hour)
-                    + (float(utc_ts.minute) / 60.0)
-                    + (float(utc_ts.second) / 3600.0)
-                    + (float(utc_ts.microsecond) / 3_600_000_000.0)
-                )
-                jd_ut = swe.julday(int(utc_ts.year), int(utc_ts.month), int(utc_ts.day), hour)
-                flags = swe.FLG_SWIEPH | swe.FLG_SPEED
-                node_res = swe.calc_ut(jd_ut, swe.TRUE_NODE, flags=flags)
-                lon = float(node_res[0][0]) % 360.0
-                if planet == "KETU":
-                    lon = (lon + 180.0) % 360.0
-                if astrology_method == "sidereal":
-                    lon = (lon - swe.get_ayanamsa_ut(float(pd.Timestamp(local_ts).to_julian_date()))) % 360.0
-                longs.append(lon)
-            except Exception:
-                longs.append(np.nan)
-        out = pd.Series(longs, index=idx).ffill()
-        LONGITUDE_CACHE[cache_key] = out
-        return out.reindex(idx, method="ffill")
-    if coordinate_system == "helio" and planet == "MOON":
-        raise ValueError("Moon not available in heliocentric mode.")
-
-    key = PLANET_KEYS.get(planet)
-    if key is None:
-        raise ValueError(f"Unknown planet: {planet_name}")
-
-    observer = eph["sun"] if coordinate_system == "helio" else eph["earth"]
-    astro_body = eph[key]
-    utc_idx = idx.tz_convert(UTC)
-    seconds = utc_idx.second.to_numpy(dtype=np.float64) + utc_idx.microsecond.to_numpy(dtype=np.float64) / 1e6
-    ts = TS.utc(
-        utc_idx.year.to_numpy(dtype=np.int32),
-        utc_idx.month.to_numpy(dtype=np.int32),
-        utc_idx.day.to_numpy(dtype=np.int32),
-        utc_idx.hour.to_numpy(dtype=np.int32),
-        utc_idx.minute.to_numpy(dtype=np.int32),
-        seconds,
+    out = canonical_planetary_longitude(
+        planet,
+        idx,
+        astrology_method=astrology_method,
+        coordinate_system=coordinate_system,
     )
-    astrometric = observer.at(ts).observe(astro_body)
-    _, ecl_lon, _ = astrometric.ecliptic_latlon(epoch="date")
-    lon = np.asarray(ecl_lon.degrees, dtype=np.float64) % 360.0
-
-    if coordinate_system == "geo" and astrology_method == "sidereal":
-        julian_dates = idx.to_julian_date().to_numpy(dtype=np.float64)
-        ayanamsa = np.array([swe.get_ayanamsa_ut(float(jd)) for jd in julian_dates], dtype=np.float64)
-        lon = (lon - ayanamsa) % 360.0
-
-    out = pd.Series(lon, index=idx).ffill()
     LONGITUDE_CACHE[cache_key] = out
-    return out.reindex(idx, method="ffill")
+    return out.copy()
 
 
 def safe_json(value: Any) -> Any:
@@ -867,13 +849,20 @@ def build_reference_context(
     else:
         ref_dt_source = ref_dt_source.tz_convert(source_tz)
     ref_dt = ref_dt_source.tz_convert(ist_tz)
-    engine = ReferenceChartEngine(
-        chart_type="ipo",
-        dt_ist=ref_dt.to_pydatetime(),
-        lat=float(lat),
-        lon=float(lon),
-    )
-    engine.compute_all()
+    required_planets = tuple(dict.fromkeys(AVG_ALL_PLANETS + tuple(planets) + PADMANABHAN_CLASSICAL_PLANETS + PADMANABHAN_NODE_PLANETS))
+    reference_positions: dict[str, float] = {}
+    for planet in required_planets:
+        if parse_avg_members(planet):
+            continue
+        series = fetch_planetary_longitude_fast(
+            planet,
+            pd.DatetimeIndex([ref_dt]),
+            astrology_method="sidereal",
+            coordinate_system="geo",
+        )
+        if not series.empty and np.isfinite(float(series.iloc[0])):
+            reference_positions[normalize_body_name(planet)] = float(series.iloc[0]) % 360.0
+    reference_houses = sidereal_house_cusps(ref_dt, float(lat), float(lon), house_system=b"O")
     natal_longitudes: dict[str, float] = {}
     natal_signs: dict[str, str] = {}
     natal_houses: dict[str, int | None] = {}
@@ -882,28 +871,28 @@ def build_reference_context(
         avg_members = parse_avg_members(planet_key)
         if avg_members:
             values = [
-                float(engine.planets_lon.get(member))
+                float(reference_positions.get(member))
                 for member in avg_members
-                if member in engine.planets_lon and np.isfinite(float(engine.planets_lon.get(member)))
+                if member in reference_positions and np.isfinite(float(reference_positions.get(member)))
             ]
             if not values:
                 continue
             lon_f = circular_average_degrees(values)
             store_key = AVG_ALL_LABEL if avg_members == AVG_ALL_PLANETS else planet_key
         else:
-            lon = engine.planets_lon.get(planet_key)
+            lon = reference_positions.get(planet_key)
             if lon is None or not np.isfinite(float(lon)):
                 continue
             lon_f = float(lon)
             store_key = planet_key
         natal_longitudes[store_key] = lon_f
         natal_signs[store_key] = str(get_zodiac_sign(lon_f))
-        natal_houses[store_key] = get_house_of_planet(lon_f, engine.houses)
+        natal_houses[store_key] = get_house_of_planet(lon_f, reference_houses)
     timing_planets = tuple(dict.fromkeys(PADMANABHAN_CLASSICAL_PLANETS + PADMANABHAN_NODE_PLANETS))
     timing_longitudes = {
-        planet: float(engine.planets_lon[planet]) % 360.0
+        planet: float(reference_positions[planet]) % 360.0
         for planet in timing_planets
-        if planet in engine.planets_lon and np.isfinite(float(engine.planets_lon[planet]))
+        if planet in reference_positions and np.isfinite(float(reference_positions[planet]))
     }
     strict_houses = sidereal_house_cusps_for_time(ref_dt, float(lat), float(lon))
     strict_asc_lon = strict_houses.get(1, np.nan)
@@ -1033,9 +1022,8 @@ def sidereal_house_cusps_for_time(timestamp: Any, lat: float, lon: float) -> dic
         utc_ts = ts.tz_convert(UTC) if ts.tzinfo is not None else ts.tz_localize(IST).tz_convert(UTC)
         hour = utc_ts.hour + (utc_ts.minute / 60.0) + (utc_ts.second / 3600.0)
         jd_ut = swe.julday(utc_ts.year, utc_ts.month, utc_ts.day, hour)
-        houses, _ = swe.houses(jd_ut, float(lat), float(lon))
-        ayanamsa = float(swe.get_ayanamsa_ut(jd_ut))
-        return {i + 1: (float(cusp) - ayanamsa) % 360.0 for i, cusp in enumerate(houses)}
+        houses, _ = swe.houses_ex(jd_ut, float(lat), float(lon), b"O", swe.FLG_SIDEREAL)
+        return {i + 1: float(cusp) % 360.0 for i, cusp in enumerate(houses)}
     except Exception:
         return {}
 
@@ -1116,9 +1104,12 @@ def build_event_strict_shadbala_context(
     houses = sidereal_house_cusps_for_time(timestamp, lat, lon)
     asc_lon = houses.get(1, np.nan)
     observables = strict_shadbala_observables_for_time(timestamp)
-    return event_strict_shadbala_context(
-        event.get("b1"),
-        event.get("b2"),
+    is_natal = bool(event.get("is_natal", False))
+    first_body = event.get("event_transit_body") if is_natal else event.get("b1")
+    second_body = "" if is_natal else event.get("b2")
+    out = event_strict_shadbala_context(
+        first_body,
+        second_body,
         longitudes,
         asc_lon,
         houses,
@@ -1128,6 +1119,12 @@ def build_event_strict_shadbala_context(
         observables.get("latitudes", {}),
         observables.get("declinations", {}),
     )
+    out["event_strict_shadbala_scope_policy"] = (
+        "TN_transiting_body_only_natal_target_strength_not_implemented"
+        if is_natal
+        else "TT_both_transiting_bodies"
+    )
+    return out
 
 
 def build_event_padmanabhan_timing_context(
@@ -1504,7 +1501,7 @@ def build_bar_analyzer(price: pd.DataFrame, lon_map: dict[str, pd.Series], cfg: 
 def main() -> None:
     args = parse_args()
 
-    events = pd.read_parquet(args.events)
+    events = enrich_event_roles_frame(pd.read_parquet(args.events))
     if "is_natal" in events.columns and not args.include_natal:
         events = events[~events["is_natal"].astype(bool)].copy()
     if "interval" in events.columns:
@@ -1622,15 +1619,17 @@ def main() -> None:
             f"lat={float(args.base_reference_lat):.4f}",
             f"lon={float(args.base_reference_lon):.4f}",
         )
-    print(f"Building adaptive longitude map for {len(cfg['planets'])} planets on analysis bars...")
-    lon_map = build_adaptive_longitude_map(
-        planets=list(cfg["planets"]),
-        full_timestamps=analysis_price.index,
-        fetch_fn=fetch_planetary_longitude_fast,
-        astrology_method="sidereal",
-        coordinate_system="geo",
-    )
-    print("Longitude map ready. Building touch analyzer...")
+    print(f"Building exact longitude map for {len(cfg['planets'])} entities on analysis bars...")
+    lon_map = {
+        planet: fetch_planetary_longitude_fast(
+            planet,
+            analysis_price.index,
+            astrology_method="sidereal",
+            coordinate_system="geo",
+        )
+        for planet in cfg["planets"]
+    }
+    print("Exact longitude map ready. Building touch analyzer...")
     compute_bar_touches, _, _, _, _ = build_bar_analyzer(analysis_price, lon_map, cfg)
     compute_natal_features = build_natal_feature_builder(lon_map, cfg, natal_ctx, args.aspect_mode)
     compute_base_natal_features = (
@@ -1653,6 +1652,8 @@ def main() -> None:
 
     rows: list[dict[str, Any]] = []
     touch_seq = 0
+    quarantined_geometry_events = 0
+    quarantined_legacy_node_events = 0
     total = len(events)
     for pos, (_, event) in enumerate(events.iterrows(), start=1):
         if pos == 1 or pos % 250 == 0:
@@ -1662,6 +1663,14 @@ def main() -> None:
         end_idx = int(event["idx_end"])
         if end_idx < start_idx:
             start_idx, end_idx = end_idx, start_idx
+        source_contract = str(event.get("astronomy_contract_version") or "").strip()
+        principal_bodies = {
+            normalize_body_name(event.get("event_transit_body")),
+            normalize_body_name(event.get("event_natal_body")),
+        }
+        if not source_contract and principal_bodies.intersection({"RAHU", "KETU"}):
+            quarantined_legacy_node_events += 1
+            continue
         event_metrics = compute_event_aspect_metrics(
             event,
             start_idx,
@@ -1671,6 +1680,17 @@ def main() -> None:
             lon_map,
             natal_ctx,
         )
+        runtime_cfg = event_runtime_config(str(event.get("aspect", "")))
+        if runtime_cfg.get("kind") in {"orb", "graha", "rashi"}:
+            event_orb = event_metrics.get("event_orb_deg")
+            event_limit = event_metrics.get("event_orb_limit_deg")
+            try:
+                valid_geometry = np.isfinite(float(event_orb)) and float(event_orb) <= float(event_limit) + 0.05
+            except (TypeError, ValueError):
+                valid_geometry = False
+            if not valid_geometry:
+                quarantined_geometry_events += 1
+                continue
         event_panchanga = build_event_panchanga_context(
             event_metrics,
             start_idx,
@@ -1753,6 +1773,15 @@ def main() -> None:
                 row = {
                     "touch_id": touch_id,
                     "event_id": event.get("event_id"),
+                    "is_natal": int(bool(event.get("is_natal", False))),
+                    "event_scope": event.get("event_scope"),
+                    "event_transit_body": event.get("event_transit_body"),
+                    "event_natal_body": event.get("event_natal_body"),
+                    "event_role_resolution_status": event.get("event_role_resolution_status"),
+                    "event_role_best_orb_deg": event.get("event_role_best_orb_deg"),
+                    "event_role_alternate_orb_deg": event.get("event_role_alternate_orb_deg"),
+                    "event_source_astronomy_contract": source_contract or "legacy_unversioned",
+                    "event_geometry_validation_status": "pass_within_declared_orb",
                     "pair_key": event.get("pair_key"),
                     "b1": event.get("b1"),
                     "b2": event.get("b2"),
@@ -1834,7 +1863,7 @@ def main() -> None:
                     "ret_after_72h_dir": direction_from_change(ret_after72),
                     "shadbala_tag": event.get("shadbala_tag"),
                     "shadbala_avg": event.get("avg_shadbala"),
-                    "shadbala_doctrine_status": "partial_high_confidence_components_pending_full_six_bala",
+                    "shadbala_doctrine_status": "provisional_source_aligned_components_pending_external_validation",
                     "moon_nakshatra": event.get("moon_nakshatra"),
                     "delta_1d": event.get("delta_1d"),
                     "delta_3d": event.get("delta_3d"),
@@ -1889,6 +1918,12 @@ def main() -> None:
                     row.update(prefix_dict(base_natal_features, "base_"))
                 rows.append(row)
 
+    if quarantined_legacy_node_events or quarantined_geometry_events:
+        print(
+            "Quarantined source events:",
+            f"legacy_node={quarantined_legacy_node_events}",
+            f"geometry_mismatch={quarantined_geometry_events}",
+        )
     if not rows:
         raise RuntimeError("No touch rows generated.")
 
@@ -1978,8 +2013,13 @@ def compute_event_aspect_metrics(
 ) -> dict[str, Any]:
     aspect_name = str(event.get("aspect", "")).strip().lower()
     cfg = event_runtime_config(aspect_name)
-    left_name = str(event.get("b1", "")).strip().upper()
-    right_name = str(event.get("b2", "")).strip().upper()
+    is_natal = bool(event.get("is_natal", False))
+    left_name = str(
+        event.get("event_transit_body", "") if is_natal else event.get("b1", "")
+    ).strip().upper()
+    right_name = str(
+        event.get("event_natal_body", "") if is_natal else event.get("b2", "")
+    ).strip().upper()
 
     out = {
         "event_pair_sep_deg": np.nan,
@@ -1993,6 +2033,8 @@ def compute_event_aspect_metrics(
         "event_best_hour_offset": np.nan,
         "event_b1_sign": "",
         "event_b2_sign": "",
+        "event_metric_left_role": "transit" if is_natal else "transit_1",
+        "event_metric_right_role": "natal" if is_natal else "transit_2",
     }
 
     if cfg["kind"] == "rashi":

@@ -1,0 +1,44 @@
+﻿ M CURRENT_PROJECT_HANDOFF.md
+ M README.md
+ M analyze_btc_aspect_effectiveness.py
+ M astro_feature_inventory_from_pdfs.md
+ M astro_function_certification.py
+ M astro_function_certification_report_20260527.md
+ M astro_function_research_audit_20260521.md
+ M astro_function_research_audit_20260527.md
+ M build_aspect_sr_touch_log.py
+ M build_btc_weekly_astro_chart.py
+ M build_pair_aspect_market_log.py
+ M build_sr_anchor_reversal_log.py
+ M build_trade_candidates_from_touches.py
+ M doctrine_config.py
+ M doctrine_config.yaml
+ M evaluate_transitsign_walk_forward.py
+ M generate_sr_candidate_chart_pack.py
+ M generate_upcoming_aspects.py
+ M jyotish_agent/build_corpus_index.py
+ M jyotish_agent/explain_case.py
+ M monitor_touchlog_rebuild_telegram.py
+ M rebuild_dataset_mt5_ipo_allpairs.py
+ M research_labs/ashtakavarga_validation/ashtakavarga_lab/kas.py
+ M reviewer_rule_replay.py
+ M serve_repeatation_pack.py
+ M sr_lazy_reactive_dashboard.py
+ M sr_touch_lazy_dashboard.py
+ D sr_touch_lazy_dashboard_restored.py
+ M strict_shadbala_doctrine.py
+ M test_jyotish_corpus_index.py
+ M test_strict_shadbala_doctrine.py
+ M trusted_external_sources.md
+ M vedic_pdf_alignment_review_20260520.md
+?? astro_event_contract.py
+?? end_to_end_financial_astro_audit_20260711.md
+?? financial_astro_ephemeris.py
+?? pytest.ini
+?? requirements-dev.txt
+?? requirements.txt
+?? test_astro_event_contract.py
+?? test_evaluate_transitsign_walk_forward.py
+?? test_financial_astro_ephemeris.py
+?? test_reviewer_rule_replay.py
+?? tryapp-android/

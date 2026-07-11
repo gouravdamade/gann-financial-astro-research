@@ -2,8 +2,6 @@
 
 import argparse
 import json
-import sys
-from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
@@ -16,14 +14,10 @@ except Exception:
     timezone = None
 
 
-# Use the original JDML4 environment for the same longitude engine.
-PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
-if str(PROJECT_DIR) not in sys.path:
-    sys.path.insert(0, str(PROJECT_DIR))
+import swisseph as swe
 
-from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude, swe
 from doctrine_config import configure_swiss_ephemeris_sidereal
+from financial_astro_ephemeris import build_exact_longitude_map, fetch_planetary_longitude
 
 
 IST = "Asia/Kolkata"
@@ -40,7 +34,7 @@ DEFAULT_PLANETS = ("SUN", "MOON", "VENUS", "MERCURY", "JUPITER", "SATURN", "MARS
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Build an event-level log where the nearest JDML4 planetary SR line "
+            "Build an event-level log where the nearest canonical planetary SR line "
             "is used as a line-relative anchor and reversals are measured before/"
             "during/after each event."
         )
@@ -386,7 +380,7 @@ def main() -> None:
     needed_planets = sorted(p for p in needed_planets if p)
 
     print("Building adaptive longitude map for", len(needed_planets), "planets...")
-    lon_map = build_adaptive_longitude_map(
+    lon_map = build_exact_longitude_map(
         planets=needed_planets,
         full_timestamps=timestamps,
         fetch_fn=fetch_planetary_longitude,
@@ -437,7 +431,6 @@ def main() -> None:
                                         best = (str(planet), mode, float(harmonic), float(n_value), int(degree))
                 if best is not None:
                     events.at[i, "anchor_identity"] = best
-                    line = lon_map[best[0]].to_numpy(dtype=float)
                     line_map[best] = (
                         line_from_identity_series(lon_map[best[0]], best)
                         if best not in line_map
@@ -476,7 +469,6 @@ def main() -> None:
     close_arr = pd.to_numeric(price["close"], errors="coerce").to_numpy(dtype=float)
 
     rows = []
-    n_events = len(events)
     for _, row in events.iterrows():
         idx_start = int(row["idx_start"])
         idx_end = int(row["idx_end"])

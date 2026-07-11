@@ -1,5 +1,8 @@
 ﻿# Vedic PDF Alignment Review - 2026-05-20
 
+> **Historical snapshot:** This source-alignment review predates the corrected astronomy and
+> Shadbala audit. Use `end_to_end_financial_astro_audit_20260711.md` for current status.
+
 ## Sources Checked
 
 - `D:\GannFinancialAstro\doc\Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.pdf`

@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import timezone
 from pathlib import Path
 from typing import Any
 
@@ -13,13 +12,6 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
-PROJECT_ROOT = Path(__file__).resolve().parent
-LEGACY_PROJECT = Path(r"D:\Trading_Algo\New folder")
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-if LEGACY_PROJECT.exists() and str(LEGACY_PROJECT) not in sys.path:
-    sys.path.insert(0, str(LEGACY_PROJECT))
 
 import swisseph as swe
 
@@ -236,10 +228,9 @@ def birth_chart(place: PlaceHypothesis) -> dict[str, Any]:
     natal = {body: planet_lon(body, GENESIS_UTC) for body in BODY_ORDER}
     jd = jd_ut(GENESIS_UTC)
     try:
-        houses, ascmc = swe.houses(jd, float(place.lat), float(place.lon))
-        ayan = float(swe.get_ayanamsa_ut(jd))
-        asc = (float(ascmc[0]) - ayan) % 360.0
-        mc = (float(ascmc[1]) - ayan) % 360.0
+        _, ascmc = swe.houses_ex(jd, float(place.lat), float(place.lon), b"P", swe.FLG_SIDEREAL)
+        asc = float(ascmc[0]) % 360.0
+        mc = float(ascmc[1]) % 360.0
     except Exception:
         asc = np.nan
         mc = np.nan

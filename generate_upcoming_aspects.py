@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import swisseph as swe
 
+from astro_event_contract import scoped_family_key
 from aspect_annotation_store import DEFAULT_DB_PATH, initialize_database
 from doctrine_config import configure_swiss_ephemeris_sidereal, doctrine_ayanamsa_name
 
@@ -323,12 +324,15 @@ def rows_from_windows(windows: list[Window], context: dict[str, dict[str, Any]],
     rows: list[dict[str, Any]] = []
     for window in sorted(windows, key=lambda item: (item.start, item.peak_orb_delta_deg, item.body1, item.body2)):
         pkey = pair_key(window.body1, window.body2)
-        family = f"{pkey}::{window.aspect}"
+        family = scoped_family_key(pkey, window.aspect, "TT")
         ctx = context.get(family, {})
         duration = max(0, int((window.end - window.start).total_seconds() // 60))
         rows.append(
             {
                 "family_key": family,
+                "legacy_unscoped_family_key": f"{pkey}::{window.aspect}",
+                "event_scope": "TT",
+                "review_context_policy": "scoped_only_no_implicit_TN_to_TT_transfer",
                 "pair_key": pkey,
                 "body1": window.body1,
                 "body2": window.body2,
@@ -387,7 +391,9 @@ def main() -> None:
                         min_window_minutes=int(args.min_window_minutes),
                     )
                 )
-    families = sorted({f"{pair_key(item.body1, item.body2)}::{item.aspect}" for item in windows})
+    families = sorted(
+        {scoped_family_key(pair_key(item.body1, item.body2), item.aspect, "TT") for item in windows}
+    )
     context = {} if args.no_review_context else review_context(args.db, families)
     metadata = {"ayanamsa": doctrine_ayanamsa_name(), "ephemeris_path": ephemeris_path}
     frame = rows_from_windows(windows, context, metadata)

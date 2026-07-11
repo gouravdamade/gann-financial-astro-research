@@ -3,17 +3,12 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
-
-PROJECT_ROOT = Path(__file__).resolve().parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 from build_btc_weekly_astro_chart import (
     ASPECTS,
@@ -26,7 +21,6 @@ from build_btc_weekly_astro_chart import (
     build_daily_transits,
     configure_ephemeris,
     fetch_binance_weekly,
-    parse_float_list,
 )
 
 
@@ -280,7 +274,9 @@ def summarize(events: pd.DataFrame) -> pd.DataFrame:
         pos_rate = float((returns > 0).mean()) if len(returns) else np.nan
         neg_rate = float((returns < 0).mean()) if len(returns) else np.nan
         consistency = max(pos_rate, neg_rate) if np.isfinite(pos_rate) and np.isfinite(neg_rate) else np.nan
-        turn_hits = int(((short["crest_inside_window"] == True) | (short["trough_inside_window"] == True)).sum())
+        crest_flags = short["crest_inside_window"].fillna(False).astype(bool)
+        trough_flags = short["trough_inside_window"].fillna(False).astype(bool)
+        turn_hits = int((crest_flags | trough_flags).sum())
         turn_rate = turn_hits / len(short) if len(short) else np.nan
         long_returns = pd.to_numeric(long["start_end_return_pct"], errors="coerce")
         avg_abs_return = float(returns.abs().mean()) if len(returns.dropna()) else np.nan
@@ -326,8 +322,8 @@ def summarize(events: pd.DataFrame) -> pd.DataFrame:
                 "short_turn_windows": int(len(short)),
                 "short_turn_hits": turn_hits,
                 "short_turn_hit_rate": turn_rate,
-                "crest_hits": int((short["crest_inside_window"] == True).sum()),
-                "trough_hits": int((short["trough_inside_window"] == True).sum()),
+                "crest_hits": int(crest_flags.sum()),
+                "trough_hits": int(trough_flags.sum()),
                 "long_trend_windows": int(len(long)),
                 "long_avg_return_pct": float(long_returns.mean()) if len(long_returns.dropna()) else np.nan,
                 "long_median_return_pct": float(long_returns.median()) if len(long_returns.dropna()) else np.nan,

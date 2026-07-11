@@ -1,5 +1,8 @@
 # Astro Function Research Audit Addendum - 2026-05-27
 
+> **Historical snapshot:** This addendum is preserved as research provenance. It is superseded
+> for current implementation/certification status by `end_to_end_financial_astro_audit_20260711.md`.
+
 Private USDJPY Gann / Vedic financial astrology workspace.
 
 This addendum records the next audit direction after the repeatation reviewer became rule-heavy enough that silent assumptions are now the main risk.

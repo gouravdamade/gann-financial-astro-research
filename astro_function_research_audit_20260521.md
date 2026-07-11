@@ -1,5 +1,8 @@
 ﻿# Astro Function Research Audit - 2026-05-21
 
+> **Historical snapshot:** This audit records the state known in May 2026. Current implementation
+> and risk status are in `end_to_end_financial_astro_audit_20260711.md`.
+
 Private USDJPY Gann / Vedic financial astrology workspace.
 
 This audit reviews the current Python astro/research functions against the local PDFs and a web cross-check. It is not a trading recommendation. The purpose is to decide what doctrine and feature work should be completed before heavier ML training on manually reviewed `case_id` repeatations.

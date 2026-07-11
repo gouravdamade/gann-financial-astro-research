@@ -1,0 +1,21 @@
+# Core research and data pipeline
+numpy>=2.0
+pandas>=2.2
+pyarrow>=16
+pyswisseph>=2.10.3.2
+PyYAML>=6
+requests>=2.32
+
+# Modeling and local retrieval
+joblib>=1.4
+scikit-learn>=1.5
+
+# Charts and review UI
+dash>=3
+plotly>=6
+
+# Spreadsheet interchange
+openpyxl>=3.1
+
+# Windows-only demo/live execution adapter
+MetaTrader5>=5.0.45; platform_system == "Windows"

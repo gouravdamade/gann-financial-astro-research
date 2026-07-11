@@ -2,8 +2,6 @@
 
 import argparse
 import json
-import sys
-from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
@@ -14,13 +12,10 @@ try:
 except Exception:  # pragma: no cover
     timezone = None
 
-PROJECT_DIR = Path(r"D:\\Trading_Algo\\New folder")
-if str(PROJECT_DIR) not in sys.path:
-    sys.path.insert(0, str(PROJECT_DIR))
+import swisseph as swe
 
-from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude, swe
 from doctrine_config import configure_swiss_ephemeris_sidereal
+from financial_astro_ephemeris import build_exact_longitude_map, fetch_planetary_longitude
 
 IST = "Asia/Kolkata"
 UTC = "UTC"
@@ -35,7 +30,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Build a row-level planetary pair/aspect market log with before/during/after\n"
-            "line-relative metrics using JDML4 SR pivots."
+            "line-relative metrics using the canonical Raman Swiss-Ephemeris SR pivots."
         )
     )
     parser.add_argument(
@@ -428,7 +423,7 @@ def main() -> None:
     needed_planets = sorted(p for p in needed_planets if p)
 
     print(f"Building adaptive longitude map for {len(needed_planets)} planets...")
-    lon_map = build_adaptive_longitude_map(
+    lon_map = build_exact_longitude_map(
         planets=needed_planets,
         full_timestamps=ts,
         fetch_fn=fetch_planetary_longitude,

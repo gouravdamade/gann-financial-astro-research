@@ -653,7 +653,7 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
             "heuristic_v1_base_minus_quote;USDJPY=USD_reference_score-JPY_reference_score;"
             "doctrine_v1_adds_sign_dignity_friendship_sthana_bala;"
             "padmanabhan_timing_index_is_parallel_evidence_only_not_signal_input;"
-            "full_shadbala_and_strict_drik_bala_pending;ml_must_validate"
+            "shadbala_and_strict_drik_provisional_uncertified;ml_must_validate"
             ";avg_all_scoring_expands_to_7_classical_planets"
             if has_base_reference
             else "base_reference_missing;pair_hypothesis_not_scored"
@@ -948,7 +948,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
         "padmanabhan_timing_v1_is_source_bounded_evidence_only_and_does_not_change_trade_direction;"
-        "full_shadbala_and_strict_drik_bala_pending;"
+        "shadbala_and_strict_drik_provisional_uncertified;"
         "ml_must_validate"
     )
 

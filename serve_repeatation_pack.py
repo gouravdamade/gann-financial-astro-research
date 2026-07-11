@@ -301,8 +301,6 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 raise ValueError("family_key is required")
             trade = payload.get("trade_profit") or {}
             auto = payload.get("auto_suggestion") or {}
-            start = payload.get("trade_start") or {}
-            end = payload.get("trade_end") or {}
         except Exception as exc:
             self._send_json(400, {"ok": False, "error": f"bad complete review request: {exc}"})
             return

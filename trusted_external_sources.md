@@ -1,8 +1,14 @@
 # Trusted External Sources For Astro Certification
 
-Last updated: 2026-05-27
+Last updated: 2026-07-11
 
-This project uses a four-gate certification process. These sources are for Gate 2 and Gate 3 external checks. They are not training labels by themselves; they become training-safe only after values are entered into `astro_external_validation_template_20260527.csv` and pass the certification comparison.
+This project uses a four-gate certification process. These sources are for Gate 2 and Gate 3
+external checks. They are not training labels by themselves. They become training-safe only after
+values are entered into the current `astro_external_validation_template_YYYYMMDD.csv`, pass the
+certification comparison, and belong to a supported astronomy contract.
+
+The May 2026 USDJPY case records are quarantined as legacy double-sidereal research history.
+Do not use their case IDs as certification samples. Start with a corrected versioned rebuild.
 
 ## Source Tiers
 
@@ -122,19 +128,18 @@ Do not train ML on:
 
 Start with these high-value checks:
 
-1. `case_8_event_start`
+1. `raman_node_regression_2025_05_28`
    - Sun/Moon/Rahu Raman longitude
-   - Tithi/Paksha/Nakshatra/Pada/Yoga/Karana
+   - confirm true-node calculation is sidereal exactly once.
 
-2. `case_43_event_start`
+2. `corrected_tn_smoke_2025_03_07`
    - Sun/Moon/Rahu Raman longitude
-   - JHora Shadbala and Drik outputs if available
+   - Tithi/Paksha/Nakshatra/Pada/Yoga/Karana.
 
-3. `case_127_sr_touch_start`
-   - Sun/Moon/Rahu Raman longitude
-   - Panchanga limb values
-   - confirm whether the 22:00 selected-window SR touch sits under the same astronomical context as the generated review pack
-
-4. `gann_reference_tokyo`
+3. `reference_chart_tokyo_1889`
    - Raman positions from an external ephemeris source
-   - use this as a long-range historical sanity check
+   - use this as a long-range historical sanity check.
+
+4. A rebuilt event fixture with explicit transit/natal roles
+   - JHora Shadbala and Drik outputs if available;
+   - exported role, orb, house system, node type, timezone, and ephemeris backend.

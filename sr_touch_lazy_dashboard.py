@@ -6,7 +6,6 @@ import json
 import os
 import re
 import sqlite3
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -15,15 +14,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import requests
 
-PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
-if str(PROJECT_DIR) not in sys.path:
-    sys.path.insert(0, str(PROJECT_DIR))
-THIS_DIR = Path(__file__).resolve().parent
-if str(THIS_DIR) not in sys.path:
-    sys.path.insert(0, str(THIS_DIR))
+import swisseph as swe
 
-from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude, swe
 from build_trade_candidates_from_touches import (
     aspect_family,
     aspect_stats_from_event_json,
@@ -32,7 +24,7 @@ from build_trade_candidates_from_touches import (
     score_transit_natal_hits_for_row,
 )
 from doctrine_config import append_doctrine_metadata, configure_swiss_ephemeris_sidereal
-from planetary_sr_engine import DEFAULT_SR_PLANETS
+from financial_astro_ephemeris import build_exact_longitude_map, fetch_planetary_longitude
 
 IST = "Asia/Kolkata"
 UTC = "UTC"
@@ -991,7 +983,7 @@ def add_rule_layer_scores(df: pd.DataFrame) -> None:
         "fx_pair_score_is_base_minus_quote_when_base_reference_fields_exist;"
         "doctrine_v1_uses_sign_dignity_friendship_sthana_bala_for_classical_planets;"
         "avg_all_scoring_expands_to_7_classical_planets;"
-        "full_shadbala_and_strict_drik_bala_pending;"
+        "shadbala_and_strict_drik_provisional_uncertified;"
         "ml_must_validate"
     )
 
@@ -1981,7 +1973,7 @@ def build_detail_figure(
     visible = filter_touches_to_rendered_identities(visible_all, identities, excluded_planets=excluded_line_planets)
     if identities:
         needed_planets = tuple(sorted({identity[0] for identity in identities}))
-        lon_map = build_adaptive_longitude_map(
+        lon_map = build_exact_longitude_map(
             planets=needed_planets,
             full_timestamps=price_window.index,
             fetch_fn=fetch_planetary_longitude_or_avg,

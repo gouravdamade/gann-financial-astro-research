@@ -1,5 +1,10 @@
 # Astro Function Certification 4-Gate Report
 
+> **Historical snapshot:** This May 2026 report is retained for provenance. Its implementation
+> status and certification labels are superseded by
+> `end_to_end_financial_astro_audit_20260711.md`; the legacy USDJPY astronomy artifacts are
+> quarantined pending a corrected versioned rebuild.
+
 - Report version: `astro_certification_4_gate_v1_20260527`
 - Generated: `2026-05-29T03:27:59+05:30`
 - Important interpretation: this report certifies traceability and local reproducibility first. External Jyotish/ephemeris validation remains explicitly pending where marked.

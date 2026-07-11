@@ -5,6 +5,7 @@ import csv
 import json
 import re
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 from typing import Iterable
 
@@ -27,6 +28,24 @@ LOCAL_TEXT_SOURCES = {
     "STRICT_VEDIC_LLM": PDF_EXTRACTS / "Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.txt",
     "SHADBALA_JAYA": PDF_EXTRACTS / "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt",
 }
+
+SUPPORTED_ASTRONOMY_CONTRACT_PREFIX = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_"
+
+
+def supported_astronomy_contract(value: object) -> bool:
+    return str(value or "").startswith(SUPPORTED_ASTRONOMY_CONTRACT_PREFIX)
+
+
+def case_astronomy_contract(context_json: object) -> str:
+    try:
+        context = json.loads(str(context_json or "{}"))
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return ""
+    return str(
+        context.get("event_source_astronomy_contract")
+        or context.get("astronomy_contract_version")
+        or ""
+    )
 
 
 def read_manifest(path: Path) -> list[dict[str, str]]:
@@ -92,32 +111,43 @@ def chunk_text(text: str, source_id: str, title: str, max_chars: int = 2200) -> 
 
 
 def rule_notes_text(db_path: Path) -> str:
-    with sqlite3.connect(str(db_path)) as conn:
+    with closing(sqlite3.connect(str(db_path))) as conn:
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
             """
-            SELECT n.note_id, n.case_id, c.pair_key, c.aspect, n.note_type, n.note_text, n.created_at_utc
+            SELECT n.note_id, n.case_id, c.pair_key, c.aspect, c.context_json,
+                   n.note_type, n.note_text, n.created_at_utc
             FROM rule_notes n
             JOIN aspect_cases c ON c.case_id = n.case_id
             ORDER BY n.created_at_utc, n.note_id
             """
         ).fetchall()
     parts = []
+    skipped = 0
     for row in rows:
+        contract = case_astronomy_contract(row["context_json"])
+        if not supported_astronomy_contract(contract):
+            skipped += 1
+            continue
         parts.append(
             "\n".join(
                 [
                     f"note_id={row['note_id']} case_id={row['case_id']} family={row['pair_key']}::{row['aspect']}",
                     f"note_type={row['note_type']} created_at_utc={row['created_at_utc']}",
+                    f"astronomy_contract={contract}",
                     str(row["note_text"] or ""),
                 ]
             )
         )
-    return "\n\n---\n\n".join(parts)
+    header = (
+        "Only notes tied to the supported single-sidereal Raman astronomy contract are indexed. "
+        f"Quarantined legacy/unversioned notes: {skipped}."
+    )
+    return "\n\n".join([header, "\n\n---\n\n".join(parts)]).strip()
 
 
 def touch_log_text(path: Path) -> str:
-    df = pd.read_csv(path, nrows=80, low_memory=False)
+    df = pd.read_csv(path, low_memory=False)
     columns = list(df.columns)
     feature_groups = {
         "identity": [c for c in columns if c in {"touch_id", "event_id", "pair_key", "b1", "b2", "aspect"}],
@@ -129,6 +159,25 @@ def touch_log_text(path: Path) -> str:
     lines = ["USDJPY touch log schema summary for local Jyotish agent."]
     for group, cols in feature_groups.items():
         lines.append(f"{group}: " + ", ".join(cols[:80]))
+    contract_column = next(
+        (name for name in ("event_source_astronomy_contract", "astronomy_contract_version") if name in df.columns),
+        None,
+    )
+    if contract_column is None:
+        lines.append(
+            "Representative rows are quarantined: this legacy touch log has no astronomy contract version."
+        )
+        return "\n\n".join(lines)
+
+    supported = df[contract_column].map(supported_astronomy_contract)
+    quarantined = int((~supported).sum())
+    df = df.loc[supported].head(80).copy()
+    lines.append(
+        f"Representative rows use the supported astronomy contract; quarantined rows: {quarantined}."
+    )
+    if df.empty:
+        lines.append("No supported rows are available for retrieval.")
+        return "\n\n".join(lines)
     lines.append("Representative rows:")
     keep_cols = []
     for cols in feature_groups.values():

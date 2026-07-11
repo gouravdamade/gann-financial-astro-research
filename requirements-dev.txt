@@ -1,0 +1,6 @@
+-r requirements.txt
+
+pytest>=9
+radon>=6
+ruff>=0.14
+vulture>=2.16

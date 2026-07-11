@@ -14,7 +14,6 @@ from shadbala_doctrine import (
     MOOLATRIKONA_SIGNS,
     NATURAL_RELATIONSHIPS,
     OWN_SIGNS,
-    SHADBALA_MINIMUM_TOTAL_VIRUPA,
     SIGN_LORDS,
     dignity_for_planet_in_sign,
     minimum_shadbala_total_virupa,
@@ -23,15 +22,17 @@ from shadbala_doctrine import (
 )
 
 
-STRICT_SHADBALA_RULE_ID = "STRICT_SHADBALA_V3_FULL_COMPONENT_V1"
+STRICT_SHADBALA_RULE_ID = "STRICT_SHADBALA_V4_SOURCE_ALIGNED_PROVISIONAL"
 STRICT_DRIK_RULE_ID = "PARASHARA_SRIPATI_DRIK_BALA_SIX_FORMULA_V1"
-STRICT_SHADBALA_STATUS = "full_component_v1_with_explicit_kaala_chesta_yuddha_decisions_pending_external_calculator_validation"
+STRICT_SHADBALA_STATUS = (
+    "provisional_source_aligned_components_pending_sunrise_abda_masa_chesta_yuddha_and_external_validation"
+)
 STRICT_DRIK_STATUS = "strict_formula_signed_natural_benefic_malefic"
 SAPTAVARGAJA_RULE_ID = "SAPTAVARGAJA_PARASHARA_SEVEN_VARGA_COMPOUND_RELATION_V1"
 OJAYUGMA_RULE_ID = "OJAYUGMA_ODD_EVEN_RASHI_NAVAMSA_V1"
 KAALA_RULE_ID = "KAALA_BALA_NATHONNATHA_PAKSHA_TRIBHAGA_ABDA_MASA_VARA_HORA_AYANA_YUDDHA_V1"
-CHESTA_RULE_ID = "CHESTA_BALA_SPEED_STATE_V1"
-YUDDHA_RULE_ID = "YUDDHA_BALA_LONGITUDE_LATITUDE_CLOSE_CONFLICT_V1"
+CHESTA_RULE_ID = "CHESTA_BALA_SOURCE_BUCKETS_PROVISIONAL_V2"
+YUDDHA_RULE_ID = "YUDDHA_BALA_UNCERTIFIED_EXCLUDED_V2"
 
 SIGN_INDEX = {
     "ARIES": 0,
@@ -420,9 +421,9 @@ def drekkana_bala_virupa(planet: Any, lon: Any) -> float:
     drekkana = int(degree_in_sign // 10.0) + 1
     if body in MALE_PLANETS and drekkana == 1:
         return 15.0
-    if body in NEUTER_PLANETS and drekkana == 2:
+    if body in FEMALE_PLANETS and drekkana == 2:
         return 15.0
-    if body in FEMALE_PLANETS and drekkana == 3:
+    if body in NEUTER_PLANETS and drekkana == 3:
         return 15.0
     return 0.0
 
@@ -483,7 +484,9 @@ def paksha_bala_virupa(planet: Any, sun_lon: Any, moon_lon: Any) -> float:
     phase = (moon - sun) % 360.0
     bright_strength = (phase / 3.0) if phase <= 180.0 else ((360.0 - phase) / 3.0)
     bright_strength = max(0.0, min(60.0, bright_strength))
-    if body in NATURAL_BENEFICS or body == "MOON":
+    if body == "MOON":
+        return float(2.0 * bright_strength)
+    if body in NATURAL_BENEFICS:
         return float(bright_strength)
     return float(60.0 - bright_strength)
 
@@ -582,7 +585,8 @@ def ayana_bala_virupa(planet: Any, declination_deg: Any) -> float:
         return np.nan
     normalized = max(-1.0, min(1.0, dec / 24.0))
     if body in AYANA_NORTH_STRONG:
-        return float(max(0.0, min(60.0, 30.0 + (30.0 * normalized))))
+        value = float(max(0.0, min(60.0, 30.0 + (30.0 * normalized))))
+        return 2.0 * value if body == "SUN" else value
     if body in AYANA_SOUTH_STRONG:
         return float(max(0.0, min(60.0, 30.0 - (30.0 * normalized))))
     if body == "MERCURY":
@@ -607,15 +611,8 @@ def yuddha_bala_virupa(planet: Any, longitudes: dict[str, float], latitudes: dic
         sep = circular_separation(value, other_lon)
         if sep is None or sep > 1.0:
             continue
-        this_lat = abs(float(latitudes.get(body, np.nan)))
-        other_lat = abs(float(latitudes.get(other, np.nan)))
-        if np.isfinite(this_lat) and np.isfinite(other_lat):
-            if this_lat < other_lat:
-                return 30.0, f"yuddha_winner_vs_{other.lower()}_latitude"
-            if this_lat > other_lat:
-                return -30.0, f"yuddha_loser_vs_{other.lower()}_latitude"
-        return 0.0, f"yuddha_close_vs_{other.lower()}_no_latitude_tiebreak"
-    return 0.0, "no_graha_yuddha_within_1deg"
+        return 0.0, f"yuddha_candidate_vs_{other.lower()}_uncertified_excluded_from_total"
+    return 0.0, "no_graha_yuddha_candidate_within_1deg"
 
 
 def kaala_bala_components(
@@ -653,10 +650,25 @@ def kaala_bala_components(
     return parts
 
 
-def chesta_bala_virupa(planet: Any, speed_deg_day: Any) -> tuple[float, str]:
+def chesta_bala_virupa(
+    planet: Any,
+    speed_deg_day: Any,
+    ayana_virupa: Any = None,
+    paksha_virupa: Any = None,
+) -> tuple[float, str]:
     body = normalize_body(planet)
-    if body in {"SUN", "MOON"}:
-        return 0.0, "sun_moon_not_scored_in_motion_state_v1"
+    if body == "SUN":
+        try:
+            value = float(ayana_virupa)
+        except (TypeError, ValueError):
+            value = np.nan
+        return (value, "sun_chesta_equals_ayana") if np.isfinite(value) else (np.nan, "sun_missing_ayana")
+    if body == "MOON":
+        try:
+            value = float(paksha_virupa)
+        except (TypeError, ValueError):
+            value = np.nan
+        return (value, "moon_chesta_equals_paksha") if np.isfinite(value) else (np.nan, "moon_missing_paksha")
     if body not in CHESTA_REFERENCE_SPEED:
         return np.nan, "unsupported_planet"
     try:
@@ -667,17 +679,21 @@ def chesta_bala_virupa(planet: Any, speed_deg_day: Any) -> tuple[float, str]:
         return np.nan, "missing_speed"
     ref = CHESTA_REFERENCE_SPEED[body]
     if speed < 0:
-        return 60.0, "retrograde_high_chesta"
+        return 60.0, "vakra_retrograde"
     ratio = abs(speed) / ref if ref else np.nan
     if not np.isfinite(ratio):
         return np.nan, "bad_speed_reference"
     if ratio < 0.15:
-        return 45.0, "near_station_high_chesta"
+        return 15.0, "vikala_near_station_provisional_speed_bucket"
     if ratio < 0.50:
-        return 30.0, "slow_direct_medium_chesta"
+        return 15.0, "mandatara_slow_direct_provisional_speed_bucket"
+    if ratio < 0.90:
+        return 30.0, "manda_direct_provisional_speed_bucket"
     if ratio <= 1.25:
-        return 15.0, "ordinary_direct_low_chesta"
-    return 7.5, "fast_direct_very_low_chesta"
+        return 7.5, "sama_normal_direct_provisional_speed_bucket"
+    if ratio <= 1.75:
+        return 45.0, "chara_fast_direct_provisional_speed_bucket"
+    return 30.0, "atichara_very_fast_direct_provisional_speed_bucket"
 
 
 def dig_bala_virupa(planet: Any, lon: Any, house_cusps: dict[int, float] | None, asc_lon: Any) -> float:
@@ -840,7 +856,12 @@ def shadbala_components_for_planet(
         longitudes,
         latitudes,
     )
-    chesta, chesta_status = chesta_bala_virupa(body, (speeds or {}).get(body, np.nan))
+    chesta, chesta_status = chesta_bala_virupa(
+        body,
+        (speeds or {}).get(body, np.nan),
+        ayana_virupa=kaala.get("ayana_virupa", np.nan),
+        paksha_virupa=kaala.get("paksha_virupa", np.nan),
+    )
     sthana_partial_values = [uchcha, saptavargaja.get("saptavargaja_virupa", np.nan), ojayugma, kendradi, drekkana]
     sthana_partial = float(sum(v for v in sthana_partial_values if np.isfinite(float(v))))
     implemented_values = [
@@ -1069,19 +1090,30 @@ def event_strict_shadbala_context(
             out.get(f"event_b1_{suffix}"),
             out.get(f"event_b2_{suffix}"),
         ]
-        numeric = [float(value) for value in values if value is not None and np.isfinite(float(value))]
+        numeric: list[float] = []
+        for value in values:
+            try:
+                converted = float(value)
+            except (TypeError, ValueError):
+                continue
+            if np.isfinite(converted):
+                numeric.append(converted)
         out[f"event_{suffix}_avg"] = float(sum(numeric) / len(numeric)) if numeric else np.nan
     out["event_strict_shadbala_rule_id"] = STRICT_SHADBALA_RULE_ID
     out["event_strict_drik_rule_id"] = STRICT_DRIK_RULE_ID
     out["event_strict_shadbala_status"] = STRICT_SHADBALA_STATUS
     out["event_strict_drik_status"] = STRICT_DRIK_STATUS
-    out["event_strict_shadbala_missing_components"] = "external_canonical_calculator_validation|ishta_kashta_phala"
+    out["event_strict_shadbala_missing_components"] = (
+        "actual_sunrise_sunset|traditional_abda_masa_epoch|full_chesta_mean_true_anomaly|"
+        "certified_graha_yuddha|external_canonical_calculator_validation|ishta_kashta_phala"
+    )
     out["event_strict_shadbala_component_rule_ids"] = "|".join(
         [SAPTAVARGAJA_RULE_ID, OJAYUGMA_RULE_ID, KAALA_RULE_ID, CHESTA_RULE_ID, YUDDHA_RULE_ID]
     )
     out["event_strict_shadbala_decision_notes"] = (
         "Rahu/Ketu excluded from Shadbala totals; AVG(ALL) is a seven-classical-planets component mean; "
-        "Kaala Abda/Masa use deterministic epoch-day lords pending cross-validation; Chesta uses speed-state v1; "
-        "Yuddha only activates for non-luminary classical planets within 1 degree."
+        "Moon Paksha and Chesta are doubled/source-linked and Sun Ayana is doubled; "
+        "Kaala still uses fixed 06:00/18:00 plus provisional Abda/Masa epochs; "
+        "non-luminary Chesta uses provisional speed buckets; Yuddha candidates are detected but score zero until certified."
     )
     return out

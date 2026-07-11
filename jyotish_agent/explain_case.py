@@ -8,7 +8,6 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
 import requests
 
 from build_corpus_index import INDEX_PATH, build_chunks, build_index, retrieve, write_jsonl, CHUNKS_PATH, MANIFEST

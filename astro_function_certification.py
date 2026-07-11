@@ -16,7 +16,7 @@ from doctrine_config import configure_swiss_ephemeris_sidereal, load_doctrine_co
 from panchanga_doctrine import panchanga_context
 
 
-REPORT_VERSION = "astro_certification_4_gate_v1_20260527"
+REPORT_VERSION = "astro_certification_4_gate_v2_20260711"
 IST = ZoneInfo("Asia/Kolkata")
 UTC = ZoneInfo("UTC")
 
@@ -32,11 +32,9 @@ PLANETS = {
 }
 
 SAMPLES = [
-    ("case_8_event_start", "2025-03-07T19:30:00", "Asia/Kolkata"),
-    ("case_43_event_start", "2025-04-04T02:30:00", "Asia/Kolkata"),
-    ("case_103_event_start", "2025-05-15T22:30:00", "Asia/Kolkata"),
-    ("case_127_sr_touch_start", "2025-05-28T22:00:00", "Asia/Kolkata"),
-    ("gann_reference_tokyo", "1889-02-11T00:00:00", "Asia/Tokyo"),
+    ("raman_node_regression_2025_05_28", "2025-05-28T22:00:00", "Asia/Kolkata"),
+    ("corrected_tn_smoke_2025_03_07", "2025-03-07T19:30:00", "Asia/Kolkata"),
+    ("reference_chart_tokyo_1889", "1889-02-11T00:00:00", "Asia/Tokyo"),
 ]
 
 
@@ -102,7 +100,7 @@ class ExternalTemplateRow:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build the four-gate astro/trading certification report.")
     parser.add_argument("--out-dir", default=".", help="Output directory for report and CSV ledgers.")
-    parser.add_argument("--date-tag", default="20260527", help="Date tag for output files.")
+    parser.add_argument("--date-tag", default="20260711", help="Date tag for output files.")
     parser.add_argument(
         "--external-values",
         default="",
@@ -112,6 +110,11 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--skip-replay", action="store_true", help="Skip reviewer_rule_replay.py execution.")
+    parser.add_argument(
+        "--legacy-archive-replay",
+        action="store_true",
+        help="Run replay against quarantined legacy case data for historical comparison only.",
+    )
     return parser.parse_args()
 
 
@@ -282,7 +285,7 @@ def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
         ),
         InventoryRow(
             "Gate 1",
-            "shadbala.full_component_v1",
+            "shadbala.source_aligned_provisional_v4",
             "Local doctrine lock + uploaded Shadbala notes",
             str(shadbala.get("method")),
             "strict_shadbala_doctrine.event_strict_shadbala_context",
@@ -353,10 +356,10 @@ def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
             "build_repeatation_review_pack.py + reviewer_rule_replay.py",
             "replay_guarded_partial",
             "trading heuristic",
-            "case_127_data_replay_passed_cases_8_43_103_source_guarded",
-            "Browser JS still owns much Auto Suggest logic; not all teaching cases have data-level replay.",
-            "Factor browser Auto Suggest into reusable Python and add data replays for 8/43/103.",
-            "train_as_rule_lesson_with_outcome_tracking",
+            "blocked_pending_corrected_event_rebuild",
+            "Legacy case data has an invalid astronomy contract and browser JS still owns much Auto Suggest logic.",
+            "Rebuild corrected events, unify Auto Suggest in Python, then replay versioned fixtures.",
+            "do_not_train_until_corrected_replay",
         ),
         InventoryRow(
             "Gate 1",
@@ -467,9 +470,16 @@ def build_position_baseline(config: dict[str, Any]) -> tuple[list[PositionRow], 
     return positions, panchanga_rows, templates
 
 
-def run_replay(skip: bool) -> tuple[str, str]:
+def run_replay(skip: bool, legacy_archive_replay: bool) -> tuple[str, str]:
     if skip:
         return "skipped", "reviewer replay skipped by CLI flag"
+    if not legacy_archive_replay:
+        return (
+            "blocked_legacy_dataset",
+            "Trading replay is intentionally blocked: current case records use the quarantined "
+            "legacy astronomy contract. Rebuild versioned corrected fixtures before certifying Gate 4. "
+            "Use --legacy-archive-replay only for historical comparison.",
+        )
     cmd = ["python", "reviewer_rule_replay.py"]
     try:
         proc = subprocess.run(cmd, cwd=Path(__file__).parent, text=True, capture_output=True, check=False)
@@ -522,11 +532,11 @@ def render_report(
     passed_external = sum(1 for row in templates if row.pass_fail == "pass")
     failed_external = sum(1 for row in templates if row.pass_fail == "fail")
     lines = [
-        f"# Astro Function Certification 4-Gate Report",
+        "# Astro Function Certification 4-Gate Report",
         "",
         f"- Report version: `{REPORT_VERSION}`",
         f"- Generated: `{datetime.now(IST).isoformat(timespec='seconds')}`",
-        f"- Important interpretation: this report certifies traceability and local reproducibility first. External Jyotish/ephemeris validation remains explicitly pending where marked.",
+        "- Important interpretation: this report certifies traceability and local reproducibility first. External Jyotish/ephemeris validation remains explicitly pending where marked.",
         "",
         "## Gate Summary",
         "",
@@ -588,10 +598,10 @@ def render_report(
         "",
         "## Current Verdict",
         "",
-        "- Safe to continue manual review with these labels visible.",
+        "- Safe to continue astronomy/doctrine inspection with these labels visible.",
         "- Do not treat Shadbala/Drik/Panchanga as externally certified yet.",
         "- Do not train on raw local LLM prose. Train on deterministic evidence, manual notes, verified rule lessons, and verifier corrections.",
-        "- Next certification lift: add external expected values for the Gate 3 template and factor browser Auto Suggest into reusable Python replay for cases 8, 43, and 103.",
+        "- Gate 4 is blocked until corrected versioned data replaces the legacy double-sidereal case records.",
         "",
     ]
     path.write_text("\n".join(lines), encoding="utf-8")
@@ -608,7 +618,7 @@ def main() -> None:
     config = load_doctrine_config(root / "doctrine_config.yaml")
     inventory = build_inventory(config)
     positions, panchanga_rows, templates = build_position_baseline(config)
-    replay_status, replay_output = run_replay(args.skip_replay)
+    replay_status, replay_output = run_replay(args.skip_replay, args.legacy_archive_replay)
 
     inventory_path = out_dir / f"astro_function_certification_inventory_{args.date_tag}.csv"
     positions_path = out_dir / f"astro_position_baseline_{args.date_tag}.csv"

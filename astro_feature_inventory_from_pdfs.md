@@ -1,5 +1,8 @@
 ﻿# Astro Feature Inventory From Attached PDFs
 
+> **Historical planning inventory:** “Implemented” and “missing” statements below describe an
+> earlier stage. Current status is maintained in `end_to_end_financial_astro_audit_20260711.md`.
+
 Created from the project PDFs supplied on 2026-05-04 and updated with the Shad Bala PDF supplied on 2026-05-05. The strict-Jyotish PDFs are treated as architecture/doctrine-control documents. The financial astrology PDFs are treated as experimental feature sources until validated out of sample.
 
 ## Source IDs

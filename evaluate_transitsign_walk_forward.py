@@ -42,6 +42,14 @@ EXCLUDED_EXACT = {
     "hover_text",
     "touch_id",
     "event_id",
+    # Candidate timestamps currently identify the bar open while these values
+    # include information from inside/at the close of that same bar. Keep them
+    # out until signal_time, decision_time and fill_time are stored separately.
+    "open_touch",
+    "high_touch",
+    "low_touch",
+    "close_touch",
+    "entry_price",
 }
 EXCLUDED_PREFIXES = (
     "delta_",
@@ -179,6 +187,16 @@ def model_specs(random_state: int) -> dict[str, Any]:
     }
 
 
+def purged_training_rows(
+    history: pd.DataFrame,
+    test_start_time: pd.Timestamp,
+    horizon: pd.Timedelta,
+) -> tuple[pd.DataFrame, pd.Timestamp]:
+    purge_cutoff = pd.Timestamp(test_start_time) - horizon
+    train = history[history["close_time_utc"] <= purge_cutoff].copy()
+    return train, purge_cutoff
+
+
 def summarize_predictions(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, float]:
     precision, recall, f1, _ = precision_recall_fscore_support(
         y_true,
@@ -213,10 +231,12 @@ def main() -> None:
     if len(df) < 100:
         raise SystemExit(f"Not enough WIN/LOSS candidates for walk-forward evaluation: {len(df)}")
 
-    numeric_cols, categorical_cols = choose_features(df)
-    preprocessor = make_preprocessor(numeric_cols, categorical_cols)
-    specs = model_specs(int(args.random_state))
     folds = fold_slices(df, int(args.folds), float(args.initial_train_frac))
+    if not folds:
+        raise SystemExit("No chronological folds could be created.")
+    feature_reference = df.iloc[: folds[0][0]].copy()
+    numeric_cols, categorical_cols = choose_features(feature_reference)
+    specs = model_specs(int(args.random_state))
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     fold_records: list[dict[str, Any]] = []
@@ -226,15 +246,14 @@ def main() -> None:
         test = df.iloc[test_start:test_stop].copy()
         test_start_time = test["entry_time_utc"].min()
         horizon = pd.Timedelta(hours=float(args.horizon_hours))
-        train = df.iloc[:test_start].copy()
-        train = train[train["close_time_utc"] <= (test_start_time - horizon + horizon)].copy()
-        train = train[train["close_time_utc"] < test_start_time].copy()
+        train, purge_cutoff = purged_training_rows(df.iloc[:test_start].copy(), test_start_time, horizon)
         if len(train) < int(args.min_train_rows) or test.empty:
             continue
 
         y_train = train["target_win"].to_numpy(dtype=int)
         y_test = test["target_win"].to_numpy(dtype=int)
         for model_name, estimator in specs.items():
+            preprocessor = make_preprocessor(numeric_cols, categorical_cols)
             pipe = Pipeline([("preprocess", preprocessor), ("model", estimator)])
             pipe.fit(train[numeric_cols + categorical_cols], y_train)
             pred = pipe.predict(test[numeric_cols + categorical_cols]).astype(int)
@@ -252,6 +271,7 @@ def main() -> None:
                 "test_rows": int(len(test)),
                 "test_start": str(test["entry_time_utc"].min()),
                 "test_end": str(test["entry_time_utc"].max()),
+                "purge_cutoff": str(purge_cutoff),
                 "test_win_rate": float(np.mean(y_test == 1)),
                 **metrics,
             }
@@ -317,7 +337,14 @@ def main() -> None:
             "fx_hypothesis_direction": direction_stats(eligible, "fx_hypothesis_direction"),
             "fx_doctrine_hypothesis_direction": direction_stats(eligible, "fx_doctrine_hypothesis_direction"),
         },
-        "purge_rule": "expanding walk-forward; train rows must close before test fold starts; no future/outcome columns used",
+        "purge_rule": (
+            "expanding walk-forward; train rows must close at or before test_start minus horizon_hours; "
+            "same-bar OHLC/entry-price and future/outcome columns are excluded"
+        ),
+        "research_warning": (
+            "Feature count remains large relative to sample size. Results are exploratory until a preregistered "
+            "availability-timestamped feature manifest and untouched holdout are used."
+        ),
     }
 
     fold_path = args.output_dir / "fold_metrics.csv"

@@ -1,8 +1,18 @@
+import sqlite3
 import unittest
+from contextlib import closing
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from jyotish_agent.build_corpus_index import build_index, chunk_text, retrieve
+import pandas as pd
+
+from jyotish_agent.build_corpus_index import (
+    build_index,
+    chunk_text,
+    retrieve,
+    rule_notes_text,
+    touch_log_text,
+)
 
 
 class CorpusChunkingTests(unittest.TestCase):
@@ -43,6 +53,48 @@ class CorpusChunkingTests(unittest.TestCase):
 
         self.assertEqual([item["source_id"] for item in evidence], ["CURRENT_RULE_NOTES"])
         self.assertEqual([item["source_id"] for item in doctrine], ["BRIHAT_JATAKA"])
+
+    def test_rule_notes_quarantine_legacy_astronomy_contracts(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            db_path = Path(temp_dir) / "notes.sqlite"
+            with closing(sqlite3.connect(db_path)) as conn:
+                conn.executescript(
+                    """
+                    CREATE TABLE aspect_cases (
+                        case_id INTEGER PRIMARY KEY, pair_key TEXT, aspect TEXT, context_json TEXT
+                    );
+                    CREATE TABLE rule_notes (
+                        note_id INTEGER PRIMARY KEY, case_id INTEGER, note_type TEXT,
+                        note_text TEXT, created_at_utc TEXT
+                    );
+                    """
+                )
+                conn.execute(
+                    "INSERT INTO aspect_cases VALUES (1, 'AVG(ALL)|MOON', 'square', '{}')"
+                )
+                conn.execute(
+                    "INSERT INTO aspect_cases VALUES (2, 'MOON|SUN', 'trine', ?)",
+                    ('{"astronomy_contract_version":"RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_V1"}',),
+                )
+                conn.execute("INSERT INTO rule_notes VALUES (1, 1, 'official_ml_note', 'legacy claim', '2026')")
+                conn.execute("INSERT INTO rule_notes VALUES (2, 2, 'official_ml_note', 'supported claim', '2026')")
+                conn.commit()
+
+            text = rule_notes_text(db_path)
+
+        self.assertNotIn("legacy claim", text)
+        self.assertIn("supported claim", text)
+        self.assertIn("Quarantined legacy/unversioned notes: 1", text)
+
+    def test_touch_log_quarantines_unversioned_representative_rows(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "touch.csv"
+            pd.DataFrame([{"event_id": "legacy", "pair_key": "AVG(ALL)|MOON"}]).to_csv(path, index=False)
+
+            text = touch_log_text(path)
+
+        self.assertIn("legacy touch log has no astronomy contract version", text)
+        self.assertNotIn("legacy AVG(ALL)|MOON", text)
 
 
 if __name__ == "__main__":

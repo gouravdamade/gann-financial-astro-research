@@ -1,7 +1,6 @@
 ﻿from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -11,13 +10,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-PROJECT_DIR = Path(r"D:\Trading_Algo\New folder")
-if str(PROJECT_DIR) not in sys.path:
-    sys.path.insert(0, str(PROJECT_DIR))
+import swisseph as swe
 
-from adaptive_ephemeris_engine import build_adaptive_longitude_map
-from JDML4 import fetch_planetary_longitude, swe
 from doctrine_config import configure_swiss_ephemeris_sidereal
+from financial_astro_ephemeris import build_exact_longitude_map, fetch_planetary_longitude
 
 
 IST = "Asia/Kolkata"
@@ -616,7 +612,7 @@ def build_detail_figure(
     line_long_map: dict[str, pd.Series] = {}
     if line_ids:
         planets = sorted({identity[0] for identity in line_ids})
-        line_long_map = build_adaptive_longitude_map(
+        line_long_map = build_exact_longitude_map(
             planets=planets,
             full_timestamps=price_window.index,
             fetch_fn=fetch_planetary_longitude,

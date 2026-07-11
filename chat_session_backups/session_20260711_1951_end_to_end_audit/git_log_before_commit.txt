@@ -1,0 +1,8 @@
+﻿35b5740 Ingest BPHS and Phaladeepika corpus sources
+f45a308 Ingest public-domain classical Jyotish sources
+9dc3565 Add provenance-aware Jyotish corpus canon
+65cce1b Show KAS as non-binding review advisory
+d96737b Add full isolated corrected KAS experiment
+b2a13b6 Add isolated Ashtakavarga validation lab
+f12f4bd Document Krushna Ashtakavarga source review
+79c7bd3 Add source-bounded Padmanabhan timing evidence
