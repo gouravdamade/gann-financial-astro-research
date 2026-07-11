@@ -15,6 +15,7 @@ Created from the project PDFs supplied on 2026-05-04 and updated with the Shad B
 | PADMANABHAN_TIMING | `Timing of Events - A Qualitative and Quantitative Study`, R. A. Padmanabhan | photographed first page (p14) only; continuation/Table 2 unavailable | Experimental Gochara + Dasha/Bhukti quantitative framework |
 | KRUSHNA_KAS_TIMING | `Timing of Events: A Research Work in Astrology with Krushna Ashtakvarga System`, Krushna Jugalkalani | readable text, 185 pages; original worksheets contain later-corrected calculations | Experimental classical Ashtakavarga evidence plus quarantined KAS-specific timing hypotheses |
 | PHALADEEPIKA_26 | Phaladeepika Chapter 26 | complete online translation checked; OCR caveat | Classical Moon-based Gochara and Vedha rules |
+| SANJAY_RATH_CRUX_1998 | `Crux of Vedic Astrology - Timing of Events`, Sanjay Rath | image-only 600-page scan; full local OCR with page markers and visual spot checks | Secondary interpretive timing synthesis for RAG only; root-text cross-check required before doctrine promotion |
 
 Extracted text folder:
 

@@ -1,10 +1,46 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-10 00:23 IST
+Last updated: 2026-07-11 06:32 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-10
+## Latest Update - 2026-07-11
+
+2026-07-11 Sanjay Rath source audit and provenance-aware classical corpus:
+
+- Fully audited the user-supplied image-only PDF `Crux of Vedic Astrology - Timing of Events` by Sanjay Rath:
+  - 600 PDF pages / 589 numbered pages;
+  - first edition in the scan dated 16 June 1998;
+  - SHA-256 `E3307EDE78737E4E35E78B042A0CFD19CAB6CD46234087173AFD62203080AF9A`;
+  - archived off `C:` at `D:\GannFinancialAstro\doc\Crux of Vedic Astrology-Timing of Events -- Sanjay Rath -- 1998.pdf` with the hash verified after the move.
+- Rendered and visually checked front matter and representative chapter pages, then completed local OCR for all 600 pages.
+- Added `sanjay_rath_crux_source_review_20260711.md`:
+  - classifies the book as modern secondary interpretive commentary, not a classical root text;
+  - maps all 15 chapters;
+  - identifies Dasha selection, Narayana Dasha, Argala, Arudha, Hora Lagna, Sudarshana, Sarvatobhadra and Sahams as retrieval candidates;
+  - explicitly blocks retrospective examples, mortality/medical/fertility material and natal statements from direct trading-rule promotion.
+- Added `classical_jyotish_corpus_canon_20260711.md` with separate authority layers for:
+  - astronomy/calculation history;
+  - root predictive classics;
+  - timing/Jaimini sources;
+  - mundane context;
+  - modern commentaries and experimental methods.
+- Registered `SANJAY_RATH_CRUX_1998` in the local agent source registry and ingestion queue, and added discovery entries for Jaimini Upadesa Sutras, Sarvartha Chintamani, Tajika Nilakanthi and Yoga Yatra.
+- Corrected stale `C:` paths in the corpus manifest to the active `D:` project/source locations.
+- Full page-marked OCR text is local/uncommitted at:
+  `D:\PycharmProjects\jyotish_agent\corpus_text\SANJAY_RATH_CRUX_1998.txt`.
+- Updated `jyotish_agent/build_corpus_index.py` so page-marked sources never merge across page boundaries and every split chunk repeats its source/page metadata.
+- Rebuilt the private local TF-IDF index:
+  - total chunks: `778`;
+  - Sanjay Rath chunks: `600`;
+  - Sanjay chunks missing `PDF_PAGE`: `0`;
+  - a mixed Narayana Dasha/Argala/Arudha/Hora Lagna/wealth query returned this source in all top-six results.
+- Added `test_jyotish_corpus_index.py`; both page-citation regression tests pass under stdlib `unittest`.
+- Updated the PDF feature inventory and local agent plan with the source authority hierarchy.
+- Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260711_063314` (includes the local OCR JSONL and generated page-marked corpus text, but not the 72.7 MB source PDF).
+- No astrology formula, Auto Suggest rule, ML label or MT5 behavior changed. This work expands local explanation/RAG knowledge only.
+
+## Previous Update - 2026-07-10
 
 2026-07-10 BTC 3-week aspect filter:
 

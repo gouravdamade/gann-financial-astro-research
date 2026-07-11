@@ -46,41 +46,48 @@ def chunk_text(text: str, source_id: str, title: str, max_chars: int = 2200) -> 
     chunks: list[dict[str, str]] = []
     current: list[str] = []
     current_len = 0
-    for para in paragraphs:
-        if current and current_len + len(para) + 2 > max_chars:
-            chunks.append(
-                {
-                    "source_id": source_id,
-                    "title": title,
-                    "chunk_id": f"{source_id}-{len(chunks) + 1:04d}",
-                    "text": "\n\n".join(current),
-                }
-            )
-            current = []
-            current_len = 0
-        if len(para) > max_chars:
-            for start in range(0, len(para), max_chars):
-                part = para[start : start + max_chars]
-                chunks.append(
-                    {
-                        "source_id": source_id,
-                        "title": title,
-                        "chunk_id": f"{source_id}-{len(chunks) + 1:04d}",
-                        "text": part,
-                    }
-                )
-            continue
-        current.append(para)
-        current_len += len(para) + 2
-    if current:
+
+    def append_chunk(value: str) -> None:
         chunks.append(
             {
                 "source_id": source_id,
                 "title": title,
                 "chunk_id": f"{source_id}-{len(chunks) + 1:04d}",
-                "text": "\n\n".join(current),
+                "text": value,
             }
         )
+
+    def flush_current() -> None:
+        nonlocal current, current_len
+        if current:
+            append_chunk("\n\n".join(current))
+            current = []
+            current_len = 0
+
+    for para in paragraphs:
+        marker_lines = [line for line in para.splitlines() if line.startswith("[[") and line.endswith("]]")]
+        if any(line.startswith("[[PDF_PAGE:") for line in marker_lines):
+            flush_current()
+            marker_prefix = "\n".join(marker_lines)
+            body = "\n".join(
+                line for line in para.splitlines() if not (line.startswith("[[") and line.endswith("]]"))
+            ).strip()
+            if not body:
+                append_chunk(marker_prefix)
+                continue
+            body_limit = max(256, max_chars - len(marker_prefix) - 1)
+            for start in range(0, len(body), body_limit):
+                append_chunk(f"{marker_prefix}\n{body[start : start + body_limit]}")
+            continue
+        if current and current_len + len(para) + 2 > max_chars:
+            flush_current()
+        if len(para) > max_chars:
+            for start in range(0, len(para), max_chars):
+                append_chunk(para[start : start + max_chars])
+            continue
+        current.append(para)
+        current_len += len(para) + 2
+    flush_current()
     return chunks
 
 

@@ -40,6 +40,13 @@
     file: "Phaladeepika Chapter 26 - Transits of Planets"
     role: "classical_gochara_vedha_reference"
     extraction_status: "complete_online_translation_checked_ocr_caveat"
+  SANJAY_RATH_CRUX_1998:
+    file: "Crux of Vedic Astrology-Timing of Events -- Sanjay Rath -- 1998.pdf"
+    author: "Sanjay Rath"
+    role: "secondary_interpretive_timing_synthesis_for_local_rag"
+    extraction_status: "image_only_600_pdf_pages_full_local_ocr_page_marked_visual_spot_checks"
+    sha256: "E3307EDE78737E4E35E78B042A0CFD19CAB6CD46234087173AFD62203080AF9A"
+    authority: "secondary_interpretive_commentary_root_text_cross_check_required"
 
 doctrine_locks:
   - id: LOCK_TIME_UTC

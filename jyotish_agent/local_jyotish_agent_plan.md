@@ -1,6 +1,6 @@
 # Local Jyotish Agent Plan
 
-Last updated: 2026-05-23 IST
+Last updated: 2026-07-11 IST
 
 ## Purpose
 
@@ -33,6 +33,18 @@ The agent must not calculate ephemeris, trade entries, Shadbala, SR geometry, Ga
 4. No hallucinated citations.
    - If a page/section is missing, the agent should say `citation missing`.
    - Every doctrine rule used for ML should eventually carry source id, section/page, and confidence.
+
+## Source Authority Hierarchy
+
+Retrieval must preserve source type instead of blending all books and notes into one voice:
+
+1. `root_classical_text`: identified edition/translation of a classical source, with page or verse locator.
+2. `secondary_interpretive_commentary`: modern authors such as Sanjay Rath or B. V. Raman; useful for synthesis and source discovery, but not a doctrine lock by itself.
+3. `experimental_authored_method`: Padmanabhan, Krushna KAS and other testable modern systems; quarantined until independently reproduced and validated.
+4. `workspace_empirical_evidence`: reviewed cases, rule lessons and walk-forward statistics; this may calibrate market behavior but is not scripture.
+5. `local_llm_draft`: explanation only, always untrusted until deterministic verification and Codex/human review.
+
+If sources disagree, the agent must show the disagreement and its provenance. The ranked acquisition plan is maintained in `classical_jyotish_corpus_canon_20260711.md`.
 
 ## Recommended Architecture
 

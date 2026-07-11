@@ -34,6 +34,14 @@
       "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\STRICT_VEDIC_LLM.txt"
     },
     {
+      "source_id": "SANJAY_RATH_CRUX_1998",
+      "title": "Crux of Vedic Astrology - Timing of Events",
+      "source_url": "D:/GannFinancialAstro/doc/Crux of Vedic Astrology-Timing of Events -- Sanjay Rath -- 1998.pdf",
+      "ingestion_policy": "local_user_reference_secondary_commentary",
+      "priority": "2",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\SANJAY_RATH_CRUX_1998.txt"
+    },
+    {
       "source_id": "CURRENT_RULE_NOTES",
       "title": "Gann aspect annotation rule notes",
       "source_url": "D:/PycharmProjects/gann_aspect_annotations.sqlite",
@@ -178,6 +186,38 @@
       "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
       "priority": "3",
       "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\JATAKA_TATTVA.txt"
+    },
+    {
+      "source_id": "JAIMINI_UPADESA_SUTRAS",
+      "title": "Jaimini Upadesa Sutras",
+      "source_url": "https://openlibrary.org/books/OL19543900M/Jaimini_Maharishi%27s_Upadesa_sutras",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "1",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\JAIMINI_UPADESA_SUTRAS.txt"
+    },
+    {
+      "source_id": "SARVARTHA_CHINTAMANI",
+      "title": "Sarvartha Chintamani",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "2",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\SARVARTHA_CHINTAMANI.txt"
+    },
+    {
+      "source_id": "TAJIKA_NILAKANTHI",
+      "title": "Tajika Nilakanthi",
+      "source_url": "https://www.dekhopanchang.com/en/learn/library",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "3",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\TAJIKA_NILAKANTHI.txt"
+    },
+    {
+      "source_id": "YOGA_YATRA",
+      "title": "Yoga Yatra",
+      "source_url": "https://gretil.sub.uni-goettingen.de/gretil.html",
+      "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
+      "priority": "3",
+      "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\YOGA_YATRA.txt"
     }
   ]
 }
