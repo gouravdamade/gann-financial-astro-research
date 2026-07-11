@@ -6,6 +6,9 @@ __pycache__/
 # IDE/local state
 .idea/
 *.log
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
 
 # Generated market/astro datasets and exports
 *.csv

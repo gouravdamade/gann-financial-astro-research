@@ -185,6 +185,7 @@ class AstroRepository:
                 INSERT INTO schema_meta(key, value, updated_at_utc)
                 VALUES('chart_annotation_schema_version', '2', ?)
                 ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at_utc=excluded.updated_at_utc
+                WHERE schema_meta.value <> excluded.value
                 """,
                 (utc_now(),),
             )
