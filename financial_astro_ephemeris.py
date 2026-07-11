@@ -171,27 +171,3 @@ def sidereal_house_cusps(
         swe.FLG_SIDEREAL,
     )
     return {index + 1: float(cusp) % 360.0 for index, cusp in enumerate(houses)}
-
-
-def patch_legacy_jdml4_astronomy(module: Any) -> None:
-    """Patch the recovery-only JDML4 runtime with the canonical single-sidereal path."""
-
-    module.fetch_planetary_longitude = fetch_planetary_longitude
-    module.fetch_planetary_longitude_single = fetch_planetary_longitude_single
-    if hasattr(module, "PLANETARY_CACHE"):
-        module.PLANETARY_CACHE = {}
-
-    def compute_houses(reference: Any) -> None:
-        if not reference.valid or not reference.planets_lon:
-            return
-        try:
-            reference.houses = sidereal_house_cusps(
-                reference.dt_ist,
-                reference.lat,
-                reference.lon,
-                house_system=b"O",
-            )
-        except Exception:
-            reference.houses = {}
-
-    module.ReferenceChartEngine.compute_houses = compute_houses

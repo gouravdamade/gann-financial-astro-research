@@ -22,7 +22,7 @@ from aspect_annotation_store import (
     upsert_completed_review,
 )
 from codex_review_task_queue import process_pending_tasks
-from reviewer_rule_replay import replay_completed_review_impacts
+from reviewer_rule_replay import auto_suggest_case, replay_completed_review_impacts
 
 
 DEFAULT_PACK_DIR = Path(
@@ -76,6 +76,8 @@ def ensure_ollama_running() -> dict:
 
 
 class NoCacheRequestHandler(SimpleHTTPRequestHandler):
+    annotation_db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+
     def end_headers(self) -> None:
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
         self.send_header("Pragma", "no-cache")
@@ -92,6 +94,9 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self) -> None:
         endpoint = self.path.split("?", 1)[0]
+        if endpoint == "/api/auto_suggest":
+            self._handle_auto_suggest()
+            return
         if endpoint == "/api/dream_review":
             self._handle_dream_review()
             return
@@ -153,6 +158,28 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
                 "path": str(out_path),
                 "markdown": markdown,
                 "llm_runtime": llm_runtime,
+            },
+        )
+
+    def _handle_auto_suggest(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            raw = self.rfile.read(length).decode("utf-8", errors="replace")
+            payload = json.loads(raw or "{}")
+            case_id = int(payload.get("case_id"))
+            pack_dir = Path(self.directory).resolve()
+            replay = auto_suggest_case(pack_dir, case_id)
+        except Exception as exc:
+            self._send_json(400, {"ok": False, "error": f"auto suggest failed: {exc}"})
+            return
+        self._send_json(
+            200,
+            {
+                "ok": True,
+                "case_id": case_id,
+                "engine": "reviewer_rule_replay.auto_suggest_case",
+                "engine_mode": "retrospective_review_only",
+                "replay": replay,
             },
         )
 
@@ -305,7 +332,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             self._send_json(400, {"ok": False, "error": f"bad complete review request: {exc}"})
             return
 
-        db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+        db_path = self.annotation_db_path
         try:
             initialize_database(db_path)
             with connect(db_path) as conn:
@@ -411,7 +438,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
         codex_task_ids: list[int] = []
         if result.get("status") == "queued_for_codex" or result.get("needs_review"):
             try:
-                db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+                db_path = self.annotation_db_path
                 initialize_database(db_path)
                 with connect(db_path) as conn:
                     codex_task_ids.append(
@@ -445,7 +472,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             result["codex_task_ids"] = codex_task_ids
             try:
                 result["codex_agent_result"] = process_pending_tasks(
-                    PROJECT_ROOT / "gann_aspect_annotations.sqlite",
+                    self.annotation_db_path,
                     limit=20,
                 )
             except Exception as exc:
@@ -468,7 +495,7 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             self._send_json(400, {"ok": False, "error": f"bad rule lesson request: {exc}"})
             return
 
-        db_path = PROJECT_ROOT / "gann_aspect_annotations.sqlite"
+        db_path = self.annotation_db_path
         try:
             initialize_database(db_path)
             with connect(db_path) as conn:
@@ -510,6 +537,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--directory", type=Path, default=DEFAULT_PACK_DIR, help="Review pack folder to serve.")
     parser.add_argument("--host", default="127.0.0.1", help="Bind host.")
     parser.add_argument("--port", type=int, default=8765, help="Bind port.")
+    parser.add_argument(
+        "--db",
+        type=Path,
+        default=PROJECT_ROOT / "gann_aspect_annotations.sqlite",
+        help="Versioned annotation database used by review APIs.",
+    )
     return parser.parse_args()
 
 
@@ -518,6 +551,7 @@ def main() -> None:
     directory = args.directory.resolve()
     if not directory.exists():
         raise SystemExit(f"Review pack directory does not exist: {directory}")
+    NoCacheRequestHandler.annotation_db_path = args.db.resolve()
     handler = partial(NoCacheRequestHandler, directory=str(directory))
     server = ThreadingHTTPServer((args.host, int(args.port)), handler)
     print(f"Serving {directory}")

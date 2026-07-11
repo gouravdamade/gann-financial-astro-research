@@ -1,6 +1,12 @@
 import pandas as pd
 
-from astro_event_contract import entity_longitude, enrich_event_roles_frame, resolve_event_roles, scoped_family_key
+from astro_event_contract import (
+    directional_family_key,
+    entity_longitude,
+    enrich_event_roles_frame,
+    resolve_event_roles,
+    scoped_family_key,
+)
 
 
 def test_resolves_transiting_moon_against_natal_average() -> None:
@@ -73,3 +79,12 @@ def test_frame_enrichment_and_scoped_family() -> None:
     assert out.loc[0, "event_scope"] == "TT"
     assert out.loc[0, "event_role_resolution_status"] == "not_applicable_transit_transit"
     assert scoped_family_key("MARS|JUPITER", "trine", "TT") == "TT::MARS|JUPITER::trine"
+
+
+def test_directional_family_keeps_transit_natal_orientation() -> None:
+    moon_transit = directional_family_key("TN", "MOON", "MERCURY", "trine")
+    mercury_transit = directional_family_key("TN", "MERCURY", "MOON", "trine")
+
+    assert moon_transit == "TN::MOON->MERCURY::trine"
+    assert mercury_transit == "TN::MERCURY->MOON::trine"
+    assert moon_transit != mercury_transit

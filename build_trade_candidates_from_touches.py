@@ -194,6 +194,27 @@ def parse_args() -> argparse.Namespace:
         default=0.05,
         help="Absolute signed return below this percent is marked as low_movement for ML ignore analysis.",
     )
+    parser.add_argument(
+        "--direction-source",
+        choices=(
+            "fx_hypothesis",
+            "fx_doctrine_hypothesis",
+            "jyotish_hypothesis",
+            "observed_72h_outcome",
+            "none",
+        ),
+        default="fx_hypothesis",
+        help=(
+            "Direction available to the candidate. observed_72h_outcome is retrospective leakage "
+            "and is allowed only for explicit diagnostic comparison."
+        ),
+    )
+    parser.add_argument(
+        "--entry-policy",
+        choices=("next_bar_open", "touch_bar_close_research_only"),
+        default="next_bar_open",
+        help="Timestamp-safe default fills at the next available bar open.",
+    )
     return parser.parse_args()
 
 
@@ -704,13 +725,61 @@ def normalize_touch_time(value: Any) -> pd.Timestamp | pd.NaT:
     return ts.tz_convert(UTC)
 
 
-def signal_direction(zone_kind: Any) -> str:
-    zone = str(zone_kind or "").strip().lower()
-    if zone == "bullish":
+def signal_direction(value: Any) -> str:
+    direction = str(value or "").strip().upper()
+    if direction in {"BULLISH", "UP", "LONG"}:
         return "LONG"
-    if zone == "bearish":
+    if direction in {"BEARISH", "DOWN", "SHORT"}:
         return "SHORT"
     return "NONE"
+
+
+def direction_column(source: str) -> str:
+    return {
+        "fx_hypothesis": "fx_hypothesis_direction",
+        "fx_doctrine_hypothesis": "fx_doctrine_hypothesis_direction",
+        "jyotish_hypothesis": "jyotish_hypothesis_direction",
+        "observed_72h_outcome": "ret_after_72h_dir",
+    }.get(str(source), "")
+
+
+def entry_from_policy(
+    price: pd.DataFrame,
+    signal_time: pd.Timestamp,
+    touch_close: Any,
+    policy: str,
+) -> dict[str, Any]:
+    if pd.isna(signal_time):
+        return {
+            "decision_time_utc": pd.NaT,
+            "entry_time_utc": pd.NaT,
+            "entry_price": np.nan,
+            "entry_timestamp_safe": 0,
+        }
+    if policy == "touch_bar_close_research_only":
+        close = pd.to_numeric(pd.Series([touch_close]), errors="coerce").iloc[0]
+        return {
+            "decision_time_utc": signal_time,
+            "entry_time_utc": signal_time,
+            "entry_price": float(close) if pd.notna(close) else np.nan,
+            "entry_timestamp_safe": 0,
+        }
+
+    position = int(price.index.searchsorted(signal_time, side="right"))
+    if position >= len(price):
+        return {
+            "decision_time_utc": pd.NaT,
+            "entry_time_utc": pd.NaT,
+            "entry_price": np.nan,
+            "entry_timestamp_safe": 1,
+        }
+    fill_time = price.index[position]
+    return {
+        "decision_time_utc": fill_time,
+        "entry_time_utc": fill_time,
+        "entry_price": float(price["open"].iloc[position]),
+        "entry_timestamp_safe": 1,
+    }
 
 
 def signed_return_pct(direction: str, entry: float, close: float) -> float:
@@ -837,21 +906,21 @@ def ignore_reason(row: pd.Series, flat_pct: float) -> str:
 def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
     df = touches.copy()
     empty_text = pd.Series("", index=df.index, dtype=object)
-    df["entry_time_utc"] = df["touch_time_local"].map(normalize_touch_time)
+    df["signal_time_utc"] = df["touch_time_local"].map(normalize_touch_time)
     df["entry_time_local"] = pd.to_datetime(df["touch_time_local"], errors="coerce")
-    df["entry_price"] = pd.to_numeric(df.get("close_touch"), errors="coerce")
-    df["signal_direction"] = df.get("zone_kind", empty_text).map(signal_direction)
+    df["observed_72h_direction"] = df.get("ret_after_72h_dir", empty_text)
+    df["observed_72h_return_pct"] = pd.to_numeric(df.get("ret_after_72h_pct"), errors="coerce")
     df["aspect_family"] = df.get("aspect", empty_text).map(aspect_family)
     df["duration_bucket"] = df.get("event_duration_minutes", pd.Series(index=df.index, dtype=object)).map(duration_bucket)
     df["sr_confirmation_type"] = df.get("touch_kind", empty_text).fillna("").astype(str)
     df["sr_confirmation_score"] = df["sr_confirmation_type"].map({"confluence": 1.0, "nearest_line": 0.6}).fillna(0.0)
 
-    active_count = pd.to_numeric(df.get("aspect_regime_active_count"), errors="coerce")
+    active_count = numeric_series(df, "aspect_regime_active_count", np.nan)
     event_json_count = df.get("event_aspects_json", pd.Series(index=df.index, dtype=object)).map(parse_event_aspect_count)
     df["active_aspect_count"] = active_count.fillna(event_json_count).fillna(0).astype(int)
     df["trade_category"] = np.where(df["active_aspect_count"] > 1, "multiple_aspects", "single_aspect")
     df["is_multiple_active"] = (df["active_aspect_count"] > 1).astype(int)
-    df["has_moon_trigger"] = pd.to_numeric(df.get("touch_has_moon"), errors="coerce").fillna(0).astype(int)
+    df["has_moon_trigger"] = numeric_series(df, "touch_has_moon").astype(int)
     touch_planets_text = df.get("touch_planets", pd.Series(index=df.index, dtype=object)).fillna("").astype(str).str.upper()
     pair_text = df.get("pair_key", pd.Series(index=df.index, dtype=object)).fillna("").astype(str).str.upper()
     df["has_outer_or_node"] = (
@@ -911,6 +980,31 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         df["fx_doctrine_pair_conflict_score"] = 0.0
         df["fx_doctrine_pair_conflict_ratio"] = 0.0
 
+    source_column = direction_column(args.direction_source)
+    if source_column:
+        source_values = df.get(source_column, empty_text)
+        df["signal_direction"] = source_values.map(signal_direction)
+    else:
+        df["signal_direction"] = "NONE"
+    df["direction_source"] = str(args.direction_source)
+    df["direction_timestamp_safe"] = int(args.direction_source != "observed_72h_outcome")
+    df["entry_policy"] = str(args.entry_policy)
+    entry_rows = [
+        entry_from_policy(
+            price,
+            signal_time,
+            touch_close,
+            str(args.entry_policy),
+        )
+        for signal_time, touch_close in zip(
+            df["signal_time_utc"],
+            df.get("close_touch", pd.Series(np.nan, index=df.index)),
+            strict=False,
+        )
+    ]
+    entry_frame = pd.DataFrame(entry_rows, index=df.index)
+    df = pd.concat([df, entry_frame], axis=1)
+
     df = append_doctrine_metadata(df)
     event_strength = numeric_series(df, "event_bphs_like_orb_strength")
     natal_strength = numeric_series(df, "tn_bphs_total")
@@ -967,6 +1061,7 @@ def build_candidates(touches: pd.DataFrame, price: pd.DataFrame, args: argparse.
         )
     exit_df = pd.DataFrame(exits)
     out = pd.concat([df.reset_index(drop=True), exit_df.reset_index(drop=True)], axis=1)
+    out["label_available_time_utc"] = out["close_time_utc"]
 
     out["ignore_reason"] = out.apply(lambda r: ignore_reason(r, args.flat_pct), axis=1)
     out["ignore_trade"] = (out["ignore_reason"].astype(str) != "").astype(int)

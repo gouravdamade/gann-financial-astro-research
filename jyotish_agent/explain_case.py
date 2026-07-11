@@ -100,23 +100,30 @@ def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
         case = row_to_dict(conn.execute("SELECT * FROM aspect_cases WHERE case_id = ?", (case_id,)).fetchone())
         if not case:
             raise SystemExit(f"case_id={case_id} not found in {db_path}")
+        family_key = str(case.get("family_key") or f"LEGACY::{case['pair_key']}::{case['aspect']}")
         exact_notes = [row_to_dict(r) for r in conn.execute("SELECT * FROM rule_notes WHERE case_id = ? ORDER BY created_at_utc, note_id", (case_id,))]
         trades = [row_to_dict(r) for r in conn.execute("SELECT * FROM trade_annotations WHERE case_id = ? ORDER BY created_at_utc, annotation_id", (case_id,))]
         ignores = [row_to_dict(r) for r in conn.execute("SELECT * FROM ignore_regions WHERE case_id = ? ORDER BY created_at_utc, ignore_id", (case_id,))]
+        case_columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(aspect_cases)")}
+        if "family_key" in case_columns:
+            family_where = "c.family_key = ?"
+            family_params = (family_key,)
+        else:
+            family_where = "c.pair_key = ? AND c.aspect = ?"
+            family_params = (case["pair_key"], case["aspect"])
         family_notes = [
             row_to_dict(r)
             for r in conn.execute(
-                """
+                f"""
                 SELECT n.*, c.pair_key, c.aspect
                 FROM rule_notes n
                 JOIN aspect_cases c ON c.case_id = n.case_id
-                WHERE c.pair_key = ? AND c.aspect = ?
+                WHERE {family_where}
                 ORDER BY n.created_at_utc, n.note_id
                 """,
-                (case["pair_key"], case["aspect"]),
+                family_params,
             )
         ]
-        family_key = f"{case['pair_key']}::{case['aspect']}"
         try:
             rule_lessons = [
                 row_to_dict(r)
@@ -144,7 +151,7 @@ def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
         "exact_notes": exact_notes,
         "family_notes": family_notes,
         "rule_lessons": rule_lessons,
-        "dream_corrections": load_dream_corrections(case_id, f"{case['pair_key']}::{case['aspect']}"),
+        "dream_corrections": load_dream_corrections(case_id, family_key),
         "trades": trades,
         "ignores": ignores,
     }
@@ -153,9 +160,10 @@ def load_case(case_id: int, db_path: Path) -> dict[str, Any]:
 def compact_case_summary(packet: dict[str, Any]) -> str:
     case = packet["case"]
     context = packet["context"]
-    synthetic_avg_square = "AVG(ALL)" in str(case.get("pair_key", "")).upper() or str(case.get("aspect", "")).lower() == "square"
+    family_key = str(case.get("family_key") or f"LEGACY::{case['pair_key']}::{case['aspect']}")
+    synthetic_avg_square = "AVG(ALL)" in str(case.get("pair_key", "")).upper()
     lines = [
-        f"case_id={case['case_id']} family={case['pair_key']}::{case['aspect']}",
+        f"case_id={case['case_id']} family={family_key}",
         f"window={case['window_start_ist']} -> {case['window_end_ist']} timeframe={case.get('timeframe')}",
     ]
     for key in IMPORTANT_CONTEXT_KEYS:
@@ -330,6 +338,7 @@ def fmt_pips(value: Any) -> str:
 def deterministic_analysis(packet: dict[str, Any], question: str = "") -> str:
     case = packet["case"]
     ctx = packet["context"]
+    family_key = str(case.get("family_key") or f"LEGACY::{case['pair_key']}::{case['aspect']}")
     auto = extract_auto_suggest(question)
     trade_result = extract_trade_result(question)
     shad = as_float(ctx.get("event_strict_shadbala_implemented_total_virupa_avg"))
@@ -406,7 +415,7 @@ def deterministic_analysis(packet: dict[str, Any], question: str = "") -> str:
         reasons.append(f"Chesta/motion strength is {chesta:.2f} ({bucket_strength(chesta, 5, 35)}), so unusual motion force is not the main driver.")
     if orb is not None:
         reasons.append(f"Aspect distance from exact is {orb:.2f} degrees ({bucket_strength(orb, 45, 75)} in current feature buckets), so this is not a very tight exact-aspect hit.")
-    if "AVG(ALL)" in str(case.get("pair_key", "")).upper() or str(case.get("aspect", "")).lower() == "square":
+    if "AVG(ALL)" in str(case.get("pair_key", "")).upper():
         reasons.append(
             "BPHS-like orb strength is not treated as a clean doctrine field here because AVG(ALL) is synthetic "
             "and square is not a direct classical BPHS graha-drishti measure; use event_orb_deg and observed family behavior instead."
@@ -440,7 +449,7 @@ def deterministic_analysis(packet: dict[str, Any], question: str = "") -> str:
     lines = [
             "## Deterministic Plain-English Analysis",
             "",
-            f"- Case `{case['case_id']}` is `{case['pair_key']}::{case['aspect']}` from `{case['window_start_ist']}` to `{case['window_end_ist']}`.",
+            f"- Case `{case['case_id']}` is `{family_key}` from `{case['window_start_ist']}` to `{case['window_end_ist']}`.",
             f"- The stored 72h outcome direction is `{ret_dir}` with return `{ret_pct}`.",
             f"- Nearby active regime count is `{regime_count}`, so attribution remains important.",
         ]

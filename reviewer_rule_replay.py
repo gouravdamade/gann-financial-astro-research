@@ -1205,7 +1205,7 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
     )
     return {
         "case_id": int(case_id),
-        "family_key": f"{case.get('pair_key')}::{case.get('aspect')}",
+        "family_key": str(case.get("family_key") or f"LEGACY::{case.get('pair_key')}::{case.get('aspect')}"),
         "outcome_label": effective_outcome,
         "trade_start": start,
         "trade_end": end,

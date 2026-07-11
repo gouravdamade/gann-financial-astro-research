@@ -1,0 +1,85 @@
+{
+  "aspect_specs": {
+    "conjunction_orb": {
+      "angle": 0.0,
+      "orb": 1.5
+    },
+    "opposition_orb": {
+      "angle": 180.0,
+      "orb": 1.5
+    },
+    "square": {
+      "angle": 90.0,
+      "orb": 1.0
+    },
+    "trine": {
+      "angle": 120.0,
+      "orb": 1.0
+    }
+  },
+  "aspects": [
+    "conjunction_orb",
+    "square",
+    "trine",
+    "opposition_orb"
+  ],
+  "astronomy_contract_version": "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2",
+  "event_count": 1268,
+  "event_end": "2026-03-10T01:30:00+05:30",
+  "event_start": "2025-03-01T00:30:00+05:30",
+  "generated_at_utc": "2026-07-11T15:14:27.491677+00:00",
+  "generator_version": "native_tn_event_source_v1_20260711",
+  "natal_entities": [
+    "SUN",
+    "MOON",
+    "MERCURY",
+    "VENUS",
+    "MARS",
+    "JUPITER",
+    "SATURN",
+    "RAHU",
+    "KETU",
+    "AVG(ALL)"
+  ],
+  "natal_planet_longitudes": {
+    "JUPITER": 249.9961939264792,
+    "KETU": 270.07412038458375,
+    "MARS": 333.9977612000053,
+    "MERCURY": 310.15832816489313,
+    "MOON": 61.08767031037019,
+    "NEPTUNE": 38.65446867456333,
+    "PLUTO": 43.14224451707957,
+    "RAHU": 90.07412038458374,
+    "SATURN": 115.63759073504424,
+    "SUN": 301.27312972460294,
+    "URANUS": 181.01621713491343,
+    "VENUS": 347.6782122686695
+  },
+  "outcome_labels_included": false,
+  "output_path": "D:\\PycharmProjects\\astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
+  "output_sha256": "110927D8B5FEEF267FA45556FE46311C8843F8B445BB8F65B2A137C1577ABB04",
+  "price_source_path": "D:\\PycharmProjects\\usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+  "price_source_sha256": "3C71A983EF645133D34B7328E44E8DA6612CA22EBC989827626D55F281B147A9",
+  "reference": {
+    "reference_chart_label": "Tokyo IPO hypothesis 1889-02-11 00:00 +09:00",
+    "reference_datetime_source": "1889-02-11T00:00:00+09:00",
+    "reference_lat": 35.6762,
+    "reference_lon": 139.6503,
+    "reference_timezone_policy": "fixed_offset_+09:00"
+  },
+  "timestamp_count": 8978,
+  "timestamp_end": "2026-03-10T01:30:00+05:30",
+  "timestamp_start": "2025-03-01T00:30:00+05:30",
+  "transit_entities": [
+    "SUN",
+    "MOON",
+    "MERCURY",
+    "VENUS",
+    "MARS",
+    "JUPITER",
+    "SATURN",
+    "RAHU",
+    "KETU",
+    "AVG(ALL)"
+  ]
+}

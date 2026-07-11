@@ -73,7 +73,7 @@ def read_case_group(db_path: Path, case_id: int) -> tuple[dict[str, Any], list[d
         conn.row_factory = sqlite3.Row
         seed = conn.execute(
             """
-            SELECT case_id, source_event_id, pair_key, aspect, aspect_label,
+            SELECT case_id, source_event_id, family_key, pair_key, aspect, aspect_label,
                    window_start_ist, window_end_ist, timeframe, source_csv
             FROM aspect_cases
             WHERE case_id = ?
@@ -84,14 +84,13 @@ def read_case_group(db_path: Path, case_id: int) -> tuple[dict[str, Any], list[d
             raise SystemExit(f"No aspect case found for case_id={case_id}.")
         rows = conn.execute(
             """
-            SELECT case_id, source_event_id, pair_key, aspect, aspect_label,
+            SELECT case_id, source_event_id, family_key, pair_key, aspect, aspect_label,
                    window_start_ist, window_end_ist, timeframe, source_csv
             FROM aspect_cases
-            WHERE pair_key = ?
-              AND aspect = ?
+            WHERE family_key = ?
             ORDER BY window_start_ist, case_id
             """,
-            (seed["pair_key"], seed["aspect"]),
+            (seed["family_key"],),
         ).fetchall()
     return dict(seed), [dict(row) for row in rows]
 
@@ -115,6 +114,10 @@ def clean_value(value: Any) -> str:
         pass
     text = str(value).strip()
     return "" if text.lower() in {"", "nan", "none", "null"} else text
+
+
+def seed_family_key(seed: dict[str, Any]) -> str:
+    return str(seed.get("family_key") or f"LEGACY::{seed['pair_key']}::{seed['aspect']}")
 
 
 def numeric_value(value: Any) -> float | None:
@@ -681,6 +684,7 @@ def load_case_family_rules(db_path: Path, seed: dict[str, Any]) -> list[dict[str
             SELECT
                 n.note_id,
                 n.case_id AS seed_case_id,
+                c.family_key,
                 c.pair_key,
                 c.aspect,
                 n.note_type,
@@ -688,11 +692,10 @@ def load_case_family_rules(db_path: Path, seed: dict[str, Any]) -> list[dict[str
                 n.created_at_utc
             FROM rule_notes n
             JOIN aspect_cases c ON c.case_id = n.case_id
-            WHERE c.pair_key = ?
-              AND c.aspect = ?
+            WHERE c.family_key = ?
             ORDER BY n.created_at_utc, n.note_id
             """,
-            (seed["pair_key"], seed["aspect"]),
+            (seed_family_key(seed),),
         ).fetchall()
     rules: list[dict[str, Any]] = []
     for row in rows:
@@ -705,7 +708,7 @@ def load_case_family_rules(db_path: Path, seed: dict[str, Any]) -> list[dict[str
             {
                 "note_id": int(row["note_id"]),
                 "seed_case_id": int(row["seed_case_id"]),
-                "family_key": f"{row['pair_key']}::{row['aspect']}",
+                "family_key": str(row["family_key"] or seed_family_key(seed)),
                 "pair_key": str(row["pair_key"]),
                 "aspect": str(row["aspect"]),
                 "note_type": str(row["note_type"] or ""),
@@ -790,6 +793,7 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
             SELECT
                 n.note_id,
                 n.case_id AS seed_case_id,
+                c.family_key,
                 c.pair_key,
                 c.aspect,
                 n.note_type,
@@ -797,11 +801,10 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
                 n.created_at_utc
             FROM rule_notes n
             JOIN aspect_cases c ON c.case_id = n.case_id
-            WHERE c.pair_key = ?
-              AND c.aspect = ?
+            WHERE c.family_key = ?
             ORDER BY n.created_at_utc, n.note_id
             """,
-            (seed["pair_key"], seed["aspect"]),
+            (seed_family_key(seed),),
         ).fetchall()
     notes_by_case: dict[int, list[dict[str, Any]]] = {}
     for row in rows:
@@ -824,7 +827,7 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
         note = {
             "note_id": int(row["note_id"]),
             "seed_case_id": int(row["seed_case_id"]),
-            "family_key": f"{row['pair_key']}::{row['aspect']}",
+            "family_key": str(row["family_key"] or seed_family_key(seed)),
             "pair_key": str(row["pair_key"]),
             "aspect": str(row["aspect"]),
             "note_type": note_type,
@@ -842,7 +845,7 @@ def load_ml_notes(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[st
 
 
 def load_rule_lessons(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dict[str, Any]]]:
-    family_key = f"{seed['pair_key']}::{seed['aspect']}"
+    family_key = seed_family_key(seed)
     try:
         with sqlite3.connect(str(db_path)) as conn:
             conn.row_factory = sqlite3.Row
@@ -902,7 +905,7 @@ def load_rule_lessons(db_path: Path, seed: dict[str, Any]) -> dict[int, list[dic
 
 
 def load_completed_reviews(db_path: Path, seed: dict[str, Any]) -> dict[int, dict[str, Any]]:
-    family_key = f"{seed['pair_key']}::{seed['aspect']}"
+    family_key = seed_family_key(seed)
     try:
         with sqlite3.connect(str(db_path)) as conn:
             conn.row_factory = sqlite3.Row
@@ -946,6 +949,8 @@ def chart_command(args: argparse.Namespace, case_id: int, output_dir: Path) -> l
         str(args.touch_log),
         "--price",
         str(chart_price_path(args, case_id)),
+        "--annotation-db",
+        str(args.db),
         "--export-case-chart",
         "--case-id",
         str(case_id),
@@ -989,6 +994,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         "windowEnd": window_end,
         "pairKey": pair_key,
         "aspect": aspect,
+        "familyKey": seed_family_key(case),
         "defaultOutcome": str(case.get("default_outcome", "bullish") or "bullish"),
         "fullWindowEntryPrice": case.get("full_window_entry_price", ""),
         "fullWindowExitPrice": case.get("full_window_exit_price", ""),
@@ -2158,7 +2164,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       state[key] = point;
       state.lastPoint = point;
       if (key === 'ignoreStart' || key === 'ignoreEnd') state.tradeIgnored = false;
-      if (key === 'tradeStart') refreshGannFanFromTradeStart(point.autoSuggested ? 'auto suggestion start marker' : 'manual trade start adjustment');
+      if (key === 'tradeStart' && !(point.autoSuggested && state.autoSuggestion && state.autoSuggestion.gann_fan)) {{
+        refreshGannFanFromTradeStart(point.autoSuggested ? 'auto suggestion start marker' : 'manual trade start adjustment');
+      }}
     }}
     function setTool(tool, persist) {{
       state.tool = tool;
@@ -3355,7 +3363,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         'status=live_autosaved_not_db_committed',
         'type=marker_ml_note',
         'case_id=' + meta.caseId,
-        'family=' + meta.pairKey + '::' + meta.aspect,
+        'family=' + meta.familyKey,
         'outcome=' + result.outcomeLabel,
         'signed_pips=' + result.signedPips.toFixed(1),
         'raw_pips=' + result.rawPips.toFixed(1),
@@ -3465,7 +3473,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
       var hints = topAstroHintLabels();
       var parts = [
-        'case_id=' + meta.caseId + ' family=' + meta.pairKey + '::' + meta.aspect,
+        'case_id=' + meta.caseId + ' family=' + meta.familyKey,
         'conflict=' + conflictType,
         'old_rule=' + oldRule,
         'new_rule=' + newRule,
@@ -3479,7 +3487,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (hints.length) parts.push('astro_hints=' + hints.join(' | '));
       return {{
         case_id: meta.caseId,
-        family_key: String(meta.pairKey || '') + '::' + String(meta.aspect || ''),
+        family_key: String(meta.familyKey || ''),
         lesson_key: conflictType + '|' + String(s.applied_family_rule || '') + '|' + endRule,
         conflict_type: conflictType,
         old_rule: oldRule,
@@ -3523,7 +3531,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       if (!result || !state.tradeStart || !state.tradeEnd) return null;
       return {{
         case_id: meta.caseId,
-        family_key: String(meta.pairKey || '') + '::' + String(meta.aspect || ''),
+        family_key: String(meta.familyKey || ''),
         pair_key: meta.pairKey,
         aspect: meta.aspect,
         price_timeframe: meta.priceTimeframe,
@@ -3990,7 +3998,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
     function dreamReviewPayload() {{
       return {{
         case_id: meta.caseId,
-        family: String(meta.pairKey || '') + '::' + String(meta.aspect || ''),
+        family: String(meta.familyKey || ''),
         pair_key: meta.pairKey,
         aspect: meta.aspect,
         window_start: meta.windowStart,
@@ -4321,7 +4329,42 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       render();
       saveDraft();
     }}
-    function autoSuggestTrade() {{
+    async function autoSuggestTrade() {{
+      setTool('', false);
+      updateSaveStatus('requesting Python Auto Suggest');
+      try {{
+        var response = await fetch('/api/auto_suggest', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ case_id: Number(meta.caseId) }})
+        }});
+        var payload = await response.json();
+        if (!response.ok || !payload.ok) throw new Error(payload.error || ('HTTP ' + response.status));
+        var replay = payload.replay || {{}};
+        state.autoSuggestion = replay.auto_suggestion || {{}};
+        state.autoSuggestion.engine = payload.engine || 'reviewer_rule_replay.auto_suggest_case';
+        state.autoSuggestion.engine_mode = payload.engine_mode || 'retrospective_review_only';
+        state.autoSuggestion.manual_override = false;
+        state.autoSuggestion.overridden_keys = [];
+        state.tradeStart = null;
+        state.tradeEnd = null;
+        if (replay.outcome_label) {{
+          setAutoOutcome(String(replay.outcome_label).toLowerCase(), 'Python retrospective review engine outcome.');
+          state.outcomeTouched = false;
+        }}
+        if (replay.trade_start) setStatePoint('tradeStart', autoSuggestedPoint(replay.trade_start, 'python_auto_trade_start'));
+        if (replay.trade_end) setStatePoint('tradeEnd', autoSuggestedPoint(replay.trade_end, 'python_auto_trade_end'));
+        drawMarkers();
+        render();
+        saveDraft();
+        updateSaveStatus('auto suggested by the single Python review engine');
+      }} catch (error) {{
+        state.autoSuggestion = null;
+        render();
+        updateSaveStatus('Python Auto Suggest unavailable: ' + String(error && error.message || error));
+      }}
+    }}
+    function legacyAutoSuggestTradeSourceArchive() {{
       var markers = collectChartMarkers();
       if (!markers.length) {{
         state.autoSuggestion = {{
@@ -5434,7 +5477,7 @@ def main() -> None:
             "trade_command": annotation_command(case),
             "ignore_command": ignore_command(case),
             "rule_note_command": rule_note_command(case),
-            "same_aspect_group_key": focus.get("same_aspect_group_key", f"{seed['pair_key']} :: {seed['aspect']}"),
+            "same_aspect_group_key": focus.get("same_aspect_group_key", seed_family_key(seed)),
             "same_aspect_group_size": focus.get("same_aspect_group_size", len(cases)),
             "group_script_direction_mode": focus.get("group_script_direction_mode", ""),
             "group_fx_doctrine_directions": focus.get("group_fx_doctrine_directions", ""),

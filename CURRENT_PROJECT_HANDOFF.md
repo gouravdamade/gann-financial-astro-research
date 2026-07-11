@@ -3294,3 +3294,42 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Full lab notes: `research_labs\ashtakavarga_validation\README.md` and `research_labs\ashtakavarga_validation\FIRST_RUN_FINDINGS.md`.
 - Next gates: fill two independent calculator exports using `fixtures\external_calculator_template.json`, then add circular-shift placebos and transaction-cost sensitivity before considering more KAS mechanics.
 - Recovery backup including lab code and local first-run reports: `D:\PycharmProjects\chat_session_backups\session_20260711_001352`.
+
+## Corrected USDJPY TN Pipeline Foundation (2026-07-11)
+
+- Replaced the recovery-only `JDML4.py` dependency with native generator
+  `build_corrected_natal_event_source.py`; `rebuild_dataset_mt5_ipo_allpairs.py` is now a
+  compatibility entrypoint only.
+- Frozen astronomy contract:
+  `RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2`; generator version:
+  `native_tn_event_source_v1_20260711`.
+- Generated 1,268 unique transit-to-natal orb windows for 2025-03-01 through 2026-03-10,
+  with explicit transit/natal roles and no market-outcome fields in the event source.
+- Replaced nearest-candle event mapping with strict contained-candle mapping. The corrected
+  touch rebuild has 754 rows and no geometry quarantine.
+- Removed the candidate-direction hindsight leak. Candidate direction now defaults to the
+  timestamp-available FX hypothesis, observed 72-hour direction is label-only, and trade
+  entry defaults to the next available bar open. Corrected result: 607 potential trades,
+  231 wins, 375 losses and 148 ignored, so the raw heuristic is not trade-ready.
+- Added directional family identity, for example `TN::MOON->MERCURY::trine`; opposite
+  transit/natal roles can no longer share notes or rules through the unordered display pair.
+- Created `gann_aspect_annotations_raman_v2.sqlite`: schema version 2, 754 cases and 205
+  directional families. It intentionally starts with zero annotations/completed reviews.
+- Generated a corrected 15-recurrence review pack for `TN::MOON->MERCURY::trine` at
+  `D:\GannFinancialAstro\doc\repeatation_review_case_55_mercury_moon_trine_20260711_204603`.
+- Browser Auto Suggest now calls `POST /api/auto_suggest`, whose active engine is
+  `reviewer_rule_replay.auto_suggest_case` in retrospective-review-only mode. A live API
+  smoke check for case 55 returned bullish `+2.3 pips`, from the first selected-window SR
+  touch to the next hardcoded attribution boundary.
+- Fixed remaining local Jyotish/RAG family reconstruction to preserve directional family
+  keys. Also corrected an explanation bug that treated every square aspect as synthetic;
+  the BPHS-like non-applicability warning now applies only to `AVG(ALL)`.
+- Verification at this checkpoint: `62 passed` via `python -m pytest -q`; corrected API
+  endpoint smoke test passed.
+- Still pending from the audit roadmap:
+  external Shadbala/Drik expected values and certification, purged timestamp-safe live
+  inference evaluation, BTC rolling/no-lookahead evidence mode, and removal of the dead
+  archived JavaScript Auto Suggest source after visual parity checks.
+- New product direction requested after this checkpoint: design a lightweight Windows
+  research/live workstation with parameterized astrology charts, TradingView-like drawing
+  tools, local LLM evidence/verification, and a supervised always-reconnecting MT5 backend.

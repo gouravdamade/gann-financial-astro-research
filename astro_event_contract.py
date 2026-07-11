@@ -117,6 +117,25 @@ def scoped_family_key(pair_key: Any, aspect: Any, scope: Any) -> str:
     return f"{scope_name}::{str(pair_key or '').strip().upper()}::{str(aspect or '').strip().lower()}"
 
 
+def canonical_pair_key(left: Any, right: Any) -> str:
+    return "|".join(sorted((normalize_body(left), normalize_body(right))))
+
+
+def directional_family_key(
+    scope: Any,
+    transit_body: Any,
+    natal_body: Any,
+    aspect: Any,
+) -> str:
+    scope_name = str(scope or "UNKNOWN").strip().upper() or "UNKNOWN"
+    transit = normalize_body(transit_body) or "UNKNOWN"
+    natal = normalize_body(natal_body) or "UNKNOWN"
+    aspect_name = str(aspect or "").strip().lower() or "unknown"
+    if scope_name == "TN":
+        return f"TN::{transit}->{natal}::{aspect_name}"
+    return f"{scope_name}::{canonical_pair_key(transit, natal)}::{aspect_name}"
+
+
 def resolve_event_roles(event: Mapping[str, Any]) -> dict[str, Any]:
     """Recover transit/natal roles lost when an unordered pair was alphabetically sorted.
 

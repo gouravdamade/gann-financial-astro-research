@@ -113,9 +113,15 @@ def chunk_text(text: str, source_id: str, title: str, max_chars: int = 2200) -> 
 def rule_notes_text(db_path: Path) -> str:
     with closing(sqlite3.connect(str(db_path))) as conn:
         conn.row_factory = sqlite3.Row
+        case_columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(aspect_cases)")}
+        family_expr = (
+            "c.family_key"
+            if "family_key" in case_columns
+            else "'LEGACY::' || UPPER(c.pair_key) || '::' || LOWER(c.aspect)"
+        )
         rows = conn.execute(
-            """
-            SELECT n.note_id, n.case_id, c.pair_key, c.aspect, c.context_json,
+            f"""
+            SELECT n.note_id, n.case_id, {family_expr} AS family_key, c.pair_key, c.aspect, c.context_json,
                    n.note_type, n.note_text, n.created_at_utc
             FROM rule_notes n
             JOIN aspect_cases c ON c.case_id = n.case_id
@@ -132,7 +138,7 @@ def rule_notes_text(db_path: Path) -> str:
         parts.append(
             "\n".join(
                 [
-                    f"note_id={row['note_id']} case_id={row['case_id']} family={row['pair_key']}::{row['aspect']}",
+                    f"note_id={row['note_id']} case_id={row['case_id']} family={row['family_key']}",
                     f"note_type={row['note_type']} created_at_utc={row['created_at_utc']}",
                     f"astronomy_contract={contract}",
                     str(row["note_text"] or ""),
@@ -150,7 +156,7 @@ def touch_log_text(path: Path) -> str:
     df = pd.read_csv(path, low_memory=False)
     columns = list(df.columns)
     feature_groups = {
-        "identity": [c for c in columns if c in {"touch_id", "event_id", "pair_key", "b1", "b2", "aspect"}],
+        "identity": [c for c in columns if c in {"touch_id", "event_id", "event_family_key", "pair_key", "b1", "b2", "aspect"}],
         "timing": [c for c in columns if "time" in c.lower() or c in {"event_duration_minutes", "event_weekday", "event_tithi_name", "event_yoga_name", "event_karana_name", "event_moon_nakshatra"}],
         "strength": [c for c in columns if "shadbala" in c.lower() or "drik" in c.lower() or "chesta" in c.lower() or "kaala" in c.lower()],
         "sr_touch": [c for c in columns if c.startswith("touch_") or c.startswith("sr_")],

@@ -355,6 +355,31 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def map_event_windows_to_price_indices(
+    price_index: pd.DatetimeIndex,
+    starts: pd.Series,
+    ends: pd.Series,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Map only candles genuinely contained inside each event window."""
+
+    index = pd.DatetimeIndex(price_index)
+    start_values = pd.DatetimeIndex(starts)
+    end_values = pd.DatetimeIndex(ends)
+    index_ns = index.as_unit("ns").asi8
+    start_ns = start_values.as_unit("ns").asi8
+    end_ns = end_values.as_unit("ns").asi8
+    idx_start = np.searchsorted(index_ns, start_ns, side="left")
+    idx_end = np.searchsorted(index_ns, end_ns, side="right") - 1
+    valid = (
+        (idx_start >= 0)
+        & (idx_start < len(index))
+        & (idx_end >= 0)
+        & (idx_end < len(index))
+        & (idx_start <= idx_end)
+    )
+    return np.asarray(idx_start), np.asarray(idx_end), np.asarray(valid, dtype=bool)
+
+
 def merge_overlapping_event_windows(events: pd.DataFrame) -> pd.DataFrame:
     if events.empty:
         return events.copy()
@@ -1541,16 +1566,18 @@ def main() -> None:
     if events.empty:
         raise RuntimeError("No events fully overlap the price range.")
 
-    idx_start = price.index.get_indexer(events["timestamp"].to_numpy(), method="nearest")
-    idx_end = price.index.get_indexer(events["event_end"].to_numpy(), method="nearest")
-    valid = (idx_start >= 0) & (idx_end >= 0)
+    idx_start, idx_end, valid = map_event_windows_to_price_indices(
+        price.index,
+        events["timestamp"],
+        events["event_end"],
+    )
     events = events.loc[valid].copy()
     idx_start = idx_start[valid]
     idx_end = idx_end[valid]
     events["idx_start"] = idx_start
     events["idx_end"] = idx_end
     if events.empty:
-        raise RuntimeError("No events with valid start/end index mapping.")
+        raise RuntimeError("No event windows contain an actual price candle.")
 
     events = events.reset_index(drop=True)
     if args.dry_run_count:
@@ -1777,10 +1804,15 @@ def main() -> None:
                     "event_scope": event.get("event_scope"),
                     "event_transit_body": event.get("event_transit_body"),
                     "event_natal_body": event.get("event_natal_body"),
+                    "event_family_key": event.get("event_family_key"),
                     "event_role_resolution_status": event.get("event_role_resolution_status"),
                     "event_role_best_orb_deg": event.get("event_role_best_orb_deg"),
                     "event_role_alternate_orb_deg": event.get("event_role_alternate_orb_deg"),
                     "event_source_astronomy_contract": source_contract or "legacy_unversioned",
+                    "event_source_generator": event.get("source_event_generator"),
+                    "event_reference_chart_label": event.get("reference_chart_label"),
+                    "event_reference_datetime_source": event.get("reference_datetime_source"),
+                    "event_reference_timezone_policy": event.get("reference_timezone_policy"),
                     "event_geometry_validation_status": "pass_within_declared_orb",
                     "pair_key": event.get("pair_key"),
                     "b1": event.get("b1"),

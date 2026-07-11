@@ -11,6 +11,8 @@ from typing import Any
 
 import pandas as pd
 
+from astro_event_contract import directional_family_key, scoped_family_key
+
 
 DEFAULT_DB_PATH = Path(__file__).resolve().with_name("gann_aspect_annotations.sqlite")
 DEFAULT_REVIEW_EXPORT_DIR = Path(r"D:\GannFinancialAstro\doc")
@@ -29,6 +31,18 @@ DEFAULT_TOUCH_LOG = Path(__file__).resolve().with_name(
 CASE_CONTEXT_COLUMNS = (
     "touch_id",
     "event_id",
+    "event_scope",
+    "event_family_key",
+    "event_transit_body",
+    "event_natal_body",
+    "event_role_resolution_status",
+    "event_role_best_orb_deg",
+    "event_role_alternate_orb_deg",
+    "event_source_astronomy_contract",
+    "event_source_generator",
+    "event_reference_chart_label",
+    "event_reference_datetime_source",
+    "event_reference_timezone_policy",
     "pair_key",
     "b1",
     "b2",
@@ -236,6 +250,7 @@ CREATE TABLE IF NOT EXISTS schema_meta (
 CREATE TABLE IF NOT EXISTS aspect_cases (
     case_id INTEGER PRIMARY KEY AUTOINCREMENT,
     source_event_id TEXT,
+    family_key TEXT,
     pair_key TEXT NOT NULL,
     aspect TEXT NOT NULL,
     aspect_label TEXT,
@@ -387,10 +402,23 @@ def initialize_database(db_path: Path) -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     with connect(db_path) as conn:
         conn.executescript(SCHEMA_SQL)
+        columns = {str(row[1]) for row in conn.execute("PRAGMA table_info(aspect_cases)")}
+        if "family_key" not in columns:
+            conn.execute("ALTER TABLE aspect_cases ADD COLUMN family_key TEXT")
+        conn.execute(
+            """
+            UPDATE aspect_cases
+            SET family_key = 'LEGACY::' || UPPER(pair_key) || '::' || LOWER(aspect)
+            WHERE family_key IS NULL OR TRIM(family_key) = ''
+            """
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_aspect_cases_family ON aspect_cases(family_key, window_start_ist)"
+        )
         conn.execute(
             """
             INSERT INTO schema_meta(key, value, updated_at_utc)
-            VALUES('schema_version', '1', ?)
+            VALUES('schema_version', '2', ?)
             ON CONFLICT(key) DO UPDATE SET
                 value = excluded.value,
                 updated_at_utc = excluded.updated_at_utc
@@ -405,6 +433,7 @@ def upsert_aspect_case(conn: sqlite3.Connection, case_data: dict[str, Any]) -> i
         """
         INSERT OR IGNORE INTO aspect_cases(
             source_event_id,
+            family_key,
             pair_key,
             aspect,
             aspect_label,
@@ -415,10 +444,11 @@ def upsert_aspect_case(conn: sqlite3.Connection, case_data: dict[str, Any]) -> i
             context_json,
             created_at_utc
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             case_data.get("source_event_id"),
+            case_data.get("family_key"),
             case_data["pair_key"],
             case_data["aspect"],
             case_data.get("aspect_label"),
@@ -433,7 +463,8 @@ def upsert_aspect_case(conn: sqlite3.Connection, case_data: dict[str, Any]) -> i
     conn.execute(
         """
         UPDATE aspect_cases
-        SET aspect_label = ?,
+        SET family_key = ?,
+            aspect_label = ?,
             timeframe = ?,
             source_csv = ?,
             context_json = ?
@@ -444,6 +475,7 @@ def upsert_aspect_case(conn: sqlite3.Connection, case_data: dict[str, Any]) -> i
           AND window_end_ist = ?
         """,
         (
+            case_data.get("family_key"),
             case_data.get("aspect_label"),
             case_data.get("timeframe"),
             case_data.get("source_csv"),
@@ -629,8 +661,17 @@ def case_data_from_touch_log_row(row: dict[str, str], source_csv: Path) -> dict[
     end = str(row.get("event_window_end_local") or "").strip()
     if not pair_key or not aspect or not start or not end:
         return None
+    scope = str(row.get("event_scope") or "").strip().upper()
+    transit_body = str(row.get("event_transit_body") or "").strip().upper()
+    natal_body = str(row.get("event_natal_body") or "").strip().upper()
+    family_key = str(row.get("event_family_key") or "").strip()
+    if not family_key and scope == "TN" and transit_body and natal_body:
+        family_key = directional_family_key(scope, transit_body, natal_body, aspect)
+    if not family_key:
+        family_key = scoped_family_key(pair_key, aspect, scope or "LEGACY")
     return {
         "source_event_id": str(row.get("event_id") or "").strip() or None,
+        "family_key": family_key,
         "pair_key": pair_key,
         "aspect": aspect,
         "aspect_label": str(row.get("aspect_label") or "").strip() or f"{pair_key} {aspect}",
@@ -680,10 +721,12 @@ def import_aspect_cases_from_csv(db_path: Path, source_csv: Path) -> tuple[int, 
 def list_aspects(conn: sqlite3.Connection, limit: int) -> list[sqlite3.Row]:
     return conn.execute(
         """
-        SELECT pair_key, aspect, COALESCE(aspect_label, pair_key || ' ' || aspect) AS aspect_label, COUNT(*) AS case_count
+        SELECT family_key, pair_key, aspect,
+               COALESCE(aspect_label, pair_key || ' ' || aspect) AS aspect_label,
+               COUNT(*) AS case_count
         FROM aspect_cases
-        GROUP BY pair_key, aspect
-        ORDER BY case_count DESC, pair_key, aspect
+        GROUP BY family_key, pair_key, aspect
+        ORDER BY case_count DESC, family_key
         LIMIT ?
         """,
         (limit,),
@@ -693,7 +736,8 @@ def list_aspects(conn: sqlite3.Connection, limit: int) -> list[sqlite3.Row]:
 def list_cases(conn: sqlite3.Connection, pair_key: str, aspect: str, limit: int) -> list[sqlite3.Row]:
     return conn.execute(
         """
-        SELECT case_id, source_event_id, pair_key, aspect, aspect_label, window_start_ist, window_end_ist, timeframe
+        SELECT case_id, source_event_id, family_key, pair_key, aspect, aspect_label,
+               window_start_ist, window_end_ist, timeframe
         FROM aspect_cases
         WHERE pair_key = ?
           AND aspect = ?
@@ -704,12 +748,20 @@ def list_cases(conn: sqlite3.Connection, pair_key: str, aspect: str, limit: int)
     ).fetchall()
 
 
-def review_aspect_cases(conn: sqlite3.Connection, pair_key: str, aspect: str) -> list[sqlite3.Row]:
+def review_aspect_cases(
+    conn: sqlite3.Connection,
+    pair_key: str,
+    aspect: str,
+    family_key: str = "",
+) -> list[sqlite3.Row]:
+    family_clause = "c.family_key = ?" if family_key else "c.pair_key = ? AND c.aspect = ?"
+    params = (family_key,) if family_key else (pair_key, aspect)
     return conn.execute(
-        """
+        f"""
         SELECT
             c.case_id,
             c.source_event_id,
+            c.family_key,
             c.pair_key,
             c.aspect,
             c.aspect_label,
@@ -719,11 +771,11 @@ def review_aspect_cases(conn: sqlite3.Connection, pair_key: str, aspect: str) ->
             COUNT(a.annotation_id) AS annotation_count
         FROM aspect_cases c
         LEFT JOIN trade_annotations a ON a.case_id = c.case_id
-        WHERE c.pair_key = ?
-          AND c.aspect = ?
+        WHERE {family_clause}
         GROUP BY
             c.case_id,
             c.source_event_id,
+            c.family_key,
             c.pair_key,
             c.aspect,
             c.aspect_label,
@@ -732,7 +784,7 @@ def review_aspect_cases(conn: sqlite3.Connection, pair_key: str, aspect: str) ->
             c.timeframe
         ORDER BY c.window_start_ist
         """,
-        (pair_key, aspect),
+        params,
     ).fetchall()
 
 
@@ -845,7 +897,8 @@ def default_review_chart_path(case_id: int) -> Path:
 def get_aspect_case(conn: sqlite3.Connection, case_id: int) -> sqlite3.Row | None:
     return conn.execute(
         """
-        SELECT case_id, source_event_id, pair_key, aspect, aspect_label, window_start_ist, window_end_ist, timeframe
+        SELECT case_id, source_event_id, family_key, pair_key, aspect, aspect_label,
+               window_start_ist, window_end_ist, timeframe
         FROM aspect_cases
         WHERE case_id = ?
         """,
@@ -1449,7 +1502,12 @@ def build_review_case_payload(db_path: Path, case_id: int) -> dict[str, Any]:
         case = get_aspect_case(conn, case_id)
         if case is None:
             raise ValueError(f"No aspect case found for case_id={case_id}.")
-        same_aspect_rows = review_aspect_cases(conn, str(case["pair_key"]), str(case["aspect"]))
+        same_aspect_rows = review_aspect_cases(
+            conn,
+            str(case["pair_key"]),
+            str(case["aspect"]),
+            str(case["family_key"] or ""),
+        )
         status = review_status(same_aspect_rows)
         trade_rows = list_trade_annotations(conn, case_id, limit=1000)
         ignore_rows = list_ignore_regions(conn, case_id, limit=1000)
@@ -1465,6 +1523,7 @@ def build_review_case_payload(db_path: Path, case_id: int) -> dict[str, Any]:
         "exported_at_utc": utc_now(),
         "case": row_to_dict(case),
         "same_aspect": {
+            "family_key": case["family_key"],
             "pair_key": case["pair_key"],
             "aspect": case["aspect"],
             "case_index": case_index,
@@ -2095,7 +2154,10 @@ def main() -> None:
         else:
             print("Imported aspect groups:")
             for row in rows:
-                print(f"- {row['pair_key']} | {row['aspect']} | cases={row['case_count']}")
+                print(
+                    f"- {row['family_key']} | display={row['pair_key']} {row['aspect']} "
+                    f"| cases={row['case_count']}"
+                )
     if args.list_cases:
         if not args.pair_key or not args.aspect:
             raise SystemExit("--list-cases requires --pair-key and --aspect.")
