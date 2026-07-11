@@ -500,7 +500,12 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
     ensure_index()
     packet = load_case(case_id, db_path)
     case_summary = compact_case_summary(packet)
-    retrieved = retrieve(case_summary + "\n" + question, top_k=8)
+    retrieval_query = case_summary + "\n" + question
+    structured_sources = {"CURRENT_RULE_NOTES", "TOUCH_LOG"}
+    retrieved = [
+        *retrieve(retrieval_query, top_k=4, source_ids=structured_sources),
+        *retrieve(retrieval_query, top_k=4, exclude_source_ids=structured_sources),
+    ]
     prompt = build_prompt(case_summary, retrieved, question)
     llm_text = ollama_generate(prompt) if use_llm else None
     if llm_text:

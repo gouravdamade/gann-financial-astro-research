@@ -47,6 +47,27 @@
     extraction_status: "image_only_600_pdf_pages_full_local_ocr_page_marked_visual_spot_checks"
     sha256: "E3307EDE78737E4E35E78B042A0CFD19CAB6CD46234087173AFD62203080AF9A"
     authority: "secondary_interpretive_commentary_root_text_cross_check_required"
+  BRIHAT_JATAKA:
+    file: "BRIHAT_JATAKA_1905_CHIDAMBARAM_AIYAR.pdf"
+    author: "Varahamihira"
+    translator: "N. Chidambaram Aiyar"
+    role: "root_predictive_text_historical_translation_with_notes"
+    extraction_status: "public_domain_306_pages_page_structured_ia_ocr_visual_spot_checks"
+    sha256: "CEAFC2FE3E385FB834B94FA4F464406DA3BA42AB01B3A2AC42A2749ABDA9F1D9"
+  BRIHAT_SAMHITA:
+    file: "BRIHAT_SAMHITA_1884_N_C_IYER.pdf"
+    author: "Varahamihira"
+    translator: "N. C. Iyer"
+    role: "root_mundane_text_historical_translation_with_notes"
+    extraction_status: "public_domain_mark_496_pages_page_structured_ia_ocr_visual_spot_checks"
+    sha256: "9E0E8B4DD7D611F22B29ED65B7ED635D806D831407B27695D8128EB804983E27"
+  SURYA_SIDDHANTA:
+    file: "SURYA_SIDDHANTA_1858_EBENEZER_BURGESS.pdf"
+    author: "Surya-Siddhanta tradition"
+    translator: "Ebenezer Burgess with the Committee of Publication"
+    role: "classical_astronomy_historical_translation_with_scholarly_notes"
+    extraction_status: "public_domain_mark_362_pages_page_structured_ia_ocr_visual_spot_checks"
+    sha256: "B555C7EAABF8F167CFAE4177180090059451610F547C1FB4A197A0B28DED41FA"
 
 doctrine_locks:
   - id: LOCK_TIME_UTC

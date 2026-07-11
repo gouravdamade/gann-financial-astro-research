@@ -1,6 +1,8 @@
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from jyotish_agent.build_corpus_index import chunk_text
+from jyotish_agent.build_corpus_index import build_index, chunk_text, retrieve
 
 
 class CorpusChunkingTests(unittest.TestCase):
@@ -26,6 +28,21 @@ class CorpusChunkingTests(unittest.TestCase):
         self.assertEqual(len(chunks), 2)
         self.assertNotIn("[[PDF_PAGE:", chunks[0]["text"])
         self.assertIn("[[PDF_PAGE: 0001]]", chunks[1]["text"])
+
+    def test_retrieve_can_reserve_slots_by_source_group(self) -> None:
+        chunks = [
+            {"source_id": "CURRENT_RULE_NOTES", "title": "Notes", "chunk_id": "notes-1", "text": "planet strength"},
+            {"source_id": "BRIHAT_JATAKA", "title": "Classic", "chunk_id": "classic-1", "text": "planet strength"},
+        ]
+        with TemporaryDirectory() as temp_dir:
+            index_path = Path(temp_dir) / "index.joblib"
+            build_index(chunks, index_path)
+
+            evidence = retrieve("planet strength", index_path, source_ids={"CURRENT_RULE_NOTES"})
+            doctrine = retrieve("planet strength", index_path, exclude_source_ids={"CURRENT_RULE_NOTES"})
+
+        self.assertEqual([item["source_id"] for item in evidence], ["CURRENT_RULE_NOTES"])
+        self.assertEqual([item["source_id"] for item in doctrine], ["BRIHAT_JATAKA"])
 
 
 if __name__ == "__main__":

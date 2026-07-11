@@ -1,10 +1,46 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-11 06:32 IST
+Last updated: 2026-07-11 07:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-07-11
+
+2026-07-11 first classical public-domain corpus ingestion:
+
+- Ingested three identified historical English editions into the private local Jyotish RAG corpus:
+  - `BRIHAT_JATAKA`: Varahamihira, N. Chidambaram Aiyar, second edition 1905, 306 PDF pages;
+  - `BRIHAT_SAMHITA`: Varahamihira, N. C. Iyer, Parts I-II 1884-1885, 496 PDF pages;
+  - `SURYA_SIDDHANTA`: Ebenezer Burgess with the Committee of Publication, 1858, 362 PDF pages.
+- Wikimedia Commons identifies the three source editions as public domain/public-domain-mark and links to their Internet Archive originals.
+- Archived source PDFs and page-structured Internet Archive DjVu OCR XML under:
+  `D:\GannFinancialAstro\sources\classical`.
+- Added `jyotish_agent/classical_source_editions.yaml` with edition, translator, rights, source URLs, section ranges, topics, PDF SHA-256 and OCR XML MD5.
+- Added `jyotish_agent/ingest_classical_sources.py`:
+  - verifies PDF and OCR hashes before processing;
+  - checks expected OCR page count;
+  - rebuilds page-cited local corpus text;
+  - distinguishes front matter, translator material, root translation-with-notes and appendices/indexes.
+- Added `classical_text_ingestion_review_20260711.md` with source-quality findings, visual checks, relevance and promotion locks.
+- Retained page blocks:
+  - Brihat Jataka `295`;
+  - Brihat Samhita `489`;
+  - Surya Siddhanta `362`.
+- Generated text remains local/uncommitted under `D:\PycharmProjects\jyotish_agent\corpus_text`.
+- Rebuilt private TF-IDF index:
+  - total chunks `2,530`;
+  - Brihat Jataka `341`;
+  - Brihat Samhita `611`;
+  - Surya Siddhanta `800`;
+  - missing page/authority markers across these sources `0`.
+- Updated local case explanation retrieval to reserve four slots for structured workspace evidence and four for doctrine/reference sources. This fixes the prior condition where case notes occupied all eight slots and classical sources never reached the LLM prompt.
+- Dedicated source queries returned each expected classical source within the top three results; a case 43 no-LLM smoke test returned both rule-note evidence and page-cited doctrine.
+- Updated corpus manifest, ingestion queue, PDF inventory and ranked corpus canon.
+- Added ingestion/retrieval regression coverage; all five stdlib unit tests pass.
+- Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260711_070637` (includes the three generated local corpus text files; source PDFs/OCR XML remain in the hashed `D:` archive).
+- No astrology calculation, market label, Auto Suggest, official ML note or MT5 execution logic changed. Surya Siddhanta is historical context and does not replace Swiss Ephemeris.
+
+## Previous Update - 2026-07-11
 
 2026-07-11 Sanjay Rath source audit and provenance-aware classical corpus:
 

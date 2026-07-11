@@ -89,8 +89,8 @@ Every corpus item must record:
 
 ## Acquisition order
 
-1. Brihat Jataka, Brihat Samhita and Surya Siddhanta public-domain editions with page markers.
-2. A certified BPHS edition and Phaladeepika edition.
+1. Completed 2026-07-11: Brihat Jataka, Brihat Samhita and Surya Siddhanta public-domain historical editions with page markers and edition hashes.
+2. Next: a certified BPHS edition and Phaladeepika edition.
 3. Saravali and Jataka Parijata.
 4. Jaimini Upadesa Sutras and Laghu Parashari.
 5. Sarvartha Chintamani, Muhurta Chintamani and Prasna Marga.

@@ -16,6 +16,9 @@ Created from the project PDFs supplied on 2026-05-04 and updated with the Shad B
 | KRUSHNA_KAS_TIMING | `Timing of Events: A Research Work in Astrology with Krushna Ashtakvarga System`, Krushna Jugalkalani | readable text, 185 pages; original worksheets contain later-corrected calculations | Experimental classical Ashtakavarga evidence plus quarantined KAS-specific timing hypotheses |
 | PHALADEEPIKA_26 | Phaladeepika Chapter 26 | complete online translation checked; OCR caveat | Classical Moon-based Gochara and Vedha rules |
 | SANJAY_RATH_CRUX_1998 | `Crux of Vedic Astrology - Timing of Events`, Sanjay Rath | image-only 600-page scan; full local OCR with page markers and visual spot checks | Secondary interpretive timing synthesis for RAG only; root-text cross-check required before doctrine promotion |
+| BRIHAT_JATAKA | `The Brihat Jataka`, Varahamihira; N. Chidambaram Aiyar, 1905 second edition | 306-page public-domain scan; page-structured IA OCR and visual checks | Root predictive text in a historical English translation with translator notes |
+| BRIHAT_SAMHITA | `The Brihat Samhita of Varaha Mihira`, N. C. Iyer, 1884-1885 | 496-page public-domain-mark scan; page-structured IA OCR and visual checks | Root mundane text in a historical English translation with translator notes |
+| SURYA_SIDDHANTA | `Translation of the Surya-Siddhanta`, Ebenezer Burgess, 1858 | 362-page public-domain-mark scan; page-structured IA OCR and visual checks | Historical astronomy/calculation doctrine; never replaces the operational ephemeris |
 
 Extracted text folder:
 

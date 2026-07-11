@@ -183,13 +183,25 @@ def build_index(chunks: list[dict[str, str]], index_path: Path) -> None:
     joblib.dump({"vectorizer": vectorizer, "matrix": matrix, "chunks": chunks}, index_path)
 
 
-def retrieve(query: str, index_path: Path = INDEX_PATH, top_k: int = 6) -> list[dict[str, str | float]]:
+def retrieve(
+    query: str,
+    index_path: Path = INDEX_PATH,
+    top_k: int = 6,
+    source_ids: set[str] | None = None,
+    exclude_source_ids: set[str] | None = None,
+) -> list[dict[str, str | float]]:
     data = joblib.load(index_path)
     vectorizer = data["vectorizer"]
     matrix = data["matrix"]
     chunks = data["chunks"]
     scores = cosine_similarity(vectorizer.transform([query]), matrix).ravel()
-    order = scores.argsort()[::-1][:top_k]
+    eligible = [
+        idx
+        for idx, chunk in enumerate(chunks)
+        if (source_ids is None or chunk["source_id"] in source_ids)
+        and (exclude_source_ids is None or chunk["source_id"] not in exclude_source_ids)
+    ]
+    order = sorted(eligible, key=lambda idx: float(scores[idx]), reverse=True)[:top_k]
     out = []
     for idx in order:
         chunk = dict(chunks[int(idx)])

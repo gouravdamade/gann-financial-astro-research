@@ -1,0 +1,106 @@
+sources:
+  BRIHAT_JATAKA:
+    title: "The Brihat Jataka"
+    author: "Varahamihira"
+    translator: "N. Chidambaram Aiyar"
+    edition: "Second edition revised and enlarged, 1905"
+    authority: "root_classical_text_historical_translation_with_notes"
+    pdf_path: 'D:\GannFinancialAstro\sources\classical\BRIHAT_JATAKA_1905_CHIDAMBARAM_AIYAR.pdf'
+    ocr_xml_path: 'D:\GannFinancialAstro\sources\classical\BRIHAT_JATAKA_1905_CHIDAMBARAM_AIYAR_djvu.xml'
+    output_path: 'D:\PycharmProjects\jyotish_agent\corpus_text\BRIHAT_JATAKA.txt'
+    expected_pages: 306
+    pdf_sha256: "CEAFC2FE3E385FB834B94FA4F464406DA3BA42AB01B3A2AC42A2749ABDA9F1D9"
+    ocr_xml_md5: "AEA5DD7E30DEC84F7EF804E5B75E54C2"
+    source_page_url: "https://commons.wikimedia.org/wiki/File:The_Brihat_jataka_(IA_brihatjataka00varaiala).pdf"
+    source_download_url: "https://archive.org/download/brihatjataka00varaiala/brihatjataka00varaiala.pdf"
+    rights: "public_domain_historical_edition"
+    section_ranges:
+      - {start: 1, end: 12, type: "front_matter"}
+      - {start: 13, end: 38, type: "translator_introduction"}
+      - {start: 39, end: 44, type: "translator_glossary"}
+      - {start: 45, end: 292, type: "root_translation_with_translator_notes"}
+      - {start: 293, end: 306, type: "translator_appendix"}
+    topics:
+      dasha: ["dasa", "antardasa"]
+      ashtakavarga: ["ashtakavarga", "ashtakavargas"]
+      planetary_strength: ["planetarystrength", "bala", "powerfulplanet"]
+      dignity: ["exaltation", "depression", "ownsign", "friendlyplanet", "enemyplanet"]
+      aspects: ["aspect", "drishti"]
+      varga: ["navamsa", "drekkana", "dwadasamsa", "trimsamsa"]
+      yoga: ["yoga", "rajayoga"]
+      profession: ["avocation", "profession", "occupation"]
+      wealth: ["wealth", "dhana"]
+      transit: ["transit", "gochara"]
+
+  BRIHAT_SAMHITA:
+    title: "The Brihat Samhita of Varaha Mihira"
+    author: "Varahamihira"
+    translator: "N. C. Iyer"
+    edition: "Parts I-II, 1884-1885"
+    authority: "root_classical_mundane_text_historical_translation_with_notes"
+    pdf_path: 'D:\GannFinancialAstro\sources\classical\BRIHAT_SAMHITA_1884_N_C_IYER.pdf'
+    ocr_xml_path: 'D:\GannFinancialAstro\sources\classical\BRIHAT_SAMHITA_1884_N_C_IYER_djvu.xml'
+    output_path: 'D:\PycharmProjects\jyotish_agent\corpus_text\BRIHAT_SAMHITA.txt'
+    expected_pages: 496
+    pdf_sha256: "9E0E8B4DD7D611F22B29ED65B7ED635D806D831407B27695D8128EB804983E27"
+    ocr_xml_md5: "E86C26150365F1DDE31B1577E37ECAC1"
+    source_page_url: "https://commons.wikimedia.org/wiki/File:The_B%E1%B9%9Bihat_sa%E1%B9%83hit%C3%A2_of_Varaha_Mihira_(IA_b29353130).pdf"
+    source_download_url: "https://archive.org/download/b29353130/b29353130.pdf"
+    rights: "public_domain_mark_historical_edition"
+    section_ranges:
+      - {start: 1, end: 8, type: "front_matter"}
+      - {start: 9, end: 18, type: "translator_preface_and_introduction"}
+      - {start: 19, end: 20, type: "contents"}
+      - {start: 21, end: 492, type: "root_translation_with_translator_notes"}
+      - {start: 493, end: 496, type: "trailing_blank_or_end_matter"}
+    topics:
+      sun: ["onthesun", "sun"]
+      moon: ["onthemoon", "moon"]
+      rahu: ["onrahu", "rahu"]
+      mars: ["onmars", "mars"]
+      mercury: ["onmercury", "mercury"]
+      jupiter: ["onjupiter", "jupiter"]
+      venus: ["onvenus", "venus"]
+      saturn: ["onsaturn", "saturn"]
+      planetary_conjunction: ["planetaryconjunction", "conjunctionofplanets"]
+      comets: ["comet", "ketu"]
+      rainfall_weather: ["rain", "weather", "monsoon", "winds"]
+      agriculture_crops: ["crop", "harvest", "flowersandplants"]
+      earthquakes_meteors: ["earthquake", "meteor", "ulka"]
+      commodities_trade: ["price", "merchandise", "articlesforsale", "trade"]
+      transit: ["transit", "passes through", "gochara"]
+
+  SURYA_SIDDHANTA:
+    title: "Translation of the Surya-Siddhanta"
+    author: "Surya-Siddhanta tradition"
+    translator: "Ebenezer Burgess with the Committee of Publication"
+    edition: "Journal of the American Oriental Society volume 6, 1858"
+    authority: "classical_astronomy_historical_translation_with_scholarly_notes"
+    pdf_path: 'D:\GannFinancialAstro\sources\classical\SURYA_SIDDHANTA_1858_EBENEZER_BURGESS.pdf'
+    ocr_xml_path: 'D:\GannFinancialAstro\sources\classical\SURYA_SIDDHANTA_1858_EBENEZER_BURGESS_djvu.xml'
+    output_path: 'D:\PycharmProjects\jyotish_agent\corpus_text\SURYA_SIDDHANTA.txt'
+    expected_pages: 362
+    pdf_sha256: "B555C7EAABF8F167CFAE4177180090059451610F547C1FB4A197A0B28DED41FA"
+    ocr_xml_md5: "FE0015AF4F008EE7857C36C3A7FFA6E8"
+    source_page_url: "https://commons.wikimedia.org/wiki/File:Translation_of_the_S%C3%BBrya-Siddh%C3%A2nta,_A_Text-Book_of_Hindu_Astronomy;_With_Notes,_and_an_Appendix_(IA_jstor-592174).pdf"
+    source_download_url: "https://archive.org/download/jstor-592174/592174.pdf"
+    rights: "public_domain_mark_historical_edition"
+    section_ranges:
+      - {start: 1, end: 1, type: "repository_notice"}
+      - {start: 2, end: 5, type: "translator_introductory_note"}
+      - {start: 6, end: 339, type: "root_translation_with_scholarly_notes_and_calculations"}
+      - {start: 340, end: 344, type: "translator_concluding_note"}
+      - {start: 345, end: 362, type: "indexes"}
+    topics:
+      time_units: ["divisionoftime", "civil day", "siderealday", "lunar day"]
+      mean_motion: ["meanmotion", "revolutionsoftheplanets"]
+      true_place: ["trueplace", "meanplace"]
+      longitude: ["longitude", "meridian"]
+      eclipse: ["eclipse", "obscuration"]
+      conjunction: ["conjunction", "opposition"]
+      nakshatra: ["asterism", "nakshatra", "lunar mansion"]
+      tithi_paksha: ["tithi", "paksha", "lunarday"]
+      yoga_karana: ["yoga", "karana"]
+      ascension_declination: ["ascension", "declination"]
+      instruments: ["instrument", "gnomon", "armillarysphere"]
+      ayanamsa_precession: ["precession", "equinox", "ayanamsa"]
