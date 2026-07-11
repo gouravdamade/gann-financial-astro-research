@@ -1,0 +1,45 @@
+{
+  "name": "gann-astro-desk",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names backend,codex,ui --prefix-colors cyan,magenta,green \"python backend/server.py\" \"node server/codexBridge.mjs\" \"vite\"",
+    "dev:ui": "vite",
+    "dev:backend": "python backend/server.py",
+    "dev:codex": "node server/codexBridge.mjs",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "test:backend": "python -m unittest discover -s backend -p \"test_*.py\"",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "^0.144.1",
+    "@tauri-apps/api": "^2.11.1",
+    "html-to-image": "^1.11.13",
+    "lightweight-charts": "^5.2.0",
+    "lucide-react": "^1.24.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "concurrently": "^10.0.3",
+    "jsdom": "^29.1.1",
+    "oxlint": "^1.71.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1",
+    "vitest": "^4.1.10"
+  }
+}

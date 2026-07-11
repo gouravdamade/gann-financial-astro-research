@@ -1,10 +1,63 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-11 19:51 IST
+Last updated: 2026-07-11 23:49 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-11
+## Latest Update - 2026-07-11 (Gann Astro Desk)
+
+2026-07-11 first Windows-app vertical slice:
+
+- Added `gann-astro-desk`, a Tauri-ready React/TypeScript desktop surface with a quiet
+  chart-first operational design. The supported runtime is currently Vite at
+  `http://127.0.0.1:5173`; native installer packaging is not yet complete.
+- Main workspace uses real corrected data:
+  - 1,268 directional Raman transit-to-natal events from
+    `astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet`;
+  - USDJPY H1 candles from the versioned MT5 parquet source;
+  - 754 corrected planetary SR touches explicitly joined from
+    `aspect_sr_touch_log_usdjpy_tn_raman_v2_20250301_20260310.csv`.
+- Added clickable aspect windows and a detachable `Analyze Aspect` family window with:
+  - all previous occurrences, filters, previous/next navigation, outcome summaries,
+    deterministic astro evidence, and persistent reviewed/pending progress;
+  - chart tools for horizontal/vertical lines, two-anchor Gann fans, reset, and clear;
+  - structured chart annotations persisted with exact time, price, event, family,
+    selected target, note, and chart state.
+- Added read-only MT5 supervisor with heartbeat/reconnect. Live smoke check connected to
+  `MetaQuotes-Demo` and returned a current USDJPY bid/ask; `tradeAllowed=false` and
+  `executionMode=read_only_market_data` are enforced.
+- Added a local `@openai/codex-sdk` bridge for family-scoped Codex analysis. Each question
+  receives deterministic case context, the selected annotation, and a local chart PNG.
+  It has no MT5 order capability and does not promote LLM prose to official evidence.
+  Bridge health passed; a real reply was blocked by the local Codex usage limit until its
+  stated reset time, and the UI reports that error rather than fabricating a response.
+- Updated `gann_aspect_annotations_raman_v2.sqlite` to app schema version 2 with empty,
+  non-destructive `chart_annotations`, `app_occurrence_progress`, and
+  `app_codex_threads` tables. New app progress remains separate from legacy completed reviews.
+- Added a Tauri 2 shell/config under `gann-astro-desk/src-tauri`. `npx tauri info` parses
+  the app, but confirms Rust/Cargo and Microsoft C++ build tools are absent. Install them
+  on `D:` and freeze/sign the Python and Node services as sidecars before producing an installer.
+- Verification completed:
+  - frontend production build: passed;
+  - Oxlint: passed;
+  - Vitest: 2 passed;
+  - backend unittest: 4 passed;
+  - Python compile and Node syntax checks: passed;
+  - live browser checks: nonblank main chart, SR lines, family recurrence window,
+    review persistence, annotation create/delete, and embedded Codex panel all passed;
+  - browser console: no errors or warnings.
+- Remaining app work, in order:
+  1. implement the parameter editor and generation jobs for symbol, date range, timeframe,
+     n/f/degree, birth/IPO chart, location, planets, aspects, pair exclusions, and TT/TN mode;
+  2. merge live MT5 candle/tick updates into the displayed series (current MT5 connection is
+     supervised, while chart history remains the versioned parquet snapshot);
+  3. migrate deterministic Auto Suggest, trade markers, P/L, rule lessons, Dream Review,
+     and official-note queue into shared app/backend contracts;
+  4. consolidate browser and Python decision logic into one no-lookahead engine;
+  5. package the Python backend and Codex bridge as signed Tauri sidecars, then build the
+     Windows installer after the `D:`-hosted Rust/MSVC gate is satisfied.
+
+## Previous Update - 2026-07-11
 
 2026-07-11 end-to-end financial astrology code/data/doctrine audit:
 
