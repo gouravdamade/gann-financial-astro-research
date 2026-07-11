@@ -9,11 +9,29 @@ import type {
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
 
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds))
+}
+
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
-  })
+  const method = (init?.method ?? 'GET').toUpperCase()
+  const attempts = method === 'GET' ? 21 : 1
+  let response: Response | null = null
+  let networkError: unknown = null
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      response = await fetch(url, {
+        ...init,
+        headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+      })
+      break
+    } catch (error) {
+      networkError = error
+      if (attempt === attempts) throw error
+      await wait(1000)
+    }
+  }
+  if (!response) throw networkError instanceof Error ? networkError : new Error('Backend is unavailable')
   const payload = (await response.json()) as ApiEnvelope<T>
   if (!response.ok || !payload.ok) {
     throw new Error(payload.error || `Request failed: ${response.status}`)
