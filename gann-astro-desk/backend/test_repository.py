@@ -63,13 +63,7 @@ class AstroRepositoryTests(unittest.TestCase):
     def test_live_decision_uses_allowlisted_touch_evidence_only(self) -> None:
         touch = self.repository.touches.iloc[0]
         event_id = str(touch["event_id"])
-        event = self.repository.events.loc[
-            self.repository.events["event_id"].astype(str) == event_id
-        ].iloc[0]
-        cutoff = max(
-            pd.Timestamp(event["event_end"]),
-            pd.Timestamp(touch["touch_time_local"]) + pd.Timedelta(hours=1),
-        )
+        cutoff = pd.Timestamp(touch["touch_time_local"]) + pd.Timedelta(hours=1)
         packet = self.repository.live_decision_packet(event_id, cutoff)
 
         self.assertEqual(packet["mode"], "live_inference")
@@ -78,9 +72,14 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertTrue(packet["guardrails"]["timestampSafe"])
         self.assertTrue(packet["guardrails"]["noLookahead"])
         self.assertFalse(packet["guardrails"]["executionAllowed"])
+        self.assertEqual(
+            packet["policyLocks"]["historicalValidationStatus"],
+            "failed_retrospective_statistical_gate_20260713",
+        )
         self.assertIsNone(packet["outcome"])
         self.assertIsNone(packet["entry"]["price"])
         self.assertIsNone(packet["exit"]["price"])
+        self.assertEqual(pd.Timestamp(packet["times"]["decisionTime"]), cutoff.tz_convert("UTC"))
         self.assertEqual(
             set(packet["featureAudit"]["consumedFields"]),
             {

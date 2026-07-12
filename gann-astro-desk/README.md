@@ -45,6 +45,9 @@ separate from live market-data concerns.
   ineligible for live execution; the native API rejects replay-mode requests.
 - Live packets reject unclosed touch candles, out-of-window touches, future price
   evidence, outcome labels, fill/exit values, and decisions outside their deadline.
+- The frozen v1 policy failed its first purged/embargoed retrospective statistical
+  gate (54.26% across 258 unique watch clusters; its 95% interval crossed 50%).
+  Every packet and Analyze Aspect panel carries that research-only validation lock.
 - Provisional astrological values remain labeled provisional.
 - New occurrence progress is stored separately from legacy completed reviews.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.

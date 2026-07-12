@@ -52,13 +52,15 @@ function resultLabel(occurrence: AspectWindow): string {
 }
 
 function evidenceCutoff(detail: EventDetail): string {
+  const eventStart = new Date(detail.event.startIso).getTime()
   const eventEnd = new Date(detail.event.endIso).getTime()
   const touchValue = detail.context.touch_time_local
   const touchTime = typeof touchValue === 'string' ? new Date(touchValue).getTime() : Number.NaN
   const timeframe = String(detail.chart.artifact.sourceTimeframe || detail.chart.timeframe).toUpperCase()
   const durationMinutes = timeframe === 'M30' ? 30 : timeframe === 'H4' ? 240 : timeframe === 'D1' ? 1440 : 60
-  const touchClose = Number.isFinite(touchTime) ? touchTime + durationMinutes * 60_000 : eventEnd
-  return new Date(Math.max(eventEnd, touchClose)).toISOString()
+  if (!Number.isFinite(touchTime)) return new Date(eventEnd).toISOString()
+  const touchClose = touchTime + durationMinutes * 60_000
+  return new Date(Math.max(eventStart, touchClose)).toISOString()
 }
 
 export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspectWindowProps) {
@@ -324,6 +326,12 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                       <span>outcome excluded</span>
                       <span>execution locked</span>
                     </div>
+                    {decisionPacket.policyLocks && (
+                      <div className="decision-validation-lock">
+                        <strong>Historical gate failed</strong>
+                        <span>54.26% hit rate; 95% interval crossed 50%. Research watch only.</span>
+                      </div>
+                    )}
                     {decisionPacket.evidence && Object.keys(decisionPacket.evidence).length > 0 && (
                       <div className="decision-evidence">
                         {Object.entries(decisionPacket.evidence).slice(0, 6).map(([key, value]) => (

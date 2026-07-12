@@ -354,6 +354,10 @@ export type DecisionPacket = {
     automaticOrderPlacement: boolean
     reviewRulesApplied: string[]
     purgedValidationRequired: boolean
+    prospectiveValidationRequired: boolean
+    historicalValidationContract: string
+    historicalValidationStatus: string
+    historicalValidationReport: string
     externalAstrologyCertificationRequired: boolean
   }
   provenance: Record<string, string | number | boolean | null | undefined>

@@ -12,8 +12,11 @@ from build_trade_candidates_from_touches import score_currency_pair_for_row
 
 
 DECISION_PACKET_CONTRACT = "GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1"
-ENGINE_VERSION = "timestamp_safe_auto_suggest_v1_20260712"
+ENGINE_VERSION = "timestamp_safe_auto_suggest_v1_1_20260713"
 POLICY_VERSION = "fx_doctrine_consensus_watch_only_v1"
+VALIDATION_CONTRACT = "GANN_TIMESTAMP_SAFE_WALK_FORWARD_EVALUATION_V1"
+VALIDATION_STATUS = "failed_retrospective_statistical_gate_20260713"
+VALIDATION_REPORT = "timestamp_safe_decision_walk_forward_20260713.md"
 RESEARCH_REPLAY = "research_replay"
 LIVE_INFERENCE = "live_inference"
 
@@ -560,6 +563,10 @@ class TimestampSafeDecisionEngine:
                 "automaticOrderPlacement": False,
                 "reviewRulesApplied": [],
                 "purgedValidationRequired": True,
+                "prospectiveValidationRequired": True,
+                "historicalValidationContract": VALIDATION_CONTRACT,
+                "historicalValidationStatus": VALIDATION_STATUS,
+                "historicalValidationReport": VALIDATION_REPORT,
                 "externalAstrologyCertificationRequired": True,
             },
             "provenance": {

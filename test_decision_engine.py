@@ -105,6 +105,10 @@ def test_live_packet_excludes_future_labels_and_unclosed_bars() -> None:
     assert first["exit"]["price"] is None
     assert first["guardrails"]["timestampSafe"] is True
     assert first["guardrails"]["executionAllowed"] is False
+    assert first["policyLocks"]["historicalValidationStatus"] == (
+        "failed_retrospective_statistical_gate_20260713"
+    )
+    assert first["policyLocks"]["prospectiveValidationRequired"] is True
     assert first["priceAudit"]["closedBarCount"] == 2
     assert first["priceAudit"]["futureOrUnclosedBarsExcluded"] == 1
     assert first["times"]["sourceDataMaxTime"] == "2026-07-02T12:00:00+00:00"

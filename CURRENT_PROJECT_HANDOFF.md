@@ -1,10 +1,60 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 00:02 IST
+Last updated: 2026-07-13 01:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (Unified Timestamp-Safe Decision Engine)
+## Latest Update - 2026-07-13 (Purged Timestamp-Safe Policy Validation)
+
+- Corrected a chronology defect in native `Analyze Aspect`: a selected historical touch now
+  becomes eligible at the close of its source candle, while event end remains the eligibility
+  deadline. The previous `max(event_end, touch_close)` display cutoff could move inference
+  beyond the 72-hour outcome label for long aspects even though the shared engine itself did
+  not require event end.
+- Added `evaluate_timestamp_safe_decisions.py`, a frozen purged/embargoed evaluator that calls
+  the real `decision_engine.live_inference_packet` for every retained SR touch. It excludes
+  forbidden future/outcome fields, quarantines labels already available at decision time,
+  prevents identical decision timestamps from crossing folds, clusters simultaneous events
+  into one market decision, and admits training labels only after the full 72-hour outcome
+  horizon plus a 72-hour embargo.
+- Added `test_evaluate_timestamp_safe_decisions.py`. Its tests cover touch-close timing,
+  label-availability purging, embargoed history, equal-time fold boundaries, simultaneous
+  decision clustering, future-label packet invariance, and already-known-label quarantine.
+- Frozen baseline result is recorded in `timestamp_safe_decision_walk_forward_20260713.md`:
+  - 754 source touches; 753 timestamp-valid packets; 1 quarantined flat label;
+  - 355 unique out-of-sample decision clusters; 258 watches and 97 abstentions;
+  - 140/258 correct = 54.26% hit rate, with Wilson 95% interval 48.17%-60.24%;
+  - exact two-sided p-value versus 50% = 0.191;
+  - balanced direction accuracy 55.91%; training-majority baseline 43.41%;
+  - mean signed 72-hour return +0.0276% before costs, but only 3/5 folds were positive.
+- The predeclared statistical gate therefore **failed**: the confidence interval crosses 50%,
+  p-value is not below 0.05, and the positive-fold requirement was not met. These results are
+  descriptive historical evidence only, not a trading certificate.
+- Engine version is now `timestamp_safe_auto_suggest_v1_1_20260713`. Every live packet exposes
+  `failed_retrospective_statistical_gate_20260713`, links the tracked validation report, requires
+  prospective validation, and keeps execution disabled. Analyze Aspect visibly shows
+  `Historical gate failed` and remains a research-watch surface.
+- Native release promoted to `0.3.1`:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - SHA-256 `0517656542BE12D8BECF7E6EE2E4DCD2C2991FFCE0D234AAB19E9514D7693308`;
+  - 1,656 files / 698,340,280 bytes;
+  - MT5 remains `read_only_market_data`.
+- Verification:
+  - full Python suite: 92 passed;
+  - native backend suite: 17 passed;
+  - frontend Vitest: 5 passed;
+  - Ruff, Oxlint, TypeScript/Vite production build, packaged visual QA, and packaged API: passed;
+  - packaged API confirmed touch-close decision time equals source-data maximum, no-lookahead
+    true, execution false, failed-gate lock present; the July 2026 active artifact was restored
+    after the reversible baseline smoke test.
+- Next gates:
+  1. run a prospective, append-only shadow-decision ledger before reconsidering the policy;
+  2. externally certify Shadbala/Drik doctrine calculations;
+  3. if the shadow sample is adequate, evaluate the same frozen metrics with spread/slippage;
+  4. do not add MT5 order placement unless a later validated execution project is explicitly
+     authorized.
+
+## Previous Update - 2026-07-13 (Unified Timestamp-Safe Decision Engine)
 
 - Added root `decision_engine.py` with the shared packet contract
   `GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1`, engine version
