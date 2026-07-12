@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import unittest
 
+import pandas as pd
+
 from repository import ASTRO_CONTRACT, AstroRepository
 
 
@@ -57,6 +59,43 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertTrue(context["guardrails"]["analysisOnly"])
         self.assertFalse(context["guardrails"]["mt5OrderPlacementAllowed"])
         self.assertEqual(context["guardrails"]["astronomyContract"], ASTRO_CONTRACT)
+
+    def test_live_decision_uses_allowlisted_touch_evidence_only(self) -> None:
+        touch = self.repository.touches.iloc[0]
+        event_id = str(touch["event_id"])
+        event = self.repository.events.loc[
+            self.repository.events["event_id"].astype(str) == event_id
+        ].iloc[0]
+        cutoff = max(
+            pd.Timestamp(event["event_end"]),
+            pd.Timestamp(touch["touch_time_local"]) + pd.Timedelta(hours=1),
+        )
+        packet = self.repository.live_decision_packet(event_id, cutoff)
+
+        self.assertEqual(packet["mode"], "live_inference")
+        self.assertEqual(packet["status"], "watch")
+        self.assertIn(packet["decision"]["action"], {"WATCH_LONG", "WATCH_SHORT"})
+        self.assertTrue(packet["guardrails"]["timestampSafe"])
+        self.assertTrue(packet["guardrails"]["noLookahead"])
+        self.assertFalse(packet["guardrails"]["executionAllowed"])
+        self.assertIsNone(packet["outcome"])
+        self.assertIsNone(packet["entry"]["price"])
+        self.assertIsNone(packet["exit"]["price"])
+        self.assertEqual(
+            set(packet["featureAudit"]["consumedFields"]),
+            {
+                "aspect",
+                "base_reference_label",
+                "base_tn_hits_json",
+                "pair_key",
+                "quote_reference_label",
+                "tn_hits_json",
+            },
+        )
+        self.assertLessEqual(
+            pd.Timestamp(packet["times"]["sourceDataMaxTime"]),
+            pd.Timestamp(packet["times"]["decisionTime"]),
+        )
 
 
 if __name__ == "__main__":

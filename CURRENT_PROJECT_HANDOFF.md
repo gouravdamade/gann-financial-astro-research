@@ -1,10 +1,69 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-12 06:35 IST
+Last updated: 2026-07-13 00:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-12 (Durable Corrected-Data Generation)
+## Latest Update - 2026-07-13 (Unified Timestamp-Safe Decision Engine)
+
+- Added root `decision_engine.py` with the shared packet contract
+  `GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1`, engine version
+  `timestamp_safe_auto_suggest_v1_20260712`, and two explicit modes:
+  `research_replay` and `live_inference`.
+- Retrospective `reviewer_rule_replay.auto_suggest_case` still performs the existing
+  completed-chart marker replay, but now returns the shared packet and declares its
+  known-outcome/future-price-path use. Replay packets are always timestamp-unsafe,
+  no-lookahead false, outcome-consumed, future-prices-consumed, and live-ineligible.
+- Browser Auto Suggest remains executable only through `POST /api/auto_suggest` and the
+  Python replay engine. The archived JavaScript decision body is unwired and now throws
+  immediately if called, preventing a second executable policy from drifting silently.
+- Added native `POST /api/decisions`, which accepts `live_inference` only. Research replay
+  requests are rejected. Live decisions use only a closed selected-touch candle, closed
+  price evidence through the decision cutoff, and an explicit feature allowlist. The
+  repository physically loads only the safe scorer/context fields; outcome labels, future
+  returns, edge scores, MFE/MAE, P/L, special traits and rule lessons are not loaded into the
+  native inference row.
+- Live policy `fx_doctrine_consensus_watch_only_v1` emits `WATCH_LONG`, `WATCH_SHORT`, or
+  `ABSTAIN` only when the raw and doctrine USD-minus-JPY hypotheses agree. It never creates
+  an entry price/time, exit price/time, P/L, outcome, or MT5 order. Execution remains locked.
+- Timestamp rules are explicit: the touch must lie inside its event window; the touch bar
+  must close before it becomes evidence; and one source-timeframe of post-window grace is
+  allowed only so the final overlapping bar can close. Packet validation rejects future
+  price evidence, outcome/fill/exit injection, unavailable watch signals, and watches outside
+  the decision deadline.
+- Analyze Aspect now shows a dedicated `Timestamp-safe inference` panel with action/reason,
+  decision cutoff, signal-availability time, closed-evidence time, packet ID, evidence, and
+  visible `timestamp safe`, `no lookahead`, `outcome excluded`, and `execution locked` badges.
+  Its historical inspection cutoff is the later of event end or the selected touch-bar close.
+- Real retained July artifact smoke (`tn_2beda5f38c4f4cc2bb866fa88c174bf2`): all 12 touch
+  events were processed by the packaged endpoint; 5 produced provisional `WATCH_SHORT` and
+  7 abstained because raw/doctrine evidence was unknown or conflicted. No live packet carried
+  an outcome or execution permission. Packaged visual QA on `TN::MERCURY->MARS::trine`
+  displayed `WATCH SHORT` cleanly and browser logs contained no warnings/errors.
+- Native release promoted to `0.3.0`:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - SHA-256 `6C22ECE1038A98FCE3B46FFBCC6E1C0E5047BB1AB702B2E18CED591E5AD5557B`;
+  - 1,656 files / 698,339,468 bytes;
+  - astronomy contract remains `RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2`;
+  - MT5 execution mode remains `read_only_market_data`.
+- Verification:
+  - full Python suite: 86 passed;
+  - native backend suite: 17 passed;
+  - frontend Vitest: 5 passed;
+  - Oxlint, TypeScript/Vite build, `git diff --check`, packaged API, and packaged UI: passed.
+- Remaining deliberate gates:
+  1. run purged/embargoed out-of-sample evaluation of timestamp-safe packets before changing
+     watch-only status;
+  2. externally certify Shadbala/Drik calculations before treating astrology doctrine as
+     production evidence;
+  3. migrate retrospective P/L, rule lessons, Dream Review, and official-note processing into
+     typed research-only contracts without exposing them to live inference;
+  4. physically delete the now-disabled JavaScript archive after any final historical parity
+     work; it is not executable now;
+  5. MT5 order placement stays disabled until the user separately authorizes an execution
+     project after validation.
+
+## Previous Update - 2026-07-12 (Durable Corrected-Data Generation)
 
 2026-07-12 third Windows-app vertical slice:
 

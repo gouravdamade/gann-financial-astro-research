@@ -292,6 +292,73 @@ export type EventDetail = {
   annotations: ChartAnnotation[]
 }
 
+export type DecisionPacket = {
+  contract: 'GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1'
+  packetId: string
+  engineVersion: string
+  policyVersion: string
+  mode: 'research_replay' | 'live_inference'
+  status: 'watch' | 'abstain' | 'observed_replay'
+  symbol: string
+  eventId: string
+  caseId: number | null
+  familyKey: string
+  times: {
+    eventWindowStart: string
+    eventWindowEnd: string
+    decisionDeadline?: string
+    signalTime: string | null
+    decisionTime: string
+    fillTime: string | null
+    exitTime: string | null
+    labelAvailableTime: string | null
+    evidenceCutoff: string
+    sourceDataMaxTime: string | null
+  }
+  decision: {
+    action: 'WATCH_LONG' | 'WATCH_SHORT' | 'ABSTAIN'
+    direction: 'bullish' | 'bearish' | 'abstain'
+    directionSource: string
+    confidence: string
+    reason: string
+  }
+  entry: { state: string; rule: string | null; time: string | null; price: number | null }
+  exit: { state: string; rule: string | null; time: string | null; price: number | null }
+  outcome: null | { label: string; signedPips: number | null; rawPips: number | null }
+  evidence?: Record<string, string | number | boolean | null>
+  priceAudit?: {
+    closedBarCount: number
+    futureOrUnclosedBarsExcluded: number
+    sourceDataMaxTime: string | null
+    firstClosedBarOpenTime: string | null
+    lastClosedBarOpenTime: string | null
+  }
+  featureAudit: {
+    allowlistVersion: string | null
+    consumedFields: string[]
+    contextFields?: string[]
+    forbiddenFieldsPresentButExcluded: string[]
+    inputFingerprint: string
+  }
+  guardrails: {
+    timestampSafe: boolean
+    noLookahead: boolean
+    outcomeLabelConsumed: boolean
+    futurePricesConsumed: boolean
+    liveEligible: boolean
+    executionAllowed: false
+    violations: string[]
+  }
+  policyLocks?: {
+    mt5Execution: string
+    automaticOrderPlacement: boolean
+    reviewRulesApplied: string[]
+    purgedValidationRequired: boolean
+    externalAstrologyCertificationRequired: boolean
+  }
+  provenance: Record<string, string | number | boolean | null | undefined>
+}
+
 export type Mt5Status = {
   state: 'starting' | 'disabled' | 'connected' | 'reconnecting'
   symbol: string

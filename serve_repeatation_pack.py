@@ -22,6 +22,7 @@ from aspect_annotation_store import (
     upsert_completed_review,
 )
 from codex_review_task_queue import process_pending_tasks
+from decision_engine import ENGINE_VERSION, RESEARCH_REPLAY
 from reviewer_rule_replay import auto_suggest_case, replay_completed_review_impacts
 
 
@@ -177,8 +178,8 @@ class NoCacheRequestHandler(SimpleHTTPRequestHandler):
             {
                 "ok": True,
                 "case_id": case_id,
-                "engine": "reviewer_rule_replay.auto_suggest_case",
-                "engine_mode": "retrospective_review_only",
+                "engine": ENGINE_VERSION,
+                "engine_mode": RESEARCH_REPLAY,
                 "replay": replay,
             },
         )

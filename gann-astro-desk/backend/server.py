@@ -317,6 +317,30 @@ def event_detail(event_id: str) -> Any:
         return jsonify({"ok": False, "error": str(exc)}), 404
 
 
+@app.post("/api/decisions")
+def decision_packet() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        mode = str(payload.get("mode") or "live_inference").strip().lower()
+        if mode != "live_inference":
+            raise ValueError("The native API accepts live_inference only; research replay stays in the reviewer")
+        event_id = str(payload.get("eventId") or "").strip()
+        if not event_id:
+            raise ValueError("eventId is required")
+        raw_decision_time = payload.get("decisionTime")
+        decision_time = (
+            required_offset_datetime(raw_decision_time, "decisionTime")
+            if raw_decision_time
+            else datetime.now(timezone.utc)
+        )
+        packet = repository.live_decision_packet(event_id, decision_time)
+        return jsonify({"ok": True, "decision": packet})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
 @app.post("/api/events/<event_id>/review")
 def occurrence_review(event_id: str) -> Any:
     try:

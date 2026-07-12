@@ -59,6 +59,9 @@ hiddenimports = sorted(
             "repository",
             "generation",
             "mt5_gateway",
+            "decision_engine",
+            "build_trade_candidates_from_touches",
+            "doctrine_config",
             "build_corrected_natal_event_source",
             "build_aspect_sr_touch_log",
         ]

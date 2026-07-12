@@ -5,9 +5,12 @@ import {
   Check,
   ChevronLeft,
   Filter,
+  LoaderCircle,
   MessageSquareText,
   Microscope,
+  RefreshCw,
   Save,
+  ShieldCheck,
   SlidersHorizontal,
   Trash2,
   X,
@@ -17,6 +20,7 @@ import {
   deleteAnnotation,
   fetchEventDetail,
   fetchFamily,
+  fetchLiveDecision,
   saveAnnotation,
   saveReviewStatus,
 } from '../api'
@@ -30,6 +34,7 @@ import type {
   AspectWindow,
   ChartAnnotation,
   ChartTool,
+  DecisionPacket,
   EventDetail,
 } from '../types'
 
@@ -46,6 +51,16 @@ function resultLabel(occurrence: AspectWindow): string {
   return `${occurrence.returnPct > 0 ? '+' : ''}${occurrence.returnPct.toFixed(2)}%`
 }
 
+function evidenceCutoff(detail: EventDetail): string {
+  const eventEnd = new Date(detail.event.endIso).getTime()
+  const touchValue = detail.context.touch_time_local
+  const touchTime = typeof touchValue === 'string' ? new Date(touchValue).getTime() : Number.NaN
+  const timeframe = String(detail.chart.artifact.sourceTimeframe || detail.chart.timeframe).toUpperCase()
+  const durationMinutes = timeframe === 'M30' ? 30 : timeframe === 'H4' ? 240 : timeframe === 'D1' ? 1440 : 60
+  const touchClose = Number.isFinite(touchTime) ? touchTime + durationMinutes * 60_000 : eventEnd
+  return new Date(Math.max(eventEnd, touchClose)).toISOString()
+}
+
 export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspectWindowProps) {
   const [family, setFamily] = useState<AspectFamily | null>(null)
   const [selectedEventId, setSelectedEventId] = useState(initialEventId ?? '')
@@ -55,6 +70,9 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
   const [filter, setFilter] = useState<OccurrenceFilter>('all')
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [reviewSaving, setReviewSaving] = useState(false)
+  const [decisionPacket, setDecisionPacket] = useState<DecisionPacket | null>(null)
+  const [decisionLoading, setDecisionLoading] = useState(false)
+  const [decisionError, setDecisionError] = useState('')
   const [error, setError] = useState('')
   const chartRef = useRef<MarketChartHandle>(null)
 
@@ -71,10 +89,30 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
     if (!selectedEventId) return
     setDetail(null)
     setSelectedAnnotation(null)
+    setDecisionPacket(null)
+    setDecisionError('')
     fetchEventDetail(selectedEventId)
       .then(setDetail)
       .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)))
   }, [selectedEventId])
+
+  const runCutoffDecision = useCallback(async (eventId: string, decisionTime: string) => {
+    setDecisionLoading(true)
+    setDecisionError('')
+    try {
+      setDecisionPacket(await fetchLiveDecision(eventId, decisionTime))
+    } catch (reason) {
+      setDecisionPacket(null)
+      setDecisionError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setDecisionLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!detail) return
+    void runCutoffDecision(detail.event.eventId, evidenceCutoff(detail))
+  }, [detail, runCutoffDecision])
 
   const selectedOccurrence = useMemo(
     () => family?.occurrences.find((item) => item.eventId === selectedEventId) ?? null,
@@ -253,6 +291,50 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                   {selectedOccurrence.outcome ?? 'Pending'} {selectedOccurrence.returnPct == null ? '' : `${selectedOccurrence.returnPct > 0 ? '+' : ''}${selectedOccurrence.returnPct.toFixed(2)}%`}
                 </strong>
                 <p>Observed outcome is a retrospective label and is not available to live inference.</p>
+              </section>
+              <section className={`live-decision ${decisionPacket?.status ?? 'loading'}`}>
+                <header>
+                  <div><ShieldCheck size={16} /><strong>Timestamp-safe inference</strong></div>
+                  <button
+                    className="icon-button"
+                    onClick={() => runCutoffDecision(selectedEventId, evidenceCutoff(detail))}
+                    disabled={decisionLoading}
+                    title="Recalculate when the selected touch candle is closed"
+                  >
+                    {decisionLoading ? <LoaderCircle size={15} /> : <RefreshCw size={15} />}
+                  </button>
+                </header>
+                {decisionPacket ? (
+                  <>
+                    <div className="live-decision-result">
+                      <strong>{decisionPacket.decision.action.replace('_', ' ')}</strong>
+                      <span>{decisionPacket.status}</span>
+                    </div>
+                    <p>{decisionPacket.decision.reason}</p>
+                    <dl>
+                      <div><dt>Decision cutoff</dt><dd>{new Date(decisionPacket.times.decisionTime).toLocaleString()}</dd></div>
+                      <div><dt>Signal available</dt><dd>{decisionPacket.times.signalTime ? new Date(decisionPacket.times.signalTime).toLocaleString() : 'no closed touch'}</dd></div>
+                      <div><dt>Closed evidence through</dt><dd>{decisionPacket.times.sourceDataMaxTime ? new Date(decisionPacket.times.sourceDataMaxTime).toLocaleString() : 'none'}</dd></div>
+                      <div><dt>Direction source</dt><dd>{decisionPacket.decision.directionSource.replaceAll('_', ' ')}</dd></div>
+                      <div><dt>Packet</dt><dd>{decisionPacket.packetId.slice(0, 12)}</dd></div>
+                    </dl>
+                    <div className="decision-guards">
+                      <span className={decisionPacket.guardrails.timestampSafe ? 'is-safe' : ''}>timestamp safe</span>
+                      <span className={decisionPacket.guardrails.noLookahead ? 'is-safe' : ''}>no lookahead</span>
+                      <span>outcome excluded</span>
+                      <span>execution locked</span>
+                    </div>
+                    {decisionPacket.evidence && Object.keys(decisionPacket.evidence).length > 0 && (
+                      <div className="decision-evidence">
+                        {Object.entries(decisionPacket.evidence).slice(0, 6).map(([key, value]) => (
+                          <div key={key}><span>{key.replaceAll('_', ' ')}</span><strong>{String(value)}</strong></div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p>{decisionError || 'Calculating from evidence available at the event cutoff.'}</p>
+                )}
               </section>
               <div className="evidence-list">
                 {detail.astroEvidence.map((item) => (

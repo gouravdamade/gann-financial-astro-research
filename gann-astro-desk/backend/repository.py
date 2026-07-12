@@ -4,6 +4,7 @@ import base64
 import json
 import os
 import sqlite3
+import sys
 import threading
 import uuid
 from dataclasses import dataclass
@@ -22,6 +23,15 @@ from price_sources import (
     load_promoted_price_source,
     promote_snapshot,
 )
+
+SHARED_PROJECT_ROOT = Path(
+    os.environ.get("GANN_ASTRO_PROJECT_ROOT") or Path(__file__).resolve().parents[2]
+).expanduser().resolve()
+if str(SHARED_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(SHARED_PROJECT_ROOT))
+
+# The shared engine is outside backend/ in source and at the bundle root when frozen.
+from decision_engine import ENGINE, LIVE_FEATURE_ALLOWLIST  # noqa: E402
 
 
 IST = "Asia/Kolkata"
@@ -302,11 +312,10 @@ class AstroRepository:
         missing = sorted(set(TOUCH_BASE_COLUMNS) - set(header.columns))
         if missing:
             raise ValueError(f"Touch artifact is missing required columns: {missing}")
-        usecols = [
-            column
-            for column in (*TOUCH_BASE_COLUMNS, *TOUCH_CONTEXT_COLUMNS)
-            if column in header.columns
-        ]
+        requested_columns = dict.fromkeys(
+            (*TOUCH_BASE_COLUMNS, *TOUCH_CONTEXT_COLUMNS, *sorted(LIVE_FEATURE_ALLOWLIST))
+        )
+        usecols = [column for column in requested_columns if column in header.columns]
         frame = pd.read_csv(path, usecols=usecols)
         frame["touch_time_local"] = pd.to_datetime(frame["touch_time_local"])
         return frame
@@ -1318,10 +1327,32 @@ class AstroRepository:
                     "ret_after_72h_dir",
                     "ret_after_72h_pct",
                     "touch_planets",
+                    "touch_time_local",
                 }
             },
             "annotations": self.list_annotations(event_id=event_id),
         }
+
+    @synchronized_dataset
+    def live_decision_packet(self, event_id: str, decision_time: Any) -> dict[str, Any]:
+        rows = self.events.loc[self.events["event_id"].astype(str) == str(event_id)]
+        if rows.empty:
+            raise KeyError(f"Unknown event: {event_id}")
+        event = rows.iloc[0].copy()
+        case = self.case_by_event.get(str(event_id))
+        if case is not None:
+            event["case_id"] = int(case["case_id"])
+        timeframe = str(self.active_artifact.get("sourceTimeframe") or "H1").upper()
+        price = self._price_for_timeframe(timeframe)
+        touch = self.touch_by_event.get(str(event_id))
+        return ENGINE.live_inference_packet(
+            event=event,
+            touch=touch,
+            price=price,
+            decision_time=decision_time,
+            timeframe=timeframe,
+            artifact=self.active_artifact,
+        )
 
     @synchronized_dataset
     def set_occurrence_progress(self, event_id: str, status: str) -> dict[str, Any]:

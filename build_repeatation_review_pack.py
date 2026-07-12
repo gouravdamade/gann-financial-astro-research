@@ -3090,9 +3090,21 @@ def marker_ui_script(case: dict[str, Any]) -> str:
           + esc(fan.base_pips_per_candle || 1)
           + ' pip per ' + esc(fan.timeframe_minutes || timeframeMinutes()) + ' minute candle; fan stays data-based during zoom/pan.</div>';
       }}
+      var packetHtml = '';
+      if (s.decision_packet) {{
+        var packet = s.decision_packet;
+        var guard = packet.guardrails || {{}};
+        packetHtml = '<div class="rm-warning"><b>Decision mode</b>: '
+          + esc(packet.mode || 'unknown')
+          + ' | live eligible: ' + esc(guard.liveEligible ? 'yes' : 'no')
+          + ' | timestamp safe: ' + esc(guard.timestampSafe ? 'yes' : 'no')
+          + '</div><div class="rm-table-sub">Packet ' + esc(packet.packetId || '')
+          + ' | engine ' + esc(packet.engineVersion || '') + '</div>';
+      }}
       return '<div class="rm-auto ' + esc(s.confidence || '') + '">'
         + '<div><b>Auto suggestion</b><span>' + esc(s.confidence || 'unknown') + '</span></div>'
         + '<div>' + esc(s.reason || '') + '</div>'
+        + packetHtml
         + geometry
         + tracking
         + breakHtml
@@ -4342,8 +4354,9 @@ def marker_ui_script(case: dict[str, Any]) -> str:
         if (!response.ok || !payload.ok) throw new Error(payload.error || ('HTTP ' + response.status));
         var replay = payload.replay || {{}};
         state.autoSuggestion = replay.auto_suggestion || {{}};
-        state.autoSuggestion.engine = payload.engine || 'reviewer_rule_replay.auto_suggest_case';
-        state.autoSuggestion.engine_mode = payload.engine_mode || 'retrospective_review_only';
+        state.autoSuggestion.decision_packet = replay.decision_packet || null;
+        state.autoSuggestion.engine = payload.engine || 'timestamp_safe_auto_suggest_v1_20260712';
+        state.autoSuggestion.engine_mode = payload.engine_mode || 'research_replay';
         state.autoSuggestion.manual_override = false;
         state.autoSuggestion.overridden_keys = [];
         state.tradeStart = null;
@@ -4365,6 +4378,7 @@ def marker_ui_script(case: dict[str, Any]) -> str:
       }}
     }}
     function legacyAutoSuggestTradeSourceArchive() {{
+      throw new Error('Archived source only: Auto Suggest executes exclusively through /api/auto_suggest.');
       var markers = collectChartMarkers();
       if (!markers.length) {{
         state.autoSuggestion = {{

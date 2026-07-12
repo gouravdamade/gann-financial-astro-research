@@ -11,6 +11,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
+from decision_engine import ENGINE, ENGINE_VERSION
+
 
 DEFAULT_PACK_ROOT = Path(r"D:\GannFinancialAstro\doc")
 DEFAULT_PACK_GLOB = "repeatation_review_case_8_avg_all_moon_square_*"
@@ -1203,7 +1207,7 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
             "created_at": datetime.utcnow().isoformat() + "Z",
         }
     )
-    return {
+    replay = {
         "case_id": int(case_id),
         "family_key": str(case.get("family_key") or f"LEGACY::{case.get('pair_key')}::{case.get('aspect')}"),
         "outcome_label": effective_outcome,
@@ -1217,6 +1221,16 @@ def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
         "end_rule": end_rule,
         "auto_suggestion": auto,
     }
+    source_max_ms = max((int(candle["t"]) for candle in candles), default=iso_ms(str(case["window_end_ist"])))
+    replay["decision_packet"] = ENGINE.research_replay_packet(
+        replay=replay,
+        case=case,
+        source_data_max_time=pd.Timestamp(source_max_ms, unit="ms", tz="UTC"),
+    )
+    auto["decision_packet_id"] = replay["decision_packet"]["packetId"]
+    auto["decision_engine_version"] = ENGINE_VERSION
+    auto["decision_mode"] = "research_replay"
+    return replay
 
 
 def replay_completed_review_impacts(

@@ -29,6 +29,11 @@ separate from live market-data concerns.
 - Horizontal line, vertical line, Gann fan, and structured annotation tools.
 - Persistent chart annotations with exact time, price, family, event, and chart state.
 - Read-only MT5 connection supervisor with heartbeat and reconnect status.
+- One versioned decision-packet contract shared by retrospective Auto Suggest and
+  native live inference, with the mode and evidence cutoff recorded on every packet.
+- A timestamp-safe Analyze Aspect inference panel that uses only closed candles and
+  allowlisted touch/astrology fields, emits watch or abstain, and never materializes
+  an entry, exit, P/L, outcome, or order.
 - Read-only Codex SDK bridge with deterministic evidence, selected annotation,
   and a local chart screenshot attached to the family task.
 
@@ -36,6 +41,10 @@ separate from live market-data concerns.
 
 - MT5 order placement is disabled in both the gateway and Codex context.
 - Observed outcomes are labeled retrospective and must not enter live inference.
+- Retrospective marker replay declares its outcome/future-path use and is always
+  ineligible for live execution; the native API rejects replay-mode requests.
+- Live packets reject unclosed touch candles, out-of-window touches, future price
+  evidence, outcome labels, fill/exit values, and decisions outside their deadline.
 - Provisional astrological values remain labeled provisional.
 - New occurrence progress is stored separately from legacy completed reviews.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.
@@ -106,9 +115,11 @@ versioned USDJPY M30/H1 sources. Generated artifacts and their manifests are sto
 registry. Immutable MT5 snapshots can be promoted explicitly into verified price sources;
 generation records the selected source ID, source snapshot, SHA-256 and as-of cutoff, and
 activation switches chart candles atomically while preserving baseline restoration.
-TT generation remains unavailable and disabled. Deterministic Auto Suggest, trade markers,
-P/L, rule lessons, Dream Review, and official-note processing still need to be consolidated
-into a shared timestamp-safe, no-lookahead decision engine before live inference.
+TT generation remains unavailable and disabled. Deterministic Auto Suggest and native
+live inference now share `GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1`; retrospective trade
+markers, P/L, rule lessons, Dream Review, and official-note processing remain research-only.
+Live inference is deliberately watch/abstain-only until purged out-of-sample validation and
+external astrology certification are complete.
 
 ## Storage
 

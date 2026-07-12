@@ -5,6 +5,7 @@ import type {
   ChartParameters,
   ChartPayload,
   DataArtifact,
+  DecisionPacket,
   EventDetail,
   GenerationJob,
   Mt5HistorySnapshot,
@@ -192,6 +193,17 @@ export async function fetchFamily(familyKey: string, eventId?: string): Promise<
 export async function fetchEventDetail(eventId: string): Promise<EventDetail> {
   const payload = await request<{ detail: EventDetail }>(`/api/events/${encodeURIComponent(eventId)}`)
   return payload.detail
+}
+
+export async function fetchLiveDecision(
+  eventId: string,
+  decisionTime: string,
+): Promise<DecisionPacket> {
+  const payload = await request<{ decision: DecisionPacket }>('/api/decisions', {
+    method: 'POST',
+    body: JSON.stringify({ mode: 'live_inference', eventId, decisionTime }),
+  })
+  return payload.decision
 }
 
 export async function saveReviewStatus(
