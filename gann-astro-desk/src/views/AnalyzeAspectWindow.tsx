@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Bot,
+  BrainCircuit,
   Check,
   ChevronLeft,
   Filter,
@@ -25,6 +26,7 @@ import {
   saveReviewStatus,
 } from '../api'
 import { CodexPanel } from '../components/CodexPanel'
+import { LocalJyotishPanel } from '../components/LocalJyotishPanel'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
 import { ToolRail } from '../components/ToolRail'
 import { canToggleReview, nextReviewStatus, reviewButtonLabel } from '../reviewProgress'
@@ -43,7 +45,7 @@ type AnalyzeAspectWindowProps = {
   initialEventId?: string | null
 }
 
-type InspectorTab = 'evidence' | 'annotations' | 'codex'
+type InspectorTab = 'evidence' | 'annotations' | 'jyotish' | 'codex'
 type OccurrenceFilter = 'all' | 'reviewed' | 'pending' | 'bullish' | 'bearish'
 
 function resultLabel(occurrence: AspectWindow): string {
@@ -283,6 +285,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
           <div className="analysis-tabs">
             <button className={tab === 'evidence' ? 'is-active' : ''} onClick={() => setTab('evidence')}><Microscope size={15} /> Evidence</button>
             <button className={tab === 'annotations' ? 'is-active' : ''} onClick={() => setTab('annotations')}><MessageSquareText size={15} /> Annotations</button>
+            <button className={tab === 'jyotish' ? 'is-active' : ''} onClick={() => setTab('jyotish')}><BrainCircuit size={15} /> Local Jyotish</button>
             <button className={tab === 'codex' ? 'is-active' : ''} onClick={() => setTab('codex')}><Bot size={15} /> Codex</button>
           </div>
           {tab === 'evidence' && (
@@ -396,6 +399,12 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               eventId={selectedEventId}
               selectedAnnotation={selectedAnnotation}
               chartRef={chartRef}
+            />
+          )}
+          {tab === 'jyotish' && (
+            <LocalJyotishPanel
+              eventId={selectedEventId}
+              selectedAnnotation={selectedAnnotation}
             />
           )}
         </aside>

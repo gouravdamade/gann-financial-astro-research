@@ -1,10 +1,70 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 02:20 IST
+Last updated: 2026-07-13 04:29 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (Append-Only Prospective Shadow Ledger)
+## Latest Update - 2026-07-13 (Automatic Prospective Refresh + Local Jyotish)
+
+- Added `gann-astro-desk/backend/prospective_refresh.py` with contract
+  `GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1`. The background supervisor polls MT5, accepts only
+  a recent fully closed M30/H1 source bar after a finalization grace period, captures an
+  immutable closed-bar snapshot, promotes it through the existing SHA-256 price-source
+  contract, queues the corrected Raman TN generator, activates only its verified completed
+  artifact, and then wakes the append-only shadow ledger.
+- Refresh runs are durable and idempotent by source-bar close time in
+  `app_prospective_refresh_runs`. Restarted pre-queue work is failed honestly, active
+  generation jobs are reconciled, simultaneous user generation is respected, and a manual
+  `Refresh source` request only wakes the same safety checks; it cannot bypass freshness.
+- Corrected artifact parameters now carry `priceSourceLastBarCloseUtc`. Shadow freshness uses
+  the actual last closed market bar instead of the file-capture timestamp, preventing a
+  weekend snapshot from making stale market data appear fresh.
+- Current packaged state is intentionally `market_stale`: latest MT5 H1 close is
+  2026-07-11 00:00 UTC, so no refresh run, artifact, or ledger decision was fabricated.
+  The worker will resume automatically after a genuinely fresh closed bar arrives.
+- Added `gann-astro-desk/backend/local_jyotish.py` and a native `Local Jyotish` Analyze
+  Aspect tab. The app starts the portable Ollama runtime from `D:\Ollama` when needed and
+  packages `jyotish_agent/corpus_chunks.jsonl` without duplicating model weights.
+- Local contract `GANN_LOCAL_JYOTISH_RAG_DRAFT_V1` uses the selected occurrence's
+  deterministic context plus 4,565 local chunks. Retrieval policy
+  `balanced_classical_commentary_same_family_v2` separates 3,787 classical-doctrine chunks,
+  761 secondary/user-reference chunks, and 17 local-research chunks; local notes are admitted
+  only when they match the selected family.
+- Every local draft is visibly untrusted, includes retrieved citations and a deterministic
+  post-draft verifier, and declares that it is not official, not consumed by live inference,
+  not consumed by the shadow ledger, and cannot execute. A real no-evidence occurrence test
+  made Qwen decline to invent strength/SR conclusions and the verifier correctly required
+  review when the model omitted inline citation ids.
+- The app defaults to `qwen2.5:3b`. `gemma4:12b` is installed but its 11.9B Q4 runtime failed
+  to load reliably after partial GTX 1060 offload, so it is not presented as the working
+  default. Model fallback remains supported.
+- Added APIs:
+  - `GET /api/prospective-refresh` and `POST /api/prospective-refresh/run`;
+  - `GET /api/local-jyotish/health` and `POST /api/local-jyotish/analyze`;
+  - `/api/shadow-ledger` now includes refresh state for the native dock.
+- Native release promoted to `0.5.0`:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - SHA-256 `343FF5C9AC1F62A1CD2B866D4974942CA6D6A8A5B8B1C8A13084973E76C481C4`;
+  - 1,657 files / 708,788,848 bytes;
+  - packaged corpus: 10,331,989 bytes;
+  - astronomy contract unchanged; MT5 and both AI surfaces remain analysis/read-only.
+- Verification:
+  - full Python suite: 104 passed;
+  - native backend suite: 29 passed, including 7 refresh/local-Jyotish tests;
+  - frontend Vitest: 5 passed;
+  - Ruff, Oxlint, TypeScript/Vite production build, `git diff --check`, native packaging,
+    source UI, packaged APIs, packaged UI, and browser logs: passed;
+  - packaged API confirmed `tradeAllowed=false`, refresh/ledger execution false, valid empty
+    chain, zero refresh runs during stale market, local model ready, and balanced layer counts.
+- Next work:
+  1. leave the app running through the next fresh market H1 close and audit the first real
+     snapshot -> promotion -> corrected artifact -> shadow capture lineage end to end;
+  2. collect the frozen prospective sample without changing policy or gate thresholds;
+  3. externally certify Shadbala/Drik doctrine calculations;
+  4. keep all order placement disabled unless a later validated execution project is
+     separately and explicitly authorized.
+
+## Previous Update - 2026-07-13 (Append-Only Prospective Shadow Ledger)
 
 - Added `gann-astro-desk/backend/shadow_ledger.py` with the contracts
   `GANN_APPEND_ONLY_SHADOW_LEDGER_V1`, `GANN_PROSPECTIVE_SHADOW_DECISION_V1`,

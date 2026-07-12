@@ -13,6 +13,8 @@ from dataclasses import dataclass
 from multiprocessing import freeze_support
 from pathlib import Path
 from typing import Any
+from urllib.error import URLError
+from urllib.request import urlopen
 
 
 WORKER_MODULES = {
@@ -136,6 +138,11 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     os.environ["GANN_ASTRO_PRICE_SOURCES_DIR"] = str(paths.data_root / "price_sources")
     os.environ["GANN_ASTRO_ALLOWED_ORIGIN"] = "*"
     os.environ["GANN_ASTRO_CODEX_URL"] = f"http://127.0.0.1:{codex_port}"
+    packaged_corpus = paths.project_root / "jyotish" / "corpus_chunks.jsonl"
+    source_corpus = paths.project_root / "jyotish_agent" / "corpus_chunks.jsonl"
+    corpus = packaged_corpus if packaged_corpus.is_file() else source_corpus
+    if corpus.is_file():
+        os.environ["GANN_ASTRO_JYOTISH_CORPUS"] = str(corpus)
     packaged_ephemeris = paths.project_root / "sweph"
     if packaged_ephemeris.is_dir():
         os.environ["GANN_ASTRO_EPHEMERIS_PATH"] = str(packaged_ephemeris)
@@ -173,6 +180,40 @@ def start_codex_bridge(paths: RuntimePaths, port: int) -> tuple[subprocess.Popen
     return process, [stdout, stderr]
 
 
+def ollama_ready() -> bool:
+    endpoint = str(os.environ.get("GANN_ASTRO_OLLAMA_URL") or "http://127.0.0.1:11434").rstrip("/")
+    try:
+        with urlopen(f"{endpoint}/api/tags", timeout=1.0) as response:
+            return response.status == 200
+    except (URLError, TimeoutError, OSError):
+        return False
+
+
+def start_local_ollama(paths: RuntimePaths) -> tuple[subprocess.Popen[Any] | None, list[Any]]:
+    if ollama_ready():
+        return None, []
+    configured = str(os.environ.get("GANN_ASTRO_OLLAMA_EXE") or "").strip()
+    executable = Path(configured).expanduser().resolve() if configured else Path(r"D:\Ollama\app\ollama.exe")
+    if not executable.is_file():
+        return None, []
+    environment = os.environ.copy()
+    model_root = Path(str(environment.get("OLLAMA_MODELS") or r"D:\Ollama\models"))
+    if model_root.is_dir():
+        environment["OLLAMA_MODELS"] = str(model_root)
+    stdout = (paths.logs_dir / "local_jyotish_ollama.log").open("a", encoding="utf-8")
+    stderr = (paths.logs_dir / "local_jyotish_ollama_error.log").open("a", encoding="utf-8")
+    creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+    process = subprocess.Popen(
+        [str(executable), "serve"],
+        cwd=executable.parent,
+        env=environment,
+        stdout=stdout,
+        stderr=stderr,
+        creationflags=creationflags,
+    )
+    return process, [stdout, stderr]
+
+
 def stop_process(process: subprocess.Popen[Any] | None) -> None:
     if process is None or process.poll() is not None:
         return
@@ -200,6 +241,7 @@ def run_desktop() -> None:
         else Path(__file__).parent / "backend"
     )
     sys.path.insert(0, str(backend_path))
+    ollama_process, ollama_logs = start_local_ollama(paths)
     codex_process, codex_logs = start_codex_bridge(paths, codex_port)
     backend_server: Any = None
     http_server: Any = None
@@ -238,10 +280,15 @@ def run_desktop() -> None:
             http_server.shutdown()
             http_server.server_close()
         if backend_server is not None:
+            backend_server.prospective_refresh.stop()
+            backend_server.shadow_ledger.stop()
             backend_server.gateway.stop()
             backend_server.generation_manager.stop()
         stop_process(codex_process)
+        stop_process(ollama_process)
         for handle in codex_logs:
+            handle.close()
+        for handle in ollama_logs:
             handle.close()
 
 

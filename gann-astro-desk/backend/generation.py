@@ -155,6 +155,10 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
         "priceSourceContract": price_source["contract"],
         "priceSourceSha256": price_source["priceSha256"],
         "priceSourceAsOfUtc": price_source["asOfUtc"],
+        "priceSourceLastBarCloseUtc": (
+            source.index.max()
+            + pd.Timedelta(minutes=30 if source_timeframe == "M30" else 60)
+        ).isoformat(),
         "start": start.isoformat(),
         "end": end.isoformat(),
         "mode": "TN",

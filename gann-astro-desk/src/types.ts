@@ -429,6 +429,86 @@ export type ShadowLedgerSnapshot = {
       maximumAgeSeconds?: number
     }
   }
+  refresh?: ProspectiveRefreshStatus
+}
+
+export type ProspectiveRefreshRun = {
+  runId: string
+  contract: 'GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1'
+  sourceBarOpenUtc: string
+  sourceBarCloseUtc: string
+  status: string
+  stage: string
+  message: string
+  sourceSnapshotId: string | null
+  priceSourceId: string | null
+  generationJobId: string | null
+  artifactId: string | null
+  parameters: Record<string, unknown>
+  error: string
+  createdAtUtc: string
+  updatedAtUtc: string
+  finishedAtUtc: string | null
+}
+
+export type ProspectiveRefreshStatus = {
+  contract: 'GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1'
+  enabled: boolean
+  state: string
+  message: string
+  lastCheckedAtUtc: string | null
+  latestClosedBarUtc: string | null
+  activeRun: ProspectiveRefreshRun | null
+  recentRuns: ProspectiveRefreshRun[]
+  lastError: string
+  executionAllowed: false
+}
+
+export type LocalJyotishHealth = {
+  contract: 'GANN_LOCAL_JYOTISH_RAG_DRAFT_V1'
+  ready: boolean
+  runtimeReady: boolean
+  corpusReady: boolean
+  model: string
+  availableModels: string[]
+  corpusChunks: number
+  retrievalPolicy: string
+  layerCounts: Record<string, number>
+  corpusPath: string
+  error: string
+  analysisOnly: true
+  rawDraftIsOfficial: false
+  executionAllowed: false
+}
+
+export type LocalJyotishDraft = {
+  contract: 'GANN_LOCAL_JYOTISH_RAG_DRAFT_V1'
+  draftId: string
+  eventId: string
+  model: string
+  text: string
+  citations: Array<{
+    sourceId: string
+    chunkId: string
+    title: string
+    layer: 'classical_doctrine' | 'reference_commentary' | 'local_research'
+    score: number
+  }>
+  guardrails: {
+    analysisOnly: true
+    deterministicEvidenceIsGroundTruth: true
+    rawDraftIsOfficial: false
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+  verifier: {
+    status: 'pass' | 'review_required'
+    issues: string[]
+    availableCitationIds: string[]
+    citedIds: string[]
+  }
+  disclaimer: string
 }
 
 export type Mt5Status = {

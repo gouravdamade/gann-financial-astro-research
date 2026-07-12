@@ -1,11 +1,13 @@
-import { Clock3, LockKeyhole, RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react'
+import { Clock3, Database, LockKeyhole, RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react'
 import type { ShadowLedgerSnapshot } from '../types'
 
 type ShadowLedgerPanelProps = {
   snapshot: ShadowLedgerSnapshot | null
   busy: boolean
+  refreshBusy: boolean
   error: string
   onScan: () => void
+  onRefresh: () => void
 }
 
 function percent(value: number | null, digits = 1): string {
@@ -33,9 +35,10 @@ function gateLabel(status: string): string {
   return 'Collecting'
 }
 
-export function ShadowLedgerPanel({ snapshot, busy, error, onScan }: ShadowLedgerPanelProps) {
+export function ShadowLedgerPanel({ snapshot, busy, refreshBusy, error, onScan, onRefresh }: ShadowLedgerPanelProps) {
   const summary = snapshot?.summary
   const supervisor = snapshot?.supervisor
+  const refresh = snapshot?.refresh
   const chainValid = summary?.chain.valid ?? true
   return (
     <section className="shadow-ledger-panel">
@@ -51,9 +54,20 @@ export function ShadowLedgerPanel({ snapshot, busy, error, onScan }: ShadowLedge
         <span><strong>{percent(summary?.hitRate ?? null)}</strong><small>directional hit rate</small></span>
         <span><strong>{gateLabel(summary?.gateStatus ?? '')}</strong><small>prospective gate</small></span>
         <span className="shadow-execution-lock"><LockKeyhole size={14} /><strong>Execution locked</strong></span>
+        <button type="button" onClick={onRefresh} disabled={refreshBusy} title="Request a fresh closed-bar MT5 artifact">
+          <Database size={14} /> {refreshBusy ? 'Requested' : 'Refresh source'}
+        </button>
         <button type="button" onClick={onScan} disabled={busy} title="Scan prospective ledger now">
           <RefreshCw size={14} className={busy ? 'is-spinning' : ''} /> Scan now
         </button>
+      </div>
+      <div className="shadow-refresh-line">
+        <Database size={13} />
+        <strong>{refresh?.state.replaceAll('_', ' ') ?? 'refresh starting'}</strong>
+        <span>{refresh?.message ?? 'Checking for the latest fully closed MT5 bar.'}</span>
+        {refresh?.latestClosedBarUtc && <span>latest close {new Date(refresh.latestClosedBarUtc).toLocaleString()}</span>}
+        {refresh?.activeRun?.artifactId && <span>artifact {refresh.activeRun.artifactId.slice(0, 14)}</span>}
+        {refresh?.lastError && <span className="negative">{refresh.lastError}</span>}
       </div>
       <div className="shadow-readiness-line">
         <Clock3 size={13} />

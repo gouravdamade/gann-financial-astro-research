@@ -765,11 +765,14 @@ class ShadowLedgerSupervisor:
                 "timeframe": timeframe,
             }
         parameters = artifact.get("parameters") or {}
-        raw_source_as_of = parameters.get("priceSourceAsOfUtc")
+        raw_source_as_of = (
+            parameters.get("priceSourceLastBarCloseUtc")
+            or parameters.get("priceSourceAsOfUtc")
+        )
         raw_created = artifact.get("createdAtUtc")
         if not raw_source_as_of or not raw_created:
             return {"ready": False, "code": "artifact_provenance_incomplete", "timeframe": timeframe}
-        source_as_of = _utc_timestamp(raw_source_as_of, "priceSourceAsOfUtc")
+        source_as_of = _utc_timestamp(raw_source_as_of, "price source last closed bar")
         created_at = _utc_timestamp(raw_created, "artifact createdAtUtc")
         if source_as_of > now + pd.Timedelta(seconds=30) or created_at > now + pd.Timedelta(seconds=30):
             return {"ready": False, "code": "artifact_timestamp_in_future", "timeframe": timeframe}
@@ -804,6 +807,7 @@ class ShadowLedgerSupervisor:
             "priceSourceId": parameters.get("priceSourceId"),
             "priceSourceSha256": parameters.get("priceSourceSha256"),
             "priceSourceAsOfUtc": parameters.get("priceSourceAsOfUtc"),
+            "priceSourceLastBarCloseUtc": parameters.get("priceSourceLastBarCloseUtc"),
             "priceSourceContract": parameters.get("priceSourceContract"),
         }
 

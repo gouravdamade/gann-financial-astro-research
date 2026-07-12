@@ -36,12 +36,20 @@ separate from live market-data concerns.
   an entry, exit, P/L, outcome, or order.
 - An automatic prospective shadow supervisor that accepts only a fresh, non-baseline
   corrected artifact whose promoted MT5 snapshot contains a just-closed SR touch.
+- An automatic closed-bar refresh supervisor that waits for a genuinely recent MT5 bar,
+  captures and promotes an immutable price snapshot, queues the corrected Raman generator,
+  activates only a fully verified artifact, and then wakes the prospective ledger. Market
+  closures and stale bars are reported without manufacturing an artifact.
 - A SQLite append-only hash-chain ledger that records the exact decision packet first,
   then appends a separate outcome only after the first closed MT5 bar reaches the
   72-hour horizon. Watches, abstentions, coverage, confidence interval, p-value, and
   directional return remain inspectable in the Shadow validation dock.
 - Read-only Codex SDK bridge with deterministic evidence, selected annotation,
   and a local chart screenshot attached to the family task.
+- A native Local Jyotish tab backed by the portable Ollama runtime and 4,565 packaged
+  classical/reference/research corpus chunks. Retrieval separates classical doctrine,
+  secondary commentary, and same-family local memory. Every response is an untrusted draft
+  with visible citations and deterministic verifier findings.
 
 ## Data Safety
 
@@ -60,6 +68,9 @@ separate from live market-data concerns.
 - Provisional astrological values remain labeled provisional.
 - New occurrence progress is stored separately from legacy completed reviews.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.
+- Local Jyotish drafts are never consumed by live inference or the shadow ledger. The app
+  defaults to `qwen2.5:3b`; the installed Gemma 12B model remains optional because it did not
+  load reliably on the current GTX 1060 runtime during verification.
 
 ## Run The Windows App
 
@@ -112,7 +123,9 @@ npm run build
 
 The supported native build is a PyInstaller one-folder release using pywebview and
 the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
-Swiss Ephemeris files, Python research workers, Node runtime, and Codex SDK bridge.
+Swiss Ephemeris files, Python research workers, Node runtime, Codex SDK bridge, and the
+local Jyotish corpus. Ollama models remain under `D:\Ollama\models` and are not duplicated
+inside the release.
 Analyze Aspect opens as a second native window rather than an external browser.
 
 `src-tauri` remains an optional future shell. A Tauri/MSI route would require Rust,

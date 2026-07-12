@@ -11,7 +11,9 @@ from urllib.request import Request, urlopen
 from flask import Flask, Response, abort, jsonify, request, send_from_directory
 
 from generation import GenerationJobManager
+from local_jyotish import LocalJyotishService
 from mt5_gateway import Mt5Gateway
+from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
 from shadow_ledger import ShadowLedgerSupervisor
 
@@ -30,9 +32,21 @@ shadow_ledger = ShadowLedgerSupervisor(
     autostart=os.environ.get("GANN_ASTRO_SHADOW_AUTOSTART", "1") != "0",
     poll_seconds=float(os.environ.get("GANN_ASTRO_SHADOW_POLL_SECONDS", "30")),
 )
+prospective_refresh = ProspectiveArtifactRefreshSupervisor(
+    repository,
+    gateway,
+    generation_manager,
+    shadow_ledger,
+    autostart=os.environ.get("GANN_ASTRO_REFRESH_AUTOSTART", "1") != "0",
+    poll_seconds=float(os.environ.get("GANN_ASTRO_REFRESH_POLL_SECONDS", "20")),
+    lookback_days=int(os.environ.get("GANN_ASTRO_REFRESH_LOOKBACK_DAYS", "14")),
+    close_grace_seconds=int(os.environ.get("GANN_ASTRO_REFRESH_CLOSE_GRACE_SECONDS", "90")),
+)
+local_jyotish = LocalJyotishService(repository)
 atexit.register(gateway.stop)
 atexit.register(generation_manager.stop)
 atexit.register(shadow_ledger.stop)
+atexit.register(prospective_refresh.stop)
 
 
 def list_argument(name: str) -> tuple[str, ...]:
@@ -91,7 +105,14 @@ def options_route(_path: str) -> Any:
 
 @app.get("/api/health")
 def health() -> Any:
-    return jsonify({"ok": True, "data": repository.health(), "mt5": gateway.status()})
+    return jsonify(
+        {
+            "ok": True,
+            "data": repository.health(),
+            "mt5": gateway.status(),
+            "prospectiveRefresh": prospective_refresh.status(),
+        }
+    )
 
 
 @app.get("/api/mt5/status")
@@ -353,7 +374,9 @@ def decision_packet() -> Any:
 def shadow_ledger_snapshot() -> Any:
     try:
         limit = max(1, min(int(request.args.get("limit", "100")), 500))
-        return jsonify({"ok": True, "shadow": shadow_ledger.snapshot(limit)})
+        snapshot = shadow_ledger.snapshot(limit)
+        snapshot["refresh"] = prospective_refresh.status()
+        return jsonify({"ok": True, "shadow": snapshot})
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
 
@@ -361,8 +384,41 @@ def shadow_ledger_snapshot() -> Any:
 @app.post("/api/shadow-ledger/scan")
 def shadow_ledger_scan() -> Any:
     try:
-        return jsonify({"ok": True, "shadow": shadow_ledger.scan_once()})
+        snapshot = shadow_ledger.scan_once()
+        snapshot["refresh"] = prospective_refresh.status()
+        return jsonify({"ok": True, "shadow": snapshot})
     except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.get("/api/prospective-refresh")
+def prospective_refresh_status() -> Any:
+    return jsonify({"ok": True, "refresh": prospective_refresh.status()})
+
+
+@app.post("/api/prospective-refresh/run")
+def request_prospective_refresh() -> Any:
+    return jsonify({"ok": True, "refresh": prospective_refresh.request_refresh()}), 202
+
+
+@app.get("/api/local-jyotish/health")
+def local_jyotish_health() -> Any:
+    return jsonify({"ok": True, "localJyotish": local_jyotish.health()})
+
+
+@app.post("/api/local-jyotish/analyze")
+def local_jyotish_analyze() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        draft = local_jyotish.analyze(
+            str(payload.get("eventId") or ""),
+            str(payload.get("question") or ""),
+            str(payload.get("annotationId") or "").strip() or None,
+        )
+        return jsonify({"ok": True, "draft": draft})
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    except RuntimeError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
 
 

@@ -8,6 +8,7 @@ import {
   fetchParameterProfiles,
   fetchParameterSchema,
   fetchShadowLedger,
+  requestProspectiveRefresh,
   saveAnnotation,
   scanShadowLedger,
 } from '../api'
@@ -50,6 +51,7 @@ export function MainWorkspace() {
   const [status, setStatus] = useState<Mt5Status | null>(null)
   const [shadow, setShadow] = useState<ShadowLedgerSnapshot | null>(null)
   const [shadowBusy, setShadowBusy] = useState(false)
+  const [refreshBusy, setRefreshBusy] = useState(false)
   const [shadowError, setShadowError] = useState('')
   const [selected, setSelected] = useState<AspectWindow | null>(null)
   const [detail, setDetail] = useState<EventDetail | null>(null)
@@ -115,6 +117,19 @@ export function MainWorkspace() {
       setShadowError(reason instanceof Error ? reason.message : String(reason))
     } finally {
       setShadowBusy(false)
+    }
+  }, [])
+
+  const runProspectiveRefresh = useCallback(async () => {
+    setRefreshBusy(true)
+    setShadowError('')
+    try {
+      const refresh = await requestProspectiveRefresh()
+      setShadow((current) => current ? { ...current, refresh } : current)
+    } catch (reason) {
+      setShadowError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      window.setTimeout(() => setRefreshBusy(false), 1200)
     }
   }, [])
 
@@ -315,10 +330,19 @@ export function MainWorkspace() {
           <button className={bottomTab === 'positions' ? 'is-active' : ''} onClick={() => setBottomTab('positions')}>MT5 positions</button>
           <button className={bottomTab === 'logs' ? 'is-active' : ''} onClick={() => setBottomTab('logs')}>Connection log</button>
           <div className="bottom-tabs-spacer" />
-          <span><Bot size={14} /> Codex analysis available inside Analyze Aspect</span>
+          <span><Bot size={14} /> Codex and local Jyotish analysis inside Analyze Aspect</span>
         </div>
         {bottomTab === 'events' && <EventTable events={sortedAspects} selectedId={selected?.eventId} onSelect={selectAspect} />}
-        {bottomTab === 'shadow' && <ShadowLedgerPanel snapshot={shadow} busy={shadowBusy} error={shadowError} onScan={runShadowScan} />}
+        {bottomTab === 'shadow' && (
+          <ShadowLedgerPanel
+            snapshot={shadow}
+            busy={shadowBusy}
+            refreshBusy={refreshBusy}
+            error={shadowError}
+            onScan={runShadowScan}
+            onRefresh={runProspectiveRefresh}
+          />
+        )}
         {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}
         {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
       </section>

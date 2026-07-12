@@ -8,10 +8,13 @@ import type {
   DecisionPacket,
   EventDetail,
   GenerationJob,
+  LocalJyotishDraft,
+  LocalJyotishHealth,
   Mt5HistorySnapshot,
   Mt5Status,
   ParameterSchema,
   PriceSource,
+  ProspectiveRefreshStatus,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
 } from './types'
@@ -219,6 +222,31 @@ export async function scanShadowLedger(): Promise<ShadowLedgerSnapshot> {
     body: '{}',
   })
   return payload.shadow
+}
+
+export async function requestProspectiveRefresh(): Promise<ProspectiveRefreshStatus> {
+  const payload = await request<{ refresh: ProspectiveRefreshStatus }>(
+    '/api/prospective-refresh/run',
+    { method: 'POST', body: '{}' },
+  )
+  return payload.refresh
+}
+
+export async function fetchLocalJyotishHealth(): Promise<LocalJyotishHealth> {
+  const payload = await request<{ localJyotish: LocalJyotishHealth }>('/api/local-jyotish/health')
+  return payload.localJyotish
+}
+
+export async function analyzeWithLocalJyotish(input: {
+  eventId: string
+  annotationId?: string | null
+  question: string
+}): Promise<LocalJyotishDraft> {
+  const payload = await request<{ draft: LocalJyotishDraft }>('/api/local-jyotish/analyze', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.draft
 }
 
 export async function saveReviewStatus(
