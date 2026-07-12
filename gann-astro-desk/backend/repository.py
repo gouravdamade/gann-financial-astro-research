@@ -3,11 +3,13 @@ from __future__ import annotations
 import base64
 import json
 import sqlite3
+import threading
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from functools import wraps
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, TypeVar
 from urllib.parse import unquote
 
 import numpy as np
@@ -23,6 +25,19 @@ ASPECT_COLORS = {
     "trine": "#36b8a0",
     "opposition_orb": "#dc6f91",
 }
+SUPPORTED_ASTRO_ENTITIES = (
+    "SUN",
+    "MOON",
+    "MERCURY",
+    "VENUS",
+    "MARS",
+    "JUPITER",
+    "SATURN",
+    "RAHU",
+    "KETU",
+    "AVG(ALL)",
+)
+SUPPORTED_ASPECTS = ("conjunction_orb", "square", "trine", "opposition_orb")
 IMPORTANT_ASTRO_FIELDS = (
     ("event_strict_shadbala_implemented_total_virupa_avg", "Planet strength", "virupa"),
     ("event_strict_shadbala_implemented_total_ratio_avg", "Strength versus minimum", "ratio"),
@@ -43,6 +58,58 @@ IMPORTANT_ASTRO_FIELDS = (
     ("event_karana_name", "Karana", "text"),
     ("aspect_regime_active_count", "Overlapping aspect count", "count"),
 )
+
+TOUCH_BASE_COLUMNS = (
+    "event_id",
+    "touch_id",
+    "touch_time_local",
+    "touch_line_price_1",
+    "touch_line_price_2",
+    "touch_planet_1",
+    "touch_planet_2",
+)
+TOUCH_CONTEXT_COLUMNS = tuple(field[0] for field in IMPORTANT_ASTRO_FIELDS) + (
+    "event_best_time_local",
+    "event_strict_shadbala_status",
+    "event_strict_drik_status",
+    "event_strict_shadbala_decision_notes",
+    "touch_planets",
+)
+REQUIRED_EVENT_COLUMNS = {
+    "event_id",
+    "timestamp",
+    "event_end",
+    "peak_time",
+    "aspect",
+    "pair_key",
+    "event_family_key",
+    "event_transit_body",
+    "event_natal_body",
+    "duration_minutes",
+    "event_peak_orb_deg",
+    "event_orb_limit_deg",
+    "astronomy_contract_version",
+    "source_event_generator",
+}
+
+RepositoryMethod = TypeVar("RepositoryMethod", bound=Callable[..., Any])
+
+
+def synchronized_dataset(method: RepositoryMethod) -> RepositoryMethod:
+    @wraps(method)
+    def wrapped(self: "AstroRepository", *args: Any, **kwargs: Any) -> Any:
+        with self._data_lock:
+            return method(self, *args, **kwargs)
+
+    return wrapped  # type: ignore[return-value]
+
+
+class ClosingConnection(sqlite3.Connection):
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> bool:
+        try:
+            return bool(super().__exit__(exc_type, exc_value, traceback))
+        finally:
+            self.close()
 
 DEFAULT_CHART_PARAMETERS: dict[str, Any] = {
     "symbol": "USDJPY",
@@ -116,6 +183,7 @@ class DataPaths:
     price_data_m30: Path
     annotation_db: Path
     snapshots_dir: Path
+    artifacts_dir: Path
 
     @classmethod
     def default(cls) -> "DataPaths":
@@ -128,32 +196,15 @@ class DataPaths:
             price_data_m30=root / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet",
             annotation_db=root / "gann_aspect_annotations_raman_v2.sqlite",
             snapshots_dir=Path(r"D:\GannFinancialAstro\app_snapshots"),
+            artifacts_dir=Path(r"D:\GannFinancialAstro\app_artifacts"),
         )
 
 
 class AstroRepository:
     def __init__(self, paths: DataPaths | None = None) -> None:
         self.paths = paths or DataPaths.default()
-        self.events = pd.read_parquet(self.paths.source_events).copy()
-        self.events["timestamp"] = pd.to_datetime(self.events["timestamp"])
-        self.events["event_end"] = pd.to_datetime(self.events["event_end"])
-        self.events["peak_time"] = pd.to_datetime(self.events["peak_time"])
-        self.events = self.events.sort_values(["timestamp", "event_family_key", "event_id"]).reset_index(drop=True)
-        touch_columns = [
-            "event_id",
-            "touch_id",
-            "touch_time_local",
-            "touch_line_price_1",
-            "touch_line_price_2",
-            "touch_planet_1",
-            "touch_planet_2",
-        ]
-        self.touches = pd.read_csv(self.paths.touch_log, usecols=touch_columns)
-        self.touches["touch_time_local"] = pd.to_datetime(self.touches["touch_time_local"])
-        self.touch_by_event = {
-            str(row["event_id"]): row
-            for _, row in self.touches.iterrows()
-        }
+        self._data_lock = threading.RLock()
+        self._baseline_metadata: dict[str, Any] | None = None
         self.price_by_timeframe = {
             "H1": self._load_price_frame(self.paths.price_data),
             "M30": self._load_price_frame(self.paths.price_data_m30),
@@ -161,8 +212,94 @@ class AstroRepository:
         self.price = self.price_by_timeframe["H1"]
         self._resampled_price: dict[str, pd.DataFrame] = {}
         self._initialize_annotations()
+        active = self._active_artifact_row()
+        try:
+            if active:
+                self._install_dataset(
+                    Path(str(active["events_path"])),
+                    Path(str(active["touch_log_path"])),
+                    self._artifact_record(active),
+                )
+            else:
+                baseline = self._baseline_artifact()
+                baseline["isActive"] = True
+                self._install_dataset(self.paths.source_events, self.paths.touch_log, baseline)
+        except Exception:
+            if not active:
+                raise
+            with self.connect() as connection:
+                connection.execute("UPDATE app_data_artifacts SET is_active = 0")
+                connection.commit()
+            baseline = self._baseline_artifact()
+            baseline["isActive"] = True
+            self._install_dataset(self.paths.source_events, self.paths.touch_log, baseline)
         self._reload_case_maps()
-        self.family_counts = self.events.groupby("event_family_key")["event_id"].count().astype(int).to_dict()
+
+    @staticmethod
+    def _load_event_frame(path: Path) -> pd.DataFrame:
+        frame = pd.read_parquet(path).copy()
+        missing = sorted(REQUIRED_EVENT_COLUMNS - set(frame.columns))
+        if missing:
+            raise ValueError(f"Event artifact is missing required columns: {missing}")
+        for column in ("timestamp", "event_end", "peak_time"):
+            frame[column] = pd.to_datetime(frame[column])
+        contracts = set(frame["astronomy_contract_version"].dropna().astype(str))
+        if contracts != {ASTRO_CONTRACT}:
+            raise ValueError(f"Unsupported astronomy contract(s): {sorted(contracts)}")
+        return frame.sort_values(["timestamp", "event_family_key", "event_id"]).reset_index(drop=True)
+
+    @staticmethod
+    def _load_touch_frame(path: Path) -> pd.DataFrame:
+        header = pd.read_csv(path, nrows=0)
+        missing = sorted(set(TOUCH_BASE_COLUMNS) - set(header.columns))
+        if missing:
+            raise ValueError(f"Touch artifact is missing required columns: {missing}")
+        usecols = [
+            column
+            for column in (*TOUCH_BASE_COLUMNS, *TOUCH_CONTEXT_COLUMNS)
+            if column in header.columns
+        ]
+        frame = pd.read_csv(path, usecols=usecols)
+        frame["touch_time_local"] = pd.to_datetime(frame["touch_time_local"])
+        return frame
+
+    def _install_dataset(self, events_path: Path, touch_path: Path, artifact: dict[str, Any]) -> None:
+        events = self._load_event_frame(events_path)
+        touches = self._load_touch_frame(touch_path)
+        touch_by_event = {str(row["event_id"]): row for _, row in touches.iterrows()}
+        family_counts = events.groupby("event_family_key")["event_id"].count().astype(int).to_dict()
+        installed_artifact = dict(artifact)
+        installed_artifact["eventCount"] = int(len(events))
+        installed_artifact["touchCount"] = int(len(touches))
+        installed_artifact["dateStart"] = pd.Timestamp(events["timestamp"].min()).isoformat()
+        installed_artifact["dateEnd"] = pd.Timestamp(events["event_end"].max()).isoformat()
+        with self._data_lock:
+            self.events = events
+            self.touches = touches
+            self.touch_by_event = touch_by_event
+            self.family_counts = family_counts
+            self.active_artifact = installed_artifact
+
+    def _baseline_artifact(self) -> dict[str, Any]:
+        return {
+            "artifactId": "baseline",
+            "label": "Corrected USDJPY baseline",
+            "symbol": "USDJPY",
+            "mode": "TN",
+            "sourceTimeframe": "H1",
+            "eventsPath": str(self.paths.source_events),
+            "touchLogPath": str(self.paths.touch_log),
+            "pricePath": str(self.paths.price_data),
+            "parameters": DEFAULT_CHART_PARAMETERS,
+            "astronomyContract": ASTRO_CONTRACT,
+            "eventCount": None,
+            "touchCount": None,
+            "dateStart": None,
+            "dateEnd": None,
+            "isActive": False,
+            "createdAtUtc": None,
+            "builtIn": True,
+        }
 
     @staticmethod
     def _load_price_frame(path: Path) -> pd.DataFrame:
@@ -194,7 +331,11 @@ class AstroRepository:
         return self._resampled_price[normalized]
 
     def connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.paths.annotation_db, timeout=30)
+        connection = sqlite3.connect(
+            self.paths.annotation_db,
+            timeout=30,
+            factory=ClosingConnection,
+        )
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA journal_mode=WAL")
         connection.execute("PRAGMA foreign_keys=ON")
@@ -248,18 +389,217 @@ class AstroRepository:
                     created_at_utc TEXT NOT NULL,
                     updated_at_utc TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS app_data_artifacts (
+                    artifact_id TEXT PRIMARY KEY,
+                    label TEXT NOT NULL,
+                    symbol TEXT NOT NULL,
+                    mode TEXT NOT NULL CHECK(mode IN ('TN', 'TT')),
+                    source_timeframe TEXT NOT NULL,
+                    events_path TEXT NOT NULL,
+                    touch_log_path TEXT NOT NULL,
+                    price_path TEXT NOT NULL,
+                    events_manifest_path TEXT NOT NULL,
+                    artifact_manifest_path TEXT NOT NULL,
+                    parameters_json TEXT NOT NULL,
+                    astronomy_contract TEXT NOT NULL,
+                    event_count INTEGER NOT NULL,
+                    touch_count INTEGER NOT NULL,
+                    date_start TEXT NOT NULL,
+                    date_end TEXT NOT NULL,
+                    is_active INTEGER NOT NULL DEFAULT 0,
+                    created_at_utc TEXT NOT NULL
+                );
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_app_data_artifacts_active
+                    ON app_data_artifacts(is_active) WHERE is_active = 1;
+                CREATE INDEX IF NOT EXISTS idx_app_data_artifacts_created
+                    ON app_data_artifacts(created_at_utc DESC);
+                CREATE TABLE IF NOT EXISTS app_generation_jobs (
+                    job_id TEXT PRIMARY KEY,
+                    label TEXT NOT NULL,
+                    status TEXT NOT NULL CHECK(status IN (
+                        'queued', 'running', 'cancelling', 'cancelled', 'completed', 'failed'
+                    )),
+                    stage TEXT NOT NULL,
+                    progress REAL NOT NULL DEFAULT 0,
+                    message TEXT NOT NULL DEFAULT '',
+                    parameters_json TEXT NOT NULL,
+                    auto_activate INTEGER NOT NULL DEFAULT 1,
+                    cancel_requested INTEGER NOT NULL DEFAULT 0,
+                    artifact_id TEXT,
+                    events_path TEXT NOT NULL DEFAULT '',
+                    touch_log_path TEXT NOT NULL DEFAULT '',
+                    log_path TEXT NOT NULL DEFAULT '',
+                    error TEXT NOT NULL DEFAULT '',
+                    created_at_utc TEXT NOT NULL,
+                    started_at_utc TEXT,
+                    finished_at_utc TEXT,
+                    updated_at_utc TEXT NOT NULL,
+                    FOREIGN KEY(artifact_id) REFERENCES app_data_artifacts(artifact_id)
+                );
+                CREATE INDEX IF NOT EXISTS idx_app_generation_jobs_status
+                    ON app_generation_jobs(status, created_at_utc);
                 """
             )
             connection.execute(
                 """
                 INSERT INTO schema_meta(key, value, updated_at_utc)
-                VALUES('chart_annotation_schema_version', '3', ?)
+                VALUES('chart_annotation_schema_version', '4', ?)
                 ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at_utc=excluded.updated_at_utc
                 WHERE schema_meta.value <> excluded.value
                 """,
                 (utc_now(),),
             )
             connection.commit()
+
+    @staticmethod
+    def _artifact_record(row: sqlite3.Row | dict[str, Any]) -> dict[str, Any]:
+        item = dict(row)
+        try:
+            parameters = json.loads(str(item.get("parameters_json") or "{}"))
+        except json.JSONDecodeError:
+            parameters = {}
+        return {
+            "artifactId": str(item["artifact_id"]),
+            "label": str(item["label"]),
+            "symbol": str(item["symbol"]),
+            "mode": str(item["mode"]),
+            "sourceTimeframe": str(item["source_timeframe"]),
+            "eventsPath": str(item["events_path"]),
+            "touchLogPath": str(item["touch_log_path"]),
+            "pricePath": str(item["price_path"]),
+            "eventsManifestPath": str(item["events_manifest_path"]),
+            "artifactManifestPath": str(item["artifact_manifest_path"]),
+            "parameters": parameters if isinstance(parameters, dict) else {},
+            "astronomyContract": str(item["astronomy_contract"]),
+            "eventCount": int(item["event_count"]),
+            "touchCount": int(item["touch_count"]),
+            "dateStart": str(item["date_start"]),
+            "dateEnd": str(item["date_end"]),
+            "isActive": bool(item["is_active"]),
+            "createdAtUtc": str(item["created_at_utc"]),
+            "builtIn": False,
+        }
+
+    def _active_artifact_row(self) -> sqlite3.Row | None:
+        with self.connect() as connection:
+            return connection.execute(
+                "SELECT * FROM app_data_artifacts WHERE is_active = 1 LIMIT 1"
+            ).fetchone()
+
+    def list_data_artifacts(self) -> list[dict[str, Any]]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                "SELECT * FROM app_data_artifacts ORDER BY created_at_utc DESC, artifact_id"
+            ).fetchall()
+        artifacts = [self._artifact_record(row) for row in rows]
+        baseline = self._baseline_artifact()
+        if self._baseline_metadata is None:
+            baseline_events = self._load_event_frame(self.paths.source_events)
+            self._baseline_metadata = {
+                "eventCount": int(len(baseline_events)),
+                "touchCount": int(len(self._load_touch_frame(self.paths.touch_log))),
+                "dateStart": pd.Timestamp(baseline_events["timestamp"].min()).isoformat(),
+                "dateEnd": pd.Timestamp(baseline_events["event_end"].max()).isoformat(),
+            }
+        baseline.update(self._baseline_metadata)
+        baseline["isActive"] = not any(item["isActive"] for item in artifacts)
+        return [baseline, *artifacts]
+
+    def register_data_artifact(self, payload: dict[str, Any]) -> dict[str, Any]:
+        artifact_id = str(payload.get("artifactId") or "").strip()
+        if not artifact_id:
+            raise ValueError("artifactId is required")
+        root = self.paths.artifacts_dir.resolve()
+        path_keys = (
+            "eventsPath",
+            "touchLogPath",
+            "pricePath",
+            "eventsManifestPath",
+            "artifactManifestPath",
+        )
+        resolved_paths: dict[str, Path] = {}
+        for key in path_keys:
+            path = Path(str(payload.get(key) or "")).resolve()
+            if key != "pricePath" and not path.is_relative_to(root):
+                raise ValueError(f"{key} must stay inside the app artifact directory")
+            if not path.exists():
+                raise ValueError(f"{key} does not exist: {path}")
+            resolved_paths[key] = path
+        parameters = payload.get("parameters")
+        if not isinstance(parameters, dict):
+            raise ValueError("artifact parameters are required")
+        now = utc_now()
+        with self.connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO app_data_artifacts(
+                    artifact_id, label, symbol, mode, source_timeframe,
+                    events_path, touch_log_path, price_path, events_manifest_path,
+                    artifact_manifest_path, parameters_json, astronomy_contract,
+                    event_count, touch_count, date_start, date_end, is_active, created_at_utc
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)
+                """,
+                (
+                    artifact_id,
+                    str(payload.get("label") or "Generated TN source")[:120],
+                    str(payload.get("symbol") or "USDJPY").upper(),
+                    str(payload.get("mode") or "TN").upper(),
+                    str(payload.get("sourceTimeframe") or "H1").upper(),
+                    str(resolved_paths["eventsPath"]),
+                    str(resolved_paths["touchLogPath"]),
+                    str(resolved_paths["pricePath"]),
+                    str(resolved_paths["eventsManifestPath"]),
+                    str(resolved_paths["artifactManifestPath"]),
+                    json.dumps(parameters, ensure_ascii=True, sort_keys=True, default=str),
+                    str(payload.get("astronomyContract") or ASTRO_CONTRACT),
+                    int(payload.get("eventCount") or 0),
+                    int(payload.get("touchCount") or 0),
+                    str(payload.get("dateStart") or ""),
+                    str(payload.get("dateEnd") or ""),
+                    now,
+                ),
+            )
+            connection.commit()
+        return next(item for item in self.list_data_artifacts() if item["artifactId"] == artifact_id)
+
+    def activate_artifact(self, artifact_id: str) -> dict[str, Any]:
+        normalized = str(artifact_id or "").strip()
+        with self._data_lock:
+            if normalized == "baseline":
+                artifact = self._baseline_artifact()
+                self._install_dataset(self.paths.source_events, self.paths.touch_log, artifact)
+                with self.connect() as connection:
+                    connection.execute("UPDATE app_data_artifacts SET is_active = 0")
+                    connection.commit()
+                active = {**self.active_artifact, "isActive": True}
+                self.active_artifact = active
+                return active
+            with self.connect() as connection:
+                row = connection.execute(
+                    "SELECT * FROM app_data_artifacts WHERE artifact_id = ?", (normalized,)
+                ).fetchone()
+            if row is None:
+                raise KeyError(f"Unknown data artifact: {normalized}")
+            artifact = self._artifact_record(row)
+            root = self.paths.artifacts_dir.resolve()
+            events_path = Path(artifact["eventsPath"]).resolve()
+            touch_path = Path(artifact["touchLogPath"]).resolve()
+            if not events_path.is_relative_to(root) or not touch_path.is_relative_to(root):
+                raise ValueError("Registered artifact paths leave the app artifact directory")
+            self._install_dataset(
+                events_path,
+                touch_path,
+                artifact,
+            )
+            with self.connect() as connection:
+                connection.execute("UPDATE app_data_artifacts SET is_active = 0")
+                connection.execute(
+                    "UPDATE app_data_artifacts SET is_active = 1 WHERE artifact_id = ?", (normalized,)
+                )
+                connection.commit()
+            active = {**self.active_artifact, "isActive": True}
+            self.active_artifact = active
+            return active
 
     def _reload_case_maps(self) -> None:
         with self.connect() as connection:
@@ -281,6 +621,7 @@ class AstroRepository:
         self.review_by_case = reviews
         self.progress_by_event = progress
 
+    @synchronized_dataset
     def health(self) -> dict[str, Any]:
         return {
             "status": "ok",
@@ -292,8 +633,10 @@ class AstroRepository:
             "priceStart": self.price.index.min().isoformat(),
             "priceEnd": self.price.index.max().isoformat(),
             "annotationDb": str(self.paths.annotation_db),
+            "activeArtifact": self.active_artifact,
         }
 
+    @synchronized_dataset
     def parameter_schema(self) -> dict[str, Any]:
         ranges = {}
         for timeframe in ("M30", "H1", "H4", "D1"):
@@ -302,13 +645,9 @@ class AstroRepository:
                 "start": frame.index.min().isoformat(),
                 "end": frame.index.max().isoformat(),
             }
-        transit_bodies = sorted({str(value) for value in self.events["event_transit_body"].dropna()})
-        natal_bodies = sorted({str(value) for value in self.events["event_natal_body"].dropna()})
-        aspects = [
-            value
-            for value in ("conjunction_orb", "square", "trine", "opposition_orb")
-            if value in set(self.events["aspect"].astype(str))
-        ]
+        transit_bodies = list(SUPPORTED_ASTRO_ENTITIES)
+        natal_bodies = list(SUPPORTED_ASTRO_ENTITIES)
+        aspects = list(SUPPORTED_ASPECTS)
         return {
             "defaults": DEFAULT_CHART_PARAMETERS,
             "options": {
@@ -328,8 +667,9 @@ class AstroRepository:
                 "correctedTn": "generator_ready",
                 "correctedTt": "not_implemented",
                 "customSrConfig": "builder_accepts_profile_config",
-                "profileJobQueue": "not_implemented",
+                "profileJobQueue": "ready",
                 "astronomyContract": ASTRO_CONTRACT,
+                "activeArtifactId": self.active_artifact["artifactId"],
             },
         }
 
@@ -451,6 +791,7 @@ class AstroRepository:
             event["lane"] = lane
             lane_ends[lane] = max(lane_ends[lane], int(event["end"]))
 
+    @synchronized_dataset
     def chart_payload(
         self,
         start: str | None = None,
@@ -502,7 +843,7 @@ class AstroRepository:
         if excluded_family_keys:
             overlapping = overlapping.loc[~overlapping["event_family_key"].astype(str).isin(excluded_family_keys)]
         if only_touched:
-            overlapping = overlapping.loc[overlapping["event_id"].astype(str).isin(self.case_by_event)]
+            overlapping = overlapping.loc[overlapping["event_id"].astype(str).isin(self.touch_by_event)]
         overlapping = overlapping.loc[pd.to_numeric(overlapping["duration_minutes"], errors="coerce") >= min_duration_minutes]
         if max_duration_minutes is not None:
             overlapping = overlapping.loc[
@@ -556,9 +897,11 @@ class AstroRepository:
                 "minDurationMinutes": min_duration_minutes,
                 "maxDurationMinutes": max_duration_minutes,
             },
+            "artifact": self.active_artifact,
             "generatedAt": utc_now(),
         }
 
+    @synchronized_dataset
     def family_payload(self, family_key: str, selected_event_id: str | None = None) -> dict[str, Any]:
         key = unquote(family_key)
         rows = self.events.loc[self.events["event_family_key"] == key].sort_values("timestamp")
@@ -591,8 +934,10 @@ class AstroRepository:
                 "averageReturnPct": round(float(np.mean(returns)), 4) if returns else None,
             },
             "astronomyContract": ASTRO_CONTRACT,
+            "artifact": self.active_artifact,
         }
 
+    @synchronized_dataset
     def event_detail(self, event_id: str) -> dict[str, Any]:
         rows = self.events.loc[self.events["event_id"] == event_id]
         if rows.empty:
@@ -618,6 +963,12 @@ class AstroRepository:
             )
         touch = self.touch_by_event.get(event_id)
         if touch is not None:
+            touch_context = {
+                key: json_value(touch.get(key))
+                for key in TOUCH_CONTEXT_COLUMNS
+                if key in touch.index and not pd.isna(touch.get(key))
+            }
+            context = {**context, **touch_context}
             for index in (1, 2):
                 price_value = pd.to_numeric(touch.get(f"touch_line_price_{index}"), errors="coerce")
                 planet_value = touch.get(f"touch_planet_{index}")
@@ -675,6 +1026,7 @@ class AstroRepository:
             "annotations": self.list_annotations(event_id=event_id),
         }
 
+    @synchronized_dataset
     def set_occurrence_progress(self, event_id: str, status: str) -> dict[str, Any]:
         normalized = status.strip().lower()
         if normalized not in {"pending", "reviewed"}:
@@ -741,6 +1093,7 @@ class AstroRepository:
             output.append(item)
         return output
 
+    @synchronized_dataset
     def save_annotation(self, payload: dict[str, Any]) -> dict[str, Any]:
         event_id = str(payload.get("eventId") or "").strip()
         family_key = str(payload.get("familyKey") or "").strip()

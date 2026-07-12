@@ -7,18 +7,21 @@ from typing import Any
 
 from flask import Flask, jsonify, request
 
+from generation import GenerationJobManager
 from mt5_gateway import Mt5Gateway
 from repository import AstroRepository
 
 
 app = Flask(__name__)
 repository = AstroRepository()
+generation_manager = GenerationJobManager(repository)
 gateway = Mt5Gateway(
     symbol=os.environ.get("GANN_ASTRO_MT5_SYMBOL", "USDJPY"),
     autoconnect=os.environ.get("GANN_ASTRO_MT5_AUTOCONNECT", "1") != "0",
 )
 gateway.start()
 atexit.register(gateway.stop)
+atexit.register(generation_manager.stop)
 
 
 def list_argument(name: str) -> tuple[str, ...]:
@@ -110,6 +113,51 @@ def delete_parameter_profile(profile_id: str) -> Any:
     return jsonify({"ok": repository.delete_parameter_profile(profile_id)})
 
 
+@app.get("/api/generation/jobs")
+def generation_jobs() -> Any:
+    return jsonify({"ok": True, "jobs": generation_manager.list_jobs(request.args.get("limit", 30))})
+
+
+@app.get("/api/generation/jobs/<job_id>")
+def generation_job(job_id: str) -> Any:
+    try:
+        return jsonify({"ok": True, "job": generation_manager.get_job(job_id)})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+
+
+@app.post("/api/generation/jobs")
+def create_generation_job() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify({"ok": True, "job": generation_manager.create_job(payload)})
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/generation/jobs/<job_id>/cancel")
+def cancel_generation_job(job_id: str) -> Any:
+    try:
+        return jsonify({"ok": True, "job": generation_manager.cancel_job(job_id)})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+
+
+@app.get("/api/data-artifacts")
+def data_artifacts() -> Any:
+    return jsonify({"ok": True, "artifacts": repository.list_data_artifacts()})
+
+
+@app.post("/api/data-artifacts/<artifact_id>/activate")
+def activate_data_artifact(artifact_id: str) -> Any:
+    try:
+        return jsonify({"ok": True, "artifact": repository.activate_artifact(artifact_id)})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
 @app.get("/api/chart")
 def chart() -> Any:
     try:
@@ -143,6 +191,25 @@ def chart() -> Any:
                     "srLines": [],
                     "astronomyContract": "NO_CORRECTED_EVENT_SOURCE_FOR_SYMBOL",
                     "parametersApplied": filters,
+                    "artifact": {
+                        "artifactId": f"live:{symbol.upper()}",
+                        "label": f"MT5 live {symbol.upper()}",
+                        "symbol": symbol.upper(),
+                        "mode": "TN",
+                        "sourceTimeframe": timeframe.upper(),
+                        "eventsPath": "",
+                        "touchLogPath": "",
+                        "pricePath": "MT5",
+                        "parameters": {},
+                        "astronomyContract": "NO_CORRECTED_EVENT_SOURCE_FOR_SYMBOL",
+                        "eventCount": 0,
+                        "touchCount": 0,
+                        "dateStart": start_iso,
+                        "dateEnd": end_iso,
+                        "isActive": True,
+                        "createdAtUtc": None,
+                        "builtIn": True,
+                    },
                 }
             payload["candles"] = bars
             payload["dataSource"] = "mt5_live"

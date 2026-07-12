@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 from datetime import timedelta, timezone as dt_timezone
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -352,6 +353,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Print the number of events available after filtering and price overlap checks, then exit.",
     )
+    parser.add_argument(
+        "--allow-empty",
+        action="store_true",
+        help="Write a valid empty touch artifact when no SR touch is found.",
+    )
     return parser.parse_args()
 
 
@@ -568,6 +574,11 @@ def reference_timezone(tz_name: str) -> dt_timezone | ZoneInfo:
     tz_key = str(tz_name or "").strip()
     if tz_key in FIXED_TIMEZONE_OFFSETS:
         return dt_timezone(timedelta(minutes=int(FIXED_TIMEZONE_OFFSETS[tz_key])))
+    fixed_offset = re.fullmatch(r"([+-])(\d{2}):(\d{2})", tz_key)
+    if fixed_offset:
+        sign = 1 if fixed_offset.group(1) == "+" else -1
+        minutes = sign * (int(fixed_offset.group(2)) * 60 + int(fixed_offset.group(3)))
+        return dt_timezone(timedelta(minutes=minutes))
     return ZoneInfo(tz_key)
 
 
@@ -1957,6 +1968,21 @@ def main() -> None:
             f"geometry_mismatch={quarantined_geometry_events}",
         )
     if not rows:
+        if args.allow_empty:
+            pd.DataFrame(
+                columns=[
+                    "event_id",
+                    "touch_id",
+                    "touch_time_local",
+                    "touch_line_price_1",
+                    "touch_line_price_2",
+                    "touch_planet_1",
+                    "touch_planet_2",
+                ]
+            ).to_csv(args.output, index=False)
+            print("Generated rows: 0")
+            print(f"Saved empty touch artifact: {args.output}")
+            return
         raise RuntimeError("No touch rows generated.")
 
     out = pd.DataFrame(rows)

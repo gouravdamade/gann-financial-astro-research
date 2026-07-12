@@ -4,7 +4,9 @@ import type {
   ChartAnnotation,
   ChartParameters,
   ChartPayload,
+  DataArtifact,
   EventDetail,
+  GenerationJob,
   Mt5Status,
   ParameterSchema,
   SavedParameterProfile,
@@ -91,6 +93,51 @@ export async function deleteParameterProfile(profileId: string): Promise<void> {
   await request<Record<string, never>>(`/api/parameter-profiles/${encodeURIComponent(profileId)}`, {
     method: 'DELETE',
   })
+}
+
+export async function fetchGenerationJobs(): Promise<GenerationJob[]> {
+  const payload = await request<{ jobs: GenerationJob[] }>('/api/generation/jobs')
+  return payload.jobs
+}
+
+export async function fetchGenerationJob(jobId: string): Promise<GenerationJob> {
+  const payload = await request<{ job: GenerationJob }>(
+    `/api/generation/jobs/${encodeURIComponent(jobId)}`,
+  )
+  return payload.job
+}
+
+export async function createGenerationJob(input: {
+  label?: string
+  parameters: ChartParameters
+  autoActivate?: boolean
+}): Promise<GenerationJob> {
+  const payload = await request<{ job: GenerationJob }>('/api/generation/jobs', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.job
+}
+
+export async function cancelGenerationJob(jobId: string): Promise<GenerationJob> {
+  const payload = await request<{ job: GenerationJob }>(
+    `/api/generation/jobs/${encodeURIComponent(jobId)}/cancel`,
+    { method: 'POST' },
+  )
+  return payload.job
+}
+
+export async function fetchDataArtifacts(): Promise<DataArtifact[]> {
+  const payload = await request<{ artifacts: DataArtifact[] }>('/api/data-artifacts')
+  return payload.artifacts
+}
+
+export async function activateDataArtifact(artifactId: string): Promise<DataArtifact> {
+  const payload = await request<{ artifact: DataArtifact }>(
+    `/api/data-artifacts/${encodeURIComponent(artifactId)}/activate`,
+    { method: 'POST' },
+  )
+  return payload.artifact
 }
 
 export async function fetchMt5Status(): Promise<Mt5Status> {

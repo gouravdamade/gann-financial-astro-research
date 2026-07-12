@@ -1,16 +1,25 @@
 import {
   Check,
+  CheckCircle2,
   Database,
+  LoaderCircle,
   Play,
   Plus,
   Radio,
+  RotateCcw,
   Save,
+  Square,
   Trash2,
   X,
 } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
+  activateDataArtifact,
+  cancelGenerationJob,
+  createGenerationJob,
   deleteParameterProfile,
+  fetchDataArtifacts,
+  fetchGenerationJobs,
   saveParameterProfile,
 } from '../api'
 import {
@@ -22,6 +31,8 @@ import {
 } from '../parameterUtils'
 import type {
   ChartParameters,
+  DataArtifact,
+  GenerationJob,
   ParameterSchema,
   SavedParameterProfile,
 } from '../types'
@@ -32,8 +43,10 @@ type ParameterDrawerProps = {
   schema: ParameterSchema
   parameters: ChartParameters
   profiles: SavedParameterProfile[]
+  activeArtifactId: string
   onClose: () => void
   onApply: (parameters: ChartParameters) => Promise<void>
+  onArtifactActivated: (artifact: DataArtifact) => Promise<void>
   onProfilesChange: (profiles: SavedParameterProfile[]) => void
 }
 
@@ -43,8 +56,10 @@ export function ParameterDrawer({
   schema,
   parameters,
   profiles,
+  activeArtifactId,
   onClose,
   onApply,
+  onArtifactActivated,
   onProfilesChange,
 }: ParameterDrawerProps) {
   const [draft, setDraft] = useState<ChartParameters>(parameters)
@@ -52,16 +67,58 @@ export function ParameterDrawer({
   const [selectedProfileId, setSelectedProfileId] = useState('')
   const [excludedCandidate, setExcludedCandidate] = useState('')
   const [profileBusy, setProfileBusy] = useState(false)
+  const [generationBusy, setGenerationBusy] = useState(false)
+  const [generationError, setGenerationError] = useState('')
+  const [jobs, setJobs] = useState<GenerationJob[]>([])
+  const [artifacts, setArtifacts] = useState<DataArtifact[]>([])
+  const [artifactCandidate, setArtifactCandidate] = useState('')
+  const notifiedArtifact = useRef(activeArtifactId)
 
   useEffect(() => {
     if (open) setDraft(structuredClone(parameters))
   }, [open, parameters])
+
+  useEffect(() => {
+    notifiedArtifact.current = activeArtifactId
+  }, [activeArtifactId])
+
+  useEffect(() => {
+    if (!open) return
+    let disposed = false
+    const refresh = async () => {
+      try {
+        const [nextJobs, nextArtifacts] = await Promise.all([
+          fetchGenerationJobs(),
+          fetchDataArtifacts(),
+        ])
+        if (disposed) return
+        setJobs(nextJobs)
+        setArtifacts(nextArtifacts)
+        const active = nextArtifacts.find((item) => item.isActive)
+        if (active && active.artifactId !== notifiedArtifact.current) {
+          notifiedArtifact.current = active.artifactId
+          await onArtifactActivated(active)
+        }
+      } catch (reason) {
+        if (!disposed) setGenerationError(reason instanceof Error ? reason.message : String(reason))
+      }
+    }
+    refresh()
+    const timer = window.setInterval(refresh, 1500)
+    return () => {
+      disposed = true
+      window.clearInterval(timer)
+    }
+  }, [open, onArtifactActivated])
 
   const range = schema.dataRanges[draft.timeframe]
   const selectedProfile = useMemo(
     () => profiles.find((item) => item.profileId === selectedProfileId) ?? null,
     [profiles, selectedProfileId],
   )
+  const activeJob = jobs.find((job) => ['queued', 'running', 'cancelling'].includes(job.status)) ?? null
+  const latestJob = activeJob ?? jobs[0] ?? null
+  const activeArtifact = artifacts.find((artifact) => artifact.isActive) ?? null
 
   if (!open) return null
 
@@ -94,6 +151,56 @@ export function ParameterDrawer({
       setProfileName('')
     } finally {
       setProfileBusy(false)
+    }
+  }
+
+  const generateSource = async () => {
+    setGenerationBusy(true)
+    setGenerationError('')
+    try {
+      const job = await createGenerationJob({
+        label: profileName.trim() || undefined,
+        parameters: { ...draft, dataSource: 'research' },
+        autoActivate: true,
+      })
+      setJobs((current) => [job, ...current.filter((item) => item.jobId !== job.jobId)])
+    } catch (reason) {
+      setGenerationError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setGenerationBusy(false)
+    }
+  }
+
+  const stopGeneration = async () => {
+    if (!activeJob) return
+    setGenerationBusy(true)
+    try {
+      const job = await cancelGenerationJob(activeJob.jobId)
+      setJobs((current) => current.map((item) => item.jobId === job.jobId ? job : item))
+    } catch (reason) {
+      setGenerationError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setGenerationBusy(false)
+    }
+  }
+
+  const activateArtifact = async () => {
+    if (!artifactCandidate) return
+    setGenerationBusy(true)
+    setGenerationError('')
+    try {
+      const artifact = await activateDataArtifact(artifactCandidate)
+      notifiedArtifact.current = artifact.artifactId
+      setArtifacts((current) => current.map((item) => ({
+        ...item,
+        isActive: item.artifactId === artifact.artifactId,
+      })))
+      await onArtifactActivated(artifact)
+      setArtifactCandidate('')
+    } catch (reason) {
+      setGenerationError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setGenerationBusy(false)
     }
   }
 
@@ -131,6 +238,65 @@ export function ParameterDrawer({
             <div className="parameter-inline">
               <input value={profileName} onChange={(event) => setProfileName(event.target.value)} placeholder="Profile name" />
               <button className="secondary-command" disabled={profileBusy} onClick={saveProfile}><Save size={14} /> Save</button>
+            </div>
+          </section>
+
+          <section className="parameter-section generation-section">
+            <div className="parameter-section-title">
+              <Database size={15} />
+              <strong>Corrected data artifacts</strong>
+              <span>{schema.generation.astronomyContract.split('_').slice(0, 2).join(' ')}</span>
+            </div>
+            <div className="artifact-active-row">
+              <div>
+                <span>Active source</span>
+                <strong>{activeArtifact?.label ?? 'Loading artifact registry'}</strong>
+              </div>
+              {activeArtifact && (
+                <span>{activeArtifact.eventCount ?? '-'} events / {activeArtifact.touchCount ?? '-'} touches</span>
+              )}
+            </div>
+            <div className="parameter-inline">
+              <select value={artifactCandidate} onChange={(event) => setArtifactCandidate(event.target.value)}>
+                <option value="">Switch data source</option>
+                {artifacts.filter((artifact) => !artifact.isActive).map((artifact) => (
+                  <option value={artifact.artifactId} key={artifact.artifactId}>
+                    {artifact.label} ({artifact.eventCount ?? '-'} / {artifact.touchCount ?? '-'})
+                  </option>
+                ))}
+              </select>
+              <button className="icon-button" disabled={!artifactCandidate || generationBusy} onClick={activateArtifact} title="Activate selected artifact"><RotateCcw size={15} /></button>
+            </div>
+            {latestJob && (
+              <div className={`generation-job-status is-${latestJob.status}`}>
+                <div className="generation-job-heading">
+                  <span>
+                    {latestJob.status === 'completed' ? <CheckCircle2 size={14} /> : <LoaderCircle size={14} />}
+                    {latestJob.label}
+                  </span>
+                  <strong>{Math.round(latestJob.progress)}%</strong>
+                </div>
+                <div className="generation-progress" aria-label={`Generation ${Math.round(latestJob.progress)} percent`}>
+                  <span style={{ width: `${Math.max(0, Math.min(100, latestJob.progress))}%` }} />
+                </div>
+                <p>{latestJob.message}</p>
+                {latestJob.error && <details><summary>Generator error</summary><pre>{latestJob.error}</pre></details>}
+              </div>
+            )}
+            {generationError && <div className="generation-inline-error">{generationError}</div>}
+            <div className="generation-actions">
+              <button
+                className="secondary-command"
+                disabled={Boolean(activeJob) || generationBusy || busy || draft.dataSource !== 'research' || draft.mode !== 'TN' || !draft.aspects.length}
+                onClick={generateSource}
+                title={draft.dataSource === 'research' ? 'Build and activate a corrected TN artifact' : 'Switch to Research mode before generating'}
+              >
+                {generationBusy ? <LoaderCircle size={14} /> : <Database size={14} />}
+                Generate corrected source
+              </button>
+              {activeJob && (
+                <button className="icon-button danger" disabled={generationBusy} onClick={stopGeneration} title="Cancel generation"><Square size={13} /></button>
+              )}
             </div>
           </section>
 
@@ -246,7 +412,7 @@ export function ParameterDrawer({
         </div>
 
         <footer className="parameter-footer">
-          <div className="generation-status"><span className="status-dot" /> TN source filters ready</div>
+          <div className="generation-status"><span className="status-dot" /> {activeJob ? `${activeJob.stage} ${Math.round(activeJob.progress)}%` : 'TN worker ready'}</div>
           <button className="primary-command" disabled={busy || draft.mode !== 'TN' || !draft.aspects.length} onClick={() => onApply(draft)}><Play size={15} /> {busy ? 'Loading' : 'Apply view'}</button>
         </footer>
       </aside>

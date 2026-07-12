@@ -1,10 +1,55 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-12 01:29 IST
+Last updated: 2026-07-12 06:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-12 (Parameterized Charts and Live MT5)
+## Latest Update - 2026-07-12 (Durable Corrected-Data Generation)
+
+2026-07-12 third Windows-app vertical slice:
+
+- Added a durable corrected transit-to-natal generation queue. Jobs are persisted in
+  SQLite, run in isolated hidden subprocesses, report honest stage/progress state, support
+  cancellation, resume queued work after restart, and mark interrupted running work failed
+  instead of pretending it completed.
+- Added a versioned corrected-data artifact registry under
+  `D:\GannFinancialAstro\app_artifacts`. Every completed artifact has inspectable generator
+  logs, canonical SR inputs, a manifest, SHA-256 hashes, astronomy-contract validation, and
+  event/touch row counts before it can be registered or activated.
+- Added schema-version-4 tables `app_generation_jobs` and `app_data_artifacts`, plus backend
+  APIs to create/list/cancel jobs, list artifacts, and activate either a generated artifact
+  or the versioned baseline. Dataset activation swaps event/touch indexes atomically under a
+  repository lock; invalid or partial artifacts never replace the working chart source.
+- Extended the corrected generators so custom SR configuration is canonical JSON, reference
+  times accept seconds, fixed-offset locations are parsed correctly, and a valid empty touch
+  artifact can be emitted when an event source has no SR touch.
+- Added the parameter-drawer generation workspace with Generate, Cancel, job progress/error,
+  artifact history, and activation controls. A research-mode watcher refreshes the chart and
+  Analyze Aspect data when a completed job auto-activates, even if the drawer was closed.
+- Corrected touch-only filtering to use the explicit event-to-touch join and retained the
+  generated deterministic astro fields for Analyze Aspect evidence instead of reducing touch
+  rows to plotting coordinates.
+- End-to-end proof generation produced `1` corrected event and `1` SR touch; the activated
+  artifact exposed `22` deterministic evidence fields in event detail. The same artifact was
+  exercised through the real HTTP queue and browser UI, then the versioned baseline was
+  restored and all proof rows/directories were removed.
+- Verification completed:
+  - backend unittest: 11 passed;
+  - frontend Vitest: 5 passed;
+  - Python compile, Oxlint, and production TypeScript/Vite build: passed;
+  - browser check: nonblank generated chart, visible 100% completed job, correct artifact
+    counts, clean baseline restoration, and no browser-console errors or warnings.
+- Remaining app work, in order:
+  1. add a timestamped MT5 history snapshot/ingestion step so corrected TN generation can
+     cover dates after the current versioned source endpoint of 2026-03-10;
+  2. migrate deterministic Auto Suggest, trade markers, P/L, rule lessons, Dream Review,
+     and the official-note queue into shared app/backend contracts;
+  3. consolidate browser and Python decision logic into one timestamp-safe no-lookahead engine;
+  4. implement and certify the corrected transit-to-transit generator;
+  5. freeze/sign Python and Node sidecars and complete native packaging after Rust/MSVC is
+     installed on `D:`.
+
+## Previous Update - 2026-07-12 (Parameterized Charts and Live MT5)
 
 2026-07-12 second Windows-app vertical slice:
 

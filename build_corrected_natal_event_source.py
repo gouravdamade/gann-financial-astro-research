@@ -84,6 +84,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reference-lon", type=float, default=139.6503)
     parser.add_argument("--min-window-minutes", type=float, default=30.0)
     parser.add_argument(
+        "--sr-config-json",
+        default="{}",
+        help="JSON object embedded in every event for the downstream corrected SR touch builder.",
+    )
+    parser.add_argument(
+        "--sr-config-file",
+        type=Path,
+        help="Optional UTF-8 JSON file; preferred over shell-escaped --sr-config-json.",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=Path(r"D:\PycharmProjects\astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet"),
@@ -126,8 +136,57 @@ def parse_fixed_offset(value: str) -> timezone:
 
 
 def reference_timestamp(date_text: str, time_text: str, offset_text: str) -> pd.Timestamp:
-    naive = datetime.strptime(f"{date_text} {time_text}", "%Y-%m-%d %H:%M")
+    try:
+        naive = datetime.fromisoformat(f"{str(date_text).strip()}T{str(time_text).strip()}")
+    except ValueError as exc:
+        raise ValueError("reference date/time must use YYYY-MM-DD and HH:MM[:SS]") from exc
     return pd.Timestamp(naive.replace(tzinfo=parse_fixed_offset(offset_text)))
+
+
+def parse_sr_config_json(value: str) -> dict[str, Any]:
+    try:
+        parsed = json.loads(str(value or "{}"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("sr-config-json must be a JSON object") from exc
+    if not isinstance(parsed, dict):
+        raise ValueError("sr-config-json must be a JSON object")
+
+    def float_list(name: str, default: tuple[float, ...]) -> list[float]:
+        raw = parsed.get(name, default)
+        if not isinstance(raw, (list, tuple)):
+            raise ValueError(f"SR {name} must be a list")
+        values = list(dict.fromkeys(float(item) for item in raw))
+        if not values or len(values) > 40 or any(not np.isfinite(item) or item <= 0 for item in values):
+            raise ValueError(f"SR {name} must contain 1-40 positive finite values")
+        return values
+
+    harmonics = float_list("harmonics", (0.12, 0.18))
+    n_values = float_list("n_values", (1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8))
+    raw_degrees = parsed.get("degrees", (360, 180, 90, 45))
+    if not isinstance(raw_degrees, (list, tuple)):
+        raise ValueError("SR degrees must be a list")
+    degrees = list(dict.fromkeys(int(float(item)) for item in raw_degrees))
+    if not degrees or len(degrees) > 20 or any(item <= 0 or item > 360 for item in degrees):
+        raise ValueError("SR degrees must contain 1-20 integers in the range 1-360")
+    if len(harmonics) * len(n_values) * len(degrees) > 400:
+        raise ValueError("SR harmonic x n x degree combinations exceed the safe limit of 400")
+    epsilon = float(parsed.get("epsilon", 0.30))
+    price_zone = float(parsed.get("price_zone", 0.16))
+    moon_factor = float(parsed.get("moon_factor", 1.8))
+    band_pct = float(parsed.get("band_pct", 0.01))
+    if not 0 < epsilon <= 10 or not 0 < price_zone <= 10:
+        raise ValueError("SR epsilon and price_zone must be greater than 0 and no more than 10")
+    if not 0 < moon_factor <= 10 or not 0 < band_pct <= 1:
+        raise ValueError("SR moon_factor and band_pct are outside safe bounds")
+    return {
+        "harmonics": harmonics,
+        "n_values": n_values,
+        "degrees": degrees,
+        "epsilon": epsilon,
+        "price_zone": price_zone,
+        "moon_factor": moon_factor,
+        "band_pct": band_pct,
+    }
 
 
 def circular_average_frame(frame: pd.DataFrame) -> pd.Series:
@@ -427,6 +486,12 @@ def main() -> None:
     transit_entities = parse_entities(args.transit_entities)
     natal_entities = parse_entities(args.natal_entities)
     aspects = parse_aspects(args.selected_aspects)
+    sr_config_text = (
+        args.sr_config_file.read_text(encoding="utf-8")
+        if args.sr_config_file is not None
+        else args.sr_config_json
+    )
+    sr_config = parse_sr_config_json(sr_config_text)
     cadence = INTERVALS[args.interval]
     if not args.price_parquet.exists():
         raise FileNotFoundError(args.price_parquet)
@@ -457,6 +522,7 @@ def main() -> None:
     )
     if frame.empty:
         raise RuntimeError("No aspect windows were generated for the requested contract.")
+    frame["sr_config_json"] = json.dumps(sr_config, sort_keys=True, separators=(",", ":"))
     atomic_write_parquet(frame, args.output, args.overwrite)
 
     manifest_path = args.output.with_suffix(".manifest.json")
@@ -479,6 +545,7 @@ def main() -> None:
         "aspects": list(aspects),
         "aspect_specs": ASPECT_SPECS,
         "reference": reference_metadata,
+        "sr_config": sr_config,
         "natal_planet_longitudes": natal_planets,
         "outcome_labels_included": False,
     }

@@ -58,6 +58,7 @@ export type ParameterSchema = {
     customSrConfig: string
     profileJobQueue: string
     astronomyContract: string
+    activeArtifactId: string
   }
 }
 
@@ -68,6 +69,58 @@ export type SavedParameterProfile = {
   isDefault: boolean
   createdAtUtc: string
   updatedAtUtc: string
+}
+
+export type GenerationJobStatus =
+  | 'queued'
+  | 'running'
+  | 'cancelling'
+  | 'cancelled'
+  | 'completed'
+  | 'failed'
+
+export type GenerationJob = {
+  jobId: string
+  label: string
+  status: GenerationJobStatus
+  stage: string
+  progress: number
+  message: string
+  parameters: ChartParameters
+  autoActivate: boolean
+  cancelRequested: boolean
+  artifactId: string | null
+  eventsPath: string
+  touchLogPath: string
+  logPath: string
+  logTail?: string
+  error: string
+  createdAtUtc: string
+  startedAtUtc: string | null
+  finishedAtUtc: string | null
+  updatedAtUtc: string
+}
+
+export type DataArtifact = {
+  artifactId: string
+  label: string
+  symbol: string
+  mode: 'TN' | 'TT'
+  sourceTimeframe: string
+  eventsPath: string
+  touchLogPath: string
+  pricePath: string
+  eventsManifestPath?: string
+  artifactManifestPath?: string
+  parameters: ChartParameters
+  astronomyContract: string
+  eventCount: number | null
+  touchCount: number | null
+  dateStart: string | null
+  dateEnd: string | null
+  isActive: boolean
+  createdAtUtc: string | null
+  builtIn: boolean
 }
 
 export type Candle = {
@@ -132,6 +185,7 @@ export type ChartPayload = {
   astronomyContract: string
   dataSource: 'corrected_historical' | 'mt5_live'
   parametersApplied: Record<string, unknown>
+  artifact: DataArtifact
   generatedAt: string
 }
 
@@ -155,6 +209,7 @@ export type AspectFamily = {
   selectedEventId: string
   summary: FamilySummary
   astronomyContract: string
+  artifact: DataArtifact
 }
 
 export type AstroEvidence = {

@@ -27,6 +27,8 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertIn("M30", schema["options"]["timeframes"])
         self.assertEqual(schema["generation"]["correctedTn"], "generator_ready")
         self.assertEqual(schema["generation"]["correctedTt"], "not_implemented")
+        self.assertEqual(schema["generation"]["profileJobQueue"], "ready")
+        self.assertEqual(schema["generation"]["activeArtifactId"], self.repository.active_artifact["artifactId"])
 
     def test_chart_filters_and_m30_source_are_applied(self) -> None:
         payload = self.repository.chart_payload(
@@ -41,7 +43,7 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertTrue(payload["aspects"])
         self.assertTrue(all(item["transitBody"] == "MOON" for item in payload["aspects"]))
         self.assertTrue(all(item["aspect"] == "square" for item in payload["aspects"]))
-        self.assertTrue(all(item["caseId"] is not None for item in payload["aspects"]))
+        self.assertTrue(all(item["eventId"] in self.repository.touch_by_event for item in payload["aspects"]))
 
     def test_family_payload_preserves_transit_natal_direction(self) -> None:
         payload = self.repository.family_payload("TN::MOON->MERCURY::square")

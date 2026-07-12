@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, Settings2, SlidersHorizontal, X } from 'lucide-react'
 import {
   fetchChart,
+  fetchDataArtifacts,
   fetchEventDetail,
   fetchMt5Status,
   fetchParameterProfiles,
@@ -22,6 +23,7 @@ import type {
   ChartPayload,
   ChartParameters,
   ChartTool,
+  DataArtifact,
   EventDetail,
   Mt5Status,
   ParameterSchema,
@@ -52,6 +54,7 @@ export function MainWorkspace() {
   const [parametersOpen, setParametersOpen] = useState(false)
   const [chartLoading, setChartLoading] = useState(false)
   const chartRef = useRef<MarketChartHandle>(null)
+  const artifactActivationRef = useRef('')
 
   useEffect(() => {
     Promise.all([fetchParameterSchema(), fetchParameterProfiles()])
@@ -85,6 +88,56 @@ export function MainWorkspace() {
       setChartLoading(false)
     }
   }, [])
+
+  const handleArtifactActivated = useCallback(async (artifact: DataArtifact) => {
+    if (artifactActivationRef.current === artifact.artifactId) return
+    artifactActivationRef.current = artifact.artifactId
+    setChartLoading(true)
+    setParameterError('')
+    try {
+      const nextSchema = await fetchParameterSchema()
+      const nextParameters: ChartParameters = {
+        ...nextSchema.defaults,
+        ...artifact.parameters,
+        reference: {
+          ...nextSchema.defaults.reference,
+          ...(artifact.parameters?.reference ?? {}),
+        },
+        dataSource: 'research',
+      }
+      const payload = await fetchChart(nextParameters)
+      setSchema(nextSchema)
+      setParameters(nextParameters)
+      setChart(payload)
+      setSelected(payload.aspects[0] ?? null)
+      setSelectedAnnotation(null)
+    } catch (reason) {
+      setParameterError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      artifactActivationRef.current = ''
+      setChartLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!parameters || !chart || parameters.dataSource !== 'research') return
+    let disposed = false
+    const refresh = () => fetchDataArtifacts()
+      .then((artifacts) => {
+        if (disposed) return
+        const active = artifacts.find((artifact) => artifact.isActive)
+        if (active && active.artifactId !== chart?.artifact.artifactId) {
+          void handleArtifactActivated(active)
+        }
+      })
+      .catch(() => undefined)
+    refresh()
+    const timer = window.setInterval(refresh, 3000)
+    return () => {
+      disposed = true
+      window.clearInterval(timer)
+    }
+  }, [chart, handleArtifactActivated, parameters])
 
   useEffect(() => {
     if (!parameters || parameters.dataSource !== 'live') return
@@ -183,6 +236,7 @@ export function MainWorkspace() {
           <div className="chart-context-strip">
             <span>Raman sidereal</span>
             <span>{parameters.reference.label}</span>
+            <span>{chart.artifact.label}</span>
             <span>{chart.aspects.length} visible aspects</span>
             <span>{chart.dataSource === 'mt5_live' ? 'MT5 live bars' : chart.timeframe + ' archive'}</span>
             {selected && <strong style={{ color: selected.color }}>{selected.transitBody} to {selected.natalBody} {selected.aspectLabel}</strong>}
@@ -228,8 +282,10 @@ export function MainWorkspace() {
         schema={schema}
         parameters={parameters}
         profiles={profiles}
+        activeArtifactId={chart.artifact.artifactId}
         onClose={() => setParametersOpen(false)}
         onApply={applyParameters}
+        onArtifactActivated={handleArtifactActivated}
         onProfilesChange={setProfiles}
       />
     </main>

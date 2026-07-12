@@ -15,6 +15,12 @@ separate from live market-data concerns.
 - Persistent parameter profiles covering market source, M30/H1/H4/D1, date range,
   TN body/aspect filters, family exclusions, duration/touch filters, planetary SR
   inputs, and birth/IPO reference coordinates.
+- Durable corrected-TN generation jobs with validated rebuild inputs, visible stage
+  progress, cancellation, restart recovery, isolated subprocesses, and inspectable logs.
+- A versioned corrected-data artifact registry with SHA-256 manifests, contract validation,
+  explicit activation/history controls, and atomic chart/Analyze Aspect dataset swaps.
+- Automatic research-chart refresh when a completed job activates its artifact, including
+  when the parameter drawer has been closed while generation continues in the background.
 - Read-only MT5 live chart mode with 20-5,000 recent bars and five-second refresh.
 - Horizontal line, vertical line, Gann fan, and structured annotation tools.
 - Persistent chart annotations with exact time, price, family, event, and chart state.
@@ -62,10 +68,14 @@ build tools installed on `D:`. The Python backend and Node Codex bridge also nee
 to be frozen as signed sidecars before the installer can be called portable.
 Until that packaging gate is completed, `npm run dev` is the supported runtime.
 
-Custom reference and SR values are persisted as rebuild inputs. The corrected TN
-generator accepts those inputs at the script layer, but the background generation
-job queue and loading generated artifacts back into Analyze Aspect remain the next
-application milestone. TT generation is still unavailable and remains disabled.
+Custom corrected-TN generation and activation are ready for date ranges covered by the
+versioned USDJPY M30/H1 sources. Generated artifacts and their manifests are stored under
+`D:\GannFinancialAstro\app_artifacts`; only validated, fully written artifacts enter the
+registry. The queue does not yet extend the price snapshot beyond 2026-03-10, so current
+or future Jul-2026 event generation still needs a versioned MT5 history-ingestion step.
+TT generation remains unavailable and disabled. Deterministic Auto Suggest, trade markers,
+P/L, rule lessons, Dream Review, and official-note processing still need to be consolidated
+into a shared timestamp-safe, no-lookahead decision engine before live inference.
 
 ## Ports And Storage
 
@@ -73,4 +83,5 @@ application milestone. TT generation is still unavailable and remains disabled.
 - deterministic backend: `127.0.0.1:8788`
 - Codex bridge: `127.0.0.1:8789`
 - snapshots: `D:\GannFinancialAstro\app_snapshots`
+- corrected data artifacts: `D:\GannFinancialAstro\app_artifacts`
 - application source and datasets: `D:\PycharmProjects`
