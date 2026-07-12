@@ -24,6 +24,8 @@ separate from live market-data concerns.
 - Read-only MT5 live chart mode with 20-5,000 recent bars and five-second refresh.
 - Immutable MT5 history snapshots with capture/as-of timestamps, closed-bar-only
   filtering, SHA-256 manifests, and explicit no-lookahead provenance.
+- Explicit snapshot promotion with deterministic manifest/OHLC/hash verification,
+  immutable price-source registration, and retained snapshot lineage in generated artifacts.
 - Horizontal line, vertical line, Gann fan, and structured annotation tools.
 - Persistent chart annotations with exact time, price, family, event, and chart state.
 - Read-only MT5 connection supervisor with heartbeat and reconnect status.
@@ -101,9 +103,9 @@ shared installer and Windows SDK servicing files on the system drive.
 Custom corrected-TN generation and activation are ready for date ranges covered by the
 versioned USDJPY M30/H1 sources. Generated artifacts and their manifests are stored under
 `D:\GannFinancialAstro\app_artifacts`; only validated, fully written artifacts enter the
-registry. Immutable MT5 snapshots now capture timestamp-safe closed bars beyond the
-frozen baseline, but snapshots are not promoted automatically into a corrected event
-artifact. Promotion remains an explicit, versioned operation.
+registry. Immutable MT5 snapshots can be promoted explicitly into verified price sources;
+generation records the selected source ID, source snapshot, SHA-256 and as-of cutoff, and
+activation switches chart candles atomically while preserving baseline restoration.
 TT generation remains unavailable and disabled. Deterministic Auto Suggest, trade markers,
 P/L, rule lessons, Dream Review, and official-note processing still need to be consolidated
 into a shared timestamp-safe, no-lookahead decision engine before live inference.
@@ -113,6 +115,7 @@ into a shared timestamp-safe, no-lookahead decision engine before live inference
 - native executable: `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`
 - native writable state: `D:\GannFinancialAstro\app_data`
 - timestamped MT5 history: `D:\GannFinancialAstro\app_data\market_snapshots`
+- promoted price sources: `D:\GannFinancialAstro\app_data\price_sources`
 - snapshots: `D:\GannFinancialAstro\app_snapshots`
 - corrected data artifacts: `D:\GannFinancialAstro\app_artifacts`
 - application source and datasets: `D:\PycharmProjects`

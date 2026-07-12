@@ -100,7 +100,14 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
     if end - start > pd.Timedelta(days=366 * 5):
         raise ValueError("A generation job is limited to five years; split larger research ranges")
     source_timeframe = "M30" if timeframe == "M30" else "H1"
-    source = repository.price_by_timeframe[source_timeframe]
+    try:
+        price_source, source = repository.resolve_price_source(
+            str(merged.get("priceSourceId") or "baseline"), source_timeframe
+        )
+    except KeyError as exc:
+        raise ValueError(str(exc)) from exc
+    if price_source["symbol"] != symbol:
+        raise ValueError(f"Price source {price_source['priceSourceId']} is not for {symbol}")
     start_utc = start.tz_convert("UTC")
     end_utc = end.tz_convert("UTC")
     if start_utc < source.index.min() or end_utc > source.index.max():
@@ -144,6 +151,10 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
         "dataSource": "research",
         "timeframe": timeframe,
         "sourceTimeframe": source_timeframe,
+        "priceSourceId": price_source["priceSourceId"],
+        "priceSourceContract": price_source["contract"],
+        "priceSourceSha256": price_source["priceSha256"],
+        "priceSourceAsOfUtc": price_source["asOfUtc"],
         "start": start.isoformat(),
         "end": end.isoformat(),
         "mode": "TN",
@@ -448,11 +459,23 @@ class GenerationJobManager:
         artifact_manifest_path = artifact_dir / "artifact.manifest.json"
         events_manifest_path = events_path.with_suffix(".manifest.json")
         source_timeframe = parameters["sourceTimeframe"]
-        price_path = (
-            self.repository.paths.price_data_m30
-            if source_timeframe == "M30"
-            else self.repository.paths.price_data
-        )
+        try:
+            price_source, _ = self.repository.resolve_price_source(
+                parameters.get("priceSourceId"), source_timeframe
+            )
+            if parameters.get("priceSourceSha256") != price_source["priceSha256"]:
+                raise ValueError("Queued price source SHA-256 changed before generation started")
+        except Exception as exc:
+            self._update_job(
+                job_id,
+                status="failed",
+                stage="failed",
+                message="Generation source verification failed.",
+                error=str(exc)[-6000:],
+                finished_at_utc=utc_now(),
+            )
+            return
+        price_path = Path(price_source["pricePath"])
         interval = "30m" if source_timeframe == "M30" else "1h"
         sr_config = {
             "harmonics": parameters["harmonics"],
@@ -580,6 +603,10 @@ class GenerationJobManager:
                 "events_sha256": file_sha256(events_path),
                 "touches_sha256": file_sha256(touch_path),
                 "price_source_sha256": file_sha256(price_path),
+                "price_source_id": price_source["priceSourceId"],
+                "price_source_contract": price_source["contract"],
+                "price_source_as_of_utc": price_source["asOfUtc"],
+                "source_snapshot_id": price_source.get("sourceSnapshotId"),
                 "parameters": parameters,
                 "outcome_labels_included": False,
             }

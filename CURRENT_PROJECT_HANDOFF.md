@@ -3541,3 +3541,69 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   - code signing or a Tauri/MSI installer is optional distribution work, not a runtime
     blocker.
 - Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260712_145424_native_windows_exe`.
+
+## Promoted MT5 Research Artifacts (2026-07-12)
+
+- Completed the explicit Snapshot -> Verified Price Source -> Corrected Artifact pipeline in
+  Gann Astro Desk. Live MT5 bars cannot become research evidence merely by being visible:
+  the user must first capture a closed-bar snapshot, then explicitly verify/promote it, then
+  generate a versioned corrected artifact from that immutable source.
+- New contracts:
+  - capture contract `MT5_TIMESTAMPED_CLOSED_BARS_V1`;
+  - promoted-source contract `PROMOTED_MT5_PRICE_SOURCE_V1`;
+  - each promotion revalidates path containment, manifest fields, no-lookahead/immutable
+    locks, OHLC geometry, timezone-aware unique timestamps, closed-bar cutoff, bar count,
+    first/last opens, last close and Parquet SHA-256;
+  - generation resolves the source both when queued and in the worker, and refuses to run
+    if the queued SHA has changed;
+  - artifact activation rechecks the artifact manifest's recorded source SHA.
+- Persistent D:-drive registry and files:
+  - registry table `app_price_sources` in
+    `D:\GannFinancialAstro\app_data\gann_aspect_annotations_raman_v2.sqlite`;
+  - promoted archives under `D:\GannFinancialAstro\app_data\price_sources`;
+  - immutable source snapshots remain under
+    `D:\GannFinancialAstro\app_data\market_snapshots`;
+  - generated artifacts remain under `D:\GannFinancialAstro\app_artifacts`.
+- Real retained research source:
+  - snapshot `USDJPY_H1_20260712T105022Z_dc53a058`;
+  - 192 fully closed H1 bars from `2026-07-01T00:00:00Z` through
+    `2026-07-10T23:00:00Z`, captured/as-of `2026-07-12T10:50:22Z`;
+  - Parquet SHA-256
+    `8D0C8C9C3C4DAF403E8E40B139CCDA134E598E43250A42C3C8C4B6CD1415154E`;
+  - promoted source `mt5_USDJPY_H1_20260712T105022Z_dc53a058`, verified on every
+    resolution and idempotent when promoted again.
+- Real retained corrected artifact:
+  - artifact `tn_2beda5f38c4f4cc2bb866fa88c174bf2`;
+  - label `July 2026 promoted MT5 research`;
+  - 29 corrected TN events and 12 SR touches;
+  - active parameters preserve the promoted source ID, source contract, as-of time and SHA;
+  - restart verification restored the July source/range and rendered 187 H1 candles with
+    29 visible aspects.
+- Native UI workflow now exposes, in order, `Snapshot MT5 range`, a captured-snapshot
+  selector with already-promoted status, `Verify and promote snapshot`, and `Price archive`
+  selection. Incompatible source/timeframe combinations are rejected or reset to baseline.
+  The bundled corrected baseline remains immutable and selectable.
+- Native release updated in place:
+  - version `0.2.0`;
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - SHA-256 `C26E8AA3EFC63DD2AAE4C13BDBB9CC14F4084F738BFC57BCCBA0E843DB56D90B`;
+  - 1,656 files / 698,293,933 bytes;
+  - packaged visual QA confirmed the July chart, 29-aspect count, H1 archive, promoted
+    snapshot status and MT5 read-only connection.
+- Verification at this checkpoint:
+  - `79 passed` for the full Python suite;
+  - `5 passed` for frontend tests;
+  - backend package suite passed (`16 tests`);
+  - Oxlint clean;
+  - TypeScript/Vite production build clean;
+  - packaged API restart, health, price-source registry, snapshot lineage and native UI
+    checks passed.
+- Canonical tracked annotation seed contains the new empty app registry tables only: zero
+  price-source, artifact and generation-job rows. The retained July source/artifact live only
+  in the writable D:-drive application state.
+- Remaining deliberate gate: consolidate retrospective review Auto Suggest and future/live
+  inference into one timestamp-safe, versioned decision engine with purged no-lookahead
+  evaluation before any execution path can consume promoted artifacts. MT5 remains
+  `read_only_market_data` and `tradeAllowed=false`.
+- Recovery backup:
+  `D:\PycharmProjects\chat_session_backups\session_20260712_165050_snapshot_promotion`.

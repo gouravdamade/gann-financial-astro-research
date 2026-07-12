@@ -16,6 +16,13 @@ from urllib.parse import unquote
 import numpy as np
 import pandas as pd
 
+from price_sources import (
+    PROMOTED_PRICE_CONTRACT,
+    file_sha256,
+    load_promoted_price_source,
+    promote_snapshot,
+)
+
 
 IST = "Asia/Kolkata"
 UTC = "UTC"
@@ -116,6 +123,7 @@ DEFAULT_CHART_PARAMETERS: dict[str, Any] = {
     "symbol": "USDJPY",
     "dataSource": "research",
     "timeframe": "H1",
+    "priceSourceId": "baseline",
     "start": "2025-05-25T00:00:00+05:30",
     "end": "2025-05-31T23:59:59+05:30",
     "mode": "TN",
@@ -185,6 +193,8 @@ class DataPaths:
     annotation_db: Path
     snapshots_dir: Path
     artifacts_dir: Path
+    market_snapshots_dir: Path
+    price_sources_dir: Path
 
     @classmethod
     def default(cls) -> "DataPaths":
@@ -225,6 +235,14 @@ class DataPaths:
                 "GANN_ASTRO_ARTIFACTS_DIR",
                 Path(r"D:\GannFinancialAstro\app_artifacts"),
             ),
+            market_snapshots_dir=configured_path(
+                "GANN_ASTRO_MARKET_SNAPSHOTS_DIR",
+                Path(r"D:\GannFinancialAstro\app_data\market_snapshots"),
+            ),
+            price_sources_dir=configured_path(
+                "GANN_ASTRO_PRICE_SOURCES_DIR",
+                Path(r"D:\GannFinancialAstro\app_data\price_sources"),
+            ),
         )
 
 
@@ -233,12 +251,14 @@ class AstroRepository:
         self.paths = paths or DataPaths.default()
         self._data_lock = threading.RLock()
         self._baseline_metadata: dict[str, Any] | None = None
-        self.price_by_timeframe = {
+        self._baseline_price_by_timeframe = {
             "H1": self._load_price_frame(self.paths.price_data),
             "M30": self._load_price_frame(self.paths.price_data_m30),
         }
+        self.price_by_timeframe = dict(self._baseline_price_by_timeframe)
         self.price = self.price_by_timeframe["H1"]
         self._resampled_price: dict[str, pd.DataFrame] = {}
+        self._baseline_price_source_cache: dict[str, Any] | None = None
         self._initialize_annotations()
         active = self._active_artifact_row()
         try:
@@ -301,12 +321,29 @@ class AstroRepository:
         installed_artifact["touchCount"] = int(len(touches))
         installed_artifact["dateStart"] = pd.Timestamp(events["timestamp"].min()).isoformat()
         installed_artifact["dateEnd"] = pd.Timestamp(events["event_end"].max()).isoformat()
+        if artifact.get("builtIn"):
+            price_frames = dict(self._baseline_price_by_timeframe)
+        else:
+            source_timeframe = str(artifact.get("sourceTimeframe") or "H1").upper()
+            price_frame = self._load_price_frame(Path(str(artifact.get("pricePath") or "")))
+            if source_timeframe == "M30":
+                price_frames = {
+                    "M30": price_frame,
+                    "H1": self._resample_ohlc(price_frame, "1h"),
+                }
+            elif source_timeframe == "H1":
+                price_frames = {"H1": price_frame}
+            else:
+                raise ValueError(f"Unsupported artifact source timeframe: {source_timeframe}")
         with self._data_lock:
             self.events = events
             self.touches = touches
             self.touch_by_event = touch_by_event
             self.family_counts = family_counts
             self.active_artifact = installed_artifact
+            self.price_by_timeframe = price_frames
+            self.price = price_frames.get("H1", next(iter(price_frames.values())))
+            self._resampled_price.clear()
 
     def _baseline_artifact(self) -> dict[str, Any]:
         return {
@@ -338,6 +375,21 @@ class AstroRepository:
             frame.index = frame.index.tz_convert(UTC)
         return frame
 
+    @staticmethod
+    def _resample_ohlc(source: pd.DataFrame, rule: str) -> pd.DataFrame:
+        aggregations: dict[str, str] = {
+            "open": "first",
+            "high": "max",
+            "low": "min",
+            "close": "last",
+        }
+        for column in ("tick_volume", "real_volume"):
+            if column in source.columns:
+                aggregations[column] = "sum"
+        if "spread" in source.columns:
+            aggregations["spread"] = "max"
+        return source.resample(rule).agg(aggregations).dropna(subset=["open", "close"])
+
     def _price_for_timeframe(self, timeframe: str) -> pd.DataFrame:
         normalized = timeframe.upper()
         if normalized in self.price_by_timeframe:
@@ -346,16 +398,10 @@ class AstroRepository:
             raise ValueError(f"Unsupported historical timeframe: {timeframe}")
         if normalized not in self._resampled_price:
             rule = "4h" if normalized == "H4" else "1D"
-            source = self.price_by_timeframe["H1"]
-            aggregations: dict[str, str] = {
-                "open": "first",
-                "high": "max",
-                "low": "min",
-                "close": "last",
-            }
-            if "tick_volume" in source.columns:
-                aggregations["tick_volume"] = "sum"
-            self._resampled_price[normalized] = source.resample(rule).agg(aggregations).dropna(subset=["open", "close"])
+            source = self.price_by_timeframe.get("H1")
+            if source is None:
+                raise ValueError(f"Active artifact cannot provide {timeframe} candles")
+            self._resampled_price[normalized] = self._resample_ohlc(source, rule)
         return self._resampled_price[normalized]
 
     def connect(self) -> sqlite3.Connection:
@@ -417,6 +463,24 @@ class AstroRepository:
                     created_at_utc TEXT NOT NULL,
                     updated_at_utc TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS app_price_sources (
+                    price_source_id TEXT PRIMARY KEY,
+                    label TEXT NOT NULL,
+                    symbol TEXT NOT NULL,
+                    source_timeframe TEXT NOT NULL CHECK(source_timeframe IN ('M30', 'H1')),
+                    price_path TEXT NOT NULL,
+                    manifest_path TEXT NOT NULL,
+                    source_snapshot_id TEXT NOT NULL,
+                    price_sha256 TEXT NOT NULL,
+                    contract TEXT NOT NULL,
+                    bar_count INTEGER NOT NULL,
+                    date_start TEXT NOT NULL,
+                    date_end TEXT NOT NULL,
+                    as_of_utc TEXT NOT NULL,
+                    created_at_utc TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS idx_app_price_sources_created
+                    ON app_price_sources(created_at_utc DESC);
                 CREATE TABLE IF NOT EXISTS app_data_artifacts (
                     artifact_id TEXT PRIMARY KEY,
                     label TEXT NOT NULL,
@@ -471,7 +535,7 @@ class AstroRepository:
             connection.execute(
                 """
                 INSERT INTO schema_meta(key, value, updated_at_utc)
-                VALUES('chart_annotation_schema_version', '4', ?)
+                VALUES('chart_annotation_schema_version', '5', ?)
                 ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at_utc=excluded.updated_at_utc
                 WHERE schema_meta.value <> excluded.value
                 """,
@@ -533,6 +597,170 @@ class AstroRepository:
         baseline["isActive"] = not any(item["isActive"] for item in artifacts)
         return [baseline, *artifacts]
 
+    @staticmethod
+    def _price_source_record(row: sqlite3.Row | dict[str, Any]) -> dict[str, Any]:
+        item = dict(row)
+        return {
+            "priceSourceId": str(item["price_source_id"]),
+            "label": str(item["label"]),
+            "symbol": str(item["symbol"]),
+            "sourceTimeframe": str(item["source_timeframe"]),
+            "pricePath": str(item["price_path"]),
+            "manifestPath": str(item["manifest_path"]),
+            "sourceSnapshotId": str(item["source_snapshot_id"]),
+            "priceSha256": str(item["price_sha256"]),
+            "contract": str(item["contract"]),
+            "barCount": int(item["bar_count"]),
+            "dateStart": str(item["date_start"]),
+            "dateEnd": str(item["date_end"]),
+            "asOfUtc": str(item["as_of_utc"]),
+            "createdAtUtc": str(item["created_at_utc"]),
+            "builtIn": False,
+            "verified": True,
+        }
+
+    def _baseline_price_source(self) -> dict[str, Any]:
+        if self._baseline_price_source_cache is None:
+            h1 = self._baseline_price_by_timeframe["H1"]
+            m30 = self._baseline_price_by_timeframe["M30"]
+            self._baseline_price_source_cache = {
+                "priceSourceId": "baseline",
+                "label": "Bundled corrected baseline",
+                "symbol": "USDJPY",
+                "sourceTimeframe": "AUTO",
+                "pricePath": "",
+                "manifestPath": "",
+                "sourceSnapshotId": None,
+                "priceSha256": "",
+                "contract": "BUNDLED_CORRECTED_PRICE_BASELINE_V1",
+                "barCount": int(len(h1)),
+                "dateStart": min(h1.index.min(), m30.index.min()).isoformat(),
+                "dateEnd": max(h1.index.max(), m30.index.max()).isoformat(),
+                "asOfUtc": max(h1.index.max(), m30.index.max()).isoformat(),
+                "createdAtUtc": None,
+                "builtIn": True,
+                "verified": True,
+            }
+        return dict(self._baseline_price_source_cache)
+
+    def list_price_sources(self) -> list[dict[str, Any]]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                "SELECT * FROM app_price_sources ORDER BY created_at_utc DESC, price_source_id"
+            ).fetchall()
+        records: list[dict[str, Any]] = [self._baseline_price_source()]
+        for row in rows:
+            record = self._price_source_record(row)
+            try:
+                manifest, _ = load_promoted_price_source(
+                    self.paths.price_sources_dir, record["priceSourceId"]
+                )
+                if manifest["priceSha256"] != record["priceSha256"]:
+                    raise ValueError("registered SHA-256 differs from promoted manifest")
+            except Exception as exc:
+                record["verified"] = False
+                record["validationError"] = str(exc)
+            records.append(record)
+        return records
+
+    def register_price_source(self, payload: dict[str, Any]) -> dict[str, Any]:
+        source_id = str(payload.get("priceSourceId") or "").strip()
+        if not source_id or payload.get("contract") != PROMOTED_PRICE_CONTRACT:
+            raise ValueError("verified promoted price source payload is required")
+        manifest, _ = load_promoted_price_source(self.paths.price_sources_dir, source_id)
+        for key in (
+            "sourceSnapshotId",
+            "symbol",
+            "sourceTimeframe",
+            "priceSha256",
+            "barCount",
+            "dateStart",
+            "dateEnd",
+            "asOfUtc",
+        ):
+            if str(payload.get(key)) != str(manifest.get(key)):
+                raise ValueError(f"promoted price source {key} does not match its manifest")
+        with self.connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO app_price_sources(
+                    price_source_id, label, symbol, source_timeframe, price_path,
+                    manifest_path, source_snapshot_id, price_sha256, contract,
+                    bar_count, date_start, date_end, as_of_utc, created_at_utc
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(price_source_id) DO UPDATE SET
+                    label=excluded.label,
+                    price_path=excluded.price_path,
+                    manifest_path=excluded.manifest_path,
+                    price_sha256=excluded.price_sha256
+                """,
+                (
+                    source_id,
+                    str(manifest.get("label") or "Promoted MT5 snapshot")[:120],
+                    str(manifest["symbol"]).upper(),
+                    str(manifest["sourceTimeframe"]).upper(),
+                    str(manifest["pricePath"]),
+                    str(manifest["manifestPath"]),
+                    str(manifest["sourceSnapshotId"]),
+                    str(manifest["priceSha256"]),
+                    str(manifest["contract"]),
+                    int(manifest["barCount"]),
+                    str(manifest["dateStart"]),
+                    str(manifest["dateEnd"]),
+                    str(manifest["asOfUtc"]),
+                    str(manifest["createdAtUtc"]),
+                ),
+            )
+            connection.commit()
+        return next(item for item in self.list_price_sources() if item["priceSourceId"] == source_id)
+
+    def promote_history_snapshot(self, snapshot_id: str, label: str | None = None) -> dict[str, Any]:
+        promoted = promote_snapshot(
+            self.paths.market_snapshots_dir,
+            self.paths.price_sources_dir,
+            snapshot_id,
+            label,
+        )
+        return self.register_price_source(promoted)
+
+    def resolve_price_source(
+        self,
+        price_source_id: str | None,
+        source_timeframe: str,
+    ) -> tuple[dict[str, Any], pd.DataFrame]:
+        normalized_id = str(price_source_id or "baseline").strip()
+        normalized_timeframe = str(source_timeframe or "H1").upper()
+        if normalized_timeframe not in {"M30", "H1"}:
+            raise ValueError(f"Unsupported generation source timeframe: {source_timeframe}")
+        if normalized_id == "baseline":
+            path = self.paths.price_data_m30 if normalized_timeframe == "M30" else self.paths.price_data
+            frame = self._baseline_price_by_timeframe[normalized_timeframe]
+            return {
+                **self._baseline_price_source(),
+                "sourceTimeframe": normalized_timeframe,
+                "pricePath": str(path),
+                "priceSha256": file_sha256(path),
+                "barCount": int(len(frame)),
+                "dateStart": frame.index.min().isoformat(),
+                "dateEnd": frame.index.max().isoformat(),
+                "asOfUtc": frame.index.max().isoformat(),
+            }, frame
+        with self.connect() as connection:
+            row = connection.execute(
+                "SELECT * FROM app_price_sources WHERE price_source_id = ?", (normalized_id,)
+            ).fetchone()
+        if row is None:
+            raise KeyError(f"Unknown price source: {normalized_id}")
+        record = self._price_source_record(row)
+        if record["sourceTimeframe"] != normalized_timeframe:
+            raise ValueError(
+                f"Price source {normalized_id} is {record['sourceTimeframe']}, not {normalized_timeframe}"
+            )
+        manifest, frame = load_promoted_price_source(self.paths.price_sources_dir, normalized_id)
+        if manifest["priceSha256"] != record["priceSha256"]:
+            raise ValueError("registered price source SHA-256 no longer matches its manifest")
+        return record, frame
+
     def register_data_artifact(self, payload: dict[str, Any]) -> dict[str, Any]:
         artifact_id = str(payload.get("artifactId") or "").strip()
         if not artifact_id:
@@ -548,7 +776,17 @@ class AstroRepository:
         resolved_paths: dict[str, Path] = {}
         for key in path_keys:
             path = Path(str(payload.get(key) or "")).resolve()
-            if key != "pricePath" and not path.is_relative_to(root):
+            if key == "pricePath":
+                baseline_paths = {
+                    self.paths.price_data.resolve(),
+                    self.paths.price_data_m30.resolve(),
+                }
+                approved = path in baseline_paths or path.is_relative_to(
+                    self.paths.price_sources_dir.resolve()
+                )
+                if not approved:
+                    raise ValueError("pricePath must be a baseline or verified promoted price source")
+            elif not path.is_relative_to(root):
                 raise ValueError(f"{key} must stay inside the app artifact directory")
             if not path.exists():
                 raise ValueError(f"{key} does not exist: {path}")
@@ -614,6 +852,15 @@ class AstroRepository:
             touch_path = Path(artifact["touchLogPath"]).resolve()
             if not events_path.is_relative_to(root) or not touch_path.is_relative_to(root):
                 raise ValueError("Registered artifact paths leave the app artifact directory")
+            price_path = Path(artifact["pricePath"]).resolve()
+            artifact_manifest_path = Path(artifact["artifactManifestPath"]).resolve()
+            try:
+                artifact_manifest = json.loads(artifact_manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                raise ValueError("Artifact manifest is unreadable") from exc
+            expected_price_sha = str(artifact_manifest.get("price_source_sha256") or "").upper()
+            if not expected_price_sha or file_sha256(price_path) != expected_price_sha:
+                raise ValueError("Artifact price source SHA-256 verification failed")
             self._install_dataset(
                 events_path,
                 touch_path,
@@ -667,8 +914,13 @@ class AstroRepository:
     @synchronized_dataset
     def parameter_schema(self) -> dict[str, Any]:
         ranges = {}
+        available_timeframes: list[str] = []
         for timeframe in ("M30", "H1", "H4", "D1"):
-            frame = self._price_for_timeframe(timeframe)
+            try:
+                frame = self._price_for_timeframe(timeframe)
+            except ValueError:
+                continue
+            available_timeframes.append(timeframe)
             ranges[timeframe] = {
                 "start": frame.index.min().isoformat(),
                 "end": frame.index.max().isoformat(),
@@ -676,11 +928,27 @@ class AstroRepository:
         transit_bodies = list(SUPPORTED_ASTRO_ENTITIES)
         natal_bodies = list(SUPPORTED_ASTRO_ENTITIES)
         aspects = list(SUPPORTED_ASPECTS)
+        active_parameters = self.active_artifact.get("parameters")
+        defaults = {
+            **DEFAULT_CHART_PARAMETERS,
+            **(active_parameters if isinstance(active_parameters, dict) else {}),
+        }
+        defaults["reference"] = {
+            **DEFAULT_CHART_PARAMETERS["reference"],
+            **(
+                active_parameters.get("reference", {})
+                if isinstance(active_parameters, dict)
+                and isinstance(active_parameters.get("reference"), dict)
+                else {}
+            ),
+        }
+        if defaults.get("timeframe") not in available_timeframes:
+            defaults["timeframe"] = available_timeframes[0]
         return {
-            "defaults": DEFAULT_CHART_PARAMETERS,
+            "defaults": defaults,
             "options": {
                 "symbols": ["USDJPY"],
-                "timeframes": ["M30", "H1", "H4", "D1"],
+                "timeframes": available_timeframes,
                 "modes": [
                     {"id": "TN", "label": "Transit to natal", "available": True},
                     {"id": "TT", "label": "Transit to transit", "available": False},
@@ -689,6 +957,7 @@ class AstroRepository:
                 "natalBodies": natal_bodies,
                 "aspects": aspects,
                 "familyKeys": sorted(self.family_counts),
+                "priceSources": self.list_price_sources(),
             },
             "dataRanges": ranges,
             "generation": {

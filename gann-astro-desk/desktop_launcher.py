@@ -133,6 +133,7 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     os.environ["GANN_ASTRO_ANNOTATION_DB"] = str(paths.annotation_db)
     os.environ["GANN_ASTRO_FRONTEND_DIST"] = str(paths.frontend_dist)
     os.environ["GANN_ASTRO_MARKET_SNAPSHOTS_DIR"] = str(paths.data_root / "market_snapshots")
+    os.environ["GANN_ASTRO_PRICE_SOURCES_DIR"] = str(paths.data_root / "price_sources")
     os.environ["GANN_ASTRO_ALLOWED_ORIGIN"] = "*"
     os.environ["GANN_ASTRO_CODEX_URL"] = f"http://127.0.0.1:{codex_port}"
     packaged_ephemeris = paths.project_root / "sweph"

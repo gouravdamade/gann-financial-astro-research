@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 import tempfile
 import time
 import unittest
 from pathlib import Path
 
+import pandas as pd
+
 from generation import GenerationJobManager, normalize_generation_parameters
+from price_sources import SNAPSHOT_CONTRACT, file_sha256
 from repository import AstroRepository, DataPaths
 
 
@@ -42,8 +46,47 @@ class GenerationJobTests(unittest.TestCase):
             annotation_db=database,
             snapshots_dir=temporary_root / "snapshots",
             artifacts_dir=temporary_root / "artifacts",
+            market_snapshots_dir=temporary_root / "market_snapshots",
+            price_sources_dir=temporary_root / "price_sources",
         )
         cls.repository = AstroRepository(cls.paths)
+        snapshot_id = "USDJPY_H1_20250307T000000Z_generation_fixture"
+        snapshot_dir = cls.paths.market_snapshots_dir / "USDJPY" / "H1"
+        snapshot_dir.mkdir(parents=True, exist_ok=True)
+        source_price = pd.read_parquet(cls.paths.price_data)
+        source_price = source_price.loc["2025-02-27":"2025-03-06"].copy()
+        snapshot_path = snapshot_dir / f"{snapshot_id}.parquet"
+        snapshot_manifest = snapshot_dir / f"{snapshot_id}.manifest.json"
+        source_price.to_parquet(snapshot_path)
+        source_index = source_price.index.tz_convert("UTC")
+        snapshot_as_of = source_index.max() + pd.Timedelta(hours=1)
+        snapshot_manifest.write_text(
+            json.dumps(
+                {
+                    "snapshotId": snapshot_id,
+                    "contract": SNAPSHOT_CONTRACT,
+                    "symbol": "USDJPY",
+                    "timeframe": "H1",
+                    "capturedAtUtc": snapshot_as_of.isoformat(),
+                    "requestedStartUtc": source_index.min().isoformat(),
+                    "requestedEndUtc": snapshot_as_of.isoformat(),
+                    "asOfUtc": snapshot_as_of.isoformat(),
+                    "barCount": len(source_price),
+                    "firstBarOpenUtc": source_index.min().isoformat(),
+                    "lastBarOpenUtc": source_index.max().isoformat(),
+                    "lastBarCloseUtc": snapshot_as_of.isoformat(),
+                    "incompleteBarsExcluded": 0,
+                    "noLookahead": True,
+                    "immutable": True,
+                    "parquetPath": str(snapshot_path),
+                    "parquetSha256": file_sha256(snapshot_path),
+                    "manifestPath": str(snapshot_manifest),
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        cls.promoted_source = cls.repository.promote_history_snapshot(snapshot_id, "Generation fixture")
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -74,6 +117,40 @@ class GenerationJobTests(unittest.TestCase):
         manager.stop()
         self.assertEqual(cancelled["status"], "cancelled")
         self.assertTrue(cancelled["cancelRequested"])
+
+    def test_promoted_snapshot_drives_generation_and_active_chart_prices(self) -> None:
+        manager = GenerationJobManager(self.repository)
+        parameters = {
+            **self.small_parameters(),
+            "priceSourceId": self.promoted_source["priceSourceId"],
+        }
+        job = manager.create_job(
+            {"label": "Promoted source smoke", "parameters": parameters, "autoActivate": True}
+        )
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline:
+            job = manager.get_job(job["jobId"])
+            if job["status"] not in {"queued", "running", "cancelling"}:
+                break
+            time.sleep(0.25)
+        manager.stop()
+
+        self.assertEqual(job["status"], "completed", job.get("error") or job.get("logTail"))
+        artifact = next(
+            item for item in self.repository.list_data_artifacts() if item["artifactId"] == job["artifactId"]
+        )
+        self.assertEqual(artifact["parameters"]["priceSourceId"], self.promoted_source["priceSourceId"])
+        self.assertEqual(Path(artifact["pricePath"]), Path(self.promoted_source["pricePath"]))
+        self.assertEqual(self.repository.active_artifact["artifactId"], job["artifactId"])
+        self.assertEqual(
+            self.repository.price.index.min(),
+            pd.Timestamp(self.promoted_source["dateStart"]),
+        )
+        schema = self.repository.parameter_schema()
+        self.assertEqual(schema["defaults"]["priceSourceId"], self.promoted_source["priceSourceId"])
+        self.assertEqual(schema["defaults"]["start"], parameters["start"])
+        self.assertNotIn("M30", schema["options"]["timeframes"])
+        self.repository.activate_artifact("baseline")
 
     def test_small_real_job_registers_and_activates_analyzable_artifact(self) -> None:
         manager = GenerationJobManager(self.repository)

@@ -21,6 +21,7 @@ export type ChartParameters = {
   symbol: string
   dataSource: ChartDataSource
   timeframe: 'M30' | 'H1' | 'H4' | 'D1'
+  priceSourceId: string
   start: string
   end: string
   mode: 'TN' | 'TT'
@@ -40,6 +41,26 @@ export type ChartParameters = {
   reference: ReferenceParameters
 }
 
+export type PriceSource = {
+  priceSourceId: string
+  label: string
+  symbol: string
+  sourceTimeframe: 'AUTO' | 'M30' | 'H1'
+  pricePath: string
+  manifestPath: string
+  sourceSnapshotId: string | null
+  priceSha256: string
+  contract: string
+  barCount: number
+  dateStart: string
+  dateEnd: string
+  asOfUtc: string
+  createdAtUtc: string | null
+  builtIn: boolean
+  verified: boolean
+  validationError?: string
+}
+
 export type ParameterSchema = {
   defaults: ChartParameters
   options: {
@@ -50,8 +71,9 @@ export type ParameterSchema = {
     natalBodies: string[]
     aspects: string[]
     familyKeys: string[]
+    priceSources: PriceSource[]
   }
-  dataRanges: Record<ChartParameters['timeframe'], { start: string; end: string }>
+  dataRanges: Partial<Record<ChartParameters['timeframe'], { start: string; end: string }>>
   generation: {
     correctedTn: string
     correctedTt: string
@@ -143,6 +165,7 @@ export type Mt5HistorySnapshot = {
   parquetPath: string
   parquetSha256: string
   manifestPath: string
+  promotedPriceSourceId?: string | null
 }
 
 export type Candle = {

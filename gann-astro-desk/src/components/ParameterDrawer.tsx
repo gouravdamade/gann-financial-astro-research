@@ -9,6 +9,7 @@ import {
   Radio,
   RotateCcw,
   Save,
+  ShieldCheck,
   Square,
   Trash2,
   X,
@@ -22,6 +23,9 @@ import {
   deleteParameterProfile,
   fetchDataArtifacts,
   fetchGenerationJobs,
+  fetchMt5HistorySnapshots,
+  fetchPriceSources,
+  promoteMt5HistorySnapshot,
   saveParameterProfile,
 } from '../api'
 import {
@@ -35,7 +39,9 @@ import type {
   ChartParameters,
   DataArtifact,
   GenerationJob,
+  Mt5HistorySnapshot,
   ParameterSchema,
+  PriceSource,
   SavedParameterProfile,
 } from '../types'
 
@@ -75,12 +81,26 @@ export function ParameterDrawer({
   const [artifacts, setArtifacts] = useState<DataArtifact[]>([])
   const [artifactCandidate, setArtifactCandidate] = useState('')
   const [snapshotBusy, setSnapshotBusy] = useState(false)
+  const [promotionBusy, setPromotionBusy] = useState(false)
   const [snapshotMessage, setSnapshotMessage] = useState('')
+  const [snapshotCandidate, setSnapshotCandidate] = useState('')
+  const [snapshots, setSnapshots] = useState<Mt5HistorySnapshot[]>([])
+  const [priceSources, setPriceSources] = useState<PriceSource[]>(schema.options.priceSources)
   const notifiedArtifact = useRef(activeArtifactId)
 
   useEffect(() => {
     if (open) setDraft(structuredClone(parameters))
   }, [open, parameters])
+
+  useEffect(() => {
+    if (!open) return
+    Promise.all([fetchMt5HistorySnapshots(), fetchPriceSources()])
+      .then(([nextSnapshots, nextSources]) => {
+        setSnapshots(nextSnapshots)
+        setPriceSources(nextSources)
+      })
+      .catch((reason) => setSnapshotMessage(reason instanceof Error ? reason.message : String(reason)))
+  }, [open])
 
   useEffect(() => {
     notifiedArtifact.current = activeArtifactId
@@ -115,7 +135,12 @@ export function ParameterDrawer({
     }
   }, [open, onArtifactActivated])
 
-  const range = schema.dataRanges[draft.timeframe]
+  const selectedPriceSource = priceSources.find(
+    (source) => source.priceSourceId === draft.priceSourceId,
+  ) ?? priceSources.find((source) => source.priceSourceId === 'baseline') ?? null
+  const range = selectedPriceSource && !selectedPriceSource.builtIn
+    ? { start: selectedPriceSource.dateStart, end: selectedPriceSource.dateEnd }
+    : schema.dataRanges[draft.timeframe] ?? { start: draft.start, end: draft.end }
   const selectedProfile = useMemo(
     () => profiles.find((item) => item.profileId === selectedProfileId) ?? null,
     [profiles, selectedProfileId],
@@ -221,11 +246,55 @@ export function ParameterDrawer({
       setSnapshotMessage(
         `${snapshot.barCount.toLocaleString()} closed bars saved at ${new Date(snapshot.capturedAtUtc).toLocaleString()}`,
       )
+      setSnapshots(await fetchMt5HistorySnapshots())
+      setSnapshotCandidate(snapshot.snapshotId)
     } catch (reason) {
       setSnapshotMessage(reason instanceof Error ? reason.message : String(reason))
     } finally {
       setSnapshotBusy(false)
     }
+  }
+
+  const promoteSnapshot = async () => {
+    if (!snapshotCandidate) return
+    setPromotionBusy(true)
+    setSnapshotMessage('')
+    try {
+      const promoted = await promoteMt5HistorySnapshot(snapshotCandidate)
+      const nextSources = await fetchPriceSources()
+      const nextSnapshots = await fetchMt5HistorySnapshots()
+      setPriceSources(nextSources)
+      setSnapshots(nextSnapshots)
+      setSnapshotCandidate('')
+      setDraft((current) => ({
+        ...current,
+        dataSource: 'research',
+        priceSourceId: promoted.priceSourceId,
+        timeframe: promoted.sourceTimeframe === 'M30' ? 'M30' : 'H1',
+        start: promoted.dateStart,
+        end: promoted.dateEnd,
+      }))
+      setSnapshotMessage(`Verified and promoted ${promoted.barCount.toLocaleString()} closed bars`)
+    } catch (reason) {
+      setSnapshotMessage(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setPromotionBusy(false)
+    }
+  }
+
+  const selectPriceSource = (priceSourceId: string) => {
+    const source = priceSources.find((item) => item.priceSourceId === priceSourceId)
+    if (!source || source.builtIn) {
+      setDraft({ ...draft, priceSourceId: 'baseline' })
+      return
+    }
+    setDraft({
+      ...draft,
+      priceSourceId: source.priceSourceId,
+      timeframe: source.sourceTimeframe === 'M30' ? 'M30' : 'H1',
+      start: source.dateStart,
+      end: source.dateEnd,
+    })
   }
 
   return (
@@ -333,13 +402,28 @@ export function ParameterDrawer({
             <div className="parameter-grid two-column">
               <label>Symbol<input value={draft.symbol} onChange={(event) => setDraft({ ...draft, symbol: event.target.value.toUpperCase() })} /></label>
               <label>Timeframe
-                <select value={draft.timeframe} onChange={(event) => setDraft({ ...draft, timeframe: event.target.value as ChartParameters['timeframe'] })}>
+                <select value={draft.timeframe} onChange={(event) => {
+                  const timeframe = event.target.value as ChartParameters['timeframe']
+                  const compatible = selectedPriceSource?.builtIn
+                    || (selectedPriceSource?.sourceTimeframe === 'M30' && timeframe === 'M30')
+                    || (selectedPriceSource?.sourceTimeframe === 'H1' && timeframe !== 'M30')
+                  setDraft({ ...draft, timeframe, priceSourceId: compatible ? draft.priceSourceId : 'baseline' })
+                }}>
                   {schema.options.timeframes.map((value) => <option key={value}>{value}</option>)}
                 </select>
               </label>
             </div>
             {draft.dataSource === 'research' ? (
               <>
+                <label>Price archive
+                  <select value={draft.priceSourceId} onChange={(event) => selectPriceSource(event.target.value)}>
+                    {priceSources.map((source) => (
+                      <option key={source.priceSourceId} value={source.priceSourceId} disabled={!source.verified}>
+                        {source.label}{source.builtIn ? '' : ` (${source.sourceTimeframe}, ${source.barCount.toLocaleString()})`}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <div className="parameter-grid two-column">
                   <label>Start<input type="datetime-local" value={datetimeInputValue(draft.start)} onChange={(event) => setDraft({ ...draft, start: datetimeParameterValue(event.target.value) })} /></label>
                   <label>End<input type="datetime-local" value={datetimeInputValue(draft.end)} onChange={(event) => setDraft({ ...draft, end: datetimeParameterValue(event.target.value) })} /></label>
@@ -348,6 +432,29 @@ export function ParameterDrawer({
                   {snapshotBusy ? <LoaderCircle size={14} /> : <HardDriveDownload size={14} />}
                   Snapshot MT5 range
                 </button>
+                <div className="parameter-inline">
+                  <select value={snapshotCandidate} onChange={(event) => setSnapshotCandidate(event.target.value)}>
+                    <option value="">Promote captured snapshot</option>
+                    {snapshots.map((snapshot) => (
+                      <option
+                        key={snapshot.snapshotId}
+                        value={snapshot.snapshotId}
+                        disabled={Boolean(snapshot.promotedPriceSourceId)}
+                      >
+                        {snapshot.symbol} {snapshot.timeframe} | {snapshot.barCount.toLocaleString()} bars
+                        {snapshot.promotedPriceSourceId ? ' | promoted' : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    className="icon-button"
+                    disabled={!snapshotCandidate || promotionBusy}
+                    onClick={promoteSnapshot}
+                    title="Verify and promote snapshot"
+                  >
+                    {promotionBusy ? <LoaderCircle size={14} /> : <ShieldCheck size={15} />}
+                  </button>
+                </div>
                 {snapshotMessage && <div className="parameter-range">{snapshotMessage}</div>}
               </>
             ) : (

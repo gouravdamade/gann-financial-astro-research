@@ -49,11 +49,6 @@ def required_offset_datetime(value: Any, label: str) -> datetime:
     return parsed
 
 
-def market_snapshot_root() -> Path:
-    configured = str(os.environ.get("GANN_ASTRO_MARKET_SNAPSHOTS_DIR") or "").strip()
-    return Path(configured or r"D:\GannFinancialAstro\market_snapshots").expanduser().resolve()
-
-
 def bool_argument(name: str) -> bool:
     return str(request.args.get(name) or "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -111,12 +106,20 @@ def mt5_bars() -> Any:
 
 @app.get("/api/mt5/history-snapshots")
 def mt5_history_snapshots() -> Any:
+    promoted = {
+        item.get("sourceSnapshotId"): item["priceSourceId"]
+        for item in repository.list_price_sources()
+        if item.get("sourceSnapshotId")
+    }
+    snapshots = gateway.list_history_snapshots(
+        repository.paths.market_snapshots_dir, request.args.get("limit", 100)
+    )
+    for snapshot in snapshots:
+        snapshot["promotedPriceSourceId"] = promoted.get(snapshot.get("snapshotId"))
     return jsonify(
         {
             "ok": True,
-            "snapshots": gateway.list_history_snapshots(
-                market_snapshot_root(), request.args.get("limit", 100)
-            ),
+            "snapshots": snapshots,
         }
     )
 
@@ -130,13 +133,33 @@ def create_mt5_history_snapshot() -> Any:
             str(payload.get("timeframe") or "H1"),
             required_offset_datetime(payload.get("start"), "start"),
             required_offset_datetime(payload.get("end"), "end"),
-            market_snapshot_root(),
+            repository.paths.market_snapshots_dir,
         )
         return jsonify({"ok": True, "snapshot": snapshot}), 201
     except ValueError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.post("/api/mt5/history-snapshots/<snapshot_id>/promote")
+def promote_mt5_history_snapshot(snapshot_id: str) -> Any:
+    try:
+        payload = request.get_json(force=True, silent=True) or {}
+        price_source = repository.promote_history_snapshot(
+            snapshot_id,
+            str(payload.get("label") or "").strip() or None,
+        )
+        return jsonify({"ok": True, "priceSource": price_source}), 201
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/price-sources")
+def price_sources() -> Any:
+    return jsonify({"ok": True, "priceSources": repository.list_price_sources()})
 
 
 @app.get("/api/parameters/schema")

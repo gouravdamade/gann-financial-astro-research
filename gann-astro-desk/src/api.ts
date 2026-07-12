@@ -10,6 +10,7 @@ import type {
   Mt5HistorySnapshot,
   Mt5Status,
   ParameterSchema,
+  PriceSource,
   SavedParameterProfile,
 } from './types'
 
@@ -157,6 +158,27 @@ export async function createMt5HistorySnapshot(input: {
     body: JSON.stringify(input),
   })
   return payload.snapshot
+}
+
+export async function fetchMt5HistorySnapshots(): Promise<Mt5HistorySnapshot[]> {
+  const payload = await request<{ snapshots: Mt5HistorySnapshot[] }>('/api/mt5/history-snapshots')
+  return payload.snapshots
+}
+
+export async function fetchPriceSources(): Promise<PriceSource[]> {
+  const payload = await request<{ priceSources: PriceSource[] }>('/api/price-sources')
+  return payload.priceSources
+}
+
+export async function promoteMt5HistorySnapshot(
+  snapshotId: string,
+  label?: string,
+): Promise<PriceSource> {
+  const payload = await request<{ priceSource: PriceSource }>(
+    `/api/mt5/history-snapshots/${encodeURIComponent(snapshotId)}/promote`,
+    { method: 'POST', body: JSON.stringify({ label }) },
+  )
+  return payload.priceSource
 }
 
 export async function fetchFamily(familyKey: string, eventId?: string): Promise<AspectFamily> {

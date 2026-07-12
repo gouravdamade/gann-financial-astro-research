@@ -60,7 +60,16 @@ export function MainWorkspace() {
     Promise.all([fetchParameterSchema(), fetchParameterProfiles()])
       .then(async ([parameterSchema, savedProfiles]) => {
         const preferredProfile = savedProfiles.find((item) => item.isDefault)
-        const initialParameters = preferredProfile?.parameters ?? parameterSchema.defaults
+        const initialParameters = preferredProfile && parameterSchema.generation.activeArtifactId === 'baseline'
+          ? {
+              ...parameterSchema.defaults,
+              ...preferredProfile.parameters,
+              reference: {
+                ...parameterSchema.defaults.reference,
+                ...preferredProfile.parameters.reference,
+              },
+            }
+          : parameterSchema.defaults
         setSchema(parameterSchema)
         setProfiles(savedProfiles)
         setParameters(initialParameters)
