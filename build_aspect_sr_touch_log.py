@@ -386,6 +386,21 @@ def map_event_windows_to_price_indices(
     return np.asarray(idx_start), np.asarray(idx_end), np.asarray(valid, dtype=bool)
 
 
+def filter_events_within_price_source(
+    events: pd.DataFrame,
+    price_index: pd.DatetimeIndex,
+) -> pd.DataFrame:
+    """Keep event windows fully covered by the original price source."""
+
+    if events.empty or price_index.empty:
+        return events.iloc[0:0].copy()
+    source_start = price_index.min()
+    source_end = price_index.max()
+    return events[
+        (events["timestamp"] >= source_start) & (events["event_end"] <= source_end)
+    ].copy()
+
+
 def merge_overlapping_event_windows(events: pd.DataFrame) -> pd.DataFrame:
     if events.empty:
         return events.copy()
@@ -1567,15 +1582,15 @@ def main() -> None:
     if missing:
         raise RuntimeError(f"Missing OHLC columns in price data: {missing}")
 
+    events = filter_events_within_price_source(events, price.index)
+    if events.empty:
+        raise RuntimeError("No events fully overlap the original price source.")
+
     max_needed = events["event_end"].max() + pd.Timedelta(hours=72)
     min_needed = events["timestamp"].min()
     price = price[(price.index >= min_needed) & (price.index <= max_needed)].copy()
     if price.empty:
         raise RuntimeError("Price data has no overlap with events.")
-
-    events = events[(events["timestamp"] >= price.index.min()) & (events["event_end"] <= price.index.max())].copy()
-    if events.empty:
-        raise RuntimeError("No events fully overlap the price range.")
 
     idx_start, idx_end, valid = map_event_windows_to_price_indices(
         price.index,

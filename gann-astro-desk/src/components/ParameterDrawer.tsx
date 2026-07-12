@@ -2,6 +2,7 @@ import {
   Check,
   CheckCircle2,
   Database,
+  HardDriveDownload,
   LoaderCircle,
   Play,
   Plus,
@@ -17,6 +18,7 @@ import {
   activateDataArtifact,
   cancelGenerationJob,
   createGenerationJob,
+  createMt5HistorySnapshot,
   deleteParameterProfile,
   fetchDataArtifacts,
   fetchGenerationJobs,
@@ -72,6 +74,8 @@ export function ParameterDrawer({
   const [jobs, setJobs] = useState<GenerationJob[]>([])
   const [artifacts, setArtifacts] = useState<DataArtifact[]>([])
   const [artifactCandidate, setArtifactCandidate] = useState('')
+  const [snapshotBusy, setSnapshotBusy] = useState(false)
+  const [snapshotMessage, setSnapshotMessage] = useState('')
   const notifiedArtifact = useRef(activeArtifactId)
 
   useEffect(() => {
@@ -204,6 +208,26 @@ export function ParameterDrawer({
     }
   }
 
+  const snapshotMt5Range = async () => {
+    setSnapshotBusy(true)
+    setSnapshotMessage('')
+    try {
+      const snapshot = await createMt5HistorySnapshot({
+        symbol: draft.symbol,
+        timeframe: draft.timeframe,
+        start: draft.start,
+        end: draft.end,
+      })
+      setSnapshotMessage(
+        `${snapshot.barCount.toLocaleString()} closed bars saved at ${new Date(snapshot.capturedAtUtc).toLocaleString()}`,
+      )
+    } catch (reason) {
+      setSnapshotMessage(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setSnapshotBusy(false)
+    }
+  }
+
   return (
     <div className="parameter-backdrop" role="presentation">
       <aside className="parameter-drawer" aria-label="Chart and astronomy parameters">
@@ -315,10 +339,17 @@ export function ParameterDrawer({
               </label>
             </div>
             {draft.dataSource === 'research' ? (
-              <div className="parameter-grid two-column">
-                <label>Start<input type="datetime-local" value={datetimeInputValue(draft.start)} onChange={(event) => setDraft({ ...draft, start: datetimeParameterValue(event.target.value) })} /></label>
-                <label>End<input type="datetime-local" value={datetimeInputValue(draft.end)} onChange={(event) => setDraft({ ...draft, end: datetimeParameterValue(event.target.value) })} /></label>
-              </div>
+              <>
+                <div className="parameter-grid two-column">
+                  <label>Start<input type="datetime-local" value={datetimeInputValue(draft.start)} onChange={(event) => setDraft({ ...draft, start: datetimeParameterValue(event.target.value) })} /></label>
+                  <label>End<input type="datetime-local" value={datetimeInputValue(draft.end)} onChange={(event) => setDraft({ ...draft, end: datetimeParameterValue(event.target.value) })} /></label>
+                </div>
+                <button className="secondary-command" disabled={snapshotBusy} onClick={snapshotMt5Range}>
+                  {snapshotBusy ? <LoaderCircle size={14} /> : <HardDriveDownload size={14} />}
+                  Snapshot MT5 range
+                </button>
+                {snapshotMessage && <div className="parameter-range">{snapshotMessage}</div>}
+              </>
             ) : (
               <label>Live bars<input type="number" min={20} max={5000} value={draft.liveBarCount} onChange={(event) => setDraft({ ...draft, liveBarCount: Number(event.target.value) })} /></label>
             )}

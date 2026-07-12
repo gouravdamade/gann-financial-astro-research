@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import sqlite3
 import threading
 import uuid
@@ -187,16 +188,43 @@ class DataPaths:
 
     @classmethod
     def default(cls) -> "DataPaths":
-        root = Path(__file__).resolve().parents[2]
+        root = Path(
+            os.environ.get("GANN_ASTRO_PROJECT_ROOT") or Path(__file__).resolve().parents[2]
+        ).expanduser().resolve()
+
+        def configured_path(name: str, fallback: Path) -> Path:
+            return Path(os.environ.get(name) or fallback).expanduser().resolve()
+
         return cls(
             project_root=root,
-            source_events=root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
-            touch_log=root / "aspect_sr_touch_log_usdjpy_tn_raman_v2_20250301_20260310.csv",
-            price_data=root / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
-            price_data_m30=root / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet",
-            annotation_db=root / "gann_aspect_annotations_raman_v2.sqlite",
-            snapshots_dir=Path(r"D:\GannFinancialAstro\app_snapshots"),
-            artifacts_dir=Path(r"D:\GannFinancialAstro\app_artifacts"),
+            source_events=configured_path(
+                "GANN_ASTRO_SOURCE_EVENTS",
+                root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
+            ),
+            touch_log=configured_path(
+                "GANN_ASTRO_TOUCH_LOG",
+                root / "aspect_sr_touch_log_usdjpy_tn_raman_v2_20250301_20260310.csv",
+            ),
+            price_data=configured_path(
+                "GANN_ASTRO_PRICE_H1",
+                root / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+            ),
+            price_data_m30=configured_path(
+                "GANN_ASTRO_PRICE_M30",
+                root / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet",
+            ),
+            annotation_db=configured_path(
+                "GANN_ASTRO_ANNOTATION_DB",
+                root / "gann_aspect_annotations_raman_v2.sqlite",
+            ),
+            snapshots_dir=configured_path(
+                "GANN_ASTRO_SNAPSHOTS_DIR",
+                Path(r"D:\GannFinancialAstro\app_snapshots"),
+            ),
+            artifacts_dir=configured_path(
+                "GANN_ASTRO_ARTIFACTS_DIR",
+                Path(r"D:\GannFinancialAstro\app_artifacts"),
+            ),
         )
 
 

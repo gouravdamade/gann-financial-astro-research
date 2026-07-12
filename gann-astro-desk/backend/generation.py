@@ -423,6 +423,11 @@ class GenerationJobManager:
                 with self._process_lock:
                     self._current_process = None
 
+    def _worker_command(self, script_name: str, arguments: list[str]) -> list[str]:
+        if getattr(sys, "frozen", False):
+            return [sys.executable, "--gann-worker", script_name, *arguments]
+        return [sys.executable, str(self.project_root / script_name), *arguments]
+
     @staticmethod
     def _tail(path: Path | None, maximum: int = 6000) -> str:
         if path is None or not path.exists():
@@ -478,9 +483,7 @@ class GenerationJobManager:
                 progress=10,
                 message="Generating corrected Raman transit-to-natal aspect windows.",
             )
-            event_command = [
-                sys.executable,
-                str(self.project_root / "build_corrected_natal_event_source.py"),
+            event_command = self._worker_command("build_corrected_natal_event_source.py", [
                 "--ticker",
                 parameters["symbol"],
                 "--interval",
@@ -516,7 +519,7 @@ class GenerationJobManager:
                 "--output",
                 str(events_path),
                 "--overwrite",
-            ]
+            ])
             self._run_command(job_id, event_command, log_path)
             events = self.repository._load_event_frame(events_path)
 
@@ -527,9 +530,7 @@ class GenerationJobManager:
                 message=f"Generated {len(events)} events; calculating deterministic SR touches.",
             )
             max_days = float(parameters.get("maxDurationMinutes") or 0) / 1440.0
-            touch_command = [
-                sys.executable,
-                str(self.project_root / "build_aspect_sr_touch_log.py"),
+            touch_command = self._worker_command("build_aspect_sr_touch_log.py", [
                 "--events",
                 str(events_path),
                 "--price",
@@ -556,7 +557,7 @@ class GenerationJobManager:
                 "--max-event-days",
                 str(max_days),
                 "--allow-empty",
-            ]
+            ])
             self._run_command(job_id, touch_command, log_path)
             touch_partial.replace(touch_path)
             touches = self.repository._load_touch_frame(touch_path)

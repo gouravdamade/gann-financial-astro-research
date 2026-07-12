@@ -22,6 +22,8 @@ separate from live market-data concerns.
 - Automatic research-chart refresh when a completed job activates its artifact, including
   when the parameter drawer has been closed while generation continues in the background.
 - Read-only MT5 live chart mode with 20-5,000 recent bars and five-second refresh.
+- Immutable MT5 history snapshots with capture/as-of timestamps, closed-bar-only
+  filtering, SHA-256 manifests, and explicit no-lookahead provenance.
 - Horizontal line, vertical line, Gann fan, and structured annotation tools.
 - Persistent chart annotations with exact time, price, family, event, and chart state.
 - Read-only MT5 connection supervisor with heartbeat and reconnect status.
@@ -36,7 +38,30 @@ separate from live market-data concerns.
 - New occurrence progress is stored separately from legacy completed reviews.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.
 
-## Run The Working App
+## Run The Windows App
+
+Launch the portable native executable:
+
+```text
+D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe
+```
+
+Keep the executable beside its `_internal` directory. The app creates a native
+WebView2 window, chooses private random loopback ports for its internal services,
+and stores writable state under `D:\GannFinancialAstro\app_data`. No browser URL
+is part of the user workflow.
+
+To rebuild the release entirely on `D:`:
+
+```powershell
+cd D:\PycharmProjects\gann-astro-desk
+.\packaging\build_windows_exe.ps1
+```
+
+The release manifest records the executable hash, bundled file count, astronomy
+contract, and read-only MT5 execution policy.
+
+## Development Runtime
 
 From `D:\PycharmProjects\gann-astro-desk`:
 
@@ -45,7 +70,7 @@ npm install
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. The backend listens on `8788` and the Codex SDK
+Open `http://127.0.0.1:5173` only for development. The backend listens on `8788` and the Codex SDK
 bridge on `8789`. Set `GANN_ASTRO_MT5_AUTOCONNECT=0` before starting when MT5
 market data is intentionally not required.
 
@@ -62,26 +87,32 @@ npm run build
 
 ## Native Windows Status
 
-`src-tauri` contains a Tauri 2 Windows shell and capability policy. Native
-development and installer builds still require Rust/Cargo and Microsoft C++
-build tools installed on `D:`. The Python backend and Node Codex bridge also need
-to be frozen as signed sidecars before the installer can be called portable.
-Until that packaging gate is completed, `npm run dev` is the supported runtime.
+The supported native build is a PyInstaller one-folder release using pywebview and
+the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
+Swiss Ephemeris files, Python research workers, Node runtime, and Codex SDK bridge.
+Analyze Aspect opens as a second native window rather than an external browser.
+
+`src-tauri` remains an optional future shell. A Tauri/MSI route would require Rust,
+Cargo, and Microsoft C++ Build Tools; those are not required by the working release.
+Rust can be placed on `D:` through `RUSTUP_HOME` and `CARGO_HOME`. Visual Studio can
+place most workloads and download caches on `D:`, but Microsoft still reserves some
+shared installer and Windows SDK servicing files on the system drive.
 
 Custom corrected-TN generation and activation are ready for date ranges covered by the
 versioned USDJPY M30/H1 sources. Generated artifacts and their manifests are stored under
 `D:\GannFinancialAstro\app_artifacts`; only validated, fully written artifacts enter the
-registry. The queue does not yet extend the price snapshot beyond 2026-03-10, so current
-or future Jul-2026 event generation still needs a versioned MT5 history-ingestion step.
+registry. Immutable MT5 snapshots now capture timestamp-safe closed bars beyond the
+frozen baseline, but snapshots are not promoted automatically into a corrected event
+artifact. Promotion remains an explicit, versioned operation.
 TT generation remains unavailable and disabled. Deterministic Auto Suggest, trade markers,
 P/L, rule lessons, Dream Review, and official-note processing still need to be consolidated
 into a shared timestamp-safe, no-lookahead decision engine before live inference.
 
-## Ports And Storage
+## Storage
 
-- UI: `127.0.0.1:5173`
-- deterministic backend: `127.0.0.1:8788`
-- Codex bridge: `127.0.0.1:8789`
+- native executable: `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`
+- native writable state: `D:\GannFinancialAstro\app_data`
+- timestamped MT5 history: `D:\GannFinancialAstro\app_data\market_snapshots`
 - snapshots: `D:\GannFinancialAstro\app_snapshots`
 - corrected data artifacts: `D:\GannFinancialAstro\app_artifacts`
 - application source and datasets: `D:\PycharmProjects`

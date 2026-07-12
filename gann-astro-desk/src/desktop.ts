@@ -11,9 +11,23 @@ export async function openAnalyzeAspect(aspect: AspectWindow): Promise<void> {
     event: aspect.eventId,
   })
   const url = `${window.location.origin}${window.location.pathname}?${query}`
+  const label = windowLabel(aspect.familyKey)
+  const title = `Analyze Aspect - ${aspect.transitBody} to ${aspect.natalBody} ${aspect.aspectLabel}`
+  const desktopApi = (
+    window as typeof window & {
+      pywebview?: {
+        api?: {
+          open_analyze_aspect?: (targetUrl: string, windowTitle: string, windowKey: string) => Promise<boolean>
+        }
+      }
+    }
+  ).pywebview?.api
+  if (desktopApi?.open_analyze_aspect) {
+    await desktopApi.open_analyze_aspect(url, title, label)
+    return
+  }
   if ('__TAURI_INTERNALS__' in window) {
     const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow')
-    const label = windowLabel(aspect.familyKey)
     const existing = await WebviewWindow.getByLabel(label)
     if (existing) {
       await existing.setFocus()
@@ -21,7 +35,7 @@ export async function openAnalyzeAspect(aspect: AspectWindow): Promise<void> {
     }
     new WebviewWindow(label, {
       url,
-      title: `Analyze Aspect - ${aspect.transitBody} to ${aspect.natalBody} ${aspect.aspectLabel}`,
+      title,
       width: 1480,
       height: 900,
       minWidth: 1080,

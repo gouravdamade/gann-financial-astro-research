@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, Settings2, SlidersHorizontal, X } from 'lucide-react'
+import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, SlidersHorizontal, X } from 'lucide-react'
 import {
   fetchChart,
   fetchDataArtifacts,
@@ -223,7 +223,6 @@ export function MainWorkspace() {
         <div className="topbar-spacer" />
         <ConnectionBadge status={status} />
         <button className="icon-button" onClick={() => setParametersOpen(true)} title="Astrology parameters"><SlidersHorizontal size={18} /></button>
-        <button className="icon-button" title="Application settings"><Settings2 size={18} /></button>
       </header>
       <section className="workspace-grid">
         <ToolRail

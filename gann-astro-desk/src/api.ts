@@ -7,6 +7,7 @@ import type {
   DataArtifact,
   EventDetail,
   GenerationJob,
+  Mt5HistorySnapshot,
   Mt5Status,
   ParameterSchema,
   SavedParameterProfile,
@@ -143,6 +144,19 @@ export async function activateDataArtifact(artifactId: string): Promise<DataArti
 export async function fetchMt5Status(): Promise<Mt5Status> {
   const payload = await request<{ mt5: Mt5Status }>('/api/mt5/status')
   return payload.mt5
+}
+
+export async function createMt5HistorySnapshot(input: {
+  symbol: string
+  timeframe: ChartParameters['timeframe']
+  start: string
+  end: string
+}): Promise<Mt5HistorySnapshot> {
+  const payload = await request<{ snapshot: Mt5HistorySnapshot }>('/api/mt5/history-snapshots', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.snapshot
 }
 
 export async function fetchFamily(familyKey: string, eventId?: string): Promise<AspectFamily> {

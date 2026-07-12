@@ -123,6 +123,28 @@ export type DataArtifact = {
   builtIn: boolean
 }
 
+export type Mt5HistorySnapshot = {
+  snapshotId: string
+  contract: 'MT5_TIMESTAMPED_CLOSED_BARS_V1'
+  symbol: string
+  timeframe: string
+  capturedAtUtc: string
+  requestedStartUtc: string
+  requestedEndUtc: string
+  asOfUtc: string
+  futureRequestClamped: boolean
+  barCount: number
+  firstBarOpenUtc: string
+  lastBarOpenUtc: string
+  lastBarCloseUtc: string
+  incompleteBarsExcluded: number
+  noLookahead: true
+  immutable: true
+  parquetPath: string
+  parquetSha256: string
+  manifestPath: string
+}
+
 export type Candle = {
   time: number
   open: number

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -40,7 +41,12 @@ _CACHE: dict[tuple[str, str, str, str], pd.Series] = {}
 
 def configure_ephemeris(path: Path | None = None) -> str:
     configure_swiss_ephemeris_sidereal(swe)
-    candidates = (path,) if path else EPHEMERIS_PATH_CANDIDATES
+    configured = str(os.environ.get("GANN_ASTRO_EPHEMERIS_PATH") or "").strip()
+    candidates = (
+        (path,)
+        if path
+        else ((Path(configured),) if configured else ()) + EPHEMERIS_PATH_CANDIDATES
+    )
     for candidate in candidates:
         if candidate is not None and candidate.exists():
             swe.set_ephe_path(str(candidate))

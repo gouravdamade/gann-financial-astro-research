@@ -3471,3 +3471,73 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - New product direction requested after this checkpoint: design a lightweight Windows
   research/live workstation with parameterized astrology charts, TradingView-like drawing
   tools, local LLM evidence/verification, and a supervised always-reconnecting MT5 backend.
+
+## Native Gann Astro Desk Release (2026-07-12)
+
+- The supported user runtime is now a real native Windows application rather than a
+  browser URL:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+- Release contract:
+  - version `0.1.0`;
+  - PyInstaller one-folder build using pywebview plus Microsoft WebView2;
+  - SHA-256 `CA26CDB4073002531C173C5642E948CF4560ECA8320B3FDE26F191E95EE7B0B1`;
+  - 1,656 files / 698,259,121 bytes;
+  - astronomy contract `RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2`;
+  - MT5 execution remains `read_only_market_data` and `tradeAllowed=false`.
+- The release bundles the corrected event/touch sources, H1/M30 price archives,
+  annotation seed DB, Swiss Ephemeris files, Python corrected-data workers, Node,
+  the Codex SDK bridge, and the compiled frontend. Writable state stays under
+  `D:\GannFinancialAstro\app_data`.
+- Native behavior verified:
+  - main `Gann Astro Desk` WebView2 window is responsive;
+  - internal backend uses a private random loopback port, with no localhost URL in
+    the user workflow;
+  - Codex bridge reports `codex-sdk`;
+  - MT5 reconnect supervisor reports connected to MetaQuotes-Demo while preserving
+    read-only execution;
+  - Analyze Aspect opens as a second native window, not Edge/Chrome;
+  - corrected baseline loads 1,268 events and 754 touches;
+  - toolbar and parameter drawer were visually checked at Windows display scaling.
+- Reproducible D-only packaging lives in
+  `gann-astro-desk\packaging\build_windows_exe.ps1` and
+  `gann-astro-desk\packaging\gann_astro_desk.spec`.
+- Rust/MSVC decision:
+  - neither is required for the working pywebview release;
+  - Rust can later be installed on D through `RUSTUP_HOME`/`CARGO_HOME`;
+  - Visual Studio Build Tools can place most workloads/cache on D, but some shared
+    installer and Windows SDK servicing files remain on C;
+  - defer both until a signed Tauri/MSI route is intentionally selected.
+- Added immutable timestamp-safe MT5 history snapshots:
+  - contract `MT5_TIMESTAMPED_CLOSED_BARS_V1`;
+  - explicit requested range, capture time and as-of cutoff;
+  - only fully closed bars are retained;
+  - incomplete bars are counted/excluded;
+  - Parquet plus atomic JSON manifest and SHA-256;
+  - storage under `D:\GannFinancialAstro\app_data\market_snapshots`;
+  - UI command: `Snapshot MT5 range` in Market source parameters.
+- Real packaged snapshot verification retained:
+  `USDJPY_H1_20260712T081855Z_4cb984b1`, 48 closed H1 bars,
+  SHA-256 `8DD95DE8C9AC9814239D0520C819DF3574D3088DEB1B4EB5FB787F2D7CFED65C`.
+- Packaged corrected-worker verification exposed and fixed a timestamp edge case:
+  an event beginning at 02:01 was incorrectly rejected when its first genuinely
+  contained H1 candle began at 02:30. Full-source coverage is now checked before
+  cropping, while contained-candle mapping remains strict. The final packaged job
+  completed with one event, one SR touch and 22 evidence rows; baseline was restored
+  and all temporary verification jobs/artifacts were removed afterward.
+- Verification at this checkpoint:
+  - `76 passed` for the full Python suite;
+  - `5 passed` for frontend tests;
+  - Oxlint clean;
+  - TypeScript/Vite production build clean;
+  - packaged native health, Codex, MT5 snapshot, generation worker and Analyze Aspect
+    smoke checks passed.
+- Remaining deliberate gates:
+  - promote an immutable MT5 history snapshot into a corrected event artifact only
+    through an explicit versioned/no-lookahead operation;
+  - consolidate retrospective and future live Auto Suggest behavior into one
+    timestamp-safe decision engine before enabling any execution path;
+  - external Shadbala/Drik certification and purged out-of-sample validation remain
+    required;
+  - code signing or a Tauri/MSI installer is optional distribution work, not a runtime
+    blocker.
+- Recovery backup: `D:\PycharmProjects\chat_session_backups\session_20260712_145424_native_windows_exe`.

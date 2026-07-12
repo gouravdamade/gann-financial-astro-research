@@ -3,9 +3,12 @@ from __future__ import annotations
 import atexit
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
-from flask import Flask, jsonify, request
+from flask import Flask, Response, abort, jsonify, request, send_from_directory
 
 from generation import GenerationJobManager
 from mt5_gateway import Mt5Gateway
@@ -36,6 +39,21 @@ def optional_float_argument(name: str) -> float | None:
     return float(value) if value else None
 
 
+def required_offset_datetime(value: Any, label: str) -> datetime:
+    text = str(value or "").strip().replace("Z", "+00:00")
+    if not text:
+        raise ValueError(f"{label} is required")
+    parsed = datetime.fromisoformat(text)
+    if parsed.tzinfo is None:
+        raise ValueError(f"{label} must include a UTC offset")
+    return parsed
+
+
+def market_snapshot_root() -> Path:
+    configured = str(os.environ.get("GANN_ASTRO_MARKET_SNAPSHOTS_DIR") or "").strip()
+    return Path(configured or r"D:\GannFinancialAstro\market_snapshots").expanduser().resolve()
+
+
 def bool_argument(name: str) -> bool:
     return str(request.args.get(name) or "").strip().lower() in {"1", "true", "yes", "on"}
 
@@ -54,7 +72,9 @@ def chart_filter_arguments() -> dict[str, Any]:
 
 @app.after_request
 def add_headers(response: Any) -> Any:
-    response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:5173"
+    response.headers["Access-Control-Allow-Origin"] = os.environ.get(
+        "GANN_ASTRO_ALLOWED_ORIGIN", "http://127.0.0.1:5173"
+    )
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     response.headers["Cache-Control"] = "no-store"
@@ -85,6 +105,36 @@ def mt5_bars() -> Any:
             count=int(request.args.get("count", "500")),
         )
         return jsonify({"ok": True, "candles": bars, "mt5": gateway.status()})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.get("/api/mt5/history-snapshots")
+def mt5_history_snapshots() -> Any:
+    return jsonify(
+        {
+            "ok": True,
+            "snapshots": gateway.list_history_snapshots(
+                market_snapshot_root(), request.args.get("limit", 100)
+            ),
+        }
+    )
+
+
+@app.post("/api/mt5/history-snapshots")
+def create_mt5_history_snapshot() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        snapshot = gateway.save_history_snapshot(
+            str(payload.get("symbol") or gateway.symbol),
+            str(payload.get("timeframe") or "H1"),
+            required_offset_datetime(payload.get("start"), "start"),
+            required_offset_datetime(payload.get("end"), "end"),
+            market_snapshot_root(),
+        )
+        return jsonify({"ok": True, "snapshot": snapshot}), 201
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
 
@@ -316,6 +366,77 @@ def save_codex_thread() -> Any:
         return jsonify({"ok": False, "error": "scopeKey and threadId are required"}), 400
     repository.save_codex_thread(scope_key, thread_id)
     return jsonify({"ok": True})
+
+
+def codex_bridge_url(path: str) -> str:
+    base = str(os.environ.get("GANN_ASTRO_CODEX_URL") or "http://127.0.0.1:8789").rstrip("/")
+    return f"{base}/{path.lstrip('/')}"
+
+
+def proxy_codex(path: str, method: str) -> Any:
+    body = request.get_data() if method != "GET" else None
+    upstream = Request(
+        codex_bridge_url(path),
+        data=body,
+        method=method,
+        headers={"Content-Type": request.headers.get("Content-Type", "application/json")},
+    )
+    try:
+        with urlopen(upstream, timeout=180) as response:
+            return Response(
+                response.read(),
+                status=response.status,
+                content_type=response.headers.get("Content-Type", "application/json"),
+            )
+    except HTTPError as exc:
+        return Response(
+            exc.read(),
+            status=exc.code,
+            content_type=exc.headers.get("Content-Type", "application/json"),
+        )
+    except URLError as exc:
+        return jsonify({"ok": False, "error": f"Codex bridge unavailable: {exc.reason}"}), 503
+
+
+@app.get("/codex-api/health")
+def codex_proxy_health() -> Any:
+    return proxy_codex("health", "GET")
+
+
+@app.post("/codex-api/chat")
+def codex_proxy_chat() -> Any:
+    return proxy_codex("chat", "POST")
+
+
+def frontend_dist() -> Path | None:
+    configured = str(os.environ.get("GANN_ASTRO_FRONTEND_DIST") or "").strip()
+    if not configured:
+        return None
+    root = Path(configured).expanduser().resolve()
+    return root if (root / "index.html").is_file() else None
+
+
+@app.get("/")
+def desktop_index() -> Any:
+    root = frontend_dist()
+    if root is None:
+        return jsonify({"ok": True, "service": "gann-astro-desk-backend"})
+    return send_from_directory(root, "index.html")
+
+
+@app.get("/<path:asset_path>")
+def desktop_asset(asset_path: str) -> Any:
+    root = frontend_dist()
+    if root is None:
+        abort(404)
+    candidate = (root / asset_path).resolve()
+    try:
+        candidate.relative_to(root)
+    except ValueError:
+        abort(404)
+    if candidate.is_file():
+        return send_from_directory(root, asset_path)
+    return send_from_directory(root, "index.html")
 
 
 if __name__ == "__main__":

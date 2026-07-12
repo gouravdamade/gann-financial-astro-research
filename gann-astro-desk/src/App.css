@@ -1327,11 +1327,15 @@
   cursor: default;
 }
 
+@media (max-width: 1450px) {
+  .top-command-bar .product-mark { width: 180px; }
+  .top-command-bar .date-control { display: none; }
+}
+
 @media (max-width: 1180px) {
   .workspace-grid { grid-template-columns: 44px minmax(0, 1fr) 280px; }
   .analyze-layout { grid-template-columns: 218px minmax(0, 1fr) 310px; }
   .product-mark { width: 170px; }
-  .date-control { display: none; }
   .family-key-label { display: none; }
 }
 
