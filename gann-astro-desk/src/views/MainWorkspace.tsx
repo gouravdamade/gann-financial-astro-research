@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, SlidersHorizontal, X } from 'lucide-react'
+import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, ShieldCheck, SlidersHorizontal, X } from 'lucide-react'
 import {
   fetchChart,
   fetchDataArtifacts,
@@ -7,7 +7,9 @@ import {
   fetchMt5Status,
   fetchParameterProfiles,
   fetchParameterSchema,
+  fetchShadowLedger,
   saveAnnotation,
+  scanShadowLedger,
 } from '../api'
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
@@ -15,6 +17,7 @@ import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
 import { ParameterDrawer } from '../components/ParameterDrawer'
+import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
 import type {
   AnnotationDraft,
@@ -28,6 +31,7 @@ import type {
   Mt5Status,
   ParameterSchema,
   SavedParameterProfile,
+  ShadowLedgerSnapshot,
 } from '../types'
 
 function dateRangeLabel(parameters: ChartParameters | null): string {
@@ -44,11 +48,14 @@ export function MainWorkspace() {
   const [parameters, setParameters] = useState<ChartParameters | null>(null)
   const [profiles, setProfiles] = useState<SavedParameterProfile[]>([])
   const [status, setStatus] = useState<Mt5Status | null>(null)
+  const [shadow, setShadow] = useState<ShadowLedgerSnapshot | null>(null)
+  const [shadowBusy, setShadowBusy] = useState(false)
+  const [shadowError, setShadowError] = useState('')
   const [selected, setSelected] = useState<AspectWindow | null>(null)
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
-  const [bottomTab, setBottomTab] = useState<'events' | 'positions' | 'logs'>('events')
+  const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'positions' | 'logs'>('events')
   const [error, setError] = useState('')
   const [parameterError, setParameterError] = useState('')
   const [parametersOpen, setParametersOpen] = useState(false)
@@ -79,6 +86,36 @@ export function MainWorkspace() {
         setSelected(preferred ?? payload.aspects[0] ?? null)
       })
       .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)))
+  }, [])
+
+  useEffect(() => {
+    let disposed = false
+    const refresh = () => fetchShadowLedger()
+      .then((value) => {
+        if (!disposed) {
+          setShadow(value)
+          setShadowError('')
+        }
+      })
+      .catch((reason) => !disposed && setShadowError(reason instanceof Error ? reason.message : String(reason)))
+    refresh()
+    const timer = window.setInterval(refresh, 10000)
+    return () => {
+      disposed = true
+      window.clearInterval(timer)
+    }
+  }, [])
+
+  const runShadowScan = useCallback(async () => {
+    setShadowBusy(true)
+    setShadowError('')
+    try {
+      setShadow(await scanShadowLedger())
+    } catch (reason) {
+      setShadowError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setShadowBusy(false)
+    }
   }, [])
 
   const applyParameters = useCallback(async (nextParameters: ChartParameters) => {
@@ -274,12 +311,14 @@ export function MainWorkspace() {
       <section className="bottom-dock">
         <div className="bottom-tabs">
           <button className={bottomTab === 'events' ? 'is-active' : ''} onClick={() => setBottomTab('events')}><PanelBottom size={14} /> Events</button>
+          <button className={bottomTab === 'shadow' ? 'is-active' : ''} onClick={() => setBottomTab('shadow')}><ShieldCheck size={14} /> Shadow validation</button>
           <button className={bottomTab === 'positions' ? 'is-active' : ''} onClick={() => setBottomTab('positions')}>MT5 positions</button>
           <button className={bottomTab === 'logs' ? 'is-active' : ''} onClick={() => setBottomTab('logs')}>Connection log</button>
           <div className="bottom-tabs-spacer" />
           <span><Bot size={14} /> Codex analysis available inside Analyze Aspect</span>
         </div>
         {bottomTab === 'events' && <EventTable events={sortedAspects} selectedId={selected?.eventId} onSelect={selectAspect} />}
+        {bottomTab === 'shadow' && <ShadowLedgerPanel snapshot={shadow} busy={shadowBusy} error={shadowError} onScan={runShadowScan} />}
         {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}
         {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
       </section>

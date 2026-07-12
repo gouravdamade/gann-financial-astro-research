@@ -34,6 +34,12 @@ separate from live market-data concerns.
 - A timestamp-safe Analyze Aspect inference panel that uses only closed candles and
   allowlisted touch/astrology fields, emits watch or abstain, and never materializes
   an entry, exit, P/L, outcome, or order.
+- An automatic prospective shadow supervisor that accepts only a fresh, non-baseline
+  corrected artifact whose promoted MT5 snapshot contains a just-closed SR touch.
+- A SQLite append-only hash-chain ledger that records the exact decision packet first,
+  then appends a separate outcome only after the first closed MT5 bar reaches the
+  72-hour horizon. Watches, abstentions, coverage, confidence interval, p-value, and
+  directional return remain inspectable in the Shadow validation dock.
 - Read-only Codex SDK bridge with deterministic evidence, selected annotation,
   and a local chart screenshot attached to the family task.
 
@@ -48,6 +54,9 @@ separate from live market-data concerns.
 - The frozen v1 policy failed its first purged/embargoed retrospective statistical
   gate (54.26% across 258 unique watch clusters; its 95% interval crossed 50%).
   Every packet and Analyze Aspect panel carries that research-only validation lock.
+- Historical/baseline and stale generated touches are rejected from the prospective
+  ledger instead of being backfilled. Ledger rows cannot be updated or deleted through
+  SQLite while their sequence and payload hashes make offline tampering detectable.
 - Provisional astrological values remain labeled provisional.
 - New occurrence progress is stored separately from legacy completed reviews.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.
@@ -121,8 +130,9 @@ activation switches chart candles atomically while preserving baseline restorati
 TT generation remains unavailable and disabled. Deterministic Auto Suggest and native
 live inference now share `GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1`; retrospective trade
 markers, P/L, rule lessons, Dream Review, and official-note processing remain research-only.
-Live inference is deliberately watch/abstain-only until purged out-of-sample validation and
-external astrology certification are complete.
+Live inference is deliberately watch/abstain-only. The retrospective gate failed, and order
+execution remains blocked while the append-only prospective trial collects evidence and
+external astrology certification remains incomplete.
 
 ## Storage
 

@@ -1,10 +1,64 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 01:02 IST
+Last updated: 2026-07-13 02:20 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (Purged Timestamp-Safe Policy Validation)
+## Latest Update - 2026-07-13 (Append-Only Prospective Shadow Ledger)
+
+- Added `gann-astro-desk/backend/shadow_ledger.py` with the contracts
+  `GANN_APPEND_ONLY_SHADOW_LEDGER_V1`, `GANN_PROSPECTIVE_SHADOW_DECISION_V1`,
+  and `GANN_PROSPECTIVE_72H_OUTCOME_V1`. The ledger records watch and abstain
+  decisions prospectively from server UTC and live read-only MT5 bars; the client cannot
+  provide a historical decision time, and the retrospective baseline is explicitly blocked.
+- Prospective capture requires a non-built-in generated artifact with complete creation and
+  source-as-of provenance, a price snapshot no older than one source timeframe plus 15
+  minutes, a just-closed touch within that same freshness window, and source data containing
+  the signal bar. Stale or baseline artifacts are reported honestly and cannot be backfilled.
+- Added append-only SQLite table `app_shadow_ledger_entries`. Decisions and 72-hour outcomes
+  are separate immutable entries with contiguous sequence numbers, canonical payload hashes,
+  previous-entry hashes, and a verified SHA-256 chain. Database triggers reject UPDATE and
+  DELETE. A 72-hour outcome is appended only after the first fully closed MT5 bar at or after
+  the frozen anchor plus 72 hours.
+- The shadow supervisor scans every 30 seconds by default, settles mature outcomes, and is
+  idempotent across restarts. It never emits an order, fill, entry/exit price, transaction
+  cost, or retrospective P/L. Simultaneous event decisions are clustered before statistics
+  so overlapping events do not inflate the sample.
+- The predeclared prospective gate requires at least 100 watch clusters, at least 10% watch
+  coverage, Wilson 95% lower bound above 50%, exact two-sided binomial p-value below 0.05,
+  positive mean signed 72-hour return, and at least four UTC calendar months. Execution
+  remains locked even if those research criteria eventually pass.
+- Added native APIs `GET /api/shadow-ledger` and `POST /api/shadow-ledger/scan`, plus a dense
+  desktop `Shadow validation` panel showing chain state, immutable counts, pending outcomes,
+  hit rate, gate progress, execution lock, readiness, and the decision/outcome trail.
+- Corrected the historical evaluator's 72-hour label availability: `after72_time_local` is
+  the target bar's open timestamp, so the label becomes usable only when that bar closes.
+  The report was regenerated; frozen metrics remain 258 watches, 140 hits, 54.26%, Wilson
+  48.17%-60.24%, and p=0.190975, so the historical statistical gate still fails.
+- Native release promoted to `0.4.0`:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - SHA-256 `89D51514AFD96B3FD0B995CE354FB7F3231C156396E019850D39825F4DA865AF`;
+  - 1,656 files / 698,374,484 bytes;
+  - astronomy contract unchanged and MT5 remains `read_only_market_data`.
+- Verification:
+  - full Python suite: 97 passed;
+  - native backend suite: 22 passed, including 5 focused shadow-ledger tests;
+  - frontend Vitest: 5 passed;
+  - Ruff, Oxlint, TypeScript/Vite production build, `git diff --check`, native packaging,
+    packaged API, and packaged visual QA: passed;
+  - packaged manual scan left the chain valid with zero entries and reported
+    `artifact_price_snapshot_stale`; browser warnings/errors were empty.
+- Current operational state: the active July research artifact is too old for prospective
+  capture, so the ledger correctly starts at zero. Do not loosen freshness or backfill it.
+- Next work:
+  1. add an automatic just-closed MT5 snapshot, promote, and corrected-artifact refresh
+     pipeline so fresh eligible touches can enter the prospective ledger unattended;
+  2. collect the frozen prospective sample without changing policy thresholds mid-run;
+  3. externally certify Shadbala/Drik doctrine calculations;
+  4. keep all order placement disabled unless a later validated execution project is
+     separately and explicitly authorized.
+
+## Previous Update - 2026-07-13 (Purged Timestamp-Safe Policy Validation)
 
 - Corrected a chronology defect in native `Analyze Aspect`: a selected historical touch now
   becomes eligible at the close of its source candle, while event end remains the eligibility

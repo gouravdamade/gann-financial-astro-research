@@ -13,6 +13,7 @@ from flask import Flask, Response, abort, jsonify, request, send_from_directory
 from generation import GenerationJobManager
 from mt5_gateway import Mt5Gateway
 from repository import AstroRepository
+from shadow_ledger import ShadowLedgerSupervisor
 
 
 app = Flask(__name__)
@@ -23,8 +24,15 @@ gateway = Mt5Gateway(
     autoconnect=os.environ.get("GANN_ASTRO_MT5_AUTOCONNECT", "1") != "0",
 )
 gateway.start()
+shadow_ledger = ShadowLedgerSupervisor(
+    repository,
+    gateway,
+    autostart=os.environ.get("GANN_ASTRO_SHADOW_AUTOSTART", "1") != "0",
+    poll_seconds=float(os.environ.get("GANN_ASTRO_SHADOW_POLL_SECONDS", "30")),
+)
 atexit.register(gateway.stop)
 atexit.register(generation_manager.stop)
+atexit.register(shadow_ledger.stop)
 
 
 def list_argument(name: str) -> tuple[str, ...]:
@@ -339,6 +347,23 @@ def decision_packet() -> Any:
         return jsonify({"ok": False, "error": str(exc)}), 404
     except ValueError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/shadow-ledger")
+def shadow_ledger_snapshot() -> Any:
+    try:
+        limit = max(1, min(int(request.args.get("limit", "100")), 500))
+        return jsonify({"ok": True, "shadow": shadow_ledger.snapshot(limit)})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.post("/api/shadow-ledger/scan")
+def shadow_ledger_scan() -> Any:
+    try:
+        return jsonify({"ok": True, "shadow": shadow_ledger.scan_once()})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
 
 
 @app.post("/api/events/<event_id>/review")

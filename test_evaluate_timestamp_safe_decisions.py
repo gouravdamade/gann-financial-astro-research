@@ -154,13 +154,16 @@ def test_future_label_changes_do_not_change_evaluation_packet() -> None:
     assert first_packets[0]["packetId"] == second_packets[0]["packetId"]
     assert first_packets[0]["outcome"] is None
     assert first_frame.iloc[0]["observed_direction"] == "DOWN"
+    assert first_frame.iloc[0]["label_available_time_utc"] == pd.Timestamp(
+        "2025-01-04T11:00:00Z"
+    )
     assert second_frame.iloc[0]["observed_direction"] == "UP"
     assert first_frame.iloc[0]["packet_status"] == "watch"
 
 
 def test_label_available_by_decision_is_quarantined() -> None:
     events, touches, price = evaluation_fixtures(-1.0, "DOWN")
-    touches.loc[0, "after72_time_local"] = pd.Timestamp("2025-01-01T10:30:00Z")
+    touches.loc[0, "after72_time_local"] = pd.Timestamp("2025-01-01T09:30:00Z")
     with patch("decision_engine.score_currency_pair_for_row", return_value=SCORES):
         frame, packets, quarantine = build_packet_frame(events, touches, price, timeframe="H1")
     assert frame.empty

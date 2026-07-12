@@ -1334,7 +1334,30 @@ class AstroRepository:
         }
 
     @synchronized_dataset
-    def live_decision_packet(self, event_id: str, decision_time: Any) -> dict[str, Any]:
+    def shadow_candidate_snapshot(self) -> dict[str, Any]:
+        timeframe = str(self.active_artifact.get("sourceTimeframe") or "H1").upper()
+        touches = [
+            {
+                "eventId": str(row["event_id"]),
+                "touchId": str(row["touch_id"]),
+                "touchTime": pd.Timestamp(row["touch_time_local"]).isoformat(),
+            }
+            for _, row in self.touches.iterrows()
+        ]
+        return {
+            "artifact": json.loads(json.dumps(self.active_artifact, default=str)),
+            "timeframe": timeframe,
+            "touches": touches,
+        }
+
+    @synchronized_dataset
+    def live_decision_packet(
+        self,
+        event_id: str,
+        decision_time: Any,
+        *,
+        price_override: pd.DataFrame | None = None,
+    ) -> dict[str, Any]:
         rows = self.events.loc[self.events["event_id"].astype(str) == str(event_id)]
         if rows.empty:
             raise KeyError(f"Unknown event: {event_id}")
@@ -1343,7 +1366,7 @@ class AstroRepository:
         if case is not None:
             event["case_id"] = int(case["case_id"])
         timeframe = str(self.active_artifact.get("sourceTimeframe") or "H1").upper()
-        price = self._price_for_timeframe(timeframe)
+        price = price_override.copy() if price_override is not None else self._price_for_timeframe(timeframe)
         touch = self.touch_by_event.get(str(event_id))
         return ENGINE.live_inference_packet(
             event=event,

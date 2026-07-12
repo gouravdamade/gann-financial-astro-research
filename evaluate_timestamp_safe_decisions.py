@@ -304,7 +304,9 @@ def build_packet_frame(
             label_time = pd.Timestamp(touch.get("after72_time_local"))
             if pd.isna(label_time) or label_time.tzinfo is None:
                 raise ValueError("label availability time is missing or timezone-naive")
-            label_time = label_time.tz_convert("UTC")
+            # after72_time_local is the target bar's open timestamp. Its close is
+            # the first instant when close_after72 and the stored direction exist.
+            label_time = label_time.tz_convert("UTC") + timeframe_delta(timeframe)
             observed_direction = str(touch.get("ret_after_72h_dir") or "").upper()
             observed_return = float(touch.get("ret_after_72h_pct"))
             if observed_direction not in VALID_LABELS:
@@ -530,7 +532,7 @@ def report_markdown(summary: dict[str, Any]) -> str:
             f"- Engine: `{ENGINE_VERSION}`",
             f"- Policy: `{POLICY_VERSION}`",
             "- Decision time: selected SR-touch candle close.",
-            "- Label time: stored 72-hour outcome availability timestamp.",
+            "- Label time: close of the stored 72-hour target bar; its open timestamp is not treated as outcome availability.",
             f"- Embargo after label availability: {summary['config']['embargo_hours']:.1f} hours.",
             "- Primary unit: one unique decision timestamp, consolidating simultaneous event rows.",
             "- Frozen policy uses no fitted parameter and test labels never enter decision packets.",

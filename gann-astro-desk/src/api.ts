@@ -13,6 +13,7 @@ import type {
   ParameterSchema,
   PriceSource,
   SavedParameterProfile,
+  ShadowLedgerSnapshot,
 } from './types'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -204,6 +205,20 @@ export async function fetchLiveDecision(
     body: JSON.stringify({ mode: 'live_inference', eventId, decisionTime }),
   })
   return payload.decision
+}
+
+export async function fetchShadowLedger(limit = 100): Promise<ShadowLedgerSnapshot> {
+  const query = new URLSearchParams({ limit: String(limit) })
+  const payload = await request<{ shadow: ShadowLedgerSnapshot }>(`/api/shadow-ledger?${query}`)
+  return payload.shadow
+}
+
+export async function scanShadowLedger(): Promise<ShadowLedgerSnapshot> {
+  const payload = await request<{ shadow: ShadowLedgerSnapshot }>('/api/shadow-ledger/scan', {
+    method: 'POST',
+    body: '{}',
+  })
+  return payload.shadow
 }
 
 export async function saveReviewStatus(

@@ -1,6 +1,6 @@
 # Timestamp-Safe Decision Walk-Forward Evaluation
 
-Generated: 2026-07-12T19:17:03.617315+00:00
+Generated: 2026-07-12T20:31:26.384614+00:00
 
 ## Frozen Contract
 
@@ -8,7 +8,7 @@ Generated: 2026-07-12T19:17:03.617315+00:00
 - Engine: `timestamp_safe_auto_suggest_v1_1_20260713`
 - Policy: `fx_doctrine_consensus_watch_only_v1`
 - Decision time: selected SR-touch candle close.
-- Label time: stored 72-hour outcome availability timestamp.
+- Label time: close of the stored 72-hour target bar; its open timestamp is not treated as outcome availability.
 - Embargo after label availability: 72.0 hours.
 - Primary unit: one unique decision timestamp, consolidating simultaneous event rows.
 - Frozen policy uses no fitted parameter and test labels never enter decision packets.

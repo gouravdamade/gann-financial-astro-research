@@ -363,6 +363,74 @@ export type DecisionPacket = {
   provenance: Record<string, string | number | boolean | null | undefined>
 }
 
+export type ShadowLedgerRecord = {
+  shadowId: string
+  eventId: string
+  familyKey: string
+  symbol: string
+  timeframe: string
+  action: 'WATCH_LONG' | 'WATCH_SHORT' | 'ABSTAIN'
+  direction: 'bullish' | 'bearish' | 'abstain'
+  capturedAtUtc: string
+  decisionTimeUtc: string
+  anchorTimeUtc: string
+  anchorClose: number
+  labelDueTimeUtc: string
+  status: 'pending_72h' | 'settled'
+  observedDirection: 'UP' | 'DOWN' | 'FLAT' | null
+  rawReturnPct: number | null
+  signedReturnPct: number | null
+  hit: boolean | null
+  packetId: string
+  executionOccurred: false
+}
+
+export type ShadowLedgerSnapshot = {
+  summary: {
+    contract: 'GANN_APPEND_ONLY_SHADOW_LEDGER_V1'
+    gateStatus: string
+    decisionCount: number
+    watchDecisionCount: number
+    abstainDecisionCount: number
+    settledDecisionCount: number
+    pendingOutcomeCount: number
+    settledClusterCount: number
+    watchClusterCount: number
+    directionalHits: number
+    hitRate: number | null
+    coverage: number | null
+    wilson95Lower: number | null
+    wilson95Upper: number | null
+    twoSidedBinomialP: number | null
+    meanSigned72hReturnPct: number | null
+    calendarMonthCount: number
+    criteria: Record<string, boolean>
+    executionAllowed: false
+    chain: {
+      valid: boolean
+      entryCount: number
+      headHash?: string
+      error: string
+    }
+  }
+  records: ShadowLedgerRecord[]
+  supervisor: {
+    state: 'starting' | 'paused' | 'waiting' | 'collecting' | 'error'
+    lastScanAtUtc: string | null
+    lastCaptureCount: number
+    lastSettlementCount: number
+    lastError: string
+    readiness: {
+      ready: boolean
+      code: string
+      artifactId?: string
+      timeframe?: string
+      sourceAsOfUtc?: string
+      maximumAgeSeconds?: number
+    }
+  }
+}
+
 export type Mt5Status = {
   state: 'starting' | 'disabled' | 'connected' | 'reconnecting'
   symbol: string
