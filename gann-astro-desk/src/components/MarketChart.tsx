@@ -20,12 +20,9 @@ import {
   useRef,
   useState,
   type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
 } from 'react'
-import {
-  createChartDrawing,
-  defaultSquareOfNineSettings,
-  squareOfNineLevels,
-} from '../chartLayouts'
+import { createChartDrawing } from '../chartLayouts'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -36,12 +33,13 @@ import type {
   ChartLayoutState,
   ChartPayload,
   ChartTool,
-  SquareOfNineSettings,
 } from '../types'
 
 type BandPosition = { event: AspectWindow; left: number; width: number }
 type Point = { time: number; price: number }
-type PendingDrawing = { type: 'gann_fan' | 'square_of_nine'; point: Point }
+type PendingDrawing = { type: 'gann_fan'; point: Point }
+type DragPreview = { drawingId: string; anchors: ChartDrawingAnchor[] }
+type DragSession = DragPreview & { anchorIndex: number }
 
 export type MarketChartHandle = {
   capture: () => Promise<string>
@@ -128,6 +126,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const createAnnotationRef = useRef(onCreateAnnotation)
   const drawingsRef = useRef(drawings)
   const drawingsChangeRef = useRef(onDrawingsChange)
+  const selectDrawingRef = useRef(onSelectDrawing)
+  const selectedDrawingIdRef = useRef(selectedDrawingId)
   const viewStateChangeRef = useRef(onViewStateChange)
   const undoRef = useRef(onUndo)
   const viewKeyRef = useRef('')
@@ -137,6 +137,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const [bands, setBands] = useState<BandPosition[]>([])
   const [pendingDrawing, setPendingDrawing] = useState<PendingDrawing | null>(null)
   const pendingDrawingRef = useRef<PendingDrawing | null>(null)
+  const [dragPreview, setDragPreview] = useState<DragPreview | null>(null)
+  const dragSessionRef = useRef<DragSession | null>(null)
   const [legendCandle, setLegendCandle] = useState<Candle | null>(payload.candles[payload.candles.length - 1] ?? null)
   const [overlayRevision, setOverlayRevision] = useState(0)
   const candleTimes = useMemo(() => payload.candles.map((item) => item.time), [payload.candles])
@@ -159,10 +161,32 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   useEffect(() => {
     drawingsRef.current = drawings
     drawingsChangeRef.current = onDrawingsChange
+    selectDrawingRef.current = onSelectDrawing
+    selectedDrawingIdRef.current = selectedDrawingId
     viewStateChangeRef.current = onViewStateChange
     undoRef.current = onUndo
     setOverlayRevision((value) => value + 1)
-  }, [drawings, onDrawingsChange, onUndo, onViewStateChange])
+  }, [drawings, onDrawingsChange, onSelectDrawing, onUndo, onViewStateChange, selectedDrawingId])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      if (target?.matches('input, textarea, select, [contenteditable="true"]')) return
+      if (event.key === 'Escape') {
+        selectDrawingRef.current?.(null)
+        return
+      }
+      if (event.key !== 'Delete' && event.key !== 'Backspace') return
+      const drawingId = selectedDrawingIdRef.current
+      const selected = drawingsRef.current.find((drawing) => drawing.drawingId === drawingId)
+      if (!selected || selected.locked) return
+      event.preventDefault()
+      drawingsChangeRef.current?.(drawingsRef.current.filter((drawing) => drawing.drawingId !== drawingId))
+      selectDrawingRef.current?.(null)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   useImperativeHandle(forwardedRef, () => ({
     capture: async () => {
@@ -279,8 +303,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           drawingsRef.current.length,
         )
         drawingsChangeRef.current?.([...drawingsRef.current, drawing])
-      } else if (tool === 'gann' || tool === 'square9') {
-        const drawingType = tool === 'gann' ? 'gann_fan' : 'square_of_nine'
+      } else if (tool === 'gann') {
+        const drawingType = 'gann_fan'
         const pending = pendingDrawingRef.current
         if (!pending || pending.type !== drawingType) {
           const nextPending: PendingDrawing = { type: drawingType, point }
@@ -320,6 +344,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           color: '#4bb7e5',
           chartState: { timeframe: currentPayload.timeframe, visibleStart: currentPayload.start, visibleEnd: currentPayload.end },
         })
+      } else if (tool === 'select') {
+        selectDrawingRef.current?.(null)
       }
     }
     chart.subscribeClick(clickHandler)
@@ -441,7 +467,110 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     return x == null || y == null ? null : { x, y }
   }
 
-  const renderDrawing = (drawing: ChartDrawing) => {
+  const startAnchorDrag = (
+    event: ReactPointerEvent<SVGCircleElement>,
+    drawing: ChartDrawing,
+    anchorIndex: number,
+  ) => {
+    if (drawing.locked || activeTool !== 'select') return
+    event.preventDefault()
+    event.stopPropagation()
+    const session = {
+      drawingId: drawing.drawingId,
+      anchorIndex,
+      anchors: drawing.anchors.map((anchor) => ({ ...anchor })),
+    }
+    dragSessionRef.current = session
+    setDragPreview({ drawingId: session.drawingId, anchors: session.anchors })
+    onSelectDrawing?.(drawing.drawingId)
+  }
+
+  const moveAnchorDrag = (clientX: number, clientY: number) => {
+    const session = dragSessionRef.current
+    const chart = chartRef.current
+    const series = seriesRef.current
+    const root = rootRef.current
+    if (!session || !chart || !series || !root) return
+    const bounds = root.getBoundingClientRect()
+    const x = Math.max(0, Math.min(bounds.width, clientX - bounds.left))
+    const y = Math.max(0, Math.min(bounds.height, clientY - bounds.top))
+    const rawTime = chart.timeScale().coordinateToTime(x)
+    const price = series.coordinateToPrice(y)
+    if (rawTime == null || price == null || typeof rawTime !== 'number') return
+    const time = nearestTime(candleTimes, Number(rawTime))
+    const anchors = session.anchors.map((anchor, index) => index === session.anchorIndex
+      ? { timeUtc: new Date(time * 1000).toISOString(), price: Number(price) }
+      : anchor)
+    const nextSession = { ...session, anchors }
+    dragSessionRef.current = nextSession
+    setDragPreview({ drawingId: session.drawingId, anchors })
+  }
+
+  const finishAnchorDrag = () => {
+    const session = dragSessionRef.current
+    if (!session) return
+    dragSessionRef.current = null
+    setDragPreview(null)
+    drawingsChangeRef.current?.(drawingsRef.current.map((drawing) => drawing.drawingId === session.drawingId
+      ? { ...drawing, anchors: session.anchors }
+      : drawing))
+  }
+
+  const cancelAnchorDrag = () => {
+    dragSessionRef.current = null
+    setDragPreview(null)
+  }
+
+  useEffect(() => {
+    const movePointer = (event: PointerEvent) => {
+      if (!dragSessionRef.current) return
+      event.preventDefault()
+      moveAnchorDrag(event.clientX, event.clientY)
+    }
+    const moveMouse = (event: MouseEvent) => {
+      if (!dragSessionRef.current) return
+      event.preventDefault()
+      moveAnchorDrag(event.clientX, event.clientY)
+    }
+    const finish = () => finishAnchorDrag()
+    const cancel = () => cancelAnchorDrag()
+    window.addEventListener('pointermove', movePointer, { passive: false })
+    window.addEventListener('pointerup', finish)
+    window.addEventListener('pointercancel', cancel)
+    window.addEventListener('mousemove', moveMouse, { passive: false })
+    window.addEventListener('mouseup', finish)
+    return () => {
+      window.removeEventListener('pointermove', movePointer)
+      window.removeEventListener('pointerup', finish)
+      window.removeEventListener('pointercancel', cancel)
+      window.removeEventListener('mousemove', moveMouse)
+      window.removeEventListener('mouseup', finish)
+    }
+  })
+
+  const renderAnchorHandle = (
+    drawing: ChartDrawing,
+    anchorIndex: number,
+    position: { x: number; y: number },
+    label: string,
+  ) => (
+    <g className="drawing-anchor-control" key={`${drawing.drawingId}-anchor-${anchorIndex}`}>
+      <circle
+        className="drawing-anchor-handle"
+        cx={position.x}
+        cy={position.y}
+        r={6}
+        onPointerDown={(event) => startAnchorDrag(event, drawing, anchorIndex)}
+      />
+      <text className="drawing-anchor-label" x={position.x + 9} y={position.y - 9}>{label}</text>
+    </g>
+  )
+
+  const renderDrawing = (inputDrawing: ChartDrawing) => {
+    if (inputDrawing.type === 'square_of_nine') return null
+    const drawing = dragPreview?.drawingId === inputDrawing.drawingId
+      ? { ...inputDrawing, anchors: dragPreview.anchors }
+      : inputDrawing
     if (!drawing.visible) return null
     const start = drawing.anchors[0] ? toScreen(drawing.anchors[0]) : null
     if (!start) return null
@@ -463,18 +592,28 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       onSelectDrawing?.(drawing.drawingId)
     }
     if (drawing.type === 'horizontal_line') {
+      const handlePosition = {
+        x: Math.max(18, Math.min((rootRef.current?.clientWidth ?? start.x) - 18, start.x)),
+        y: start.y,
+      }
       return (
         <g key={drawing.drawingId} className={`chart-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
           <line x1={0} y1={start.y} x2="100%" y2={start.y} style={strokeStyle} />
           <line x1={0} y1={start.y} x2="100%" y2={start.y} className="drawing-hit-target" />
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 0, handlePosition, 'Price')}
         </g>
       )
     }
     if (drawing.type === 'vertical_line') {
+      const handlePosition = {
+        x: start.x,
+        y: Math.max(18, Math.min((rootRef.current?.clientHeight ?? start.y) - 18, start.y)),
+      }
       return (
         <g key={drawing.drawingId} className={`chart-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
           <line x1={start.x} y1={0} x2={start.x} y2="100%" style={strokeStyle} />
           <line x1={start.x} y1={0} x2={start.x} y2="100%" className="drawing-hit-target" />
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 0, handlePosition, 'Time')}
         </g>
       )
     }
@@ -495,53 +634,13 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           })}
           <line x1={start.x} y1={start.y} x2={start.x + dx * scale} y2={start.y + (end.y - start.y) * scale} className="drawing-hit-target" />
           <circle cx={start.x} cy={start.y} r={selected ? 5 : 3} fill={drawing.style.color} opacity={drawing.style.opacity} />
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 0, start, 'Origin')}
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 1, end, 'Slope')}
         </g>
       )
     }
 
-    const defaults = defaultSquareOfNineSettings(drawing.anchors[0].price)
-    const settings = { ...defaults, ...drawing.settings } as SquareOfNineSettings
-    const rings = Math.max(1, Math.min(12, Math.round(settings.rings)))
-    const radiusX = Math.max(28, Math.abs(end.x - start.x))
-    const radiusY = Math.max(28, Math.abs(end.y - start.y))
-    const spokeAngles = [0, 45, 90, 135, 180, 225, 270, 315].filter((angle) => (
-      (angle % 90 === 0 && settings.showCardinals)
-      || (angle % 90 !== 0 && settings.showDiagonals)
-    ))
-    const angleSign = settings.angleRotation === 'clockwise' ? 1 : -1
-    let levels = [] as ReturnType<typeof squareOfNineLevels>
-    try {
-      levels = squareOfNineLevels(settings)
-    } catch {
-      levels = []
-    }
-    const outerLevels = levels.filter((level) => level.ring === rings)
-    return (
-      <g key={drawing.drawingId} className={`chart-drawing square9-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
-        {Array.from({ length: rings }, (_, index) => {
-          const factor = (index + 1) / rings
-          return <rect key={index} x={start.x - radiusX * factor} y={start.y - radiusY * factor} width={radiusX * factor * 2} height={radiusY * factor * 2} fill="none" style={{ ...strokeStyle, opacity: drawing.style.opacity * (0.45 + factor * 0.4) }} />
-        })}
-        {spokeAngles.map((angle) => {
-          const radians = ((angleSign * angle + settings.angleOffsetDeg) * Math.PI) / 180
-          return <line key={angle} x1={start.x} y1={start.y} x2={start.x + Math.cos(radians) * radiusX} y2={start.y + Math.sin(radians) * radiusY} style={{ ...strokeStyle, opacity: drawing.style.opacity * 0.72 }} />
-        })}
-        {settings.showTimeProjections && Array.from({ length: rings }, (_, index) => {
-          const offset = (radiusX * (index + 1)) / rings
-          return <g key={index}><line x1={start.x + offset} y1={0} x2={start.x + offset} y2="100%" style={{ ...strokeStyle, opacity: 0.2 }} /><line x1={start.x - offset} y1={0} x2={start.x - offset} y2="100%" style={{ ...strokeStyle, opacity: 0.2 }} /></g>
-        })}
-        {settings.showPriceProjections && levels.map((level) => {
-          const y = seriesRef.current?.priceToCoordinate(level.value)
-          return y == null ? null : <line key={`${level.ring}-${level.angleDeg}`} x1={0} y1={y} x2="100%" y2={y} style={{ ...strokeStyle, opacity: 0.16 }} />
-        })}
-        {settings.showLabels && outerLevels.map((level) => {
-          const radians = ((angleSign * level.angleDeg + settings.angleOffsetDeg) * Math.PI) / 180
-          return <text key={level.angleDeg} x={start.x + Math.cos(radians) * (radiusX + 9)} y={start.y + Math.sin(radians) * (radiusY + 9)} className="square9-label" fill={drawing.style.color}>{level.value.toFixed(3)}</text>
-        })}
-        <rect x={start.x - radiusX} y={start.y - radiusY} width={radiusX * 2} height={radiusY * 2} className="drawing-hit-target square-hit-target" />
-        <circle cx={start.x} cy={start.y} r={selected ? 5 : 3} fill={drawing.style.color} />
-      </g>
-    )
+    return null
   }
 
   return (

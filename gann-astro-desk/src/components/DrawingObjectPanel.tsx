@@ -2,7 +2,6 @@ import {
   Eye,
   EyeOff,
   Fan,
-  Grid3X3,
   Lock,
   Minus,
   Save,
@@ -15,7 +14,6 @@ import { useEffect, useMemo, useState } from 'react'
 import type {
   ChartDrawing,
   DrawingTemplate,
-  SquareOfNineSettings,
 } from '../types'
 
 type DrawingObjectPanelProps = {
@@ -33,17 +31,13 @@ type DrawingObjectPanelProps = {
 function DrawingIcon({ drawing }: { drawing: ChartDrawing }) {
   if (drawing.type === 'vertical_line') return <SeparatorVertical size={15} />
   if (drawing.type === 'gann_fan') return <Fan size={15} />
-  if (drawing.type === 'square_of_nine') return <Grid3X3 size={15} />
   return <Minus size={15} />
 }
 
-function numberSetting(
-  drawing: ChartDrawing,
-  key: keyof SquareOfNineSettings,
-  fallback: number,
-): number {
-  const value = drawing.settings[key]
-  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+function localDateTimeValue(iso: string): string {
+  const value = new Date(iso)
+  if (!Number.isFinite(value.getTime())) return ''
+  return new Date(value.getTime() - value.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
 }
 
 export function DrawingObjectPanel({
@@ -57,7 +51,11 @@ export function DrawingObjectPanel({
   onRemoveTemplate,
   onClose,
 }: DrawingObjectPanelProps) {
-  const selected = drawings.find((item) => item.drawingId === selectedDrawingId) ?? null
+  const chartDrawings = useMemo(
+    () => drawings.filter((item) => item.type !== 'square_of_nine'),
+    [drawings],
+  )
+  const selected = chartDrawings.find((item) => item.drawingId === selectedDrawingId) ?? null
   const matchingTemplates = useMemo(
     () => templates.filter((item) => item.drawingType === selected?.type),
     [selected?.type, templates],
@@ -74,19 +72,23 @@ export function DrawingObjectPanel({
     if (selected) onUpdate(selected.drawingId, { style: { ...selected.style, ...update } })
   }
 
-  const updateSettings = (update: Record<string, unknown>) => {
-    if (selected) onUpdate(selected.drawingId, { settings: { ...selected.settings, ...update } })
+  const updateAnchor = (index: number, update: Partial<ChartDrawing['anchors'][number]>) => {
+    if (!selected || selected.locked) return
+    const anchors = selected.anchors.map((anchor, anchorIndex) => anchorIndex === index
+      ? { ...anchor, ...update }
+      : anchor)
+    onUpdate(selected.drawingId, { anchors })
   }
 
   return (
     <aside className="drawing-object-panel" aria-label="Drawing object tree">
       <header>
-        <div><strong>Objects</strong><span>{drawings.length} research drawings</span></div>
+        <div><strong>Objects</strong><span>{chartDrawings.length} research drawings</span></div>
         <button className="icon-button" onClick={onClose} title="Close object tree"><X size={16} /></button>
       </header>
       <div className="drawing-object-list">
-        {drawings.length === 0 && <p className="drawing-empty">Place a line, fan, or Square of Nine to add it here.</p>}
-        {drawings.slice().sort((a, b) => b.zIndex - a.zIndex).map((drawing) => (
+        {chartDrawings.length === 0 && <p className="drawing-empty">Place a line or Gann fan to add it here.</p>}
+        {chartDrawings.slice().sort((a, b) => b.zIndex - a.zIndex).map((drawing) => (
           <div className={`drawing-object-row ${drawing.drawingId === selectedDrawingId ? 'is-selected' : ''}`} key={drawing.drawingId}>
             <button className="drawing-object-name" onClick={() => onSelect(drawing.drawingId)} title={`Select ${drawing.name}`}>
               <DrawingIcon drawing={drawing} />
@@ -110,26 +112,19 @@ export function DrawingObjectPanel({
             <label>Opacity<input type="number" min={0.1} max={1} step={0.1} value={selected.style.opacity} onChange={(event) => updateStyle({ opacity: Number(event.target.value) })} /></label>
           </div>
 
-          {selected.type === 'square_of_nine' && (
-            <div className="square9-properties">
-              <div className="property-heading"><strong>Square of Nine</strong><span>Provisional geometry</span></div>
-              <div className="property-grid">
-                <label>Center<input type="number" step="0.001" value={numberSetting(selected, 'centerValue', selected.anchors[0]?.price ?? 1)} onChange={(event) => updateSettings({ centerValue: Number(event.target.value) })} /></label>
-                <label>Increment<input type="number" min="0.00001" step="0.001" value={numberSetting(selected, 'increment', 0.01)} onChange={(event) => updateSettings({ increment: Number(event.target.value) })} /></label>
-                <label>Rings<input type="number" min={1} max={12} step={1} value={numberSetting(selected, 'rings', 3)} onChange={(event) => updateSettings({ rings: Number(event.target.value) })} /></label>
-                <label>Angle offset<input type="number" min={-360} max={360} step={1} value={numberSetting(selected, 'angleOffsetDeg', 0)} onChange={(event) => updateSettings({ angleOffsetDeg: Number(event.target.value) })} /></label>
-                <label>Numbers<select value={String(selected.settings.numberRotation ?? 'clockwise')} onChange={(event) => updateSettings({ numberRotation: event.target.value })}><option value="clockwise">Clockwise</option><option value="counterclockwise">Counterclockwise</option></select></label>
-                <label>Angles<select value={String(selected.settings.angleRotation ?? 'clockwise')} onChange={(event) => updateSettings({ angleRotation: event.target.value })}><option value="clockwise">Clockwise</option><option value="counterclockwise">Counterclockwise</option></select></label>
+          <div className="drawing-anchor-properties">
+            <div className="property-heading"><strong>Anchors</strong><span>{selected.locked ? 'Locked' : 'Drag on chart or edit'}</span></div>
+            {selected.anchors.map((anchor, index) => (
+              <div className="drawing-anchor-fields" key={`${selected.drawingId}-${index}`}>
+                <strong>{selected.type === 'gann_fan' ? (index === 0 ? 'Origin' : 'Slope') : 'Position'}</strong>
+                {selected.type !== 'horizontal_line' && <label>Time<input type="datetime-local" value={localDateTimeValue(anchor.timeUtc)} disabled={selected.locked} onChange={(event) => {
+                  const date = new Date(event.target.value)
+                  if (Number.isFinite(date.getTime())) updateAnchor(index, { timeUtc: date.toISOString() })
+                }} /></label>}
+                {selected.type !== 'vertical_line' && <label>Price<input type="number" step="any" value={anchor.price} disabled={selected.locked} onChange={(event) => updateAnchor(index, { price: Number(event.target.value) })} /></label>}
               </div>
-              <div className="property-toggles">
-                <label><input type="checkbox" checked={Boolean(selected.settings.showCardinals ?? true)} onChange={(event) => updateSettings({ showCardinals: event.target.checked })} /> Cardinals</label>
-                <label><input type="checkbox" checked={Boolean(selected.settings.showDiagonals ?? true)} onChange={(event) => updateSettings({ showDiagonals: event.target.checked })} /> Diagonals</label>
-                <label><input type="checkbox" checked={Boolean(selected.settings.showLabels ?? true)} onChange={(event) => updateSettings({ showLabels: event.target.checked })} /> Labels</label>
-                <label><input type="checkbox" checked={Boolean(selected.settings.showPriceProjections ?? false)} onChange={(event) => updateSettings({ showPriceProjections: event.target.checked })} /> Price levels</label>
-                <label><input type="checkbox" checked={Boolean(selected.settings.showTimeProjections ?? false)} onChange={(event) => updateSettings({ showTimeProjections: event.target.checked })} /> Time spokes</label>
-              </div>
-            </div>
-          )}
+            ))}
+          </div>
 
           <div className="drawing-template-controls">
             <div className="property-heading"><strong>Template</strong><span>Style and settings</span></div>
@@ -146,6 +141,7 @@ export function DrawingObjectPanel({
               <button onClick={() => void onCreateTemplate(templateName, selected).then(() => setTemplateName(''))} disabled={!templateName.trim()}><Save size={14} /> Save</button>
             </div>
           </div>
+          <button className="drawing-delete-command" onClick={() => onDelete(selected.drawingId)} disabled={selected.locked}><Trash2 size={14} /> Delete drawing</button>
         </div>
       )}
     </aside>

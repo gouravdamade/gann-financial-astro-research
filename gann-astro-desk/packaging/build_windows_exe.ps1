@@ -68,7 +68,7 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 $releaseFiles = Get-ChildItem -LiteralPath $releaseFolder -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.7.0"
+    version = "0.8.0"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash

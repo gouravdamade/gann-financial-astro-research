@@ -5,7 +5,6 @@ export type ChartTool =
   | 'horizontal'
   | 'vertical'
   | 'gann'
-  | 'square9'
 
 export type ChartDataSource = 'research' | 'live'
 
@@ -51,6 +50,44 @@ export type SquareOfNineSettings = {
   showTimeProjections: boolean
 }
 
+export type SquareOfNineDataType = 'price' | 'time' | 'date' | 'datetime'
+
+export type SquareOfNineIncrementUnit =
+  | 'minute'
+  | 'hour'
+  | 'day'
+  | 'week'
+  | 'month'
+  | 'trading_day'
+
+export type SquareOfNineMarkKind = 'selected' | 'high' | 'low' | 'forecast' | 'error'
+
+export type SquareOfNineMark = {
+  kind: SquareOfNineMarkKind
+  note: string
+}
+
+export type SquareOfNineWorkspaceState = {
+  contract: 'GANN_SQUARE_OF_NINE_WORKSPACE_V1'
+  schemaVersion: 1
+  dataType: SquareOfNineDataType
+  firstPrice: number
+  firstDate: string
+  firstTime: string
+  increment: number
+  incrementUnit: SquareOfNineIncrementUnit
+  size: number
+  zoomPercent: number
+  numberRotation: 'clockwise' | 'counterclockwise'
+  angleRotation: 'clockwise' | 'counterclockwise'
+  angleOffsetDeg: number
+  showOrdinals: boolean
+  showAngles: boolean
+  activeMarkMode: 'select' | Exclude<SquareOfNineMarkKind, 'selected'>
+  selectedCellOrdinal: number
+  marks: Record<string, SquareOfNineMark>
+}
+
 export type GannFanSettings = {
   ratios: number[]
 }
@@ -80,6 +117,7 @@ export type ChartLayoutState = {
   visibleEndUtc?: string
   showAspects: boolean
   showSrLines: boolean
+  squareOfNine?: SquareOfNineWorkspaceState
 }
 
 export type ChartLayout = {

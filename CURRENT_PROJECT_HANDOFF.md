@@ -1,10 +1,66 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 20:33 IST
+Last updated: 2026-07-14 00:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (Named Layouts + Square of Nine Native Release)
+## Latest Update - 2026-07-14 (Standalone Square of Nine + Editable Drawings)
+
+- Promoted Gann Astro Desk `0.8.0`. Square of Nine is now a dedicated workspace tab,
+  never a candlestick overlay. The market chart, aspect inspector, activity dock, and
+  Square workspace are separate surfaces inside the same native application.
+- The standalone Square supports price, time, date, and date-time values; editable first
+  value; signed increment/decrement; minute/hour/day/week/month/trading-day units;
+  center-inclusive size 1-15; independent number/angle direction; angle offset; zoom
+  50%-150%; value or cell lookup; clickable High/Low/Forecast/Error marks; per-cell notes;
+  PNG export; and named-layout persistence.
+- Legacy `square_of_nine` chart drawings are filtered from candlestick rendering and
+  migrated into standalone workspace settings on layout load. Autosave then persists the
+  migrated form without leaving a stale overlay object.
+- Horizontal lines, vertical lines, and Gann fans now have visible selected handles.
+  Unlocked anchors can be dragged in UTC-time/price coordinates or edited numerically in
+  the object panel. The panel also retains rename, hide/show, lock/unlock, color, width,
+  line style, opacity, templates, and explicit Delete drawing controls. `Delete` or
+  `Backspace` removes a selected unlocked object; `Escape` deselects it.
+- Official GannZilla documentation was reviewed for interaction patterns: named chart
+  persistence, selectable/deletable objects, Square size/first value/increment/data type,
+  cell marking, zoom, and movable fan control points. The implementation is original and
+  remains a research UI, not validation of Gann forecasting claims.
+- Research safety is unchanged: Square of Nine and chart drawings are not consumed by Auto
+  Suggest, timestamp-safe live inference, the shadow ledger, or execution. MT5 remains
+  read-only with `tradeAllowed=false`; the frozen prospective policy/trial was not changed.
+- Packaged QA used isolated temporary layouts and cleaned both afterward:
+  - Square date mode, -1 trading-day increment, 9x9 size, a High mark, and a note survived
+    reload;
+  - a Gann fan was created, selected, resized by dragging its origin while its slope anchor
+    stayed fixed, and deleted with the keyboard;
+  - zero packaged browser warnings/errors; the user default layout and its two existing
+    research drawings remain intact.
+- Native release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - version `0.8.0`;
+  - SHA-256 `9C81A85A6412D20721BDBEAA5922EA6E2C7E802091CDA8C42A7F4E1B0710CB48`;
+  - stable tree 1,658 files / 708,955,644 bytes including the release manifest;
+  - rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.7.0_20260714_000817`.
+- Packaged runtime verification:
+  - MetaQuotes-Demo connected in `read_only_market_data` mode;
+  - local Jyotish ready on `qwen2.5:3b`;
+  - shadow chain valid with 7 pending abstain decisions;
+  - frozen trial ID unchanged at
+    `2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16`.
+- Verification: Oxlint, 13 Vitest tests, 38 backend tests, TypeScript/Vite production
+  build, PyInstaller native build, source and packaged interaction QA, release
+  hash/manifest/API checks, and `git diff --check` passed.
+- Evidence is in `square9_workspace_drawing_editor_release_20260714.md`.
+- Next recommended work:
+  1. add optional Square templates and a print/export report only after real usage reveals
+     which configurations recur;
+  2. consider Gann wheel/pyramid variants as separate workspaces, not chart overlays;
+  3. validate all manual Gann geometry out of sample before allowing any inference use;
+  4. continue settling the frozen prospective cohort without changing its policy.
+
+## Previous Update - 2026-07-13 (Named Layouts + Square of Nine Native Release)
 
 - Promoted Gann Astro Desk `0.7.0` with durable named chart layouts. Layouts, drawings,
   templates, and viewport/layer state now use versioned SQLite contracts:

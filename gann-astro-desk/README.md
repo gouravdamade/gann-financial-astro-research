@@ -31,14 +31,19 @@ separate from live market-data concerns.
   filtering, SHA-256 manifests, and explicit no-lookahead provenance.
 - Explicit snapshot promotion with deterministic manifest/OHLC/hash verification,
   immutable price-source registration, and retained snapshot lineage in generated artifacts.
-- Horizontal line, vertical line, Gann fan, Square of Nine, and structured annotation tools.
+- Horizontal line, vertical line, Gann fan, and structured annotation tools on the market
+  chart. Unlocked lines and fan anchors can be selected, dragged, edited numerically,
+  hidden, locked, renamed, styled, or deleted; `Delete` removes the selected object and
+  `Escape` clears selection.
 - Versioned named chart layouts with debounced autosave, exact UTC-time/price anchors,
   restore, Save As, object tree, undo, lock/hide, drawing templates, and JSON
   export/import. Analyze Aspect layouts are family-scoped and persist while navigating
   recurrences.
-- Square of Nine properties include center, increment, rings, independent number/angle
-  rotation, highlighted angles, cardinal/diagonal guides, labels, and optional price/time
-  projections.
+- A separate Square of Nine workspace tab keeps the wheel away from candlesticks. It
+  supports price, time, date, and date-time values; editable first value; signed
+  increment/decrement; time units; center-inclusive size; number and angle rotation;
+  zoom; value lookup; clickable High/Low/Forecast/Error marks; per-cell notes; PNG export;
+  and named-layout persistence. Legacy chart-overlay squares migrate into this workspace.
 - Persistent chart annotations with exact time, price, family, event, and chart state.
 - Read-only MT5 connection supervisor with heartbeat and reconnect status.
 - One versioned decision-packet contract shared by retrospective Auto Suggest and
@@ -90,8 +95,9 @@ separate from live market-data concerns.
   internally consistent policy cohort.
 - Provisional astrological values remain labeled provisional.
 - New occurrence progress is stored separately from legacy completed reviews.
-- Manual Gann geometry and Square of Nine are research-only stored overlays. Their
-  persistence contract forces live-inference, shadow-ledger, and execution consumption off.
+- Manual chart geometry and the standalone Square of Nine workspace are research-only.
+  Their persistence contract forces live-inference, shadow-ledger, and execution
+  consumption off.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.
 - Local Jyotish drafts are never consumed by live inference or the shadow ledger. The app
   defaults to `qwen2.5:3b`; the installed Gemma 12B model remains optional because it did not

@@ -317,7 +317,13 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               layoutKey={chartLayouts.activeLayout?.layoutId}
               viewState={chartLayouts.chartState}
               onDrawingsChange={chartLayouts.replaceDrawings}
-              onSelectDrawing={chartLayouts.setSelectedDrawingId}
+              onSelectDrawing={(drawingId) => {
+                chartLayouts.setSelectedDrawingId(drawingId)
+                if (drawingId) {
+                  setActiveTool('select')
+                  setObjectsOpen(true)
+                }
+              }}
               onViewStateChange={chartLayouts.updateChartState}
               onUndo={chartLayouts.undo}
             />

@@ -8,6 +8,7 @@ import {
   ChevronUp,
   Eye,
   EyeOff,
+  Grid3X3,
   LockKeyhole,
   Maximize2,
   Minimize2,
@@ -45,6 +46,7 @@ import { ParameterDrawer } from '../components/ParameterDrawer'
 import { RefreshStatusChip } from '../components/RefreshStatusChip'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
+import { SquareOfNineWorkspace } from './SquareOfNineWorkspace'
 import { useChartLayouts } from '../useChartLayouts'
 import type {
   AnnotationDraft,
@@ -100,6 +102,7 @@ export function MainWorkspace() {
   const [selected, setSelected] = useState<AspectWindow | null>(null)
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
+  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9'>('chart')
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
   const [toolActivationNonce, setToolActivationNonce] = useState(0)
   const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'positions' | 'logs'>('events')
@@ -369,8 +372,8 @@ export function MainWorkspace() {
     [chart],
   )
 
-  const inspectorVisible = workspace.inspectorOpen && !focusMode
-  const bottomVisible = workspace.bottomOpen && !focusMode
+  const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
+  const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
   const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'positions' | 'logs') => {
     setBottomTab(tab)
     setFocusMode(false)
@@ -393,39 +396,47 @@ export function MainWorkspace() {
   }
 
   return (
-    <main className={`desk-shell ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
+    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
       <header className="top-command-bar">
         <div className="product-mark">
           <span className="product-glyph">GA</span>
           <div><strong>Gann Astro Desk</strong><span>Market research terminal</span></div>
         </div>
-        <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
-        <div className="segmented-control" aria-label="Timeframe">
-          {schema.options.timeframes.map((timeframe) => <button key={timeframe} className={timeframe === chart.timeframe ? 'is-active' : ''} disabled={chartLoading} onClick={() => applyParameters({ ...parameters, timeframe })}>{timeframe}</button>)}
+        <div className="segmented-control workspace-surface-tabs" aria-label="Research workspace">
+          <button className={activeSurface === 'chart' ? 'is-active' : ''} onClick={() => setActiveSurface('chart')}><Activity size={13} /> Chart</button>
+          <button className={activeSurface === 'square9' ? 'is-active' : ''} onClick={() => { setActiveSurface('square9'); setFocusMode(false); setObjectsOpen(false) }}><Grid3X3 size={13} /> Square of Nine</button>
         </div>
-        <button className="date-control" onClick={() => setParametersOpen(true)}><CalendarDays size={15} /> {dateRangeLabel(parameters)}</button>
-        <div className="segmented-control mode-control"><button disabled title="Corrected TT generator pending">TT</button><button className="is-active">TN</button></div>
-        <button className="secondary-command astro-command" onClick={() => setParametersOpen(true)} title="Configure planets, aspects, harmonics, reference chart, and data source"><Activity size={15} /> Astro layers</button>
+        <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
+        {activeSurface === 'chart' && <>
+          <div className="segmented-control" aria-label="Timeframe">
+            {schema.options.timeframes.map((timeframe) => <button key={timeframe} className={timeframe === chart.timeframe ? 'is-active' : ''} disabled={chartLoading} onClick={() => applyParameters({ ...parameters, timeframe })}>{timeframe}</button>)}
+          </div>
+          <button className="date-control" onClick={() => setParametersOpen(true)}><CalendarDays size={15} /> {dateRangeLabel(parameters)}</button>
+          <div className="segmented-control mode-control"><button disabled title="Corrected TT generator pending">TT</button><button className="is-active">TN</button></div>
+          <button className="secondary-command astro-command" onClick={() => setParametersOpen(true)} title="Configure planets, aspects, harmonics, reference chart, and data source"><Activity size={15} /> Astro layers</button>
+        </>}
         <div className="topbar-spacer" />
         <RefreshStatusChip status={shadow?.refresh} busy={refreshBusy} onRefresh={runProspectiveRefresh} />
         <ConnectionBadge status={status} />
-        <button className="icon-button" onClick={() => void captureChart()} title="Download chart snapshot" aria-label="Download chart snapshot"><Camera size={18} /></button>
-        <button className="icon-button" onClick={() => setFocusMode((value) => !value)} title={focusMode ? 'Restore panels' : 'Focus chart'} aria-label={focusMode ? 'Restore panels' : 'Focus chart'}>
-          {focusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-        </button>
-        <button
-          className={`icon-button ${workspace.inspectorOpen ? 'is-active' : ''}`}
-          onClick={() => {
-            setFocusMode(false)
-            setWorkspace((current) => ({ ...current, inspectorOpen: !current.inspectorOpen }))
-          }}
-          title={workspace.inspectorOpen ? 'Hide aspect inspector' : 'Show aspect inspector'}
-          aria-label={workspace.inspectorOpen ? 'Hide aspect inspector' : 'Show aspect inspector'}
-        >
-          {workspace.inspectorOpen ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
-        </button>
+        {activeSurface === 'chart' && <>
+          <button className="icon-button" onClick={() => void captureChart()} title="Download chart snapshot" aria-label="Download chart snapshot"><Camera size={18} /></button>
+          <button className="icon-button" onClick={() => setFocusMode((value) => !value)} title={focusMode ? 'Restore panels' : 'Focus chart'} aria-label={focusMode ? 'Restore panels' : 'Focus chart'}>
+            {focusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
+          <button
+            className={`icon-button ${workspace.inspectorOpen ? 'is-active' : ''}`}
+            onClick={() => {
+              setFocusMode(false)
+              setWorkspace((current) => ({ ...current, inspectorOpen: !current.inspectorOpen }))
+            }}
+            title={workspace.inspectorOpen ? 'Hide aspect inspector' : 'Show aspect inspector'}
+            aria-label={workspace.inspectorOpen ? 'Hide aspect inspector' : 'Show aspect inspector'}
+          >
+            {workspace.inspectorOpen ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
+          </button>
+        </>}
       </header>
-      <section className="workspace-grid">
+      {activeSurface === 'chart' && <section className="workspace-grid">
         <ToolRail
           activeTool={activeTool}
           onToolChange={(tool) => {
@@ -498,7 +509,13 @@ export function MainWorkspace() {
             layoutKey={chartLayouts.activeLayout?.layoutId}
             viewState={chartLayouts.chartState}
             onDrawingsChange={chartLayouts.replaceDrawings}
-            onSelectDrawing={chartLayouts.setSelectedDrawingId}
+            onSelectDrawing={(drawingId) => {
+              chartLayouts.setSelectedDrawingId(drawingId)
+              if (drawingId) {
+                setActiveTool('select')
+                setObjectsOpen(true)
+              }
+            }}
             onViewStateChange={chartLayouts.updateChartState}
             onUndo={chartLayouts.undo}
           />
@@ -526,8 +543,36 @@ export function MainWorkspace() {
             onSaveAnnotation={saveSelectedAnnotation}
           />
         )}
-      </section>
-      <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>
+      </section>}
+      {activeSurface === 'square9' && (
+        <SquareOfNineWorkspace
+          symbol={chart.symbol}
+          timeframe={chart.timeframe}
+          latestPrice={chart.candles.at(-1)?.close ?? 1}
+          state={chartLayouts.chartState.squareOfNine}
+          onChange={(squareOfNine) => chartLayouts.updateChartState({ squareOfNine })}
+          layoutToolbar={(
+            <LayoutToolbar
+              layouts={chartLayouts.layouts}
+              activeLayout={chartLayouts.activeLayout}
+              saveStatus={chartLayouts.saveStatus}
+              error={chartLayouts.error}
+              showObjects={false}
+              onSelect={chartLayouts.switchLayout}
+              onSave={chartLayouts.saveNow}
+              onSaveAs={chartLayouts.saveAs}
+              onDelete={chartLayouts.removeLayout}
+              onExport={() => chartLayouts.activeLayout && downloadLayoutJson({
+                ...chartLayouts.activeLayout,
+                chartState: chartLayouts.chartState,
+                drawings: chartLayouts.drawings,
+              })}
+              onImport={chartLayouts.importLayout}
+            />
+          )}
+        />
+      )}
+      {activeSurface === 'chart' && <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>
         <div className="bottom-tabs">
           <button className={bottomTab === 'events' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('events')}><PanelBottom size={14} /> Events</button>
           <button className={bottomTab === 'shadow' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('shadow')}><ShieldCheck size={14} /> Shadow validation</button>
@@ -564,7 +609,7 @@ export function MainWorkspace() {
             {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
           </div>
         )}
-      </section>
+      </section>}
       <footer className="workstation-status-bar">
         <span className={status?.connected ? 'is-live' : 'is-waiting'}><i /> {status?.connected ? 'Market data live' : 'Market data waiting'}</span>
         <span>{chart.candles.length} bars</span>

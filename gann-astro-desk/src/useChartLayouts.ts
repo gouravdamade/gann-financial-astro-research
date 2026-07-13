@@ -13,6 +13,7 @@ import {
   validateImportedLayout,
   type ChartLayoutScope,
 } from './chartLayouts'
+import { migrateLegacySquareOfNineDrawing } from './squareOfNineWorkspace'
 import type {
   ChartDrawing,
   ChartLayout,
@@ -78,19 +79,31 @@ export function useChartLayouts({
   }, [initialChartState, onRestoreChartState])
 
   const installLayout = useCallback((layout: ChartLayout) => {
-    activeLayoutRef.current = layout
-    drawingsRef.current = layout.drawings
-    chartStateRef.current = layout.chartState
+    const legacySquare = layout.drawings.find((drawing) => drawing.type === 'square_of_nine')
+    const drawings = layout.drawings.filter((drawing) => drawing.type !== 'square_of_nine')
+    const chartState = legacySquare && !layout.chartState.squareOfNine
+      ? {
+          ...layout.chartState,
+          squareOfNine: migrateLegacySquareOfNineDrawing(
+            legacySquare,
+            legacySquare.anchors[0]?.price ?? 1,
+          ),
+        }
+      : layout.chartState
+    const installedLayout = { ...layout, chartState, drawings }
+    activeLayoutRef.current = installedLayout
+    drawingsRef.current = drawings
+    chartStateRef.current = chartState
     lastSavedSignatureRef.current = layoutSignature(layout.chartState, layout.drawings)
     hydratedRef.current = true
-    setActiveLayout(layout)
-    setDrawingState(layout.drawings)
-    setChartStateValue(layout.chartState)
+    setActiveLayout(installedLayout)
+    setDrawingState(drawings)
+    setChartStateValue(chartState)
     setUndoStack([])
     setSelectedDrawingId(null)
     setSaveStatus('saved')
     setError(null)
-    restoreRef.current?.(layout.chartState)
+    restoreRef.current?.(chartState)
   }, [])
 
   const loadScope = useCallback(async () => {
