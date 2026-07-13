@@ -10,6 +10,16 @@ from urllib.request import Request, urlopen
 
 from flask import Flask, Response, abort, jsonify, request, send_from_directory
 
+from chart_layouts import (
+    LayoutRevisionConflict,
+    delete_chart_layout,
+    delete_drawing_template,
+    get_chart_layout,
+    list_chart_layouts,
+    list_drawing_templates,
+    save_chart_layout,
+    save_drawing_template,
+)
 from generation import GenerationJobManager
 from local_jyotish import LocalJyotishService
 from mt5_gateway import Mt5Gateway
@@ -229,6 +239,65 @@ def save_parameter_profile() -> Any:
 @app.delete("/api/parameter-profiles/<profile_id>")
 def delete_parameter_profile(profile_id: str) -> Any:
     return jsonify({"ok": repository.delete_parameter_profile(profile_id)})
+
+
+@app.get("/api/chart-layouts")
+def chart_layouts() -> Any:
+    rows = list_chart_layouts(
+        repository,
+        workspace_kind=request.args.get("workspaceKind"),
+        symbol=request.args.get("symbol"),
+        timeframe=request.args.get("timeframe"),
+        family_key=request.args.get("familyKey"),
+    )
+    return jsonify({"ok": True, "layouts": rows})
+
+
+@app.get("/api/chart-layouts/<layout_id>")
+def chart_layout(layout_id: str) -> Any:
+    try:
+        return jsonify({"ok": True, "layout": get_chart_layout(repository, layout_id)})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+
+
+@app.post("/api/chart-layouts")
+def upsert_chart_layout() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        layout = save_chart_layout(repository, payload)
+        return jsonify({"ok": True, "layout": layout}), 201
+    except LayoutRevisionConflict as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 409
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.delete("/api/chart-layouts/<layout_id>")
+def remove_chart_layout(layout_id: str) -> Any:
+    deleted = delete_chart_layout(repository, layout_id)
+    return jsonify({"ok": deleted}), 200 if deleted else 404
+
+
+@app.get("/api/drawing-templates")
+def drawing_templates() -> Any:
+    return jsonify({"ok": True, "templates": list_drawing_templates(repository)})
+
+
+@app.post("/api/drawing-templates")
+def upsert_drawing_template() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        template = save_drawing_template(repository, payload)
+        return jsonify({"ok": True, "template": template}), 201
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.delete("/api/drawing-templates/<template_id>")
+def remove_drawing_template(template_id: str) -> Any:
+    deleted = delete_drawing_template(repository, template_id)
+    return jsonify({"ok": deleted}), 200 if deleted else 404
 
 
 @app.get("/api/generation/jobs")

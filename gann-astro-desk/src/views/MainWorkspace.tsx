@@ -33,15 +33,19 @@ import {
   saveWorkspacePreferences,
   scanShadowLedger,
 } from '../api'
+import { downloadLayoutJson } from '../chartLayouts'
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
+import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
 import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
+import { LayoutToolbar } from '../components/LayoutToolbar'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
 import { ParameterDrawer } from '../components/ParameterDrawer'
 import { RefreshStatusChip } from '../components/RefreshStatusChip'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
+import { useChartLayouts } from '../useChartLayouts'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -97,6 +101,7 @@ export function MainWorkspace() {
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
+  const [toolActivationNonce, setToolActivationNonce] = useState(0)
   const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'positions' | 'logs'>('events')
   const [error, setError] = useState('')
   const [parameterError, setParameterError] = useState('')
@@ -105,9 +110,41 @@ export function MainWorkspace() {
   const [workspace, setWorkspace] = useState<WorkspacePreferences>(initialWorkspacePreferences)
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false)
   const [focusMode, setFocusMode] = useState(false)
+  const [objectsOpen, setObjectsOpen] = useState(false)
   const [clock, setClock] = useState(() => new Date())
   const chartRef = useRef<MarketChartHandle>(null)
   const artifactActivationRef = useRef('')
+  const restoreLayoutState = useCallback((state: { showAspects: boolean; showSrLines: boolean }) => {
+    setWorkspace((current) => ({
+      ...current,
+      showAspects: state.showAspects,
+      showSrLines: state.showSrLines,
+    }))
+  }, [])
+  const chartLayouts = useChartLayouts({
+    enabled: Boolean(chart),
+    scope: {
+      workspaceKind: 'main',
+      symbol: chart?.symbol ?? parameters?.symbol ?? 'USDJPY',
+      timeframe: chart?.timeframe ?? parameters?.timeframe ?? 'H1',
+      familyKey: '',
+    },
+    initialChartState: {
+      showAspects: workspace.showAspects,
+      showSrLines: workspace.showSrLines,
+    },
+    onRestoreChartState: restoreLayoutState,
+  })
+  const activeChartLayout = chartLayouts.activeLayout
+  const updateLayoutChartState = chartLayouts.updateChartState
+
+  useEffect(() => {
+    if (!activeChartLayout) return
+    updateLayoutChartState({
+      showAspects: workspace.showAspects,
+      showSrLines: workspace.showSrLines,
+    })
+  }, [activeChartLayout, updateLayoutChartState, workspace.showAspects, workspace.showSrLines])
 
   useEffect(() => {
     let disposed = false
@@ -391,10 +428,13 @@ export function MainWorkspace() {
       <section className="workspace-grid">
         <ToolRail
           activeTool={activeTool}
-          onToolChange={setActiveTool}
-          onUndo={() => chartRef.current?.undoDrawing()}
+          onToolChange={(tool) => {
+            setActiveTool(tool)
+            setToolActivationNonce((value) => value + 1)
+          }}
+          onUndo={chartLayouts.undo}
           onReset={() => chartRef.current?.resetView()}
-          onClear={() => chartRef.current?.clearDrawings()}
+          onClear={chartLayouts.clearDrawings}
         />
         <section className="chart-workspace">
           <div className="chart-context-strip">
@@ -406,6 +446,24 @@ export function MainWorkspace() {
               {selected && <em style={{ color: selected.color }}>{selected.transitBody} to {selected.natalBody} {selected.aspectLabel}</em>}
             </div>
             <div className="chart-context-spacer" />
+            <LayoutToolbar
+              layouts={chartLayouts.layouts}
+              activeLayout={chartLayouts.activeLayout}
+              saveStatus={chartLayouts.saveStatus}
+              error={chartLayouts.error}
+              objectsOpen={objectsOpen}
+              onSelect={chartLayouts.switchLayout}
+              onSave={chartLayouts.saveNow}
+              onSaveAs={chartLayouts.saveAs}
+              onDelete={chartLayouts.removeLayout}
+              onToggleObjects={() => setObjectsOpen((value) => !value)}
+              onExport={() => chartLayouts.activeLayout && downloadLayoutJson({
+                ...chartLayouts.activeLayout,
+                chartState: chartLayouts.chartState,
+                drawings: chartLayouts.drawings,
+              })}
+              onImport={chartLayouts.importLayout}
+            />
             <button
               className={workspace.showAspects ? 'is-active' : ''}
               onClick={() => setWorkspace((current) => ({ ...current, showAspects: !current.showAspects }))}
@@ -428,13 +486,35 @@ export function MainWorkspace() {
             selectedAspectId={selected?.eventId}
             selectedAnnotationId={selectedAnnotation?.annotationId}
             activeTool={activeTool}
+            toolActivationNonce={toolActivationNonce}
             annotations={annotations}
             onSelectAspect={selectAspect}
             onSelectAnnotation={setSelectedAnnotation}
             onCreateAnnotation={createAnnotation}
             showAspects={workspace.showAspects}
             showSrLines={workspace.showSrLines}
+            drawings={chartLayouts.drawings}
+            selectedDrawingId={chartLayouts.selectedDrawingId}
+            layoutKey={chartLayouts.activeLayout?.layoutId}
+            viewState={chartLayouts.chartState}
+            onDrawingsChange={chartLayouts.replaceDrawings}
+            onSelectDrawing={chartLayouts.setSelectedDrawingId}
+            onViewStateChange={chartLayouts.updateChartState}
+            onUndo={chartLayouts.undo}
           />
+          {objectsOpen && (
+            <DrawingObjectPanel
+              drawings={chartLayouts.drawings}
+              templates={chartLayouts.templates}
+              selectedDrawingId={chartLayouts.selectedDrawingId}
+              onSelect={chartLayouts.setSelectedDrawingId}
+              onUpdate={chartLayouts.updateDrawing}
+              onDelete={chartLayouts.deleteDrawing}
+              onCreateTemplate={chartLayouts.createTemplate}
+              onRemoveTemplate={chartLayouts.removeTemplate}
+              onClose={() => setObjectsOpen(false)}
+            />
+          )}
         </section>
         {inspectorVisible && (
           <InspectorPanel

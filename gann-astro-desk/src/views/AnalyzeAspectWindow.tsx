@@ -25,11 +25,15 @@ import {
   saveAnnotation,
   saveReviewStatus,
 } from '../api'
+import { downloadLayoutJson } from '../chartLayouts'
 import { CodexPanel } from '../components/CodexPanel'
+import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
+import { LayoutToolbar } from '../components/LayoutToolbar'
 import { LocalJyotishPanel } from '../components/LocalJyotishPanel'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
 import { ToolRail } from '../components/ToolRail'
 import { canToggleReview, nextReviewStatus, reviewButtonLabel } from '../reviewProgress'
+import { useChartLayouts } from '../useChartLayouts'
 import type {
   AnnotationDraft,
   AspectFamily,
@@ -70,6 +74,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
   const [selectedEventId, setSelectedEventId] = useState(initialEventId ?? '')
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
+  const [toolActivationNonce, setToolActivationNonce] = useState(0)
   const [tab, setTab] = useState<InspectorTab>('evidence')
   const [filter, setFilter] = useState<OccurrenceFilter>('all')
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
@@ -78,7 +83,18 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
   const [decisionLoading, setDecisionLoading] = useState(false)
   const [decisionError, setDecisionError] = useState('')
   const [error, setError] = useState('')
+  const [objectsOpen, setObjectsOpen] = useState(false)
   const chartRef = useRef<MarketChartHandle>(null)
+  const chartLayouts = useChartLayouts({
+    enabled: Boolean(detail),
+    scope: {
+      workspaceKind: 'analysis',
+      symbol: detail?.chart.symbol ?? 'USDJPY',
+      timeframe: detail?.chart.timeframe ?? 'H1',
+      familyKey,
+    },
+    initialChartState: { showAspects: true, showSrLines: true },
+  })
 
   useEffect(() => {
     fetchFamily(familyKey, initialEventId ?? undefined)
@@ -248,13 +264,35 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               <span>{new Date(selectedOccurrence.start * 1000).toLocaleString()} | case {selectedOccurrence.caseId ?? 'not touched'}</span>
             </div>
             <button onClick={() => navigate(1)} disabled={selectedIndex >= family.summary.total - 1}>Next <ArrowRight size={15} /></button>
+            <LayoutToolbar
+              layouts={chartLayouts.layouts}
+              activeLayout={chartLayouts.activeLayout}
+              saveStatus={chartLayouts.saveStatus}
+              error={chartLayouts.error}
+              objectsOpen={objectsOpen}
+              onSelect={chartLayouts.switchLayout}
+              onSave={chartLayouts.saveNow}
+              onSaveAs={chartLayouts.saveAs}
+              onDelete={chartLayouts.removeLayout}
+              onToggleObjects={() => setObjectsOpen((value) => !value)}
+              onExport={() => chartLayouts.activeLayout && downloadLayoutJson({
+                ...chartLayouts.activeLayout,
+                chartState: chartLayouts.chartState,
+                drawings: chartLayouts.drawings,
+              })}
+              onImport={chartLayouts.importLayout}
+            />
           </div>
           <div className="analyze-chart-row">
             <ToolRail
               activeTool={activeTool}
-              onToolChange={setActiveTool}
+              onToolChange={(tool) => {
+                setActiveTool(tool)
+                setToolActivationNonce((value) => value + 1)
+              }}
+              onUndo={chartLayouts.undo}
               onReset={() => chartRef.current?.resetView()}
-              onClear={() => chartRef.current?.clearDrawings()}
+              onClear={chartLayouts.clearDrawings}
             />
             <MarketChart
               ref={chartRef}
@@ -262,6 +300,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               selectedAspectId={selectedEventId}
               selectedAnnotationId={selectedAnnotation?.annotationId}
               activeTool={activeTool}
+              toolActivationNonce={toolActivationNonce}
               annotations={detail.annotations}
               onSelectAspect={(aspect) => {
                 if (aspect.familyKey === family.familyKey) setSelectedEventId(aspect.eventId)
@@ -271,7 +310,30 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                 setTab('annotations')
               }}
               onCreateAnnotation={createAnnotation}
+              showAspects={chartLayouts.chartState.showAspects}
+              showSrLines={chartLayouts.chartState.showSrLines}
+              drawings={chartLayouts.drawings}
+              selectedDrawingId={chartLayouts.selectedDrawingId}
+              layoutKey={chartLayouts.activeLayout?.layoutId}
+              viewState={chartLayouts.chartState}
+              onDrawingsChange={chartLayouts.replaceDrawings}
+              onSelectDrawing={chartLayouts.setSelectedDrawingId}
+              onViewStateChange={chartLayouts.updateChartState}
+              onUndo={chartLayouts.undo}
             />
+            {objectsOpen && (
+              <DrawingObjectPanel
+                drawings={chartLayouts.drawings}
+                templates={chartLayouts.templates}
+                selectedDrawingId={chartLayouts.selectedDrawingId}
+                onSelect={chartLayouts.setSelectedDrawingId}
+                onUpdate={chartLayouts.updateDrawing}
+                onDelete={chartLayouts.deleteDrawing}
+                onCreateTemplate={chartLayouts.createTemplate}
+                onRemoveTemplate={chartLayouts.removeTemplate}
+                onClose={() => setObjectsOpen(false)}
+              />
+            )}
           </div>
           <footer className="family-summary-strip">
             <span><strong>{family.summary.bullish}</strong> bullish</span>

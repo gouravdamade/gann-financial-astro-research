@@ -1,10 +1,63 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 15:50 IST
+Last updated: 2026-07-13 20:33 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (Frozen Prospective Trial Manifest)
+## Latest Update - 2026-07-13 (Named Layouts + Square of Nine Native Release)
+
+- Promoted Gann Astro Desk `0.7.0` with durable named chart layouts. Layouts, drawings,
+  templates, and viewport/layer state now use versioned SQLite contracts:
+  `GANN_CHART_LAYOUT_V1`, `GANN_RESEARCH_CHART_DRAWING_V1`, and
+  `GANN_DRAWING_TEMPLATE_V1`.
+- Every drawing persists market coordinates (`timeUtc` + `price`) instead of screen
+  pixels. Transactional writes use optimistic revisions; stale clients receive HTTP 409
+  rather than overwriting newer work.
+- Added default restore, debounced autosave, explicit Save, Save As, layout switch/delete,
+  JSON export/import, undo, locked-object-safe clear, and reusable templates.
+- Added a chart object tree with select, rename, hide/show, lock/unlock, delete, color,
+  width, line style, and opacity controls. The same controller is used by the main chart
+  and family-scoped Analyze Aspect workspace; drawings persist while navigating family
+  repeatations.
+- Added a Square of Nine research tool with center value, increment, rings, angle offset,
+  clockwise/counterclockwise rotation, highlighted angles, cardinals/diagonals, labels,
+  and optional price/time projections. The square-root rotation formula is unit-tested
+  against the documented 45/90/180/360-degree increments.
+- All stored and imported drawings are forcibly research-only:
+  `consumedByLiveInference=false`, `consumedByShadowLedger=false`, and
+  `executionAllowed=false`. Manual geometry does not change Auto Suggest or the frozen
+  prospective policy.
+- Interactive QA covered restore, Save As independence, lock/hide, clear, undo, templates,
+  family recurrence navigation, and Square of Nine persistence. Packaged QA restored a
+  data-anchored Square after reload with zero browser warnings, then removed the QA object;
+  the live app database has one clean default USDJPY H1 layout with zero drawings.
+- Native release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - version `0.7.0`;
+  - SHA-256 `C6863F64D4ACC4E55961A22052553B9177E55B8A1CA1BF818CA851AE37F60D8F`;
+  - stable tree 1,658 files / 708,928,971 bytes including the release manifest;
+  - rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.6.1_20260713_190632`.
+- Packaged runtime verification:
+  - MT5 connected to MetaQuotes-Demo, read-only, `tradeAllowed=false`;
+  - local Jyotish ready on `qwen2.5:3b` with 4,565 chunks, analysis-only;
+  - refresh current through the 2026-07-13 14:00 UTC H1 close;
+  - frozen trial ID unchanged at
+    `2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16`;
+  - shadow chain valid: 7 abstain decisions, 0 settled, 7 pending, execution false.
+- Verification: frontend lint, 8 Vitest tests, 38 backend tests, 4 focused layout tests,
+  production build, focused Ruff, packaged hash/manifest/API/DOM QA, and
+  `git diff --check` passed.
+- Evidence is in `chart_layout_square9_release_20260713.md`.
+- Next recommended work:
+  1. collect and settle the frozen prospective cohort without changing policy;
+  2. externally certify Shadbala/Drik calculations;
+  3. validate Square of Nine and other manual Gann geometry out of sample before allowing
+     any inference use;
+  4. keep order placement disabled unless a separate execution project is explicitly
+     authorized and validated.
+
+## Previous Update - 2026-07-13 (Frozen Prospective Trial Manifest)
 
 - Promoted Gann Astro Desk to native release `0.6.1` and froze the existing
   prospective shadow sample under `GANN_FROZEN_PROSPECTIVE_SHADOW_TRIAL_V1`.

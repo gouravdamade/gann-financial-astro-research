@@ -17,6 +17,7 @@ from urllib.parse import unquote
 import numpy as np
 import pandas as pd
 
+from chart_layouts import ensure_chart_layout_schema
 from price_sources import (
     PROMOTED_PRICE_CONTRACT,
     file_sha256,
@@ -551,6 +552,7 @@ class AstroRepository:
                 (utc_now(),),
             )
             connection.commit()
+        ensure_chart_layout_schema(self)
 
     @staticmethod
     def _artifact_record(row: sqlite3.Row | dict[str, Any]) -> dict[str, Any]:

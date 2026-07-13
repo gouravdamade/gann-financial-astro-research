@@ -19,24 +19,29 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
 } from 'react'
+import {
+  createChartDrawing,
+  defaultSquareOfNineSettings,
+  squareOfNineLevels,
+} from '../chartLayouts'
 import type {
   AnnotationDraft,
   AspectWindow,
   Candle,
   ChartAnnotation,
+  ChartDrawing,
+  ChartDrawingAnchor,
+  ChartLayoutState,
   ChartPayload,
   ChartTool,
+  SquareOfNineSettings,
 } from '../types'
 
 type BandPosition = { event: AspectWindow; left: number; width: number }
 type Point = { time: number; price: number }
-type Drawing = Point & {
-  id: string
-  type: 'horizontal' | 'vertical' | 'gann'
-  endTime?: number
-  endPrice?: number
-}
+type PendingDrawing = { type: 'gann_fan' | 'square_of_nine'; point: Point }
 
 export type MarketChartHandle = {
   capture: () => Promise<string>
@@ -50,6 +55,7 @@ type MarketChartProps = {
   selectedAspectId?: string | null
   selectedAnnotationId?: string | null
   activeTool: ChartTool
+  toolActivationNonce?: number
   annotations?: ChartAnnotation[]
   onSelectAspect?: (aspect: AspectWindow) => void
   onSelectAnnotation?: (annotation: ChartAnnotation) => void
@@ -57,6 +63,14 @@ type MarketChartProps = {
   showAspects?: boolean
   showSrLines?: boolean
   compact?: boolean
+  drawings?: ChartDrawing[]
+  selectedDrawingId?: string | null
+  layoutKey?: string | null
+  viewState?: ChartLayoutState
+  onDrawingsChange?: (drawings: ChartDrawing[]) => void
+  onSelectDrawing?: (drawingId: string | null) => void
+  onViewStateChange?: (state: Partial<ChartLayoutState>) => void
+  onUndo?: () => void
 }
 
 function nearestTime(times: number[], value: number): number {
@@ -84,6 +98,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     selectedAspectId,
     selectedAnnotationId,
     activeTool,
+    toolActivationNonce = 0,
     annotations = [],
     onSelectAspect,
     onSelectAnnotation,
@@ -91,6 +106,14 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     showAspects = true,
     showSrLines = true,
     compact = false,
+    drawings = [],
+    selectedDrawingId,
+    layoutKey,
+    viewState,
+    onDrawingsChange,
+    onSelectDrawing,
+    onViewStateChange,
+    onUndo,
   },
   forwardedRef,
 ) {
@@ -103,18 +126,26 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const selectedAspectIdRef = useRef(selectedAspectId)
   const payloadRef = useRef(payload)
   const createAnnotationRef = useRef(onCreateAnnotation)
+  const drawingsRef = useRef(drawings)
+  const drawingsChangeRef = useRef(onDrawingsChange)
+  const viewStateChangeRef = useRef(onViewStateChange)
+  const undoRef = useRef(onUndo)
   const viewKeyRef = useRef('')
+  const appliedLayoutViewRef = useRef('')
+  const applyingViewRef = useRef(false)
+  const notifiedViewRef = useRef('')
   const [bands, setBands] = useState<BandPosition[]>([])
-  const [drawings, setDrawings] = useState<Drawing[]>([])
-  const [pendingGann, setPendingGann] = useState<Point | null>(null)
+  const [pendingDrawing, setPendingDrawing] = useState<PendingDrawing | null>(null)
+  const pendingDrawingRef = useRef<PendingDrawing | null>(null)
   const [legendCandle, setLegendCandle] = useState<Candle | null>(payload.candles[payload.candles.length - 1] ?? null)
   const [overlayRevision, setOverlayRevision] = useState(0)
   const candleTimes = useMemo(() => payload.candles.map((item) => item.time), [payload.candles])
 
   useEffect(() => {
     toolRef.current = activeTool
-    if (activeTool !== 'gann') setPendingGann(null)
-  }, [activeTool])
+    pendingDrawingRef.current = null
+    setPendingDrawing(null)
+  }, [activeTool, toolActivationNonce])
 
   useEffect(() => {
     selectedAspectIdRef.current = selectedAspectId
@@ -124,6 +155,14 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     payloadRef.current = payload
     createAnnotationRef.current = onCreateAnnotation
   }, [onCreateAnnotation, payload])
+
+  useEffect(() => {
+    drawingsRef.current = drawings
+    drawingsChangeRef.current = onDrawingsChange
+    viewStateChangeRef.current = onViewStateChange
+    undoRef.current = onUndo
+    setOverlayRevision((value) => value + 1)
+  }, [drawings, onDrawingsChange, onUndo, onViewStateChange])
 
   useImperativeHandle(forwardedRef, () => ({
     capture: async () => {
@@ -139,17 +178,19 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       setOverlayRevision((value) => value + 1)
     },
     clearDrawings: () => {
-      setDrawings([])
-      setPendingGann(null)
+      drawingsChangeRef.current?.([])
+      pendingDrawingRef.current = null
+      setPendingDrawing(null)
     },
     undoDrawing: () => {
-      if (pendingGann) {
-        setPendingGann(null)
+      if (pendingDrawingRef.current) {
+        pendingDrawingRef.current = null
+        setPendingDrawing(null)
         return
       }
-      setDrawings((items) => items.slice(0, -1))
+      undoRef.current?.()
     },
-  }))
+  }), [])
 
   useEffect(() => {
     if (!hostRef.current) return
@@ -199,7 +240,20 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     chartRef.current = chart
     seriesRef.current = series
 
-    const refreshOverlays = () => setOverlayRevision((value) => value + 1)
+    const refreshOverlays = () => {
+      setOverlayRevision((value) => value + 1)
+      if (applyingViewRef.current) return
+      const visible = chart.timeScale().getVisibleRange()
+      if (!visible || typeof visible.from !== 'number' || typeof visible.to !== 'number') return
+      const next = {
+        visibleStartUtc: new Date(Number(visible.from) * 1000).toISOString(),
+        visibleEndUtc: new Date(Number(visible.to) * 1000).toISOString(),
+      }
+      const signature = `${next.visibleStartUtc}:${next.visibleEndUtc}`
+      if (signature === notifiedViewRef.current) return
+      notifiedViewRef.current = signature
+      viewStateChangeRef.current?.(next)
+    }
     chart.timeScale().subscribeVisibleLogicalRangeChange(refreshOverlays)
     const resizeObserver = new ResizeObserver(refreshOverlays)
     resizeObserver.observe(hostRef.current)
@@ -212,24 +266,44 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       const point = { time, price: Number(priceValue) }
       const tool = toolRef.current
       if (tool === 'horizontal') {
-        setDrawings((items) => [...items, { ...point, id: crypto.randomUUID(), type: 'horizontal' }])
+        const drawing = createChartDrawing(
+          'horizontal_line',
+          [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
+          drawingsRef.current.length,
+        )
+        drawingsChangeRef.current?.([...drawingsRef.current, drawing])
       } else if (tool === 'vertical') {
-        setDrawings((items) => [...items, { ...point, id: crypto.randomUUID(), type: 'vertical' }])
-      } else if (tool === 'gann') {
-        setPendingGann((first) => {
-          if (!first) return point
-          setDrawings((items) => [
-            ...items,
-            {
-              ...first,
-              id: crypto.randomUUID(),
-              type: 'gann',
-              endTime: point.time,
-              endPrice: point.price,
-            },
-          ])
-          return null
-        })
+        const drawing = createChartDrawing(
+          'vertical_line',
+          [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
+          drawingsRef.current.length,
+        )
+        drawingsChangeRef.current?.([...drawingsRef.current, drawing])
+      } else if (tool === 'gann' || tool === 'square9') {
+        const drawingType = tool === 'gann' ? 'gann_fan' : 'square_of_nine'
+        const pending = pendingDrawingRef.current
+        if (!pending || pending.type !== drawingType) {
+          const nextPending: PendingDrawing = { type: drawingType, point }
+          pendingDrawingRef.current = nextPending
+          setPendingDrawing(nextPending)
+          return
+        }
+        const sameTime = pending.point.time === point.time
+        const priceTolerance = Math.max(Math.abs(pending.point.price) * 1e-10, 1e-8)
+        const samePrice = Math.abs(pending.point.price - point.price) <= priceTolerance
+        if (sameTime || samePrice) return
+        const anchors: ChartDrawingAnchor[] = [pending.point, point].map((anchor) => ({
+          timeUtc: new Date(anchor.time * 1000).toISOString(),
+          price: anchor.price,
+        }))
+        const drawing = createChartDrawing(
+          drawingType,
+          anchors,
+          drawingsRef.current.length,
+        )
+        pendingDrawingRef.current = null
+        setPendingDrawing(null)
+        drawingsChangeRef.current?.([...drawingsRef.current, drawing])
       } else if (tool === 'annotation' && createAnnotationRef.current) {
         const currentPayload = payloadRef.current
         const selected = currentPayload.aspects.find((item) => item.eventId === selectedAspectIdRef.current)
@@ -302,13 +376,28 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const viewKey = payload.dataSource === 'mt5_live'
       ? `${payload.symbol}:${payload.timeframe}:live`
       : `${payload.symbol}:${payload.timeframe}:${payload.start}:${payload.end}`
-    if (viewKeyRef.current !== viewKey) {
-      chart.timeScale().fitContent()
-      viewKeyRef.current = viewKey
+    const layoutViewKey = `${viewKey}:${layoutKey ?? 'unmanaged'}`
+    if (appliedLayoutViewRef.current !== layoutViewKey) {
+      applyingViewRef.current = true
+      const visibleStart = viewState?.visibleStartUtc
+      const visibleEnd = viewState?.visibleEndUtc
+      if (visibleStart && visibleEnd) {
+        chart.timeScale().setVisibleRange({
+          from: Math.floor(new Date(visibleStart).getTime() / 1000) as UTCTimestamp,
+          to: Math.floor(new Date(visibleEnd).getTime() / 1000) as UTCTimestamp,
+        })
+      } else {
+        chart.timeScale().fitContent()
+      }
+      appliedLayoutViewRef.current = layoutViewKey
+      window.setTimeout(() => {
+        applyingViewRef.current = false
+      }, 0)
     }
+    viewKeyRef.current = viewKey
     setOverlayRevision((value) => value + 1)
     setLegendCandle(payload.candles[payload.candles.length - 1] ?? null)
-  }, [payload, showSrLines])
+  }, [layoutKey, payload, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -339,14 +428,120 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     return { change, percent, positive: change >= 0 }
   }, [legendCandle, payload.candles])
 
-  const toScreen = (point: Point) => {
+  const toScreen = (point: Point | ChartDrawingAnchor) => {
     const chart = chartRef.current
     const series = seriesRef.current
     if (!chart || !series) return null
-    const time = nearestTime(candleTimes, point.time)
+    const pointTime = 'timeUtc' in point
+      ? Math.floor(new Date(point.timeUtc).getTime() / 1000)
+      : point.time
+    const time = nearestTime(candleTimes, pointTime)
     const x = chart.timeScale().timeToCoordinate(time as UTCTimestamp)
     const y = series.priceToCoordinate(point.price)
     return x == null || y == null ? null : { x, y }
+  }
+
+  const renderDrawing = (drawing: ChartDrawing) => {
+    if (!drawing.visible) return null
+    const start = drawing.anchors[0] ? toScreen(drawing.anchors[0]) : null
+    if (!start) return null
+    const selected = drawing.drawingId === selectedDrawingId
+    const dash = drawing.style.lineStyle === 'dashed'
+      ? '6 4'
+      : drawing.style.lineStyle === 'dotted'
+        ? '2 4'
+        : undefined
+    const strokeStyle = {
+      stroke: drawing.style.color,
+      strokeWidth: drawing.style.lineWidth,
+      strokeDasharray: dash,
+      opacity: drawing.style.opacity,
+    }
+    const selectDrawing = (event: ReactMouseEvent<SVGGElement>) => {
+      if (activeTool !== 'select') return
+      event.stopPropagation()
+      onSelectDrawing?.(drawing.drawingId)
+    }
+    if (drawing.type === 'horizontal_line') {
+      return (
+        <g key={drawing.drawingId} className={`chart-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
+          <line x1={0} y1={start.y} x2="100%" y2={start.y} style={strokeStyle} />
+          <line x1={0} y1={start.y} x2="100%" y2={start.y} className="drawing-hit-target" />
+        </g>
+      )
+    }
+    if (drawing.type === 'vertical_line') {
+      return (
+        <g key={drawing.drawingId} className={`chart-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
+          <line x1={start.x} y1={0} x2={start.x} y2="100%" style={strokeStyle} />
+          <line x1={start.x} y1={0} x2={start.x} y2="100%" className="drawing-hit-target" />
+        </g>
+      )
+    }
+    const end = drawing.anchors[1] ? toScreen(drawing.anchors[1]) : null
+    if (!end) return null
+    if (drawing.type === 'gann_fan') {
+      const rawRatios = Array.isArray(drawing.settings.ratios)
+        ? drawing.settings.ratios.filter((value): value is number => typeof value === 'number')
+        : [0.25, 0.5, 1, 2, 4]
+      const ratios = rawRatios.length ? rawRatios : [1]
+      const dx = end.x - start.x
+      const scale = dx === 0 ? 1 : Math.max(1, (rootRef.current?.clientWidth ?? end.x) / Math.abs(dx))
+      return (
+        <g key={drawing.drawingId} className={`chart-drawing gann-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
+          {ratios.map((ratio) => {
+            const targetY = start.y + (end.y - start.y) * ratio * scale
+            return <line key={ratio} x1={start.x} y1={start.y} x2={start.x + dx * scale} y2={targetY} style={{ ...strokeStyle, strokeWidth: ratio === 1 ? drawing.style.lineWidth + 1 : drawing.style.lineWidth }} />
+          })}
+          <line x1={start.x} y1={start.y} x2={start.x + dx * scale} y2={start.y + (end.y - start.y) * scale} className="drawing-hit-target" />
+          <circle cx={start.x} cy={start.y} r={selected ? 5 : 3} fill={drawing.style.color} opacity={drawing.style.opacity} />
+        </g>
+      )
+    }
+
+    const defaults = defaultSquareOfNineSettings(drawing.anchors[0].price)
+    const settings = { ...defaults, ...drawing.settings } as SquareOfNineSettings
+    const rings = Math.max(1, Math.min(12, Math.round(settings.rings)))
+    const radiusX = Math.max(28, Math.abs(end.x - start.x))
+    const radiusY = Math.max(28, Math.abs(end.y - start.y))
+    const spokeAngles = [0, 45, 90, 135, 180, 225, 270, 315].filter((angle) => (
+      (angle % 90 === 0 && settings.showCardinals)
+      || (angle % 90 !== 0 && settings.showDiagonals)
+    ))
+    const angleSign = settings.angleRotation === 'clockwise' ? 1 : -1
+    let levels = [] as ReturnType<typeof squareOfNineLevels>
+    try {
+      levels = squareOfNineLevels(settings)
+    } catch {
+      levels = []
+    }
+    const outerLevels = levels.filter((level) => level.ring === rings)
+    return (
+      <g key={drawing.drawingId} className={`chart-drawing square9-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
+        {Array.from({ length: rings }, (_, index) => {
+          const factor = (index + 1) / rings
+          return <rect key={index} x={start.x - radiusX * factor} y={start.y - radiusY * factor} width={radiusX * factor * 2} height={radiusY * factor * 2} fill="none" style={{ ...strokeStyle, opacity: drawing.style.opacity * (0.45 + factor * 0.4) }} />
+        })}
+        {spokeAngles.map((angle) => {
+          const radians = ((angleSign * angle + settings.angleOffsetDeg) * Math.PI) / 180
+          return <line key={angle} x1={start.x} y1={start.y} x2={start.x + Math.cos(radians) * radiusX} y2={start.y + Math.sin(radians) * radiusY} style={{ ...strokeStyle, opacity: drawing.style.opacity * 0.72 }} />
+        })}
+        {settings.showTimeProjections && Array.from({ length: rings }, (_, index) => {
+          const offset = (radiusX * (index + 1)) / rings
+          return <g key={index}><line x1={start.x + offset} y1={0} x2={start.x + offset} y2="100%" style={{ ...strokeStyle, opacity: 0.2 }} /><line x1={start.x - offset} y1={0} x2={start.x - offset} y2="100%" style={{ ...strokeStyle, opacity: 0.2 }} /></g>
+        })}
+        {settings.showPriceProjections && levels.map((level) => {
+          const y = seriesRef.current?.priceToCoordinate(level.value)
+          return y == null ? null : <line key={`${level.ring}-${level.angleDeg}`} x1={0} y1={y} x2="100%" y2={y} style={{ ...strokeStyle, opacity: 0.16 }} />
+        })}
+        {settings.showLabels && outerLevels.map((level) => {
+          const radians = ((angleSign * level.angleDeg + settings.angleOffsetDeg) * Math.PI) / 180
+          return <text key={level.angleDeg} x={start.x + Math.cos(radians) * (radiusX + 9)} y={start.y + Math.sin(radians) * (radiusY + 9)} className="square9-label" fill={drawing.style.color}>{level.value.toFixed(3)}</text>
+        })}
+        <rect x={start.x - radiusX} y={start.y - radiusY} width={radiusX * 2} height={radiusY * 2} className="drawing-hit-target square-hit-target" />
+        <circle cx={start.x} cy={start.y} r={selected ? 5 : 3} fill={drawing.style.color} />
+      </g>
+    )
   }
 
   return (
@@ -399,37 +594,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             style={{ left, width, borderColor: event.color, backgroundColor: `${event.color}12` }}
           />
         ))}
-      <svg className="drawing-layer" aria-hidden="true">
-        {drawings.flatMap((drawing) => {
-          const start = toScreen(drawing)
-          if (!start) return []
-          if (drawing.type === 'horizontal') {
-            return [<line key={drawing.id} x1={0} y1={start.y} x2="100%" y2={start.y} className="manual-line horizontal" />]
-          }
-          if (drawing.type === 'vertical') {
-            return [<line key={drawing.id} x1={start.x} y1={0} x2={start.x} y2="100%" className="manual-line vertical" />]
-          }
-          const end = drawing.endTime && drawing.endPrice != null
-            ? toScreen({ time: drawing.endTime, price: drawing.endPrice })
-            : null
-          if (!end) return []
-          const ratios = [0.25, 0.5, 1, 2, 4]
-          return ratios.map((ratio) => {
-            const dx = end.x - start.x
-            const dy = (end.y - start.y) * ratio
-            const scale = dx === 0 ? 1 : Math.max(1, (rootRef.current?.clientWidth ?? end.x) / Math.abs(dx))
-            return (
-              <line
-                key={`${drawing.id}-${ratio}`}
-                x1={start.x}
-                y1={start.y}
-                x2={start.x + dx * scale}
-                y2={start.y + dy * scale}
-                className={ratio === 1 ? 'gann-line primary' : 'gann-line'}
-              />
-            )
-          })
-        })}
+      <svg className="drawing-layer" aria-label="Persisted research drawings">
+        {drawings.slice().sort((a, b) => a.zIndex - b.zIndex).map(renderDrawing)}
       </svg>
       <div className="annotation-layer" aria-label="Chart annotations">
         {annotations.map((annotation, index) => {
@@ -452,7 +618,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           )
         })}
       </div>
-      {activeTool === 'gann' && pendingGann && <div className="drawing-status">Second anchor pending</div>}
+      {pendingDrawing && <div className="drawing-status">Place the second time/price anchor</div>}
     </div>
   )
 })

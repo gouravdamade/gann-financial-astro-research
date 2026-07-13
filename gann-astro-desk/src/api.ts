@@ -2,10 +2,15 @@ import type {
   AnnotationDraft,
   AspectFamily,
   ChartAnnotation,
+  ChartDrawing,
+  ChartLayout,
+  ChartLayoutState,
   ChartParameters,
   ChartPayload,
+  ChartWorkspaceKind,
   DataArtifact,
   DecisionPacket,
+  DrawingTemplate,
   EventDetail,
   GenerationJob,
   LocalJyotishDraft,
@@ -114,6 +119,81 @@ export async function deleteParameterProfile(profileId: string): Promise<void> {
   await request<Record<string, never>>(`/api/parameter-profiles/${encodeURIComponent(profileId)}`, {
     method: 'DELETE',
   })
+}
+
+export async function fetchChartLayouts(scope: {
+  workspaceKind: ChartWorkspaceKind
+  symbol: string
+  timeframe: string
+  familyKey?: string
+}): Promise<ChartLayout[]> {
+  const query = new URLSearchParams({
+    workspaceKind: scope.workspaceKind,
+    symbol: scope.symbol,
+    timeframe: scope.timeframe,
+  })
+  if (scope.familyKey != null) query.set('familyKey', scope.familyKey)
+  const payload = await request<{ layouts: ChartLayout[] }>(`/api/chart-layouts?${query}`)
+  return payload.layouts
+}
+
+export async function fetchChartLayout(layoutId: string): Promise<ChartLayout> {
+  const payload = await request<{ layout: ChartLayout }>(
+    `/api/chart-layouts/${encodeURIComponent(layoutId)}`,
+  )
+  return payload.layout
+}
+
+export async function saveChartLayout(input: {
+  layoutId?: string
+  expectedRevision?: number
+  name: string
+  workspaceKind: ChartWorkspaceKind
+  symbol: string
+  timeframe: string
+  familyKey: string
+  isDefault?: boolean
+  autosave: boolean
+  chartState: ChartLayoutState
+  drawings: ChartDrawing[]
+}): Promise<ChartLayout> {
+  const payload = await request<{ layout: ChartLayout }>('/api/chart-layouts', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.layout
+}
+
+export async function deleteChartLayout(layoutId: string): Promise<void> {
+  await request<Record<string, never>>(`/api/chart-layouts/${encodeURIComponent(layoutId)}`, {
+    method: 'DELETE',
+  })
+}
+
+export async function fetchDrawingTemplates(): Promise<DrawingTemplate[]> {
+  const payload = await request<{ templates: DrawingTemplate[] }>('/api/drawing-templates')
+  return payload.templates
+}
+
+export async function saveDrawingTemplate(input: {
+  templateId?: string
+  name: string
+  drawingType: ChartDrawing['type']
+  style: ChartDrawing['style']
+  settings: Record<string, unknown>
+}): Promise<DrawingTemplate> {
+  const payload = await request<{ template: DrawingTemplate }>('/api/drawing-templates', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.template
+}
+
+export async function deleteDrawingTemplate(templateId: string): Promise<void> {
+  await request<Record<string, never>>(
+    `/api/drawing-templates/${encodeURIComponent(templateId)}`,
+    { method: 'DELETE' },
+  )
 }
 
 export async function fetchGenerationJobs(): Promise<GenerationJob[]> {

@@ -5,6 +5,7 @@ export type ChartTool =
   | 'horizontal'
   | 'vertical'
   | 'gann'
+  | 'square9'
 
 export type ChartDataSource = 'research' | 'live'
 
@@ -13,6 +14,102 @@ export type WorkspacePreferences = {
   bottomOpen: boolean
   showAspects: boolean
   showSrLines: boolean
+}
+
+export type ChartWorkspaceKind = 'main' | 'analysis'
+
+export type ChartDrawingType =
+  | 'horizontal_line'
+  | 'vertical_line'
+  | 'gann_fan'
+  | 'square_of_nine'
+
+export type ChartDrawingAnchor = {
+  timeUtc: string
+  price: number
+}
+
+export type ChartDrawingStyle = {
+  color: string
+  lineWidth: number
+  lineStyle: 'solid' | 'dashed' | 'dotted'
+  opacity: number
+}
+
+export type SquareOfNineSettings = {
+  centerValue: number
+  increment: number
+  rings: number
+  numberRotation: 'clockwise' | 'counterclockwise'
+  angleRotation: 'clockwise' | 'counterclockwise'
+  angleOffsetDeg: number
+  highlightedAngles: number[]
+  showCardinals: boolean
+  showDiagonals: boolean
+  showLabels: boolean
+  showPriceProjections: boolean
+  showTimeProjections: boolean
+}
+
+export type GannFanSettings = {
+  ratios: number[]
+}
+
+export type ChartDrawing = {
+  contract: 'GANN_RESEARCH_CHART_DRAWING_V1'
+  schemaVersion: 1
+  drawingId: string
+  type: ChartDrawingType
+  name: string
+  visible: boolean
+  locked: boolean
+  zIndex: number
+  anchors: ChartDrawingAnchor[]
+  style: ChartDrawingStyle
+  settings: Partial<SquareOfNineSettings & GannFanSettings> & Record<string, unknown>
+  guardrails: {
+    researchOnly: true
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+}
+
+export type ChartLayoutState = {
+  visibleStartUtc?: string
+  visibleEndUtc?: string
+  showAspects: boolean
+  showSrLines: boolean
+}
+
+export type ChartLayout = {
+  contract: 'GANN_CHART_LAYOUT_V1'
+  schemaVersion: 1
+  layoutId: string
+  name: string
+  workspaceKind: ChartWorkspaceKind
+  symbol: string
+  timeframe: string
+  familyKey: string
+  revision: number
+  isDefault: boolean
+  autosave: boolean
+  chartState: ChartLayoutState
+  drawings: ChartDrawing[]
+  createdAtUtc: string
+  updatedAtUtc: string
+}
+
+export type DrawingTemplate = {
+  contract: 'GANN_DRAWING_TEMPLATE_V1'
+  schemaVersion: 1
+  templateId: string
+  name: string
+  drawingType: ChartDrawingType
+  style: ChartDrawingStyle
+  settings: Record<string, unknown>
+  createdAtUtc: string
+  updatedAtUtc: string
 }
 
 export type ReferenceParameters = {

@@ -59,6 +59,7 @@ hiddenimports = sorted(
         + [
             "server",
             "repository",
+            "chart_layouts",
             "generation",
             "mt5_gateway",
             "shadow_ledger",

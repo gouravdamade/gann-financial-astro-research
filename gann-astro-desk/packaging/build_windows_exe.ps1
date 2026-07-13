@@ -68,13 +68,15 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 $releaseFiles = Get-ChildItem -LiteralPath $releaseFolder -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.6.1"
+    version = "0.7.0"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash
     file_count = $releaseFiles.Count
     total_bytes = ($releaseFiles | Measure-Object -Property Length -Sum).Sum
     astronomy_contract = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2"
+    chart_layout_contract = "GANN_CHART_LAYOUT_V1"
+    drawing_contract = "GANN_RESEARCH_CHART_DRAWING_V1"
     mt5_execution_mode = "read_only_market_data"
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $releaseFolder "release.manifest.json") -Encoding utf8
