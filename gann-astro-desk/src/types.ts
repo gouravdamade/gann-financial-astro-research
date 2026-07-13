@@ -8,6 +8,13 @@ export type ChartTool =
 
 export type ChartDataSource = 'research' | 'live'
 
+export type WorkspacePreferences = {
+  inspectorOpen: boolean
+  bottomOpen: boolean
+  showAspects: boolean
+  showSrLines: boolean
+}
+
 export type ReferenceParameters = {
   label: string
   date: string

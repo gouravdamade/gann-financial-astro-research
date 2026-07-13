@@ -1,10 +1,65 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 04:29 IST
+Last updated: 2026-07-13 12:49 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (Automatic Prospective Refresh + Local Jyotish)
+## Latest Update - 2026-07-13 (TradingView-Style Terminal + First Live Refresh Audit)
+
+- Promoted Gann Astro Desk to native release `0.6.0` with a chart-first graphite market
+  terminal: compact command bar, fixed OHLC readout, TradingView-style drawing rail with
+  undo, chart focus mode, collapsible aspect inspector and activity dock, layer controls,
+  live read-only status bar, chart PNG command, and responsive desktop behavior.
+- Added an always-visible `Auto refresh` control. It displays the closed-bar supervisor
+  state and can request the existing guarded check immediately; it cannot bypass freshness,
+  close finalization, immutable snapshot promotion, corrected-artifact verification, or the
+  execution lock. A manual packaged-UI check created no duplicate; later runs began only
+  when the 06:00 and 07:00 UTC bars became eligible.
+- Panel and layer preferences now persist through `schema_meta.workspace_preferences_v1`
+  instead of depending on a random private loopback origin. `GET/PUT
+  /api/workspace-preferences` supports partial updates, accepts only JSON booleans, and
+  explicitly closes its SQLite handles.
+- Audited the first seven real automatic H1 cycles, closed at 01:00 through 07:00 UTC on
+  2026-07-13. All completed successfully and activated distinct corrected artifacts. The
+  latest active artifact is `tn_53277139e4354e54bbff9a28e5b2b12c` with 39 events and 17
+  touches through the 07:00 UTC closed bar.
+- A 98-check lineage audit passed across snapshot manifest/parquet hashes, promoted-source
+  identity, run/artifact cutoff identity, artifact price provenance, event/touch hashes and
+  counts, outcome-label exclusion, refresh run identity, and execution lock. Evidence is in
+  `prospective_refresh_live_audit_20260713.md`.
+- The audit found one recordkeeping-only issue: four completed run rows retained inherited
+  prior-artifact provenance even though their generated artifacts were correct. The
+  supervisor now writes current source provenance before queueing, replaces completed run
+  parameters with verified artifact parameters, and performs a guarded startup repair only
+  when artifact ID, refresh run ID, source close, and price-source ID all agree. All five
+  existing rows are now reconciled, and later runs were written correctly at completion.
+- Packaged runtime checks:
+  - MT5 connected; `tradeAllowed=false`;
+  - refresh `up_to_date` at `2026-07-13T07:00:00+00:00`;
+  - append-only shadow chain valid with 7 decisions and outcomes still pending;
+  - local Jyotish ready on `qwen2.5:3b`;
+  - layout preferences persisted and were restored to inspector/dock/aspects/SR visible;
+  - packaged focus, restore, aspect, SR, and Auto Refresh controls passed browser checks.
+- Native release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - version `0.6.0`;
+  - SHA-256 `59AAC283334B5045DF7909A4CE21DE20D09864F7B71ACCCC32D98A8299921D12`;
+  - 1,657 files / 708,767,866 bytes;
+  - application remains analysis/read-only and is running for continued prospective capture.
+- Verification:
+  - full Python suite: 107 passed;
+  - frontend Vitest: 5 passed;
+  - focused refresh, shadow, and preference API tests: 12 passed;
+  - Ruff, Oxlint, TypeScript/Vite production build, PyInstaller packaging, release hash,
+    packaged APIs, source visual QA, packaged DOM/control QA, and `git diff --check`: passed.
+- Next work:
+  1. collect the frozen prospective shadow sample without changing policy thresholds;
+  2. settle outcomes only after their real 72-hour horizon and continue chain audits;
+  3. externally certify Shadbala/Drik doctrine calculations;
+  4. keep all order placement disabled unless a later validated execution project is
+     separately and explicitly authorized.
+
+## Previous Update - 2026-07-13 (Automatic Prospective Refresh + Local Jyotish)
 
 - Added `gann-astro-desk/backend/prospective_refresh.py` with contract
   `GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1`. The background supervisor polls MT5, accepts only

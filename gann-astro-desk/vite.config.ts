@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const apiTarget = process.env.GANN_ASTRO_API_TARGET || 'http://127.0.0.1:8788'
+
 export default defineConfig({
   plugins: [react()],
   clearScreen: false,
@@ -10,7 +12,7 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8788',
+        target: apiTarget,
         changeOrigin: false,
       },
       '/codex-api': {

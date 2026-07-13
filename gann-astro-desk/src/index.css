@@ -1,25 +1,25 @@
 :root {
   font-family: Inter, "Segoe UI", Arial, sans-serif;
-  color: #d8e2ed;
-  background: #0b1018;
+  color: #d6d9df;
+  background: #0f1115;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --bg: #0b1018;
-  --surface-1: #101722;
-  --surface-2: #151f2c;
-  --surface-3: #1a2635;
-  --border: #2a394b;
-  --border-strong: #3c5067;
-  --text: #d8e2ed;
-  --text-soft: #a7b5c5;
-  --text-muted: #718198;
-  --cyan: #4bb7e5;
-  --teal: #3cc7a0;
-  --coral: #f07178;
-  --amber: #e0ad45;
-  --magenta: #cf77a1;
-  --focus: #5ac4ee;
+  --bg: #0f1115;
+  --surface-1: #13161b;
+  --surface-2: #191d23;
+  --surface-3: #20252d;
+  --border: #2a2e36;
+  --border-strong: #40464f;
+  --text: #d6d9df;
+  --text-soft: #a8adb7;
+  --text-muted: #747b87;
+  --cyan: #4aa3d8;
+  --teal: #36b89a;
+  --coral: #e06c75;
+  --amber: #d7a84d;
+  --magenta: #c67da6;
+  --focus: #5caee0;
   letter-spacing: 0;
 }
 
@@ -62,12 +62,12 @@ textarea:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0c131d;
+  background: #111419;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #33465b;
-  border: 2px solid #0c131d;
+  background: #3b414b;
+  border: 2px solid #111419;
   border-radius: 6px;
 }
 

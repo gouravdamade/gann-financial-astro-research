@@ -23,6 +23,7 @@ import {
 import type {
   AnnotationDraft,
   AspectWindow,
+  Candle,
   ChartAnnotation,
   ChartPayload,
   ChartTool,
@@ -41,6 +42,7 @@ export type MarketChartHandle = {
   capture: () => Promise<string>
   resetView: () => void
   clearDrawings: () => void
+  undoDrawing: () => void
 }
 
 type MarketChartProps = {
@@ -52,6 +54,8 @@ type MarketChartProps = {
   onSelectAspect?: (aspect: AspectWindow) => void
   onSelectAnnotation?: (annotation: ChartAnnotation) => void
   onCreateAnnotation?: (draft: AnnotationDraft) => void
+  showAspects?: boolean
+  showSrLines?: boolean
   compact?: boolean
 }
 
@@ -84,6 +88,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     onSelectAspect,
     onSelectAnnotation,
     onCreateAnnotation,
+    showAspects = true,
+    showSrLines = true,
     compact = false,
   },
   forwardedRef,
@@ -101,7 +107,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const [bands, setBands] = useState<BandPosition[]>([])
   const [drawings, setDrawings] = useState<Drawing[]>([])
   const [pendingGann, setPendingGann] = useState<Point | null>(null)
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null)
+  const [legendCandle, setLegendCandle] = useState<Candle | null>(payload.candles[payload.candles.length - 1] ?? null)
   const [overlayRevision, setOverlayRevision] = useState(0)
   const candleTimes = useMemo(() => payload.candles.map((item) => item.time), [payload.candles])
 
@@ -136,6 +142,13 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       setDrawings([])
       setPendingGann(null)
     },
+    undoDrawing: () => {
+      if (pendingGann) {
+        setPendingGann(null)
+        return
+      }
+      setDrawings((items) => items.slice(0, -1))
+    },
   }))
 
   useEffect(() => {
@@ -143,15 +156,15 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const chart = createChart(hostRef.current, {
       autoSize: true,
       layout: {
-        background: { type: ColorType.Solid, color: '#101722' },
-        textColor: '#aebdce',
+        background: { type: ColorType.Solid, color: '#0f1621' },
+        textColor: '#94a3b5',
         attributionLogo: false,
         fontFamily: 'Inter, Segoe UI, sans-serif',
         fontSize: 12,
       },
       grid: {
-        vertLines: { color: '#202c3a', style: LineStyle.Solid },
-        horzLines: { color: '#202c3a', style: LineStyle.Solid },
+        vertLines: { color: '#1c2734', style: LineStyle.Solid },
+        horzLines: { color: '#1c2734', style: LineStyle.Solid },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -159,11 +172,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         horzLine: { color: '#73859a', labelBackgroundColor: '#33465a', width: 1 },
       },
       rightPriceScale: {
-        borderColor: '#344357',
-        scaleMargins: { top: 0.12, bottom: 0.08 },
+        borderColor: '#2a3747',
+        scaleMargins: { top: 0.16, bottom: 0.08 },
       },
       timeScale: {
-        borderColor: '#344357',
+        borderColor: '#2a3747',
         timeVisible: true,
         secondsVisible: false,
         rightOffset: 5,
@@ -238,15 +251,18 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     chart.subscribeClick(clickHandler)
     chart.subscribeCrosshairMove((params) => {
       if (!params.point || params.time == null) {
-        setTooltip(null)
+        setLegendCandle(payloadRef.current.candles[payloadRef.current.candles.length - 1] ?? null)
         return
       }
       const candle = params.seriesData.get(series)
       if (!candle || !('close' in candle)) return
-      setTooltip({
-        x: params.point.x,
-        y: params.point.y,
-        text: `${new Date(Number(params.time) * 1000).toLocaleString()}  O ${candle.open.toFixed(3)}  H ${candle.high.toFixed(3)}  L ${candle.low.toFixed(3)}  C ${candle.close.toFixed(3)}`,
+      setLegendCandle({
+        time: Number(params.time),
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+        volume: 0,
       })
     })
 
@@ -275,7 +291,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       })),
     )
     priceLinesRef.current.forEach((line) => series.removePriceLine(line))
-    priceLinesRef.current = payload.srLines.map((line) => series.createPriceLine({
+    priceLinesRef.current = (showSrLines ? payload.srLines : []).map((line) => series.createPriceLine({
       price: line.price,
       color: line.color,
       lineWidth: 1,
@@ -291,13 +307,14 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       viewKeyRef.current = viewKey
     }
     setOverlayRevision((value) => value + 1)
-  }, [payload])
+    setLegendCandle(payload.candles[payload.candles.length - 1] ?? null)
+  }, [payload, showSrLines])
 
   useEffect(() => {
     const chart = chartRef.current
     if (!chart || !hostRef.current) return
     const width = hostRef.current.clientWidth
-    const positions = payload.aspects
+    const positions = (showAspects ? payload.aspects : [])
       .map((event) => {
         const start = nearestTime(candleTimes, event.start)
         const end = nearestTime(candleTimes, event.end)
@@ -311,7 +328,16 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       })
       .filter((item): item is BandPosition => item !== null)
     setBands(positions)
-  }, [candleTimes, overlayRevision, payload.aspects])
+  }, [candleTimes, overlayRevision, payload.aspects, showAspects])
+
+  const legendValues = useMemo(() => {
+    if (!legendCandle) return null
+    const index = payload.candles.findIndex((item) => item.time === legendCandle.time)
+    const previous = index > 0 ? payload.candles[index - 1].close : legendCandle.open
+    const change = legendCandle.close - previous
+    const percent = previous ? (change / previous) * 100 : 0
+    return { change, percent, positive: change >= 0 }
+  }, [legendCandle, payload.candles])
 
   const toScreen = (point: Point) => {
     const chart = chartRef.current
@@ -326,6 +352,22 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   return (
     <div className={`market-chart ${activeTool !== 'select' ? 'is-drawing' : ''}`} ref={rootRef}>
       <div className="market-chart-host" ref={hostRef} />
+      {legendCandle && legendValues && (
+        <div className="chart-ohlc-legend">
+          <strong>{payload.symbol}</strong>
+          <span>{payload.timeframe}</span>
+          <small>{new Date(legendCandle.time * 1000).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</small>
+          <dl>
+            <div><dt>O</dt><dd>{legendCandle.open.toFixed(3)}</dd></div>
+            <div><dt>H</dt><dd>{legendCandle.high.toFixed(3)}</dd></div>
+            <div><dt>L</dt><dd>{legendCandle.low.toFixed(3)}</dd></div>
+            <div><dt>C</dt><dd>{legendCandle.close.toFixed(3)}</dd></div>
+          </dl>
+          <em className={legendValues.positive ? 'positive' : 'negative'}>
+            {legendValues.change >= 0 ? '+' : ''}{legendValues.change.toFixed(3)} ({legendValues.percent >= 0 ? '+' : ''}{legendValues.percent.toFixed(2)}%)
+          </em>
+        </div>
+      )}
       <div className="aspect-band-layer" aria-label="Astrological aspect windows">
         {bands.map(({ event, left, width }) => (
           <button
@@ -334,7 +376,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             style={{
               left,
               width,
-              top: 8 + (event.lane ?? 0) * 19,
+              top: 39 + (event.lane ?? 0) * 19,
               borderColor: event.color,
               backgroundColor: `${event.color}33`,
             }}
@@ -348,7 +390,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           </button>
         ))}
       </div>
-      {bands
+      {showAspects && bands
         .filter(({ event }) => event.eventId === selectedAspectId)
         .map(({ event, left, width }) => (
           <div
@@ -410,14 +452,6 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           )
         })}
       </div>
-      {tooltip && (
-        <div
-          className="chart-tooltip"
-          style={{ left: Math.min(tooltip.x + 16, (rootRef.current?.clientWidth ?? 500) - 390), top: Math.max(tooltip.y - 42, 8) }}
-        >
-          {tooltip.text}
-        </div>
-      )}
       {activeTool === 'gann' && pendingGann && <div className="drawing-status">Second anchor pending</div>}
     </div>
   )

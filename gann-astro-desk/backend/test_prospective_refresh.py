@@ -49,6 +49,7 @@ class FakeRepository:
             "H1": pd.DataFrame({"close": [145.0]}, index=index),
         }
         self.promotions: list[str] = []
+        self.artifacts: list[dict[str, Any]] = []
 
     def connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.db_path, factory=ClosingConnection)
@@ -65,6 +66,9 @@ class FakeRepository:
             "priceSha256": "A" * 64,
             "asOfUtc": "2026-07-13T10:02:00+00:00",
         }
+
+    def list_data_artifacts(self) -> list[dict[str, Any]]:
+        return list(self.artifacts)
 
 
 class FakeGateway:
@@ -151,18 +155,34 @@ class ProspectiveRefreshTests(unittest.TestCase):
             self.assertEqual(len(generation.created), 1)
             parameters = generation.created[0]["parameters"]
             self.assertEqual(parameters["priceSourceId"], "mt5_USDJPY_H1_fresh")
+            self.assertEqual(parameters["priceSourceContract"], "PROMOTED_MT5_PRICE_SOURCE_V1")
+            self.assertEqual(parameters["priceSourceSha256"], "A" * 64)
+            self.assertEqual(parameters["priceSourceAsOfUtc"], "2026-07-13T10:02:00+00:00")
+            self.assertEqual(parameters["priceSourceLastBarCloseUtc"], "2026-07-13T10:00:00+00:00")
             self.assertEqual(
                 parameters["prospectiveRefresh"]["sourceBarCloseUtc"],
                 "2026-07-13T10:00:00+00:00",
             )
+            persisted = status["activeRun"]["parameters"]
+            self.assertEqual(persisted["priceSourceLastBarCloseUtc"], "2026-07-13T10:00:00+00:00")
             manager.run_once("2026-07-13T10:03:00Z")
             self.assertEqual(gateway.snapshot_calls, 1)
             self.assertEqual(len(generation.created), 1)
 
     def test_completed_generation_wakes_shadow_ledger(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            manager, _repository, _gateway, generation, shadow = self.make_manager(Path(temporary))
+            manager, repository, _gateway, generation, shadow = self.make_manager(Path(temporary))
             manager.run_once("2026-07-13T10:02:00Z")
+            repository.artifacts.append(
+                {
+                    "artifactId": "tn_fresh",
+                    "parameters": {
+                        "priceSourceId": "mt5_USDJPY_H1_fresh",
+                        "priceSourceLastBarCloseUtc": "2026-07-13T10:00:00+00:00",
+                        "verifiedArtifactParameters": True,
+                    },
+                }
+            )
             generation.jobs["job-1"].update(
                 status="completed",
                 progress=100.0,
@@ -172,6 +192,7 @@ class ProspectiveRefreshTests(unittest.TestCase):
             status = manager.run_once("2026-07-13T10:04:00Z")
             self.assertEqual(status["state"], "up_to_date")
             self.assertEqual(status["activeRun"]["artifactId"], "tn_fresh")
+            self.assertTrue(status["activeRun"]["parameters"]["verifiedArtifactParameters"])
             self.assertEqual(shadow.scans, 1)
 
     def test_stale_market_bar_does_not_create_snapshot(self) -> None:
@@ -192,6 +213,60 @@ class ProspectiveRefreshTests(unittest.TestCase):
             self.assertEqual(status["state"], "up_to_date")
             self.assertEqual(gateway.snapshot_calls, 0)
             self.assertEqual(generation.created, [])
+
+    def test_startup_repairs_completed_audit_parameters_from_verified_artifact(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manager, repository, gateway, generation, shadow = self.make_manager(root)
+            with repository.connect() as connection:
+                connection.execute(
+                    """
+                    INSERT INTO app_prospective_refresh_runs(
+                        run_id, contract, source_bar_open_utc, source_bar_close_utc,
+                        status, stage, source_snapshot_id, price_source_id, artifact_id,
+                        parameters_json, created_at_utc, updated_at_utc
+                    ) VALUES(?, ?, ?, ?, 'completed', 'completed', ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        "run-repair",
+                        "GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1",
+                        "2026-07-13T09:00:00+00:00",
+                        "2026-07-13T10:00:00+00:00",
+                        "snapshot-repair",
+                        "price-repair",
+                        "tn_repair",
+                        '{"priceSourceLastBarCloseUtc":"2026-07-13T09:00:00+00:00"}',
+                        "2026-07-13T10:02:00+00:00",
+                        "2026-07-13T10:03:00+00:00",
+                    ),
+                )
+            repository.artifacts.append(
+                {
+                    "artifactId": "tn_repair",
+                    "parameters": {
+                        "priceSourceId": "price-repair",
+                        "priceSourceLastBarCloseUtc": "2026-07-13T10:00:00+00:00",
+                        "prospectiveRefresh": {
+                            "contract": "GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1",
+                            "runId": "run-repair",
+                            "sourceBarCloseUtc": "2026-07-13T10:00:00+00:00",
+                        },
+                    },
+                }
+            )
+
+            repaired = ProspectiveArtifactRefreshSupervisor(
+                repository,
+                gateway,
+                generation,
+                shadow,
+                autostart=False,
+            )
+            run = repaired.recent_runs(1)[0]
+            self.assertEqual(
+                run["parameters"]["priceSourceLastBarCloseUtc"],
+                "2026-07-13T10:00:00+00:00",
+            )
 
 
 if __name__ == "__main__":

@@ -1,5 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Bot, CalendarDays, ChevronDown, PanelBottom, Search, ShieldCheck, SlidersHorizontal, X } from 'lucide-react'
+import {
+  Activity,
+  Bot,
+  CalendarDays,
+  Camera,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Maximize2,
+  Minimize2,
+  PanelBottom,
+  PanelRightClose,
+  PanelRightOpen,
+  Search,
+  ShieldCheck,
+  Waves,
+  X,
+} from 'lucide-react'
 import {
   fetchChart,
   fetchDataArtifacts,
@@ -8,8 +27,10 @@ import {
   fetchParameterProfiles,
   fetchParameterSchema,
   fetchShadowLedger,
+  fetchWorkspacePreferences,
   requestProspectiveRefresh,
   saveAnnotation,
+  saveWorkspacePreferences,
   scanShadowLedger,
 } from '../api'
 import { openAnalyzeAspect } from '../desktop'
@@ -18,6 +39,7 @@ import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
 import { ParameterDrawer } from '../components/ParameterDrawer'
+import { RefreshStatusChip } from '../components/RefreshStatusChip'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
 import type {
@@ -33,6 +55,7 @@ import type {
   ParameterSchema,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
+  WorkspacePreferences,
 } from '../types'
 
 function dateRangeLabel(parameters: ChartParameters | null): string {
@@ -41,6 +64,23 @@ function dateRangeLabel(parameters: ChartParameters | null): string {
   const start = new Date(parameters.start)
   const end = new Date(parameters.end)
   return `${start.toLocaleDateString([], { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`
+}
+
+const WORKSPACE_PREFERENCES_KEY = 'gann-astro-desk.workspace.v1'
+
+function initialWorkspacePreferences(): WorkspacePreferences {
+  const defaults: WorkspacePreferences = {
+    inspectorOpen: true,
+    bottomOpen: true,
+    showAspects: true,
+    showSrLines: true,
+  }
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(WORKSPACE_PREFERENCES_KEY) ?? '{}') as Partial<WorkspacePreferences>
+    return { ...defaults, ...saved }
+  } catch {
+    return defaults
+  }
 }
 
 export function MainWorkspace() {
@@ -62,8 +102,39 @@ export function MainWorkspace() {
   const [parameterError, setParameterError] = useState('')
   const [parametersOpen, setParametersOpen] = useState(false)
   const [chartLoading, setChartLoading] = useState(false)
+  const [workspace, setWorkspace] = useState<WorkspacePreferences>(initialWorkspacePreferences)
+  const [workspaceHydrated, setWorkspaceHydrated] = useState(false)
+  const [focusMode, setFocusMode] = useState(false)
+  const [clock, setClock] = useState(() => new Date())
   const chartRef = useRef<MarketChartHandle>(null)
   const artifactActivationRef = useRef('')
+
+  useEffect(() => {
+    let disposed = false
+    fetchWorkspacePreferences()
+      .then((preferences) => {
+        if (!disposed) setWorkspace(preferences)
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!disposed) setWorkspaceHydrated(true)
+      })
+    return () => { disposed = true }
+  }, [])
+
+  useEffect(() => {
+    if (!workspaceHydrated) return
+    window.localStorage.setItem(WORKSPACE_PREFERENCES_KEY, JSON.stringify(workspace))
+    const timer = window.setTimeout(() => {
+      void saveWorkspacePreferences(workspace).catch(() => undefined)
+    }, 250)
+    return () => window.clearTimeout(timer)
+  }, [workspace, workspaceHydrated])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(new Date()), 1000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     Promise.all([fetchParameterSchema(), fetchParameterProfiles()])
@@ -261,6 +332,22 @@ export function MainWorkspace() {
     [chart],
   )
 
+  const inspectorVisible = workspace.inspectorOpen && !focusMode
+  const bottomVisible = workspace.bottomOpen && !focusMode
+  const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'positions' | 'logs') => {
+    setBottomTab(tab)
+    setFocusMode(false)
+    setWorkspace((current) => ({ ...current, bottomOpen: true }))
+  }, [])
+  const captureChart = useCallback(async () => {
+    const dataUrl = await chartRef.current?.capture()
+    if (!dataUrl) return
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = `${chart?.symbol ?? 'chart'}_${chart?.timeframe ?? 'view'}_${new Date().toISOString().replaceAll(':', '-')}.png`
+    link.click()
+  }, [chart?.symbol, chart?.timeframe])
+
   if (error) {
     return <main className="fatal-state"><strong>Gann Astro Desk could not load</strong><span>{error}</span></main>
   }
@@ -269,11 +356,11 @@ export function MainWorkspace() {
   }
 
   return (
-    <main className="desk-shell">
+    <main className={`desk-shell ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
       <header className="top-command-bar">
         <div className="product-mark">
           <span className="product-glyph">GA</span>
-          <div><strong>Gann Astro Desk</strong><span>Research workspace</span></div>
+          <div><strong>Gann Astro Desk</strong><span>Market research terminal</span></div>
         </div>
         <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
         <div className="segmented-control" aria-label="Timeframe">
@@ -281,25 +368,58 @@ export function MainWorkspace() {
         </div>
         <button className="date-control" onClick={() => setParametersOpen(true)}><CalendarDays size={15} /> {dateRangeLabel(parameters)}</button>
         <div className="segmented-control mode-control"><button disabled title="Corrected TT generator pending">TT</button><button className="is-active">TN</button></div>
+        <button className="secondary-command astro-command" onClick={() => setParametersOpen(true)} title="Configure planets, aspects, harmonics, reference chart, and data source"><Activity size={15} /> Astro layers</button>
         <div className="topbar-spacer" />
+        <RefreshStatusChip status={shadow?.refresh} busy={refreshBusy} onRefresh={runProspectiveRefresh} />
         <ConnectionBadge status={status} />
-        <button className="icon-button" onClick={() => setParametersOpen(true)} title="Astrology parameters"><SlidersHorizontal size={18} /></button>
+        <button className="icon-button" onClick={() => void captureChart()} title="Download chart snapshot" aria-label="Download chart snapshot"><Camera size={18} /></button>
+        <button className="icon-button" onClick={() => setFocusMode((value) => !value)} title={focusMode ? 'Restore panels' : 'Focus chart'} aria-label={focusMode ? 'Restore panels' : 'Focus chart'}>
+          {focusMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+        </button>
+        <button
+          className={`icon-button ${workspace.inspectorOpen ? 'is-active' : ''}`}
+          onClick={() => {
+            setFocusMode(false)
+            setWorkspace((current) => ({ ...current, inspectorOpen: !current.inspectorOpen }))
+          }}
+          title={workspace.inspectorOpen ? 'Hide aspect inspector' : 'Show aspect inspector'}
+          aria-label={workspace.inspectorOpen ? 'Hide aspect inspector' : 'Show aspect inspector'}
+        >
+          {workspace.inspectorOpen ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
+        </button>
       </header>
       <section className="workspace-grid">
         <ToolRail
           activeTool={activeTool}
           onToolChange={setActiveTool}
+          onUndo={() => chartRef.current?.undoDrawing()}
           onReset={() => chartRef.current?.resetView()}
           onClear={() => chartRef.current?.clearDrawings()}
         />
         <section className="chart-workspace">
           <div className="chart-context-strip">
-            <span>Raman sidereal</span>
-            <span>{parameters.reference.label}</span>
-            <span>{chart.artifact.label}</span>
-            <span>{chart.aspects.length} visible aspects</span>
-            <span>{chart.dataSource === 'mt5_live' ? 'MT5 live bars' : chart.timeframe + ' archive'}</span>
-            {selected && <strong style={{ color: selected.color }}>{selected.transitBody} to {selected.natalBody} {selected.aspectLabel}</strong>}
+            <div className="chart-context-primary">
+              <strong>{chart.symbol}</strong>
+              <span>{chart.timeframe}</span>
+              <span>Raman sidereal</span>
+              <span>{parameters.reference.label}</span>
+              {selected && <em style={{ color: selected.color }}>{selected.transitBody} to {selected.natalBody} {selected.aspectLabel}</em>}
+            </div>
+            <div className="chart-context-spacer" />
+            <button
+              className={workspace.showAspects ? 'is-active' : ''}
+              onClick={() => setWorkspace((current) => ({ ...current, showAspects: !current.showAspects }))}
+              title="Show or hide aspect windows"
+            >
+              {workspace.showAspects ? <Eye size={13} /> : <EyeOff size={13} />} Aspects {chart.aspects.length}
+            </button>
+            <button
+              className={workspace.showSrLines ? 'is-active' : ''}
+              onClick={() => setWorkspace((current) => ({ ...current, showSrLines: !current.showSrLines }))}
+              title="Show or hide planetary support and resistance lines"
+            >
+              <Waves size={13} /> SR {chart.srLines.length}
+            </button>
             {chartLoading && <strong className="chart-loading-label">Updating chart</strong>}
           </div>
           <MarketChart
@@ -312,40 +432,68 @@ export function MainWorkspace() {
             onSelectAspect={selectAspect}
             onSelectAnnotation={setSelectedAnnotation}
             onCreateAnnotation={createAnnotation}
+            showAspects={workspace.showAspects}
+            showSrLines={workspace.showSrLines}
           />
         </section>
-        <InspectorPanel
-          selected={selected}
-          detail={detail}
-          annotation={selectedAnnotation}
-          onAnalyze={() => selected && openAnalyzeAspect(selected)}
-          onAnnotationNoteChange={(note) => setSelectedAnnotation((value) => value ? { ...value, note } : value)}
-          onSaveAnnotation={saveSelectedAnnotation}
-        />
-      </section>
-      <section className="bottom-dock">
-        <div className="bottom-tabs">
-          <button className={bottomTab === 'events' ? 'is-active' : ''} onClick={() => setBottomTab('events')}><PanelBottom size={14} /> Events</button>
-          <button className={bottomTab === 'shadow' ? 'is-active' : ''} onClick={() => setBottomTab('shadow')}><ShieldCheck size={14} /> Shadow validation</button>
-          <button className={bottomTab === 'positions' ? 'is-active' : ''} onClick={() => setBottomTab('positions')}>MT5 positions</button>
-          <button className={bottomTab === 'logs' ? 'is-active' : ''} onClick={() => setBottomTab('logs')}>Connection log</button>
-          <div className="bottom-tabs-spacer" />
-          <span><Bot size={14} /> Codex and local Jyotish analysis inside Analyze Aspect</span>
-        </div>
-        {bottomTab === 'events' && <EventTable events={sortedAspects} selectedId={selected?.eventId} onSelect={selectAspect} />}
-        {bottomTab === 'shadow' && (
-          <ShadowLedgerPanel
-            snapshot={shadow}
-            busy={shadowBusy}
-            refreshBusy={refreshBusy}
-            error={shadowError}
-            onScan={runShadowScan}
-            onRefresh={runProspectiveRefresh}
+        {inspectorVisible && (
+          <InspectorPanel
+            selected={selected}
+            detail={detail}
+            annotation={selectedAnnotation}
+            onAnalyze={() => selected && openAnalyzeAspect(selected)}
+            onAnnotationNoteChange={(note) => setSelectedAnnotation((value) => value ? { ...value, note } : value)}
+            onSaveAnnotation={saveSelectedAnnotation}
           />
         )}
-        {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}
-        {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
       </section>
+      <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>
+        <div className="bottom-tabs">
+          <button className={bottomTab === 'events' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('events')}><PanelBottom size={14} /> Events</button>
+          <button className={bottomTab === 'shadow' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('shadow')}><ShieldCheck size={14} /> Shadow validation</button>
+          <button className={bottomTab === 'positions' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('positions')}>MT5 positions</button>
+          <button className={bottomTab === 'logs' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('logs')}>Connection log</button>
+          <div className="bottom-tabs-spacer" />
+          <span><Bot size={14} /> Codex + local Jyotish</span>
+          <button
+            className="bottom-collapse-button"
+            onClick={() => {
+              setFocusMode(false)
+              setWorkspace((current) => ({ ...current, bottomOpen: !current.bottomOpen }))
+            }}
+            title={bottomVisible ? 'Collapse bottom panel' : 'Expand bottom panel'}
+            aria-label={bottomVisible ? 'Collapse bottom panel' : 'Expand bottom panel'}
+          >
+            {bottomVisible ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
+          </button>
+        </div>
+        {bottomVisible && (
+          <div className="bottom-dock-body">
+            {bottomTab === 'events' && <EventTable events={sortedAspects} selectedId={selected?.eventId} onSelect={selectAspect} />}
+            {bottomTab === 'shadow' && (
+              <ShadowLedgerPanel
+                snapshot={shadow}
+                busy={shadowBusy}
+                refreshBusy={refreshBusy}
+                error={shadowError}
+                onScan={runShadowScan}
+                onRefresh={runProspectiveRefresh}
+              />
+            )}
+            {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}
+            {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
+          </div>
+        )}
+      </section>
+      <footer className="workstation-status-bar">
+        <span className={status?.connected ? 'is-live' : 'is-waiting'}><i /> {status?.connected ? 'Market data live' : 'Market data waiting'}</span>
+        <span>{chart.candles.length} bars</span>
+        <span>{chart.artifact.label}</span>
+        <span className="status-spacer" />
+        <span>{shadow?.refresh?.state === 'up_to_date' ? 'Artifact current' : shadow?.refresh?.state?.replaceAll('_', ' ') ?? 'Refresh checking'}</span>
+        <span className="execution-locked"><LockKeyhole size={12} /> Read-only</span>
+        <time>{clock.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} IST</time>
+      </footer>
       {parameterError && <div className="parameter-error" role="alert">{parameterError}<button onClick={() => setParameterError('')} title="Dismiss"><X size={14} /></button></div>}
       <ParameterDrawer
         open={parametersOpen}

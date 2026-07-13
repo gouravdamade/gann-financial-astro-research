@@ -8,6 +8,11 @@ separate from live market-data concerns.
 ## Implemented
 
 - Real USDJPY H1 candlesticks from the versioned MT5 parquet source.
+- A chart-first market-terminal shell with a compact command bar, fixed OHLC readout,
+  TradingView-style drawing rail, focus mode, collapsible inspector/activity dock,
+  aspect and SR visibility toggles, and a persistent read-only status bar.
+- Durable workspace layout preferences stored in the native application database, so
+  panel and layer visibility survive the random private-port change on every launch.
 - Directional transit-to-natal aspect windows from the corrected 1,268-event source.
 - Planetary SR lines joined from the corrected 754-row touch artifact.
 - Clickable aspects with a detachable Analyze Aspect family window.
@@ -40,6 +45,9 @@ separate from live market-data concerns.
   captures and promotes an immutable price snapshot, queues the corrected Raman generator,
   activates only a fully verified artifact, and then wakes the prospective ledger. Market
   closures and stale bars are reported without manufacturing an artifact.
+- An always-visible Auto Refresh control reports the closed-bar supervisor state and can
+  request the same guarded check immediately; it cannot bypass recency, finalization,
+  price-source verification, artifact validation, or the execution lock.
 - A SQLite append-only hash-chain ledger that records the exact decision packet first,
   then appends a separate outcome only after the first closed MT5 bar reaches the
   72-hour horizon. Watches, abstentions, coverage, confidence interval, p-value, and

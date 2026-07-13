@@ -17,6 +17,7 @@ import type {
   ProspectiveRefreshStatus,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
+  WorkspacePreferences,
 } from './types'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -81,6 +82,19 @@ export async function fetchParameterSchema(): Promise<ParameterSchema> {
 export async function fetchParameterProfiles(): Promise<SavedParameterProfile[]> {
   const payload = await request<{ profiles: SavedParameterProfile[] }>('/api/parameter-profiles')
   return payload.profiles
+}
+
+export async function fetchWorkspacePreferences(): Promise<WorkspacePreferences> {
+  const payload = await request<{ preferences: WorkspacePreferences }>('/api/workspace-preferences')
+  return payload.preferences
+}
+
+export async function saveWorkspacePreferences(preferences: WorkspacePreferences): Promise<WorkspacePreferences> {
+  const payload = await request<{ preferences: WorkspacePreferences }>('/api/workspace-preferences', {
+    method: 'PUT',
+    body: JSON.stringify(preferences),
+  })
+  return payload.preferences
 }
 
 export async function saveParameterProfile(input: {

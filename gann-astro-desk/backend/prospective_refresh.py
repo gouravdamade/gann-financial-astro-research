@@ -72,6 +72,7 @@ class ProspectiveArtifactRefreshSupervisor:
         }
         self._initialize_schema()
         self._recover_interrupted_runs()
+        self._repair_completed_run_parameters()
         if autostart:
             self.start()
 
@@ -127,6 +128,57 @@ class ProspectiveArtifactRefreshSupervisor:
                 (now, now),
             )
             connection.commit()
+
+    def _repair_completed_run_parameters(self) -> int:
+        """Backfill audit rows only when their verified artifact proves the lineage."""
+        artifacts = {
+            str(item.get("artifactId")): item
+            for item in self.repository.list_data_artifacts()
+            if item.get("artifactId") and isinstance(item.get("parameters"), dict)
+        }
+        with self.repository.connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT * FROM app_prospective_refresh_runs
+                WHERE status = 'completed' AND artifact_id IS NOT NULL
+                """
+            ).fetchall()
+        repaired = 0
+        for row in rows:
+            run = self._run_record(row)
+            artifact = artifacts.get(str(run.get("artifactId") or ""))
+            if artifact is None:
+                continue
+            parameters = artifact["parameters"]
+            refresh = parameters.get("prospectiveRefresh")
+            if not isinstance(refresh, dict) or refresh.get("contract") != REFRESH_CONTRACT:
+                continue
+            try:
+                same_close = _utc_timestamp(
+                    refresh.get("sourceBarCloseUtc"),
+                    "artifact source bar close",
+                ) == _utc_timestamp(run["sourceBarCloseUtc"], "run source bar close")
+            except (TypeError, ValueError):
+                continue
+            same_source = (
+                not run.get("priceSourceId")
+                or str(parameters.get("priceSourceId") or "") == str(run["priceSourceId"])
+            )
+            if refresh.get("runId") != run["runId"] or not same_close or not same_source:
+                continue
+            if run.get("parameters") == parameters:
+                continue
+            self._update_run(
+                run["runId"],
+                parameters_json=json.dumps(
+                    parameters,
+                    ensure_ascii=True,
+                    sort_keys=True,
+                    default=str,
+                ),
+            )
+            repaired += 1
+        return repaired
 
     def start(self) -> None:
         if self._thread and self._thread.is_alive():
@@ -313,12 +365,37 @@ class ProspectiveArtifactRefreshSupervisor:
             return True
         if status == "completed":
             finished = _utc_now_text()
+            artifact_id = str(job.get("artifactId") or "")
+            artifact_parameters: dict[str, Any] | None = None
+            if artifact_id:
+                artifact = next(
+                    (
+                        item
+                        for item in self.repository.list_data_artifacts()
+                        if str(item.get("artifactId")) == artifact_id
+                    ),
+                    None,
+                )
+                if artifact and isinstance(artifact.get("parameters"), dict):
+                    artifact_parameters = artifact["parameters"]
             self._update_run(
                 run["runId"],
                 status="completed",
                 stage="completed",
                 message="Fresh corrected artifact activated; shadow ledger scan requested.",
-                artifact_id=job.get("artifactId"),
+                artifact_id=artifact_id,
+                **(
+                    {
+                        "parameters_json": json.dumps(
+                            artifact_parameters,
+                            ensure_ascii=True,
+                            sort_keys=True,
+                            default=str,
+                        )
+                    }
+                    if artifact_parameters is not None
+                    else {}
+                ),
                 error="",
                 finished_at_utc=finished,
             )
@@ -375,6 +452,10 @@ class ProspectiveArtifactRefreshSupervisor:
                 "mode": "TN",
                 "timeframe": str(parameters.get("timeframe") or "H1").upper(),
                 "priceSourceId": price_source["priceSourceId"],
+                "priceSourceContract": price_source["contract"],
+                "priceSourceSha256": price_source["priceSha256"],
+                "priceSourceAsOfUtc": price_source["asOfUtc"],
+                "priceSourceLastBarCloseUtc": source_bar_close.isoformat(),
                 "start": start.tz_convert("Asia/Kolkata").isoformat(),
                 "end": source_bar_open.tz_convert("Asia/Kolkata").isoformat(),
                 "prospectiveRefresh": {

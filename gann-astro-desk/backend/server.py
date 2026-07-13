@@ -16,6 +16,7 @@ from mt5_gateway import Mt5Gateway
 from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
 from shadow_ledger import ShadowLedgerSupervisor
+from workspace_preferences import read_workspace_preferences, update_workspace_preferences
 
 
 app = Flask(__name__)
@@ -118,6 +119,21 @@ def health() -> Any:
 @app.get("/api/mt5/status")
 def mt5_status() -> Any:
     return jsonify({"ok": True, "mt5": gateway.status()})
+
+
+@app.get("/api/workspace-preferences")
+def get_workspace_preferences() -> Any:
+    return jsonify({"ok": True, "preferences": read_workspace_preferences(repository)})
+
+
+@app.put("/api/workspace-preferences")
+def put_workspace_preferences() -> Any:
+    payload = request.get_json(silent=True) or {}
+    try:
+        preferences = update_workspace_preferences(repository, payload)
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    return jsonify({"ok": True, "preferences": preferences})
 
 
 @app.get("/api/mt5/bars")
