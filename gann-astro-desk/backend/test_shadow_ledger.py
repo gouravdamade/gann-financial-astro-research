@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -13,8 +14,13 @@ from decision_engine import ENGINE
 from shadow_ledger import (
     DECISION_CONTRACT,
     LEDGER_CONTRACT,
+    TRIAL_CONTRACT,
     ShadowLedgerStore,
     ShadowLedgerSupervisor,
+    _canonical_json,
+    _entry_hash_payload,
+    _fingerprint,
+    _sha256,
     bars_to_price_frame,
     first_closed_outcome_bar,
     last_closed_anchor,
@@ -103,6 +109,7 @@ class FakeRepository:
     def __init__(self, database_path: Path) -> None:
         self.paths = SimpleNamespace(annotation_db=database_path)
         self.artifact = artifact_fixture()
+        self.engine_version_override: str | None = None
 
     def shadow_candidate_snapshot(self) -> dict:
         return {
@@ -126,7 +133,7 @@ class FakeRepository:
     ) -> dict:
         if event_id != "event-shadow-1":
             raise KeyError(event_id)
-        return ENGINE.live_inference_packet(
+        packet = ENGINE.live_inference_packet(
             event=event_fixture(),
             touch=touch_fixture(),
             price=price_override,
@@ -134,6 +141,9 @@ class FakeRepository:
             timeframe="H1",
             artifact=self.artifact,
         )
+        if self.engine_version_override:
+            packet["engineVersion"] = self.engine_version_override
+        return packet
 
 
 class FakeGateway:
@@ -156,7 +166,9 @@ class ShadowLedgerTests(unittest.TestCase):
         anchor_time, anchor_price = last_closed_anchor(price, "H1", NOW)
         self.assertEqual(anchor_time, NOW)
         self.assertAlmostEqual(anchor_price, 150.01)
-        self.assertIsNone(first_closed_outcome_bar(price, "H1", NOW + pd.Timedelta(hours=72), NOW))
+        self.assertIsNone(
+            first_closed_outcome_bar(price, "H1", NOW + pd.Timedelta(hours=72), NOW)
+        )
         outcome = first_closed_outcome_bar(
             price,
             "H1",
@@ -175,8 +187,28 @@ class ShadowLedgerTests(unittest.TestCase):
             duplicate = supervisor.scan_once(NOW + pd.Timedelta(minutes=1))
         self.assertEqual(first["summary"]["decisionCount"], 1)
         self.assertEqual(first["summary"]["pendingOutcomeCount"], 1)
+        trial = first["summary"]["trial"]
+        self.assertEqual(trial["contract"], TRIAL_CONTRACT)
+        self.assertEqual(trial["status"], "frozen_policy_cohort")
+        self.assertTrue(trial["policyLocked"])
+        self.assertTrue(trial["integrityValid"])
+        self.assertEqual(trial["cohortCount"], 1)
+        self.assertEqual(
+            trial["nextOutcomeDueTimeUtc"], (NOW + pd.Timedelta(hours=72)).isoformat()
+        )
+        self.assertEqual(trial["dueOutcomeCount"], 0)
+        self.assertEqual(
+            trial["progress"]["watchClusters"], {"current": 0, "target": 100}
+        )
+        self.assertEqual(
+            trial["progress"]["calendarMonths"], {"current": 0, "target": 4}
+        )
         self.assertEqual(duplicate["summary"]["decisionCount"], 1)
         self.assertEqual(duplicate["supervisor"]["lastCaptureCount"], 0)
+
+        due = supervisor.store.summary(NOW + pd.Timedelta(hours=72))
+        self.assertEqual(due["trial"]["dueOutcomeCount"], 1)
+        self.assertEqual(due["trial"]["notYetDueOutcomeCount"], 0)
 
         settled = supervisor.scan_once(NOW + pd.Timedelta(hours=73))
         self.assertEqual(settled["summary"]["settledDecisionCount"], 1)
@@ -187,6 +219,86 @@ class ShadowLedgerTests(unittest.TestCase):
         self.assertEqual(record["status"], "settled")
         self.assertFalse(record["hit"])
         self.assertFalse(record["executionOccurred"])
+        self.assertEqual(settled["summary"]["trial"]["dueOutcomeCount"], 0)
+        self.assertIsNone(settled["summary"]["trial"]["nextOutcomeDueTimeUtc"])
+
+    def test_frozen_trial_rejects_a_different_engine_policy_cohort(self) -> None:
+        repository = FakeRepository(self.database_path)
+        supervisor = ShadowLedgerSupervisor(repository, FakeGateway(), autostart=False)
+        with patch("decision_engine.score_currency_pair_for_row", return_value=SCORES):
+            first = supervisor.scan_once(NOW)
+            repository.engine_version_override = (
+                "timestamp_safe_auto_suggest_v2_unapproved"
+            )
+            rejected = supervisor.scan_once(NOW + pd.Timedelta(minutes=1))
+        self.assertEqual(first["summary"]["decisionCount"], 1)
+        self.assertEqual(rejected["summary"]["decisionCount"], 1)
+        self.assertTrue(rejected["summary"]["trial"]["integrityValid"])
+        self.assertIn(
+            "frozen prospective trial refuses", rejected["supervisor"]["lastError"]
+        )
+
+    def test_existing_legacy_decision_seeds_immutable_trial_manifest_once(self) -> None:
+        repository = FakeRepository(self.database_path)
+        supervisor = ShadowLedgerSupervisor(repository, FakeGateway(), autostart=False)
+        with patch("decision_engine.score_currency_pair_for_row", return_value=SCORES):
+            supervisor.scan_once(NOW)
+
+        connection = sqlite3.connect(self.database_path)
+        connection.row_factory = sqlite3.Row
+        try:
+            connection.executescript(
+                """
+                DROP TRIGGER trg_shadow_ledger_no_update;
+                DROP TRIGGER trg_shadow_trial_manifest_no_update;
+                DROP TRIGGER trg_shadow_trial_manifest_no_delete;
+                DELETE FROM app_shadow_trial_manifest;
+                """
+            )
+            row = connection.execute(
+                "SELECT * FROM app_shadow_ledger_entries WHERE entry_type = 'decision'"
+            ).fetchone()
+            assert row is not None
+            payload = json.loads(str(row["payload_json"]))
+            payload.pop("trialIdentity")
+            encoded = _canonical_json(payload)
+            payload_sha = _sha256(encoded)
+            item = dict(row)
+            item["payload_sha256"] = payload_sha
+            item["entry_id"] = _fingerprint(
+                {
+                    "contract": LEDGER_CONTRACT,
+                    "entryType": "decision",
+                    "shadowId": item["shadow_id"],
+                    "payloadSha256": payload_sha,
+                }
+            )
+            item["entry_hash"] = _fingerprint(_entry_hash_payload(item))
+            connection.execute(
+                """
+                UPDATE app_shadow_ledger_entries
+                SET entry_id = ?, payload_json = ?, payload_sha256 = ?, entry_hash = ?
+                WHERE ledger_sequence = ?
+                """,
+                (
+                    item["entry_id"],
+                    encoded,
+                    payload_sha,
+                    item["entry_hash"],
+                    item["ledger_sequence"],
+                ),
+            )
+            connection.commit()
+        finally:
+            connection.close()
+
+        migrated = ShadowLedgerStore(self.database_path)
+        manifest = migrated.trial_manifest()
+        self.assertIsNotNone(manifest)
+        assert manifest is not None
+        self.assertEqual(manifest["manifestSource"], "existing_decision_backfill_v1")
+        self.assertTrue(migrated.summary(NOW)["trial"]["integrityValid"])
+        self.assertTrue(migrated.verify_chain()["valid"])
 
     def test_stale_artifact_is_never_backfilled_into_prospective_trial(self) -> None:
         repository = FakeRepository(self.database_path)
@@ -214,17 +326,37 @@ class ShadowLedgerTests(unittest.TestCase):
             connection.rollback()
             with self.assertRaisesRegex(sqlite3.IntegrityError, "append-only"):
                 connection.execute("DELETE FROM app_shadow_ledger_entries")
+            manifest = connection.execute(
+                "SELECT trial_id, contract FROM app_shadow_trial_manifest WHERE singleton_id = 1"
+            ).fetchone()
+            self.assertIsNotNone(manifest)
+            assert manifest is not None
+            self.assertEqual(manifest[1], TRIAL_CONTRACT)
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "immutable"):
+                connection.execute(
+                    "UPDATE app_shadow_trial_manifest SET source = 'changed' WHERE singleton_id = 1"
+                )
+            connection.rollback()
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "immutable"):
+                connection.execute("DELETE FROM app_shadow_trial_manifest")
         finally:
             connection.close()
         self.assertTrue(store.verify_chain()["valid"])
 
-    def test_decision_payload_is_explicitly_prospective_and_execution_locked(self) -> None:
+    def test_decision_payload_is_explicitly_prospective_and_execution_locked(
+        self,
+    ) -> None:
         repository = FakeRepository(self.database_path)
         supervisor = ShadowLedgerSupervisor(repository, FakeGateway(), autostart=False)
         with patch("decision_engine.score_currency_pair_for_row", return_value=SCORES):
             supervisor.scan_once(NOW)
         decisions, _ = supervisor.store._payload_sets()
         self.assertEqual(decisions[0]["contract"], DECISION_CONTRACT)
+        self.assertEqual(decisions[0]["trialIdentity"]["contract"], TRIAL_CONTRACT)
+        self.assertEqual(
+            decisions[0]["trialIdentity"]["trialId"],
+            supervisor.store.trial_manifest()["trialId"],
+        )
         self.assertFalse(decisions[0]["executionAllowed"])
         self.assertFalse(decisions[0]["packet"]["guardrails"]["executionAllowed"])
         self.assertEqual(

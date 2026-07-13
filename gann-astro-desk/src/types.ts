@@ -392,6 +392,69 @@ export type ShadowLedgerRecord = {
   executionOccurred: false
 }
 
+export type ShadowTrialCohort = {
+  trialId: string
+  decisionContract: string
+  packetContract: string
+  engineVersion: string
+  policyVersion: string
+  astronomyContract: string
+  symbol: string
+  timeframe: string
+  outcomeContract: string
+  horizonHours: number
+  gateConfigurationSha256: string
+  decisionCount: number
+  settledDecisionCount: number
+  pendingOutcomeCount: number
+  firstCapturedAtUtc: string
+  lastCapturedAtUtc: string
+}
+
+export type ShadowTrialSummary = {
+  contract: 'GANN_FROZEN_PROSPECTIVE_SHADOW_TRIAL_V1'
+  status: 'awaiting_first_decision' | 'frozen_policy_cohort' | 'mixed_policy_cohorts_blocked'
+  trialId: string | null
+  policyLocked: boolean
+  integrityValid: boolean
+  cohortCount: number
+  decisionContract?: string
+  packetContract?: string
+  engineVersion?: string
+  policyVersion?: string
+  astronomyContract?: string
+  symbol?: string
+  timeframe?: string
+  outcomeContract?: string
+  horizonHours?: number
+  gateConfiguration: {
+    minimumWatchClusters: number
+    minimumCoverage: number
+    wilsonLowerMustExceed: number
+    twoSidedPBelow: number
+    meanSignedReturnMustExceedPct: number
+    minimumCalendarMonths: number
+  }
+  gateConfigurationSha256: string
+  manifestIdentitySha256?: string | null
+  establishedAtUtc?: string | null
+  seedShadowId?: string | null
+  manifestSource?: string | null
+  firstCapturedAtUtc: string | null
+  lastCapturedAtUtc: string | null
+  nextOutcomeDueTimeUtc: string | null
+  lastOutcomeDueTimeUtc: string | null
+  dueOutcomeCount: number
+  notYetDueOutcomeCount: number
+  observedAtUtc: string
+  progress?: {
+    watchClusters: { current: number; target: number }
+    calendarMonths: { current: number; target: number }
+    coverage: { current: number | null; minimum: number }
+  }
+  cohorts: ShadowTrialCohort[]
+}
+
 export type ShadowLedgerSnapshot = {
   summary: {
     contract: 'GANN_APPEND_ONLY_SHADOW_LEDGER_V1'
@@ -413,6 +476,7 @@ export type ShadowLedgerSnapshot = {
     calendarMonthCount: number
     criteria: Record<string, boolean>
     executionAllowed: false
+    trial: ShadowTrialSummary
     chain: {
       valid: boolean
       entryCount: number

@@ -1,10 +1,66 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-13 12:49 IST
+Last updated: 2026-07-13 15:50 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-13 (TradingView-Style Terminal + First Live Refresh Audit)
+## Latest Update - 2026-07-13 (Frozen Prospective Trial Manifest)
+
+- Promoted Gann Astro Desk to native release `0.6.1` and froze the existing
+  prospective shadow sample under `GANN_FROZEN_PROSPECTIVE_SHADOW_TRIAL_V1`.
+  Its trial ID is
+  `2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16`.
+- Added immutable SQLite manifest `app_shadow_trial_manifest` with UPDATE and DELETE
+  guards. The first coherent cohort locks the ledger/decision/packet/outcome contracts,
+  engine, policy, Raman astronomy contract, symbol, timeframe, 72-hour horizon, and
+  statistical gate configuration. Later mismatches are rejected before ledger append.
+- The seven pre-manifest decisions were migrated once through
+  `existing_decision_backfill_v1`; all resolve to one valid cohort without rewriting the
+  append-only decision chain. New decisions embed the same `trialIdentity` in their payload.
+- The predeclared gate remains unchanged: 100 settled watch clusters, at least 10% watch
+  coverage, Wilson 95% lower bound above 50%, exact two-sided binomial p-value below 0.05,
+  positive mean signed 72-hour return, and at least four UTC calendar months. Execution is
+  still locked regardless of gate status.
+- Shadow Validation now displays the frozen trial fingerprint, engine/policy, integrity,
+  `0 / 100` watch-cluster progress, `0 / 4` calendar-month progress, and next real 72-hour
+  settlement. Live packaged state at verification:
+  - chain valid; 7 decisions, all abstain; 0 settled and 7 pending;
+  - first legal settlement `2026-07-16T04:00:00+00:00`; no outcomes currently due;
+  - latest verified closed MT5 H1 bar `2026-07-13T10:00:00+00:00`;
+  - active corrected artifact `tn_46ffe4254d23445c96cc220d2038202c`;
+  - MT5 connected, `tradeAllowed=false`; shadow execution false;
+  - local Jyotish ready on `qwen2.5:3b`.
+- Split trial identity and summary logic into `gann-astro-desk/backend/shadow_trial.py`
+  so the append-only ledger no longer owns a duplicate trial-policy implementation.
+- Native release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - version `0.6.1`;
+  - SHA-256 `772905ED308F58B46CAE7910ED8314DCA7D6B1DCE9877AE3478A46DE42DFD7DC`;
+  - 1,657 files / 708,779,331 bytes;
+  - release manifest now stores the portable relative executable name;
+  - prior `0.6.0` archived under
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.6.0_20260713_154140`.
+- Verification:
+  - full Python suite: 109 passed;
+  - focused shadow/refresh tests: 12 passed;
+  - frontend Vitest: 5 passed;
+  - Ruff, Oxlint, TypeScript/Vite, PyInstaller, release hash, packaged APIs, live database
+    migration, packaged visual/DOM QA, browser console, and `git diff --check`: passed.
+- Evidence is in `prospective_shadow_trial_manifest_20260713.md`.
+- Chart-persistence audit: SQLite already preserves event-linked annotation pins, notes,
+  and their chart state, but manual horizontal/vertical lines and Gann fans are still local
+  React state and disappear after restart. The next drawing release should therefore add
+  named layouts/autosave and versioned drawing storage before adding Square of Nine.
+- Next recommended work:
+  1. add named chart layouts, autosave, drawing templates, object tree, lock/hide, and
+     JSON import/export so all manual drawings restore exactly;
+  2. add a data-anchored Square of Nine research tool with center value, increment, rings,
+     rotation direction, angle highlights, price/time projections, and persisted settings;
+  3. keep Square of Nine and manual geometry outside live inference until separately tested;
+  4. settle the frozen cohort only after each real 72-hour horizon and continue chain audits;
+  5. externally certify Shadbala/Drik doctrine calculations.
+
+## Previous Update - 2026-07-13 (TradingView-Style Terminal + First Live Refresh Audit)
 
 - Promoted Gann Astro Desk to native release `0.6.0` with a chart-first graphite market
   terminal: compact command bar, fixed OHLC readout, TradingView-style drawing rail with

@@ -15,6 +15,11 @@ import pandas as pd
 
 from decision_engine import LIVE_INFERENCE
 from mt5_gateway import TIMEFRAME_SECONDS
+from shadow_trial import (
+    TRIAL_CONTRACT,
+    trial_descriptor,
+    trial_summary,
+)
 
 
 LEDGER_CONTRACT = "GANN_APPEND_ONLY_SHADOW_LEDGER_V1"
@@ -111,7 +116,9 @@ def _binomial_two_sided_p(hits: int, total: int) -> float | None:
     return min(1.0, 2 * tail)
 
 
-def _wilson_interval(hits: int, total: int, z: float = 1.959963984540054) -> tuple[float | None, float | None]:
+def _wilson_interval(
+    hits: int, total: int, z: float = 1.959963984540054
+) -> tuple[float | None, float | None]:
     if total <= 0:
         return None, None
     proportion = hits / total
@@ -119,7 +126,9 @@ def _wilson_interval(hits: int, total: int, z: float = 1.959963984540054) -> tup
     center = (proportion + (z * z / (2 * total))) / denominator
     margin = (
         z
-        * math.sqrt((proportion * (1 - proportion) / total) + (z * z / (4 * total * total)))
+        * math.sqrt(
+            (proportion * (1 - proportion) / total) + (z * z / (4 * total * total))
+        )
         / denominator
     )
     return max(0.0, center - margin), min(1.0, center + margin)
@@ -169,7 +178,10 @@ def first_closed_outcome_bar(
     now = _utc_timestamp(observed_at, "observed_at")
     delta = _timeframe_delta(timeframe)
     normalized = price.copy().sort_index()
-    if not isinstance(normalized.index, pd.DatetimeIndex) or normalized.index.tz is None:
+    if (
+        not isinstance(normalized.index, pd.DatetimeIndex)
+        or normalized.index.tz is None
+    ):
         raise ValueError("price evidence must have timezone-aware timestamps")
     normalized.index = normalized.index.tz_convert("UTC")
     close_times = normalized.index + delta
@@ -230,6 +242,16 @@ class ShadowLedgerStore:
                     ON app_shadow_ledger_entries(entry_type, shadow_id);
                 CREATE INDEX IF NOT EXISTS idx_shadow_entry_recorded
                     ON app_shadow_ledger_entries(recorded_at_utc, ledger_sequence);
+                CREATE TABLE IF NOT EXISTS app_shadow_trial_manifest (
+                    singleton_id INTEGER PRIMARY KEY CHECK(singleton_id = 1),
+                    trial_id TEXT NOT NULL UNIQUE,
+                    contract TEXT NOT NULL,
+                    identity_json TEXT NOT NULL,
+                    identity_sha256 TEXT NOT NULL,
+                    established_at_utc TEXT NOT NULL,
+                    seed_shadow_id TEXT NOT NULL,
+                    source TEXT NOT NULL
+                );
                 CREATE TRIGGER IF NOT EXISTS trg_shadow_ledger_no_update
                 BEFORE UPDATE ON app_shadow_ledger_entries
                 BEGIN
@@ -240,13 +262,23 @@ class ShadowLedgerStore:
                 BEGIN
                     SELECT RAISE(ABORT, 'shadow ledger is append-only');
                 END;
+                CREATE TRIGGER IF NOT EXISTS trg_shadow_trial_manifest_no_update
+                BEFORE UPDATE ON app_shadow_trial_manifest
+                BEGIN
+                    SELECT RAISE(ABORT, 'shadow trial manifest is immutable');
+                END;
+                CREATE TRIGGER IF NOT EXISTS trg_shadow_trial_manifest_no_delete
+                BEFORE DELETE ON app_shadow_trial_manifest
+                BEGIN
+                    SELECT RAISE(ABORT, 'shadow trial manifest is immutable');
+                END;
                 """
             )
             now = _utc_now().isoformat()
             connection.execute(
                 """
                 INSERT INTO schema_meta(key, value, updated_at_utc)
-                VALUES('shadow_ledger_schema_version', '1', ?)
+                VALUES('shadow_ledger_schema_version', '2', ?)
                 ON CONFLICT(key) DO UPDATE SET
                     value=excluded.value,
                     updated_at_utc=excluded.updated_at_utc
@@ -255,6 +287,111 @@ class ShadowLedgerStore:
                 (now,),
             )
             connection.commit()
+        self._backfill_trial_manifest()
+
+    @staticmethod
+    def _manifest_record(row: sqlite3.Row | None) -> dict[str, Any] | None:
+        if row is None:
+            return None
+        encoded = str(row["identity_json"])
+        identity_sha = _sha256(encoded)
+        if identity_sha != str(row["identity_sha256"]):
+            raise ValueError("shadow trial manifest identity hash does not match")
+        descriptor = json.loads(encoded)
+        if descriptor.get("contract") != TRIAL_CONTRACT:
+            raise ValueError("shadow trial manifest contract does not match")
+        if descriptor.get("trialId") != str(row["trial_id"]):
+            raise ValueError("shadow trial manifest ID does not match")
+        return {
+            **descriptor,
+            "manifestIdentitySha256": identity_sha,
+            "establishedAtUtc": str(row["established_at_utc"]),
+            "seedShadowId": str(row["seed_shadow_id"]),
+            "manifestSource": str(row["source"]),
+        }
+
+    @staticmethod
+    def _insert_trial_manifest(
+        connection: sqlite3.Connection,
+        descriptor: Mapping[str, Any],
+        *,
+        established_at: pd.Timestamp,
+        seed_shadow_id: str,
+        source: str,
+    ) -> None:
+        encoded = _canonical_json(descriptor)
+        connection.execute(
+            """
+            INSERT INTO app_shadow_trial_manifest(
+                singleton_id, trial_id, contract, identity_json, identity_sha256,
+                established_at_utc, seed_shadow_id, source
+            ) VALUES(1, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                descriptor["trialId"],
+                TRIAL_CONTRACT,
+                encoded,
+                _sha256(encoded),
+                established_at.isoformat(),
+                seed_shadow_id,
+                source,
+            ),
+        )
+
+    def _backfill_trial_manifest(self) -> None:
+        with self._lock, self.connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                manifest = connection.execute(
+                    "SELECT * FROM app_shadow_trial_manifest WHERE singleton_id = 1"
+                ).fetchone()
+                if manifest is not None:
+                    self._manifest_record(manifest)
+                    connection.commit()
+                    return
+                rows = connection.execute(
+                    """
+                    SELECT payload_json FROM app_shadow_ledger_entries
+                    WHERE entry_type = 'decision' ORDER BY ledger_sequence
+                    """
+                ).fetchall()
+                if not rows:
+                    connection.commit()
+                    return
+                decisions = [json.loads(str(row["payload_json"])) for row in rows]
+                descriptors = [
+                    trial_descriptor(
+                        item,
+                        ledger_contract=LEDGER_CONTRACT,
+                        outcome_contract=OUTCOME_CONTRACT,
+                    )
+                    for item in decisions
+                ]
+                trial_ids = {str(item["trialId"]) for item in descriptors}
+                if len(trial_ids) != 1:
+                    raise ValueError(
+                        "existing shadow decisions contain mixed policy cohorts; "
+                        "an immutable trial manifest cannot be established"
+                    )
+                first = decisions[0]
+                self._insert_trial_manifest(
+                    connection,
+                    descriptors[0],
+                    established_at=_utc_now(),
+                    seed_shadow_id=str(first["shadowId"]),
+                    source="existing_decision_backfill_v1",
+                )
+                connection.commit()
+            except Exception:
+                connection.rollback()
+                raise
+
+    def trial_manifest(self) -> dict[str, Any] | None:
+        with self.connect() as connection:
+            row = connection.execute(
+                "SELECT * FROM app_shadow_trial_manifest WHERE singleton_id = 1"
+            ).fetchone()
+        return self._manifest_record(row)
 
     @staticmethod
     def _verify_rows(rows: list[sqlite3.Row]) -> None:
@@ -316,6 +453,35 @@ class ShadowLedgerStore:
                     "SELECT * FROM app_shadow_ledger_entries ORDER BY ledger_sequence"
                 ).fetchall()
                 self._verify_rows(rows)
+                if entry_type == "decision":
+                    candidate_trial = trial_descriptor(
+                        payload,
+                        ledger_contract=LEDGER_CONTRACT,
+                        outcome_contract=OUTCOME_CONTRACT,
+                    )
+                    manifest_row = connection.execute(
+                        "SELECT * FROM app_shadow_trial_manifest WHERE singleton_id = 1"
+                    ).fetchone()
+                    if manifest_row is None:
+                        self._insert_trial_manifest(
+                            connection,
+                            candidate_trial,
+                            established_at=recorded_at,
+                            seed_shadow_id=shadow_id,
+                            source="first_decision_capture_v1",
+                        )
+                        manifest_row = connection.execute(
+                            "SELECT * FROM app_shadow_trial_manifest WHERE singleton_id = 1"
+                        ).fetchone()
+                    manifest = self._manifest_record(manifest_row)
+                    if manifest is None:
+                        raise RuntimeError("shadow trial manifest was not established")
+                    if manifest["trialId"] != candidate_trial["trialId"]:
+                        raise ValueError(
+                            "frozen prospective trial refuses a mixed policy cohort; "
+                            f"expected {manifest['trialId']}, "
+                            f"received {candidate_trial['trialId']}"
+                        )
                 existing = connection.execute(
                     """
                     SELECT * FROM app_shadow_ledger_entries
@@ -333,7 +499,9 @@ class ShadowLedgerStore:
                         rows[-1]["recorded_at_utc"], "previous recorded_at_utc"
                     )
                     if recorded_at < previous_recorded:
-                        raise ValueError("refusing append after a backwards clock movement")
+                        raise ValueError(
+                            "refusing append after a backwards clock movement"
+                        )
                 entry_id = _fingerprint(
                     {
                         "contract": LEDGER_CONTRACT,
@@ -427,8 +595,12 @@ class ShadowLedgerStore:
         artifact_evidence: dict[str, Any],
     ) -> tuple[dict[str, Any], bool]:
         captured = _utc_timestamp(captured_at, "captured_at")
-        decision_time = _utc_timestamp(packet.get("times", {}).get("decisionTime"), "decisionTime")
-        signal_time = _utc_timestamp(packet.get("times", {}).get("signalTime"), "signalTime")
+        decision_time = _utc_timestamp(
+            packet.get("times", {}).get("decisionTime"), "decisionTime"
+        )
+        signal_time = _utc_timestamp(
+            packet.get("times", {}).get("signalTime"), "signalTime"
+        )
         source_max = _utc_timestamp(
             packet.get("times", {}).get("sourceDataMaxTime"), "sourceDataMaxTime"
         )
@@ -436,16 +608,28 @@ class ShadowLedgerStore:
         if packet.get("mode") != LIVE_INFERENCE:
             raise ValueError("shadow ledger accepts live_inference packets only")
         guardrails = packet.get("guardrails") or {}
-        if guardrails.get("timestampSafe") is not True or guardrails.get("noLookahead") is not True:
+        if (
+            guardrails.get("timestampSafe") is not True
+            or guardrails.get("noLookahead") is not True
+        ):
             raise ValueError("shadow decision packet is not timestamp safe")
-        if guardrails.get("executionAllowed") is not False or packet.get("outcome") is not None:
-            raise ValueError("shadow decision packet contains execution or outcome data")
-        if source_max > decision_time or decision_time > captured + pd.Timedelta(seconds=30):
+        if (
+            guardrails.get("executionAllowed") is not False
+            or packet.get("outcome") is not None
+        ):
+            raise ValueError(
+                "shadow decision packet contains execution or outcome data"
+            )
+        if source_max > decision_time or decision_time > captured + pd.Timedelta(
+            seconds=30
+        ):
             raise ValueError("shadow decision chronology is invalid")
         if captured - decision_time > pd.Timedelta(minutes=5):
             raise ValueError("shadow packet was not captured at server decision time")
         signal_age = decision_time - signal_time
-        if signal_age < pd.Timedelta(0) or signal_age > pd.Timedelta(seconds=max_signal_age_seconds):
+        if signal_age < pd.Timedelta(0) or signal_age > pd.Timedelta(
+            seconds=max_signal_age_seconds
+        ):
             raise ValueError("shadow signal is stale or not yet available")
         if anchor != source_max:
             raise ValueError("shadow anchor must equal the last closed evidence time")
@@ -453,7 +637,9 @@ class ShadowLedgerStore:
         if not np.isfinite(anchor_value):
             raise ValueError("shadow anchor price is invalid")
         if bool(artifact_evidence.get("builtIn")):
-            raise ValueError("built-in retrospective artifacts cannot enter the prospective ledger")
+            raise ValueError(
+                "built-in retrospective artifacts cannot enter the prospective ledger"
+            )
         label_due = anchor + pd.Timedelta(hours=OUTCOME_HORIZON_HOURS)
         shadow_id = _fingerprint(
             {
@@ -478,6 +664,11 @@ class ShadowLedgerStore:
             "packet": packet,
             "executionAllowed": False,
         }
+        payload["trialIdentity"] = trial_descriptor(
+            payload,
+            ledger_contract=LEDGER_CONTRACT,
+            outcome_contract=OUTCOME_CONTRACT,
+        )
         return self._append(
             entry_type="decision",
             shadow_id=shadow_id,
@@ -506,16 +697,28 @@ class ShadowLedgerStore:
         observed = _utc_timestamp(observed_time, "observed_time")
         settled = _utc_timestamp(settled_at, "settled_at")
         if observed < due or settled < observed:
-            raise ValueError("shadow outcome was observed before its closed 72-hour horizon")
+            raise ValueError(
+                "shadow outcome was observed before its closed 72-hour horizon"
+            )
         anchor_price = float(decision_payload.get("anchorClose"))
         target_price = float(observed_price)
-        if not np.isfinite(anchor_price) or not np.isfinite(target_price) or anchor_price == 0:
+        if (
+            not np.isfinite(anchor_price)
+            or not np.isfinite(target_price)
+            or anchor_price == 0
+        ):
             raise ValueError("shadow outcome prices are invalid")
         raw_return = ((target_price / anchor_price) - 1) * 100
-        observed_direction = "UP" if raw_return > 0 else "DOWN" if raw_return < 0 else "FLAT"
+        observed_direction = (
+            "UP" if raw_return > 0 else "DOWN" if raw_return < 0 else "FLAT"
+        )
         predicted = str((packet.get("decision") or {}).get("direction") or "abstain")
         predicted_direction = {"bullish": "UP", "bearish": "DOWN"}.get(predicted)
-        hit = bool(predicted_direction == observed_direction) if predicted_direction else None
+        hit = (
+            bool(predicted_direction == observed_direction)
+            if predicted_direction
+            else None
+        )
         signed_return = (
             raw_return
             if predicted == "bullish"
@@ -548,7 +751,9 @@ class ShadowLedgerStore:
             event_id=str(packet.get("eventId") or ""),
             family_key=str(packet.get("familyKey") or ""),
             symbol=str(packet.get("symbol") or "USDJPY").upper(),
-            timeframe=str(decision_payload.get("captureKey", {}).get("timeframe") or "H1").upper(),
+            timeframe=str(
+                decision_payload.get("captureKey", {}).get("timeframe") or "H1"
+            ).upper(),
             effective_at=observed,
             recorded_at=settled,
             payload=payload,
@@ -600,9 +805,13 @@ class ShadowLedgerStore:
                     "anchorClose": decision.get("anchorClose"),
                     "labelDueTimeUtc": decision.get("labelDueTimeUtc"),
                     "status": "settled" if outcome else "pending_72h",
-                    "observedDirection": outcome.get("observedDirection") if outcome else None,
+                    "observedDirection": outcome.get("observedDirection")
+                    if outcome
+                    else None,
                     "rawReturnPct": outcome.get("rawReturnPct") if outcome else None,
-                    "signedReturnPct": outcome.get("signedReturnPct") if outcome else None,
+                    "signedReturnPct": outcome.get("signedReturnPct")
+                    if outcome
+                    else None,
                     "hit": outcome.get("hit") if outcome else None,
                     "packetId": packet.get("packetId"),
                     "executionOccurred": False,
@@ -610,8 +819,22 @@ class ShadowLedgerStore:
             )
         return records[: max(1, min(int(limit), 500))]
 
-    def summary(self) -> dict[str, Any]:
+    def summary(self, observed_at: Any | None = None) -> dict[str, Any]:
         decisions, outcomes = self._payload_sets()
+        now = (
+            _utc_timestamp(observed_at, "summary observed_at")
+            if observed_at is not None
+            else _utc_now()
+        )
+        trial = trial_summary(
+            decisions,
+            outcomes,
+            now,
+            ledger_contract=LEDGER_CONTRACT,
+            outcome_contract=OUTCOME_CONTRACT,
+            manifest=self.trial_manifest(),
+        )
+        gate_configuration = trial["gateConfiguration"]
         settled = [item for item in decisions if str(item["shadowId"]) in outcomes]
         clusters: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
         for decision in settled:
@@ -627,13 +850,17 @@ class ShadowLedgerStore:
             directions = {
                 str(item.get("packet", {}).get("decision", {}).get("direction") or "")
                 for item in items
-                if str(item.get("packet", {}).get("decision", {}).get("direction") or "")
+                if str(
+                    item.get("packet", {}).get("decision", {}).get("direction") or ""
+                )
                 in {"bullish", "bearish"}
             }
             if len(directions) != 1:
                 continue
             representative = items[0]
-            watch_clusters.append((representative, outcomes[str(representative["shadowId"])]))
+            watch_clusters.append(
+                (representative, outcomes[str(representative["shadowId"])])
+            )
         hits = sum(1 for _, outcome in watch_clusters if outcome.get("hit") is True)
         watch_count = len(watch_clusters)
         total_clusters = len(clusters)
@@ -651,21 +878,47 @@ class ShadowLedgerStore:
         coverage = (watch_count / total_clusters) if total_clusters else None
         mean_signed = float(np.mean(signed_returns)) if signed_returns else None
         criteria = {
-            "minimum100WatchClusters": watch_count >= 100,
-            "coverageAtLeast10Pct": coverage is not None and coverage >= 0.10,
-            "wilsonLowerAbove50Pct": lower is not None and lower > 0.50,
-            "twoSidedPBelow005": p_value is not None and p_value < 0.05,
-            "positiveMeanSignedReturn": mean_signed is not None and mean_signed > 0,
-            "minimumFourCalendarMonths": len(months - {""}) >= 4,
+            "minimum100WatchClusters": watch_count
+            >= int(gate_configuration["minimumWatchClusters"]),
+            "coverageAtLeast10Pct": coverage is not None
+            and coverage >= float(gate_configuration["minimumCoverage"]),
+            "wilsonLowerAbove50Pct": lower is not None
+            and lower > float(gate_configuration["wilsonLowerMustExceed"]),
+            "twoSidedPBelow005": p_value is not None
+            and p_value < float(gate_configuration["twoSidedPBelow"]),
+            "positiveMeanSignedReturn": mean_signed is not None
+            and mean_signed
+            > float(gate_configuration["meanSignedReturnMustExceedPct"]),
+            "minimumFourCalendarMonths": len(months - {""})
+            >= int(gate_configuration["minimumCalendarMonths"]),
         }
-        enough_sample = criteria["minimum100WatchClusters"] and criteria["minimumFourCalendarMonths"]
+        enough_sample = (
+            criteria["minimum100WatchClusters"]
+            and criteria["minimumFourCalendarMonths"]
+        )
         gate_status = (
-            "collecting_prospective_shadow_evidence"
+            "blocked_mixed_policy_cohorts"
+            if not trial["integrityValid"]
+            else "collecting_prospective_shadow_evidence"
             if not enough_sample
             else "passed_prospective_statistical_gate"
             if all(criteria.values())
             else "failed_prospective_statistical_gate"
         )
+        trial["progress"] = {
+            "watchClusters": {
+                "current": watch_count,
+                "target": int(gate_configuration["minimumWatchClusters"]),
+            },
+            "calendarMonths": {
+                "current": len(months - {""}),
+                "target": int(gate_configuration["minimumCalendarMonths"]),
+            },
+            "coverage": {
+                "current": coverage,
+                "minimum": float(gate_configuration["minimumCoverage"]),
+            },
+        }
         return {
             "contract": LEDGER_CONTRACT,
             "gateStatus": gate_status,
@@ -695,6 +948,7 @@ class ShadowLedgerStore:
             "criteria": criteria,
             "executionAllowed": False,
             "chain": self.verify_chain(),
+            "trial": trial,
         }
 
 
@@ -752,11 +1006,17 @@ class ShadowLedgerSupervisor:
             self._status.update(values)
 
     @staticmethod
-    def _artifact_readiness(snapshot: dict[str, Any], now: pd.Timestamp) -> dict[str, Any]:
+    def _artifact_readiness(
+        snapshot: dict[str, Any], now: pd.Timestamp
+    ) -> dict[str, Any]:
         artifact = snapshot.get("artifact") or {}
         timeframe = str(snapshot.get("timeframe") or "").upper()
         if timeframe not in SUPPORTED_TIMEFRAMES:
-            return {"ready": False, "code": "unsupported_timeframe", "timeframe": timeframe}
+            return {
+                "ready": False,
+                "code": "unsupported_timeframe",
+                "timeframe": timeframe,
+            }
         if bool(artifact.get("builtIn")):
             return {
                 "ready": False,
@@ -765,18 +1025,29 @@ class ShadowLedgerSupervisor:
                 "timeframe": timeframe,
             }
         parameters = artifact.get("parameters") or {}
-        raw_source_as_of = (
-            parameters.get("priceSourceLastBarCloseUtc")
-            or parameters.get("priceSourceAsOfUtc")
-        )
+        raw_source_as_of = parameters.get(
+            "priceSourceLastBarCloseUtc"
+        ) or parameters.get("priceSourceAsOfUtc")
         raw_created = artifact.get("createdAtUtc")
         if not raw_source_as_of or not raw_created:
-            return {"ready": False, "code": "artifact_provenance_incomplete", "timeframe": timeframe}
+            return {
+                "ready": False,
+                "code": "artifact_provenance_incomplete",
+                "timeframe": timeframe,
+            }
         source_as_of = _utc_timestamp(raw_source_as_of, "price source last closed bar")
         created_at = _utc_timestamp(raw_created, "artifact createdAtUtc")
-        if source_as_of > now + pd.Timedelta(seconds=30) or created_at > now + pd.Timedelta(seconds=30):
-            return {"ready": False, "code": "artifact_timestamp_in_future", "timeframe": timeframe}
-        max_age = _timeframe_delta(timeframe) + pd.Timedelta(minutes=CAPTURE_GRACE_MINUTES)
+        if source_as_of > now + pd.Timedelta(
+            seconds=30
+        ) or created_at > now + pd.Timedelta(seconds=30):
+            return {
+                "ready": False,
+                "code": "artifact_timestamp_in_future",
+                "timeframe": timeframe,
+            }
+        max_age = _timeframe_delta(timeframe) + pd.Timedelta(
+            minutes=CAPTURE_GRACE_MINUTES
+        )
         if now - source_as_of > max_age:
             return {
                 "ready": False,
@@ -811,7 +1082,9 @@ class ShadowLedgerSupervisor:
             "priceSourceContract": parameters.get("priceSourceContract"),
         }
 
-    def _capture_fresh(self, now: pd.Timestamp) -> tuple[int, dict[str, Any], list[str]]:
+    def _capture_fresh(
+        self, now: pd.Timestamp
+    ) -> tuple[int, dict[str, Any], list[str]]:
         snapshot = self.repository.shadow_candidate_snapshot()
         readiness = self._artifact_readiness(snapshot, now)
         if not readiness["ready"]:
@@ -825,7 +1098,11 @@ class ShadowLedgerSupervisor:
         for touch in snapshot.get("touches") or []:
             touch_time = _utc_timestamp(touch.get("touchTime"), "touchTime")
             signal_time = touch_time + delta
-            if signal_time <= now and now - signal_time <= max_age and source_as_of >= signal_time:
+            if (
+                signal_time <= now
+                and now - signal_time <= max_age
+                and source_as_of >= signal_time
+            ):
                 candidates.append({**touch, "signalTime": signal_time})
         if not candidates:
             return 0, {**readiness, "code": "waiting_for_just_closed_touch"}, []
@@ -882,7 +1159,9 @@ class ShadowLedgerSupervisor:
         errors: list[str] = []
         for (symbol, timeframe), decisions in grouped.items():
             try:
-                price = bars_to_price_frame(self.gateway.bars(symbol, timeframe, count=5000))
+                price = bars_to_price_frame(
+                    self.gateway.bars(symbol, timeframe, count=5000)
+                )
             except Exception as exc:
                 errors.append(f"{symbol}/{timeframe}: {exc}")
                 continue
@@ -908,7 +1187,11 @@ class ShadowLedgerSupervisor:
         return settled_count, errors
 
     def scan_once(self, observed_at: Any | None = None) -> dict[str, Any]:
-        now = _utc_timestamp(observed_at, "observed_at") if observed_at is not None else _utc_now()
+        now = (
+            _utc_timestamp(observed_at, "observed_at")
+            if observed_at is not None
+            else _utc_now()
+        )
         with self._scan_lock:
             captured = 0
             settled = 0
@@ -931,11 +1214,13 @@ class ShadowLedgerSupervisor:
                 lastError="; ".join(errors[:8]),
                 readiness=readiness,
             )
-        return self.snapshot()
+        return self.snapshot(observed_at=now)
 
-    def snapshot(self, limit: int = 100) -> dict[str, Any]:
+    def snapshot(
+        self, limit: int = 100, observed_at: Any | None = None
+    ) -> dict[str, Any]:
         return {
-            "summary": self.store.summary(),
+            "summary": self.store.summary(observed_at),
             "records": self.store.records(limit),
             "supervisor": self.status(),
         }

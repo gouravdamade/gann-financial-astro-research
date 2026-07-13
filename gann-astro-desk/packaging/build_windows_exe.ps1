@@ -68,9 +68,9 @@ if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
 $releaseFiles = Get-ChildItem -LiteralPath $releaseFolder -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.6.0"
+    version = "0.6.1"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
-    executable = $exe
+    executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash
     file_count = $releaseFiles.Count
     total_bytes = ($releaseFiles | Measure-Object -Property Length -Sum).Sum

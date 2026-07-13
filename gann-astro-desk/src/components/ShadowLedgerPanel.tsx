@@ -1,4 +1,4 @@
-import { Clock3, Database, LockKeyhole, RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react'
+import { Clock3, Database, Fingerprint, LockKeyhole, RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react'
 import type { ShadowLedgerSnapshot } from '../types'
 
 type ShadowLedgerPanelProps = {
@@ -40,6 +40,9 @@ export function ShadowLedgerPanel({ snapshot, busy, refreshBusy, error, onScan, 
   const supervisor = snapshot?.supervisor
   const refresh = snapshot?.refresh
   const chainValid = summary?.chain.valid ?? true
+  const trial = summary?.trial
+  const watchProgress = trial?.progress?.watchClusters
+  const monthProgress = trial?.progress?.calendarMonths
   return (
     <section className="shadow-ledger-panel">
       <div className="shadow-ledger-summary">
@@ -50,7 +53,10 @@ export function ShadowLedgerPanel({ snapshot, busy, refreshBusy, error, onScan, 
         </span>
         <span><strong>{summary?.decisionCount ?? 0}</strong><small>captured decisions</small></span>
         <span><strong>{summary?.pendingOutcomeCount ?? 0}</strong><small>awaiting 72h</small></span>
-        <span><strong>{summary?.watchClusterCount ?? 0}</strong><small>settled watches</small></span>
+        <span>
+          <strong>{watchProgress ? `${watchProgress.current} / ${watchProgress.target}` : summary?.watchClusterCount ?? 0}</strong>
+          <small>settled watch clusters</small>
+        </span>
         <span><strong>{percent(summary?.hitRate ?? null)}</strong><small>directional hit rate</small></span>
         <span><strong>{gateLabel(summary?.gateStatus ?? '')}</strong><small>prospective gate</small></span>
         <span className="shadow-execution-lock"><LockKeyhole size={14} /><strong>Execution locked</strong></span>
@@ -77,6 +83,28 @@ export function ShadowLedgerPanel({ snapshot, busy, refreshBusy, error, onScan, 
           <span>95% interval {percent(summary.wilson95Lower)} to {percent(summary.wilson95Upper)}</span>
         )}
         {(error || supervisor?.lastError) && <span className="negative">{error || supervisor?.lastError}</span>}
+      </div>
+      <div className={`shadow-trial-line ${trial?.integrityValid === false ? 'is-invalid' : ''}`}>
+        <Fingerprint size={13} />
+        <strong>
+          {trial?.status === 'frozen_policy_cohort'
+            ? 'Frozen trial policy verified'
+            : trial?.status === 'mixed_policy_cohorts_blocked'
+              ? 'Mixed policy cohort blocked'
+              : 'Trial locks on first decision'}
+        </strong>
+        {trial?.trialId && <span title={trial.trialId}>trial {trial.trialId.slice(0, 12)}</span>}
+        {trial?.engineVersion && <span title={trial.engineVersion}>engine {trial.engineVersion}</span>}
+        {trial?.policyVersion && <span title={trial.policyVersion}>policy {trial.policyVersion}</span>}
+        {monthProgress && <span>{monthProgress.current} / {monthProgress.target} calendar months</span>}
+        {trial?.dueOutcomeCount ? (
+          <span className="negative">{trial.dueOutcomeCount} eligible outcome{trial.dueOutcomeCount === 1 ? '' : 's'} awaiting settlement</span>
+        ) : trial?.nextOutcomeDueTimeUtc ? (
+          <span>next 72h settlement {new Date(trial.nextOutcomeDueTimeUtc).toLocaleString()}</span>
+        ) : (
+          <span>no unsettled outcomes</span>
+        )}
+        <span className="shadow-policy-lock"><LockKeyhole size={12} /> thresholds unchanged</span>
       </div>
       <div className="shadow-ledger-table-wrap">
         <table className="shadow-ledger-table">

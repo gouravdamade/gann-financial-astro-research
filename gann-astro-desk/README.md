@@ -52,6 +52,11 @@ separate from live market-data concerns.
   then appends a separate outcome only after the first closed MT5 bar reaches the
   72-hour horizon. Watches, abstentions, coverage, confidence interval, p-value, and
   directional return remain inspectable in the Shadow validation dock.
+- An immutable one-row prospective-trial manifest locks the first cohort's decision
+  contract, engine, policy, Raman astronomy contract, symbol, timeframe, 72-hour horizon,
+  and statistical thresholds. A mismatched future cohort is rejected instead of being
+  silently mixed into the sample; the dock shows the fingerprint, 100-cluster/four-month
+  progress, next eligible settlement, and any due outcome backlog.
 - Read-only Codex SDK bridge with deterministic evidence, selected annotation,
   and a local chart screenshot attached to the family task.
 - A native Local Jyotish tab backed by the portable Ollama runtime and 4,565 packaged
@@ -73,6 +78,9 @@ separate from live market-data concerns.
 - Historical/baseline and stale generated touches are rejected from the prospective
   ledger instead of being backfilled. Ledger rows cannot be updated or deleted through
   SQLite while their sequence and payload hashes make offline tampering detectable.
+- The prospective-trial manifest is also protected against SQL update/delete. Existing
+  pre-manifest decisions seed it once during the schema-v2 upgrade only when they form one
+  internally consistent policy cohort.
 - Provisional astrological values remain labeled provisional.
 - New occurrence progress is stored separately from legacy completed reviews.
 - Codex threads are family-scoped; local LLM text is never promoted to official evidence.
