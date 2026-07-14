@@ -8,6 +8,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 import uuid
 from pathlib import Path
 from typing import Any
@@ -183,8 +184,14 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
 
 
 class GenerationJobManager:
-    def __init__(self, repository: AstroRepository, autostart: bool = True) -> None:
+    def __init__(
+        self,
+        repository: AstroRepository,
+        autostart: bool = True,
+        diagnostics: Any | None = None,
+    ) -> None:
         self.repository = repository
+        self.diagnostics = diagnostics
         self.project_root = repository.paths.project_root
         self.artifacts_root = repository.paths.artifacts_dir
         self._stop = threading.Event()
@@ -373,7 +380,22 @@ class GenerationJobManager:
                 self._wake.wait(timeout=1.0)
                 self._wake.clear()
                 continue
-            self._run_job(job)
+            started_at = time.perf_counter()
+            try:
+                self._run_job(job)
+            finally:
+                if self.diagnostics is not None:
+                    try:
+                        completed = self.get_job(job["jobId"])
+                        status = str(completed.get("status") or "unknown")
+                    except Exception:
+                        status = "unknown"
+                    self.diagnostics.record(
+                        "artifact_generation_job",
+                        (time.perf_counter() - started_at) * 1000,
+                        ok=status == "completed",
+                        details={"jobId": job["jobId"], "status": status},
+                    )
 
     def _update_job(self, job_id: str, **values: Any) -> None:
         allowed = {
@@ -409,6 +431,27 @@ class GenerationJobManager:
         with log_path.open("a", encoding="utf-8", errors="replace") as log:
             log.write(f"\n$ {subprocess.list2cmdline(command)}\n")
             log.flush()
+            if getattr(sys, "frozen", False):
+                if self._stop.is_set() or self._cancel_requested(job_id):
+                    raise JobCancelled("Generation cancelled by the user.")
+                previous_arguments = list(sys.argv)
+                try:
+                    from runtime_support import run_worker_mode
+
+                    if not run_worker_mode(command[1:]):
+                        raise RuntimeError("Packaged generator arguments were not recognized")
+                    log.write("Packaged generator completed in the background worker thread.\n")
+                    log.flush()
+                except Exception:
+                    log.write(traceback.format_exc())
+                    log.flush()
+                    raise
+                finally:
+                    sys.argv = previous_arguments
+                if self._stop.is_set() or self._cancel_requested(job_id):
+                    raise JobCancelled("Generation cancelled by the user.")
+                return
+
             creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
             process = subprocess.Popen(
                 command,

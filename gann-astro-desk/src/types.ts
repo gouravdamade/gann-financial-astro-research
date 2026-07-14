@@ -670,6 +670,71 @@ export type ProspectiveRefreshStatus = {
   executionAllowed: false
 }
 
+export type BackendRuntimeInfo = {
+  contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1'
+  baseUrl: string
+  port: number
+  pid: number
+  status: string
+  executionAllowed: false
+  restartCount: number
+  recoveryState: 'steady' | 'recovering' | 'recovered'
+  startedAtUnixMs: number
+  spawnElapsedMs: number
+  lastExit: string | null
+}
+
+export type RuntimeMetric = {
+  name: string
+  count: number
+  successCount: number
+  failureCount: number
+  sampleCount: number
+  lastMs: number
+  averageMs: number
+  p50Ms: number
+  p95Ms: number
+  maxMs: number
+  lastAtUtc: string
+}
+
+export type RuntimeDiagnosticEvent = {
+  atUtc: string
+  sessionId: string
+  kind: string
+  name: string
+  durationMs?: number
+  details?: Record<string, unknown>
+  executionAllowed: false
+}
+
+export type RuntimeDiagnostics = {
+  contract: 'GANN_RUNTIME_DIAGNOSTICS_V1'
+  sessionId: string
+  startedAtUtc: string
+  uptimeSeconds: number
+  startup: {
+    totalMs: number
+    phasesMs: Record<string, number>
+    metadata: Record<string, unknown>
+  }
+  operations: RuntimeMetric[]
+  recentEvents: RuntimeDiagnosticEvent[]
+  logPath: string
+  guardrails: {
+    observabilityOnly: true
+    changesInferencePolicy: false
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+}
+
+export type RuntimeDiagnosticsBundle = {
+  runtime: BackendRuntimeInfo | null
+  diagnostics: RuntimeDiagnostics
+}
+
 export type LocalJyotishHealth = {
   contract: 'GANN_LOCAL_JYOTISH_RAG_DRAFT_V1'
   ready: boolean

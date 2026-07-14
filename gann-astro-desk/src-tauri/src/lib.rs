@@ -1,16 +1,23 @@
 use serde::Serialize;
+use serde_json::json;
+use std::collections::VecDeque;
 use std::env;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpListener, TcpStream};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
-use std::sync::Mutex;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Mutex,
+};
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Manager, RunEvent, State};
 
 const SIDECAR_CONTRACT: &str = "GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1";
+const MAX_RESTARTS: usize = 3;
+const RESTART_WINDOW: Duration = Duration::from_secs(5 * 60);
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -21,16 +28,70 @@ struct BackendRuntimeInfo {
     pid: u32,
     status: String,
     execution_allowed: bool,
+    restart_count: u32,
+    recovery_state: String,
+    started_at_unix_ms: u64,
+    spawn_elapsed_ms: u64,
+    last_exit: Option<String>,
 }
 
-struct BackendRuntimeState {
-    info: BackendRuntimeInfo,
-    child: Mutex<Option<Child>>,
-}
-
+#[derive(Clone)]
 enum SidecarLaunch {
     Executable(PathBuf),
     SourcePython { python: PathBuf, script: PathBuf },
+}
+
+struct ManagedChild {
+    process: Child,
+    #[cfg(windows)]
+    _job: std::os::windows::io::OwnedHandle,
+}
+
+impl ManagedChild {
+    fn new(process: Child) -> Result<Self, String> {
+        #[cfg(windows)]
+        {
+            let job = assign_kill_on_close_job(&process)?;
+            Ok(Self { process, _job: job })
+        }
+        #[cfg(not(windows))]
+        {
+            Ok(Self { process })
+        }
+    }
+
+    fn id(&self) -> u32 {
+        self.process.id()
+    }
+}
+
+struct SupervisorProcess {
+    child: Option<ManagedChild>,
+    restart_times: VecDeque<Instant>,
+    restart_count: u32,
+    started_at_unix_ms: u64,
+    spawn_elapsed_ms: u64,
+    last_exit: Option<String>,
+}
+
+struct BackendRuntimeState {
+    base_url: String,
+    port: u16,
+    codex_port: u16,
+    launch: SidecarLaunch,
+    data_root: PathBuf,
+    logs_dir: PathBuf,
+    process: Mutex<SupervisorProcess>,
+    shutting_down: AtomicBool,
+}
+
+fn now_unix_ms() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis()
+        .try_into()
+        .unwrap_or(u64::MAX)
 }
 
 fn available_port() -> Result<u16, String> {
@@ -105,6 +166,118 @@ fn configure_hidden_process(command: &mut Command) {
     }
 }
 
+#[cfg(windows)]
+fn assign_kill_on_close_job(child: &Child) -> Result<std::os::windows::io::OwnedHandle, String> {
+    use std::mem::{size_of, zeroed};
+    use std::os::windows::io::{AsRawHandle, FromRawHandle, OwnedHandle};
+    use windows_sys::Win32::Foundation::GetLastError;
+    use windows_sys::Win32::System::JobObjects::{
+        AssignProcessToJobObject, CreateJobObjectW, JobObjectExtendedLimitInformation,
+        SetInformationJobObject, JOBOBJECT_EXTENDED_LIMIT_INFORMATION,
+        JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
+    };
+
+    unsafe {
+        let raw_job = CreateJobObjectW(std::ptr::null(), std::ptr::null());
+        if raw_job.is_null() {
+            return Err(format!(
+                "Unable to create sidecar job object: {}",
+                GetLastError()
+            ));
+        }
+        let job = OwnedHandle::from_raw_handle(raw_job.cast());
+        let mut limits: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = zeroed();
+        limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+        if SetInformationJobObject(
+            raw_job,
+            JobObjectExtendedLimitInformation,
+            (&limits as *const JOBOBJECT_EXTENDED_LIMIT_INFORMATION).cast(),
+            size_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>() as u32,
+        ) == 0
+        {
+            return Err(format!(
+                "Unable to configure sidecar job object: {}",
+                GetLastError()
+            ));
+        }
+        if AssignProcessToJobObject(raw_job, child.as_raw_handle().cast()) == 0 {
+            return Err(format!(
+                "Unable to attach sidecar to job object: {}",
+                GetLastError()
+            ));
+        }
+        Ok(job)
+    }
+}
+
+fn spawn_sidecar(
+    launch: &SidecarLaunch,
+    data_root: &Path,
+    logs_dir: &Path,
+    port: u16,
+    codex_port: u16,
+) -> Result<(ManagedChild, u64, u64), String> {
+    let stdout = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(logs_dir.join("tauri_backend_sidecar.log"))
+        .map_err(|error| format!("Unable to open backend sidecar log: {error}"))?;
+    let stderr = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(logs_dir.join("tauri_backend_sidecar_error.log"))
+        .map_err(|error| format!("Unable to open backend sidecar error log: {error}"))?;
+
+    let mut command = match launch {
+        SidecarLaunch::Executable(executable) => {
+            let mut command = Command::new(executable);
+            if let Some(parent) = executable.parent() {
+                command.current_dir(parent);
+            }
+            command
+        }
+        SidecarLaunch::SourcePython { python, script } => {
+            let mut command = Command::new(python);
+            command.arg(script);
+            if let Some(parent) = script.parent() {
+                command.current_dir(parent);
+            }
+            command
+        }
+    };
+    command
+        .arg("--port")
+        .arg(port.to_string())
+        .arg("--codex-port")
+        .arg(codex_port.to_string())
+        .env("GANN_ASTRO_DESKTOP_DATA", data_root)
+        .env("PYTHONUNBUFFERED", "1")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::from(stdout))
+        .stderr(Stdio::from(stderr));
+    configure_hidden_process(&mut command);
+    let spawn_started_at = Instant::now();
+    let process = command
+        .spawn()
+        .map_err(|error| format!("Unable to start managed backend sidecar: {error}"))?;
+    let managed = ManagedChild::new(process)?;
+    let spawn_elapsed_ms = spawn_started_at
+        .elapsed()
+        .as_millis()
+        .try_into()
+        .unwrap_or(u64::MAX);
+    Ok((managed, now_unix_ms(), spawn_elapsed_ms))
+}
+
+fn prune_restart_times(restart_times: &mut VecDeque<Instant>, now: Instant) {
+    while restart_times
+        .front()
+        .is_some_and(|started| now.duration_since(*started) > RESTART_WINDOW)
+    {
+        restart_times.pop_front();
+    }
+}
+
 impl BackendRuntimeState {
     fn spawn(app: &AppHandle) -> Result<Self, String> {
         let port = available_port()?;
@@ -114,110 +287,158 @@ impl BackendRuntimeState {
         let logs_dir = data_root.join("logs");
         fs::create_dir_all(&logs_dir)
             .map_err(|error| format!("Unable to create runtime logs: {error}"))?;
-        let stdout = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(logs_dir.join("tauri_backend_sidecar.log"))
-            .map_err(|error| format!("Unable to open backend sidecar log: {error}"))?;
-        let stderr = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(logs_dir.join("tauri_backend_sidecar_error.log"))
-            .map_err(|error| format!("Unable to open backend sidecar error log: {error}"))?;
-
-        let mut command = match launch {
-            SidecarLaunch::Executable(executable) => {
-                let mut command = Command::new(&executable);
-                if let Some(parent) = executable.parent() {
-                    command.current_dir(parent);
-                }
-                command
-            }
-            SidecarLaunch::SourcePython { python, script } => {
-                let mut command = Command::new(python);
-                command.arg(&script);
-                if let Some(parent) = script.parent() {
-                    command.current_dir(parent);
-                }
-                command
-            }
+        let (child, started_at_unix_ms, spawn_elapsed_ms) =
+            spawn_sidecar(&launch, &data_root, &logs_dir, port, codex_port)?;
+        let state = Self {
+            base_url: format!("http://127.0.0.1:{port}"),
+            port,
+            codex_port,
+            launch,
+            data_root,
+            logs_dir,
+            process: Mutex::new(SupervisorProcess {
+                child: Some(child),
+                restart_times: VecDeque::new(),
+                restart_count: 0,
+                started_at_unix_ms,
+                spawn_elapsed_ms,
+                last_exit: None,
+            }),
+            shutting_down: AtomicBool::new(false),
         };
-        command
-            .arg("--port")
-            .arg(port.to_string())
-            .arg("--codex-port")
-            .arg(codex_port.to_string())
-            .env("GANN_ASTRO_DESKTOP_DATA", &data_root)
-            .env("PYTHONUNBUFFERED", "1")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::from(stdout))
-            .stderr(Stdio::from(stderr));
-        configure_hidden_process(&mut command);
-        let child = command
-            .spawn()
-            .map_err(|error| format!("Unable to start managed backend sidecar: {error}"))?;
-        let pid = child.id();
+        state.append_supervisor_event("sidecar_spawned", None);
+        Ok(state)
+    }
 
-        Ok(Self {
-            info: BackendRuntimeInfo {
-                contract: SIDECAR_CONTRACT,
-                base_url: format!("http://127.0.0.1:{port}"),
-                port,
-                pid,
-                status: "starting".to_string(),
-                execution_allowed: false,
-            },
-            child: Mutex::new(Some(child)),
-        })
+    fn append_supervisor_event(&self, name: &str, details: Option<serde_json::Value>) {
+        let event = json!({
+            "atUnixMs": now_unix_ms(),
+            "kind": "tauri_supervisor",
+            "name": name,
+            "details": details.unwrap_or_else(|| json!({})),
+            "executionAllowed": false,
+        });
+        if let Ok(mut handle) = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(self.logs_dir.join("tauri_runtime_supervisor.jsonl"))
+        {
+            let _ = writeln!(handle, "{event}");
+        }
+    }
+
+    fn restart_locked(&self, process: &mut SupervisorProcess) -> Result<(), String> {
+        if self.shutting_down.load(Ordering::SeqCst) {
+            return Err("Backend sidecar is shutting down".to_string());
+        }
+        let now = Instant::now();
+        prune_restart_times(&mut process.restart_times, now);
+        if process.restart_times.len() >= MAX_RESTARTS {
+            self.append_supervisor_event(
+                "restart_limit_reached",
+                Some(json!({"restartCount": process.restart_count})),
+            );
+            return Err(format!(
+                "Backend sidecar restart limit reached ({MAX_RESTARTS} attempts in five minutes)"
+            ));
+        }
+        thread::sleep(Duration::from_millis(250));
+        let (child, started_at_unix_ms, spawn_elapsed_ms) = spawn_sidecar(
+            &self.launch,
+            &self.data_root,
+            &self.logs_dir,
+            self.port,
+            self.codex_port,
+        )?;
+        process.child = Some(child);
+        process.restart_times.push_back(now);
+        process.restart_count += 1;
+        process.started_at_unix_ms = started_at_unix_ms;
+        process.spawn_elapsed_ms = spawn_elapsed_ms;
+        self.append_supervisor_event(
+            "sidecar_restarted",
+            Some(json!({
+                "restartCount": process.restart_count,
+                "lastExit": process.last_exit,
+            })),
+        );
+        Ok(())
     }
 
     fn snapshot(&self) -> Result<BackendRuntimeInfo, String> {
-        let mut info = self.info.clone();
-        let mut child_guard = self
-            .child
+        let mut process = self
+            .process
             .lock()
             .map_err(|_| "Backend sidecar state is unavailable".to_string())?;
-        let child = child_guard
-            .as_mut()
-            .ok_or_else(|| "Backend sidecar is not running".to_string())?;
-        if let Some(status) = child
-            .try_wait()
-            .map_err(|error| format!("Unable to inspect backend sidecar: {error}"))?
-        {
-            *child_guard = None;
-            return Err(format!("Backend sidecar exited early with status {status}"));
+        if let Some(child) = process.child.as_mut() {
+            if let Some(status) = child
+                .process
+                .try_wait()
+                .map_err(|error| format!("Unable to inspect backend sidecar: {error}"))?
+            {
+                let exit = status.to_string();
+                process.last_exit = Some(exit.clone());
+                process.child = None;
+                self.append_supervisor_event(
+                    "sidecar_exit_detected",
+                    Some(json!({"status": exit})),
+                );
+            }
         }
-        let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), info.port);
-        info.status = if TcpStream::connect_timeout(&address, Duration::from_millis(120)).is_ok() {
-            "ready"
+        if process.child.is_none() {
+            self.restart_locked(&mut process)?;
+        }
+        let child = process
+            .child
+            .as_ref()
+            .ok_or_else(|| "Backend sidecar recovery did not start a process".to_string())?;
+        let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), self.port);
+        let ready = TcpStream::connect_timeout(&address, Duration::from_millis(120)).is_ok();
+        let recovery_state = if process.restart_count == 0 {
+            "steady"
+        } else if ready {
+            "recovered"
         } else {
-            "starting"
-        }
-        .to_string();
-        Ok(info)
+            "recovering"
+        };
+        Ok(BackendRuntimeInfo {
+            contract: SIDECAR_CONTRACT,
+            base_url: self.base_url.clone(),
+            port: self.port,
+            pid: child.id(),
+            status: if ready { "ready" } else { "starting" }.to_string(),
+            execution_allowed: false,
+            restart_count: process.restart_count,
+            recovery_state: recovery_state.to_string(),
+            started_at_unix_ms: process.started_at_unix_ms,
+            spawn_elapsed_ms: process.spawn_elapsed_ms,
+            last_exit: process.last_exit.clone(),
+        })
     }
 
     fn shutdown(&self) {
-        let Ok(mut child_guard) = self.child.lock() else {
+        self.shutting_down.store(true, Ordering::SeqCst);
+        let Ok(mut process) = self.process.lock() else {
             return;
         };
-        let Some(mut child) = child_guard.take() else {
+        let Some(mut child) = process.child.take() else {
             return;
         };
-        if let Some(stdin) = child.stdin.as_mut() {
+        self.append_supervisor_event("sidecar_shutdown_requested", None);
+        if let Some(stdin) = child.process.stdin.as_mut() {
             let _ = stdin.write_all(b"shutdown\n");
             let _ = stdin.flush();
         }
         let deadline = Instant::now() + Duration::from_secs(8);
         while Instant::now() < deadline {
-            match child.try_wait() {
+            match child.process.try_wait() {
                 Ok(Some(_)) => return,
                 Ok(None) => thread::sleep(Duration::from_millis(100)),
                 Err(_) => break,
             }
         }
-        let _ = child.kill();
-        let _ = child.wait();
+        let _ = child.process.kill();
+        let _ = child.process.wait();
     }
 }
 
@@ -238,9 +459,30 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("Gann Astro Desk failed to build");
 
-    app.run(|app_handle, event| {
-        if matches!(event, RunEvent::ExitRequested { .. } | RunEvent::Exit) {
+    app.run(|app_handle, event| match event {
+        RunEvent::Resumed => {
+            let state = app_handle.state::<BackendRuntimeState>();
+            let _ = state.snapshot();
+        }
+        RunEvent::ExitRequested { .. } | RunEvent::Exit => {
             app_handle.state::<BackendRuntimeState>().shutdown();
         }
+        _ => {}
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn restart_window_prunes_old_attempts() {
+        let now = Instant::now();
+        let mut attempts = VecDeque::from([
+            now - RESTART_WINDOW - Duration::from_secs(1),
+            now - Duration::from_secs(3),
+        ]);
+        prune_restart_times(&mut attempts, now);
+        assert_eq!(attempts.len(), 1);
+    }
 }

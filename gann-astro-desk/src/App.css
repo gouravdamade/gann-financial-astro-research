@@ -931,6 +931,101 @@
   font-size: 11px;
 }
 
+.runtime-diagnostics-panel {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 42px minmax(0, 1fr);
+  background: #111419;
+}
+
+.runtime-summary-strip {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-bottom: 1px solid #292e36;
+}
+
+.runtime-summary-strip > span {
+  min-width: 132px;
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-content: center;
+  column-gap: 5px;
+  padding: 0 10px;
+  border-right: 1px solid #292e36;
+  color: #bdc6d0;
+}
+
+.runtime-summary-strip svg { grid-row: 1 / 3; align-self: center; color: #6f8497; }
+.runtime-summary-strip strong { font-size: 9px; line-height: 13px; text-transform: capitalize; }
+.runtime-summary-strip small { color: #707985; font-size: 8px; line-height: 10px; }
+.runtime-summary-strip .is-ready strong { color: #57cda7; }
+.runtime-summary-strip .is-recovered strong { color: #efbd58; }
+
+.runtime-summary-strip .runtime-phases {
+  flex: 1 1 auto;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.runtime-phases i {
+  min-width: 0;
+  color: #73808d;
+  font-size: 8px;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.runtime-diagnostic-error {
+  position: absolute;
+  right: 10px;
+  margin-top: 45px;
+  z-index: 2;
+  color: #ff8d94;
+  font-size: 8px;
+}
+
+.runtime-metric-table-wrap { min-height: 0; overflow: auto; }
+
+.runtime-metric-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 9px;
+}
+
+.runtime-metric-table th,
+.runtime-metric-table td {
+  height: 25px;
+  padding: 0 9px;
+  border-right: 1px solid #242931;
+  border-bottom: 1px solid #242931;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.runtime-metric-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #191d23;
+  color: #7d8591;
+  font-weight: 650;
+}
+
+.runtime-metric-table th:first-child,
+.runtime-metric-table td:first-child { width: 330px; text-align: left; }
+.runtime-metric-table th:not(:first-child) { width: 78px; }
+.runtime-empty { text-align: center !important; color: #707985; }
+
 .loading-state,
 .fatal-state {
   width: 100%;

@@ -1,10 +1,48 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-14 09:17 IST
+Last updated: 2026-07-14 22:31 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-14 (Tauri 2 / Rust Native Shell)
+## Latest Update - 2026-07-14 (Tauri Runtime Stabilization 0.9.1)
+
+- Promoted Gann Astro Desk `0.9.1` after adding end-to-end runtime diagnostics,
+  same-port Rust sidecar recovery, Windows Job Object descendant cleanup, and a
+  frontend diagnostics/reconnect dock.
+- Fixed the release-blocking packaged-generation hang. Frozen PyInstaller workers
+  now invoke both existing generators on `GenerationJobManager`'s background thread
+  instead of spawning another frozen copy. Development mode still uses subprocesses;
+  packaged cancellation is checked between generator stages.
+- A real packaged API job completed one corrected event plus one SR touch from the
+  copied final candidate in 14.65 seconds. The native crash-injection soak passed all
+  11 recovery, persistence, safety, and descendant-cleanup checks.
+- Promoted release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - executable SHA-256
+    `F7A371991250974AFBED4B693C300DCA7B714377448B03E067532AFA433531B6`;
+  - installer SHA-256
+    `059F78A93E5A749D6F114389831F1FA745F85E54EC3E3A080E8FE15A34469F43`;
+  - rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.9.0_20260714_222152`.
+- Real-state restart preserved the honestly cancelled status of stale job
+  `8394a28dba854c418622b41d97bc6885`, reconnected to MetaQuotes-Demo read-only,
+  and kept `tradeAllowed=false` plus every runtime execution lock false.
+- Verification: 117 Python tests, 17 Vitest tests, Oxlint, TypeScript/Vite, Ruff,
+  byte compilation, PowerShell parsing, Cargo check/test, Clippy `-D warnings`,
+  rustfmt, frozen API generation, final-candidate generation, native crash/recovery
+  soak, release hashes, and real writable-state restart passed.
+- Evidence: `tauri_stabilization_release_20260714.md`.
+- Recovery backup:
+  `D:\PycharmProjects\chat_session_backups\session_20260714_223416_tauri_stabilization_v091`.
+- Next requested work:
+  1. improve discoverability and direct manipulation for horizontal/vertical lines;
+  2. add persistent editable Fibonacci retracement drawings;
+  3. research Sarvatobhadra and Sudarshana Chakra doctrine for local-RAG ingestion
+     and evidence-only app surfaces;
+  4. research Gann's *The Tunnel Thru the Air* and public Financial Astrology /
+     planetary-line discussions without promoting unvalidated claims into inference.
+
+## Previous Update - 2026-07-14 (Tauri 2 / Rust Native Shell)
 
 - Promoted Gann Astro Desk `0.9.0`. The supported native shell is now Tauri 2 / Rust;
   PyWebView is retained only in the archived 0.8.0 rollback release.

@@ -5,6 +5,7 @@ import math
 import os
 import re
 import threading
+import time
 import uuid
 from collections import Counter
 from pathlib import Path
@@ -56,8 +57,10 @@ class LocalJyotishService:
         corpus_path: Path | None = None,
         endpoint: str | None = None,
         preferred_model: str | None = None,
+        diagnostics: Any | None = None,
     ) -> None:
         self.repository = repository
+        self.diagnostics = diagnostics
         default_corpus = repository.paths.project_root / "jyotish_agent" / "corpus_chunks.jsonl"
         self.corpus_path = Path(
             corpus_path
@@ -342,6 +345,7 @@ class LocalJyotishService:
             " ".join(str(item.get("label") or item.get("key") or "") for item in evidence if isinstance(item, dict)),
         ]
         query = " ".join(query_parts)
+        retrieval_started_at = time.perf_counter()
         doctrine_sources = self.retrieve(query, limit=3, layer="classical_doctrine")
         commentary_sources = self.retrieve(query, limit=2, layer="reference_commentary")
         local_candidates = self.retrieve(query, limit=10, layer="local_research")
@@ -354,11 +358,18 @@ class LocalJyotishService:
             if any(needle in str(item.get("excerpt") or "").upper() for needle in family_needles)
         ][:2]
         sources = [*doctrine_sources, *commentary_sources, *local_sources]
+        if self.diagnostics is not None:
+            self.diagnostics.record(
+                "local_jyotish_retrieval",
+                (time.perf_counter() - retrieval_started_at) * 1000,
+                details={"sourceCount": len(sources)},
+            )
         prompt = self._build_prompt(normalized_question, context, sources)
         available = list(dict.fromkeys([health["model"], *health["availableModels"]]))
         result: dict[str, Any] | None = None
         selected_model = ""
         errors: list[str] = []
+        generation_started_at = time.perf_counter()
         for model in available:
             try:
                 result = self._request_json(
@@ -381,7 +392,20 @@ class LocalJyotishService:
             except (HTTPError, URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError) as exc:
                 errors.append(f"{model}: {exc}")
         if result is None:
+            if self.diagnostics is not None:
+                self.diagnostics.record(
+                    "local_jyotish_generation",
+                    (time.perf_counter() - generation_started_at) * 1000,
+                    ok=False,
+                    details={"attemptedModels": available},
+                )
             raise RuntimeError("Local models failed: " + "; ".join(errors))
+        if self.diagnostics is not None:
+            self.diagnostics.record(
+                "local_jyotish_generation",
+                (time.perf_counter() - generation_started_at) * 1000,
+                details={"model": selected_model},
+            )
         text = str(result.get("response") or "").strip()
         if not text:
             raise RuntimeError("Local Jyotish model returned an empty draft")

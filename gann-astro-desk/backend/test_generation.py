@@ -2,12 +2,19 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import sys
 import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import pandas as pd
+
+
+APP_ROOT = Path(__file__).resolve().parents[1]
+if str(APP_ROOT) not in sys.path:
+    sys.path.insert(0, str(APP_ROOT))
 
 from generation import GenerationJobManager, normalize_generation_parameters
 from price_sources import SNAPSHOT_CONTRACT, file_sha256
@@ -117,6 +124,70 @@ class GenerationJobTests(unittest.TestCase):
         manager.stop()
         self.assertEqual(cancelled["status"], "cancelled")
         self.assertTrue(cancelled["cancelRequested"])
+
+    def test_frozen_worker_runs_in_process_without_spawning_itself(self) -> None:
+        manager = GenerationJobManager(self.repository, autostart=False)
+        log_path = self.paths.artifacts_dir / "frozen_worker_environment.log"
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        previous_arguments = list(sys.argv)
+        try:
+            with (
+                mock.patch.object(sys, "frozen", True, create=True),
+                mock.patch("runtime_support.run_worker_mode", return_value=True) as worker,
+                mock.patch("generation.subprocess.Popen") as popen,
+            ):
+                manager._run_command(
+                    "test-job",
+                    [
+                        "GannAstroBackend.exe",
+                        "--gann-worker",
+                        "generator.py",
+                        "--example",
+                    ],
+                    log_path,
+                )
+        finally:
+            manager.stop()
+
+        worker.assert_called_once_with(
+            ["--gann-worker", "generator.py", "--example"]
+        )
+        popen.assert_not_called()
+        self.assertEqual(sys.argv, previous_arguments)
+        self.assertIn(
+            "Packaged generator completed in the background worker thread.",
+            log_path.read_text(encoding="utf-8"),
+        )
+
+    def test_small_real_frozen_job_runs_both_generators_in_process(self) -> None:
+        manager = GenerationJobManager(self.repository)
+        try:
+            with (
+                mock.patch.object(sys, "frozen", True, create=True),
+                mock.patch("generation.subprocess.Popen") as popen,
+            ):
+                job = manager.create_job(
+                    {
+                        "label": "Frozen in-process regression smoke",
+                        "parameters": self.small_parameters(),
+                    }
+                )
+                deadline = time.monotonic() + 30
+                while time.monotonic() < deadline:
+                    job = manager.get_job(job["jobId"])
+                    if job["status"] not in {"queued", "running", "cancelling"}:
+                        break
+                    time.sleep(0.25)
+        finally:
+            manager.stop()
+
+        self.assertEqual(job["status"], "completed", job.get("error") or job.get("logTail"))
+        popen.assert_not_called()
+        log_text = Path(job["logPath"]).read_text(encoding="utf-8")
+        self.assertEqual(
+            log_text.count("Packaged generator completed in the background worker thread."),
+            2,
+        )
 
     def test_promoted_snapshot_drives_generation_and_active_chart_prices(self) -> None:
         manager = GenerationJobManager(self.repository)

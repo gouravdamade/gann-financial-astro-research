@@ -5,6 +5,7 @@ import {
   fetchChartLayout,
   fetchChartLayouts,
   fetchDrawingTemplates,
+  recordFrontendDiagnostic,
   saveChartLayout,
   saveDrawingTemplate,
 } from './api'
@@ -107,6 +108,8 @@ export function useChartLayouts({
   }, [])
 
   const loadScope = useCallback(async () => {
+    const startedAt = performance.now()
+    let succeeded = false
     hydratedRef.current = false
     setSaveStatus('loading')
     setError(null)
@@ -137,10 +140,13 @@ export function useChartLayouts({
           : [selected],
       )
       installLayout(selected)
+      succeeded = true
     } catch (loadError) {
       const message = loadError instanceof Error ? loadError.message : String(loadError)
       setError(message)
       setSaveStatus('error')
+    } finally {
+      void recordFrontendDiagnostic('layout_restore', performance.now() - startedAt, succeeded).catch(() => undefined)
     }
   }, [installLayout, stableScope])
 
@@ -237,13 +243,18 @@ export function useChartLayouts({
 
   const switchLayout = useCallback(async (layoutId: string) => {
     if (layoutId === activeLayoutRef.current?.layoutId) return
+    const startedAt = performance.now()
+    let succeeded = false
     await executeSave()
     setSaveStatus('loading')
     try {
       installLayout(await fetchChartLayout(layoutId))
+      succeeded = true
     } catch (switchError) {
       setError(switchError instanceof Error ? switchError.message : String(switchError))
       setSaveStatus('error')
+    } finally {
+      void recordFrontendDiagnostic('layout_restore', performance.now() - startedAt, succeeded).catch(() => undefined)
     }
   }, [executeSave, installLayout])
 

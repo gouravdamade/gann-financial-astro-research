@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sqlite3
 import threading
+import time
 import uuid
 from datetime import datetime, timezone
 from typing import Any
@@ -45,6 +46,7 @@ class ProspectiveArtifactRefreshSupervisor:
         poll_seconds: float = 20.0,
         lookback_days: int = 14,
         close_grace_seconds: int = 90,
+        diagnostics: Any | None = None,
     ) -> None:
         self.repository = repository
         self.gateway = gateway
@@ -53,6 +55,7 @@ class ProspectiveArtifactRefreshSupervisor:
         self.poll_seconds = max(5.0, float(poll_seconds))
         self.lookback_days = max(3, min(int(lookback_days), 90))
         self.close_grace_seconds = max(15, min(int(close_grace_seconds), 600))
+        self.diagnostics = diagnostics
         self._stop = threading.Event()
         self._wake = threading.Event()
         self._run_lock = threading.RLock()
@@ -636,9 +639,20 @@ class ProspectiveArtifactRefreshSupervisor:
     def _worker_loop(self) -> None:
         while not self._stop.is_set():
             self._force_requested = False
+            started_at = time.perf_counter()
+            ok = True
             try:
                 self.run_once()
             except Exception as exc:
+                ok = False
                 self._set_status(state="error", message="Refresh supervisor failed.", lastError=str(exc))
+            finally:
+                if self.diagnostics is not None:
+                    self.diagnostics.record(
+                        "prospective_refresh_scan",
+                        (time.perf_counter() - started_at) * 1000,
+                        ok=ok,
+                        details={"state": self.status().get("state")},
+                    )
             self._wake.wait(self.poll_seconds)
             self._wake.clear()

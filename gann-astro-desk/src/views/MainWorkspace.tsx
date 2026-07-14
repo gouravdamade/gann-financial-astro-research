@@ -27,9 +27,11 @@ import {
   fetchMt5Status,
   fetchParameterProfiles,
   fetchParameterSchema,
+  fetchRuntimeDiagnostics,
   fetchShadowLedger,
   fetchWorkspacePreferences,
   requestProspectiveRefresh,
+  recordFrontendDiagnostic,
   saveAnnotation,
   saveWorkspacePreferences,
   scanShadowLedger,
@@ -44,6 +46,7 @@ import { LayoutToolbar } from '../components/LayoutToolbar'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
 import { ParameterDrawer } from '../components/ParameterDrawer'
 import { RefreshStatusChip } from '../components/RefreshStatusChip'
+import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnosticsPanel'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
 import { SquareOfNineWorkspace } from './SquareOfNineWorkspace'
@@ -59,6 +62,7 @@ import type {
   EventDetail,
   Mt5Status,
   ParameterSchema,
+  RuntimeDiagnosticsBundle,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
   WorkspacePreferences,
@@ -73,6 +77,18 @@ function dateRangeLabel(parameters: ChartParameters | null): string {
 }
 
 const WORKSPACE_PREFERENCES_KEY = 'gann-astro-desk.workspace.v1'
+const APP_BOOTSTRAP_STARTED_AT = performance.now()
+
+function recordAfterPaint(
+  name: 'app_bootstrap' | 'chart_initial_render',
+  startedAt: number,
+): void {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      void recordFrontendDiagnostic(name, performance.now() - startedAt).catch(() => undefined)
+    })
+  })
+}
 
 function initialWorkspacePreferences(): WorkspacePreferences {
   const defaults: WorkspacePreferences = {
@@ -95,6 +111,8 @@ export function MainWorkspace() {
   const [parameters, setParameters] = useState<ChartParameters | null>(null)
   const [profiles, setProfiles] = useState<SavedParameterProfile[]>([])
   const [status, setStatus] = useState<Mt5Status | null>(null)
+  const [runtimeDiagnostics, setRuntimeDiagnostics] = useState<RuntimeDiagnosticsBundle | null>(null)
+  const [runtimeDiagnosticsError, setRuntimeDiagnosticsError] = useState('')
   const [shadow, setShadow] = useState<ShadowLedgerSnapshot | null>(null)
   const [shadowBusy, setShadowBusy] = useState(false)
   const [refreshBusy, setRefreshBusy] = useState(false)
@@ -105,7 +123,7 @@ export function MainWorkspace() {
   const [activeSurface, setActiveSurface] = useState<'chart' | 'square9'>('chart')
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
   const [toolActivationNonce, setToolActivationNonce] = useState(0)
-  const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'positions' | 'logs'>('events')
+  const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'positions' | 'diagnostics'>('events')
   const [error, setError] = useState('')
   const [parameterError, setParameterError] = useState('')
   const [parametersOpen, setParametersOpen] = useState(false)
@@ -177,6 +195,7 @@ export function MainWorkspace() {
   }, [])
 
   useEffect(() => {
+    const chartStartedAt = performance.now()
     Promise.all([fetchParameterSchema(), fetchParameterProfiles()])
       .then(async ([parameterSchema, savedProfiles]) => {
         const preferredProfile = savedProfiles.find((item) => item.isDefault)
@@ -195,6 +214,8 @@ export function MainWorkspace() {
         setParameters(initialParameters)
         const payload = await fetchChart(initialParameters)
         setChart(payload)
+        recordAfterPaint('chart_initial_render', chartStartedAt)
+        recordAfterPaint('app_bootstrap', APP_BOOTSTRAP_STARTED_AT)
         const preferred = payload.aspects.find((item) => item.familyKey === 'TN::MOON->MERCURY::square')
         setSelected(preferred ?? payload.aspects[0] ?? null)
       })
@@ -245,6 +266,8 @@ export function MainWorkspace() {
   }, [])
 
   const applyParameters = useCallback(async (nextParameters: ChartParameters) => {
+    const startedAt = performance.now()
+    let succeeded = false
     setChartLoading(true)
     setParameterError('')
     try {
@@ -254,16 +277,20 @@ export function MainWorkspace() {
       setSelected((current) => payload.aspects.find((item) => item.eventId === current?.eventId) ?? payload.aspects[0] ?? null)
       setSelectedAnnotation(null)
       setParametersOpen(false)
+      succeeded = true
     } catch (reason) {
       setParameterError(reason instanceof Error ? reason.message : String(reason))
     } finally {
       setChartLoading(false)
+      void recordFrontendDiagnostic('chart_apply', performance.now() - startedAt, succeeded).catch(() => undefined)
     }
   }, [])
 
   const handleArtifactActivated = useCallback(async (artifact: DataArtifact) => {
     if (artifactActivationRef.current === artifact.artifactId) return
     artifactActivationRef.current = artifact.artifactId
+    const startedAt = performance.now()
+    let succeeded = false
     setChartLoading(true)
     setParameterError('')
     try {
@@ -283,11 +310,13 @@ export function MainWorkspace() {
       setChart(payload)
       setSelected(payload.aspects[0] ?? null)
       setSelectedAnnotation(null)
+      succeeded = true
     } catch (reason) {
       setParameterError(reason instanceof Error ? reason.message : String(reason))
     } finally {
       artifactActivationRef.current = ''
       setChartLoading(false)
+      void recordFrontendDiagnostic('artifact_activation', performance.now() - startedAt, succeeded).catch(() => undefined)
     }
   }, [])
 
@@ -314,9 +343,16 @@ export function MainWorkspace() {
   useEffect(() => {
     if (!parameters || parameters.dataSource !== 'live') return
     const timer = window.setInterval(() => {
+      const startedAt = performance.now()
       fetchChart(parameters)
-        .then((payload) => setChart(payload))
-        .catch((reason) => setParameterError(reason instanceof Error ? reason.message : String(reason)))
+        .then((payload) => {
+          setChart(payload)
+          void recordFrontendDiagnostic('chart_live_refresh', performance.now() - startedAt).catch(() => undefined)
+        })
+        .catch((reason) => {
+          void recordFrontendDiagnostic('chart_live_refresh', performance.now() - startedAt, false).catch(() => undefined)
+          setParameterError(reason instanceof Error ? reason.message : String(reason))
+        })
     }, 5000)
     return () => window.clearInterval(timer)
   }, [parameters])
@@ -326,6 +362,26 @@ export function MainWorkspace() {
     const refresh = () => fetchMt5Status().then((value) => !disposed && setStatus(value)).catch(() => undefined)
     refresh()
     const timer = window.setInterval(refresh, 2500)
+    return () => {
+      disposed = true
+      window.clearInterval(timer)
+    }
+  }, [])
+
+  useEffect(() => {
+    let disposed = false
+    const refresh = () => fetchRuntimeDiagnostics()
+      .then((value) => {
+        if (!disposed) {
+          setRuntimeDiagnostics(value)
+          setRuntimeDiagnosticsError('')
+        }
+      })
+      .catch((reason) => {
+        if (!disposed) setRuntimeDiagnosticsError(reason instanceof Error ? reason.message : String(reason))
+      })
+    refresh()
+    const timer = window.setInterval(refresh, 5000)
     return () => {
       disposed = true
       window.clearInterval(timer)
@@ -374,7 +430,7 @@ export function MainWorkspace() {
 
   const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
   const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
-  const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'positions' | 'logs') => {
+  const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'positions' | 'diagnostics') => {
     setBottomTab(tab)
     setFocusMode(false)
     setWorkspace((current) => ({ ...current, bottomOpen: true }))
@@ -577,7 +633,7 @@ export function MainWorkspace() {
           <button className={bottomTab === 'events' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('events')}><PanelBottom size={14} /> Events</button>
           <button className={bottomTab === 'shadow' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('shadow')}><ShieldCheck size={14} /> Shadow validation</button>
           <button className={bottomTab === 'positions' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('positions')}>MT5 positions</button>
-          <button className={bottomTab === 'logs' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('logs')}>Connection log</button>
+          <button className={bottomTab === 'diagnostics' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('diagnostics')}>Diagnostics</button>
           <div className="bottom-tabs-spacer" />
           <span><Bot size={14} /> Codex + local Jyotish</span>
           <button
@@ -606,7 +662,9 @@ export function MainWorkspace() {
               />
             )}
             {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}
-            {bottomTab === 'logs' && <div className="dock-empty">{status?.lastError || `Heartbeat current: ${status?.updatedAt ?? 'starting'}`}</div>}
+            {bottomTab === 'diagnostics' && (
+              <RuntimeDiagnosticsPanel bundle={runtimeDiagnostics} error={runtimeDiagnosticsError || status?.lastError || ''} />
+            )}
           </div>
         )}
       </section>}

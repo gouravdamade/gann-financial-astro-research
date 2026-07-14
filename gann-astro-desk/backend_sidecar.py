@@ -7,6 +7,7 @@ import os
 import signal
 import sys
 import threading
+import time
 import traceback
 from multiprocessing import freeze_support
 from pathlib import Path
@@ -36,6 +37,12 @@ def parse_arguments(arguments: list[str] | None = None) -> argparse.Namespace:
 
 
 def run_sidecar(arguments: list[str] | None = None) -> None:
+    sidecar_started_at = time.perf_counter()
+    startup_phases: dict[str, float] = {}
+
+    def mark_startup_phase(name: str) -> None:
+        startup_phases[name] = round((time.perf_counter() - sidecar_started_at) * 1000, 2)
+
     options = parse_arguments(arguments)
     if not (1 <= options.port <= 65535):
         raise ValueError("Backend port must be between 1 and 65535")
@@ -45,6 +52,7 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
 
     paths = runtime_paths()
     prepare_environment(paths, codex_port)
+    mark_startup_phase("environment_ready")
     backend_path = (
         paths.bundle_root / "backend"
         if getattr(sys, "frozen", False)
@@ -53,7 +61,9 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
     sys.path.insert(0, str(backend_path))
 
     ollama_process, ollama_logs = start_local_ollama(paths)
+    mark_startup_phase("ollama_checked")
     codex_process, codex_logs = start_codex_bridge(paths, codex_port)
+    mark_startup_phase("codex_bridge_started")
     backend_server: Any = None
     http_server: Any = None
     shutdown_once = threading.Event()
@@ -83,9 +93,19 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
 
     try:
         backend_server = importlib.import_module("server")
+        mark_startup_phase("backend_imported")
         from werkzeug.serving import make_server
 
         http_server = make_server("127.0.0.1", options.port, backend_server.app, threaded=True)
+        mark_startup_phase("http_ready")
+        backend_server.runtime_diagnostics.set_startup_timings(
+            startup_phases,
+            {
+                "ollamaStartedBySidecar": ollama_process is not None,
+                "codexBridgeStarted": codex_process is not None,
+                "executionAllowed": False,
+            },
+        )
         for signal_name in ("SIGINT", "SIGTERM"):
             signal_value = getattr(signal, signal_name, None)
             if signal_value is not None:
@@ -98,6 +118,7 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
                     "status": "ready",
                     "baseUrl": f"http://127.0.0.1:{options.port}",
                     "pid": os.getpid(),
+                    "startupMs": startup_phases["http_ready"],
                     "executionAllowed": False,
                 },
                 separators=(",", ":"),
@@ -106,6 +127,8 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
         )
         http_server.serve_forever()
     finally:
+        if backend_server is not None:
+            backend_server.runtime_diagnostics.record_lifecycle("sidecar_shutdown_requested")
         if http_server is not None:
             http_server.server_close()
         if backend_server is not None:

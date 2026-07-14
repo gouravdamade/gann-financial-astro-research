@@ -1,6 +1,7 @@
 import type {
   AnnotationDraft,
   AspectFamily,
+  BackendRuntimeInfo,
   ChartAnnotation,
   ChartDrawing,
   ChartLayout,
@@ -20,32 +21,25 @@ import type {
   ParameterSchema,
   PriceSource,
   ProspectiveRefreshStatus,
+  RuntimeDiagnosticsBundle,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
   WorkspacePreferences,
 } from './types'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
-type BackendRuntime = {
-  contract: string
-  baseUrl: string
-  port: number
-  pid: number
-  status: string
-  executionAllowed: boolean
-}
-
-let backendBaseUrlPromise: Promise<string> | null = null
+let backendRuntimePromise: Promise<BackendRuntimeInfo> | null = null
 
 function isTauriRuntime(): boolean {
   return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 }
 
-async function backendBaseUrl(): Promise<string> {
-  if (!isTauriRuntime()) return ''
-  if (backendBaseUrlPromise == null) {
-    backendBaseUrlPromise = import('@tauri-apps/api/core').then(async ({ invoke }) => {
-      const runtime = await invoke<BackendRuntime>('backend_runtime')
+export async function fetchBackendRuntime(force = false): Promise<BackendRuntimeInfo | null> {
+  if (!isTauriRuntime()) return null
+  if (force) backendRuntimePromise = null
+  if (backendRuntimePromise == null) {
+    backendRuntimePromise = import('@tauri-apps/api/core').then(async ({ invoke }) => {
+      const runtime = await invoke<BackendRuntimeInfo>('backend_runtime')
       if (runtime.contract !== 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1') {
         throw new Error(`Unsupported backend runtime contract: ${runtime.contract}`)
       }
@@ -55,10 +49,15 @@ async function backendBaseUrl(): Promise<string> {
       if (runtime.executionAllowed) {
         throw new Error('Backend runtime violated the read-only execution lock')
       }
-      return runtime.baseUrl.replace(/\/$/, '')
+      return runtime
     })
   }
-  return backendBaseUrlPromise
+  return backendRuntimePromise
+}
+
+async function backendBaseUrl(): Promise<string> {
+  const runtime = await fetchBackendRuntime()
+  return runtime?.baseUrl.replace(/\/$/, '') ?? ''
 }
 
 async function resolveRequestUrl(url: string): Promise<string> {
@@ -73,10 +72,10 @@ function wait(milliseconds: number): Promise<void> {
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const method = (init?.method ?? 'GET').toUpperCase()
   const attempts = method === 'GET' ? 61 : 1
-  const requestUrl = await resolveRequestUrl(url)
   let response: Response | null = null
   let networkError: unknown = null
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const requestUrl = await resolveRequestUrl(url)
     try {
       response = await fetch(requestUrl, {
         ...init,
@@ -85,6 +84,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
       break
     } catch (error) {
       networkError = error
+      if (isTauriRuntime()) backendRuntimePromise = null
       if (attempt === attempts) throw error
       await wait(1000)
     }
@@ -364,6 +364,25 @@ export async function requestProspectiveRefresh(): Promise<ProspectiveRefreshSta
     { method: 'POST', body: '{}' },
   )
   return payload.refresh
+}
+
+export async function fetchRuntimeDiagnostics(): Promise<RuntimeDiagnosticsBundle> {
+  const runtime = await fetchBackendRuntime(true)
+  const payload = await request<{ diagnostics: RuntimeDiagnosticsBundle['diagnostics'] }>(
+    '/api/runtime-diagnostics',
+  )
+  return { runtime, diagnostics: payload.diagnostics }
+}
+
+export async function recordFrontendDiagnostic(
+  name: 'app_bootstrap' | 'artifact_activation' | 'chart_apply' | 'chart_initial_render' | 'chart_live_refresh' | 'layout_restore',
+  durationMs: number,
+  ok = true,
+): Promise<void> {
+  await request('/api/runtime-diagnostics/frontend', {
+    method: 'POST',
+    body: JSON.stringify({ name, durationMs, ok }),
+  })
 }
 
 export async function fetchLocalJyotishHealth(): Promise<LocalJyotishHealth> {

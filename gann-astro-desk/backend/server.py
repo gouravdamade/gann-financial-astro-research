@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import atexit
 import os
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from flask import Flask, Response, abort, jsonify, request, send_from_directory
+from flask import Flask, Response, abort, g, jsonify, request, send_from_directory
 
 from chart_layouts import (
     LayoutRevisionConflict,
@@ -25,13 +26,17 @@ from local_jyotish import LocalJyotishService
 from mt5_gateway import Mt5Gateway
 from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
+from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
 from workspace_preferences import read_workspace_preferences, update_workspace_preferences
 
 
 app = Flask(__name__)
 repository = AstroRepository()
-generation_manager = GenerationJobManager(repository)
+runtime_diagnostics = RuntimeDiagnostics(
+    repository.paths.annotation_db.parent / "logs" / "runtime_diagnostics.jsonl"
+)
+generation_manager = GenerationJobManager(repository, diagnostics=runtime_diagnostics)
 gateway = Mt5Gateway(
     symbol=os.environ.get("GANN_ASTRO_MT5_SYMBOL", "USDJPY"),
     autoconnect=os.environ.get("GANN_ASTRO_MT5_AUTOCONNECT", "1") != "0",
@@ -52,8 +57,9 @@ prospective_refresh = ProspectiveArtifactRefreshSupervisor(
     poll_seconds=float(os.environ.get("GANN_ASTRO_REFRESH_POLL_SECONDS", "20")),
     lookback_days=int(os.environ.get("GANN_ASTRO_REFRESH_LOOKBACK_DAYS", "14")),
     close_grace_seconds=int(os.environ.get("GANN_ASTRO_REFRESH_CLOSE_GRACE_SECONDS", "90")),
+    diagnostics=runtime_diagnostics,
 )
-local_jyotish = LocalJyotishService(repository)
+local_jyotish = LocalJyotishService(repository, diagnostics=runtime_diagnostics)
 atexit.register(gateway.stop)
 atexit.register(generation_manager.stop)
 atexit.register(shadow_ledger.stop)
@@ -98,8 +104,26 @@ def chart_filter_arguments() -> dict[str, Any]:
     }
 
 
+@app.before_request
+def start_request_timer() -> None:
+    g.runtime_started_at = time.perf_counter()
+
+
 @app.after_request
 def add_headers(response: Any) -> Any:
+    started_at = getattr(g, "runtime_started_at", None)
+    if (
+        started_at is not None
+        and request.method != "OPTIONS"
+        and not request.path.startswith("/api/runtime-diagnostics")
+    ):
+        route = request.url_rule.rule if request.url_rule is not None else request.path
+        runtime_diagnostics.record(
+            f"http:{request.method} {route}",
+            (time.perf_counter() - started_at) * 1000,
+            ok=response.status_code < 500,
+            details={"status": response.status_code},
+        )
     response.headers["Access-Control-Allow-Origin"] = os.environ.get(
         "GANN_ASTRO_ALLOWED_ORIGIN", "http://127.0.0.1:5173"
     )
@@ -122,6 +146,45 @@ def health() -> Any:
             "data": repository.health(),
             "mt5": gateway.status(),
             "prospectiveRefresh": prospective_refresh.status(),
+        }
+    )
+
+
+@app.get("/api/runtime-diagnostics")
+def get_runtime_diagnostics() -> Any:
+    return jsonify({"ok": True, "diagnostics": runtime_diagnostics.snapshot()})
+
+
+@app.post("/api/runtime-diagnostics/frontend")
+def record_frontend_diagnostic() -> Any:
+    payload = request.get_json(silent=True) or {}
+    allowed_names = {
+        "app_bootstrap",
+        "artifact_activation",
+        "chart_apply",
+        "chart_initial_render",
+        "chart_live_refresh",
+        "layout_restore",
+    }
+    name = str(payload.get("name") or "").strip()
+    if name not in allowed_names:
+        return jsonify({"ok": False, "error": "Unsupported frontend diagnostic name"}), 400
+    try:
+        duration_ms = float(payload.get("durationMs"))
+    except (TypeError, ValueError):
+        return jsonify({"ok": False, "error": "durationMs must be numeric"}), 400
+    if not 0 <= duration_ms <= 10 * 60 * 1000:
+        return jsonify({"ok": False, "error": "durationMs is outside the accepted range"}), 400
+    runtime_diagnostics.record(
+        f"frontend:{name}",
+        duration_ms,
+        ok=bool(payload.get("ok", True)),
+    )
+    return jsonify(
+        {
+            "ok": True,
+            "recorded": name,
+            "guardrails": {"executionAllowed": False},
         }
     )
 

@@ -53,6 +53,9 @@ $sidecarExe = Join-Path $resourceRoot "GannAstroBackend.exe"
 if (-not (Test-Path -LiteralPath $sidecarExe -PathType Leaf)) {
     throw "Backend sidecar executable was not created: $sidecarExe"
 }
-New-Item -ItemType File -Path (Join-Path $resourceRoot ".gitkeep") -Force | Out-Null
+$gitkeep = Join-Path $resourceRoot ".gitkeep"
+if (-not (Test-Path -LiteralPath $gitkeep -PathType Leaf)) {
+    New-Item -ItemType File -Path $gitkeep | Out-Null
+}
 
 Write-Output $sidecarExe
