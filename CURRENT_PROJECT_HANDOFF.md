@@ -1,10 +1,54 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-14 00:35 IST
+Last updated: 2026-07-14 09:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-14 (Standalone Square of Nine + Editable Drawings)
+## Latest Update - 2026-07-14 (Tauri 2 / Rust Native Shell)
+
+- Promoted Gann Astro Desk `0.9.0`. The supported native shell is now Tauri 2 / Rust;
+  PyWebView is retained only in the archived 0.8.0 rollback release.
+- This is a compatibility migration, not an astrology-engine rewrite. React/TypeScript and
+  Lightweight Charts remain the UI; the validated Python astrology, MT5, local Jyotish,
+  corrected-data, refresh, and shadow-ledger engine runs as a managed headless sidecar.
+- Added shared `runtime_support.py`, headless `backend_sidecar.py`, a sidecar-only PyInstaller
+  spec, and D-drive reproducible Tauri build scripts. Rust owns random loopback ports,
+  process startup, typed runtime discovery, child windows, and graceful sidecar shutdown.
+- Sidecar contract: `GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1`. Frontend transport rejects an
+  unknown contract, a non-private-loopback backend URL, or any runtime claiming execution
+  permission. Browser/Vite development continues to use relative API routes.
+- Installed the native build toolchain primarily on D::
+  - Rust/Cargo 1.97 under `D:\Rust`;
+  - Visual Studio Build Tools 2022 17.14.35 under `D:\VisualStudio`;
+  - MSVC 19.44 and Windows SDK 10.0.26100 compiler/linker checks passed.
+- Promoted release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - executable SHA-256
+    `DCB4874CD3A6900597BC88A0817D467BD55EC3F1B5514FB95A2E72E06F73FE33`;
+  - NSIS installer
+    `D:\GannFinancialAstro\release\GannAstroDesk\Gann Astro Desk_0.9.0_x64-setup.exe`;
+  - installer SHA-256
+    `94C523AE64C81FAA7CAEF497DC845FA6A6BEC1037A8C7F5992F7862ADD8BDC2C`;
+  - rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.8.0_20260714_091158`.
+- Real-state verification preserved the frozen trial ID, valid seven-decision shadow chain,
+  seven pending outcomes, MetaQuotes-Demo read-only connection, local Jyotish
+  `qwen2.5:3b`, and every execution lock (`tradeAllowed=false`).
+- Native visual QA covered the chart workspace, separate Analyze Aspect Tauri window, and
+  standalone Square of Nine workspace. Closing the app terminated the managed sidecar with
+  no orphan process.
+- Verification: 113 Python tests, 15 Vitest tests, Oxlint, TypeScript/Vite, Ruff, source and
+  packaged sidecar smoke tests, rustfmt, Cargo check, Clippy `-D warnings`, Tauri release
+  build, NSIS bundle, live API contracts, native visual QA, and artifact hashes passed.
+- Evidence: `tauri_hybrid_release_20260714.md`.
+- Next recommended work:
+  1. continue the frozen prospective trial without changing policy;
+  2. code-sign the NSIS installer only after a signing identity is available;
+  3. profile first and port Python bottlenecks to Rust one module at a time with fixture
+     parity rather than rewriting validated doctrine logic wholesale;
+  4. keep MT5 order placement outside this process and disabled.
+
+## Previous Update - 2026-07-14 (Standalone Square of Nine + Editable Drawings)
 
 - Promoted Gann Astro Desk `0.8.0`. Square of Nine is now a dedicated workspace tab,
   never a candlestick overlay. The market chart, aspect inspector, activity dock, and

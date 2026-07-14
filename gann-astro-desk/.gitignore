@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+src-tauri/resources/GannAstroBackend/*
+!src-tauri/resources/GannAstroBackend/.gitkeep
+src-tauri/gen/
+src-tauri/target/
 
 # Editor directories and files
 .vscode/*

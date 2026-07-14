@@ -26,6 +26,45 @@ import type {
 } from './types'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
+type BackendRuntime = {
+  contract: string
+  baseUrl: string
+  port: number
+  pid: number
+  status: string
+  executionAllowed: boolean
+}
+
+let backendBaseUrlPromise: Promise<string> | null = null
+
+function isTauriRuntime(): boolean {
+  return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
+}
+
+async function backendBaseUrl(): Promise<string> {
+  if (!isTauriRuntime()) return ''
+  if (backendBaseUrlPromise == null) {
+    backendBaseUrlPromise = import('@tauri-apps/api/core').then(async ({ invoke }) => {
+      const runtime = await invoke<BackendRuntime>('backend_runtime')
+      if (runtime.contract !== 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1') {
+        throw new Error(`Unsupported backend runtime contract: ${runtime.contract}`)
+      }
+      if (!runtime.baseUrl.startsWith('http://127.0.0.1:')) {
+        throw new Error('Backend runtime did not provide a private loopback URL')
+      }
+      if (runtime.executionAllowed) {
+        throw new Error('Backend runtime violated the read-only execution lock')
+      }
+      return runtime.baseUrl.replace(/\/$/, '')
+    })
+  }
+  return backendBaseUrlPromise
+}
+
+async function resolveRequestUrl(url: string): Promise<string> {
+  const baseUrl = await backendBaseUrl()
+  return baseUrl && url.startsWith('/') ? `${baseUrl}${url}` : url
+}
 
 function wait(milliseconds: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds))
@@ -33,12 +72,13 @@ function wait(milliseconds: number): Promise<void> {
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const method = (init?.method ?? 'GET').toUpperCase()
-  const attempts = method === 'GET' ? 21 : 1
+  const attempts = method === 'GET' ? 61 : 1
+  const requestUrl = await resolveRequestUrl(url)
   let response: Response | null = null
   let networkError: unknown = null
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {
-      response = await fetch(url, {
+      response = await fetch(requestUrl, {
         ...init,
         headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
       })
