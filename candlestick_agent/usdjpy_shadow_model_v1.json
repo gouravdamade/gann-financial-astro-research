@@ -1,0 +1,183 @@
+{
+  "contract": "GANN_CANDLESTICK_FROZEN_MODEL_ARTIFACT_V1",
+  "status": "prospective_shadow_research_only",
+  "frozenAtUtc": "2026-07-15T16:20:41+00:00",
+  "symbol": "USDJPY",
+  "timeframe": "H1",
+  "geometryMethodologyVersion": "transparent_ohlc_geometry_v1",
+  "evaluationContract": "GANN_CANDLESTICK_WALK_FORWARD_CONTRACT_V1",
+  "evaluationContractSha256": "1F8BBB07D97A54A9FDC2F339BE0573A1059284E7AB345CE00FF12841882F2877",
+  "source": {
+    "pathLabel": "usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+    "sha256": "3C71A983EF645133D34B7328E44E8DA6612CA22EBC989827626D55F281B147A9",
+    "immutableForStudy": true
+  },
+  "training": {
+    "rows": 99973,
+    "firstFeatureAvailableAtUtc": "2010-01-28T03:00:00+00:00",
+    "lastFeatureAvailableAtUtc": "2026-03-09T15:00:00+00:00",
+    "lastLabelAvailableAtUtc": "2026-03-09T21:00:00+00:00",
+    "fitRule": "all frozen historical rows with the six-bar label present in the immutable source",
+    "retuningAllowed": false
+  },
+  "decision": {
+    "minimumHistoryBars": 21,
+    "confirmationBars": 0,
+    "featureAvailability": "decision_bar_close",
+    "entryPolicy": "next_bar_open",
+    "holdingBars": 6,
+    "exitPolicy": "sixth_held_bar_close",
+    "pipSize": 0.01,
+    "pointSize": 0.001,
+    "captureGraceMinutes": 15,
+    "lateDecisionBackfillAllowed": false
+  },
+  "costs": {
+    "spreadPolicy": "entry_bar_observed_points_else_fixed_fallback",
+    "fallbackSpreadPips": 1.0,
+    "slippagePipsPerSide": 0.2
+  },
+  "primaryModel": {
+    "contract": "GANN_CANDLESTICK_TRANSPARENT_LOGISTIC_MODEL_V1",
+    "name": "named_pattern_logistic_v1",
+    "features": [
+      "pattern_doji",
+      "pattern_spinning_top",
+      "pattern_marubozu_like",
+      "pattern_long_bullish_body",
+      "pattern_long_bearish_body",
+      "pattern_long_lower_wick",
+      "pattern_long_upper_wick",
+      "pattern_bullish_body_engulfing",
+      "pattern_bearish_body_engulfing",
+      "pattern_inside_bar",
+      "pattern_outside_bar"
+    ],
+    "scalerMean": [
+      0.10854930831324458,
+      0.16385424064497414,
+      0.02926790233363008,
+      0.11893211167015094,
+      0.10691886809438549,
+      0.07109919678313145,
+      0.05608514298860692,
+      0.0825022756144159,
+      0.08200214057795605,
+      0.1781180918848089,
+      0.10440819021135707
+    ],
+    "scalerScale": [
+      0.3110729110320613,
+      0.3701432539809865,
+      0.16855649565240483,
+      0.3237086104567342,
+      0.30901007061227126,
+      0.2569904686947066,
+      0.23008607025318686,
+      0.2751284247998721,
+      0.27436798194867634,
+      0.38261212373384573,
+      0.30578933929773644
+    ],
+    "coefficients": [
+      -0.0031584871929241473,
+      0.010620290361237647,
+      0.007946119815593705,
+      -0.004687862770008911,
+      0.022213556694886633,
+      -0.0009306956648732797,
+      0.009413453303933847,
+      -0.010017309723246453,
+      0.000585094547326613,
+      0.014387706588180112,
+      -0.00562649178865446
+    ],
+    "intercept": 2.04661190746333e-05,
+    "classes": [
+      0,
+      1
+    ],
+    "shortProbability": 0.45,
+    "longProbability": 0.55,
+    "trainingRows": 99973,
+    "positiveRows": 51550,
+    "negativeRows": 48423,
+    "modelId": "DC7ED62B864E538A86C83B862D11E8361AF83FD1C6EA58B89A839918BF53FE1D",
+    "trainingProbabilityRange": {
+      "minimum": 0.4789628532166914,
+      "maximum": 0.5359025277334323
+    }
+  },
+  "diagnosticModels": [
+    {
+      "contract": "GANN_CANDLESTICK_TRANSPARENT_LOGISTIC_MODEL_V1",
+      "name": "raw_geometry_logistic_v1",
+      "features": [
+        "body_signed_fraction",
+        "upper_wick_fraction",
+        "lower_wick_fraction",
+        "close_location",
+        "range_atr_ratio",
+        "pretrend_signed_strength_atr",
+        "gap_from_prior_close_atr"
+      ],
+      "scalerMean": [
+        0.017737380940337995,
+        0.26854344072899683,
+        0.2873613265581707,
+        0.51807763996279,
+        1.0085352655504376,
+        0.036723315295129684,
+        -0.001787361974664826
+      ],
+      "scalerScale": [
+        0.5122093486203853,
+        0.20527197734658573,
+        0.21326133318408008,
+        0.2911528658210463,
+        0.5666463112568818,
+        1.1970943128135567,
+        0.10339275335556475
+      ],
+      "coefficients": [
+        -0.2112591026382841,
+        0.0721968748861959,
+        -0.07526340123897224,
+        0.191057562518611,
+        0.008360219685896066,
+        -0.014375284107933753,
+        -0.012683626006414685
+      ],
+      "intercept": 3.559418937504801e-05,
+      "classes": [
+        0,
+        1
+      ],
+      "shortProbability": 0.45,
+      "longProbability": 0.55,
+      "trainingRows": 99973,
+      "positiveRows": 51550,
+      "negativeRows": 48423,
+      "modelId": "8E633BCB3DCB0237412606D86ABED7E85BF90191B152C8659DA60100064478E8",
+      "trainingProbabilityRange": {
+        "minimum": 0.324449231754212,
+        "maximum": 0.6457064963141916
+      }
+    }
+  ],
+  "retrospectiveGate": {
+    "status": "failed",
+    "primaryCandidate": "named_pattern_logistic_v1",
+    "reason": "The frozen retrospective walk-forward primary produced zero threshold-qualified trades.",
+    "promotionAuthorized": false
+  },
+  "guardrails": {
+    "consumedByAstrologyRules": false,
+    "consumedByAutoSuggest": false,
+    "consumedByOfficialMlNotes": false,
+    "consumedByCoordinator": false,
+    "executionAllowed": false,
+    "mt5ReadOnly": true
+  },
+  "artifactId": "9FF4EE79619351C75C1B0931F3528603F3EDA0FC02E91BB0B4B5596DC798C9E6"
+}

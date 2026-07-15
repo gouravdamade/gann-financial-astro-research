@@ -647,6 +647,102 @@ export type ShadowLedgerSnapshot = {
   refresh?: ProspectiveRefreshStatus
 }
 
+export type CandlestickShadowCandidate = {
+  name: string
+  modelId: string
+  probabilityUp?: number
+  action: 'long' | 'short' | 'abstain'
+  shortProbability?: number
+  longProbability?: number
+  diagnosticOnly?: true
+  signedGrossPips?: number | null
+  netPips?: number | null
+  tradeOccurred?: boolean
+  executionOccurred?: false
+}
+
+export type CandlestickShadowPayload = {
+  contract: string
+  decisionId: string
+  recordedAtUtc: string
+  decisionBarOpenUtc?: string
+  featureAvailableAtUtc?: string
+  captureLagSeconds?: number
+  ohlc?: { time: string; open: number; high: number; low: number; close: number }
+  patterns?: Array<{ name: string; hypothesisBias: string; basis: string; context: string }>
+  primary: CandlestickShadowCandidate
+  diagnostics: CandlestickShadowCandidate[]
+  entryTimeUtc?: string
+  exitTimeUtc?: string
+  entryPrice?: number
+  exitPrice?: number
+  grossLongPips?: number
+  targetUp?: boolean
+  totalCostPips?: number
+  heldBars?: number
+}
+
+export type CandlestickShadowRecord = {
+  sequence: number
+  entryId: string
+  entryType: 'decision' | 'outcome'
+  decisionId: string
+  effectiveAtUtc: string
+  recordedAtUtc: string
+  payloadSha256: string
+  entryHash: string
+  payload: CandlestickShadowPayload
+}
+
+export type CandlestickShadowSnapshot = {
+  contract: 'GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2'
+  trial: {
+    trialId: string
+    contract: 'GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V2'
+    identitySha256: string
+    establishedAtUtc: string
+  }
+  model: {
+    artifactId: string
+    artifactSha256: string
+    primaryModelId: string
+    retrospectiveGate: {
+      status: 'failed'
+      primaryCandidate: string
+      reason: string
+      promotionAuthorized: false
+    }
+  }
+  summary: { decisions: number; outcomes: number; pending: number }
+  integrity: { ok: boolean; entries: number; headHash: string }
+  records: CandlestickShadowRecord[]
+  lastScan: {
+    state: 'not_scanned' | 'captured' | 'current' | 'idle' | 'skipped' | 'error'
+    observedAtUtc: string | null
+    decisionAppended: boolean
+    outcomesAppended: number
+    message: string
+    marketClock?: {
+      contract: 'GANN_MT5_MARKET_CLOCK_SKEW_LOCK_V1'
+      observedAtUtc: string
+      marketTimeUtc: string
+      skewSeconds: number
+      maximumAbsoluteSkewSeconds: number
+      valid: boolean
+      failureMode: 'skip_without_append'
+    } | null
+  }
+  databasePath: string
+  guardrails: {
+    consumedByAstrologyRules: false
+    consumedByAutoSuggest: false
+    consumedByOfficialMlNotes: false
+    consumedByCoordinator: false
+    executionAllowed: false
+    mt5ReadOnly: true
+  }
+}
+
 export type ProspectiveRefreshRun = {
   runId: string
   contract: 'GANN_PROSPECTIVE_ARTIFACT_REFRESH_V1'

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import {
   fetchChart,
+  fetchCandlestickShadow,
   fetchDataArtifacts,
   fetchEventDetail,
   fetchMt5Status,
@@ -35,10 +36,12 @@ import {
   saveAnnotation,
   saveWorkspacePreferences,
   scanShadowLedger,
+  scanCandlestickShadow,
 } from '../api'
 import { downloadLayoutJson } from '../chartLayouts'
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
+import { CandlestickShadowPanel } from '../components/CandlestickShadowPanel'
 import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
 import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
@@ -58,6 +61,7 @@ import type {
   ChartPayload,
   ChartParameters,
   ChartTool,
+  CandlestickShadowSnapshot,
   DataArtifact,
   EventDetail,
   Mt5Status,
@@ -117,13 +121,16 @@ export function MainWorkspace() {
   const [shadowBusy, setShadowBusy] = useState(false)
   const [refreshBusy, setRefreshBusy] = useState(false)
   const [shadowError, setShadowError] = useState('')
+  const [candleShadow, setCandleShadow] = useState<CandlestickShadowSnapshot | null>(null)
+  const [candleShadowBusy, setCandleShadowBusy] = useState(false)
+  const [candleShadowError, setCandleShadowError] = useState('')
   const [selected, setSelected] = useState<AspectWindow | null>(null)
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [activeSurface, setActiveSurface] = useState<'chart' | 'square9'>('chart')
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
   const [toolActivationNonce, setToolActivationNonce] = useState(0)
-  const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'positions' | 'diagnostics'>('events')
+  const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'candle-shadow' | 'positions' | 'diagnostics'>('events')
   const [error, setError] = useState('')
   const [parameterError, setParameterError] = useState('')
   const [parametersOpen, setParametersOpen] = useState(false)
@@ -178,6 +185,36 @@ export function MainWorkspace() {
         if (!disposed) setWorkspaceHydrated(true)
       })
     return () => { disposed = true }
+  }, [])
+
+  useEffect(() => {
+    let disposed = false
+    const refresh = () => fetchCandlestickShadow()
+      .then((value) => {
+        if (!disposed) {
+          setCandleShadow(value)
+          setCandleShadowError('')
+        }
+      })
+      .catch((reason) => !disposed && setCandleShadowError(reason instanceof Error ? reason.message : String(reason)))
+    refresh()
+    const timer = window.setInterval(refresh, 10000)
+    return () => {
+      disposed = true
+      window.clearInterval(timer)
+    }
+  }, [])
+
+  const runCandleShadowScan = useCallback(async () => {
+    setCandleShadowBusy(true)
+    setCandleShadowError('')
+    try {
+      setCandleShadow(await scanCandlestickShadow())
+    } catch (reason) {
+      setCandleShadowError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setCandleShadowBusy(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -430,7 +467,7 @@ export function MainWorkspace() {
 
   const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
   const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
-  const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'positions' | 'diagnostics') => {
+  const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'candle-shadow' | 'positions' | 'diagnostics') => {
     setBottomTab(tab)
     setFocusMode(false)
     setWorkspace((current) => ({ ...current, bottomOpen: true }))
@@ -633,6 +670,7 @@ export function MainWorkspace() {
         <div className="bottom-tabs">
           <button className={bottomTab === 'events' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('events')}><PanelBottom size={14} /> Events</button>
           <button className={bottomTab === 'shadow' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('shadow')}><ShieldCheck size={14} /> Shadow validation</button>
+          <button className={bottomTab === 'candle-shadow' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('candle-shadow')}><Activity size={14} /> Candle shadow</button>
           <button className={bottomTab === 'positions' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('positions')}>MT5 positions</button>
           <button className={bottomTab === 'diagnostics' && bottomVisible ? 'is-active' : ''} onClick={() => selectBottomTab('diagnostics')}>Diagnostics</button>
           <div className="bottom-tabs-spacer" />
@@ -660,6 +698,14 @@ export function MainWorkspace() {
                 error={shadowError}
                 onScan={runShadowScan}
                 onRefresh={runProspectiveRefresh}
+              />
+            )}
+            {bottomTab === 'candle-shadow' && (
+              <CandlestickShadowPanel
+                snapshot={candleShadow}
+                busy={candleShadowBusy}
+                error={candleShadowError}
+                onScan={runCandleShadowScan}
               />
             )}
             {bottomTab === 'positions' && <div className="dock-empty">Order execution is disabled. The MT5 gateway is market-data only.</div>}

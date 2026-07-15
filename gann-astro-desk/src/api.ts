@@ -15,6 +15,7 @@ import type {
   EventDetail,
   GenerationJob,
   CandlestickEvidence,
+  CandlestickShadowSnapshot,
   LocalCandlestickDraft,
   LocalCandlestickHealth,
   LocalJyotishDraft,
@@ -355,6 +356,20 @@ export async function fetchShadowLedger(limit = 100): Promise<ShadowLedgerSnapsh
 
 export async function scanShadowLedger(): Promise<ShadowLedgerSnapshot> {
   const payload = await request<{ shadow: ShadowLedgerSnapshot }>('/api/shadow-ledger/scan', {
+    method: 'POST',
+    body: '{}',
+  })
+  return payload.shadow
+}
+
+export async function fetchCandlestickShadow(limit = 100): Promise<CandlestickShadowSnapshot> {
+  const query = new URLSearchParams({ limit: String(limit) })
+  const payload = await request<{ shadow: CandlestickShadowSnapshot }>(`/api/candlestick-shadow?${query}`)
+  return payload.shadow
+}
+
+export async function scanCandlestickShadow(): Promise<CandlestickShadowSnapshot> {
+  const payload = await request<{ shadow: CandlestickShadowSnapshot }>('/api/candlestick-shadow/scan', {
     method: 'POST',
     body: '{}',
   })

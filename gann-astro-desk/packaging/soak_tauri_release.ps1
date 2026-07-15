@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.0-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.1-tauri",
     [int]$DurationSeconds = 20,
     [switch]$SkipCrashRecovery
 )
@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
 }
 
 $session = [DateTime]::UtcNow.ToString("yyyyMMdd_HHmmss")
-$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.0_$session"
+$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.1_$session"
 $logsRoot = Join-Path $dataRoot "logs"
 New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
@@ -153,6 +153,25 @@ try {
     Write-SoakPhase "candlestick_specialist_verified" ([ordered]@{
         event_id = $candleEventId
         corpus_chunks = $candleHealth.localCandlestick.corpusChunks
+    })
+    $candleShadow = Invoke-RestMethod -Uri `
+        ("http://127.0.0.1:{0}/api/candlestick-shadow" -f $initial.Port) -TimeoutSec 10
+    $report.checks.candlestick_shadow_contract = `
+        $candleShadow.shadow.contract -eq "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2"
+    $report.checks.candlestick_shadow_trial_frozen = `
+        $candleShadow.shadow.trial.contract -eq "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V2"
+    $report.checks.candlestick_shadow_chain_valid = `
+        $candleShadow.shadow.integrity.ok -eq $true
+    $report.checks.candlestick_shadow_failed_gate_visible = `
+        $candleShadow.shadow.model.retrospectiveGate.status -eq "failed"
+    $report.checks.candlestick_shadow_execution_locked = (
+        $candleShadow.shadow.guardrails.executionAllowed -eq $false -and
+        $candleShadow.shadow.guardrails.mt5ReadOnly -eq $true
+    )
+    Write-SoakPhase "candlestick_shadow_verified" ([ordered]@{
+        trial_id = $candleShadow.shadow.trial.trialId
+        decisions = $candleShadow.shadow.summary.decisions
+        scan_state = $candleShadow.shadow.lastScan.state
     })
 
     $layoutPayload = [ordered]@{

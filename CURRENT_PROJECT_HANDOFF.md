@@ -1,10 +1,62 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-15 21:17 IST
+Last updated: 2026-07-15 23:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-15 (Timestamp-Safe USDJPY Candle Walk-Forward V1)
+## Latest Update - 2026-07-15 (Prospective Candlestick Shadow 0.10.1)
+
+- Promoted Gann Astro Desk `0.10.1` with a separate timestamp-safe USDJPY H1
+  candlestick-shadow cohort. The app exposes chain state, frozen model/trial IDs,
+  retrospective-gate status, clock state, decisions, and six-bar outcomes in a new
+  `Candle shadow` dock.
+- Froze transparent artifact
+  `9FF4EE79619351C75C1B0931F3528603F3EDA0FC02E91BB0B4B5596DC798C9E6` on
+  99,973 historically label-available rows. Primary named-pattern model
+  `DC7ED62B864E538A86C83B862D11E8361AF83FD1C6EA58B89A839918BF53FE1D`
+  still fails its retrospective gate; raw-geometry model
+  `8E633BCB3DCB0237412606D86ABED7E85BF90191B152C8659DA60100064478E8`
+  is diagnostic only.
+- Added append-only/hash-chained contracts
+  `GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2`,
+  `GANN_CANDLESTICK_PROSPECTIVE_DECISION_V2`, and
+  `GANN_CANDLESTICK_PROSPECTIVE_6BAR_OUTCOME_V2`. Only the newest fully closed H1
+  bar is eligible during a frozen 15-minute grace period; missed decisions are never
+  backfilled. Outcomes use next-bar open and the sixth actual subsequent market-bar
+  close, including frozen transaction costs.
+- A live audit found the MetaQuotes-Demo tick clock about +10,800 seconds ahead of
+  Windows UTC even though the MetaTrader Python API documents tick/bar times as UTC.
+  The one resulting V1 stale abstention is preserved but invalid at
+  `D:\GannFinancialAstro\app_data\candlestick_shadow_v1_invalid_market_clock_20260715.sqlite`.
+  V2 freezes `GANN_MT5_MARKET_CLOCK_SKEW_LOCK_V1` at 300 seconds and now skips before
+  append or settlement. Valid V2 state remains a pristine zero-entry genesis chain at
+  `D:\GannFinancialAstro\app_data\candlestick_shadow_v2.sqlite`; no offset was guessed.
+- Safety remains absolute: both candle candidates are excluded from astrology rules,
+  Auto Suggest, official ML notes, the coordinator, and execution. MT5 remains
+  read-only with `tradeAllowed=false`.
+- Verification: 11 focused shadow tests, 66 backend tests, 18 frontend tests, Ruff,
+  Python byte compilation, lint, Vite/TypeScript, native build, browser QA at
+  desktop/compact widths, and the native
+  crash/recovery soak passed. Candidate and promoted-stable reports are
+  `D:\GannFinancialAstro\soak\tauri_0.10.1_20260715_172125\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.1_20260715_173904\logs\native_soak_report.json`.
+- Promoted release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - executable SHA-256
+    `77FEC8E0412DE9E5EEA3F1275A2C066024BB6FB77304E009BD4F697F0D80CED7`;
+  - installer SHA-256
+    `16E9FCA2E186BEF52B23A1AAC95664E52199F2C5BA394BF84032B4EE44C3AC7E`;
+  - rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.0_20260715T172944Z`.
+- Evidence: `candlestick_prospective_shadow_release_20260715.md`.
+- Recovery backup:
+  `D:\PycharmProjects\chat_session_backups\session_20260715_230401_candlestick_shadow_v0101`.
+- Next gate: correct or replace the MT5 terminal/feed configuration until its clock
+  naturally agrees with UTC within five minutes. Do not hardcode a three-hour offset,
+  backfill missed rows, change the V2 manifest, or authorize execution.
+
+## Previous Update - 2026-07-15 (Timestamp-Safe USDJPY Candle Walk-Forward V1)
 
 - Added a separate offline USDJPY H1 candlestick evaluation lab with frozen contract
   `GANN_CANDLESTICK_WALK_FORWARD_CONTRACT_V1`. It fingerprints the immutable 100,000-row

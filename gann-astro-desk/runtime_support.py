@@ -114,6 +114,18 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     )
     if candle_corpus.is_file():
         os.environ["GANN_ASTRO_CANDLE_CORPUS"] = str(candle_corpus)
+    packaged_candle_model = paths.project_root / "candlestick" / "usdjpy_shadow_model_v1.json"
+    source_candle_model = paths.project_root / "candlestick_agent" / "usdjpy_shadow_model_v1.json"
+    candle_model = (
+        packaged_candle_model
+        if packaged_candle_model.is_file()
+        else source_candle_model
+    )
+    if candle_model.is_file():
+        os.environ["GANN_ASTRO_CANDLE_SHADOW_MODEL"] = str(candle_model)
+    os.environ["GANN_ASTRO_CANDLE_SHADOW_DB"] = str(
+        paths.data_root / "candlestick_shadow_v2.sqlite"
+    )
     packaged_ephemeris = paths.project_root / "sweph"
     if packaged_ephemeris.is_dir():
         os.environ["GANN_ASTRO_EPHEMERIS_PATH"] = str(packaged_ephemeris)
@@ -196,7 +208,13 @@ def stop_process(process: subprocess.Popen[Any] | None) -> None:
 
 
 def stop_backend_services(backend_server: Any) -> None:
-    for name in ("prospective_refresh", "shadow_ledger", "gateway", "generation_manager"):
+    for name in (
+        "prospective_refresh",
+        "candlestick_shadow",
+        "shadow_ledger",
+        "gateway",
+        "generation_manager",
+    ):
         service = getattr(backend_server, name, None)
         if service is not None:
             service.stop()

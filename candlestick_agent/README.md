@@ -39,5 +39,25 @@ remained inside the predeclared abstention band. See
 `candlestick_usdjpy_walk_forward_20260715.md`; this result is evidence against
 promoting named patterns, not permission to retune V1 on the same folds.
 
+The next predeclared gate is a separate prospective candle-shadow cohort. Freeze
+the transparent V1 coefficients with:
+
+```powershell
+python candlestick_agent\freeze_usdjpy_shadow_model.py
+```
+
+`usdjpy_shadow_model_v1.json` contains only the frozen scaler values, logistic
+coefficients, source/contract fingerprints, failed retrospective-gate status,
+and research locks. Gann Astro Desk evaluates that artifact with plain math and
+stores timely USDJPY H1 decisions in a separate hash-chained SQLite ledger. A
+decision is eligible only during the first 15 minutes after the newest fully
+closed H1 bar. Missed decisions are never backfilled, outcomes use the next bar
+open and sixth actual subsequent bar close, and weekends do not count as bars.
+The primary named-pattern candidate and raw-geometry diagnostic remain isolated
+from astrology rules, Auto Suggest, official ML notes, the coordinator, and MT5
+execution. The V2 prospective trial also freezes a five-minute MT5 market-clock
+skew lock. If the terminal violates the documented UTC contract, the scanner
+skips without appending rather than guessing a broker offset.
+
 Copyrighted books are registry references only unless the user supplies a lawful
 local copy. No unofficial downloadable copy is fetched or committed.

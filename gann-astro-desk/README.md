@@ -165,7 +165,8 @@ npm run build
 The supported native build is Tauri 2 / Rust with a managed PyInstaller Python sidecar
 and the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
 Swiss Ephemeris files, Python research workers, Node runtime, Codex SDK bridge, Local
-Jyotish corpus, and Candlestick Specialist corpus. Ollama models remain under
+Jyotish corpus, Candlestick Specialist corpus, and the transparent frozen USDJPY H1
+candlestick-shadow model. Ollama models remain under
 `D:\Ollama\models` and are not duplicated inside the release. Analyze Aspect opens as
 a second native Tauri window rather than an external browser.
 
@@ -187,6 +188,16 @@ markers, P/L, rule lessons, Dream Review, and official-note processing remain re
 Live inference is deliberately watch/abstain-only. The retrospective gate failed, and order
 execution remains blocked while the append-only prospective trial collects evidence and
 external astrology certification remains incomplete.
+
+The separate `Candle shadow` dock is a prospective research observer, not the astrology
+shadow trial. It records only the latest fully closed USDJPY H1 candle when the app sees
+that close within the frozen 15-minute grace window; missed hours are never recreated.
+Decisions and six-actual-bar outcomes are append-only and hash chained in
+`D:\GannFinancialAstro\app_data\candlestick_shadow_v2.sqlite`. The scanner additionally
+requires the latest MT5 tick clock to remain within five minutes of system UTC; a larger
+skew fails closed without a decision or settlement. The failed named-pattern
+primary remains visible, the raw-geometry model is diagnostic only, and neither can feed
+Auto Suggest, rules, official notes, the coordinator, or MT5 execution.
 
 ## Storage
 

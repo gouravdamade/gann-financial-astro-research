@@ -21,6 +21,7 @@ from chart_layouts import (
     save_chart_layout,
     save_drawing_template,
 )
+from candlestick_shadow import CandlestickShadowSupervisor, default_model_path
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
 from local_jyotish import LocalJyotishService
@@ -49,6 +50,16 @@ shadow_ledger = ShadowLedgerSupervisor(
     autostart=os.environ.get("GANN_ASTRO_SHADOW_AUTOSTART", "1") != "0",
     poll_seconds=float(os.environ.get("GANN_ASTRO_SHADOW_POLL_SECONDS", "30")),
 )
+candlestick_shadow = CandlestickShadowSupervisor(
+    gateway,
+    model_path=default_model_path(repository.paths.project_root),
+    database_path=Path(
+        os.environ.get("GANN_ASTRO_CANDLE_SHADOW_DB")
+        or repository.paths.annotation_db.parent / "candlestick_shadow_v2.sqlite"
+    ),
+    autostart=os.environ.get("GANN_ASTRO_CANDLE_SHADOW_AUTOSTART", "1") != "0",
+    poll_seconds=float(os.environ.get("GANN_ASTRO_CANDLE_SHADOW_POLL_SECONDS", "20")),
+)
 prospective_refresh = ProspectiveArtifactRefreshSupervisor(
     repository,
     gateway,
@@ -65,6 +76,7 @@ local_candlestick = LocalCandlestickService(repository, diagnostics=runtime_diag
 atexit.register(gateway.stop)
 atexit.register(generation_manager.stop)
 atexit.register(shadow_ledger.stop)
+atexit.register(candlestick_shadow.stop)
 atexit.register(prospective_refresh.stop)
 
 
@@ -147,6 +159,7 @@ def health() -> Any:
             "ok": True,
             "data": repository.health(),
             "mt5": gateway.status(),
+            "candlestickShadow": candlestick_shadow.status(limit=1),
             "prospectiveRefresh": prospective_refresh.status(),
         }
     )
@@ -537,6 +550,23 @@ def shadow_ledger_scan() -> Any:
         snapshot = shadow_ledger.scan_once()
         snapshot["refresh"] = prospective_refresh.status()
         return jsonify({"ok": True, "shadow": snapshot})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.get("/api/candlestick-shadow")
+def candlestick_shadow_snapshot() -> Any:
+    try:
+        limit = max(1, min(int(request.args.get("limit", "100")), 500))
+        return jsonify({"ok": True, "shadow": candlestick_shadow.status(limit=limit)})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.post("/api/candlestick-shadow/scan")
+def candlestick_shadow_scan() -> Any:
+    try:
+        return jsonify({"ok": True, "shadow": candlestick_shadow.scan_once()})
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
 
