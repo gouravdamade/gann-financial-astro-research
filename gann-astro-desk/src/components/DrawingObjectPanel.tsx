@@ -2,6 +2,7 @@ import {
   Eye,
   EyeOff,
   Fan,
+  ListFilter,
   Lock,
   Minus,
   Save,
@@ -31,6 +32,7 @@ type DrawingObjectPanelProps = {
 function DrawingIcon({ drawing }: { drawing: ChartDrawing }) {
   if (drawing.type === 'vertical_line') return <SeparatorVertical size={15} />
   if (drawing.type === 'gann_fan') return <Fan size={15} />
+  if (drawing.type === 'fibonacci_retracement') return <ListFilter size={15} />
   return <Minus size={15} />
 }
 
@@ -62,14 +64,43 @@ export function DrawingObjectPanel({
   )
   const [templateId, setTemplateId] = useState('')
   const [templateName, setTemplateName] = useState('')
+  const [fibonacciLevels, setFibonacciLevels] = useState('')
 
   useEffect(() => {
     setTemplateId('')
     setTemplateName('')
   }, [selectedDrawingId])
 
+  useEffect(() => {
+    if (selected?.type !== 'fibonacci_retracement') {
+      setFibonacciLevels('')
+      return
+    }
+    const levels = Array.isArray(selected.settings.levels)
+      ? selected.settings.levels.filter((value): value is number => typeof value === 'number')
+      : []
+    setFibonacciLevels(levels.join(', '))
+  }, [selected?.settings.levels, selected?.type])
+
   const updateStyle = (update: Partial<ChartDrawing['style']>) => {
     if (selected) onUpdate(selected.drawingId, { style: { ...selected.style, ...update } })
+  }
+
+  const updateSettings = (update: Record<string, unknown>) => {
+    if (selected) onUpdate(selected.drawingId, { settings: { ...selected.settings, ...update } })
+  }
+
+  const commitFibonacciLevels = () => {
+    if (selected?.type !== 'fibonacci_retracement') return
+    const levels = [...new Set(
+      fibonacciLevels
+        .split(/[\s,;]+/)
+        .map(Number)
+        .filter((value) => Number.isFinite(value) && value >= -5 && value <= 5),
+    )].slice(0, 24)
+    if (levels.length < 2) return
+    setFibonacciLevels(levels.join(', '))
+    updateSettings({ levels })
   }
 
   const updateAnchor = (index: number, update: Partial<ChartDrawing['anchors'][number]>) => {
@@ -87,7 +118,7 @@ export function DrawingObjectPanel({
         <button className="icon-button" onClick={onClose} title="Close object tree"><X size={16} /></button>
       </header>
       <div className="drawing-object-list">
-        {chartDrawings.length === 0 && <p className="drawing-empty">Place a line or Gann fan to add it here.</p>}
+        {chartDrawings.length === 0 && <p className="drawing-empty">Place a line, Gann fan, or Fibonacci retracement to add it here.</p>}
         {chartDrawings.slice().sort((a, b) => b.zIndex - a.zIndex).map((drawing) => (
           <div className={`drawing-object-row ${drawing.drawingId === selectedDrawingId ? 'is-selected' : ''}`} key={drawing.drawingId}>
             <button className="drawing-object-name" onClick={() => onSelect(drawing.drawingId)} title={`Select ${drawing.name}`}>
@@ -116,7 +147,11 @@ export function DrawingObjectPanel({
             <div className="property-heading"><strong>Anchors</strong><span>{selected.locked ? 'Locked' : 'Drag on chart or edit'}</span></div>
             {selected.anchors.map((anchor, index) => (
               <div className="drawing-anchor-fields" key={`${selected.drawingId}-${index}`}>
-                <strong>{selected.type === 'gann_fan' ? (index === 0 ? 'Origin' : 'Slope') : 'Position'}</strong>
+                <strong>{selected.type === 'gann_fan'
+                  ? (index === 0 ? 'Origin' : 'Slope')
+                  : selected.type === 'fibonacci_retracement'
+                    ? (index === 0 ? 'Start' : 'End')
+                    : 'Position'}</strong>
                 {selected.type !== 'horizontal_line' && <label>Time<input type="datetime-local" value={localDateTimeValue(anchor.timeUtc)} disabled={selected.locked} onChange={(event) => {
                   const date = new Date(event.target.value)
                   if (Number.isFinite(date.getTime())) updateAnchor(index, { timeUtc: date.toISOString() })
@@ -125,6 +160,30 @@ export function DrawingObjectPanel({
               </div>
             ))}
           </div>
+
+          {selected.type === 'fibonacci_retracement' && (
+            <div className="fibonacci-properties">
+              <div className="property-heading"><strong>Fibonacci levels</strong><span>-5 to 5</span></div>
+              <label>
+                Decimal levels
+                <input
+                  value={fibonacciLevels}
+                  onChange={(event) => setFibonacciLevels(event.target.value)}
+                  onBlur={commitFibonacciLevels}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') commitFibonacciLevels()
+                  }}
+                  disabled={selected.locked}
+                  placeholder="0, 0.236, 0.382, 0.5, 0.618, 1"
+                />
+              </label>
+              <div className="property-toggles">
+                <label><input type="checkbox" checked={selected.settings.showLabels !== false} onChange={(event) => updateSettings({ showLabels: event.target.checked })} /> Labels</label>
+                <label><input type="checkbox" checked={selected.settings.showPrices !== false} onChange={(event) => updateSettings({ showPrices: event.target.checked })} /> Prices</label>
+                <label><input type="checkbox" checked={selected.settings.extendLines === true} onChange={(event) => updateSettings({ extendLines: event.target.checked })} /> Extend</label>
+              </div>
+            </div>
+          )}
 
           <div className="drawing-template-controls">
             <div className="property-heading"><strong>Template</strong><span>Style and settings</span></div>

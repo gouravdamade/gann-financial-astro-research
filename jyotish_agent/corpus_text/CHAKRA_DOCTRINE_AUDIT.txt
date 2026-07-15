@@ -1,0 +1,70 @@
+[[SOURCE: CHAKRA_DOCTRINE_AUDIT]]
+[[TITLE: Sarvatobhadra and Sudarshana Chakra provenance audit]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: curated_source_provenance_audit_not_root_doctrine]]
+[[CONTENT_LAYER: source_policy]]
+[[TOPICS: source_provenance,recension_control,research_guardrails]]
+
+This source tells the local agent what can and cannot be claimed about two chakra systems. It is not a replacement for a root Sanskrit text, a critical edition, or an externally certified translation. It must not calculate market direction, place a trade, or silently merge passages from different recensions.
+
+Retrieval hierarchy: quote a page-identified root witness first; identify historical translator or editor material separately; use modern interpretation only as commentary; state uncertainty when the selected witness does not contain the claimed chapter. Classical doctrine and market evidence remain separate namespaces.
+
+[[SOURCE: CHAKRA_DOCTRINE_AUDIT]]
+[[TITLE: Sarvatobhadra Chakra evidence]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: curated_source_provenance_audit_not_root_doctrine]]
+[[CONTENT_LAYER: sarvatobhadra_evidence]]
+[[TOPICS: sarvatobhadra,vedha,latta,transit,nakshatra,tithi,recension_control]]
+
+The local 1937 Subrahmanya Sastri Phaladeepika witness provides two different evidence layers. PDF page 341, chapter 26 verse 48, translates Mantreswara's instruction that auspicious and inauspicious vedhas in the Sarvatobhadra Chakra should also be considered when judging transit. This is the root-text layer available in this edition.
+
+PDF pages 342-356 are not all Mantreswara's verses. The editor explicitly says the following Sarvatobhadra slokas are extracted from other works and later identifies the English free rendering as material extracted from Horaratna. Those pages describe an 81-cell construction, 28 nakshatras including Abhijit, vowels, consonants, signs, five tithi classes, planetary vedha directions, and qualitative outcomes. Retrieval must label this material editorial_sarvatobhadra_supplement_from_horaratna_and_other_works.
+
+An accessible Government Oriental Manuscripts Library catalogue record, number 14002, preserves the beginning of a Sarvatobhadracakraslokah and independently attests both 64-cell and 81-cell forms. A separate manuscript catalogue records a complete thirteen-page Sanskrit Sarvatobhadra Chakra attributed to Narhari. These catalogues establish manuscript witnesses, not a single certified operational formula or secure universal authorship.
+
+Do not claim that Narapati Jayacharya, Varahamihira, Brahmayamala, Horaratna, or any modern author is the sole source unless a specific edition and passage have been verified. Do not infer bullish or bearish market direction from a vedha. A future app module may map a dated transit into a separately displayed 9 by 9 research grid, expose every placement convention and source edition, and log vedha features for blinded testing. It must remain evidence-only until its layout, benefic/malefic convention, node handling, and outcome mapping pass doctrine certification and no-lookahead validation.
+
+Public source locators:
+- Phaladeepika historical edition: https://archive.org/details/in.ernet.dli.2015.92117
+- Sanskrit Documents Phaladeepika transcription: https://sanskritdocuments.org/doc_z_misc_sociology_astrology/phaladIpika.html
+- Government Oriental Manuscripts Library catalogue entry 14002: https://www.wisdomlib.org/history/compilation/catalogue-sanskrit-manuscripts-madras/d/doc1538063.html
+- Narhari manuscript catalogue record: https://manuscripts.vitragelibrary.org/collection-details/sarvatobhadra-chakra
+
+[[SOURCE: CHAKRA_DOCTRINE_AUDIT]]
+[[TITLE: Sudarshana Chakra evidence]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: curated_source_provenance_audit_not_root_doctrine]]
+[[CONTENT_LAYER: sudarshana_evidence]]
+[[TOPICS: sudarshana,lagna,moon,sun,dasha,transit,recension_control]]
+
+The page-structured 1899 BPHS Purva-Uttara witness in the local classical corpus does not expose a Sudarshana chapter under that name. This absence must be reported when that witness is selected; it must not be silently filled from a modern expanded edition.
+
+Later BPHS editions do contain a Sudarshana chapter, but chapter numbering differs. One widely circulated English edition labels it chapter 74, while a 2006 edition catalogue labels it chapter 76. The common later-edition description uses three concentric twelve-house references aligned from Lagna, Moon, and Sun, followed by year, month, and shorter-period timing. This is a recension-specific doctrine candidate, not yet a certified formula in this workspace.
+
+The user-supplied Sanjay Rath Crux of Vedic Astrology is indexed as secondary interpretive commentary. Its Sudarshana examples may help formulate questions, but the same book later warns that some illustrated methods were incorrect or not foolproof. It cannot certify a deterministic engine by itself.
+
+A future app module may show a separate tri-reference wheel for Lagna, Moon, and Sun, with source-edition selection and a visible decision trail. It should not be painted onto the candlestick chart initially. It must not score a trade until the chosen Sanskrit witness, translation, house progression, subperiod convention, transit treatment, and reference-chart calculations have passed fixture parity and external review.
+
+Public source locators:
+- Sanskrit Documents BPHS transcription index and scans: https://sanskritdocuments.org/iast/jyotisha/
+- Later English edition containing chapter 74: https://vedic-astro.s3.amazonaws.com/books/bhrihat_parasara_hora_shastra.pdf
+- 2006 edition catalogue identifying chapter 76: https://www.wisdomlib.org/shop/books/jyotisha/brihat-parashara-hora-shastra/doc234250.html
+
+[[SOURCE: CHAKRA_DOCTRINE_AUDIT]]
+[[TITLE: Chakra app promotion gates]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: workspace_research_policy]]
+[[CONTENT_LAYER: app_design_guardrails]]
+[[TOPICS: sarvatobhadra,sudarshana,app_design,validation,no_lookahead]]
+
+Gate 1 - provenance: select and hash a lawful edition, preserve page or verse identity, and distinguish root text, commentary, translation, and editor supplement.
+
+Gate 2 - deterministic convention: define every cell or house mapping, benefic/malefic rule, retrograde and node treatment, time conversion, ayanamsa, and boundary rule in code and fixtures. The LLM may explain the result but may not calculate it.
+
+Gate 3 - doctrine parity: compare a fixed set of charts against an independent trusted implementation or a qualified human adjudication. Record disagreements by formula and source edition rather than averaging them away.
+
+Gate 4 - market validation: freeze the feature contract before observing outcomes, use purged walk-forward evaluation, compare against price-only and randomized baselines, correct for multiple testing, and keep failed hypotheses. Only then may a feature be considered for Auto Suggest. MT5 execution remains disabled.

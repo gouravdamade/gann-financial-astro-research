@@ -2,7 +2,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from jyotish_agent.ingest_classical_sources import render_source, section_for, topics_for
+from jyotish_agent.ingest_classical_sources import (
+    DEFAULT_REGISTRY,
+    load_registry,
+    render_source,
+    section_for,
+    topics_for,
+)
 
 
 SAMPLE_XML = """<?xml version="1.0" encoding="UTF-8"?>
@@ -66,6 +72,30 @@ class ClassicalSourceIngestionTests(unittest.TestCase):
             self.assertIn("[[RIGHTS_BASIS: repository_public_domain_assertion]]", text)
             self.assertIn("[[RETRIEVAL_CAUTION: Do not merge commentary with root text.]]", text)
             self.assertIn("[[TOPICS: dasha]]", text)
+
+    def test_phaladeepika_sarvatobhadra_supplement_is_not_labeled_as_root_text(self) -> None:
+        source = load_registry(DEFAULT_REGISTRY)["PHALADEEPIKA"]
+
+        self.assertEqual(
+            section_for(341, source["section_ranges"]),
+            "root_sanskrit_with_english_translation_and_notes",
+        )
+        self.assertEqual(
+            section_for(342, source["section_ranges"]),
+            "editorial_sarvatobhadra_supplement_from_horaratna_and_other_works",
+        )
+        self.assertEqual(
+            section_for(356, source["section_ranges"]),
+            "editorial_sarvatobhadra_supplement_from_horaratna_and_other_works",
+        )
+        self.assertEqual(
+            section_for(357, source["section_ranges"]),
+            "root_sanskrit_with_english_translation_and_notes",
+        )
+        self.assertIn(
+            "sarvatobhadra",
+            topics_for("Sarvatobhadrachakra vedha", source["topics"]),
+        )
 
 
 if __name__ == "__main__":

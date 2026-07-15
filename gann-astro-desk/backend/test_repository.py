@@ -1,16 +1,57 @@
 from __future__ import annotations
 
+import gc
+import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 
 import pandas as pd
 
-from repository import ASTRO_CONTRACT, AstroRepository
+from repository import ASTRO_CONTRACT, AstroRepository, DataPaths
 
 
 class AstroRepositoryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.repository = AstroRepository()
+        cls.temporary = tempfile.TemporaryDirectory()
+        temporary_root = Path(cls.temporary.name)
+        project_root = Path(__file__).resolve().parents[2]
+        database = temporary_root / "annotations.sqlite"
+        source = sqlite3.connect(project_root / "gann_aspect_annotations_raman_v2.sqlite")
+        destination = sqlite3.connect(database)
+        try:
+            source.backup(destination)
+        finally:
+            destination.close()
+            source.close()
+        connection = sqlite3.connect(database)
+        try:
+            connection.execute("DELETE FROM app_generation_jobs")
+            connection.execute("DELETE FROM app_data_artifacts")
+            connection.execute("DELETE FROM app_price_sources")
+            connection.commit()
+        finally:
+            connection.close()
+        paths = DataPaths(
+            project_root=project_root,
+            source_events=project_root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
+            touch_log=project_root / "aspect_sr_touch_log_usdjpy_tn_raman_v2_20250301_20260310.csv",
+            price_data=project_root / "usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+            price_data_m30=project_root / "usd_jpy_m30_mt5_metaquotes_demo_20250310_20260310.parquet",
+            annotation_db=database,
+            snapshots_dir=temporary_root / "snapshots",
+            artifacts_dir=temporary_root / "artifacts",
+            market_snapshots_dir=temporary_root / "market_snapshots",
+            price_sources_dir=temporary_root / "price_sources",
+        )
+        cls.repository = AstroRepository(paths)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        del cls.repository
+        gc.collect()
+        cls.temporary.cleanup()
 
     def test_chart_payload_uses_versioned_directional_events(self) -> None:
         payload = self.repository.chart_payload("2025-05-26", "2025-05-30")

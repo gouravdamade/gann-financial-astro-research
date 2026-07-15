@@ -1,4 +1,6 @@
 corpus_text/*.txt
+!corpus_text/CHAKRA_DOCTRINE_AUDIT.txt
+!corpus_text/FINANCIAL_ASTRO_FORUM_HYPOTHESES.txt
 corpus_chunks.jsonl
 index/*
 !index/.gitkeep

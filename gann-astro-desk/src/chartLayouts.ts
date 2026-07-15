@@ -7,6 +7,7 @@ import type {
   ChartLayoutState,
   ChartWorkspaceKind,
   DrawingTemplate,
+  FibonacciSettings,
   SquareOfNineSettings,
 } from './types'
 
@@ -40,7 +41,19 @@ export function defaultDrawingStyle(type: ChartDrawingType): ChartDrawingStyle {
   if (type === 'square_of_nine') {
     return { color: '#58a6c6', lineWidth: 1, lineStyle: 'solid', opacity: 0.84 }
   }
+  if (type === 'fibonacci_retracement') {
+    return { color: '#57b8a6', lineWidth: 1, lineStyle: 'solid', opacity: 0.86 }
+  }
   return { color: '#62c6ed', lineWidth: 1, lineStyle: 'solid', opacity: 0.9 }
+}
+
+export function defaultFibonacciSettings(): FibonacciSettings {
+  return {
+    levels: [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1],
+    showLabels: true,
+    showPrices: true,
+    extendLines: false,
+  }
 }
 
 export function defaultSquareOfNineSettings(centerValue: number): SquareOfNineSettings {
@@ -68,6 +81,8 @@ export function createChartDrawing(
 ): ChartDrawing {
   const settings = type === 'gann_fan'
     ? { ratios: [0.25, 0.5, 1, 2, 4] }
+    : type === 'fibonacci_retracement'
+      ? defaultFibonacciSettings()
     : type === 'square_of_nine'
       ? defaultSquareOfNineSettings(anchors[0]?.price ?? 1)
       : {}

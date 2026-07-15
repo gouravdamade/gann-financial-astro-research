@@ -10,7 +10,61 @@ from typing import Any
 
 import requests
 
-from build_corpus_index import INDEX_PATH, build_chunks, build_index, retrieve, write_jsonl, CHUNKS_PATH, MANIFEST
+try:
+    from .build_corpus_index import (
+        CHUNKS_PATH,
+        INDEX_PATH,
+        MANIFEST,
+        build_chunks,
+        build_index,
+        retrieve,
+        write_jsonl,
+    )
+except ImportError:  # Direct script execution from jyotish_agent/.
+    from build_corpus_index import (
+        CHUNKS_PATH,
+        INDEX_PATH,
+        MANIFEST,
+        build_chunks,
+        build_index,
+        retrieve,
+        write_jsonl,
+    )
+
+
+SOURCE_PROVENANCE_IDS = {"CHAKRA_DOCTRINE_AUDIT"}
+HYPOTHESIS_REFERENCE_IDS = {
+    "GANN_TUNNEL_1927",
+    "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
+}
+HYPOTHESIS_QUERY_TERMS = {
+    "forex factory",
+    "forum",
+    "gann",
+    "planetary line",
+    "planetary price",
+    "radix",
+    "tunnel thru the air",
+    "tunnel through the air",
+}
+
+
+def source_layer(source_id: str) -> str:
+    normalized = str(source_id or "").upper()
+    if normalized in {"CURRENT_RULE_NOTES", "TOUCH_LOG"}:
+        return "local_research"
+    if normalized in SOURCE_PROVENANCE_IDS:
+        return "source_provenance"
+    if normalized in HYPOTHESIS_REFERENCE_IDS:
+        return "hypothesis_reference"
+    if normalized in {"SHADBALA_JAYA", "STRICT_VEDIC_LLM", "SANJAY_RATH_CRUX_1998"}:
+        return "reference_commentary"
+    return "classical_or_unclassified_reference"
+
+
+def question_requests_hypotheses(question: str) -> bool:
+    normalized = " ".join(str(question or "").lower().split())
+    return any(term in normalized for term in HYPOTHESIS_QUERY_TERMS)
 
 
 ROOT = Path(__file__).resolve().parent
@@ -237,7 +291,8 @@ def build_prompt(case_summary: str, retrieved: list[dict[str, Any]], question: s
     sources = []
     for item in retrieved:
         sources.append(
-            f"[{item['chunk_id']} | {item['title']} | score={item['score']:.3f}]\n{item['text'][:1600]}"
+            f"[{item['chunk_id']} | {source_layer(str(item.get('source_id') or ''))} | "
+            f"{item['title']} | score={item['score']:.3f}]\n{item['text'][:1600]}"
         )
     return f"""You are a strict Jyotish research assistant for a USDJPY Gann/financial astrology workspace.
 
@@ -247,6 +302,9 @@ Rules:
 - Treat "Rule conflict lessons / training memory" and "Dream Review corrections / verifier memory" as high-priority local memory.
 - If Dream Review corrected an older note, follow the correction and say the older wording is stale.
 - Separate doctrine/source hints from observed case-family evidence.
+- Source-provenance passages control attribution and recension warnings; they are not root doctrine.
+- Hypothesis-reference passages are unverified research material, never doctrine, proof, certification, or ground truth. They may only suggest a test.
+- Never let a hypothesis-reference passage alter deterministic evidence, Auto Suggest, or an official ML note.
 - Say when a citation is only a local note or when doctrine citation is missing.
 - Output practical ML features/rules to test, not trading advice.
 - Keep the answer about the exact case in the evidence. Do not drift to generic planets or unrelated aspects.
@@ -271,7 +329,12 @@ Draft a concise explanation with:
 """
 
 
-def llm_drift_warning(case_id: int, case_summary: str, llm_text: str | None) -> str | None:
+def llm_drift_warning(
+    case_id: int,
+    case_summary: str,
+    llm_text: str | None,
+    retrieved: list[dict[str, Any]] | None = None,
+) -> str | None:
     if not llm_text:
         return "Local LLM did not return text."
     checks = [
@@ -284,6 +347,20 @@ def llm_drift_warning(case_id: int, case_summary: str, llm_text: str | None) -> 
         ("ret_after_72h_dir=DOWN" in case_summary or "direction=bearish" in case_summary.lower())
         and "bullish bias" in llm_text.lower()
     )
+    hypothesis_overclaim = bool(
+        any(source_layer(str(item.get("source_id") or "")) == "hypothesis_reference" for item in (retrieved or []))
+        and re.search(
+            r"\b(classical(?:\s+doctrine)?|scriptural|authoritative|proven|certified|ground\s+truth)\b",
+            llm_text,
+            re.I,
+        )
+        and not re.search(r"\b(not|never|unverified|unproven|hypothesis|fiction|literary)\b", llm_text, re.I)
+    )
+    if hypothesis_overclaim:
+        return (
+            "Local LLM commentary promoted an unverified hypothesis source to doctrine or proof. "
+            "Use deterministic evidence as ground truth and keep the hypothesis as a test candidate only."
+        )
     if direction_conflict or not all(checks) or any(item in llm_text.lower() for item in banned_generic):
         return (
             "Local LLM commentary may have drifted from the evidence. "
@@ -488,7 +565,8 @@ def extractive_answer(packet: dict[str, Any], case_summary: str, retrieved: list
     for item in retrieved:
         lines.extend(
             [
-                f"### {item['chunk_id']} | {item['title']} | score={item['score']:.3f}",
+                f"### {item['chunk_id']} | {source_layer(str(item.get('source_id') or ''))} | "
+                f"{item['title']} | score={item['score']:.3f}",
                 item["text"][:1400],
                 "",
             ]
@@ -510,14 +588,19 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
     case_summary = compact_case_summary(packet)
     retrieval_query = case_summary + "\n" + question
     structured_sources = {"CURRENT_RULE_NOTES", "TOUCH_LOG"}
+    excluded_by_default = structured_sources | HYPOTHESIS_REFERENCE_IDS
     retrieved = [
         *retrieve(retrieval_query, top_k=4, source_ids=structured_sources),
-        *retrieve(retrieval_query, top_k=4, exclude_source_ids=structured_sources),
+        *retrieve(retrieval_query, top_k=4, exclude_source_ids=excluded_by_default),
     ]
+    if question_requests_hypotheses(question):
+        retrieved.extend(
+            retrieve(retrieval_query, top_k=2, source_ids=HYPOTHESIS_REFERENCE_IDS)
+        )
     prompt = build_prompt(case_summary, retrieved, question)
     llm_text = ollama_generate(prompt) if use_llm else None
     if llm_text:
-        warning = llm_drift_warning(case_id, case_summary, llm_text)
+        warning = llm_drift_warning(case_id, case_summary, llm_text, retrieved)
         text_parts = [
             "# Local Jyotish Agent Draft",
             "",
@@ -554,7 +637,8 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
         for item in retrieved:
             text_parts.extend(
                 [
-                    f"### {item['chunk_id']} | {item['title']} | score={item['score']:.3f}",
+                    f"### {item['chunk_id']} | {source_layer(str(item.get('source_id') or ''))} | "
+                    f"{item['title']} | score={item['score']:.3f}",
                     item["text"][:1400],
                     "",
                 ]

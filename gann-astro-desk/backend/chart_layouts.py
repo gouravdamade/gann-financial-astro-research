@@ -20,6 +20,7 @@ ALLOWED_DRAWING_TYPES = {
     "horizontal_line",
     "vertical_line",
     "gann_fan",
+    "fibonacci_retracement",
     "square_of_nine",
 }
 RESEARCH_GUARDRAILS = {
@@ -158,6 +159,7 @@ def _normalize_style(drawing_type: str, value: Any) -> dict[str, Any]:
         "horizontal_line": ("#62c6ed", "solid", 0.9),
         "vertical_line": ("#d68ac0", "solid", 0.9),
         "gann_fan": ("#d7a63e", "dashed", 0.82),
+        "fibonacci_retracement": ("#57b8a6", "solid", 0.86),
         "square_of_nine": ("#58a6c6", "solid", 0.84),
     }
     color, line_style, opacity = defaults[drawing_type]
@@ -206,6 +208,25 @@ def _normalize_settings(
                 if math.isfinite(ratio) and ratio != 0:
                     ratios.append(ratio)
         return {"ratios": ratios or [0.25, 0.5, 1.0, 2.0, 4.0]}
+    if drawing_type == "fibonacci_retracement":
+        raw_levels = source.get("levels")
+        levels = []
+        if isinstance(raw_levels, list):
+            for raw in raw_levels[:24]:
+                try:
+                    level = float(raw)
+                except (TypeError, ValueError):
+                    continue
+                if math.isfinite(level) and -5.0 <= level <= 5.0 and level not in levels:
+                    levels.append(level)
+        if len(levels) < 2:
+            levels = [0.0, 0.236, 0.382, 0.5, 0.618, 0.786, 1.0]
+        return {
+            "levels": levels,
+            "showLabels": bool(source.get("showLabels", True)),
+            "showPrices": bool(source.get("showPrices", True)),
+            "extendLines": bool(source.get("extendLines", False)),
+        }
     if drawing_type != "square_of_nine":
         return source
     anchor_price = anchors[0]["price"] if anchors else 1.0
@@ -275,7 +296,8 @@ def normalize_drawing(payload: dict[str, Any], index: int = 0) -> dict[str, Any]
     anchors = payload.get("anchors")
     if not isinstance(anchors, list):
         raise ValueError("drawing anchors must be a list")
-    minimum_anchors = 2 if drawing_type in {"gann_fan", "square_of_nine"} else 1
+    two_anchor_types = {"gann_fan", "fibonacci_retracement", "square_of_nine"}
+    minimum_anchors = 2 if drawing_type in two_anchor_types else 1
     if len(anchors) < minimum_anchors or len(anchors) > 8:
         raise ValueError(f"{drawing_type} requires at least {minimum_anchors} anchor(s)")
     normalized_anchors = []
@@ -292,7 +314,7 @@ def normalize_drawing(payload: dict[str, Any], index: int = 0) -> dict[str, Any]
                 ),
             }
         )
-    if drawing_type in {"gann_fan", "square_of_nine"}:
+    if drawing_type in two_anchor_types:
         first_anchor, second_anchor = normalized_anchors[:2]
         if first_anchor["timeUtc"] == second_anchor["timeUtc"]:
             raise ValueError(f"{drawing_type} anchors require distinct times")

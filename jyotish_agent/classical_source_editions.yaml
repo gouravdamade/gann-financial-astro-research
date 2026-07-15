@@ -55,13 +55,15 @@ sources:
     source_download_url: "https://archive.org/download/in.ernet.dli.2015.92117/2015.92117.Mantreswaras-Phaladeepika.pdf"
     rights: "repository_asserted_public_domain_historical_edition"
     rights_basis: "Digital Library of India catalog says In Public Domain; title page says Copyright Registered, so redistribution rights require revalidation"
-    retrieval_caution: "Keep Sanskrit verse, English translation, and translator note distinct. Repository rights assertion conflicts with the title-page notice; local research corpus only unless independently cleared."
+    retrieval_caution: "Keep Sanskrit verse, English translation, and translator note distinct. In chapter 26, PDF page 341 contains Mantreswara's verse 48, while PDF pages 342-356 are explicitly editor-supplied extracts and a free rendering from other works including Horaratna; do not attribute that supplement to Mantreswara. Repository rights assertion conflicts with the title-page notice; local research corpus only unless independently cleared."
     section_ranges:
       - {start: 1, end: 5, type: "library_front_leaves"}
       - {start: 6, end: 8, type: "title_and_publication_matter"}
       - {start: 9, end: 13, type: "translator_prefaces"}
       - {start: 14, end: 37, type: "descriptive_contents"}
-      - {start: 38, end: 361, type: "root_sanskrit_with_english_translation_and_notes"}
+      - {start: 38, end: 341, type: "root_sanskrit_with_english_translation_and_notes"}
+      - {start: 342, end: 356, type: "editorial_sarvatobhadra_supplement_from_horaratna_and_other_works"}
+      - {start: 357, end: 361, type: "root_sanskrit_with_english_translation_and_notes"}
       - {start: 362, end: 393, type: "verse_and_sanskrit_indexes"}
       - {start: 394, end: 471, type: "english_subject_index"}
       - {start: 472, end: 476, type: "trailing_blank_or_library_leaves"}
@@ -75,6 +77,8 @@ sources:
       dasha: ["dasa", "mahadasa", "bhukti", "antara"]
       ashtakavarga: ["ashtakavarga", "benefic dots", "sarvashtakavarga"]
       transit: ["transit", "gochara"]
+      sarvatobhadra: ["sarvatobhadra", "sarvato-bhadra", "sarvatobhadrachakra", "sarvato-bhadrachakra"]
+      vedha_latta: ["vedha", "latta", "lattas"]
       nodes: ["rahu", "ketu"]
       yoga: ["yoga", "rajayoga", "mahapurusha"]
       profession_wealth: ["profession", "livelihood", "wealth"]

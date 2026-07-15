@@ -5,6 +5,7 @@ export type ChartTool =
   | 'horizontal'
   | 'vertical'
   | 'gann'
+  | 'fibonacci'
 
 export type ChartDataSource = 'research' | 'live'
 
@@ -21,6 +22,7 @@ export type ChartDrawingType =
   | 'horizontal_line'
   | 'vertical_line'
   | 'gann_fan'
+  | 'fibonacci_retracement'
   | 'square_of_nine'
 
 export type ChartDrawingAnchor = {
@@ -92,6 +94,13 @@ export type GannFanSettings = {
   ratios: number[]
 }
 
+export type FibonacciSettings = {
+  levels: number[]
+  showLabels: boolean
+  showPrices: boolean
+  extendLines: boolean
+}
+
 export type ChartDrawing = {
   contract: 'GANN_RESEARCH_CHART_DRAWING_V1'
   schemaVersion: 1
@@ -103,7 +112,7 @@ export type ChartDrawing = {
   zIndex: number
   anchors: ChartDrawingAnchor[]
   style: ChartDrawingStyle
-  settings: Partial<SquareOfNineSettings & GannFanSettings> & Record<string, unknown>
+  settings: Partial<SquareOfNineSettings & GannFanSettings & FibonacciSettings> & Record<string, unknown>
   guardrails: {
     researchOnly: true
     consumedByLiveInference: false

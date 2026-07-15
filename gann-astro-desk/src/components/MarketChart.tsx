@@ -12,6 +12,7 @@ import {
   type UTCTimestamp,
 } from 'lightweight-charts'
 import { toPng } from 'html-to-image'
+import { Eye, EyeOff, Lock, SlidersHorizontal, Trash2, Unlock } from 'lucide-react'
 import {
   forwardRef,
   useEffect,
@@ -37,7 +38,7 @@ import type {
 
 type BandPosition = { event: AspectWindow; left: number; width: number }
 type Point = { time: number; price: number }
-type PendingDrawing = { type: 'gann_fan'; point: Point }
+type PendingDrawing = { type: 'gann_fan' | 'fibonacci_retracement'; point: Point }
 type DragPreview = { drawingId: string; anchors: ChartDrawingAnchor[] }
 type DragSession = DragPreview & { anchorIndex: number }
 
@@ -282,6 +283,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const resizeObserver = new ResizeObserver(refreshOverlays)
     resizeObserver.observe(hostRef.current)
 
+    const commitDrawing = (drawing: ChartDrawing) => {
+      drawingsChangeRef.current?.([...drawingsRef.current, drawing])
+      selectDrawingRef.current?.(drawing.drawingId)
+    }
+
     const clickHandler = (params: MouseEventParams<Time>) => {
       if (!params.point || params.time == null) return
       const time = Number(params.time)
@@ -295,16 +301,16 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
           drawingsRef.current.length,
         )
-        drawingsChangeRef.current?.([...drawingsRef.current, drawing])
+        commitDrawing(drawing)
       } else if (tool === 'vertical') {
         const drawing = createChartDrawing(
           'vertical_line',
           [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
           drawingsRef.current.length,
         )
-        drawingsChangeRef.current?.([...drawingsRef.current, drawing])
-      } else if (tool === 'gann') {
-        const drawingType = 'gann_fan'
+        commitDrawing(drawing)
+      } else if (tool === 'gann' || tool === 'fibonacci') {
+        const drawingType = tool === 'gann' ? 'gann_fan' : 'fibonacci_retracement'
         const pending = pendingDrawingRef.current
         if (!pending || pending.type !== drawingType) {
           const nextPending: PendingDrawing = { type: drawingType, point }
@@ -327,7 +333,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         )
         pendingDrawingRef.current = null
         setPendingDrawing(null)
-        drawingsChangeRef.current?.([...drawingsRef.current, drawing])
+        commitDrawing(drawing)
       } else if (tool === 'annotation' && createAnnotationRef.current) {
         const currentPayload = payloadRef.current
         const selected = currentPayload.aspects.find((item) => item.eventId === selectedAspectIdRef.current)
@@ -639,8 +645,64 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         </g>
       )
     }
+    if (drawing.type === 'fibonacci_retracement') {
+      const rawLevels = Array.isArray(drawing.settings.levels)
+        ? drawing.settings.levels.filter((value): value is number => (
+            typeof value === 'number' && Number.isFinite(value) && value >= -5 && value <= 5
+          ))
+        : [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1]
+      const levels = [...new Set(rawLevels)].slice(0, 24)
+      const series = seriesRef.current
+      if (!series || levels.length < 2) return null
+      const rootWidth = rootRef.current?.clientWidth ?? Math.max(start.x, end.x)
+      const x1 = drawing.settings.extendLines ? 0 : Math.min(start.x, end.x)
+      const x2 = drawing.settings.extendLines ? rootWidth : Math.max(start.x, end.x)
+      const levelRows = levels.flatMap((level) => {
+        const price = drawing.anchors[0].price
+          + (drawing.anchors[1].price - drawing.anchors[0].price) * level
+        const y = series.priceToCoordinate(price)
+        return y == null ? [] : [{ level, price, y: Number(y) }]
+      })
+      if (levelRows.length < 2) return null
+      const yValues = levelRows.map((row) => row.y)
+      const y1 = Math.min(...yValues)
+      const y2 = Math.max(...yValues)
+      const showLabels = drawing.settings.showLabels !== false
+      const showPrices = drawing.settings.showPrices !== false
+      return (
+        <g key={drawing.drawingId} className={`chart-drawing fibonacci-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
+          <rect
+            className="drawing-hit-target fibonacci-hit-target"
+            x={x1}
+            y={y1 - 6}
+            width={Math.max(12, x2 - x1)}
+            height={Math.max(12, y2 - y1 + 12)}
+          />
+          {levelRows.map(({ level, price, y }) => (
+            <g key={level} className="fibonacci-level">
+              <line className="fibonacci-level-line" x1={x1} y1={y} x2={x2} y2={y} style={strokeStyle} />
+              {showLabels && (
+                <text className="fibonacci-level-label" x={Math.max(x1 + 54, x2 - 4)} y={y - 3} fill={drawing.style.color}>
+                  {(level * 100).toFixed(level === 0 || level === 1 ? 0 : 1)}%{showPrices ? `  ${price.toFixed(3)}` : ''}
+                </text>
+              )}
+            </g>
+          ))}
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 0, start, 'Start')}
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 1, end, 'End')}
+        </g>
+      )
+    }
 
     return null
+  }
+
+  const selectedDrawing = drawings.find((drawing) => drawing.drawingId === selectedDrawingId) ?? null
+  const updateSelectedDrawing = (update: Partial<ChartDrawing>) => {
+    if (!selectedDrawing) return
+    onDrawingsChange?.(drawings.map((drawing) => drawing.drawingId === selectedDrawing.drawingId
+      ? { ...drawing, ...update, guardrails: drawing.guardrails }
+      : drawing))
   }
 
   return (
@@ -696,6 +758,28 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       <svg className="drawing-layer" aria-label="Persisted research drawings">
         {drawings.slice().sort((a, b) => a.zIndex - b.zIndex).map(renderDrawing)}
       </svg>
+      {selectedDrawing && (
+        <div className="selected-drawing-toolbar" role="toolbar" aria-label={`${selectedDrawing.name} drawing controls`}>
+          <button className="selected-drawing-name" onClick={() => onSelectDrawing?.(selectedDrawing.drawingId)} title="Open drawing properties">
+            <strong>{selectedDrawing.name}</strong>
+            <span>Edit</span>
+          </button>
+          <button className="icon-button" onClick={() => onSelectDrawing?.(selectedDrawing.drawingId)} title="Edit drawing properties" aria-label="Edit drawing properties"><SlidersHorizontal size={14} /></button>
+          <button className="icon-button" onClick={() => updateSelectedDrawing({ visible: !selectedDrawing.visible })} title={selectedDrawing.visible ? 'Hide drawing' : 'Show drawing'} aria-label={selectedDrawing.visible ? 'Hide drawing' : 'Show drawing'}>{selectedDrawing.visible ? <Eye size={14} /> : <EyeOff size={14} />}</button>
+          <button className="icon-button" onClick={() => updateSelectedDrawing({ locked: !selectedDrawing.locked })} title={selectedDrawing.locked ? 'Unlock drawing' : 'Lock drawing'} aria-label={selectedDrawing.locked ? 'Unlock drawing' : 'Lock drawing'}>{selectedDrawing.locked ? <Lock size={14} /> : <Unlock size={14} />}</button>
+          <button
+            className="icon-button danger"
+            onClick={() => {
+              if (selectedDrawing.locked) return
+              onDrawingsChange?.(drawings.filter((drawing) => drawing.drawingId !== selectedDrawing.drawingId))
+              onSelectDrawing?.(null)
+            }}
+            disabled={selectedDrawing.locked}
+            title={selectedDrawing.locked ? 'Unlock drawing before deleting' : 'Delete drawing'}
+            aria-label="Delete drawing"
+          ><Trash2 size={14} /></button>
+        </div>
+      )}
       <div className="annotation-layer" aria-label="Chart annotations">
         {annotations.map((annotation, index) => {
           if (annotation.anchorPrice == null) return null

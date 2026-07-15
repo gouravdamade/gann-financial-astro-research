@@ -1,10 +1,29 @@
 import { describe, expect, it } from 'vitest'
 import {
+  createChartDrawing,
+  defaultFibonacciSettings,
   defaultSquareOfNineSettings,
   squareOfNineLevels,
   squareOfNineValue,
   validateImportedLayout,
 } from './chartLayouts'
+
+describe('Fibonacci retracement research drawing', () => {
+  it('creates standard persisted levels with research-only guardrails', () => {
+    const drawing = createChartDrawing(
+      'fibonacci_retracement',
+      [
+        { timeUtc: '2026-07-13T10:00:00Z', price: 148.25 },
+        { timeUtc: '2026-07-13T14:00:00Z', price: 147.5 },
+      ],
+      2,
+    )
+    expect(drawing.settings).toEqual(defaultFibonacciSettings())
+    expect(drawing.guardrails.executionAllowed).toBe(false)
+    expect(drawing.guardrails.consumedByLiveInference).toBe(false)
+    expect(drawing.style.color).toBe('#57b8a6')
+  })
+})
 
 describe('Square of Nine research math', () => {
   it('matches the documented square-root rotation steps', () => {

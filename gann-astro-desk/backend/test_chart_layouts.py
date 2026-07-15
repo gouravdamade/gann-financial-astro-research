@@ -159,6 +159,32 @@ class ChartLayoutTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "require distinct times"):
             save_chart_layout(self.repository, self.payload(drawings=[duplicate_fan]))
 
+    def test_fibonacci_retracement_is_normalized_and_research_only(self) -> None:
+        fibonacci = horizontal_drawing("fib-1")
+        fibonacci["type"] = "fibonacci_retracement"
+        fibonacci["anchors"] = [
+            {"timeUtc": "2026-07-13T10:00:00Z", "price": 148.25},
+            {"timeUtc": "2026-07-13T14:00:00Z", "price": 147.5},
+        ]
+        fibonacci["settings"] = {
+            "levels": [0, 0.382, 0.618, 1, 0.618, float("nan"), 99],
+            "showLabels": False,
+            "showPrices": True,
+            "extendLines": True,
+        }
+        saved = save_chart_layout(self.repository, self.payload(drawings=[fibonacci]))
+        drawing = saved["drawings"][0]
+        self.assertEqual(drawing["type"], "fibonacci_retracement")
+        self.assertEqual(drawing["settings"]["levels"], [0.0, 0.382, 0.618, 1.0])
+        self.assertFalse(drawing["settings"]["showLabels"])
+        self.assertTrue(drawing["settings"]["extendLines"])
+        self.assertEqual(drawing["style"]["color"], "#49a7d1")
+        self.assertFalse(drawing["guardrails"]["consumedByLiveInference"])
+
+        fibonacci["anchors"] = [fibonacci["anchors"][0]]
+        with self.assertRaisesRegex(ValueError, "requires at least 2"):
+            save_chart_layout(self.repository, self.payload(drawings=[fibonacci]))
+
     def test_drawing_template_round_trip(self) -> None:
         saved = save_drawing_template(
             self.repository,

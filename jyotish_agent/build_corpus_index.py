@@ -27,6 +27,9 @@ TOUCH_LOG = PROJECT_ROOT / "aspect_sr_touch_log_72h_orb_1y_nodes_outer_sr_eventf
 LOCAL_TEXT_SOURCES = {
     "STRICT_VEDIC_LLM": PDF_EXTRACTS / "Building a Strict Vedic Astrology Prediction Engine with a Local LLM Layer.txt",
     "SHADBALA_JAYA": PDF_EXTRACTS / "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt",
+    "GANN_TUNNEL_1927": Path(
+        r"D:\GannFinancialAstro\sources\gann\GANN_TUNNEL_1927_PROJECT_GUTENBERG.txt"
+    ),
 }
 
 SUPPORTED_ASTRONOMY_CONTRACT_PREFIX = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_"

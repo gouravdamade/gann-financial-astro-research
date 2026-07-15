@@ -49,6 +49,24 @@ class LocalJyotishTests(unittest.TestCase):
                 "title": "Saturn and the Moon",
                 "text": "Saturn and Moon conditions require house, dignity, and aspect context.",
             },
+            {
+                "source_id": "CHAKRA_DOCTRINE_AUDIT",
+                "chunk_id": "CHAKRA-AUDIT-0001",
+                "title": "Sudarshana recension audit",
+                "text": "Sudarshana Chakra chapter numbering varies by later BPHS recension and must not be silently imported into the 1899 witness.",
+            },
+            {
+                "source_id": "GANN_TUNNEL_1927",
+                "chunk_id": "GANN-TUNNEL-0001",
+                "title": "The Tunnel Thru the Air",
+                "text": "The novel says a secret is veiled, but no particular planetary-line trading algorithm is thereby proven.",
+            },
+            {
+                "source_id": "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
+                "chunk_id": "FORUM-HYPOTHESIS-0001",
+                "title": "Planetary price line forum hypotheses",
+                "text": "Forum planetary price line and radix claims are unverified hypotheses for prospective testing only.",
+            },
         ]
         path.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
         return path
@@ -62,6 +80,31 @@ class LocalJyotishTests(unittest.TestCase):
             )
             results = service.retrieve("How should strict Shadbala strength be judged?", limit=2)
             self.assertEqual(results[0]["chunkId"], "BPHS-0123")
+
+    def test_source_layers_keep_provenance_and_hypotheses_out_of_doctrine(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            service = LocalJyotishService(
+                FakeRepository(root),
+                corpus_path=self.write_corpus(root),
+            )
+            provenance = service.retrieve(
+                "Which Sudarshana BPHS recension is present?",
+                layer="source_provenance",
+            )
+            hypotheses = service.retrieve(
+                "Does the Gann Tunnel prove planetary price lines?",
+                layer="hypothesis_reference",
+            )
+            doctrine = service.retrieve(
+                "Does the Gann Tunnel prove planetary price lines?",
+                layer="classical_doctrine",
+            )
+            self.assertEqual(provenance[0]["chunkId"], "CHAKRA-AUDIT-0001")
+            self.assertTrue(any(
+                item["chunkId"] == "GANN-TUNNEL-0001" for item in hypotheses
+            ))
+            self.assertFalse(any(item["chunkId"].startswith("GANN-") for item in doctrine))
 
     def test_analyze_returns_guarded_untrusted_draft_with_citations(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -90,6 +133,39 @@ class LocalJyotishTests(unittest.TestCase):
             self.assertFalse(result["guardrails"]["consumedByShadowLedger"])
             self.assertFalse(result["guardrails"]["executionAllowed"])
             self.assertTrue(any(item["chunkId"] == "BPHS-0123" for item in result["citations"]))
+            self.assertFalse(any(item["layer"] == "hypothesis_reference" for item in result["citations"]))
+
+    def test_gann_hypothesis_is_opt_in_and_overclaim_requires_review(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            service = LocalJyotishService(
+                FakeRepository(root),
+                corpus_path=self.write_corpus(root),
+                preferred_model="gemma4:12b",
+            )
+
+            def fake_request(path: str, **_kwargs):
+                if path == "/api/tags":
+                    return {"models": [{"name": "gemma4:12b"}]}
+                return {
+                    "response": (
+                        "The novel is proven classical doctrine for planetary price lines "
+                        "[GANN-TUNNEL-0001]."
+                    )
+                }
+
+            with patch.object(service, "_request_json", side_effect=fake_request):
+                result = service.analyze(
+                    "event-1",
+                    "Does Gann's Tunnel Thru the Air prove planetary price lines?",
+                )
+            self.assertTrue(any(
+                item["layer"] == "hypothesis_reference" for item in result["citations"]
+            ))
+            self.assertEqual(result["verifier"]["status"], "review_required")
+            self.assertTrue(any(
+                "hypothesis-reference" in issue for issue in result["verifier"]["issues"]
+            ))
 
     def test_health_is_offline_when_runtime_is_unavailable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

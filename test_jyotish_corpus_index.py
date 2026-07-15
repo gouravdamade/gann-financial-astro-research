@@ -13,6 +13,11 @@ from jyotish_agent.build_corpus_index import (
     rule_notes_text,
     touch_log_text,
 )
+from jyotish_agent.explain_case import (
+    llm_drift_warning,
+    question_requests_hypotheses,
+    source_layer,
+)
 
 
 class CorpusChunkingTests(unittest.TestCase):
@@ -95,6 +100,57 @@ class CorpusChunkingTests(unittest.TestCase):
 
         self.assertIn("legacy touch log has no astronomy contract version", text)
         self.assertNotIn("legacy AVG(ALL)|MOON", text)
+
+    def test_chakra_audit_retrieval_preserves_recension_warning(self) -> None:
+        source_path = (
+            Path(__file__).resolve().parent
+            / "jyotish_agent"
+            / "corpus_text"
+            / "CHAKRA_DOCTRINE_AUDIT.txt"
+        )
+        chunks = chunk_text(
+            source_path.read_text(encoding="utf-8"),
+            "CHAKRA_DOCTRINE_AUDIT",
+            "Sarvatobhadra and Sudarshana Chakra provenance audit",
+        )
+        with TemporaryDirectory() as temp_dir:
+            index_path = Path(temp_dir) / "index.joblib"
+            build_index(chunks, index_path)
+            results = retrieve("Is Sudarshana present in the 1899 BPHS witness?", index_path, top_k=3)
+
+        joined = "\n".join(str(item["text"]) for item in results)
+        self.assertIn("1899 BPHS", joined)
+        self.assertIn("must not be silently filled", joined)
+
+    def test_forum_hypothesis_source_rejects_direct_inference(self) -> None:
+        source_path = (
+            Path(__file__).resolve().parent
+            / "jyotish_agent"
+            / "corpus_text"
+            / "FINANCIAL_ASTRO_FORUM_HYPOTHESES.txt"
+        )
+        text = source_path.read_text(encoding="utf-8")
+
+        self.assertIn("not doctrine and not proof", text)
+        self.assertIn("may directly change Auto Suggest", text)
+        self.assertIn("multiple testing", text)
+
+    def test_case_explainer_hypothesis_sources_are_opt_in_and_guarded(self) -> None:
+        self.assertEqual(source_layer("GANN_TUNNEL_1927"), "hypothesis_reference")
+        self.assertFalse(question_requests_hypotheses("Explain this Moon square recurrence"))
+        self.assertTrue(question_requests_hypotheses("Test Gann planetary price lines"))
+        warning = llm_drift_warning(
+            8,
+            "case_id=8 family=AVG(ALL)|MOON::square",
+            "Case 8 says this is proven classical doctrine.",
+            [
+                {
+                    "source_id": "GANN_TUNNEL_1927",
+                    "chunk_id": "GANN-TUNNEL-0001",
+                }
+            ],
+        )
+        self.assertIn("unverified hypothesis", str(warning))
 
 
 if __name__ == "__main__":

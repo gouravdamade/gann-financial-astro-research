@@ -357,6 +357,21 @@
   pointer-events: all;
 }
 
+.drawing-hit-target.fibonacci-hit-target {
+  fill: transparent;
+  stroke-width: 1;
+  pointer-events: all;
+}
+
+.fibonacci-level-label {
+  stroke: #0f1621;
+  stroke-width: 3px;
+  paint-order: stroke;
+  pointer-events: none;
+  text-anchor: end;
+  font: 700 8px/1 Consolas, monospace;
+}
+
 .chart-drawing.is-selected {
   filter: drop-shadow(0 0 3px #d9f2ff);
 }
@@ -395,6 +410,58 @@
   paint-order: stroke;
   pointer-events: none;
   font: 700 9px/1 Inter, "Segoe UI", sans-serif;
+}
+
+.selected-drawing-toolbar {
+  position: absolute;
+  z-index: 20;
+  bottom: 12px;
+  left: 12px;
+  height: 32px;
+  max-width: min(390px, calc(100% - 24px));
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid #3a4652;
+  border-radius: 4px;
+  background: rgb(19 24 30 / 94%);
+  box-shadow: 0 5px 16px #0008;
+}
+
+.selected-drawing-toolbar .icon-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+}
+
+.selected-drawing-name {
+  min-width: 92px;
+  max-width: 190px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: #cdd4dc;
+  padding: 0 6px;
+  text-align: left;
+}
+
+.selected-drawing-name strong {
+  overflow: hidden;
+  flex: 1 1 auto;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-drawing-name span {
+  color: #78b9d5;
+  font-size: 8px;
+  font-weight: 700;
 }
 
 .square9-label {
@@ -2619,7 +2686,8 @@
   font-size: 9px;
 }
 
-.layout-toolbar > .icon-button {
+.layout-toolbar > .icon-button,
+.layout-toolbar > .objects-button {
   width: 24px;
   height: 24px;
   border-radius: 3px;
@@ -2627,10 +2695,38 @@
 }
 
 .layout-toolbar > .icon-button:hover,
-.layout-toolbar > .icon-button.is-active {
+.layout-toolbar > .icon-button.is-active,
+.layout-toolbar > .objects-button:hover,
+.layout-toolbar > .objects-button.is-active {
   border-color: #3d5664;
   background: #1d2b34;
   color: #c2e8f7;
+}
+
+.layout-toolbar > .objects-button {
+  width: auto;
+  min-width: 66px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 0 5px;
+  cursor: pointer;
+  font-size: 8px;
+}
+
+.layout-toolbar > .objects-button strong {
+  min-width: 13px;
+  height: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  background: #2a4654;
+  color: #d8f2fc;
+  font-size: 7px;
 }
 
 .layout-save-state {
@@ -2805,7 +2901,9 @@
 
 .drawing-properties input.color-swatch-input { width: 100%; padding: 3px; }
 .square9-properties,
+.fibonacci-properties,
 .drawing-template-controls { margin-top: 14px; padding-top: 11px; border-top: 1px solid #2b323b; }
+.fibonacci-properties > label { display: grid; gap: 4px; color: #79828e; font-size: 8px; }
 .drawing-anchor-properties { margin-top: 14px; padding-top: 11px; border-top: 1px solid #2b323b; }
 .drawing-anchor-fields { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: end; gap: 5px; margin-top: 7px; }
 .drawing-anchor-fields > strong { align-self: center; color: #77818d; font-size: 8px; }

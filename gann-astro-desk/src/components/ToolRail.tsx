@@ -1,6 +1,7 @@
 import {
   Crosshair,
   Fan,
+  ListFilter,
   MessageSquarePlus,
   Minus,
   MousePointer2,
@@ -18,6 +19,7 @@ const tools: Array<{ id: ChartTool; label: string; icon: typeof MousePointer2 }>
   { id: 'horizontal', label: 'Horizontal line', icon: Minus },
   { id: 'vertical', label: 'Vertical line', icon: SeparatorVertical },
   { id: 'gann', label: 'Gann fan', icon: Fan },
+  { id: 'fibonacci', label: 'Fibonacci retracement', icon: ListFilter },
 ]
 
 type ToolRailProps = {

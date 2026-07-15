@@ -1,10 +1,57 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-14 22:31 IST
+Last updated: 2026-07-15 08:35 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-14 (Tauri Runtime Stabilization 0.9.1)
+## Latest Update - 2026-07-15 (Drawings, Fibonacci, and Source Trust 0.9.2)
+
+- Promoted Gann Astro Desk `0.9.2` with discoverable drawing-object controls and a
+  persistent editable Fibonacci retracement tool. New drawings auto-select; a
+  chart-side toolbar exposes edit, hide, lock, and delete; the layout toolbar shows
+  a visible `Objects` command and count.
+- Fibonacci uses two draggable UTC-time/price anchors and supports normalized custom
+  levels, labels, prices, extension, rename, color, width, style, opacity, lock,
+  hide, and deletion. Browser QA removed all temporary drawings afterward.
+- Hardened local Jyotish source trust. Root texts, commentary, provenance audits,
+  unverified hypotheses, and unknown sources now have explicit layers. Gann/forum
+  material is retrieved only for explicit queries and cannot be promoted to
+  doctrine, proof, certification, ground truth, deterministic output, or official
+  ML notes.
+- Audited Sarvatobhadra and Sudarshana Chakra source boundaries. Sarvatobhadra has
+  witness/grid plurality; Sudarshana is BPHS-recension-sensitive. No predictive
+  Chakra calculator was added. A future separate Chakra Lab requires a declared
+  convention, formulas, fixtures, and out-of-sample gates.
+- Added curated provenance and forum-hypothesis corpus notes plus source-layer tests.
+  Generated corpus/index files remain local and uncommitted; the rebuilt local index
+  contains 5,178 chunks.
+- Repository tests now use a temporary database copy and clear only its runtime
+  artifact tables, preventing the live prospective database from changing test
+  expectations or being mutated.
+- Promoted release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - executable SHA-256
+    `ACD4EE927826EB850625F5592895755608A04C17D3102601377C842D9DB76CB6`;
+  - installer SHA-256
+    `B04936B3D175991A7E908393B7C5238C54E82F7493DD8DA10CE3E80B774E3B18`;
+  - rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.9.1_20260715_082720`.
+- Preserved live state before promotion at
+  `D:\GannFinancialAstro\state_backups\pre_0.9.2_promotion_20260715_082622`.
+  The tracked live SQLite remains deliberately uncommitted.
+- Verification: 12 source/corpus tests, 45 backend tests, 15 root guardrails,
+  18 frontend tests, lint, TypeScript/Vite, Ruff, PowerShell parsing, Rust format,
+  check/test/Clippy, browser visual QA, artifact hashes, and the 11-check native
+  crash/recovery soak passed.
+- Evidence: `drawing_fibonacci_source_trust_release_20260715.md` and
+  `chakra_gann_source_audit_20260715.md`.
+- Recovery backup:
+  `D:\PycharmProjects\chat_session_backups\session_20260715_083528_drawing_fibonacci_source_trust_v092`.
+- Safety remains unchanged: manual Gann/Square/Fibonacci tools do not feed Auto
+  Suggest, live inference, the shadow ledger, or execution; MT5 remains read-only
+  with `tradeAllowed=false`; the frozen prospective policy/trial is unchanged.
+
+## Previous Update - 2026-07-14 (Tauri Runtime Stabilization 0.9.1)
 
 - Promoted Gann Astro Desk `0.9.1` after adding end-to-end runtime diagnostics,
   same-port Rust sidecar recovery, Windows Job Object descendant cleanup, and a

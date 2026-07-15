@@ -18,6 +18,7 @@ type LayoutToolbarProps = {
   saveStatus: LayoutSaveStatus
   error: string | null
   objectsOpen?: boolean
+  objectCount?: number
   showObjects?: boolean
   onSelect: (layoutId: string) => void
   onSave: () => Promise<boolean>
@@ -34,6 +35,7 @@ export function LayoutToolbar({
   saveStatus,
   error,
   objectsOpen = false,
+  objectCount = 0,
   showObjects = true,
   onSelect,
   onSave,
@@ -102,7 +104,16 @@ export function LayoutToolbar({
         title="Save layout as"
         aria-label="Save layout as"
       ><CopyPlus size={15} /></button>
-      {showObjects && <button className={`icon-button ${objectsOpen ? 'is-active' : ''}`} onClick={onToggleObjects} title="Drawing object tree" aria-label="Drawing object tree"><FolderTree size={15} /></button>}
+      {showObjects && (
+        <button
+          className={`objects-button ${objectsOpen ? 'is-active' : ''}`}
+          onClick={onToggleObjects}
+          title="Open drawing objects to edit, lock, hide, or delete"
+          aria-label="Drawing objects"
+        >
+          <FolderTree size={15} /><span>Objects</span>{objectCount > 0 && <strong>{objectCount}</strong>}
+        </button>
+      )}
       <button className="icon-button" onClick={onExport} disabled={!activeLayout} title="Export layout JSON" aria-label="Export layout JSON"><Download size={15} /></button>
       <button className="icon-button" onClick={() => fileRef.current?.click()} title="Import layout JSON" aria-label="Import layout JSON"><Upload size={15} /></button>
       <button className="icon-button" onClick={() => setDeleteOpen(true)} disabled={!activeLayout} title="Delete layout" aria-label="Delete layout"><Trash2 size={15} /></button>

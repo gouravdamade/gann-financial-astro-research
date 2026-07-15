@@ -1,0 +1,59 @@
+[[SOURCE: FINANCIAL_ASTRO_FORUM_HYPOTHESES]]
+[[TITLE: Public financial-astrology forum claims converted to testable hypotheses]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: unverified_forum_hypotheses_not_doctrine_or_market_evidence]]
+[[CONTENT_LAYER: source_policy]]
+[[TOPICS: financial_astrology,gann,forum_evidence,research_guardrails]]
+
+This source is a research backlog, not doctrine and not proof. Forex Factory posts are anecdotal, may be edited, frequently omit exact parameters, and can contain hindsight selection. Claims such as guaranteed cycles or exact future turning points must be rejected unless a pre-registered no-lookahead test supports them. Nothing in this source may directly change Auto Suggest, the shadow ledger, or MT5 behavior.
+
+Primary forum locators reviewed:
+- W. D. Gann and His Fellows: https://www.forexfactory.com/thread/1182419-w-d-gann-his-fellows
+- W.D. Gann planetary price and timing analysis: https://www.forexfactory.com/thread/945113-wd-gann-planetary-price-timing-analysis
+- Planetary Cycles Trading EUR/USD: https://www.forexfactory.com/thread/108462-planetary-cycles-trading-eurusd
+
+[[SOURCE: FINANCIAL_ASTRO_FORUM_HYPOTHESES]]
+[[TITLE: Radix and transit hypothesis]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: unverified_forum_hypothesis]]
+[[CONTENT_LAYER: test_candidate]]
+[[TOPICS: radix,transit_to_natal,first_trade_date,seasonality,eclipse,lunation]]
+
+Hypothesis: an instrument's inception or first-trade chart acts as a radix, and transits or progressions to selected radix points contain incremental timing information. Related claims mention seasonal changes, lunations, eclipses, and a primary significator. Required test: freeze the birth-event definition, time zone, location, ephemeris contract, bodies, aspects, orb, and holding rule before viewing returns. Compare against shuffled radix dates and price-only seasonality baselines.
+
+[[SOURCE: FINANCIAL_ASTRO_FORUM_HYPOTHESES]]
+[[TITLE: Planetary price-line hypothesis]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: unverified_forum_hypothesis]]
+[[CONTENT_LAYER: test_candidate]]
+[[TOPICS: planetary_line,north_node,gann_angle,price_time_scaling]]
+
+Hypothesis: a planetary longitude can be converted into a price line with a declared scale such as one degree to one price unit, including harmonic offsets. Forum examples often use the retrograde North Node and occasionally describe Mars-Jupiter, Mars-Uranus, Saturn-Uranus, or outer-planet combinations. Required test: scale, anchor, wrap rule, harmonic set, and acceptable touch epsilon must be immutable before the evaluation period. Search over many scales is multiple testing and must be penalized. The two newly requested viewport Gann fans and all manual chart drawings remain display-only and may not become evidence implicitly.
+
+[[SOURCE: FINANCIAL_ASTRO_FORUM_HYPOTHESES]]
+[[TITLE: Confluence and repeat hypothesis]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: unverified_forum_hypothesis]]
+[[CONTENT_LAYER: test_candidate]]
+[[TOPICS: confluence,repeatation,aspect_family,walk_forward]]
+
+Hypothesis: individual planetary hits are inconsistent, while pre-defined combinations of two or more independent timing factors may identify larger moves. The useful part of the forum discussion is methodological: record every occurrence, retain quiet failures, and backtest repeat families. The unsafe part is selecting the planets, degrees, and starting low after seeing the chart. In this workspace a confluence candidate must define its family key before outcomes, count all eligible occurrences, report base rate and uncertainty, and survive purged walk-forward validation.
+
+[[SOURCE: FINANCIAL_ASTRO_FORUM_HYPOTHESES]]
+[[TITLE: Tunnel Thru the Air research policy]]
+[[AUTHOR: Gann Astro Desk research workspace]]
+[[EDITION: 2026-07-15 version 1]]
+[[AUTHORITY: public_domain_fiction_hypothesis_source]]
+[[CONTENT_LAYER: text_research_policy]]
+[[TOPICS: tunnel_thru_the_air,gann,date_extraction,code_hypothesis]]
+
+The Tunnel Thru the Air is a 1927 work of fiction. Gann's foreword says it contains a secret in veiled language, but that statement does not identify a trading algorithm. The lawful Project Gutenberg transcription is indexed separately as GANN_TUNNEL_1927.
+
+Research sequence: first create a reproducible inventory of explicit dates, times, numbers, names, Bible references, market transactions, and chapter positions. Second, publish candidate decoding rules before aligning them to market data. Third, compare each rule against shuffled dates, alternative books, and untouched out-of-sample periods. A pattern found only after repeated reinterpretation is literary speculation, not a certified market feature.
+
+Public text: https://www.gutenberg.org/ebooks/74988
+Original 1927 scan: https://archive.org/details/tunnelthruairorl00gann

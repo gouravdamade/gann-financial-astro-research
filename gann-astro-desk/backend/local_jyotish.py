@@ -23,6 +23,34 @@ STOP_WORDS = {
     "using", "was", "were", "what", "when", "which", "with", "would", "you",
 }
 
+CLASSICAL_DOCTRINE_SOURCES = {
+    "BPHS",
+    "BRIHAT_JATAKA",
+    "BRIHAT_SAMHITA",
+    "PHALADEEPIKA",
+    "SURYA_SIDDHANTA",
+}
+REFERENCE_COMMENTARY_SOURCES = {
+    "SHADBALA_JAYA",
+    "STRICT_VEDIC_LLM",
+    "SANJAY_RATH_CRUX_1998",
+}
+SOURCE_PROVENANCE_SOURCES = {"CHAKRA_DOCTRINE_AUDIT"}
+HYPOTHESIS_REFERENCE_SOURCES = {
+    "GANN_TUNNEL_1927",
+    "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
+}
+HYPOTHESIS_QUERY_TERMS = {
+    "forex factory",
+    "forum",
+    "gann",
+    "planetary line",
+    "planetary price",
+    "radix",
+    "tunnel thru the air",
+    "tunnel through the air",
+}
+
 
 def _tokens(value: str) -> set[str]:
     return {
@@ -38,9 +66,20 @@ def _source_layer(source_id: str) -> str:
         ("CASE_", "DREAM_", "RULE_", "REVIEW_", "ML_")
     ):
         return "local_research"
-    if normalized in {"SHADBALA_JAYA", "STRICT_VEDIC_LLM", "SANJAY_RATH_CRUX_1998"}:
+    if normalized in CLASSICAL_DOCTRINE_SOURCES:
+        return "classical_doctrine"
+    if normalized in REFERENCE_COMMENTARY_SOURCES:
         return "reference_commentary"
-    return "classical_doctrine"
+    if normalized in SOURCE_PROVENANCE_SOURCES:
+        return "source_provenance"
+    if normalized in HYPOTHESIS_REFERENCE_SOURCES:
+        return "hypothesis_reference"
+    return "unclassified_reference"
+
+
+def _query_requests_hypotheses(query: str) -> bool:
+    normalized = " ".join(str(query or "").lower().split())
+    return any(term in normalized for term in HYPOTHESIS_QUERY_TERMS)
 
 
 class LocalJyotishService:
@@ -209,7 +248,7 @@ class LocalJyotishService:
             "model": selected or self.preferred_model,
             "availableModels": models,
             "corpusChunks": len(chunks),
-            "retrievalPolicy": "balanced_classical_commentary_same_family_v2",
+            "retrievalPolicy": "provenance_classical_commentary_hypothesis_opt_in_v3",
             "layerCounts": dict(sorted(layer_counts.items())),
             "corpusPath": str(self.corpus_path),
             "error": error,
@@ -251,11 +290,14 @@ class LocalJyotishService:
             [
                 "You are the local Jyotish research assistant inside Gann Astro Desk.",
                 "This is retrospective/manual research only. Never place or recommend an MT5 order.",
-                "Treat deterministic application evidence as ground truth and local corpus passages as doctrine references.",
+                "Treat deterministic application evidence as ground truth. Retrieved passages have different trust layers.",
                 "Do not invent ephemeris, Shadbala values, aspects, prices, outcomes, citations, or marker positions.",
                 "When a doctrine claim lacks a relevant passage, say that it is an uncited hypothesis.",
                 "Cite corpus claims with the exact bracketed chunk id. Separate observation, deterministic calculation, doctrine, and uncertainty.",
-                "Classical-doctrine passages and local-research memory are different evidence layers; never present a local note as classical authority.",
+                "Classical-doctrine passages, secondary commentary, source-provenance audits, hypothesis references, and local-research memory are different evidence layers.",
+                "A source-provenance passage controls attribution and recension warnings; do not treat it as root doctrine.",
+                "A hypothesis-reference passage is unverified research material. It may suggest a test, but it is never doctrine, proof, certification, ground truth, or permission to alter deterministic output.",
+                "Never present a local note, forum claim, or literary Gann passage as classical authority.",
                 "Raw output is an untrusted draft. It must not be promoted to an official ML note without deterministic verification and Codex/human review.",
                 "Return concise sections: Observed, Deterministic evidence, Jyotish hypothesis, ML features to test, Uncertainty.",
                 "",
@@ -300,6 +342,28 @@ class LocalJyotishService:
             issues.append("Draft introduces an SR-break claim absent from deterministic context.")
         if re.search(r"\b(certified|proven)\s+(jyotish|astrology|shadbala|drik)\b", text, re.I):
             issues.append("Draft overstates external astrology certification.")
+        hypothesis_sources = [
+            item for item in sources if item.get("layer") == "hypothesis_reference"
+        ]
+        if hypothesis_sources:
+            hypothesis_ids = {str(item["chunkId"]) for item in hypothesis_sources}
+            for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+                sentence_ids = set(re.findall(r"\[([A-Za-z0-9_.:-]+)\]", sentence))
+                if not (sentence_ids & hypothesis_ids):
+                    continue
+                if re.search(
+                    r"\b(classical(?:\s+doctrine)?|scriptural|authoritative|proven|certified|ground\s+truth)\b",
+                    sentence,
+                    re.I,
+                ) and not re.search(
+                    r"\b(not|never|unverified|unproven|hypothesis|fiction|literary)\b",
+                    sentence,
+                    re.I,
+                ):
+                    issues.append(
+                        "Draft overstates a hypothesis-reference source as doctrine, proof, certification, or ground truth."
+                    )
+                    break
         if "shadbala" in text.lower() and "shadbala" not in deterministic_keys:
             issues.append("Draft discusses Shadbala although this occurrence exposes no deterministic Shadbala field.")
         if "drik bala" in text.lower() and "drik" not in deterministic_keys:
@@ -346,8 +410,14 @@ class LocalJyotishService:
         ]
         query = " ".join(query_parts)
         retrieval_started_at = time.perf_counter()
+        provenance_sources = self.retrieve(query, limit=2, layer="source_provenance")
         doctrine_sources = self.retrieve(query, limit=3, layer="classical_doctrine")
         commentary_sources = self.retrieve(query, limit=2, layer="reference_commentary")
+        hypothesis_sources = (
+            self.retrieve(query, limit=2, layer="hypothesis_reference")
+            if _query_requests_hypotheses(normalized_question)
+            else []
+        )
         local_candidates = self.retrieve(query, limit=10, layer="local_research")
         family_needles = {
             str(event.get("familyKey") or "").upper(),
@@ -357,7 +427,13 @@ class LocalJyotishService:
             item for item in local_candidates
             if any(needle in str(item.get("excerpt") or "").upper() for needle in family_needles)
         ][:2]
-        sources = [*doctrine_sources, *commentary_sources, *local_sources]
+        sources = [
+            *provenance_sources,
+            *doctrine_sources,
+            *commentary_sources,
+            *hypothesis_sources,
+            *local_sources,
+        ]
         if self.diagnostics is not None:
             self.diagnostics.record(
                 "local_jyotish_retrieval",

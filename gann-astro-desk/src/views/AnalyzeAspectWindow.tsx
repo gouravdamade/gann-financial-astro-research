@@ -270,6 +270,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               saveStatus={chartLayouts.saveStatus}
               error={chartLayouts.error}
               objectsOpen={objectsOpen}
+              objectCount={chartLayouts.drawings.length}
               onSelect={chartLayouts.switchLayout}
               onSave={chartLayouts.saveNow}
               onSaveAs={chartLayouts.saveAs}
