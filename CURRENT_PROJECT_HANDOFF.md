@@ -1,10 +1,42 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-15 20:10 IST
+Last updated: 2026-07-15 21:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-15 (Isolated Candlestick Specialist 0.10.0)
+## Latest Update - 2026-07-15 (Timestamp-Safe USDJPY Candle Walk-Forward V1)
+
+- Added a separate offline USDJPY H1 candlestick evaluation lab with frozen contract
+  `GANN_CANDLESTICK_WALK_FORWARD_CONTRACT_V1`. It fingerprints the immutable 100,000-row
+  MetaQuotes-Demo source, reuses app geometry `transparent_ohlc_geometry_v1`, enters only
+  at the next bar open, exits after six held H1 bars, charges spread and round-trip
+  slippage, and uses five expanding chronological folds with label-availability purge and
+  a six-bar embargo.
+- The predeclared primary `named_pattern_logistic_v1` failed. Across 49,987 out-of-sample
+  rows its probability range was 0.467735-0.544749, entirely inside the frozen 0.45/0.55
+  abstention band, so it made zero trades. The manifest now explains that this is
+  deterministic abstention rather than a missing prediction.
+- Simple baselines and deterministic candle rules lost after costs. The exploratory raw
+  continuous-geometry logistic model made only 84 trades at 0.17% coverage and averaged
+  +4.05 pips/trade, with four positive folds, but it is far below the frozen 500-trade
+  minimum and is not promoted. Aggregate bullish-pattern clues changed sign across folds
+  and remain unstable diagnostics.
+- Ran the complete study twice. Decision rows, predictions, fold metrics, strategy summary,
+  pattern diagnostics, and purge diagnostics were byte-identical. Final local evidence is
+  `D:\GannFinancialAstro\validation\candlestick_usdjpy_v1_20260715_154033`; generated
+  datasets remain local and uncommitted.
+- Added eight focused tests covering next-bar fills, costs, prefix invariance, source-hash
+  rejection, chronological purge/embargo, disabled execution, and explicit no-signal
+  probability diagnostics. Ruff and both full historical runs passed.
+- Safety boundary remains absolute: these results do not feed either RAG corpus, Auto
+  Suggest, official ML notes, the prospective shadow ledger, coordinator, or execution.
+  MT5 and the frozen prospective policy are unchanged.
+- Evidence: `candlestick_usdjpy_walk_forward_20260715.md`.
+- Next gate: do not retune V1 on these folds. A separately frozen V2 may test raw geometry
+  with a calibration segment, coverage floor, stronger dependence controls, and untouched
+  holdout. Operationally, accumulate a timestamped prospective candle-shadow cohort first.
+
+## Previous Update - 2026-07-15 (Isolated Candlestick Specialist 0.10.0)
 
 - Promoted Gann Astro Desk `0.10.0` with a separate candlestick-analysis specialist.
   It shares the local Ollama runtime for memory efficiency but has its own model setting,

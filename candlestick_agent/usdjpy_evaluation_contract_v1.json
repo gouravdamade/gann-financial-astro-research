@@ -1,0 +1,71 @@
+{
+  "contract": "GANN_CANDLESTICK_WALK_FORWARD_CONTRACT_V1",
+  "status": "retrospective_research_only",
+  "symbol": "USDJPY",
+  "timeframe": "H1",
+  "source": {
+    "path": "usd_jpy_h1_mt5_metaquotes_demo_full.parquet",
+    "sha256": "3C71A983EF645133D34B7328E44E8DA6612CA22EBC989827626D55F281B147A9",
+    "timezone": "UTC",
+    "immutableForStudy": true
+  },
+  "geometryMethodologyVersion": "transparent_ohlc_geometry_v1",
+  "decision": {
+    "minimumHistoryBars": 21,
+    "confirmationBars": 0,
+    "featureAvailability": "decision_bar_close",
+    "entryPolicy": "next_bar_open",
+    "holdingBars": 6,
+    "exitPolicy": "sixth_held_bar_close",
+    "pipSize": 0.01,
+    "pointSize": 0.001
+  },
+  "costs": {
+    "spreadPolicy": "entry_bar_observed_points_else_fixed_fallback",
+    "fallbackSpreadPips": 1.0,
+    "slippagePipsPerSide": 0.2
+  },
+  "splits": {
+    "initialTrainFraction": 0.5,
+    "folds": 5,
+    "embargoBars": 6,
+    "trainingRule": "expanding_past_only_and_label_available_before_test_minus_embargo"
+  },
+  "models": {
+    "randomSeed": 42,
+    "logisticC": 1.0,
+    "longProbability": 0.55,
+    "shortProbability": 0.45,
+    "classWeight": "balanced",
+    "thresholdTuning": false
+  },
+  "strategies": {
+    "primaryCandidate": "named_pattern_logistic_v1",
+    "diagnosticCandidates": [
+      "raw_geometry_logistic_v1",
+      "named_pattern_rule_v1",
+      "raw_wick_reversal_rule_v1"
+    ],
+    "matchedBaselines": [
+      "always_long_v1",
+      "body_momentum_v1",
+      "momentum_5bar_v1",
+      "training_majority_v1"
+    ]
+  },
+  "promotionGate": {
+    "minimumPrimaryTrades": 500,
+    "minimumPositiveFolds": 4,
+    "minimumMatchedLiftPipsPerTrade": 0.1,
+    "requireWeeklyBlockBootstrapLowerAboveZero": true,
+    "bootstrapSamples": 2000,
+    "coordinatorAuthorization": false,
+    "executionAuthorization": false
+  },
+  "researchWarnings": [
+    "Historical folds are not an untouched prospective trial.",
+    "Adjacent holding-period labels overlap and are serially dependent.",
+    "Only the primary candidate participates in the promotion gate; other results are exploratory.",
+    "Passing this retrospective gate cannot authorize Auto Suggest, official ML notes, shadow policy changes, or execution."
+  ]
+}
