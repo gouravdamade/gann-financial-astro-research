@@ -71,10 +71,16 @@ separate from live market-data concerns.
   progress, next eligible settlement, and any due outcome backlog.
 - Read-only Codex SDK bridge with deterministic evidence, selected annotation,
   and a local chart screenshot attached to the family task.
-- A native Local Jyotish tab backed by the portable Ollama runtime and 4,565 packaged
+- A native Local Jyotish tab backed by the portable Ollama runtime and 5,178 packaged
   classical/reference/research corpus chunks. Retrieval separates classical doctrine,
   secondary commentary, and same-family local memory. Every response is an untrusted draft
   with visible citations and deterministic verifier findings.
+- A separate Candles tab with a dedicated three-chunk method/evidence/provenance corpus
+  and the versioned `GANN_CANDLESTICK_EVIDENCE_V1` packet.
+  It measures only closed-bar OHLC geometry at the selected cutoff, reports transparent
+  body/wick/trend/ATR formulas, and places post-cutoff bars in an explicitly retrospective
+  section. Its dedicated local-RAG prompt, corpus, citations, verifier, model setting, and
+  API contract remain isolated from the Jyotish specialist.
 
 ## Data Safety
 
@@ -102,6 +108,10 @@ separate from live market-data concerns.
 - Local Jyotish drafts are never consumed by live inference or the shadow ledger. The app
   defaults to `qwen2.5:3b`; the installed Gemma 12B model remains optional because it did not
   load reliably on the current GTX 1060 runtime during verification.
+- Candlestick names are conditional geometry hypotheses, not signals. Candlestick evidence
+  and drafts cannot enter Auto Suggest, live inference, the shadow ledger, official ML notes,
+  or execution. Published evidence is mixed, so every target market and timeframe still
+  requires purged no-lookahead validation.
 
 ## Run The Windows App
 
@@ -120,7 +130,7 @@ To rebuild the release entirely on `D:`:
 
 ```powershell
 cd D:\PycharmProjects\gann-astro-desk
-.\packaging\build_windows_exe.ps1
+.\packaging\build_tauri_windows.ps1
 ```
 
 The release manifest records the executable hash, bundled file count, astronomy
@@ -152,18 +162,18 @@ npm run build
 
 ## Native Windows Status
 
-The supported native build is a PyInstaller one-folder release using pywebview and
-the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
-Swiss Ephemeris files, Python research workers, Node runtime, Codex SDK bridge, and the
-local Jyotish corpus. Ollama models remain under `D:\Ollama\models` and are not duplicated
-inside the release.
-Analyze Aspect opens as a second native window rather than an external browser.
+The supported native build is Tauri 2 / Rust with a managed PyInstaller Python sidecar
+and the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
+Swiss Ephemeris files, Python research workers, Node runtime, Codex SDK bridge, Local
+Jyotish corpus, and Candlestick Specialist corpus. Ollama models remain under
+`D:\Ollama\models` and are not duplicated inside the release. Analyze Aspect opens as
+a second native Tauri window rather than an external browser.
 
-`src-tauri` remains an optional future shell. A Tauri/MSI route would require Rust,
-Cargo, and Microsoft C++ Build Tools; those are not required by the working release.
-Rust can be placed on `D:` through `RUSTUP_HOME` and `CARGO_HOME`. Visual Studio can
-place most workloads and download caches on `D:`, but Microsoft still reserves some
-shared installer and Windows SDK servicing files on the system drive.
+Rust/Cargo are installed under `D:\Rust`; Visual Studio Build Tools are primarily under
+`D:\VisualStudio`. The build produces a portable release tree and NSIS installer while
+the Rust shell owns random private loopback ports, sidecar recovery, and descendant
+cleanup. Python doctrine and evidence engines remain behind typed local contracts rather
+than being rewritten merely for language uniformity.
 
 Custom corrected-TN generation and activation are ready for date ranges covered by the
 versioned USDJPY M30/H1 sources. Generated artifacts and their manifests are stored under

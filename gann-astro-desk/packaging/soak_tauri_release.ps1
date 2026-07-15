@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.9.2-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.0-tauri",
     [int]$DurationSeconds = 20,
     [switch]$SkipCrashRecovery
 )
@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
 }
 
 $session = [DateTime]::UtcNow.ToString("yyyyMMdd_HHmmss")
-$dataRoot = Join-Path $safeRoot "soak\tauri_0.9.2_$session"
+$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.0_$session"
 $logsRoot = Join-Path $dataRoot "logs"
 New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
@@ -113,6 +113,47 @@ try {
     $report.initial_port = $initial.Port
     $report.checks.initial_health = [bool]$initial.Health.ok
     $report.checks.mt5_trade_allowed_false = $initial.Health.mt5.tradeAllowed -eq $false
+    $candleHealth = Invoke-RestMethod -Uri `
+        ("http://127.0.0.1:{0}/api/local-candlestick/health" -f $initial.Port) -TimeoutSec 10
+    $chart = Invoke-RestMethod -Uri `
+        ("http://127.0.0.1:{0}/api/chart" -f $initial.Port) -TimeoutSec 20
+    $candleEventId = [string]($chart.chart.aspects | Select-Object -First 1).eventId
+    if (-not $candleEventId) {
+        $artifactStart = [string]$chart.chart.artifact.dateStart
+        $artifactEnd = [string]$chart.chart.artifact.dateEnd
+        if ($artifactStart -and $artifactEnd) {
+            $historyUri = "http://127.0.0.1:{0}/api/chart?start={1}&end={2}" -f `
+                $initial.Port,
+                [Uri]::EscapeDataString($artifactStart),
+                [Uri]::EscapeDataString($artifactEnd)
+            $chart = Invoke-RestMethod -Uri $historyUri -TimeoutSec 40
+            $candleEventId = [string]($chart.chart.aspects | Select-Object -First 1).eventId
+        }
+    }
+    if (-not $candleEventId) {
+        throw "Packaged chart did not expose an event for candlestick evidence QA"
+    }
+    $candleEvidence = Invoke-JsonPost `
+        ("http://127.0.0.1:{0}/api/local-candlestick/evidence" -f $initial.Port) `
+        ([ordered]@{ eventId = $candleEventId })
+    $report.candlestick_event_id = $candleEventId
+    $report.checks.candlestick_health_contract = `
+        $candleHealth.localCandlestick.contract -eq "GANN_LOCAL_CANDLE_RAG_DRAFT_V1"
+    $report.checks.candlestick_corpus_ready = `
+        $candleHealth.localCandlestick.corpusReady -eq $true
+    $report.checks.candlestick_evidence_contract = `
+        $candleEvidence.evidence.contract -eq "GANN_CANDLESTICK_EVIDENCE_V1"
+    $report.checks.candlestick_closed_bars_only = `
+        $candleEvidence.evidence.guardrails.closedBarsOnlyAtCutoff -eq $true
+    $report.checks.candlestick_inference_locked = (
+        $candleEvidence.evidence.guardrails.consumedByLiveInference -eq $false -and
+        $candleEvidence.evidence.guardrails.consumedByShadowLedger -eq $false -and
+        $candleEvidence.evidence.guardrails.executionAllowed -eq $false
+    )
+    Write-SoakPhase "candlestick_specialist_verified" ([ordered]@{
+        event_id = $candleEventId
+        corpus_chunks = $candleHealth.localCandlestick.corpusChunks
+    })
 
     $layoutPayload = [ordered]@{
         expectedRevision = 0

@@ -14,6 +14,9 @@ import type {
   DrawingTemplate,
   EventDetail,
   GenerationJob,
+  CandlestickEvidence,
+  LocalCandlestickDraft,
+  LocalCandlestickHealth,
   LocalJyotishDraft,
   LocalJyotishHealth,
   Mt5HistorySnapshot,
@@ -396,6 +399,34 @@ export async function analyzeWithLocalJyotish(input: {
   question: string
 }): Promise<LocalJyotishDraft> {
   const payload = await request<{ draft: LocalJyotishDraft }>('/api/local-jyotish/analyze', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.draft
+}
+
+export async function fetchLocalCandlestickHealth(): Promise<LocalCandlestickHealth> {
+  const payload = await request<{ localCandlestick: LocalCandlestickHealth }>('/api/local-candlestick/health')
+  return payload.localCandlestick
+}
+
+export async function fetchCandlestickEvidence(input: {
+  eventId: string
+  annotationId?: string | null
+}): Promise<CandlestickEvidence> {
+  const payload = await request<{ evidence: CandlestickEvidence }>('/api/local-candlestick/evidence', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.evidence
+}
+
+export async function analyzeWithLocalCandlestick(input: {
+  eventId: string
+  annotationId?: string | null
+  question: string
+}): Promise<LocalCandlestickDraft> {
+  const payload = await request<{ draft: LocalCandlestickDraft }>('/api/local-candlestick/analyze', {
     method: 'POST',
     body: JSON.stringify(input),
   })

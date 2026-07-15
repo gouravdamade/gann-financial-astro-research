@@ -22,6 +22,7 @@ from chart_layouts import (
     save_drawing_template,
 )
 from generation import GenerationJobManager
+from local_candlestick import LocalCandlestickService
 from local_jyotish import LocalJyotishService
 from mt5_gateway import Mt5Gateway
 from prospective_refresh import ProspectiveArtifactRefreshSupervisor
@@ -60,6 +61,7 @@ prospective_refresh = ProspectiveArtifactRefreshSupervisor(
     diagnostics=runtime_diagnostics,
 )
 local_jyotish = LocalJyotishService(repository, diagnostics=runtime_diagnostics)
+local_candlestick = LocalCandlestickService(repository, diagnostics=runtime_diagnostics)
 atexit.register(gateway.stop)
 atexit.register(generation_manager.stop)
 atexit.register(shadow_ledger.stop)
@@ -564,6 +566,44 @@ def local_jyotish_analyze() -> Any:
             str(payload.get("annotationId") or "").strip() or None,
         )
         return jsonify({"ok": True, "draft": draft})
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    except RuntimeError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.get("/api/local-candlestick/health")
+def local_candlestick_health() -> Any:
+    return jsonify({"ok": True, "localCandlestick": local_candlestick.health()})
+
+
+@app.post("/api/local-candlestick/evidence")
+def local_candlestick_evidence() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        evidence = local_candlestick.evidence(
+            str(payload.get("eventId") or ""),
+            str(payload.get("annotationId") or "").strip() or None,
+        )
+        return jsonify({"ok": True, "evidence": evidence})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/local-candlestick/analyze")
+def local_candlestick_analyze() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        draft = local_candlestick.analyze(
+            str(payload.get("eventId") or ""),
+            str(payload.get("question") or ""),
+            str(payload.get("annotationId") or "").strip() or None,
+        )
+        return jsonify({"ok": True, "draft": draft})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
     except ValueError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
     except RuntimeError as exc:

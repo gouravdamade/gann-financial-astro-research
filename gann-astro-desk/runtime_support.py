@@ -105,6 +105,15 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     corpus = packaged_corpus if packaged_corpus.is_file() else source_corpus
     if corpus.is_file():
         os.environ["GANN_ASTRO_JYOTISH_CORPUS"] = str(corpus)
+    packaged_candle_corpus = paths.project_root / "candlestick" / "corpus_chunks.jsonl"
+    source_candle_corpus = paths.project_root / "candlestick_agent" / "corpus_chunks.jsonl"
+    candle_corpus = (
+        packaged_candle_corpus
+        if packaged_candle_corpus.is_file()
+        else source_candle_corpus
+    )
+    if candle_corpus.is_file():
+        os.environ["GANN_ASTRO_CANDLE_CORPUS"] = str(candle_corpus)
     packaged_ephemeris = paths.project_root / "sweph"
     if packaged_ephemeris.is_dir():
         os.environ["GANN_ASTRO_EPHEMERIS_PATH"] = str(packaged_ephemeris)

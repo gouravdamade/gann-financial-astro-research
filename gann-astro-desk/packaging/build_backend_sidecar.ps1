@@ -4,6 +4,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $appRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
+$projectRoot = [IO.Path]::GetFullPath((Join-Path $appRoot ".."))
 $safeBuildRoot = [IO.Path]::GetFullPath("D:\GannFinancialAstro")
 $pyinstallerWork = Join-Path $safeBuildRoot "tauri_sidecar_build"
 $tempRoot = Join-Path $safeBuildRoot "tmp\gann_astro_tauri_sidecar"
@@ -36,6 +37,10 @@ $env:PYTHONPYCACHEPREFIX = Join-Path $safeBuildRoot "pycache"
 
 Push-Location $appRoot
 try {
+    & $PackagingPython (Join-Path $projectRoot "candlestick_agent\build_corpus_index.py")
+    if ($LASTEXITCODE -ne 0) {
+        throw "Candlestick corpus build failed with exit code $LASTEXITCODE"
+    }
     & $PackagingPython -m PyInstaller `
         --noconfirm `
         --clean `

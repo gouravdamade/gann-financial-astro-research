@@ -771,7 +771,7 @@ export type LocalJyotishDraft = {
     sourceId: string
     chunkId: string
     title: string
-    layer: 'classical_doctrine' | 'reference_commentary' | 'local_research'
+    layer: 'classical_doctrine' | 'reference_commentary' | 'local_research' | 'source_provenance' | 'hypothesis_reference' | 'unclassified_reference'
     score: number
   }>
   guardrails: {
@@ -787,6 +787,125 @@ export type LocalJyotishDraft = {
     issues: string[]
     availableCitationIds: string[]
     citedIds: string[]
+  }
+  disclaimer: string
+}
+
+export type CandlestickPatternEvidence = {
+  name: string
+  hypothesisBias: 'bullish' | 'bearish' | 'neutral'
+  basis: string
+  context: string
+}
+
+export type CandlestickBarEvidence = {
+  startTime: string
+  closeTime: string
+  open: number
+  high: number
+  low: number
+  close: number
+  direction: 'bullish' | 'bearish' | 'flat'
+  rangePips: number
+  bodyPips: number
+  bodyFraction: number
+  upperWickFraction: number
+  lowerWickFraction: number
+  closeLocation: number
+  atr14Pips: number
+  preTrend: 'up' | 'down' | 'sideways' | 'insufficient'
+  preTrendStrengthAtr: number
+  patterns: CandlestickPatternEvidence[]
+}
+
+export type CandlestickWindowEvidence = {
+  barCount: number
+  open?: number | null
+  high: number | null
+  low: number | null
+  close?: number | null
+  movePips: number | null
+  patterns: Array<CandlestickPatternEvidence & { time: string }>
+}
+
+export type CandlestickEvidence = {
+  contract: 'GANN_CANDLESTICK_EVIDENCE_V1'
+  methodologyVersion: 'transparent_ohlc_geometry_v1'
+  eventId: string
+  symbol: string
+  timeframe: string
+  barSeconds: number
+  eventStart: string
+  eventEnd: string
+  analysisCutoff: string
+  selectedAnnotationId: string
+  closedBarCountAtCutoff: number
+  focusBar: CandlestickBarEvidence | null
+  eventWindow: CandlestickWindowEvidence
+  hindsight: CandlestickWindowEvidence & {
+    available: boolean
+    label: string
+    referencePrice?: number
+    closeMoveFromCutoffPips?: number
+    maxUpFromCutoffPips?: number
+    maxDownFromCutoffPips?: number
+  }
+  guardrails: {
+    analysisOnly: true
+    closedBarsOnlyAtCutoff: true
+    hindsightSeparated: true
+    patternIsNotTradeSignal: true
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+}
+
+export type LocalCandlestickHealth = {
+  contract: 'GANN_LOCAL_CANDLE_RAG_DRAFT_V1'
+  ready: boolean
+  runtimeReady: boolean
+  corpusReady: boolean
+  model: string
+  availableModels: string[]
+  corpusChunks: number
+  retrievalPolicy: string
+  layerCounts: Record<string, number>
+  corpusPath: string
+  error: string
+  analysisOnly: true
+  rawDraftIsOfficial: false
+  executionAllowed: false
+}
+
+export type LocalCandlestickDraft = {
+  contract: 'GANN_LOCAL_CANDLE_RAG_DRAFT_V1'
+  draftId: string
+  eventId: string
+  model: string
+  text: string
+  evidence: CandlestickEvidence
+  citations: Array<{
+    sourceId: string
+    chunkId: string
+    title: string
+    layer: 'method_reference' | 'empirical_evidence' | 'source_provenance' | 'unclassified_reference'
+    score: number
+  }>
+  guardrails: {
+    analysisOnly: true
+    deterministicEvidenceIsGroundTruth: true
+    rawDraftIsOfficial: false
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+  verifier: {
+    status: 'pass' | 'review_required'
+    issues: string[]
+    availableCitationIds: string[]
+    citedIds: string[]
+    repairs: string[]
   }
   disclaimer: string
 }

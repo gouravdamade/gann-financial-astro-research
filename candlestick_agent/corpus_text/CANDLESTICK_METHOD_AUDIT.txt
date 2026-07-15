@@ -1,0 +1,14 @@
+SOURCE LAYER: source_provenance
+SOURCES:
+- https://www.penguinrandomhouse.com/books/350650/japanese-candlestick-charting-techniques-by-steve-nison/
+- https://www.mheducation.com/highered/mhp/product/candlestick-charting-explained.html
+- https://onlinelibrary.wiley.com/doi/book/10.1002/9781119202288
+- https://onlinelibrary.wiley.com/doi/book/10.1002/9781119204923
+
+The publisher records identify Steve Nison's Japanese Candlestick Charting Techniques, Gregory Morris's Candlestick Charting Explained, Thomas Bulkowski's Encyclopedia of Candlestick Charts, and Michael Thomsett's Bloomberg Visual Guide to Candlestick Charting as important modern references. They are copyrighted works. Their metadata may guide acquisition, but their full text must not be downloaded from unofficial mirrors or committed to this repository.
+
+The local specialist starts from open technical documentation and original deterministic formulas. Copyrighted references remain registry-only until the user supplies a lawfully owned local copy. Even then, extraction must stay local and must carry title, edition, page, and ownership provenance.
+
+Practitioner terminology is not a certification standard. Different books and software can use different thresholds for short, long, equal, or doji bodies. The application therefore displays its formula version and raw ratios. A future TA-Lib parity mode must be named separately and verified against official TA-Lib fixtures; it must not silently replace the workspace v1 formulas.
+
+The specialist is separate from the Jyotish agent because the corpora, deterministic evidence, verifier rules, and failure modes differ. It may share the same local Ollama runtime to avoid loading two large model processes. The model name is independently configurable. Shared runtime does not permit shared retrieval or prompt context.

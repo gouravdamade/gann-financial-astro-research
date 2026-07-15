@@ -1,0 +1,12 @@
+SOURCE LAYER: method_reference
+SOURCE: TA-Lib pattern-recognition documentation
+URL: https://ta-lib.org/functions/
+LICENSE/USE: TA-Lib is BSD licensed. This file is a new curated summary, not a copy of source code.
+
+Candlestick names are labels for explicit OHLC relationships, not self-sufficient trade instructions. TA-Lib exposes a large pattern-recognition family, but its own pattern pages repeatedly state when a function does not verify the preceding trend assumed by the traditional interpretation. Therefore a geometry match and its market context must be recorded separately.
+
+The workspace v1 detector is intentionally smaller than TA-Lib and does not claim TA-Lib parity. It reports transparent, versioned measurements for body fraction, upper and lower wick fractions, close location, prior-body median, prior-range median, ATR, and a five-bar pre-pattern trend. Its first named geometries are doji, spinning top, marubozu-like, long body, long lower wick, long upper wick, bullish or bearish body engulfing, inside bar, and outside bar.
+
+Dynamic context matters. A long lower wick after a decline may be discussed as a hammer-context reversal candidate, while the same geometry after a rise may resemble hanging-man context. A long upper wick after a rise may resemble shooting-star context, while the same shape after a decline may resemble inverted-hammer context. The geometry is observed; the interpretation remains a hypothesis requiring confirmation and instrument-specific testing.
+
+No pattern output is permission to buy, sell, place an order, or modify Auto Suggest. Pattern combinations, confirmation rules, trend definitions, holding periods, spread, slippage, and session structure must be evaluated prospectively on the target symbol and timeframe.

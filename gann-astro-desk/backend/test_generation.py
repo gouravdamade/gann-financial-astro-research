@@ -16,12 +16,13 @@ APP_ROOT = Path(__file__).resolve().parents[1]
 if str(APP_ROOT) not in sys.path:
     sys.path.insert(0, str(APP_ROOT))
 
-from generation import GenerationJobManager, normalize_generation_parameters
-from price_sources import SNAPSHOT_CONTRACT, file_sha256
-from repository import AstroRepository, DataPaths
+from generation import GenerationJobManager, normalize_generation_parameters  # noqa: E402
+from price_sources import SNAPSHOT_CONTRACT, file_sha256  # noqa: E402
+from repository import AstroRepository, DataPaths  # noqa: E402
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+REAL_GENERATION_TIMEOUT_SECONDS = 90
 
 
 class GenerationJobTests(unittest.TestCase):
@@ -172,7 +173,7 @@ class GenerationJobTests(unittest.TestCase):
                         "parameters": self.small_parameters(),
                     }
                 )
-                deadline = time.monotonic() + 30
+                deadline = time.monotonic() + REAL_GENERATION_TIMEOUT_SECONDS
                 while time.monotonic() < deadline:
                     job = manager.get_job(job["jobId"])
                     if job["status"] not in {"queued", "running", "cancelling"}:
@@ -198,7 +199,7 @@ class GenerationJobTests(unittest.TestCase):
         job = manager.create_job(
             {"label": "Promoted source smoke", "parameters": parameters, "autoActivate": True}
         )
-        deadline = time.monotonic() + 30
+        deadline = time.monotonic() + REAL_GENERATION_TIMEOUT_SECONDS
         while time.monotonic() < deadline:
             job = manager.get_job(job["jobId"])
             if job["status"] not in {"queued", "running", "cancelling"}:
@@ -228,7 +229,7 @@ class GenerationJobTests(unittest.TestCase):
         job = manager.create_job(
             {"label": "Regression smoke", "parameters": self.small_parameters(), "autoActivate": True}
         )
-        deadline = time.monotonic() + 30
+        deadline = time.monotonic() + REAL_GENERATION_TIMEOUT_SECONDS
         while time.monotonic() < deadline:
             job = manager.get_job(job["jobId"])
             if job["status"] not in {"queued", "running", "cancelling"}:

@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Bot,
   BrainCircuit,
+  CandlestickChart,
   Check,
   ChevronLeft,
   Filter,
@@ -27,6 +28,7 @@ import {
 } from '../api'
 import { downloadLayoutJson } from '../chartLayouts'
 import { CodexPanel } from '../components/CodexPanel'
+import { CandlestickPanel } from '../components/CandlestickPanel'
 import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
 import { LayoutToolbar } from '../components/LayoutToolbar'
 import { LocalJyotishPanel } from '../components/LocalJyotishPanel'
@@ -49,7 +51,7 @@ type AnalyzeAspectWindowProps = {
   initialEventId?: string | null
 }
 
-type InspectorTab = 'evidence' | 'annotations' | 'jyotish' | 'codex'
+type InspectorTab = 'evidence' | 'annotations' | 'candles' | 'jyotish' | 'codex'
 type OccurrenceFilter = 'all' | 'reviewed' | 'pending' | 'bullish' | 'bearish'
 
 function resultLabel(occurrence: AspectWindow): string {
@@ -353,7 +355,8 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
         <aside className="analysis-inspector">
           <div className="analysis-tabs">
             <button className={tab === 'evidence' ? 'is-active' : ''} onClick={() => setTab('evidence')}><Microscope size={15} /> Evidence</button>
-            <button className={tab === 'annotations' ? 'is-active' : ''} onClick={() => setTab('annotations')}><MessageSquareText size={15} /> Annotations</button>
+            <button className={tab === 'annotations' ? 'is-active' : ''} onClick={() => setTab('annotations')} title="Chart annotations"><MessageSquareText size={15} /> Notes</button>
+            <button className={tab === 'candles' ? 'is-active' : ''} onClick={() => setTab('candles')}><CandlestickChart size={15} /> Candles</button>
             <button className={tab === 'jyotish' ? 'is-active' : ''} onClick={() => setTab('jyotish')}><BrainCircuit size={15} /> Local Jyotish</button>
             <button className={tab === 'codex' ? 'is-active' : ''} onClick={() => setTab('codex')}><Bot size={15} /> Codex</button>
           </div>
@@ -472,6 +475,12 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
           )}
           {tab === 'jyotish' && (
             <LocalJyotishPanel
+              eventId={selectedEventId}
+              selectedAnnotation={selectedAnnotation}
+            />
+          )}
+          {tab === 'candles' && (
+            <CandlestickPanel
               eventId={selectedEventId}
               selectedAnnotation={selectedAnnotation}
             />

@@ -1,10 +1,61 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-15 08:35 IST
+Last updated: 2026-07-15 20:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-15 (Drawings, Fibonacci, and Source Trust 0.9.2)
+## Latest Update - 2026-07-15 (Isolated Candlestick Specialist 0.10.0)
+
+- Promoted Gann Astro Desk `0.10.0` with a separate candlestick-analysis specialist.
+  It shares the local Ollama runtime for memory efficiency but has its own model setting,
+  corpus, retrieval layers, prompt, verifier, API contract, and Analyze Aspect tab. It is
+  not an extension of the Jyotish prompt.
+- Added deterministic contract `GANN_CANDLESTICK_EVIDENCE_V1` using transparent closed-bar
+  OHLC geometry at a recorded timestamp cutoff. It reports body/wick fractions, close
+  location, ATR14, five-bar prior trend, named geometry with formula basis, event-window
+  summary, and separately labelled post-cutoff hindsight.
+- Added draft contract `GANN_LOCAL_CANDLE_RAG_DRAFT_V1`. Local commentary is untrusted;
+  exact source IDs, empirical caveats, focus-bar pattern consistency, certainty, TA-Lib
+  parity claims, and execution-like language are verified. Missing model citations receive
+  a visible deterministic footer and recorded repair.
+- Analyze Aspect now has Evidence, Notes, Candles, Local Jyotish, and Codex tabs. The
+  Candles tab continues to show deterministic evidence if Ollama is unavailable.
+- Source research used TA-Lib documentation, publisher records, and peer-reviewed studies.
+  Published findings are mixed, so pattern names are conditional feature hypotheses rather
+  than signals. Copyrighted books remain registry-only unless the user supplies a lawful
+  local copy. Generated corpus/index files remain local and uncommitted.
+- Safety boundary is explicit: candle evidence and drafts cannot feed Auto Suggest, live
+  inference, the prospective shadow ledger, official ML notes, or execution. MT5 remains
+  read-only with `tradeAllowed=false`; the frozen prospective trial is unchanged.
+- Promoted release:
+  - executable `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`;
+  - executable SHA-256
+    `8E3545DA8E9176088C08D25E7323D808F0A3FA99FEAC7D0830BC5E6486E2D161`;
+  - installer SHA-256
+    `A0CA5A58722F4C8D270EED09344381EF2F87414539CECDD5A7BC47F221B4212E`;
+  - immediate pre-final-verifier rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.0_pre_final_verifier_20260715_200811`;
+  - previous-release rollback archive
+    `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.9.2_20260715_113545`.
+- Preserved live state before promotion at
+  `D:\GannFinancialAstro\state_backups\pre_0.10.0_promotion_20260715_113545`.
+- Verification: 10 focused candle tests, 55 backend tests, 18 frontend tests, lint,
+  TypeScript/Vite, Ruff, Python byte compilation, PowerShell parsing, Rust format/check/
+  test/Clippy, real event evidence, Flask plus Ollama, native visual QA, full native
+  crash/recovery soak, and a stable-path native smoke passed. No descendant processes
+  survived either soak. Final rebuilt-candidate and promoted-stable reports are
+  `D:\GannFinancialAstro\soak\tauri_0.10.0_20260715_143548\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.0_20260715_143913\logs\native_soak_report.json`.
+- Evidence: `candlestick_specialist_release_20260715.md`.
+- Recovery backup:
+  `D:\PycharmProjects\chat_session_backups\session_20260715_121321_candlestick_specialist_v0100`.
+- Next gate: construct a timestamp-safe USDJPY candle evaluation dataset and compare raw
+  geometry, named-pattern features, and simple price-only baselines with frozen trend,
+  confirmation, holding, cost, purge, and embargo definitions. A coordinator may consume
+  candle features only after independent out-of-sample improvement is demonstrated.
+
+## Previous Update - 2026-07-15 (Drawings, Fibonacci, and Source Trust 0.9.2)
 
 - Promoted Gann Astro Desk `0.9.2` with discoverable drawing-object controls and a
   persistent editable Fibonacci retracement tool. New drawings auto-select; a

@@ -1,6 +1,7 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.9.2-tauri",
-    [switch]$SkipSidecarBuild
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.0-tauri",
+    [switch]$SkipSidecarBuild,
+    [switch]$FinalizeOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -41,33 +42,35 @@ if (Test-Path -LiteralPath $candidate) {
 }
 New-Item -ItemType Directory -Path $candidate -Force | Out-Null
 
-if (-not $SkipSidecarBuild) {
-    & (Join-Path $PSScriptRoot "build_backend_sidecar.ps1")
+if (-not $FinalizeOnly) {
+    if (-not $SkipSidecarBuild) {
+        & (Join-Path $PSScriptRoot "build_backend_sidecar.ps1")
+    }
+    if (-not (Test-Path -LiteralPath $vcvars -PathType Leaf)) {
+        throw "MSVC build environment was not found: $vcvars"
+    }
+
+    $env:CARGO_HOME = "D:\Rust\cargo"
+    $env:RUSTUP_HOME = "D:\Rust\rustup"
+    $env:CARGO_TARGET_DIR = $cargoTarget
+    $env:TEMP = Join-Path $safeRoot "tmp\gann_astro_tauri_build"
+    $env:TMP = $env:TEMP
+    New-Item -ItemType Directory -Path $env:TEMP -Force | Out-Null
+    Import-BatchEnvironment $vcvars
+    $env:Path = "D:\Rust\cargo\bin;$env:Path"
+
+    Push-Location $appRoot
+    try {
+        & npm.cmd run desktop:build -- --bundles nsis
+        if ($LASTEXITCODE -ne 0) {
+            throw "Tauri build failed with exit code $LASTEXITCODE"
+        }
+    } finally {
+        Pop-Location
+    }
 }
 if (-not (Test-Path -LiteralPath $sidecarExe -PathType Leaf)) {
     throw "Managed backend sidecar was not found: $sidecarExe"
-}
-if (-not (Test-Path -LiteralPath $vcvars -PathType Leaf)) {
-    throw "MSVC build environment was not found: $vcvars"
-}
-
-$env:CARGO_HOME = "D:\Rust\cargo"
-$env:RUSTUP_HOME = "D:\Rust\rustup"
-$env:CARGO_TARGET_DIR = $cargoTarget
-$env:TEMP = Join-Path $safeRoot "tmp\gann_astro_tauri_build"
-$env:TMP = $env:TEMP
-New-Item -ItemType Directory -Path $env:TEMP -Force | Out-Null
-Import-BatchEnvironment $vcvars
-$env:Path = "D:\Rust\cargo\bin;$env:Path"
-
-Push-Location $appRoot
-try {
-    & npm.cmd run desktop:build -- --bundles nsis
-    if ($LASTEXITCODE -ne 0) {
-        throw "Tauri build failed with exit code $LASTEXITCODE"
-    }
-} finally {
-    Pop-Location
 }
 
 $compiledExe = Join-Path $cargoTarget "release\gann-astro-desk.exe"
@@ -89,8 +92,8 @@ Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.9.2"
-    status = "drawing_fibonacci_source_trust_candidate"
+    version = "0.10.0"
+    status = "candlestick_specialist_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash

@@ -1,0 +1,13 @@
+SOURCE LAYER: empirical_evidence
+SOURCES:
+- https://doi.org/10.1016/j.jbankfin.2005.08.001
+- https://doi.org/10.1016/j.jbankfin.2015.09.009
+- https://doi.org/10.1080/135048698334637
+
+Published evidence is mixed rather than a universal validation of candlestick trading. Marshall, Young, and Rose reported that the tested candlestick strategies did not add value for their DJIA-stock sample from 1992 through 2002. That negative result is mandatory context whenever a draft suggests predictive value.
+
+Lu, Chen, and Hsu later reported that conclusions changed with trend definition and, especially, the holding strategy. Their positive results applied to a subset of three-day reversal patterns under specific assumptions after transaction costs and data-snooping controls. This does not transfer automatically to intraday USDJPY.
+
+Caginalp and Laurent reported earlier positive evidence for price patterns on a large stock sample. The later contradictory and conditional results mean the correct workspace conclusion is uncertainty: a named pattern is a feature candidate whose effect size, direction, and useful horizon must be estimated on timestamp-safe USDJPY data.
+
+For this workspace, validation must pre-register the pattern formula, context trend, timeframe, session, confirmation rule, entry availability, holding or exit rule, spread and slippage, and train/test boundary. Every comparison needs a matched unconditional baseline and enough occurrences. Results from retrospective annotation are hypotheses, not live evidence.
