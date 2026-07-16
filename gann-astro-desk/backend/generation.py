@@ -84,8 +84,10 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
     merged = {**DEFAULT_CHART_PARAMETERS, **value}
     merged["reference"] = {**DEFAULT_CHART_PARAMETERS["reference"], **(value.get("reference") or {})}
     symbol = str(merged.get("symbol") or "").upper().strip()
-    if symbol != "USDJPY":
-        raise ValueError("Corrected background generation currently supports USDJPY only")
+    if not symbol or len(symbol) > 32 or not all(
+        character.isalnum() or character in {".", "_", "-"} for character in symbol
+    ):
+        raise ValueError("symbol must be a valid MT5 instrument name")
     if str(merged.get("mode") or "").upper() != "TN":
         raise ValueError("The corrected transit-to-transit generator is not implemented")
     if str(merged.get("dataSource") or "research").lower() != "research":
@@ -145,6 +147,18 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
     longitude = float(reference.get("longitude"))
     if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
         raise ValueError("reference latitude/longitude are outside valid bounds")
+    default_reference = DEFAULT_CHART_PARAMETERS["reference"]
+    unchanged_default_reference = all(
+        str(reference.get(key)) == str(default_reference.get(key))
+        for key in ("date", "time", "utcOffset", "latitude", "longitude")
+    )
+    unchanged_default_label = str(reference.get("label") or "").strip().casefold() == str(
+        default_reference.get("label") or ""
+    ).strip().casefold()
+    if symbol != "USDJPY" and (unchanged_default_reference or unchanged_default_label):
+        raise ValueError(
+            f"Enter the asset-specific birth/IPO reference date, time, UTC offset, and location for {symbol}"
+        )
 
     normalized = {
         **merged,
@@ -179,8 +193,33 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
             "latitude": latitude,
             "longitude": longitude,
         },
+        "includeBaseReference": symbol == "USDJPY",
+        "baseReferencePolicy": (
+            "legacy_usd_jpy_pair_reference" if symbol == "USDJPY" else "disabled_single_asset_reference"
+        ),
     }
     return normalized
+
+
+def touch_reference_arguments(parameters: dict[str, Any]) -> list[str]:
+    reference = parameters["reference"]
+    arguments = [
+        "--ipo-date",
+        reference["date"],
+        "--ipo-time",
+        reference["time"],
+        "--reference-tz",
+        reference["utcOffset"],
+        "--reference-lat",
+        str(reference["latitude"]),
+        "--reference-lon",
+        str(reference["longitude"]),
+        "--quote-reference-label",
+        reference["label"],
+    ]
+    if not parameters.get("includeBaseReference", False):
+        arguments.append("--disable-base-reference")
+    return arguments
 
 
 class GenerationJobManager:
@@ -612,21 +651,10 @@ class GenerationJobManager:
                 "--aspect-mode",
                 "orb",
                 "--include-natal",
-                "--ipo-date",
-                reference["date"],
-                "--ipo-time",
-                reference["time"],
-                "--reference-tz",
-                reference["utcOffset"],
-                "--reference-lat",
-                str(reference["latitude"]),
-                "--reference-lon",
-                str(reference["longitude"]),
-                "--quote-reference-label",
-                parameters["symbol"][-3:],
                 "--max-event-days",
                 str(max_days),
                 "--allow-empty",
+                *touch_reference_arguments(parameters),
             ])
             self._run_command(job_id, touch_command, log_path)
             touch_partial.replace(touch_path)

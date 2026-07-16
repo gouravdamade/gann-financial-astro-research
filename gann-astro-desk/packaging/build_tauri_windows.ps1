@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.3-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.4-tauri",
     [switch]$SkipSidecarBuild,
     [switch]$FinalizeOnly
 )
@@ -92,7 +92,7 @@ Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.10.3"
+    version = "0.10.4"
     status = "normalized_mt5_history_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"

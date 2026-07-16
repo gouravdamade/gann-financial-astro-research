@@ -91,27 +91,35 @@ class Mt5Gateway:
         observed_at: datetime,
         clock_probe: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
-        tick = mt5.symbol_info_tick(symbol)
-        if tick is None:
-            raise RuntimeError("MT5 did not expose a timestamped market tick")
-        current_h1 = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_H1, 0, 1)
-        if current_h1 is None or len(current_h1) != 1:
-            raise RuntimeError("MT5 did not expose the current H1 bar timestamp")
         status = self.status()
         probe_path = default_clock_probe_path(status.get("terminalCommonDataPath"))
         probe = dict(clock_probe) if clock_probe is not None else read_clock_probe(probe_path)
+        validation_symbol = str(probe.get("symbol") or "").upper().strip()
+        if not validation_symbol:
+            raise RuntimeError("MT5 clock probe does not identify its validation symbol")
+        if not mt5.symbol_select(validation_symbol, True):
+            raise RuntimeError(f"MT5 clock validation symbol is unavailable: {validation_symbol}")
+        tick = mt5.symbol_info_tick(validation_symbol)
+        if tick is None:
+            raise RuntimeError("MT5 did not expose a timestamped validation-symbol tick")
+        current_h1 = mt5.copy_rates_from_pos(validation_symbol, mt5.TIMEFRAME_H1, 0, 1)
+        if current_h1 is None or len(current_h1) != 1:
+            raise RuntimeError("MT5 did not expose the validation-symbol H1 timestamp")
         evidence = time_normalization_evidence(
             observed_at,
             int(tick.time),
             int(current_h1[-1]["time"]),
             probe,
-            expected_symbol=symbol,
+            expected_symbol=validation_symbol,
             expected_server=str(status.get("server") or "") or None,
             expected_terminal_build=int(status.get("terminalBuild") or 0) or None,
         )
         if not evidence["valid"]:
             issue = "; ".join(evidence["validationIssues"])
             raise RuntimeError(f"MT5 server-time normalization failed: {issue}")
+        evidence["validationSymbol"] = validation_symbol
+        evidence["requestedSymbol"] = symbol.upper().strip()
+        evidence["crossSymbolOffsetApplication"] = validation_symbol != symbol.upper().strip()
         return evidence
 
     def connect(self) -> bool:

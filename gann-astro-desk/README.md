@@ -154,19 +154,26 @@ market data is intentionally not required.
 
 The Codex bridge uses the local Codex login and does not require an OpenAI API key.
 
-## Generate a two-year chart with aspects
+## Fetch any MT5 research range with aspects
 
 1. Open `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
-2. Open **Astro layers**, select **Research**, `USDJPY`, and an H1 promoted MT5
-   archive covering the requested dates. If no archive covers the range, capture an
-   immutable MT5 snapshot first and use **Verify and promote snapshot**.
-3. Set the start/end dates, keep **TN** selected, choose the planets/aspects, and run
-   **Generate corrected TN**. Activate the completed artifact.
-4. Select **D1** for the overview and leave **Aspects** and **SR** enabled. The chart
-   can now fit at least two years of daily candles; zooming into a quarter or month
-   makes short aspect bands easier to inspect.
-5. Save or choose a named layout. The current ready-to-use layout is
-   `USDJPY 2Y D1 TN aspects` for 16 July 2024 through 16 July 2026.
+2. Open **Astro layers**, select **Research**, enter the exact broker symbol, chart
+   timeframe, and requested start/end dates. For a non-USDJPY asset, enter its own
+   birth/IPO date, time, UTC offset, latitude, longitude, and reference label.
+3. Choose the TN planets/aspects and press **Fetch MT5 and build aspects**. The app
+   automatically captures fully closed bars, verifies an immutable normalized
+   archive, promotes it, generates corrected TN evidence, and activates the chart.
+   H4 and D1 views use H1 source bars; M30 uses M30 source bars.
+4. The completion message states whether MT5 covered the whole request. If the
+   broker returned less history, generation is bounded to the actual available
+   range instead of silently claiming full coverage.
+5. Leave **Aspects** and **SR** enabled and save a named layout for reuse. At a
+   multi-year zoom, zoom into a quarter or month to read short aspect bands.
+
+One corrected generation job supports up to five years, so a four-year chart is a
+single request. MT5 snapshot capture itself permits up to twenty years; split a
+longer corrected study into ranges no greater than five years. The older manual
+snapshot, verify/promote, and generation controls remain available for audits.
 
 MT5 remains data-only throughout this workflow. Capturing, promoting, generating,
 and activating research data cannot place an order.

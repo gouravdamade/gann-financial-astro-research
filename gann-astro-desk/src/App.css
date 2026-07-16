@@ -2560,6 +2560,22 @@
   justify-content: center;
 }
 
+.mt5-fetch-command {
+  width: 100%;
+  justify-content: center;
+}
+
+.mt5-fetch-command .lucide-loader-circle {
+  animation: generation-spin 900ms linear infinite;
+}
+
+.mt5-fetch-help {
+  margin: -3px 0 2px;
+  color: #8195a8;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
 .generation-inline-error {
   padding-left: 8px;
   border-left: 2px solid #a75560;

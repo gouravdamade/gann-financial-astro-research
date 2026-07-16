@@ -1116,8 +1116,11 @@ class AstroRepository:
     ) -> dict[str, Any]:
         symbol = symbol.upper().strip()
         timeframe = timeframe.upper().strip()
-        if symbol != "USDJPY":
-            raise ValueError("The corrected historical source currently supports USDJPY only")
+        artifact_symbol = str(self.active_artifact.get("symbol") or "USDJPY").upper().strip()
+        if symbol != artifact_symbol:
+            raise ValueError(
+                f"The active corrected artifact is for {artifact_symbol}, not {symbol}"
+            )
         price_source = self._price_for_timeframe(timeframe)
         start_local = parse_local_timestamp(start, "2025-05-25T00:00:00+05:30")
         end_local = parse_local_timestamp(end, "2025-05-31T23:59:59+05:30")

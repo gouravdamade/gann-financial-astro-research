@@ -35,6 +35,11 @@ import {
   parseNumberList,
   toggleValue,
 } from '../parameterUtils'
+import {
+  boundRequestedRangeToSource,
+  chartTimeframeForSource,
+  mt5SourceTimeframeForChart,
+} from '../mt5ResearchWorkflow'
 import type {
   ChartParameters,
   DataArtifact,
@@ -82,6 +87,7 @@ export function ParameterDrawer({
   const [artifactCandidate, setArtifactCandidate] = useState('')
   const [snapshotBusy, setSnapshotBusy] = useState(false)
   const [promotionBusy, setPromotionBusy] = useState(false)
+  const [automaticResearchBusy, setAutomaticResearchBusy] = useState(false)
   const [snapshotMessage, setSnapshotMessage] = useState('')
   const [snapshotCandidate, setSnapshotCandidate] = useState('')
   const [snapshots, setSnapshots] = useState<Mt5HistorySnapshot[]>([])
@@ -239,7 +245,7 @@ export function ParameterDrawer({
     try {
       const snapshot = await createMt5HistorySnapshot({
         symbol: draft.symbol,
-        timeframe: draft.timeframe,
+        timeframe: mt5SourceTimeframeForChart(draft.timeframe),
         start: draft.start,
         end: draft.end,
       })
@@ -270,7 +276,7 @@ export function ParameterDrawer({
         ...current,
         dataSource: 'research',
         priceSourceId: promoted.priceSourceId,
-        timeframe: promoted.sourceTimeframe === 'M30' ? 'M30' : 'H1',
+        timeframe: chartTimeframeForSource(current.timeframe, promoted.sourceTimeframe),
         start: promoted.dateStart,
         end: promoted.dateEnd,
       }))
@@ -291,10 +297,63 @@ export function ParameterDrawer({
     setDraft({
       ...draft,
       priceSourceId: source.priceSourceId,
-      timeframe: source.sourceTimeframe === 'M30' ? 'M30' : 'H1',
+      timeframe: chartTimeframeForSource(draft.timeframe, source.sourceTimeframe),
       start: source.dateStart,
       end: source.dateEnd,
     })
+  }
+
+  const fetchMt5AndGenerate = async () => {
+    setAutomaticResearchBusy(true)
+    setSnapshotMessage('Connecting to MT5 and requesting closed bars...')
+    setGenerationError('')
+    try {
+      const requestedStart = draft.start
+      const requestedEnd = draft.end
+      const sourceTimeframe = mt5SourceTimeframeForChart(draft.timeframe)
+      const snapshot = await createMt5HistorySnapshot({
+        symbol: draft.symbol,
+        timeframe: sourceTimeframe,
+        start: requestedStart,
+        end: requestedEnd,
+      })
+      setSnapshotMessage(`Captured ${snapshot.barCount.toLocaleString()} closed ${sourceTimeframe} bars; verifying archive...`)
+      const promoted = await promoteMt5HistorySnapshot(
+        snapshot.snapshotId,
+        `${draft.symbol} ${sourceTimeframe} self-service ${new Date(snapshot.capturedAtUtc).toLocaleString()}`,
+      )
+      const bounded = boundRequestedRangeToSource(requestedStart, requestedEnd, promoted)
+      const nextDraft: ChartParameters = {
+        ...draft,
+        dataSource: 'research',
+        priceSourceId: promoted.priceSourceId,
+        start: bounded.start,
+        end: bounded.end,
+      }
+      setDraft(nextDraft)
+      const [nextSources, nextSnapshots] = await Promise.all([
+        fetchPriceSources(),
+        fetchMt5HistorySnapshots(),
+      ])
+      setPriceSources(nextSources)
+      setSnapshots(nextSnapshots)
+      const job = await createGenerationJob({
+        label: `${draft.symbol} ${draft.timeframe} ${bounded.start.slice(0, 10)} to ${bounded.end.slice(0, 10)}`,
+        parameters: nextDraft,
+        autoActivate: true,
+      })
+      setJobs((current) => [job, ...current.filter((item) => item.jobId !== job.jobId)])
+      const coverage = bounded.startCovered && bounded.endCovered
+        ? 'Full requested range received.'
+        : 'Broker history was partial; the generated range was bounded to available closed bars.'
+      setSnapshotMessage(
+        `${promoted.barCount.toLocaleString()} verified ${sourceTimeframe} bars. ${coverage} Corrected TN generation queued.`,
+      )
+    } catch (reason) {
+      setSnapshotMessage(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      setAutomaticResearchBusy(false)
+    }
   }
 
   return (
@@ -418,7 +477,11 @@ export function ParameterDrawer({
                 <label>Price archive
                   <select value={draft.priceSourceId} onChange={(event) => selectPriceSource(event.target.value)}>
                     {priceSources.map((source) => (
-                      <option key={source.priceSourceId} value={source.priceSourceId} disabled={!source.verified}>
+                      <option
+                        key={source.priceSourceId}
+                        value={source.priceSourceId}
+                        disabled={!source.verified || (!source.builtIn && !['M30', 'H1'].includes(source.sourceTimeframe))}
+                      >
                         {source.label}{source.builtIn ? '' : ` (${source.sourceTimeframe}, ${source.barCount.toLocaleString()})`}
                       </option>
                     ))}
@@ -428,6 +491,18 @@ export function ParameterDrawer({
                   <label>Start<input type="datetime-local" value={datetimeInputValue(draft.start)} onChange={(event) => setDraft({ ...draft, start: datetimeParameterValue(event.target.value) })} /></label>
                   <label>End<input type="datetime-local" value={datetimeInputValue(draft.end)} onChange={(event) => setDraft({ ...draft, end: datetimeParameterValue(event.target.value) })} /></label>
                 </div>
+                <button
+                  className="primary-command mt5-fetch-command"
+                  disabled={automaticResearchBusy || snapshotBusy || promotionBusy || Boolean(activeJob) || generationBusy || busy || draft.mode !== 'TN' || !draft.aspects.length}
+                  onClick={fetchMt5AndGenerate}
+                  title="Fetch closed bars from MT5, verify an immutable archive, and generate corrected TN aspects"
+                >
+                  {automaticResearchBusy ? <LoaderCircle size={14} /> : <HardDriveDownload size={14} />}
+                  {automaticResearchBusy ? 'Preparing research chart' : 'Fetch MT5 and build aspects'}
+                </button>
+                <p className="mt5-fetch-help">
+                  Uses {mt5SourceTimeframeForChart(draft.timeframe)} source bars for the {draft.timeframe} view, verifies the broker range, and activates the completed chart automatically.
+                </p>
                 <button className="secondary-command" disabled={snapshotBusy} onClick={snapshotMt5Range}>
                   {snapshotBusy ? <LoaderCircle size={14} /> : <HardDriveDownload size={14} />}
                   Snapshot MT5 range
@@ -439,7 +514,7 @@ export function ParameterDrawer({
                       <option
                         key={snapshot.snapshotId}
                         value={snapshot.snapshotId}
-                        disabled={Boolean(snapshot.promotedPriceSourceId)}
+                        disabled={Boolean(snapshot.promotedPriceSourceId) || !['M30', 'H1'].includes(snapshot.timeframe)}
                       >
                         {snapshot.symbol} {snapshot.timeframe} | {snapshot.barCount.toLocaleString()} bars
                         {snapshot.promotedPriceSourceId ? ' | promoted' : ''}

@@ -1,10 +1,58 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-16 18:37 IST
+Last updated: 2026-07-16 22:34 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-16 (Two-Year USDJPY Aspect Chart 0.10.3)
+## Latest Update - 2026-07-16 (Self-Service MT5 Historical Charts 0.10.4)
+
+- Promoted Gann Astro Desk `0.10.4` with a one-click Research command,
+  `Fetch MT5 and build aspects`. It captures fully closed MT5 bars, verifies and
+  promotes an immutable source, bounds dates to actual broker coverage, queues
+  corrected TN generation, activates the artifact, and opens the chart. H4/D1
+  use H1 source bars; M30 uses native M30 bars.
+- Removed the USDJPY-only generator/payload restriction. Exact MT5 symbols can
+  now be used, including normal broker suffix characters. Active artifact and
+  requested symbol must match.
+- Non-USDJPY assets require a genuinely distinct birth/IPO reference label and
+  date/time/UTC-offset/location. Label-only renaming is rejected, and
+  `--disable-base-reference` prevents hidden USD reference evidence. TT remains
+  disabled; this is corrected TN generalization only.
+- Added transparent full/partial broker-history reporting with a 72-hour market
+  closure tolerance. One generation job supports five years, so a four-year
+  chart is one request; snapshot capture supports twenty years.
+- Proved the read-only path live with AAPL on MetaQuotes-Demo: snapshot
+  `AAPL_H1_20260716T143525Z_b6b6c31e`, 7,219 fully closed H1 bars from
+  18 July 2022 through 16 July 2026, one incomplete bar excluded, measured MT5
+  offset `+10,800s`, parquet SHA-256
+  `1790159A9AF19A2A76DB562717DC3290CE76530CC7726DB2B3C1C03F49D46314`.
+  Clock evidence records USDJPY as validation symbol and AAPL as requested
+  symbol rather than guessing a cross-symbol offset.
+- Verification passed: 24 frontend tests, 78 backend tests, Oxlint,
+  TypeScript/Vite build, Ruff, Python byte compilation, native visual QA, and
+  final candidate plus promoted-stable crash/recovery soaks. Reports:
+  `D:\GannFinancialAstro\soak\tauri_0.10.4_20260716_165645\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.4_20260716_170035\logs\native_soak_report.json`.
+- Stable executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+  SHA-256: executable
+  `1E265FD427D15A8BEFBF3516A7638E16FD1AC6E19C8AA549B7AF68A62A2C6151`,
+  installer
+  `2E95ED8B66FB34D712DE1C63888634C63319F2276EAF31962C6D1C6D851F599A`,
+  sidecar
+  `059AD2BEC18944181AA0602940251CA5520ED2F44F156665DA242ED4C1887950`.
+- Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.3_20260716T150745Z`;
+  final pre-promotion state:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.4_final_promotion_20260716T165918Z`.
+- Evidence: `self_service_mt5_chart_release_20260716.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260716_223439_self_service_mt5_chart_v0104`.
+- Safety remains unchanged: MT5 is data-only, `tradeAllowed=false`, app
+  execution is locked, and historical chart generation cannot place orders.
+
+## Previous Update - 2026-07-16 (Two-Year USDJPY Aspect Chart 0.10.3)
 
 - Promoted Gann Astro Desk `0.10.3` with a ready native two-year USDJPY research
   chart. The default named layout `USDJPY 2Y D1 TN aspects` spans 16 July 2024

@@ -218,6 +218,34 @@ class Mt5GatewayTests(unittest.TestCase):
         self.assertEqual(validated["contract"], NORMALIZED_SNAPSHOT_CONTRACT)
         self.assertEqual(len(validated_frame), 2)
 
+    def test_history_snapshot_uses_server_clock_probe_for_a_different_symbol(self) -> None:
+        gateway = Mt5Gateway(autoconnect=False)
+        gateway._mt5 = FakeMt5()
+        gateway._set_status(
+            connected=True,
+            state="connected",
+            tradeAllowed=False,
+            accountLogin=123,
+            server="Test-Demo",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot = gateway.save_history_snapshot(
+                "AAPL",
+                "H1",
+                datetime(2026, 7, 12, 9, tzinfo=timezone.utc),
+                datetime(2026, 7, 12, 13, tzinfo=timezone.utc),
+                Path(directory),
+                captured_at=TEST_CAPTURE,
+                clock_probe=self.clock_probe(TEST_CAPTURE),
+            )
+
+        normalization = snapshot["timeNormalization"]
+        self.assertEqual(snapshot["symbol"], "AAPL")
+        self.assertEqual(normalization["validationSymbol"], "USDJPY")
+        self.assertEqual(normalization["requestedSymbol"], "AAPL")
+        self.assertTrue(normalization["crossSymbolOffsetApplication"])
+        self.assertEqual(normalization["serverOffsetSeconds"], TEST_SERVER_OFFSET_SECONDS)
+
     def test_history_snapshot_rejects_stale_clock_probe_without_writing(self) -> None:
         gateway = Mt5Gateway(autoconnect=False)
         gateway._mt5 = FakeMt5()

@@ -16,7 +16,11 @@ APP_ROOT = Path(__file__).resolve().parents[1]
 if str(APP_ROOT) not in sys.path:
     sys.path.insert(0, str(APP_ROOT))
 
-from generation import GenerationJobManager, normalize_generation_parameters  # noqa: E402
+from generation import (  # noqa: E402
+    GenerationJobManager,
+    normalize_generation_parameters,
+    touch_reference_arguments,
+)
 from price_sources import SNAPSHOT_CONTRACT, file_sha256  # noqa: E402
 from repository import AstroRepository, DataPaths  # noqa: E402
 
@@ -117,6 +121,89 @@ class GenerationJobTests(unittest.TestCase):
         self.assertEqual(normalized["natalBodies"], ["VENUS"])
         self.assertEqual(normalized["aspects"], ["conjunction_orb"])
         self.assertEqual(normalized["harmonics"], [0.12, 0.18])
+        self.assertTrue(normalized["includeBaseReference"])
+        self.assertEqual(normalized["baseReferencePolicy"], "legacy_usd_jpy_pair_reference")
+
+    def test_non_usdjpy_symbol_uses_only_its_explicit_reference_chart(self) -> None:
+        source = dict(self.promoted_source)
+        source["priceSourceId"] = "mt5_XAUUSD_H1_fixture"
+        source["symbol"] = "XAUUSD"
+        with mock.patch.object(self.repository, "resolve_price_source", return_value=(source, pd.read_parquet(source["pricePath"]))):
+            normalized = normalize_generation_parameters(
+                self.repository,
+                {
+                    **self.small_parameters(),
+                    "symbol": "XAUUSD",
+                    "priceSourceId": source["priceSourceId"],
+                    "reference": {
+                        "label": "Gold reference",
+                        "date": "1919-09-12",
+                        "time": "10:30",
+                        "utcOffset": "+01:00",
+                        "latitude": 51.5074,
+                        "longitude": -0.1278,
+                    },
+                },
+            )
+        self.assertFalse(normalized["includeBaseReference"])
+        self.assertEqual(normalized["baseReferencePolicy"], "disabled_single_asset_reference")
+        arguments = touch_reference_arguments(normalized)
+        self.assertIn("--disable-base-reference", arguments)
+        self.assertIn("Gold reference", arguments)
+
+    def test_invalid_mt5_symbol_is_rejected_before_generation(self) -> None:
+        with self.assertRaisesRegex(ValueError, "valid MT5 instrument"):
+            normalize_generation_parameters(
+                self.repository,
+                {**self.small_parameters(), "symbol": "EUR/USD"},
+            )
+
+    def test_non_usdjpy_symbol_cannot_inherit_the_default_usdjpy_reference(self) -> None:
+        source = dict(self.promoted_source)
+        source["priceSourceId"] = "mt5_XAUUSD_H1_fixture"
+        source["symbol"] = "XAUUSD"
+        with (
+            mock.patch.object(
+                self.repository,
+                "resolve_price_source",
+                return_value=(source, pd.read_parquet(source["pricePath"])),
+            ),
+            self.assertRaisesRegex(ValueError, "asset-specific birth/IPO reference"),
+        ):
+            normalize_generation_parameters(
+                self.repository,
+                {
+                    **self.small_parameters(),
+                    "symbol": "XAUUSD",
+                    "priceSourceId": source["priceSourceId"],
+                },
+            )
+
+    def test_non_usdjpy_symbol_cannot_change_only_the_default_reference_label(self) -> None:
+        source = dict(self.promoted_source)
+        source["priceSourceId"] = "mt5_XAUUSD_H1_fixture"
+        source["symbol"] = "XAUUSD"
+        parameters = self.small_parameters()
+        with (
+            mock.patch.object(
+                self.repository,
+                "resolve_price_source",
+                return_value=(source, pd.read_parquet(source["pricePath"])),
+            ),
+            self.assertRaisesRegex(ValueError, "asset-specific birth/IPO reference"),
+        ):
+            normalize_generation_parameters(
+                self.repository,
+                {
+                    **parameters,
+                    "symbol": "XAUUSD",
+                    "priceSourceId": source["priceSourceId"],
+                    "reference": {
+                        **parameters["reference"],
+                        "label": "Gold reference",
+                    },
+                },
+            )
 
     def test_queued_job_can_be_cancelled_durably(self) -> None:
         manager = GenerationJobManager(self.repository, autostart=False)
@@ -248,6 +335,83 @@ class GenerationJobTests(unittest.TestCase):
         restored = reopened.activate_artifact("baseline")
         self.assertEqual(restored["artifactId"], "baseline")
         self.assertEqual(restored["eventCount"], 1268)
+
+    def test_small_real_non_usdjpy_job_uses_single_asset_reference(self) -> None:
+        snapshot_id = "AAPL_H1_20250307T000000Z_generation_fixture"
+        snapshot_dir = self.paths.market_snapshots_dir / "AAPL" / "H1"
+        snapshot_dir.mkdir(parents=True, exist_ok=True)
+        source_price = pd.read_parquet(self.paths.price_data).loc["2025-02-27":"2025-03-06"].copy()
+        snapshot_path = snapshot_dir / f"{snapshot_id}.parquet"
+        snapshot_manifest = snapshot_dir / f"{snapshot_id}.manifest.json"
+        source_price.to_parquet(snapshot_path)
+        source_index = source_price.index.tz_convert("UTC")
+        snapshot_as_of = source_index.max() + pd.Timedelta(hours=1)
+        snapshot_manifest.write_text(
+            json.dumps(
+                {
+                    "snapshotId": snapshot_id,
+                    "contract": SNAPSHOT_CONTRACT,
+                    "symbol": "AAPL",
+                    "timeframe": "H1",
+                    "capturedAtUtc": snapshot_as_of.isoformat(),
+                    "requestedStartUtc": source_index.min().isoformat(),
+                    "requestedEndUtc": snapshot_as_of.isoformat(),
+                    "asOfUtc": snapshot_as_of.isoformat(),
+                    "barCount": len(source_price),
+                    "firstBarOpenUtc": source_index.min().isoformat(),
+                    "lastBarOpenUtc": source_index.max().isoformat(),
+                    "lastBarCloseUtc": snapshot_as_of.isoformat(),
+                    "incompleteBarsExcluded": 0,
+                    "noLookahead": True,
+                    "immutable": True,
+                    "parquetPath": str(snapshot_path),
+                    "parquetSha256": file_sha256(snapshot_path),
+                    "manifestPath": str(snapshot_manifest),
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        promoted = self.repository.promote_history_snapshot(snapshot_id, "AAPL generation fixture")
+        parameters = {
+            **self.small_parameters(),
+            "symbol": "AAPL",
+            "priceSourceId": promoted["priceSourceId"],
+            "start": source_index.min().tz_convert("Asia/Kolkata").isoformat(),
+            "end": source_index.max().tz_convert("Asia/Kolkata").isoformat(),
+            "transitBodies": ["MOON"],
+            "natalBodies": ["SUN"],
+            "aspects": ["conjunction_orb", "opposition_orb", "trine", "square"],
+            "reference": {
+                "label": "AAPL test reference",
+                "date": "1980-12-12",
+                "time": "09:30:00",
+                "utcOffset": "-05:00",
+                "latitude": 40.7128,
+                "longitude": -74.0060,
+            },
+        }
+        manager = GenerationJobManager(self.repository)
+        job = manager.create_job(
+            {"label": "AAPL single-asset smoke", "parameters": parameters, "autoActivate": False}
+        )
+        deadline = time.monotonic() + REAL_GENERATION_TIMEOUT_SECONDS
+        while time.monotonic() < deadline:
+            job = manager.get_job(job["jobId"])
+            if job["status"] not in {"queued", "running", "cancelling"}:
+                break
+            time.sleep(0.25)
+        manager.stop()
+
+        self.assertEqual(job["status"], "completed", job.get("error") or job.get("logTail"))
+        artifact = next(
+            item for item in self.repository.list_data_artifacts() if item["artifactId"] == job["artifactId"]
+        )
+        self.assertEqual(artifact["symbol"], "AAPL")
+        self.assertFalse(artifact["parameters"]["includeBaseReference"])
+        log_text = Path(job["logPath"]).read_text(encoding="utf-8")
+        self.assertIn("--disable-base-reference", log_text)
+        self.assertIn("AAPL test reference", log_text)
 
 
 if __name__ == "__main__":
