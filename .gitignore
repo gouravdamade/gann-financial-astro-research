@@ -46,3 +46,9 @@ walk_forward_eval_*/
 # Separate web/app projects kept under this parent folder
 orliva-static-deploy/
 orliva-storefront/
+
+# Private/generated Sarvatobhadra research material
+sbc/corpus/private/
+sbc/compiled/
+sbc/generated/
+configs/sbc/local_overrides/

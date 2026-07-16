@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gannastro/schemas/sbc/profile-v1.json",
+  "title": "SBC Phase 1 profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "status", "authority", "phase", "astronomy", "panchanga", "features", "source_ids"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "profile_id": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "authority": {"type": "string", "minLength": 1},
+    "phase": {"const": 1},
+    "astronomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zodiac", "ayanamsha", "center", "node", "fallback_policy"],
+      "properties": {
+        "zodiac": {"enum": ["SIDEREAL", "TROPICAL"]},
+        "ayanamsha": {"enum": ["RAMAN", "LAHIRI"]},
+        "center": {"enum": ["GEOCENTRIC", "TOPOCENTRIC"]},
+        "node": {"enum": ["TRUE_NODE", "MEAN_NODE"]},
+        "fallback_policy": {"enum": ["ALLOW_RECORDED", "ERROR_IF_NOT_SWISSEPH"]}
+      }
+    },
+    "panchanga": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timezone", "vara_boundary", "abhijit_policy", "abhijit_interval", "sunrise_algorithm"],
+      "properties": {
+        "timezone": {"type": "string", "minLength": 1},
+        "vara_boundary": {"enum": ["CIVIL_MIDNIGHT", "SUNRISE_BASED"]},
+        "abhijit_policy": {"enum": ["IGNORE_FOR_PLANET_PLACEMENT", "OVERLAP_FLAG", "REPLACE_SEGMENT"]},
+        "abhijit_interval": {"type": ["object", "null"]},
+        "sunrise_algorithm": {"type": "string", "minLength": 1}
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["positions", "panchanga", "grid", "vedha", "latta", "scoring", "trades"],
+      "properties": {
+        "positions": {"const": true},
+        "panchanga": {"const": true},
+        "grid": {"const": false},
+        "vedha": {"const": false},
+        "latta": {"const": false},
+        "scoring": {"const": false},
+        "trades": {"const": false}
+      }
+    },
+    "source_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "notes": {"type": "string"}
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gannastro/schemas/sbc/snapshot-v1.json",
+  "title": "SBC Phase 1 deterministic snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "snapshot_id", "as_of_utc", "profile_id", "profile_hash", "astronomy_contract", "astro_settings", "panchanga_settings", "positions", "memberships", "panchanga", "source_ids", "research_locks"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "snapshot_id": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "as_of_utc": {"type": "string", "format": "date-time"},
+    "profile_id": {"type": "string"},
+    "profile_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "astronomy_contract": {"type": "string"},
+    "astro_settings": {"type": "object"},
+    "panchanga_settings": {"type": "object"},
+    "positions": {"type": "array", "minItems": 2},
+    "memberships": {"type": "object"},
+    "panchanga": {"type": "object"},
+    "source_ids": {"type": "array", "items": {"type": "string"}},
+    "research_locks": {
+      "type": "object",
+      "properties": {
+        "grid": {"const": false},
+        "vedha": {"const": false},
+        "latta": {"const": false},
+        "scoring": {"const": false},
+        "trades": {"const": false},
+        "market_data": {"const": false},
+        "auto_suggest": {"const": false},
+        "mt5_execution": {"const": false}
+      }
+    }
+  }
+}

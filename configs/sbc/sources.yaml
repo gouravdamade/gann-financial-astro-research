@@ -1,0 +1,79 @@
+schema_version: 1
+register_id: SBC_SOURCE_REGISTER_V1
+sources:
+  - source_id: SBC_IMPLEMENTATION_GUIDE_20260717
+    title: Sarvatobhadra Chakra Codex Implementation Guide
+    authority: workspace_specification
+    content_layer: implementation_spec
+    status: workspace_implementation_spec_non_doctrinal
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 80A3F6B4F6613CB7EFC18639E7EED7A42822423537C3CF96E72380849D622E60
+    registry_ref: D:/Ollama/app/downloads/Sarvatobhadra_Chakra_Codex_Implementation_Guide.pdf
+    source_url: null
+    notes: Defines project phases and interfaces; it is not independent classical authority.
+
+  - source_id: CHAKRA_DOCTRINE_AUDIT_20260715
+    title: Chakra and Gann source audit
+    authority: workspace_source_audit
+    content_layer: source_conflict_register
+    status: audited_workspace_policy
+    rights_status: repository_document
+    sha256: 79753310CBCD64B9725920EE13BCD4E73525DD8EB6448E1556EDBE901D567D38
+    registry_ref: chakra_gann_source_audit_20260715.md
+    source_url: null
+    notes: Records 64-cell and 81-cell Sarvatobhadra textual plurality and keeps executable rules gated.
+
+  - source_id: PANCHANGA_FORMULA_FOUNDATION_V1
+    title: Deterministic sidereal Sun-Moon Panchanga formula foundation
+    authority: workspace_formula_contract
+    content_layer: computational_formula
+    status: formula_foundation_pending_traditional_validation
+    rights_status: repository_code
+    sha256: 473012339B7DC7A92E55F503B4B87D568B8B69D4232F89BC37EFAFADA302AF65
+    registry_ref: panchanga_doctrine.py
+    source_url: null
+    notes: Supplies 27-fold nakshatra, tithi, karana, yoga, and weekday naming formulas only.
+
+  - source_id: PHALADEEPIKA_1937_SUBRAHMANYA_SASTRI
+    title: Phaladeepika, V. Subrahmanya Sastri English edition
+    authority: classical_text_translation
+    content_layer: root_text_plus_editor_supplement
+    status: locally_ingested_source_edition
+    rights_status: private_research_copy_no_redistribution
+    sha256: 795DDB67D7416188B2272D2021B2B798561FAAAC08067A986AF0FACFD0552FCB
+    registry_ref: jyotish_agent/classical_source_editions.yaml#PHALADEEPIKA
+    source_url: null
+    notes: Mantreswara 26.48 and the editor supplement on pages 342-356 must remain separate citation layers.
+
+  - source_id: TRAILOKYA_DIPIKA_1972_PENDING
+    title: Trailokya Dipika 1972 Sarvatobhadra edition
+    authority: traditional_source_candidate
+    content_layer: root_or_commentary_pending_identification
+    status: pending_legal_acquisition_and_page_certification
+    rights_status: unknown_do_not_ingest_or_redistribute
+    sha256: null
+    registry_ref: null
+    source_url: null
+    notes: Candidate authority for grid and Vedha; no executable rule may cite it until the edition is acquired and certified.
+
+  - source_id: AGARWAL_2000_SBC_PENDING
+    title: Sarvatobhadra Chakra, Agarwal 2000 edition
+    authority: modern_practitioner_source_candidate
+    content_layer: commentary_pending_identification
+    status: pending_legal_acquisition_and_page_certification
+    rights_status: unknown_do_not_ingest_or_redistribute
+    sha256: null
+    registry_ref: null
+    source_url: null
+    notes: Candidate secondary authority only; no executable rule may cite it yet.
+
+  - source_id: MAITREYA8_COMPARISON_V1
+    title: Maitreya8 Sarvatobhadra behavior comparison
+    authority: software_comparison
+    content_layer: behavioral_fixture
+    status: comparison_only_not_doctrinal
+    rights_status: external_software_observation_only
+    sha256: null
+    registry_ref: null
+    source_url: https://www.saravali.de/maitreya.html
+    notes: Renamed from the ambiguous saravali_simple label; never treated as a textual authority.

@@ -1,10 +1,44 @@
-﻿# Current Project Handoff
+# Current Project Handoff
 
-Last updated: 2026-07-17 03:19 IST
+Last updated: 2026-07-17 05:20 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-17 (Timeframe-Aware Aspects and W1 0.10.6)
+## Latest Update - 2026-07-17 (Sarvatobhadra Phase 1 Foundation)
+
+- Added an isolated `sbc` research package with strict source/profile contracts,
+  Raman-primary and Lahiri-comparison profiles, timezone-aware Swiss Ephemeris
+  positions, true/mean node selection, Ketu provenance, nakshatra/pada mapping,
+  and deterministic Panchanga facts. The adapter records latitude, distance,
+  speed, requested/returned flags, fallback mode, library version, ephemeris
+  file path, and SHA-256 when available.
+- Added explicit civil-midnight and Swiss Ephemeris sunrise Vara contracts.
+  Abhijit remains inactive by default and can only be enabled through a
+  source-cited profile interval. Snapshot identity uses astronomical facts,
+  profile hash, time, and location rather than machine-specific paths.
+- Hard-locked the unresolved layers: no 64-cell or 81-cell grid selection, no
+  Vedha, Latta, directional/financial scoring, market data, Auto Suggest, MT5
+  execution, or desktop UI integration. The 64/81 source conflict and the
+  Phaladeepika root-text/editor-supplement split are recorded instead of blended.
+- Added source register, schemas, ADR, rule-conflict register, acceptance gates,
+  and Swiss Ephemeris dual-license release warning under `configs/sbc` and
+  `docs/sbc`. The user-provided implementation guide is classified as a
+  non-doctrinal workspace specification and is not ingested as classical text.
+- Verification passed: 18 focused SBC tests and a 32-test combined regression
+  pass covering existing ephemeris, event-contract, Shadbala, and SBC behavior;
+  the explicitly enumerated full repository suite passed all 97 tests. A
+  deterministic Delhi sample used Swiss Ephemeris data files for all nine
+  bodies and produced snapshot
+  `6C49401FFF48182086E7F6F2D95CD356D5EFC6AC27C5693D6C1C4561424048DC`.
+- Evidence: `sbc_phase1_foundation_20260717.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_052004_sbc_phase1_foundation`.
+- Stable Gann Astro Desk remains `0.10.6`; this foundation is not packaged or
+  promoted. Recommended next gate is source-certified 64/81 grid fixture work,
+  followed by independent-calculator comparison and only then a read-only
+  native Chakra Lab.
+
+## Previous Update - 2026-07-17 (Timeframe-Aware Aspects and W1 0.10.6)
 
 - Promoted Gann Astro Desk `0.10.6`. Aspect visibility now follows the selected
   chart timeframe while corrected event timestamps remain unchanged. Automatic

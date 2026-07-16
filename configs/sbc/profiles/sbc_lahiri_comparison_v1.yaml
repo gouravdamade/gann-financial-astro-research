@@ -1,0 +1,30 @@
+schema_version: 1
+profile_id: sbc_lahiri_comparison_v1
+status: comparison_only
+authority: non_primary_astronomy_comparison
+phase: 1
+astronomy:
+  zodiac: SIDEREAL
+  ayanamsha: LAHIRI
+  center: GEOCENTRIC
+  node: TRUE_NODE
+  fallback_policy: ALLOW_RECORDED
+panchanga:
+  timezone: Asia/Kolkata
+  vara_boundary: CIVIL_MIDNIGHT
+  abhijit_policy: IGNORE_FOR_PLANET_PLACEMENT
+  abhijit_interval: null
+  sunrise_algorithm: SWISSEPH_STANDARD_APPARENT_UPPER_LIMB_V1
+features:
+  positions: true
+  panchanga: true
+  grid: false
+  vedha: false
+  latta: false
+  scoring: false
+  trades: false
+source_ids:
+  - SBC_IMPLEMENTATION_GUIDE_20260717
+  - CHAKRA_DOCTRINE_AUDIT_20260715
+  - PANCHANGA_FORMULA_FOUNDATION_V1
+notes: Comparison fixture only. It must not silently replace the Raman project contract.
