@@ -526,6 +526,48 @@
   font-size: 10px;
 }
 
+.chart-navigation-controls {
+  position: absolute;
+  z-index: 18;
+  bottom: 12px;
+  left: 50%;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid #3a4652;
+  border-radius: 4px;
+  background: rgb(19 24 30 / 94%);
+  box-shadow: 0 5px 16px #0008;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.chart-navigation-controls.is-visible,
+.chart-navigation-controls:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.chart-navigation-controls .icon-button {
+  width: 27px;
+  height: 27px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #aab4bf;
+}
+
+.chart-navigation-controls .icon-button:hover,
+.chart-navigation-controls .icon-button:focus-visible {
+  border-color: #4a5a68;
+  background: #26313a;
+  color: #e5f6ff;
+}
+
 .inspector-panel,
 .analysis-inspector,
 .occurrence-sidebar {

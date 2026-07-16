@@ -12,7 +12,18 @@ import {
   type UTCTimestamp,
 } from 'lightweight-charts'
 import { toPng } from 'html-to-image'
-import { Eye, EyeOff, Lock, SlidersHorizontal, Trash2, Unlock } from 'lucide-react'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  Lock,
+  Minus,
+  Plus,
+  SlidersHorizontal,
+  Trash2,
+  Unlock,
+} from 'lucide-react'
 import {
   forwardRef,
   useEffect,
@@ -24,7 +35,12 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import { createChartDrawing } from '../chartLayouts'
-import { MIN_CHART_BAR_SPACING } from '../chartViewport'
+import {
+  isChartNavigationProximity,
+  MIN_CHART_BAR_SPACING,
+  navigateChartLogicalRange,
+  type ChartNavigationAction,
+} from '../chartViewport'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -142,6 +158,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const [dragPreview, setDragPreview] = useState<DragPreview | null>(null)
   const dragSessionRef = useRef<DragSession | null>(null)
   const [legendCandle, setLegendCandle] = useState<Candle | null>(payload.candles[payload.candles.length - 1] ?? null)
+  const [navigationVisible, setNavigationVisible] = useState(false)
   const [overlayRevision, setOverlayRevision] = useState(0)
   const candleTimes = useMemo(() => payload.candles.map((item) => item.time), [payload.candles])
 
@@ -706,8 +723,47 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       : drawing))
   }
 
+  const navigateChart = (action: ChartNavigationAction) => {
+    const chart = chartRef.current
+    if (!chart) return
+    const visibleRange = chart.timeScale().getVisibleLogicalRange()
+    if (!visibleRange) return
+    const nextRange = navigateChartLogicalRange(
+      { from: Number(visibleRange.from), to: Number(visibleRange.to) },
+      action,
+      payloadRef.current.candles.length,
+    )
+    if (!nextRange) return
+    chart.timeScale().setVisibleLogicalRange(nextRange)
+    setOverlayRevision((value) => value + 1)
+  }
+
+  const handleNavigationClick = (
+    event: ReactMouseEvent<HTMLButtonElement>,
+    action: ChartNavigationAction,
+  ) => {
+    navigateChart(action)
+    if (event.detail > 0) event.currentTarget.blur()
+  }
+
+  const handleChartPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const nearNavigation = isChartNavigationProximity(
+      event.clientX - bounds.left,
+      event.clientY - bounds.top,
+      bounds.width,
+      bounds.height,
+    )
+    setNavigationVisible((current) => current === nearNavigation ? current : nearNavigation)
+  }
+
   return (
-    <div className={`market-chart ${activeTool !== 'select' ? 'is-drawing' : ''}`} ref={rootRef}>
+    <div
+      className={`market-chart ${activeTool !== 'select' ? 'is-drawing' : ''}`}
+      ref={rootRef}
+      onPointerMove={handleChartPointerMove}
+      onPointerLeave={() => setNavigationVisible(false)}
+    >
       <div className="market-chart-host" ref={hostRef} />
       {legendCandle && legendValues && (
         <div className="chart-ohlc-legend">
@@ -801,6 +857,16 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             </button>
           )
         })}
+      </div>
+      <div
+        className={`chart-navigation-controls ${navigationVisible ? 'is-visible' : ''}`}
+        role="toolbar"
+        aria-label="Chart navigation controls"
+      >
+        <button type="button" className="icon-button" onClick={(event) => handleNavigationClick(event, 'backward')} title="Move chart backward" aria-label="Move chart backward"><ChevronLeft size={16} /></button>
+        <button type="button" className="icon-button" onClick={(event) => handleNavigationClick(event, 'zoom_out')} title="Zoom out" aria-label="Zoom out"><Minus size={16} /></button>
+        <button type="button" className="icon-button" onClick={(event) => handleNavigationClick(event, 'zoom_in')} title="Zoom in" aria-label="Zoom in"><Plus size={16} /></button>
+        <button type="button" className="icon-button" onClick={(event) => handleNavigationClick(event, 'forward')} title="Move chart forward" aria-label="Move chart forward"><ChevronRight size={16} /></button>
       </div>
       {pendingDrawing && <div className="drawing-status">Place the second time/price anchor</div>}
     </div>

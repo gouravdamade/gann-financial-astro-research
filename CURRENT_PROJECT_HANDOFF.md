@@ -1,10 +1,48 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-16 22:34 IST
+Last updated: 2026-07-17 01:08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-16 (Self-Service MT5 Historical Charts 0.10.4)
+## Latest Update - 2026-07-17 (Proximity Chart Navigation 0.10.5)
+
+- Promoted Gann Astro Desk `0.10.5` with a compact bottom-center chart dock:
+  move backward, zoom out, zoom in, and move forward. The dock appears only
+  when the pointer approaches it, remains keyboard accessible, cannot intercept
+  chart input while hidden, and hides again after pointer focus leaves.
+- Navigation is deterministic: center-based zoom, quarter-range forward/backward
+  movement, candle-bound clamping with two bars of left and five bars of right
+  padding, and a minimum visible range of eight bars. Pure range/proximity
+  helpers have focused regression coverage.
+- Verification passed: 27 frontend tests across 7 files, all 78 backend tests,
+  Oxlint, TypeScript/Vite production build, Ruff, Python byte compilation,
+  browser visual/interaction QA, and packaged native Windows QA. The native
+  test visibly exercised zoom and forward movement, then confirmed the dock
+  disappears outside its proximity region.
+- Candidate and promoted-stable crash/recovery soaks each passed all 28 checks
+  with zero errors. Reports:
+  `D:\GannFinancialAstro\soak\tauri_0.10.5_20260716_191936\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.5_20260716_193440\logs\native_soak_report.json`.
+- Stable executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+  SHA-256: executable
+  `E93358F99276FF2E41068B520749C22A45D9B1D5C28A08F9B9FB796A7B08DF16`,
+  installer
+  `B556FDA10B8741EF91232A45116CA261410A6361938A035B6C35F4E0364073EC`,
+  sidecar
+  `2FC4035143D62EE8ED1B5D9AA1BBAD83EB33F246AF534B859FC046820D60D53E`.
+- Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.4_20260716T193054Z`;
+  pre-promotion state:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.5_promotion_20260716T193054Z`.
+- Evidence: `chart_navigation_release_20260717.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_010819_chart_navigation_v0105`.
+- Safety remains unchanged: MT5 is data-only, `tradeAllowed=false`, app
+  execution is locked, and chart navigation cannot place orders.
+
+## Previous Update - 2026-07-16 (Self-Service MT5 Historical Charts 0.10.4)
 
 - Promoted Gann Astro Desk `0.10.4` with a one-click Research command,
   `Fetch MT5 and build aspects`. It captures fully closed MT5 bars, verifies and

@@ -11,6 +11,10 @@ separate from live market-data concerns.
 - A chart-first market-terminal shell with a compact command bar, fixed OHLC readout,
   TradingView-style drawing rail, focus mode, collapsible inspector/activity dock,
   aspect and SR visibility toggles, and a persistent read-only status bar.
+- A proximity-revealed chart navigation dock provides backward/forward movement and
+  centered zoom in/out without occupying the chart when the pointer is elsewhere.
+  Each move advances one-quarter of the visible range, respects candle boundaries,
+  supports keyboard focus, and persists through the active named layout.
 - Durable workspace layout preferences stored in the native application database, so
   panel and layer visibility survive the random private-port change on every launch.
 - Directional transit-to-natal aspect windows from the corrected 1,268-event source.
