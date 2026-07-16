@@ -24,6 +24,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import { createChartDrawing } from '../chartLayouts'
+import { MIN_CHART_BAR_SPACING } from '../chartViewport'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -247,7 +248,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         secondsVisible: false,
         rightOffset: 5,
         barSpacing: compact ? 8 : 11,
-        minBarSpacing: 3,
+        minBarSpacing: MIN_CHART_BAR_SPACING,
       },
       handleScroll: true,
       handleScale: true,

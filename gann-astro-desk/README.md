@@ -28,7 +28,10 @@ separate from live market-data concerns.
   when the parameter drawer has been closed while generation continues in the background.
 - Read-only MT5 live chart mode with 20-5,000 recent bars and five-second refresh.
 - Immutable MT5 history snapshots with capture/as-of timestamps, closed-bar-only
-  filtering, SHA-256 manifests, and explicit no-lookahead provenance.
+  filtering, SHA-256 manifests, and explicit no-lookahead provenance. New V2
+  snapshots preserve raw server epochs while indexing bars by UTC derived from a
+  fresh measured `TimeTradeServer-TimeGMT` probe; stale or inconsistent clock
+  evidence fails closed before a file is written.
 - Explicit snapshot promotion with deterministic manifest/OHLC/hash verification,
   immutable price-source registration, and retained snapshot lineage in generated artifacts.
 - Horizontal line, vertical line, Gann fan, and structured annotation tools on the market
@@ -150,6 +153,23 @@ bridge on `8789`. Set `GANN_ASTRO_MT5_AUTOCONNECT=0` before starting when MT5
 market data is intentionally not required.
 
 The Codex bridge uses the local Codex login and does not require an OpenAI API key.
+
+## Generate a two-year chart with aspects
+
+1. Open `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+2. Open **Astro layers**, select **Research**, `USDJPY`, and an H1 promoted MT5
+   archive covering the requested dates. If no archive covers the range, capture an
+   immutable MT5 snapshot first and use **Verify and promote snapshot**.
+3. Set the start/end dates, keep **TN** selected, choose the planets/aspects, and run
+   **Generate corrected TN**. Activate the completed artifact.
+4. Select **D1** for the overview and leave **Aspects** and **SR** enabled. The chart
+   can now fit at least two years of daily candles; zooming into a quarter or month
+   makes short aspect bands easier to inspect.
+5. Save or choose a named layout. The current ready-to-use layout is
+   `USDJPY 2Y D1 TN aspects` for 16 July 2024 through 16 July 2026.
+
+MT5 remains data-only throughout this workflow. Capturing, promoting, generating,
+and activating research data cannot place an order.
 
 ## Verify
 

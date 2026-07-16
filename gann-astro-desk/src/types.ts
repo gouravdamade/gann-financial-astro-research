@@ -298,7 +298,7 @@ export type DataArtifact = {
 
 export type Mt5HistorySnapshot = {
   snapshotId: string
-  contract: 'MT5_TIMESTAMPED_CLOSED_BARS_V1'
+  contract: 'MT5_TIMESTAMPED_CLOSED_BARS_V1' | 'MT5_TIMESTAMP_NORMALIZED_CLOSED_BARS_V2'
   symbol: string
   timeframe: string
   capturedAtUtc: string
@@ -310,6 +310,11 @@ export type Mt5HistorySnapshot = {
   firstBarOpenUtc: string
   lastBarOpenUtc: string
   lastBarCloseUtc: string
+  rawFirstBarOpenServerEpochSeconds?: number
+  rawLastBarOpenServerEpochSeconds?: number
+  timeNormalizationContract?: 'GANN_MT5_SERVER_TIME_NORMALIZATION_V1'
+  timeNormalization?: Mt5TimeNormalization
+  appExecutionAllowed?: false
   incompleteBarsExcluded: number
   noLookahead: true
   immutable: true

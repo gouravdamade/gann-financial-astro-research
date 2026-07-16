@@ -1,10 +1,52 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-16 14:10 IST
+Last updated: 2026-07-16 18:37 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-16 (Measured MT5 Time Normalization 0.10.2)
+## Latest Update - 2026-07-16 (Two-Year USDJPY Aspect Chart 0.10.3)
+
+- Promoted Gann Astro Desk `0.10.3` with a ready native two-year USDJPY research
+  chart. The default named layout `USDJPY 2Y D1 TN aspects` spans 16 July 2024
+  through 16 July 2026, displays 627 D1 candles, and keeps Aspects and SR enabled.
+- Captured immutable normalized snapshot
+  `USDJPY_H1_20260716T115532Z_0fc96b3a`: 12,421 fully closed H1 bars, one
+  incomplete bar excluded, measured MT5 server offset `+10,800s`, raw server epochs
+  preserved, and parquet SHA-256
+  `0F3F4039A56FE5D10843E56FE5DAAB8879A46F0090200E5A60144188419A4D75`.
+  Promoted price source is
+  `mt5_USDJPY_H1_20260716T115532Z_0fc96b3a`.
+- Generated and activated corrected TN artifact
+  `tn_b439f7561ff547a4ad59d13217bcebde` with 2,464 aspect windows, 1,569
+  deterministic SR touches, and 8 planetary SR lines. TT remains disabled.
+- Fixed a chart viewport defect: `minBarSpacing=3` limited a roughly 1,100-pixel
+  chart to about thirteen months even though the backend returned the complete
+  range. The new 0.5-pixel zoom floor preserves normal zoom but allows all 627 D1
+  candles to fit. Added a focused regression test.
+- Verification passed: 20 frontend tests, Oxlint, TypeScript/Vite build, native
+  candidate visual QA, and candidate plus promoted-stable crash/recovery soaks.
+  Candidate report:
+  `D:\GannFinancialAstro\soak\tauri_0.10.3_20260716_125424\logs\native_soak_report.json`;
+  stable report:
+  `D:\GannFinancialAstro\soak\tauri_0.10.3_20260716_130357\logs\native_soak_report.json`.
+  Earlier in this same release cycle all 72 backend tests, Ruff, and Python byte
+  compilation also passed.
+- Promoted executable SHA-256:
+  `5B078630CCFE18DF74BB877716ACAE1EC29B3E8FCC6F84189AEDBB5DEEBAE560`;
+  installer SHA-256:
+  `27C62BEBF24A64D69A45DBC7D6272A5788B66159A93F123AFDAEAC55D8BF523C`.
+  Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.2_20260716T130240Z`;
+  pre-promotion state:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.3_promotion_20260716T130240Z`.
+- Evidence: `two_year_aspect_chart_release_20260716.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260716_183944_two_year_aspect_chart_v0103`.
+- Safety remains unchanged: MT5 is data-only, `tradeAllowed=false`,
+  `appExecutionAllowed=false`, and the chart is retrospective research evidence,
+  not walk-forward certification.
+
+## Previous Update - 2026-07-16 (Measured MT5 Time Normalization 0.10.2)
 
 - Promoted Gann Astro Desk `0.10.2` with measured, fresh MT5 server-time
   normalization. Read-only service `GannClockProbe` writes

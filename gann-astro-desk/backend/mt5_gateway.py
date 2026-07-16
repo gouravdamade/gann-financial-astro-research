@@ -7,11 +7,17 @@ import threading
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 import pandas as pd
 
-from mt5_clock import default_clock_probe_path, deploy_clock_probe
+from mt5_clock import (
+    TIME_NORMALIZATION_CONTRACT,
+    default_clock_probe_path,
+    deploy_clock_probe,
+    read_clock_probe,
+    time_normalization_evidence,
+)
 
 
 TIMEFRAME_SECONDS = {
@@ -20,6 +26,7 @@ TIMEFRAME_SECONDS = {
     "H4": 4 * 60 * 60,
     "D1": 24 * 60 * 60,
 }
+NORMALIZED_SNAPSHOT_CONTRACT = "MT5_TIMESTAMP_NORMALIZED_CLOSED_BARS_V2"
 
 
 class Mt5Gateway:
@@ -76,6 +83,36 @@ class Mt5Gateway:
 
             self._mt5 = mt5
         return self._mt5
+
+    def _normalization_evidence_locked(
+        self,
+        mt5: Any,
+        symbol: str,
+        observed_at: datetime,
+        clock_probe: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        tick = mt5.symbol_info_tick(symbol)
+        if tick is None:
+            raise RuntimeError("MT5 did not expose a timestamped market tick")
+        current_h1 = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_H1, 0, 1)
+        if current_h1 is None or len(current_h1) != 1:
+            raise RuntimeError("MT5 did not expose the current H1 bar timestamp")
+        status = self.status()
+        probe_path = default_clock_probe_path(status.get("terminalCommonDataPath"))
+        probe = dict(clock_probe) if clock_probe is not None else read_clock_probe(probe_path)
+        evidence = time_normalization_evidence(
+            observed_at,
+            int(tick.time),
+            int(current_h1[-1]["time"]),
+            probe,
+            expected_symbol=symbol,
+            expected_server=str(status.get("server") or "") or None,
+            expected_terminal_build=int(status.get("terminalBuild") or 0) or None,
+        )
+        if not evidence["valid"]:
+            issue = "; ".join(evidence["validationIssues"])
+            raise RuntimeError(f"MT5 server-time normalization failed: {issue}")
+        return evidence
 
     def connect(self) -> bool:
         with self._terminal_lock:
@@ -214,6 +251,7 @@ class Mt5Gateway:
         output_root: Path,
         *,
         captured_at: datetime | None = None,
+        clock_probe: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         normalized_symbol = symbol.upper().strip()
         normalized_timeframe = timeframe.upper().strip()
@@ -249,17 +287,33 @@ class Mt5Gateway:
             }[normalized_timeframe]
             if not mt5.symbol_select(normalized_symbol, True):
                 raise RuntimeError(f"MT5 symbol is unavailable: {normalized_symbol}")
+            normalization = self._normalization_evidence_locked(
+                mt5,
+                normalized_symbol,
+                captured,
+                clock_probe,
+            )
+            server_offset = timedelta(seconds=int(normalization["serverOffsetSeconds"]))
+            query_start = requested_start + server_offset
+            query_end = effective_end + server_offset
             rates = mt5.copy_rates_range(
                 normalized_symbol,
                 timeframe_value,
-                requested_start,
-                effective_end,
+                query_start,
+                query_end,
             )
             if rates is None or len(rates) == 0:
                 raise RuntimeError(str(mt5.last_error()))
 
         frame = pd.DataFrame(rates)
-        frame["time"] = pd.to_datetime(frame["time"], unit="s", utc=True)
+        frame["raw_time"] = pd.to_numeric(frame["time"], errors="raise").astype("int64")
+        frame["time"] = pd.to_datetime(
+            frame["raw_time"] - int(normalization["serverOffsetSeconds"]),
+            unit="s",
+            utc=True,
+        )
+        if frame["time"].duplicated().any() or not frame["time"].is_monotonic_increasing:
+            raise RuntimeError("Normalized MT5 snapshot timestamps are not unique and increasing")
         frame = frame[
             (frame["time"] >= pd.Timestamp(requested_start))
             & (frame["time"] <= pd.Timestamp(effective_end))
@@ -277,7 +331,16 @@ class Mt5Gateway:
             if column not in frame:
                 frame[column] = 0
         frame = frame.set_index("time")[
-            ["open", "high", "low", "close", "tick_volume", "spread", "real_volume"]
+            [
+                "open",
+                "high",
+                "low",
+                "close",
+                "tick_volume",
+                "spread",
+                "real_volume",
+                "raw_time",
+            ]
         ].sort_index()
         frame.index.name = "time"
 
@@ -301,22 +364,29 @@ class Mt5Gateway:
         last_bar_close = last_bar_open + timedelta(seconds=TIMEFRAME_SECONDS[normalized_timeframe])
         manifest = {
             "snapshotId": snapshot_id,
-            "contract": "MT5_TIMESTAMPED_CLOSED_BARS_V1",
+            "contract": NORMALIZED_SNAPSHOT_CONTRACT,
             "symbol": normalized_symbol,
             "timeframe": normalized_timeframe,
             "source": "MetaTrader5.copy_rates_range",
             "capturedAtUtc": captured.isoformat(timespec="seconds"),
             "requestedStartUtc": requested_start.isoformat(timespec="seconds"),
             "requestedEndUtc": requested_end.isoformat(timespec="seconds"),
+            "queryStartServerEncoded": query_start.isoformat(timespec="seconds"),
+            "queryEndServerEncoded": query_end.isoformat(timespec="seconds"),
             "asOfUtc": effective_end.isoformat(timespec="seconds"),
             "futureRequestClamped": requested_end > captured,
             "barCount": int(len(frame)),
             "firstBarOpenUtc": frame.index.min().isoformat(),
             "lastBarOpenUtc": frame.index.max().isoformat(),
             "lastBarCloseUtc": last_bar_close.isoformat(timespec="seconds"),
+            "rawFirstBarOpenServerEpochSeconds": int(frame["raw_time"].iloc[0]),
+            "rawLastBarOpenServerEpochSeconds": int(frame["raw_time"].iloc[-1]),
             "incompleteBarsExcluded": excluded_incomplete,
             "noLookahead": True,
             "immutable": True,
+            "timeNormalizationContract": TIME_NORMALIZATION_CONTRACT,
+            "timeNormalization": normalization,
+            "appExecutionAllowed": False,
             "parquetPath": str(parquet_path),
             "parquetSha256": digest.hexdigest().upper(),
             "accountLogin": status.get("accountLogin"),

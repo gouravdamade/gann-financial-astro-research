@@ -14,6 +14,8 @@ import pandas as pd
 
 
 SNAPSHOT_CONTRACT = "MT5_TIMESTAMPED_CLOSED_BARS_V1"
+NORMALIZED_SNAPSHOT_CONTRACT = "MT5_TIMESTAMP_NORMALIZED_CLOSED_BARS_V2"
+SUPPORTED_SNAPSHOT_CONTRACTS = {SNAPSHOT_CONTRACT, NORMALIZED_SNAPSHOT_CONTRACT}
 PROMOTED_PRICE_CONTRACT = "PROMOTED_MT5_PRICE_SOURCE_V1"
 REQUIRED_PRICE_COLUMNS = ("open", "high", "low", "close")
 TIMEFRAME_SECONDS = {
@@ -100,7 +102,8 @@ def validate_snapshot(snapshot_root: Path, snapshot_id: str) -> tuple[dict[str, 
         raise ValueError("snapshot manifest must be an object")
     if str(manifest.get("snapshotId") or "") != normalized_id:
         raise ValueError("snapshot manifest id does not match its filename")
-    if manifest.get("contract") != SNAPSHOT_CONTRACT:
+    snapshot_contract = str(manifest.get("contract") or "")
+    if snapshot_contract not in SUPPORTED_SNAPSHOT_CONTRACTS:
         raise ValueError("unsupported MT5 snapshot contract")
     if manifest.get("noLookahead") is not True or manifest.get("immutable") is not True:
         raise ValueError("snapshot is not marked immutable and no-lookahead")
@@ -115,6 +118,26 @@ def validate_snapshot(snapshot_root: Path, snapshot_id: str) -> tuple[dict[str, 
 
     as_of = pd.Timestamp(manifest.get("asOfUtc"))
     frame = validate_price_frame(pd.read_parquet(price_path), str(manifest.get("timeframe")), as_of)
+    if snapshot_contract == NORMALIZED_SNAPSHOT_CONTRACT:
+        normalization = manifest.get("timeNormalization") or {}
+        if (
+            normalization.get("contract") != "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
+            or normalization.get("valid") is not True
+        ):
+            raise ValueError("normalized snapshot is missing valid MT5 clock evidence")
+        if "raw_time" not in frame.columns:
+            raise ValueError("normalized snapshot does not preserve raw MT5 timestamps")
+        raw_time = pd.to_numeric(frame["raw_time"], errors="coerce")
+        if raw_time.isna().any():
+            raise ValueError("normalized snapshot contains invalid raw MT5 timestamps")
+        offset = int(normalization.get("serverOffsetSeconds") or 0)
+        normalized_epoch = frame.index.as_unit("ns").asi8 // 1_000_000_000
+        if not np.array_equal(raw_time.to_numpy(dtype="int64") - offset, normalized_epoch):
+            raise ValueError("normalized snapshot raw/UTC timestamps are inconsistent")
+        if int(manifest.get("rawFirstBarOpenServerEpochSeconds") or 0) != int(raw_time.iloc[0]):
+            raise ValueError("normalized snapshot raw first bar does not match its manifest")
+        if int(manifest.get("rawLastBarOpenServerEpochSeconds") or 0) != int(raw_time.iloc[-1]):
+            raise ValueError("normalized snapshot raw last bar does not match its manifest")
     if int(manifest.get("barCount") or -1) != len(frame):
         raise ValueError("snapshot bar count does not match its manifest")
     if pd.Timestamp(manifest.get("firstBarOpenUtc")) != frame.index.min():
@@ -169,7 +192,7 @@ def promote_snapshot(
         "symbol": str(snapshot["symbol"]).upper(),
         "sourceTimeframe": str(snapshot["timeframe"]).upper(),
         "contract": PROMOTED_PRICE_CONTRACT,
-        "sourceSnapshotContract": SNAPSHOT_CONTRACT,
+        "sourceSnapshotContract": snapshot["contract"],
         "sourceSnapshotId": snapshot["snapshotId"],
         "sourceSnapshotManifestPath": snapshot["manifestPath"],
         "sourceSnapshotManifestSha256": file_sha256(Path(snapshot["manifestPath"])),

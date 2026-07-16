@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.2-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.3-tauri",
     [int]$DurationSeconds = 20,
     [switch]$SkipCrashRecovery
 )
@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
 }
 
 $session = [DateTime]::UtcNow.ToString("yyyyMMdd_HHmmss")
-$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.2_$session"
+$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.3_$session"
 $logsRoot = Join-Path $dataRoot "logs"
 New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
