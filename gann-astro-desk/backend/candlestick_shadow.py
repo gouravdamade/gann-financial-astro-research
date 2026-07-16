@@ -15,16 +15,21 @@ import numpy as np
 import pandas as pd
 
 from candlestick_analysis import METHODOLOGY_VERSION, _records
+from mt5_clock import (
+    default_clock_probe_path,
+    normalization_probe_identity,
+    normalize_bars,
+    read_clock_probe,
+    time_normalization_evidence,
+)
 
 
-LEDGER_CONTRACT = "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2"
-DECISION_CONTRACT = "GANN_CANDLESTICK_PROSPECTIVE_DECISION_V2"
-OUTCOME_CONTRACT = "GANN_CANDLESTICK_PROSPECTIVE_6BAR_OUTCOME_V2"
-TRIAL_CONTRACT = "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V2"
+LEDGER_CONTRACT = "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3"
+DECISION_CONTRACT = "GANN_CANDLESTICK_PROSPECTIVE_DECISION_V3"
+OUTCOME_CONTRACT = "GANN_CANDLESTICK_PROSPECTIVE_6BAR_OUTCOME_V3"
+TRIAL_CONTRACT = "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3"
 ARTIFACT_CONTRACT = "GANN_CANDLESTICK_FROZEN_MODEL_ARTIFACT_V1"
 MODEL_CONTRACT = "GANN_CANDLESTICK_TRANSPARENT_LOGISTIC_MODEL_V1"
-MARKET_CLOCK_CONTRACT = "GANN_MT5_MARKET_CLOCK_SKEW_LOCK_V1"
-MAX_MARKET_CLOCK_SKEW_SECONDS = 300
 GENESIS_HASH = "0" * 64
 BAR_DELTA = pd.Timedelta(hours=1)
 
@@ -84,22 +89,6 @@ def _utc_timestamp(value: Any, label: str) -> pd.Timestamp:
 
 def _utc_now() -> pd.Timestamp:
     return pd.Timestamp(datetime.now(timezone.utc))
-
-
-def market_clock_evidence(observed_at: Any, market_time_utc: Any) -> dict[str, Any]:
-    observed = _utc_timestamp(observed_at, "observed_at")
-    market = _utc_timestamp(market_time_utc, "market_time_utc")
-    skew_seconds = (market - observed).total_seconds()
-    valid = abs(skew_seconds) <= MAX_MARKET_CLOCK_SKEW_SECONDS
-    return {
-        "contract": MARKET_CLOCK_CONTRACT,
-        "observedAtUtc": observed.isoformat(),
-        "marketTimeUtc": market.isoformat(),
-        "skewSeconds": skew_seconds,
-        "maximumAbsoluteSkewSeconds": MAX_MARKET_CLOCK_SKEW_SECONDS,
-        "valid": valid,
-        "failureMode": "skip_without_append",
-    }
 
 
 def _model_identity(model: Mapping[str, Any]) -> dict[str, Any]:
@@ -255,6 +244,9 @@ def feature_snapshot(
     atr_price = atr_pips * pip_size
     patterns = list(record.get("patterns") or [])
     pattern_map = {str(item.get("name") or ""): item for item in patterns}
+    raw_decision_bar_open = int(
+        source.get("raw_time", int(decision_open.timestamp()))
+    )
     features: dict[str, float] = {
         "body_signed_fraction": signed_body / candle_range,
         "upper_wick_fraction": float(record["upperWickFraction"]),
@@ -284,6 +276,9 @@ def feature_snapshot(
     input_rows = [
         {
             "time": timestamp.isoformat(),
+            "rawServerEpochSeconds": int(
+                row.get("raw_time", int(timestamp.timestamp()))
+            ),
             "open": float(row.open),
             "high": float(row.high),
             "low": float(row.low),
@@ -294,6 +289,8 @@ def feature_snapshot(
     return {
         "decisionBarOpenUtc": decision_open.isoformat(),
         "featureAvailableAtUtc": feature_available.isoformat(),
+        "rawDecisionBarOpenServerEpochSeconds": raw_decision_bar_open,
+        "rawFeatureAvailableServerEpochSeconds": raw_decision_bar_open + 3600,
         "captureLagSeconds": int(lag.total_seconds()),
         "ohlc": input_rows[-1],
         "features": features,
@@ -330,7 +327,7 @@ def build_decision_payload(
     snapshot: Mapping[str, Any],
     artifact: Mapping[str, Any],
     observed_at: Any,
-    market_clock: Mapping[str, Any],
+    time_normalization: Mapping[str, Any],
 ) -> dict[str, Any]:
     now = _utc_timestamp(observed_at, "observed_at")
     primary = evaluate_model(artifact["primaryModel"], snapshot["features"])
@@ -359,6 +356,12 @@ def build_decision_payload(
         "diagnostics": diagnostics,
         "decisionBarOpenUtc": snapshot["decisionBarOpenUtc"],
         "featureAvailableAtUtc": snapshot["featureAvailableAtUtc"],
+        "rawDecisionBarOpenServerEpochSeconds": snapshot[
+            "rawDecisionBarOpenServerEpochSeconds"
+        ],
+        "rawFeatureAvailableServerEpochSeconds": snapshot[
+            "rawFeatureAvailableServerEpochSeconds"
+        ],
         "captureLagSeconds": snapshot["captureLagSeconds"],
         "ohlc": snapshot["ohlc"],
         "features": snapshot["features"],
@@ -367,7 +370,7 @@ def build_decision_payload(
         "atr14Pips": snapshot["atr14Pips"],
         "inputBars": snapshot["inputBars"],
         "inputBarsSha256": snapshot["inputBarsSha256"],
-        "marketClock": dict(market_clock),
+        "timeNormalization": dict(time_normalization),
         "holdingBars": int(artifact["decision"]["holdingBars"]),
         "entryPolicy": "next_bar_open",
         "exitPolicy": "sixth_held_bar_close",
@@ -390,6 +393,7 @@ def build_outcome_payload(
     frame: pd.DataFrame,
     artifact: Mapping[str, Any],
     observed_at: Any,
+    time_normalization: Mapping[str, Any],
 ) -> dict[str, Any] | None:
     now = _utc_timestamp(observed_at, "observed_at")
     feature_time = _utc_timestamp(
@@ -409,6 +413,12 @@ def build_outcome_payload(
     exit_time = exit_open_time + BAR_DELTA
     entry_price = float(selected.iloc[0]["open"])
     exit_price = float(selected.iloc[-1]["close"])
+    raw_entry_time = int(
+        selected.iloc[0].get("raw_time", int(entry_time.timestamp()))
+    )
+    raw_exit_open_time = int(
+        selected.iloc[-1].get("raw_time", int(exit_open_time.timestamp()))
+    )
     pip_size = float(artifact["decision"]["pipSize"])
     gross_long = (exit_price - entry_price) / pip_size
     spread = float(artifact["costs"]["fallbackSpreadPips"])
@@ -434,6 +444,9 @@ def build_outcome_payload(
         "recordedAtUtc": now.isoformat(),
         "entryTimeUtc": entry_time.isoformat(),
         "exitTimeUtc": exit_time.isoformat(),
+        "rawEntryBarOpenServerEpochSeconds": raw_entry_time,
+        "rawExitBarOpenServerEpochSeconds": raw_exit_open_time,
+        "rawExitAvailableServerEpochSeconds": raw_exit_open_time + 3600,
         "entryPrice": entry_price,
         "exitPrice": exit_price,
         "heldBars": holding_bars,
@@ -443,6 +456,10 @@ def build_outcome_payload(
         "slippagePips": slippage,
         "totalCostPips": total_cost,
         "spreadSource": "frozen_fixed_fallback",
+        "timeNormalization": dict(time_normalization),
+        "decisionTimeNormalizationSha256": _fingerprint(
+            decision_payload["timeNormalization"]
+        ),
         "primary": candidate_result(decision_payload["primary"]),
         "diagnostics": [candidate_result(item) for item in decision_payload["diagnostics"]],
         "guardrails": {
@@ -552,11 +569,7 @@ class CandlestickShadowStore:
             "costs": self.artifact["costs"],
             "retrospectiveGate": self.artifact["retrospectiveGate"],
             "guardrails": self.artifact["guardrails"],
-            "marketClock": {
-                "contract": MARKET_CLOCK_CONTRACT,
-                "maximumAbsoluteSkewSeconds": MAX_MARKET_CLOCK_SKEW_SECONDS,
-                "failureMode": "skip_without_append",
-            },
+            "timeNormalization": normalization_probe_identity(),
         }
 
     def ensure_manifest(self) -> None:
@@ -781,12 +794,18 @@ class CandlestickShadowSupervisor:
         *,
         model_path: Path | str,
         database_path: Path | str,
+        clock_probe_path: Path | str | None = None,
         autostart: bool = True,
         poll_seconds: float = 20.0,
     ) -> None:
         self.gateway = gateway
         self.artifact = load_frozen_model(model_path)
         self.store = CandlestickShadowStore(database_path, self.artifact)
+        self.clock_probe_path = (
+            Path(clock_probe_path).expanduser().resolve()
+            if clock_probe_path is not None
+            else None
+        )
         self.poll_seconds = max(2.0, float(poll_seconds))
         self._lock = threading.RLock()
         self._stop = threading.Event()
@@ -797,6 +816,7 @@ class CandlestickShadowSupervisor:
             "decisionAppended": False,
             "outcomesAppended": 0,
             "message": "Waiting for the first read-only MT5 scan.",
+            "timeNormalization": None,
         }
         if autostart:
             self.start()
@@ -834,44 +854,83 @@ class CandlestickShadowSupervisor:
         *,
         observed_at: Any | None = None,
         bars: list[dict[str, Any]] | None = None,
-        market_time_utc: Any | None = None,
+        clock_probe: Mapping[str, Any] | None = None,
+        raw_market_tick_epoch_seconds: int | None = None,
     ) -> dict[str, Any]:
         now = _utc_timestamp(observed_at or _utc_now(), "observed_at")
         evidence = bars if bars is not None else self.gateway.bars("USDJPY", "H1", 5000)
-        market_time = market_time_utc
-        if market_time is None:
-            status = self.gateway.status() if callable(getattr(self.gateway, "status", None)) else {}
-            market_time = status.get("lastTickUtc")
-        if market_time is None:
+        status = (
+            self.gateway.status()
+            if callable(getattr(self.gateway, "status", None))
+            else {}
+        )
+        raw_tick = raw_market_tick_epoch_seconds
+        if raw_tick is None:
+            raw_tick = status.get("rawLastTickServerEpochSeconds")
+        if raw_tick is None:
             with self._lock:
                 self._last_scan = {
                     "state": "skipped",
                     "observedAtUtc": now.isoformat(),
                     "decisionAppended": False,
                     "outcomesAppended": 0,
-                    "message": "MT5 did not expose a timestamped market tick; no entry was appended.",
-                    "marketClock": None,
+                    "message": "MT5 did not expose a raw timestamped market tick; no entry was appended.",
+                    "timeNormalization": None,
                 }
             return self.status()
-        clock = market_clock_evidence(now, market_time)
-        if not clock["valid"]:
+        try:
+            raw_h1 = max(int(row["time"]) for row in evidence)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("MT5 H1 evidence does not expose raw server timestamps") from exc
+        probe_path = self.clock_probe_path or default_clock_probe_path(
+            status.get("terminalCommonDataPath")
+        )
+        try:
+            probe = dict(clock_probe) if clock_probe is not None else read_clock_probe(probe_path)
+        except (OSError, ValueError) as exc:
             with self._lock:
                 self._last_scan = {
                     "state": "skipped",
                     "observedAtUtc": now.isoformat(),
                     "decisionAppended": False,
                     "outcomesAppended": 0,
-                    "message": (
-                        f"MT5 market clock skew is {clock['skewSeconds']:+.1f} seconds; "
-                        f"maximum is {MAX_MARKET_CLOCK_SKEW_SECONDS}. No entry was appended."
-                    ),
-                    "marketClock": clock,
+                    "message": f"{exc}. No entry was appended.",
+                    "timeNormalization": None,
+                    "clockProbePath": str(probe_path),
                 }
             return self.status()
-        frame = bars_to_frame(evidence)
+        normalization = time_normalization_evidence(
+            now.to_pydatetime(),
+            int(raw_tick),
+            raw_h1,
+            probe,
+            expected_symbol=str(self.artifact["symbol"]),
+            expected_server=str(status.get("server") or "") or None,
+            expected_terminal_build=int(status.get("terminalBuild") or 0) or None,
+        )
+        if not normalization["valid"]:
+            issue = "; ".join(normalization["validationIssues"])
+            with self._lock:
+                self._last_scan = {
+                    "state": "skipped",
+                    "observedAtUtc": now.isoformat(),
+                    "decisionAppended": False,
+                    "outcomesAppended": 0,
+                    "message": f"MT5 server-time normalization failed: {issue}. No entry was appended.",
+                    "timeNormalization": normalization,
+                    "clockProbePath": str(probe_path),
+                }
+            return self.status()
+        frame = bars_to_frame(normalize_bars(evidence, normalization))
         outcomes = 0
         for decision_payload in self.store.pending_decisions():
-            outcome = build_outcome_payload(decision_payload, frame, self.artifact, now)
+            outcome = build_outcome_payload(
+                decision_payload,
+                frame,
+                self.artifact,
+                now,
+                normalization,
+            )
             if outcome is None:
                 continue
             if self.store.append(
@@ -888,7 +947,7 @@ class CandlestickShadowSupervisor:
         try:
             snapshot = feature_snapshot(frame, self.artifact, now)
             decision_payload = build_decision_payload(
-                snapshot, self.artifact, now, clock
+                snapshot, self.artifact, now, normalization
             )
             if self.store.has_decision(decision_payload["decisionId"]):
                 state = "current"
@@ -913,7 +972,8 @@ class CandlestickShadowSupervisor:
                 "decisionAppended": decision_appended,
                 "outcomesAppended": outcomes,
                 "message": message,
-                "marketClock": clock,
+                "timeNormalization": normalization,
+                "clockProbePath": str(probe_path),
             }
         return self.status()
 

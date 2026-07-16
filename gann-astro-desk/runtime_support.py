@@ -100,6 +100,9 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     os.environ["GANN_ASTRO_PRICE_SOURCES_DIR"] = str(paths.data_root / "price_sources")
     os.environ["GANN_ASTRO_ALLOWED_ORIGIN"] = "*"
     os.environ["GANN_ASTRO_CODEX_URL"] = f"http://127.0.0.1:{codex_port}"
+    packaged_clock_probe = paths.bundle_root / "mt5"
+    if packaged_clock_probe.is_dir():
+        os.environ["GANN_ASTRO_MT5_CLOCK_PROBE_BUNDLE"] = str(packaged_clock_probe)
     packaged_corpus = paths.project_root / "jyotish" / "corpus_chunks.jsonl"
     source_corpus = paths.project_root / "jyotish_agent" / "corpus_chunks.jsonl"
     corpus = packaged_corpus if packaged_corpus.is_file() else source_corpus
@@ -124,7 +127,7 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     if candle_model.is_file():
         os.environ["GANN_ASTRO_CANDLE_SHADOW_MODEL"] = str(candle_model)
     os.environ["GANN_ASTRO_CANDLE_SHADOW_DB"] = str(
-        paths.data_root / "candlestick_shadow_v2.sqlite"
+        paths.data_root / "candlestick_shadow_v3.sqlite"
     )
     packaged_ephemeris = paths.project_root / "sweph"
     if packaged_ephemeris.is_dir():

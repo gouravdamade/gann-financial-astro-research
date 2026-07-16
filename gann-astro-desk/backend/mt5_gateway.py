@@ -4,13 +4,14 @@ import hashlib
 import json
 import os
 import threading
-import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
+
+from mt5_clock import default_clock_probe_path, deploy_clock_probe
 
 
 TIMEFRAME_SECONDS = {
@@ -34,8 +35,13 @@ class Mt5Gateway:
             "state": "starting" if autoconnect else "disabled",
             "symbol": symbol,
             "connected": False,
+            "terminalAllowsTrading": False,
+            "accountAllowsTrading": False,
+            "accountExpertTradingAllowed": False,
+            "appExecutionAllowed": False,
             "tradeAllowed": False,
             "lastError": "",
+            "executionMode": "read_only_market_data",
             "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }
 
@@ -112,18 +118,51 @@ class Mt5Gateway:
                     lastError=str(mt5.last_error()),
                 )
                 return False
-            tick_time = datetime.fromtimestamp(int(tick.time), tz=timezone.utc).isoformat() if tick else None
+            raw_tick_epoch = int(tick.time) if tick else None
+            raw_tick_time = (
+                datetime.fromtimestamp(raw_tick_epoch, tz=timezone.utc).isoformat()
+                if raw_tick_epoch is not None
+                else None
+            )
+            common_data_path = str(getattr(terminal, "commondata_path", "") or "")
+            terminal_data_path = str(getattr(terminal, "data_path", "") or "")
+            try:
+                deployment = deploy_clock_probe(
+                    os.environ.get("GANN_ASTRO_MT5_CLOCK_PROBE_BUNDLE"),
+                    terminal_data_path,
+                )
+            except OSError as exc:
+                deployment = {
+                    "contract": "GANN_MT5_CLOCK_PROBE_DEPLOYMENT_V1",
+                    "available": True,
+                    "deployed": False,
+                    "changed": False,
+                    "message": str(exc),
+                    "appExecutionAllowed": False,
+                }
             self._set_status(
                 state="connected",
                 connected=True,
+                terminalAllowsTrading=bool(getattr(terminal, "trade_allowed", False)),
+                accountAllowsTrading=bool(getattr(account, "trade_allowed", False)),
+                accountExpertTradingAllowed=bool(getattr(account, "trade_expert", False)),
+                appExecutionAllowed=False,
                 tradeAllowed=False,
                 accountLogin=int(account.login),
                 server=str(account.server),
                 company=str(account.company),
                 terminalBuild=int(getattr(terminal, "build", 0)),
+                terminalPath=str(getattr(terminal, "path", "") or ""),
+                terminalDataPath=terminal_data_path,
+                terminalCommonDataPath=common_data_path,
+                clockProbePath=str(default_clock_probe_path(common_data_path)),
+                clockProbeDeployment=deployment,
                 bid=float(tick.bid) if tick else None,
                 ask=float(tick.ask) if tick else None,
-                lastTickUtc=tick_time,
+                rawLastTickServerEpochSeconds=raw_tick_epoch,
+                rawLastTickMilliseconds=int(getattr(tick, "time_msc", 0)) if tick else None,
+                rawLastTickServerTime=raw_tick_time,
+                lastTickUtc=None,
                 lastError="",
                 executionMode="read_only_market_data",
             )

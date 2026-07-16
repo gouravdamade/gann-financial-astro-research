@@ -193,9 +193,12 @@ The separate `Candle shadow` dock is a prospective research observer, not the as
 shadow trial. It records only the latest fully closed USDJPY H1 candle when the app sees
 that close within the frozen 15-minute grace window; missed hours are never recreated.
 Decisions and six-actual-bar outcomes are append-only and hash chained in
-`D:\GannFinancialAstro\app_data\candlestick_shadow_v2.sqlite`. The scanner additionally
-requires the latest MT5 tick clock to remain within five minutes of system UTC; a larger
-skew fails closed without a decision or settlement. The failed named-pattern
+`D:\GannFinancialAstro\app_data\candlestick_shadow_v3.sqlite`. A packaged read-only MQL5
+service records fresh `TimeTradeServer`, `TimeGMT`, Python-comparable tick, and H1 bar
+evidence. V3 measures the broker/server offset from that evidence, normalizes raw MT5
+epochs to UTC, preserves both raw and normalized timestamps in every row, and fails closed
+without append if the probe is missing, stale, inconsistent, or off its validation grid.
+It never guesses or hardcodes a three-hour correction. The failed named-pattern
 primary remains visible, the raw-geometry model is diagnostic only, and neither can feed
 Auto Suggest, rules, official notes, the coordinator, or MT5 execution.
 

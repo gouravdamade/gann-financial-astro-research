@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.1-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.2-tauri",
     [int]$DurationSeconds = 20,
     [switch]$SkipCrashRecovery
 )
@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
 }
 
 $session = [DateTime]::UtcNow.ToString("yyyyMMdd_HHmmss")
-$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.1_$session"
+$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.2_$session"
 $logsRoot = Join-Path $dataRoot "logs"
 New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
@@ -98,6 +98,23 @@ function Invoke-JsonPost([string]$Uri, [object]$Body) {
         -Body ($Body | ConvertTo-Json -Depth 12) -TimeoutSec 10
 }
 
+function Wait-ForNormalizedShadow([int]$Port, [int]$TimeoutSeconds = 90) {
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $last = $null
+    while ((Get-Date) -lt $deadline) {
+        try {
+            $last = Invoke-RestMethod -Uri `
+                ("http://127.0.0.1:{0}/api/candlestick-shadow" -f $Port) -TimeoutSec 10
+            if ($last.shadow.lastScan.timeNormalization.valid -eq $true) {
+                return $last
+            }
+        } catch {}
+        Start-Sleep -Seconds 2
+    }
+    $message = if ($last) { [string]$last.shadow.lastScan.message } else { "no snapshot" }
+    throw "Candlestick shadow did not expose fresh MT5 time normalization: $message"
+}
+
 try {
     Write-SoakPhase "app_launching"
     $env:GANN_ASTRO_DESKTOP_DATA = $dataRoot
@@ -113,6 +130,10 @@ try {
     $report.initial_port = $initial.Port
     $report.checks.initial_health = [bool]$initial.Health.ok
     $report.checks.mt5_trade_allowed_false = $initial.Health.mt5.tradeAllowed -eq $false
+    $report.checks.mt5_app_execution_locked = `
+        $initial.Health.mt5.appExecutionAllowed -eq $false
+    $report.checks.mt5_read_only_mode = `
+        $initial.Health.mt5.executionMode -eq "read_only_market_data"
     $candleHealth = Invoke-RestMethod -Uri `
         ("http://127.0.0.1:{0}/api/local-candlestick/health" -f $initial.Port) -TimeoutSec 10
     $chart = Invoke-RestMethod -Uri `
@@ -154,12 +175,24 @@ try {
         event_id = $candleEventId
         corpus_chunks = $candleHealth.localCandlestick.corpusChunks
     })
-    $candleShadow = Invoke-RestMethod -Uri `
-        ("http://127.0.0.1:{0}/api/candlestick-shadow" -f $initial.Port) -TimeoutSec 10
+    $candleShadow = Wait-ForNormalizedShadow $initial.Port
     $report.checks.candlestick_shadow_contract = `
-        $candleShadow.shadow.contract -eq "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2"
+        $candleShadow.shadow.contract -eq "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3"
     $report.checks.candlestick_shadow_trial_frozen = `
-        $candleShadow.shadow.trial.contract -eq "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V2"
+        $candleShadow.shadow.trial.contract -eq "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3"
+    $report.checks.mt5_clock_probe_contract = `
+        $candleShadow.shadow.lastScan.timeNormalization.probe.contract -eq `
+        "GANN_MT5_CLOCK_PROBE_V1"
+    $report.checks.mt5_time_normalization_contract = `
+        $candleShadow.shadow.lastScan.timeNormalization.contract -eq `
+        "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
+    $report.checks.mt5_time_normalization_valid = `
+        $candleShadow.shadow.lastScan.timeNormalization.valid -eq $true
+    $report.checks.mt5_normalized_tick_fresh = `
+        [Math]::Abs([double]$candleShadow.shadow.lastScan.timeNormalization.normalizedMarketTickSkewSeconds) `
+        -le 300
+    $report.checks.mt5_clock_probe_fresh = `
+        [double]$candleShadow.shadow.lastScan.timeNormalization.probe.ageSeconds -le 30
     $report.checks.candlestick_shadow_chain_valid = `
         $candleShadow.shadow.integrity.ok -eq $true
     $report.checks.candlestick_shadow_failed_gate_visible = `
@@ -172,6 +205,8 @@ try {
         trial_id = $candleShadow.shadow.trial.trialId
         decisions = $candleShadow.shadow.summary.decisions
         scan_state = $candleShadow.shadow.lastScan.state
+        server_offset_seconds = `
+            $candleShadow.shadow.lastScan.timeNormalization.serverOffsetSeconds
     })
 
     $layoutPayload = [ordered]@{

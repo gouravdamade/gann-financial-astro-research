@@ -4,6 +4,7 @@ import unittest
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 
@@ -18,6 +19,33 @@ class FakeMt5:
 
     def symbol_select(self, _symbol: str, _enabled: bool) -> bool:
         return True
+
+    def terminal_info(self):
+        return SimpleNamespace(
+            connected=True,
+            trade_allowed=True,
+            build=6012,
+            path="C:/Program Files/MetaTrader 5",
+            data_path="C:/MetaQuotes/Terminal/Test",
+            commondata_path="C:/MetaQuotes/Terminal/Common",
+        )
+
+    def account_info(self):
+        return SimpleNamespace(
+            login=123,
+            server="Test-Demo",
+            company="MetaQuotes Ltd.",
+            trade_allowed=True,
+            trade_expert=True,
+        )
+
+    def symbol_info_tick(self, _symbol: str):
+        return SimpleNamespace(
+            time=1_752_655_200,
+            time_msc=1_752_655_200_500,
+            bid=145.0,
+            ask=145.01,
+        )
 
     def copy_rates_from_pos(self, _symbol: str, _timeframe: int, _position: int, count: int):
         return [
@@ -66,6 +94,20 @@ class Mt5GatewayTests(unittest.TestCase):
         gateway = Mt5Gateway(autoconnect=False)
         with self.assertRaises(ValueError):
             gateway.bars("USDJPY;DROP", "H1", 20)
+
+    def test_terminal_permission_is_disclosed_while_app_execution_stays_locked(self) -> None:
+        gateway = Mt5Gateway(autoconnect=False)
+        gateway._mt5 = FakeMt5()
+        self.assertTrue(gateway._refresh())
+        status = gateway.status()
+        self.assertTrue(status["terminalAllowsTrading"])
+        self.assertTrue(status["accountAllowsTrading"])
+        self.assertTrue(status["accountExpertTradingAllowed"])
+        self.assertFalse(status["appExecutionAllowed"])
+        self.assertFalse(status["tradeAllowed"])
+        self.assertEqual(status["executionMode"], "read_only_market_data")
+        self.assertEqual(status["rawLastTickServerEpochSeconds"], 1_752_655_200)
+        self.assertIsNone(status["lastTickUtc"])
 
     def test_history_snapshot_excludes_unclosed_bar_and_records_as_of_contract(self) -> None:
         gateway = Mt5Gateway(autoconnect=False)

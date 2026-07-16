@@ -17,6 +17,15 @@ function signed(value?: number | null): string {
   return `${value > 0 ? '+' : ''}${value.toFixed(1)}`
 }
 
+function offsetLabel(seconds?: number): string {
+  if (seconds == null) return '-'
+  const sign = seconds >= 0 ? '+' : '-'
+  const absolute = Math.abs(seconds)
+  const hours = Math.floor(absolute / 3600).toString().padStart(2, '0')
+  const minutes = Math.floor((absolute % 3600) / 60).toString().padStart(2, '0')
+  return `${sign}${hours}:${minutes}`
+}
+
 function recordValues(record: CandlestickShadowRecord): {
   primary: string
   diagnostic: string
@@ -66,9 +75,12 @@ export function CandlestickShadowPanel({ snapshot, busy, error, onScan }: Candle
         <strong>{snapshot?.lastScan.state.replaceAll('_', ' ') ?? 'starting'}</strong>
         <span>{snapshot?.lastScan.message ?? 'Waiting for the first read-only MT5 scan.'}</span>
         {snapshot?.lastScan.observedAtUtc && <span>{new Date(snapshot.lastScan.observedAtUtc).toLocaleString()}</span>}
-        {snapshot?.lastScan.marketClock && (
-          <span className={snapshot.lastScan.marketClock.valid ? '' : 'negative'}>
-            MT5 clock {snapshot.lastScan.marketClock.skewSeconds > 0 ? '+' : ''}{snapshot.lastScan.marketClock.skewSeconds.toFixed(0)}s
+        {snapshot?.lastScan.timeNormalization && (
+          <span className={snapshot.lastScan.timeNormalization.valid ? '' : 'negative'}>
+            server {offsetLabel(snapshot.lastScan.timeNormalization.serverOffsetSeconds)} · normalized skew{' '}
+            {snapshot.lastScan.timeNormalization.normalizedMarketTickSkewSeconds > 0 ? '+' : ''}
+            {snapshot.lastScan.timeNormalization.normalizedMarketTickSkewSeconds.toFixed(0)}s · probe{' '}
+            {snapshot.lastScan.timeNormalization.probe.ageSeconds.toFixed(0)}s old
           </span>
         )}
         {error && <span className="negative">{error}</span>}
@@ -78,7 +90,12 @@ export function CandlestickShadowPanel({ snapshot, busy, error, onScan }: Candle
         <strong>Frozen transparent model</strong>
         <span title={snapshot?.trial.trialId}>trial {snapshot?.trial.trialId.slice(0, 12) ?? '-'}</span>
         <span title={snapshot?.model.primaryModelId}>primary {snapshot?.model.primaryModelId.slice(0, 12) ?? '-'}</span>
-        <span>15-minute grace; missed bars are never backfilled; MT5 clock skew must be within 5 minutes</span>
+        <span>15-minute grace; missed bars are never backfilled; fresh MQL5 clock evidence is mandatory</span>
+        {snapshot?.lastScan.timeNormalization && (
+          <span>
+            terminal algo {snapshot.lastScan.timeNormalization.probe.terminalAllowsTrading ? 'enabled' : 'disabled'} · app execution locked
+          </span>
+        )}
         <span className="shadow-policy-lock"><LockKeyhole size={12} /> research only</span>
       </div>
       <div className="shadow-ledger-table-wrap">

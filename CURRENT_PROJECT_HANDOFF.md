@@ -1,10 +1,59 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-15 23:10 IST
+Last updated: 2026-07-16 14:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-15 (Prospective Candlestick Shadow 0.10.1)
+## Latest Update - 2026-07-16 (Measured MT5 Time Normalization 0.10.2)
+
+- Promoted Gann Astro Desk `0.10.2` with measured, fresh MT5 server-time
+  normalization. Read-only service `GannClockProbe` writes
+  `GANN_MT5_CLOCK_PROBE_V1`; the Python observer derives
+  `GANN_MT5_SERVER_TIME_NORMALIZATION_V1` from `TimeTradeServer-TimeGMT`, keeps
+  raw server epochs alongside normalized UTC, and skips without append when the
+  evidence is stale, inconsistent, drifting, or mismatched. There is no hardcoded
+  three-hour correction.
+- Added V3 contracts
+  `GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3`,
+  `GANN_CANDLESTICK_PROSPECTIVE_DECISION_V3`,
+  `GANN_CANDLESTICK_PROSPECTIVE_6BAR_OUTCOME_V3`, and
+  `GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3`. Trial ID is
+  `FD210BB9F2AD1287E23A5BFF526DD65E4C1AAF8832D0F5274805CFBB3065E0DA`.
+- Live MetaQuotes-Demo evidence measured server offset `+10,800s`, normalized the
+  tick to about 1-2 seconds from UTC, and captured the first real V3 decision at
+  `2026-07-16T08:00:16.821622Z`, 16 seconds after the H1 close. Decision
+  `6F317AD1E5A734AE606B040CA747C9E8172CC7DB94C1FA126EA7452165B73AB0`
+  correctly abstained at probability-up `0.4953679816`; later scans refused a late
+  duplicate. V3 database SHA-256 is
+  `99F91BDD9EC4CD55D13656B29AD71847550FD8ACD8F693BD26F90899AC74AC04`.
+- V2 was never opened by V3 and remains byte-identical at SHA-256
+  `98F58DE7D8EA7CB4588C1B187430EBDEA29297B8A32905B91D4D476F2B1EA4B2`.
+  The UI now distinguishes terminal/account Algo Trading permissions from the
+  immutable application lock: `MT5 data only`, `tradeAllowed=false`, and
+  `appExecutionAllowed=false`. The MQL5 probe contains no trade functions.
+- Verification passed: 19 focused tests, all 71 backend tests, 18 frontend tests,
+  Ruff, Python byte compilation, lint, TypeScript/Vite, PowerShell parsing,
+  MQL5 compilation, candidate native visual QA, and both candidate and promoted
+  stable-path crash/recovery soaks. Reports:
+  `D:\GannFinancialAstro\soak\tauri_0.10.2_20260716_082809\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.2_20260716_083516\logs\native_soak_report.json`.
+- Promoted release executable SHA-256:
+  `0CD1A63D851A89DC20185BB7D9013C8A4598D340A396BB68C5D8F6EEEC5538A2`;
+  installer SHA-256:
+  `B88F807EA0001787C6CBD523C46F7A8E9B572180AEA928D2F45B00A5A2CD2DA8`.
+  Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.1_20260716T083400Z`;
+  pre-promotion state:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.2_promotion_20260716T083400Z`.
+- Evidence: `mt5_server_time_normalization_release_20260716.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260716_141116_mt5_time_normalization_v0102`.
+- Next gate: keep V3 unchanged for at least 48 hours of clock/probe continuity,
+  then continue the longer untouched prospective cohort. The primary candle model
+  still fails its retrospective gate. Do not backfill, retune, or enable execution.
+
+## Previous Update - 2026-07-15 (Prospective Candlestick Shadow 0.10.1)
 
 - Promoted Gann Astro Desk `0.10.1` with a separate timestamp-safe USDJPY H1
   candlestick-shadow cohort. The app exposes chain state, frozen model/trial IDs,

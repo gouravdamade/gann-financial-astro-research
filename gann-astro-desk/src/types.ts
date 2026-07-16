@@ -667,6 +667,8 @@ export type CandlestickShadowPayload = {
   recordedAtUtc: string
   decisionBarOpenUtc?: string
   featureAvailableAtUtc?: string
+  rawDecisionBarOpenServerEpochSeconds?: number
+  rawFeatureAvailableServerEpochSeconds?: number
   captureLagSeconds?: number
   ohlc?: { time: string; open: number; high: number; low: number; close: number }
   patterns?: Array<{ name: string; hypothesisBias: string; basis: string; context: string }>
@@ -680,6 +682,46 @@ export type CandlestickShadowPayload = {
   targetUp?: boolean
   totalCostPips?: number
   heldBars?: number
+  timeNormalization?: Mt5TimeNormalization
+}
+
+export type Mt5ClockProbeEvidence = {
+  contract: 'GANN_MT5_CLOCK_PROBE_V1'
+  probeSequence: number
+  probePath: string
+  probeFileSha256: string
+  ageSeconds: number
+  timeGmtUtc: string
+  timeCurrentServerEncoded: string
+  timeTradeServerEncoded: string
+  rawTickServerEncoded: string
+  rawH1BarOpenServerEncoded: string
+  terminalBuild: number
+  terminalConnected: boolean
+  terminalAllowsTrading: boolean
+  accountAllowsTrading: boolean
+  accountExpertTradingAllowed: boolean
+  accountServer: string
+  symbol: string
+}
+
+export type Mt5TimeNormalization = {
+  contract: 'GANN_MT5_SERVER_TIME_NORMALIZATION_V1'
+  observedAtUtc: string
+  valid: boolean
+  failureMode: 'skip_without_append'
+  validationIssues: string[]
+  serverOffsetSeconds: number
+  rawMeasuredOffsetSeconds: number
+  offsetResidualSeconds: number
+  offsetSource: 'TimeTradeServer-TimeGMT'
+  rawMarketTickServerEncoded: string
+  normalizedMarketTickUtc: string
+  normalizedMarketTickSkewSeconds: number
+  rawH1BarOpenServerEncoded: string
+  normalizedH1BarOpenUtc: string
+  probe: Mt5ClockProbeEvidence
+  appExecutionAllowed: false
 }
 
 export type CandlestickShadowRecord = {
@@ -695,10 +737,10 @@ export type CandlestickShadowRecord = {
 }
 
 export type CandlestickShadowSnapshot = {
-  contract: 'GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2'
+  contract: 'GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3'
   trial: {
     trialId: string
-    contract: 'GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V2'
+    contract: 'GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3'
     identitySha256: string
     establishedAtUtc: string
   }
@@ -722,15 +764,8 @@ export type CandlestickShadowSnapshot = {
     decisionAppended: boolean
     outcomesAppended: number
     message: string
-    marketClock?: {
-      contract: 'GANN_MT5_MARKET_CLOCK_SKEW_LOCK_V1'
-      observedAtUtc: string
-      marketTimeUtc: string
-      skewSeconds: number
-      maximumAbsoluteSkewSeconds: number
-      valid: boolean
-      failureMode: 'skip_without_append'
-    } | null
+    timeNormalization?: Mt5TimeNormalization | null
+    clockProbePath?: string
   }
   databasePath: string
   guardrails: {
@@ -1011,6 +1046,10 @@ export type Mt5Status = {
   symbol: string
   connected: boolean
   tradeAllowed: boolean
+  terminalAllowsTrading: boolean
+  accountAllowsTrading: boolean
+  accountExpertTradingAllowed: boolean
+  appExecutionAllowed: false
   lastError: string
   updatedAt: string
   accountLogin?: number
@@ -1019,6 +1058,22 @@ export type Mt5Status = {
   bid?: number | null
   ask?: number | null
   lastTickUtc?: string | null
+  rawLastTickServerEpochSeconds?: number | null
+  rawLastTickMilliseconds?: number | null
+  rawLastTickServerTime?: string | null
+  terminalPath?: string
+  terminalDataPath?: string
+  terminalCommonDataPath?: string
+  clockProbePath?: string
+  clockProbeDeployment?: {
+    contract: 'GANN_MT5_CLOCK_PROBE_DEPLOYMENT_V1'
+    available: boolean
+    deployed: boolean
+    changed: boolean
+    message?: string
+    targetRoot?: string
+    appExecutionAllowed: false
+  }
   executionMode?: string
 }
 

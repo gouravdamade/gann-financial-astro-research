@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.1-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.2-tauri",
     [switch]$SkipSidecarBuild,
     [switch]$FinalizeOnly
 )
@@ -92,8 +92,8 @@ Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.10.1"
-    status = "prospective_candlestick_shadow_candidate"
+    version = "0.10.2"
+    status = "measured_mt5_time_normalization_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -106,8 +106,10 @@ $manifest = [ordered]@{
     astronomy_contract = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2"
     chart_layout_contract = "GANN_CHART_LAYOUT_V1"
     drawing_contract = "GANN_RESEARCH_CHART_DRAWING_V1"
-    candlestick_shadow_contract = "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V2"
-    candlestick_trial_contract = "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V2"
+    candlestick_shadow_contract = "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3"
+    candlestick_trial_contract = "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3"
+    mt5_clock_probe_contract = "GANN_MT5_CLOCK_PROBE_V1"
+    mt5_time_normalization_contract = "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
     mt5_execution_mode = "read_only_market_data"
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8

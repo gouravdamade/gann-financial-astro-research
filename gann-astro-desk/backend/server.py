@@ -55,7 +55,12 @@ candlestick_shadow = CandlestickShadowSupervisor(
     model_path=default_model_path(repository.paths.project_root),
     database_path=Path(
         os.environ.get("GANN_ASTRO_CANDLE_SHADOW_DB")
-        or repository.paths.annotation_db.parent / "candlestick_shadow_v2.sqlite"
+        or repository.paths.annotation_db.parent / "candlestick_shadow_v3.sqlite"
+    ),
+    clock_probe_path=(
+        Path(os.environ["GANN_ASTRO_MT5_CLOCK_PROBE"])
+        if os.environ.get("GANN_ASTRO_MT5_CLOCK_PROBE")
+        else None
     ),
     autostart=os.environ.get("GANN_ASTRO_CANDLE_SHADOW_AUTOSTART", "1") != "0",
     poll_seconds=float(os.environ.get("GANN_ASTRO_CANDLE_SHADOW_POLL_SECONDS", "20")),
