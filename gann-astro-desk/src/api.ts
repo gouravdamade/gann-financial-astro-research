@@ -115,6 +115,7 @@ export async function fetchChart(parameters?: ChartParameters): Promise<ChartPay
     parameters.aspects.forEach((value) => query.append('aspect', value))
     parameters.excludedFamilyKeys.forEach((value) => query.append('excludeFamily', value))
     query.set('onlyTouched', String(parameters.onlyTouched))
+    query.set('aspectDurationMode', parameters.aspectDurationMode ?? 'auto')
     query.set('minDurationMinutes', String(parameters.minDurationMinutes))
     if (parameters.maxDurationMinutes != null) query.set('maxDurationMinutes', String(parameters.maxDurationMinutes))
     query.set('liveBarCount', String(parameters.liveBarCount))

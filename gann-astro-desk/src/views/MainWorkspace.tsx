@@ -39,6 +39,7 @@ import {
   scanCandlestickShadow,
 } from '../api'
 import { downloadLayoutJson } from '../chartLayouts'
+import { effectiveAspectMinDurationMinutes, formatAspectDuration } from '../aspectTimeframePolicy'
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
 import { CandlestickShadowPanel } from '../components/CandlestickShadowPanel'
@@ -464,6 +465,11 @@ export function MainWorkspace() {
     () => chart?.aspects.slice().sort((a, b) => a.start - b.start) ?? [],
     [chart],
   )
+  const appliedAspectMinimum = Number(
+    chart?.parametersApplied.effectiveMinDurationMinutes
+    ?? (parameters ? effectiveAspectMinDurationMinutes(parameters) : 0),
+  )
+  const appliedAspectMinimumLabel = formatAspectDuration(appliedAspectMinimum)
 
   const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
   const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
@@ -572,9 +578,9 @@ export function MainWorkspace() {
             <button
               className={workspace.showAspects ? 'is-active' : ''}
               onClick={() => setWorkspace((current) => ({ ...current, showAspects: !current.showAspects }))}
-              title="Show or hide aspect windows"
+              title={`Show or hide aspects lasting at least ${appliedAspectMinimumLabel} on ${chart.timeframe}`}
             >
-              {workspace.showAspects ? <Eye size={13} /> : <EyeOff size={13} />} Aspects {chart.aspects.length}
+              {workspace.showAspects ? <Eye size={13} /> : <EyeOff size={13} />} Aspects {chart.aspects.length} · ≥{appliedAspectMinimumLabel}
             </button>
             <button
               className={workspace.showSrLines ? 'is-active' : ''}

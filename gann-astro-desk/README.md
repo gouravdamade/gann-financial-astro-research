@@ -21,9 +21,13 @@ separate from live market-data concerns.
 - Planetary SR lines joined from the corrected 754-row touch artifact.
 - Clickable aspects with a detachable Analyze Aspect family window.
 - Previous/next recurrence navigation, evidence filters, and review progress.
-- Persistent parameter profiles covering market source, M30/H1/H4/D1, date range,
+- Persistent parameter profiles covering market source, M30/H1/H4/D1/W1, date range,
   TN body/aspect filters, family exclusions, duration/touch filters, planetary SR
   inputs, and birth/IPO reference coordinates.
+- Timeframe-aware aspect visibility keeps corrected event timestamps canonical while
+  requiring each visible aspect to last at least one selected chart bar: 30 minutes
+  on M30, one hour on H1, four hours on H4, one day on D1, and one week on W1.
+  Researchers can disable the automatic policy and enter an explicit duration minimum.
 - Durable corrected-TN generation jobs with validated rebuild inputs, visible stage
   progress, cancellation, restart recovery, isolated subprocesses, and inspectable logs.
 - A versioned corrected-data artifact registry with SHA-256 manifests, contract validation,

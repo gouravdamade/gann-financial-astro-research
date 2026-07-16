@@ -1,10 +1,53 @@
 ﻿# Current Project Handoff
 
-Last updated: 2026-07-17 01:08 IST
+Last updated: 2026-07-17 03:19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-17 (Proximity Chart Navigation 0.10.5)
+## Latest Update - 2026-07-17 (Timeframe-Aware Aspects and W1 0.10.6)
+
+- Promoted Gann Astro Desk `0.10.6`. Aspect visibility now follows the selected
+  chart timeframe while corrected event timestamps remain unchanged. Automatic
+  mode requires at least one full selected bar: M30 30 minutes, H1 60 minutes,
+  H4 240 minutes, D1 1,440 minutes, and W1 10,080 minutes. The parameter drawer
+  shows the applied minimum and retains an explicit manual override.
+- Added W1 end to end: Monday-anchored historical candles resampled from H1,
+  native MT5 `TIMEFRAME_W1` live bars, schema/profile/UI contracts, candlestick
+  fallback duration, and Analyze Aspect compatibility. Corrected W1 generation
+  deliberately keeps H1 source bars so canonical event/evidence timestamps are
+  not weakened by chart aggregation.
+- Verification passed: 30 frontend tests across 8 files, all 83 backend tests,
+  Oxlint, TypeScript/Vite production build, Python byte compilation, packaged
+  native visual QA, and candidate plus promoted-stable crash/recovery soaks.
+  Native QA observed H1 `43 / >=1h`, D1 `12 / >=1d`, and W1 `0 / >=1w` for the
+  same 3-17 July range; W1 rendered two Monday-anchored candles.
+- Candidate and promoted-stable soaks each passed all 28 checks with zero errors.
+  Reports:
+  `D:\GannFinancialAstro\soak\tauri_0.10.6_20260716_212702\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.6_20260716_214509\logs\native_soak_report.json`.
+  An earlier candidate attempt stopped before promotion because a MetaTrader
+  LiveUpdate notice blocked fresh authorization; dismissing the notice restored
+  the connected terminal and the unchanged candidate passed.
+- Stable executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+  SHA-256: executable
+  `92321E9F689D5D4CC104793E9D5F1FD8CB5C1DED80FD784CC4553F7F39C9A81F`,
+  installer
+  `F0F2DD3A2688EB680979AC40B45E1B4BF9D537F551BF487FA128F76B0BCF92C7`,
+  sidecar
+  `8074A56297A9CD4E4A2BB5A21DD246F168CFABA02F2B6F16FB53D3227E5051C0`.
+- Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.5_20260716T214414Z`;
+  pre-promotion state:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.6_promotion_20260716T214204Z`.
+- Evidence: `timeframe_aspect_policy_release_20260717.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_031923_timeframe_aspect_policy_v0106`.
+- Safety remains unchanged: MT5 is data-only, `tradeAllowed=false`, app
+  execution is locked, and timeframe switching cannot place orders.
+
+## Previous Update - 2026-07-17 (Proximity Chart Navigation 0.10.5)
 
 - Promoted Gann Astro Desk `0.10.5` with a compact bottom-center chart dock:
   move backward, zoom out, zoom in, and move forward. The dock appears only

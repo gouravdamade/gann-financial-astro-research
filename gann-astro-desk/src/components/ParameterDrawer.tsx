@@ -36,6 +36,10 @@ import {
   toggleValue,
 } from '../parameterUtils'
 import {
+  automaticAspectMinDurationMinutes,
+  formatAspectDuration,
+} from '../aspectTimeframePolicy'
+import {
   boundRequestedRangeToSource,
   chartTimeframeForSource,
   mt5SourceTimeframeForChart,
@@ -154,6 +158,7 @@ export function ParameterDrawer({
   const activeJob = jobs.find((job) => ['queued', 'running', 'cancelling'].includes(job.status)) ?? null
   const latestJob = activeJob ?? jobs[0] ?? null
   const activeArtifact = artifacts.find((artifact) => artifact.isActive) ?? null
+  const automaticAspectMinimum = automaticAspectMinDurationMinutes(draft.timeframe)
 
   if (!open) return null
 
@@ -578,8 +583,22 @@ export function ParameterDrawer({
           <section className="parameter-section">
             <div className="parameter-section-title"><Check size={15} /><strong>Event filters</strong></div>
             <label className="toggle-row"><span>Touch-linked cases only</span><input type="checkbox" checked={draft.onlyTouched} onChange={(event) => setDraft({ ...draft, onlyTouched: event.target.checked })} /></label>
+            <label className="toggle-row">
+              <span className="toggle-row-copy">
+                <span>Timeframe-aware duration</span>
+                <small>{draft.timeframe} minimum {formatAspectDuration(automaticAspectMinimum)}</small>
+              </span>
+              <input
+                type="checkbox"
+                checked={draft.aspectDurationMode === 'auto'}
+                onChange={(event) => setDraft({
+                  ...draft,
+                  aspectDurationMode: event.target.checked ? 'auto' : 'manual',
+                })}
+              />
+            </label>
             <div className="parameter-grid two-column">
-              <label>Min minutes<input type="number" min={0} value={draft.minDurationMinutes} onChange={(event) => setDraft({ ...draft, minDurationMinutes: Number(event.target.value) })} /></label>
+              <label>{draft.aspectDurationMode === 'auto' ? 'Applied minimum' : 'Min minutes'}<input type="number" min={0} disabled={draft.aspectDurationMode === 'auto'} value={draft.aspectDurationMode === 'auto' ? automaticAspectMinimum : draft.minDurationMinutes} onChange={(event) => setDraft({ ...draft, minDurationMinutes: Number(event.target.value) })} /></label>
               <label>Max minutes<input type="number" min={0} value={draft.maxDurationMinutes ?? ''} onChange={(event) => setDraft({ ...draft, maxDurationMinutes: event.target.value ? Number(event.target.value) : null })} /></label>
             </div>
             <div className="parameter-subtitle">Excluded families</div>

@@ -65,7 +65,15 @@ function evidenceCutoff(detail: EventDetail): string {
   const touchValue = detail.context.touch_time_local
   const touchTime = typeof touchValue === 'string' ? new Date(touchValue).getTime() : Number.NaN
   const timeframe = String(detail.chart.artifact.sourceTimeframe || detail.chart.timeframe).toUpperCase()
-  const durationMinutes = timeframe === 'M30' ? 30 : timeframe === 'H4' ? 240 : timeframe === 'D1' ? 1440 : 60
+  const durationMinutes = timeframe === 'M30'
+    ? 30
+    : timeframe === 'H4'
+      ? 240
+      : timeframe === 'D1'
+        ? 1440
+        : timeframe === 'W1'
+          ? 10080
+          : 60
   if (!Number.isFinite(touchTime)) return new Date(eventEnd).toISOString()
   const touchClose = touchTime + durationMinutes * 60_000
   return new Date(Math.max(eventStart, touchClose)).toISOString()

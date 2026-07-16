@@ -22,6 +22,7 @@ class FakeMt5:
     TIMEFRAME_H1 = 60
     TIMEFRAME_H4 = 240
     TIMEFRAME_D1 = 1440
+    TIMEFRAME_W1 = 10080
 
     def symbol_select(self, _symbol: str, _enabled: bool) -> bool:
         return True

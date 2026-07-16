@@ -15,6 +15,7 @@ from typing import Any
 
 import pandas as pd
 
+from aspect_timeframe import SUPPORTED_CHART_TIMEFRAMES, normalize_aspect_duration_mode
 from repository import (
     ASTRO_CONTRACT,
     DEFAULT_CHART_PARAMETERS,
@@ -93,8 +94,9 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
     if str(merged.get("dataSource") or "research").lower() != "research":
         raise ValueError("Generate corrected sources from Research mode, not the live-bar view")
     timeframe = str(merged.get("timeframe") or "H1").upper()
-    if timeframe not in {"M30", "H1", "H4", "D1"}:
+    if timeframe not in SUPPORTED_CHART_TIMEFRAMES:
         raise ValueError(f"Unsupported generation timeframe: {timeframe}")
+    aspect_duration_mode = normalize_aspect_duration_mode(merged.get("aspectDurationMode"))
 
     start = _timestamp(merged.get("start"), "start")
     end = _timestamp(merged.get("end"), "end")
@@ -165,6 +167,7 @@ def normalize_generation_parameters(repository: AstroRepository, value: dict[str
         "symbol": symbol,
         "dataSource": "research",
         "timeframe": timeframe,
+        "aspectDurationMode": aspect_duration_mode,
         "sourceTimeframe": source_timeframe,
         "priceSourceId": price_source["priceSourceId"],
         "priceSourceContract": price_source["contract"],

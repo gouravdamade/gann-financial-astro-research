@@ -168,10 +168,12 @@ export type ReferenceParameters = {
   longitude: number
 }
 
+export type ChartTimeframe = 'M30' | 'H1' | 'H4' | 'D1' | 'W1'
+
 export type ChartParameters = {
   symbol: string
   dataSource: ChartDataSource
-  timeframe: 'M30' | 'H1' | 'H4' | 'D1'
+  timeframe: ChartTimeframe
   priceSourceId: string
   start: string
   end: string
@@ -181,6 +183,7 @@ export type ChartParameters = {
   aspects: string[]
   excludedFamilyKeys: string[]
   onlyTouched: boolean
+  aspectDurationMode: 'auto' | 'manual'
   minDurationMinutes: number
   maxDurationMinutes: number | null
   liveBarCount: number

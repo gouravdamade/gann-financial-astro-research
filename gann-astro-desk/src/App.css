@@ -2643,6 +2643,18 @@
   accent-color: #3f9fbc;
 }
 
+.toggle-row-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.toggle-row-copy small {
+  color: #7f909e;
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .exclusion-list {
   display: flex;
   flex-wrap: wrap;

@@ -63,7 +63,13 @@ def _bar_seconds(frame: pd.DataFrame, timeframe: str) -> int:
     positive = [int(value) for value in differences if math.isfinite(value) and value > 0]
     if positive:
         return max(60, int(median(positive)))
-    return {"M30": 1800, "H1": 3600, "H4": 14400, "D1": 86400}.get(timeframe.upper(), 3600)
+    return {
+        "M30": 1800,
+        "H1": 3600,
+        "H4": 14400,
+        "D1": 86400,
+        "W1": 604800,
+    }.get(timeframe.upper(), 3600)
 
 
 def _true_ranges(frame: pd.DataFrame) -> list[float]:

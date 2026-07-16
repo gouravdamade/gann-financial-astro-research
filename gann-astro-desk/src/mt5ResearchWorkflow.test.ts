@@ -10,12 +10,14 @@ describe('MT5 research workflow', () => {
     expect(mt5SourceTimeframeForChart('H1')).toBe('H1')
     expect(mt5SourceTimeframeForChart('H4')).toBe('H1')
     expect(mt5SourceTimeframeForChart('D1')).toBe('H1')
+    expect(mt5SourceTimeframeForChart('W1')).toBe('H1')
     expect(mt5SourceTimeframeForChart('M30')).toBe('M30')
   })
 
-  it('preserves H4 and D1 views backed by H1 archives', () => {
+  it('preserves H4, D1, and W1 views backed by H1 archives', () => {
     expect(chartTimeframeForSource('D1', 'H1')).toBe('D1')
     expect(chartTimeframeForSource('H4', 'H1')).toBe('H4')
+    expect(chartTimeframeForSource('W1', 'H1')).toBe('W1')
     expect(chartTimeframeForSource('D1', 'M30')).toBe('M30')
   })
 

@@ -68,6 +68,7 @@ class AstroRepositoryTests(unittest.TestCase):
     def test_parameter_schema_exposes_supported_and_pending_modes(self) -> None:
         schema = self.repository.parameter_schema()
         self.assertIn("M30", schema["options"]["timeframes"])
+        self.assertIn("W1", schema["options"]["timeframes"])
         self.assertEqual(schema["generation"]["correctedTn"], "generator_ready")
         self.assertEqual(schema["generation"]["correctedTt"], "not_implemented")
         self.assertEqual(schema["generation"]["profileJobQueue"], "ready")
@@ -87,6 +88,29 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertTrue(all(item["transitBody"] == "MOON" for item in payload["aspects"]))
         self.assertTrue(all(item["aspect"] == "square" for item in payload["aspects"]))
         self.assertTrue(all(item["eventId"] in self.repository.touch_by_event for item in payload["aspects"]))
+
+    def test_timeframe_policy_filters_aspects_without_changing_event_windows(self) -> None:
+        h1 = self.repository.chart_payload("2025-05-01", "2025-06-30", timeframe="H1")
+        d1 = self.repository.chart_payload("2025-05-01", "2025-06-30", timeframe="D1")
+        self.assertEqual(h1["parametersApplied"]["effectiveMinDurationMinutes"], 60.0)
+        self.assertEqual(d1["parametersApplied"]["effectiveMinDurationMinutes"], 1440.0)
+        self.assertTrue(all(item["durationMinutes"] >= 60 for item in h1["aspects"]))
+        self.assertTrue(all(item["durationMinutes"] >= 1440 for item in d1["aspects"]))
+        h1_by_id = {item["eventId"]: item for item in h1["aspects"]}
+        for item in d1["aspects"]:
+            self.assertEqual(item["start"], h1_by_id[item["eventId"]]["start"])
+            self.assertEqual(item["end"], h1_by_id[item["eventId"]]["end"])
+
+    def test_weekly_candles_are_monday_anchored_and_use_weekly_aspect_policy(self) -> None:
+        payload = self.repository.chart_payload("2025-05-01", "2025-06-30", timeframe="W1")
+        self.assertTrue(payload["candles"])
+        self.assertEqual(payload["parametersApplied"]["effectiveMinDurationMinutes"], 10080.0)
+        candle_days = {
+            pd.to_datetime(item["time"], unit="s", utc=True).dayofweek
+            for item in payload["candles"]
+        }
+        self.assertEqual(candle_days, {0})
+        self.assertTrue(all(item["durationMinutes"] >= 10080 for item in payload["aspects"]))
 
     def test_family_payload_preserves_transit_natal_direction(self) -> None:
         payload = self.repository.family_payload("TN::MOON->MERCURY::square")

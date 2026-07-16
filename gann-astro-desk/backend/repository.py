@@ -17,6 +17,11 @@ from urllib.parse import unquote
 import numpy as np
 import pandas as pd
 
+from aspect_timeframe import (
+    SUPPORTED_CHART_TIMEFRAMES,
+    effective_aspect_min_duration_minutes,
+    normalize_aspect_duration_mode,
+)
 from chart_layouts import ensure_chart_layout_schema
 from price_sources import (
     PROMOTED_PRICE_CONTRACT,
@@ -143,6 +148,7 @@ DEFAULT_CHART_PARAMETERS: dict[str, Any] = {
     "aspects": ["conjunction_orb", "square", "trine", "opposition_orb"],
     "excludedFamilyKeys": [],
     "onlyTouched": False,
+    "aspectDurationMode": "auto",
     "minDurationMinutes": 0.0,
     "maxDurationMinutes": None,
     "liveBarCount": 500,
@@ -386,7 +392,13 @@ class AstroRepository:
         return frame
 
     @staticmethod
-    def _resample_ohlc(source: pd.DataFrame, rule: str) -> pd.DataFrame:
+    def _resample_ohlc(
+        source: pd.DataFrame,
+        rule: str,
+        *,
+        label: str | None = None,
+        closed: str | None = None,
+    ) -> pd.DataFrame:
         aggregations: dict[str, str] = {
             "open": "first",
             "high": "max",
@@ -398,20 +410,32 @@ class AstroRepository:
                 aggregations[column] = "sum"
         if "spread" in source.columns:
             aggregations["spread"] = "max"
-        return source.resample(rule).agg(aggregations).dropna(subset=["open", "close"])
+        return (
+            source.resample(rule, label=label, closed=closed)
+            .agg(aggregations)
+            .dropna(subset=["open", "close"])
+        )
 
     def _price_for_timeframe(self, timeframe: str) -> pd.DataFrame:
         normalized = timeframe.upper()
         if normalized in self.price_by_timeframe:
             return self.price_by_timeframe[normalized]
-        if normalized not in {"H4", "D1"}:
+        if normalized not in {"H4", "D1", "W1"}:
             raise ValueError(f"Unsupported historical timeframe: {timeframe}")
         if normalized not in self._resampled_price:
-            rule = "4h" if normalized == "H4" else "1D"
             source = self.price_by_timeframe.get("H1")
             if source is None:
                 raise ValueError(f"Active artifact cannot provide {timeframe} candles")
-            self._resampled_price[normalized] = self._resample_ohlc(source, rule)
+            if normalized == "W1":
+                self._resampled_price[normalized] = self._resample_ohlc(
+                    source,
+                    "W-MON",
+                    label="left",
+                    closed="left",
+                )
+            else:
+                rule = "4h" if normalized == "H4" else "1D"
+                self._resampled_price[normalized] = self._resample_ohlc(source, rule)
         return self._resampled_price[normalized]
 
     def connect(self) -> sqlite3.Connection:
@@ -926,7 +950,7 @@ class AstroRepository:
     def parameter_schema(self) -> dict[str, Any]:
         ranges = {}
         available_timeframes: list[str] = []
-        for timeframe in ("M30", "H1", "H4", "D1"):
+        for timeframe in SUPPORTED_CHART_TIMEFRAMES:
             try:
                 frame = self._price_for_timeframe(timeframe)
             except ValueError:
@@ -1111,6 +1135,7 @@ class AstroRepository:
         aspects: tuple[str, ...] | None = None,
         excluded_family_keys: tuple[str, ...] | None = None,
         only_touched: bool = False,
+        aspect_duration_mode: str = "auto",
         min_duration_minutes: float = 0.0,
         max_duration_minutes: float | None = None,
     ) -> dict[str, Any]:
@@ -1122,6 +1147,12 @@ class AstroRepository:
                 f"The active corrected artifact is for {artifact_symbol}, not {symbol}"
             )
         price_source = self._price_for_timeframe(timeframe)
+        duration_mode = normalize_aspect_duration_mode(aspect_duration_mode)
+        effective_min_duration = effective_aspect_min_duration_minutes(
+            timeframe,
+            duration_mode,
+            min_duration_minutes,
+        )
         start_local = parse_local_timestamp(start, "2025-05-25T00:00:00+05:30")
         end_local = parse_local_timestamp(end, "2025-05-31T23:59:59+05:30")
         if end_local <= start_local:
@@ -1155,7 +1186,10 @@ class AstroRepository:
             overlapping = overlapping.loc[~overlapping["event_family_key"].astype(str).isin(excluded_family_keys)]
         if only_touched:
             overlapping = overlapping.loc[overlapping["event_id"].astype(str).isin(self.touch_by_event)]
-        overlapping = overlapping.loc[pd.to_numeric(overlapping["duration_minutes"], errors="coerce") >= min_duration_minutes]
+        overlapping = overlapping.loc[
+            pd.to_numeric(overlapping["duration_minutes"], errors="coerce")
+            >= effective_min_duration
+        ]
         if max_duration_minutes is not None:
             overlapping = overlapping.loc[
                 pd.to_numeric(overlapping["duration_minutes"], errors="coerce") <= max_duration_minutes
@@ -1205,7 +1239,11 @@ class AstroRepository:
                 "aspects": list(aspects or ()),
                 "excludedFamilyKeys": list(excluded_family_keys or ()),
                 "onlyTouched": only_touched,
-                "minDurationMinutes": min_duration_minutes,
+                "aspectDurationMode": duration_mode,
+                "requestedMinDurationMinutes": min_duration_minutes,
+                "effectiveMinDurationMinutes": effective_min_duration,
+                "minimumAspectBars": 1 if duration_mode == "auto" else None,
+                "minDurationMinutes": effective_min_duration,
                 "maxDurationMinutes": max_duration_minutes,
             },
             "artifact": self.active_artifact,

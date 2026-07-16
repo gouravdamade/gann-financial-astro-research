@@ -118,6 +118,7 @@ def chart_filter_arguments() -> dict[str, Any]:
         "aspects": list_argument("aspect"),
         "excluded_family_keys": list_argument("excludeFamily"),
         "only_touched": bool_argument("onlyTouched"),
+        "aspect_duration_mode": str(request.args.get("aspectDurationMode") or "auto"),
         "min_duration_minutes": optional_float_argument("minDurationMinutes") or 0.0,
         "max_duration_minutes": optional_float_argument("maxDurationMinutes"),
     }

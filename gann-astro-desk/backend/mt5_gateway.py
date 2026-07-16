@@ -25,6 +25,7 @@ TIMEFRAME_SECONDS = {
     "H1": 60 * 60,
     "H4": 4 * 60 * 60,
     "D1": 24 * 60 * 60,
+    "W1": 7 * 24 * 60 * 60,
 }
 NORMALIZED_SNAPSHOT_CONTRACT = "MT5_TIMESTAMP_NORMALIZED_CLOSED_BARS_V2"
 
@@ -230,6 +231,7 @@ class Mt5Gateway:
                 "H1": mt5.TIMEFRAME_H1,
                 "H4": mt5.TIMEFRAME_H4,
                 "D1": mt5.TIMEFRAME_D1,
+                "W1": mt5.TIMEFRAME_W1,
             }.get(normalized_timeframe)
             if timeframe_value is None:
                 raise ValueError(f"unsupported MT5 timeframe: {timeframe}")
@@ -292,6 +294,7 @@ class Mt5Gateway:
                 "H1": mt5.TIMEFRAME_H1,
                 "H4": mt5.TIMEFRAME_H4,
                 "D1": mt5.TIMEFRAME_D1,
+                "W1": mt5.TIMEFRAME_W1,
             }[normalized_timeframe]
             if not mt5.symbol_select(normalized_symbol, True):
                 raise RuntimeError(f"MT5 symbol is unavailable: {normalized_symbol}")
