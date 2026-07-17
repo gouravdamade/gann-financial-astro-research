@@ -56,16 +56,24 @@ https://github.com/gouravdamade/gann-financial-astro-research.git
 
 1. `financial_astro_ephemeris.py`: one Raman Swiss-Ephemeris calculation path.
 2. `astro_event_contract.py`: scoped event identity and transit/natal role contract.
-3. `rebuild_dataset_mt5_ipo_allpairs.py`: recovery source rebuild; still requires the external
-   JDML compatibility runtime and is the next replacement target.
+3. `build_corrected_natal_event_source.py`: native corrected transit-to-natal event generator;
+   `rebuild_dataset_mt5_ipo_allpairs.py` is a compatibility entrypoint only.
 4. `build_aspect_sr_touch_log.py`: corrected touch/evidence builder.
 5. `build_trade_candidates_from_touches.py`: candidate feature/scoring layer.
 6. `aspect_annotation_store.py` and `build_repeatation_review_pack.py`: manual review storage/UI.
 7. `reviewer_rule_replay.py`: retrospective rule replay only.
 8. `evaluate_transitsign_walk_forward.py`: purged exploratory evaluation.
+9. `gann-astro-desk/`: supported Tauri 2 Windows workstation, timestamp-safe live inference,
+   immutable MT5 research sources, chart layouts/drawings, local specialists, and read-only
+   Chakra/Square of Nine research surfaces.
 
 The BTC weekly tools and `research_labs/ashtakavarga_validation/` are separate descriptive or
 experimental surfaces. They do not feed live USDJPY decisions.
+
+The current supported executable is
+`D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. See
+[`gann-astro-desk/README.md`](gann-astro-desk/README.md) for its contracts, verification commands,
+and deliberate validation gates.
 
 ## Current Important Data Files
 

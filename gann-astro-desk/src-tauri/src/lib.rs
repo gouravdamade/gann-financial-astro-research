@@ -14,16 +14,20 @@ use std::sync::{
 use std::thread;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Manager, RunEvent, State};
+use uuid::Uuid;
 
 const SIDECAR_CONTRACT: &str = "GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1";
 const MAX_RESTARTS: usize = 3;
 const RESTART_WINDOW: Duration = Duration::from_secs(5 * 60);
+const MAX_LOG_BYTES: u64 = 10 * 1024 * 1024;
+const LOG_BACKUP_COUNT: usize = 3;
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct BackendRuntimeInfo {
     contract: &'static str,
     base_url: String,
+    api_token: String,
     port: u16,
     pid: u32,
     status: String,
@@ -76,6 +80,7 @@ struct SupervisorProcess {
 
 struct BackendRuntimeState {
     base_url: String,
+    api_token: String,
     port: u16,
     codex_port: u16,
     launch: SidecarLaunch,
@@ -101,6 +106,60 @@ fn available_port() -> Result<u16, String> {
         .local_addr()
         .map(|address| address.port())
         .map_err(|error| format!("Unable to read the private backend port: {error}"))
+}
+
+fn backup_log_path(path: &Path, index: usize) -> PathBuf {
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .unwrap_or("runtime.log");
+    path.with_file_name(format!("{name}.{index}"))
+}
+
+fn rotate_log_if_needed(path: &Path) -> Result<(), String> {
+    let size = match fs::metadata(path) {
+        Ok(metadata) => metadata.len(),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => {
+            return Err(format!(
+                "Unable to inspect runtime log {}: {error}",
+                path.display()
+            ));
+        }
+    };
+    if size < MAX_LOG_BYTES {
+        return Ok(());
+    }
+    let oldest = backup_log_path(path, LOG_BACKUP_COUNT);
+    if oldest.exists() {
+        fs::remove_file(&oldest).map_err(|error| {
+            format!(
+                "Unable to remove old runtime log {}: {error}",
+                oldest.display()
+            )
+        })?;
+    }
+    for index in (1..LOG_BACKUP_COUNT).rev() {
+        let source = backup_log_path(path, index);
+        if source.exists() {
+            let destination = backup_log_path(path, index + 1);
+            fs::rename(&source, &destination).map_err(|error| {
+                format!(
+                    "Unable to rotate runtime log {} to {}: {error}",
+                    source.display(),
+                    destination.display()
+                )
+            })?;
+        }
+    }
+    let first_backup = backup_log_path(path, 1);
+    fs::rename(path, &first_backup).map_err(|error| {
+        format!(
+            "Unable to rotate runtime log {} to {}: {error}",
+            path.display(),
+            first_backup.display()
+        )
+    })
 }
 
 fn parse_http_json_response(raw: &[u8]) -> Result<Value, String> {
@@ -137,7 +196,12 @@ fn parse_http_json_response(raw: &[u8]) -> Result<Value, String> {
     Ok(payload)
 }
 
-fn post_private_json(port: u16, path: &str, payload: &Value) -> Result<Value, String> {
+fn post_private_json(
+    port: u16,
+    api_token: &str,
+    path: &str,
+    payload: &Value,
+) -> Result<Value, String> {
     if !path.starts_with('/') || path.contains(char::is_whitespace) {
         return Err("Private sidecar path is invalid".to_string());
     }
@@ -153,7 +217,7 @@ fn post_private_json(port: u16, path: &str, payload: &Value) -> Result<Value, St
     let body = serde_json::to_vec(payload)
         .map_err(|error| format!("Unable to encode Chakra Lab request: {error}"))?;
     let request = format!(
-        "POST {path} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+        "POST {path} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\nContent-Type: application/json\r\nAccept: application/json\r\nX-Gann-Astro-Token: {api_token}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
         body.len()
     );
     stream
@@ -281,16 +345,22 @@ fn spawn_sidecar(
     logs_dir: &Path,
     port: u16,
     codex_port: u16,
+    api_token: &str,
 ) -> Result<(ManagedChild, u64, u64), String> {
+    let stdout_path = logs_dir.join("tauri_backend_sidecar.log");
+    let stderr_path = logs_dir.join("tauri_backend_sidecar_error.log");
+    rotate_log_if_needed(&stdout_path)?;
+    rotate_log_if_needed(&stderr_path)?;
+    rotate_log_if_needed(&logs_dir.join("tauri_runtime_supervisor.jsonl"))?;
     let stdout = OpenOptions::new()
         .create(true)
         .append(true)
-        .open(logs_dir.join("tauri_backend_sidecar.log"))
+        .open(stdout_path)
         .map_err(|error| format!("Unable to open backend sidecar log: {error}"))?;
     let stderr = OpenOptions::new()
         .create(true)
         .append(true)
-        .open(logs_dir.join("tauri_backend_sidecar_error.log"))
+        .open(stderr_path)
         .map_err(|error| format!("Unable to open backend sidecar error log: {error}"))?;
 
     let mut command = match launch {
@@ -316,6 +386,7 @@ fn spawn_sidecar(
         .arg("--codex-port")
         .arg(codex_port.to_string())
         .env("GANN_ASTRO_DESKTOP_DATA", data_root)
+        .env("GANN_ASTRO_API_TOKEN", api_token)
         .env("PYTHONUNBUFFERED", "1")
         .stdin(Stdio::piped())
         .stdout(Stdio::from(stdout))
@@ -347,15 +418,17 @@ impl BackendRuntimeState {
     fn spawn(app: &AppHandle) -> Result<Self, String> {
         let port = available_port()?;
         let codex_port = available_port()?;
+        let api_token = Uuid::new_v4().simple().to_string();
         let launch = locate_sidecar(app)?;
         let data_root = default_data_root();
         let logs_dir = data_root.join("logs");
         fs::create_dir_all(&logs_dir)
             .map_err(|error| format!("Unable to create runtime logs: {error}"))?;
         let (child, started_at_unix_ms, spawn_elapsed_ms) =
-            spawn_sidecar(&launch, &data_root, &logs_dir, port, codex_port)?;
+            spawn_sidecar(&launch, &data_root, &logs_dir, port, codex_port, &api_token)?;
         let state = Self {
             base_url: format!("http://127.0.0.1:{port}"),
+            api_token,
             port,
             codex_port,
             launch,
@@ -414,6 +487,7 @@ impl BackendRuntimeState {
             &self.logs_dir,
             self.port,
             self.codex_port,
+            &self.api_token,
         )?;
         process.child = Some(child);
         process.restart_times.push_back(now);
@@ -469,6 +543,7 @@ impl BackendRuntimeState {
         Ok(BackendRuntimeInfo {
             contract: SIDECAR_CONTRACT,
             base_url: self.base_url.clone(),
+            api_token: self.api_token.clone(),
             port: self.port,
             pid: child.id(),
             status: if ready { "ready" } else { "starting" }.to_string(),
@@ -522,7 +597,12 @@ async fn chakra_lab_snapshot(
         return Err("Chakra Lab requires the read-only runtime lock".to_string());
     }
     tauri::async_runtime::spawn_blocking(move || {
-        post_private_json(runtime.port, "/api/chakra-lab/snapshot", &request)
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/snapshot",
+            &request,
+        )
     })
     .await
     .map_err(|error| format!("Chakra Lab bridge task failed: {error}"))?
@@ -582,5 +662,30 @@ mod tests {
         let error = parse_http_json_response(failure).unwrap_err();
         assert!(error.contains("HTTP 400"));
         assert!(error.contains("bad time"));
+    }
+
+    #[test]
+    fn oversized_runtime_logs_are_rotated_with_bounded_backups() {
+        let root = env::temp_dir().join(format!(
+            "gann-astro-log-rotation-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let path = root.join("runtime.log");
+        let handle = fs::File::create(&path).unwrap();
+        handle.set_len(MAX_LOG_BYTES).unwrap();
+        drop(handle);
+        fs::write(backup_log_path(&path, 1), b"previous").unwrap();
+
+        rotate_log_if_needed(&path).unwrap();
+
+        assert!(!path.exists());
+        assert_eq!(
+            fs::metadata(backup_log_path(&path, 1)).unwrap().len(),
+            MAX_LOG_BYTES
+        );
+        assert_eq!(fs::read(backup_log_path(&path, 2)).unwrap(), b"previous");
+        fs::remove_dir_all(root).unwrap();
     }
 }

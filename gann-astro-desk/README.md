@@ -29,7 +29,7 @@ separate from live market-data concerns.
   on M30, one hour on H1, four hours on H4, one day on D1, and one week on W1.
   Researchers can disable the automatic policy and enter an explicit duration minimum.
 - Durable corrected-TN generation jobs with validated rebuild inputs, visible stage
-  progress, cancellation, restart recovery, isolated subprocesses, and inspectable logs.
+  progress, cancellation, restart recovery, isolated worker processes, and inspectable logs.
 - A versioned corrected-data artifact registry with SHA-256 manifests, contract validation,
   explicit activation/history controls, and atomic chart/Analyze Aspect dataset swaps.
 - Automatic research-chart refresh when a completed job activates its artifact, including
@@ -197,7 +197,7 @@ npm run build
 
 ## Native Windows Status
 
-The current stable native release is `0.10.7` at
+The current stable native release is `0.10.8` at
 `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
@@ -210,6 +210,19 @@ Jyotish corpus, Candlestick Specialist corpus, and the transparent frozen USDJPY
 candlestick-shadow model. Ollama models remain under
 `D:\Ollama\models` and are not duplicated inside the release. Analyze Aspect opens as
 a second native Tauri window rather than an external browser.
+
+The native shell gives each launch a random private API token in addition to its random
+loopback port. Generator workers run as separate child processes so CPU-heavy astronomy
+rebuilds cannot monopolize the HTTP sidecar. Codex starts after the chart backend is ready
+and Ollama warm-up is deferred briefly, keeping optional AI startup out of the chart's
+critical path. Routine Werkzeug access lines are suppressed and native sidecar logs rotate
+at 10 MiB with three retained backups.
+
+The frontend uses visibility-aware, non-overlapping polling. Hidden windows pause fast
+refreshes; expensive shadow/diagnostic resources refresh quickly only while their panel is
+open; generation jobs use the 1.5-second cadence only while work is active. Live charts use
+incremental last-bar updates when the visible MT5 window has not shifted, while research
+surfaces and detachable analysis code load in separate chunks.
 
 Rust/Cargo are installed under `D:\Rust`; Visual Studio Build Tools are primarily under
 `D:\VisualStudio`. The build produces a portable release tree and NSIS installer while

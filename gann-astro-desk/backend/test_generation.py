@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import subprocess
 import sys
 import tempfile
 import time
@@ -213,68 +214,52 @@ class GenerationJobTests(unittest.TestCase):
         self.assertEqual(cancelled["status"], "cancelled")
         self.assertTrue(cancelled["cancelRequested"])
 
-    def test_frozen_worker_runs_in_process_without_spawning_itself(self) -> None:
+    def test_frozen_worker_runs_in_an_isolated_child_process(self) -> None:
         manager = GenerationJobManager(self.repository, autostart=False)
         log_path = self.paths.artifacts_dir / "frozen_worker_environment.log"
         log_path.parent.mkdir(parents=True, exist_ok=True)
-        previous_arguments = list(sys.argv)
+        process = mock.Mock()
+        process.poll.side_effect = [None, 0]
+        process.returncode = 0
+        command = [
+            "GannAstroBackend.exe",
+            "--gann-worker",
+            "generator.py",
+            "--example",
+        ]
         try:
             with (
                 mock.patch.object(sys, "frozen", True, create=True),
-                mock.patch("runtime_support.run_worker_mode", return_value=True) as worker,
-                mock.patch("generation.subprocess.Popen") as popen,
+                mock.patch("generation.subprocess.Popen", return_value=process) as popen,
+                mock.patch("generation.time.sleep"),
             ):
-                manager._run_command(
-                    "test-job",
-                    [
-                        "GannAstroBackend.exe",
-                        "--gann-worker",
-                        "generator.py",
-                        "--example",
-                    ],
-                    log_path,
-                )
+                manager._run_command("test-job", command, log_path)
         finally:
             manager.stop()
 
-        worker.assert_called_once_with(
-            ["--gann-worker", "generator.py", "--example"]
-        )
-        popen.assert_not_called()
-        self.assertEqual(sys.argv, previous_arguments)
+        popen.assert_called_once()
+        self.assertEqual(popen.call_args.args[0], command)
+        self.assertEqual(popen.call_args.kwargs["cwd"], manager.project_root)
+        self.assertEqual(popen.call_args.kwargs["stderr"], subprocess.STDOUT)
         self.assertIn(
-            "Packaged generator completed in the background worker thread.",
+            subprocess.list2cmdline(command),
             log_path.read_text(encoding="utf-8"),
         )
 
-    def test_small_real_frozen_job_runs_both_generators_in_process(self) -> None:
-        manager = GenerationJobManager(self.repository)
+    def test_frozen_worker_command_targets_the_packaged_executable(self) -> None:
+        manager = GenerationJobManager(self.repository, autostart=False)
         try:
             with (
                 mock.patch.object(sys, "frozen", True, create=True),
-                mock.patch("generation.subprocess.Popen") as popen,
+                mock.patch.object(sys, "executable", r"D:\release\GannAstroBackend.exe"),
             ):
-                job = manager.create_job(
-                    {
-                        "label": "Frozen in-process regression smoke",
-                        "parameters": self.small_parameters(),
-                    }
-                )
-                deadline = time.monotonic() + REAL_GENERATION_TIMEOUT_SECONDS
-                while time.monotonic() < deadline:
-                    job = manager.get_job(job["jobId"])
-                    if job["status"] not in {"queued", "running", "cancelling"}:
-                        break
-                    time.sleep(0.25)
+                command = manager._worker_command("generator.py", ["--example"])
         finally:
             manager.stop()
 
-        self.assertEqual(job["status"], "completed", job.get("error") or job.get("logTail"))
-        popen.assert_not_called()
-        log_text = Path(job["logPath"]).read_text(encoding="utf-8")
         self.assertEqual(
-            log_text.count("Packaged generator completed in the background worker thread."),
-            2,
+            command,
+            [r"D:\release\GannAstroBackend.exe", "--gann-worker", "generator.py", "--example"],
         )
 
     def test_promoted_snapshot_drives_generation_and_active_chart_prices(self) -> None:

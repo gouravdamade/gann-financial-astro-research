@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 
 from flask import Flask, Response, abort, g, jsonify, request, send_from_directory
 
+from api_security import private_api_request_authorized
 from chart_layouts import (
     LayoutRevisionConflict,
     delete_chart_layout,
@@ -136,8 +137,16 @@ def chart_filter_arguments() -> dict[str, Any]:
 
 
 @app.before_request
-def start_request_timer() -> None:
+def start_request_timer() -> Any:
     g.runtime_started_at = time.perf_counter()
+    expected_token = str(os.environ.get("GANN_ASTRO_API_TOKEN") or "")
+    if not private_api_request_authorized(
+        request.method,
+        expected_token,
+        str(request.headers.get("X-Gann-Astro-Token") or ""),
+    ):
+        return jsonify({"ok": False, "error": "Private API token is missing or invalid"}), 403
+    return None
 
 
 @app.after_request
@@ -158,7 +167,7 @@ def add_headers(response: Any) -> Any:
     response.headers["Access-Control-Allow-Origin"] = os.environ.get(
         "GANN_ASTRO_ALLOWED_ORIGIN", "http://127.0.0.1:5173"
     )
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,X-Gann-Astro-Token"
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     response.headers["Cache-Control"] = "no-store"
     return response

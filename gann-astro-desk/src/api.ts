@@ -52,6 +52,9 @@ export async function fetchBackendRuntime(force = false): Promise<BackendRuntime
       if (!runtime.baseUrl.startsWith('http://127.0.0.1:')) {
         throw new Error('Backend runtime did not provide a private loopback URL')
       }
+      if (typeof runtime.apiToken !== 'string' || runtime.apiToken.length < 16) {
+        throw new Error('Backend runtime did not provide a private API token')
+      }
       if (runtime.executionAllowed) {
         throw new Error('Backend runtime violated the read-only execution lock')
       }
@@ -61,14 +64,13 @@ export async function fetchBackendRuntime(force = false): Promise<BackendRuntime
   return backendRuntimePromise
 }
 
-async function backendBaseUrl(): Promise<string> {
+async function backendRequestTarget(url: string): Promise<{ url: string; apiToken: string }> {
   const runtime = await fetchBackendRuntime()
-  return runtime?.baseUrl.replace(/\/$/, '') ?? ''
-}
-
-async function resolveRequestUrl(url: string): Promise<string> {
-  const baseUrl = await backendBaseUrl()
-  return baseUrl && url.startsWith('/') ? `${baseUrl}${url}` : url
+  const baseUrl = runtime?.baseUrl.replace(/\/$/, '') ?? ''
+  return {
+    url: baseUrl && url.startsWith('/') ? `${baseUrl}${url}` : url,
+    apiToken: runtime?.apiToken ?? '',
+  }
 }
 
 function wait(milliseconds: number): Promise<void> {
@@ -81,11 +83,15 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let response: Response | null = null
   let networkError: unknown = null
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    const requestUrl = await resolveRequestUrl(url)
+    const target = await backendRequestTarget(url)
     try {
-      response = await fetch(requestUrl, {
+      response = await fetch(target.url, {
         ...init,
-        headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(target.apiToken ? { 'X-Gann-Astro-Token': target.apiToken } : {}),
+          ...(init?.headers ?? {}),
+        },
       })
       break
     } catch (error) {

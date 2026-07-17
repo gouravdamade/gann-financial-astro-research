@@ -152,6 +152,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const appliedLayoutViewRef = useRef('')
   const applyingViewRef = useRef(false)
   const notifiedViewRef = useRef('')
+  const renderedCandlesRef = useRef<Candle[]>([])
+  const renderedSeriesKeyRef = useRef('')
+  const srLinesSignatureRef = useRef('')
+  const crosshairFrameRef = useRef<number | null>(null)
+  const pendingLegendRef = useRef<Candle | null>(null)
   const [bands, setBands] = useState<BandPosition[]>([])
   const [pendingDrawing, setPendingDrawing] = useState<PendingDrawing | null>(null)
   const pendingDrawingRef = useRef<PendingDrawing | null>(null)
@@ -373,14 +378,22 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       }
     }
     chart.subscribeClick(clickHandler)
+    const scheduleLegendUpdate = (candle: Candle | null) => {
+      pendingLegendRef.current = candle
+      if (crosshairFrameRef.current != null) return
+      crosshairFrameRef.current = window.requestAnimationFrame(() => {
+        crosshairFrameRef.current = null
+        setLegendCandle(pendingLegendRef.current)
+      })
+    }
     chart.subscribeCrosshairMove((params) => {
       if (!params.point || params.time == null) {
-        setLegendCandle(payloadRef.current.candles[payloadRef.current.candles.length - 1] ?? null)
+        scheduleLegendUpdate(payloadRef.current.candles[payloadRef.current.candles.length - 1] ?? null)
         return
       }
       const candle = params.seriesData.get(series)
       if (!candle || !('close' in candle)) return
-      setLegendCandle({
+      scheduleLegendUpdate({
         time: Number(params.time),
         open: candle.open,
         high: candle.high,
@@ -394,10 +407,17 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       resizeObserver.disconnect()
       chart.timeScale().unsubscribeVisibleLogicalRangeChange(refreshOverlays)
       chart.unsubscribeClick(clickHandler)
+      if (crosshairFrameRef.current != null) {
+        window.cancelAnimationFrame(crosshairFrameRef.current)
+        crosshairFrameRef.current = null
+      }
       chart.remove()
       chartRef.current = null
       seriesRef.current = null
       priceLinesRef.current = []
+      renderedCandlesRef.current = []
+      renderedSeriesKeyRef.current = ''
+      srLinesSignatureRef.current = ''
     }
   }, [compact])
 
@@ -405,24 +425,53 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const chart = chartRef.current
     const series = seriesRef.current
     if (!chart || !series) return
-    series.setData(
-      payload.candles.map((candle) => ({
+    const nextSeriesData = payload.candles.map((candle) => ({
         time: candle.time as UTCTimestamp,
         open: candle.open,
         high: candle.high,
         low: candle.low,
         close: candle.close,
-      })),
+      }))
+    const previousCandles = renderedCandlesRef.current
+    const seriesKey = `${payload.symbol}:${payload.timeframe}:${payload.dataSource}`
+    const lastCandle = payload.candles[payload.candles.length - 1]
+    const previousLast = previousCandles[previousCandles.length - 1]
+    const previousPenultimate = previousCandles[previousCandles.length - 2]
+    const nextPenultimate = payload.candles[payload.candles.length - 2]
+    const sameLiveWindow = payload.dataSource === 'mt5_live'
+      && renderedSeriesKeyRef.current === seriesKey
+      && previousCandles.length === payload.candles.length
+      && previousCandles[0]?.time === payload.candles[0]?.time
+      && previousPenultimate?.time === nextPenultimate?.time
+      && previousLast?.time === lastCandle?.time
+    const appendedLiveBar = payload.dataSource === 'mt5_live'
+      && renderedSeriesKeyRef.current === seriesKey
+      && payload.candles.length === previousCandles.length + 1
+      && previousLast?.time === nextPenultimate?.time
+    if ((sameLiveWindow || appendedLiveBar) && lastCandle) {
+      series.update(nextSeriesData[nextSeriesData.length - 1])
+    } else {
+      series.setData(nextSeriesData)
+    }
+    renderedCandlesRef.current = payload.candles
+    renderedSeriesKeyRef.current = seriesKey
+
+    const visibleSrLines = showSrLines ? payload.srLines : []
+    const srLinesSignature = JSON.stringify(
+      visibleSrLines.map((line) => [line.price, line.color, line.label]),
     )
-    priceLinesRef.current.forEach((line) => series.removePriceLine(line))
-    priceLinesRef.current = (showSrLines ? payload.srLines : []).map((line) => series.createPriceLine({
-      price: line.price,
-      color: line.color,
-      lineWidth: 1,
-      lineStyle: LineStyle.Solid,
-      axisLabelVisible: true,
-      title: line.label,
-    }))
+    if (srLinesSignatureRef.current !== srLinesSignature) {
+      priceLinesRef.current.forEach((line) => series.removePriceLine(line))
+      priceLinesRef.current = visibleSrLines.map((line) => series.createPriceLine({
+        price: line.price,
+        color: line.color,
+        lineWidth: 1,
+        lineStyle: LineStyle.Solid,
+        axisLabelVisible: true,
+        title: line.label,
+      }))
+      srLinesSignatureRef.current = srLinesSignature
+    }
     const viewKey = payload.dataSource === 'mt5_live'
       ? `${payload.symbol}:${payload.timeframe}:live`
       : `${payload.symbol}:${payload.timeframe}:${payload.start}:${payload.end}`
@@ -446,8 +495,17 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     }
     viewKeyRef.current = viewKey
     setOverlayRevision((value) => value + 1)
-    setLegendCandle(payload.candles[payload.candles.length - 1] ?? null)
-  }, [layoutKey, payload, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
+    setLegendCandle((current) => {
+      const latest = payload.candles[payload.candles.length - 1] ?? null
+      return current?.time === latest?.time
+        && current?.open === latest?.open
+        && current?.high === latest?.high
+        && current?.low === latest?.low
+        && current?.close === latest?.close
+        ? current
+        : latest
+    })
+  }, [compact, layoutKey, payload, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -529,6 +587,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     dragSessionRef.current = nextSession
     setDragPreview({ drawingId: session.drawingId, anchors })
   }
+  const moveAnchorDragRef = useRef(moveAnchorDrag)
+  moveAnchorDragRef.current = moveAnchorDrag
 
   const finishAnchorDrag = () => {
     const session = dragSessionRef.current
@@ -549,12 +609,12 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const movePointer = (event: PointerEvent) => {
       if (!dragSessionRef.current) return
       event.preventDefault()
-      moveAnchorDrag(event.clientX, event.clientY)
+      moveAnchorDragRef.current(event.clientX, event.clientY)
     }
     const moveMouse = (event: MouseEvent) => {
       if (!dragSessionRef.current) return
       event.preventDefault()
-      moveAnchorDrag(event.clientX, event.clientY)
+      moveAnchorDragRef.current(event.clientX, event.clientY)
     }
     const finish = () => finishAnchorDrag()
     const cancel = () => cancelAnchorDrag()
@@ -570,7 +630,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       window.removeEventListener('mousemove', moveMouse)
       window.removeEventListener('mouseup', finish)
     }
-  })
+  }, [])
 
   const renderAnchorHandle = (
     drawing: ChartDrawing,

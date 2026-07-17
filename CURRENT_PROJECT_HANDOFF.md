@@ -1,8 +1,54 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 22:41 IST
+Last updated: 2026-07-18 00:38 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-18 (End-to-End Product Audit / 0.10.8 Candidate)
+
+- Completed an end-to-end audit of the supported Tauri/React/Python/Rust
+  workstation, runtime logs, packaging, documentation, recovery state, and
+  legacy review path. Detailed evidence and roadmap:
+  `gann_astro_desk_end_to_end_audit_20260718.md`.
+- Corrected the most serious runtime defect: frozen corrected-data generation
+  no longer executes astronomy workers synchronously inside the API sidecar.
+  Every source and packaged job now uses an isolated child process with the
+  existing cancellation/supervision path.
+- Moved optional Codex/Ollama startup off the chart-critical path. The backend
+  imports and opens HTTP first, Codex starts after readiness, and Ollama warm-up
+  is deferred. The shutdown path now also prevents a helper started during
+  shutdown from becoming orphaned.
+- Added a per-launch private API token shared only by the Rust shell, Python
+  child, and trusted frontend runtime. Packaged requests without the exact
+  token fail closed; source/Vite development remains tokenless. Execution stays
+  locked.
+- Replaced the main workspace's overlapping interval fleet with one
+  visibility-aware scheduler. Hidden windows use a minimum 30-second cadence;
+  expensive panels poll quickly only while visible; generation polls at 1.5
+  seconds only while active.
+- Added incremental Lightweight Charts live-bar updates, SR-line signature
+  reuse, animation-frame crosshair throttling, and stable global drawing-drag
+  listeners.
+- Code-split Analyze Aspect, Parameter Drawer, Drawing Objects, Square of Nine,
+  and Chakra Lab. The main minified JavaScript fell from 540.84 kB to 463.06 kB
+  and gzip from 163.63 kB to 146.24 kB.
+- Suppressed routine Werkzeug access lines and added 10 MiB / three-backup
+  rotation for sidecar stdout, stderr, and supervisor logs.
+- Fixed a recovery-repository defect: root `*.html` ignored the untracked Vite
+  entry document. `gann-astro-desk\index.html` is now explicitly tracked, so a
+  clean Git checkout can build.
+- Candidate version is `0.10.8`. Isolated-worktree verification currently
+  passes 33 frontend tests across 10 files, Oxlint, TypeScript/Vite production
+  build, 8 focused generator/process tests, 3 private API security tests, Ruff
+  lint for changed Python, 3 Rust tests, Rust formatting, and strict Clippy.
+- Still required before stable promotion: integrate into `D:\PycharmProjects`,
+  run all 226 Python tests, rebuild PyInstaller/Tauri, run native soak and
+  interactive visual QA, record post-fix startup timings/hashes, create the
+  timestamped recovery snapshot, commit, and push `origin/master`.
+- Deliberate gates remain unchanged: corrected TT generation, external
+  Shadbala/Drik certification, purged prospective validation, BTC rolling
+  no-lookahead evidence, retrospective policy promotion, and any order
+  execution.
 
 ## Latest Update - 2026-07-17 (Native Chakra Lab Release 0.10.7)
 

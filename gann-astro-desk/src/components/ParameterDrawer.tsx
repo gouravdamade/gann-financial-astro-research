@@ -14,7 +14,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   activateDataArtifact,
   cancelGenerationJob,
@@ -44,6 +44,7 @@ import {
   chartTimeframeForSource,
   mt5SourceTimeframeForChart,
 } from '../mt5ResearchWorkflow'
+import { useVisibilityPolling } from '../useVisibilityPolling'
 import type {
   ChartParameters,
   DataArtifact,
@@ -97,6 +98,7 @@ export function ParameterDrawer({
   const [snapshots, setSnapshots] = useState<Mt5HistorySnapshot[]>([])
   const [priceSources, setPriceSources] = useState<PriceSource[]>(schema.options.priceSources)
   const notifiedArtifact = useRef(activeArtifactId)
+  const hasActiveGenerationJob = jobs.some((job) => ['queued', 'running', 'cancelling'].includes(job.status))
 
   useEffect(() => {
     if (open) setDraft(structuredClone(parameters))
@@ -116,34 +118,27 @@ export function ParameterDrawer({
     notifiedArtifact.current = activeArtifactId
   }, [activeArtifactId])
 
-  useEffect(() => {
-    if (!open) return
-    let disposed = false
-    const refresh = async () => {
-      try {
-        const [nextJobs, nextArtifacts] = await Promise.all([
-          fetchGenerationJobs(),
-          fetchDataArtifacts(),
-        ])
-        if (disposed) return
-        setJobs(nextJobs)
-        setArtifacts(nextArtifacts)
-        const active = nextArtifacts.find((item) => item.isActive)
-        if (active && active.artifactId !== notifiedArtifact.current) {
-          notifiedArtifact.current = active.artifactId
-          await onArtifactActivated(active)
-        }
-      } catch (reason) {
-        if (!disposed) setGenerationError(reason instanceof Error ? reason.message : String(reason))
+  const refreshGenerationState = useCallback(async () => {
+    try {
+      const [nextJobs, nextArtifacts] = await Promise.all([
+        fetchGenerationJobs(),
+        fetchDataArtifacts(),
+      ])
+      setJobs(nextJobs)
+      setArtifacts(nextArtifacts)
+      const active = nextArtifacts.find((item) => item.isActive)
+      if (active && active.artifactId !== notifiedArtifact.current) {
+        notifiedArtifact.current = active.artifactId
+        await onArtifactActivated(active)
       }
+    } catch (reason) {
+      setGenerationError(reason instanceof Error ? reason.message : String(reason))
     }
-    refresh()
-    const timer = window.setInterval(refresh, 1500)
-    return () => {
-      disposed = true
-      window.clearInterval(timer)
-    }
-  }, [open, onArtifactActivated])
+  }, [onArtifactActivated])
+  useVisibilityPolling(refreshGenerationState, {
+    enabled: open,
+    intervalMs: hasActiveGenerationJob ? 1500 : 10000,
+  })
 
   const selectedPriceSource = priceSources.find(
     (source) => source.priceSourceId === draft.priceSourceId,

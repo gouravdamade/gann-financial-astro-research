@@ -8,7 +8,6 @@ import subprocess
 import sys
 import threading
 import time
-import traceback
 import uuid
 from pathlib import Path
 from typing import Any
@@ -473,27 +472,6 @@ class GenerationJobManager:
         with log_path.open("a", encoding="utf-8", errors="replace") as log:
             log.write(f"\n$ {subprocess.list2cmdline(command)}\n")
             log.flush()
-            if getattr(sys, "frozen", False):
-                if self._stop.is_set() or self._cancel_requested(job_id):
-                    raise JobCancelled("Generation cancelled by the user.")
-                previous_arguments = list(sys.argv)
-                try:
-                    from runtime_support import run_worker_mode
-
-                    if not run_worker_mode(command[1:]):
-                        raise RuntimeError("Packaged generator arguments were not recognized")
-                    log.write("Packaged generator completed in the background worker thread.\n")
-                    log.flush()
-                except Exception:
-                    log.write(traceback.format_exc())
-                    log.flush()
-                    raise
-                finally:
-                    sys.argv = previous_arguments
-                if self._stop.is_set() or self._cancel_requested(job_id):
-                    raise JobCancelled("Generation cancelled by the user.")
-                return
-
             creationflags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
             process = subprocess.Popen(
                 command,

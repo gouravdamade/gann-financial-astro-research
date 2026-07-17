@@ -26,6 +26,7 @@ describe('Tauri backend transport', () => {
     invokeMock.mockResolvedValue({
       contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
       baseUrl: 'http://127.0.0.1:53123',
+      apiToken: 'private-test-token',
       port: 53123,
       pid: 44,
       status: 'ready',
@@ -44,7 +45,11 @@ describe('Tauri backend transport', () => {
     expect(invokeMock).toHaveBeenCalledWith('backend_runtime')
     expect(fetchMock).toHaveBeenCalledWith(
       'http://127.0.0.1:53123/api/parameters/schema',
-      expect.any(Object),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'X-Gann-Astro-Token': 'private-test-token',
+        }),
+      }),
     )
   })
 
@@ -52,6 +57,7 @@ describe('Tauri backend transport', () => {
     invokeMock.mockResolvedValue({
       contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
       baseUrl: 'http://127.0.0.1:53123',
+      apiToken: 'private-test-token',
       port: 53123,
       pid: 44,
       status: 'ready',
@@ -102,6 +108,7 @@ describe('Tauri backend transport', () => {
     invokeMock.mockResolvedValue({
       contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
       baseUrl: 'http://127.0.0.1:53123',
+      apiToken: 'private-test-token',
       port: 53123,
       pid: 44,
       status: 'ready',
@@ -136,6 +143,7 @@ describe('Tauri backend transport', () => {
       .mockResolvedValueOnce({
         contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
         baseUrl: 'http://127.0.0.1:53123',
+        apiToken: 'private-test-token',
         port: 53123,
         pid: 44,
         status: 'starting',
@@ -146,6 +154,7 @@ describe('Tauri backend transport', () => {
       .mockResolvedValueOnce({
         contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
         baseUrl: 'http://127.0.0.1:53123',
+        apiToken: 'private-test-token',
         port: 53123,
         pid: 45,
         status: 'ready',

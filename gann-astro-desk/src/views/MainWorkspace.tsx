@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Activity,
   Bot,
@@ -44,19 +44,16 @@ import { effectiveAspectMinDurationMinutes, formatAspectDuration } from '../aspe
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
 import { CandlestickShadowPanel } from '../components/CandlestickShadowPanel'
-import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
 import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
 import { LayoutToolbar } from '../components/LayoutToolbar'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
-import { ParameterDrawer } from '../components/ParameterDrawer'
 import { RefreshStatusChip } from '../components/RefreshStatusChip'
 import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnosticsPanel'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
-import { SquareOfNineWorkspace } from './SquareOfNineWorkspace'
-import { ChakraLabWorkspace } from './ChakraLabWorkspace'
 import { useChartLayouts } from '../useChartLayouts'
+import { useVisibilityPolling } from '../useVisibilityPolling'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -74,6 +71,19 @@ import type {
   ShadowLedgerSnapshot,
   WorkspacePreferences,
 } from '../types'
+
+const DrawingObjectPanel = lazy(() => import('../components/DrawingObjectPanel').then((module) => ({
+  default: module.DrawingObjectPanel,
+})))
+const ParameterDrawer = lazy(() => import('../components/ParameterDrawer').then((module) => ({
+  default: module.ParameterDrawer,
+})))
+const SquareOfNineWorkspace = lazy(() => import('./SquareOfNineWorkspace').then((module) => ({
+  default: module.SquareOfNineWorkspace,
+})))
+const ChakraLabWorkspace = lazy(() => import('./ChakraLabWorkspace').then((module) => ({
+  default: module.ChakraLabWorkspace,
+})))
 
 function dateRangeLabel(parameters: ChartParameters | null): string {
   if (!parameters) return 'Date range'
@@ -112,6 +122,15 @@ function initialWorkspacePreferences(): WorkspacePreferences {
   }
 }
 
+function StatusClock() {
+  const [clock, setClock] = useState(() => new Date())
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(new Date()), 1000)
+    return () => window.clearInterval(timer)
+  }, [])
+  return <time>{clock.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} IST</time>
+}
+
 export function MainWorkspace() {
   const [chart, setChart] = useState<ChartPayload | null>(null)
   const [schema, setSchema] = useState<ParameterSchema | null>(null)
@@ -142,9 +161,10 @@ export function MainWorkspace() {
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false)
   const [focusMode, setFocusMode] = useState(false)
   const [objectsOpen, setObjectsOpen] = useState(false)
-  const [clock, setClock] = useState(() => new Date())
   const chartRef = useRef<MarketChartHandle>(null)
   const artifactActivationRef = useRef('')
+  const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
+  const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
   const restoreLayoutState = useCallback((state: { showAspects: boolean; showSrLines: boolean }) => {
     setWorkspace((current) => ({
       ...current,
@@ -190,23 +210,18 @@ export function MainWorkspace() {
     return () => { disposed = true }
   }, [])
 
-  useEffect(() => {
-    let disposed = false
-    const refresh = () => fetchCandlestickShadow()
-      .then((value) => {
-        if (!disposed) {
-          setCandleShadow(value)
-          setCandleShadowError('')
-        }
-      })
-      .catch((reason) => !disposed && setCandleShadowError(reason instanceof Error ? reason.message : String(reason)))
-    refresh()
-    const timer = window.setInterval(refresh, 10000)
-    return () => {
-      disposed = true
-      window.clearInterval(timer)
+  const refreshCandlestickShadow = useCallback(async () => {
+    try {
+      setCandleShadow(await fetchCandlestickShadow())
+      setCandleShadowError('')
+    } catch (reason) {
+      setCandleShadowError(reason instanceof Error ? reason.message : String(reason))
     }
   }, [])
+  useVisibilityPolling(refreshCandlestickShadow, {
+    enabled: bottomVisible && bottomTab === 'candle-shadow',
+    intervalMs: 10000,
+  })
 
   const runCandleShadowScan = useCallback(async () => {
     setCandleShadowBusy(true)
@@ -228,11 +243,6 @@ export function MainWorkspace() {
     }, 250)
     return () => window.clearTimeout(timer)
   }, [workspace, workspaceHydrated])
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setClock(new Date()), 1000)
-    return () => window.clearInterval(timer)
-  }, [])
 
   useEffect(() => {
     const chartStartedAt = performance.now()
@@ -262,23 +272,17 @@ export function MainWorkspace() {
       .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)))
   }, [])
 
-  useEffect(() => {
-    let disposed = false
-    const refresh = () => fetchShadowLedger()
-      .then((value) => {
-        if (!disposed) {
-          setShadow(value)
-          setShadowError('')
-        }
-      })
-      .catch((reason) => !disposed && setShadowError(reason instanceof Error ? reason.message : String(reason)))
-    refresh()
-    const timer = window.setInterval(refresh, 10000)
-    return () => {
-      disposed = true
-      window.clearInterval(timer)
+  const refreshShadowLedger = useCallback(async () => {
+    try {
+      setShadow(await fetchShadowLedger())
+      setShadowError('')
+    } catch (reason) {
+      setShadowError(reason instanceof Error ? reason.message : String(reason))
     }
   }, [])
+  useVisibilityPolling(refreshShadowLedger, {
+    intervalMs: bottomVisible && bottomTab === 'shadow' ? 10000 : 30000,
+  })
 
   const runShadowScan = useCallback(async () => {
     setShadowBusy(true)
@@ -360,73 +364,60 @@ export function MainWorkspace() {
     }
   }, [])
 
-  useEffect(() => {
+  const refreshActiveArtifact = useCallback(async () => {
     if (!parameters || !chart || parameters.dataSource !== 'research') return
-    let disposed = false
-    const refresh = () => fetchDataArtifacts()
-      .then((artifacts) => {
-        if (disposed) return
-        const active = artifacts.find((artifact) => artifact.isActive)
-        if (active && active.artifactId !== chart?.artifact.artifactId) {
-          void handleArtifactActivated(active)
-        }
-      })
-      .catch(() => undefined)
-    refresh()
-    const timer = window.setInterval(refresh, 3000)
-    return () => {
-      disposed = true
-      window.clearInterval(timer)
+    try {
+      const artifacts = await fetchDataArtifacts()
+      const active = artifacts.find((artifact) => artifact.isActive)
+      if (active && active.artifactId !== chart.artifact.artifactId) {
+        await handleArtifactActivated(active)
+      }
+    } catch {
+      // The parameter drawer exposes generation errors when the user is working there.
     }
   }, [chart, handleArtifactActivated, parameters])
+  useVisibilityPolling(refreshActiveArtifact, {
+    enabled: Boolean(parameters && chart && parameters.dataSource === 'research' && !parametersOpen),
+    intervalMs: 10000,
+  })
 
-  useEffect(() => {
+  const refreshLiveChart = useCallback(async () => {
     if (!parameters || parameters.dataSource !== 'live') return
-    const timer = window.setInterval(() => {
-      const startedAt = performance.now()
-      fetchChart(parameters)
-        .then((payload) => {
-          setChart(payload)
-          void recordFrontendDiagnostic('chart_live_refresh', performance.now() - startedAt).catch(() => undefined)
-        })
-        .catch((reason) => {
-          void recordFrontendDiagnostic('chart_live_refresh', performance.now() - startedAt, false).catch(() => undefined)
-          setParameterError(reason instanceof Error ? reason.message : String(reason))
-        })
-    }, 5000)
-    return () => window.clearInterval(timer)
+    const startedAt = performance.now()
+    try {
+      setChart(await fetchChart(parameters))
+      void recordFrontendDiagnostic('chart_live_refresh', performance.now() - startedAt).catch(() => undefined)
+    } catch (reason) {
+      void recordFrontendDiagnostic('chart_live_refresh', performance.now() - startedAt, false).catch(() => undefined)
+      setParameterError(reason instanceof Error ? reason.message : String(reason))
+    }
   }, [parameters])
+  useVisibilityPolling(refreshLiveChart, {
+    enabled: parameters?.dataSource === 'live',
+    intervalMs: 5000,
+  })
 
-  useEffect(() => {
-    let disposed = false
-    const refresh = () => fetchMt5Status().then((value) => !disposed && setStatus(value)).catch(() => undefined)
-    refresh()
-    const timer = window.setInterval(refresh, 2500)
-    return () => {
-      disposed = true
-      window.clearInterval(timer)
+  const refreshMt5Status = useCallback(async () => {
+    try {
+      setStatus(await fetchMt5Status())
+    } catch {
+      // The last known state remains visible until the reconnect supervisor responds.
     }
   }, [])
+  useVisibilityPolling(refreshMt5Status, { intervalMs: 5000 })
 
-  useEffect(() => {
-    let disposed = false
-    const refresh = () => fetchRuntimeDiagnostics()
-      .then((value) => {
-        if (!disposed) {
-          setRuntimeDiagnostics(value)
-          setRuntimeDiagnosticsError('')
-        }
-      })
-      .catch((reason) => {
-        if (!disposed) setRuntimeDiagnosticsError(reason instanceof Error ? reason.message : String(reason))
-      })
-    refresh()
-    const timer = window.setInterval(refresh, 5000)
-    return () => {
-      disposed = true
-      window.clearInterval(timer)
+  const refreshRuntimeDiagnostics = useCallback(async () => {
+    try {
+      setRuntimeDiagnostics(await fetchRuntimeDiagnostics())
+      setRuntimeDiagnosticsError('')
+    } catch (reason) {
+      setRuntimeDiagnosticsError(reason instanceof Error ? reason.message : String(reason))
     }
   }, [])
+  useVisibilityPolling(refreshRuntimeDiagnostics, {
+    enabled: bottomVisible && bottomTab === 'diagnostics',
+    intervalMs: 10000,
+  })
 
   useEffect(() => {
     if (!selected) {
@@ -473,8 +464,6 @@ export function MainWorkspace() {
   )
   const appliedAspectMinimumLabel = formatAspectDuration(appliedAspectMinimum)
 
-  const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
-  const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
   const selectBottomTab = useCallback((tab: 'events' | 'shadow' | 'candle-shadow' | 'positions' | 'diagnostics') => {
     setBottomTab(tab)
     setFocusMode(false)
@@ -623,17 +612,19 @@ export function MainWorkspace() {
             onUndo={chartLayouts.undo}
           />
           {objectsOpen && (
-            <DrawingObjectPanel
-              drawings={chartLayouts.drawings}
-              templates={chartLayouts.templates}
-              selectedDrawingId={chartLayouts.selectedDrawingId}
-              onSelect={chartLayouts.setSelectedDrawingId}
-              onUpdate={chartLayouts.updateDrawing}
-              onDelete={chartLayouts.deleteDrawing}
-              onCreateTemplate={chartLayouts.createTemplate}
-              onRemoveTemplate={chartLayouts.removeTemplate}
-              onClose={() => setObjectsOpen(false)}
-            />
+            <Suspense fallback={null}>
+              <DrawingObjectPanel
+                drawings={chartLayouts.drawings}
+                templates={chartLayouts.templates}
+                selectedDrawingId={chartLayouts.selectedDrawingId}
+                onSelect={chartLayouts.setSelectedDrawingId}
+                onUpdate={chartLayouts.updateDrawing}
+                onDelete={chartLayouts.deleteDrawing}
+                onCreateTemplate={chartLayouts.createTemplate}
+                onRemoveTemplate={chartLayouts.removeTemplate}
+                onClose={() => setObjectsOpen(false)}
+              />
+            </Suspense>
           )}
         </section>
         {inspectorVisible && (
@@ -648,38 +639,42 @@ export function MainWorkspace() {
         )}
       </section>}
       {activeSurface === 'square9' && (
-        <SquareOfNineWorkspace
-          symbol={chart.symbol}
-          timeframe={chart.timeframe}
-          latestPrice={chart.candles.at(-1)?.close ?? 1}
-          state={chartLayouts.chartState.squareOfNine}
-          onChange={(squareOfNine) => chartLayouts.updateChartState({ squareOfNine })}
-          layoutToolbar={(
-            <LayoutToolbar
-              layouts={chartLayouts.layouts}
-              activeLayout={chartLayouts.activeLayout}
-              saveStatus={chartLayouts.saveStatus}
-              error={chartLayouts.error}
-              showObjects={false}
-              onSelect={chartLayouts.switchLayout}
-              onSave={chartLayouts.saveNow}
-              onSaveAs={chartLayouts.saveAs}
-              onDelete={chartLayouts.removeLayout}
-              onExport={() => chartLayouts.activeLayout && downloadLayoutJson({
-                ...chartLayouts.activeLayout,
-                chartState: chartLayouts.chartState,
-                drawings: chartLayouts.drawings,
-              })}
-              onImport={chartLayouts.importLayout}
-            />
-          )}
-        />
+        <Suspense fallback={<div className="loading-state"><strong>Opening Square of Nine</strong></div>}>
+          <SquareOfNineWorkspace
+            symbol={chart.symbol}
+            timeframe={chart.timeframe}
+            latestPrice={chart.candles.at(-1)?.close ?? 1}
+            state={chartLayouts.chartState.squareOfNine}
+            onChange={(squareOfNine) => chartLayouts.updateChartState({ squareOfNine })}
+            layoutToolbar={(
+              <LayoutToolbar
+                layouts={chartLayouts.layouts}
+                activeLayout={chartLayouts.activeLayout}
+                saveStatus={chartLayouts.saveStatus}
+                error={chartLayouts.error}
+                showObjects={false}
+                onSelect={chartLayouts.switchLayout}
+                onSave={chartLayouts.saveNow}
+                onSaveAs={chartLayouts.saveAs}
+                onDelete={chartLayouts.removeLayout}
+                onExport={() => chartLayouts.activeLayout && downloadLayoutJson({
+                  ...chartLayouts.activeLayout,
+                  chartState: chartLayouts.chartState,
+                  drawings: chartLayouts.drawings,
+                })}
+                onImport={chartLayouts.importLayout}
+              />
+            )}
+          />
+        </Suspense>
       )}
       {activeSurface === 'chakra' && (
-        <ChakraLabWorkspace
-          defaultLatitude={parameters.reference.latitude}
-          defaultLongitude={parameters.reference.longitude}
-        />
+        <Suspense fallback={<div className="loading-state"><strong>Opening Chakra Lab</strong></div>}>
+          <ChakraLabWorkspace
+            defaultLatitude={parameters.reference.latitude}
+            defaultLongitude={parameters.reference.longitude}
+          />
+        </Suspense>
       )}
       {activeSurface === 'chart' && <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>
         <div className="bottom-tabs">
@@ -737,21 +732,25 @@ export function MainWorkspace() {
         <span className="status-spacer" />
         <span>{shadow?.refresh?.state === 'up_to_date' ? 'Artifact current' : shadow?.refresh?.state?.replaceAll('_', ' ') ?? 'Refresh checking'}</span>
         <span className="execution-locked"><LockKeyhole size={12} /> Read-only</span>
-        <time>{clock.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} IST</time>
+        <StatusClock />
       </footer>
       {parameterError && <div className="parameter-error" role="alert">{parameterError}<button onClick={() => setParameterError('')} title="Dismiss"><X size={14} /></button></div>}
-      <ParameterDrawer
-        open={parametersOpen}
-        busy={chartLoading}
-        schema={schema}
-        parameters={parameters}
-        profiles={profiles}
-        activeArtifactId={chart.artifact.artifactId}
-        onClose={() => setParametersOpen(false)}
-        onApply={applyParameters}
-        onArtifactActivated={handleArtifactActivated}
-        onProfilesChange={setProfiles}
-      />
+      {parametersOpen && (
+        <Suspense fallback={null}>
+          <ParameterDrawer
+            open
+            busy={chartLoading}
+            schema={schema}
+            parameters={parameters}
+            profiles={profiles}
+            activeArtifactId={chart.artifact.artifactId}
+            onClose={() => setParametersOpen(false)}
+            onApply={applyParameters}
+            onArtifactActivated={handleArtifactActivated}
+            onProfilesChange={setProfiles}
+          />
+        </Suspense>
+      )}
     </main>
   )
 }

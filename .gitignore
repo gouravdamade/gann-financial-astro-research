@@ -15,6 +15,7 @@ __pycache__/
 *.parquet
 *.pkl
 *.html
+!gann-astro-desk/index.html
 *.zip
 *.bsp
 upcoming_aspects_*.json

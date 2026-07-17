@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import importlib
 import json
+import logging
 import os
 import signal
 import sys
@@ -27,6 +28,7 @@ from runtime_support import (
 
 
 SIDECAR_CONTRACT = "GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1"
+SUPPORT_SERVICE_DELAY_SECONDS = 8.0
 
 
 def parse_arguments(arguments: list[str] | None = None) -> argparse.Namespace:
@@ -60,12 +62,14 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
     )
     sys.path.insert(0, str(backend_path))
 
-    ollama_process, ollama_logs = start_local_ollama(paths)
-    mark_startup_phase("ollama_checked")
-    codex_process, codex_logs = start_codex_bridge(paths, codex_port)
-    mark_startup_phase("codex_bridge_started")
+    ollama_process: Any = None
+    ollama_logs: list[Any] = []
+    codex_process: Any = None
+    codex_logs: list[Any] = []
     backend_server: Any = None
     http_server: Any = None
+    support_thread: threading.Thread | None = None
+    support_lock = threading.Lock()
     shutdown_once = threading.Event()
 
     def request_shutdown() -> None:
@@ -91,18 +95,51 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
     def signal_shutdown(_signum: int, _frame: Any) -> None:
         threading.Thread(target=request_shutdown, daemon=True).start()
 
+    def launch_support_services() -> None:
+        nonlocal codex_logs, codex_process, ollama_logs, ollama_process
+        next_codex_process, next_codex_logs = start_codex_bridge(paths, codex_port)
+        if shutdown_once.is_set():
+            stop_process(next_codex_process)
+            close_handles(next_codex_logs)
+            return
+        with support_lock:
+            codex_process = next_codex_process
+            codex_logs = next_codex_logs
+        if backend_server is not None:
+            backend_server.runtime_diagnostics.record_lifecycle(
+                "support_service_started",
+                service="codex_bridge",
+                started=next_codex_process is not None,
+            )
+        if shutdown_once.wait(SUPPORT_SERVICE_DELAY_SECONDS):
+            return
+        next_ollama_process, next_ollama_logs = start_local_ollama(paths)
+        if shutdown_once.is_set():
+            stop_process(next_ollama_process)
+            close_handles(next_ollama_logs)
+            return
+        with support_lock:
+            ollama_process = next_ollama_process
+            ollama_logs = next_ollama_logs
+        if backend_server is not None:
+            backend_server.runtime_diagnostics.record_lifecycle(
+                "support_service_started",
+                service="local_ollama",
+                started=next_ollama_process is not None,
+            )
+
     try:
         backend_server = importlib.import_module("server")
         mark_startup_phase("backend_imported")
         from werkzeug.serving import make_server
 
+        logging.getLogger("werkzeug").setLevel(logging.WARNING)
         http_server = make_server("127.0.0.1", options.port, backend_server.app, threaded=True)
         mark_startup_phase("http_ready")
         backend_server.runtime_diagnostics.set_startup_timings(
             startup_phases,
             {
-                "ollamaStartedBySidecar": ollama_process is not None,
-                "codexBridgeStarted": codex_process is not None,
+                "supportServicesDeferred": True,
                 "executionAllowed": False,
             },
         )
@@ -125,18 +162,28 @@ def run_sidecar(arguments: list[str] | None = None) -> None:
             ),
             flush=True,
         )
+        support_thread = threading.Thread(
+            target=launch_support_services,
+            name="gann-support-services",
+            daemon=True,
+        )
+        support_thread.start()
         http_server.serve_forever()
     finally:
+        shutdown_once.set()
         if backend_server is not None:
             backend_server.runtime_diagnostics.record_lifecycle("sidecar_shutdown_requested")
         if http_server is not None:
             http_server.server_close()
         if backend_server is not None:
             stop_backend_services(backend_server)
-        stop_process(codex_process)
-        stop_process(ollama_process)
-        close_handles(codex_logs)
-        close_handles(ollama_logs)
+        if support_thread is not None:
+            support_thread.join(timeout=3)
+        with support_lock:
+            stop_process(codex_process)
+            stop_process(ollama_process)
+            close_handles(codex_logs)
+            close_handles(ollama_logs)
 
 
 def main() -> int:

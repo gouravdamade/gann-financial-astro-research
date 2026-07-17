@@ -821,6 +821,7 @@ export type ProspectiveRefreshStatus = {
 export type BackendRuntimeInfo = {
   contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1'
   baseUrl: string
+  apiToken: string
   port: number
   pid: number
   status: string
