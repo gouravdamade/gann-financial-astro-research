@@ -1,0 +1,10 @@
+﻿{
+    "promoted_at_utc":  "2026-07-17T20:24:15.7595445Z",
+    "version":  "0.10.8",
+    "candidate":  "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.8-tauri",
+    "stable":  "D:\\GannFinancialAstro\\release\\GannAstroDesk",
+    "archive":  "D:\\GannFinancialAstro\\release_archive\\GannAstroDesk_0.10.7_20260717T202315Z",
+    "state_backup":  "D:\\GannFinancialAstro\\state_backups\\pre_0.10.8_promotion_20260717T202315Z",
+    "executable_sha256":  "FA28C213D6894CFF8DBCE14F416C24C84446BFFBC7AA457D0D2AAC64EB8C8635",
+    "installer_sha256":  "1BD1D9B742B0EC0E15B4BE8F4C6D7DF1AD95CD86937029BAC124229B242710BE"
+}

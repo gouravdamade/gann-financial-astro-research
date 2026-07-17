@@ -1,0 +1,12 @@
+﻿{
+    "contract":  "GANN_CODEX_RECOVERY_SNAPSHOT_V1",
+    "created_at_ist":  "2026-07-18T02:01:11.1593367+05:30",
+    "release":  "0.10.8",
+    "source_repo":  "D:\\PycharmProjects",
+    "remote":  "https://github.com/gouravdamade/gann-financial-astro-research.git",
+    "stable_executable":  "D:\\GannFinancialAstro\\release\\GannAstroDesk\\GannAstroDesk.exe",
+    "stable_soak":  "D:\\GannFinancialAstro\\soak\\tauri_0.10.8_20260717_202432\\logs\\native_soak_report.json",
+    "rollback_archive":  "D:\\GannFinancialAstro\\release_archive\\GannAstroDesk_0.10.7_20260717T202315Z",
+    "state_backup":  "D:\\GannFinancialAstro\\state_backups\\pre_0.10.8_promotion_20260717T202315Z",
+    "note":  "Compact recovery evidence only; user databases, logs, corpora, and Android worktree intentionally excluded."
+}

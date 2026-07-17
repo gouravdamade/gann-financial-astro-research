@@ -1,0 +1,4 @@
+﻿ M gann_aspect_annotations_raman_v2.sqlite
+?? candlestick_shadow_v3.sqlite
+?? logs/
+?? tryapp-android/

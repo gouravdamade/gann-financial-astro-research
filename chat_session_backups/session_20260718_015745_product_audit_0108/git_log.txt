@@ -1,0 +1,8 @@
+﻿a038e3b Record Gann Astro Desk 0.10.8 release evidence
+f974556 Authenticate native release soak
+cc1ce18 Audit native app performance and runtime isolation
+c22500b Record packaged Chakra visual QA
+9fe2685 Release Chakra Lab in Gann Astro Desk 0.10.7
+1e7342f Add timestamp-safe Chakra Lab workspace
+98c2e08 Add source-profiled SBC Vedha guidance
+1edd308 Add page-certified SBC letter fixture
