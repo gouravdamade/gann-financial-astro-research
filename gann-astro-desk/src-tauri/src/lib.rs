@@ -99,6 +99,25 @@ fn now_unix_ms() -> u64 {
         .unwrap_or(u64::MAX)
 }
 
+fn validated_api_token_override(value: &str) -> Option<String> {
+    let token = value.trim();
+    if !(24..=128).contains(&token.len())
+        || !token
+            .chars()
+            .all(|character| character.is_ascii_alphanumeric() || matches!(character, '-' | '_'))
+    {
+        return None;
+    }
+    Some(token.to_string())
+}
+
+fn launch_api_token() -> String {
+    env::var("GANN_ASTRO_API_TOKEN_OVERRIDE")
+        .ok()
+        .and_then(|value| validated_api_token_override(&value))
+        .unwrap_or_else(|| Uuid::new_v4().simple().to_string())
+}
+
 fn available_port() -> Result<u16, String> {
     let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 0))
         .map_err(|error| format!("Unable to reserve a private backend port: {error}"))?;
@@ -418,7 +437,7 @@ impl BackendRuntimeState {
     fn spawn(app: &AppHandle) -> Result<Self, String> {
         let port = available_port()?;
         let codex_port = available_port()?;
-        let api_token = Uuid::new_v4().simple().to_string();
+        let api_token = launch_api_token();
         let launch = locate_sidecar(app)?;
         let data_root = default_data_root();
         let logs_dir = data_root.join("logs");
@@ -662,6 +681,17 @@ mod tests {
         let error = parse_http_json_response(failure).unwrap_err();
         assert!(error.contains("HTTP 400"));
         assert!(error.contains("bad time"));
+    }
+
+    #[test]
+    fn api_token_override_accepts_only_header_safe_values() {
+        let valid = "0123456789abcdef0123456789abcdef";
+        assert_eq!(validated_api_token_override(valid), Some(valid.to_string()));
+        assert_eq!(validated_api_token_override("short"), None);
+        assert_eq!(
+            validated_api_token_override("0123456789abcdef01234567\r\nInjected: yes"),
+            None
+        );
     }
 
     #[test]

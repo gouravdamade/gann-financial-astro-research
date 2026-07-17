@@ -23,6 +23,11 @@ New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
 $phasePath = Join-Path $logsRoot "native_soak_phases.jsonl"
 $previousDataRoot = $env:GANN_ASTRO_DESKTOP_DATA
+$previousApiTokenOverride = $env:GANN_ASTRO_API_TOKEN_OVERRIDE
+$soakApiToken = [Guid]::NewGuid().ToString("N")
+$privateHeaders = @{
+    "X-Gann-Astro-Token" = $soakApiToken
+}
 $app = $null
 $report = [ordered]@{
     contract = "GANN_TAURI_NATIVE_SOAK_V1"
@@ -69,6 +74,25 @@ function Get-DescendantIds([int]$ParentId) {
     return @($ids)
 }
 
+function Invoke-PrivateRestMethod(
+    [string]$Uri,
+    [string]$Method = "Get",
+    [object]$Body = $null,
+    [int]$TimeoutSec = 10
+) {
+    $arguments = @{
+        Uri = $Uri
+        Method = $Method
+        Headers = $privateHeaders
+        TimeoutSec = $TimeoutSec
+    }
+    if ($null -ne $Body) {
+        $arguments.ContentType = "application/json"
+        $arguments.Body = $Body | ConvertTo-Json -Depth 12
+    }
+    return Invoke-RestMethod @arguments
+}
+
 function Wait-ForSidecar([int]$AppPid, [int]$ExcludePid = 0, [int]$TimeoutSeconds = 90) {
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while ((Get-Date) -lt $deadline) {
@@ -78,7 +102,8 @@ function Wait-ForSidecar([int]$AppPid, [int]$ExcludePid = 0, [int]$TimeoutSecond
         if ($candidateSidecar -and $candidateSidecar.CommandLine -match "--port\s+(\d+)") {
             $port = [int]$Matches[1]
             try {
-                $health = Invoke-RestMethod -Uri ("http://127.0.0.1:{0}/api/health" -f $port) -TimeoutSec 3
+                $health = Invoke-PrivateRestMethod `
+                    -Uri ("http://127.0.0.1:{0}/api/health" -f $port) -TimeoutSec 3
                 if ($health.ok) {
                     return [pscustomobject]@{
                         Process = $candidateSidecar
@@ -94,8 +119,7 @@ function Wait-ForSidecar([int]$AppPid, [int]$ExcludePid = 0, [int]$TimeoutSecond
 }
 
 function Invoke-JsonPost([string]$Uri, [object]$Body) {
-    return Invoke-RestMethod -Uri $Uri -Method Post -ContentType "application/json" `
-        -Body ($Body | ConvertTo-Json -Depth 12) -TimeoutSec 10
+    return Invoke-PrivateRestMethod -Uri $Uri -Method Post -Body $Body -TimeoutSec 10
 }
 
 function Wait-ForNormalizedShadow([int]$Port, [int]$TimeoutSeconds = 90) {
@@ -103,7 +127,7 @@ function Wait-ForNormalizedShadow([int]$Port, [int]$TimeoutSeconds = 90) {
     $last = $null
     while ((Get-Date) -lt $deadline) {
         try {
-            $last = Invoke-RestMethod -Uri `
+            $last = Invoke-PrivateRestMethod -Uri `
                 ("http://127.0.0.1:{0}/api/candlestick-shadow" -f $Port) -TimeoutSec 10
             if ($last.shadow.lastScan.timeNormalization.valid -eq $true) {
                 return $last
@@ -118,6 +142,7 @@ function Wait-ForNormalizedShadow([int]$Port, [int]$TimeoutSeconds = 90) {
 try {
     Write-SoakPhase "app_launching"
     $env:GANN_ASTRO_DESKTOP_DATA = $dataRoot
+    $env:GANN_ASTRO_API_TOKEN_OVERRIDE = $soakApiToken
     $app = Start-Process -FilePath $executable -PassThru
     $appStartedAt = $app.StartTime
     Write-SoakPhase "app_started" ([ordered]@{ app_pid = $app.Id })
@@ -183,9 +208,9 @@ try {
         actor_status = [string]$jupiterReadiness.status
         evidence_cutoff_utc = [string]$chakraSnapshot.evidence_cutoff_utc
     })
-    $candleHealth = Invoke-RestMethod -Uri `
+    $candleHealth = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/local-candlestick/health" -f $initial.Port) -TimeoutSec 10
-    $chart = Invoke-RestMethod -Uri `
+    $chart = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/chart" -f $initial.Port) -TimeoutSec 20
     $candleEventId = [string]($chart.chart.aspects | Select-Object -First 1).eventId
     if (-not $candleEventId) {
@@ -196,7 +221,7 @@ try {
                 $initial.Port,
                 [Uri]::EscapeDataString($artifactStart),
                 [Uri]::EscapeDataString($artifactEnd)
-            $chart = Invoke-RestMethod -Uri $historyUri -TimeoutSec 40
+            $chart = Invoke-PrivateRestMethod -Uri $historyUri -TimeoutSec 40
             $candleEventId = [string]($chart.chart.aspects | Select-Object -First 1).eventId
         }
     }
@@ -300,7 +325,7 @@ try {
         $active = $initial
     }
 
-    $layoutAfter = Invoke-RestMethod -Uri `
+    $layoutAfter = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/chart-layouts/{1}" -f $active.Port, $layoutId) -TimeoutSec 10
     $report.checks.layout_survived_recovery = (
         $layoutAfter.ok -and
@@ -308,9 +333,9 @@ try {
         $layoutAfter.layout.revision -eq 1
     )
     Write-SoakPhase "layout_verified"
-    $refresh = Invoke-RestMethod -Uri `
+    $refresh = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/prospective-refresh" -f $active.Port) -TimeoutSec 10
-    $diagnostics = Invoke-RestMethod -Uri `
+    $diagnostics = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/runtime-diagnostics" -f $active.Port) -TimeoutSec 10
     $report.checks.refresh_execution_locked = $refresh.refresh.executionAllowed -eq $false
     $report.checks.diagnostics_execution_locked = `
@@ -365,6 +390,11 @@ try {
         Remove-Item Env:GANN_ASTRO_DESKTOP_DATA -ErrorAction SilentlyContinue
     } else {
         $env:GANN_ASTRO_DESKTOP_DATA = $previousDataRoot
+    }
+    if ($null -eq $previousApiTokenOverride) {
+        Remove-Item Env:GANN_ASTRO_API_TOKEN_OVERRIDE -ErrorAction SilentlyContinue
+    } else {
+        $env:GANN_ASTRO_API_TOKEN_OVERRIDE = $previousApiTokenOverride
     }
     $report.finished_at_utc = [DateTime]::UtcNow.ToString("o")
     $failedChecks = @(
