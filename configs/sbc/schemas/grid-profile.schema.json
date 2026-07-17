@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gannastro/schemas/sbc/grid-profile-v1.json",
+  "title": "SBC source-gated grid profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "grid_profile_id",
+    "grid_form",
+    "status",
+    "authority",
+    "selection_policy",
+    "compile_enabled",
+    "blocked_reason",
+    "dimensions",
+    "orientation",
+    "witness_sets",
+    "certified_layers",
+    "entries",
+    "unresolved_layers",
+    "blocked_capabilities"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "grid_profile_id": {"type": "string", "minLength": 1},
+    "grid_form": {"enum": ["SBC_81_CELL", "SBC_64_CELL"]},
+    "status": {"type": "string", "minLength": 1},
+    "authority": {"type": "string", "minLength": 1},
+    "selection_policy": {"const": "EXPLICIT_ONLY"},
+    "compile_enabled": {"type": "boolean"},
+    "blocked_reason": {"type": ["string", "null"]},
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rows", "columns"],
+      "properties": {
+        "rows": {"type": "integer", "minimum": 1},
+        "columns": {"type": "integer", "minimum": 1}
+      }
+    },
+    "orientation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coordinate_basis", "row_direction", "column_direction", "cardinal_binding", "comparison_transform"],
+      "properties": {
+        "coordinate_basis": {"type": "string", "minLength": 1},
+        "row_direction": {"type": "string", "minLength": 1},
+        "column_direction": {"type": "string", "minLength": 1},
+        "cardinal_binding": {"type": "string", "minLength": 1},
+        "comparison_transform": {"enum": ["IDENTITY", "ROTATE_CCW_90", "ROTATE_CW_90", "ROTATE_180", "NONE"]}
+      }
+    },
+    "witness_sets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["witness_set_id", "evidence_status", "citations"],
+        "properties": {
+          "witness_set_id": {"type": "string", "minLength": 1},
+          "evidence_status": {"type": "string", "minLength": 1},
+          "citations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source_id", "locator", "witness_role", "transform_to_profile"],
+              "properties": {
+                "source_id": {"type": "string", "minLength": 1},
+                "locator": {"type": "string", "minLength": 1},
+                "witness_role": {"type": "string", "minLength": 1},
+                "transform_to_profile": {"enum": ["IDENTITY", "ROTATE_CCW_90", "ROTATE_CW_90", "ROTATE_180", "NONE"]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "certified_layers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY"]}
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["row", "column", "layer", "value", "witness_set_id"],
+        "properties": {
+          "row": {"type": "integer", "minimum": 1},
+          "column": {"type": "integer", "minimum": 1},
+          "layer": {"enum": ["NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY"]},
+          "value": {"type": "string", "minLength": 1},
+          "witness_set_id": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "unresolved_layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["layer", "expected_count", "reason", "witness_set_id"],
+        "properties": {
+          "layer": {"type": "string", "minLength": 1},
+          "expected_count": {"type": "integer", "minimum": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "witness_set_id": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "blocked_capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "notes": {"type": "string"}
+  }
+}

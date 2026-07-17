@@ -1,0 +1,43 @@
+schema_version: 1
+grid_profile_id: sbc_64_blocked_v1
+grid_form: SBC_64_CELL
+status: blocked_missing_page_certified_mapping
+authority: source_plurality_register_only
+selection_policy: EXPLICIT_ONLY
+compile_enabled: false
+blocked_reason: No locally held source edition supplies a page-certified 64-cell mapping.
+dimensions:
+  rows: 8
+  columns: 8
+orientation:
+  coordinate_basis: UNAVAILABLE
+  row_direction: UNRESOLVED
+  column_direction: UNRESOLVED
+  cardinal_binding: UNRESOLVED
+  comparison_transform: NONE
+witness_sets:
+  - witness_set_id: FORM_ATTESTATION_ONLY
+    evidence_status: FORM_EXISTS_MAPPING_NOT_AVAILABLE
+    citations:
+      - source_id: CHAKRA_DOCTRINE_AUDIT_20260715
+        locator: Sarvatobhadra 64-cell versus 81-cell source-plurality audit
+        witness_role: WORKSPACE_CONFLICT_REGISTER_ONLY
+        transform_to_profile: NONE
+certified_layers: []
+entries: []
+unresolved_layers:
+  - layer: FULL_GRID_MAPPING
+    expected_count: 64
+    reason: A page-certified 64-cell source fixture has not been acquired.
+    witness_set_id: FORM_ATTESTATION_ONLY
+blocked_capabilities:
+  - GRID_COMPILATION
+  - DEFAULT_PROFILE_SELECTION
+  - CARDINAL_ORIENTATION
+  - VEDHA
+  - LATTA
+  - SCORING
+  - FINANCIAL_LABELS
+  - TRADES
+  - MT5_EXECUTION
+notes: Metadata-only research block. This profile must raise GridProfileBlockedError if compilation is attempted.

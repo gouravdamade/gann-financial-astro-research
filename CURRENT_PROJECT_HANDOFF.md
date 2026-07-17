@@ -1,10 +1,49 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 05:20 IST
+Last updated: 2026-07-17 06:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-17 (Sarvatobhadra Phase 1 Foundation)
+## Latest Update - 2026-07-17 (Sarvatobhadra Phase 2A Grid Fixture)
+
+- Added the explicit-only `sbc_81_rotation_normalized_partial_v1` research
+  fixture and strict compiler. It deterministically creates 81 figure-relative
+  cells with 28 nakshatras including Abhijit, 12 rashis, five tithi groups, and
+  seven weekday entries. Every entry resolves to a registered page locator.
+- The local source comparison found a material orientation issue that is now
+  preserved in data: the cardinals-labeled plate in the 1937 Subrahmanya Sastri
+  *Phaladeepika* editor supplement becomes Sanjay Rath Figure 1.2 only after a
+  90-degree counter-clockwise rotation. The compiler therefore claims topology
+  agreement, not a certified absolute North/East orientation.
+- Kept source layers honest. PDF page 341 contains root Mantreswara 26.48;
+  pages 342-356 are editor-supplied extracts/free rendering. The executable
+  fixture cites PDF pages 347-349 as editor supplement material. Rath PDF page
+  21, printed page 10, is registered as modern secondary commentary.
+- The fixture is intentionally incomplete: 16 vowel slots, 20 consonant slots,
+  and absolute cardinal binding remain unresolved, so `complete=false`.
+  Vedha, Latta, scoring, financial labels, trades, MT5 execution, desktop-app
+  integration, and implicit/default grid selection remain blocked.
+- Added metadata-only `sbc_64_blocked_v1`. It records the missing source gate
+  and raises `GridProfileBlockedError` if compilation is attempted; no 64-cell
+  coordinates were invented.
+- Compile smoke evidence:
+  - profile hash
+    `C5AF4D521343BA3C690EE9CE5ECAF1912D4804635CEAC43DE1161E1041B28B3B`;
+  - layer counts: 28 nakshatra, 12 rashi, 5 tithi-group, 7 weekday;
+  - source IDs: `PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT` and
+    `SANJAY_RATH_CRUX_1998_SBC_FIGURE`.
+- Verification passed: 8 focused Phase 2A tests after formatting, all 196 full
+  repository tests, Ruff lint, and Ruff format checks. Evidence and decisions
+  are in `sbc_phase2a_grid_fixture_20260717.md`,
+  `docs/sbc/GRID_FIXTURE_AUDIT.md`, and ADR-0002.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_061702_sbc_phase2a_grid_fixture`.
+- Stable Gann Astro Desk remains `0.10.6`; no SBC grid is packaged or promoted.
+  Recommended next gate is a separately reviewed Sanskrit letter fixture plus
+  acquisition of a page-certified 64-cell edition. A read-only Chakra Lab still
+  waits for orientation resolution and independent fixture comparison.
+
+## Previous Update - 2026-07-17 (Sarvatobhadra Phase 1 Foundation)
 
 - Added an isolated `sbc` research package with strict source/profile contracts,
   Raman-primary and Lahiri-comparison profiles, timezone-aware Swiss Ephemeris

@@ -1,0 +1,147 @@
+schema_version: 1
+grid_profile_id: sbc_81_rotation_normalized_partial_v1
+grid_form: SBC_81_CELL
+status: partial_topology_fixture_not_a_default
+authority: editor_supplement_and_secondary_figure_rotation_normalized_comparison
+selection_policy: EXPLICIT_ONLY
+compile_enabled: true
+blocked_reason: null
+dimensions:
+  rows: 9
+  columns: 9
+orientation:
+  coordinate_basis: SANJAY_RATH_1998_FIGURE_1_2_ROWS_AND_COLUMNS
+  row_direction: TOP_TO_BOTTOM
+  column_direction: LEFT_TO_RIGHT
+  cardinal_binding: UNRESOLVED_SOURCE_ROTATION_CONFLICT
+  comparison_transform: ROTATE_CCW_90
+witness_sets:
+  - witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED
+    evidence_status: TWO_WITNESS_TOPOLOGY_AGREEMENT_CARDINAL_BINDING_UNRESOLVED
+    citations:
+      - source_id: SANJAY_RATH_CRUX_1998_SBC_FIGURE
+        locator: PDF page 21; printed page 10; Figure 1.2
+        witness_role: PROFILE_COORDINATE_FRAME
+        transform_to_profile: IDENTITY
+      - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+        locator: PDF page 347 printed page 310 plate; PDF page 348 printed page 311 construction text
+        witness_role: ROTATION_NORMALIZED_TOPOLOGY_WITNESS
+        transform_to_profile: ROTATE_CCW_90
+  - witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING
+    evidence_status: TWO_WITNESS_CENTER_MAPPING_AGREEMENT_AFTER_ROTATION
+    citations:
+      - source_id: SANJAY_RATH_CRUX_1998_SBC_FIGURE
+        locator: PDF page 21; printed page 10; Figure 1.2 center cross
+        witness_role: PROFILE_COORDINATE_FRAME
+        transform_to_profile: IDENTITY
+      - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+        locator: PDF pages 347-349; printed pages 310-312; center cross and weekday text
+        witness_role: ROTATION_NORMALIZED_CENTER_WITNESS
+        transform_to_profile: ROTATE_CCW_90
+  - witness_set_id: LETTER_LAYERS_PENDING_TRANSCRIPTION
+    evidence_status: LAYERS_ATTESTED_GLYPH_TRANSCRIPTION_NOT_CERTIFIED
+    citations:
+      - source_id: SANJAY_RATH_CRUX_1998_SBC_FIGURE
+        locator: PDF page 21; printed page 10; Figure 1.2 letter cells
+        witness_role: SECONDARY_FIGURE_GLYPH_WITNESS
+        transform_to_profile: IDENTITY
+      - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+        locator: PDF pages 347-348; printed pages 310-311; plate and construction text
+        witness_role: EDITOR_SUPPLEMENT_GLYPH_WITNESS
+        transform_to_profile: ROTATE_CCW_90
+  - witness_set_id: CARDINAL_ORIENTATION_CONFLICT
+    evidence_status: SOURCE_ROTATION_CONFLICT_RECORDED_NOT_RESOLVED
+    citations:
+      - source_id: SANJAY_RATH_CRUX_1998_SBC_FIGURE
+        locator: PDF page 21; printed page 10; Figure 1.2 has no cardinal labels
+        witness_role: FIGURE_RELATIVE_COORDINATE_FRAME
+        transform_to_profile: IDENTITY
+      - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+        locator: PDF page 347; printed page 310; plate labels North East South West
+        witness_role: CARDINALLY_LABELED_ROTATED_PLATE
+        transform_to_profile: ROTATE_CCW_90
+certified_layers:
+  - NAKSHATRA
+  - RASHI
+  - TITHI_GROUP
+  - WEEKDAY
+entries:
+  - {row: 1, column: 2, layer: NAKSHATRA, value: KRITTIKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 1, column: 3, layer: NAKSHATRA, value: ROHINI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 1, column: 4, layer: NAKSHATRA, value: MRIGASHIRA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 1, column: 5, layer: NAKSHATRA, value: ARDRA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 1, column: 6, layer: NAKSHATRA, value: PUNARVASU, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 1, column: 7, layer: NAKSHATRA, value: PUSHYA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 1, column: 8, layer: NAKSHATRA, value: ASHLESHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 2, column: 9, layer: NAKSHATRA, value: MAGHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 9, layer: NAKSHATRA, value: PURVA_PHALGUNI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 4, column: 9, layer: NAKSHATRA, value: UTTARA_PHALGUNI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 5, column: 9, layer: NAKSHATRA, value: HASTA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 6, column: 9, layer: NAKSHATRA, value: CHITRA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 9, layer: NAKSHATRA, value: SWATI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 8, column: 9, layer: NAKSHATRA, value: VISHAKHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 8, layer: NAKSHATRA, value: ANURADHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 7, layer: NAKSHATRA, value: JYESHTHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 6, layer: NAKSHATRA, value: MULA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 5, layer: NAKSHATRA, value: PURVA_ASHADHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 4, layer: NAKSHATRA, value: UTTARA_ASHADHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 3, layer: NAKSHATRA, value: ABHIJIT, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 9, column: 2, layer: NAKSHATRA, value: SHRAVANA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 8, column: 1, layer: NAKSHATRA, value: DHANISHTHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 1, layer: NAKSHATRA, value: SHATABHISHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 6, column: 1, layer: NAKSHATRA, value: PURVA_BHADRAPADA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 5, column: 1, layer: NAKSHATRA, value: UTTARA_BHADRAPADA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 4, column: 1, layer: NAKSHATRA, value: REVATI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 1, layer: NAKSHATRA, value: ASHWINI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 2, column: 1, layer: NAKSHATRA, value: BHARANI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+
+  - {row: 3, column: 3, layer: RASHI, value: VRISHABHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 4, layer: RASHI, value: MITHUNA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 5, layer: RASHI, value: KARKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 4, column: 7, layer: RASHI, value: SIMHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 5, column: 7, layer: RASHI, value: KANYA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 6, column: 7, layer: RASHI, value: TULA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 5, layer: RASHI, value: VRISCHIKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 4, layer: RASHI, value: DHANUS, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 3, layer: RASHI, value: MAKARA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 6, column: 3, layer: RASHI, value: KUMBHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 5, column: 3, layer: RASHI, value: MEENA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 4, column: 3, layer: RASHI, value: MESHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+
+  - {row: 4, column: 5, layer: TITHI_GROUP, value: NANDA, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 6, layer: TITHI_GROUP, value: BHADRA, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 6, column: 5, layer: TITHI_GROUP, value: JAYA, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 4, layer: TITHI_GROUP, value: RIKTA, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 5, layer: TITHI_GROUP, value: PURNA, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 4, column: 5, layer: WEEKDAY, value: SUNDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 4, column: 5, layer: WEEKDAY, value: TUESDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 6, layer: WEEKDAY, value: MONDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 6, layer: WEEKDAY, value: WEDNESDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 6, column: 5, layer: WEEKDAY, value: THURSDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 4, layer: WEEKDAY, value: FRIDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+  - {row: 5, column: 5, layer: WEEKDAY, value: SATURDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
+unresolved_layers:
+  - layer: VOWEL
+    expected_count: 16
+    reason: Sanskrit glyph sequence and transliteration require a separate page-certified transcription fixture.
+    witness_set_id: LETTER_LAYERS_PENDING_TRANSCRIPTION
+  - layer: CONSONANT
+    expected_count: 20
+    reason: Sanskrit glyph sequence and transliteration require a separate page-certified transcription fixture.
+    witness_set_id: LETTER_LAYERS_PENDING_TRANSCRIPTION
+  - layer: CARDINAL_ORIENTATION
+    expected_count: 1
+    reason: The cardinals on the 1937 plate rotate to the unlabeled Rath coordinate frame; no silent orientation choice is allowed.
+    witness_set_id: CARDINAL_ORIENTATION_CONFLICT
+blocked_capabilities:
+  - DEFAULT_PROFILE_SELECTION
+  - CARDINAL_ORIENTATION
+  - VOWEL_LAYER
+  - CONSONANT_LAYER
+  - VEDHA
+  - LATTA
+  - SCORING
+  - FINANCIAL_LABELS
+  - TRADES
+  - MT5_EXECUTION
+notes: This fixture compiles source-cited topology only. It is incomplete, figure-relative, read-only, and never selected implicitly.

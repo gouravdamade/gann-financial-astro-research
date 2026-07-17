@@ -45,6 +45,28 @@ sources:
     source_url: null
     notes: Mantreswara 26.48 and the editor supplement on pages 342-356 must remain separate citation layers.
 
+  - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+    title: Phaladeepika 1937 English edition, editor-supplied Sarvatobhadra supplement
+    authority: editor_supplement
+    content_layer: editor_supplied_horaratna_extract_and_free_rendering
+    status: locally_ingested_page_certified_for_grid_comparison
+    rights_status: private_research_copy_no_redistribution
+    sha256: 795DDB67D7416188B2272D2021B2B798561FAAAC08067A986AF0FACFD0552FCB
+    registry_ref: D:/GannFinancialAstro/sources/classical/PHALADEEPIKA_1937_SUBRAHMANYA_SASTRI.pdf#pdf-pages-347-349
+    source_url: null
+    notes: PDF page 341 is Mantreswara 26.48; PDF pages 342-356 are editor-supplied extracts and free rendering. The grid plate and construction text used here are PDF pages 347-349, printed pages 310-312, and are never labeled root Mantreswara doctrine.
+
+  - source_id: SANJAY_RATH_CRUX_1998_SBC_FIGURE
+    title: The Crux of Vedic Astrology - Timing of Events, Sarvatobhadra Figure 1.2
+    authority: modern_secondary_commentary
+    content_layer: secondary_interpretive_grid_figure
+    status: locally_ingested_page_certified_for_grid_comparison
+    rights_status: private_research_copy_no_redistribution
+    sha256: E3307EDE78737E4E35E78B042A0CFD19CAB6CD46234087173AFD62203080AF9A
+    registry_ref: D:/GannFinancialAstro/doc/Crux of Vedic Astrology-Timing of Events -- Sanjay Rath -- 1998.pdf#pdf-page-21
+    source_url: null
+    notes: PDF page 21, printed page 10, supplies the figure-relative 9x9 coordinate frame. It has no cardinal labels and is secondary commentary, not independent root-text authority.
+
   - source_id: TRAILOKYA_DIPIKA_1972_PENDING
     title: Trailokya Dipika 1972 Sarvatobhadra edition
     authority: traditional_source_candidate
