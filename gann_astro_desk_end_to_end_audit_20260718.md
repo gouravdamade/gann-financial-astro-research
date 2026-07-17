@@ -2,7 +2,7 @@
 
 Date: 2026-07-18 IST
 
-Release candidate: 0.10.8
+Stable release: 0.10.8
 
 Scope: Windows/Tauri shell, React chart workspace, Python sidecar, corrected
 event generation, live/research data flow, local specialist services,
@@ -28,6 +28,9 @@ Release 0.10.8 corrects the high-confidence runtime defects:
    token.
 9. The previously ignored `gann-astro-desk/index.html` is now tracked, so a
    clean Git checkout can actually build the app.
+10. The native soak harness authenticates every request with a constrained
+    one-launch token, so private-loopback security is tested rather than
+    bypassed.
 
 Execution remains intentionally locked. This audit does not promote any
 research rule to live order placement.
@@ -109,8 +112,12 @@ asynchronously after readiness; Ollama starts after an additional delay. This
 does not make the heavy Python repository import free, but it removes optional
 AI services from the critical chart path.
 
-Post-package startup timing must be measured from the 0.10.8 soak report before
-claiming a final improvement percentage.
+The promoted stable soak reached a healthy private sidecar 18.5 seconds after
+the native process started, while the interactive chart was available after
+approximately 18-20 seconds. The backend's own measured startup was 3.06
+seconds. This is roughly half the prior approximately 40-second cold visual
+baseline; the remaining delay is primarily packaged process and one-directory
+file loading rather than Codex/Ollama startup.
 
 ### Frontend bundle
 
@@ -223,22 +230,57 @@ Baseline before remediation:
 - Rust: 2 passed.
 - Oxlint, Vite build, Rust formatting, and strict Clippy passed.
 
-0.10.8 isolated-worktree gates completed:
+0.10.8 final integrated gates completed:
 
+- Python: 229 passed.
 - Frontend: 33 passed across 10 files.
 - Oxlint: clean.
 - TypeScript and Vite production build: passed.
 - Focused generation/process tests: 8 passed.
 - Private API security tests: 3 passed.
 - Changed-Python Ruff lint: clean.
-- Rust: 3 passed.
+- Rust: 4 passed.
 - Rust formatting: passed.
 - Strict Clippy with warnings denied: passed.
+- Both PyInstaller sidecar and Tauri/NSIS production packaging: passed.
 - `git diff --check`: clean apart from expected Windows line-ending notices.
 
-The main-repository 226-test run, PyInstaller/Tauri packaging, native soak,
-interactive visual QA, hashes, and stable promotion are release-completion
-gates and must be appended after integration.
+The candidate and promoted stable package each passed all 35 native soak checks
+with zero errors and zero failed checks. Both runs verified private API
+authentication, timestamp-safe Chakra and candlestick contracts, MT5 read-only
+locks, same-port sidecar crash recovery, chart-layout persistence, and zero
+genuine descendant survivors:
+
+- candidate:
+  `D:\GannFinancialAstro\soak\tauri_0.10.8_20260717_195543\logs\native_soak_report.json`
+- stable:
+  `D:\GannFinancialAstro\soak\tauri_0.10.8_20260717_202432\logs\native_soak_report.json`
+
+Interactive native QA covered the chart, lazy parameter drawer, Square of
+Nine, 81-cell Chakra board, Analyze Aspect second window, Local Jyotish
+readiness, and the read-only connected Codex panel. No blank surface, browser
+error, clipping, or incoherent overlap was visible at 1482x864. Evidence:
+
+- `gann-astro-desk\docs\visual_qa\gann_astro_desk_0108_main_workspace_20260718.png`
+- `gann-astro-desk\docs\visual_qa\gann_astro_desk_0108_chakra_workspace_20260718.png`
+- `gann-astro-desk\docs\visual_qa\gann_astro_desk_0108_analyze_codex_20260718.png`
+
+## Stable Release Evidence
+
+- Executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`
+- Executable SHA-256:
+  `FA28C213D6894CFF8DBCE14F416C24C84446BFFBC7AA457D0D2AAC64EB8C8635`
+- Installer SHA-256:
+  `1BD1D9B742B0EC0E15B4BE8F4C6D7DF1AD95CD86937029BAC124229B242710BE`
+- Sidecar SHA-256:
+  `F168417FE656944AEAD827A4D6DEAE90458DE15B22032B7E45BE247DA84BE768`
+- Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.7_20260717T202315Z`
+- Pre-promotion writable-state backup:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.8_promotion_20260717T202315Z`
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260718_015745_product_audit_0108`
 
 ## TradingView-Class Roadmap
 
@@ -293,6 +335,7 @@ workflow, not by cloning every TradingView control.
 The software is substantially stronger after this audit, and the fixes are
 appropriate for a 0.10.8 release. It is not yet "best in class" because
 prospective validation, replay, drawing ergonomics, and architectural
-simplification remain unfinished. The correct next move is to finish and
-measure the 0.10.8 native release, then implement timestamp-safe Bar Replay
-before adding more doctrine or drawing families.
+simplification remain unfinished. The audited native release is complete; the
+correct next product move is timestamp-safe Bar Replay, followed by drawing
+favorites/magnets/groups/sync and decomposition of the deterministic decision
+engine before adding more doctrine or drawing families.

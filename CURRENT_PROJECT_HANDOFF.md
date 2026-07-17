@@ -1,10 +1,10 @@
 # Current Project Handoff
 
-Last updated: 2026-07-18 00:38 IST
+Last updated: 2026-07-18 01:58 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-18 (End-to-End Product Audit / 0.10.8 Candidate)
+## Latest Update - 2026-07-18 (End-to-End Product Audit / Stable 0.10.8)
 
 - Completed an end-to-end audit of the supported Tauri/React/Python/Rust
   workstation, runtime logs, packaging, documentation, recovery state, and
@@ -21,7 +21,8 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Added a per-launch private API token shared only by the Rust shell, Python
   child, and trusted frontend runtime. Packaged requests without the exact
   token fail closed; source/Vite development remains tokenless. Execution stays
-  locked.
+  locked. The release soak now supplies a constrained one-launch token and
+  authenticates all 35 checks, including the deliberate sidecar restart.
 - Replaced the main workspace's overlapping interval fleet with one
   visibility-aware scheduler. Hidden windows use a minimum 30-second cadence;
   expensive panels poll quickly only while visible; generation polls at 1.5
@@ -37,14 +38,42 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Fixed a recovery-repository defect: root `*.html` ignored the untracked Vite
   entry document. `gann-astro-desk\index.html` is now explicitly tracked, so a
   clean Git checkout can build.
-- Candidate version is `0.10.8`. Isolated-worktree verification currently
-  passes 33 frontend tests across 10 files, Oxlint, TypeScript/Vite production
-  build, 8 focused generator/process tests, 3 private API security tests, Ruff
-  lint for changed Python, 3 Rust tests, Rust formatting, and strict Clippy.
-- Still required before stable promotion: integrate into `D:\PycharmProjects`,
-  run all 226 Python tests, rebuild PyInstaller/Tauri, run native soak and
-  interactive visual QA, record post-fix startup timings/hashes, create the
-  timestamped recovery snapshot, commit, and push `origin/master`.
+- Final verification passes all 229 Python tests, 33 frontend tests across 10
+  files, Oxlint, TypeScript/Vite production build, 8 focused
+  generator/process tests, 3 private API security tests, changed-Python Ruff,
+  4 Rust tests, Rust formatting, strict Clippy, PyInstaller sidecar packaging,
+  and Tauri/NSIS packaging.
+- Candidate and promoted stable packages each passed all 35 authenticated
+  native checks with zero errors, same-port sidecar recovery, preserved chart
+  layout, execution locked, and zero descendant survivors:
+  `D:\GannFinancialAstro\soak\tauri_0.10.8_20260717_195543\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.8_20260717_202432\logs\native_soak_report.json`.
+- Stable cold sidecar readiness is 18.5 seconds after process start and the
+  interactive chart appears in approximately 18-20 seconds, roughly half the
+  prior approximately 40-second visual baseline. Backend startup itself is
+  3.06 seconds.
+- Interactive native QA passed for the main chart, parameter drawer, Square of
+  Nine, Chakra board, Analyze Aspect second window, Local Jyotish readiness,
+  and read-only connected Codex panel. Evidence is under
+  `gann-astro-desk\docs\visual_qa\gann_astro_desk_0108_*_20260718.png`.
+- Promoted stable executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+  SHA-256: executable
+  `FA28C213D6894CFF8DBCE14F416C24C84446BFFBC7AA457D0D2AAC64EB8C8635`;
+  installer
+  `1BD1D9B742B0EC0E15B4BE8F4C6D7DF1AD95CD86937029BAC124229B242710BE`;
+  sidecar
+  `F168417FE656944AEAD827A4D6DEAE90458DE15B22032B7E45BE247DA84BE768`.
+- Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.7_20260717T202315Z`;
+  pre-promotion state:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.8_promotion_20260717T202315Z`;
+  recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260718_015745_product_audit_0108`.
+- Highest-priority product work remaining is timestamp-safe Bar Replay,
+  drawing favorites/magnet modes/groups/sync scopes, deterministic decision
+  engine decomposition, and approved artifact/backup retention.
 - Deliberate gates remain unchanged: corrected TT generation, external
   Shadbala/Drik certification, purged prospective validation, BTC rolling
   no-lookahead evidence, retrospective policy promotion, and any order
