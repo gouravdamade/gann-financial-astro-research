@@ -90,9 +90,22 @@ survivors.
 
 The source WebView Chakra UI was visually verified before packaging, including
 the full board, actor readiness transition, constrained-width layout, and
-absence of browser errors. A separate candidate screenshot was not captured
-because the Windows action-approval request expired. Both the exact candidate
-and stable native packages were nevertheless launched and exercised by the
+absence of browser errors. Interactive packaged-stable QA was subsequently
+completed through Windows automation:
+
+- the signed release hash still matched the promoted `0.10.7` executable;
+- the application reached its chart workspace after an approximately
+  40-second cold start;
+- the native Chakra tab rendered all nine rows and nine columns;
+- setting Jupiter motion to `Mean` and pressing `Refresh snapshot` advanced
+  the actor ledger from four ready actors to five;
+- the grid, controls, evidence ledger, matched-cell area, and inspector were
+  all visible together at 1482x864 without a blank surface, browser error,
+  clipping, or incoherent overlap.
+
+Visual evidence:
+`gann-astro-desk\docs\visual_qa\gann_astro_desk_0107_chakra_interactive_20260717_224115.jpg`.
+The exact candidate and stable native packages also remain covered by the two
 accepted automated soaks.
 
 ## Recovery
@@ -103,6 +116,8 @@ accepted automated soaks.
   `D:\GannFinancialAstro\state_backups\pre_0.10.7_promotion_20260717T154235Z`
 - Chat-session recovery snapshot:
   `D:\PycharmProjects\chat_session_backups\session_20260717_211806_sbc_chakra_lab_release_0107`
+- Interactive-QA recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_224115_chakra_interactive_qa`
 
 The unrelated modified annotation database, local candlestick database, logs,
 and Android worktree in the source repository remain uncommitted.

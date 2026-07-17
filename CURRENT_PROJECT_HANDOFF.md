@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 21:18 IST
+Last updated: 2026-07-17 22:41 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -48,14 +48,19 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.6_20260717T154235Z`;
   pre-promotion writable-state backup:
   `D:\GannFinancialAstro\state_backups\pre_0.10.7_promotion_20260717T154235Z`.
-- Source WebView visual QA remained green. A second candidate launch through
-  Windows UI automation was not captured because its action-approval request
-  expired; the exact packaged WebView2 candidate and stable copy were still
-  launched and exercised by both native soaks.
+- Packaged-stable interactive visual QA was completed after Windows permission
+  was granted. `GannAstroDesk.exe` reached the main chart after an approximately
+  40-second cold start, the Chakra tab rendered the complete 9x9 board, and
+  changing Jupiter motion from `Required` to `Mean` plus `Refresh snapshot`
+  advanced actor readiness from four to five. No browser error, blank surface,
+  clipping, or incoherent overlap was visible at 1482x864. Evidence:
+  `gann-astro-desk\docs\visual_qa\gann_astro_desk_0107_chakra_interactive_20260717_224115.jpg`.
 - Detailed release evidence:
   `sbc_chakra_lab_native_release_20260717.md`.
 - Recovery snapshot:
   `D:\PycharmProjects\chat_session_backups\session_20260717_211806_sbc_chakra_lab_release_0107`.
+- Interactive-QA recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_224115_chakra_interactive_qa`.
 
 ## Latest Update - 2026-07-17 (Sarvatobhadra Phase 4A Chakra Lab)
 
