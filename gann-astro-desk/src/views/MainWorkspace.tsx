@@ -6,6 +6,7 @@ import {
   Camera,
   ChevronDown,
   ChevronUp,
+  CircleDot,
   Eye,
   EyeOff,
   Grid3X3,
@@ -54,6 +55,7 @@ import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnosticsPanel'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
 import { SquareOfNineWorkspace } from './SquareOfNineWorkspace'
+import { ChakraLabWorkspace } from './ChakraLabWorkspace'
 import { useChartLayouts } from '../useChartLayouts'
 import type {
   AnnotationDraft,
@@ -128,7 +130,7 @@ export function MainWorkspace() {
   const [selected, setSelected] = useState<AspectWindow | null>(null)
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
-  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9'>('chart')
+  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra'>('chart')
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
   const [toolActivationNonce, setToolActivationNonce] = useState(0)
   const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'candle-shadow' | 'positions' | 'diagnostics'>('events')
@@ -495,7 +497,7 @@ export function MainWorkspace() {
   }
 
   return (
-    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
+    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${activeSurface === 'chakra' ? 'chakra-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
       <header className="top-command-bar">
         <div className="product-mark">
           <span className="product-glyph">GA</span>
@@ -504,6 +506,7 @@ export function MainWorkspace() {
         <div className="segmented-control workspace-surface-tabs" aria-label="Research workspace">
           <button className={activeSurface === 'chart' ? 'is-active' : ''} onClick={() => setActiveSurface('chart')}><Activity size={13} /> Chart</button>
           <button className={activeSurface === 'square9' ? 'is-active' : ''} onClick={() => { setActiveSurface('square9'); setFocusMode(false); setObjectsOpen(false) }}><Grid3X3 size={13} /> Square of Nine</button>
+          <button className={activeSurface === 'chakra' ? 'is-active' : ''} onClick={() => { setActiveSurface('chakra'); setFocusMode(false); setObjectsOpen(false) }}><CircleDot size={13} /> Chakra</button>
         </div>
         <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
         {activeSurface === 'chart' && <>
@@ -670,6 +673,12 @@ export function MainWorkspace() {
               onImport={chartLayouts.importLayout}
             />
           )}
+        />
+      )}
+      {activeSurface === 'chakra' && (
+        <ChakraLabWorkspace
+          defaultLatitude={parameters.reference.latitude}
+          defaultLongitude={parameters.reference.longitude}
         />
       )}
       {activeSurface === 'chart' && <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>

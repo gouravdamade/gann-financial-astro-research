@@ -1104,3 +1104,181 @@ export type AnnotationDraft = {
   color: string
   chartState: Record<string, unknown>
 }
+
+export type ChakraMotionClass = 'DIRECT_SWIFT' | 'MEAN' | 'RETROGRADE'
+export type ChakraDignityState = 'ORDINARY' | 'EXALTED' | 'DEBILITATED'
+export type ChakraPlanetNature = 'BENEFIC' | 'MALEFIC' | 'CONDITIONAL'
+
+export type ChakraLabActorInput = {
+  body: string
+  motionClass?: ChakraMotionClass
+  nature?: ChakraPlanetNature
+  dignity?: ChakraDignityState
+  mercuryAssociationNature?: ChakraPlanetNature
+}
+
+export type ChakraLabRequest = {
+  at: string
+  timezone: 'Asia/Kolkata'
+  latitude: number
+  longitude: number
+  altitudeM: number
+  bodies: string[]
+  actors: ChakraLabActorInput[]
+  foundationProfileId: 'sbc_raman_foundation_v1'
+  gridProfileId: 'sbc_81_rotation_normalized_partial_v1'
+  vedhaProfileId: 'phaladeepika_editor_vedha_guidance_v1'
+  vowels: string[]
+  nameInitials: string[]
+}
+
+export type ChakraGridEntry = {
+  row: number
+  column: number
+  layer: 'NAKSHATRA' | 'RASHI' | 'TITHI_GROUP' | 'WEEKDAY' | 'VOWEL' | 'NAME_INITIAL'
+  value: string
+  glyph: string | null
+  transliteration: string | null
+  semantic_role: string | null
+  witness_set_id: string
+  evidence_status: string
+}
+
+export type ChakraGridCell = {
+  row: number
+  column: number
+  entries: ChakraGridEntry[]
+}
+
+export type ChakraVedhaTarget = {
+  source_nakshatra: string
+  direction: 'LEFT' | 'FRONT' | 'RIGHT'
+  row: number
+  column: number
+  layer: ChakraGridEntry['layer']
+  value: string
+  semantic_role: string | null
+  witness_set_id: string
+  evidence_status: string
+}
+
+export type ChakraActorResolution = {
+  body: string
+  source_nakshatra: string
+  direction: 'LEFT' | 'FRONT' | 'RIGHT'
+  direction_reason: string
+  nature: ChakraPlanetNature
+  nature_reason: string
+  effective_multiplier: number | null
+  multiplier_status: string
+  multiplier_reason: string
+  targets: ChakraVedhaTarget[]
+}
+
+export type ChakraVedhaContribution = {
+  body: string
+  source_nakshatra: string
+  direction: 'LEFT' | 'FRONT' | 'RIGHT'
+  target: ChakraVedhaTarget
+  nature: ChakraPlanetNature
+  effective_multiplier: number | null
+  signed_guidance_units: number | null
+  status: string
+  explanation: string
+}
+
+export type ChakraLabSnapshot = {
+  contract: 'SBC_CHAKRA_LAB_SNAPSHOT_V1'
+  schema_version: 1
+  snapshot_id: string
+  requested_at_local: string
+  as_of_utc: string
+  evidence_cutoff_utc: string
+  timezone: string
+  location: {
+    latitude: number
+    longitude: number
+    timezone: string
+    altitude_m: number
+  }
+  foundation_snapshot: {
+    snapshot_id: string
+    profile_id: string
+    profile_hash: string
+    astronomy_contract: string
+    panchanga: {
+      tithi_name: string
+      tithi_group: string
+      paksha: string
+      moon_phase: string
+      yoga_name: string
+      karana_name: string
+      vara: {
+        weekday: string
+        weekday_lord: string
+      }
+    }
+  }
+  grid: {
+    grid_profile_id: string
+    profile_hash: string
+    rows: number
+    columns: number
+    cells: ChakraGridCell[]
+    certified_layers: string[]
+    complete: boolean
+    blocked_capabilities: string[]
+  }
+  context_contract: 'SBC_CURRENT_MOMENT_CONTEXT_V1'
+  target_context: Array<{
+    layer: ChakraGridEntry['layer']
+    values: string[]
+  }>
+  position_context: Array<{
+    body: string
+    longitude_deg: number
+    longitude_speed_deg_per_day: number
+    rashi: string
+    nakshatras: string[]
+  }>
+  actor_readiness: Array<{
+    body: string
+    requested: boolean
+    status: 'READY' | 'NOT_SELECTED' | 'MOTION_REQUIRED' | 'OUTSIDE_CERTIFIED_VEDHA_PROFILE'
+    source_nakshatra: string
+    motion_class: ChakraMotionClass | null
+    reason: string
+  }>
+  guidance: {
+    schema_version: 'SBC_VEDHA_GUIDANCE_V1'
+    vedha_profile_id: string
+    vedha_profile_hash: string
+    grid_profile_id: string
+    grid_profile_hash: string
+    guidance_model_id: string
+    guidance_only: true
+    financial_validation_status: 'NOT_VALIDATED'
+    actor_resolutions: ChakraActorResolution[]
+    contributions: ChakraVedhaContribution[]
+    favorable_guidance_units: number
+    adverse_guidance_units: number
+    net_guidance_units: number
+    normalized_guidance_score: number
+    guidance_band: string
+    matched_target_count: number
+    scored_match_count: number
+    unresolved_match_count: number
+    scoring_coverage_ratio: number
+    blocked_capabilities: string[]
+  } | null
+  source_ids: string[]
+  guardrails: {
+    read_only: true
+    timestamp_safe: true
+    no_lookahead: true
+    execution_allowed: false
+    market_data_included: false
+    financially_validated: false
+    guidance_only: true
+  }
+}

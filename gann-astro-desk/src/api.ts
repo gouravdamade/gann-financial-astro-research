@@ -29,6 +29,8 @@ import type {
   SavedParameterProfile,
   ShadowLedgerSnapshot,
   WorkspacePreferences,
+  ChakraLabRequest,
+  ChakraLabSnapshot,
 } from './types'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -522,4 +524,31 @@ export async function codexBridgeHealth(): Promise<boolean> {
   } catch {
     return false
   }
+}
+
+export async function fetchChakraLabSnapshot(
+  input: ChakraLabRequest,
+): Promise<ChakraLabSnapshot> {
+  if (isTauriRuntime()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ snapshot: ChakraLabSnapshot }>>(
+      'chakra_lab_snapshot',
+      { request: input },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Chakra Lab request failed')
+    }
+    if (payload.snapshot.guardrails.execution_allowed) {
+      throw new Error('Chakra Lab response violated the execution lock')
+    }
+    return payload.snapshot
+  }
+  const payload = await request<{ snapshot: ChakraLabSnapshot }>(
+    '/api/chakra-lab/snapshot',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+  return payload.snapshot
 }

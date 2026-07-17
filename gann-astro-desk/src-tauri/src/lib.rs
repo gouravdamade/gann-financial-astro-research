@@ -1,9 +1,9 @@
 use serde::Serialize;
-use serde_json::json;
+use serde_json::{json, Value};
 use std::collections::VecDeque;
 use std::env;
 use std::fs::{self, OpenOptions};
-use std::io::Write;
+use std::io::{Read, Write};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpListener, TcpStream};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
@@ -101,6 +101,71 @@ fn available_port() -> Result<u16, String> {
         .local_addr()
         .map(|address| address.port())
         .map_err(|error| format!("Unable to read the private backend port: {error}"))
+}
+
+fn parse_http_json_response(raw: &[u8]) -> Result<Value, String> {
+    let split = raw
+        .windows(4)
+        .position(|window| window == b"\r\n\r\n")
+        .ok_or_else(|| "Private sidecar returned an invalid HTTP response".to_string())?;
+    let headers = std::str::from_utf8(&raw[..split])
+        .map_err(|error| format!("Private sidecar returned invalid HTTP headers: {error}"))?;
+    let mut lines = headers.lines();
+    let status_line = lines
+        .next()
+        .ok_or_else(|| "Private sidecar response has no status line".to_string())?;
+    let status = status_line
+        .split_whitespace()
+        .nth(1)
+        .and_then(|value| value.parse::<u16>().ok())
+        .ok_or_else(|| "Private sidecar response has an invalid status".to_string())?;
+    if lines.any(|line| {
+        line.to_ascii_lowercase()
+            .starts_with("transfer-encoding: chunked")
+    }) {
+        return Err("Private sidecar used unsupported chunked encoding".to_string());
+    }
+    let payload = serde_json::from_slice::<Value>(&raw[split + 4..])
+        .map_err(|error| format!("Private sidecar returned invalid JSON: {error}"))?;
+    if !(200..300).contains(&status) {
+        let detail = payload
+            .get("error")
+            .and_then(Value::as_str)
+            .unwrap_or("Chakra Lab request failed");
+        return Err(format!("Private sidecar returned HTTP {status}: {detail}"));
+    }
+    Ok(payload)
+}
+
+fn post_private_json(port: u16, path: &str, payload: &Value) -> Result<Value, String> {
+    if !path.starts_with('/') || path.contains(char::is_whitespace) {
+        return Err("Private sidecar path is invalid".to_string());
+    }
+    let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port);
+    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(3))
+        .map_err(|error| format!("Unable to connect to private sidecar: {error}"))?;
+    stream
+        .set_read_timeout(Some(Duration::from_secs(20)))
+        .map_err(|error| format!("Unable to set sidecar read timeout: {error}"))?;
+    stream
+        .set_write_timeout(Some(Duration::from_secs(5)))
+        .map_err(|error| format!("Unable to set sidecar write timeout: {error}"))?;
+    let body = serde_json::to_vec(payload)
+        .map_err(|error| format!("Unable to encode Chakra Lab request: {error}"))?;
+    let request = format!(
+        "POST {path} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\nContent-Type: application/json\r\nAccept: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+        body.len()
+    );
+    stream
+        .write_all(request.as_bytes())
+        .and_then(|_| stream.write_all(&body))
+        .and_then(|_| stream.flush())
+        .map_err(|error| format!("Unable to send Chakra Lab request: {error}"))?;
+    let mut response = Vec::new();
+    stream
+        .read_to_end(&mut response)
+        .map_err(|error| format!("Unable to read Chakra Lab response: {error}"))?;
+    parse_http_json_response(&response)
 }
 
 fn default_data_root() -> PathBuf {
@@ -447,6 +512,22 @@ fn backend_runtime(state: State<'_, BackendRuntimeState>) -> Result<BackendRunti
     state.snapshot()
 }
 
+#[tauri::command]
+async fn chakra_lab_snapshot(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Chakra Lab requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(runtime.port, "/api/chakra-lab/snapshot", &request)
+    })
+    .await
+    .map_err(|error| format!("Chakra Lab bridge task failed: {error}"))?
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let app = tauri::Builder::default()
@@ -455,7 +536,10 @@ pub fn run() {
             app.manage(state);
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![backend_runtime])
+        .invoke_handler(tauri::generate_handler![
+            backend_runtime,
+            chakra_lab_snapshot
+        ])
         .build(tauri::generate_context!())
         .expect("Gann Astro Desk failed to build");
 
@@ -484,5 +568,19 @@ mod tests {
         ]);
         prune_restart_times(&mut attempts, now);
         assert_eq!(attempts.len(), 1);
+    }
+
+    #[test]
+    fn private_json_parser_accepts_success_and_surfaces_sidecar_errors() {
+        let success = b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 22\r\n\r\n{\"ok\":true,\"value\":7}";
+        assert_eq!(
+            parse_http_json_response(success).unwrap()["value"],
+            json!(7)
+        );
+
+        let failure = b"HTTP/1.1 400 BAD REQUEST\r\nContent-Type: application/json\r\nContent-Length: 32\r\n\r\n{\"ok\":false,\"error\":\"bad time\"}";
+        let error = parse_http_json_response(failure).unwrap_err();
+        assert!(error.contains("HTTP 400"));
+        assert!(error.contains("bad time"));
     }
 }

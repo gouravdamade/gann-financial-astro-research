@@ -3,10 +3,23 @@
 Phase 1 contains deterministic astronomy and Panchanga facts. Phase 2 adds an
 explicit-only, partial 81-cell topology and Sanskrit letter fixture. Phase 3A
 adds figure-relative Vedha guidance with a transparent experimental evidence
-score. Absolute cardinal orientation, Latta, financial labels, and trade
+score. Phase 4A binds those layers to one timestamp-safe, read-only Chakra Lab
+snapshot. Absolute cardinal orientation, Latta, financial labels, and trade
 decisions remain disabled.
 """
 
+from .chakra_lab import (
+    CHAKRA_LAB_CONTRACT,
+    ChakraLabActorReadiness,
+    ChakraLabActorSelection,
+    ChakraLabEngine,
+    ChakraLabGuardrails,
+    ChakraLabLayerContext,
+    ChakraLabPositionContext,
+    ChakraLabRequest,
+    ChakraLabSnapshot,
+    rashi_from_longitude,
+)
 from .config import CompiledProfile, load_profile, load_source_register
 from .ephemeris import SwissEphemerisProvider
 from .grid import (
@@ -31,6 +44,15 @@ from .vedha import (
 )
 
 __all__ = [
+    "CHAKRA_LAB_CONTRACT",
+    "ChakraLabActorReadiness",
+    "ChakraLabActorSelection",
+    "ChakraLabEngine",
+    "ChakraLabGuardrails",
+    "ChakraLabLayerContext",
+    "ChakraLabPositionContext",
+    "ChakraLabRequest",
+    "ChakraLabSnapshot",
     "CompiledProfile",
     "CompiledGrid",
     "DignityState",
@@ -53,4 +75,5 @@ __all__ = [
     "load_profile",
     "load_source_register",
     "load_vedha_profile",
+    "rashi_from_longitude",
 ]

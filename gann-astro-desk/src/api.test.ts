@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ChakraLabRequest } from './types'
 
 const { invokeMock } = vi.hoisted(() => ({ invokeMock: vi.fn() }))
 
@@ -60,6 +61,40 @@ describe('Tauri backend transport', () => {
 
     const { fetchParameterSchema } = await import('./api')
     await expect(fetchParameterSchema()).rejects.toThrow('read-only execution lock')
+  })
+
+  it('uses native IPC for Chakra Lab without exposing the private backend port', async () => {
+    invokeMock.mockResolvedValue({
+      ok: true,
+      snapshot: {
+        guardrails: {
+          execution_allowed: false,
+        },
+      },
+    })
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const request: ChakraLabRequest = {
+      at: '2026-07-17T12:00:00+05:30',
+      timezone: 'Asia/Kolkata',
+      latitude: 18.5204,
+      longitude: 73.8567,
+      altitudeM: 0,
+      bodies: ['SUN'],
+      actors: [{ body: 'SUN', dignity: 'ORDINARY' }],
+      foundationProfileId: 'sbc_raman_foundation_v1',
+      gridProfileId: 'sbc_81_rotation_normalized_partial_v1',
+      vedhaProfileId: 'phaladeepika_editor_vedha_guidance_v1',
+      vowels: [],
+      nameInitials: [],
+    }
+
+    const { fetchChakraLabSnapshot } = await import('./api')
+    const snapshot = await fetchChakraLabSnapshot(request)
+
+    expect(invokeMock).toHaveBeenCalledWith('chakra_lab_snapshot', { request })
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(snapshot.guardrails.execution_allowed).toBe(false)
   })
 
   it('rediscovers the runtime after a network failure so Rust can recover the sidecar', async () => {

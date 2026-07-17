@@ -22,6 +22,7 @@ from chart_layouts import (
     save_drawing_template,
 )
 from candlestick_shadow import CandlestickShadowSupervisor, default_model_path
+from chakra_lab_service import build_chakra_lab_snapshot
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
 from local_jyotish import LocalJyotishService
@@ -30,7 +31,10 @@ from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
 from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
-from workspace_preferences import read_workspace_preferences, update_workspace_preferences
+from workspace_preferences import (
+    read_workspace_preferences,
+    update_workspace_preferences,
+)
 
 
 app = Flask(__name__)
@@ -73,7 +77,9 @@ prospective_refresh = ProspectiveArtifactRefreshSupervisor(
     autostart=os.environ.get("GANN_ASTRO_REFRESH_AUTOSTART", "1") != "0",
     poll_seconds=float(os.environ.get("GANN_ASTRO_REFRESH_POLL_SECONDS", "20")),
     lookback_days=int(os.environ.get("GANN_ASTRO_REFRESH_LOOKBACK_DAYS", "14")),
-    close_grace_seconds=int(os.environ.get("GANN_ASTRO_REFRESH_CLOSE_GRACE_SECONDS", "90")),
+    close_grace_seconds=int(
+        os.environ.get("GANN_ASTRO_REFRESH_CLOSE_GRACE_SECONDS", "90")
+    ),
     diagnostics=runtime_diagnostics,
 )
 local_jyotish = LocalJyotishService(repository, diagnostics=runtime_diagnostics)
@@ -108,7 +114,12 @@ def required_offset_datetime(value: Any, label: str) -> datetime:
 
 
 def bool_argument(name: str) -> bool:
-    return str(request.args.get(name) or "").strip().lower() in {"1", "true", "yes", "on"}
+    return str(request.args.get(name) or "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 
 def chart_filter_arguments() -> dict[str, Any]:
@@ -176,6 +187,20 @@ def get_runtime_diagnostics() -> Any:
     return jsonify({"ok": True, "diagnostics": runtime_diagnostics.snapshot()})
 
 
+@app.post("/api/chakra-lab/snapshot")
+def create_chakra_lab_snapshot() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "snapshot": build_chakra_lab_snapshot(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
 @app.post("/api/runtime-diagnostics/frontend")
 def record_frontend_diagnostic() -> Any:
     payload = request.get_json(silent=True) or {}
@@ -189,13 +214,17 @@ def record_frontend_diagnostic() -> Any:
     }
     name = str(payload.get("name") or "").strip()
     if name not in allowed_names:
-        return jsonify({"ok": False, "error": "Unsupported frontend diagnostic name"}), 400
+        return jsonify(
+            {"ok": False, "error": "Unsupported frontend diagnostic name"}
+        ), 400
     try:
         duration_ms = float(payload.get("durationMs"))
     except (TypeError, ValueError):
         return jsonify({"ok": False, "error": "durationMs must be numeric"}), 400
     if not 0 <= duration_ms <= 10 * 60 * 1000:
-        return jsonify({"ok": False, "error": "durationMs is outside the accepted range"}), 400
+        return jsonify(
+            {"ok": False, "error": "durationMs is outside the accepted range"}
+        ), 400
     runtime_diagnostics.record(
         f"frontend:{name}",
         duration_ms,
@@ -315,7 +344,9 @@ def parameter_profiles() -> Any:
 def save_parameter_profile() -> Any:
     try:
         payload = request.get_json(force=True, silent=False)
-        return jsonify({"ok": True, "profile": repository.save_parameter_profile(payload)})
+        return jsonify(
+            {"ok": True, "profile": repository.save_parameter_profile(payload)}
+        )
     except ValueError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 
@@ -386,7 +417,12 @@ def remove_drawing_template(template_id: str) -> Any:
 
 @app.get("/api/generation/jobs")
 def generation_jobs() -> Any:
-    return jsonify({"ok": True, "jobs": generation_manager.list_jobs(request.args.get("limit", 30))})
+    return jsonify(
+        {
+            "ok": True,
+            "jobs": generation_manager.list_jobs(request.args.get("limit", 30)),
+        }
+    )
 
 
 @app.get("/api/generation/jobs/<job_id>")
@@ -422,7 +458,9 @@ def data_artifacts() -> Any:
 @app.post("/api/data-artifacts/<artifact_id>/activate")
 def activate_data_artifact(artifact_id: str) -> Any:
     try:
-        return jsonify({"ok": True, "artifact": repository.activate_artifact(artifact_id)})
+        return jsonify(
+            {"ok": True, "artifact": repository.activate_artifact(artifact_id)}
+        )
     except KeyError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 404
     except ValueError as exc:
@@ -442,8 +480,12 @@ def chart() -> Any:
                 timeframe=timeframe,
                 count=int(request.args.get("liveBarCount", "500")),
             )
-            start_iso = datetime.fromtimestamp(bars[0]["time"], tz=timezone.utc).isoformat()
-            end_iso = datetime.fromtimestamp(bars[-1]["time"], tz=timezone.utc).isoformat()
+            start_iso = datetime.fromtimestamp(
+                bars[0]["time"], tz=timezone.utc
+            ).isoformat()
+            end_iso = datetime.fromtimestamp(
+                bars[-1]["time"], tz=timezone.utc
+            ).isoformat()
             if symbol.upper() == "USDJPY":
                 payload = repository.chart_payload(
                     start=start_iso,
@@ -484,7 +526,9 @@ def chart() -> Any:
                 }
             payload["candles"] = bars
             payload["dataSource"] = "mt5_live"
-            payload["generatedAt"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            payload["generatedAt"] = datetime.now(timezone.utc).isoformat(
+                timespec="seconds"
+            )
             return jsonify({"ok": True, "chart": payload})
         payload = repository.chart_payload(
             start=request.args.get("start"),
@@ -521,7 +565,9 @@ def decision_packet() -> Any:
         payload = request.get_json(force=True, silent=False)
         mode = str(payload.get("mode") or "live_inference").strip().lower()
         if mode != "live_inference":
-            raise ValueError("The native API accepts live_inference only; research replay stays in the reviewer")
+            raise ValueError(
+                "The native API accepts live_inference only; research replay stays in the reviewer"
+            )
         event_id = str(payload.get("eventId") or "").strip()
         if not event_id:
             raise ValueError("eventId is required")
@@ -650,7 +696,9 @@ def local_candlestick_analyze() -> Any:
 def occurrence_review(event_id: str) -> Any:
     try:
         payload = request.get_json(force=True, silent=False)
-        event = repository.set_occurrence_progress(event_id, str(payload.get("status") or ""))
+        event = repository.set_occurrence_progress(
+            event_id, str(payload.get("status") or "")
+        )
         return jsonify({"ok": True, "event": event})
     except KeyError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 404
@@ -706,7 +754,12 @@ def codex_context() -> Any:
 @app.get("/api/codex/thread")
 def codex_thread() -> Any:
     scope_key = str(request.args.get("scopeKey") or "")
-    return jsonify({"ok": True, "threadId": repository.get_codex_thread(scope_key) if scope_key else None})
+    return jsonify(
+        {
+            "ok": True,
+            "threadId": repository.get_codex_thread(scope_key) if scope_key else None,
+        }
+    )
 
 
 @app.post("/api/codex/thread")
@@ -715,13 +768,17 @@ def save_codex_thread() -> Any:
     scope_key = str(payload.get("scopeKey") or "").strip()
     thread_id = str(payload.get("threadId") or "").strip()
     if not scope_key or not thread_id:
-        return jsonify({"ok": False, "error": "scopeKey and threadId are required"}), 400
+        return jsonify(
+            {"ok": False, "error": "scopeKey and threadId are required"}
+        ), 400
     repository.save_codex_thread(scope_key, thread_id)
     return jsonify({"ok": True})
 
 
 def codex_bridge_url(path: str) -> str:
-    base = str(os.environ.get("GANN_ASTRO_CODEX_URL") or "http://127.0.0.1:8789").rstrip("/")
+    base = str(
+        os.environ.get("GANN_ASTRO_CODEX_URL") or "http://127.0.0.1:8789"
+    ).rstrip("/")
     return f"{base}/{path.lstrip('/')}"
 
 
@@ -731,7 +788,9 @@ def proxy_codex(path: str, method: str) -> Any:
         codex_bridge_url(path),
         data=body,
         method=method,
-        headers={"Content-Type": request.headers.get("Content-Type", "application/json")},
+        headers={
+            "Content-Type": request.headers.get("Content-Type", "application/json")
+        },
     )
     try:
         with urlopen(upstream, timeout=180) as response:
@@ -747,7 +806,9 @@ def proxy_codex(path: str, method: str) -> Any:
             content_type=exc.headers.get("Content-Type", "application/json"),
         )
     except URLError as exc:
-        return jsonify({"ok": False, "error": f"Codex bridge unavailable: {exc.reason}"}), 503
+        return jsonify(
+            {"ok": False, "error": f"Codex bridge unavailable: {exc.reason}"}
+        ), 503
 
 
 @app.get("/codex-api/health")

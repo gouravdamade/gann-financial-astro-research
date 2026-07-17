@@ -4,7 +4,9 @@ This package is an isolated, source-profiled research foundation. Phase 1
 calculates astronomy, nakshatra membership, and Panchanga facts. Phase 2 adds
 one explicit-only, figure-relative 81-cell topology and Sanskrit-letter
 fixture. Phase 3A adds standard figure-relative Vedha rays and a transparent
-research guidance ledger. It does not emit a market opinion or trade decision.
+research guidance ledger. Phase 4A binds those layers to one immutable,
+timestamp-safe Chakra Lab snapshot. It does not emit a market opinion or trade
+decision.
 
 Primary profile: `sbc_raman_foundation_v1`.
 
@@ -40,6 +42,19 @@ The guidance score is deliberately simple and visible:
 This normalization is an engineering comparison aid, not a classical
 numerical score and not a financially validated signal.
 
+Phase 4A Chakra Lab contract:
+
+- the request timestamp must contain a UTC offset;
+- astronomy, Panchanga, current placements, target context, and Vedha actors
+  share one evidence cutoff;
+- current nakshatra, rashi, and tithi-group context is derived from that
+  snapshot rather than accepted as caller-provided facts;
+- direct/swift versus mean motion is never inferred for Mars through Saturn;
+- fixed-direction actors can be evaluated immediately, while a selected
+  variable actor without explicit motion is returned as `MOTION_REQUIRED`;
+- market data, Auto Suggest, financial labels, orders, and MT5 execution are
+  absent and explicitly locked.
+
 Minimal use:
 
 ```python
@@ -67,6 +82,6 @@ Locked until later certification:
 - Auto Suggest and MT5 execution
 - main chart integration
 
-The first user-facing surface will be a read-only Chakra Lab. It will use
-native Tauri IPC rather than a localhost REST service. Phase 3A is a tested
-Python research backend and is not yet wired into the packaged app.
+The first user-facing surface is a read-only Chakra Lab. Packaged UI requests
+cross native Tauri IPC; Tauri forwards them only to its supervised private
+sidecar. Browser development keeps a private API fallback for testability.

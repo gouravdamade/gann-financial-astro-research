@@ -1,10 +1,63 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 08:52 IST
+Last updated: 2026-07-17 15:40 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-17 (Sarvatobhadra Phase 3A Vedha Guidance)
+## Latest Update - 2026-07-17 (Sarvatobhadra Phase 4A Chakra Lab)
+
+- Added a timestamp-safe, read-only Sarvatobhadra Chakra research surface to
+  the native Gann Astro Desk source. The Chakra tab accepts one offset-aware
+  IST moment, latitude/longitude/altitude, optional vowel and name-initial
+  keys, explicit actor selection, dignity, and required motion state for Mars
+  through Saturn. Sun, Moon, Rahu, and Ketu retain their source-profiled fixed
+  motion directions.
+- Added `sbc.chakra_lab.ChakraLabEngine` and the versioned
+  `SBC_CHAKRA_LAB_SNAPSHOT_V1` contract. One deterministic foundation snapshot
+  supplies astronomy, Panchanga, rashi, nakshatra, grid context, actor
+  readiness, Vedha rays, and the guidance ledger. Snapshot identity includes
+  scientific inputs and profile hashes; the local display timestamp and
+  canonical UTC evidence cutoff are both retained.
+- Missing variable-planet motion fails closed as `MOTION_REQUIRED`; it is never
+  inferred from future movement. Unknown API fields and naive timestamps fail
+  closed. The response guardrails require read-only operation, no lookahead,
+  no market data, no financial validation, and `execution_allowed=false`.
+- Added a strict private backend adapter at
+  `POST /api/chakra-lab/snapshot`, a native Tauri IPC command, and a
+  dependency-free Rust loopback bridge. The browser development fallback uses
+  the private API; packaged Tauri code does not expose the sidecar port to the
+  Chakra UI. PyInstaller configuration now bundles the SBC profiles, schemas,
+  Python modules, Panchanga doctrine, and Swiss Ephemeris import.
+- Added the operational Chakra UI: 81-cell board, context/ray/matched-cell
+  states, explicit actor readiness, favorable/adverse/net/coverage ledger,
+  matched-cell evidence, and cell inspector. The UI deliberately contains no
+  bullish/bearish label, Auto Suggest, price, order, or MT5 action.
+- Verification passed: all 226 Python repository tests, 32 frontend tests
+  across nine files, the production TypeScript/Vite build, Oxlint, changed-file
+  Ruff lint and format checks, Rust formatting, and both Rust bridge tests.
+  The frontend tests include native IPC isolation and proof that the Chakra
+  surface renders no bullish/bearish trading label.
+- Source-mode smoke testing passed at `http://127.0.0.1:5173/` against the
+  read-only backend on port 8788. The live endpoint returned 81 cells, matching
+  `as_of_utc` and `evidence_cutoff_utc`, three explicitly ready test actors,
+  `execution_allowed=false`, and `financially_validated=false`. The UI promoted
+  Jupiter from `MOTION_REQUIRED` to the source-profiled FRONT direction only
+  after explicit `MEAN` selection. Browser diagnostics contained no warnings
+  or errors. Visual QA also corrected a constrained-width actor-grid overflow.
+- `git diff --check` is clean apart from expected Windows line-ending warnings.
+  The unrelated modified annotation database and local untracked database,
+  logs, and Android worktree remain untouched and uncommitted.
+- Detailed architecture, guardrails, and validation evidence:
+  `sbc_phase4a_chakra_lab_20260717.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_151619_sbc_phase4a_chakra_lab`.
+- Stable Gann Astro Desk remains `0.10.6`. Phase 4A source is not a promoted
+  packaged release. Before promotion, build the PyInstaller sidecar and Tauri
+  EXE, execute a packaged read-only smoke test, and repeat the green source
+  checks as release verification. Financial interpretation still requires
+  prospective out-of-sample validation.
+
+## Previous Update - 2026-07-17 (Sarvatobhadra Phase 3A Vedha Guidance)
 
 - Added the explicit-only
   `phaladeepika_editor_vedha_guidance_v1` profile and deterministic

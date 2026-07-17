@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gannastro/schemas/sbc/chakra-lab-snapshot-v1.json",
+  "title": "Timestamp-safe read-only Sarvatobhadra Chakra Lab snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schema_version",
+    "snapshot_id",
+    "requested_at_local",
+    "as_of_utc",
+    "evidence_cutoff_utc",
+    "timezone",
+    "location",
+    "foundation_snapshot",
+    "grid",
+    "context_contract",
+    "target_context",
+    "position_context",
+    "actor_readiness",
+    "guidance",
+    "source_ids",
+    "guardrails"
+  ],
+  "properties": {
+    "contract": {"const": "SBC_CHAKRA_LAB_SNAPSHOT_V1"},
+    "schema_version": {"const": 1},
+    "snapshot_id": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "requested_at_local": {"type": "string", "format": "date-time"},
+    "as_of_utc": {"type": "string", "format": "date-time"},
+    "evidence_cutoff_utc": {"type": "string", "format": "date-time"},
+    "timezone": {"type": "string"},
+    "location": {"type": "object"},
+    "foundation_snapshot": {"type": "object"},
+    "grid": {"type": "object"},
+    "context_contract": {"const": "SBC_CURRENT_MOMENT_CONTEXT_V1"},
+    "target_context": {"type": "array"},
+    "position_context": {"type": "array"},
+    "actor_readiness": {"type": "array"},
+    "guidance": {"type": ["object", "null"]},
+    "source_ids": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only",
+        "timestamp_safe",
+        "no_lookahead",
+        "execution_allowed",
+        "market_data_included",
+        "financially_validated",
+        "guidance_only"
+      ],
+      "properties": {
+        "read_only": {"const": true},
+        "timestamp_safe": {"const": true},
+        "no_lookahead": {"const": true},
+        "execution_allowed": {"const": false},
+        "market_data_included": {"const": false},
+        "financially_validated": {"const": false},
+        "guidance_only": {"const": true}
+      }
+    }
+  }
+}
