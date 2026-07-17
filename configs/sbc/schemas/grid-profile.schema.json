@@ -81,7 +81,7 @@
     "certified_layers": {
       "type": "array",
       "uniqueItems": true,
-      "items": {"enum": ["NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY"]}
+      "items": {"enum": ["NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY", "VOWEL", "NAME_INITIAL"]}
     },
     "entries": {
       "type": "array",
@@ -92,10 +92,30 @@
         "properties": {
           "row": {"type": "integer", "minimum": 1},
           "column": {"type": "integer", "minimum": 1},
-          "layer": {"enum": ["NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY"]},
+          "layer": {"enum": ["NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY", "VOWEL", "NAME_INITIAL"]},
           "value": {"type": "string", "minLength": 1},
+          "glyph": {"type": "string", "minLength": 1},
+          "transliteration": {"type": "string", "minLength": 1, "pattern": "^[a-z]+$"},
+          "semantic_role": {
+            "enum": [
+              "SANSKRIT_VOWEL",
+              "CONSONANT_NAME_INITIAL",
+              "VOWEL_EXCEPTION_IN_NAME_INITIAL_RING"
+            ]
+          },
           "witness_set_id": {"type": "string", "minLength": 1}
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {"layer": {"enum": ["VOWEL", "NAME_INITIAL"]}},
+              "required": ["layer"]
+            },
+            "then": {
+              "required": ["glyph", "transliteration", "semantic_role"]
+            }
+          }
+        ]
       }
     },
     "unresolved_layers": {

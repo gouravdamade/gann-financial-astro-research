@@ -1,5 +1,9 @@
 # Phase 2A Acceptance Gates
 
+Historical note: these gates describe the Phase 2A commit. ADR-0003 and the
+Phase 2B gates later certify the letter layers without changing the unresolved
+cardinal-orientation or interpretation locks.
+
 Phase 2A is accepted only when all of the following pass:
 
 1. Source-layer gate: the 1937 grid is identified as editor-supplied material,

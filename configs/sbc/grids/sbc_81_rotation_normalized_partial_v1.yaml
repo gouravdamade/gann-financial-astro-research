@@ -1,8 +1,8 @@
 schema_version: 1
 grid_profile_id: sbc_81_rotation_normalized_partial_v1
 grid_form: SBC_81_CELL
-status: partial_topology_fixture_not_a_default
-authority: editor_supplement_and_secondary_figure_rotation_normalized_comparison
+status: partial_topology_and_letter_fixture_not_a_default
+authority: editor_supplement_and_secondary_figure_rotation_normalized_page_comparison
 selection_policy: EXPLICIT_ONLY
 compile_enabled: true
 blocked_reason: null
@@ -38,16 +38,16 @@ witness_sets:
         locator: PDF pages 347-349; printed pages 310-312; center cross and weekday text
         witness_role: ROTATION_NORMALIZED_CENTER_WITNESS
         transform_to_profile: ROTATE_CCW_90
-  - witness_set_id: LETTER_LAYERS_PENDING_TRANSCRIPTION
-    evidence_status: LAYERS_ATTESTED_GLYPH_TRANSCRIPTION_NOT_CERTIFIED
+  - witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED
+    evidence_status: TWO_WITNESS_PAGE_CERTIFIED_TRANSCRIPTION_AGREEMENT_AFTER_ROTATION
     citations:
       - source_id: SANJAY_RATH_CRUX_1998_SBC_FIGURE
         locator: PDF page 21; printed page 10; Figure 1.2 letter cells
-        witness_role: SECONDARY_FIGURE_GLYPH_WITNESS
+        witness_role: PROFILE_COORDINATE_FRAME_GLYPH_WITNESS
         transform_to_profile: IDENTITY
       - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
         locator: PDF pages 347-348; printed pages 310-311; plate and construction text
-        witness_role: EDITOR_SUPPLEMENT_GLYPH_WITNESS
+        witness_role: PAGE_CERTIFIED_SEQUENCE_AND_GLYPH_WITNESS
         transform_to_profile: ROTATE_CCW_90
   - witness_set_id: CARDINAL_ORIENTATION_CONFLICT
     evidence_status: SOURCE_ROTATION_CONFLICT_RECORDED_NOT_RESOLVED
@@ -65,6 +65,8 @@ certified_layers:
   - RASHI
   - TITHI_GROUP
   - WEEKDAY
+  - VOWEL
+  - NAME_INITIAL
 entries:
   - {row: 1, column: 2, layer: NAKSHATRA, value: KRITTIKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 1, column: 3, layer: NAKSHATRA, value: ROHINI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
@@ -95,6 +97,44 @@ entries:
   - {row: 3, column: 1, layer: NAKSHATRA, value: ASHWINI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 2, column: 1, layer: NAKSHATRA, value: BHARANI, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
 
+  - {row: 1, column: 1, layer: VOWEL, value: A, glyph: 'अ', transliteration: a, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 1, column: 9, layer: VOWEL, value: AA, glyph: 'आ', transliteration: aa, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 9, column: 9, layer: VOWEL, value: I, glyph: 'इ', transliteration: i, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 9, column: 1, layer: VOWEL, value: II, glyph: 'ई', transliteration: ii, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 2, column: 2, layer: VOWEL, value: U, glyph: 'उ', transliteration: u, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 2, column: 8, layer: VOWEL, value: UU, glyph: 'ऊ', transliteration: uu, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 8, layer: VOWEL, value: VOCALIC_R, glyph: 'ऋ', transliteration: r, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 2, layer: VOWEL, value: LONG_VOCALIC_R, glyph: 'ॠ', transliteration: rr, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 3, column: 3, layer: VOWEL, value: VOCALIC_L, glyph: 'ऌ', transliteration: l, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 3, column: 7, layer: VOWEL, value: LONG_VOCALIC_L, glyph: 'ॡ', transliteration: ll, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 7, column: 7, layer: VOWEL, value: E, glyph: 'ए', transliteration: e, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 7, column: 3, layer: VOWEL, value: AI, glyph: 'ऐ', transliteration: ai, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 4, column: 4, layer: VOWEL, value: O, glyph: 'ओ', transliteration: o, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 4, column: 6, layer: VOWEL, value: AU, glyph: 'औ', transliteration: au, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 6, column: 6, layer: VOWEL, value: ANUSVARA, glyph: 'अं', transliteration: am, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 6, column: 4, layer: VOWEL, value: VISARGA, glyph: 'अः', transliteration: ah, semantic_role: SANSKRIT_VOWEL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+
+  - {row: 2, column: 3, layer: NAME_INITIAL, value: A, glyph: 'अ', transliteration: a, semantic_role: VOWEL_EXCEPTION_IN_NAME_INITIAL_RING, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 2, column: 4, layer: NAME_INITIAL, value: VA, glyph: 'व', transliteration: va, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 2, column: 5, layer: NAME_INITIAL, value: KA, glyph: 'क', transliteration: ka, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 2, column: 6, layer: NAME_INITIAL, value: HA, glyph: 'ह', transliteration: ha, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 2, column: 7, layer: NAME_INITIAL, value: DDA, glyph: 'ड', transliteration: dda, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 3, column: 8, layer: NAME_INITIAL, value: MA, glyph: 'म', transliteration: ma, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 4, column: 8, layer: NAME_INITIAL, value: TTA, glyph: 'ट', transliteration: tta, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 5, column: 8, layer: NAME_INITIAL, value: PA, glyph: 'प', transliteration: pa, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 6, column: 8, layer: NAME_INITIAL, value: RA, glyph: 'र', transliteration: ra, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 7, column: 8, layer: NAME_INITIAL, value: TA, glyph: 'त', transliteration: ta, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 7, layer: NAME_INITIAL, value: NA, glyph: 'न', transliteration: na, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 6, layer: NAME_INITIAL, value: YA, glyph: 'य', transliteration: ya, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 5, layer: NAME_INITIAL, value: BHA, glyph: 'भ', transliteration: bha, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 4, layer: NAME_INITIAL, value: JA, glyph: 'ज', transliteration: ja, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 8, column: 3, layer: NAME_INITIAL, value: KHA, glyph: 'ख', transliteration: kha, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 7, column: 2, layer: NAME_INITIAL, value: GA, glyph: 'ग', transliteration: ga, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 6, column: 2, layer: NAME_INITIAL, value: SA, glyph: 'स', transliteration: sa, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 5, column: 2, layer: NAME_INITIAL, value: DA, glyph: 'द', transliteration: da, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 4, column: 2, layer: NAME_INITIAL, value: CHA, glyph: 'च', transliteration: cha, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+  - {row: 3, column: 2, layer: NAME_INITIAL, value: LA, glyph: 'ल', transliteration: la, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
+
   - {row: 3, column: 3, layer: RASHI, value: VRISHABHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 3, column: 4, layer: RASHI, value: MITHUNA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 3, column: 5, layer: RASHI, value: KARKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
@@ -121,14 +161,6 @@ entries:
   - {row: 5, column: 4, layer: WEEKDAY, value: FRIDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
   - {row: 5, column: 5, layer: WEEKDAY, value: SATURDAY, witness_set_id: CENTER_TITHI_WEEKDAY_MAPPING}
 unresolved_layers:
-  - layer: VOWEL
-    expected_count: 16
-    reason: Sanskrit glyph sequence and transliteration require a separate page-certified transcription fixture.
-    witness_set_id: LETTER_LAYERS_PENDING_TRANSCRIPTION
-  - layer: CONSONANT
-    expected_count: 20
-    reason: Sanskrit glyph sequence and transliteration require a separate page-certified transcription fixture.
-    witness_set_id: LETTER_LAYERS_PENDING_TRANSCRIPTION
   - layer: CARDINAL_ORIENTATION
     expected_count: 1
     reason: The cardinals on the 1937 plate rotate to the unlabeled Rath coordinate frame; no silent orientation choice is allowed.
@@ -136,12 +168,10 @@ unresolved_layers:
 blocked_capabilities:
   - DEFAULT_PROFILE_SELECTION
   - CARDINAL_ORIENTATION
-  - VOWEL_LAYER
-  - CONSONANT_LAYER
   - VEDHA
   - LATTA
   - SCORING
   - FINANCIAL_LABELS
   - TRADES
   - MT5_EXECUTION
-notes: This fixture compiles source-cited topology only. It is incomplete, figure-relative, read-only, and never selected implicitly.
+notes: This fixture compiles source-cited topology plus page-certified Sanskrit vowel and name-initial transcriptions. NAME_INITIAL is used instead of CONSONANT because the source ring begins with vowel A. The fixture remains incomplete, figure-relative, read-only, and never selected implicitly while absolute cardinal orientation is unresolved.

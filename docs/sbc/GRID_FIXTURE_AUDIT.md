@@ -1,4 +1,4 @@
-# Phase 2A Grid Fixture Audit
+# Phase 2B Grid and Letter Fixture Audit
 
 ## Source Findings
 
@@ -9,7 +9,8 @@
 | Are the 28 nakshatras, including Abhijit, consistent? | Yes after rotation normalization | Certified structural layer |
 | Is the 12-rashi ring consistent? | Yes after rotation normalization | Certified structural layer |
 | Are the five tithi groups and weekdays consistent? | Yes after rotation normalization | Certified structural layer |
-| Are all Sanskrit vowel/consonant glyphs safely transliterated? | Not yet | Letter layers blocked |
+| Are all 16 Sanskrit vowel glyphs safely transcribed? | Yes, with exact Devanagari and ASCII transliteration in both held page witnesses | Certified letter layer |
+| Is the source-labeled consonant ring machine-safe? | Yes, after naming it `NAME_INITIAL`; its first item is vowel `अ`, followed by 19 consonants | Certified semantic exception |
 | Is a complete 64-cell mapping locally page-certifiable? | No | Compiler blocked |
 | Are Vedha/Latta rules certified by this gate? | No | Interpretation blocked |
 
@@ -40,11 +41,35 @@ Examples:
 - 12 rashi entries exactly once
 - 5 tithi-group entries exactly once
 - 7 weekday entries exactly once
+- 16 vowel entries in nested-corner order exactly once
+- 20 name-initial entries around the second ring exactly once
 - 81 deterministic cells in the compiled container
 
-The container is deliberately incomplete: 16 vowel slots, 20 consonant slots,
-and one absolute-cardinal binding remain unresolved. `complete` therefore stays
-false.
+The container is deliberately incomplete because one absolute-cardinal binding
+remains unresolved. `complete` therefore stays false.
+
+## Letter Contract
+
+Every `VOWEL` and `NAME_INITIAL` entry carries four independent machine fields:
+
+- an uppercase ASCII token used for identity;
+- the exact Devanagari glyph shown by the source;
+- a lowercase ASCII transliteration;
+- a semantic role.
+
+The first item in the source-described consonant ring is `अ` (`A`). Calling
+the whole machine layer `CONSONANT` would silently falsify the page evidence.
+It is therefore `NAME_INITIAL`, and that first entry carries
+`VOWEL_EXCEPTION_IN_NAME_INITIAL_RING`; the other 19 carry
+`CONSONANT_NAME_INITIAL`.
+
+## 64-Cell Acquisition Search
+
+A lawful retail listing was located for the 1972 *Sarvatobhadra Chakra* with
+*Trailokya Dipika* commentary by Pt. Mithalal Vyas, published by Tej Kumar Book
+Depot, Lucknow. That is an acquisition lead, not page evidence. No legally
+usable public copy inspected in this gate supplied a complete, edition-stable
+64-cell coordinate map. `sbc_64_blocked_v1` therefore remains metadata-only.
 
 ## Non-Claims
 
@@ -52,6 +77,5 @@ Phase 2A does not certify:
 
 - that 81 cells are universally preferable to 64 cells;
 - an absolute North/East orientation for the compiled profile;
-- vowel or consonant transliteration;
 - Abhijit longitude insertion policy for planetary placement;
 - Vedha, Latta, benefic/malefic judgment, scoring, market direction, or trades.

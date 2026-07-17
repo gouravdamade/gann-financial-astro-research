@@ -43,12 +43,10 @@ def test_partial_81_cell_fixture_is_explicit_reproducible_and_incomplete() -> No
         "RASHI",
         "TITHI_GROUP",
         "WEEKDAY",
-    }
-    assert {item.layer for item in first.unresolved_layers} == {
         "VOWEL",
-        "CONSONANT",
-        "CARDINAL_ORIENTATION",
+        "NAME_INITIAL",
     }
+    assert {item.layer for item in first.unresolved_layers} == {"CARDINAL_ORIENTATION"}
     assert "DEFAULT_PROFILE_SELECTION" in first.blocked_capabilities
     assert "TRADES" in first.blocked_capabilities
 

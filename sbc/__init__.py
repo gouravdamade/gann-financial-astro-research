@@ -1,8 +1,9 @@
 """Source-backed Sarvatobhadra Chakra research foundation.
 
-Phase 1 contains deterministic astronomy and Panchanga facts. Phase 2A adds
-an explicit-only, partial 81-cell topology fixture. Cardinal orientation,
-letter layers, Vedha, Latta, scoring, and trade decisions remain disabled.
+Phase 1 contains deterministic astronomy and Panchanga facts. Phase 2 adds an
+explicit-only, partial 81-cell topology and Sanskrit letter fixture. Absolute
+cardinal orientation, Vedha, Latta, scoring, and trade decisions remain
+disabled.
 """
 
 from .config import CompiledProfile, load_profile, load_source_register

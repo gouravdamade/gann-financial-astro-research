@@ -43,7 +43,16 @@ ORIENTATION_KEYS = {
 }
 WITNESS_SET_KEYS = {"witness_set_id", "evidence_status", "citations"}
 CITATION_KEYS = {"source_id", "locator", "witness_role", "transform_to_profile"}
-ENTRY_KEYS = {"row", "column", "layer", "value", "witness_set_id"}
+ENTRY_KEYS = {
+    "row",
+    "column",
+    "layer",
+    "value",
+    "glyph",
+    "transliteration",
+    "semantic_role",
+    "witness_set_id",
+}
 UNRESOLVED_LAYER_KEYS = {"layer", "expected_count", "reason", "witness_set_id"}
 
 SELECTION_POLICY = "EXPLICIT_ONLY"
@@ -54,7 +63,19 @@ SUPPORTED_TRANSFORMS = {
     "ROTATE_180",
     "NONE",
 }
-ALLOWED_ENTRY_LAYERS = {"NAKSHATRA", "RASHI", "TITHI_GROUP", "WEEKDAY"}
+LETTER_ENTRY_LAYERS = {"VOWEL", "NAME_INITIAL"}
+ALLOWED_ENTRY_LAYERS = {
+    "NAKSHATRA",
+    "RASHI",
+    "TITHI_GROUP",
+    "WEEKDAY",
+    *LETTER_ENTRY_LAYERS,
+}
+LETTER_SEMANTIC_ROLES = {
+    "SANSKRIT_VOWEL",
+    "CONSONANT_NAME_INITIAL",
+    "VOWEL_EXCEPTION_IN_NAME_INITIAL_RING",
+}
 
 SBC_NAKSHATRAS_28 = (
     "KRITTIKA",
@@ -101,6 +122,46 @@ SBC_RASHIS_12 = (
     "MESHA",
 )
 SBC_TITHI_GROUPS_5 = ("NANDA", "BHADRA", "JAYA", "RIKTA", "PURNA")
+SBC_VOWELS_16 = (
+    "A",
+    "AA",
+    "I",
+    "II",
+    "U",
+    "UU",
+    "VOCALIC_R",
+    "LONG_VOCALIC_R",
+    "VOCALIC_L",
+    "LONG_VOCALIC_L",
+    "E",
+    "AI",
+    "O",
+    "AU",
+    "ANUSVARA",
+    "VISARGA",
+)
+SBC_NAME_INITIALS_20 = (
+    "A",
+    "VA",
+    "KA",
+    "HA",
+    "DDA",
+    "MA",
+    "TTA",
+    "PA",
+    "RA",
+    "TA",
+    "NA",
+    "YA",
+    "BHA",
+    "JA",
+    "KHA",
+    "GA",
+    "SA",
+    "DA",
+    "CHA",
+    "LA",
+)
 WEEKDAYS_7 = (
     "SUNDAY",
     "MONDAY",
@@ -116,6 +177,8 @@ CERTIFIED_LAYER_VALUES = {
     "RASHI": frozenset(SBC_RASHIS_12),
     "TITHI_GROUP": frozenset(SBC_TITHI_GROUPS_5),
     "WEEKDAY": frozenset(WEEKDAYS_7),
+    "VOWEL": frozenset(SBC_VOWELS_16),
+    "NAME_INITIAL": frozenset(SBC_NAME_INITIALS_20),
 }
 
 
@@ -144,6 +207,9 @@ class GridEntry:
     column: int
     layer: str
     value: str
+    glyph: str | None
+    transliteration: str | None
+    semantic_role: str | None
     witness_set_id: str
     citations: tuple[GridCitation, ...]
     evidence_status: str
@@ -390,6 +456,44 @@ def validate_grid_profile(
         value = _required_text(entry_raw, "value", "grid entry").upper()
         if layer not in ALLOWED_ENTRY_LAYERS:
             raise ValueError(f"unsupported grid entry layer: {layer}")
+        glyph_raw = entry_raw.get("glyph")
+        transliteration_raw = entry_raw.get("transliteration")
+        semantic_role_raw = entry_raw.get("semantic_role")
+        glyph = str(glyph_raw).strip() if glyph_raw is not None else None
+        transliteration = (
+            str(transliteration_raw).strip()
+            if transliteration_raw is not None
+            else None
+        )
+        semantic_role = (
+            str(semantic_role_raw).strip().upper()
+            if semantic_role_raw is not None
+            else None
+        )
+        if layer in LETTER_ENTRY_LAYERS:
+            if not glyph or not transliteration or not semantic_role:
+                raise ValueError(
+                    f"{layer} entries require glyph, transliteration, and semantic_role"
+                )
+            if semantic_role not in LETTER_SEMANTIC_ROLES:
+                raise ValueError(f"unsupported {layer} semantic_role: {semantic_role}")
+            if layer == "VOWEL" and semantic_role != "SANSKRIT_VOWEL":
+                raise ValueError("VOWEL entries must use SANSKRIT_VOWEL semantic_role")
+            if layer == "NAME_INITIAL":
+                if value == "A":
+                    expected_role = "VOWEL_EXCEPTION_IN_NAME_INITIAL_RING"
+                else:
+                    expected_role = "CONSONANT_NAME_INITIAL"
+                if semantic_role != expected_role:
+                    raise ValueError(
+                        f"NAME_INITIAL {value} must use {expected_role} semantic_role"
+                    )
+        elif any(
+            field is not None for field in (glyph, transliteration, semantic_role)
+        ):
+            raise ValueError(
+                f"non-letter layer {layer} cannot carry letter transcription fields"
+            )
         witness_id = _required_text(entry_raw, "witness_set_id", "grid entry")
         witness = witness_by_id.get(witness_id)
         if witness is None:
@@ -408,6 +512,9 @@ def validate_grid_profile(
                 column=column,
                 layer=layer,
                 value=value,
+                glyph=glyph,
+                transliteration=transliteration,
+                semantic_role=semantic_role,
                 witness_set_id=witness_id,
                 citations=witness.citations,
                 evidence_status=witness.evidence_status,

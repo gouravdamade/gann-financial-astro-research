@@ -1,10 +1,50 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 06:17 IST
+Last updated: 2026-07-17 07:18 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-17 (Sarvatobhadra Phase 2A Grid Fixture)
+## Latest Update - 2026-07-17 (Sarvatobhadra Phase 2B Letter Fixture)
+
+- Certified the Sanskrit letter layers in the explicit-only
+  `sbc_81_rotation_normalized_partial_v1` profile from the two held page
+  witnesses. The fixture now compiles 16 vowels and 20 name-initial sounds in
+  addition to the Phase 2A structural layers. Each letter entry carries an
+  uppercase ASCII token, exact Devanagari glyph, lowercase ASCII
+  transliteration, semantic role, and both page citations.
+- Corrected a doctrinal-data trap instead of normalizing it away. The source
+  calls the 20-item ring consonantal, but its first item is vowel `अ`. The
+  executable layer is therefore `NAME_INITIAL`, and the first item records
+  `VOWEL_EXCEPTION_IN_NAME_INITIAL_RING`; the remaining 19 record
+  `CONSONANT_NAME_INITIAL`.
+- Added strict runtime and JSON-schema contracts. Letter entries fail closed
+  when glyph, transliteration, or semantic role is absent or inconsistent;
+  structural layers reject letter-only metadata. The profile compiles 88
+  entries across six certified layers: 28 nakshatra, 20 name initial, 12 rashi,
+  5 tithi group, 16 vowel, and 7 weekday.
+- Absolute cardinal orientation remains the only unresolved layer. The fixture
+  stays `complete=false`, figure-relative, read-only, explicit-only, and blocked
+  from Vedha, Latta, scoring, financial labels, trades, and MT5 execution.
+- A lawful retail listing was located for the 1972 *Sarvatobhadra Chakra* with
+  *Trailokya Dipika* commentary by Pt. Mithalal Vyas. It is an acquisition lead
+  only. No acquired/page-certified 64-cell mapping was found, so
+  `sbc_64_blocked_v1` still raises `GridProfileBlockedError` and no coordinates
+  were invented.
+- Deterministic profile hash:
+  `7C772792EADDAE88DF8612B55E0A6FBD2E699E3A2C3CD95101E8A93868984D45`.
+- Verification passed: 15 focused Phase 2A/2B tests, all 203 repository tests,
+  changed-file Ruff lint and format checks, schema/runtime parity coverage, and
+  `git diff --check`. Evidence is in
+  `sbc_phase2b_letter_fixture_20260717.md`,
+  `docs/sbc/LETTER_FIXTURE_AUDIT.md`, Phase 2B acceptance gates, and ADR-0003.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_072038_sbc_phase2b_letter_fixture`.
+- Stable Gann Astro Desk remains `0.10.6`; no SBC UI is packaged or promoted.
+  Recommended next gate is independent-calculator/edition comparison and an
+  explicit resolution policy for cardinal orientation before a read-only
+  Chakra Lab. Vedha/Latta interpretation remains a separate later gate.
+
+## Previous Update - 2026-07-17 (Sarvatobhadra Phase 2A Grid Fixture)
 
 - Added the explicit-only `sbc_81_rotation_normalized_partial_v1` research
   fixture and strict compiler. It deterministically creates 81 figure-relative

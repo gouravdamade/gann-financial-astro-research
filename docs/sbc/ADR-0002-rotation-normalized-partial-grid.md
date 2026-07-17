@@ -4,6 +4,10 @@ Status: accepted for Phase 2A research fixtures
 
 Date: 2026-07-17
 
+Phase 2B note: decision 5 was fulfilled by ADR-0003. The same profile now
+contains certified `VOWEL` and `NAME_INITIAL` transcriptions; the orientation
+and all interpretation locks in this ADR remain unchanged.
+
 ## Context
 
 Two locally held editions show an 81-cell Sarvatobhadra layout:
