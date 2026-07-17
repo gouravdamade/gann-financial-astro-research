@@ -62,7 +62,7 @@ $gitkeep = Join-Path $resourceRoot ".gitkeep"
 if (-not (Test-Path -LiteralPath $gitkeep -PathType Leaf)) {
     Set-Content -LiteralPath $gitkeep `
         -Value "# Packaged backend output is generated into this directory." `
-        -Encoding utf8
+        -Encoding ascii
 }
 
 Write-Output $sidecarExe

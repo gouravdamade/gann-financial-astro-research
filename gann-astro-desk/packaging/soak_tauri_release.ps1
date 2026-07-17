@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.6-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.7-tauri",
     [int]$DurationSeconds = 20,
     [switch]$SkipCrashRecovery
 )
@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
 }
 
 $session = [DateTime]::UtcNow.ToString("yyyyMMdd_HHmmss")
-$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.6_$session"
+$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.7_$session"
 $logsRoot = Join-Path $dataRoot "logs"
 New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
@@ -119,6 +119,7 @@ try {
     Write-SoakPhase "app_launching"
     $env:GANN_ASTRO_DESKTOP_DATA = $dataRoot
     $app = Start-Process -FilePath $executable -PassThru
+    $appStartedAt = $app.StartTime
     Write-SoakPhase "app_started" ([ordered]@{ app_pid = $app.Id })
     $initial = Wait-ForSidecar $app.Id
     Write-SoakPhase "initial_sidecar_ready" ([ordered]@{
@@ -134,6 +135,54 @@ try {
         $initial.Health.mt5.appExecutionAllowed -eq $false
     $report.checks.mt5_read_only_mode = `
         $initial.Health.mt5.executionMode -eq "read_only_market_data"
+    $chakraPayload = [ordered]@{
+        at = "2026-07-17T12:00:00+05:30"
+        timezone = "Asia/Kolkata"
+        latitude = 28.6139
+        longitude = 77.2090
+        altitudeM = 216.0
+        bodies = @("SUN", "MOON", "JUPITER")
+        actors = @(
+            [ordered]@{ body = "SUN" },
+            [ordered]@{ body = "MOON" },
+            [ordered]@{ body = "JUPITER"; motionClass = "MEAN" }
+        )
+    }
+    $chakra = Invoke-JsonPost `
+        ("http://127.0.0.1:{0}/api/chakra-lab/snapshot" -f $initial.Port) `
+        $chakraPayload
+    $chakraSnapshot = $chakra.snapshot
+    $jupiterReadiness = @(
+        $chakraSnapshot.actor_readiness |
+            Where-Object { $_.body -eq "JUPITER" }
+    ) | Select-Object -First 1
+    $report.chakra_snapshot_id = [string]$chakraSnapshot.snapshot_id
+    $report.checks.chakra_endpoint_ok = $chakra.ok -eq $true
+    $report.checks.chakra_contract = `
+        $chakraSnapshot.contract -eq "SBC_CHAKRA_LAB_SNAPSHOT_V1"
+    $report.checks.chakra_board_has_81_cells = `
+        @($chakraSnapshot.grid.cells).Count -eq 81
+    $report.checks.chakra_cutoff_matches_as_of = `
+        $chakraSnapshot.evidence_cutoff_utc -eq $chakraSnapshot.as_of_utc
+    $report.checks.chakra_jupiter_motion_explicit = `
+        $jupiterReadiness.status -eq "READY"
+    $report.checks.chakra_timestamp_guardrails = (
+        $chakraSnapshot.guardrails.read_only -eq $true -and
+        $chakraSnapshot.guardrails.timestamp_safe -eq $true -and
+        $chakraSnapshot.guardrails.no_lookahead -eq $true
+    )
+    $report.checks.chakra_market_execution_locked = (
+        $chakraSnapshot.guardrails.execution_allowed -eq $false -and
+        $chakraSnapshot.guardrails.market_data_included -eq $false -and
+        $chakraSnapshot.guardrails.financially_validated -eq $false -and
+        $chakraSnapshot.guardrails.guidance_only -eq $true
+    )
+    Write-SoakPhase "chakra_lab_verified" ([ordered]@{
+        snapshot_id = $report.chakra_snapshot_id
+        cells = @($chakraSnapshot.grid.cells).Count
+        actor_status = [string]$jupiterReadiness.status
+        evidence_cutoff_utc = [string]$chakraSnapshot.evidence_cutoff_utc
+    })
     $candleHealth = Invoke-RestMethod -Uri `
         ("http://127.0.0.1:{0}/api/local-candlestick/health" -f $initial.Port) -TimeoutSec 10
     $chart = Invoke-RestMethod -Uri `
@@ -287,9 +336,23 @@ try {
     }
     Write-SoakPhase "app_closed"
     Start-Sleep -Seconds 2
-    $survivors = @($descendantIds | Where-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue })
+    $survivorIds = [Collections.Generic.List[int]]::new()
+    $preexistingParentageIds = [Collections.Generic.List[int]]::new()
+    foreach ($descendantId in $descendantIds) {
+        $descendant = Get-Process -Id $descendantId -ErrorAction SilentlyContinue
+        if ($null -eq $descendant) {
+            continue
+        }
+        if ($descendant.StartTime -lt $appStartedAt) {
+            $preexistingParentageIds.Add([int]$descendantId)
+            continue
+        }
+        $survivorIds.Add([int]$descendantId)
+    }
+    $survivors = @($survivorIds)
     $report.checks.no_descendant_survivors = $survivors.Count -eq 0
     $report.surviving_descendant_pids = $survivors
+    $report.preexisting_parentage_pids_ignored = @($preexistingParentageIds)
     Write-SoakPhase "survivors_checked" ([ordered]@{ count = $survivors.Count })
 } catch {
     $report.errors += $_.Exception.Message

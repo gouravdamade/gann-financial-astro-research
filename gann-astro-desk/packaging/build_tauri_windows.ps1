@@ -1,5 +1,5 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.6-tauri",
+    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.7-tauri",
     [switch]$SkipSidecarBuild,
     [switch]$FinalizeOnly
 )
@@ -92,8 +92,8 @@ Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.10.6"
-    status = "timeframe_aspect_policy_candidate"
+    version = "0.10.7"
+    status = "sbc_chakra_lab_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -112,6 +112,10 @@ $manifest = [ordered]@{
     mt5_time_normalization_contract = "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
     mt5_history_snapshot_contract = "MT5_TIMESTAMP_NORMALIZED_CLOSED_BARS_V2"
     mt5_execution_mode = "read_only_market_data"
+    chakra_lab_contract = "SBC_CHAKRA_LAB_SNAPSHOT_V1"
+    chakra_lab_mode = "read_only_guidance"
+    chakra_lab_execution_allowed = $false
+    chakra_lab_financially_validated = $false
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 

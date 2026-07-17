@@ -1,8 +1,61 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 15:40 IST
+Last updated: 2026-07-17 21:18 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-17 (Native Chakra Lab Release 0.10.7)
+
+- Promoted Gann Astro Desk `0.10.7` with the timestamp-safe, read-only
+  Sarvatobhadra Chakra Lab introduced in Phase 4A. The native Tauri package
+  contains the 81-cell board, explicit actor/motion controls, Vedha guidance
+  ledger, matched-cell evidence, and cell inspector.
+- The release manifest now declares
+  `SBC_CHAKRA_LAB_SNAPSHOT_V1`, `read_only_guidance`,
+  `chakra_lab_execution_allowed=false`, and
+  `chakra_lab_financially_validated=false`. MT5 remains data-only and all order
+  execution remains locked.
+- Extended the native release soak from 28 to 35 checks. The packaged test now
+  requires the Chakra endpoint, contract, 81 cells, exact as-of/evidence-cutoff
+  equality, explicit Jupiter motion readiness, timestamp/no-lookahead locks,
+  and market/execution/financial guardrails.
+- Corrected a soak-only Windows PID ancestry false positive. A lingering
+  `git remote -v` process had started before the app but inherited a stale
+  parent PID. The shutdown gate now ignores only processes whose start time
+  predates the app and still fails on every real descendant survivor.
+- Corrected repeat build hygiene so `build_backend_sidecar.ps1` recreates
+  `.gitkeep` as ASCII instead of adding a Windows PowerShell UTF-8 BOM.
+- Verification passed: all 226 Python tests; all 32 frontend tests across nine
+  files; Oxlint; TypeScript/Vite production build; focused Ruff lint and format
+  checks; two Rust tests; Rust formatting; Clippy with warnings denied; release
+  script parsing; and `git diff --check` apart from expected line-ending
+  warnings.
+- The candidate and promoted-stable native soaks each passed all 35 checks with
+  zero errors, zero failed checks, same-port sidecar recovery, and zero genuine
+  descendant survivors:
+  `D:\GannFinancialAstro\soak\tauri_0.10.7_20260717_134805\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.7_20260717_154428\logs\native_soak_report.json`.
+- Stable executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`.
+  SHA-256: executable
+  `CF8441C084BFB837499891FACFD194279C5DFCDA8FD0CEC4D1F4974FDB9CCE63`;
+  installer
+  `F9AE74EB99FE3675F1C201C1786712BAE5D457324E182B97AFCBD04174C22204`;
+  sidecar
+  `7F45E86DFEB0A3F492F108FB9E1840D852D8CE4F391AC68941972A296E6A0215`.
+- Rollback archive:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.6_20260717T154235Z`;
+  pre-promotion writable-state backup:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.7_promotion_20260717T154235Z`.
+- Source WebView visual QA remained green. A second candidate launch through
+  Windows UI automation was not captured because its action-approval request
+  expired; the exact packaged WebView2 candidate and stable copy were still
+  launched and exercised by both native soaks.
+- Detailed release evidence:
+  `sbc_chakra_lab_native_release_20260717.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_211806_sbc_chakra_lab_release_0107`.
 
 ## Latest Update - 2026-07-17 (Sarvatobhadra Phase 4A Chakra Lab)
 

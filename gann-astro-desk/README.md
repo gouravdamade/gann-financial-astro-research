@@ -197,6 +197,12 @@ npm run build
 
 ## Native Windows Status
 
+The current stable native release is `0.10.7` at
+`D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
+timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
+surface contains no order action, cannot consume market data, and reports
+`execution_allowed=false` and `financially_validated=false`.
+
 The supported native build is Tauri 2 / Rust with a managed PyInstaller Python sidecar
 and the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
 Swiss Ephemeris files, Python research workers, Node runtime, Codex SDK bridge, Local
