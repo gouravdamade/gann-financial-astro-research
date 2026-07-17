@@ -7,7 +7,7 @@
 | Is an 81-cell form locally page-certifiable? | Yes, in two held editions | Partial topology fixture allowed |
 | Do the two figures share one absolute orientation? | No; they are related by a 90-degree rotation | Cardinal binding blocked |
 | Are the 28 nakshatras, including Abhijit, consistent? | Yes after rotation normalization | Certified structural layer |
-| Is the 12-rashi ring consistent? | Yes after rotation normalization | Certified structural layer |
+| Is the 12-rashi ring consistent? | Yes after a Phase 3A six-cell transcription correction and rotation normalization | Certified structural layer |
 | Are the five tithi groups and weekdays consistent? | Yes after rotation normalization | Certified structural layer |
 | Are all 16 Sanskrit vowel glyphs safely transcribed? | Yes, with exact Devanagari and ASCII transliteration in both held page witnesses | Certified letter layer |
 | Is the source-labeled consonant ring machine-safe? | Yes, after naming it `NAME_INITIAL`; its first item is vowel `अ`, followed by 19 consonants | Certified semantic exception |
@@ -34,6 +34,22 @@ Examples:
 | (9, 8) | Magha | (2, 9) |
 | (8, 1) | Anuradha | (9, 8) |
 | (1, 2) | Dhanishtha | (8, 1) |
+
+## Phase 3A Rashi Correction
+
+The first Phase 2A transcription placed the three top and three bottom rashi
+cells one column too far left. Visual reinspection of Rath Figure 1.2 and the
+editor supplement's Krittika, Rohini, and Mrigashira worked Vedha examples
+showed the correct coordinates:
+
+```text
+top:    VRISHABHA (3,4), MITHUNA (3,5), KARKA (3,6)
+bottom: MAKARA (7,4), DHANUS (7,5), VRISCHIKA (7,6)
+```
+
+The correction removes unintended rashi/vowel cell overlaps and makes all
+three printed nine-target examples compile exactly. Tests now assert both the
+correct cells and the vacated `(3,3)` and `(7,3)` cells.
 
 ## Certified Counts
 
@@ -73,9 +89,10 @@ usable public copy inspected in this gate supplied a complete, edition-stable
 
 ## Non-Claims
 
-Phase 2A does not certify:
+The grid fixture does not certify:
 
 - that 81 cells are universally preferable to 64 cells;
 - an absolute North/East orientation for the compiled profile;
 - Abhijit longitude insertion policy for planetary placement;
-- Vedha, Latta, benefic/malefic judgment, scoring, market direction, or trades.
+- automatic speed classification, special-corner Vedha, Latta, association
+  inference, market direction, or trades.

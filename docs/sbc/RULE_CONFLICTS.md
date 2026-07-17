@@ -6,7 +6,10 @@
 | --- | --- | --- |
 | Grid size | 64-cell and 81-cell descriptions | No grid selected |
 | Abhijit | Omitted, overlapping, or replacing part of Uttara Ashadha/Shravana | Ignored for placement unless a source-cited profile interval is supplied |
-| Vedha | Direction, counting, exceptions, and benefic/malefic handling vary | Not implemented |
+| Vedha doctrine families | Board rays, star-count aspects, Panchashalaka/Saptashalaka, and school-specific exceptions differ | Only the explicit 81-cell editor-supplement standard-ray profile is implemented |
+| Direct speed threshold | Source distinguishes swift/direct from mean motion but gives no executable threshold | Caller must provide `DIRECT_SWIFT` or `MEAN`; automatic inference fails closed |
+| Vedha modifier combination | Source gives retrograde, exalted, and debilitated multipliers but no stacking/precedence rule | Retrograde plus non-ordinary dignity remains unresolved and unscored |
+| Vedha conditional nature | Mercury depends on association and Moon on waxing/waning state | Caller/context may resolve; otherwise contribution remains unscored |
 | Latta | Root-text and later commentary layers may differ | Not implemented |
 | Ayanamsha | Raman project choice versus Lahiri comparison | Raman primary, Lahiri comparison only |
 | Vara boundary | Civil midnight versus sunrise | Explicit profile setting; civil midnight primary |
@@ -15,6 +18,7 @@
 
 ## Promotion Rule
 
-No unresolved row may be converted into financial scoring by an LLM. A future
-profile must cite exact source rules and pass fixtures for every cell, boundary,
-and exception it activates.
+No unresolved row may be converted into financial scoring by an LLM. The
+Phase 3A signed guidance ledger is explicitly experimental, non-financial, and
+source-profiled. A future profile must cite exact source rules and pass fixtures
+for every cell, boundary, and exception it activates.

@@ -8,6 +8,11 @@ Phase 2B note: decision 5 was fulfilled by ADR-0003. The same profile now
 contains certified `VOWEL` and `NAME_INITIAL` transcriptions; the orientation
 and all interpretation locks in this ADR remain unchanged.
 
+Phase 3A correction: page reinspection found that the three top and three
+bottom rashi entries had been transcribed one column too far left. Their
+corrected coordinates are recorded in `GRID_FIXTURE_AUDIT.md` and are now
+guarded by both direct coordinate tests and three printed Vedha examples.
+
 ## Context
 
 Two locally held editions show an 81-cell Sarvatobhadra layout:
@@ -44,7 +49,8 @@ promoted to root Mantreswara doctrine.
    because no locally held page-certified 64-cell mapping is available.
 8. Provide no implicit/default grid selection.
 9. Keep Vedha, Latta, scoring, financial labels, Auto Suggest, and execution
-   unavailable.
+   unavailable at this Phase 2A gate. Later profiles may unlock only the
+   exact source-scoped behavior they certify.
 
 ## Consequences
 

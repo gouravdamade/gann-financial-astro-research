@@ -135,15 +135,15 @@ entries:
   - {row: 4, column: 2, layer: NAME_INITIAL, value: CHA, glyph: 'च', transliteration: cha, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
   - {row: 3, column: 2, layer: NAME_INITIAL, value: LA, glyph: 'ल', transliteration: la, semantic_role: CONSONANT_NAME_INITIAL, witness_set_id: LETTER_LAYERS_TRANSCRIPTION_CERTIFIED}
 
-  - {row: 3, column: 3, layer: RASHI, value: VRISHABHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
-  - {row: 3, column: 4, layer: RASHI, value: MITHUNA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
-  - {row: 3, column: 5, layer: RASHI, value: KARKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 4, layer: RASHI, value: VRISHABHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 5, layer: RASHI, value: MITHUNA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 3, column: 6, layer: RASHI, value: KARKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 4, column: 7, layer: RASHI, value: SIMHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 5, column: 7, layer: RASHI, value: KANYA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 6, column: 7, layer: RASHI, value: TULA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
-  - {row: 7, column: 5, layer: RASHI, value: VRISCHIKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
-  - {row: 7, column: 4, layer: RASHI, value: DHANUS, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
-  - {row: 7, column: 3, layer: RASHI, value: MAKARA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 6, layer: RASHI, value: VRISCHIKA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 5, layer: RASHI, value: DHANUS, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
+  - {row: 7, column: 4, layer: RASHI, value: MAKARA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 6, column: 3, layer: RASHI, value: KUMBHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 5, column: 3, layer: RASHI, value: MEENA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
   - {row: 4, column: 3, layer: RASHI, value: MESHA, witness_set_id: GRID_TOPOLOGY_81_ROTATION_NORMALIZED}
@@ -168,10 +168,11 @@ unresolved_layers:
 blocked_capabilities:
   - DEFAULT_PROFILE_SELECTION
   - CARDINAL_ORIENTATION
-  - VEDHA
+  - AUTOMATIC_DIRECT_SPEED_CLASSIFICATION
+  - SPECIAL_CORNER_JUNCTION_RULES
   - LATTA
-  - SCORING
+  - CLASSICAL_NATAL_SEVERITY_TRANSLATION
   - FINANCIAL_LABELS
   - TRADES
   - MT5_EXECUTION
-notes: This fixture compiles source-cited topology plus page-certified Sanskrit vowel and name-initial transcriptions. NAME_INITIAL is used instead of CONSONANT because the source ring begins with vowel A. The fixture remains incomplete, figure-relative, read-only, and never selected implicitly while absolute cardinal orientation is unresolved.
+notes: This fixture compiles source-cited topology plus page-certified Sanskrit vowel and name-initial transcriptions. NAME_INITIAL is used instead of CONSONANT because the source ring begins with vowel A. The six top/bottom rashi cells are page-corrected and regression-checked against the Krittika, Rohini, and Mrigashira Vedha examples. Standard figure-relative Vedha geometry is available only through an explicit Vedha profile; direct-speed inference, special corner rules, classical natal severity translation, financial labels, and execution remain blocked.

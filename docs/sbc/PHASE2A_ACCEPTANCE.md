@@ -22,3 +22,7 @@ Phase 2A is accepted only when all of the following pass:
 
 Passing these gates certifies a partial comparison fixture only. It does not
 certify a complete Sarvatobhadra method or any financial utility.
+
+Phase 3A historical correction: six rashi coordinates were shifted to their
+visually certified Figure 1.2 cells. The revised topology gate now also passes
+the Krittika, Rohini, and Mrigashira printed Vedha examples.

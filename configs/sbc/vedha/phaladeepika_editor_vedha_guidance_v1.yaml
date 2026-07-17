@@ -1,0 +1,117 @@
+schema_version: 1
+vedha_profile_id: phaladeepika_editor_vedha_guidance_v1
+grid_profile_id: sbc_81_rotation_normalized_partial_v1
+status: source_profiled_figure_relative_guidance_not_financially_validated
+authority: phaladeepika_1937_editor_supplement_cross_checked_with_rath_motion_summary
+selection_policy: EXPLICIT_ONLY
+compile_enabled: true
+citations:
+  - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+    locator: PDF page 349; printed page 312
+    rule_scope: natural nature, three directions, three worked ray examples, and motion-to-direction rules
+  - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+    locator: PDF pages 350-351; printed pages 313-314
+    rule_scope: conditional nature, layer effects, planet effects, and retrograde/exaltation/debilitation modifiers
+  - source_id: SANJAY_RATH_CRUX_1998_SBC_MOTION_SUMMARY
+    locator: PDF page 22; printed page 11
+    rule_scope: independent secondary cross-check of normal, swift, and retrograde motion classes
+target_layers:
+  - NAKSHATRA
+  - VOWEL
+  - NAME_INITIAL
+  - RASHI
+  - TITHI_GROUP
+direction_geometry:
+  LEFT: INWARD_PLUS_FIGURE_LEFT_DIAGONAL
+  FRONT: OPPOSITE_OUTER_NAKSHATRA_ONLY
+  RIGHT: INWARD_PLUS_FIGURE_RIGHT_DIAGONAL
+motion_rules:
+  fixed_directions:
+    SUN: LEFT
+    MOON: LEFT
+    RAHU: RIGHT
+    KETU: RIGHT
+  variable_bodies:
+    - MARS
+    - MERCURY
+    - JUPITER
+    - VENUS
+    - SATURN
+  motion_to_direction:
+    DIRECT_SWIFT: LEFT
+    MEAN: FRONT
+    RETROGRADE: RIGHT
+nature_rules:
+  natural_benefics:
+    - JUPITER
+    - VENUS
+  natural_malefics:
+    - SATURN
+    - SUN
+    - RAHU
+    - KETU
+    - MARS
+  conditional_bodies:
+    - MERCURY
+    - MOON
+guidance_model:
+  model_id: EXPERIMENTAL_NORMALIZED_GUIDANCE_V1
+  base_evidence_unit: 1.0
+  benefic_sign: 1.0
+  malefic_sign: -1.0
+  conditional_sign: null
+  modifiers:
+    ORDINARY: 1.0
+    RETROGRADE: 2.0
+    EXALTED: 3.0
+    DEBILITATED: 0.5
+  modifier_combination_policy: BLOCK_RETROGRADE_WITH_NON_ORDINARY_DIGNITY
+  financial_validation_status: NOT_VALIDATED
+  guidance_only: true
+worked_examples:
+  - source_nakshatra: KRITTIKA
+    locator: PDF page 349; printed page 312; Krittika worked example
+    expected_targets:
+      - NAKSHATRA:BHARANI
+      - NAME_INITIAL:A
+      - RASHI:VRISHABHA
+      - TITHI_GROUP:NANDA
+      - TITHI_GROUP:BHADRA
+      - RASHI:TULA
+      - NAME_INITIAL:TA
+      - NAKSHATRA:VISHAKHA
+      - NAKSHATRA:SHRAVANA
+  - source_nakshatra: ROHINI
+    locator: PDF page 349; printed page 312; Rohini worked example
+    expected_targets:
+      - VOWEL:U
+      - NAKSHATRA:ASHWINI
+      - NAME_INITIAL:VA
+      - RASHI:MITHUNA
+      - VOWEL:AU
+      - RASHI:KANYA
+      - NAME_INITIAL:RA
+      - NAKSHATRA:SWATI
+      - NAKSHATRA:ABHIJIT
+  - source_nakshatra: MRIGASHIRA
+    locator: PDF page 349; printed page 312; Mrigashira worked example
+    expected_targets:
+      - RASHI:KARKA
+      - NAME_INITIAL:KA
+      - RASHI:SIMHA
+      - NAME_INITIAL:PA
+      - NAKSHATRA:CHITRA
+      - NAKSHATRA:REVATI
+      - NAME_INITIAL:LA
+      - NAME_INITIAL:A
+      - NAKSHATRA:UTTARA_ASHADHA
+blocked_capabilities:
+  - AUTOMATIC_DIRECT_SPEED_CLASSIFICATION
+  - SPECIAL_CORNER_JUNCTION_RULES
+  - ASSOCIATION_NATURE_INFERENCE
+  - MODIFIER_STACKING
+  - CLASSICAL_NATAL_SEVERITY_TRANSLATION
+  - FINANCIAL_LABELS
+  - TRADES
+  - MT5_EXECUTION
+notes: The score is an explicit engineering normalization over source-backed matches, not a classical numerical score. It preserves favorable, adverse, and unresolved evidence separately. The source calls the NAME_INITIAL A cell a vowel in two examples; the machine layer retains the certified board-cell semantic exception rather than duplicating the target.

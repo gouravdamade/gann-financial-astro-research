@@ -1,10 +1,63 @@
 # Current Project Handoff
 
-Last updated: 2026-07-17 07:18 IST
+Last updated: 2026-07-17 08:52 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-17 (Sarvatobhadra Phase 2B Letter Fixture)
+## Latest Update - 2026-07-17 (Sarvatobhadra Phase 3A Vedha Guidance)
+
+- Added the explicit-only
+  `phaladeepika_editor_vedha_guidance_v1` profile and deterministic
+  `sbc.vedha.VedhaGuidanceEngine`. It derives standard figure-relative left,
+  front, and right rays from the certified 81-cell board and validates them
+  against the editor supplement's printed Krittika, Rohini, and Mrigashira
+  nine-target examples.
+- Reinspecting those examples exposed a Phase 2A transcription error. Six
+  rashi cells were shifted one column right to their page-supported positions:
+  top `VRISHABHA (3,4)`, `MITHUNA (3,5)`, `KARKA (3,6)`; bottom
+  `MAKARA (7,4)`, `DHANUS (7,5)`, `VRISCHIKA (7,6)`. Direct coordinate and
+  worked-example regressions now guard the correction.
+- Encoded source-profiled motion without inventing a speed threshold:
+  Sun/Moon use left; Rahu/Ketu use right; Mars through Saturn require caller
+  supplied `DIRECT_SWIFT`, `MEAN`, or `RETROGRADE`, mapping to left, front, or
+  right. Missing variable motion fails closed.
+- Added an auditable research-guidance ledger. Each target match is one
+  experimental evidence unit; resolved benefic/malefic nature supplies the
+  sign, and the held source modifiers are `2x` retrograde, `3x` exalted, and
+  `0.5x` debilitated. Favorable, adverse, net, normalized balance, unresolved
+  contributions, and scoring coverage remain separately visible.
+- The numerical score is an engineering comparison aid, not a classical
+  financial score. Every report is `guidance_only=true` and
+  `financial_validation_status=NOT_VALIDATED`; financial labels, trades, and
+  MT5 execution are blocked. Conditional Moon/Mercury nature, automatic direct
+  speed classification, retrograde-plus-dignity precedence, special
+  corner/junction rules, and classical natal-severity translation fail closed.
+- Reproducible sample: mean-motion Jupiter/Krittika to Shravana contributes
+  `+1`; retrograde Saturn/Krittika to Bharani contributes `-2`; net `-1`,
+  normalized `-0.3333333333333333`, coverage `1.0`. This is evidence balance,
+  not a bearish forecast.
+- Source pages: held Phaladeepika editor supplement PDF pages 349-351, printed
+  pages 312-314; Rath motion comparison PDF page 22, printed page 11. The
+  editor-supplied material remains clearly separated from Mantreswara root
+  doctrine.
+- Runtime hashes: Vedha profile
+  `EE8283233C9BFE1E1565552B93F3F1E317367D5CD2A153726F54BCC6AA05D3BD`;
+  corrected grid
+  `468F0FCD43D1A9271DDC4F86F4664F2C22F7EC327C6B131B975D67B3557B8F3D`.
+  Raw YAML SHA-256 is
+  `B46966D2C979DB013FDE1EE9DDF9500952704D90134BDFDBAEC9468668CC83CA`.
+- Verification passed: 24 focused Phase 2A/2B/3A tests, all 212 repository
+  tests, Ruff lint and format checks, and `git diff --check`. Evidence and
+  decisions are in `sbc_phase3a_vedha_guidance_20260717.md`,
+  `docs/sbc/VEDHA_GUIDANCE_AUDIT.md`, Phase 3A acceptance gates, and ADR-0004.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260717_085230_sbc_phase3a_vedha_guidance`.
+- Stable Gann Astro Desk remains `0.10.6`; Phase 3A is not integrated into the
+  packaged app. Next gates are timestamp-safe read-only Chakra Lab adaptation,
+  direct-speed and special-corner source certification, and prospective
+  out-of-sample financial validation before any market-facing interpretation.
+
+## Previous Update - 2026-07-17 (Sarvatobhadra Phase 2B Letter Fixture)
 
 - Certified the Sanskrit letter layers in the explicit-only
   `sbc_81_rotation_normalized_partial_v1` profile from the two held page

@@ -72,15 +72,15 @@ def test_outer_ring_has_all_28_nakshatras_in_source_figure_order() -> None:
 def test_rashi_ring_and_center_cross_match_the_page_fixtures() -> None:
     grid = compile_grid(PROFILE_ID)
     rashi_coordinates = (
-        (3, 3),
         (3, 4),
         (3, 5),
+        (3, 6),
         (4, 7),
         (5, 7),
         (6, 7),
+        (7, 6),
         (7, 5),
         (7, 4),
-        (7, 3),
         (6, 3),
         (5, 3),
         (4, 3),
@@ -89,6 +89,8 @@ def test_rashi_ring_and_center_cross_match_the_page_fixtures() -> None:
         _values(grid, row, column, "RASHI")[0] for row, column in rashi_coordinates
     )
     assert rashis == SBC_RASHIS_12
+    assert _values(grid, 3, 3, "RASHI") == ()
+    assert _values(grid, 7, 3, "RASHI") == ()
 
     assert _values(grid, 4, 5, "TITHI_GROUP") == ("NANDA",)
     assert _values(grid, 4, 5, "WEEKDAY") == ("SUNDAY", "TUESDAY")

@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gannastro/schemas/sbc/vedha-profile-v1.json",
+  "title": "SBC source-profiled Vedha guidance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "vedha_profile_id",
+    "grid_profile_id",
+    "status",
+    "authority",
+    "selection_policy",
+    "compile_enabled",
+    "citations",
+    "target_layers",
+    "direction_geometry",
+    "motion_rules",
+    "nature_rules",
+    "guidance_model",
+    "worked_examples",
+    "blocked_capabilities"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "vedha_profile_id": {"type": "string", "minLength": 1},
+    "grid_profile_id": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "minLength": 1},
+    "authority": {"type": "string", "minLength": 1},
+    "selection_policy": {"const": "EXPLICIT_ONLY"},
+    "compile_enabled": {"const": true},
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "locator", "rule_scope"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "locator": {"type": "string", "minLength": 1},
+          "rule_scope": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "target_layers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["NAKSHATRA", "VOWEL", "NAME_INITIAL", "RASHI", "TITHI_GROUP"]
+      }
+    },
+    "direction_geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["LEFT", "FRONT", "RIGHT"],
+      "properties": {
+        "LEFT": {"const": "INWARD_PLUS_FIGURE_LEFT_DIAGONAL"},
+        "FRONT": {"const": "OPPOSITE_OUTER_NAKSHATRA_ONLY"},
+        "RIGHT": {"const": "INWARD_PLUS_FIGURE_RIGHT_DIAGONAL"}
+      }
+    },
+    "motion_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixed_directions", "variable_bodies", "motion_to_direction"],
+      "properties": {
+        "fixed_directions": {"type": "object"},
+        "variable_bodies": {"type": "array", "uniqueItems": true},
+        "motion_to_direction": {"type": "object"}
+      }
+    },
+    "nature_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["natural_benefics", "natural_malefics", "conditional_bodies"],
+      "properties": {
+        "natural_benefics": {"type": "array", "uniqueItems": true},
+        "natural_malefics": {"type": "array", "uniqueItems": true},
+        "conditional_bodies": {"type": "array", "uniqueItems": true}
+      }
+    },
+    "guidance_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "base_evidence_unit",
+        "benefic_sign",
+        "malefic_sign",
+        "conditional_sign",
+        "modifiers",
+        "modifier_combination_policy",
+        "financial_validation_status",
+        "guidance_only"
+      ],
+      "properties": {
+        "model_id": {"const": "EXPERIMENTAL_NORMALIZED_GUIDANCE_V1"},
+        "base_evidence_unit": {"const": 1.0},
+        "benefic_sign": {"const": 1.0},
+        "malefic_sign": {"const": -1.0},
+        "conditional_sign": {"type": "null"},
+        "modifiers": {"type": "object"},
+        "modifier_combination_policy": {
+          "const": "BLOCK_RETROGRADE_WITH_NON_ORDINARY_DIGNITY"
+        },
+        "financial_validation_status": {"const": "NOT_VALIDATED"},
+        "guidance_only": {"const": true}
+      }
+    },
+    "worked_examples": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_nakshatra", "expected_targets", "locator"],
+        "properties": {
+          "source_nakshatra": {"type": "string", "minLength": 1},
+          "expected_targets": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 3}
+          },
+          "locator": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "blocked_capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "notes": {"type": "string"}
+  }
+}
