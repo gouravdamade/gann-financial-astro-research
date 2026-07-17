@@ -10,6 +10,7 @@ import {
   saveDrawingTemplate,
 } from './api'
 import {
+  defaultDrawingPreferences,
   layoutSignature,
   validateImportedLayout,
   type ChartLayoutScope,
@@ -82,7 +83,7 @@ export function useChartLayouts({
   const installLayout = useCallback((layout: ChartLayout) => {
     const legacySquare = layout.drawings.find((drawing) => drawing.type === 'square_of_nine')
     const drawings = layout.drawings.filter((drawing) => drawing.type !== 'square_of_nine')
-    const chartState = legacySquare && !layout.chartState.squareOfNine
+    const migratedChartState = legacySquare && !layout.chartState.squareOfNine
       ? {
           ...layout.chartState,
           squareOfNine: migrateLegacySquareOfNineDrawing(
@@ -91,11 +92,18 @@ export function useChartLayouts({
           ),
         }
       : layout.chartState
+    const chartState = {
+      ...migratedChartState,
+      drawingPreferences: {
+        ...defaultDrawingPreferences(),
+        ...(migratedChartState.drawingPreferences ?? {}),
+      },
+    }
     const installedLayout = { ...layout, chartState, drawings }
     activeLayoutRef.current = installedLayout
     drawingsRef.current = drawings
     chartStateRef.current = chartState
-    lastSavedSignatureRef.current = layoutSignature(layout.chartState, layout.drawings)
+    lastSavedSignatureRef.current = layoutSignature(chartState, drawings)
     hydratedRef.current = true
     setActiveLayout(installedLayout)
     setDrawingState(drawings)
@@ -329,6 +337,21 @@ export function useChartLayouts({
     replaceDrawings(drawingsRef.current.filter((drawing) => drawing.drawingId !== drawingId))
   }, [replaceDrawings])
 
+  const updateDrawingGroup = useCallback((
+    groupId: string,
+    update: Partial<Pick<ChartDrawing, 'visible' | 'locked' | 'groupName' | 'syncScope'>>,
+  ) => {
+    replaceDrawings(drawingsRef.current.map((drawing) => drawing.groupId === groupId
+      ? { ...drawing, ...update, guardrails: drawing.guardrails }
+      : drawing))
+  }, [replaceDrawings])
+
+  const deleteDrawingGroup = useCallback((groupId: string) => {
+    replaceDrawings(drawingsRef.current.filter((drawing) => (
+      drawing.groupId !== groupId || drawing.locked
+    )))
+  }, [replaceDrawings])
+
   const undo = useCallback(() => {
     setUndoStack((stack) => {
       const previous = stack.at(-1)
@@ -370,6 +393,8 @@ export function useChartLayouts({
     replaceDrawings,
     updateChartState,
     updateDrawing,
+    updateDrawingGroup,
+    deleteDrawingGroup,
     deleteDrawing,
     undo,
     clearDrawings: () => replaceDrawings(drawingsRef.current.filter((drawing) => drawing.locked)),

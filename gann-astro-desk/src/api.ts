@@ -109,7 +109,10 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return payload
 }
 
-export async function fetchChart(parameters?: ChartParameters): Promise<ChartPayload> {
+export async function fetchChart(
+  parameters?: ChartParameters,
+  replay?: { cutoffUtc: string },
+): Promise<ChartPayload> {
   const query = new URLSearchParams({
     start: parameters?.start ?? '2025-05-25T00:00:00+05:30',
     end: parameters?.end ?? '2025-05-31T23:59:59+05:30',
@@ -128,6 +131,7 @@ export async function fetchChart(parameters?: ChartParameters): Promise<ChartPay
     if (parameters.maxDurationMinutes != null) query.set('maxDurationMinutes', String(parameters.maxDurationMinutes))
     query.set('liveBarCount', String(parameters.liveBarCount))
   }
+  if (replay?.cutoffUtc) query.set('replayCutoff', replay.cutoffUtc)
   const payload = await request<{ chart: ChartPayload }>(`/api/chart?${query}`)
   return payload.chart
 }

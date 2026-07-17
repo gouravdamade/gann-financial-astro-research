@@ -7,7 +7,7 @@ import json
 import re
 import struct
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +31,44 @@ class ReplayExpectation:
     signed_pips: float | None = None
     gann_anchor_side: str | None = None
     min_case_window_sr_touches: int | None = None
+
+
+@dataclass
+class AutoSuggestEvidence:
+    case_id: int
+    case: dict[str, Any]
+    traces: list[dict[str, Any]]
+    outcome: str
+    candles: list[dict[str, Any]]
+    markers: list[dict[str, Any]]
+    zones: list[dict[str, Any]]
+    multi_aspect: dict[str, Any]
+    selected: list[dict[str, Any]]
+    window_markers: list[dict[str, Any]]
+    case_window_sr_touches: list[dict[str, Any]]
+    first_case_window_sr_touch: dict[str, Any] | None
+    entry_point: dict[str, Any] | None
+    min_gap_ms: int = 60000
+
+
+@dataclass
+class AutoSuggestBaseline:
+    default_start: dict[str, Any] | None
+    default_end: dict[str, Any] | None
+    default_start_geometry: dict[str, Any] | None
+    use_default_marker_flow: bool
+    support_barrier_rule: dict[str, Any] | None
+
+
+@dataclass
+class AutoSuggestDecision:
+    start: dict[str, Any] | None
+    end: dict[str, Any] | None
+    start_rule: str
+    end_rule: str
+    reason: str
+    auto: dict[str, Any]
+    fan: dict[str, Any] | None
 
 
 EXPECTATIONS: dict[int, ReplayExpectation] = {
@@ -986,251 +1024,541 @@ def replay_case_127(pack_dir: Path) -> dict[str, Any]:
     }
 
 
-def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
+def collect_auto_suggest_evidence(pack_dir: Path, case_id: int) -> AutoSuggestEvidence:
     html_path = pack_dir / f"aspect_review_case_{int(case_id)}_chart.html"
-    html_text = html_path.read_text(encoding="utf-8", errors="ignore")
-    traces = plotly_data(html_text)
+    traces = plotly_data(html_path.read_text(encoding="utf-8", errors="ignore"))
     case = case_metadata_from_template(pack_dir, case_id)
     outcome = str(case.get("default_outcome") or "").lower()
     if outcome not in {"bullish", "bearish"}:
-        outcome = "bearish" if str(case.get("full_window_direction") or "").lower() == "bearish" else "bullish"
+        outcome = (
+            "bearish"
+            if str(case.get("full_window_direction") or "").lower() == "bearish"
+            else "bullish"
+        )
     candles = collect_candles(traces)
     markers = collect_markers(traces)
     zones = collect_zone_boundaries(traces, candles, case)
     aspect_windows = collect_aspect_windows(traces)
-    multi_aspect = multi_aspect_overlap_evidence(candles, aspect_windows, case)
-    selected = [point for point in markers if point.get("is_selected_case_touch")]
     window_start = iso_ms(str(case["window_start_ist"]))
     window_end = iso_ms(str(case["window_end_ist"]))
-    window_markers = [point for point in markers if window_start <= point_time(point) <= window_end]
+    selected = [point for point in markers if point.get("is_selected_case_touch")]
+    window_markers = [
+        point
+        for point in markers
+        if window_start <= point_time(point) <= window_end
+    ]
     case_window_sr_touches = collect_case_window_sr_touches(traces, case)
-    first_case_window_sr_touch = case_window_sr_touches[0] if case_window_sr_touches else None
-    default_start = first_case_window_sr_touch or (selected[0] if selected else (window_markers[0] if window_markers else (markers[0] if markers else None)))
+    return AutoSuggestEvidence(
+        case_id=int(case_id),
+        case=case,
+        traces=traces,
+        outcome=outcome,
+        candles=candles,
+        markers=markers,
+        zones=zones,
+        multi_aspect=multi_aspect_overlap_evidence(candles, aspect_windows, case),
+        selected=selected,
+        window_markers=window_markers,
+        case_window_sr_touches=case_window_sr_touches,
+        first_case_window_sr_touch=(
+            case_window_sr_touches[0] if case_window_sr_touches else None
+        ),
+        entry_point=case_entry_point(case),
+    )
+
+
+def select_auto_suggest_baseline(
+    evidence: AutoSuggestEvidence,
+) -> AutoSuggestBaseline:
+    default_start = (
+        evidence.first_case_window_sr_touch
+        or (evidence.selected[0] if evidence.selected else None)
+        or (evidence.window_markers[0] if evidence.window_markers else None)
+        or (evidence.markers[0] if evidence.markers else None)
+    )
     default_start_time = point_time(default_start)
-    min_gap_ms = 60000
-    default_end = next((point for point in markers if point_time(point) > default_start_time + min_gap_ms), None)
-    entry_point = case_entry_point(case)
-    default_start_geometry = sr_geometry_for_point(default_start, entry_point, outcome, candles, case)
-    use_default_marker_flow = default_start_geometry and default_start_geometry.get("position") == "same_as_entry"
-    support_barrier_rule = applied_rule(case, "bearish_bias_support_barrier")
-
-    start = default_start
-    end = default_end
-    start_rule = "not_found"
-    end_rule = "next_later_hardcoded_marker" if end else "not_found"
-    reason = ""
-    auto: dict[str, Any] = {}
-
-    if support_barrier_rule and outcome == "bearish" and entry_point and not use_default_marker_flow:
-        entry_time = point_time(entry_point)
-        entry_price = float(entry_point["y"])
-        clearance_pips = sr_geometry_epsilon_pips(candles, entry_point, case)
-        clearance_price = clearance_pips / 100
-        sr_line_touches = collect_sr_line_touches(traces, candles, entry_point, outcome, case)
-        target_candidates = [
+    default_end = next(
+        (
             point
-            for point in unique_markers(selected + window_markers + markers + sr_line_touches)
-            if point_time(point) >= entry_time
-            and safe_float(point.get("y")) is not None
-            and float(point["y"]) < entry_price - clearance_price
-        ]
-        first_barrier = target_candidates[0] if target_candidates else None
-        barrier_geometry = sr_geometry_for_point(first_barrier, entry_point, outcome, candles, case)
-        barrier_break = break_confirmation_for_geometry(barrier_geometry, first_barrier, entry_point, outcome, candles, case)
-        zone_boundary = zone_boundary_after(zones, entry_time, case, min_gap_ms)
-        attribution_boundary = attribution_boundary_after(markers, entry_time, case, min_gap_ms)
-        barrier_confirmed = barrier_break and barrier_break.get("status") == "confirmed"
-        target = earliest_timed_point([zone_boundary, attribution_boundary]) if barrier_confirmed else earliest_timed_point([first_barrier, zone_boundary, attribution_boundary])
-        if not target and first_barrier:
-            target = first_barrier
-        end_rule = "global_first_boundary_after_entry" if target else "not_found"
-        if barrier_confirmed and target and zone_boundary and marker_identity(target) == marker_identity(zone_boundary):
-            end_rule = "confirmed_break_next_shaded_zone_boundary"
-        elif barrier_confirmed and target and attribution_boundary and marker_identity(target) == marker_identity(attribution_boundary):
-            end_rule = "confirmed_break_next_hardcoded_marker_boundary"
-        elif target and first_barrier and marker_identity(target) == marker_identity(first_barrier):
-            end_rule = "global_first_sr_touch_target"
-        elif target and zone_boundary and marker_identity(target) == marker_identity(zone_boundary):
-            end_rule = "global_next_shaded_zone_boundary"
-        elif target and attribution_boundary and marker_identity(target) == marker_identity(attribution_boundary):
-            end_rule = "global_next_hardcoded_marker_boundary"
-        fan = gann_fan_for_start(entry_point, outcome, candles, case, "family rule case-window entry")
-        fan_exit = gann_fan_second_from_bottom_touch(fan, entry_point, multi_aspect, candles, case)
-        if fan_exit and (not target or point_time(fan_exit) < point_time(target)):
-            target = fan_exit
-            end_rule = "gann_second_from_bottom_touch_multi_aspect"
-        start = entry_point
-        end = target
-        start_rule = "family_rule_case_window_entry_open_price"
-        reason = "family bearish_bias_support_barrier replay"
-        auto = {
+            for point in evidence.markers
+            if point_time(point) > default_start_time + evidence.min_gap_ms
+        ),
+        None,
+    )
+    geometry = sr_geometry_for_point(
+        default_start,
+        evidence.entry_point,
+        evidence.outcome,
+        evidence.candles,
+        evidence.case,
+    )
+    return AutoSuggestBaseline(
+        default_start=default_start,
+        default_end=default_end,
+        default_start_geometry=geometry,
+        use_default_marker_flow=bool(
+            geometry and geometry.get("position") == "same_as_entry"
+        ),
+        support_barrier_rule=applied_rule(
+            evidence.case,
+            "bearish_bias_support_barrier",
+        ),
+    )
+
+
+def boundary_rule(
+    target: dict[str, Any] | None,
+    first_sr: dict[str, Any] | None,
+    zone: dict[str, Any] | None,
+    attribution: dict[str, Any] | None,
+    break_confirmed: bool,
+    fallback: str,
+) -> str:
+    if not target:
+        return "not_found"
+    identity = marker_identity(target)
+    if break_confirmed and zone and identity == marker_identity(zone):
+        return "confirmed_break_next_shaded_zone_boundary"
+    if break_confirmed and attribution and identity == marker_identity(attribution):
+        return "confirmed_break_next_hardcoded_marker_boundary"
+    if first_sr and identity == marker_identity(first_sr):
+        return "global_first_sr_touch_target"
+    if zone and identity == marker_identity(zone):
+        return "global_next_shaded_zone_boundary"
+    if attribution and identity == marker_identity(attribution):
+        return "global_next_hardcoded_marker_boundary"
+    return fallback
+
+
+def run_support_barrier_stage(
+    evidence: AutoSuggestEvidence,
+) -> AutoSuggestDecision:
+    entry_point = evidence.entry_point
+    if entry_point is None:
+        raise ValueError("support-barrier stage requires an entry point")
+    entry_time = point_time(entry_point)
+    entry_price = float(entry_point["y"])
+    clearance_pips = sr_geometry_epsilon_pips(
+        evidence.candles,
+        entry_point,
+        evidence.case,
+    )
+    clearance_price = clearance_pips / 100
+    sr_line_touches = collect_sr_line_touches(
+        evidence.traces,
+        evidence.candles,
+        entry_point,
+        evidence.outcome,
+        evidence.case,
+    )
+    target_candidates = [
+        point
+        for point in unique_markers(
+            evidence.selected
+            + evidence.window_markers
+            + evidence.markers
+            + sr_line_touches
+        )
+        if point_time(point) >= entry_time
+        and safe_float(point.get("y")) is not None
+        and float(point["y"]) < entry_price - clearance_price
+    ]
+    first_barrier = target_candidates[0] if target_candidates else None
+    barrier_geometry = sr_geometry_for_point(
+        first_barrier,
+        entry_point,
+        evidence.outcome,
+        evidence.candles,
+        evidence.case,
+    )
+    barrier_break = break_confirmation_for_geometry(
+        barrier_geometry,
+        first_barrier,
+        entry_point,
+        evidence.outcome,
+        evidence.candles,
+        evidence.case,
+    )
+    zone = zone_boundary_after(
+        evidence.zones,
+        entry_time,
+        evidence.case,
+        evidence.min_gap_ms,
+    )
+    attribution = attribution_boundary_after(
+        evidence.markers,
+        entry_time,
+        evidence.case,
+        evidence.min_gap_ms,
+    )
+    break_confirmed = bool(
+        barrier_break and barrier_break.get("status") == "confirmed"
+    )
+    target = (
+        earliest_timed_point([zone, attribution])
+        if break_confirmed
+        else earliest_timed_point([first_barrier, zone, attribution])
+    )
+    if not target and first_barrier:
+        target = first_barrier
+    end_rule = boundary_rule(
+        target,
+        first_barrier,
+        zone,
+        attribution,
+        break_confirmed,
+        "global_first_boundary_after_entry",
+    )
+    fan = gann_fan_for_start(
+        entry_point,
+        evidence.outcome,
+        evidence.candles,
+        evidence.case,
+        "family rule case-window entry",
+    )
+    fan_exit = gann_fan_second_from_bottom_touch(
+        fan,
+        entry_point,
+        evidence.multi_aspect,
+        evidence.candles,
+        evidence.case,
+    )
+    if fan_exit and (not target or point_time(fan_exit) < point_time(target)):
+        target = fan_exit
+        end_rule = "gann_second_from_bottom_touch_multi_aspect"
+    return AutoSuggestDecision(
+        start=entry_point,
+        end=target,
+        start_rule="family_rule_case_window_entry_open_price",
+        end_rule=end_rule,
+        reason="family bearish_bias_support_barrier replay",
+        fan=fan,
+        auto={
             "applied_family_rule": "bearish_bias_support_barrier",
             "barrier_sr_geometry": barrier_geometry,
             "break_confirmation": barrier_break,
-            "attribution_boundary": attribution_boundary,
-            "next_shaded_zone_boundary": zone_boundary,
+            "attribution_boundary": attribution,
+            "next_shaded_zone_boundary": zone,
             "global_exit_boundary": target,
-            "multi_aspect_overlap_evidence": multi_aspect,
+            "multi_aspect_overlap_evidence": evidence.multi_aspect,
             "gann_fan_exit_candidate": fan_exit,
-            "gann_fan_exit_rule_status": "provisional_review_required"
-            if fan_exit
-            else ("eligible_but_no_touch_found" if multi_aspect.get("active") else "blocked_no_multi_aspect_overlap"),
+            "gann_fan_exit_rule_status": (
+                "provisional_review_required"
+                if fan_exit
+                else (
+                    "eligible_but_no_touch_found"
+                    if evidence.multi_aspect.get("active")
+                    else "blocked_no_multi_aspect_overlap"
+                )
+            ),
             "sr_line_touch_candidates": sr_line_touches,
             "sr_geometry_epsilon_pips": clearance_pips,
-        }
-    else:
-        wick_start = None
-        default_flow_geometry = sr_geometry_for_point(default_end, default_start, outcome, candles, case)
-        default_flow_at_sr = default_flow_geometry and default_flow_geometry.get("position") == "same_as_entry"
-        if not first_case_window_sr_touch and selected and default_flow_at_sr and outcome in {"bullish", "bearish"}:
-            candle = candle_at_or_after(candles, point_time(default_start), case)
-            if candle:
-                direction_sign = -1 if outcome == "bearish" else 1
-                wick_start = {
-                    "x": candle["x"],
-                    "y": round(candle["high"] if direction_sign < 0 else candle["low"], 3),
-                    "source": "auto_wick_entry_top" if direction_sign < 0 else "auto_wick_entry_bottom",
-                    "traceName": default_start.get("traceName", "") if default_start else "",
-                    "marker_label": "wick entry: bearish top wick from selected-case marker candle"
-                    if direction_sign < 0
-                    else "wick entry: bullish bottom wick from selected-case marker candle",
-                }
-                start = wick_start
-        start_rule = (
-            "first_case_window_sr_line_touch"
-            if first_case_window_sr_touch
+        },
+    )
+
+
+def marker_flow_start(
+    evidence: AutoSuggestEvidence,
+    baseline: AutoSuggestBaseline,
+) -> tuple[dict[str, Any] | None, str, dict[str, Any] | None]:
+    start = baseline.default_start
+    wick_start = None
+    flow_geometry = sr_geometry_for_point(
+        baseline.default_end,
+        baseline.default_start,
+        evidence.outcome,
+        evidence.candles,
+        evidence.case,
+    )
+    flow_at_sr = bool(
+        flow_geometry and flow_geometry.get("position") == "same_as_entry"
+    )
+    if (
+        not evidence.first_case_window_sr_touch
+        and evidence.selected
+        and flow_at_sr
+        and evidence.outcome in {"bullish", "bearish"}
+    ):
+        candle = candle_at_or_after(
+            evidence.candles,
+            point_time(baseline.default_start),
+            evidence.case,
+        )
+        if candle:
+            bearish = evidence.outcome == "bearish"
+            wick_start = {
+                "x": candle["x"],
+                "y": round(candle["high"] if bearish else candle["low"], 3),
+                "source": (
+                    "auto_wick_entry_top"
+                    if bearish
+                    else "auto_wick_entry_bottom"
+                ),
+                "traceName": (
+                    baseline.default_start.get("traceName", "")
+                    if baseline.default_start
+                    else ""
+                ),
+                "marker_label": (
+                    "wick entry: bearish top wick from selected-case marker candle"
+                    if bearish
+                    else "wick entry: bullish bottom wick from selected-case marker candle"
+                ),
+            }
+            start = wick_start
+    start_rule = (
+        "first_case_window_sr_line_touch"
+        if evidence.first_case_window_sr_touch
+        else (
+            "wick_entry_from_selected_case_sr_marker"
+            if wick_start
             else (
-                "wick_entry_from_selected_case_sr_marker"
-                if wick_start
-                else ("first_selected_case_touch" if selected else ("first_marker_inside_case_window" if window_markers else "first_visible_marker"))
+                "first_selected_case_touch"
+                if evidence.selected
+                else (
+                    "first_marker_inside_case_window"
+                    if evidence.window_markers
+                    else "first_visible_marker"
+                )
             )
         )
-        fan = gann_fan_for_start(start, outcome, candles, case, "marker-flow auto suggestion start")
-        fan_exit = gann_fan_second_from_bottom_touch(fan, start, multi_aspect, candles, case)
-        global_carryover_used = False
-        global_sr_line_touches: list[dict[str, Any]] = []
-        global_first_sr_touch = None
-        global_zone_boundary = None
-        global_attribution_boundary = None
-        global_boundary = None
-        global_break = None
-        if start and outcome in {"bullish", "bearish"}:
-            start_time = point_time(start)
-            global_sr_line_touches = [
-                point
-                for point in collect_sr_line_touches(traces, candles, start, outcome, case)
-                if point_time(point) > start_time + min_gap_ms
-            ]
-            global_first_sr_touch = global_sr_line_touches[0] if global_sr_line_touches else None
-            global_zone_boundary = zone_boundary_after(zones, start_time, case, min_gap_ms)
-            global_attribution_boundary = attribution_boundary_after(markers, start_time, case, min_gap_ms)
-            global_geometry = sr_geometry_for_point(global_first_sr_touch, start, outcome, candles, case)
-            global_break = break_confirmation_for_geometry(global_geometry, global_first_sr_touch, start, outcome, candles, case)
-            global_break_confirmed = bool(global_break and global_break.get("status") == "confirmed")
-            if global_break_confirmed:
-                global_boundary = earliest_timed_point([global_zone_boundary, global_attribution_boundary, end]) or global_first_sr_touch
-            else:
-                global_boundary = earliest_timed_point([global_first_sr_touch, global_zone_boundary, global_attribution_boundary, end])
-            if global_boundary:
-                boundary_was_old_end = bool(end and marker_identity(global_boundary) == marker_identity(end))
-                if (
-                    global_break_confirmed
-                    and global_zone_boundary
-                    and marker_identity(global_boundary) == marker_identity(global_zone_boundary)
-                ):
-                    end_rule = "confirmed_break_next_shaded_zone_boundary"
-                elif (
-                    global_break_confirmed
-                    and global_attribution_boundary
-                    and marker_identity(global_boundary) == marker_identity(global_attribution_boundary)
-                ):
-                    end_rule = "confirmed_break_next_hardcoded_marker_boundary"
-                elif global_first_sr_touch and marker_identity(global_boundary) == marker_identity(global_first_sr_touch):
-                    end_rule = "global_first_sr_touch_target"
-                elif global_zone_boundary and marker_identity(global_boundary) == marker_identity(global_zone_boundary):
-                    end_rule = "global_next_shaded_zone_boundary"
-                elif global_attribution_boundary and marker_identity(global_boundary) == marker_identity(global_attribution_boundary):
-                    end_rule = "global_next_hardcoded_marker_boundary"
-                if not boundary_was_old_end or end_rule != "next_later_hardcoded_marker":
-                    end = global_boundary
-                    global_carryover_used = True
-        if fan_exit and (not end or point_time(fan_exit) < point_time(end)):
-            end = fan_exit
-            end_rule = "gann_second_from_bottom_touch_multi_aspect"
-        reason = "marker-flow replay"
-        auto = {
-            "default_marker_flow_sr_geometry": default_flow_geometry,
-            "case_window_sr_touch_candidates": case_window_sr_touches,
-            "global_rule_templates_applied": global_carryover_used,
-            "global_exit_boundary": global_boundary,
-            "global_first_sr_touch": global_first_sr_touch,
-            "next_shaded_zone_boundary": global_zone_boundary,
-            "attribution_boundary": global_attribution_boundary,
-            "break_confirmation": global_break,
-            "sr_line_touch_candidates": global_sr_line_touches,
-            "multi_aspect_overlap_evidence": multi_aspect,
-            "gann_fan_exit_candidate": fan_exit,
-            "gann_fan_exit_rule_status": "provisional_review_required"
-            if fan_exit
-            else ("eligible_but_no_touch_found" if multi_aspect.get("active") else "blocked_no_multi_aspect_overlap"),
-        }
+    )
+    return start, start_rule, flow_geometry
 
-    effective_outcome = outcome
+
+def run_marker_flow_stage(
+    evidence: AutoSuggestEvidence,
+    baseline: AutoSuggestBaseline,
+) -> AutoSuggestDecision:
+    start, start_rule, flow_geometry = marker_flow_start(evidence, baseline)
+    end = baseline.default_end
+    end_rule = "next_later_hardcoded_marker" if end else "not_found"
+    fan = gann_fan_for_start(
+        start,
+        evidence.outcome,
+        evidence.candles,
+        evidence.case,
+        "marker-flow auto suggestion start",
+    )
+    fan_exit = gann_fan_second_from_bottom_touch(
+        fan,
+        start,
+        evidence.multi_aspect,
+        evidence.candles,
+        evidence.case,
+    )
+    carryover_used = False
+    sr_touches: list[dict[str, Any]] = []
+    first_sr = None
+    zone = None
+    attribution = None
+    boundary = None
+    break_evidence = None
+    if start and evidence.outcome in {"bullish", "bearish"}:
+        start_time = point_time(start)
+        sr_touches = [
+            point
+            for point in collect_sr_line_touches(
+                evidence.traces,
+                evidence.candles,
+                start,
+                evidence.outcome,
+                evidence.case,
+            )
+            if point_time(point) > start_time + evidence.min_gap_ms
+        ]
+        first_sr = sr_touches[0] if sr_touches else None
+        zone = zone_boundary_after(
+            evidence.zones,
+            start_time,
+            evidence.case,
+            evidence.min_gap_ms,
+        )
+        attribution = attribution_boundary_after(
+            evidence.markers,
+            start_time,
+            evidence.case,
+            evidence.min_gap_ms,
+        )
+        geometry = sr_geometry_for_point(
+            first_sr,
+            start,
+            evidence.outcome,
+            evidence.candles,
+            evidence.case,
+        )
+        break_evidence = break_confirmation_for_geometry(
+            geometry,
+            first_sr,
+            start,
+            evidence.outcome,
+            evidence.candles,
+            evidence.case,
+        )
+        break_confirmed = bool(
+            break_evidence and break_evidence.get("status") == "confirmed"
+        )
+        boundary = (
+            earliest_timed_point([zone, attribution, end]) or first_sr
+            if break_confirmed
+            else earliest_timed_point([first_sr, zone, attribution, end])
+        )
+        if boundary:
+            boundary_was_old_end = bool(
+                end and marker_identity(boundary) == marker_identity(end)
+            )
+            classified_rule = boundary_rule(
+                boundary,
+                first_sr,
+                zone,
+                attribution,
+                break_confirmed,
+                end_rule,
+            )
+            if not boundary_was_old_end or classified_rule != "next_later_hardcoded_marker":
+                end = boundary
+                end_rule = classified_rule
+                carryover_used = True
+    if fan_exit and (not end or point_time(fan_exit) < point_time(end)):
+        end = fan_exit
+        end_rule = "gann_second_from_bottom_touch_multi_aspect"
+    return AutoSuggestDecision(
+        start=start,
+        end=end,
+        start_rule=start_rule,
+        end_rule=end_rule,
+        reason="marker-flow replay",
+        fan=fan,
+        auto={
+            "default_marker_flow_sr_geometry": flow_geometry,
+            "case_window_sr_touch_candidates": evidence.case_window_sr_touches,
+            "global_rule_templates_applied": carryover_used,
+            "global_exit_boundary": boundary,
+            "global_first_sr_touch": first_sr,
+            "next_shaded_zone_boundary": zone,
+            "attribution_boundary": attribution,
+            "break_confirmation": break_evidence,
+            "sr_line_touch_candidates": sr_touches,
+            "multi_aspect_overlap_evidence": evidence.multi_aspect,
+            "gann_fan_exit_candidate": fan_exit,
+            "gann_fan_exit_rule_status": (
+                "provisional_review_required"
+                if fan_exit
+                else (
+                    "eligible_but_no_touch_found"
+                    if evidence.multi_aspect.get("active")
+                    else "blocked_no_multi_aspect_overlap"
+                )
+            ),
+        },
+    )
+
+
+def finalize_auto_suggest(
+    evidence: AutoSuggestEvidence,
+    decision: AutoSuggestDecision,
+) -> dict[str, Any]:
+    effective_outcome = evidence.outcome
     auto_outcome_reason = ""
     if (
-        end_rule == "gann_second_from_bottom_touch_multi_aspect"
-        and fan
-        and fan.get("fan_direction") in {"bullish", "bearish"}
+        decision.end_rule == "gann_second_from_bottom_touch_multi_aspect"
+        and decision.fan
+        and decision.fan.get("fan_direction") in {"bullish", "bearish"}
     ):
-        effective_outcome = str(fan["fan_direction"])
+        effective_outcome = str(decision.fan["fan_direction"])
         auto_outcome_reason = (
             "Gann fan exit controls trade direction: top-wick/down fan is bearish, "
             "bottom-wick/up fan is bullish."
         )
-    signed = signed_pips_for_points(start, end, effective_outcome)
+    signed = signed_pips_for_points(
+        decision.start,
+        decision.end,
+        effective_outcome,
+    )
     raw = None
-    if start and end and safe_float(start.get("y")) is not None and safe_float(end.get("y")) is not None:
-        raw = (float(end["y"]) - float(start["y"])) * 100
-    sr_geometry = sr_geometry_for_point(end, start, effective_outcome, candles, case)
+    if (
+        decision.start
+        and decision.end
+        and safe_float(decision.start.get("y")) is not None
+        and safe_float(decision.end.get("y")) is not None
+    ):
+        raw = (float(decision.end["y"]) - float(decision.start["y"])) * 100
+    auto = dict(decision.auto)
     auto.update(
         {
-            "active": bool(start and end),
+            "active": bool(decision.start and decision.end),
             "confidence": "deterministic_replay",
-            "reason": reason,
-            "marker_count": len(markers),
-            "selected_case_marker_count": len(selected),
-            "sr_geometry": sr_geometry,
-            "start_rule": start_rule,
-            "end_rule": end_rule,
+            "reason": decision.reason,
+            "marker_count": len(evidence.markers),
+            "selected_case_marker_count": len(evidence.selected),
+            "sr_geometry": sr_geometry_for_point(
+                decision.end,
+                decision.start,
+                effective_outcome,
+                evidence.candles,
+                evidence.case,
+            ),
+            "start_rule": decision.start_rule,
+            "end_rule": decision.end_rule,
             "auto_outcome": effective_outcome,
             "auto_outcome_reason": auto_outcome_reason,
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         }
     )
     replay = {
-        "case_id": int(case_id),
-        "family_key": str(case.get("family_key") or f"LEGACY::{case.get('pair_key')}::{case.get('aspect')}"),
+        "case_id": evidence.case_id,
+        "family_key": str(
+            evidence.case.get("family_key")
+            or (
+                f"LEGACY::{evidence.case.get('pair_key')}::"
+                f"{evidence.case.get('aspect')}"
+            )
+        ),
         "outcome_label": effective_outcome,
-        "trade_start": start,
-        "trade_end": end,
-        "entry_price": safe_float(start.get("y") if start else None),
-        "exit_price": safe_float(end.get("y") if end else None),
+        "trade_start": decision.start,
+        "trade_end": decision.end,
+        "entry_price": safe_float(
+            decision.start.get("y") if decision.start else None
+        ),
+        "exit_price": safe_float(
+            decision.end.get("y") if decision.end else None
+        ),
         "signed_pips": round(signed, 1) if signed is not None else None,
         "raw_pips": round(raw, 1) if raw is not None else None,
-        "start_rule": start_rule,
-        "end_rule": end_rule,
+        "start_rule": decision.start_rule,
+        "end_rule": decision.end_rule,
         "auto_suggestion": auto,
     }
-    source_max_ms = max((int(candle["t"]) for candle in candles), default=iso_ms(str(case["window_end_ist"])))
+    source_max_ms = max(
+        (int(candle["t"]) for candle in evidence.candles),
+        default=iso_ms(str(evidence.case["window_end_ist"])),
+    )
     replay["decision_packet"] = ENGINE.research_replay_packet(
         replay=replay,
-        case=case,
+        case=evidence.case,
         source_data_max_time=pd.Timestamp(source_max_ms, unit="ms", tz="UTC"),
     )
     auto["decision_packet_id"] = replay["decision_packet"]["packetId"]
     auto["decision_engine_version"] = ENGINE_VERSION
     auto["decision_mode"] = "research_replay"
     return replay
+
+
+def auto_suggest_case(pack_dir: Path, case_id: int) -> dict[str, Any]:
+    evidence = collect_auto_suggest_evidence(pack_dir, case_id)
+    baseline = select_auto_suggest_baseline(evidence)
+    use_support_barrier = bool(
+        baseline.support_barrier_rule
+        and evidence.outcome == "bearish"
+        and evidence.entry_point
+        and not baseline.use_default_marker_flow
+    )
+    decision = (
+        run_support_barrier_stage(evidence)
+        if use_support_barrier
+        else run_marker_flow_stage(evidence, baseline)
+    )
+    return finalize_auto_suggest(evidence, decision)
 
 
 def replay_completed_review_impacts(

@@ -1,6 +1,6 @@
 # Trusted External Sources For Astro Certification
 
-Last updated: 2026-07-11
+Last updated: 2026-07-18
 
 This project uses a four-gate certification process. These sources are for Gate 2 and Gate 3
 external checks. They are not training labels by themselves. They become training-safe only after
@@ -41,9 +41,19 @@ Use these for Shadbala, Drik-style strength, divisional chart sanity, and Pancha
    - Limitation: tradition/settings can change outputs. Record settings, not only values.
 
 2. PyJHora
+   - Official repository: https://github.com/naturalstupid/PyJHora
    - URL: https://pypi.org/project/pyjhora/
    - Use for: secondary automated cross-checks and repeatable Python comparisons.
-   - Limitation: not the final authority; use it as a second opinion against JHora/book examples.
+   - Pinned local comparator: PyJHora `4.8.7`, wheel SHA-256
+     `D8D8014573A38DDEFEDCAE57D3B8D84687CAC2AD31BB5B1DD70D945906A4D54D`.
+   - Required settings: call `drik.set_ayanamsa_mode("RAMAN")`, preserve the
+     fixture's civil-time UTC offset, and record that `strength.shad_bala(...)[6]`
+     and the private `strength._drik_bala(...)` API supplied the compared
+     classical-planet virupa values.
+   - Limitation: not the final authority; use it as a second opinion against
+     Jagannatha Hora and saved book examples. Package availability or a source
+     claim is not certification. Only a saved numeric export admitted by the
+     fail-closed gate counts.
 
 ### Tier C - Panchanga Sites
 
@@ -70,10 +80,21 @@ python astro_function_certification.py
 2. Open:
 
 ```text
-D:\PycharmProjects\astro_external_validation_template_20260527.csv
+D:\PycharmProjects\astro_external_validation_template_20260718.csv
 ```
 
-3. For each row you can verify externally, fill:
+The runner now writes numeric rows for every classical planet instead of the old
+`needs local row-specific event context` placeholder. Strength keys use:
+
+```text
+shadbala_implemented_total_virupa.SUN
+drik_bala_virupa.SUN
+...
+shadbala_implemented_total_virupa.SATURN
+drik_bala_virupa.SATURN
+```
+
+3. For each externally verified row, fill:
 
 - `external_expected_value`
 - `external_source`
@@ -93,6 +114,33 @@ The script preserves your entered external values and updates `pass_fail`:
 - `fail`: local value does not match external value.
 - `pending`: no external value entered yet.
 - `pending_manual_context`: the row needs a row-specific event context before it can be compared.
+
+It also writes:
+
+```text
+D:\PycharmProjects\astro_external_validation_gate_20260718.json
+```
+
+That machine gate is fail-closed. It passes only when all 70 declared strength
+rows (five fixtures x seven classical planets x Shadbala/Drik) have sourced,
+numeric, in-tolerance external values. Duplicate keys, unknown keys, missing
+source labels, non-numeric strength values, failures, and pending rows all block
+certification. A passed research gate still leaves execution disabled.
+
+As of 2026-07-18, 25 astronomy/Panchanga witness rows pass and all 70 populated
+Shadbala/Drik strength rows fail the declared tolerance; no strength rows remain
+pending. The admitted PyJHora 4.8.7 export is
+`pyjhora_external_strength_values_20260718.csv` (SHA-256
+`29A88901CEE0821F3F20C75777D2BDDACDB9524EB253939D9263E693CBDEE9C9`).
+The gate therefore reports `failed_external_validation`, not certification.
+
+The failure must not be fixed by widening tolerance. Initial diagnosis shows
+that dividing many local Drik values by four brings them close to PyJHora, while
+dynamic Moon/Mercury benefic classification and special-aspect handling still
+leave residual differences. Shadbala totals show broader component-level
+differences. PyJHora is a secondary comparator, so formula promotion requires a
+component-by-component reconciliation with Jagannatha Hora or a saved worked
+classical example.
 
 ## Current Tolerances
 
@@ -114,6 +162,14 @@ Promote a feature to `externally_validated` only when:
    - reviewer drawer,
    - ML notes / deterministic evidence,
    - local RAG evidence.
+5. `astro_external_validation_gate_YYYYMMDD.json` reports
+   `passed_external_validation`.
+
+For the current USDJPY fixtures, use Tokyo latitude/longitude
+(`35.6762`, `139.6503`) with the event timestamp shown in the CSV. Record Raman
+ayanamsa, true node, Porphyry houses, exact timezone, location, software version,
+and a durable export/screenshot path. Do not compare a planet-total row against
+an `AVG(ALL)` or pair-average value.
 
 ## Do Not Train Rules
 

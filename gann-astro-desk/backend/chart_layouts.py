@@ -82,6 +82,19 @@ def ensure_chart_layout_schema(repository: LayoutRepository) -> None:
             );
             CREATE INDEX IF NOT EXISTS idx_app_chart_drawings_layout
                 ON app_chart_drawings(layout_id, z_index, drawing_id);
+            CREATE TABLE IF NOT EXISTS app_chart_synced_drawings (
+                drawing_id TEXT PRIMARY KEY,
+                workspace_kind TEXT NOT NULL CHECK(workspace_kind IN ('main', 'analysis')),
+                symbol TEXT NOT NULL,
+                family_key TEXT NOT NULL DEFAULT '',
+                drawing_json TEXT NOT NULL,
+                created_at_utc TEXT NOT NULL,
+                updated_at_utc TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_app_chart_synced_drawings_scope
+                ON app_chart_synced_drawings(
+                    workspace_kind, symbol, family_key, updated_at_utc
+                );
             CREATE TABLE IF NOT EXISTS app_drawing_templates (
                 template_id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -328,6 +341,11 @@ def normalize_drawing(payload: dict[str, Any], index: int = 0) -> dict[str, Any]
             raise ValueError(f"{drawing_type} anchors require distinct prices")
     style = _normalize_style(drawing_type, payload.get("style"))
     settings = _normalize_settings(drawing_type, payload.get("settings"), normalized_anchors)
+    group_id = str(payload.get("groupId") or "").strip()[:80] or None
+    group_name = str(payload.get("groupName") or "").strip()[:80] if group_id else ""
+    sync_scope = str(payload.get("syncScope") or "layout").strip().lower()
+    if sync_scope not in {"layout", "symbol"}:
+        sync_scope = "layout"
     normalized = {
         "contract": DRAWING_CONTRACT,
         "schemaVersion": DRAWING_SCHEMA_VERSION,
@@ -336,6 +354,9 @@ def normalize_drawing(payload: dict[str, Any], index: int = 0) -> dict[str, Any]
         "name": str(payload.get("name") or drawing_type.replace("_", " ").title())[:80],
         "visible": bool(payload.get("visible", True)),
         "locked": bool(payload.get("locked", False)),
+        "groupId": group_id,
+        "groupName": group_name,
+        "syncScope": sync_scope,
         "zIndex": int(payload.get("zIndex", index)),
         "anchors": normalized_anchors,
         "style": style,
@@ -358,16 +379,7 @@ def _scope(payload: dict[str, Any]) -> tuple[str, str, str, str]:
     return workspace, symbol, timeframe, family_key
 
 
-def _drawing_rows(connection: sqlite3.Connection, layout_id: str) -> list[dict[str, Any]]:
-    rows = connection.execute(
-        """
-        SELECT drawing_json
-        FROM app_chart_drawings
-        WHERE layout_id = ?
-        ORDER BY z_index, drawing_id
-        """,
-        (layout_id,),
-    ).fetchall()
+def _decode_drawing_rows(rows: list[sqlite3.Row]) -> list[dict[str, Any]]:
     drawings = []
     for row in rows:
         try:
@@ -377,6 +389,48 @@ def _drawing_rows(connection: sqlite3.Connection, layout_id: str) -> list[dict[s
         if isinstance(drawing, dict):
             drawings.append(drawing)
     return drawings
+
+
+def _drawing_rows(
+    connection: sqlite3.Connection,
+    layout_id: str,
+    workspace_kind: str,
+    symbol: str,
+    family_key: str,
+) -> list[dict[str, Any]]:
+    rows = connection.execute(
+        """
+        SELECT drawing_json
+        FROM app_chart_drawings
+        WHERE layout_id = ?
+        ORDER BY z_index, drawing_id
+        """,
+        (layout_id,),
+    ).fetchall()
+    synced_rows = connection.execute(
+        """
+        SELECT drawing_json
+        FROM app_chart_synced_drawings
+        WHERE workspace_kind = ? AND symbol = ? AND family_key = ?
+        ORDER BY updated_at_utc, drawing_id
+        """,
+        (workspace_kind, symbol, family_key),
+    ).fetchall()
+    merged = {
+        str(drawing.get("drawingId")): drawing
+        for drawing in _decode_drawing_rows(rows)
+        if drawing.get("drawingId")
+    }
+    for drawing in _decode_drawing_rows(synced_rows):
+        if drawing.get("drawingId"):
+            merged[str(drawing["drawingId"])] = drawing
+    return sorted(
+        merged.values(),
+        key=lambda drawing: (
+            int(drawing.get("zIndex", 0)),
+            str(drawing.get("drawingId") or ""),
+        ),
+    )
 
 
 def _layout_record(connection: sqlite3.Connection, row: sqlite3.Row) -> dict[str, Any]:
@@ -398,7 +452,13 @@ def _layout_record(connection: sqlite3.Connection, row: sqlite3.Row) -> dict[str
         "isDefault": bool(item["is_default"]),
         "autosave": bool(item["autosave"]),
         "chartState": chart_state if isinstance(chart_state, dict) else {},
-        "drawings": _drawing_rows(connection, str(item["layout_id"])),
+        "drawings": _drawing_rows(
+            connection,
+            str(item["layout_id"]),
+            str(item["workspace_kind"]),
+            str(item["symbol"]),
+            str(item["family_key"]),
+        ),
         "createdAtUtc": str(item["created_at_utc"]),
         "updatedAtUtc": str(item["updated_at_utc"]),
     }
@@ -497,6 +557,43 @@ def save_chart_layout(repository: LayoutRepository, payload: dict[str, Any]) -> 
                 """,
                 (workspace, symbol, timeframe, family_key),
             )
+        existing_synced_ids = {
+            str(row["drawing_id"])
+            for row in connection.execute(
+                """
+                SELECT drawing_id
+                FROM app_chart_synced_drawings
+                WHERE workspace_kind = ? AND symbol = ? AND family_key = ?
+                """,
+                (workspace, symbol, family_key),
+            ).fetchall()
+        }
+        next_synced_ids = {
+            str(drawing["drawingId"])
+            for drawing in drawings
+            if drawing["syncScope"] == "symbol"
+        }
+        removed_synced_ids = (
+            existing_synced_ids - next_synced_ids
+            if existing is not None
+            else set()
+        )
+        for drawing_id in removed_synced_ids:
+            connection.execute(
+                "DELETE FROM app_chart_synced_drawings WHERE drawing_id = ?",
+                (drawing_id,),
+            )
+            connection.execute(
+                """
+                DELETE FROM app_chart_drawings
+                WHERE drawing_id = ?
+                  AND layout_id IN (
+                    SELECT layout_id FROM app_chart_layouts
+                    WHERE workspace_kind = ? AND symbol = ? AND family_key = ?
+                  )
+                """,
+                (drawing_id, workspace, symbol, family_key),
+            )
         connection.execute(
             """
             INSERT INTO app_chart_layouts(
@@ -564,6 +661,30 @@ def save_chart_layout(repository: LayoutRepository, payload: dict[str, Any]) -> 
                     now,
                 ),
             )
+            if drawing["syncScope"] == "symbol":
+                connection.execute(
+                    """
+                    INSERT INTO app_chart_synced_drawings(
+                        drawing_id, workspace_kind, symbol, family_key,
+                        drawing_json, created_at_utc, updated_at_utc
+                    ) VALUES(?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(drawing_id) DO UPDATE SET
+                        workspace_kind=excluded.workspace_kind,
+                        symbol=excluded.symbol,
+                        family_key=excluded.family_key,
+                        drawing_json=excluded.drawing_json,
+                        updated_at_utc=excluded.updated_at_utc
+                    """,
+                    (
+                        drawing["drawingId"],
+                        workspace,
+                        symbol,
+                        family_key,
+                        encoded,
+                        existing_created.get(drawing["drawingId"], now),
+                        now,
+                    ),
+                )
         connection.commit()
     return get_chart_layout(repository, layout_id)
 

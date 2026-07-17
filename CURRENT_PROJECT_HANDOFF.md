@@ -1,8 +1,83 @@
 # Current Project Handoff
 
-Last updated: 2026-07-18 01:58 IST
+Last updated: 2026-07-18 04:34 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-18 (Replay / Drawings / Decision / Validation Source Milestone)
+
+- This is a verified source milestone, not a promoted native release. Stable
+  Gann Astro Desk remains `0.10.8`; its packaged executable and rollback
+  evidence remain unchanged.
+- Added timestamp-safe Bar Replay under
+  `GANN_TIMESTAMP_SAFE_BAR_REPLAY_V1`. The chart API accepts a replay cutoff,
+  emits only closed candles, removes future event starts, clips active
+  event/regime windows, hides future outcome/review labels and returns, counts
+  only occurrences known by the cutoff, and reveals an SR touch only after its
+  touch candle closes. The workspace has select, previous, play/pause, next,
+  and exit controls, and suspends live refresh while replay is armed.
+- Added persistent drawing workflow controls: favorites, OHLC magnet modes
+  (`off`, `weak`, `strong`), keep-drawing mode, drawing groups, group rename,
+  group visibility/locking, unlocked-group deletion, and synchronization
+  scopes (`layout` or `symbol`). Symbol-scoped drawings persist through
+  `app_chart_synced_drawings` and appear across layouts/timeframes for the same
+  symbol.
+- Decomposed the legacy Auto Suggest decision path in
+  `reviewer_rule_replay.py` into typed evidence, baseline, support/boundary,
+  marker-flow, and finalization stages. The old in-function monolith/oracle is
+  removed. Golden decisions for cases `8`, `43`, `103`, `127`, and `185`
+  remain locked by seven focused tests.
+- Strengthened the external astrology gate under
+  `GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1`. It now has five explicit
+  fixtures and a complete 70-row matrix: five fixtures x seven classical
+  planets x Shadbala total and Drik Bala. External imports reject duplicate,
+  unknown, unsourced, and non-numeric strength rows; the numeric tolerance is
+  `0.5` virupa and execution remains disabled even if research certification
+  eventually passes.
+- Current Gate 3 truth is deliberately fail-closed:
+  `failed_external_validation`. Twenty-five saved astronomy/Panchanga witness
+  rows pass, while all 70 Shadbala/Drik strength comparisons fail the declared
+  `0.5` virupa tolerance; no strength rows remain pending. The reproducible
+  PyJHora `4.8.7` export is
+  `pyjhora_external_strength_values_20260718.csv` (SHA-256
+  `29A88901CEE0821F3F20C75777D2BDDACDB9524EB253939D9263E693CBDEE9C9`).
+  Its hash-pinned wheel is staged locally at
+  `D:\GannFinancialAstro\external_validators\wheels\pyjhora-4.8.7-py3-none-any.whl`
+  (SHA-256
+  `D8D8014573A38DDEFEDCAE57D3B8D84687CAC2AD31BB5B1DD70D945906A4D54D`)
+  and is not bundled or committed.
+- The external failure is evidence, not a tolerance problem to hide. Many
+  local Drik values divided by four closely approach PyJHora, but residual
+  differences remain around dynamic Moon/Mercury benefic classification and
+  special-aspect handling. Shadbala totals also differ materially, indicating
+  additional component-level differences. Do not silently alter production
+  formulas from this single secondary comparator: keep v4 strength fields
+  provisional, blocked from execution/promotion, and resolve each component
+  against Jagannatha Hora or a saved worked classical example.
+- Added `GANN_RESEARCH_VALIDATION_GATE_MATRIX_V1` and
+  `/api/validation-gates`, plus a compact workspace status strip. The matrix
+  independently reports timestamp safety, external astrology,
+  retrospective policy, prospective shadow trial, candlestick model, and
+  execution authorization. Research prerequisites can pass without unlocking
+  order execution.
+- Frozen retrospective policy currently fails its declared statistical gate:
+  `258` watches / `355` clusters, `54.26%` hit rate, Wilson 95% interval
+  `48.17%-60.24%`, two-sided binomial `p=0.190975`, and mean signed 72-hour
+  return `+0.0276%`. The prospective gate remains collecting and requires at
+  least `100` watch clusters, `10%` coverage, Wilson lower bound above `0.5`,
+  `p < 0.05`, positive mean signed return, and four calendar months under one
+  immutable cohort.
+- Verification: all `246` Python tests pass in the final source state; focused
+  backend (`96`), Auto Suggest (`7`), and external-certification/export (`5`)
+  suites pass. The final frontend state passes `38` tests across `12` files,
+  Oxlint, TypeScript checks, and a Vite production build. Browser QA verified replay
+  scrubbing (`241` full bars to `113` known bars at the chosen cutoff),
+  future-aspect reduction (`47` to `19`), drawing panel access at desktop and
+  970 px width, the validation strip, and zero console errors.
+- Detailed evidence:
+  `gann_astro_desk_replay_drawings_validation_20260718.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260718_043433_replay_drawings_validation`.
 
 ## Latest Update - 2026-07-18 (End-to-End Product Audit / Stable 0.10.8)
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   createChartDrawing,
+  defaultDrawingPreferences,
   defaultFibonacciSettings,
   defaultSquareOfNineSettings,
   squareOfNineLevels,
@@ -22,6 +23,8 @@ describe('Fibonacci retracement research drawing', () => {
     expect(drawing.guardrails.executionAllowed).toBe(false)
     expect(drawing.guardrails.consumedByLiveInference).toBe(false)
     expect(drawing.style.color).toBe('#57b8a6')
+    expect(drawing.groupId).toBeNull()
+    expect(drawing.syncScope).toBe('layout')
   })
 })
 
@@ -69,5 +72,7 @@ describe('layout import guardrails', () => {
     expect(imported.isDefault).toBe(false)
     expect(imported.drawings[0].guardrails.executionAllowed).toBe(false)
     expect(imported.drawings[0].guardrails.consumedByLiveInference).toBe(false)
+    expect(imported.drawings[0].syncScope).toBe('layout')
+    expect(imported.chartState.drawingPreferences).toEqual(defaultDrawingPreferences())
   })
 })

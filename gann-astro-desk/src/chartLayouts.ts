@@ -5,8 +5,10 @@ import type {
   ChartDrawingType,
   ChartLayout,
   ChartLayoutState,
+  ChartTool,
   ChartWorkspaceKind,
   DrawingTemplate,
+  DrawingPreferences,
   FibonacciSettings,
   SquareOfNineSettings,
 } from './types'
@@ -29,6 +31,14 @@ export type SquareOfNineLevel = {
   angleDeg: number
   ring: number
   value: number
+}
+
+export function defaultDrawingPreferences(): DrawingPreferences {
+  return {
+    favoriteTools: ['horizontal', 'gann', 'fibonacci'] satisfies ChartTool[],
+    magnetMode: 'weak',
+    keepDrawing: false,
+  }
 }
 
 export function defaultDrawingStyle(type: ChartDrawingType): ChartDrawingStyle {
@@ -94,6 +104,9 @@ export function createChartDrawing(
     name: type.replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()),
     visible: true,
     locked: false,
+    groupId: null,
+    groupName: '',
+    syncScope: 'layout',
     zIndex,
     anchors,
     style: template?.style ?? defaultDrawingStyle(type),
@@ -167,8 +180,12 @@ export function validateImportedLayout(value: unknown): Omit<ChartLayout, 'layou
     ...drawing,
     contract: 'GANN_RESEARCH_CHART_DRAWING_V1' as const,
     schemaVersion: 1 as const,
+    groupId: drawing.groupId ?? null,
+    groupName: drawing.groupName ?? '',
+    syncScope: drawing.syncScope === 'symbol' ? 'symbol' as const : 'layout' as const,
     guardrails: { ...RESEARCH_DRAWING_GUARDRAILS },
   }))
+  const chartState = candidate.chartState ?? { showAspects: true, showSrLines: true }
   return {
     contract: 'GANN_CHART_LAYOUT_V1',
     schemaVersion: 1,
@@ -179,7 +196,13 @@ export function validateImportedLayout(value: unknown): Omit<ChartLayout, 'layou
     familyKey: candidate.familyKey ?? '',
     isDefault: false,
     autosave: candidate.autosave ?? true,
-    chartState: candidate.chartState ?? { showAspects: true, showSrLines: true },
+    chartState: {
+      ...chartState,
+      drawingPreferences: {
+        ...defaultDrawingPreferences(),
+        ...(chartState.drawingPreferences ?? {}),
+      },
+    },
     drawings,
   }
 }

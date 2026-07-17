@@ -167,6 +167,14 @@ DEFAULT_CHART_PARAMETERS: dict[str, Any] = {
     },
 }
 
+CHART_TIMEFRAME_DURATION = {
+    "M30": pd.Timedelta(minutes=30),
+    "H1": pd.Timedelta(hours=1),
+    "H4": pd.Timedelta(hours=4),
+    "D1": pd.Timedelta(days=1),
+    "W1": pd.Timedelta(days=7),
+}
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -1138,6 +1146,7 @@ class AstroRepository:
         aspect_duration_mode: str = "auto",
         min_duration_minutes: float = 0.0,
         max_duration_minutes: float | None = None,
+        replay_cutoff: str | None = None,
     ) -> dict[str, Any]:
         symbol = symbol.upper().strip()
         timeframe = timeframe.upper().strip()
@@ -1159,9 +1168,59 @@ class AstroRepository:
             raise ValueError("end must be later than start")
         start_utc = start_local.tz_convert(UTC)
         end_utc = end_local.tz_convert(UTC)
-        price = price_source.loc[(price_source.index >= start_utc) & (price_source.index <= end_utc)]
-        if len(price) > 50_000:
+        source_price = price_source.loc[
+            (price_source.index >= start_utc) & (price_source.index <= end_utc)
+        ]
+        if len(source_price) > 50_000:
             raise ValueError("Chart request exceeds 50,000 candles; narrow the date range or use a larger timeframe")
+        timeframe_duration = CHART_TIMEFRAME_DURATION.get(timeframe)
+        if timeframe_duration is None:
+            raise ValueError(f"Unsupported replay timeframe: {timeframe}")
+        replay_active = replay_cutoff is not None
+        replay_metadata: dict[str, Any] | None = None
+        price = source_price
+        replay_cutoff_utc: pd.Timestamp | None = None
+        if replay_active:
+            if source_price.empty:
+                raise ValueError("Bar Replay requires at least one candle in the requested range")
+            replay_cutoff_utc = pd.Timestamp(replay_cutoff)
+            if replay_cutoff_utc.tzinfo is None:
+                raise ValueError("replayCutoff must include a UTC offset")
+            replay_cutoff_utc = replay_cutoff_utc.tz_convert(UTC)
+            close_times = source_price.index + timeframe_duration
+            revealed_mask = close_times <= replay_cutoff_utc
+            price = source_price.loc[revealed_mask]
+            if price.empty:
+                first_close = close_times[0].isoformat()
+                raise ValueError(
+                    f"replayCutoff precedes the first closed candle; use {first_close} or later"
+                )
+            revealed_count = int(revealed_mask.sum())
+            previous_cutoff = (
+                close_times[revealed_count - 2].isoformat()
+                if revealed_count > 1
+                else None
+            )
+            next_cutoff = (
+                close_times[revealed_count].isoformat()
+                if revealed_count < len(close_times)
+                else None
+            )
+            replay_metadata = {
+                "contract": "GANN_TIMESTAMP_SAFE_BAR_REPLAY_V1",
+                "active": True,
+                "cutoffUtc": replay_cutoff_utc.isoformat(),
+                "evidenceCutoff": replay_cutoff_utc.isoformat(),
+                "sourceDataMaxTime": close_times[revealed_count - 1].isoformat(),
+                "firstCutoffUtc": close_times[0].isoformat(),
+                "previousCutoffUtc": previous_cutoff,
+                "nextCutoffUtc": next_cutoff,
+                "position": revealed_count,
+                "totalBars": int(len(close_times)),
+                "excludedFutureCandles": int(len(close_times) - revealed_count),
+                "timestampSafe": True,
+                "noLookahead": True,
+            }
         candles = [
             {
                 "time": int(index.timestamp()),
@@ -1173,8 +1232,14 @@ class AstroRepository:
             }
             for index, row in price.iterrows()
         ]
+        visible_end_local = (
+            min(end_local, replay_cutoff_utc.tz_convert(IST))
+            if replay_cutoff_utc is not None
+            else end_local
+        )
         overlapping = self.events.loc[
-            (self.events["timestamp"] <= end_local) & (self.events["event_end"] >= start_local)
+            (self.events["timestamp"] <= visible_end_local)
+            & (self.events["event_end"] >= start_local)
         ]
         if transit_bodies:
             overlapping = overlapping.loc[overlapping["event_transit_body"].astype(str).isin(transit_bodies)]
@@ -1195,12 +1260,45 @@ class AstroRepository:
                 pd.to_numeric(overlapping["duration_minutes"], errors="coerce") <= max_duration_minutes
             ]
         event_records = [self._event_record(row) for _, row in overlapping.iterrows()]
+        if replay_cutoff_utc is not None:
+            historical_counts = (
+                self.events.loc[self.events["timestamp"] <= visible_end_local]
+                .groupby("event_family_key")["event_id"]
+                .count()
+                .astype(int)
+                .to_dict()
+            )
+            cutoff_epoch = int(replay_cutoff_utc.timestamp())
+            for event in event_records:
+                event["end"] = min(int(event["end"]), cutoff_epoch)
+                event["endIso"] = pd.Timestamp(event["end"], unit="s", tz=UTC).isoformat()
+                event["peak"] = min(int(event["peak"]), cutoff_epoch)
+                event["peakIso"] = pd.Timestamp(event["peak"], unit="s", tz=UTC).isoformat()
+                event["durationMinutes"] = round(
+                    max(0.0, (event["end"] - int(event["start"])) / 60.0),
+                    2,
+                )
+                event["occurrenceCount"] = int(
+                    historical_counts.get(event["familyKey"], 1)
+                )
+                event["outcome"] = None
+                event["returnPct"] = None
+                event["reviewed"] = False
+                event["reviewStatus"] = "unavailable_during_replay"
+                event["reviewSource"] = "none"
+                event["signedPips"] = None
         self._assign_lanes(event_records)
         sr_lines: list[dict[str, Any]] = []
         seen_prices: set[tuple[str, float]] = set()
         for event in event_records:
             touch = self.touch_by_event.get(event["eventId"])
             if touch is None:
+                continue
+            touch_time = pd.Timestamp(touch["touch_time_local"])
+            if touch_time.tzinfo is None:
+                touch_time = touch_time.tz_localize(IST)
+            touch_known_at = touch_time.tz_convert(UTC) + timeframe_duration
+            if replay_cutoff_utc is not None and touch_known_at > replay_cutoff_utc:
                 continue
             for index in (1, 2):
                 price_value = pd.to_numeric(touch.get(f"touch_line_price_{index}"), errors="coerce")
@@ -1248,6 +1346,7 @@ class AstroRepository:
             },
             "artifact": self.active_artifact,
             "generatedAt": utc_now(),
+            "replay": replay_metadata,
         }
 
     @synchronized_dataset

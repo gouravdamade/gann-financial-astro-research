@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
+import math
 import subprocess
 from dataclasses import dataclass, asdict
 from datetime import datetime
@@ -14,9 +16,10 @@ import swisseph as swe
 
 from doctrine_config import configure_swiss_ephemeris_sidereal, load_doctrine_config
 from panchanga_doctrine import panchanga_context
+from strict_shadbala_doctrine import CLASSICAL_PLANETS, components_for_body
 
 
-REPORT_VERSION = "astro_certification_4_gate_v2_20260711"
+REPORT_VERSION = "astro_certification_4_gate_v3_20260718"
 IST = ZoneInfo("Asia/Kolkata")
 UTC = ZoneInfo("UTC")
 
@@ -31,11 +34,67 @@ PLANETS = {
     "RAHU_TRUE_NODE": swe.TRUE_NODE,
 }
 
-SAMPLES = [
-    ("raman_node_regression_2025_05_28", "2025-05-28T22:00:00", "Asia/Kolkata"),
-    ("corrected_tn_smoke_2025_03_07", "2025-03-07T19:30:00", "Asia/Kolkata"),
-    ("reference_chart_tokyo_1889", "1889-02-11T00:00:00", "Asia/Tokyo"),
-]
+@dataclass(frozen=True)
+class CertificationSample:
+    sample_id: str
+    local_iso: str
+    timezone: str
+    latitude: float
+    longitude: float
+    location: str
+
+
+SAMPLES = (
+    CertificationSample(
+        "case_8_event_start",
+        "2025-03-07T19:30:00",
+        "Asia/Kolkata",
+        35.6762,
+        139.6503,
+        "Tokyo reference location",
+    ),
+    CertificationSample(
+        "case_43_event_start",
+        "2025-04-04T02:30:00",
+        "Asia/Kolkata",
+        35.6762,
+        139.6503,
+        "Tokyo reference location",
+    ),
+    CertificationSample(
+        "case_103_event_start",
+        "2025-05-15T22:30:00",
+        "Asia/Kolkata",
+        35.6762,
+        139.6503,
+        "Tokyo reference location",
+    ),
+    CertificationSample(
+        "case_127_sr_touch_start",
+        "2025-05-28T22:00:00",
+        "Asia/Kolkata",
+        35.6762,
+        139.6503,
+        "Tokyo reference location",
+    ),
+    CertificationSample(
+        "gann_reference_tokyo",
+        "1889-02-11T00:00:00",
+        "Asia/Tokyo",
+        35.6762,
+        139.6503,
+        "Tokyo reference location",
+    ),
+)
+
+STRENGTH_FEATURE_PREFIXES = (
+    "shadbala_implemented_total_virupa.",
+    "drik_bala_virupa.",
+)
+LEGACY_STRENGTH_PLACEHOLDERS = {
+    "shadbala_total_virupa_by_classical_planet",
+    "drik_bala_virupa_by_classical_planet",
+}
 
 
 @dataclass
@@ -100,7 +159,7 @@ class ExternalTemplateRow:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build the four-gate astro/trading certification report.")
     parser.add_argument("--out-dir", default=".", help="Output directory for report and CSV ledgers.")
-    parser.add_argument("--date-tag", default="20260711", help="Date tag for output files.")
+    parser.add_argument("--date-tag", default="20260718", help="Date tag for output files.")
     parser.add_argument(
         "--external-values",
         default="",
@@ -114,6 +173,11 @@ def parse_args() -> argparse.Namespace:
         "--legacy-archive-replay",
         action="store_true",
         help="Run replay against quarantined legacy case data for historical comparison only.",
+    )
+    parser.add_argument(
+        "--require-external-pass",
+        action="store_true",
+        help="Exit non-zero unless Gate 3 is fully externally certified.",
     )
     return parser.parse_args()
 
@@ -223,6 +287,100 @@ def merge_external_values(
     return merged
 
 
+def validate_external_import(
+    templates: list[ExternalTemplateRow],
+    external_rows: list[dict[str, str]],
+) -> list[str]:
+    known = {external_key(row) for row in templates}
+    seen: set[tuple[str, str, str]] = set()
+    issues: list[str] = []
+    for row_number, row in enumerate(external_rows, start=2):
+        key = external_key(row)
+        feature_key = key[2]
+        expected = str(row.get("external_expected_value", "")).strip()
+        source = str(row.get("external_source", "")).strip()
+        if feature_key in LEGACY_STRENGTH_PLACEHOLDERS and not expected:
+            continue
+        if key in seen:
+            issues.append(f"row {row_number}: duplicate external key {key}")
+            continue
+        seen.add(key)
+        if key not in known:
+            issues.append(f"row {row_number}: unknown external key {key}")
+            continue
+        if expected and not source:
+            issues.append(f"row {row_number}: expected value has no external source for {key}")
+        if feature_key.startswith(STRENGTH_FEATURE_PREFIXES) and expected and as_float(expected) is None:
+            issues.append(f"row {row_number}: strength value is not numeric for {key}")
+    return issues
+
+
+def external_gate_summary(
+    templates: list[ExternalTemplateRow],
+    import_issues: list[str],
+    external_values_path: Path,
+) -> dict[str, Any]:
+    strength_rows = [
+        row
+        for row in templates
+        if row.feature_key.startswith(STRENGTH_FEATURE_PREFIXES)
+    ]
+    passed = sum(row.pass_fail == "pass" for row in templates)
+    failed = sum(row.pass_fail == "fail" for row in templates)
+    pending = sum(row.pass_fail.startswith("pending") for row in templates)
+    strength_passed = sum(row.pass_fail == "pass" for row in strength_rows)
+    strength_failed = sum(row.pass_fail == "fail" for row in strength_rows)
+    strength_pending = sum(row.pass_fail.startswith("pending") for row in strength_rows)
+    expected_strength_rows = len(SAMPLES) * len(CLASSICAL_PLANETS) * len(STRENGTH_FEATURE_PREFIXES)
+    if import_issues:
+        status = "blocked_invalid_external_import"
+    elif failed:
+        status = "failed_external_validation"
+    elif pending:
+        status = "blocked_pending_external_values"
+    elif len(strength_rows) != expected_strength_rows:
+        status = "blocked_incomplete_strength_matrix"
+    else:
+        status = "passed_external_validation"
+    source_sha = None
+    if external_values_path.exists():
+        source_sha = hashlib.sha256(external_values_path.read_bytes()).hexdigest().upper()
+    return {
+        "contract": "GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1",
+        "reportVersion": REPORT_VERSION,
+        "generatedAtUtc": datetime.now(UTC).isoformat(timespec="seconds"),
+        "status": status,
+        "certified": status == "passed_external_validation",
+        "executionAllowed": False,
+        "rows": {
+            "total": len(templates),
+            "pass": passed,
+            "fail": failed,
+            "pending": pending,
+        },
+        "strengthMatrix": {
+            "expectedRows": expected_strength_rows,
+            "actualRows": len(strength_rows),
+            "pass": strength_passed,
+            "fail": strength_failed,
+            "pending": strength_pending,
+            "classicalPlanets": list(CLASSICAL_PLANETS),
+            "measures": list(STRENGTH_FEATURE_PREFIXES),
+        },
+        "externalImport": {
+            "path": str(external_values_path),
+            "sha256": source_sha,
+            "issues": import_issues,
+        },
+        "requirements": [
+            "Every selected classical-planet Shadbala total must match a saved Tier B export within 0.5 virupa.",
+            "Every selected classical-planet Drik Bala value must match a saved Tier B export within 0.5 virupa.",
+            "External source settings must record Raman ayanamsa, true node, event time, timezone, and location.",
+            "Any missing, duplicate, unknown, non-numeric, or out-of-tolerance row blocks certification.",
+        ],
+    }
+
+
 def markdown_table(headers: list[str], rows: list[list[Any]]) -> str:
     out = ["| " + " | ".join(headers) + " |", "| " + " | ".join("---" for _ in headers) + " |"]
     for row in rows:
@@ -240,12 +398,30 @@ def jd_ut_for(local_dt: datetime) -> tuple[float, datetime]:
     return float(swe.julday(utc.year, utc.month, utc.day, hour)), utc
 
 
-def calc_planet(jd_ut: float, planet_id: int, ayanamsa_deg: float) -> tuple[float, float, float]:
-    values, _flags = swe.calc_ut(jd_ut, planet_id)
+def calc_planet(jd_ut: float, planet_id: int, ayanamsa_deg: float) -> tuple[float, float, float, float, float]:
+    values, _flags = swe.calc_ut(jd_ut, planet_id, swe.FLG_SWIEPH | swe.FLG_SPEED)
+    equatorial, _equatorial_flags = swe.calc_ut(
+        jd_ut,
+        planet_id,
+        swe.FLG_SWIEPH | swe.FLG_SPEED | swe.FLG_EQUATORIAL,
+    )
     tropical = float(values[0]) % 360.0
     sidereal = (tropical - ayanamsa_deg) % 360.0
     speed = float(values[3]) if len(values) > 3 else 0.0
-    return tropical, sidereal, speed
+    latitude = float(values[1]) if len(values) > 1 else float("nan")
+    declination = float(equatorial[1]) if len(equatorial) > 1 else float("nan")
+    return tropical, sidereal, speed, latitude, declination
+
+
+def sidereal_house_cusps(jd_ut: float, latitude: float, longitude: float) -> dict[int, float]:
+    houses, _ascmc = swe.houses_ex(
+        jd_ut,
+        float(latitude),
+        float(longitude),
+        b"O",
+        swe.FLG_SIDEREAL,
+    )
+    return {index + 1: float(cusp) % 360.0 for index, cusp in enumerate(houses)}
 
 
 def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
@@ -356,10 +532,10 @@ def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
             "build_repeatation_review_pack.py + reviewer_rule_replay.py",
             "replay_guarded_partial",
             "trading heuristic",
-            "blocked_pending_corrected_event_rebuild",
-            "Legacy case data has an invalid astronomy contract and browser JS still owns much Auto Suggest logic.",
-            "Rebuild corrected events, unify Auto Suggest in Python, then replay versioned fixtures.",
-            "do_not_train_until_corrected_replay",
+            "versioned_corrected_golden_replay_passed_5_cases",
+            "Python replay is decomposed and golden-tested; browser generation remains a separate implementation and the root legacy archive stays quarantined.",
+            "Consolidate browser generation onto the staged engine after a portable corrected-fixture contract exists.",
+            "train_rule_lessons_only_until_prospective_gate",
         ),
         InventoryRow(
             "Gate 1",
@@ -384,14 +560,22 @@ def build_position_baseline(config: dict[str, Any]) -> tuple[list[PositionRow], 
     panchanga_rows: list[PanchangaRow] = []
     templates: list[ExternalTemplateRow] = []
 
-    for sample_id, iso_text, tz_name in SAMPLES:
-        local_dt = sample_datetime(iso_text, tz_name)
+    for sample in SAMPLES:
+        sample_id = sample.sample_id
+        local_dt = sample_datetime(sample.local_iso, sample.timezone)
         jd_ut, utc_dt = jd_ut_for(local_dt)
         ayanamsa_deg = float(swe.get_ayanamsa_ut(jd_ut))
         sidereal_values: dict[str, float] = {}
+        speeds: dict[str, float] = {}
+        latitudes: dict[str, float] = {}
+        declinations: dict[str, float] = {}
         for planet, planet_id in PLANETS.items():
-            tropical, sidereal, speed = calc_planet(jd_ut, planet_id, ayanamsa_deg)
+            tropical, sidereal, speed, latitude, declination = calc_planet(jd_ut, planet_id, ayanamsa_deg)
             sidereal_values[planet] = sidereal
+            if planet in CLASSICAL_PLANETS:
+                speeds[planet] = speed
+                latitudes[planet] = latitude
+                declinations[planet] = declination
             positions.append(
                 PositionRow(
                     sample_id=sample_id,
@@ -426,6 +610,23 @@ def build_position_baseline(config: dict[str, Any]) -> tuple[list[PositionRow], 
                 )
             )
 
+        houses = sidereal_house_cusps(jd_ut, sample.latitude, sample.longitude)
+        asc_lon = houses.get(1, float("nan"))
+        strength_components = {
+            planet: components_for_body(
+                planet,
+                sidereal_values,
+                asc_lon,
+                houses,
+                local_dt,
+                sample.longitude,
+                speeds,
+                latitudes,
+                declinations,
+            )
+            for planet in CLASSICAL_PLANETS
+        }
+
         panchanga = panchanga_context("cert", local_dt, sidereal_values["SUN"], sidereal_values["MOON"])
         panchanga_rows.append(
             PanchangaRow(
@@ -451,8 +652,6 @@ def build_position_baseline(config: dict[str, Any]) -> tuple[list[PositionRow], 
             ("rahu_true_node_sidereal_lon_deg", f"{sidereal_values['RAHU_TRUE_NODE']:.9f}"),
             ("tithi_name", str(panchanga.get("cert_tithi_name", ""))),
             ("moon_nakshatra_pada", f"{panchanga.get('cert_moon_nakshatra', '')} {panchanga.get('cert_moon_pada', '')}"),
-            ("shadbala_total_virupa_by_classical_planet", "needs local row-specific event context plus external expected value"),
-            ("drik_bala_virupa_by_classical_planet", "needs local row-specific event context plus external expected value"),
         ]:
             templates.append(
                 ExternalTemplateRow(
@@ -466,6 +665,30 @@ def build_position_baseline(config: dict[str, Any]) -> tuple[list[PositionRow], 
                     notes="Fill expected value from trusted ephemeris/Panchanga/Shadbala source, then rerun certification.",
                 )
             )
+        for planet in CLASSICAL_PLANETS:
+            components = strength_components[planet]
+            for feature_key, component_key in (
+                (f"shadbala_implemented_total_virupa.{planet}", "implemented_total_virupa"),
+                (f"drik_bala_virupa.{planet}", "drik_virupa"),
+            ):
+                local_value = components.get(component_key)
+                if local_value is None or not math.isfinite(float(local_value)):
+                    raise ValueError(f"{sample_id} {feature_key} did not produce a finite local value")
+                templates.append(
+                    ExternalTemplateRow(
+                        gate="Gate 3",
+                        sample_id=sample_id,
+                        feature_key=feature_key,
+                        local_value=f"{float(local_value):.9f}",
+                        external_expected_value="",
+                        external_source="",
+                        pass_fail="pending",
+                        notes=(
+                            f"Local strict-v4 value at {sample.location}; Raman ayanamsa; true node; "
+                            "Porphyry houses. Fill a planet-matched JHora export value and saved evidence path."
+                        ),
+                    )
+                )
 
     return positions, panchanga_rows, templates
 
@@ -496,6 +719,7 @@ def render_report(
     positions: list[PositionRow],
     panchanga_rows: list[PanchangaRow],
     templates: list[ExternalTemplateRow],
+    external_gate: dict[str, Any],
     replay_status: str,
     replay_output: str,
     output_files: dict[str, Path],
@@ -531,12 +755,27 @@ def render_report(
     pending_external = sum(1 for row in templates if row.pass_fail.startswith("pending"))
     passed_external = sum(1 for row in templates if row.pass_fail == "pass")
     failed_external = sum(1 for row in templates if row.pass_fail == "fail")
+    if external_gate["certified"]:
+        external_verdict = (
+            "- Shadbala/Drik external certification passed for the declared matrix."
+        )
+    elif external_gate["status"] == "failed_external_validation":
+        external_verdict = (
+            "- Shadbala/Drik external comparison completed but failed the declared "
+            "tolerance; keep the local strength features provisional and resolve the "
+            "formula differences before promotion."
+        )
+    else:
+        external_verdict = (
+            "- Do not treat Shadbala/Drik as externally certified; the machine gate "
+            "is waiting for complete accepted evidence."
+        )
     lines = [
         "# Astro Function Certification 4-Gate Report",
         "",
         f"- Report version: `{REPORT_VERSION}`",
         f"- Generated: `{datetime.now(IST).isoformat(timespec='seconds')}`",
-        "- Important interpretation: this report certifies traceability and local reproducibility first. External Jyotish/ephemeris validation remains explicitly pending where marked.",
+        "- Important interpretation: this report certifies traceability and local reproducibility first. Pending and failed external checks remain explicit and fail closed.",
         "",
         "## Gate Summary",
         "",
@@ -546,8 +785,11 @@ def render_report(
                 ["Gate 1 - Formula inventory", f"{len(inventory)} feature rows inventoried"],
                 ["Gate 2 - Astronomical baseline", f"{len(positions)} planet/node rows generated with Raman ayanamsa"],
                 [
-                    "Gate 3 - External validation template",
-                    f"{passed_external} pass / {failed_external} fail / {pending_external} pending",
+                    "Gate 3 - External validation",
+                    (
+                        f"{external_gate['status']}: "
+                        f"{passed_external} pass / {failed_external} fail / {pending_external} pending"
+                    ),
                 ],
                 ["Gate 4 - Trading replay", replay_status],
             ],
@@ -579,9 +821,29 @@ def render_report(
         "",
         "Fill the expected-value columns from trusted ephemeris, Panchanga, and Shadbala examples. On each run, the script preserves those entries and computes pass/fail where a direct comparison is possible.",
         "",
+        f"Gate status: `{external_gate['status']}`",
+        "",
         markdown_table(
             ["Status", "Rows"],
             [["pass", passed_external], ["fail", failed_external], ["pending", pending_external]],
+        ),
+        "",
+        markdown_table(
+            ["Strength matrix", "Rows"],
+            [
+                ["expected", external_gate["strengthMatrix"]["expectedRows"]],
+                ["actual", external_gate["strengthMatrix"]["actualRows"]],
+                ["pass", external_gate["strengthMatrix"]["pass"]],
+                ["fail", external_gate["strengthMatrix"]["fail"]],
+                ["pending", external_gate["strengthMatrix"]["pending"]],
+            ],
+        ),
+        "",
+        "External import issues:",
+        "",
+        *(
+            [f"- {issue}" for issue in external_gate["externalImport"]["issues"]]
+            or ["- none"]
         ),
         "",
         "## Gate 4 - Trading Replay",
@@ -599,7 +861,7 @@ def render_report(
         "## Current Verdict",
         "",
         "- Safe to continue astronomy/doctrine inspection with these labels visible.",
-        "- Do not treat Shadbala/Drik/Panchanga as externally certified yet.",
+        external_verdict,
         "- Do not train on raw local LLM prose. Train on deterministic evidence, manual notes, verified rule lessons, and verifier corrections.",
         "- Gate 4 is blocked until corrected versioned data replaces the legacy double-sidereal case records.",
         "",
@@ -624,18 +886,30 @@ def main() -> None:
     positions_path = out_dir / f"astro_position_baseline_{args.date_tag}.csv"
     panchanga_path = out_dir / f"panchanga_baseline_{args.date_tag}.csv"
     template_path = out_dir / f"astro_external_validation_template_{args.date_tag}.csv"
+    external_gate_path = out_dir / f"astro_external_validation_gate_{args.date_tag}.json"
     replay_path = out_dir / f"trading_rule_replay_result_{args.date_tag}.json"
     report_path = out_dir / f"astro_function_certification_report_{args.date_tag}.md"
 
     external_values_path = Path(args.external_values) if args.external_values else template_path
     if external_values_path and not external_values_path.is_absolute():
         external_values_path = root / external_values_path
-    templates = merge_external_values(templates, csv_dict_rows(external_values_path))
+    external_rows = csv_dict_rows(external_values_path)
+    external_import_issues = validate_external_import(templates, external_rows)
+    templates = merge_external_values(templates, external_rows)
+    external_gate = external_gate_summary(
+        templates,
+        external_import_issues,
+        external_values_path,
+    )
 
     csv_write(inventory_path, inventory)
     csv_write(positions_path, positions)
     csv_write(panchanga_path, panchanga_rows)
     csv_write(template_path, templates)
+    external_gate_path.write_text(
+        json.dumps(external_gate, indent=2, ensure_ascii=True),
+        encoding="utf-8",
+    )
     replay_path.write_text(
         json.dumps(
             {
@@ -655,6 +929,7 @@ def main() -> None:
         positions,
         panchanga_rows,
         templates,
+        external_gate,
         replay_status,
         replay_output,
         {
@@ -662,12 +937,16 @@ def main() -> None:
             "position_baseline_csv": positions_path,
             "panchanga_baseline_csv": panchanga_path,
             "external_validation_template_csv": template_path,
+            "external_validation_gate_json": external_gate_path,
             "trading_rule_replay_json": replay_path,
             "report_md": report_path,
         },
     )
     print(f"Wrote {report_path}")
+    print(f"Gate 3 external validation: {external_gate['status']}")
     print(f"Gate 4 replay: {replay_status}")
+    if args.require_external_pass and not external_gate["certified"]:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":

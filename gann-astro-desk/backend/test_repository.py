@@ -112,6 +112,62 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertEqual(candle_days, {0})
         self.assertTrue(all(item["durationMinutes"] >= 10080 for item in payload["aspects"]))
 
+    def test_bar_replay_is_cut_at_closed_bar_evidence_time(self) -> None:
+        full = self.repository.chart_payload(
+            "2025-05-26T00:00:00+05:30",
+            "2025-05-30T23:59:59+05:30",
+            timeframe="H1",
+        )
+        self.assertGreater(len(full["candles"]), 20)
+        selected = full["candles"][19]
+        cutoff = pd.Timestamp(selected["time"], unit="s", tz="UTC") + pd.Timedelta(hours=1)
+        replay = self.repository.chart_payload(
+            "2025-05-26T00:00:00+05:30",
+            "2025-05-30T23:59:59+05:30",
+            timeframe="H1",
+            replay_cutoff=cutoff.isoformat(),
+        )
+
+        self.assertEqual(
+            replay["replay"]["contract"],
+            "GANN_TIMESTAMP_SAFE_BAR_REPLAY_V1",
+        )
+        self.assertEqual(replay["replay"]["position"], 20)
+        self.assertEqual(len(replay["candles"]), 20)
+        self.assertTrue(replay["replay"]["timestampSafe"])
+        self.assertTrue(replay["replay"]["noLookahead"])
+        self.assertLessEqual(
+            max(item["time"] + 60 * 60 for item in replay["candles"]),
+            int(cutoff.timestamp()),
+        )
+        self.assertTrue(
+            all(item["start"] <= int(cutoff.timestamp()) for item in replay["aspects"])
+        )
+        self.assertTrue(
+            all(item["end"] <= int(cutoff.timestamp()) for item in replay["aspects"])
+        )
+        self.assertTrue(
+            all(item["peak"] <= int(cutoff.timestamp()) for item in replay["aspects"])
+        )
+        self.assertTrue(all(item["outcome"] is None for item in replay["aspects"]))
+        self.assertTrue(all(item["returnPct"] is None for item in replay["aspects"]))
+        self.assertTrue(all(not item["reviewed"] for item in replay["aspects"]))
+        self.assertTrue(
+            all(
+                item.get("touchTime", 0) + 60 * 60 <= int(cutoff.timestamp())
+                for item in replay["srLines"]
+            )
+        )
+
+    def test_bar_replay_rejects_cutoff_before_first_close(self) -> None:
+        with self.assertRaisesRegex(ValueError, "precedes the first closed candle"):
+            self.repository.chart_payload(
+                "2025-05-26T00:00:00+05:30",
+                "2025-05-27T23:59:59+05:30",
+                timeframe="H1",
+                replay_cutoff="2025-05-25T18:45:00Z",
+            )
+
     def test_family_payload_preserves_transit_natal_direction(self) -> None:
         payload = self.repository.family_payload("TN::MOON->MERCURY::square")
         self.assertEqual(payload["transitBody"], "MOON")

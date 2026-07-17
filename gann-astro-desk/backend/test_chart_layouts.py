@@ -94,6 +94,8 @@ class ChartLayoutTests(unittest.TestCase):
         self.assertFalse(created["drawings"][0]["guardrails"]["consumedByLiveInference"])
         self.assertEqual(created["drawings"][0]["style"]["lineStyle"], "solid")
         self.assertEqual(created["drawings"][0]["style"]["opacity"], 0.9)
+        self.assertIsNone(created["drawings"][0]["groupId"])
+        self.assertEqual(created["drawings"][0]["syncScope"], "layout")
 
         updated = save_chart_layout(
             self.repository,
@@ -199,6 +201,73 @@ class ChartLayoutTests(unittest.TestCase):
         self.assertEqual(list_drawing_templates(self.repository), [saved])
         self.assertTrue(delete_drawing_template(self.repository, saved["templateId"]))
         self.assertEqual(list_drawing_templates(self.repository), [])
+
+    def test_symbol_synced_drawing_round_trips_across_timeframes(self) -> None:
+        synced = horizontal_drawing("shared-line")
+        synced["syncScope"] = "symbol"
+        synced["groupId"] = "levels"
+        synced["groupName"] = "Shared levels"
+        h1 = save_chart_layout(
+            self.repository,
+            self.payload(timeframe="H1", drawings=[synced]),
+        )
+        m30 = save_chart_layout(
+            self.repository,
+            self.payload(
+                name="USDJPY M30",
+                timeframe="M30",
+                isDefault=False,
+                drawings=[],
+            ),
+        )
+
+        loaded_m30 = get_chart_layout(self.repository, m30["layoutId"])
+        shared = next(
+            item for item in loaded_m30["drawings"]
+            if item["drawingId"] == "shared-line"
+        )
+        self.assertEqual(shared["syncScope"], "symbol")
+        self.assertEqual(shared["groupId"], "levels")
+        self.assertEqual(shared["anchors"], h1["drawings"][0]["anchors"])
+
+        shared["anchors"][0]["price"] = 148.5
+        save_chart_layout(
+            self.repository,
+            self.payload(
+                layoutId=m30["layoutId"],
+                expectedRevision=m30["revision"],
+                name=m30["name"],
+                timeframe="M30",
+                isDefault=m30["isDefault"],
+                drawings=[shared],
+            ),
+        )
+        reloaded_h1 = get_chart_layout(self.repository, h1["layoutId"])
+        self.assertEqual(reloaded_h1["drawings"][0]["anchors"][0]["price"], 148.5)
+
+    def test_removing_symbol_sync_deletes_shared_copy_but_keeps_local_copy(self) -> None:
+        synced = horizontal_drawing("shared-line")
+        synced["syncScope"] = "symbol"
+        h1 = save_chart_layout(self.repository, self.payload(drawings=[synced]))
+        m30 = save_chart_layout(
+            self.repository,
+            self.payload(name="M30", timeframe="M30", drawings=[]),
+        )
+        local = dict(h1["drawings"][0])
+        local["syncScope"] = "layout"
+        save_chart_layout(
+            self.repository,
+            self.payload(
+                layoutId=h1["layoutId"],
+                expectedRevision=h1["revision"],
+                drawings=[local],
+            ),
+        )
+        self.assertEqual(
+            [item["drawingId"] for item in get_chart_layout(self.repository, h1["layoutId"])["drawings"]],
+            ["shared-line"],
+        )
+        self.assertEqual(get_chart_layout(self.repository, m30["layoutId"])["drawings"], [])
 
 
 if __name__ == "__main__":

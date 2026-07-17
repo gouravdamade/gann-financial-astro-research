@@ -39,11 +39,13 @@ import {
   scanShadowLedger,
   scanCandlestickShadow,
 } from '../api'
-import { downloadLayoutJson } from '../chartLayouts'
+import { replayCutoffForCandle } from '../barReplay'
+import { defaultDrawingPreferences, downloadLayoutJson } from '../chartLayouts'
 import { effectiveAspectMinDurationMinutes, formatAspectDuration } from '../aspectTimeframePolicy'
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
 import { CandlestickShadowPanel } from '../components/CandlestickShadowPanel'
+import { BarReplayControls } from '../components/BarReplayControls'
 import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
 import { LayoutToolbar } from '../components/LayoutToolbar'
@@ -161,6 +163,9 @@ export function MainWorkspace() {
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false)
   const [focusMode, setFocusMode] = useState(false)
   const [objectsOpen, setObjectsOpen] = useState(false)
+  const [replaySelecting, setReplaySelecting] = useState(false)
+  const [replayPlaying, setReplayPlaying] = useState(false)
+  const replayBusyRef = useRef(false)
   const chartRef = useRef<MarketChartHandle>(null)
   const artifactActivationRef = useRef('')
   const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
@@ -313,6 +318,8 @@ export function MainWorkspace() {
     const startedAt = performance.now()
     let succeeded = false
     setChartLoading(true)
+    setReplayPlaying(false)
+    setReplaySelecting(false)
     setParameterError('')
     try {
       const payload = await fetchChart(nextParameters)
@@ -365,7 +372,7 @@ export function MainWorkspace() {
   }, [])
 
   const refreshActiveArtifact = useCallback(async () => {
-    if (!parameters || !chart || parameters.dataSource !== 'research') return
+    if (!parameters || !chart || parameters.dataSource !== 'research' || chart.replay?.active) return
     try {
       const artifacts = await fetchDataArtifacts()
       const active = artifacts.find((artifact) => artifact.isActive)
@@ -377,7 +384,7 @@ export function MainWorkspace() {
     }
   }, [chart, handleArtifactActivated, parameters])
   useVisibilityPolling(refreshActiveArtifact, {
-    enabled: Boolean(parameters && chart && parameters.dataSource === 'research' && !parametersOpen),
+    enabled: Boolean(parameters && chart && parameters.dataSource === 'research' && !chart.replay?.active && !parametersOpen),
     intervalMs: 10000,
   })
 
@@ -393,9 +400,78 @@ export function MainWorkspace() {
     }
   }, [parameters])
   useVisibilityPolling(refreshLiveChart, {
-    enabled: parameters?.dataSource === 'live',
+    enabled: parameters?.dataSource === 'live' && !chart?.replay?.active,
     intervalMs: 5000,
   })
+
+  const applyReplayCutoff = useCallback(async (cutoffUtc: string) => {
+    if (!parameters || parameters.dataSource !== 'research' || replayBusyRef.current) return
+    replayBusyRef.current = true
+    setChartLoading(true)
+    setParameterError('')
+    try {
+      const payload = await fetchChart(parameters, { cutoffUtc })
+      setChart(payload)
+      setSelected((current) => (
+        payload.aspects.find((item) => item.eventId === current?.eventId)
+        ?? payload.aspects.at(-1)
+        ?? null
+      ))
+      setSelectedAnnotation(null)
+      setReplaySelecting(false)
+      setActiveTool('select')
+    } catch (reason) {
+      setReplayPlaying(false)
+      setParameterError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      replayBusyRef.current = false
+      setChartLoading(false)
+    }
+  }, [parameters])
+
+  const selectReplayStart = useCallback(() => {
+    if (parameters?.dataSource !== 'research') return
+    setReplayPlaying(false)
+    setReplaySelecting(true)
+    setActiveTool('replay')
+    setToolActivationNonce((value) => value + 1)
+  }, [parameters?.dataSource])
+
+  const selectReplayCutoff = useCallback((candleOpenTime: number) => {
+    if (!chart || !replaySelecting) return
+    void applyReplayCutoff(replayCutoffForCandle(candleOpenTime, chart.timeframe))
+  }, [applyReplayCutoff, chart, replaySelecting])
+
+  const exitReplay = useCallback(async () => {
+    if (!parameters || replayBusyRef.current) return
+    replayBusyRef.current = true
+    setReplayPlaying(false)
+    setReplaySelecting(false)
+    setChartLoading(true)
+    try {
+      setChart(await fetchChart(parameters))
+      setActiveTool('select')
+    } catch (reason) {
+      setParameterError(reason instanceof Error ? reason.message : String(reason))
+    } finally {
+      replayBusyRef.current = false
+      setChartLoading(false)
+    }
+  }, [parameters])
+
+  useEffect(() => {
+    if (!replayPlaying || !chart?.replay?.nextCutoffUtc) return
+    const timer = window.setTimeout(() => {
+      void applyReplayCutoff(chart.replay?.nextCutoffUtc ?? '')
+    }, 900)
+    return () => window.clearTimeout(timer)
+  }, [applyReplayCutoff, chart?.replay?.nextCutoffUtc, replayPlaying])
+
+  useEffect(() => {
+    if (replayPlaying && chart?.replay && !chart.replay.nextCutoffUtc) {
+      setReplayPlaying(false)
+    }
+  }, [chart?.replay, replayPlaying])
 
   const refreshMt5Status = useCallback(async () => {
     try {
@@ -537,6 +613,14 @@ export function MainWorkspace() {
           onUndo={chartLayouts.undo}
           onReset={() => chartRef.current?.resetView()}
           onClear={chartLayouts.clearDrawings}
+          preferences={chartLayouts.chartState.drawingPreferences}
+          onPreferencesChange={(update) => chartLayouts.updateChartState({
+            drawingPreferences: {
+              ...defaultDrawingPreferences(),
+              ...(chartLayouts.chartState.drawingPreferences ?? {}),
+              ...update,
+            },
+          })}
         />
         <section className="chart-workspace">
           <div className="chart-context-strip">
@@ -548,6 +632,18 @@ export function MainWorkspace() {
               {selected && <em style={{ color: selected.color }}>{selected.transitBody} to {selected.natalBody} {selected.aspectLabel}</em>}
             </div>
             <div className="chart-context-spacer" />
+            <BarReplayControls
+              replay={chart.replay ?? null}
+              selecting={replaySelecting}
+              playing={replayPlaying}
+              busy={chartLoading}
+              disabled={parameters.dataSource !== 'research'}
+              onSelectStart={selectReplayStart}
+              onPrevious={() => chart.replay?.previousCutoffUtc && void applyReplayCutoff(chart.replay.previousCutoffUtc)}
+              onNext={() => chart.replay?.nextCutoffUtc && void applyReplayCutoff(chart.replay.nextCutoffUtc)}
+              onTogglePlaying={() => setReplayPlaying((value) => !value)}
+              onExit={() => void exitReplay()}
+            />
             <LayoutToolbar
               layouts={chartLayouts.layouts}
               activeLayout={chartLayouts.activeLayout}
@@ -594,6 +690,7 @@ export function MainWorkspace() {
             onSelectAspect={selectAspect}
             onSelectAnnotation={setSelectedAnnotation}
             onCreateAnnotation={createAnnotation}
+            onReplayCutoffSelect={selectReplayCutoff}
             showAspects={workspace.showAspects}
             showSrLines={workspace.showSrLines}
             drawings={chartLayouts.drawings}
@@ -610,6 +707,8 @@ export function MainWorkspace() {
             }}
             onViewStateChange={chartLayouts.updateChartState}
             onUndo={chartLayouts.undo}
+            drawingPreferences={chartLayouts.chartState.drawingPreferences}
+            onToolComplete={() => setActiveTool('select')}
           />
           {objectsOpen && (
             <Suspense fallback={null}>
@@ -620,6 +719,8 @@ export function MainWorkspace() {
                 onSelect={chartLayouts.setSelectedDrawingId}
                 onUpdate={chartLayouts.updateDrawing}
                 onDelete={chartLayouts.deleteDrawing}
+                onUpdateGroup={chartLayouts.updateDrawingGroup}
+                onDeleteGroup={chartLayouts.deleteDrawingGroup}
                 onCreateTemplate={chartLayouts.createTemplate}
                 onRemoveTemplate={chartLayouts.removeTemplate}
                 onClose={() => setObjectsOpen(false)}

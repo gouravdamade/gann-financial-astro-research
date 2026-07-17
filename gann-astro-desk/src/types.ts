@@ -1,6 +1,7 @@
 export type ChartTool =
   | 'select'
   | 'crosshair'
+  | 'replay'
   | 'annotation'
   | 'horizontal'
   | 'vertical'
@@ -17,6 +18,14 @@ export type WorkspacePreferences = {
 }
 
 export type ChartWorkspaceKind = 'main' | 'analysis'
+export type DrawingMagnetMode = 'off' | 'weak' | 'strong'
+export type DrawingSyncScope = 'layout' | 'symbol'
+
+export type DrawingPreferences = {
+  favoriteTools: ChartTool[]
+  magnetMode: DrawingMagnetMode
+  keepDrawing: boolean
+}
 
 export type ChartDrawingType =
   | 'horizontal_line'
@@ -109,6 +118,9 @@ export type ChartDrawing = {
   name: string
   visible: boolean
   locked: boolean
+  groupId: string | null
+  groupName: string
+  syncScope: DrawingSyncScope
   zIndex: number
   anchors: ChartDrawingAnchor[]
   style: ChartDrawingStyle
@@ -126,6 +138,7 @@ export type ChartLayoutState = {
   visibleEndUtc?: string
   showAspects: boolean
   showSrLines: boolean
+  drawingPreferences?: DrawingPreferences
   squareOfNine?: SquareOfNineWorkspaceState
 }
 
@@ -391,6 +404,23 @@ export type ChartPayload = {
   parametersApplied: Record<string, unknown>
   artifact: DataArtifact
   generatedAt: string
+  replay?: BarReplaySnapshot | null
+}
+
+export type BarReplaySnapshot = {
+  contract: 'GANN_TIMESTAMP_SAFE_BAR_REPLAY_V1'
+  active: true
+  cutoffUtc: string
+  evidenceCutoff: string
+  sourceDataMaxTime: string
+  firstCutoffUtc: string
+  previousCutoffUtc: string | null
+  nextCutoffUtc: string | null
+  position: number
+  totalBars: number
+  excludedFutureCandles: number
+  timestampSafe: true
+  noLookahead: true
 }
 
 export type FamilySummary = {
@@ -607,6 +637,32 @@ export type ShadowTrialSummary = {
   cohorts: ShadowTrialCohort[]
 }
 
+export type ValidationGate = {
+  gateId:
+    | 'timestamp_safe_inference'
+    | 'external_astrology'
+    | 'retrospective_policy'
+    | 'prospective_shadow'
+    | 'candlestick_agent'
+    | 'execution_authorization'
+  title: string
+  status: 'passed' | 'failed' | 'blocked' | 'collecting' | 'locked'
+  blocking: boolean
+  detail: string
+  source: string | null
+  metrics: Record<string, string | number | boolean | null | undefined>
+}
+
+export type ValidationGateMatrix = {
+  contract: 'GANN_RESEARCH_VALIDATION_GATE_MATRIX_V1'
+  generatedAtUtc: string
+  overallStatus: 'research_only_blocked' | 'prerequisites_passed_execution_still_locked'
+  prerequisitesPassed: boolean
+  executionAllowed: false
+  blockingGateIds: string[]
+  gates: ValidationGate[]
+}
+
 export type ShadowLedgerSnapshot = {
   summary: {
     contract: 'GANN_APPEND_ONLY_SHADOW_LEDGER_V1'
@@ -637,6 +693,7 @@ export type ShadowLedgerSnapshot = {
     }
   }
   records: ShadowLedgerRecord[]
+  validationGates?: ValidationGateMatrix
   supervisor: {
     state: 'starting' | 'paused' | 'waiting' | 'collecting' | 'error'
     lastScanAtUtc: string | null

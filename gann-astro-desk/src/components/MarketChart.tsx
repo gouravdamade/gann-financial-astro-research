@@ -35,6 +35,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import { createChartDrawing } from '../chartLayouts'
+import { chooseMagnetCandidate, type MagnetCandidate } from '../drawingMagnet'
 import {
   isChartNavigationProximity,
   MIN_CHART_BAR_SPACING,
@@ -48,6 +49,7 @@ import type {
   ChartAnnotation,
   ChartDrawing,
   ChartDrawingAnchor,
+  DrawingPreferences,
   ChartLayoutState,
   ChartPayload,
   ChartTool,
@@ -76,6 +78,8 @@ type MarketChartProps = {
   onSelectAspect?: (aspect: AspectWindow) => void
   onSelectAnnotation?: (annotation: ChartAnnotation) => void
   onCreateAnnotation?: (draft: AnnotationDraft) => void
+  onReplayCutoffSelect?: (candleOpenTime: number) => void
+  onToolComplete?: () => void
   showAspects?: boolean
   showSrLines?: boolean
   compact?: boolean
@@ -87,6 +91,7 @@ type MarketChartProps = {
   onSelectDrawing?: (drawingId: string | null) => void
   onViewStateChange?: (state: Partial<ChartLayoutState>) => void
   onUndo?: () => void
+  drawingPreferences?: DrawingPreferences
 }
 
 function nearestTime(times: number[], value: number): number {
@@ -119,6 +124,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     onSelectAspect,
     onSelectAnnotation,
     onCreateAnnotation,
+    onReplayCutoffSelect,
+    onToolComplete,
     showAspects = true,
     showSrLines = true,
     compact = false,
@@ -130,6 +137,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     onSelectDrawing,
     onViewStateChange,
     onUndo,
+    drawingPreferences = {
+      favoriteTools: ['horizontal', 'gann', 'fibonacci'],
+      magnetMode: 'weak',
+      keepDrawing: false,
+    },
   },
   forwardedRef,
 ) {
@@ -142,6 +154,9 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const selectedAspectIdRef = useRef(selectedAspectId)
   const payloadRef = useRef(payload)
   const createAnnotationRef = useRef(onCreateAnnotation)
+  const replayCutoffSelectRef = useRef(onReplayCutoffSelect)
+  const toolCompleteRef = useRef(onToolComplete)
+  const drawingPreferencesRef = useRef(drawingPreferences)
   const drawingsRef = useRef(drawings)
   const drawingsChangeRef = useRef(onDrawingsChange)
   const selectDrawingRef = useRef(onSelectDrawing)
@@ -180,7 +195,10 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   useEffect(() => {
     payloadRef.current = payload
     createAnnotationRef.current = onCreateAnnotation
-  }, [onCreateAnnotation, payload])
+    replayCutoffSelectRef.current = onReplayCutoffSelect
+    toolCompleteRef.current = onToolComplete
+    drawingPreferencesRef.current = drawingPreferences
+  }, [drawingPreferences, onCreateAnnotation, onReplayCutoffSelect, onToolComplete, payload])
 
   useEffect(() => {
     drawingsRef.current = drawings
@@ -239,6 +257,39 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       undoRef.current?.()
     },
   }), [])
+
+  const magnetizePoint = (
+    rawTime: number,
+    rawPrice: number,
+    screenX: number,
+    screenY: number,
+  ): Point => {
+    const chart = chartRef.current
+    const series = seriesRef.current
+    const candles = payloadRef.current.candles
+    const mode = drawingPreferencesRef.current.magnetMode
+    if (!chart || !series || !candles.length || mode === 'off') {
+      return { time: nearestTime(candles.map((item) => item.time), rawTime), price: rawPrice }
+    }
+    const candleTime = nearestTime(candles.map((item) => item.time), rawTime)
+    const candle = candles.find((item) => item.time === candleTime)
+    const candleX = chart.timeScale().timeToCoordinate(candleTime as UTCTimestamp)
+    if (!candle || candleX == null) return { time: candleTime, price: rawPrice }
+    const candidates = (['open', 'high', 'low', 'close'] as const).flatMap((field) => {
+      const candidateY = series.priceToCoordinate(candle[field])
+      if (candidateY == null) return []
+      return [{
+        time: candleTime,
+        price: candle[field],
+        field,
+        distancePx: Math.hypot(Number(candleX) - screenX, Number(candidateY) - screenY),
+      } satisfies MagnetCandidate]
+    })
+    const snapped = chooseMagnetCandidate(candidates, mode)
+    return snapped
+      ? { time: snapped.time, price: snapped.price }
+      : { time: candleTime, price: rawPrice }
+  }
 
   useEffect(() => {
     if (!hostRef.current) return
@@ -316,15 +367,23 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       const time = Number(params.time)
       const priceValue = series.coordinateToPrice(params.point.y)
       if (priceValue == null) return
-      const point = { time, price: Number(priceValue) }
+      const point = magnetizePoint(
+        time,
+        Number(priceValue),
+        params.point.x,
+        params.point.y,
+      )
       const tool = toolRef.current
-      if (tool === 'horizontal') {
+      if (tool === 'replay') {
+        replayCutoffSelectRef.current?.(time)
+      } else if (tool === 'horizontal') {
         const drawing = createChartDrawing(
           'horizontal_line',
           [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
           drawingsRef.current.length,
         )
         commitDrawing(drawing)
+        if (!drawingPreferencesRef.current.keepDrawing) toolCompleteRef.current?.()
       } else if (tool === 'vertical') {
         const drawing = createChartDrawing(
           'vertical_line',
@@ -332,6 +391,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           drawingsRef.current.length,
         )
         commitDrawing(drawing)
+        if (!drawingPreferencesRef.current.keepDrawing) toolCompleteRef.current?.()
       } else if (tool === 'gann' || tool === 'fibonacci') {
         const drawingType = tool === 'gann' ? 'gann_fan' : 'fibonacci_retracement'
         const pending = pendingDrawingRef.current
@@ -357,6 +417,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         pendingDrawingRef.current = null
         setPendingDrawing(null)
         commitDrawing(drawing)
+        if (!drawingPreferencesRef.current.keepDrawing) toolCompleteRef.current?.()
       } else if (tool === 'annotation' && createAnnotationRef.current) {
         const currentPayload = payloadRef.current
         const selected = currentPayload.aspects.find((item) => item.eventId === selectedAspectIdRef.current)
@@ -579,9 +640,9 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const rawTime = chart.timeScale().coordinateToTime(x)
     const price = series.coordinateToPrice(y)
     if (rawTime == null || price == null || typeof rawTime !== 'number') return
-    const time = nearestTime(candleTimes, Number(rawTime))
+    const snapped = magnetizePoint(Number(rawTime), Number(price), x, y)
     const anchors = session.anchors.map((anchor, index) => index === session.anchorIndex
-      ? { timeUtc: new Date(time * 1000).toISOString(), price: Number(price) }
+      ? { timeUtc: new Date(snapped.time * 1000).toISOString(), price: snapped.price }
       : anchor)
     const nextSession = { ...session, anchors }
     dragSessionRef.current = nextSession

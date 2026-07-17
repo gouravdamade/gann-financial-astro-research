@@ -35,16 +35,49 @@ function gateLabel(status: string): string {
   return 'Collecting'
 }
 
+function gateIcon(status: string) {
+  if (status === 'passed') return <ShieldCheck size={14} />
+  if (status === 'collecting') return <Clock3 size={14} />
+  if (status === 'locked') return <LockKeyhole size={14} />
+  return <ShieldAlert size={14} />
+}
+
 export function ShadowLedgerPanel({ snapshot, busy, refreshBusy, error, onScan, onRefresh }: ShadowLedgerPanelProps) {
   const summary = snapshot?.summary
   const supervisor = snapshot?.supervisor
   const refresh = snapshot?.refresh
   const chainValid = summary?.chain.valid ?? true
   const trial = summary?.trial
+  const validation = snapshot?.validationGates
   const watchProgress = trial?.progress?.watchClusters
   const monthProgress = trial?.progress?.calendarMonths
   return (
     <section className="shadow-ledger-panel">
+      <div className="validation-matrix-header">
+        <div>
+          <strong>Research validation gates</strong>
+          <small>{validation?.prerequisitesPassed ? 'Research prerequisites passed; execution remains locked' : 'Fail-closed prerequisite matrix'}</small>
+        </div>
+        <span className="shadow-execution-lock"><LockKeyhole size={14} /> Read-only</span>
+      </div>
+      <div className="validation-gate-strip">
+        {(validation?.gates ?? []).map((gate) => (
+          <article
+            key={gate.gateId}
+            className={`validation-gate-card is-${gate.status}`}
+            title={`${gate.detail}${gate.source ? `\nSource: ${gate.source}` : ''}`}
+          >
+            {gateIcon(gate.status)}
+            <div>
+              <strong>{gate.title}</strong>
+              <small>{gate.status.replaceAll('_', ' ')}</small>
+            </div>
+          </article>
+        ))}
+        {!validation?.gates.length && (
+          <span className="validation-matrix-pending"><Clock3 size={14} /> Loading validation matrix</span>
+        )}
+      </div>
       <div className="shadow-ledger-summary">
         <span className={chainValid ? 'is-valid' : 'is-invalid'}>
           {chainValid ? <ShieldCheck size={15} /> : <ShieldAlert size={15} />}

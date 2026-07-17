@@ -860,8 +860,100 @@
   height: calc(100% - 32px);
   min-height: 0;
   display: grid;
-  grid-template-rows: 43px 25px 25px 25px minmax(0, 1fr);
+  grid-template-rows: 34px 54px 43px 25px 25px 25px minmax(0, 1fr);
   background: #0c131c;
+}
+
+.validation-matrix-header {
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  border-bottom: 1px solid #233244;
+  background: #101923;
+}
+
+.validation-matrix-header > div {
+  min-width: 0;
+  display: grid;
+}
+
+.validation-matrix-header strong {
+  color: #d8e7f1;
+  font-size: 10px;
+}
+
+.validation-matrix-header small {
+  color: #7f91a4;
+  font-size: 8px;
+}
+
+.validation-matrix-header .shadow-execution-lock {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #efbd58;
+  font-size: 9px;
+}
+
+.validation-gate-strip {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(112px, 1fr));
+  gap: 1px;
+  overflow-x: auto;
+  border-bottom: 1px solid #233244;
+  background: #233244;
+}
+
+.validation-gate-card {
+  min-width: 112px;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  padding: 6px 9px;
+  background: #0f1822;
+  color: #8fa1b3;
+}
+
+.validation-gate-card > div {
+  min-width: 0;
+  display: grid;
+}
+
+.validation-gate-card strong,
+.validation-gate-card small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.validation-gate-card strong {
+  color: #c7d7e4;
+  font-size: 9px;
+}
+
+.validation-gate-card small {
+  color: #7f91a4;
+  font-size: 8px;
+  text-transform: capitalize;
+}
+
+.validation-gate-card.is-passed { color: #55cfa5; }
+.validation-gate-card.is-collecting { color: #68c9e8; }
+.validation-gate-card.is-failed { color: #ff7885; }
+.validation-gate-card.is-blocked,
+.validation-gate-card.is-locked { color: #efbd58; }
+
+.validation-matrix-pending {
+  min-width: 220px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 11px;
+  background: #0f1822;
+  color: #8fa1b3;
+  font-size: 9px;
 }
 
 .shadow-ledger-summary {
@@ -2916,6 +3008,19 @@
 
 .tool-rail .icon-button:hover { background: #22262d; border-color: #3b414b; }
 .tool-rail .icon-button.is-active { border-color: #3f88ae; background: #203b4c; color: #d7f2ff; }
+.tool-rail .icon-button.magnet-weak { color: #d3a84d; }
+.tool-rail .icon-button.magnet-strong { border-color: #8d6c29; background: #332a19; color: #ffd36e; }
+.tool-rail .icon-button.magnet-off { color: #555d68; }
+.tool-rail-item .icon-button { position: relative; }
+.tool-favorite-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d7a63e;
+}
 
 .chart-workspace { background: #0f1621; }
 
@@ -2940,6 +3045,49 @@
 .chart-context-primary span { font-size: 9px; }
 .chart-context-primary em { overflow: hidden; font-size: 9px; font-style: normal; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
 .chart-context-spacer { flex: 1 1 auto; }
+
+.bar-replay-launch {
+  min-width: 78px;
+}
+
+.bar-replay-controls {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 3px 0 7px;
+  border: 1px solid #345264;
+  border-radius: 3px;
+  background: #152630;
+}
+
+.bar-replay-controls .icon-button {
+  width: 21px;
+  height: 21px;
+  border-radius: 2px;
+  color: #9fc6d8;
+}
+
+.bar-replay-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 2px;
+  color: #71c4b4;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.bar-replay-clock strong {
+  color: #d8e7ed;
+  font-size: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-replay-clock small {
+  color: #758894;
+  font-size: 7px;
+}
 
 .layout-toolbar {
   min-width: 0;
@@ -3119,6 +3267,39 @@
 .drawing-object-row:hover { background: #1d2229; }
 .drawing-object-row.is-selected { box-shadow: inset 2px 0 #4a9fc4; background: #1b2932; }
 
+.drawing-group-row {
+  min-height: 34px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 25px 25px 25px;
+  align-items: center;
+  gap: 2px;
+  padding: 0 5px 0 9px;
+  border-bottom: 1px solid #303842;
+  background: #191f26;
+}
+
+.drawing-group-row > span {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8795a2;
+}
+
+.drawing-group-row strong {
+  overflow: hidden;
+  color: #c9d2da;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drawing-group-row small {
+  min-width: 15px;
+  color: #6f7a85;
+  font-size: 7px;
+}
+
 .drawing-object-name {
   min-width: 0;
   height: 100%;
@@ -3176,7 +3357,23 @@
 .drawing-properties input.color-swatch-input { width: 100%; padding: 3px; }
 .square9-properties,
 .fibonacci-properties,
-.drawing-template-controls { margin-top: 14px; padding-top: 11px; border-top: 1px solid #2b323b; }
+.drawing-template-controls,
+.drawing-group-properties { margin-top: 14px; padding-top: 11px; border-top: 1px solid #2b323b; }
+.drawing-group-properties { display: grid; gap: 7px; }
+.drawing-group-properties > label { display: grid; gap: 4px; color: #79828e; font-size: 8px; }
+.drawing-new-group-row { display: grid; grid-template-columns: minmax(0, 1fr) 58px; gap: 4px; }
+.drawing-new-group-row button {
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid #3a444f;
+  border-radius: 3px;
+  background: #20262d;
+  color: #aeb6bf;
+  font-size: 8px;
+}
 .fibonacci-properties > label { display: grid; gap: 4px; color: #79828e; font-size: 8px; }
 .drawing-anchor-properties { margin-top: 14px; padding-top: 11px; border-top: 1px solid #2b323b; }
 .drawing-anchor-fields { display: grid; grid-template-columns: 42px minmax(0, 1fr); align-items: end; gap: 5px; margin-top: 7px; }
@@ -3545,6 +3742,23 @@
   .auto-refresh-chip > span,
   .auto-refresh-chip > i,
   .top-command-bar .connection-badge > span { display: none; }
+
+  .chart-context-strip { gap: 3px; padding-inline: 5px; }
+  .chart-context-primary { flex: 0 1 54px; }
+  .chart-context-primary span,
+  .chart-context-primary em,
+  .chart-context-spacer { display: none; }
+  .layout-toolbar { flex: 0 0 auto; }
+  .layout-toolbar > select,
+  .layout-toolbar > .layout-save-state,
+  .layout-toolbar > .icon-button { display: none; }
+  .layout-toolbar > .objects-button {
+    width: 24px;
+    min-width: 24px;
+    padding: 0;
+  }
+  .layout-toolbar > .objects-button span { display: none; }
+  .chart-context-strip > button { padding-inline: 4px; font-size: 8px; }
 }
 
 /* Timestamp-safe Sarvatobhadra Chakra Lab ------------------------------- */

@@ -32,9 +32,15 @@ from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
 from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
+from validation_gates import build_validation_gate_matrix
 from workspace_preferences import (
     read_workspace_preferences,
     update_workspace_preferences,
+)
+from decision_engine import (  # noqa: E402
+    VALIDATION_CONTRACT,
+    VALIDATION_REPORT,
+    VALIDATION_STATUS,
 )
 
 
@@ -121,6 +127,22 @@ def bool_argument(name: str) -> bool:
         "yes",
         "on",
     }
+
+
+def current_validation_gates(
+    shadow_snapshot: dict[str, Any] | None = None,
+    candlestick_snapshot: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    current_shadow = shadow_snapshot or shadow_ledger.snapshot(1)
+    current_candlestick = candlestick_snapshot or candlestick_shadow.status(limit=1)
+    return build_validation_gate_matrix(
+        repository.paths.project_root,
+        current_shadow,
+        current_candlestick,
+        historical_contract=VALIDATION_CONTRACT,
+        historical_status=VALIDATION_STATUS,
+        historical_report=VALIDATION_REPORT,
+    )
 
 
 def chart_filter_arguments() -> dict[str, Any]:
@@ -544,6 +566,7 @@ def chart() -> Any:
             end=request.args.get("end"),
             symbol=symbol,
             timeframe=timeframe,
+            replay_cutoff=request.args.get("replayCutoff"),
             **filters,
         )
         return jsonify({"ok": True, "chart": payload})
@@ -600,6 +623,7 @@ def shadow_ledger_snapshot() -> Any:
         limit = max(1, min(int(request.args.get("limit", "100")), 500))
         snapshot = shadow_ledger.snapshot(limit)
         snapshot["refresh"] = prospective_refresh.status()
+        snapshot["validationGates"] = current_validation_gates(snapshot)
         return jsonify({"ok": True, "shadow": snapshot})
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
@@ -610,6 +634,7 @@ def shadow_ledger_scan() -> Any:
     try:
         snapshot = shadow_ledger.scan_once()
         snapshot["refresh"] = prospective_refresh.status()
+        snapshot["validationGates"] = current_validation_gates(snapshot)
         return jsonify({"ok": True, "shadow": snapshot})
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
@@ -630,6 +655,14 @@ def candlestick_shadow_scan() -> Any:
         return jsonify({"ok": True, "shadow": candlestick_shadow.scan_once()})
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.get("/api/validation-gates")
+def validation_gate_snapshot() -> Any:
+    try:
+        return jsonify({"ok": True, "validationGates": current_validation_gates()})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
 
 
 @app.get("/api/prospective-refresh")

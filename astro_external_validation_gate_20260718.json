@@ -1,0 +1,45 @@
+{
+  "contract": "GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1",
+  "reportVersion": "astro_certification_4_gate_v3_20260718",
+  "generatedAtUtc": "2026-07-17T23:28:29+00:00",
+  "status": "failed_external_validation",
+  "certified": false,
+  "executionAllowed": false,
+  "rows": {
+    "total": 95,
+    "pass": 25,
+    "fail": 70,
+    "pending": 0
+  },
+  "strengthMatrix": {
+    "expectedRows": 70,
+    "actualRows": 70,
+    "pass": 0,
+    "fail": 70,
+    "pending": 0,
+    "classicalPlanets": [
+      "SUN",
+      "MOON",
+      "MARS",
+      "MERCURY",
+      "JUPITER",
+      "VENUS",
+      "SATURN"
+    ],
+    "measures": [
+      "shadbala_implemented_total_virupa.",
+      "drik_bala_virupa."
+    ]
+  },
+  "externalImport": {
+    "path": "D:\\PycharmProjects\\pyjhora_external_strength_values_20260718.csv",
+    "sha256": "29A88901CEE0821F3F20C75777D2BDDACDB9524EB253939D9263E693CBDEE9C9",
+    "issues": []
+  },
+  "requirements": [
+    "Every selected classical-planet Shadbala total must match a saved Tier B export within 0.5 virupa.",
+    "Every selected classical-planet Drik Bala value must match a saved Tier B export within 0.5 virupa.",
+    "External source settings must record Raman ayanamsa, true node, event time, timezone, and location.",
+    "Any missing, duplicate, unknown, non-numeric, or out-of-tolerance row blocks certification."
+  ]
+}

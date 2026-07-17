@@ -26,7 +26,7 @@ import {
   saveAnnotation,
   saveReviewStatus,
 } from '../api'
-import { downloadLayoutJson } from '../chartLayouts'
+import { defaultDrawingPreferences, downloadLayoutJson } from '../chartLayouts'
 import { CodexPanel } from '../components/CodexPanel'
 import { CandlestickPanel } from '../components/CandlestickPanel'
 import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
@@ -304,6 +304,14 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               onUndo={chartLayouts.undo}
               onReset={() => chartRef.current?.resetView()}
               onClear={chartLayouts.clearDrawings}
+              preferences={chartLayouts.chartState.drawingPreferences}
+              onPreferencesChange={(update) => chartLayouts.updateChartState({
+                drawingPreferences: {
+                  ...defaultDrawingPreferences(),
+                  ...(chartLayouts.chartState.drawingPreferences ?? {}),
+                  ...update,
+                },
+              })}
             />
             <MarketChart
               ref={chartRef}
@@ -337,6 +345,8 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               }}
               onViewStateChange={chartLayouts.updateChartState}
               onUndo={chartLayouts.undo}
+              drawingPreferences={chartLayouts.chartState.drawingPreferences}
+              onToolComplete={() => setActiveTool('select')}
             />
             {objectsOpen && (
               <DrawingObjectPanel
@@ -346,6 +356,8 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                 onSelect={chartLayouts.setSelectedDrawingId}
                 onUpdate={chartLayouts.updateDrawing}
                 onDelete={chartLayouts.deleteDrawing}
+                onUpdateGroup={chartLayouts.updateDrawingGroup}
+                onDeleteGroup={chartLayouts.deleteDrawingGroup}
                 onCreateTemplate={chartLayouts.createTemplate}
                 onRemoveTemplate={chartLayouts.removeTemplate}
                 onClose={() => setObjectsOpen(false)}
