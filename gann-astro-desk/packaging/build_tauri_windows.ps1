@@ -1,12 +1,19 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.8-tauri",
+    [string]$CandidateRoot = "",
     [switch]$SkipSidecarBuild,
     [switch]$FinalizeOnly
 )
 
 $ErrorActionPreference = "Stop"
 $appRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
+$projectRoot = [IO.Path]::GetFullPath((Join-Path $appRoot ".."))
 $safeRoot = [IO.Path]::GetFullPath("D:\GannFinancialAstro")
+$tauriConfig = Get-Content -LiteralPath (Join-Path $appRoot "src-tauri\tauri.conf.json") -Raw |
+    ConvertFrom-Json
+$appVersion = [string]$tauriConfig.version
+if (-not $CandidateRoot) {
+    $CandidateRoot = Join-Path $safeRoot "release_candidate\GannAstroDesk-$appVersion-tauri"
+}
 $sidecarRoot = Join-Path $appRoot "src-tauri\resources\GannAstroBackend"
 $sidecarExe = Join-Path $sidecarRoot "GannAstroBackend.exe"
 $cargoTarget = "D:\Rust\targets"
@@ -90,9 +97,15 @@ $installerTarget = Join-Path $candidate $installer.Name
 Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
+$sourceGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
+$sourceGitDirty = [bool](
+    & git.exe -C $projectRoot status --porcelain -- `
+        "gann-astro-desk" |
+        Select-Object -First 1
+)
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
-    version = "0.10.8"
+    version = $appVersion
     status = "performance_audit_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
@@ -102,6 +115,24 @@ $manifest = [ordered]@{
     file_count = $releaseFiles.Count
     total_bytes = ($releaseFiles | Measure-Object -Property Length -Sum).Sum
     shell = "Tauri 2 / Rust"
+    source_git_commit = $sourceGitCommit
+    source_git_dirty = $sourceGitDirty
+    tool_rail_contract = "GANN_CHART_TOOL_RAIL_V2"
+    chart_tools = @(
+        "select",
+        "crosshair",
+        "annotation",
+        "horizontal",
+        "vertical",
+        "gann",
+        "fibonacci",
+        "favorites",
+        "magnet",
+        "keep_drawing",
+        "undo",
+        "reset",
+        "clear"
+    )
     backend_contract = "GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1"
     astronomy_contract = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2"
     chart_layout_contract = "GANN_CHART_LAYOUT_V1"

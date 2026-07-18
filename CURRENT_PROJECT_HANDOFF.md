@@ -1,8 +1,31 @@
 # Current Project Handoff
 
-Last updated: 2026-07-18 17:07 IST
+Last updated: 2026-07-18 20:21 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-18 (Native Tool-Rail Parity / 0.10.9 Source)
+
+- User reported that the Vite development page exposed more sidebar tools than
+  the promoted Windows executable. This was confirmed as a stale-package
+  problem, not responsive hiding: stable `0.10.8` was built at 01:24 IST,
+  before commit `c67be0e` added Bar Replay plus drawing favorites, OHLC magnet
+  modes, keep-drawing, drawing groups, and symbol/layout synchronization.
+- Bumped React, Tauri, Cargo, and lockfile versions to `0.10.9`. The source
+  tool rail now has a regression test locking all seven chart tools plus
+  favorites, magnet, keep-drawing, undo, reset, and clear.
+- Removed hard-coded `0.10.8` candidate and soak paths. Both packaging scripts
+  now derive the version from `src-tauri/tauri.conf.json`.
+- Release manifests now record the source Git commit, source dirty state,
+  `GANN_CHART_TOOL_RAIL_V2`, and the expected complete chart-tool inventory.
+- Pre-package verification passed: frontend `39/39`, backend `97/97`, Oxlint,
+  TypeScript/Vite production build, PowerShell parser checks, and Rust
+  formatting. The `0.10.9` native candidate still requires PyInstaller/Tauri
+  packaging, authenticated soak, visual verification, promotion, and final
+  release hashes.
+- Existing runtime-only files remain deliberately outside this change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-18 (Named Formula Diagnostics / Kaala Decomposition)
 

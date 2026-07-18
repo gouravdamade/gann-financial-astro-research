@@ -197,7 +197,7 @@ npm run build
 
 ## Native Windows Status
 
-The current stable native release is `0.10.8` at
+The current native source version is `0.10.9`; the promoted Windows release is at
 `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports

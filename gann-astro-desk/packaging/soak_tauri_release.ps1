@@ -1,11 +1,18 @@
 param(
-    [string]$CandidateRoot = "D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.8-tauri",
+    [string]$CandidateRoot = "",
     [int]$DurationSeconds = 20,
     [switch]$SkipCrashRecovery
 )
 
 $ErrorActionPreference = "Stop"
 $safeRoot = [IO.Path]::GetFullPath("D:\GannFinancialAstro")
+$appRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
+$tauriConfig = Get-Content -LiteralPath (Join-Path $appRoot "src-tauri\tauri.conf.json") -Raw |
+    ConvertFrom-Json
+$appVersion = [string]$tauriConfig.version
+if (-not $CandidateRoot) {
+    $CandidateRoot = Join-Path $safeRoot "release_candidate\GannAstroDesk-$appVersion-tauri"
+}
 $candidate = [IO.Path]::GetFullPath($CandidateRoot)
 $prefix = $safeRoot.TrimEnd("\") + "\"
 if (-not $candidate.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) {
@@ -17,7 +24,7 @@ if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
 }
 
 $session = [DateTime]::UtcNow.ToString("yyyyMMdd_HHmmss")
-$dataRoot = Join-Path $safeRoot "soak\tauri_0.10.8_$session"
+$dataRoot = Join-Path $safeRoot "soak\tauri_$($appVersion)_$session"
 $logsRoot = Join-Path $dataRoot "logs"
 New-Item -ItemType Directory -Path $logsRoot -Force | Out-Null
 $reportPath = Join-Path $logsRoot "native_soak_report.json"
