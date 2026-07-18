@@ -203,6 +203,17 @@ timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
 `execution_allowed=false` and `financially_validated=false`.
 
+Release `0.10.9` restores parity with the development tool rail. Its
+`GANN_CHART_TOOL_RAIL_V2` manifest locks select, crosshair, annotation,
+horizontal/vertical lines, Gann fan, Fibonacci, favorites, OHLC magnet,
+keep-drawing, undo, reset, and clear. Native visual evidence is stored at
+`docs\visual_qa\gann_astro_desk_0109_tool_rail_parity_20260718.png`.
+
+The promoted-release soak passed all application checks. On a closed market,
+the optional `-AllowClosedMarketMt5Defer` soak flag may defer only the exact
+stale MT5 fresh-tick check while read-only mode and the execution lock are both
+confirmed. The default soak remains fail-closed.
+
 The supported native build is Tauri 2 / Rust with a managed PyInstaller Python sidecar
 and the installed Microsoft WebView2 runtime. It bundles the frontend, corrected data,
 Swiss Ephemeris files, Python research workers, Node runtime, Codex SDK bridge, Local

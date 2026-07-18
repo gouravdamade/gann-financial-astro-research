@@ -1,10 +1,10 @@
 # Current Project Handoff
 
-Last updated: 2026-07-18 20:21 IST
+Last updated: 2026-07-18 21:33 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-18 (Native Tool-Rail Parity / 0.10.9 Source)
+## Latest Update - 2026-07-18 (Native Tool-Rail Parity / Stable 0.10.9)
 
 - User reported that the Vite development page exposed more sidebar tools than
   the promoted Windows executable. This was confirmed as a stale-package
@@ -20,9 +20,41 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   `GANN_CHART_TOOL_RAIL_V2`, and the expected complete chart-tool inventory.
 - Pre-package verification passed: frontend `39/39`, backend `97/97`, Oxlint,
   TypeScript/Vite production build, PowerShell parser checks, and Rust
-  formatting. The `0.10.9` native candidate still requires PyInstaller/Tauri
-  packaging, authenticated soak, visual verification, promotion, and final
-  release hashes.
+  formatting.
+- Packaged, visually verified, and promoted native `0.10.9`. Stable executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`; installer:
+  `D:\GannFinancialAstro\release\GannAstroDesk\Gann Astro Desk_0.10.9_x64-setup.exe`.
+  The executable SHA-256 is
+  `5244DDFC218CC34A37944A58C691DFF90E868142C81B49364AD6569CC8B6E065`;
+  installer SHA-256 is
+  `8C75088FDAB92504375CBFF68C780DC64693AB6687144D61F61D0A845764F512`.
+- Stable manifest records clean source commit
+  `e55469121175572fd63c0e17b8c3456119d5b3bc`, 1,467 bundled files, and all
+  expected controls: select, crosshair, annotation, horizontal, vertical, Gann,
+  Fibonacci, favorites, magnet, keep-drawing, undo, reset, and clear.
+- Native visual QA confirms the formerly missing favorites, magnet, and
+  keep-drawing controls:
+  `gann-astro-desk\docs\visual_qa\gann_astro_desk_0109_tool_rail_parity_20260718.png`.
+- The promoted release passed the full crash/recovery soak:
+  `D:\GannFinancialAstro\soak\tauri_0.10.9_20260718_155751\logs\native_soak_report.json`.
+  It is a conditional pass only because 2026-07-18 is Saturday and the
+  MetaQuotes-Demo USDJPY tick is stale. The explicit
+  `-AllowClosedMarketMt5Defer` switch deferred only that exact fresh-tick check
+  while `executionAllowed=false` and `mt5ReadOnly=true`; all health, security,
+  Chakra, candlestick, layout persistence, sidecar recovery, diagnostics, and
+  descendant-cleanup checks passed. Without the switch, stale MT5 time still
+  fails closed.
+- Post-promotion verification also passed the complete frontend suite
+  `39/39` with one Vitest worker and final PowerShell parser and diff-hygiene
+  checks. The one-worker setting avoids an observed Windows fork-worker
+  startup timeout under parallel process pressure; it does not change test
+  selection.
+- Archived prior stable:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.8_20260718T155519Z`.
+  Pre-promotion writable-state backup:
+  `D:\GannFinancialAstro\state_backups\pre_0.10.9_promotion_20260718T155519Z`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260718_213543_native_tool_parity_0109`.
 - Existing runtime-only files remain deliberately outside this change:
   `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
   `logs/`, and `tryapp-android/`.

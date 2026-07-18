@@ -1,7 +1,8 @@
 param(
     [string]$CandidateRoot = "",
     [int]$DurationSeconds = 20,
-    [switch]$SkipCrashRecovery
+    [switch]$SkipCrashRecovery,
+    [switch]$AllowClosedMarketMt5Defer
 )
 
 $ErrorActionPreference = "Stop"
@@ -43,6 +44,7 @@ $report = [ordered]@{
     data_root = $dataRoot
     crash_recovery_requested = -not $SkipCrashRecovery
     checks = [ordered]@{}
+    deferred_checks = @()
     errors = @()
     execution_allowed = $false
 }
@@ -129,7 +131,11 @@ function Invoke-JsonPost([string]$Uri, [object]$Body) {
     return Invoke-PrivateRestMethod -Uri $Uri -Method Post -Body $Body -TimeoutSec 10
 }
 
-function Wait-ForNormalizedShadow([int]$Port, [int]$TimeoutSeconds = 90) {
+function Wait-ForNormalizedShadow(
+    [int]$Port,
+    [int]$TimeoutSeconds = 90,
+    [switch]$AllowClosedMarketDefer
+) {
     $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     $last = $null
     while ((Get-Date) -lt $deadline) {
@@ -137,12 +143,28 @@ function Wait-ForNormalizedShadow([int]$Port, [int]$TimeoutSeconds = 90) {
             $last = Invoke-PrivateRestMethod -Uri `
                 ("http://127.0.0.1:{0}/api/candlestick-shadow" -f $Port) -TimeoutSec 10
             if ($last.shadow.lastScan.timeNormalization.valid -eq $true) {
-                return $last
+                return [pscustomobject]@{
+                    Snapshot = $last
+                    Deferred = $false
+                    Message = ""
+                }
             }
         } catch {}
         Start-Sleep -Seconds 2
     }
     $message = if ($last) { [string]$last.shadow.lastScan.message } else { "no snapshot" }
+    $closedMarketStaleTick = (
+        $message -match "normalized market tick is not close to observed UTC" -and
+        $last.shadow.guardrails.executionAllowed -eq $false -and
+        $last.shadow.guardrails.mt5ReadOnly -eq $true
+    )
+    if ($AllowClosedMarketDefer -and $closedMarketStaleTick) {
+        return [pscustomobject]@{
+            Snapshot = $last
+            Deferred = $true
+            Message = $message
+        }
+    }
     throw "Candlestick shadow did not expose fresh MT5 time normalization: $message"
 }
 
@@ -256,7 +278,10 @@ try {
         event_id = $candleEventId
         corpus_chunks = $candleHealth.localCandlestick.corpusChunks
     })
-    $candleShadow = Wait-ForNormalizedShadow $initial.Port
+    $shadowResult = Wait-ForNormalizedShadow `
+        -Port $initial.Port `
+        -AllowClosedMarketDefer:$AllowClosedMarketMt5Defer
+    $candleShadow = $shadowResult.Snapshot
     $report.checks.candlestick_shadow_contract = `
         $candleShadow.shadow.contract -eq "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3"
     $report.checks.candlestick_shadow_trial_frozen = `
@@ -267,13 +292,28 @@ try {
     $report.checks.mt5_time_normalization_contract = `
         $candleShadow.shadow.lastScan.timeNormalization.contract -eq `
         "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
-    $report.checks.mt5_time_normalization_valid = `
-        $candleShadow.shadow.lastScan.timeNormalization.valid -eq $true
-    $report.checks.mt5_normalized_tick_fresh = `
-        [Math]::Abs([double]$candleShadow.shadow.lastScan.timeNormalization.normalizedMarketTickSkewSeconds) `
-        -le 300
-    $report.checks.mt5_clock_probe_fresh = `
-        [double]$candleShadow.shadow.lastScan.timeNormalization.probe.ageSeconds -le 30
+    if ($shadowResult.Deferred) {
+        $report.deferred_checks += "mt5_time_normalization_closed_market"
+        $report.checks.mt5_time_normalization_deferred_closed_market = (
+            $AllowClosedMarketMt5Defer -and
+            $candleShadow.shadow.lastScan.timeNormalization.valid -eq $false -and
+            $candleShadow.shadow.guardrails.executionAllowed -eq $false -and
+            $candleShadow.shadow.guardrails.mt5ReadOnly -eq $true
+        )
+        Write-SoakPhase "mt5_time_normalization_deferred" ([ordered]@{
+            reason = $shadowResult.Message
+            execution_allowed = $candleShadow.shadow.guardrails.executionAllowed
+            mt5_read_only = $candleShadow.shadow.guardrails.mt5ReadOnly
+        })
+    } else {
+        $report.checks.mt5_time_normalization_valid = `
+            $candleShadow.shadow.lastScan.timeNormalization.valid -eq $true
+        $report.checks.mt5_normalized_tick_fresh = `
+            [Math]::Abs([double]$candleShadow.shadow.lastScan.timeNormalization.normalizedMarketTickSkewSeconds) `
+            -le 300
+        $report.checks.mt5_clock_probe_fresh = `
+            [double]$candleShadow.shadow.lastScan.timeNormalization.probe.ageSeconds -le 30
+    }
     $report.checks.candlestick_shadow_chain_valid = `
         $candleShadow.shadow.integrity.ok -eq $true
     $report.checks.candlestick_shadow_failed_gate_visible = `
@@ -411,6 +451,7 @@ try {
     )
     $report.failed_checks = $failedChecks
     $report.passed = $report.errors.Count -eq 0 -and $failedChecks.Count -eq 0
+    $report.conditional_pass = $report.passed -and $report.deferred_checks.Count -gt 0
     $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $reportPath -Encoding utf8
     Write-SoakPhase "finished" ([ordered]@{ passed = $report.passed })
 }
