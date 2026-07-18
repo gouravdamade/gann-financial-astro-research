@@ -11,6 +11,11 @@ $safeRoot = [IO.Path]::GetFullPath("D:\GannFinancialAstro")
 $tauriConfig = Get-Content -LiteralPath (Join-Path $appRoot "src-tauri\tauri.conf.json") -Raw |
     ConvertFrom-Json
 $appVersion = [string]$tauriConfig.version
+$expectedEntryUrl = "index.html?v=$appVersion"
+$configuredEntryUrl = [string]$tauriConfig.app.windows[0].url
+if ($configuredEntryUrl -ne $expectedEntryUrl) {
+    throw "Tauri entry URL must match the app version: expected $expectedEntryUrl, found $configuredEntryUrl"
+}
 if (-not $CandidateRoot) {
     $CandidateRoot = Join-Path $safeRoot "release_candidate\GannAstroDesk-$appVersion-tauri"
 }
@@ -137,6 +142,7 @@ $manifest = [ordered]@{
     astronomy_contract = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2"
     chart_layout_contract = "GANN_CHART_LAYOUT_V1"
     drawing_contract = "GANN_RESEARCH_CHART_DRAWING_V1"
+    webview_asset_cache_contract = "GANN_TAURI_VERSIONED_ENTRYPOINT_V1"
     candlestick_shadow_contract = "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3"
     candlestick_trial_contract = "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3"
     mt5_clock_probe_contract = "GANN_MT5_CLOCK_PROBE_V1"
