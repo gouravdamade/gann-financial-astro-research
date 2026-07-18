@@ -1,0 +1,19 @@
+profile_id: fx_relative_experimental_v1
+status: experimental
+no_edge_threshold: 0.35
+component_weights:
+  sbc_identity: 1.0
+  currency_event: 0.0
+  central_bank: 0.0
+  country_mundane: 0.0
+  mundane_domain: 0.0
+requirements:
+  require_explanations: true
+  require_source_locator_for_verified_rules: true
+  prohibit_unreviewed_akshara_as_ground_truth: true
+pair_model:
+  method: latent_currency_difference
+  calculate_signed_common_mode: true
+  calculate_joint_activation: true
+execution_allowed: false
+promotion_allowed: false

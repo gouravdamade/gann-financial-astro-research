@@ -97,7 +97,9 @@ drik_bala:
     MARS: [[90, 120], [210, 240]]
   validation_policy:
     pyjhora: tier_b_secondary_comparator
+    pyjhora_component_matrix: six_components_x_five_fixtures_x_seven_planets
     independent_required: Jagannatha_Hora_or_saved_worked_example
+    jhora_witness_contract: GANN_JHORA_SHADBALA_WITNESS_V1
     execution_allowed: false
 
 panchanga:
@@ -131,6 +133,24 @@ experimental_layers:
   - gann_research_context
   - usdjpy_base_minus_quote_score
   - repeatation_manual_marker_review
+  - instrument_relative_sbc_fx_v1_execution_locked
+
+instrument_relative_sbc:
+  status: experimental_isolated
+  contract: GANN_INSTRUMENT_RELATIVE_SBC_FX_V1
+  specification: Sarvatobhadra_Instrument_Specific_and_Forex_Codex_Spec
+  implementation_root: research_labs/instrument_relative_sbc
+  missing_evidence_policy: unknown_not_zero
+  fx_pair_method: latent_currency_base_minus_quote
+  required_invariants: [identity, inversion, triangle, quote_metadata]
+  execution_allowed: false
+  promotion_allowed: false
+  pending:
+    - human_reviewed_instrument_identity_registry
+    - sbc_snapshot_to_astro_event_adapter
+    - source_verified_contribution_rules
+    - timestamp_safe_cross_sectional_research_harness
+    - purged_walk_forward_and_random_mapping_placebos
 
 source_ids:
   - STRICT_VEDIC_LLM

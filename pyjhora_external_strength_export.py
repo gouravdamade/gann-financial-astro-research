@@ -15,6 +15,14 @@ from zoneinfo import ZoneInfo
 PYJHORA_VERSION = "4.8.7"
 PYJHORA_WHEEL_SHA256 = "D8D8014573A38DDEFEDCAE57D3B8D84687CAC2AD31BB5B1DD70D945906A4D54D"
 PLANETS = ("SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN")
+SHADBALA_COMPONENTS = (
+    "sthana",
+    "kaala",
+    "dig",
+    "chesta",
+    "naisargika",
+    "drik",
+)
 STRENGTH_PREFIXES = (
     "shadbala_implemented_total_virupa.",
     "drik_bala_virupa.",
@@ -109,6 +117,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path(r"D:\PycharmProjects\pyjhora_drik_contributions_20260718.csv"),
     )
+    parser.add_argument(
+        "--component-output",
+        type=Path,
+        default=Path(r"D:\PycharmProjects\pyjhora_shadbala_components_20260718.csv"),
+    )
     return parser.parse_args()
 
 
@@ -196,6 +209,66 @@ def calculate_strengths(pyjhora_root: Path) -> dict[tuple[str, str], float]:
     return values
 
 
+def component_rows_from_vectors(
+    sample_id: str,
+    vectors: list[Any],
+    source: str,
+) -> list[dict[str, str]]:
+    if len(vectors) < len(SHADBALA_COMPONENTS):
+        raise RuntimeError(
+            f"Expected {len(SHADBALA_COMPONENTS)} Shadbala vectors, got {len(vectors)}."
+        )
+    rows: list[dict[str, str]] = []
+    for component_index, component in enumerate(SHADBALA_COMPONENTS):
+        vector = list(vectors[component_index])
+        if len(vector) != len(PLANETS):
+            raise RuntimeError(
+                f"Unexpected {component} vector length for {sample_id}: {len(vector)}"
+            )
+        for planet_index, planet in enumerate(PLANETS):
+            rows.append(
+                {
+                    "sample_id": sample_id,
+                    "planet": planet,
+                    "component": component,
+                    "external_value_virupa": f"{float(vector[planet_index]):.9f}",
+                    "source": source,
+                }
+            )
+    return rows
+
+
+def calculate_shadbala_components(
+    pyjhora_root: Path,
+    source: str,
+) -> list[dict[str, str]]:
+    if str(pyjhora_root) not in sys.path:
+        sys.path.insert(0, str(pyjhora_root))
+    from jhora import utils
+    from jhora.horoscope.chart import strength
+    from jhora.panchanga import drik
+
+    rows: list[dict[str, str]] = []
+    for fixture in FIXTURES:
+        date_parts, time_parts, utc_offset_hours = civil_time_parts(fixture)
+        drik.set_ayanamsa_mode("RAMAN")
+        jd = utils.julian_day_number(date_parts, time_parts)
+        place = drik.Place(
+            fixture.location,
+            fixture.latitude,
+            fixture.longitude,
+            utc_offset_hours,
+        )
+        vectors = strength.shad_bala(jd, place)
+        rows.extend(component_rows_from_vectors(fixture.sample_id, vectors, source))
+    expected_rows = len(FIXTURES) * len(PLANETS) * len(SHADBALA_COMPONENTS)
+    if len(rows) != expected_rows:
+        raise RuntimeError(
+            f"Expected {expected_rows} PyJHora component rows, got {len(rows)}."
+        )
+    return rows
+
+
 def calculate_drik_contributions(pyjhora_root: Path) -> list[dict[str, str]]:
     if str(pyjhora_root) not in sys.path:
         sys.path.insert(0, str(pyjhora_root))
@@ -275,6 +348,10 @@ def merge_strength_rows(
     values: dict[tuple[str, str], float],
     source: str,
 ) -> tuple[list[dict[str, str]], int]:
+    provenance_note = (
+        "Independent PyJHora Raman-mode export; shad_bala()[6] total or "
+        "private _drik_bala() value."
+    )
     expected_keys = {
         (fixture.sample_id, f"{prefix}{planet}")
         for fixture in FIXTURES
@@ -299,11 +376,19 @@ def merge_strength_rows(
             row["external_expected_value"] = f"{values[key]:.9f}"
             row["external_source"] = source
             row["pass_fail"] = "pending_gate_comparison"
-            base_note = str(row.get("notes") or "").split(" | numeric delta=", 1)[0]
-            row["notes"] = (
-                f"{base_note} | Independent PyJHora Raman-mode export; "
-                "shad_bala()[6] total or private _drik_bala() value."
-            )
+            note_parts = [
+                part.strip()
+                for part in str(row.get("notes") or "").split(" | ")
+                if part.strip()
+            ]
+            base_parts = [
+                part
+                for part in note_parts
+                if not part.startswith("numeric delta=")
+                and part != "No external expected value entered."
+                and part != provenance_note
+            ]
+            row["notes"] = " | ".join((*base_parts, provenance_note))
             updated += 1
         result.append(row)
     if seen != expected_keys:
@@ -337,6 +422,7 @@ def main() -> int:
         f"PyJHora {PYJHORA_VERSION} Tier B isolated export; Raman ayanamsa; "
         f"wheel sha256 {wheel_hash}; event civil timezone; Tokyo reference coordinates"
     )
+    components = calculate_shadbala_components(args.pyjhora_root, source)
     merged, updated = merge_strength_rows(rows, values, source)
     if updated != len(FIXTURES) * len(PLANETS) * len(STRENGTH_PREFIXES):
         raise RuntimeError(f"Expected 70 strength updates, wrote {updated}.")
@@ -346,20 +432,28 @@ def main() -> int:
         list(contributions[0]),
         contributions,
     )
+    write_csv(
+        args.component_output,
+        list(components[0]),
+        components,
+    )
     print(
         json.dumps(
             {
-                "contract": "GANN_PYJHORA_EXTERNAL_STRENGTH_EXPORT_V1",
+                "contract": "GANN_PYJHORA_EXTERNAL_STRENGTH_EXPORT_V2",
                 "pyjhoraVersion": PYJHORA_VERSION,
                 "wheelSha256": wheel_hash,
                 "ayanamsa": "RAMAN",
                 "fixtures": len(FIXTURES),
                 "strengthRows": updated,
                 "contributionRows": len(contributions),
+                "componentRows": len(components),
                 "output": str(args.output.resolve()),
                 "outputSha256": sha256(args.output),
                 "contributionOutput": str(args.contribution_output.resolve()),
                 "contributionOutputSha256": sha256(args.contribution_output),
+                "componentOutput": str(args.component_output.resolve()),
+                "componentOutputSha256": sha256(args.component_output),
             },
             indent=2,
         )

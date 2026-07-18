@@ -1,8 +1,75 @@
 # Current Project Handoff
 
-Last updated: 2026-07-18 07:04 IST
+Last updated: 2026-07-18 08:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-18 (Six-Component Comparator / JHora Witness / Experimental Forex Layer)
+
+- This is a verified research-source milestone, not a native release or
+  execution promotion. Stable Gann Astro Desk remains `0.10.8`.
+- Expanded the pinned PyJHora exporter to contract
+  `GANN_PYJHORA_EXTERNAL_STRENGTH_EXPORT_V2`. It now exports all six Shadbala
+  components for five fixtures and seven classical planets, producing a
+  complete `210`-row component matrix. Export merging is byte-idempotent and
+  rejects incomplete or unexpected matrices.
+- Added `GANN_SHADBALA_COMPONENT_COMPARATOR_V1`. It compares local Sthana,
+  Kaala, Dig, Chesta, Naisargika, and Drik values independently at `0.5`
+  virupa tolerance. Current diagnostic result is `96 pass / 114 fail`:
+  Naisargika `35/35` and Drik `35/35` pass; Dig passes `25/35`; Chesta passes
+  `1/35`; Sthana and Kaala pass `0/35`. The remaining full-total failure is
+  therefore localized rather than treated as one opaque discrepancy.
+- Component evidence:
+  `pyjhora_shadbala_components_20260718.csv` SHA-256
+  `281497DBFF577DEB10B2CCCD27270C9F013887791739E83054F524D9C8F8075E`;
+  `shadbala_component_residuals_20260718.csv` SHA-256
+  `456CAFCD1426468D9F82CF67C1DD60F8819CD86FC7EDA43C73203BDE17CB8525`;
+  report `shadbala_component_reconciliation_20260718.md` SHA-256
+  `9B48364479D055FAB3DB7C95F3DFB6255F21A663F9FC57C930F1628851517430`.
+- The refreshed mixed external-strength ledger now records reconciled Drik and
+  recalculated local totals and has SHA-256
+  `2EFABCE7624126029BFC8576F4C7F2CF92819CB163D14E0F2F9B6F87A2F2865E`.
+  The independent contribution matrix remains unchanged at SHA-256
+  `6FDB30D6CF082B017436093F7F81CFB8BAB303A6B7426A4B4414BF47DCA2D342`.
+- Installed official Jagannatha Hora `8.0.0.0` locally at
+  `D:\GannFinancialAstro\external_validators\jagannatha_hora_8_0\app`.
+  Download ZIP SHA-256 is
+  `10A291F8F69FBB9AB8C4EC88F8D804FD227FB23E0F4375706C30BA0043B72339`;
+  installed `jhora.exe` SHA-256 is
+  `3DDBE5FB0458AD1F0AD91B002C7EFB8BBA9F08891D3F46190ABA97D570B17908`;
+  installed `swedll32.dll` SHA-256 is
+  `D56BA3A6158FCEC3921774B5C9FCC533374413D7B77CDBC6B83FFA082D260A69`.
+  The official installer is unsigned, as warned by its publisher.
+- Added `GANN_JHORA_SHADBALA_WITNESS_V1` and a locked `245`-row worksheet:
+  five fixtures x seven planets x six components plus total. It pins the JHora
+  executable hash and chart settings, and fails closed on duplicate, unknown,
+  mixed-settings, unsourced, or unreviewed entries. Template
+  `jhora_shadbala_witness_template_20260718.csv` SHA-256 is
+  `BA616F3EF35F3D3F914A9D113E6DA1559E07C8326F7566A28A8BB3493471DE9B`.
+- JHora witness status remains honestly pending. Installation is not
+  certification: JHora exposes no trusted batch export in this setup, and UI
+  automation libraries are not installed. Values must be captured visibly
+  under the locked settings with screenshots/evidence and reviewer metadata.
+- Added the isolated `research_labs/instrument_relative_sbc` package from the
+  new instrument/forex specification. It provides versioned identities,
+  time-valid target mappings, source-tiered rules, signed evidence ledgers,
+  latent currency scores, base-minus-quote FX differentials, common-mode/joint
+  activation diagnostics, and identity/inversion/triangle invariants.
+  Unknown evidence remains unknown. `execution_allowed=false` and
+  `promotion_allowed=false`; the package cannot affect Auto Suggest, MT5,
+  markers, orders, stops, or targets.
+- Added explicit experimental policy locks to `doctrine_config.yaml` and the
+  architecture record
+  `instrument_relative_sbc_fx_foundation_20260718.md`. Automatic akshara
+  resolution, live Chakra-to-contribution translation, certified economic
+  identity charts, walk-forward calibration, and promotion remain pending.
+- Verification: `274` full Python tests pass; `20` focused new tests pass;
+  changed-file Ruff checks pass. Runtime/user files
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/` were not modified or committed by this
+  milestone.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260718_080416_shadbala_jhora_instrument_relative`.
 
 ## Latest Update - 2026-07-18 (Drik Bala V2 Reconciliation / Gate Still Closed)
 
