@@ -1,0 +1,243 @@
+from __future__ import annotations
+
+import csv
+from pathlib import Path
+
+from astro_function_certification import (
+    CLASSICAL_PLANETS,
+    SAMPLES,
+    STRENGTH_FEATURE_PREFIXES,
+    ExternalTemplateRow,
+    build_position_baseline,
+    compare_external_value,
+    external_gate_summary,
+    independent_drik_gate_summary,
+    merge_external_values,
+    validate_external_import,
+)
+from doctrine_config import load_doctrine_config
+
+
+def row(
+    sample_id: str,
+    feature_key: str,
+    *,
+    local: str = "10.0",
+    expected: str = "10.0",
+    status: str = "pass",
+) -> ExternalTemplateRow:
+    return ExternalTemplateRow(
+        gate="Gate 3",
+        sample_id=sample_id,
+        feature_key=feature_key,
+        local_value=local,
+        external_expected_value=expected,
+        external_source="saved JHora export",
+        pass_fail=status,
+        notes="test",
+    )
+
+
+def full_strength_matrix(status: str = "pass") -> list[ExternalTemplateRow]:
+    return [
+        row(sample.sample_id, f"{prefix}{planet}", status=status)
+        for sample in SAMPLES
+        for planet in CLASSICAL_PLANETS
+        for prefix in STRENGTH_FEATURE_PREFIXES
+    ]
+
+
+def test_strength_comparison_is_numeric_and_strict() -> None:
+    assert compare_external_value("shadbala_implemented_total_virupa.SUN", "300", "300.49")[0] == "pass"
+    assert compare_external_value("shadbala_implemented_total_virupa.SUN", "300", "300.51")[0] == "fail"
+    assert compare_external_value("drik_bala_virupa.MOON", "-12.0", "-12.4")[0] == "pass"
+
+
+def test_external_import_rejects_duplicate_unknown_and_unsourced_values() -> None:
+    templates = [row("sample", "drik_bala_virupa.SUN")]
+    external_rows = [
+        {
+            "gate": "Gate 3",
+            "sample_id": "sample",
+            "feature_key": "drik_bala_virupa.SUN",
+            "external_expected_value": "10",
+            "external_source": "",
+        },
+        {
+            "gate": "Gate 3",
+            "sample_id": "sample",
+            "feature_key": "drik_bala_virupa.SUN",
+            "external_expected_value": "10",
+            "external_source": "duplicate",
+        },
+        {
+            "gate": "Gate 3",
+            "sample_id": "sample",
+            "feature_key": "made_up_feature",
+            "external_expected_value": "10",
+            "external_source": "unknown",
+        },
+    ]
+    issues = validate_external_import(templates, external_rows)
+    assert any("has no external source" in issue for issue in issues)
+    assert any("duplicate external key" in issue for issue in issues)
+    assert any("unknown external key" in issue for issue in issues)
+
+
+def test_external_merge_replaces_stale_local_methodology_and_keeps_provenance() -> None:
+    templates = [
+        ExternalTemplateRow(
+            gate="Gate 3",
+            sample_id="sample",
+            feature_key="drik_bala_virupa.SUN",
+            local_value="10.0",
+            external_expected_value="",
+            external_source="",
+            pass_fail="pending",
+            notes="Local strict-v6 BPHS source-profile value. Fill an independent witness.",
+        )
+    ]
+    external_rows = [
+        {
+            "gate": "Gate 3",
+            "sample_id": "sample",
+            "feature_key": "drik_bala_virupa.SUN",
+            "external_expected_value": "10.0",
+            "external_source": "saved comparator",
+            "notes": (
+                "Local strict-v4 value with obsolete methodology. | "
+                "Independent PyJHora Raman-mode export. | "
+                "numeric delta=99.000000000; tolerance=0.5"
+            ),
+        }
+    ]
+    merged = merge_external_values(templates, external_rows)
+    assert len(merged) == 1
+    assert merged[0].pass_fail == "pass"
+    assert "strict-v6" in merged[0].notes
+    assert "strict-v4" not in merged[0].notes
+    assert "Independent PyJHora Raman-mode export." in merged[0].notes
+    assert merged[0].notes.count("numeric delta=") == 1
+
+
+def test_gate_passes_only_for_complete_strength_matrix() -> None:
+    gate = external_gate_summary(full_strength_matrix(), [], Path("missing.csv"))
+    assert gate["status"] == "passed_external_validation"
+    assert gate["certified"] is True
+    assert gate["executionAllowed"] is False
+
+    pending = full_strength_matrix()
+    pending[0] = row(
+        SAMPLES[0].sample_id,
+        f"{STRENGTH_FEATURE_PREFIXES[0]}{CLASSICAL_PLANETS[0]}",
+        expected="",
+        status="pending",
+    )
+    gate = external_gate_summary(pending, [], Path("missing.csv"))
+    assert gate["status"] == "blocked_pending_external_values"
+    assert gate["certified"] is False
+
+
+def test_independent_drik_witness_is_a_separate_fail_closed_gate() -> None:
+    pending = [
+        row(
+            sample.sample_id,
+            f"drik_bala_virupa.{planet}",
+            expected="",
+            status="pending",
+        )
+        for sample in SAMPLES
+        for planet in CLASSICAL_PLANETS
+    ]
+    gate = independent_drik_gate_summary(pending, [], None)
+    assert gate["status"] == "blocked_pending_independent_values"
+    assert gate["certified"] is False
+
+    passed = [
+        row(sample.sample_id, f"drik_bala_virupa.{planet}")
+        for sample in SAMPLES
+        for planet in CLASSICAL_PLANETS
+    ]
+    gate = independent_drik_gate_summary(passed, [], Path("missing.csv"))
+    assert gate["status"] == "passed_independent_validation"
+    assert gate["certified"] is True
+
+
+def test_local_certification_matrix_contains_finite_planet_values() -> None:
+    config = load_doctrine_config(Path(__file__).with_name("doctrine_config.yaml"))
+    positions, panchanga, templates, drik_contributions = build_position_baseline(config)
+    strength_rows = [
+        item
+        for item in templates
+        if item.feature_key.startswith(STRENGTH_FEATURE_PREFIXES)
+    ]
+    assert len(positions) == len(SAMPLES) * 9
+    assert len(panchanga) == len(SAMPLES)
+    assert len(drik_contributions) == len(SAMPLES) * len(CLASSICAL_PLANETS) * 6
+    assert all(item.nature_reason for item in drik_contributions)
+    assert len(strength_rows) == len(SAMPLES) * len(CLASSICAL_PLANETS) * 2
+    assert all(not item.local_value.startswith("needs ") for item in strength_rows)
+    assert all(float(item.local_value) == float(item.local_value) for item in strength_rows)
+
+
+def test_reconciled_drik_matches_saved_pyjhora_tier_b_matrix() -> None:
+    root = Path(__file__).parent
+    config = load_doctrine_config(root / "doctrine_config.yaml")
+    _positions, _panchanga, templates, _contributions = build_position_baseline(config)
+    local = {
+        (item.sample_id, item.feature_key): float(item.local_value)
+        for item in templates
+        if item.feature_key.startswith("drik_bala_virupa.")
+    }
+    with (root / "pyjhora_external_strength_values_20260718.csv").open(
+        newline="",
+        encoding="utf-8",
+    ) as handle:
+        expected = {
+            (row["sample_id"], row["feature_key"]): float(row["external_expected_value"])
+            for row in csv.DictReader(handle)
+            if row["feature_key"].startswith("drik_bala_virupa.")
+        }
+    assert len(local) == len(SAMPLES) * len(CLASSICAL_PLANETS)
+    assert local.keys() == expected.keys()
+    residuals = {
+        key: abs(local_value - expected[key])
+        for key, local_value in local.items()
+    }
+    assert max(residuals.values()) <= 0.5, sorted(
+        residuals.items(),
+        key=lambda item: item[1],
+        reverse=True,
+    )[:5]
+
+
+def test_reconciled_drik_contributions_match_saved_pyjhora_ledger() -> None:
+    root = Path(__file__).parent
+    config = load_doctrine_config(root / "doctrine_config.yaml")
+    _positions, _panchanga, _templates, local_rows = build_position_baseline(config)
+    local = {
+        (row.sample_id, row.target, row.aspector): row
+        for row in local_rows
+    }
+    with (root / "pyjhora_drik_contributions_20260718.csv").open(
+        newline="",
+        encoding="utf-8",
+    ) as handle:
+        external = {
+            (row["sample_id"], row["target"], row["aspector"]): row
+            for row in csv.DictReader(handle)
+        }
+    assert len(local) == len(SAMPLES) * len(CLASSICAL_PLANETS) * 6
+    assert local.keys() == external.keys()
+    for key, local_row in local.items():
+        expected = external[key]
+        assert local_row.nature == expected["nature"], key
+        assert abs(float(local_row.angle_deg) - float(expected["angle_deg"])) <= 0.021, key
+        assert abs(local_row.gross_virupa - float(expected["gross_virupa"])) <= 0.021, key
+        assert abs(
+            local_row.raw_signed_virupa - float(expected["raw_signed_virupa"])
+        ) <= 0.021, key
+        assert abs(
+            local_row.normalized_signed_virupa
+            - float(expected["normalized_signed_virupa"])
+        ) <= 0.0051, key
