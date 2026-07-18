@@ -20,6 +20,8 @@ import type {
   ChakraLabSnapshot,
   ChakraMotionClass,
 } from '../types'
+import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
+import { InstrumentKeyConverter } from './InstrumentKeyConverter'
 
 
 const BODIES = [
@@ -69,6 +71,10 @@ function splitValues(value: string): string[] {
     .split(',')
     .map((item) => item.trim().toUpperCase())
     .filter(Boolean)
+}
+
+function mergeValue(value: string, token: string): string {
+  return [...new Set([...splitValues(value), token])].join(', ')
 }
 
 function displayToken(value: string): string {
@@ -178,6 +184,14 @@ export function ChakraLabWorkspace({
     }))
   }
 
+  const applyInstrumentKey = (candidate: InstrumentKeyCandidate) => {
+    if (candidate.layer === 'VOWEL') {
+      setVowels((current) => mergeValue(current, candidate.key))
+      return
+    }
+    setNameInitials((current) => mergeValue(current, candidate.key))
+  }
+
   return (
     <section className="chakra-lab-workspace">
       <div className="chakra-command-strip">
@@ -274,6 +288,7 @@ export function ChakraLabWorkspace({
                 onChange={(event) => setNameInitials(event.target.value)}
               />
             </label>
+            <InstrumentKeyConverter onApply={applyInstrumentKey} />
           </section>
 
           <section className="chakra-actors-section">

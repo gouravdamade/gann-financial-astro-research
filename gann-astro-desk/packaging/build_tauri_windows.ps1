@@ -145,6 +145,7 @@ $manifest = [ordered]@{
     mt5_execution_mode = "read_only_market_data"
     chakra_lab_contract = "SBC_CHAKRA_LAB_SNAPSHOT_V1"
     chakra_lab_mode = "read_only_guidance"
+    chakra_instrument_key_converter_contract = "SBC_ENGLISH_INITIAL_ADVISORY_V1"
     chakra_lab_execution_allowed = $false
     chakra_lab_financially_validated = $false
 }

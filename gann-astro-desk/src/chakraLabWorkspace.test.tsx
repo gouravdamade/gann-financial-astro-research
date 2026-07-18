@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ChakraLabSnapshot } from './types'
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
 
@@ -13,6 +14,11 @@ const { fetchSnapshot } = vi.hoisted(() => ({
 vi.mock('./api', () => ({
   fetchChakraLabSnapshot: fetchSnapshot,
 }))
+
+afterEach(() => {
+  cleanup()
+  fetchSnapshot.mockReset()
+})
 
 const snapshot: ChakraLabSnapshot = {
   contract: 'SBC_CHAKRA_LAB_SNAPSHOT_V1',
@@ -134,5 +140,27 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.getByText('Guidance ledger')).toBeInTheDocument()
     expect(screen.getByText('Not financially validated')).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
+  it('converts a spoken English ticker initial and applies the reviewed key', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
+    await user.click(screen.getByText('English stock key converter'))
+    await user.type(screen.getByPlaceholderText('USDJPY or AAPL'), 'USD')
+
+    expect(screen.getByText('यू-एस-डी')).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'NAME_INITIAL · YA · य' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Use selected key' }))
+    expect(screen.getByLabelText('Name-initial keys')).toHaveValue('YA')
   })
 })

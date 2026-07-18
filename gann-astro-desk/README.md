@@ -197,11 +197,18 @@ npm run build
 
 ## Native Windows Status
 
-The current native source version is `0.10.9`; the promoted Windows release is at
+The current native source version is `0.10.10`; the promoted Windows release is at
 `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
 `execution_allowed=false` and `financially_validated=false`.
+
+Release `0.10.10` adds the advisory English stock/ticker initial-key converter
+to Chakra Lab. Ticker mode spells symbols letter-by-letter and displays the
+Hindi form, certified Chakra layer, ASCII key, and Devanagari glyph. Company
+mode exposes pronunciation candidates for human review. The converter never
+silently changes context, cannot accept an instrument mapping as ground truth,
+and only copies a selected certified key after an explicit user action.
 
 Release `0.10.9` restores parity with the development tool rail. Its
 `GANN_CHART_TOOL_RAIL_V2` manifest locks select, crosshair, annotation,
