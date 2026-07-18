@@ -1,6 +1,6 @@
 {
-  "report_version": "astro_certification_4_gate_v4_drik_reconciled_20260718",
-  "generated_at": "2026-07-18T06:56:50+05:30",
+  "report_version": "astro_certification_4_gate_v5_bphs_bala_reconciliation_20260718",
+  "generated_at": "2026-07-18T08:59:13+05:30",
   "status": "blocked_legacy_dataset",
   "output": "Trading replay is intentionally blocked: current case records use the quarantined legacy astronomy contract. Rebuild versioned corrected fixtures before certifying Gate 4. Use --legacy-archive-replay only for historical comparison."
 }

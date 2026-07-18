@@ -19,7 +19,7 @@ from panchanga_doctrine import panchanga_context
 from strict_shadbala_doctrine import CLASSICAL_PLANETS, components_for_body
 
 
-REPORT_VERSION = "astro_certification_4_gate_v4_drik_reconciled_20260718"
+REPORT_VERSION = "astro_certification_4_gate_v5_bphs_bala_reconciliation_20260718"
 IST = ZoneInfo("Asia/Kolkata")
 UTC = ZoneInfo("UTC")
 
@@ -282,6 +282,32 @@ def append_compare_note(notes: str, compare_note: str) -> str:
     return " | ".join(base_parts + [compare_note])
 
 
+def merge_methodology_and_provenance_notes(
+    current_notes: str,
+    imported_notes: str,
+) -> str:
+    current_parts = [
+        part.strip()
+        for part in str(current_notes).split(" | ")
+        if part.strip() and not is_compare_note_fragment(part)
+    ]
+    imported_parts = [
+        part.strip()
+        for part in str(imported_notes).split(" | ")
+        if (
+            part.strip()
+            and not is_compare_note_fragment(part)
+            and not part.strip().startswith("Local strict-v")
+            and not part.strip().startswith("Fill expected value")
+        )
+    ]
+    merged: list[str] = []
+    for part in current_parts + imported_parts:
+        if part not in merged:
+            merged.append(part)
+    return " | ".join(merged)
+
+
 def merge_external_values(
     templates: list[ExternalTemplateRow],
     external_rows: list[dict[str, str]],
@@ -292,7 +318,10 @@ def merge_external_values(
         source = external_by_key.get(external_key(row), {})
         expected = source.get("external_expected_value", row.external_expected_value)
         external_source = source.get("external_source", row.external_source)
-        notes = source.get("notes", row.notes)
+        notes = merge_methodology_and_provenance_notes(
+            row.notes,
+            source.get("notes", ""),
+        )
         pass_fail, compare_note = compare_external_value(row.feature_key, row.local_value, expected)
         notes = append_compare_note(notes, compare_note)
         merged.append(
@@ -552,15 +581,15 @@ def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
         ),
         InventoryRow(
             "Gate 1",
-            "shadbala.source_aligned_provisional_v5",
-            "Local doctrine lock + uploaded Shadbala notes",
+            "shadbala.bphs_component_reconciliation_v6",
+            "BPHS chapter 27 source profile + uploaded Shadbala notes + pinned PyJHora diagnostics",
             str(shadbala.get("method")),
             "strict_shadbala_doctrine.event_strict_shadbala_context",
             "implemented_unvalidated",
-            "strict formula attempt",
+            "versioned source profile with named comparator variants",
             str(shadbala.get("status")),
             "|".join(shadbala.get("missing", [])),
-            "Use the complete Tier B matrix diagnostically; require independent JHora or worked-example evidence before certification.",
+            "Use the complete Tier B matrix diagnostically; certify remaining Kaala/Chesta/Yuddha variants with a saved JHora or worked-example witness.",
             "train_as_provisional_numeric_feature_only",
         ),
         InventoryRow(
@@ -722,6 +751,7 @@ def build_position_baseline(
                 speeds,
                 latitudes,
                 declinations,
+                sample.latitude,
             )
             for planet in CLASSICAL_PLANETS
         }
@@ -810,10 +840,13 @@ def build_position_baseline(
                         external_source="",
                         pass_fail="pending",
                         notes=(
-                            f"Local strict-v5 value at {sample.location}; Raman ayanamsa; true node; "
-                            "Porphyry houses. Drik V2 uses a divide-by-four contribution ledger, dynamic "
-                            "Moon/Mercury nature, and range-based special aspects. Fill a planet-matched "
-                            "independent JHora export value and saved evidence path."
+                            f"Local strict-v6 BPHS source-profile value at {sample.location}; Raman "
+                            "ayanamsa; true node; Porphyry houses. Sthana uses degree-bounded D1 "
+                            "Moolatrikona and source weights; Kaala uses astronomical sunrise and the "
+                            "published Ahargana scheme; Chesta keeps motion state diagnostic separate; "
+                            "Yuddha candidates fail closed. Drik V2 uses a divide-by-four contribution "
+                            "ledger, dynamic Moon/Mercury nature, and range-based special aspects. Fill "
+                            "a planet-matched independent JHora export value and saved evidence path."
                         ),
                     )
                 )
@@ -895,10 +928,12 @@ def render_report(
         )
     elif external_gate["status"] == "failed_external_validation":
         external_verdict = (
-            f"- Tier B Drik comparison is {drik_passed} pass / {drik_failed} fail, while "
-            "the remaining Shadbala total rows still fail. Keep the full strength feature "
-            "set provisional, and do not call Drik independently certified until its "
-            "separate JHora/worked-example witness passes."
+            f"- Tier B Drik comparison is {drik_passed} pass / {drik_failed} fail. The "
+            "separate six-component diagnostic is 145 pass / 65 fail: Dig 35/35, Drik "
+            "35/35, Naisargika 35/35, Sthana 34/35, Chesta 6/35, and Kaala 0/35. The "
+            "35 full-total rows still fail against the alternate PyJHora Kaala/Chesta "
+            "profile. Keep full Shadbala provisional and require the independent JHora "
+            "or cited worked-example witness before certification."
         )
     else:
         external_verdict = (

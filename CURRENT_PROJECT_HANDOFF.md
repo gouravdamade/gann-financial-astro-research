@@ -1,8 +1,69 @@
 # Current Project Handoff
 
-Last updated: 2026-07-18 08:02 IST
+Last updated: 2026-07-18 09:03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-18 (BPHS Bala Doctrine V6 / Component Reconciliation)
+
+- This is a research-source and certification milestone, not a native release
+  or execution promotion. Stable Gann Astro Desk remains `0.10.8`.
+- Corrected Saptavargaja under a named BPHS source profile:
+  `45/30/20/15/10/4/2` virupa for Moolatrikona through great-enemy,
+  degree-bounded D1 Moolatrikona, no exaltation/debilitation double counting,
+  and corrected masculine/neutral/feminine Drekkana thirds. A separate named
+  PyJHora compatibility profile remains diagnostic only.
+- Rebuilt Kaala timing around Swiss Ephemeris apparent sunrise/sunset, a
+  visible 06:00/18:00 fallback, the published 1860-01-01 Ahargana anchor
+  `714404108573`, sunrise day boundaries, Abda/Masa/Dina lords, and one-hour
+  local-mean-time Hora periods. Seven-factor and nine-factor totals are
+  emitted separately.
+- Corrected Ayana to the 23 degrees 27 minutes source formula and planet
+  north/south rules. Graha Yuddha now fails closed when a candidate is
+  detected instead of fabricating a zero contribution.
+- Replaced speed buckets as production Chesta. Sun uses Ayana, Moon uses
+  doubled Paksha, and Mars-Saturn use a source-structured seegrocha versus
+  mean/true midpoint model. Motion-state, doubled, and motion-added values
+  remain explicitly labeled research diagnostics.
+- Corrected the Sun minimum total from `300` to `390` virupa. The locked
+  minimum sequence is Sun 390, Moon 360, Mars 300, Mercury 420, Jupiter 390,
+  Venus 330, and Saturn 300.
+- The PyJHora exporter now selects canonical bounded Dig
+  `_dig_bala(method=2)`. The six-component comparator improved from
+  `96 pass / 114 fail` to `145 pass / 65 fail`: Sthana `34/35`, Kaala
+  `0/35`, Dig `35/35`, Chesta `6/35`, Naisargika `35/35`, and Drik `35/35`.
+  The sole Sthana failure is retained as a real divisional-boundary witness:
+  a `0.010271` degree Swiss/PyJHora Jupiter difference at the 1889 Tokyo
+  fixture crosses D3/D9/D12/D30 boundaries.
+- Gate 3 remains deliberately closed at `60 pass / 35 fail / 0 pending`.
+  Drik passes `35/35`, but all 35 full totals disagree with PyJHora's
+  alternate Kaala/Chesta profile. The independent JHora/worked-example
+  witness is still required. Gate 4 is correctly
+  `blocked_legacy_dataset`; no corrected Bala value was applied to the
+  quarantined historical cases.
+- Evidence hashes:
+  `pyjhora_external_strength_values_20260718.csv`
+  `D7045700B49D2EEC5CCED67D55A932811169EC511FD0173106E1A35153D220AA`;
+  `pyjhora_shadbala_components_20260718.csv`
+  `9FD387D50D802A6AF4ACCF905A3D171492E149D6FC5FF18EE9F54A0D2B745A50`;
+  `shadbala_component_residuals_20260718.csv`
+  `F6E05FA5A2DCEF389CE295254DBCE6908AD88380FF586E7782DB38C3E0F49E4E`;
+  `shadbala_component_reconciliation_20260718.md`
+  `79F10F8E90089A848C5D1DF84F1BC6A187E8D31031581E1265D66FBC344D6E22`.
+- The certification report is now
+  `astro_certification_4_gate_v5_bphs_bala_reconciliation_20260718`.
+  Imported evidence can no longer carry obsolete strict-v4/v5 methodology
+  notes into a new run; independent source provenance is retained and
+  comparison notes are regenerated once.
+- Verification: all `277` Python tests pass; `25` focused doctrine,
+  certification, exporter, and comparator tests pass; changed-file Ruff
+  checks and `git diff --check` pass.
+- Runtime/user state was not staged:
+  `gann_aspect_annotations_raman_v2.sqlite`,
+  `candlestick_shadow_v3.sqlite`, `logs/`, and `tryapp-android/`.
+- Detailed rationale: `shadbala_doctrine_corrections_20260718.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260718_090312_shadbala_bala_doctrine_v6`.
 
 ## Latest Update - 2026-07-18 (Six-Component Comparator / JHora Witness / Experimental Forex Layer)
 

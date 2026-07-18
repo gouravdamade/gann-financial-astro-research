@@ -1,4 +1,4 @@
-config_id: doctrine_v2_20260711_audit
+config_id: doctrine_v3_20260718_bala_reconciliation
 status: provisional_audited
 description: >
   Doctrine lock for the USDJPY Gann / Vedic financial astrology research
@@ -35,8 +35,8 @@ drishti:
     - independent_orb_contract_validation
 
 shadbala:
-  method: strict_shadbala_v5_drik_reconciled_provisional
-  status: provisional_source_aligned_drik_tier_b_pending_sunrise_abda_masa_chesta_yuddha_and_independent_validation
+  method: strict_shadbala_v6_bphs_component_reconciliation_provisional
+  status: provisional_bphs_source_profile_with_astronomical_kaala_and_mean_longitude_chesta_pending_jhora_witness
   current_fields: [shadbala_tag, shadbala_avg]
   implemented_components:
     - naisargika_bala
@@ -60,25 +60,24 @@ shadbala:
   doctrine_decisions:
     rahu_ketu_shadbala_policy: excluded_proxy_nodes_not_classical_shadbala_members
     avg_all_policy: seven_classical_planet_component_mean
-    saptavargaja_policy: D1_D2_D3_D7_D9_D12_D30_compound_relationship_v1
-    kaala_abda_masa_policy: deterministic_epoch_day_lords_pending_cross_validation
-    chesta_policy: sun_equals_ayana_moon_equals_doubled_paksha_other_speed_buckets_provisional
-    yuddha_policy: detect_close_candidates_but_score_zero_pending_source_and_calculator_certification
+    saptavargaja_policy: BPHS_source_weights_and_D1_degree_moolatrikona_with_named_PyJHora_comparator_profile
+    kaala_abda_masa_policy: BPHS_Ahargana_anchor_1860_sunrise_boundary_and_astronomical_rise_set
+    chesta_policy: sun_equals_ayana_moon_equals_doubled_paksha_others_mean_true_seegrocha_model
+    chesta_motion_policy: eight_motion_state_speed_buckets_are_diagnostic_not_base_Chesta
+    yuddha_policy: detect_within_1deg_candidates_and_fail_closed_pending_disc_diameter_certification
   minimum_total_virupa:
-    SUN: 300
+    SUN: 390
     MOON: 360
     MARS: 300
     MERCURY: 420
     JUPITER: 390
     VENUS: 330
     SATURN: 300
-  minimum_total_source: SHADBALA_JAYA lines 743-745
+  minimum_total_source: BPHS Santhanam chapter 27 Shadbala minimum totals
   missing:
-    - external_canonical_calculator_validation
-    - actual_sunrise_sunset_and_proportional_hora
-    - exact_traditional_abda_masa_epoch_crosscheck
-    - full_chesta_mean_true_anomaly_and_avasta_crosscheck
-    - graha_yuddha_source_resolution
+    - independent_jhora_component_witness
+    - chesta_mean_longitude_model_crosscheck
+    - graha_yuddha_disc_diameter_source_resolution
     - ishta_kashta_phala
 
 drik_bala:

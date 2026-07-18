@@ -1,7 +1,7 @@
 # Astro Function Certification 4-Gate Report
 
-- Report version: `astro_certification_4_gate_v4_drik_reconciled_20260718`
-- Generated: `2026-07-18T06:56:50+05:30`
+- Report version: `astro_certification_4_gate_v5_bphs_bala_reconciliation_20260718`
+- Generated: `2026-07-18T08:59:13+05:30`
 - Important interpretation: this report certifies traceability and local reproducibility first. Pending and failed external checks remain explicit and fail closed.
 
 ## Gate Summary
@@ -29,7 +29,7 @@
 | --- | --- | --- | --- | --- |
 | astronomy.raman_ayanamsa | implemented_unvalidated | strict astronomy setting | baseline_generated_pending_external_reference | allow_as_feature_after_external_position_check |
 | astronomy.true_node_rahu_ketu | implemented_unvalidated | strict node position, proxy strength | baseline_generated_pending_external_reference | position_feature_ok_strength_policy_guarded |
-| shadbala.source_aligned_provisional_v5 | implemented_unvalidated | strict formula attempt | provisional_source_aligned_drik_tier_b_pending_sunrise_abda_masa_chesta_yuddha_and_independent_validation | train_as_provisional_numeric_feature_only |
+| shadbala.bphs_component_reconciliation_v6 | implemented_unvalidated | versioned source profile with named comparator variants | provisional_bphs_source_profile_with_astronomical_kaala_and_mean_longitude_chesta_pending_jhora_witness | train_as_provisional_numeric_feature_only |
 | shadbala.avg_all_policy | implemented_unvalidated | research aggregation | pending_walk_forward_and_external_component_validation | train_with_explicit_artificial_feature_label |
 | drik_bala.reconciled_formula_v2 | tier_b_aligned_pending_independent_validation | versioned reconciled formula | tier_b_pyjhora_aligned_pending_independent_jhora_or_worked_example | train_as_provisional_numeric_feature_only |
 | drishti.event_orb_strength | proxy_research_feature | proxy | event_orb_proxy_not_drik_bala | do_not_train_as_doctrine_strength |
@@ -126,6 +126,6 @@ Trading replay is intentionally blocked: current case records use the quarantine
 ## Current Verdict
 
 - Safe to continue astronomy/doctrine inspection with these labels visible.
-- Tier B Drik comparison is 35 pass / 0 fail, while the remaining Shadbala total rows still fail. Keep the full strength feature set provisional, and do not call Drik independently certified until its separate JHora/worked-example witness passes.
+- Tier B Drik comparison is 35 pass / 0 fail. The separate six-component diagnostic is 145 pass / 65 fail: Dig 35/35, Drik 35/35, Naisargika 35/35, Sthana 34/35, Chesta 6/35, and Kaala 0/35. The 35 full-total rows still fail against the alternate PyJHora Kaala/Chesta profile. Keep full Shadbala provisional and require the independent JHora or cited worked-example witness before certification.
 - Do not train on raw local LLM prose. Train on deterministic evidence, manual notes, verified rule lessons, and verifier corrections.
 - Gate 4 is blocked until corrected versioned data replaces the legacy double-sidereal case records.

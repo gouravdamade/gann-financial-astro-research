@@ -960,6 +960,7 @@ def build_reference_context(
             strict_observables.get("speeds", {}),
             strict_observables.get("latitudes", {}),
             strict_observables.get("declinations", {}),
+            float(lat),
         )
         try:
             total = float(components.get("implemented_total_virupa", np.nan))
@@ -1169,6 +1170,7 @@ def build_event_strict_shadbala_context(
         observables.get("speeds", {}),
         observables.get("latitudes", {}),
         observables.get("declinations", {}),
+        lat,
     )
     out["event_strict_shadbala_scope_policy"] = (
         "TN_transiting_body_only_natal_target_strength_not_implemented"

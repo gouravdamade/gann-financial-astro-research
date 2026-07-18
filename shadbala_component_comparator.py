@@ -25,9 +25,9 @@ from pyjhora_external_strength_export import SHADBALA_COMPONENTS
 from strict_shadbala_doctrine import components_for_body
 
 
-COMPARATOR_CONTRACT = "GANN_SHADBALA_COMPONENT_COMPARATOR_V1"
+COMPARATOR_CONTRACT = "GANN_SHADBALA_COMPONENT_COMPARATOR_V2"
 LOCAL_COMPONENT_FIELDS = {
-    "sthana": "sthana_partial_virupa",
+    "sthana": "sthana_comparator_virupa",
     "kaala": "kaala_9_virupa",
     "dig": "dig_virupa",
     "chesta": "chesta_virupa",
@@ -106,6 +106,7 @@ def calculate_local_component_values(
                 speeds,
                 latitudes,
                 declinations,
+                sample.latitude,
             )
             for component, field in LOCAL_COMPONENT_FIELDS.items():
                 value = float(components[field])
@@ -240,7 +241,8 @@ def write_report(
         f"Contract: `{COMPARATOR_CONTRACT}`",
         "",
         "This is a diagnostic Tier B comparison. It does not certify a doctrine or",
-        "authorize execution. The local formulas remain unchanged.",
+        "authorize execution. Source-profile formulas remain distinct from named",
+        "comparator compatibility profiles.",
         "",
         f"- External matrix: `{external_path}`",
         f"- External SHA-256: `{sha256(external_path)}`",
@@ -276,12 +278,34 @@ def write_report(
             f"{float(row['external_value_virupa']):.6f} | "
             f"{float(row['signed_delta_virupa']):+.6f} |"
         )
+    if any(
+        row["sample_id"] == "gann_reference_tokyo"
+        and row["planet"] == "JUPITER"
+        and row["component"] == "sthana"
+        and row["pass_fail"] == "fail"
+        for row in rows
+    ):
+        lines.extend(
+            [
+                "",
+                "## Boundary Sensitivity",
+                "",
+                "- The sole Sthana compatibility failure is the 1889 Tokyo Jupiter fixture.",
+                "  Local Swiss Ephemeris places Jupiter at 249.992006 degrees while PyJHora",
+                "  places it at 250.002277 degrees. That 0.010271-degree difference crosses",
+                "  an exact divisional boundary and changes D3, D9, D12, and D30 assignments.",
+                "  It is retained as a boundary-instability witness, not forced to pass.",
+            ]
+        )
     lines.extend(
         [
             "",
             "## Interpretation Lock",
             "",
             "- A failed component identifies a formula/profile disagreement; it is not repaired by widening tolerance.",
+            "- Sthana uses the named PyJHora compatibility profile here; production retains the BPHS source weights and degree-bounded D1 Moolatrikona.",
+            "- Dig compares against PyJHora `_dig_bala(method=2)`, its bounded circular-distance implementation, not the package default method that can exceed 60 virupa.",
+            "- Kaala and Chesta residuals remain diagnostic because the production source profiles intentionally reject known unbounded or structurally incomplete comparator behavior.",
             "- PyJHora is a secondary comparator. Jagannatha Hora or a reproducible worked example remains required.",
             "- Where legitimate source variants disagree, preserve separate named profiles instead of silently blending them.",
             "",

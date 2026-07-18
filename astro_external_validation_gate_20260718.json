@@ -1,7 +1,7 @@
 {
   "contract": "GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1",
-  "reportVersion": "astro_certification_4_gate_v4_drik_reconciled_20260718",
-  "generatedAtUtc": "2026-07-18T01:26:50+00:00",
+  "reportVersion": "astro_certification_4_gate_v5_bphs_bala_reconciliation_20260718",
+  "generatedAtUtc": "2026-07-18T03:29:13+00:00",
   "status": "failed_external_validation",
   "certified": false,
   "executionAllowed": false,
@@ -33,7 +33,7 @@
   },
   "externalImport": {
     "path": "D:\\PycharmProjects\\pyjhora_external_strength_values_20260718.csv",
-    "sha256": "29A88901CEE0821F3F20C75777D2BDDACDB9524EB253939D9263E693CBDEE9C9",
+    "sha256": "D7045700B49D2EEC5CCED67D55A932811169EC511FD0173106E1A35153D220AA",
     "issues": []
   },
   "requirements": [

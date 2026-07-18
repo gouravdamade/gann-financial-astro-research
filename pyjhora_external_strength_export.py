@@ -259,7 +259,12 @@ def calculate_shadbala_components(
             fixture.longitude,
             utc_offset_hours,
         )
-        vectors = strength.shad_bala(jd, place)
+        vectors = list(strength.shad_bala(jd, place))
+        vectors[SHADBALA_COMPONENTS.index("dig")] = strength._dig_bala(
+            jd,
+            place,
+            method=2,
+        )
         rows.extend(component_rows_from_vectors(fixture.sample_id, vectors, source))
     expected_rows = len(FIXTURES) * len(PLANETS) * len(SHADBALA_COMPONENTS)
     if len(rows) != expected_rows:
@@ -420,7 +425,9 @@ def main() -> int:
     contributions = calculate_drik_contributions(args.pyjhora_root)
     source = (
         f"PyJHora {PYJHORA_VERSION} Tier B isolated export; Raman ayanamsa; "
-        f"wheel sha256 {wheel_hash}; event civil timezone; Tokyo reference coordinates"
+        f"wheel sha256 {wheel_hash}; event civil timezone; Tokyo reference coordinates; "
+        "Dig uses _dig_bala(method=2) canonical bounded circular-distance variant because "
+        "the package default method=1 can exceed 60 virupa"
     )
     components = calculate_shadbala_components(args.pyjhora_root, source)
     merged, updated = merge_strength_rows(rows, values, source)

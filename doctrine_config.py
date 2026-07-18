@@ -11,7 +11,7 @@ import pandas as pd
 DOCTRINE_CONFIG_PATH = Path(__file__).resolve().with_name("doctrine_config.yaml")
 
 SHADBALA_MINIMUM_TOTAL_VIRUPA: dict[str, float] = {
-    "SUN": 300.0,
+    "SUN": 390.0,
     "MOON": 360.0,
     "MARS": 300.0,
     "MERCURY": 420.0,
@@ -22,7 +22,7 @@ SHADBALA_MINIMUM_TOTAL_VIRUPA: dict[str, float] = {
 AVG_ALL_CLASSICAL = ("SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN")
 
 DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
-    "config_id": "doctrine_v2_20260711_audit",
+    "config_id": "doctrine_v3_20260718_bala_reconciliation",
     "status": "provisional_audited",
     "time_standard": {
         "internal_time": "UTC/JD_UT",
@@ -50,8 +50,8 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "current_virupa_field": "event_bphs_like_orb_virupa",
     },
     "shadbala": {
-        "method": "strict_shadbala_v4_source_aligned_provisional",
-        "status": "provisional_source_aligned_components_pending_sunrise_abda_masa_chesta_yuddha_and_external_validation",
+        "method": "strict_shadbala_v6_bphs_component_reconciliation_provisional",
+        "status": "provisional_bphs_source_profile_with_astronomical_kaala_and_mean_longitude_chesta_pending_jhora_witness",
         "current_fields": ["shadbala_tag", "shadbala_avg"],
         "implemented_components": [
             "naisargika_bala",
@@ -76,13 +76,14 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "doctrine_decisions": {
             "rahu_ketu_shadbala_policy": "excluded_proxy_nodes_not_classical_shadbala_members",
             "avg_all_policy": "seven_classical_planet_component_mean",
-            "saptavargaja_policy": "D1_D2_D3_D7_D9_D12_D30_compound_relationship_v1",
-            "kaala_abda_masa_policy": "deterministic_epoch_day_lords_pending_cross_validation",
-            "chesta_policy": "sun_equals_ayana_moon_equals_doubled_paksha_other_speed_buckets_provisional",
-            "yuddha_policy": "detect_close_candidates_but_score_zero_pending_source_and_calculator_certification",
+            "saptavargaja_policy": "BPHS_source_weights_and_D1_degree_moolatrikona_with_named_PyJHora_comparator_profile",
+            "kaala_abda_masa_policy": "BPHS_Ahargana_anchor_1860_sunrise_boundary_and_astronomical_rise_set",
+            "chesta_policy": "sun_equals_ayana_moon_equals_doubled_paksha_others_mean_true_seegrocha_model",
+            "chesta_motion_policy": "eight_motion_state_speed_buckets_are_diagnostic_not_base_Chesta",
+            "yuddha_policy": "detect_within_1deg_candidates_and_fail_closed_pending_disc_diameter_certification",
         },
         "minimum_total_virupa": SHADBALA_MINIMUM_TOTAL_VIRUPA,
-        "minimum_total_source": "SHADBALA_JAYA lines 743-745",
+        "minimum_total_source": "BPHS Santhanam chapter 27 Shadbala minimum totals",
     },
     "drik_bala": {
         "method": "parashara_sripati_six_formula_signed",

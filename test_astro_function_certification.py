@@ -12,6 +12,7 @@ from astro_function_certification import (
     compare_external_value,
     external_gate_summary,
     independent_drik_gate_summary,
+    merge_external_values,
     validate_external_import,
 )
 from doctrine_config import load_doctrine_config
@@ -81,6 +82,42 @@ def test_external_import_rejects_duplicate_unknown_and_unsourced_values() -> Non
     assert any("has no external source" in issue for issue in issues)
     assert any("duplicate external key" in issue for issue in issues)
     assert any("unknown external key" in issue for issue in issues)
+
+
+def test_external_merge_replaces_stale_local_methodology_and_keeps_provenance() -> None:
+    templates = [
+        ExternalTemplateRow(
+            gate="Gate 3",
+            sample_id="sample",
+            feature_key="drik_bala_virupa.SUN",
+            local_value="10.0",
+            external_expected_value="",
+            external_source="",
+            pass_fail="pending",
+            notes="Local strict-v6 BPHS source-profile value. Fill an independent witness.",
+        )
+    ]
+    external_rows = [
+        {
+            "gate": "Gate 3",
+            "sample_id": "sample",
+            "feature_key": "drik_bala_virupa.SUN",
+            "external_expected_value": "10.0",
+            "external_source": "saved comparator",
+            "notes": (
+                "Local strict-v4 value with obsolete methodology. | "
+                "Independent PyJHora Raman-mode export. | "
+                "numeric delta=99.000000000; tolerance=0.5"
+            ),
+        }
+    ]
+    merged = merge_external_values(templates, external_rows)
+    assert len(merged) == 1
+    assert merged[0].pass_fail == "pass"
+    assert "strict-v6" in merged[0].notes
+    assert "strict-v4" not in merged[0].notes
+    assert "Independent PyJHora Raman-mode export." in merged[0].notes
+    assert merged[0].notes.count("numeric delta=") == 1
 
 
 def test_gate_passes_only_for_complete_strength_matrix() -> None:

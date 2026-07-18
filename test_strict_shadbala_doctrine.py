@@ -2,9 +2,17 @@ from __future__ import annotations
 
 import math
 
+from shadbala_doctrine import minimum_shadbala_total_virupa
 from strict_shadbala_doctrine import (
+    AHARGANA_AT_ANCHOR,
+    AYANA_OBLIQUITY_DEG,
+    SAPTAVARGAJA_PYJHORA_PROFILE,
+    SAPTAVARGAJA_SOURCE_PROFILE,
+    ahargana_lords,
     ayana_bala_virupa,
+    astronomical_sunrise_sunset_lmt,
     chesta_bala_virupa,
+    chesta_motion_state_bala_virupa,
     d9_navamsa_sign,
     drekkana_bala_virupa,
     drik_base_strength_virupa,
@@ -22,6 +30,10 @@ from strict_shadbala_doctrine import (
 def assert_close(actual: float, expected: float, tolerance: float = 1e-6) -> None:
     if abs(float(actual) - float(expected)) > tolerance:
         raise AssertionError(f"{actual!r} != {expected!r}")
+
+
+def test_bphs_minimum_totals_include_sun_390_virupa() -> None:
+    assert_close(minimum_shadbala_total_virupa("SUN"), 390.0)
 
 
 def test_drik_six_formula_checkpoints() -> None:
@@ -85,8 +97,20 @@ def test_saptavargaja_detail_shape() -> None:
         "SATURN": 330.0,
     }
     out = saptavargaja_bala("SUN", 10.0, longitudes)
+    comparator = saptavargaja_bala(
+        "SUN",
+        10.0,
+        longitudes,
+        profile=SAPTAVARGAJA_PYJHORA_PROFILE,
+    )
     assert len(out["saptavarga_details"]) == 7
     assert out["saptavargaja_virupa"] > 0
+    assert out["profile"] == SAPTAVARGAJA_SOURCE_PROFILE
+    assert comparator["profile"] == SAPTAVARGAJA_PYJHORA_PROFILE
+    assert all(
+        detail["label"] not in {"exaltation", "debilitation"}
+        for detail in out["saptavarga_details"]
+    )
 
 
 def test_nathonnatha_local_mean_time() -> None:
@@ -100,33 +124,60 @@ def test_nathonnatha_local_mean_time() -> None:
 
 
 def test_chesta_and_yuddha_decisions() -> None:
-    chesta, status = chesta_bala_virupa("MARS", -0.2)
-    assert_close(chesta, 60.0)
-    assert status == "vakra_retrograde"
+    motion, motion_status = chesta_motion_state_bala_virupa("MARS", -0.2)
+    assert_close(motion, 60.0)
+    assert motion_status == "vakra_retrograde_speed_diagnostic"
+    chesta, status = chesta_bala_virupa(
+        "MARS",
+        -0.2,
+        timestamp="2025-03-07T00:00:00+00:00",
+        true_longitude=100.0,
+        sun_longitude=10.0,
+    )
+    assert 0.0 <= chesta <= 60.0
+    assert "mean_true_seegrocha" in status
     yuddha, ystatus = yuddha_bala_virupa(
         "MARS",
         {"MARS": 100.0, "MERCURY": 100.5, "JUPITER": 240.0, "VENUS": 300.0, "SATURN": 330.0},
         {"MARS": 0.1, "MERCURY": 0.5},
     )
-    assert_close(yuddha, 0.0)
-    assert "uncertified_excluded" in ystatus
+    assert math.isnan(yuddha)
+    assert "fail_closed" in ystatus
 
 
 def test_source_aligned_drekkana_paksha_ayana_and_luminary_chesta() -> None:
     assert_close(drekkana_bala_virupa("SUN", 5.0), 15.0)
-    assert_close(drekkana_bala_virupa("MOON", 15.0), 15.0)
-    assert_close(drekkana_bala_virupa("VENUS", 15.0), 15.0)
-    assert_close(drekkana_bala_virupa("MERCURY", 25.0), 15.0)
-    assert_close(drekkana_bala_virupa("SATURN", 25.0), 15.0)
+    assert_close(drekkana_bala_virupa("MERCURY", 15.0), 15.0)
+    assert_close(drekkana_bala_virupa("SATURN", 15.0), 15.0)
+    assert_close(drekkana_bala_virupa("MOON", 25.0), 15.0)
+    assert_close(drekkana_bala_virupa("VENUS", 25.0), 15.0)
     assert_close(paksha_bala_virupa("JUPITER", 0.0, 120.0), 40.0)
     assert_close(paksha_bala_virupa("MOON", 0.0, 120.0), 80.0)
-    assert_close(ayana_bala_virupa("SUN", 24.0), 120.0)
+    assert_close(ayana_bala_virupa("SUN", AYANA_OBLIQUITY_DEG), 120.0)
     sun_chesta, sun_status = chesta_bala_virupa("SUN", 1.0, ayana_virupa=72.0)
     moon_chesta, moon_status = chesta_bala_virupa("MOON", 13.0, paksha_virupa=84.0)
     assert_close(sun_chesta, 72.0)
     assert_close(moon_chesta, 84.0)
     assert sun_status == "sun_chesta_equals_ayana"
     assert moon_status == "moon_chesta_equals_paksha"
+
+
+def test_ahargana_anchor_and_astronomical_sunrise() -> None:
+    lords = ahargana_lords("1860-01-01T12:00:00+00:00", 0.0, 6.0)
+    assert lords == {
+        "ahargana": AHARGANA_AT_ANCHOR,
+        "abda": "JUPITER",
+        "masa": "SATURN",
+        "dina": "SUN",
+    }
+    sunrise, sunset, status = astronomical_sunrise_sunset_lmt(
+        "2025-03-07T00:00:00+00:00",
+        139.6503,
+        35.6762,
+    )
+    assert 4.0 <= sunrise <= 8.0
+    assert 16.0 <= sunset <= 20.0
+    assert status == "swiss_ephemeris_apparent_solar_rise_set_lmt"
 
 
 def test_avg_all_component_mean_context() -> None:
@@ -153,13 +204,15 @@ def test_avg_all_component_mean_context() -> None:
         speeds,
         latitudes,
         declinations,
+        35.6762,
     )
     assert math.isfinite(float(ctx["event_b1_strict_saptavargaja_bala_virupa"]))
     assert math.isfinite(float(ctx["event_b1_strict_kaala_9_bala_virupa"]))
-    assert "external_canonical_calculator_validation" in ctx["event_strict_shadbala_missing_components"]
+    assert "independent_jhora_component_witness" in ctx["event_strict_shadbala_missing_components"]
 
 
 def run_all() -> None:
+    test_bphs_minimum_totals_include_sun_390_virupa()
     test_drik_six_formula_checkpoints()
     test_drik_v2_wrapper_exposes_normalized_and_raw_audit_fields()
     test_navamsa_and_ojayugma()
@@ -167,6 +220,7 @@ def run_all() -> None:
     test_nathonnatha_local_mean_time()
     test_chesta_and_yuddha_decisions()
     test_source_aligned_drekkana_paksha_ayana_and_luminary_chesta()
+    test_ahargana_anchor_and_astronomical_sunrise()
     test_avg_all_component_mean_context()
 
 
