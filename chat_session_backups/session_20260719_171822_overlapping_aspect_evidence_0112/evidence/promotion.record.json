@@ -1,0 +1,26 @@
+﻿{
+    "recorded_at_utc":  "2026-07-19T11:44:00.5863282Z",
+    "promotion_stamp":  "20260719T114322Z",
+    "from_version":  "0.10.11",
+    "to_version":  "0.10.12",
+    "source_git_commit":  "53fbf8ae822f704c9e8de4444f2a3ee987458e8c",
+    "source_git_dirty":  true,
+    "candidate":  "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.12-tauri",
+    "stable":  "D:\\GannFinancialAstro\\release\\GannAstroDesk",
+    "candidate_soak":  "D:\\GannFinancialAstro\\soak\\tauri_0.10.12_20260719_113938\\logs\\native_soak_report.json",
+    "stable_soak":  "D:\\GannFinancialAstro\\soak\\tauri_0.10.12_20260719_114416\\logs\\native_soak_report.json",
+    "conditional_pass":  true,
+    "deferred_checks":  [
+                            "mt5_time_normalization_closed_market"
+                        ],
+    "execution_allowed":  false,
+    "archive":  "D:\\GannFinancialAstro\\release_archive\\GannAstroDesk_0.10.11_20260719T114322Z",
+    "app_data_backup":  "D:\\GannFinancialAstro\\app_data_backups\\app_data_before_0.10.12_20260719T114322Z",
+    "app_data_backup_files":  672,
+    "app_data_backup_bytes":  70696678,
+    "executable_sha256":  "210B44AF8395351CD79BDB16B1062952E038BCF10FB9DA2BB499A0AAE9C02A64",
+    "installer_sha256":  "37828C10F0A0151C3C3433E736EBE10B62521699057435E3D35C5477F02C2C28",
+    "aspect_presentation_contract":  "all visible aspect windows translucent; overlap click cycles; details and review actions",
+    "currency_evidence_contract":  "GANN_FX_PAIR_EVIDENCE_V1",
+    "stable_soak_passed":  true
+}

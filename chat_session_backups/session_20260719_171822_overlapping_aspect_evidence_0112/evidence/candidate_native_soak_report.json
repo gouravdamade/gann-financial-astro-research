@@ -1,0 +1,78 @@
+﻿{
+    "contract":  "GANN_TAURI_NATIVE_SOAK_V1",
+    "started_at_utc":  "2026-07-19T11:39:38.5769068Z",
+    "candidate":  "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.12-tauri",
+    "data_root":  "D:\\GannFinancialAstro\\soak\\tauri_0.10.12_20260719_113938",
+    "crash_recovery_requested":  true,
+    "checks":  {
+                   "initial_health":  true,
+                   "mt5_trade_allowed_false":  true,
+                   "mt5_app_execution_locked":  true,
+                   "mt5_read_only_mode":  true,
+                   "chakra_endpoint_ok":  true,
+                   "chakra_contract":  true,
+                   "chakra_board_has_81_cells":  true,
+                   "chakra_cutoff_matches_as_of":  true,
+                   "chakra_jupiter_motion_explicit":  true,
+                   "chakra_timestamp_guardrails":  true,
+                   "chakra_market_execution_locked":  true,
+                   "candlestick_health_contract":  true,
+                   "candlestick_corpus_ready":  true,
+                   "candlestick_evidence_contract":  true,
+                   "candlestick_closed_bars_only":  true,
+                   "candlestick_inference_locked":  true,
+                   "candlestick_shadow_contract":  true,
+                   "candlestick_shadow_trial_frozen":  true,
+                   "mt5_clock_probe_contract":  true,
+                   "mt5_time_normalization_contract":  true,
+                   "mt5_time_normalization_deferred_closed_market":  true,
+                   "candlestick_shadow_chain_valid":  true,
+                   "candlestick_shadow_failed_gate_visible":  true,
+                   "candlestick_shadow_execution_locked":  true,
+                   "layout_created":  true,
+                   "sidecar_pid_changed":  true,
+                   "same_port_recovery":  true,
+                   "recovered_health":  true,
+                   "layout_survived_recovery":  true,
+                   "refresh_execution_locked":  true,
+                   "diagnostics_execution_locked":  true,
+                   "diagnostics_contract":  true,
+                   "no_descendant_survivors":  true
+               },
+    "deferred_checks":  [
+                            "mt5_time_normalization_closed_market"
+                        ],
+    "errors":  [
+
+               ],
+    "execution_allowed":  false,
+    "initial_app_pid":  8520,
+    "initial_sidecar_pid":  5676,
+    "initial_port":  59338,
+    "chakra_snapshot_id":  "5834B5B6ACC66A9D896C0C0E4434248E4843DAC684E0535B55E115431CE62EBB",
+    "candlestick_event_id":  "e108c6c894039cff4616eeff604582a774e9189bee4967781c5dbbb608e5e08c",
+    "layout_id":  "3120e761-01db-4111-a059-b00b0c5b3483",
+    "recovered_sidecar_pid":  17496,
+    "recovered_port":  59338,
+    "diagnostics_session_id":  "eda7db9e9db04c37a1d54812535ce77f",
+    "diagnostics_startup_ms":  2963.12,
+    "descendant_pids_before_shutdown":  [
+                                            26972,
+                                            17496,
+                                            17180,
+                                            2032,
+                                            9448
+                                        ],
+    "surviving_descendant_pids":  [
+
+                                  ],
+    "preexisting_parentage_pids_ignored":  [
+
+                                           ],
+    "finished_at_utc":  "2026-07-19T11:42:02.8377241Z",
+    "failed_checks":  [
+
+                      ],
+    "passed":  true,
+    "conditional_pass":  true
+}
