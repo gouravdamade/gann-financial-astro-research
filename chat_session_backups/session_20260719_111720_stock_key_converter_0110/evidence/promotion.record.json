@@ -1,0 +1,22 @@
+{
+  "recorded_at_utc": "2026-07-19T05:48:48.5056666Z",
+  "promotion_stamp": "20260719T053806Z",
+  "from_version": "0.10.9",
+  "to_version": "0.10.10",
+  "source_git_commit": "ec72cf61aa5ae1009ceb7963b3a62cead63ab274",
+  "candidate": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.10-tauri",
+  "stable": "D:\\GannFinancialAstro\\release\\GannAstroDesk",
+  "candidate_soak": "D:\\GannFinancialAstro\\soak\\tauri_0.10.10_20260718_185508\\logs\\native_soak_report.json",
+  "stable_soak": "D:\\GannFinancialAstro\\soak\\tauri_0.10.10_20260719_054344\\logs\\native_soak_report.json",
+  "conditional_pass": true,
+  "deferred_checks": [
+    "mt5_time_normalization_closed_market"
+  ],
+  "execution_allowed": false,
+  "archive": "D:\\GannFinancialAstro\\release_archive\\GannAstroDesk_0.10.9_20260719T053806Z",
+  "state_backup": "D:\\GannFinancialAstro\\state_backups\\pre_0.10.10_promotion_20260719T053806Z",
+  "executable_sha256": "8C9EB04EFF6398816D7C8E94C20629BC398A111AA4101E9AA007BB276E3862F2",
+  "installer_sha256": "A20603D24806A10184BB4F033E3C553C74600441ED621656C77F370821201659",
+  "webview_asset_cache_contract": "GANN_TAURI_VERSIONED_ENTRYPOINT_V1",
+  "converter_contract": "SBC_ENGLISH_INITIAL_ADVISORY_V1"
+}
