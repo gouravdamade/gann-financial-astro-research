@@ -1,10 +1,10 @@
 # Current Project Handoff
 
-Last updated: 2026-07-19 21:32 IST
+Last updated: 2026-07-19 22:04 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-07-19 (Timestamp-Safe RSI / Market Synthesis / 0.10.14 Source Candidate)
+## Latest Update - 2026-07-19 (Timestamp-Safe RSI / Market Synthesis / Stable 0.10.14)
 
 - Added a native Lightweight Charts RSI pane that follows the selected chart
   timeframe. It uses Wilder close RSI, fully closed bars only, period `2-200`,
@@ -37,17 +37,38 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   graceful local-runtime-unavailable behavior. A prospective occurrence with
   only 7 closed bars correctly failed the 15-bar RSI-14 warm-up instead of
   borrowing future bars.
-- Native packaging now records the RSI and market-synthesis contracts. The soak
-  must verify RSI closed-bar guardrails and both feature execution locks before
-  promotion.
+- Native packaging records the RSI and market-synthesis contracts. Candidate and
+  stable-path soaks verified RSI closed-bar guardrails, both feature execution
+  locks, same-port sidecar recovery, layout persistence, and child cleanup.
 - Verification passed: frontend `56/56` across 18 files, backend `109/109`,
   Oxlint, TypeScript/Vite production build, PowerShell packaging parser checks,
   and source-diff hygiene. The production build retains one informational Vite
   warning because the main chart chunk is 501.74 kB, just over the default
   500 kB advisory threshold; this is not a build failure.
-- Version metadata is staged at `0.10.14`. Native candidate build, native soak,
-  stable promotion, hashes, and recovery snapshot are the remaining release
-  steps for this update.
+- Packaged and promoted native `0.10.14` from source commit `0036b52`. Stable
+  executable:
+  `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`; installer:
+  `D:\GannFinancialAstro\release\GannAstroDesk\Gann Astro Desk_0.10.14_x64-setup.exe`.
+  Executable SHA-256:
+  `2DCC84088CE31EBCE2AC02D7C5EACB35474DD80BDE7FEE6EE17F4D28239C539F`;
+  installer SHA-256:
+  `F32F20926EA72A3435C208EAB830D24B49E4B26A52493335753B665B1B4E91BD`.
+- Candidate native soak passed:
+  `D:\GannFinancialAstro\soak\tauri_0.10.14_20260719_162227\logs\native_soak_report.json`.
+  Stable-path soak also passed:
+  `D:\GannFinancialAstro\soak\tauri_0.10.14_20260719_163015\logs\native_soak_report.json`.
+  Each passed 39/39 checks with zero errors, zero failed checks, same-port crash
+  recovery, preserved layout, execution locks, and zero descendant survivors.
+  Both are conditional only because Sunday closure deferred the fresh MT5
+  time-normalization tick check.
+- Archived prior stable:
+  `D:\GannFinancialAstro\release_archive\GannAstroDesk_0.10.13_20260719_215559`.
+  Pre-promotion writable-state backup:
+  `D:\GannFinancialAstro\app_data_backups\app_data_before_0.10.14_20260719_215559`
+  (672 files / 70,705,307 bytes). Both Sarvatobhadra manual files remain beside
+  the promoted executable.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260719_220417_rsi_market_synthesis_0114`.
 - External Shadbala/Drik certification remains unchanged and visibly failed:
   35/70 comparator checks passed and independent Drik witness 0/35 passed.
   RSI/candlestick/synthesis use remains research-only pending prospective,
