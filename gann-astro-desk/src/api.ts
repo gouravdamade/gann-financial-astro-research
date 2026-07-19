@@ -20,6 +20,9 @@ import type {
   LocalCandlestickHealth,
   LocalJyotishDraft,
   LocalJyotishHealth,
+  MarketSynthesisDraft,
+  MarketSynthesisHealth,
+  RsiEvidence,
   Mt5HistorySnapshot,
   Mt5Status,
   ParameterSchema,
@@ -447,6 +450,39 @@ export async function fetchCandlestickEvidence(input: {
     body: JSON.stringify(input),
   })
   return payload.evidence
+}
+
+export async function fetchRsiEvidence(input: {
+  eventId: string
+  annotationId?: string | null
+  period?: number
+  levels?: number[]
+}): Promise<RsiEvidence> {
+  const payload = await request<{ evidence: RsiEvidence }>('/api/rsi/evidence', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.evidence
+}
+
+export async function fetchMarketSynthesisHealth(): Promise<MarketSynthesisHealth> {
+  const payload = await request<{ marketSynthesis: MarketSynthesisHealth }>('/api/market-synthesis/health')
+  return payload.marketSynthesis
+}
+
+export async function analyzeWithMarketSynthesis(input: {
+  eventId: string
+  annotationId?: string | null
+  question: string
+  period: number
+  levels: number[]
+  inputs: { astrology: boolean; candlesticks: boolean; rsi: boolean }
+}): Promise<MarketSynthesisDraft> {
+  const payload = await request<{ draft: MarketSynthesisDraft }>('/api/market-synthesis/analyze', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.draft
 }
 
 export async function analyzeWithLocalCandlestick(input: {

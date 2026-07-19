@@ -1,8 +1,60 @@
 # Current Project Handoff
 
-Last updated: 2026-07-19 19:17 IST
+Last updated: 2026-07-19 21:32 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-19 (Timestamp-Safe RSI / Market Synthesis / 0.10.14 Source Candidate)
+
+- Added a native Lightweight Charts RSI pane that follows the selected chart
+  timeframe. It uses Wilder close RSI, fully closed bars only, period `2-200`,
+  default levels `30/50/70`, editable custom levels, a fixed `0-100` scale, and
+  explicit warm-up status. Aspect shading remains confined to the price pane.
+- Horizontal and vertical drawings are now pane-aware. They may be attached to
+  the price pane, RSI pane, or (for vertical lines) all panes. RSI drawings are
+  editable, deletable, autosaved with the timeframe layout, and retained across
+  layout reloads. Older drawings migrate to the price pane; unsupported tools
+  cannot be placed on RSI.
+- Added deterministic `GANN_RSI_EVIDENCE_V1` using methodology
+  `wilder_smoothed_close_v1`. Analyze Aspect now reports cutoff value/zone,
+  event-window minimum/maximum/change, configured-level crossings, warm-up
+  availability, and explicit research-only guardrails. A level touch is never
+  promoted to proof of reversal.
+- Added a separate research-only Market Synthesis coordinator with contracts
+  `GANN_LOCAL_MARKET_SYNTHESIS_DRAFT_V1` and
+  `GANN_MARKET_SYNTHESIS_PACKET_V1`. It compares isolated deterministic
+  astrology, candlestick geometry, and RSI packets while the Local Jyotish
+  agent remains the astrology/doctrine specialist.
+- The coordinator strips retrospective outcome/return/P&L/MFE/MAE/excursion
+  fields and candlestick hindsight, requires specialist cutoffs to agree, asks
+  for bullish/bearish/abstain plus closed-bar conditions, and verifies drafts
+  for execution language, certainty, and references to excluded inputs. It is
+  not consumed by live inference or shadow ledgers and cannot place orders or
+  unlock execution.
+- Analyze Aspect now has seven compact work areas: Evidence, Notes, Candles,
+  RSI, Synthesis, Local Jyotish, and Codex. Browser QA confirmed nonblank H1 and
+  H4 RSI panes, correct timeframe recalculation, RSI drawing persistence, and
+  graceful local-runtime-unavailable behavior. A prospective occurrence with
+  only 7 closed bars correctly failed the 15-bar RSI-14 warm-up instead of
+  borrowing future bars.
+- Native packaging now records the RSI and market-synthesis contracts. The soak
+  must verify RSI closed-bar guardrails and both feature execution locks before
+  promotion.
+- Verification passed: frontend `56/56` across 18 files, backend `109/109`,
+  Oxlint, TypeScript/Vite production build, PowerShell packaging parser checks,
+  and source-diff hygiene. The production build retains one informational Vite
+  warning because the main chart chunk is 501.74 kB, just over the default
+  500 kB advisory threshold; this is not a build failure.
+- Version metadata is staged at `0.10.14`. Native candidate build, native soak,
+  stable promotion, hashes, and recovery snapshot are the remaining release
+  steps for this update.
+- External Shadbala/Drik certification remains unchanged and visibly failed:
+  35/70 comparator checks passed and independent Drik witness 0/35 passed.
+  RSI/candlestick/synthesis use remains research-only pending prospective,
+  purged out-of-sample validation.
+- Runtime-only files remain deliberately outside this change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-19 (Timestamp-Safe Family Evidence / Stable 0.10.13)
 

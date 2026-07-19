@@ -11,6 +11,7 @@ import {
 } from './api'
 import {
   defaultDrawingPreferences,
+  defaultRsiPaneSettings,
   layoutSignature,
   validateImportedLayout,
   type ChartLayoutScope,
@@ -82,7 +83,12 @@ export function useChartLayouts({
 
   const installLayout = useCallback((layout: ChartLayout) => {
     const legacySquare = layout.drawings.find((drawing) => drawing.type === 'square_of_nine')
-    const drawings = layout.drawings.filter((drawing) => drawing.type !== 'square_of_nine')
+    const drawings = layout.drawings
+      .filter((drawing) => drawing.type !== 'square_of_nine')
+      .map((drawing) => ({
+        ...drawing,
+        pane: drawing.pane === 'rsi' || drawing.pane === 'global' ? drawing.pane : 'price' as const,
+      }))
     const migratedChartState = legacySquare && !layout.chartState.squareOfNine
       ? {
           ...layout.chartState,
@@ -97,6 +103,10 @@ export function useChartLayouts({
       drawingPreferences: {
         ...defaultDrawingPreferences(),
         ...(migratedChartState.drawingPreferences ?? {}),
+      },
+      rsi: {
+        ...defaultRsiPaneSettings(),
+        ...(migratedChartState.rsi ?? {}),
       },
     }
     const installedLayout = { ...layout, chartState, drawings }

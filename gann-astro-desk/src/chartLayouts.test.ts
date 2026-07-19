@@ -3,6 +3,7 @@ import {
   createChartDrawing,
   defaultDrawingPreferences,
   defaultFibonacciSettings,
+  defaultRsiPaneSettings,
   defaultSquareOfNineSettings,
   squareOfNineLevels,
   squareOfNineValue,
@@ -73,6 +74,38 @@ describe('layout import guardrails', () => {
     expect(imported.drawings[0].guardrails.executionAllowed).toBe(false)
     expect(imported.drawings[0].guardrails.consumedByLiveInference).toBe(false)
     expect(imported.drawings[0].syncScope).toBe('layout')
+    expect(imported.drawings[0].pane).toBe('price')
     expect(imported.chartState.drawingPreferences).toEqual(defaultDrawingPreferences())
+    expect(imported.chartState.rsi).toEqual(defaultRsiPaneSettings())
+  })
+
+  it('preserves explicit RSI drawings and normalized indicator settings', () => {
+    const imported = validateImportedLayout({
+      contract: 'GANN_CHART_LAYOUT_V1',
+      schemaVersion: 1,
+      layoutId: 'rsi-layout',
+      name: 'RSI research',
+      workspaceKind: 'main',
+      symbol: 'USDJPY',
+      timeframe: 'H4',
+      familyKey: '',
+      revision: 1,
+      isDefault: false,
+      autosave: true,
+      chartState: {
+        showAspects: true,
+        showSrLines: true,
+        rsi: { visible: true, period: 21, levels: [20, 50, 80] },
+      },
+      drawings: [{
+        drawingId: 'rsi-level-1',
+        type: 'horizontal_line',
+        pane: 'rsi',
+        anchors: [{ timeUtc: '2026-07-13T10:00:00Z', price: 63.5 }],
+      }],
+    })
+    expect(imported.chartState.rsi).toMatchObject({ visible: true, period: 21, levels: [20, 50, 80] })
+    expect(imported.drawings[0].pane).toBe('rsi')
+    expect(imported.drawings[0].anchors[0].price).toBe(63.5)
   })
 })

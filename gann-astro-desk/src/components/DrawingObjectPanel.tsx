@@ -162,7 +162,7 @@ export function DrawingObjectPanel({
           <div className={`drawing-object-row ${drawing.drawingId === selectedDrawingId ? 'is-selected' : ''}`} key={drawing.drawingId}>
             <button className="drawing-object-name" onClick={() => onSelect(drawing.drawingId)} title={`Select ${drawing.name}`}>
               <DrawingIcon drawing={drawing} />
-              <span><strong>{drawing.name}</strong><small>{drawing.groupName || 'Ungrouped'} / {drawing.syncScope === 'symbol' ? 'Symbol sync' : 'This layout'}</small></span>
+              <span><strong>{drawing.name}</strong><small>{drawing.groupName || 'Ungrouped'} / {drawing.pane === 'rsi' ? 'RSI pane' : drawing.pane === 'global' ? 'All panes' : 'Price pane'} / {drawing.syncScope === 'symbol' ? 'Symbol sync' : 'This layout'}</small></span>
             </button>
             <button className="icon-button" onClick={() => onUpdate(drawing.drawingId, { visible: !drawing.visible })} title={drawing.visible ? 'Hide drawing' : 'Show drawing'}>{drawing.visible ? <Eye size={14} /> : <EyeOff size={14} />}</button>
             <button className="icon-button" onClick={() => onUpdate(drawing.drawingId, { locked: !drawing.locked })} title={drawing.locked ? 'Unlock drawing' : 'Lock drawing'}>{drawing.locked ? <Lock size={14} /> : <Unlock size={14} />}</button>
@@ -175,6 +175,19 @@ export function DrawingObjectPanel({
         <div className="drawing-properties">
           <div className="property-heading"><strong>Properties</strong><span>{selected.type.replaceAll('_', ' ')}</span></div>
           <label>Name<input value={selected.name} maxLength={80} onChange={(event) => onUpdate(selected.drawingId, { name: event.target.value })} /></label>
+          {(selected.type === 'horizontal_line' || selected.type === 'vertical_line') && (
+            <label>
+              Pane
+              <select
+                value={selected.pane ?? (selected.type === 'vertical_line' ? 'global' : 'price')}
+                onChange={(event) => onUpdate(selected.drawingId, { pane: event.target.value as ChartDrawing['pane'] })}
+              >
+                <option value="price">Price</option>
+                <option value="rsi">RSI</option>
+                {selected.type === 'vertical_line' && <option value="global">All panes</option>}
+              </select>
+            </label>
+          )}
           <div className="property-grid">
             <label>Color<input className="color-swatch-input" type="color" value={selected.style.color} onChange={(event) => updateStyle({ color: event.target.value })} /></label>
             <label>Width<select value={selected.style.lineWidth} onChange={(event) => updateStyle({ lineWidth: Number(event.target.value) })}><option value={1}>1 px</option><option value={2}>2 px</option><option value={3}>3 px</option><option value={4}>4 px</option></select></label>
@@ -245,7 +258,7 @@ export function DrawingObjectPanel({
                   const date = new Date(event.target.value)
                   if (Number.isFinite(date.getTime())) updateAnchor(index, { timeUtc: date.toISOString() })
                 }} /></label>}
-                {selected.type !== 'vertical_line' && <label>Price<input type="number" step="any" value={anchor.price} disabled={selected.locked} onChange={(event) => updateAnchor(index, { price: Number(event.target.value) })} /></label>}
+                {selected.type !== 'vertical_line' && <label>{selected.pane === 'rsi' ? 'RSI level' : 'Price'}<input type="number" min={selected.pane === 'rsi' ? 0 : undefined} max={selected.pane === 'rsi' ? 100 : undefined} step="any" value={anchor.price} disabled={selected.locked} onChange={(event) => updateAnchor(index, { price: Number(event.target.value) })} /></label>}
               </div>
             ))}
           </div>

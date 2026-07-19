@@ -20,6 +20,7 @@ export type WorkspacePreferences = {
 export type ChartWorkspaceKind = 'main' | 'analysis'
 export type DrawingMagnetMode = 'off' | 'weak' | 'strong'
 export type DrawingSyncScope = 'layout' | 'symbol'
+export type ChartDrawingPane = 'price' | 'rsi' | 'global'
 
 export type DrawingPreferences = {
   favoriteTools: ChartTool[]
@@ -121,6 +122,7 @@ export type ChartDrawing = {
   groupId: string | null
   groupName: string
   syncScope: DrawingSyncScope
+  pane?: ChartDrawingPane
   zIndex: number
   anchors: ChartDrawingAnchor[]
   style: ChartDrawingStyle
@@ -133,12 +135,27 @@ export type ChartDrawing = {
   }
 }
 
+export type RsiPaneSettings = {
+  contract: 'GANN_RSI_PANE_SETTINGS_V1'
+  visible: boolean
+  period: number
+  source: 'close'
+  timeframe: 'chart'
+  levels: number[]
+}
+
+export type RsiPoint = {
+  time: number
+  value: number
+}
+
 export type ChartLayoutState = {
   visibleStartUtc?: string
   visibleEndUtc?: string
   showAspects: boolean
   showSrLines: boolean
   drawingPreferences?: DrawingPreferences
+  rsi?: RsiPaneSettings
   squareOfNine?: SquareOfNineWorkspaceState
 }
 
@@ -1131,6 +1148,117 @@ export type CandlestickEvidence = {
     consumedByShadowLedger: false
     executionAllowed: false
   }
+}
+
+export type RsiEvidence = {
+  contract: 'GANN_RSI_EVIDENCE_V1'
+  methodologyVersion: 'wilder_smoothed_close_v1'
+  eventId: string
+  symbol: string
+  timeframe: string
+  source: 'close'
+  period: number
+  levels: number[]
+  barSeconds: number
+  eventStart: string
+  eventEnd: string
+  analysisCutoff: string
+  selectedAnnotationId: string
+  closedBarCountAtCutoff: number
+  warmupBarsRequired: number
+  ready: boolean
+  focus: null | {
+    barOpenTime: string
+    barCloseTime: string
+    close: number
+    value: number
+    zone: 'unavailable' | 'at_or_above_70' | 'at_or_below_30' | 'above_midline' | 'below_midline'
+    nearestLevel: number
+    distanceToNearestLevel: number
+  }
+  eventWindow: {
+    sampleCount: number
+    startValue: number | null
+    endValue: number | null
+    minimum: number | null
+    maximum: number | null
+    change: number | null
+    crossings: Array<{
+      level: number
+      direction: 'up' | 'down'
+      time: string
+      from: number
+      to: number
+    }>
+  }
+  guardrails: {
+    analysisOnly: true
+    closedBarsOnlyAtCutoff: true
+    wilderMethodExplicit: true
+    levelTouchIsNotReversalProof: true
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+}
+
+export type MarketSynthesisHealth = {
+  contract: 'GANN_LOCAL_MARKET_SYNTHESIS_DRAFT_V1'
+  ready: boolean
+  runtimeReady: boolean
+  model: string
+  availableModels: string[]
+  error: string
+  analysisOnly: true
+  executionAllowed: false
+}
+
+export type MarketSynthesisDraft = {
+  contract: 'GANN_LOCAL_MARKET_SYNTHESIS_DRAFT_V1'
+  draftId: string
+  eventId: string
+  model: string
+  text: string
+  packet: {
+    contract: 'GANN_MARKET_SYNTHESIS_PACKET_V1'
+    eventId: string
+    symbol: string
+    timeframe: string
+    analysisCutoff: string
+    includedInputs: {
+      astrology: boolean
+      candlesticks: boolean
+      rsi: boolean
+    }
+    astrology: Record<string, unknown> | null
+    candlesticks: Omit<CandlestickEvidence, 'hindsight'> | null
+    rsi: RsiEvidence | null
+    guardrails: {
+      analysisOnly: true
+      specialistPacketsRemainIsolated: true
+      retrospectiveOutcomeExcluded: true
+      candlestickHindsightExcluded: true
+      closedBarsOnlyAtCutoff: true
+      consumedByLiveInference: false
+      consumedByShadowLedger: false
+      automaticOrderPlacement: false
+      executionAllowed: false
+    }
+  }
+  verifier: {
+    status: 'pass' | 'review_required'
+    issues: string[]
+  }
+  guardrails: {
+    analysisOnly: true
+    deterministicEvidenceIsGroundTruth: true
+    rawDraftIsOfficial: false
+    consumedByLiveInference: false
+    consumedByShadowLedger: false
+    automaticOrderPlacement: false
+    executionAllowed: false
+  }
+  disclaimer: string
 }
 
 export type LocalCandlestickHealth = {

@@ -2231,19 +2231,177 @@
 
 .analysis-tabs {
   height: 39px;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
   gap: 2px;
   padding: 5px;
   border-bottom: 1px solid var(--border);
   flex: 0 0 auto;
+  overflow-x: auto;
 }
 
 .analysis-tabs button {
+  flex: 1 0 56px;
   justify-content: center;
   min-width: 0;
   padding: 0 3px;
   font-size: 8px;
+}
+
+.rsi-analysis-controls {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 7px;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rsi-analysis-controls label {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  color: #8194a6;
+  font-size: 8px;
+}
+
+.rsi-analysis-controls input:not([type='checkbox']) {
+  min-width: 0;
+  height: 27px;
+  padding: 0 6px;
+  border: 1px solid #34495c;
+  border-radius: 3px;
+  background: #0d1621;
+  color: #d8e3eb;
+  font: 9px Consolas, monospace;
+}
+
+.rsi-analysis-controls .rsi-pane-toggle {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rsi-evidence-body {
+  display: grid;
+  gap: 0;
+  overflow: auto;
+}
+
+.rsi-focus-value {
+  display: grid;
+  gap: 3px;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rsi-focus-value span,
+.rsi-focus-value small,
+.rsi-focus-value em {
+  color: #8295a7;
+  font-size: 8px;
+  font-style: normal;
+}
+
+.rsi-focus-value strong {
+  color: #e0b75e;
+  font-size: 24px;
+}
+
+.rsi-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rsi-evidence-grid > div {
+  padding: 8px 10px;
+  border-right: 1px solid #1f2c39;
+  border-bottom: 1px solid #1f2c39;
+}
+
+.rsi-evidence-grid > div:nth-child(2n) { border-right: 0; }
+.rsi-evidence-grid dt { color: #71859a; font-size: 8px; }
+.rsi-evidence-grid dd { margin: 3px 0 0; color: #d1dee7; font: 10px Consolas, monospace; }
+
+.rsi-crossing-list {
+  display: grid;
+  gap: 5px;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rsi-crossing-list header,
+.rsi-crossing-list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+}
+
+.rsi-crossing-list > div {
+  padding: 6px;
+  border-left: 2px solid #d6a84b;
+  background: #121c27;
+}
+
+.rsi-crossing-list strong { color: #cbd8e1; font-size: 9px; }
+.rsi-crossing-list span,
+.rsi-crossing-list small,
+.rsi-crossing-list p { color: #7f92a4; font-size: 8px; }
+.rsi-crossing-list small { grid-column: 1 / -1; }
+.rsi-evidence-body > footer { padding: 9px 10px; color: #74879a; font-size: 8px; line-height: 1.45; }
+
+.market-synthesis-panel {
+  min-height: 0;
+}
+
+.synthesis-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border-bottom: 1px solid var(--border);
+  background: var(--border);
+}
+
+.synthesis-inputs label {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 7px;
+  background: #111c28;
+  color: #9fb1c1;
+  font-size: 8px;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.synthesis-inputs input {
+  flex: 0 0 auto;
+  margin: 0;
+  accent-color: #4bb7e5;
+}
+
+.synthesis-packet-audit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.synthesis-packet-audit span {
+  padding: 3px 5px;
+  border: 1px solid #2e4557;
+  border-radius: 3px;
+  background: #0c1721;
+  color: #8ea3b4;
+  font-size: 8px;
+}
+
+@media (max-width: 1120px) {
+  .synthesis-inputs {
+    grid-template-columns: 1fr;
+  }
 }
 
 .analysis-tab-body,
@@ -4159,6 +4317,116 @@
 
 .chart-ohlc-legend > strong { color: #e1e5eb; font-size: 11px; }
 .chart-ohlc-legend > span { color: #8ebbd0; font-weight: 700; }
+
+.rsi-indicator-control {
+  position: absolute;
+  z-index: 12;
+  top: 7px;
+  right: 70px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px;
+  border: 1px solid #2a3b4c;
+  border-radius: 4px;
+  background: rgb(13 20 30 / 86%);
+  backdrop-filter: blur(3px);
+}
+
+.rsi-indicator-control button {
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #8ea0b2;
+  cursor: pointer;
+  font-size: 9px;
+}
+
+.rsi-indicator-control button:hover,
+.rsi-indicator-control button.is-active {
+  background: #253342;
+  color: #e0b75e;
+}
+
+.rsi-settings-popover {
+  position: absolute;
+  z-index: 16;
+  top: 39px;
+  right: 70px;
+  width: min(270px, calc(100% - 20px));
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid #40576a;
+  border-radius: 5px;
+  background: #111c29;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 38%);
+  color: #b9c8d4;
+}
+
+.rsi-settings-popover header,
+.rsi-settings-popover small {
+  grid-column: 1 / -1;
+}
+
+.rsi-settings-popover header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rsi-settings-popover header > div,
+.rsi-settings-popover label {
+  display: grid;
+  gap: 3px;
+}
+
+.rsi-settings-popover header span,
+.rsi-settings-popover label,
+.rsi-settings-popover small {
+  color: #8194a6;
+  font-size: 8px;
+}
+
+.rsi-settings-popover input {
+  min-width: 0;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid #34495c;
+  border-radius: 3px;
+  background: #0d1621;
+  color: #d8e3eb;
+  font: 9px Consolas, monospace;
+}
+
+.rsi-pane-legend {
+  position: absolute;
+  z-index: 10;
+  left: 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 3px;
+  background: rgb(15 22 33 / 76%);
+  color: #95a6b5;
+  pointer-events: none;
+  font-size: 9px;
+}
+
+.rsi-pane-legend strong { color: #e0b75e; }
+.rsi-pane-legend span { color: #8296a8; }
+.rsi-pane-legend em { color: #c9d4dc; font-style: normal; font-weight: 700; }
+.rsi-pane-legend em.is-high { color: #ed8d8d; }
+.rsi-pane-legend em.is-low { color: #65c9af; }
 .chart-ohlc-legend > small { color: #6f7885; font-size: 8px; }
 .chart-ohlc-legend dl { display: flex; gap: 6px; margin: 0; }
 .chart-ohlc-legend dl > div { display: flex; gap: 2px; }

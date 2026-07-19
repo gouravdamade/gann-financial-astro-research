@@ -27,9 +27,11 @@ from chakra_lab_service import build_chakra_lab_snapshot
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
 from local_jyotish import LocalJyotishService
+from market_synthesis import MarketSynthesisService
 from mt5_gateway import Mt5Gateway
 from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
+from rsi_analysis import build_rsi_evidence
 from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
 from validation_gates import build_validation_gate_matrix
@@ -91,6 +93,7 @@ prospective_refresh = ProspectiveArtifactRefreshSupervisor(
 )
 local_jyotish = LocalJyotishService(repository, diagnostics=runtime_diagnostics)
 local_candlestick = LocalCandlestickService(repository, diagnostics=runtime_diagnostics)
+market_synthesis = MarketSynthesisService(repository, diagnostics=runtime_diagnostics)
 atexit.register(gateway.stop)
 atexit.register(generation_manager.stop)
 atexit.register(shadow_ledger.stop)
@@ -729,6 +732,62 @@ def local_candlestick_analyze() -> Any:
     except KeyError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 404
     except ValueError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    except RuntimeError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
+
+
+@app.post("/api/rsi/evidence")
+def rsi_evidence() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        if not isinstance(payload, dict):
+            raise ValueError("JSON object payload is required")
+        event_id = str(payload.get("eventId") or "").strip()
+        if not event_id:
+            raise ValueError("eventId is required")
+        raw_levels = payload.get("levels")
+        levels = raw_levels if isinstance(raw_levels, list) else None
+        evidence = build_rsi_evidence(
+            repository.event_detail(event_id),
+            str(payload.get("annotationId") or "").strip() or None,
+            period=int(payload.get("period") or 14),
+            levels=levels,
+        )
+        return jsonify({"ok": True, "evidence": evidence})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/market-synthesis/health")
+def market_synthesis_health() -> Any:
+    return jsonify({"ok": True, "marketSynthesis": market_synthesis.health()})
+
+
+@app.post("/api/market-synthesis/analyze")
+def market_synthesis_analyze() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        if not isinstance(payload, dict):
+            raise ValueError("JSON object payload is required")
+        inputs = payload.get("inputs") if isinstance(payload.get("inputs"), dict) else {}
+        raw_levels = payload.get("levels")
+        draft = market_synthesis.analyze(
+            str(payload.get("eventId") or ""),
+            str(payload.get("question") or ""),
+            str(payload.get("annotationId") or "").strip() or None,
+            period=int(payload.get("period") or 14),
+            levels=raw_levels if isinstance(raw_levels, list) else None,
+            include_astrology=bool(inputs.get("astrology", True)),
+            include_candles=bool(inputs.get("candlesticks", True)),
+            include_rsi=bool(inputs.get("rsi", True)),
+        )
+        return jsonify({"ok": True, "draft": draft})
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
     except RuntimeError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 503

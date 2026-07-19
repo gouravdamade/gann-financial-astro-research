@@ -274,9 +274,40 @@ try {
         $candleEvidence.evidence.guardrails.consumedByShadowLedger -eq $false -and
         $candleEvidence.evidence.guardrails.executionAllowed -eq $false
     )
+    $rsiEvidence = Invoke-JsonPost `
+        ("http://127.0.0.1:{0}/api/rsi/evidence" -f $initial.Port) `
+        ([ordered]@{
+            eventId = $candleEventId
+            period = 14
+            levels = @(30, 50, 70)
+        })
+    $marketSynthesisHealth = Invoke-PrivateRestMethod -Uri `
+        ("http://127.0.0.1:{0}/api/market-synthesis/health" -f $initial.Port) `
+        -TimeoutSec 10
+    $report.checks.rsi_evidence_contract = `
+        $rsiEvidence.evidence.contract -eq "GANN_RSI_EVIDENCE_V1"
+    $report.checks.rsi_wilder_methodology = `
+        $rsiEvidence.evidence.methodologyVersion -eq "wilder_smoothed_close_v1"
+    $report.checks.rsi_closed_bars_only = `
+        $rsiEvidence.evidence.guardrails.closedBarsOnlyAtCutoff -eq $true
+    $report.checks.rsi_inference_locked = (
+        $rsiEvidence.evidence.guardrails.consumedByLiveInference -eq $false -and
+        $rsiEvidence.evidence.guardrails.consumedByShadowLedger -eq $false -and
+        $rsiEvidence.evidence.guardrails.executionAllowed -eq $false
+    )
+    $report.checks.market_synthesis_contract = `
+        $marketSynthesisHealth.marketSynthesis.contract -eq `
+        "GANN_LOCAL_MARKET_SYNTHESIS_DRAFT_V1"
+    $report.checks.market_synthesis_execution_locked = (
+        $marketSynthesisHealth.marketSynthesis.analysisOnly -eq $true -and
+        $marketSynthesisHealth.marketSynthesis.executionAllowed -eq $false
+    )
     Write-SoakPhase "candlestick_specialist_verified" ([ordered]@{
         event_id = $candleEventId
         corpus_chunks = $candleHealth.localCandlestick.corpusChunks
+        rsi_ready = $rsiEvidence.evidence.ready
+        market_synthesis_runtime_ready = `
+            $marketSynthesisHealth.marketSynthesis.runtimeReady
     })
     $shadowResult = Wait-ForNormalizedShadow `
         -Port $initial.Port `

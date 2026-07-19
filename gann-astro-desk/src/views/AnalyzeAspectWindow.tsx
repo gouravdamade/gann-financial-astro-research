@@ -1,4 +1,5 @@
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
   Bot,
@@ -15,6 +16,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Trash2,
+  Workflow,
   X,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -26,7 +28,7 @@ import {
   saveAnnotation,
   saveReviewStatus,
 } from '../api'
-import { defaultDrawingPreferences, downloadLayoutJson } from '../chartLayouts'
+import { defaultDrawingPreferences, defaultRsiPaneSettings, downloadLayoutJson } from '../chartLayouts'
 import { CodexPanel } from '../components/CodexPanel'
 import { CandlestickPanel } from '../components/CandlestickPanel'
 import { CurrencyDivergence } from '../components/CurrencyDivergence'
@@ -36,6 +38,8 @@ import { HistoricalFamilyEvidence } from '../components/HistoricalFamilyEvidence
 import { LayoutToolbar } from '../components/LayoutToolbar'
 import { LocalJyotishPanel } from '../components/LocalJyotishPanel'
 import { MarketChart, type MarketChartHandle } from '../components/MarketChart'
+import { MarketSynthesisPanel } from '../components/MarketSynthesisPanel'
+import { RsiPanel } from '../components/RsiPanel'
 import { ToolRail } from '../components/ToolRail'
 import { openAnalyzeAspect } from '../desktop'
 import { canToggleReview, nextReviewStatus, reviewButtonLabel } from '../reviewProgress'
@@ -55,7 +59,7 @@ type AnalyzeAspectWindowProps = {
   initialEventId?: string | null
 }
 
-type InspectorTab = 'evidence' | 'annotations' | 'candles' | 'jyotish' | 'codex'
+type InspectorTab = 'evidence' | 'annotations' | 'candles' | 'rsi' | 'synthesis' | 'jyotish' | 'codex'
 type OccurrenceFilter = 'all' | 'reviewed' | 'pending' | 'bullish' | 'bearish'
 
 function resultLabel(occurrence: AspectWindow): string {
@@ -109,6 +113,10 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
     },
     initialChartState: { showAspects: true, showSrLines: true },
   })
+  const rsiSettings = {
+    ...defaultRsiPaneSettings(),
+    ...(chartLayouts.chartState.rsi ?? {}),
+  }
 
   useEffect(() => {
     fetchFamily(familyKey, initialEventId ?? undefined)
@@ -396,6 +404,8 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
             <button className={tab === 'evidence' ? 'is-active' : ''} onClick={() => setTab('evidence')}><Microscope size={15} /> Evidence</button>
             <button className={tab === 'annotations' ? 'is-active' : ''} onClick={() => setTab('annotations')} title="Chart annotations"><MessageSquareText size={15} /> Notes</button>
             <button className={tab === 'candles' ? 'is-active' : ''} onClick={() => setTab('candles')}><CandlestickChart size={15} /> Candles</button>
+            <button className={tab === 'rsi' ? 'is-active' : ''} onClick={() => setTab('rsi')}><Activity size={15} /> RSI</button>
+            <button className={tab === 'synthesis' ? 'is-active' : ''} onClick={() => setTab('synthesis')}><Workflow size={15} /> Synthesis</button>
             <button className={tab === 'jyotish' ? 'is-active' : ''} onClick={() => setTab('jyotish')}><BrainCircuit size={15} /> Local Jyotish</button>
             <button className={tab === 'codex' ? 'is-active' : ''} onClick={() => setTab('codex')}><Bot size={15} /> Codex</button>
           </div>
@@ -555,6 +565,23 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
             <CandlestickPanel
               eventId={selectedEventId}
               selectedAnnotation={selectedAnnotation}
+            />
+          )}
+          {tab === 'rsi' && (
+            <RsiPanel
+              eventId={selectedEventId}
+              selectedAnnotation={selectedAnnotation}
+              settings={rsiSettings}
+              onSettingsChange={(update) => chartLayouts.updateChartState({
+                rsi: { ...rsiSettings, ...update },
+              })}
+            />
+          )}
+          {tab === 'synthesis' && (
+            <MarketSynthesisPanel
+              eventId={selectedEventId}
+              selectedAnnotation={selectedAnnotation}
+              rsiSettings={rsiSettings}
             />
           )}
         </aside>

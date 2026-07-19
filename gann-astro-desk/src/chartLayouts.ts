@@ -10,6 +10,7 @@ import type {
   DrawingTemplate,
   DrawingPreferences,
   FibonacciSettings,
+  RsiPaneSettings,
   SquareOfNineSettings,
 } from './types'
 
@@ -38,6 +39,17 @@ export function defaultDrawingPreferences(): DrawingPreferences {
     favoriteTools: ['horizontal', 'gann', 'fibonacci'] satisfies ChartTool[],
     magnetMode: 'weak',
     keepDrawing: false,
+  }
+}
+
+export function defaultRsiPaneSettings(): RsiPaneSettings {
+  return {
+    contract: 'GANN_RSI_PANE_SETTINGS_V1',
+    visible: false,
+    period: 14,
+    source: 'close',
+    timeframe: 'chart',
+    levels: [30, 50, 70],
   }
 }
 
@@ -88,6 +100,7 @@ export function createChartDrawing(
   anchors: ChartDrawingAnchor[],
   zIndex: number,
   template?: DrawingTemplate | null,
+  pane: ChartDrawing['pane'] = 'price',
 ): ChartDrawing {
   const settings = type === 'gann_fan'
     ? { ratios: [0.25, 0.5, 1, 2, 4] }
@@ -107,6 +120,7 @@ export function createChartDrawing(
     groupId: null,
     groupName: '',
     syncScope: 'layout',
+    pane,
     zIndex,
     anchors,
     style: template?.style ?? defaultDrawingStyle(type),
@@ -183,6 +197,7 @@ export function validateImportedLayout(value: unknown): Omit<ChartLayout, 'layou
     groupId: drawing.groupId ?? null,
     groupName: drawing.groupName ?? '',
     syncScope: drawing.syncScope === 'symbol' ? 'symbol' as const : 'layout' as const,
+    pane: drawing.pane === 'rsi' || drawing.pane === 'global' ? drawing.pane : 'price' as const,
     guardrails: { ...RESEARCH_DRAWING_GUARDRAILS },
   }))
   const chartState = candidate.chartState ?? { showAspects: true, showSrLines: true }
@@ -201,6 +216,10 @@ export function validateImportedLayout(value: unknown): Omit<ChartLayout, 'layou
       drawingPreferences: {
         ...defaultDrawingPreferences(),
         ...(chartState.drawingPreferences ?? {}),
+      },
+      rsi: {
+        ...defaultRsiPaneSettings(),
+        ...(chartState.rsi ?? {}),
       },
     },
     drawings,

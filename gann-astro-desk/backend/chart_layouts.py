@@ -346,6 +346,13 @@ def normalize_drawing(payload: dict[str, Any], index: int = 0) -> dict[str, Any]
     sync_scope = str(payload.get("syncScope") or "layout").strip().lower()
     if sync_scope not in {"layout", "symbol"}:
         sync_scope = "layout"
+    pane = str(payload.get("pane") or "price").strip().lower()
+    if pane == "rsi" and drawing_type not in {"horizontal_line", "vertical_line"}:
+        pane = "price"
+    if pane == "global" and drawing_type != "vertical_line":
+        pane = "price"
+    if pane not in {"price", "rsi", "global"}:
+        pane = "price"
     normalized = {
         "contract": DRAWING_CONTRACT,
         "schemaVersion": DRAWING_SCHEMA_VERSION,
@@ -357,6 +364,7 @@ def normalize_drawing(payload: dict[str, Any], index: int = 0) -> dict[str, Any]
         "groupId": group_id,
         "groupName": group_name,
         "syncScope": sync_scope,
+        "pane": pane,
         "zIndex": int(payload.get("zIndex", index)),
         "anchors": normalized_anchors,
         "style": style,

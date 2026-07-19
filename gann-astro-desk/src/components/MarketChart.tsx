@@ -2,9 +2,11 @@ import {
   CandlestickSeries,
   ColorType,
   CrosshairMode,
+  LineSeries,
   LineStyle,
   createChart,
   type IChartApi,
+  type IPaneApi,
   type IPriceLine,
   type ISeriesApi,
   type MouseEventParams,
@@ -13,6 +15,7 @@ import {
 } from 'lightweight-charts'
 import { toPng } from 'html-to-image'
 import {
+  Activity,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -43,7 +46,7 @@ import {
   formatAspectRange,
   nextAspectAtTime,
 } from '../aspectPresentation'
-import { createChartDrawing } from '../chartLayouts'
+import { createChartDrawing, defaultRsiPaneSettings } from '../chartLayouts'
 import { chooseMagnetCandidate, type MagnetCandidate } from '../drawingMagnet'
 import {
   isChartNavigationProximity,
@@ -51,6 +54,7 @@ import {
   navigateChartLogicalRange,
   type ChartNavigationAction,
 } from '../chartViewport'
+import { closedCandlesAt, normalizeRsiLevels, normalizeRsiPeriod, wilderRsiPoints } from '../rsi'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -75,6 +79,7 @@ type OverlapPickerState = {
   top: number
   eventIds: string[]
 }
+type PaneBounds = { top: number; height: number }
 
 export type MarketChartHandle = {
   capture: () => Promise<string>
@@ -164,11 +169,22 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   },
   forwardedRef,
 ) {
+  const rsiSettings = {
+    ...defaultRsiPaneSettings(),
+    ...(viewState?.rsi ?? {}),
+  }
+  const rsiPeriod = normalizeRsiPeriod(rsiSettings.period)
+  const rsiLevels = normalizeRsiLevels(rsiSettings.levels)
+  const rsiLevelsKey = rsiLevels.join(',')
+  const rsiVisible = rsiSettings.visible
   const rootRef = useRef<HTMLDivElement>(null)
   const hostRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
+  const rsiSeriesRef = useRef<ISeriesApi<'Line'> | null>(null)
+  const rsiPaneRef = useRef<IPaneApi<Time> | null>(null)
   const priceLinesRef = useRef<IPriceLine[]>([])
+  const rsiPriceLinesRef = useRef<IPriceLine[]>([])
   const toolRef = useRef(activeTool)
   const selectedAspectIdRef = useRef(selectedAspectId)
   const selectAspectRef = useRef(onSelectAspect)
@@ -206,11 +222,31 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const [legendCandle, setLegendCandle] = useState<Candle | null>(payload.candles[payload.candles.length - 1] ?? null)
   const [navigationVisible, setNavigationVisible] = useState(false)
   const [overlayRevision, setOverlayRevision] = useState(0)
+  const [rsiPaneBounds, setRsiPaneBounds] = useState<PaneBounds | null>(null)
+  const [rsiLegendValue, setRsiLegendValue] = useState<number | null>(null)
+  const [rsiSettingsOpen, setRsiSettingsOpen] = useState(false)
+  const [rsiLevelsInput, setRsiLevelsInput] = useState(rsiLevels.join(', '))
   const candleTimes = useMemo(() => payload.candles.map((item) => item.time), [payload.candles])
+  const rsiPoints = useMemo(() => {
+    const cutoff = payload.replay?.cutoffUtc ?? payload.generatedAt
+    return wilderRsiPoints(
+      closedCandlesAt(payload.candles, payload.timeframe, cutoff),
+      rsiPeriod,
+    )
+  }, [payload.candles, payload.generatedAt, payload.replay?.cutoffUtc, payload.timeframe, rsiPeriod])
+  const rsiPointsRef = useRef(rsiPoints)
   const activeCounts = useMemo(
     () => activeAspectCountsAtPeak(payload.aspects),
     [payload.aspects],
   )
+
+  useEffect(() => {
+    setRsiLevelsInput(rsiLevelsKey.split(',').join(', '))
+  }, [rsiLevelsKey])
+
+  useEffect(() => {
+    rsiPointsRef.current = rsiPoints
+  }, [rsiPoints])
 
   useEffect(() => {
     toolRef.current = activeTool
@@ -375,11 +411,54 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       priceLineVisible: false,
       lastValueVisible: true,
     })
+    const rsiSeries = rsiVisible
+      ? chart.addSeries(LineSeries, {
+          color: '#d6a84b',
+          lineWidth: 2,
+          priceLineVisible: false,
+          lastValueVisible: true,
+          crosshairMarkerVisible: true,
+          priceFormat: {
+            type: 'custom',
+            minMove: 0.1,
+            formatter: (value: number) => value.toFixed(1),
+          },
+          autoscaleInfoProvider: () => ({
+            priceRange: { minValue: 0, maxValue: 100 },
+          }),
+        }, 1)
+      : null
+    const panes = chart.panes()
+    if (rsiSeries && panes[1]) {
+      panes[0].setStretchFactor(3)
+      panes[1].setStretchFactor(1)
+    }
     chartRef.current = chart
     seriesRef.current = series
+    rsiSeriesRef.current = rsiSeries
+    rsiPaneRef.current = rsiSeries?.getPane() ?? null
+
+    const refreshPaneBounds = () => {
+      const root = rootRef.current
+      const paneElement = rsiPaneRef.current?.getHTMLElement()
+      if (!root || !paneElement) {
+        setRsiPaneBounds(null)
+        return
+      }
+      const rootBounds = root.getBoundingClientRect()
+      const paneBounds = paneElement.getBoundingClientRect()
+      const next = {
+        top: paneBounds.top - rootBounds.top,
+        height: paneBounds.height,
+      }
+      setRsiPaneBounds((current) => (
+        current?.top === next.top && current?.height === next.height ? current : next
+      ))
+    }
 
     const refreshOverlays = () => {
       setOverlayRevision((value) => value + 1)
+      refreshPaneBounds()
       if (applyingViewRef.current) return
       const visible = chart.timeScale().getVisibleRange()
       if (!visible || typeof visible.from !== 'number' || typeof visible.to !== 'number') return
@@ -395,6 +474,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     chart.timeScale().subscribeVisibleLogicalRangeChange(refreshOverlays)
     const resizeObserver = new ResizeObserver(refreshOverlays)
     resizeObserver.observe(hostRef.current)
+    window.requestAnimationFrame(refreshPaneBounds)
 
     const commitDrawing = (drawing: ChartDrawing) => {
       drawingsChangeRef.current?.([...drawingsRef.current, drawing])
@@ -404,14 +484,22 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const clickHandler = (params: MouseEventParams<Time>) => {
       if (!params.point || params.time == null) return
       const time = Number(params.time)
-      const priceValue = series.coordinateToPrice(params.point.y)
-      if (priceValue == null) return
-      const point = magnetizePoint(
-        time,
-        Number(priceValue),
-        params.point.x,
-        params.point.y,
-      )
+      const rsiPaneClicked = Boolean(rsiSeries && params.paneIndex === 1)
+      const rawValue = rsiPaneClicked
+        ? rsiSeries?.coordinateToPrice(params.point.y)
+        : series.coordinateToPrice(params.point.y)
+      if (rawValue == null) return
+      const point = rsiPaneClicked
+        ? {
+            time: nearestTime(payloadRef.current.candles.map((item) => item.time), time),
+            price: Math.max(0, Math.min(100, Number(rawValue))),
+          }
+        : magnetizePoint(
+            time,
+            Number(rawValue),
+            params.point.x,
+            params.point.y,
+          )
       const tool = toolRef.current
       if (tool === 'replay') {
         replayCutoffSelectRef.current?.(time)
@@ -420,6 +508,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           'horizontal_line',
           [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
           drawingsRef.current.length,
+          undefined,
+          rsiPaneClicked ? 'rsi' : 'price',
         )
         commitDrawing(drawing)
         if (!drawingPreferencesRef.current.keepDrawing) toolCompleteRef.current?.()
@@ -428,10 +518,13 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           'vertical_line',
           [{ timeUtc: new Date(time * 1000).toISOString(), price: point.price }],
           drawingsRef.current.length,
+          undefined,
+          rsiPaneClicked ? 'rsi' : 'price',
         )
         commitDrawing(drawing)
         if (!drawingPreferencesRef.current.keepDrawing) toolCompleteRef.current?.()
       } else if (tool === 'gann' || tool === 'fibonacci') {
+        if (rsiPaneClicked) return
         const drawingType = tool === 'gann' ? 'gann_fan' : 'fibonacci_retracement'
         const pending = pendingDrawingRef.current
         if (!pending || pending.type !== drawingType) {
@@ -458,6 +551,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         commitDrawing(drawing)
         if (!drawingPreferencesRef.current.keepDrawing) toolCompleteRef.current?.()
       } else if (tool === 'annotation' && createAnnotationRef.current) {
+        if (rsiPaneClicked) return
         const currentPayload = payloadRef.current
         const selected = currentPayload.aspects.find((item) => item.eventId === selectedAspectIdRef.current)
         if (!selected) return
@@ -466,7 +560,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           familyKey: selected.familyKey,
           annotationType: 'point',
           anchorTimeUtc: new Date(time * 1000).toISOString(),
-          anchorPrice: Number(priceValue.toFixed(5)),
+          anchorPrice: Number(Number(rawValue).toFixed(5)),
           targetType: 'chart_point',
           targetId: '',
           note: 'Review this location',
@@ -474,7 +568,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           chartState: { timeframe: currentPayload.timeframe, visibleStart: currentPayload.start, visibleEnd: currentPayload.end },
         })
       } else if (tool === 'select') {
-        const active = showAspectsRef.current
+        const active = showAspectsRef.current && !rsiPaneClicked
           ? aspectsAtTime(payloadRef.current.aspects, time)
           : []
         const aspect = active.length
@@ -513,6 +607,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     chart.subscribeCrosshairMove((params) => {
       if (!params.point || params.time == null) {
         scheduleLegendUpdate(payloadRef.current.candles[payloadRef.current.candles.length - 1] ?? null)
+        setRsiLegendValue(rsiPointsRef.current.at(-1)?.value ?? null)
         return
       }
       const candle = params.seriesData.get(series)
@@ -525,6 +620,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         close: candle.close,
         volume: 0,
       })
+      const rsiPoint = rsiSeries ? params.seriesData.get(rsiSeries) : null
+      setRsiLegendValue(rsiPoint && 'value' in rsiPoint ? Number(rsiPoint.value) : null)
     })
 
     return () => {
@@ -538,12 +635,17 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       chart.remove()
       chartRef.current = null
       seriesRef.current = null
+      rsiSeriesRef.current = null
+      rsiPaneRef.current = null
       priceLinesRef.current = []
+      rsiPriceLinesRef.current = []
       renderedCandlesRef.current = []
       renderedSeriesKeyRef.current = ''
       srLinesSignatureRef.current = ''
+      appliedLayoutViewRef.current = ''
+      setRsiPaneBounds(null)
     }
-  }, [compact])
+  }, [compact, rsiVisible])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -579,6 +681,26 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     }
     renderedCandlesRef.current = payload.candles
     renderedSeriesKeyRef.current = seriesKey
+
+    const rsiSeries = rsiSeriesRef.current
+    if (rsiSeries) {
+      rsiSeries.setData(rsiPoints.map((point) => ({
+        time: point.time as UTCTimestamp,
+        value: point.value,
+      })))
+      rsiPriceLinesRef.current.forEach((line) => rsiSeries.removePriceLine(line))
+      rsiPriceLinesRef.current = rsiLevelsKey.split(',').map(Number).map((level) => rsiSeries.createPriceLine({
+        price: level,
+        color: level === 50 ? '#587086' : '#795f42',
+        lineWidth: 1,
+        lineStyle: level === 50 ? LineStyle.Dashed : LineStyle.Dotted,
+        axisLabelVisible: true,
+        title: String(level),
+      }))
+      setRsiLegendValue(rsiPoints.at(-1)?.value ?? null)
+    } else {
+      setRsiLegendValue(null)
+    }
 
     const visibleSrLines = showSrLines ? payload.srLines : []
     const srLinesSignature = JSON.stringify(
@@ -629,7 +751,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         ? current
         : latest
     })
-  }, [compact, layoutKey, payload, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
+  }, [compact, layoutKey, payload, rsiLevelsKey, rsiPoints, rsiVisible, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -684,17 +806,39 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     return { change, percent, positive: change >= 0 }
   }, [legendCandle, payload.candles])
 
-  const toScreen = (point: Point | ChartDrawingAnchor) => {
+  const paneBounds = (pane: ChartDrawing['pane']): PaneBounds => {
+    const root = rootRef.current
     const chart = chartRef.current
-    const series = seriesRef.current
+    const paneIndex = pane === 'rsi' ? 1 : 0
+    const paneElement = chart?.panes()[paneIndex]?.getHTMLElement()
+    if (!root || !paneElement) {
+      return { top: 0, height: root?.clientHeight ?? 0 }
+    }
+    const rootBounds = root.getBoundingClientRect()
+    const bounds = paneElement.getBoundingClientRect()
+    return { top: bounds.top - rootBounds.top, height: bounds.height }
+  }
+
+  const drawingPane = (drawing: ChartDrawing): ChartDrawing['pane'] => {
+    if (drawing.pane) return drawing.pane
+    return drawing.type === 'vertical_line' ? 'global' : 'price'
+  }
+
+  const toScreen = (
+    point: Point | ChartDrawingAnchor,
+    pane: ChartDrawing['pane'] = 'price',
+  ) => {
+    const chart = chartRef.current
+    const series = pane === 'rsi' ? rsiSeriesRef.current : seriesRef.current
     if (!chart || !series) return null
     const pointTime = 'timeUtc' in point
       ? Math.floor(new Date(point.timeUtc).getTime() / 1000)
       : point.time
     const time = nearestTime(candleTimes, pointTime)
     const x = chart.timeScale().timeToCoordinate(time as UTCTimestamp)
-    const y = series.priceToCoordinate(point.price)
-    return x == null || y == null ? null : { x, y }
+    const localY = series.priceToCoordinate(point.price)
+    const bounds = paneBounds(pane)
+    return x == null || localY == null ? null : { x, y: bounds.top + Number(localY) }
   }
 
   const startAnchorDrag = (
@@ -718,16 +862,24 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const moveAnchorDrag = (clientX: number, clientY: number) => {
     const session = dragSessionRef.current
     const chart = chartRef.current
-    const series = seriesRef.current
     const root = rootRef.current
+    const drawing = drawingsRef.current.find((item) => item.drawingId === session?.drawingId)
+    const pane = drawing ? drawingPane(drawing) : 'price'
+    const series = pane === 'rsi' ? rsiSeriesRef.current : seriesRef.current
     if (!session || !chart || !series || !root) return
     const bounds = root.getBoundingClientRect()
     const x = Math.max(0, Math.min(bounds.width, clientX - bounds.left))
-    const y = Math.max(0, Math.min(bounds.height, clientY - bounds.top))
+    const activePaneBounds = paneBounds(pane)
+    const y = Math.max(0, Math.min(activePaneBounds.height, clientY - bounds.top - activePaneBounds.top))
     const rawTime = chart.timeScale().coordinateToTime(x)
     const price = series.coordinateToPrice(y)
     if (rawTime == null || price == null || typeof rawTime !== 'number') return
-    const snapped = magnetizePoint(Number(rawTime), Number(price), x, y)
+    const snapped = pane === 'rsi'
+      ? {
+          time: nearestTime(payloadRef.current.candles.map((item) => item.time), Number(rawTime)),
+          price: Math.max(0, Math.min(100, Number(price))),
+        }
+      : magnetizePoint(Number(rawTime), Number(price), x, y)
     const anchors = session.anchors.map((anchor, index) => index === session.anchorIndex
       ? { timeUtc: new Date(snapped.time * 1000).toISOString(), price: snapped.price }
       : anchor)
@@ -804,7 +956,10 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       ? { ...inputDrawing, anchors: dragPreview.anchors }
       : inputDrawing
     if (!drawing.visible) return null
-    const start = drawing.anchors[0] ? toScreen(drawing.anchors[0]) : null
+    const pane = drawingPane(drawing)
+    if (pane === 'rsi' && !rsiVisible) return null
+    const coordinatePane = pane === 'global' ? 'price' : pane
+    const start = drawing.anchors[0] ? toScreen(drawing.anchors[0], coordinatePane) : null
     if (!start) return null
     const selected = drawing.drawingId === selectedDrawingId
     const dash = drawing.style.lineStyle === 'dashed'
@@ -832,24 +987,27 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         <g key={drawing.drawingId} className={`chart-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
           <line x1={0} y1={start.y} x2="100%" y2={start.y} style={strokeStyle} />
           <line x1={0} y1={start.y} x2="100%" y2={start.y} className="drawing-hit-target" />
-          {selected && !drawing.locked && renderAnchorHandle(drawing, 0, handlePosition, 'Price')}
+          {selected && !drawing.locked && renderAnchorHandle(drawing, 0, handlePosition, pane === 'rsi' ? 'RSI' : 'Price')}
         </g>
       )
     }
     if (drawing.type === 'vertical_line') {
+      const bounds = pane === 'global'
+        ? { top: 0, height: rootRef.current?.clientHeight ?? 0 }
+        : paneBounds(pane)
       const handlePosition = {
         x: start.x,
-        y: Math.max(18, Math.min((rootRef.current?.clientHeight ?? start.y) - 18, start.y)),
+        y: bounds.top + Math.max(18, Math.min(bounds.height - 18, start.y - bounds.top)),
       }
       return (
         <g key={drawing.drawingId} className={`chart-drawing ${selected ? 'is-selected' : ''}`} onClick={selectDrawing}>
-          <line x1={start.x} y1={0} x2={start.x} y2="100%" style={strokeStyle} />
-          <line x1={start.x} y1={0} x2={start.x} y2="100%" className="drawing-hit-target" />
+          <line x1={start.x} y1={bounds.top} x2={start.x} y2={bounds.top + bounds.height} style={strokeStyle} />
+          <line x1={start.x} y1={bounds.top} x2={start.x} y2={bounds.top + bounds.height} className="drawing-hit-target" />
           {selected && !drawing.locked && renderAnchorHandle(drawing, 0, handlePosition, 'Time')}
         </g>
       )
     }
-    const end = drawing.anchors[1] ? toScreen(drawing.anchors[1]) : null
+    const end = drawing.anchors[1] ? toScreen(drawing.anchors[1], coordinatePane) : null
     if (!end) return null
     if (drawing.type === 'gann_fan') {
       const rawRatios = Array.isArray(drawing.settings.ratios)
@@ -924,6 +1082,22 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   }
 
   const selectedDrawing = drawings.find((drawing) => drawing.drawingId === selectedDrawingId) ?? null
+  const updateRsiSettings = (update: Partial<typeof rsiSettings>) => {
+    onViewStateChange?.({
+      rsi: {
+        ...defaultRsiPaneSettings(),
+        ...rsiSettings,
+        ...update,
+      },
+    })
+  }
+  const commitRsiLevels = () => {
+    const levels = normalizeRsiLevels(
+      rsiLevelsInput.split(/[\s,;]+/).map(Number),
+    )
+    setRsiLevelsInput(levels.join(', '))
+    updateRsiSettings({ levels })
+  }
   const updateSelectedDrawing = (update: Partial<ChartDrawing>) => {
     if (!selectedDrawing) return
     onDrawingsChange?.(drawings.map((drawing) => drawing.drawingId === selectedDrawing.drawingId
@@ -999,6 +1173,33 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       onPointerLeave={() => setNavigationVisible(false)}
     >
       <div className="market-chart-host" ref={hostRef} />
+      <div className="rsi-indicator-control" role="toolbar" aria-label="RSI indicator controls">
+        <button
+          type="button"
+          className={rsiVisible ? 'is-active' : ''}
+          onClick={() => updateRsiSettings({ visible: !rsiVisible })}
+          title={rsiVisible ? 'Hide RSI pane' : 'Show RSI pane'}
+        >
+          <Activity size={14} /> RSI {rsiPeriod}
+        </button>
+        {rsiVisible && (
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() => setRsiSettingsOpen((value) => !value)}
+            title="RSI settings"
+            aria-label="RSI settings"
+          ><SlidersHorizontal size={14} /></button>
+        )}
+      </div>
+      {rsiSettingsOpen && rsiVisible && (
+        <aside className="rsi-settings-popover" aria-label="RSI settings panel">
+          <header><div><strong>Relative Strength Index</strong><span>Wilder close</span></div><button className="icon-button" onClick={() => setRsiSettingsOpen(false)} title="Close RSI settings"><X size={14} /></button></header>
+          <label>Period<input type="number" min={2} max={200} value={rsiPeriod} onChange={(event) => updateRsiSettings({ period: normalizeRsiPeriod(Number(event.target.value)) })} /></label>
+          <label>Levels<input value={rsiLevelsInput} onChange={(event) => setRsiLevelsInput(event.target.value)} onBlur={commitRsiLevels} onKeyDown={(event) => { if (event.key === 'Enter') commitRsiLevels() }} /></label>
+          <small>Follows {payload.timeframe}. Closed bars only; a level touch is evidence, not proof of reversal.</small>
+        </aside>
+      )}
       {legendCandle && legendValues && (
         <div className="chart-ohlc-legend">
           <strong>{payload.symbol}</strong>
@@ -1015,6 +1216,15 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
           </em>
         </div>
       )}
+      {rsiVisible && rsiPaneBounds && (
+        <div className="rsi-pane-legend" style={{ top: rsiPaneBounds.top + 5 }}>
+          <strong>RSI {rsiPeriod}</strong>
+          <span>{payload.timeframe}</span>
+          <em className={rsiLegendValue != null && rsiLegendValue >= 70 ? 'is-high' : rsiLegendValue != null && rsiLegendValue <= 30 ? 'is-low' : ''}>
+            {rsiLegendValue == null ? 'warming up' : rsiLegendValue.toFixed(2)}
+          </em>
+        </div>
+      )}
       <div className="aspect-window-layer" aria-hidden="true">
         {bands.map(({ event, left, width }) => {
           const selected = event.eventId === selectedAspectId
@@ -1025,6 +1235,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
               style={{
                 left,
                 width,
+                bottom: rsiPaneBounds ? Math.max(24, (rootRef.current?.clientHeight ?? 0) - rsiPaneBounds.top) : 24,
                 borderColor: `${event.color}${selected ? 'e6' : '73'}`,
                 backgroundColor: `${event.color}${selected ? '22' : '12'}`,
               }}

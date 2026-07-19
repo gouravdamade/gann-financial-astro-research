@@ -202,6 +202,38 @@ class ChartLayoutTests(unittest.TestCase):
         self.assertTrue(delete_drawing_template(self.repository, saved["templateId"]))
         self.assertEqual(list_drawing_templates(self.repository), [])
 
+    def test_rsi_pane_and_settings_round_trip(self) -> None:
+        rsi_level = horizontal_drawing("rsi-level")
+        rsi_level["pane"] = "rsi"
+        rsi_level["anchors"][0]["price"] = 62.5
+        saved = save_chart_layout(
+            self.repository,
+            self.payload(
+                chartState={
+                    "showAspects": True,
+                    "showSrLines": True,
+                    "rsi": {"visible": True, "period": 21, "levels": [20, 50, 80]},
+                },
+                drawings=[rsi_level],
+            ),
+        )
+        self.assertEqual(saved["chartState"]["rsi"]["period"], 21)
+        self.assertEqual(saved["drawings"][0]["pane"], "rsi")
+        self.assertEqual(saved["drawings"][0]["anchors"][0]["price"], 62.5)
+
+        invalid = horizontal_drawing("invalid-rsi-fan")
+        invalid["type"] = "gann_fan"
+        invalid["pane"] = "rsi"
+        invalid["anchors"] = [
+            {"timeUtc": "2026-07-13T10:00:00Z", "price": 40},
+            {"timeUtc": "2026-07-13T11:00:00Z", "price": 60},
+        ]
+        normalized = save_chart_layout(
+            self.repository,
+            self.payload(name="Invalid RSI fan", isDefault=False, drawings=[invalid]),
+        )
+        self.assertEqual(normalized["drawings"][0]["pane"], "price")
+
     def test_symbol_synced_drawing_round_trips_across_timeframes(self) -> None:
         synced = horizontal_drawing("shared-line")
         synced["syncScope"] = "symbol"
