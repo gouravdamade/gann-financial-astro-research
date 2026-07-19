@@ -1,0 +1,28 @@
+﻿{
+    "recorded_at_utc":  "2026-07-19T13:49:59.8133320Z",
+    "promotion_stamp":  "20260719T134231Z",
+    "from_version":  "0.10.12",
+    "to_version":  "0.10.13",
+    "source_git_commit":  "202dc27408e45f261c41f028268624b9263b9640",
+    "source_git_dirty":  true,
+    "candidate":  "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.13-tauri",
+    "stable":  "D:\\GannFinancialAstro\\release\\GannAstroDesk",
+    "candidate_soak":  "D:\\GannFinancialAstro\\soak\\tauri_0.10.13_20260719_133416\\logs\\native_soak_report.json",
+    "stable_soak":  "D:\\GannFinancialAstro\\soak\\tauri_0.10.13_20260719_134340\\logs\\native_soak_report.json",
+    "conditional_pass":  true,
+    "deferred_checks":  [
+                            "mt5_time_normalization_closed_market"
+                        ],
+    "execution_allowed":  false,
+    "archive":  "D:\\GannFinancialAstro\\release_archive\\GannAstroDesk_0.10.12_20260719T134231Z",
+    "app_data_backup":  "D:\\GannFinancialAstro\\app_data_backups\\app_data_before_0.10.13_20260719T134231Z",
+    "app_data_backup_files":  672,
+    "app_data_backup_bytes":  70705307,
+    "executable_sha256":  "4788FE9C32BEC3F402D2D8E23FF9E31A185358A41EDF5B60AAECE0D0443EFEBC",
+    "installer_sha256":  "A6D49AE8A634B901679E10B81A0D7BCB823D93A15BE8BE8EB14126C815EFCEC7",
+    "overlap_picker":  "explicit list with Details and Review actions",
+    "historical_family_contract":  "GANN_RETROSPECTIVE_FAMILY_EVIDENCE_V1",
+    "currency_evidence_contract":  "GANN_FX_PAIR_EVIDENCE_V1",
+    "external_astrology_gate":  "failed: 35/70 comparator; 0/35 independent Drik passed; 35 pending",
+    "stable_soak_passed":  true
+}
