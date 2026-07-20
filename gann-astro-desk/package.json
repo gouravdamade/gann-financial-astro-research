@@ -1,11 +1,12 @@
 {
   "name": "gann-astro-desk",
   "private": true,
-  "version": "0.10.14",
+  "version": "0.10.15",
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --names backend,codex,ui --prefix-colors cyan,magenta,green \"python backend/server.py\" \"node server/codexBridge.mjs\" \"vite\"",
     "dev:ui": "vite",
+    "dev:mobile:ui": "vite --host 0.0.0.0",
     "dev:backend": "python backend/server.py",
     "dev:codex": "node server/codexBridge.mjs",
     "build": "tsc -b && vite build",
@@ -15,7 +16,10 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "desktop:dev": "tauri dev",
-    "desktop:build": "tauri build"
+    "desktop:build": "tauri build",
+    "mobile:init": "tauri android init --ci --skip-targets-install",
+    "mobile:dev": "tauri android dev",
+    "mobile:build:debug": "tauri android build --debug --target aarch64 --apk --ci"
   },
   "dependencies": {
     "@openai/codex-sdk": "^0.144.1",

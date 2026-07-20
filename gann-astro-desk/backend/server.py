@@ -24,6 +24,7 @@ from chart_layouts import (
 )
 from candlestick_shadow import CandlestickShadowSupervisor, default_model_path
 from chakra_lab_service import build_chakra_lab_snapshot
+from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
 from local_jyotish import LocalJyotishService
@@ -214,6 +215,11 @@ def health() -> Any:
             "prospectiveRefresh": prospective_refresh.status(),
         }
     )
+
+
+@app.get("/api/companion/capabilities")
+def companion_capabilities() -> Any:
+    return jsonify({"ok": True, "capabilities": build_companion_capabilities()})
 
 
 @app.get("/api/runtime-diagnostics")

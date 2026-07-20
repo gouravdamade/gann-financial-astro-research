@@ -35,6 +35,7 @@ import type {
   ChakraLabRequest,
   ChakraLabSnapshot,
 } from './types'
+import { COMPANION_CLIENT_CONTRACT, getCompanionSession } from './companion'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
 let backendRuntimePromise: Promise<BackendRuntimeInfo> | null = null
@@ -67,12 +68,28 @@ export async function fetchBackendRuntime(force = false): Promise<BackendRuntime
   return backendRuntimePromise
 }
 
-async function backendRequestTarget(url: string): Promise<{ url: string; apiToken: string }> {
+async function backendRequestTarget(url: string): Promise<{
+  url: string
+  authorizationHeaders: Record<string, string>
+}> {
+  const companion = getCompanionSession()
+  if (companion) {
+    const baseUrl = companion.baseUrl.replace(/\/$/, '')
+    return {
+      url: url.startsWith('/') ? `${baseUrl}${url}` : url,
+      authorizationHeaders: {
+        Authorization: `Bearer ${companion.accessToken}`,
+        'X-Gann-Astro-Client': COMPANION_CLIENT_CONTRACT,
+      },
+    }
+  }
   const runtime = await fetchBackendRuntime()
   const baseUrl = runtime?.baseUrl.replace(/\/$/, '') ?? ''
   return {
     url: baseUrl && url.startsWith('/') ? `${baseUrl}${url}` : url,
-    apiToken: runtime?.apiToken ?? '',
+    authorizationHeaders: runtime?.apiToken
+      ? { 'X-Gann-Astro-Token': runtime.apiToken }
+      : {},
   }
 }
 
@@ -92,7 +109,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
         ...init,
         headers: {
           'Content-Type': 'application/json',
-          ...(target.apiToken ? { 'X-Gann-Astro-Token': target.apiToken } : {}),
+          ...target.authorizationHeaders,
           ...(init?.headers ?? {}),
         },
       })
@@ -575,7 +592,7 @@ export async function codexBridgeHealth(): Promise<boolean> {
 export async function fetchChakraLabSnapshot(
   input: ChakraLabRequest,
 ): Promise<ChakraLabSnapshot> {
-  if (isTauriRuntime()) {
+  if (isTauriRuntime() && !getCompanionSession()) {
     const { invoke } = await import('@tauri-apps/api/core')
     const payload = await invoke<ApiEnvelope<{ snapshot: ChakraLabSnapshot }>>(
       'chakra_lab_snapshot',

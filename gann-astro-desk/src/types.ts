@@ -982,6 +982,14 @@ export type BackendRuntimeInfo = {
   lastExit: string | null
 }
 
+export type RuntimeProfile = {
+  contract: 'GANN_ASTRO_RUNTIME_PROFILE_V1'
+  platform: 'browser' | 'desktop' | 'android' | 'mobile'
+  backendMode: 'browser_development' | 'managed_sidecar' | 'remote_companion'
+  configured: boolean
+  executionAllowed: false
+}
+
 export type RuntimeMetric = {
   name: string
   count: number

@@ -1,8 +1,68 @@
 # Current Project Handoff
 
-Last updated: 2026-07-19 22:04 IST
+Last updated: 2026-07-20 19:30 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-20 (Android Companion Foundation / Source 0.10.15)
+
+- Added the first Android companion foundation without weakening the Windows
+  application boundary. Tauri now exposes a versioned runtime-profile contract:
+  Windows remains `managed_sidecar`, while Android is `remote_companion` and
+  never starts, stops, or bundles the Python/MT5 sidecar.
+- Added versioned companion client, session, and capability contracts. Android
+  sessions are memory-only, production pairing requires HTTPS, bearer tokens
+  are never persisted, and trade/order execution is explicitly locked. The
+  private Flask server remains loopback-only and is not exposed to the LAN.
+- Added a mobile pairing/status shell, responsive safe-area layout, authenticated
+  companion request routing, browser-development fallbacks, and unit tests for
+  runtime detection, session validation, HTTPS enforcement, expiry, and the
+  execution lock. The pairing UI targets `/companion/v1/pair`, but pairing is
+  intentionally not operational until the separate Rust TLS gateway exists.
+- Added an internal authenticated `/api/companion/capabilities` endpoint and a
+  deterministic backend capability declaration. It identifies Windows as the
+  owner of MT5, Swiss Ephemeris, Shadbala/Drik, rule engines, local LLMs, Codex
+  relay, and durable evidence; Android is limited to presentation, touch input,
+  chart/review requests, and bounded cache in this phase.
+- Split Tauri configuration into shared, Windows, and Android layers. Existing
+  Windows resources, sidecar commands, CSP, and NSIS settings remain in the
+  Windows overlay; the Android overlay uses the `Gann Astro Mobile` identity and
+  HTTPS/WSS network policy.
+- Added reproducible D-drive Android tooling and packaging scripts. The build
+  uses JDK 17 at `D:\FaceSwapServer\android-tools\jdk\jdk-17.0.19+10`, Android
+  SDK/NDK at `D:\FaceSwapServer\android-tools\sdk`, Rust targets under
+  `D:\Rust`, and Gradle/temp storage on D:. The packaging fallback copies and
+  strips the Rust library when Windows Developer Mode prevents Tauri from
+  creating its generated symlink; it does not alter Windows policy.
+- Built and independently inspected the arm64 debug pairing shell:
+  `D:\GannFinancialAstro\mobile\release_candidate\GannAstroMobile-0.10.15-debug\GannAstroMobile-0.10.15-debug.apk`.
+  It is 29,751,085 bytes with SHA-256
+  `9E032A411E3C7C79571FA7B26419B383C2D2F7083EA6577E427712D80479F95C`.
+  Package inspection confirms `com.gouravdamade.gannastrodesk`, version
+  `0.10.15` / code `10015`, min SDK 24, target/compile SDK 36, arm64-v8a only,
+  app label `Gann Astro Mobile`, and no sensitive Android permission beyond
+  network access plus Android's generated non-exported receiver guard.
+- Verification passed against source `0.10.15`: frontend `62/62` across 20
+  files, backend `111/111`, Oxlint, Vite/TypeScript production build, 4 Rust
+  tests, strict Clippy with warnings denied, Android Rust compilation, Gradle
+  arm64 assembly, package metadata inspection, and source-diff hygiene. The
+  generated Tauri Android wrapper emits two upstream Android deprecation
+  warnings, but the build succeeds.
+- No ADB device was connected, so installation, touch/gesture, rotation,
+  background/resume, network-loss, and real pairing tests remain pending. The
+  next implementation milestone is the Rust HTTPS/WSS companion gateway with
+  one-time pairing, certificate trust/pinning, bounded streaming/backpressure,
+  revocation, audit logging, and LAN threat tests. Execution must remain locked
+  throughout that milestone.
+- The stable Windows release remains promoted `0.10.14`; this turn did not
+  rebuild or replace it. External Shadbala/Drik certification also remains
+  unchanged and visibly failed at 35/70 comparator checks and 0/35 independent
+  Drik witness checks.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260720_193026_android_companion_foundation_0115`.
+- Existing runtime-only files remain deliberately outside this change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-19 (Timestamp-Safe RSI / Market Synthesis / Stable 0.10.14)
 

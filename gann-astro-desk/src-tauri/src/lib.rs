@@ -1,27 +1,47 @@
 use serde::Serialize;
+#[cfg(not(mobile))]
 use serde_json::{json, Value};
+#[cfg(not(mobile))]
 use std::collections::VecDeque;
+#[cfg(not(mobile))]
 use std::env;
+#[cfg(not(mobile))]
 use std::fs::{self, OpenOptions};
+#[cfg(not(mobile))]
 use std::io::{Read, Write};
+#[cfg(not(mobile))]
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, TcpListener, TcpStream};
+#[cfg(not(mobile))]
 use std::path::{Path, PathBuf};
+#[cfg(not(mobile))]
 use std::process::{Child, Command, Stdio};
+#[cfg(not(mobile))]
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Mutex,
 };
+#[cfg(not(mobile))]
 use std::thread;
+#[cfg(not(mobile))]
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+#[cfg(not(mobile))]
 use tauri::{AppHandle, Manager, RunEvent, State};
+#[cfg(not(mobile))]
 use uuid::Uuid;
 
+#[cfg(not(mobile))]
 const SIDECAR_CONTRACT: &str = "GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1";
+const RUNTIME_PROFILE_CONTRACT: &str = "GANN_ASTRO_RUNTIME_PROFILE_V1";
+#[cfg(not(mobile))]
 const MAX_RESTARTS: usize = 3;
+#[cfg(not(mobile))]
 const RESTART_WINDOW: Duration = Duration::from_secs(5 * 60);
+#[cfg(not(mobile))]
 const MAX_LOG_BYTES: u64 = 10 * 1024 * 1024;
+#[cfg(not(mobile))]
 const LOG_BACKUP_COUNT: usize = 3;
 
+#[cfg(not(mobile))]
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct BackendRuntimeInfo {
@@ -39,18 +59,31 @@ struct BackendRuntimeInfo {
     last_exit: Option<String>,
 }
 
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct RuntimeProfile {
+    contract: &'static str,
+    platform: &'static str,
+    backend_mode: &'static str,
+    configured: bool,
+    execution_allowed: bool,
+}
+
+#[cfg(not(mobile))]
 #[derive(Clone)]
 enum SidecarLaunch {
     Executable(PathBuf),
     SourcePython { python: PathBuf, script: PathBuf },
 }
 
+#[cfg(not(mobile))]
 struct ManagedChild {
     process: Child,
     #[cfg(windows)]
     _job: std::os::windows::io::OwnedHandle,
 }
 
+#[cfg(not(mobile))]
 impl ManagedChild {
     fn new(process: Child) -> Result<Self, String> {
         #[cfg(windows)]
@@ -69,6 +102,7 @@ impl ManagedChild {
     }
 }
 
+#[cfg(not(mobile))]
 struct SupervisorProcess {
     child: Option<ManagedChild>,
     restart_times: VecDeque<Instant>,
@@ -78,6 +112,7 @@ struct SupervisorProcess {
     last_exit: Option<String>,
 }
 
+#[cfg(not(mobile))]
 struct BackendRuntimeState {
     base_url: String,
     api_token: String,
@@ -90,6 +125,7 @@ struct BackendRuntimeState {
     shutting_down: AtomicBool,
 }
 
+#[cfg(not(mobile))]
 fn now_unix_ms() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -99,6 +135,7 @@ fn now_unix_ms() -> u64 {
         .unwrap_or(u64::MAX)
 }
 
+#[cfg(not(mobile))]
 fn validated_api_token_override(value: &str) -> Option<String> {
     let token = value.trim();
     if !(24..=128).contains(&token.len())
@@ -111,6 +148,7 @@ fn validated_api_token_override(value: &str) -> Option<String> {
     Some(token.to_string())
 }
 
+#[cfg(not(mobile))]
 fn launch_api_token() -> String {
     env::var("GANN_ASTRO_API_TOKEN_OVERRIDE")
         .ok()
@@ -118,6 +156,7 @@ fn launch_api_token() -> String {
         .unwrap_or_else(|| Uuid::new_v4().simple().to_string())
 }
 
+#[cfg(not(mobile))]
 fn available_port() -> Result<u16, String> {
     let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 0))
         .map_err(|error| format!("Unable to reserve a private backend port: {error}"))?;
@@ -127,6 +166,7 @@ fn available_port() -> Result<u16, String> {
         .map_err(|error| format!("Unable to read the private backend port: {error}"))
 }
 
+#[cfg(not(mobile))]
 fn backup_log_path(path: &Path, index: usize) -> PathBuf {
     let name = path
         .file_name()
@@ -135,6 +175,7 @@ fn backup_log_path(path: &Path, index: usize) -> PathBuf {
     path.with_file_name(format!("{name}.{index}"))
 }
 
+#[cfg(not(mobile))]
 fn rotate_log_if_needed(path: &Path) -> Result<(), String> {
     let size = match fs::metadata(path) {
         Ok(metadata) => metadata.len(),
@@ -181,6 +222,7 @@ fn rotate_log_if_needed(path: &Path) -> Result<(), String> {
     })
 }
 
+#[cfg(not(mobile))]
 fn parse_http_json_response(raw: &[u8]) -> Result<Value, String> {
     let split = raw
         .windows(4)
@@ -215,6 +257,7 @@ fn parse_http_json_response(raw: &[u8]) -> Result<Value, String> {
     Ok(payload)
 }
 
+#[cfg(not(mobile))]
 fn post_private_json(
     port: u16,
     api_token: &str,
@@ -251,6 +294,7 @@ fn post_private_json(
     parse_http_json_response(&response)
 }
 
+#[cfg(not(mobile))]
 fn default_data_root() -> PathBuf {
     if let Some(configured) = env::var_os("GANN_ASTRO_DESKTOP_DATA") {
         return PathBuf::from(configured);
@@ -264,6 +308,7 @@ fn default_data_root() -> PathBuf {
         .join("GannAstroDesk")
 }
 
+#[cfg(not(mobile))]
 fn locate_sidecar(app: &AppHandle) -> Result<SidecarLaunch, String> {
     if let Some(configured) = env::var_os("GANN_ASTRO_SIDECAR_EXE") {
         let executable = PathBuf::from(configured);
@@ -305,6 +350,7 @@ fn locate_sidecar(app: &AppHandle) -> Result<SidecarLaunch, String> {
     ))
 }
 
+#[cfg(not(mobile))]
 fn configure_hidden_process(command: &mut Command) {
     #[cfg(windows)]
     {
@@ -358,6 +404,7 @@ fn assign_kill_on_close_job(child: &Child) -> Result<std::os::windows::io::Owned
     }
 }
 
+#[cfg(not(mobile))]
 fn spawn_sidecar(
     launch: &SidecarLaunch,
     data_root: &Path,
@@ -424,6 +471,7 @@ fn spawn_sidecar(
     Ok((managed, now_unix_ms(), spawn_elapsed_ms))
 }
 
+#[cfg(not(mobile))]
 fn prune_restart_times(restart_times: &mut VecDeque<Instant>, now: Instant) {
     while restart_times
         .front()
@@ -433,6 +481,7 @@ fn prune_restart_times(restart_times: &mut VecDeque<Instant>, now: Instant) {
     }
 }
 
+#[cfg(not(mobile))]
 impl BackendRuntimeState {
     fn spawn(app: &AppHandle) -> Result<Self, String> {
         let port = available_port()?;
@@ -602,10 +651,40 @@ impl BackendRuntimeState {
 }
 
 #[tauri::command]
+fn runtime_profile() -> RuntimeProfile {
+    #[cfg(mobile)]
+    {
+        RuntimeProfile {
+            contract: RUNTIME_PROFILE_CONTRACT,
+            platform: if cfg!(target_os = "android") {
+                "android"
+            } else {
+                "mobile"
+            },
+            backend_mode: "remote_companion",
+            configured: false,
+            execution_allowed: false,
+        }
+    }
+    #[cfg(not(mobile))]
+    {
+        RuntimeProfile {
+            contract: RUNTIME_PROFILE_CONTRACT,
+            platform: "desktop",
+            backend_mode: "managed_sidecar",
+            configured: true,
+            execution_allowed: false,
+        }
+    }
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 fn backend_runtime(state: State<'_, BackendRuntimeState>) -> Result<BackendRuntimeInfo, String> {
     state.snapshot()
 }
 
+#[cfg(not(mobile))]
 #[tauri::command]
 async fn chakra_lab_snapshot(
     request: Value,
@@ -629,6 +708,7 @@ async fn chakra_lab_snapshot(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    #[cfg(not(mobile))]
     let app = tauri::Builder::default()
         .setup(|app| {
             let state = BackendRuntimeState::spawn(app.handle())?;
@@ -636,12 +716,20 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            runtime_profile,
             backend_runtime,
             chakra_lab_snapshot
         ])
         .build(tauri::generate_context!())
         .expect("Gann Astro Desk failed to build");
 
+    #[cfg(mobile)]
+    let app = tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![runtime_profile])
+        .build(tauri::generate_context!())
+        .expect("Gann Astro Mobile failed to build");
+
+    #[cfg(not(mobile))]
     app.run(|app_handle, event| match event {
         RunEvent::Resumed => {
             let state = app_handle.state::<BackendRuntimeState>();
@@ -652,6 +740,9 @@ pub fn run() {
         }
         _ => {}
     });
+
+    #[cfg(mobile)]
+    app.run(|_, _| {});
 }
 
 #[cfg(test)]

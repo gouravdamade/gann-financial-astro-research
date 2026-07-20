@@ -1,10 +1,10 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Gann Astro Desk",
-  "version": "0.10.14",
+  "version": "0.10.15",
   "identifier": "com.gouravdamade.gannastrodesk",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "npm run dev:mobile:ui",
     "devUrl": "http://127.0.0.1:5173",
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
@@ -14,25 +14,15 @@
       {
         "label": "main",
         "title": "Gann Astro Desk",
-        "url": "index.html?v=0.10.14",
-        "width": 1480,
-        "height": 920,
-        "minWidth": 1120,
-        "minHeight": 720,
-        "resizable": true,
-        "center": true
+        "url": "index.html?v=0.10.15"
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' http://127.0.0.1:*; img-src 'self' data: asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; script-src 'self'"
+      "csp": "default-src 'self'; connect-src 'self' https: wss:; img-src 'self' data: asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; script-src 'self'"
     }
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
-    "shortDescription": "Private Gann and financial astrology research workspace",
-    "resources": {
-      "resources/GannAstroBackend/": "backend/"
-    }
+    "shortDescription": "Private Gann and financial astrology research workspace"
   }
 }
