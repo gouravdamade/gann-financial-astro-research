@@ -12,8 +12,14 @@ class CompanionCapabilitiesTests(unittest.TestCase):
         self.assertTrue(payload["transport"]["gatewayRequired"])
         self.assertFalse(payload["transport"]["directPythonExposureAllowed"])
         self.assertTrue(payload["transport"]["tlsRequired"])
+        self.assertTrue(payload["transport"]["gatewayImplemented"])
+        self.assertTrue(payload["transport"]["encryptedPairingEnvelope"])
+        self.assertTrue(payload["transport"]["certificatePinning"])
         self.assertFalse(payload["features"]["orderPlacement"])
+        self.assertFalse(payload["features"]["offlineCache"])
+        self.assertTrue(payload["features"]["boundedWebSocketStreaming"])
         self.assertFalse(payload["guardrails"]["executionAllowed"])
+        self.assertEqual(payload["guardrails"]["sessionPersistence"], "memory_only")
 
     def test_windows_remains_authoritative_for_research_evidence(self) -> None:
         payload = build_companion_capabilities()

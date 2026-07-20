@@ -1,8 +1,75 @@
 # Current Project Handoff
 
-Last updated: 2026-07-20 19:30 IST
+Last updated: 2026-07-20 22:22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-20 (Real Rust Companion Gateway / Source 0.10.16)
+
+- Completed the Windows-hosted Rust HTTPS/WSS companion gateway while keeping
+  the Python/MT5 backend private on loopback. The gateway binds LAN HTTPS on
+  port `9443` (falling back to an ephemeral port if occupied), advertises only
+  non-loopback LAN addresses, generates an in-memory self-signed certificate,
+  and exposes an explicit read/review/AI/Codex allowlist. Order, trade,
+  execution, generation, promotion, scan, and MT5-history mutation routes stay
+  blocked; `executionAllowed` remains false in every contract and audit event.
+- Implemented one-time pairing and native certificate pinning. Pairing uses a
+  12-character code with a five-minute window, 90-second challenge, five-proof
+  lockout, HKDF-SHA256 keys, HMAC-SHA256 transcript proof, and a
+  ChaCha20-Poly1305 encrypted session envelope. Sessions are memory-only,
+  least-privilege, rate-limited, expire after 12 hours, and are revoked on host
+  restart. Android keeps the bearer token and pinned certificate in native Rust;
+  neither is exposed to WebView JavaScript or persisted to disk.
+- Added bounded WSS market-status streaming with sequence numbers, three-second
+  updates, lag/resync signaling, five-second send timeout, reconnect backoff,
+  and immediate disconnect after revoke/expiry. Proxy requests enforce decoded
+  path safety, 8 MiB request and 32 MiB response limits, no redirects, and an
+  exact route/capability allowlist. The rotating JSONL audit log lives at
+  `D:\GannFinancialAstro\app_data\logs\companion_gateway_audit.jsonl`.
+- Added the Windows Companion Mode panel and Android native pairing client. The
+  desktop panel displays selectable LAN URL, one-time code, certificate pin,
+  execution lock, paired sessions, and revoke controls. The Android shell
+  performs the cryptographic handshake natively, restores only its in-memory
+  session while the process lives, starts the pinned WSS stream, and returns to
+  pairing after revoke, expiry, or an invalid session.
+- Built Windows candidate
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.16-tauri`.
+  Portable EXE SHA-256:
+  `5DE005D46C2E499CCE8D6545283D4214F94B0A5FF929E6D181C3FF0B420FEC96`;
+  installer SHA-256:
+  `3EA1339A924D1A676045B75300AAFD23EF8D336C8B255D9B98DBC19A2415B51E`.
+  Packaged smoke testing confirmed the app remained alive, opened
+  `0.0.0.0:9443`, returned HTTPS 403 until Companion Mode was opened, wrote its
+  audit trail, and shut down without leaving the gateway or sidecar alive.
+- The first packaged smoke run exposed an `axum-server` reactor panic that unit
+  tests had masked by already running inside Tokio. Listener conversion now
+  occurs inside Tauri's async runtime, and a dedicated non-Tokio startup
+  regression test prevents recurrence.
+- Built signed arm64 debug APK
+  `D:\GannFinancialAstro\mobile\release_candidate\GannAstroMobile-0.10.16-debug\GannAstroMobile-0.10.16-debug.apk`
+  with SHA-256
+  `D7A2C8FC42CAB6791A5F45DD2A2A32B2FC8F4A61F4F5BA13FD8B0C02597165C0`.
+  `apksigner` confirms APK Signature Scheme v2 with the Android debug
+  certificate. This remains a debug candidate, not a distributable release.
+- Verification passed: frontend `62/62` across 20 files, backend `111/111`,
+  Oxlint, TypeScript/Vite production build, Rust formatting, 13 Rust tests
+  including real encrypted HTTPS pairing/pinned WSS and non-Tokio startup,
+  strict Clippy with warnings denied, Android arm64 Rust compilation, Windows
+  native packaging, APK signature inspection, release hashes, and source-diff
+  hygiene. Vite retains only its existing advisory for the 516.48 kB main chunk.
+- Physical-phone testing is still genuinely pending because
+  `adb devices -l` returned no attached device. Do not promote the Android
+  candidate until install/launch, pairing over Wi-Fi, chart/review requests,
+  stream reconnect, host revoke, restart revocation, background/resume,
+  rotation, touch layout, and network-loss recovery pass on real hardware.
+- Stable Windows release remains promoted `0.10.14`; candidate `0.10.16` has not
+  replaced it. External Shadbala/Drik certification also remains unchanged at
+  35/70 comparator checks and 0/35 independent Drik witness checks.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260720_222217_rust_companion_gateway_0116`.
+- Existing runtime-only files remain deliberately outside this change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-20 (Android Companion Foundation / Source 0.10.15)
 

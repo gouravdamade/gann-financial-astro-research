@@ -3,26 +3,31 @@ from __future__ import annotations
 from typing import Any
 
 
-CONTRACT = "GANN_ASTRO_COMPANION_CAPABILITIES_V1"
+CONTRACT = "GANN_ASTRO_COMPANION_CAPABILITIES_V2"
 
 
 def build_companion_capabilities() -> dict[str, Any]:
     return {
         "contract": CONTRACT,
-        "apiVersion": 1,
+        "apiVersion": 2,
         "hostRole": "windows_research_host",
         "transport": {
             "gatewayRequired": True,
             "directPythonExposureAllowed": False,
             "tlsRequired": True,
             "devicePairingRequired": True,
+            "gatewayImplemented": True,
+            "gatewayContract": "GANN_ASTRO_RUST_COMPANION_GATEWAY_V1",
+            "encryptedPairingEnvelope": True,
+            "certificatePinning": True,
         },
         "features": {
             "chartRead": True,
             "reviewWrite": True,
             "aiDrafts": True,
             "codexBridge": True,
-            "offlineCache": True,
+            "offlineCache": False,
+            "boundedWebSocketStreaming": True,
             "orderPlacement": False,
         },
         "computeTopology": {
@@ -49,5 +54,6 @@ def build_companion_capabilities() -> dict[str, Any]:
             "timestampSafeEvidenceRequired": True,
             "retrospectiveLabelsAllowedInLiveInference": False,
             "llmDraftsAreEvidence": False,
+            "sessionPersistence": "memory_only",
         },
     }

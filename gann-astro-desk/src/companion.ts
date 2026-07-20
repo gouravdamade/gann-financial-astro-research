@@ -1,8 +1,8 @@
-export const COMPANION_CLIENT_CONTRACT = 'GANN_ASTRO_ANDROID_COMPANION_CLIENT_V1' as const
-export const COMPANION_SESSION_CONTRACT = 'GANN_ASTRO_COMPANION_SESSION_V1' as const
+export const COMPANION_CLIENT_CONTRACT = 'GANN_ASTRO_ANDROID_COMPANION_CLIENT_V2' as const
+export const COMPANION_SESSION_CONTRACT = 'GANN_ASTRO_COMPANION_SESSION_V2' as const
 
 export type CompanionCapabilities = {
-  contract: 'GANN_ASTRO_COMPANION_CAPABILITIES_V1'
+  contract: 'GANN_ASTRO_COMPANION_CAPABILITIES_V2'
   chartRead: boolean
   reviewWrite: boolean
   aiDrafts: boolean
@@ -12,14 +12,25 @@ export type CompanionCapabilities = {
 
 export type CompanionSession = {
   contract: typeof COMPANION_SESSION_CONTRACT
+  sessionId: string
   baseUrl: string
-  accessToken: string
   expiresAtUtc: string
-  executionAllowed: false
+  certificateSha256: string
+  transport: 'native_pinned_https_wss'
   capabilities: CompanionCapabilities
+  executionAllowed: false
+}
+
+export type NativeCompanionResponse = {
+  status: number
+  payload: unknown
 }
 
 let activeSession: CompanionSession | null = null
+
+function isTauriRuntime(): boolean {
+  return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
+}
 
 export function getCompanionSession(): CompanionSession | null {
   return activeSession
@@ -34,7 +45,7 @@ export function setCompanionSession(session: CompanionSession): void {
   activeSession = session
 }
 
-export function normalizeCompanionBaseUrl(value: string, allowInsecure = false): string {
+export function normalizeCompanionBaseUrl(value: string): string {
   const parsed = new URL(value.trim())
   if (parsed.username || parsed.password || parsed.search || parsed.hash) {
     throw new Error('Server address cannot contain credentials, a query, or a fragment')
@@ -42,7 +53,7 @@ export function normalizeCompanionBaseUrl(value: string, allowInsecure = false):
   if (parsed.pathname !== '/' && parsed.pathname !== '') {
     throw new Error('Server address must not contain a path')
   }
-  if (parsed.protocol !== 'https:' && !(allowInsecure && parsed.protocol === 'http:')) {
+  if (parsed.protocol !== 'https:') {
     throw new Error('The companion connection requires HTTPS')
   }
   return `${parsed.protocol}//${parsed.host}`
@@ -52,12 +63,16 @@ export function validateCompanionSession(session: CompanionSession): CompanionSe
   if (session.contract !== COMPANION_SESSION_CONTRACT) {
     throw new Error(`Unsupported companion session contract: ${String(session.contract)}`)
   }
-  normalizeCompanionBaseUrl(session.baseUrl, import.meta.env.DEV)
-  if (typeof session.accessToken !== 'string' || session.accessToken.length < 32) {
-    throw new Error('Companion session did not provide a valid access token')
+  normalizeCompanionBaseUrl(session.baseUrl)
+  if (!session.sessionId || !/^[A-F0-9]{64}$/i.test(session.certificateSha256)) {
+    throw new Error('Companion session did not provide a valid identity')
   }
-  if (!Number.isFinite(Date.parse(session.expiresAtUtc))) {
-    throw new Error('Companion session did not provide a valid expiry')
+  const expiry = Date.parse(session.expiresAtUtc)
+  if (!Number.isFinite(expiry) || expiry <= Date.now()) {
+    throw new Error('Companion session is expired')
+  }
+  if (session.transport !== 'native_pinned_https_wss') {
+    throw new Error('Companion session did not enable the pinned native transport')
   }
   if (session.executionAllowed || session.capabilities.executionAllowed) {
     throw new Error('Companion session violated the execution lock')
@@ -70,41 +85,55 @@ export async function pairCompanion(input: {
   pairingCode: string
   deviceName: string
 }): Promise<CompanionSession> {
-  const baseUrl = normalizeCompanionBaseUrl(input.baseUrl, import.meta.env.DEV)
-  const pairingCode = input.pairingCode.trim()
+  if (!isTauriRuntime()) {
+    throw new Error('Secure companion pairing is available only in the native Android app')
+  }
+  const baseUrl = normalizeCompanionBaseUrl(input.baseUrl)
+  const pairingCode = input.pairingCode.trim().toUpperCase()
   const deviceName = input.deviceName.trim()
-  if (!/^[A-Z0-9-]{6,20}$/i.test(pairingCode)) {
-    throw new Error('Enter the one-time pairing code shown on the laptop')
+  if (!/^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/.test(pairingCode)) {
+    throw new Error('Enter all three groups from the one-time code shown on the laptop')
   }
   if (deviceName.length < 2 || deviceName.length > 64) {
     throw new Error('Device name must be between 2 and 64 characters')
   }
-
-  const controller = new AbortController()
-  const timeout = window.setTimeout(() => controller.abort(), 15_000)
-  let response: Response
-  try {
-    response = await fetch(`${baseUrl}/companion/v1/pair`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contract: COMPANION_CLIENT_CONTRACT,
-        pairingCode,
-        deviceName,
-        requestedCapabilities: ['chart_read', 'review_write', 'ai_drafts', 'codex_bridge'],
-        executionRequested: false,
-      }),
-      signal: controller.signal,
-    })
-  } finally {
-    window.clearTimeout(timeout)
-  }
-
-  const payload = await response.json() as { ok?: boolean; error?: string; session?: CompanionSession }
-  if (!response.ok || !payload.ok || !payload.session) {
-    throw new Error(payload.error || `Pairing failed: ${response.status}`)
-  }
-  const session = validateCompanionSession({ ...payload.session, baseUrl })
+  const { invoke } = await import('@tauri-apps/api/core')
+  const session = await invoke<CompanionSession>('companion_pair', {
+    input: { baseUrl, pairingCode, deviceName },
+  })
   setCompanionSession(session)
   return session
+}
+
+export async function restoreCompanionSession(): Promise<CompanionSession | null> {
+  if (!isTauriRuntime()) return null
+  const { invoke } = await import('@tauri-apps/api/core')
+  const session = await invoke<CompanionSession | null>('companion_session')
+  if (session) setCompanionSession(session)
+  return session
+}
+
+export async function startCompanionStream(): Promise<void> {
+  if (!isTauriRuntime() || !activeSession) return
+  const { invoke } = await import('@tauri-apps/api/core')
+  await invoke('companion_start_stream')
+}
+
+export async function disconnectCompanion(): Promise<void> {
+  clearCompanionSession()
+  if (!isTauriRuntime()) return
+  const { invoke } = await import('@tauri-apps/api/core')
+  await invoke('companion_disconnect')
+}
+
+export async function nativeCompanionRequest(input: {
+  path: string
+  method: string
+  body?: string
+}): Promise<NativeCompanionResponse> {
+  if (!isTauriRuntime() || !activeSession) {
+    throw new Error('The native companion transport is not paired')
+  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  return invoke<NativeCompanionResponse>('companion_request', { input })
 }

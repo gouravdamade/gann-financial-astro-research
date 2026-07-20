@@ -44,7 +44,7 @@ export function MobileCompanionSetup({ onPaired }: MobileCompanionSetupProps) {
           <WifiOff size={22} />
           <span>
             <strong>Laptop not paired</strong>
-            <small>Open Companion Mode on Gann Astro Desk to obtain the address and one-time code.</small>
+            <small>Open Companion on Gann Astro Desk to obtain the HTTPS address and one-time code.</small>
           </span>
         </div>
 
@@ -56,7 +56,7 @@ export function MobileCompanionSetup({ onPaired }: MobileCompanionSetupProps) {
               inputMode="url"
               autoCapitalize="none"
               autoCorrect="off"
-              placeholder="https://gann-laptop.local:9443"
+              placeholder="https://192.168.1.20:9443"
               value={baseUrl}
               onChange={(event) => setBaseUrl(event.target.value)}
               required
@@ -69,7 +69,7 @@ export function MobileCompanionSetup({ onPaired }: MobileCompanionSetupProps) {
               inputMode="text"
               autoCapitalize="characters"
               autoCorrect="off"
-              placeholder="AB12-CD34"
+              placeholder="ABCD-EFGH-JK23"
               value={pairingCode}
               onChange={(event) => setPairingCode(event.target.value)}
               required
@@ -93,6 +93,9 @@ export function MobileCompanionSetup({ onPaired }: MobileCompanionSetupProps) {
             {pairing ? <LoaderCircle className="mobile-spin" size={17} /> : <Link2 size={17} />}
             {pairing ? 'Pairing' : 'Pair laptop'}
           </button>
+          <p className="mobile-pairing-security-note">
+            The code authenticates an encrypted handshake. The laptop certificate and session token remain inside the native Rust layer.
+          </p>
         </form>
       </section>
     </main>

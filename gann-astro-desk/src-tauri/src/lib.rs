@@ -1,4 +1,11 @@
 use serde::Serialize;
+use tauri::Manager;
+
+#[cfg(mobile)]
+mod companion_client;
+#[cfg(not(mobile))]
+mod companion_gateway;
+mod companion_protocol;
 #[cfg(not(mobile))]
 use serde_json::{json, Value};
 #[cfg(not(mobile))]
@@ -25,7 +32,7 @@ use std::thread;
 #[cfg(not(mobile))]
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 #[cfg(not(mobile))]
-use tauri::{AppHandle, Manager, RunEvent, State};
+use tauri::{AppHandle, RunEvent, State};
 #[cfg(not(mobile))]
 use uuid::Uuid;
 
@@ -680,6 +687,39 @@ fn runtime_profile() -> RuntimeProfile {
 
 #[cfg(not(mobile))]
 #[tauri::command]
+fn companion_gateway_info(
+    state: State<'_, companion_gateway::CompanionGatewayState>,
+) -> companion_gateway::GatewayInfo {
+    state.info()
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
+fn companion_start_pairing(
+    state: State<'_, companion_gateway::CompanionGatewayState>,
+) -> Result<companion_gateway::PairingWindowInfo, String> {
+    state.start_pairing()
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
+fn companion_gateway_sessions(
+    state: State<'_, companion_gateway::CompanionGatewayState>,
+) -> Vec<companion_gateway::GatewaySessionInfo> {
+    state.sessions()
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
+fn companion_revoke_session(
+    session_id: String,
+    state: State<'_, companion_gateway::CompanionGatewayState>,
+) -> bool {
+    state.revoke(&session_id)
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 fn backend_runtime(state: State<'_, BackendRuntimeState>) -> Result<BackendRuntimeInfo, String> {
     state.snapshot()
 }
@@ -708,24 +748,48 @@ async fn chakra_lab_snapshot(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    companion_protocol::install_crypto_provider()
+        .expect("Gann Astro could not initialize its TLS crypto provider");
+
     #[cfg(not(mobile))]
     let app = tauri::Builder::default()
         .setup(|app| {
-            let state = BackendRuntimeState::spawn(app.handle())?;
-            app.manage(state);
+            let backend = BackendRuntimeState::spawn(app.handle())?;
+            let gateway = companion_gateway::CompanionGatewayState::spawn(
+                backend.port,
+                backend.api_token.clone(),
+                backend.data_root.clone(),
+            )?;
+            app.manage(backend);
+            app.manage(gateway);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             runtime_profile,
             backend_runtime,
-            chakra_lab_snapshot
+            chakra_lab_snapshot,
+            companion_gateway_info,
+            companion_start_pairing,
+            companion_gateway_sessions,
+            companion_revoke_session
         ])
         .build(tauri::generate_context!())
         .expect("Gann Astro Desk failed to build");
 
     #[cfg(mobile)]
     let app = tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![runtime_profile])
+        .setup(|app| {
+            app.manage(companion_client::MobileCompanionState::default());
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![
+            runtime_profile,
+            companion_client::companion_pair,
+            companion_client::companion_request,
+            companion_client::companion_session,
+            companion_client::companion_disconnect,
+            companion_client::companion_start_stream
+        ])
         .build(tauri::generate_context!())
         .expect("Gann Astro Mobile failed to build");
 
@@ -736,6 +800,9 @@ pub fn run() {
             let _ = state.snapshot();
         }
         RunEvent::ExitRequested { .. } | RunEvent::Exit => {
+            app_handle
+                .state::<companion_gateway::CompanionGatewayState>()
+                .shutdown();
             app_handle.state::<BackendRuntimeState>().shutdown();
         }
         _ => {}

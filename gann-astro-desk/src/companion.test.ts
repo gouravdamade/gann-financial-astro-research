@@ -8,13 +8,15 @@ import {
 } from './companion'
 
 const session: CompanionSession = {
-  contract: 'GANN_ASTRO_COMPANION_SESSION_V1',
+  contract: 'GANN_ASTRO_COMPANION_SESSION_V2',
+  sessionId: '83f13567-13b0-4b74-88bb-e5fdf7a7a3cf',
   baseUrl: 'https://gann-laptop.local:9443',
-  accessToken: 'a'.repeat(48),
-  expiresAtUtc: '2026-07-20T18:00:00Z',
+  expiresAtUtc: '2030-07-20T18:00:00Z',
+  certificateSha256: 'A'.repeat(64),
+  transport: 'native_pinned_https_wss',
   executionAllowed: false,
   capabilities: {
-    contract: 'GANN_ASTRO_COMPANION_CAPABILITIES_V1',
+    contract: 'GANN_ASTRO_COMPANION_CAPABILITIES_V2',
     chartRead: true,
     reviewWrite: true,
     aiDrafts: true,

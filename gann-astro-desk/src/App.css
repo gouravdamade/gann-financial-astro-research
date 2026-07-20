@@ -161,6 +161,13 @@
   opacity: 0.65;
 }
 
+.mobile-pairing-security-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 .mobile-spin {
   animation: mobile-spin 900ms linear infinite;
 }
@@ -363,6 +370,214 @@
   background: #45252c;
   border-color: #8c4b56;
   color: #ffb9bd;
+}
+
+.companion-gateway-panel {
+  position: fixed;
+  z-index: 110;
+  top: 62px;
+  right: 10px;
+  width: min(390px, calc(100vw - 20px));
+  max-height: calc(100vh - 92px);
+  display: grid;
+  gap: 12px;
+  padding: 13px;
+  overflow-y: auto;
+  border: 1px solid #36506a;
+  border-radius: 6px;
+  background: #101923;
+  box-shadow: 0 18px 46px rgb(0 0 0 / 48%);
+}
+
+.companion-gateway-panel > header,
+.companion-gateway-panel > header > span,
+.companion-gateway-status,
+.companion-pairing-card > div,
+.companion-session-list > div,
+.companion-session-list article,
+.companion-session-list article > span {
+  display: flex;
+}
+
+.companion-gateway-panel > header,
+.companion-gateway-status,
+.companion-pairing-card > div,
+.companion-session-list > div,
+.companion-session-list article {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.companion-gateway-panel > header > span {
+  align-items: center;
+  gap: 9px;
+  color: #dcecf7;
+}
+
+.companion-gateway-panel > header > span > span,
+.companion-session-list article > span {
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.companion-gateway-panel > header strong,
+.companion-session-list strong {
+  font-size: 12px;
+}
+
+.companion-gateway-panel > header small,
+.companion-session-list small,
+.companion-certificate small,
+.companion-pairing-card small {
+  color: #8295a8;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.companion-gateway-status {
+  min-height: 30px;
+  gap: 8px;
+  padding: 0 4px 8px;
+  border-bottom: 1px solid #253547;
+  color: #96aabc;
+  font-size: 10px;
+}
+
+.companion-gateway-status > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.companion-gateway-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d3a84d;
+}
+
+.companion-gateway-status .is-ready i {
+  background: #55c89a;
+  box-shadow: 0 0 0 3px rgb(85 200 154 / 12%);
+}
+
+.companion-pairing-card,
+.companion-certificate,
+.companion-session-list {
+  display: grid;
+  gap: 8px;
+}
+
+.companion-pairing-card {
+  padding: 11px;
+  border: 1px solid #38677f;
+  border-radius: 5px;
+  background: #132633;
+}
+
+.companion-pairing-card time {
+  color: #d5ab58;
+  font-size: 10px;
+}
+
+.companion-code,
+.companion-url,
+.companion-open-pairing {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #467c99;
+  border-radius: 4px;
+  background: #1d4a61;
+  color: #e7f8ff;
+  cursor: pointer;
+}
+
+.companion-code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.companion-url {
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 0 9px;
+  background: #131e29;
+  color: #b9ccdb;
+  font-size: 11px;
+}
+
+.companion-url span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.companion-address-choice {
+  display: grid;
+  gap: 4px;
+  color: #8295a8;
+  font-size: 10px;
+}
+
+.companion-address-choice select {
+  min-width: 0;
+  height: 30px;
+  border: 1px solid #36506a;
+  border-radius: 4px;
+  background: #111a24;
+  color: #c6d8e4;
+  font-size: 10px;
+}
+
+.companion-open-pairing:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.companion-certificate {
+  padding: 9px 0;
+  border-block: 1px solid #253547;
+}
+
+.companion-certificate code {
+  color: #9bcce1;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.companion-session-list > div > span {
+  min-width: 22px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: #213346;
+  color: #b8d5e4;
+  text-align: center;
+  font-size: 10px;
+}
+
+.companion-session-list article {
+  min-height: 42px;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #202e3c;
+}
+
+.companion-session-list p,
+.companion-gateway-error {
+  margin: 0;
+  color: #8394a6;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.companion-gateway-error {
+  color: #f09ba2;
 }
 
 .workspace-grid {

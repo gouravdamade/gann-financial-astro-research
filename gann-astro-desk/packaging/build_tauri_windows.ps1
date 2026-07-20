@@ -111,7 +111,7 @@ $sourceGitDirty = [bool](
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
     version = $appVersion
-    status = "performance_audit_candidate"
+    status = "companion_gateway_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -139,6 +139,14 @@ $manifest = [ordered]@{
         "clear"
     )
     backend_contract = "GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1"
+    companion_gateway_contract = "GANN_ASTRO_RUST_COMPANION_GATEWAY_V1"
+    companion_client_contract = "GANN_ASTRO_ANDROID_COMPANION_CLIENT_V2"
+    companion_session_contract = "GANN_ASTRO_COMPANION_SESSION_V2"
+    companion_stream_contract = "GANN_ASTRO_COMPANION_STREAM_V1"
+    companion_transport = "native_pinned_https_wss"
+    companion_python_exposure = "loopback_only"
+    companion_execution_allowed = $false
+    companion_physical_device_validation = "pending"
     astronomy_contract = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2"
     chart_layout_contract = "GANN_CHART_LAYOUT_V1"
     drawing_contract = "GANN_RESEARCH_CHART_DRAWING_V1"

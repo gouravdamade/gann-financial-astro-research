@@ -18,6 +18,7 @@ import {
   PanelRightOpen,
   Search,
   ShieldCheck,
+  Smartphone,
   Waves,
   X,
 } from 'lucide-react'
@@ -45,6 +46,7 @@ import { effectiveAspectMinDurationMinutes, formatAspectDuration } from '../aspe
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
 import { CandlestickShadowPanel } from '../components/CandlestickShadowPanel'
+import { CompanionGatewayPanel } from '../components/CompanionGatewayPanel'
 import { BarReplayControls } from '../components/BarReplayControls'
 import { EventTable } from '../components/EventTable'
 import { InspectorPanel } from '../components/InspectorPanel'
@@ -133,7 +135,7 @@ function StatusClock() {
   return <time>{clock.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} IST</time>
 }
 
-export function MainWorkspace() {
+export function MainWorkspace({ showCompanionGateway = false }: { showCompanionGateway?: boolean }) {
   const [chart, setChart] = useState<ChartPayload | null>(null)
   const [schema, setSchema] = useState<ParameterSchema | null>(null)
   const [parameters, setParameters] = useState<ChartParameters | null>(null)
@@ -159,6 +161,7 @@ export function MainWorkspace() {
   const [error, setError] = useState('')
   const [parameterError, setParameterError] = useState('')
   const [parametersOpen, setParametersOpen] = useState(false)
+  const [companionOpen, setCompanionOpen] = useState(false)
   const [chartLoading, setChartLoading] = useState(false)
   const [workspace, setWorkspace] = useState<WorkspacePreferences>(initialWorkspacePreferences)
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false)
@@ -586,6 +589,16 @@ export function MainWorkspace() {
         <div className="topbar-spacer" />
         <RefreshStatusChip status={shadow?.refresh} busy={refreshBusy} onRefresh={runProspectiveRefresh} />
         <ConnectionBadge status={status} />
+        {showCompanionGateway && (
+          <button
+            className={`icon-button ${companionOpen ? 'is-active' : ''}`}
+            onClick={() => setCompanionOpen((value) => !value)}
+            title="Pair or manage an Android companion"
+            aria-label="Pair or manage an Android companion"
+          >
+            <Smartphone size={18} />
+          </button>
+        )}
         {activeSurface === 'chart' && <>
           <button className="icon-button" onClick={() => void captureChart()} title="Download chart snapshot" aria-label="Download chart snapshot"><Camera size={18} /></button>
           <button className="icon-button" onClick={() => setFocusMode((value) => !value)} title={focusMode ? 'Restore panels' : 'Focus chart'} aria-label={focusMode ? 'Restore panels' : 'Focus chart'}>
@@ -863,6 +876,9 @@ export function MainWorkspace() {
             onProfilesChange={setProfiles}
           />
         </Suspense>
+      )}
+      {showCompanionGateway && companionOpen && (
+        <CompanionGatewayPanel onClose={() => setCompanionOpen(false)} />
       )}
     </main>
   )

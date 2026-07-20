@@ -143,18 +143,22 @@ Copy-Item -LiteralPath $apk.FullName -Destination $apkTarget -Force
 $manifest = [ordered]@{
     product = "Gann Astro Mobile"
     version = $appVersion
-    status = "android_companion_pairing_shell"
+    status = "android_companion_https_pairing_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     apk = [IO.Path]::GetFileName($apkTarget)
     apk_sha256 = (Get-FileHash -LiteralPath $apkTarget -Algorithm SHA256).Hash
     source_git_commit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
     source_git_dirty = [bool](& git.exe -C $projectRoot status --porcelain -- "gann-astro-desk" | Select-Object -First 1)
     runtime_profile_contract = "GANN_ASTRO_RUNTIME_PROFILE_V1"
-    companion_client_contract = "GANN_ASTRO_ANDROID_COMPANION_CLIENT_V1"
-    companion_session_contract = "GANN_ASTRO_COMPANION_SESSION_V1"
-    companion_capabilities_contract = "GANN_ASTRO_COMPANION_CAPABILITIES_V1"
+    companion_client_contract = "GANN_ASTRO_ANDROID_COMPANION_CLIENT_V2"
+    companion_session_contract = "GANN_ASTRO_COMPANION_SESSION_V2"
+    companion_capabilities_contract = "GANN_ASTRO_COMPANION_CAPABILITIES_V2"
+    companion_stream_contract = "GANN_ASTRO_COMPANION_STREAM_V1"
+    companion_gateway_contract = "GANN_ASTRO_RUST_COMPANION_GATEWAY_V1"
     session_persistence = "memory_only"
-    gateway_status = "not_yet_implemented"
+    transport = "native_pinned_https_wss"
+    gateway_status = "implemented_requires_windows_host"
+    physical_device_validation = "required_before_release"
     execution_allowed = $false
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8

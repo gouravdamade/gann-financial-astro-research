@@ -35,7 +35,7 @@ import type {
   ChakraLabRequest,
   ChakraLabSnapshot,
 } from './types'
-import { COMPANION_CLIENT_CONTRACT, getCompanionSession } from './companion'
+import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
 let backendRuntimePromise: Promise<BackendRuntimeInfo> | null = null
@@ -45,6 +45,7 @@ function isTauriRuntime(): boolean {
 }
 
 export async function fetchBackendRuntime(force = false): Promise<BackendRuntimeInfo | null> {
+  if (getCompanionSession()) return null
   if (!isTauriRuntime()) return null
   if (force) backendRuntimePromise = null
   if (backendRuntimePromise == null) {
@@ -72,17 +73,6 @@ async function backendRequestTarget(url: string): Promise<{
   url: string
   authorizationHeaders: Record<string, string>
 }> {
-  const companion = getCompanionSession()
-  if (companion) {
-    const baseUrl = companion.baseUrl.replace(/\/$/, '')
-    return {
-      url: url.startsWith('/') ? `${baseUrl}${url}` : url,
-      authorizationHeaders: {
-        Authorization: `Bearer ${companion.accessToken}`,
-        'X-Gann-Astro-Client': COMPANION_CLIENT_CONTRACT,
-      },
-    }
-  }
   const runtime = await fetchBackendRuntime()
   const baseUrl = runtime?.baseUrl.replace(/\/$/, '') ?? ''
   return {
@@ -99,6 +89,23 @@ function wait(milliseconds: number): Promise<void> {
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const method = (init?.method ?? 'GET').toUpperCase()
+  if (getCompanionSession()) {
+    if (!url.startsWith('/')) throw new Error('Companion requests must use a relative path')
+    const response = await nativeCompanionRequest({
+      path: url,
+      method,
+      body: typeof init?.body === 'string' ? init.body : undefined,
+    })
+    const payload = response.payload as ApiEnvelope<T>
+    if (response.status < 200 || response.status >= 300 || !payload.ok) {
+      if (response.status === 401) {
+        await disconnectCompanion().catch(() => undefined)
+        window.dispatchEvent(new Event('gann-astro-companion-invalid'))
+      }
+      throw new Error(payload.error || `Request failed: ${response.status}`)
+    }
+    return payload
+  }
   const attempts = method === 'GET' ? 61 : 1
   let response: Response | null = null
   let networkError: unknown = null
