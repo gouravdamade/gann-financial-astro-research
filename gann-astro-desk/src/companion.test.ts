@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import {
   clearCompanionSession,
+  formatCompanionError,
   getCompanionSession,
   normalizeCompanionBaseUrl,
   setCompanionSession,
@@ -50,5 +51,15 @@ describe('mobile companion session', () => {
       ...session,
       executionAllowed: true,
     } as unknown as CompanionSession)).toThrow('execution lock')
+  })
+
+  it('preserves native Rust invocation errors for remote diagnosis', () => {
+    expect(formatCompanionError('Unable to reach the laptop pairing gateway: timeout')).toContain(
+      'timeout',
+    )
+    expect(formatCompanionError({ message: 'Pinned certificate check failed' })).toBe(
+      'Pinned certificate check failed',
+    )
+    expect(formatCompanionError(null)).toBe('Unable to pair with the laptop')
   })
 })

@@ -56,6 +56,12 @@ export default function App() {
   }, [companionPaired])
 
   useEffect(() => {
+    const isAndroid = profile?.platform === 'android' || profile?.platform === 'mobile'
+    document.documentElement.classList.toggle('android-runtime', isAndroid)
+    return () => document.documentElement.classList.remove('android-runtime')
+  }, [profile?.platform])
+
+  useEffect(() => {
     if (profile?.backendMode !== 'remote_companion') return
     let disposed = false
     let unlisten: (() => void) | undefined

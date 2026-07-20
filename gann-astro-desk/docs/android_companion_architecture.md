@@ -2,7 +2,7 @@
 
 ## Status
 
-Version 0.10.16 is a release candidate with a native Rust HTTPS/WSS companion
+Version 0.10.17 is a release candidate with a native Rust HTTPS/WSS companion
 transport. The Windows app keeps Python and MT5 on loopback, exposes only an
 explicit research-route allowlist, and opens pairing only when the user requests
 it. Android performs the pairing handshake and all later requests in Rust; the
@@ -37,11 +37,11 @@ validation is still required before this candidate is called usable.
 
 ## Pairing Flow
 
-1. Windows starts a self-signed Rust TLS gateway on LAN interfaces while Python
+1. Windows starts a self-signed Rust TLS gateway on LAN and Tailscale interfaces while Python
    remains bound to `127.0.0.1` with its private sidecar token.
-2. The user opens Android Companion. Windows displays one or more LAN HTTPS
-   addresses, a certificate fingerprint, and a 12-character code valid for five
-   minutes.
+2. The user opens Android Companion. Windows displays labeled LAN and Tailscale
+   HTTPS addresses, prefers Tailscale when available, and shows a certificate
+   fingerprint plus a 12-character code valid for five minutes.
 3. Android requests a 90-second challenge. HKDF-SHA256 derives proof and
    encryption keys from the one-time code, challenge salt, and server nonce.
 4. Android sends an HMAC proof that binds both nonces, device identity,
@@ -52,6 +52,24 @@ validation is still required before this candidate is called usable.
    the authenticated status endpoint, then uses only pinned HTTPS/WSS.
 7. The token and certificate remain in Rust memory. Restart, expiry, or desktop
    revocation invalidates the session; Android returns to the pairing screen.
+
+## Private Remote Operation
+
+- Tailscale is the supported away-from-Wi-Fi path. Both devices must be signed
+  into the same private tailnet, and Android must not exclude Gann Astro Mobile
+  through app-based split tunneling.
+- Start Tailscale before Gann Astro Desk. Gateway certificates are generated in
+  memory at desktop startup, so the desktop app must be restarted after a new
+  Tailscale address first becomes available.
+- The desktop panel labels the Tailscale endpoint and selects it by default. A
+  LAN endpoint remains available for local fallback.
+- Windows Firewall permits this executable on TCP 9443 from `100.64.0.0/10`
+  only. No router port forwarding or public-network allow rule is required.
+- For a long shift, keep the laptop plugged in and awake, Tailscale running in
+  unattended mode, and Gann Astro Desk open. Pair immediately before leaving;
+  the memory-only session lasts 12 hours.
+- The Android shell uses viewport safe-area insets on both the pairing screen
+  and paired workspace, keeping controls clear of status and navigation bars.
 
 ## Gateway Requirements
 

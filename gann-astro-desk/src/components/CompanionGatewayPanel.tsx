@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Copy, Link2, LoaderCircle, RefreshCw, ShieldCheck, Smartphone, Trash2, X } from 'lucide-react'
+import { Copy, Link2, LoaderCircle, RefreshCw, ShieldCheck, Smartphone, Trash2, Wifi, X } from 'lucide-react'
 import {
+  companionEndpointLabel,
+  companionEndpoints,
   fetchCompanionGateway,
   fetchCompanionSessions,
   openCompanionPairing,
@@ -48,9 +50,13 @@ export function CompanionGatewayPanel({ onClose }: CompanionGatewayPanelProps) {
     return () => window.clearInterval(timer)
   }, [refresh])
 
+  const availableEndpoints = useMemo(
+    () => companionEndpoints(pairing ?? gateway),
+    [gateway, pairing],
+  )
   const availableUrls = useMemo(
-    () => pairing?.urls ?? gateway?.urls ?? [],
-    [gateway?.urls, pairing?.urls],
+    () => availableEndpoints.map((endpoint) => endpoint.url),
+    [availableEndpoints],
   )
   useEffect(() => {
     if (!availableUrls.length) {
@@ -93,6 +99,8 @@ export function CompanionGatewayPanel({ onClose }: CompanionGatewayPanelProps) {
   }
 
   const primaryUrl = selectedUrl || availableUrls[0] || ''
+  const selectedEndpoint = availableEndpoints.find((endpoint) => endpoint.url === primaryUrl)
+  const tailscaleReady = availableEndpoints.some((endpoint) => endpoint.network === 'tailscale')
   const expires = pairing?.expiresAtUtc ?? gateway?.pairingExpiresAtUtc
 
   return (
@@ -104,6 +112,7 @@ export function CompanionGatewayPanel({ onClose }: CompanionGatewayPanelProps) {
 
       <div className="companion-gateway-status">
         <span className={gateway?.status === 'ready' ? 'is-ready' : 'is-waiting'}><i /> {gateway?.status ?? 'checking'}</span>
+        <span className={tailscaleReady ? 'is-remote-ready' : ''}><Wifi size={13} /> {tailscaleReady ? 'Tailscale ready' : 'LAN only'}</span>
         <span><ShieldCheck size={13} /> Execution locked</span>
         <button className="icon-button" onClick={() => void refresh()} title="Refresh companion status"><RefreshCw size={14} /></button>
       </div>
@@ -121,11 +130,17 @@ export function CompanionGatewayPanel({ onClose }: CompanionGatewayPanelProps) {
             <label className="companion-address-choice">
               <span>Network address</span>
               <select value={primaryUrl} onChange={(event) => setSelectedUrl(event.target.value)}>
-                {availableUrls.map((url) => <option key={url} value={url}>{url}</option>)}
+                {availableEndpoints.map((endpoint) => (
+                  <option key={endpoint.url} value={endpoint.url}>{companionEndpointLabel(endpoint)}</option>
+                ))}
               </select>
             </label>
           )}
-          <small>{copied ? `${copied} copied` : 'Enter both values in Gann Astro Mobile while the phone is on this network.'}</small>
+          <small>{copied
+            ? `${copied} copied`
+            : selectedEndpoint?.remoteAccess
+              ? 'Remote address: keep Tailscale connected on this laptop and phone, even while the phone uses mobile data.'
+              : 'Local address: the phone must be on this Wi-Fi/LAN. Connect Tailscale and restart the desktop app for remote access.'}</small>
         </section>
       ) : (
         <button className="companion-open-pairing" onClick={() => void beginPairing()} disabled={busy || !gateway}>

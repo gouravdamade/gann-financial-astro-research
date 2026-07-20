@@ -1264,7 +1264,7 @@ dependencies = [
 
 [[package]]
 name = "gann-astro-desk"
-version = "0.10.16"
+version = "0.10.17"
 dependencies = [
  "axum",
  "axum-server",

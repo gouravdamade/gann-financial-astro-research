@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { CircleAlert, Laptop, Link2, LoaderCircle, ShieldCheck, WifiOff } from 'lucide-react'
-import { pairCompanion, type CompanionSession } from '../companion'
+import { formatCompanionError, pairCompanion, type CompanionSession } from '../companion'
 
 type MobileCompanionSetupProps = {
   onPaired: (session: CompanionSession) => void
@@ -20,7 +20,7 @@ export function MobileCompanionSetup({ onPaired }: MobileCompanionSetupProps) {
     try {
       onPaired(await pairCompanion({ baseUrl, pairingCode, deviceName }))
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Unable to pair with the laptop')
+      setError(formatCompanionError(reason))
     } finally {
       setPairing(false)
     }

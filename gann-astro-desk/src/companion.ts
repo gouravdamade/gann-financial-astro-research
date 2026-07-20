@@ -40,6 +40,19 @@ export function clearCompanionSession(): void {
   activeSession = null
 }
 
+export function formatCompanionError(
+  reason: unknown,
+  fallback = 'Unable to pair with the laptop',
+): string {
+  if (reason instanceof Error && reason.message.trim()) return reason.message.trim()
+  if (typeof reason === 'string' && reason.trim()) return reason.trim()
+  if (reason && typeof reason === 'object' && 'message' in reason) {
+    const message = (reason as { message?: unknown }).message
+    if (typeof message === 'string' && message.trim()) return message.trim()
+  }
+  return fallback
+}
+
 export function setCompanionSession(session: CompanionSession): void {
   validateCompanionSession(session)
   activeSession = session

@@ -50,10 +50,22 @@ const MAX_SESSION_REQUESTS_PER_WINDOW: u16 = 240;
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct GatewayEndpoint {
+    pub url: String,
+    pub address: String,
+    pub interface_name: String,
+    pub network: &'static str,
+    pub recommended: bool,
+    pub remote_access: bool,
+}
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GatewayInfo {
     pub contract: &'static str,
     pub status: &'static str,
     pub urls: Vec<String>,
+    pub endpoints: Vec<GatewayEndpoint>,
     pub port: u16,
     pub certificate_sha256: String,
     pub pairing_active: bool,
@@ -67,6 +79,7 @@ pub struct GatewayInfo {
 pub struct PairingWindowInfo {
     pub contract: &'static str,
     pub urls: Vec<String>,
+    pub endpoints: Vec<GatewayEndpoint>,
     pub pairing_code: String,
     pub certificate_sha256: String,
     pub expires_at_utc: String,
@@ -125,6 +138,7 @@ enum RequiredCapability {
 
 struct GatewayCore {
     urls: Vec<String>,
+    endpoints: Vec<GatewayEndpoint>,
     port: u16,
     certificate_der: Vec<u8>,
     certificate_sha256: String,
@@ -191,19 +205,18 @@ impl CompanionGatewayState {
         listener
             .set_nonblocking(true)
             .map_err(|error| format!("Unable to configure companion listener: {error}"))?;
-        let addresses = companion_addresses();
+        let network_addresses = companion_network_addresses();
+        let addresses = network_addresses
+            .iter()
+            .map(|entry| entry.address)
+            .collect::<Vec<_>>();
         let (certificate_der, private_key_der) = generate_certificate(&addresses)?;
         let certificate_sha256 = sha256_hex(&certificate_der);
-        let urls = addresses
+        let endpoints = gateway_endpoints(&network_addresses, port);
+        let urls = endpoints
             .iter()
-            .filter(|address| !address.is_loopback())
-            .map(|address| format!("https://{address}:{port}"))
+            .map(|endpoint| endpoint.url.clone())
             .collect::<Vec<_>>();
-        let urls = if urls.is_empty() {
-            vec![format!("https://127.0.0.1:{port}")]
-        } else {
-            urls
-        };
         let backend_client = reqwest::Client::builder()
             .connect_timeout(Duration::from_secs(3))
             .timeout(Duration::from_secs(45))
@@ -218,6 +231,7 @@ impl CompanionGatewayState {
         }
         let core = Arc::new(GatewayCore {
             urls,
+            endpoints,
             port,
             certificate_der,
             certificate_sha256,
@@ -255,7 +269,10 @@ impl CompanionGatewayState {
             }
         });
         spawn_stream_publisher(core.clone());
-        core.audit("gateway_started", json!({"port": port, "urls": core.urls}));
+        core.audit(
+            "gateway_started",
+            json!({"port": port, "urls": core.urls, "endpoints": core.endpoints}),
+        );
         Ok(Self { core, handle })
     }
 
@@ -306,6 +323,7 @@ impl GatewayCore {
             contract: GATEWAY_CONTRACT,
             status: "ready",
             urls: self.urls.clone(),
+            endpoints: self.endpoints.clone(),
             port: self.port,
             certificate_sha256: self.certificate_sha256.clone(),
             pairing_active,
@@ -336,6 +354,7 @@ impl GatewayCore {
         Ok(PairingWindowInfo {
             contract: GATEWAY_CONTRACT,
             urls: self.urls.clone(),
+            endpoints: self.endpoints.clone(),
             pairing_code: code,
             certificate_sha256: self.certificate_sha256.clone(),
             expires_at_utc,
@@ -478,24 +497,113 @@ fn bind_gateway_listener() -> Result<TcpListener, String> {
         .map_err(|error| format!("Unable to bind the companion TLS gateway: {error}"))
 }
 
-fn companion_addresses() -> Vec<IpAddr> {
-    let mut addresses = vec![IpAddr::V4(Ipv4Addr::LOCALHOST)];
-    if let Ok(interfaces) = local_ip_address::list_afinet_netifas() {
-        for (_, address) in interfaces {
-            if address.is_loopback() || address.is_unspecified() {
-                continue;
-            }
-            if let IpAddr::V4(ipv4) = address {
-                if ipv4.octets()[0] == 169 && ipv4.octets()[1] == 254 {
-                    continue;
-                }
-                addresses.push(IpAddr::V4(ipv4));
-            }
+#[derive(Clone)]
+struct CompanionNetworkAddress {
+    interface_name: String,
+    address: IpAddr,
+    network: &'static str,
+}
+
+fn is_tailscale_address(address: IpAddr) -> bool {
+    match address {
+        IpAddr::V4(ipv4) => {
+            let octets = ipv4.octets();
+            octets[0] == 100 && (64..=127).contains(&octets[1])
+        }
+        IpAddr::V6(ipv6) => {
+            let segments = ipv6.segments();
+            segments[0] == 0xfd7a && segments[1] == 0x115c && segments[2] == 0xa1e0
         }
     }
-    addresses.sort_by_key(ToString::to_string);
-    addresses.dedup();
+}
+
+fn classify_companion_network(interface_name: &str, address: IpAddr) -> &'static str {
+    if address.is_loopback() {
+        "loopback"
+    } else if interface_name.to_ascii_lowercase().contains("tailscale")
+        || is_tailscale_address(address)
+    {
+        "tailscale"
+    } else {
+        "lan"
+    }
+}
+
+fn network_priority(network: &str) -> u8 {
+    match network {
+        "tailscale" => 0,
+        "lan" => 1,
+        _ => 2,
+    }
+}
+
+fn is_advertisable_companion_address(address: IpAddr) -> bool {
+    if address.is_loopback() || address.is_unspecified() || address.is_multicast() {
+        return false;
+    }
+    match address {
+        IpAddr::V4(ipv4) => {
+            let octets = ipv4.octets();
+            !(octets[0] == 169 && octets[1] == 254)
+        }
+        IpAddr::V6(ipv6) => !ipv6.is_unicast_link_local(),
+    }
+}
+
+fn companion_network_addresses() -> Vec<CompanionNetworkAddress> {
+    let mut addresses = vec![CompanionNetworkAddress {
+        interface_name: "Loopback".to_string(),
+        address: IpAddr::V4(Ipv4Addr::LOCALHOST),
+        network: "loopback",
+    }];
+    if let Ok(interfaces) = local_ip_address::list_afinet_netifas() {
+        for (interface_name, address) in interfaces {
+            if !is_advertisable_companion_address(address) {
+                continue;
+            }
+            addresses.push(CompanionNetworkAddress {
+                network: classify_companion_network(&interface_name, address),
+                interface_name,
+                address,
+            });
+        }
+    }
+    addresses.sort_by(|left, right| {
+        network_priority(left.network)
+            .cmp(&network_priority(right.network))
+            .then_with(|| left.address.to_string().cmp(&right.address.to_string()))
+    });
+    addresses.dedup_by(|left, right| left.address == right.address);
     addresses
+}
+
+fn gateway_url(address: IpAddr, port: u16) -> String {
+    match address {
+        IpAddr::V4(_) => format!("https://{address}:{port}"),
+        IpAddr::V6(_) => format!("https://[{address}]:{port}"),
+    }
+}
+
+fn gateway_endpoints(addresses: &[CompanionNetworkAddress], port: u16) -> Vec<GatewayEndpoint> {
+    let mut visible = addresses
+        .iter()
+        .filter(|entry| !entry.address.is_loopback())
+        .collect::<Vec<_>>();
+    if visible.is_empty() {
+        visible = addresses.iter().collect();
+    }
+    visible
+        .into_iter()
+        .enumerate()
+        .map(|(index, entry)| GatewayEndpoint {
+            url: gateway_url(entry.address, port),
+            address: entry.address.to_string(),
+            interface_name: entry.interface_name.clone(),
+            network: entry.network,
+            recommended: index == 0,
+            remote_access: entry.network == "tailscale",
+        })
+        .collect()
 }
 
 fn generate_certificate(addresses: &[IpAddr]) -> Result<(Vec<u8>, Vec<u8>), String> {
@@ -1115,6 +1223,14 @@ mod tests {
         let (stream_tx, _) = broadcast::channel(32);
         Arc::new(GatewayCore {
             urls: vec![format!("https://127.0.0.1:{port}")],
+            endpoints: vec![GatewayEndpoint {
+                url: format!("https://127.0.0.1:{port}"),
+                address: "127.0.0.1".to_string(),
+                interface_name: "Loopback".to_string(),
+                network: "loopback",
+                recommended: true,
+                remote_access: false,
+            }],
             port,
             certificate_sha256: sha256_hex(&certificate_der),
             certificate_der,
@@ -1207,6 +1323,51 @@ mod tests {
         assert!(certificate.len() > 200);
         assert!(key.len() > 100);
         assert_eq!(sha256_hex(&certificate).len(), 64);
+    }
+
+    #[test]
+    fn tailscale_endpoint_is_remote_ready_and_preferred() {
+        let addresses = vec![
+            CompanionNetworkAddress {
+                interface_name: "Wi-Fi".to_string(),
+                address: "192.168.1.2".parse().unwrap(),
+                network: "lan",
+            },
+            CompanionNetworkAddress {
+                interface_name: "Tailscale".to_string(),
+                address: "100.94.12.7".parse().unwrap(),
+                network: "tailscale",
+            },
+        ];
+        let mut sorted = addresses;
+        sorted.sort_by_key(|entry| network_priority(entry.network));
+        let endpoints = gateway_endpoints(&sorted, 9443);
+        assert_eq!(endpoints[0].network, "tailscale");
+        assert!(endpoints[0].recommended);
+        assert!(endpoints[0].remote_access);
+        assert!(!endpoints[1].recommended);
+        assert!(!endpoints[1].remote_access);
+    }
+
+    #[test]
+    fn tailscale_ranges_and_ipv6_urls_are_classified_safely() {
+        assert!(is_tailscale_address("100.64.0.1".parse().unwrap()));
+        assert!(is_tailscale_address("100.127.255.254".parse().unwrap()));
+        assert!(!is_tailscale_address("100.128.0.1".parse().unwrap()));
+        assert!(is_tailscale_address("fd7a:115c:a1e0::42".parse().unwrap()));
+        assert_eq!(
+            gateway_url("fd7a:115c:a1e0::42".parse().unwrap(), 9443),
+            "https://[fd7a:115c:a1e0::42]:9443"
+        );
+        assert!(!is_advertisable_companion_address(
+            "fe80::42".parse().unwrap()
+        ));
+        assert!(!is_advertisable_companion_address(
+            "169.254.10.1".parse().unwrap()
+        ));
+        assert!(is_advertisable_companion_address(
+            "100.94.12.7".parse().unwrap()
+        ));
     }
 
     #[test]

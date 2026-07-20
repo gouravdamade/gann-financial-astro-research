@@ -1,8 +1,72 @@
 # Current Project Handoff
 
-Last updated: 2026-07-20 22:22 IST
+Last updated: 2026-07-21 01:14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-21 (Private Tailscale Companion / Source 0.10.17)
+
+- Installed signed Tailscale `1.98.9` under `D:\Tailscale` from the retained
+  installer at
+  `D:\GannFinancialAstro\installers\tailscale\tailscale-setup-1.98.9-amd64.msi`.
+  Installer Authenticode validation passed; SHA-256 is
+  `07BCB57D3BD34A0299D98133F1A0091DB2CE66831AA7C100F456E2269A41E665`.
+  The Windows service is running in unattended mode with automatic updates and
+  incoming tailnet connections enabled.
+- Enrolled laptop `Surbhi` and Android `Gaurav's S21 FE` in the private
+  `gourav.damade@gmail.com` tailnet. Laptop addresses are `100.67.92.85` and
+  `fd7a:115c:a1e0::4938:5c56`; phone addresses are `100.98.3.48` and
+  `fd7a:115c:a1e0::8338:331`. Direct laptop-to-phone Tailscale ping passed in
+  60 ms without DERP relay. The companion remote address is
+  `https://100.67.92.85:9443`; Gann Astro Desk must remain open and Windows must
+  stay awake for remote use.
+- Added deterministic network-interface discovery to the Rust companion
+  gateway. The API and desktop panel now label `tailscale`, `lan`, and
+  `loopback` endpoints, prefer a usable Tailscale address, retain the old URL
+  list for compatibility, format IPv6 safely, and exclude link-local/APIPA
+  addresses. The live packaged audit exposes only usable Tailscale and LAN
+  endpoints and keeps execution locked.
+- Added the reproducible administrator helper
+  `gann-astro-desk\tools\configure_tailscale_companion.ps1`. Windows Firewall
+  allows the exact `0.10.17` candidate executable on TCP `9443` only from
+  Tailscale `100.64.0.0/10` or the Windows Private local subnet. The stale exact
+  public TCP block for the prior candidate is disabled; no broad public rule
+  was added.
+- Improved Android pairing failures so native Rust TLS/pinning/connection
+  errors reach the UI instead of collapsing to `Unable to pair with the
+  laptop`. Added `viewport-fit=cover`, dynamic viewport height, Android runtime
+  safe-area insets on all edges, top/bottom spacing for the status/navigation
+  bars, and bounded wrapping for the `Execution locked` label.
+- Built Windows candidate
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.17-tauri`.
+  Portable EXE SHA-256:
+  `80D19BFF4ADE129A21F883896FC22D49B9E3C3BA35CE6F74640B8B67788E8141`;
+  installer SHA-256:
+  `2CDB2177E41404C0BAC6CF9733F4EFC0EEA327DD3DEA32A9890D7B6F51B769F9`.
+  Stable Windows release `0.10.14` remains untouched.
+- Built signed arm64 debug APK
+  `D:\GannFinancialAstro\mobile\release_candidate\GannAstroMobile-0.10.17-debug\GannAstroMobile-0.10.17-debug.apk`.
+  SHA-256 is
+  `75E1126A4F688F3B3376370B5D559CABAA6B35037CB0B4307CA5933227DF9E25`;
+  `apksigner` confirms APK Signature Scheme v2 with one Android debug signer.
+- Verification passed: frontend `65/65` across 21 files, TypeScript/Vite
+  production build, strict Rust Clippy with warnings denied, prior full Rust
+  `15/15`, final focused gateway `9/9`, packaged port ownership, clean
+  Tailscale-first endpoint audit, live self-signed TLS certificate/SAN
+  inspection, expected unauthenticated HTTP 403, direct tailnet ping, APK
+  signature inspection, and release hashes. A final all-target Rust test rerun
+  was stopped after Windows Firewall prompted for the transient Cargo test
+  binary; no release-binary firewall permission was widened.
+- Physical Android pairing over the Tailscale address is the only remaining
+  release gate. A fresh five-minute code was opened in the desktop panel for
+  the user; the code is intentionally not persisted here. Confirm the audit
+  records phone remote IP `100.98.3.48`, `device_paired`, and
+  `stream_connected`, then repeat with phone Wi-Fi disabled and mobile data
+  plus Tailscale enabled. Also visually verify the new top/bottom safe areas on
+  the installed `0.10.17` APK.
+- Existing runtime-only files remain deliberately outside this change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-20 (Real Rust Companion Gateway / Source 0.10.16)
 

@@ -1,9 +1,19 @@
 export const COMPANION_GATEWAY_CONTRACT = 'GANN_ASTRO_RUST_COMPANION_GATEWAY_V1' as const
 
+export type CompanionGatewayEndpoint = {
+  url: string
+  address: string
+  interfaceName: string
+  network: 'tailscale' | 'lan' | 'loopback'
+  recommended: boolean
+  remoteAccess: boolean
+}
+
 export type CompanionGatewayInfo = {
   contract: typeof COMPANION_GATEWAY_CONTRACT
   status: 'ready'
   urls: string[]
+  endpoints?: CompanionGatewayEndpoint[]
   port: number
   certificateSha256: string
   pairingActive: boolean
@@ -15,10 +25,40 @@ export type CompanionGatewayInfo = {
 export type CompanionPairingWindow = {
   contract: typeof COMPANION_GATEWAY_CONTRACT
   urls: string[]
+  endpoints?: CompanionGatewayEndpoint[]
   pairingCode: string
   certificateSha256: string
   expiresAtUtc: string
   executionAllowed: false
+}
+
+export function companionEndpoints(
+  value: Pick<CompanionGatewayInfo | CompanionPairingWindow, 'endpoints' | 'urls'> | null,
+): CompanionGatewayEndpoint[] {
+  if (!value) return []
+  if (value.endpoints?.length) {
+    return [...value.endpoints].sort((left, right) => {
+      if (left.recommended !== right.recommended) return left.recommended ? -1 : 1
+      return left.url.localeCompare(right.url)
+    })
+  }
+  return value.urls.map((url, index) => ({
+    url,
+    address: new URL(url).hostname,
+    interfaceName: 'Network adapter',
+    network: 'lan',
+    recommended: index === 0,
+    remoteAccess: false,
+  }))
+}
+
+export function companionEndpointLabel(endpoint: CompanionGatewayEndpoint): string {
+  const network = endpoint.network === 'tailscale'
+    ? 'Tailscale remote'
+    : endpoint.network === 'loopback'
+      ? 'This laptop only'
+      : 'Local Wi-Fi/LAN'
+  return `${network} | ${endpoint.url}`
 }
 
 export type CompanionGatewaySession = {
