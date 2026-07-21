@@ -1,6 +1,7 @@
 import type {
   AnnotationDraft,
   AspectFamily,
+  AspectEvidenceTrace,
   BackendRuntimeInfo,
   ChartAnnotation,
   ChartDrawing,
@@ -489,6 +490,17 @@ export async function fetchCandlestickEvidence(input: {
     body: JSON.stringify(input),
   })
   return payload.evidence
+}
+
+export async function fetchAspectEvidenceTrace(
+  eventId: string,
+  maxRecords = 120,
+): Promise<AspectEvidenceTrace> {
+  const query = new URLSearchParams({ maxRecords: String(maxRecords) })
+  const payload = await request<{ trace: AspectEvidenceTrace }>(
+    `/api/events/${encodeURIComponent(eventId)}/evidence-trace?${query}`,
+  )
+  return payload.trace
 }
 
 export async function fetchRsiEvidence(input: {

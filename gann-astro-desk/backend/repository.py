@@ -24,6 +24,7 @@ from aspect_timeframe import (
     normalize_aspect_duration_mode,
 )
 from chart_layouts import ensure_chart_layout_schema
+from aspect_evidence_trace import build_aspect_evidence_trace
 from price_sources import (
     PROMOTED_PRICE_CONTRACT,
     file_sha256,
@@ -298,6 +299,7 @@ class AstroRepository:
         self.price_by_timeframe = dict(self._baseline_price_by_timeframe)
         self.price = self.price_by_timeframe["H1"]
         self._resampled_price: dict[str, pd.DataFrame] = {}
+        self._aspect_trace_cache: dict[tuple[str, str, int], dict[str, Any]] = {}
         self._baseline_price_source_cache: dict[str, Any] | None = None
         self._initialize_annotations()
         active = self._active_artifact_row()
@@ -461,6 +463,7 @@ class AstroRepository:
             self.price_by_timeframe = price_frames
             self.price = price_frames.get("H1", next(iter(price_frames.values())))
             self._resampled_price.clear()
+            self._aspect_trace_cache.clear()
 
     def _baseline_artifact(self) -> dict[str, Any]:
         return {
@@ -1882,6 +1885,51 @@ class AstroRepository:
             },
             "annotations": self.list_annotations(event_id=event_id),
         }
+
+    @synchronized_dataset
+    def aspect_evidence_trace(
+        self,
+        event_id: str,
+        *,
+        max_window_records: int = 120,
+    ) -> dict[str, Any]:
+        """Build a cached, read-only trace without reusing outcome labels as input."""
+
+        rows = self.events.loc[self.events["event_id"].astype(str) == str(event_id)]
+        if rows.empty:
+            raise KeyError(f"Unknown event: {event_id}")
+        timeframe = str(self.active_artifact.get("sourceTimeframe") or "H1").upper()
+        max_records = int(max_window_records)
+        cache_key = (str(event_id), timeframe, max_records)
+        cached = self._aspect_trace_cache.get(cache_key)
+        if cached is not None:
+            return json.loads(json.dumps(cached, default=str))
+
+        parameters = self.active_artifact.get("parameters")
+        parameters = parameters if isinstance(parameters, dict) else {}
+        raw_reference = parameters.get("reference")
+        reference = (
+            raw_reference
+            if isinstance(raw_reference, dict)
+            else DEFAULT_CHART_PARAMETERS["reference"]
+        )
+        event = rows.iloc[0]
+        case = self.case_by_event.get(str(event_id))
+        trace = build_aspect_evidence_trace(
+            event=event,
+            events=self.events,
+            price=self._price_for_timeframe(timeframe),
+            symbol=str(self.active_artifact.get("symbol") or "USDJPY"),
+            timeframe=timeframe,
+            reference=reference,
+            artifact_mode=str(self.active_artifact.get("mode") or "TN"),
+            touch=self.touch_by_event.get(str(event_id)),
+            context=self._case_context(case),
+            external_gate=self.external_astrology_gate,
+            max_window_records=max_records,
+        )
+        self._aspect_trace_cache[cache_key] = trace
+        return json.loads(json.dumps(trace, default=str))
 
     @synchronized_dataset
     def shadow_candidate_snapshot(self) -> dict[str, Any]:

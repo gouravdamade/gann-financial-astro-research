@@ -641,6 +641,171 @@ export type EventDetail = {
   annotations: ChartAnnotation[]
 }
 
+export type AspectEvidenceTraceRecord = {
+  kind: 'start' | 'window_bar' | 'end'
+  asOfUtc: string
+  asOfIst: string
+  eventState: 'window_start' | 'inside_window' | 'window_end' | 'before_window' | 'after_window'
+  market: {
+    available: boolean
+    reason?: string
+    barOpenTimeUtc?: string
+    barCloseTimeUtc?: string
+    open?: number | null
+    high?: number | null
+    low?: number | null
+    close?: number | null
+    rsi14?: {
+      value: number | null
+      zone: string
+      method: string
+      closedBarOnly: boolean
+    }
+    candle?: {
+      direction?: string
+      rangePips?: number | null
+      bodyPips?: number | null
+      bodyFraction?: number | null
+      upperWickFraction?: number | null
+      lowerWickFraction?: number | null
+      closeLocation?: number | null
+      atr14Pips?: number | null
+      preTrend?: string
+      patterns?: Array<{ name: string; hypothesisBias: string; basis: string; context: string }>
+    }
+    sr?: {
+      status: string
+      knownAtUtc: string | null
+      touchTimeUtc?: string
+      source?: string
+      lines: Array<{ planet: string; price: number; distancePipsFromClose: number | null }>
+    }
+  }
+  overlaps: {
+    activeCount: number
+    otherActiveCount: number
+    events: Array<{ eventId: string; familyKey: string; aspect: string; role: 'selected' | 'overlap' }>
+    truncated: boolean
+    contract: string
+  }
+  sbc: {
+    snapshotId: string
+    asOfUtc: string
+    panchanga: {
+      tithi: string
+      tithiGroup: string
+      paksha: string
+      yoga: string
+      karana: string
+      weekday: string
+      weekdayLord: string
+    }
+    positions: Array<{ body: string; longitudeDeg: number | null; speedDegPerDay: number | null; rashi: string; nakshatras: string[] }>
+    actorReadiness: Array<{ body: string; requested: boolean; status: string; source_nakshatra: string; motion_class: ChakraMotionClass | null; reason: string }>
+    guidance: null | {
+      guidanceOnly: boolean
+      financialValidationStatus: string
+      favorableUnits: number | null
+      adverseUnits: number | null
+      netUnits: number | null
+      normalizedScore: number | null
+      band: string
+      scoredMatchCount: number
+      unresolvedMatchCount: number
+      coverageRatio: number | null
+    }
+    policy: {
+      displayTimezone: string
+      locationSource: string
+      variableMotion: string
+      instrumentKeys: string
+    }
+    guardrails: {
+      readOnly: boolean
+      timestampSafe: boolean
+      noLookahead: boolean
+      executionAllowed: boolean
+      financiallyValidated: boolean
+      guidanceOnly: boolean
+    }
+  }
+  strength: {
+    status: string
+    body?: string
+    reason?: string
+    scopePolicy?: string
+    implementedTotalVirupa?: number | null
+    strengthVsMinimum?: number | null
+    drikVirupa?: number | null
+    drikBeneficVirupa?: number | null
+    drikMaleficVirupa?: number | null
+    saptavargajaVirupa?: number | null
+    ojayugmaVirupa?: number | null
+    kaala9Virupa?: number | null
+    chestaVirupa?: number | null
+    calculatorStatus?: string
+    drikStatus?: string
+    missingComponents?: string[]
+    certification?: { status: string; certified: boolean; contract: string }
+  }
+  guardrails: {
+    timestampSafe: boolean
+    noLookahead: boolean
+    outcomeExcluded: boolean
+    executionAllowed: boolean
+    consumedByLiveInference: boolean
+  }
+}
+
+export type AspectEvidenceTrace = {
+  contract: 'GANN_ASPECT_EVIDENCE_TRACE_V1'
+  version: string
+  eventId: string
+  familyKey: string
+  symbol: string
+  timeframe: string
+  times: {
+    eventStartUtc: string
+    eventEndUtc: string
+    displayTimezone: string
+  }
+  profile: {
+    referenceLabel: string
+    latitude: number | null
+    longitude: number | null
+    referenceTimezone: string
+    locationPolicy: string
+  }
+  start: AspectEvidenceTraceRecord
+  window: {
+    totalCompletedBars: number
+    includedBarCount: number
+    sampled: boolean
+    samplingPolicy: string
+    records: AspectEvidenceTraceRecord[]
+  }
+  end: AspectEvidenceTraceRecord
+  outcome: {
+    available: boolean
+    retrospectiveOnly: boolean
+    reason: string
+    touchTimeUtc?: string | null
+    labelAvailableAtUtc?: string | null
+    direction?: string | null
+    returnPct?: number | null
+  }
+  precalculationStatus: Record<string, string>
+  guardrails: {
+    researchOnly: boolean
+    timestampSafe: boolean
+    noLookahead: boolean
+    outcomeSeparated: boolean
+    consumedByLiveInference: boolean
+    consumedByShadowLedger: boolean
+    executionAllowed: boolean
+  }
+}
+
 export type DecisionPacket = {
   contract: 'GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1'
   packetId: string

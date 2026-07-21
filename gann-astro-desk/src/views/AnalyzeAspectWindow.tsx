@@ -7,6 +7,7 @@ import {
   CandlestickChart,
   Check,
   ChevronLeft,
+  Clock3,
   Filter,
   LoaderCircle,
   MessageSquareText,
@@ -31,6 +32,7 @@ import {
 import { defaultDrawingPreferences, defaultRsiPaneSettings, downloadLayoutJson } from '../chartLayouts'
 import { CodexPanel } from '../components/CodexPanel'
 import { CandlestickPanel } from '../components/CandlestickPanel'
+import { AspectEvidenceTracePanel } from '../components/AspectEvidenceTracePanel'
 import { CurrencyDivergence } from '../components/CurrencyDivergence'
 import { DrawingObjectPanel } from '../components/DrawingObjectPanel'
 import { EvidenceCertificationGrid } from '../components/EvidenceCertificationGrid'
@@ -59,7 +61,7 @@ type AnalyzeAspectWindowProps = {
   initialEventId?: string | null
 }
 
-type InspectorTab = 'evidence' | 'annotations' | 'candles' | 'rsi' | 'synthesis' | 'jyotish' | 'codex'
+type InspectorTab = 'evidence' | 'trace' | 'annotations' | 'candles' | 'rsi' | 'synthesis' | 'jyotish' | 'codex'
 type OccurrenceFilter = 'all' | 'reviewed' | 'pending' | 'bullish' | 'bearish'
 
 function resultLabel(occurrence: AspectWindow): string {
@@ -402,6 +404,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
         <aside className="analysis-inspector">
           <div className="analysis-tabs">
             <button className={tab === 'evidence' ? 'is-active' : ''} onClick={() => setTab('evidence')}><Microscope size={15} /> Evidence</button>
+            <button className={tab === 'trace' ? 'is-active' : ''} onClick={() => setTab('trace')}><Clock3 size={15} /> Trace</button>
             <button className={tab === 'annotations' ? 'is-active' : ''} onClick={() => setTab('annotations')} title="Chart annotations"><MessageSquareText size={15} /> Notes</button>
             <button className={tab === 'candles' ? 'is-active' : ''} onClick={() => setTab('candles')}><CandlestickChart size={15} /> Candles</button>
             <button className={tab === 'rsi' ? 'is-active' : ''} onClick={() => setTab('rsi')}><Activity size={15} /> RSI</button>
@@ -515,6 +518,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               </div>
             </div>
           )}
+          {tab === 'trace' && <AspectEvidenceTracePanel eventId={selectedEventId} />}
           {tab === 'annotations' && (
             <div className="analysis-tab-body annotation-tab">
               <header><strong>{detail.annotations.length} annotations</strong><span>Chart-linked research notes</span></header>

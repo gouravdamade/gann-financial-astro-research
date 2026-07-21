@@ -3282,6 +3282,267 @@ html.android-runtime .loading-state {
   margin-top: 8px;
 }
 
+.evidence-trace-tab,
+.evidence-trace-loading,
+.evidence-trace-error {
+  display: grid;
+  gap: 9px;
+}
+
+.evidence-trace-loading,
+.evidence-trace-error {
+  color: #9db2c5;
+  font-size: 11px;
+}
+
+.evidence-trace-error strong {
+  color: #f0c47d;
+}
+
+.evidence-trace-header,
+.evidence-trace-window > header,
+.evidence-trace-outcome > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.evidence-trace-header > div,
+.evidence-trace-window > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.evidence-trace-header strong {
+  color: #eff8fc;
+  font-size: 13px;
+}
+
+.evidence-trace-header small,
+.evidence-trace-window > header > span,
+.evidence-trace-outcome > header > span {
+  color: #8ca0b2;
+  font-size: 8px;
+}
+
+.evidence-trace-guards,
+.evidence-trace-certification,
+.evidence-trace-panchanga,
+.evidence-trace-sr-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.evidence-trace-guards span,
+.evidence-trace-certification span,
+.evidence-trace-panchanga span,
+.evidence-trace-sr-lines span {
+  padding: 3px 5px;
+  border: 1px solid #405467;
+  border-radius: 3px;
+  color: #a5bdcd;
+  font-size: 8px;
+}
+
+.evidence-trace-guards span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-color: #2f7d72;
+  color: #86d6c4;
+}
+
+.evidence-trace-point,
+.evidence-trace-window,
+.evidence-trace-outcome,
+.evidence-trace-status {
+  border: 1px solid #293e53;
+  border-radius: 5px;
+  background: #101b28;
+}
+
+.evidence-trace-point.is-start {
+  border-left: 3px solid #36b8a0;
+}
+
+.evidence-trace-point.is-end {
+  border-left: 3px solid #e0ad45;
+}
+
+.evidence-trace-point summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.evidence-trace-point summary::-webkit-details-marker {
+  display: none;
+}
+
+.evidence-trace-point summary > div:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.evidence-trace-point summary > div:first-child span {
+  color: #8facbf;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
+.evidence-trace-point summary > div:first-child strong {
+  color: #dce8f0;
+  font-size: 10px;
+}
+
+.evidence-trace-summary-values {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  color: #a5bbc8;
+  font-size: 8px;
+  text-align: right;
+}
+
+.evidence-trace-summary-values .is-positive {
+  color: #73d6bc;
+}
+
+.evidence-trace-summary-values .is-negative {
+  color: #ee9289;
+}
+
+.evidence-trace-point-body {
+  display: grid;
+  gap: 7px;
+  padding: 0 8px 9px;
+  border-top: 1px solid #263a4c;
+}
+
+.evidence-trace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px 9px;
+  padding-top: 7px;
+}
+
+.evidence-trace-grid > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.evidence-trace-grid span {
+  color: #7890a5;
+  font-size: 8px;
+}
+
+.evidence-trace-grid strong {
+  color: #dbe6ed;
+  font-size: 8px;
+  overflow-wrap: anywhere;
+}
+
+.evidence-trace-patterns,
+.evidence-trace-muted,
+.evidence-trace-outcome p {
+  margin: 0;
+  color: #91a8b9;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.evidence-trace-certification .is-certified {
+  border-color: #2e8477;
+  color: #81d5c0;
+}
+
+.evidence-trace-certification .is-provisional {
+  border-color: #957e4d;
+  color: #dfc982;
+}
+
+.evidence-trace-window,
+.evidence-trace-outcome,
+.evidence-trace-status {
+  padding: 8px;
+}
+
+.evidence-trace-window > header > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #b7d9e8;
+  font-size: 10px;
+}
+
+.evidence-trace-record-list {
+  display: grid;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.evidence-trace-outcome {
+  border-color: #614b77;
+  background: #171425;
+}
+
+.evidence-trace-outcome > header > strong,
+.evidence-trace-status > strong {
+  color: #e3d6f1;
+  font-size: 10px;
+}
+
+.evidence-trace-outcome > div {
+  display: grid;
+  gap: 2px;
+  margin-top: 7px;
+}
+
+.evidence-trace-outcome > div > strong {
+  font-size: 14px;
+}
+
+.evidence-trace-outcome small {
+  color: #a89ab9;
+  font-size: 8px;
+}
+
+.evidence-trace-status {
+  display: grid;
+  gap: 4px;
+}
+
+.evidence-trace-status > div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid #223447;
+}
+
+.evidence-trace-status span,
+.evidence-trace-status small {
+  font-size: 8px;
+  overflow-wrap: anywhere;
+}
+
+.evidence-trace-status span {
+  color: #a7b8c6;
+}
+
+.evidence-trace-status small {
+  color: #7896a8;
+  text-align: right;
+}
+
 .evidence-item {
   min-height: 44px;
   display: flex;

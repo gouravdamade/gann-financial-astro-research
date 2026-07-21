@@ -232,6 +232,25 @@ def _records(frame: pd.DataFrame, bar_seconds: int, pip_factor: float) -> list[d
     return records
 
 
+def build_candlestick_bar_records(
+    candles: list[dict[str, Any]],
+    *,
+    symbol: str,
+    timeframe: str,
+) -> list[dict[str, Any]]:
+    """Return transparent OHLC-derived records without choosing an analysis cutoff.
+
+    Consumers that need a timestamp-safe decision must still select only rows
+    whose ``closeTime`` is at or before their own evidence cutoff.
+    """
+
+    frame = _validated_frame(candles)
+    normalized_symbol = str(symbol or "").upper()
+    normalized_timeframe = str(timeframe or "").upper()
+    pip_factor = PIP_FACTOR_BY_SYMBOL.get(normalized_symbol, 1.0)
+    return _records(frame, _bar_seconds(frame, normalized_timeframe), pip_factor)
+
+
 def _window_summary(records: list[dict[str, Any]], pip_factor: float) -> dict[str, Any]:
     if not records:
         return {"barCount": 0, "movePips": None, "high": None, "low": None, "patterns": []}

@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from aspect_evidence_trace import ASPECT_EVIDENCE_TRACE_CONTRACT
 from repository import ASTRO_CONTRACT, AstroRepository, DataPaths
 
 
@@ -218,6 +219,41 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertEqual(certification["astronomy_geometry"]["status"], "versioned")
         self.assertIn(certification["shadbala_drik"]["status"], {"certified", "failed", "blocked"})
         self.assertEqual(certification["family_outcomes"]["status"], "retrospective")
+
+    def test_aspect_evidence_trace_keeps_outcome_out_of_timestamp_safe_records(self) -> None:
+        event_id = str(self.repository.touches.iloc[0]["event_id"])
+        trace = self.repository.aspect_evidence_trace(event_id, max_window_records=12)
+
+        self.assertEqual(trace["contract"], ASPECT_EVIDENCE_TRACE_CONTRACT)
+        self.assertTrue(trace["guardrails"]["timestampSafe"])
+        self.assertTrue(trace["guardrails"]["noLookahead"])
+        self.assertTrue(trace["guardrails"]["outcomeSeparated"])
+        self.assertFalse(trace["guardrails"]["executionAllowed"])
+        self.assertEqual(trace["start"]["kind"], "start")
+        self.assertEqual(trace["end"]["kind"], "end")
+        self.assertTrue(trace["start"]["guardrails"]["outcomeExcluded"])
+        self.assertTrue(trace["end"]["guardrails"]["outcomeExcluded"])
+        self.assertTrue(trace["outcome"]["retrospectiveOnly"])
+        self.assertIn("sbc", trace["precalculationStatus"])
+        self.assertIn("strictShadbalaDrik", trace["precalculationStatus"])
+
+        records = [trace["start"], *trace["window"]["records"], trace["end"]]
+        for record in records:
+            self.assertTrue(record["guardrails"]["timestampSafe"])
+            self.assertTrue(record["guardrails"]["noLookahead"])
+            self.assertTrue(record["guardrails"]["outcomeExcluded"])
+            self.assertFalse(record["guardrails"]["executionAllowed"])
+            self.assertIn("panchanga", record["sbc"])
+            self.assertIn("actorReadiness", record["sbc"])
+            self.assertIn("implementedTotalVirupa", record["strength"])
+            self.assertIn("certification", record["strength"])
+            market = record["market"]
+            if market["available"]:
+                self.assertLessEqual(
+                    pd.Timestamp(market["barCloseTimeUtc"]),
+                    pd.Timestamp(record["asOfUtc"]),
+                )
+                self.assertTrue(market["rsi14"]["closedBarOnly"])
 
     def test_historical_family_summary_uses_only_prior_matured_outcomes(self) -> None:
         family_key = "TN::MOON->KETU::trine"

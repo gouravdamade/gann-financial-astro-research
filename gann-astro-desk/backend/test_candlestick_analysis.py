@@ -3,7 +3,11 @@ from __future__ import annotations
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from candlestick_analysis import CANDLESTICK_EVIDENCE_CONTRACT, build_candlestick_evidence
+from candlestick_analysis import (
+    CANDLESTICK_EVIDENCE_CONTRACT,
+    build_candlestick_bar_records,
+    build_candlestick_evidence,
+)
 
 
 BASE = datetime(2026, 1, 5, tzinfo=timezone.utc)
@@ -81,6 +85,19 @@ class CandlestickEvidenceTests(unittest.TestCase):
         payload["chart"]["candles"] = [candle(0, 100.0, 99.0, 98.0, 100.5)]
         with self.assertRaisesRegex(ValueError, "No valid OHLC"):
             build_candlestick_evidence(payload)
+
+    def test_bar_records_are_transparent_ohlc_features(self) -> None:
+        records = build_candlestick_bar_records(
+            detail()["chart"]["candles"],
+            symbol="USDJPY",
+            timeframe="H1",
+        )
+        self.assertEqual(len(records), 6)
+        self.assertEqual(records[0]["startTime"], BASE.isoformat())
+        self.assertEqual(records[0]["closeTime"], (BASE + timedelta(hours=1)).isoformat())
+        self.assertEqual(records[0]["direction"], "bullish")
+        self.assertIn("patterns", records[3])
+        self.assertGreater(records[3]["rangePips"], 0)
 
 
 if __name__ == "__main__":

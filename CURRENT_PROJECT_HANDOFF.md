@@ -1,8 +1,49 @@
 # Current Project Handoff
 
-Last updated: 2026-07-21 14:17 IST
+Last updated: 2026-07-21 17:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-21 (Timestamp-safe Aspect Evidence Trace / Source)
+
+- Added the read-only contract `GANN_ASPECT_EVIDENCE_TRACE_V1` and
+  `GET /api/events/<event_id>/evidence-trace`. In **Analyze Aspect**, the new
+  **Trace** tab shows the evidence that was knowable at aspect start, each
+  fully closed bar inside the aspect window, and the window end. It uses the
+  active artifact's saved reference location and displays timestamps in IST.
+- Each trace point pre-calculates: closed-bar OHLC/RSI/candle geometry,
+  currently overlapping aspects, registered SR state only after the touch bar
+  has closed, fixed-body Sarvatobhadra Chakra guidance plus Panchanga, and
+  strict Shadbala/Drik components recomputed at that exact timestamp. The
+  strength panel includes its current certification status and missing witness
+  components instead of claiming a certification that has not been earned.
+- SBC does **not** guess variable-planet motion. Fixed-body results can be
+  shown; Mars through Saturn remain explicitly `MOTION_REQUIRED` until a
+  doctrine-backed motion input is supplied. No instrument-name key is invented
+  either. This preserves the existing SBC research boundary.
+- The known price result is a separate, visibly labelled **retrospective only**
+  record. It never appears in start/window/end evidence, Auto Suggest, live
+  inference, shadow ledger, or any MT5 execution route. The trace has hard
+  guards for timestamp safety, no look-ahead, outcome separation, and
+  execution lock. Manual Gann drawings remain deliberately excluded because a
+  user-drawn chart object is not a deterministic backend fact.
+- Long windows are capped at 120 displayed closed bars (or an explicit evenly
+  spaced sample); each trace is cached per event/timeframe/cap and clears when
+  the active dataset changes. This keeps the reviewer responsive without
+  changing its evidence meaning.
+- Added a reusable transparent candle-bar-record helper and regression tests
+  that prove each trace bar closes on or before its own evidence timestamp;
+  they also prove the retrospective result remains isolated.
+- Verification passed: backend `117/117`, frontend `71/71` across 22 files,
+  Oxlint, TypeScript/Vite production build, Python compilation, and a Flask
+  test-client request to the new API route. Vite retains its existing advisory
+  for the main bundle exceeding 500 kB after minification.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260721_175541_aspect_evidence_trace`.
+- This is a source/UI capability only, not a promoted Windows release yet.
+  Existing runtime-only files remain intentionally outside this source change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-21 (Live Planetary Line Lab / Source 0.10.18)
 

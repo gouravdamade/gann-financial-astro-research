@@ -612,6 +612,26 @@ def event_detail(event_id: str) -> Any:
         return jsonify({"ok": False, "error": str(exc)}), 404
 
 
+@app.get("/api/events/<event_id>/evidence-trace")
+def aspect_evidence_trace(event_id: str) -> Any:
+    try:
+        raw_max_records = request.args.get("maxRecords")
+        max_records = int(raw_max_records) if raw_max_records else 120
+        return jsonify(
+            {
+                "ok": True,
+                "trace": repository.aspect_evidence_trace(
+                    event_id,
+                    max_window_records=max_records,
+                ),
+            }
+        )
+    except KeyError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 404
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
 @app.post("/api/decisions")
 def decision_packet() -> Any:
     try:
