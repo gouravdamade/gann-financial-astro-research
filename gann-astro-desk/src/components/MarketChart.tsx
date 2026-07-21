@@ -66,6 +66,7 @@ import type {
   ChartLayoutState,
   ChartPayload,
   ChartTool,
+  PlanetaryLineSeries,
 } from '../types'
 
 type BandPosition = { event: AspectWindow; left: number; width: number }
@@ -104,6 +105,7 @@ type MarketChartProps = {
   onToolComplete?: () => void
   showAspects?: boolean
   showSrLines?: boolean
+  planetaryLines?: PlanetaryLineSeries[]
   compact?: boolean
   drawings?: ChartDrawing[]
   selectedDrawingId?: string | null
@@ -152,6 +154,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     onToolComplete,
     showAspects = true,
     showSrLines = true,
+    planetaryLines = [],
     compact = false,
     drawings = [],
     selectedDrawingId,
@@ -182,6 +185,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
   const rsiSeriesRef = useRef<ISeriesApi<'Line'> | null>(null)
+  const planetarySeriesRef = useRef<Map<string, ISeriesApi<'Line'>>>(new Map())
   const rsiPaneRef = useRef<IPaneApi<Time> | null>(null)
   const priceLinesRef = useRef<IPriceLine[]>([])
   const rsiPriceLinesRef = useRef<IPriceLine[]>([])
@@ -368,6 +372,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
 
   useEffect(() => {
     if (!hostRef.current) return
+    const planetarySeries = planetarySeriesRef.current
     const chart = createChart(hostRef.current, {
       autoSize: true,
       layout: {
@@ -636,6 +641,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       chartRef.current = null
       seriesRef.current = null
       rsiSeriesRef.current = null
+      planetarySeries.clear()
       rsiPaneRef.current = null
       priceLinesRef.current = []
       rsiPriceLinesRef.current = []
@@ -646,6 +652,40 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       setRsiPaneBounds(null)
     }
   }, [compact, rsiVisible])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    if (!chart) return
+    const desiredIds = new Set(planetaryLines.map((line) => line.id))
+    for (const [lineId, lineSeries] of planetarySeriesRef.current) {
+      if (desiredIds.has(lineId)) continue
+      chart.removeSeries(lineSeries)
+      planetarySeriesRef.current.delete(lineId)
+    }
+    for (const line of planetaryLines) {
+      let lineSeries = planetarySeriesRef.current.get(line.id)
+      const options = {
+        color: line.color,
+        lineWidth: 1 as const,
+        lineStyle: line.mode === 'mirror' ? LineStyle.Dashed : LineStyle.Solid,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: true,
+        title: line.label,
+        autoscaleInfoProvider: () => null,
+      }
+      if (!lineSeries) {
+        lineSeries = chart.addSeries(LineSeries, options)
+        planetarySeriesRef.current.set(line.id, lineSeries)
+      } else {
+        lineSeries.applyOptions(options)
+      }
+      lineSeries.setData(line.points.map((point) => ({
+        time: point.time as UTCTimestamp,
+        value: point.value,
+      })))
+    }
+  }, [planetaryLines, rsiVisible])
 
   useEffect(() => {
     const chart = chartRef.current

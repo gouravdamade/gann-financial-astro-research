@@ -27,6 +27,8 @@ import type {
   Mt5Status,
   ParameterSchema,
   PriceSource,
+  PlanetaryLineGroup,
+  PlanetaryLineOverlay,
   ProspectiveRefreshStatus,
   RuntimeDiagnosticsBundle,
   SavedParameterProfile,
@@ -161,6 +163,19 @@ export async function fetchChart(
   if (replay?.cutoffUtc) query.set('replayCutoff', replay.cutoffUtc)
   const payload = await request<{ chart: ChartPayload }>(`/api/chart?${query}`)
   return payload.chart
+}
+
+export async function fetchPlanetaryLines(input: {
+  symbol: string
+  timeframe: string
+  timestamps: number[]
+  groups: PlanetaryLineGroup[]
+}): Promise<PlanetaryLineOverlay> {
+  const payload = await request<{ overlay: PlanetaryLineOverlay }>('/api/planetary-lines', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.overlay
 }
 
 export async function fetchParameterSchema(): Promise<ParameterSchema> {

@@ -149,6 +149,73 @@ export type RsiPoint = {
   value: number
 }
 
+export type PlanetaryLineMode = 'direct' | 'mirror' | 'both'
+
+export type PlanetaryLineGroup = {
+  planet: string
+  enabled: boolean
+  color: string
+  mode: PlanetaryLineMode
+  nValues: number[]
+  fValues: number[]
+  degrees: number[]
+}
+
+export type PlanetaryLineOverlaySettings = {
+  contract: 'GANN_PLANETARY_LINE_LAB_SETTINGS_V1'
+  visible: boolean
+  sampleLimit: number
+  groups: PlanetaryLineGroup[]
+}
+
+export type PlanetaryLinePoint = {
+  time: number
+  value: number
+}
+
+export type PlanetaryLineSeries = {
+  id: string
+  planet: string
+  mode: Exclude<PlanetaryLineMode, 'both'>
+  n: number
+  f: number
+  degree: number
+  color: string
+  label: string
+  points: PlanetaryLinePoint[]
+}
+
+export type PlanetaryLineOverlay = {
+  contract: 'GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1'
+  symbol: string
+  timeframe: string
+  astronomyContract: string
+  formula: {
+    direct: string
+    mirror: string
+    avgAll: string
+  }
+  timestampCount: number
+  lineCount: number
+  pointCount: number
+  limits: {
+    maxTimestamps: number
+    maxLines: number
+    maxPoints: number
+  }
+  lines: PlanetaryLineSeries[]
+  guardrails: {
+    researchOnly: true
+    curveFitExploration: true
+    exactBarTimestamps: true
+    consumedByLiveInference: false
+    consumedByAutoSuggest: false
+    consumedByShadowLedger: false
+    executionAllowed: false
+  }
+  generatedAtUtc: string
+}
+
 export type ChartLayoutState = {
   visibleStartUtc?: string
   visibleEndUtc?: string
@@ -156,6 +223,7 @@ export type ChartLayoutState = {
   showSrLines: boolean
   drawingPreferences?: DrawingPreferences
   rsi?: RsiPaneSettings
+  planetaryLines?: PlanetaryLineOverlaySettings
   squareOfNine?: SquareOfNineWorkspaceState
 }
 

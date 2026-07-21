@@ -30,6 +30,7 @@ from local_candlestick import LocalCandlestickService
 from local_jyotish import LocalJyotishService
 from market_synthesis import MarketSynthesisService
 from mt5_gateway import Mt5Gateway
+from planetary_lines import build_planetary_line_overlay
 from prospective_refresh import ProspectiveArtifactRefreshSupervisor
 from repository import AstroRepository
 from rsi_analysis import build_rsi_evidence
@@ -580,6 +581,17 @@ def chart() -> Any:
         )
         return jsonify({"ok": True, "chart": payload})
     except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/planetary-lines")
+def planetary_lines() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {"ok": True, "overlay": build_planetary_line_overlay(payload)}
+        )
+    except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 
 

@@ -13,6 +13,7 @@ import type {
   RsiPaneSettings,
   SquareOfNineSettings,
 } from './types'
+import { normalizePlanetaryLineSettings } from './planetaryLines'
 
 export const RESEARCH_DRAWING_GUARDRAILS = {
   researchOnly: true,
@@ -221,6 +222,7 @@ export function validateImportedLayout(value: unknown): Omit<ChartLayout, 'layou
         ...defaultRsiPaneSettings(),
         ...(chartState.rsi ?? {}),
       },
+      planetaryLines: normalizePlanetaryLineSettings(chartState.planetaryLines),
     },
     drawings,
   }

@@ -16,6 +16,7 @@ import {
   PanelBottom,
   PanelRightClose,
   PanelRightOpen,
+  Orbit,
   Search,
   ShieldCheck,
   Smartphone,
@@ -42,6 +43,10 @@ import {
 } from '../api'
 import { replayCutoffForCandle } from '../barReplay'
 import { defaultDrawingPreferences, downloadLayoutJson } from '../chartLayouts'
+import {
+  defaultPlanetaryLineOverlaySettings,
+  normalizePlanetaryLineSettings,
+} from '../planetaryLines'
 import { effectiveAspectMinDurationMinutes, formatAspectDuration } from '../aspectTimeframePolicy'
 import { openAnalyzeAspect } from '../desktop'
 import { ConnectionBadge } from '../components/ConnectionBadge'
@@ -57,6 +62,7 @@ import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnosticsPanel'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
 import { useChartLayouts } from '../useChartLayouts'
+import { usePlanetaryLineOverlay } from '../usePlanetaryLineOverlay'
 import { useVisibilityPolling } from '../useVisibilityPolling'
 import type {
   AnnotationDraft,
@@ -81,6 +87,9 @@ const DrawingObjectPanel = lazy(() => import('../components/DrawingObjectPanel')
 })))
 const ParameterDrawer = lazy(() => import('../components/ParameterDrawer').then((module) => ({
   default: module.ParameterDrawer,
+})))
+const PlanetaryLinePanel = lazy(() => import('../components/PlanetaryLinePanel').then((module) => ({
+  default: module.PlanetaryLinePanel,
 })))
 const SquareOfNineWorkspace = lazy(() => import('./SquareOfNineWorkspace').then((module) => ({
   default: module.SquareOfNineWorkspace,
@@ -167,6 +176,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [workspaceHydrated, setWorkspaceHydrated] = useState(false)
   const [focusMode, setFocusMode] = useState(false)
   const [objectsOpen, setObjectsOpen] = useState(false)
+  const [planetaryLinesOpen, setPlanetaryLinesOpen] = useState(false)
   const [replaySelecting, setReplaySelecting] = useState(false)
   const [replayPlaying, setReplayPlaying] = useState(false)
   const replayBusyRef = useRef(false)
@@ -197,6 +207,19 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   })
   const activeChartLayout = chartLayouts.activeLayout
   const updateLayoutChartState = chartLayouts.updateChartState
+  const planetaryLineSettings = useMemo(
+    () => normalizePlanetaryLineSettings(
+      chartLayouts.chartState.planetaryLines,
+      parameters ?? undefined,
+    ),
+    [chartLayouts.chartState.planetaryLines, parameters],
+  )
+  const planetaryLineOverlay = usePlanetaryLineOverlay(
+    chart,
+    planetaryLineSettings,
+    chartLayouts.chartState.visibleStartUtc,
+    chartLayouts.chartState.visibleEndUtc,
+  )
 
   useEffect(() => {
     if (!activeChartLayout) return
@@ -669,7 +692,10 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
               onSave={chartLayouts.saveNow}
               onSaveAs={chartLayouts.saveAs}
               onDelete={chartLayouts.removeLayout}
-              onToggleObjects={() => setObjectsOpen((value) => !value)}
+              onToggleObjects={() => {
+                setPlanetaryLinesOpen(false)
+                setObjectsOpen((value) => !value)
+              }}
               onExport={() => chartLayouts.activeLayout && downloadLayoutJson({
                 ...chartLayouts.activeLayout,
                 chartState: chartLayouts.chartState,
@@ -690,6 +716,23 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
               title="Show or hide planetary support and resistance lines"
             >
               <Waves size={13} /> SR {chart.srLines.length}
+            </button>
+            <button
+              className={planetaryLinesOpen || planetaryLineSettings.visible ? 'is-active' : ''}
+              onClick={() => {
+                setObjectsOpen(false)
+                setPlanetaryLinesOpen((value) => {
+                  const next = !value
+                  if (next) {
+                    setFocusMode(false)
+                    setWorkspace((current) => ({ ...current, inspectorOpen: false }))
+                  }
+                  return next
+                })
+              }}
+              title="Open per-planet live line calculations"
+            >
+              <Orbit size={13} /> Lines {planetaryLineOverlay.overlay?.lineCount ?? planetaryLineOverlay.requestedLineCount}
             </button>
             {chartLoading && <strong className="chart-loading-label">Updating chart</strong>}
           </div>
@@ -717,6 +760,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             onReplayCutoffSelect={selectReplayCutoff}
             showAspects={workspace.showAspects}
             showSrLines={workspace.showSrLines}
+            planetaryLines={planetaryLineOverlay.overlay?.lines ?? []}
             drawings={chartLayouts.drawings}
             selectedDrawingId={chartLayouts.selectedDrawingId}
             layoutKey={chartLayouts.activeLayout?.layoutId}
@@ -726,6 +770,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
               chartLayouts.setSelectedDrawingId(drawingId)
               if (drawingId) {
                 setActiveTool('select')
+                setPlanetaryLinesOpen(false)
                 setObjectsOpen(true)
               }
             }}
@@ -748,6 +793,22 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
                 onCreateTemplate={chartLayouts.createTemplate}
                 onRemoveTemplate={chartLayouts.removeTemplate}
                 onClose={() => setObjectsOpen(false)}
+              />
+            </Suspense>
+          )}
+          {planetaryLinesOpen && (
+            <Suspense fallback={null}>
+              <PlanetaryLinePanel
+                settings={planetaryLineSettings}
+                status={planetaryLineOverlay.status}
+                error={planetaryLineOverlay.error}
+                plottedLineCount={planetaryLineOverlay.overlay?.lineCount ?? 0}
+                sampledTimestampCount={planetaryLineOverlay.overlay?.timestampCount ?? planetaryLineOverlay.sampledTimestampCount}
+                onChange={(planetaryLines) => chartLayouts.updateChartState({ planetaryLines })}
+                onReset={() => chartLayouts.updateChartState({
+                  planetaryLines: defaultPlanetaryLineOverlaySettings(parameters),
+                })}
+                onClose={() => setPlanetaryLinesOpen(false)}
               />
             </Suspense>
           )}

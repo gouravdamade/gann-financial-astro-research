@@ -9,6 +9,7 @@ import {
   squareOfNineValue,
   validateImportedLayout,
 } from './chartLayouts'
+import { defaultPlanetaryLineOverlaySettings } from './planetaryLines'
 
 describe('Fibonacci retracement research drawing', () => {
   it('creates standard persisted levels with research-only guardrails', () => {
@@ -77,6 +78,7 @@ describe('layout import guardrails', () => {
     expect(imported.drawings[0].pane).toBe('price')
     expect(imported.chartState.drawingPreferences).toEqual(defaultDrawingPreferences())
     expect(imported.chartState.rsi).toEqual(defaultRsiPaneSettings())
+    expect(imported.chartState.planetaryLines).toEqual(defaultPlanetaryLineOverlaySettings())
   })
 
   it('preserves explicit RSI drawings and normalized indicator settings', () => {

@@ -17,6 +17,7 @@ import {
   type ChartLayoutScope,
 } from './chartLayouts'
 import { migrateLegacySquareOfNineDrawing } from './squareOfNineWorkspace'
+import { normalizePlanetaryLineSettings } from './planetaryLines'
 import type {
   ChartDrawing,
   ChartLayout,
@@ -108,6 +109,7 @@ export function useChartLayouts({
         ...defaultRsiPaneSettings(),
         ...(migratedChartState.rsi ?? {}),
       },
+      planetaryLines: normalizePlanetaryLineSettings(migratedChartState.planetaryLines),
     }
     const installedLayout = { ...layout, chartState, drawings }
     activeLayoutRef.current = installedLayout

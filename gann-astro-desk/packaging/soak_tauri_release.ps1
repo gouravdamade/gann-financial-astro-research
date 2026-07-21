@@ -257,6 +257,50 @@ try {
     if (-not $candleEventId) {
         throw "Packaged chart did not expose an event for candlestick evidence QA"
     }
+    $planetaryLineTimestamps = @(
+        $chart.chart.candles |
+            Select-Object -First 2 |
+            ForEach-Object { [long]$_.time }
+    )
+    if ($planetaryLineTimestamps.Count -lt 2) {
+        throw "Packaged chart did not expose enough candles for planetary-line QA"
+    }
+    $planetaryLines = Invoke-JsonPost `
+        ("http://127.0.0.1:{0}/api/planetary-lines" -f $initial.Port) `
+        ([ordered]@{
+            symbol = [string]$chart.chart.symbol
+            timeframe = [string]$chart.chart.timeframe
+            timestamps = $planetaryLineTimestamps
+            groups = @(
+                [ordered]@{
+                    planet = "MARS"
+                    enabled = $true
+                    color = "#ef8354"
+                    mode = "direct"
+                    nValues = @(2.0)
+                    fValues = @(0.5)
+                    degrees = @(180.0)
+                }
+            )
+        })
+    $report.checks.planetary_line_contract = `
+        $planetaryLines.overlay.contract -eq "GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1"
+    $report.checks.planetary_line_formula_rendered = (
+        $planetaryLines.overlay.lineCount -eq 1 -and
+        @($planetaryLines.overlay.lines[0].points).Count -eq 2
+    )
+    $report.checks.planetary_line_execution_locked = (
+        $planetaryLines.overlay.guardrails.researchOnly -eq $true -and
+        $planetaryLines.overlay.guardrails.curveFitExploration -eq $true -and
+        $planetaryLines.overlay.guardrails.consumedByLiveInference -eq $false -and
+        $planetaryLines.overlay.guardrails.consumedByAutoSuggest -eq $false -and
+        $planetaryLines.overlay.guardrails.executionAllowed -eq $false
+    )
+    Write-SoakPhase "planetary_line_lab_verified" ([ordered]@{
+        contract = [string]$planetaryLines.overlay.contract
+        timestamp_count = [int]$planetaryLines.overlay.timestampCount
+        line_count = [int]$planetaryLines.overlay.lineCount
+    })
     $candleEvidence = Invoke-JsonPost `
         ("http://127.0.0.1:{0}/api/local-candlestick/evidence" -f $initial.Port) `
         ([ordered]@{ eventId = $candleEventId })

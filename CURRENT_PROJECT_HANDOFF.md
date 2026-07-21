@@ -1,8 +1,49 @@
 # Current Project Handoff
 
-Last updated: 2026-07-21 01:14 IST
+Last updated: 2026-07-21 14:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-21 (Live Planetary Line Lab / Source 0.10.18)
+
+- Added the research-only Planetary Line Lab to the desktop chart. Open it with
+  `Lines` in the toolbar, enable one or more planets, and supply comma-separated
+  `n`, `f`, and `degree` values per planet. Each parameter combination renders
+  as an independent overlay, so it is suitable for explicit curve-fitting
+  exploration without changing the chart's trading rules.
+- The timestamp-safe formula is `f * n * degree + f * longitude` for the
+  direct line, with optional mirror form
+  `f * n * degree + f * (360 - longitude)`. Planet positions are computed at
+  the displayed bar timestamps through the existing Raman sidereal ephemeris.
+  Supported groups are Sun through Pluto, Rahu, Ketu, and `AVG(ALL)`; the
+  latter is the same circular mean used by the legacy planetary-SR engine.
+- Values replot after a short debounce and recalculate when the chart pans,
+  zooms, or receives live bars. Rendering uses independent chart series and
+  does not alter candlestick autoscaling. Direct lines are solid and mirror
+  lines dashed. Configuration is saved with each chart layout.
+- Safety limits cap requests at 1,200 bar timestamps, 96 resulting lines,
+  100,000 points, and 12 values per parameter. The overlay is deliberately
+  excluded from Auto Suggest, live inference, shadow/review ledgers, and any
+  execution path. It remains an exploratory visual layer until separately
+  validated out of sample.
+- Added the backend contract `GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1`,
+  `/api/planetary-lines`, frontend overlay state/UI, persisted layout support,
+  companion-gateway read allowlist, backend tests, frontend tests, and a
+  packaged release soak assertion for formula rendering and execution lock.
+- Verification passed: backend `115/115`, frontend `71/71` across 22 test
+  files, production frontend build, lint, visual live-overlay checks, and
+  packaged Windows soak at
+  `D:\GannFinancialAstro\soak\tauri_0.10.18_20260721_054426\logs\native_soak_report.json`.
+- Built Windows candidate
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.18-tauri`.
+  Portable `GannAstroDesk.exe` SHA-256:
+  `56736492C535B5E16F8C02DEE816F195BB40F1AC3EC2F52AE8F2302A50CD0CAC`.
+  Installer `Gann Astro Desk_0.10.18_x64-setup.exe` SHA-256:
+  `D9E012E7C6B5EAEB1C4C56D4BF38F433C9F566CBE1D47C45F52AB65DAACD9A6D`.
+  Stable `0.10.14` remains untouched.
+- Existing runtime-only files remain deliberately outside this source change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-21 (Private Tailscale Companion / Source 0.10.17)
 

@@ -1052,7 +1052,9 @@ fn classify_proxy_route(method: &Method, path: &str) -> Option<RequiredCapabilit
     if chart_read && method == Method::GET {
         return Some(RequiredCapability::ChartRead);
     }
-    if path == "/api/decisions" && method == Method::POST {
+    if (path == "/api/decisions" || path == "/api/planetary-lines")
+        && method == Method::POST
+    {
         return Some(RequiredCapability::ChartRead);
     }
     None
@@ -1304,6 +1306,7 @@ mod tests {
     #[test]
     fn proxy_allowlist_blocks_execution_and_generation_surfaces() {
         assert!(classify_proxy_route(&Method::GET, "/api/chart").is_some());
+        assert!(classify_proxy_route(&Method::POST, "/api/planetary-lines").is_some());
         assert!(classify_proxy_route(&Method::POST, "/api/annotations").is_some());
         assert!(classify_proxy_route(&Method::POST, "/api/snapshots").is_some());
         assert!(classify_proxy_route(&Method::GET, "/api/companion/capabilities").is_some());
