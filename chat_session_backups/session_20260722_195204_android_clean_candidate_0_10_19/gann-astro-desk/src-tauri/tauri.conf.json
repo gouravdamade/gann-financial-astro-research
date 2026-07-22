@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Gann Astro Desk",
+  "version": "0.10.19",
+  "identifier": "com.gouravdamade.gannastrodesk",
+  "build": {
+    "beforeDevCommand": "npm run dev:mobile:ui",
+    "devUrl": "http://127.0.0.1:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Gann Astro Desk",
+        "url": "index.html?v=0.10.19"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' https: wss:; img-src 'self' data: asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "shortDescription": "Private Gann and financial astrology research workspace"
+  }
+}

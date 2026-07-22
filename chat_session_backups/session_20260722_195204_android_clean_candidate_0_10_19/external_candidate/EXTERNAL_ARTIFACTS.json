@@ -1,0 +1,9 @@
+﻿{
+    "contract":  "GANN_EXTERNAL_ARTIFACT_REFERENCE_V1",
+    "apkPath":  "D:\\GannFinancialAstro\\mobile\\release_candidate\\GannAstroMobile-0.10.19-debug\\GannAstroMobile-0.10.19-debug.apk",
+    "apkBytes":  41074685,
+    "apkSha256":  "A8D4D28F9EB4DC0DC0A672FE6B611019E1A7E4CA6B1EE5D7CB09890FC645F635",
+    "apkCopiedIntoGitBackup":  false,
+    "reason":  "The 41 MB APK remains in the D: release-candidate store; Git backup records its exact path, size, hash, and manifest without duplicating the binary.",
+    "executionAllowed":  false
+}
