@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 22:10 IST
+Last updated: 2026-07-22 22:25 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -28,8 +28,28 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   formatting line in untouched `companion_gateway.rs`.
 - Updated Android architecture/build metadata to declare
   `GANN_ASTRO_ANDROID_SECURE_SESSION_V1` and Keystore-backed persistence. The
-  0.10.20 APK, clean-build audit, and refreshed physical acceptance plan are
-  the next checkpoint; no physical pass is being carried over to a new binary.
+  source checkpoint is commit `d608d62` and is pushed to `origin/master`.
+- Built the clean-source 0.10.20 arm64 debug APK at
+  `D:\GannFinancialAstro\mobile\release_candidate\GannAstroMobile-0.10.20-debug\GannAstroMobile-0.10.20-debug.apk`.
+  It is 42,221,537 bytes with SHA-256
+  `15A288C8A8FC2688F978F85FAE33BDC4F885EB865E1070AEA438671416D73E9D`.
+  Package audit confirms application ID `com.gouravdamade.gannastrodesk`,
+  version code 10020/name 0.10.20, arm64 Rust payload, and valid one-signer v2
+  Android debug signature. The manifest reports clean source commit `d608d62`,
+  Keystore persistence, and `execution_allowed=false`.
+- Added `status/audits/android_clean_candidate_0_10_20_20260722.json` and
+  selected desktop 0.10.19 plus Android 0.10.20 under plan
+  `GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_20_V1`. The 0.10.19 MOB-01 through
+  MOB-04 results remain historical and were archived outside Git as
+  `mobile_acceptance_results.0_10_19.archived_20260722T165244Z.json` (SHA-256
+  `EBDFEBE01280E6B3FB940D94A5FE593B42D7BA3BDA41B30691D66EF2B0C7272D`).
+  All physical gates are intentionally pending for the changed Android binary.
+- Next physical check: install 0.10.20 over 0.10.19, pair once because the old
+  memory-only session cannot migrate, force-stop Android, relaunch, and confirm
+  the paired workspace restores without another code. Do not mark MOB-05 pass
+  until screenshots or recording bind that behavior to the exact APK hash.
+- Candidate/status recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_222546_android_secure_pairing_0_10_20_candidate`.
 - Recovery snapshot:
   `D:\PycharmProjects\chat_session_backups\session_20260722_221052_android_secure_pairing_0_10_20_source`.
 - Existing runtime-only SQLite/log/Android files remain deliberately untouched:

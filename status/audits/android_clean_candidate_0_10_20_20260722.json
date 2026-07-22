@@ -1,0 +1,65 @@
+{
+  "contract": "GANN_ANDROID_CANDIDATE_BUILD_AUDIT_V1",
+  "auditedAtUtc": "2026-07-22T16:52:44Z",
+  "releaseId": "gann-astro-mobile-0.10.20-android-debug",
+  "artifact": {
+    "path": "D:/GannFinancialAstro/mobile/release_candidate/GannAstroMobile-0.10.20-debug/GannAstroMobile-0.10.20-debug.apk",
+    "bytes": 42221537,
+    "sha256": "15A288C8A8FC2688F978F85FAE33BDC4F885EB865E1070AEA438671416D73E9D",
+    "manifestSha256Match": true
+  },
+  "source": {
+    "gitCommit": "d608d62ad7f2d01a3d44e2f84519589a05fa5e0b",
+    "gitDirtyForAppSource": false,
+    "version": "0.10.20"
+  },
+  "package": {
+    "applicationId": "com.gouravdamade.gannastrodesk",
+    "versionCode": 10020,
+    "versionName": "0.10.20",
+    "minimumSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "applicationLabel": "Gann Astro Mobile",
+    "arm64RustLibraryPresent": true
+  },
+  "signing": {
+    "verified": true,
+    "v2Scheme": true,
+    "signerCount": 1,
+    "profile": "android_debug",
+    "certificateSha256": "2887FE2D7C1538B51ADC4F3F9A3D434E2DD8AF21162D73E89E6247C395E45527",
+    "productionPromotionAllowed": false
+  },
+  "secureSession": {
+    "contract": "GANN_ASTRO_ANDROID_SECURE_SESSION_V1",
+    "persistence": "android_keystore_encrypted_until_expiry_or_revocation",
+    "webViewCredentialExposure": false,
+    "desktopGatewayPersistence": "memory_only",
+    "physicalForceStopRestoreVerified": false
+  },
+  "automatedChecks": {
+    "frontend": "71 passed",
+    "backend": "not rerun; companion change is native Android only",
+    "typescriptViteBuild": "passed",
+    "oxlint": "passed",
+    "rustLibraryTests": "18 passed",
+    "androidSecureSessionTests": "3 passed",
+    "androidRustCompile": "passed",
+    "gradleArm64DebugAssembly": "passed_copy_fallback_after_expected_windows_symlink_rejection",
+    "apkSignature": "passed",
+    "apkBadging": "passed",
+    "apkNativePayload": "passed"
+  },
+  "nonBlockingBuildWarnings": [
+    "Vite main chunk exceeds 500 kB after minification",
+    "Gradle reports features deprecated for Gradle 9",
+    "generated Android wrapper uses deprecated WebView databaseEnabled and onBackPressed APIs"
+  ],
+  "physicalDevice": {
+    "adbAttached": false,
+    "formalAcceptanceStatus": "pending_MOB_01_through_MOB_08_for_new_mobile_binary"
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

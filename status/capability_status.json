@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-22T14:11:08Z",
+  "asOfUtc": "2026-07-22T16:52:44Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -14,11 +14,11 @@
         "sourceCertified": "not_applicable",
         "financiallyValidated": "not_applicable"
       },
-      "statusDetail": "Clean-source Android 0.10.19 candidate and Windows 0.10.19 candidate are packaged; complete MOB-01 through MOB-08 physical evidence is pending.",
+      "statusDetail": "Clean-source Android 0.10.20 Keystore-persistence candidate and Windows 0.10.19 candidate are packaged. MOB-01 through MOB-08 must be collected again for the changed Android binary; no old physical pass is carried forward.",
       "evidenceRefs": [
         "gann-astro-desk/docs/android_companion_architecture.md",
         "status/mobile_acceptance_plan.json",
-        "status/audits/android_clean_candidate_0_10_19_20260722.json"
+        "status/audits/android_clean_candidate_0_10_20_20260722.json"
       ],
       "executionAllowed": false
     },
