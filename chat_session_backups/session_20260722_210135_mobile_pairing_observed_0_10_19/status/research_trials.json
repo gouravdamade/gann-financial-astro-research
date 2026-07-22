@@ -1,0 +1,67 @@
+{
+  "contract": "GANN_RESEARCH_TRIAL_STATUS_V1",
+  "asOfUtc": "2026-07-22T12:45:00Z",
+  "executionAllowed": false,
+  "trials": [
+    {
+      "trialId": "2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16",
+      "label": "Frozen prospective USDJPY H1 72-hour shadow trial",
+      "contract": "GANN_FROZEN_PROSPECTIVE_SHADOW_TRIAL_V1",
+      "status": "frozen_collecting",
+      "frozen": true,
+      "cohortMutable": false,
+      "symbol": "USDJPY",
+      "timeframe": "H1",
+      "engineVersion": "timestamp_safe_auto_suggest_v1_1_20260713",
+      "policyVersion": "fx_doctrine_consensus_watch_only_v1",
+      "manifestIdentitySha256": "D74E67ABFABC85474CABD93DB2607EBA611C621D4879201B886D1ACC145626BF",
+      "latestAuditRef": "status/audits/prospective_shadow_trial_audit_20260722.json",
+      "latestAudit": {
+        "status": "pass_frozen_cohort_collecting",
+        "entryCount": 14,
+        "decisionCount": 7,
+        "abstainDecisionCount": 7,
+        "watchDecisionCount": 0,
+        "settledDecisionCount": 7,
+        "pendingOutcomeCount": 0,
+        "chainValid": true,
+        "cohortCount": 1
+      },
+      "financiallyValidated": false,
+      "executionAllowed": false
+    },
+    {
+      "trialId": "chart_conditioned_aspect_polarity_prospective_v1_pending",
+      "label": "Chart-conditioned aspect polarity purged prospective trial",
+      "contract": "NOT_REGISTERED",
+      "status": "not_registered",
+      "frozen": false,
+      "cohortMutable": false,
+      "separateFromTrialIds": [
+        "2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16"
+      ],
+      "blockers": [
+        "missing complete source profiles",
+        "chart-hypothesis sensitivity protocol not registered",
+        "untouched holdout period not frozen"
+      ],
+      "financiallyValidated": false,
+      "executionAllowed": false
+    },
+    {
+      "trialId": "instrument_relative_sbc_fx_prospective_v1_pending",
+      "label": "Instrument-relative SBC FX prospective trial",
+      "contract": "NOT_REGISTERED",
+      "status": "not_registered",
+      "frozen": false,
+      "cohortMutable": false,
+      "blockers": [
+        "accepted time-valid currency identities are incomplete",
+        "source-profiled snapshot contributions are not certified",
+        "financial validation protocol is not frozen"
+      ],
+      "financiallyValidated": false,
+      "executionAllowed": false
+    }
+  ]
+}

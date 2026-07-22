@@ -1,0 +1,21 @@
+﻿{
+    "product":  "Gann Astro Mobile",
+    "version":  "0.10.19",
+    "status":  "android_companion_https_pairing_candidate",
+    "built_at_utc":  "2026-07-22T14:09:51.3823396Z",
+    "apk":  "GannAstroMobile-0.10.19-debug.apk",
+    "apk_sha256":  "A8D4D28F9EB4DC0DC0A672FE6B611019E1A7E4CA6B1EE5D7CB09890FC645F635",
+    "source_git_commit":  "3cabe251338ca143c70530b7fb40739d95c2d55e",
+    "source_git_dirty":  false,
+    "runtime_profile_contract":  "GANN_ASTRO_RUNTIME_PROFILE_V1",
+    "companion_client_contract":  "GANN_ASTRO_ANDROID_COMPANION_CLIENT_V2",
+    "companion_session_contract":  "GANN_ASTRO_COMPANION_SESSION_V2",
+    "companion_capabilities_contract":  "GANN_ASTRO_COMPANION_CAPABILITIES_V2",
+    "companion_stream_contract":  "GANN_ASTRO_COMPANION_STREAM_V1",
+    "companion_gateway_contract":  "GANN_ASTRO_RUST_COMPANION_GATEWAY_V1",
+    "session_persistence":  "memory_only",
+    "transport":  "native_pinned_https_wss",
+    "gateway_status":  "implemented_requires_windows_host",
+    "physical_device_validation":  "required_before_release",
+    "execution_allowed":  false
+}

@@ -1,0 +1,113 @@
+{
+  "contract": "GANN_CAPABILITY_STATUS_V1",
+  "asOfUtc": "2026-07-22T14:11:08Z",
+  "executionAllowed": false,
+  "capabilities": [
+    {
+      "capabilityId": "android_companion_pinned_https",
+      "label": "Android companion over pinned HTTPS/WSS and Tailscale",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "yes",
+        "physicallyTested": "no",
+        "promotedStable": "no",
+        "sourceCertified": "not_applicable",
+        "financiallyValidated": "not_applicable"
+      },
+      "statusDetail": "Clean-source Android 0.10.19 candidate and Windows 0.10.19 candidate are packaged; complete MOB-01 through MOB-08 physical evidence is pending.",
+      "evidenceRefs": [
+        "gann-astro-desk/docs/android_companion_architecture.md",
+        "status/mobile_acceptance_plan.json",
+        "status/audits/android_clean_candidate_0_10_19_20260722.json"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "frozen_prospective_shadow_trial",
+      "label": "Frozen prospective USDJPY shadow cohort",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "yes",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "not_applicable",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "One immutable policy cohort is collecting; statistical gate has not passed.",
+      "evidenceRefs": [
+        "prospective_shadow_trial_manifest_20260713.md",
+        "status/research_trials.json"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "instrument_relative_sbc_fx",
+      "label": "Instrument-relative SBC and FX base-minus-quote research",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Latent currency arithmetic and invariants exist; snapshot connector is unscored and uncertified identities remain blocked.",
+      "evidenceRefs": [
+        "research_labs/instrument_relative_sbc/README.md"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "chart_conditioned_aspect_polarity",
+      "label": "Chart-conditioned aspect polarity research lab",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Milestone 1 is execution locked; missing source profiles and a separate purged trial block promotion.",
+      "evidenceRefs": [
+        "chart_conditioned_aspects_milestone1_20260722.md"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "strict_shadbala_drik",
+      "label": "Strict Shadbala and reconciled Drik evidence",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "yes",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Drik passes the Tier B comparator, but full Shadbala has 35 failed total rows and the independent witness is pending.",
+      "evidenceRefs": [
+        "astro_external_validation_gate_20260718.json",
+        "astro_function_certification_report_20260718.md"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "aspect_evidence_trace",
+      "label": "Timestamp-safe aspect evidence trace",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "yes",
+        "physicallyTested": "no",
+        "promotedStable": "no",
+        "sourceCertified": "not_applicable",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Packaged in desktop 0.10.19; retrospective extrema stay barred from live inference.",
+      "evidenceRefs": [
+        "aspect_evidence_trace_native_release_20260722.md"
+      ],
+      "executionAllowed": false
+    }
+  ]
+}

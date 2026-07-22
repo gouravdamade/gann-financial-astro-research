@@ -1,0 +1,38 @@
+﻿{
+    "contract":  "GANN_EXTERNAL_MOBILE_EVIDENCE_POINTER_V1",
+    "evidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722",
+    "files":  [
+                  {
+                      "name":  "candidate_hashes.json",
+                      "path":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722\\candidate_hashes.json",
+                      "bytes":  1311,
+                      "sha256":  "63B447957A5039966139D4772DA25249735CEA09AAC77724431406FA9C391C61"
+                  },
+                  {
+                      "name":  "gateway_pairing_excerpt.jsonl",
+                      "path":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722\\gateway_pairing_excerpt.jsonl",
+                      "bytes":  2030,
+                      "sha256":  "C4DCD0986D7B3A8993BE9062D9D2C36790BFAACF1090024AE922104445B5E15C"
+                  },
+                  {
+                      "name":  "pairing_observation.json",
+                      "path":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722\\pairing_observation.json",
+                      "bytes":  1071,
+                      "sha256":  "C54E8FBF389E523B9028D886FB0F327F17C6FE9F3FE5522E4550E87132AD6C1D"
+                  },
+                  {
+                      "name":  "tailscale_status.json",
+                      "path":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722\\tailscale_status.json",
+                      "bytes":  4578,
+                      "sha256":  "BA06121D9B378B4D8A7659D64743B659F1572B5BF193F05C3080A515DDB495C7"
+                  },
+                  {
+                      "name":  "windows_bundle_identity.json",
+                      "path":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722\\windows_bundle_identity.json",
+                      "bytes":  1038,
+                      "sha256":  "373195EF7A18B9F3C252AD0025FA1256A2086A568B8B2868E16ED9A53F0A2895"
+                  }
+              ],
+    "storedOutsideGit":  true,
+    "executionAllowed":  false
+}
