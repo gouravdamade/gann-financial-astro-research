@@ -66,6 +66,8 @@ function TracePoint({
       <div className="evidence-trace-point-body">
         <div className="evidence-trace-grid">
           <div><span>Close</span><strong>{formatNumber(market.close, 3)}</strong></div>
+          <div><span>High wick</span><strong>{formatNumber(market.high, 3)}</strong></div>
+          <div><span>Low wick</span><strong>{formatNumber(market.low, 3)}</strong></div>
           <div><span>RSI 14</span><strong>{formatNumber(market.rsi14?.value, 1)} {market.rsi14?.zone?.replaceAll('_', ' ')}</strong></div>
           <div><span>Candle</span><strong>{market.candle?.direction ?? 'unavailable'}</strong></div>
           <div><span>Overlaps</span><strong>{record.overlaps.otherActiveCount} other</strong></div>
@@ -98,6 +100,7 @@ function TracePoint({
           </span>
           <span>SBC guidance only</span>
           <span>outcome excluded</span>
+          {record.guardrails.selectedRetrospectively && <span>chosen after window close</span>}
         </div>
         {strength.missingComponents?.length ? (
           <p className="evidence-trace-muted">Pending strength witnesses: {strength.missingComponents.join(', ').replaceAll('_', ' ')}</p>
@@ -182,6 +185,16 @@ export function AspectEvidenceTracePanel({ eventId }: Props) {
         </div>
       </section>
       <TracePoint record={trace.end} label="Window end" />
+      <section className="evidence-trace-checkpoints">
+        <header><strong>Reaction checkpoints</strong><span>post-window research only</span></header>
+        {trace.reactionCheckpoints.available && trace.reactionCheckpoints.crest && trace.reactionCheckpoints.trough ? (
+          <>
+            <p className="evidence-trace-muted">Highest and lowest wick among completed bars in this aspect window. Selection becomes knowable only when the window closes.</p>
+            <TracePoint record={trace.reactionCheckpoints.crest} label="Highest wick" />
+            <TracePoint record={trace.reactionCheckpoints.trough} label="Lowest wick" />
+          </>
+        ) : <p className="evidence-trace-muted">No fully closed bar exists inside this aspect window.</p>}
+      </section>
       <section className="evidence-trace-outcome">
         <header><strong>Observed outcome</strong><span>retrospective only</span></header>
         {trace.outcome.available ? (

@@ -671,6 +671,17 @@ def build_aspect_evidence_trace(
     )
     selected_window_positions = [window_positions[item] for item in selected_window_positions]
 
+    crest_position = (
+        max(window_positions, key=lambda index: float(frame.iloc[index]["high"]))
+        if window_positions
+        else None
+    )
+    trough_position = (
+        min(window_positions, key=lambda index: float(frame.iloc[index]["low"]))
+        if window_positions
+        else None
+    )
+
     pip_factor = PIP_FACTOR_BY_SYMBOL.get(str(symbol).upper(), 1.0)
     candle_inputs = [
         {
@@ -695,6 +706,11 @@ def build_aspect_evidence_trace(
 
     trace_times = [event_start]
     trace_times.extend(close_times[position] for position in selected_window_positions)
+    trace_times.extend(
+        close_times[position]
+        for position in (crest_position, trough_position)
+        if position is not None
+    )
     trace_times.append(event_end)
     unique_times = pd.DatetimeIndex(trace_times).unique().sort_values()
     longitudes_by_body = {
@@ -776,6 +792,57 @@ def build_aspect_evidence_trace(
         external_gate=external_gate,
         chakra_engine=chakra_engine,
     )
+    reaction_checkpoints: dict[str, Any] = {
+        "available": crest_position is not None and trough_position is not None,
+        "retrospectiveOnly": True,
+        "selectionKnownAtUtc": event_end.isoformat(),
+        "selectionPolicy": (
+            "after_window_close_highest_high_and_lowest_low_among_completed_window_bars"
+        ),
+        "usableAtStart": False,
+        "usableDuringWindow": False,
+        "consumedByLiveInference": False,
+        "consumedByShadowLedger": False,
+        "crest": None,
+        "trough": None,
+    }
+    if crest_position is not None and trough_position is not None:
+        checkpoints: dict[str, int] = {
+            "crest": crest_position,
+            "trough": trough_position,
+        }
+        for name, position in checkpoints.items():
+            checkpoint = _trace_record(
+                kind=f"window_{name}",
+                at=close_times[position],
+                event_start=event_start,
+                event_end=event_end,
+                position=position,
+                frame=frame,
+                close_times=close_times,
+                candle_by_close=candle_by_close,
+                rsi_values=rsi_values,
+                touch=touch,
+                timeframe_duration=duration,
+                pip_factor=pip_factor,
+                events=events,
+                event=event,
+                longitudes_by_body=longitudes_by_body,
+                reference=reference,
+                artifact_mode=artifact_mode,
+                external_gate=external_gate,
+                chakra_engine=chakra_engine,
+            )
+            checkpoint["guardrails"] = {
+                **checkpoint["guardrails"],
+                "selectedRetrospectively": True,
+                "selectionKnownAtUtc": event_end.isoformat(),
+                "usableAtStart": False,
+                "usableDuringWindow": False,
+                "consumedByLiveInference": False,
+                "consumedByShadowLedger": False,
+            }
+            reaction_checkpoints[name] = checkpoint
     return {
         "contract": ASPECT_EVIDENCE_TRACE_CONTRACT,
         "version": ASPECT_EVIDENCE_TRACE_VERSION,
@@ -806,6 +873,7 @@ def build_aspect_evidence_trace(
             "records": window,
         },
         "end": end,
+        "reactionCheckpoints": reaction_checkpoints,
         "outcome": _outcome_record(touch=touch, context=context),
         "precalculationStatus": {
             "sbc": "computed_per_timestamp_guidance_only",

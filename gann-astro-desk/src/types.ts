@@ -642,7 +642,7 @@ export type EventDetail = {
 }
 
 export type AspectEvidenceTraceRecord = {
-  kind: 'start' | 'window_bar' | 'end'
+  kind: 'start' | 'window_bar' | 'end' | 'window_crest' | 'window_trough'
   asOfUtc: string
   asOfIst: string
   eventState: 'window_start' | 'inside_window' | 'window_end' | 'before_window' | 'after_window'
@@ -754,6 +754,11 @@ export type AspectEvidenceTraceRecord = {
     outcomeExcluded: boolean
     executionAllowed: boolean
     consumedByLiveInference: boolean
+    selectedRetrospectively?: boolean
+    selectionKnownAtUtc?: string
+    usableAtStart?: boolean
+    usableDuringWindow?: boolean
+    consumedByShadowLedger?: boolean
   }
 }
 
@@ -785,6 +790,18 @@ export type AspectEvidenceTrace = {
     records: AspectEvidenceTraceRecord[]
   }
   end: AspectEvidenceTraceRecord
+  reactionCheckpoints: {
+    available: boolean
+    retrospectiveOnly: boolean
+    selectionKnownAtUtc: string
+    selectionPolicy: string
+    usableAtStart: boolean
+    usableDuringWindow: boolean
+    consumedByLiveInference: boolean
+    consumedByShadowLedger: boolean
+    crest: AspectEvidenceTraceRecord | null
+    trough: AspectEvidenceTraceRecord | null
+  }
   outcome: {
     available: boolean
     retrospectiveOnly: boolean

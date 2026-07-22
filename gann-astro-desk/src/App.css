@@ -3301,6 +3301,7 @@ html.android-runtime .loading-state {
 
 .evidence-trace-header,
 .evidence-trace-window > header,
+.evidence-trace-checkpoints > header,
 .evidence-trace-outcome > header {
   display: flex;
   align-items: center;
@@ -3321,6 +3322,7 @@ html.android-runtime .loading-state {
 
 .evidence-trace-header small,
 .evidence-trace-window > header > span,
+.evidence-trace-checkpoints > header > span,
 .evidence-trace-outcome > header > span {
   color: #8ca0b2;
   font-size: 8px;
@@ -3356,6 +3358,7 @@ html.android-runtime .loading-state {
 
 .evidence-trace-point,
 .evidence-trace-window,
+.evidence-trace-checkpoints,
 .evidence-trace-outcome,
 .evidence-trace-status {
   border: 1px solid #293e53;
@@ -3470,6 +3473,7 @@ html.android-runtime .loading-state {
 }
 
 .evidence-trace-window,
+.evidence-trace-checkpoints,
 .evidence-trace-outcome,
 .evidence-trace-status {
   padding: 8px;
@@ -3480,6 +3484,18 @@ html.android-runtime .loading-state {
   align-items: center;
   gap: 5px;
   color: #b7d9e8;
+  font-size: 10px;
+}
+
+.evidence-trace-checkpoints {
+  display: grid;
+  gap: 6px;
+  border-color: #5d4e7a;
+  background: #161426;
+}
+
+.evidence-trace-checkpoints > header > strong {
+  color: #dfd0f0;
   font-size: 10px;
 }
 

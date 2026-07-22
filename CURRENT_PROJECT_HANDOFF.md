@@ -1,8 +1,35 @@
 # Current Project Handoff
 
-Last updated: 2026-07-21 17:55 IST
+Last updated: 2026-07-22 13:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-22 (Aspect Reaction Checkpoints / Source)
+
+- Extended `GANN_ASPECT_EVIDENCE_TRACE_V1` with the three concise review
+  checkpoints requested for each aspect: **Start**, **Highest wick**, and
+  **Lowest wick**. The Trace tab still retains every closed in-window bar for
+  detailed inspection; the two extrema are shortcuts into that evidence.
+- Highest/lowest selection uses the candle high and low among fully closed bars
+  whose close is inside the selected aspect window. Each checkpoint includes
+  the same SBC, Panchanga, strict Shadbala/Drik, RSI, candle, overlap, and SR
+  snapshot as the complete trace.
+- Crest/trough selection is deliberately marked `retrospectiveOnly`. Although
+  each checkpoint's source data is valid at its own timestamp, knowing that it
+  is the final window high or low requires the aspect window to have closed.
+  It is therefore unavailable at Start, unavailable during the live window,
+  excluded from live inference and the shadow ledger, and execution-locked.
+- The reviewer labels these as **Reaction checkpoints / post-window research
+  only**, displays the exact high/low wick values, and repeats the
+  `chosen after window close` warning inside each checkpoint.
+- Verification passed: backend `117/117`, frontend `71/71` across 22 files,
+  Oxlint, TypeScript/Vite production build, Python compilation, and direct
+  Flask endpoint verification of the extrema and live-consumption lock.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_130457_aspect_reaction_checkpoints`.
+- Existing runtime-only files remain deliberately outside this source change:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-21 (Timestamp-safe Aspect Evidence Trace / Source)
 

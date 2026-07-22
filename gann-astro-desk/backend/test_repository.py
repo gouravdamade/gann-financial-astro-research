@@ -237,6 +237,24 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertIn("sbc", trace["precalculationStatus"])
         self.assertIn("strictShadbalaDrik", trace["precalculationStatus"])
 
+        checkpoints = trace["reactionCheckpoints"]
+        self.assertTrue(checkpoints["retrospectiveOnly"])
+        self.assertFalse(checkpoints["usableAtStart"])
+        self.assertFalse(checkpoints["usableDuringWindow"])
+        self.assertFalse(checkpoints["consumedByLiveInference"])
+        self.assertFalse(checkpoints["consumedByShadowLedger"])
+        if checkpoints["available"]:
+            self.assertIsNotNone(checkpoints["crest"])
+            self.assertIsNotNone(checkpoints["trough"])
+            for checkpoint in (checkpoints["crest"], checkpoints["trough"]):
+                self.assertTrue(checkpoint["guardrails"]["selectedRetrospectively"])
+                self.assertFalse(checkpoint["guardrails"]["usableAtStart"])
+                self.assertFalse(checkpoint["guardrails"]["usableDuringWindow"])
+                self.assertLessEqual(
+                    pd.Timestamp(checkpoint["asOfUtc"]),
+                    pd.Timestamp(trace["times"]["eventEndUtc"]),
+                )
+
         records = [trace["start"], *trace["window"]["records"], trace["end"]]
         for record in records:
             self.assertTrue(record["guardrails"]["timestampSafe"])
