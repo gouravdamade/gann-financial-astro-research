@@ -1,8 +1,40 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 21:37 IST
+Last updated: 2026-07-22 22:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-22 (Android Secure Pairing Persistence 0.10.20 Source)
+
+- The physical MOB-05 force-stop check exposed the documented 0.10.19
+  memory-only pairing behavior: killing the Android process erased the phone's
+  in-memory bearer session and returned the app to pairing.
+- Upgraded the Android candidate source to 0.10.20. After the proof-bound
+  pairing and pinned HTTPS status check succeed, native Rust now persists the
+  encrypted companion session through `android-native-keyring-store` 1.0.0;
+  its encryption key is protected by Android Keystore and neither the bearer
+  token nor pinned certificate is exposed to the WebView.
+- A force-stopped/recreated Android process can restore only a canonical,
+  unexpired, execution-locked session whose stored certificate bytes match its
+  fingerprint. Expiry, corrupt/oversized storage, unsafe capability claims,
+  HTTP 401, WSS revocation, or explicit Disconnect clears memory and protected
+  storage and returns to pairing. A desktop restart still invalidates the
+  gateway's in-memory sessions by design.
+- Added fail-closed persistence/expiry tests and compiled the real
+  `aarch64-linux-android` target. Verification passes: frontend lint, 22 test
+  files / 71 tests, production build, 18 Rust library tests, focused secure
+  session tests 3/3, Android target check, status tests 6/6, and canonical
+  status validation. The only `cargo fmt --check` difference is a pre-existing
+  formatting line in untouched `companion_gateway.rs`.
+- Updated Android architecture/build metadata to declare
+  `GANN_ASTRO_ANDROID_SECURE_SESSION_V1` and Keystore-backed persistence. The
+  0.10.20 APK, clean-build audit, and refreshed physical acceptance plan are
+  the next checkpoint; no physical pass is being carried over to a new binary.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_221052_android_secure_pairing_0_10_20_source`.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-22 (MOB-04 Desktop Revocation Pass)
 

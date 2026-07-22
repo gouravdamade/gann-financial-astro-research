@@ -15,7 +15,8 @@ use std::sync::{
     Arc, Mutex,
 };
 use std::time::Duration;
-use tauri::{AppHandle, Emitter, State};
+use tauri::{AppHandle, Emitter, Manager, State};
+use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use tokio_tungstenite::{
     connect_async_tls_with_config,
     tungstenite::{client::IntoClientRequest, Error as WebSocketError, Message},
@@ -24,6 +25,8 @@ use tokio_tungstenite::{
 use url::Url;
 
 const MAX_RESPONSE_BYTES: usize = 32 * 1024 * 1024;
+const MAX_PERSISTED_SESSION_BYTES: usize = 64 * 1024;
+const PERSISTED_SESSION_CONTRACT: &str = "GANN_ASTRO_ANDROID_SECURE_SESSION_V1";
 
 enum StreamFailure {
     SessionInvalid(String),
@@ -38,6 +41,14 @@ struct PairedCompanion {
     client: reqwest::Client,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct PersistedCompanionSession {
+    contract: String,
+    base_url: String,
+    session: EncryptedSession,
+}
+
 pub struct MobileCompanionState {
     paired: Mutex<Option<PairedCompanion>>,
     stream_generation: Arc<AtomicU64>,
@@ -45,8 +56,12 @@ pub struct MobileCompanionState {
 
 impl Default for MobileCompanionState {
     fn default() -> Self {
+        let paired = restore_paired_companion().unwrap_or_else(|_| {
+            let _ = secure_session_storage::delete();
+            None
+        });
         Self {
-            paired: Mutex::new(None),
+            paired: Mutex::new(paired),
             stream_generation: Arc::new(AtomicU64::new(0)),
         }
     }
@@ -173,18 +188,10 @@ pub async fn companion_pair(
         &envelope,
     )?;
     validate_encrypted_session(&encrypted, &challenge.certificate_sha256)?;
-    let certificate_der = decode_url(&encrypted.certificate_der)?;
-    let certificate = reqwest::Certificate::from_der(&certificate_der)
-        .map_err(|error| format!("Laptop certificate is invalid: {error}"))?;
-    let pinned_client = reqwest::Client::builder()
-        .tls_built_in_root_certs(false)
-        .add_root_certificate(certificate)
-        .connect_timeout(Duration::from_secs(5))
-        .timeout(Duration::from_secs(45))
-        .redirect(reqwest::redirect::Policy::none())
-        .build()
-        .map_err(|error| format!("Unable to initialize pinned companion transport: {error}"))?;
-    let status = pinned_client
+    let paired =
+        paired_from_encrypted(base_url.clone(), &encrypted, &challenge.certificate_sha256)?;
+    let status = paired
+        .client
         .get(format!("{base_url}/companion/v1/status"))
         .bearer_auth(&encrypted.access_token)
         .header("X-Gann-Astro-Client", CLIENT_CONTRACT)
@@ -194,22 +201,8 @@ pub async fn companion_pair(
     if !status.status().is_success() {
         return Err("Laptop session did not pass the pinned HTTPS verification".to_string());
     }
-    let public = PublicCompanionSession {
-        contract: SESSION_CONTRACT.to_string(),
-        session_id: encrypted.session_id,
-        base_url,
-        expires_at_utc: encrypted.expires_at_utc,
-        certificate_sha256: encrypted.certificate_sha256,
-        transport: "native_pinned_https_wss".to_string(),
-        capabilities: encrypted.capabilities,
-        execution_allowed: false,
-    };
-    let paired = PairedCompanion {
-        public: public.clone(),
-        access_token: encrypted.access_token,
-        certificate_der,
-        client: pinned_client,
-    };
+    persist_paired_companion(&base_url, &encrypted)?;
+    let public = paired.public.clone();
     *state
         .paired
         .lock()
@@ -253,13 +246,17 @@ pub async fn companion_request(
         .send()
         .await
         .map_err(|error| format!("Companion request failed: {error}"))?;
+    let response_status = response.status();
+    if response_status == StatusCode::UNAUTHORIZED {
+        let _ = clear_mobile_session(&state);
+    }
     if response
         .content_length()
         .is_some_and(|length| length > MAX_RESPONSE_BYTES as u64)
     {
         return Err("Companion response exceeded the mobile limit".to_string());
     }
-    let status = response.status().as_u16();
+    let status = response_status.as_u16();
     let payload = response
         .bytes()
         .await
@@ -286,12 +283,7 @@ pub fn companion_session(
 
 #[tauri::command]
 pub fn companion_disconnect(state: State<'_, MobileCompanionState>) -> Result<(), String> {
-    state.stream_generation.fetch_add(1, Ordering::SeqCst);
-    *state
-        .paired
-        .lock()
-        .map_err(|_| "Mobile companion state is unavailable".to_string())? = None;
-    Ok(())
+    clear_mobile_session(&state)
 }
 
 #[tauri::command]
@@ -313,6 +305,8 @@ pub fn companion_start_stream(
             match stream_once(&app, &paired).await {
                 Ok(()) => backoff = Duration::from_secs(1),
                 Err(StreamFailure::SessionInvalid(error)) => {
+                    let state = app.state::<MobileCompanionState>();
+                    let _ = clear_mobile_session(&state);
                     let _ = app.emit(
                         "companion-session-invalid",
                         serde_json::json!({
@@ -458,7 +452,163 @@ fn validate_encrypted_session(
     if session.access_token.len() < 32 || session.session_id.is_empty() {
         return Err("Laptop companion session is incomplete".to_string());
     }
+    let expires_at = OffsetDateTime::parse(&session.expires_at_utc, &Rfc3339)
+        .map_err(|_| "Laptop companion session expiry is invalid".to_string())?;
+    if expires_at <= OffsetDateTime::now_utc() {
+        return Err("Laptop companion session is expired".to_string());
+    }
     Ok(())
+}
+
+fn pinned_client(certificate_der: &[u8]) -> Result<reqwest::Client, String> {
+    let certificate = reqwest::Certificate::from_der(certificate_der)
+        .map_err(|error| format!("Laptop certificate is invalid: {error}"))?;
+    reqwest::Client::builder()
+        .tls_built_in_root_certs(false)
+        .add_root_certificate(certificate)
+        .connect_timeout(Duration::from_secs(5))
+        .timeout(Duration::from_secs(45))
+        .redirect(reqwest::redirect::Policy::none())
+        .build()
+        .map_err(|error| format!("Unable to initialize pinned companion transport: {error}"))
+}
+
+fn paired_from_encrypted(
+    base_url: String,
+    session: &EncryptedSession,
+    expected_fingerprint: &str,
+) -> Result<PairedCompanion, String> {
+    let normalized_base_url = normalize_base_url(&base_url)?;
+    if normalized_base_url != base_url {
+        return Err("Stored laptop address was not canonical".to_string());
+    }
+    validate_encrypted_session(session, expected_fingerprint)?;
+    let certificate_der = decode_url(&session.certificate_der)?;
+    let client = pinned_client(&certificate_der)?;
+    Ok(PairedCompanion {
+        public: PublicCompanionSession {
+            contract: SESSION_CONTRACT.to_string(),
+            session_id: session.session_id.clone(),
+            base_url,
+            expires_at_utc: session.expires_at_utc.clone(),
+            certificate_sha256: session.certificate_sha256.clone(),
+            transport: "native_pinned_https_wss".to_string(),
+            capabilities: session.capabilities.clone(),
+            execution_allowed: false,
+        },
+        access_token: session.access_token.clone(),
+        certificate_der,
+        client,
+    })
+}
+
+fn persist_paired_companion(base_url: &str, session: &EncryptedSession) -> Result<(), String> {
+    let payload = serde_json::to_vec(&PersistedCompanionSession {
+        contract: PERSISTED_SESSION_CONTRACT.to_string(),
+        base_url: base_url.to_string(),
+        session: session.clone(),
+    })
+    .map_err(|error| format!("Unable to encode secure companion session: {error}"))?;
+    if payload.len() > MAX_PERSISTED_SESSION_BYTES {
+        return Err("Secure companion session exceeded the storage limit".to_string());
+    }
+    secure_session_storage::save(&payload)
+}
+
+fn restore_paired_companion() -> Result<Option<PairedCompanion>, String> {
+    let Some(payload) = secure_session_storage::load()? else {
+        return Ok(None);
+    };
+    if payload.len() > MAX_PERSISTED_SESSION_BYTES {
+        return Err("Stored companion session exceeded the storage limit".to_string());
+    }
+    let persisted: PersistedCompanionSession = serde_json::from_slice(&payload)
+        .map_err(|_| "Stored companion session is corrupt".to_string())?;
+    if persisted.contract != PERSISTED_SESSION_CONTRACT {
+        return Err("Stored companion session contract is unsupported".to_string());
+    }
+    let fingerprint = persisted.session.certificate_sha256.clone();
+    paired_from_encrypted(persisted.base_url, &persisted.session, &fingerprint).map(Some)
+}
+
+fn clear_mobile_session(state: &MobileCompanionState) -> Result<(), String> {
+    state.stream_generation.fetch_add(1, Ordering::SeqCst);
+    *state
+        .paired
+        .lock()
+        .map_err(|_| "Mobile companion state is unavailable".to_string())? = None;
+    secure_session_storage::delete()
+}
+
+#[cfg(target_os = "android")]
+mod secure_session_storage {
+    use android_native_keyring_store::Store;
+    use keyring_core::{api::CredentialStoreApi, Entry, Error};
+    use std::{
+        collections::HashMap,
+        sync::{Arc, OnceLock},
+    };
+
+    const SERVICE: &str = "com.gouravdamade.gannastrodesk.companion";
+    const USER: &str = "paired-session-v1";
+    static STORE: OnceLock<Result<Arc<Store>, String>> = OnceLock::new();
+
+    fn store() -> Result<Arc<Store>, String> {
+        match STORE.get_or_init(|| {
+            let config = HashMap::from([("name", "gann-astro-companion")]);
+            Store::new_with_configuration(&config)
+                .map_err(|error| format!("Android secure storage is unavailable: {error}"))
+        }) {
+            Ok(store) => Ok(Arc::clone(store)),
+            Err(error) => Err(error.clone()),
+        }
+    }
+
+    fn entry() -> Result<Entry, String> {
+        store()?
+            .build(SERVICE, USER, None)
+            .map_err(|error| format!("Android secure session entry is unavailable: {error}"))
+    }
+
+    pub fn save(payload: &[u8]) -> Result<(), String> {
+        entry()?
+            .set_secret(payload)
+            .map_err(|error| format!("Unable to protect the companion session: {error}"))
+    }
+
+    pub fn load() -> Result<Option<Vec<u8>>, String> {
+        match entry()?.get_secret() {
+            Ok(payload) => Ok(Some(payload)),
+            Err(Error::NoEntry) => Ok(None),
+            Err(error) => Err(format!(
+                "Unable to restore the protected companion session: {error}"
+            )),
+        }
+    }
+
+    pub fn delete() -> Result<(), String> {
+        match entry()?.delete_credential() {
+            Ok(()) | Err(Error::NoEntry) => Ok(()),
+            Err(error) => Err(format!(
+                "Unable to remove the protected companion session: {error}"
+            )),
+        }
+    }
+}
+
+#[cfg(not(target_os = "android"))]
+mod secure_session_storage {
+    pub fn save(_: &[u8]) -> Result<(), String> {
+        Ok(())
+    }
+
+    pub fn load() -> Result<Option<Vec<u8>>, String> {
+        Ok(None)
+    }
+
+    pub fn delete() -> Result<(), String> {
+        Ok(())
+    }
 }
 
 fn validate_relative_path(path: &str) -> Result<(), String> {
@@ -502,6 +652,20 @@ fn error_from_payload(payload: &[u8], fallback: &str) -> String {
 mod tests {
     use super::*;
 
+    fn valid_encrypted_session() -> EncryptedSession {
+        let certificate = b"test-certificate";
+        EncryptedSession {
+            contract: SESSION_CONTRACT.to_string(),
+            session_id: "session-1".to_string(),
+            access_token: "a".repeat(64),
+            expires_at_utc: "2099-01-01T00:00:00Z".to_string(),
+            certificate_der: encode_url(certificate),
+            certificate_sha256: sha256_hex(certificate),
+            capabilities: crate::companion_protocol::CompanionCapabilities::locked(),
+            execution_allowed: false,
+        }
+    }
+
     #[test]
     fn mobile_url_and_path_validation_reject_credentials_and_absolute_targets() {
         assert_eq!(
@@ -514,5 +678,41 @@ mod tests {
         assert!(validate_relative_path("https://example.com/api/chart").is_err());
         assert!(validate_relative_path("/api/events/../orders").is_err());
         assert!(validate_relative_path("/api/events/%2e%2e/orders").is_err());
+    }
+
+    #[test]
+    fn persisted_session_validation_is_fail_closed() {
+        let valid = valid_encrypted_session();
+        assert!(validate_encrypted_session(&valid, &valid.certificate_sha256).is_ok());
+
+        let mut expired = valid.clone();
+        expired.expires_at_utc = "2020-01-01T00:00:00Z".to_string();
+        assert!(validate_encrypted_session(&expired, &expired.certificate_sha256).is_err());
+
+        let mut unsafe_session = valid.clone();
+        unsafe_session.execution_allowed = true;
+        assert!(
+            validate_encrypted_session(&unsafe_session, &unsafe_session.certificate_sha256)
+                .is_err()
+        );
+
+        assert!(validate_encrypted_session(&valid, &"0".repeat(64)).is_err());
+    }
+
+    #[test]
+    fn persisted_session_envelope_round_trips_without_exposing_browser_storage() {
+        let session = valid_encrypted_session();
+        let persisted = PersistedCompanionSession {
+            contract: PERSISTED_SESSION_CONTRACT.to_string(),
+            base_url: "https://100.64.0.1:9443".to_string(),
+            session,
+        };
+        let encoded = serde_json::to_vec(&persisted).unwrap();
+        assert!(encoded.len() < MAX_PERSISTED_SESSION_BYTES);
+        let decoded: PersistedCompanionSession = serde_json::from_slice(&encoded).unwrap();
+        assert_eq!(decoded.contract, PERSISTED_SESSION_CONTRACT);
+        assert_eq!(decoded.base_url, "https://100.64.0.1:9443");
+        assert!(!decoded.session.execution_allowed);
+        assert!(!decoded.session.capabilities.execution_allowed);
     }
 }

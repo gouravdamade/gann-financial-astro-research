@@ -1,7 +1,7 @@
 use serde::Serialize;
 use tauri::Manager;
 
-#[cfg(mobile)]
+#[cfg(any(mobile, test))]
 mod companion_client;
 #[cfg(not(mobile))]
 mod companion_gateway;

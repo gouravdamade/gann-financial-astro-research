@@ -2,7 +2,7 @@
 
 ## Status
 
-Version 0.10.17 is a release candidate with a native Rust HTTPS/WSS companion
+Version 0.10.20 is a release candidate with a native Rust HTTPS/WSS companion
 transport. The Windows app keeps Python and MT5 on loopback, exposes only an
 explicit research-route allowlist, and opens pairing only when the user requests
 it. Android performs the pairing handshake and all later requests in Rust; the
@@ -29,7 +29,9 @@ validation is still required before this candidate is called usable.
   requests.
 - `GANN_ASTRO_PAIRING_CHALLENGE_V1` and
   `GANN_ASTRO_PAIRING_ENVELOPE_V1` protect the bootstrap handshake.
-- `GANN_ASTRO_COMPANION_SESSION_V2` describes a 12-hour, memory-only session.
+- `GANN_ASTRO_COMPANION_SESSION_V2` describes a 12-hour, revocable session.
+- `GANN_ASTRO_ANDROID_SECURE_SESSION_V1` keeps that session in an encrypted
+  Android-native store whose encryption key is protected by Android Keystore.
 - `GANN_ASTRO_COMPANION_CAPABILITIES_V2` advertises least-privilege research
   scopes and keeps direct Python exposure disabled.
 - `GANN_ASTRO_COMPANION_STREAM_V1` identifies bounded WSS status messages.
@@ -50,8 +52,12 @@ validation is still required before this candidate is called usable.
    a ChaCha20-Poly1305 envelope containing the certificate and bearer token.
 6. Android validates the envelope, pins the certificate in native Rust, verifies
    the authenticated status endpoint, then uses only pinned HTTPS/WSS.
-7. The token and certificate remain in Rust memory. Restart, expiry, or desktop
-   revocation invalidates the session; Android returns to the pairing screen.
+7. The token and pinned certificate remain outside the WebView. Android stores
+   their encrypted session envelope through an Android Keystore-backed native
+   store, so force-stop or process restart can restore a still-valid session.
+   Explicit Disconnect, expiry, gateway rejection, desktop revocation, changed
+   certificate, corrupt storage, or any unsafe capability claim erases it and
+   returns Android to the pairing screen.
 
 ## Private Remote Operation
 
@@ -66,8 +72,9 @@ validation is still required before this candidate is called usable.
 - Windows Firewall permits this executable on TCP 9443 from `100.64.0.0/10`
   only. No router port forwarding or public-network allow rule is required.
 - For a long shift, keep the laptop plugged in and awake, Tailscale running in
-  unattended mode, and Gann Astro Desk open. Pair immediately before leaving;
-  the memory-only session lasts 12 hours.
+  unattended mode, and Gann Astro Desk open. A still-valid protected pairing
+  survives an Android force-stop, but expires after 12 hours. Restarting the
+  desktop invalidates its in-memory gateway sessions and requires pairing again.
 - The Android shell uses viewport safe-area insets on both the pairing screen
   and paired workspace, keeping controls clear of status and navigation bars.
 
@@ -102,8 +109,9 @@ physical phone.
 
 ## Next Milestones
 
-1. Run physical-device install, first pair, wrong-code lockout, revoke, app
-   restart, laptop restart, Wi-Fi loss, sleep/wake, and certificate-change tests.
+1. Run physical-device install, first pair, wrong-code lockout, revoke, secure
+   force-stop restore, laptop restart, Wi-Fi loss, sleep/wake, and
+   certificate-change tests for the 0.10.20 Android candidate.
 2. Add a small connection-state surface and manual reconnect control to the
    paired mobile workspace.
 3. Add mobile chart layout and touch-tool adaptations without forking research

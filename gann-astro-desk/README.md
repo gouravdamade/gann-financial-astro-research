@@ -197,11 +197,19 @@ npm run build
 
 ## Native Windows Status
 
-The current native source version is `0.10.13`; the promoted Windows release is at
+The current native source version is `0.10.20`; the promoted Windows release is at
 `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
 `execution_allowed=false` and `financially_validated=false`.
+
+Android candidate `0.10.20` replaces process-memory-only pairing with a native
+encrypted session store protected by Android Keystore. A still-valid pairing can
+therefore survive force-stop and relaunch without exposing its bearer token or
+pinned certificate to the WebView. Explicit Disconnect, 401/WSS revocation,
+expiry, corrupt storage, a certificate mismatch, or an unsafe execution claim
+clears the protected session and returns the phone to pairing. The desktop
+gateway remains execution locked and keeps its own sessions in memory.
 
 Release `0.10.13` makes dense aspect evidence inspectable without hiding any
 event. Selecting an overlap opens an explicit list of every active aspect with
