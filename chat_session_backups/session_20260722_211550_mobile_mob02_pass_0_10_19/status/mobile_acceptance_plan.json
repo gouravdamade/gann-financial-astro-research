@@ -1,0 +1,80 @@
+{
+  "contract": "GANN_MOBILE_PHYSICAL_ACCEPTANCE_V1",
+  "planId": "GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1",
+  "createdAtUtc": "2026-07-22T14:11:08Z",
+  "status": "collecting_evidence",
+  "desktopCandidate": {
+    "releaseId": "gann-astro-desk-0.10.19-windows",
+    "version": "0.10.19",
+    "artifactPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.19-tauri/GannAstroDesk.exe",
+    "artifactSha256": "45B7087DDBEC3BC535B0575912ECACB167652FA427703002DEE7BE4BBB64B017",
+    "installerPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.19-tauri/Gann Astro Desk_0.10.19_x64-setup.exe",
+    "installerSha256": "94FA71119210E135B5B941A3F57FD45A74E8856DC427B81E7D20F91176B26041",
+    "installedExecutableSha256": "09A3B42896F365DAE3C7859859D27BDC24AD912D3BAEB9684B9DBE85C0B3FBFC",
+    "bundleIdentityContract": "GANN_WINDOWS_BUNDLE_IDENTITY_V1",
+    "bundleIdentityAuditRef": "status/audits/windows_bundle_identity_0_10_19_20260722.json",
+    "sourceGitCommit": "79a99005e3c59c95868f1ccea88247e504ab82ce",
+    "sourceGitDirty": false
+  },
+  "mobileCandidate": {
+    "releaseId": "gann-astro-mobile-0.10.19-android-debug",
+    "version": "0.10.19",
+    "artifactPath": "D:/GannFinancialAstro/mobile/release_candidate/GannAstroMobile-0.10.19-debug/GannAstroMobile-0.10.19-debug.apk",
+    "artifactSha256": "A8D4D28F9EB4DC0DC0A672FE6B611019E1A7E4CA6B1EE5D7CB09890FC645F635",
+    "sourceGitCommit": "3cabe251338ca143c70530b7fb40739d95c2d55e",
+    "sourceGitDirty": false,
+    "candidateAuditRef": "status/audits/android_clean_candidate_0_10_19_20260722.json"
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false,
+  "tests": [
+    {
+      "testId": "MOB-01",
+      "title": "Install and first launch",
+      "requiredEvidence": ["APK install record", "pairing screen screenshot", "execution-locked indicator"],
+      "acceptance": "The exact APK installs and launches without crash; safe areas are visible and execution remains locked."
+    },
+    {
+      "testId": "MOB-02",
+      "title": "Valid Tailscale pairing",
+      "requiredEvidence": ["gateway audit excerpt", "paired workspace screenshot", "candidate hashes"],
+      "acceptance": "Pinned HTTPS pairing succeeds over the private tailnet and no Python token reaches the WebView."
+    },
+    {
+      "testId": "MOB-03",
+      "title": "Wrong-code rejection and lockout",
+      "requiredEvidence": ["five rejected attempts", "gateway lockout audit excerpt"],
+      "acceptance": "Wrong proofs create no session and the configured failure limit blocks further attempts."
+    },
+    {
+      "testId": "MOB-04",
+      "title": "Desktop device revocation",
+      "requiredEvidence": ["revoke action screenshot", "rejected authenticated request", "gateway audit excerpt"],
+      "acceptance": "Revoking the paired device immediately invalidates its current session."
+    },
+    {
+      "testId": "MOB-05",
+      "title": "Android process restart",
+      "requiredEvidence": ["before/after screen recording or screenshots"],
+      "acceptance": "Because credentials are memory-only, a killed Android process returns to pairing and cannot reuse the prior session."
+    },
+    {
+      "testId": "MOB-06",
+      "title": "Laptop restart and certificate change",
+      "requiredEvidence": ["old-session rejection", "new fingerprint", "successful re-pair"],
+      "acceptance": "A laptop restart invalidates the old session; Android rejects the changed certificate until a new explicit pairing completes."
+    },
+    {
+      "testId": "MOB-07",
+      "title": "Network loss, sleep, wake, and resume",
+      "requiredEvidence": ["disconnect state", "resume state", "gateway audit excerpt"],
+      "acceptance": "Loss and recovery are visible, bounded, and do not duplicate mutations or bypass reauthentication."
+    },
+    {
+      "testId": "MOB-08",
+      "title": "Usability and least-privilege scope",
+      "requiredEvidence": ["portrait and landscape screenshots", "touch workflow", "blocked-route checks"],
+      "acceptance": "Status/navigation bars do not cover controls; chart touch works; review scopes work; generation, promotion, MT5 mutation, and every trade route remain blocked."
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "contract": "GANN_ANDROID_CANDIDATE_BUILD_AUDIT_V1",
+  "auditedAtUtc": "2026-07-22T14:11:08Z",
+  "releaseId": "gann-astro-mobile-0.10.19-android-debug",
+  "artifact": {
+    "path": "D:/GannFinancialAstro/mobile/release_candidate/GannAstroMobile-0.10.19-debug/GannAstroMobile-0.10.19-debug.apk",
+    "bytes": 41074685,
+    "sha256": "A8D4D28F9EB4DC0DC0A672FE6B611019E1A7E4CA6B1EE5D7CB09890FC645F635",
+    "manifestSha256Match": true
+  },
+  "source": {
+    "gitCommit": "3cabe251338ca143c70530b7fb40739d95c2d55e",
+    "gitDirtyForAppSource": false,
+    "version": "0.10.19"
+  },
+  "package": {
+    "applicationId": "com.gouravdamade.gannastrodesk",
+    "versionCode": 10019,
+    "versionName": "0.10.19",
+    "minimumSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "applicationLabel": "Gann Astro Mobile",
+    "arm64RustLibraryPresent": true
+  },
+  "signing": {
+    "verified": true,
+    "v2Scheme": true,
+    "signerCount": 1,
+    "profile": "android_debug",
+    "certificateSha256": "2887FE2D7C1538B51ADC4F3F9A3D434E2DD8AF21162D73E89E6247C395E45527",
+    "productionPromotionAllowed": false
+  },
+  "automatedChecks": {
+    "frontend": "71 passed",
+    "backend": "117 passed",
+    "typescriptViteBuild": "passed",
+    "oxlint": "passed",
+    "rustLibraryTests": "15 passed",
+    "rustClippyDenyWarnings": "passed",
+    "androidRustCompile": "passed",
+    "gradleArm64DebugAssembly": "passed_copy_fallback_after_expected_windows_symlink_rejection",
+    "apkSignature": "passed",
+    "apkBadging": "passed",
+    "apkNativePayload": "passed"
+  },
+  "nonBlockingBuildWarnings": [
+    "Vite main chunk exceeds 500 kB after minification",
+    "Gradle reports features deprecated for Gradle 9",
+    "generated Android wrapper uses deprecated WebView databaseEnabled and onBackPressed APIs"
+  ],
+  "physicalDevice": {
+    "adbAttached": false,
+    "tailscalePhoneOnline": false,
+    "formalAcceptanceStatus": "pending_MOB_01_through_MOB_08"
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false
+}
