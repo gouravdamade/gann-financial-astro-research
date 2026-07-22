@@ -730,9 +730,9 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
                   return next
                 })
               }}
-              title="Open per-planet live line calculations"
+              title="Open Live SR Lab for per-planet line calculations"
             >
-              <Orbit size={13} /> Lines {planetaryLineOverlay.overlay?.lineCount ?? planetaryLineOverlay.requestedLineCount}
+              <Orbit size={13} /> Live SR {planetaryLineOverlay.overlay?.lineCount ?? planetaryLineOverlay.requestedLineCount}
             </button>
             {chartLoading && <strong className="chart-loading-label">Updating chart</strong>}
           </div>
@@ -804,7 +804,9 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
                 error={planetaryLineOverlay.error}
                 plottedLineCount={planetaryLineOverlay.overlay?.lineCount ?? 0}
                 sampledTimestampCount={planetaryLineOverlay.overlay?.timestampCount ?? planetaryLineOverlay.sampledTimestampCount}
+                generatedAtUtc={planetaryLineOverlay.generatedAtUtc}
                 onChange={(planetaryLines) => chartLayouts.updateChartState({ planetaryLines })}
+                onRecalculate={planetaryLineOverlay.recalculate}
                 onReset={() => chartLayouts.updateChartState({
                   planetaryLines: defaultPlanetaryLineOverlaySettings(parameters),
                 })}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { fetchPlanetaryLines } from './api'
 import {
   enabledPlanetaryLineGroups,
@@ -23,6 +23,7 @@ export function usePlanetaryLineOverlay(
   const [overlay, setOverlay] = useState<PlanetaryLineOverlay | null>(null)
   const [status, setStatus] = useState<PlanetaryLineOverlayStatus>('idle')
   const [error, setError] = useState('')
+  const [refreshNonce, setRefreshNonce] = useState(0)
   const requestSequence = useRef(0)
   const lineCount = planetaryLineCount(settings)
   const timestamps = useMemo(
@@ -89,7 +90,11 @@ export function usePlanetaryLineOverlay(
       })
     }, 260)
     return () => window.clearTimeout(timer)
-  }, [lineCount, requestInput, settings.visible])
+  }, [lineCount, refreshNonce, requestInput, settings.visible])
+
+  const recalculate = useCallback(() => {
+    setRefreshNonce((current) => current + 1)
+  }, [])
 
   return {
     overlay,
@@ -97,5 +102,7 @@ export function usePlanetaryLineOverlay(
     error,
     requestedLineCount: lineCount,
     sampledTimestampCount: timestamps.length,
+    generatedAtUtc: overlay?.generatedAtUtc ?? '',
+    recalculate,
   }
 }

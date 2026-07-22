@@ -98,7 +98,7 @@ sources:
     sha256: null
     registry_ref: null
     source_url: null
-    notes: A complete imprint-bearing edition is still required. The two locally acquired files are registered separately because the image scan is incomplete and the 2013 file is an edited derivative of that scan. No executable rule may cite this unresolved complete-edition candidate.
+    notes: A complete imprint-bearing edition is still required. The locally acquired image scan is incomplete, while both searchable ChiStaBo files are edited derivatives of that scan. No executable rule may cite this unresolved complete-edition candidate.
 
   - source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     title: Mystics of Sarvato Bhadra Chakra and Astrological Predictions (incomplete image scan)
@@ -121,6 +121,28 @@ sources:
     registry_ref: D:/GannFinancialAstro/sources/private/AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_D93B9B97.pdf
     source_url: null
     notes: The 95-page Word-generated PDF identifies itself as a 2013 edited version of an Internet scan. Its editor changed names to Vedic terminology, abbreviated planets, replicated or redrew figures, and inserted additions in square brackets. It is not an independent witness and does not repair the source scan's missing pages; use it only as a searchable navigation and comparison aid.
+
+  - source_id: AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_2012
+    title: Mystics of Sarvato Bhadra Chakra, ChiStaBo edited version, January 2012
+    authority: derivative_transcription
+    content_layer: editorial_reformat_with_changed_terminology_and_missing_page_placeholders
+    status: locally_acquired_derivative_comparison_only_not_doctrinal
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 8AF0045A44BBFF8F81F470F996D7949887BEC1A63C1641586EFC579EED4ED6CA
+    registry_ref: D:/GannFinancialAstro/sources/private/AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_2012_8AF0045A.pdf
+    source_url: null
+    notes: The 94-page Word-generated PDF identifies itself as edited by ChiStaBo in January 2012. It includes explicit missing-page placeholders and is an earlier derivative, not an independent witness. Use only for search, navigation, and comparison; do not use its edits to repair the scan or certify doctrine.
+
+  - source_id: AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722
+    title: Astrological Norms for Financial Gain in Share Market, printed pages 180-194
+    authority: modern_practitioner_hypothesis_reference
+    content_layer: intact_financial_chapter_from_incomplete_scan
+    status: page_sequence_visually_checked_hypothesis_only
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    registry_ref: D:/GannFinancialAstro/sources/private/AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf#pdf-pages-177-191-printed-pages-180-194
+    source_url: null
+    notes: All fifteen page images are present in sequence and were visually reviewed on 2026-07-22. A page-marked private OCR extract is available to the local RAG system only as opt-in modern-practitioner hypothesis material. It is not classical doctrine, source certification, Auto Suggest evidence, live inference input, or execution permission.
 
   - source_id: MAITREYA8_COMPARISON_V1
     title: Maitreya8 Sarvatobhadra behavior comparison

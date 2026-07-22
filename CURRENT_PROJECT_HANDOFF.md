@@ -1,8 +1,51 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 22:25 IST
+Last updated: 2026-07-22 23:30 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-22 (Live SR Lab and Agarwal Financial Hypothesis Source 0.10.21)
+
+- Audited the desktop planetary-line path end to end. The native source already
+  had a functioning live-replotting exploratory line engine; version 0.10.21
+  makes it discoverable as **Live SR** beside the existing **SR** chart toggle,
+  adds an explicit recalculate command, and shows the calculation time.
+- Live SR recalculates on symbol/timeframe artifact changes, new chart-bar
+  payloads, visible-range changes, and per-planet parameter changes. It supports
+  multiple `n`, `f`, and degree values plus direct/mirror/both modes. Exact UTC
+  bar timestamps and the Raman sidereal Swiss Ephemeris contract are retained.
+- Safety boundary is unchanged: Live SR is curve-fit research only and cannot
+  feed Auto Suggest, live inference, the prospective shadow ledger, validation,
+  official ML notes, or MT5 execution. The adjacent **SR** toggle remains the
+  corrected artifact's precomputed SR layer.
+- Audited both newly supplied Agarwal PDFs against the existing private scan.
+  The 191-page file is an exact duplicate of the archived incomplete image
+  scan. The 94-page January 2012 ChiStaBo file is an earlier edited derivative,
+  not an independent witness; it was archived privately as
+  `D:\GannFinancialAstro\sources\private\AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_2012_8AF0045A.pdf`.
+- Confirmed by full 15-page visual review that image-scan PDF pages 177-191 are
+  consecutive printed pages 180-194, Chapter 20 on financial/share-market
+  norms. A page-marked private extract now lives at
+  `D:\GannFinancialAstro\sources\private\derived\AGARWAL_FINANCIAL_CHAPTER20_PDF_PAGES_177_191_5644DFC4.txt`.
+- The local Jyotish RAG indexes that chapter only as opt-in
+  `hypothesis_reference` material. Questions naming Agarwal, Sarvatobhadra,
+  financial astrology, share markets, or bullish/bearish market hypotheses may
+  retrieve it. It is explicitly excluded from doctrine, deterministic SBC
+  scoring, Auto Suggest, inference, official notes, validation, and execution.
+- The complete Agarwal profile remains blocked: the scan still omits printed
+  pages 46-47, 54-55, 62-63, 133, and 144 and has no verified edition imprint;
+  both searchable files are derivatives.
+- Verification passes: JSON/YAML/CSV source validation; 13 focused corpus/RAG
+  tests; frontend lint; all 71 frontend tests executed and passed across the
+  resource-bounded run plus focused rerun; TypeScript/Vite production build;
+  117 backend tests; and 18 Rust tests. The existing 524 KB main-bundle warning
+  remains a performance follow-up only.
+- Full milestone details: `live_sr_agarwal_hypothesis_release_20260722.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_232813_live_sr_agarwal_0_10_21_source`.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-22 (Android Secure Pairing Persistence 0.10.20 Source)
 

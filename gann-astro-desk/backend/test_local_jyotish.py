@@ -67,6 +67,12 @@ class LocalJyotishTests(unittest.TestCase):
                 "title": "Planetary price line forum hypotheses",
                 "text": "Forum planetary price line and radix claims are unverified hypotheses for prospective testing only.",
             },
+            {
+                "source_id": "AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722",
+                "chunk_id": "AGARWAL-FINANCIAL-0001",
+                "title": "Astrological Norms for Financial Gain in Share Market",
+                "text": "A modern practitioner proposes bullish and bearish share-market combinations for prospective testing only.",
+            },
         ]
         path.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
         return path
@@ -105,6 +111,14 @@ class LocalJyotishTests(unittest.TestCase):
                 item["chunkId"] == "GANN-TUNNEL-0001" for item in hypotheses
             ))
             self.assertFalse(any(item["chunkId"].startswith("GANN-") for item in doctrine))
+
+            agarwal = service.retrieve(
+                "Which Agarwal share market combinations are hypotheses?",
+                layer="hypothesis_reference",
+            )
+            self.assertTrue(any(
+                item["chunkId"] == "AGARWAL-FINANCIAL-0001" for item in agarwal
+            ))
 
     def test_analyze_returns_guarded_untrusted_draft_with_citations(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

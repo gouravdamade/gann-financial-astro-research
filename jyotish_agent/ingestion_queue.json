@@ -218,6 +218,14 @@
       "ingestion_policy": "rag_reference_only_unless_public_domain_or_user_owned",
       "priority": "3",
       "text_path": "D:\\PycharmProjects\\jyotish_agent\\corpus_text\\YOGA_YATRA.txt"
+    },
+    {
+      "source_id": "AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722",
+      "title": "Astrological Norms for Financial Gain in Share Market",
+      "source_url": null,
+      "ingestion_policy": "private_page_provenanced_hypothesis_reference_never_doctrine_or_execution",
+      "priority": "3",
+      "text_path": "D:\\GannFinancialAstro\\sources\\private\\derived\\AGARWAL_FINANCIAL_CHAPTER20_PDF_PAGES_177_191_5644DFC4.txt"
     }
   ]
 }

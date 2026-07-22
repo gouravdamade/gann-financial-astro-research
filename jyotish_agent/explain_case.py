@@ -34,16 +34,23 @@ except ImportError:  # Direct script execution from jyotish_agent/.
 
 SOURCE_PROVENANCE_IDS = {"CHAKRA_DOCTRINE_AUDIT"}
 HYPOTHESIS_REFERENCE_IDS = {
+    "AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722",
     "GANN_TUNNEL_1927",
     "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
 }
 HYPOTHESIS_QUERY_TERMS = {
+    "agarwal",
+    "bullish market",
+    "bearish market",
+    "financial astrology",
     "forex factory",
     "forum",
     "gann",
     "planetary line",
     "planetary price",
     "radix",
+    "sarvatobhadra",
+    "share market",
     "tunnel thru the air",
     "tunnel through the air",
 }

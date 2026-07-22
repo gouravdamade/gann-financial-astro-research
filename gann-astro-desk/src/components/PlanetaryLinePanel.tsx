@@ -1,4 +1,4 @@
-import { Copy, Orbit, RotateCcw, ShieldCheck, X } from 'lucide-react'
+import { Copy, Orbit, RefreshCw, RotateCcw, ShieldCheck, X } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import {
   PLANETARY_LINE_MAX_LINES,
@@ -19,7 +19,9 @@ type PlanetaryLinePanelProps = {
   error: string
   plottedLineCount: number
   sampledTimestampCount: number
+  generatedAtUtc: string
   onChange: (settings: PlanetaryLineOverlaySettings) => void
+  onRecalculate: () => void
   onReset: () => void
   onClose: () => void
 }
@@ -40,7 +42,9 @@ export function PlanetaryLinePanel({
   error,
   plottedLineCount,
   sampledTimestampCount,
+  generatedAtUtc,
   onChange,
+  onRecalculate,
   onReset,
   onClose,
 }: PlanetaryLinePanelProps) {
@@ -119,15 +123,24 @@ export function PlanetaryLinePanel({
   }
 
   return (
-    <aside className="planetary-line-panel" aria-label="Planetary line laboratory">
+    <aside className="planetary-line-panel" aria-label="Live support and resistance line laboratory">
       <header>
         <span className="planetary-line-heading-icon"><Orbit size={17} /></span>
         <div>
-          <strong>Planetary line lab</strong>
-          <span>Per-planet live curve fitting</span>
+          <strong>Live SR Lab</strong>
+          <span>Per-planet live line calculations</span>
         </div>
+        <button
+          className="icon-button"
+          onClick={onRecalculate}
+          disabled={status === 'calculating'}
+          title="Recalculate live support and resistance lines"
+          aria-label="Recalculate live support and resistance lines"
+        >
+          <RefreshCw size={14} />
+        </button>
         <button className="icon-button" onClick={onReset} title="Reset planetary line settings" aria-label="Reset planetary line settings"><RotateCcw size={14} /></button>
-        <button className="icon-button" onClick={onClose} title="Close planetary line lab" aria-label="Close planetary line lab"><X size={15} /></button>
+        <button className="icon-button" onClick={onClose} title="Close Live SR Lab" aria-label="Close Live SR Lab"><X size={15} /></button>
       </header>
 
       <section className="planetary-line-master-row">
@@ -157,7 +170,7 @@ export function PlanetaryLinePanel({
         <i />
         <span>
           {status === 'calculating' && `Calculating ${requestedLineCount} lines`}
-          {status === 'ready' && `${plottedLineCount} lines across ${sampledTimestampCount} bar times`}
+          {status === 'ready' && `${plottedLineCount} lines across ${sampledTimestampCount} bar times${generatedAtUtc ? ` | updated ${new Date(generatedAtUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : ''}`}
           {status === 'idle' && (settings.visible ? 'Enable at least one planet' : 'Overlay hidden')}
           {status === 'error' && (error || 'Planetary line calculation failed')}
         </span>

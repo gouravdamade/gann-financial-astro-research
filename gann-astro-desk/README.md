@@ -197,7 +197,7 @@ npm run build
 
 ## Native Windows Status
 
-The current native source version is `0.10.20`; the promoted Windows release is at
+The current native source version is `0.10.21`; the promoted Windows release is at
 `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
@@ -210,6 +210,13 @@ pinned certificate to the WebView. Explicit Disconnect, 401/WSS revocation,
 expiry, corrupt storage, a certificate mismatch, or an unsafe execution claim
 clears the protected session and returns the phone to pairing. The desktop
 gateway remains execution locked and keeps its own sessions in memory.
+
+Windows candidate `0.10.21` exposes the existing timestamp-safe planetary-line
+overlay as **Live SR Lab**, adds an explicit recalculation command and generated
+time, and keeps every calculated line outside Auto Suggest, inference,
+validation, and execution. The local Jyotish corpus can opt into the visually
+checked Agarwal financial chapter as modern practitioner hypothesis material;
+it is never retrieved as doctrine or consumed by trading logic.
 
 Release `0.10.13` makes dense aspect evidence inspectable without hiding any
 event. Selecting an overlap opens an explicit list of every active aspect with

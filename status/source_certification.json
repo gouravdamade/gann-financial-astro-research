@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-22T12:45:00Z",
+  "asOfUtc": "2026-07-22T18:10:00Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -38,6 +38,16 @@
       "summary": "The image scan is incomplete and the searchable edition is derivative; neither enables an executable financial profile.",
       "evidenceRefs": [
         "docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md"
+      ]
+    },
+    {
+      "certificationId": "agarwal_financial_chapter20_hypothesis_reference",
+      "status": "page_sequence_verified_private_hypothesis_only",
+      "sourceCertified": false,
+      "summary": "Printed pages 180-194 are intact and visually checked, so they may support opt-in local RAG hypotheses; they remain modern commentary and are excluded from doctrine, deterministic scoring, Auto Suggest, live inference, official ML notes, and execution.",
+      "evidenceRefs": [
+        "docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md",
+        "configs/sbc/sources.yaml"
       ]
     },
     {

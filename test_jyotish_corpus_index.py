@@ -137,8 +137,13 @@ class CorpusChunkingTests(unittest.TestCase):
 
     def test_case_explainer_hypothesis_sources_are_opt_in_and_guarded(self) -> None:
         self.assertEqual(source_layer("GANN_TUNNEL_1927"), "hypothesis_reference")
+        self.assertEqual(
+            source_layer("AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722"),
+            "hypothesis_reference",
+        )
         self.assertFalse(question_requests_hypotheses("Explain this Moon square recurrence"))
         self.assertTrue(question_requests_hypotheses("Test Gann planetary price lines"))
+        self.assertTrue(question_requests_hypotheses("Compare this Sarvatobhadra share market hypothesis"))
         warning = llm_drift_warning(
             8,
             "case_id=8 family=AVG(ALL)|MOON::square",
