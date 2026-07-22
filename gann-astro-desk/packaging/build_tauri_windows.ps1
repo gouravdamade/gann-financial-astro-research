@@ -111,7 +111,7 @@ $sourceGitDirty = [bool](
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
     version = $appVersion
-    status = "planetary_line_lab_candidate"
+    status = "aspect_evidence_trace_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -156,6 +156,17 @@ $manifest = [ordered]@{
     planetary_line_execution_allowed = $false
     planetary_line_live_inference_allowed = $false
     planetary_line_auto_suggest_allowed = $false
+    aspect_evidence_trace_contract = "GANN_ASPECT_EVIDENCE_TRACE_V1"
+    aspect_evidence_trace_mode = "read_only_timestamp_safe"
+    aspect_reaction_checkpoints = @(
+        "start",
+        "highest_wick",
+        "lowest_wick"
+    )
+    aspect_reaction_extrema_mode = "retrospective_only_after_window_close"
+    aspect_evidence_live_inference_allowed = $false
+    aspect_evidence_shadow_ledger_allowed = $false
+    aspect_evidence_execution_allowed = $false
     webview_asset_cache_contract = "GANN_TAURI_VERSIONED_ENTRYPOINT_V1"
     candlestick_shadow_contract = "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3"
     candlestick_trial_contract = "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3"
