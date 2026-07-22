@@ -1,8 +1,50 @@
 # Current Project Handoff
 
-Last updated: 2026-07-23 02:34 IST
+Last updated: 2026-07-23 03:58 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Arghya Independent Witness Gate)
+
+- Audited an independent edited transcription of the 1962 Krishna
+  Rau/Choudhary booklet, the already-bounded Agarwal financial chapter, and
+  seven public page photographs of a dated 12-14 May 1951 Bombay silver
+  example.
+- Krishna Rau/Choudhary Table XV independently prints `11|15`, supporting the
+  proportional correction candidate for Trailokya's `11|45`. Table XVI also
+  independently prints `2|18`, so the second non-proportional value remains
+  unresolved. Neither original Trailokya CSV was changed and no correction is
+  applied at runtime.
+- Krishna Rau/Choudhary and Agarwal independently state that one reference
+  price unit is `1/20 = 5%`. The isolated lab can now expose only that unit
+  size; for example, `2041 / 20 = 102.05`. It still refuses a target price or
+  signal because no certified rule maps an Arghya score to a number of units.
+- The 1951 pages show a 12 May silver price of `2041`, a net benefic remainder
+  `0|32|15`, and a 14 May price of `2011`. The historical 30-point decrease is
+  consistent with benefic/abundance/lower-price direction, but it is not a
+  prospective forecast and the linked final score-to-price working page is
+  unavailable behind an authenticated Evernote screen.
+- Added guarded witness metadata and fail-closed validation to
+  `configs/sbc/arghya/trailokya_arghya_reconciliation_v1.yaml` and
+  `research_labs/trailokya_arghya/reconcile.py`. Every worked example remains
+  `certifies_price_formula: false` and `reusable_prediction_allowed: false`.
+- Full audit:
+  `docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md`.
+- Private worksheet images and hashes are preserved outside Git at
+  `D:\GannFinancialAstro\sources\private\derived\arghya_1951_silver`.
+- Direct predicted price, bullish/bearish labels, stocks/FX mapping,
+  Auto Suggest, live inference, official ML-note evidence, validation
+  promotion, and MT5 execution remain blocked. The next gate is a complete
+  page-cited score-to-price calculation plus prospective frozen-rule tests.
+- Verification passes: 9 focused Arghya tests; 82 SBC/corpus/local-Jyotish
+  tests; 20 status/profile/Arghya tests; reconciliation audit command; and
+  `git diff --check`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_040453_arghya_independent_witness_gate`.
+- No installer was rebuilt. The current Windows candidate remains 0.10.21.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-23 (Trailokya Arghya Double Transcription)
 

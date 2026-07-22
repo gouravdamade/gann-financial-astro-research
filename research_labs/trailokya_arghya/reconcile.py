@@ -93,6 +93,17 @@ class AvailabilityDirection:
     execution_allowed: bool
 
 
+@dataclass(frozen=True)
+class ResearchPriceUnit:
+    reference_value: Decimal
+    divisor: Decimal
+    fraction: Decimal
+    percent: Decimal
+    unit_value: Decimal
+    forecast_allowed: bool
+    execution_allowed: bool
+
+
 def parse_viswa_kala(token: str) -> Decimal:
     parts = token.strip().split("|")
     if len(parts) != 2 or not all(part.isdigit() for part in parts):
@@ -188,6 +199,33 @@ def load_reconciliation_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
             raise ValueError(f"Arghya profile must keep {lock}=false")
     if loaded.get("source_lineage", {}).get("independent_worked_witness") is not None:
         raise ValueError("Independent worked witness is not yet certified")
+    table_witness = loaded.get("source_lineage", {}).get("independent_table_witness")
+    if not isinstance(table_witness, dict):
+        raise ValueError("Independent table witness metadata is required")
+    price_unit = loaded.get("price_unit_evidence")
+    if not isinstance(price_unit, dict):
+        raise ValueError("Guarded price-unit evidence is required")
+    if Decimal(str(price_unit.get("divisor"))) != Decimal("20"):
+        raise ValueError("Price-unit divisor must preserve the witnessed value 20")
+    if Decimal(str(price_unit.get("fraction"))) != Decimal("0.05"):
+        raise ValueError("Price-unit fraction must preserve the witnessed value 0.05")
+    if Decimal(str(price_unit.get("percent"))) != Decimal("5"):
+        raise ValueError("Price-unit percent must preserve the witnessed value 5")
+    worked_examples = loaded.get("worked_example_evidence")
+    if not isinstance(worked_examples, list) or not worked_examples:
+        raise ValueError("Worked-example evidence must be recorded")
+    for example in worked_examples:
+        if not isinstance(example, dict):
+            raise ValueError("Worked-example evidence entries must be mappings")
+        if example.get("certifies_price_formula") is not False:
+            raise ValueError("No current worked example may certify the price formula")
+        if example.get("reusable_prediction_allowed") is not False:
+            raise ValueError("Worked examples must remain unavailable to prediction")
+    for finding in loaded.get("independent_witness_findings", {}).get(
+        "table_anomalies", []
+    ):
+        if finding.get("correction_applied") is not False:
+            raise ValueError("Independent anomaly readings cannot silently alter source data")
     return loaded
 
 
@@ -264,7 +302,16 @@ def reconciliation_report() -> dict[str, Any]:
         "table_counts": EXPECTED_TABLE_COUNTS,
         "cross_edition_mismatches": mismatches,
         "source_preserved_anomalies": anomalies,
+        "independent_table_witness": profile["source_lineage"][
+            "independent_table_witness"
+        ],
+        "anomaly_witness_assessment": profile["independent_witness_findings"][
+            "table_anomalies"
+        ],
+        "price_unit_evidence": profile["price_unit_evidence"],
+        "worked_example_evidence": profile["worked_example_evidence"],
         "independent_worked_witness": None,
+        "price_formula_certified": False,
         "execution_allowed": False,
     }
 
@@ -302,10 +349,38 @@ def evaluate_availability_direction(
     )
 
 
+def calculate_reference_price_unit(
+    reference_value: Decimal | int | str,
+) -> ResearchPriceUnit:
+    """Return the witnessed 1/20 reference unit without producing a forecast."""
+
+    profile = load_reconciliation_profile()
+    reference = Decimal(str(reference_value))
+    if reference <= 0:
+        raise ValueError("Reference value must be positive")
+    evidence = profile["price_unit_evidence"]
+    divisor = Decimal(str(evidence["divisor"]))
+    fraction = Decimal(str(evidence["fraction"]))
+    percent = Decimal(str(evidence["percent"]))
+    unit = reference / divisor
+    if unit != reference * fraction:
+        raise ValueError("Price-unit evidence is internally inconsistent")
+    return ResearchPriceUnit(
+        reference_value=reference,
+        divisor=divisor,
+        fraction=fraction,
+        percent=percent,
+        unit_value=unit,
+        forecast_allowed=False,
+        execution_allowed=False,
+    )
+
+
 def refuse_predicted_price(*_: Any, **__: Any) -> None:
     raise ArghyaExecutionLockedError(
-        "Direct predicted price is blocked: the same-lineage table reading is stable, "
-        "but the exact price equation and an independent worked witness are unresolved."
+        "Direct predicted price is blocked: table readings and the 1/20 reference unit "
+        "have witnesses, but the score-to-unit equation and an independent reproducible "
+        "worked forecast remain unresolved."
     )
 
 

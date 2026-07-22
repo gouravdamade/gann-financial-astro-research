@@ -1,6 +1,6 @@
 schema_version: 1
 profile_id: trailokya_arghya_reconciliation_v1
-status: numeric_tables_reconciled_direction_only_price_formula_blocked
+status: independent_table_witnesses_recorded_partial_worked_example_price_formula_blocked
 execution_allowed: false
 promotion_allowed: false
 market_mapping_allowed: false
@@ -11,6 +11,11 @@ source_lineage:
   same_lineage_reading_witness:
     source_id: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
     sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+  independent_table_witness:
+    source_id: KRISHNA_RAU_CHOUDHARY_SBC_1962_CHISTABO_2013_TRANSCRIPTION
+    examined_artifact: edited_2013_transcription_of_1962_booklet
+    sha256: 786A20415DAFC791CA7374C33458B30465EA5B93DD7F2856B1969FB7374A8F6A
+    authority: secondary_transcription_not_original_1962_scan
   independent_worked_witness: null
 page_alignment:
   relationship_vedha_viswa:
@@ -90,11 +95,70 @@ source_preserved_anomalies:
   - cell: relationship_vedha_viswa/three_quarter/malefic_neutral
     printed_value: "11|45"
     proportional_expectation: "11|15"
-    action: preserve_and_flag
+    action: preserve_source_record_supported_correction_candidate_not_applied
   - cell: five_class_vedha_viswa/three_quarter/malefic_4
     printed_value: "2|18"
     proportional_expectation: "2|24"
-    action: preserve_and_flag
+    action: preserve_repeated_anomaly_unresolved
+independent_witness_findings:
+  table_anomalies:
+    - cell: relationship_vedha_viswa/three_quarter/malefic_neutral
+      source_reading: "11|15"
+      assessment: supports_proportional_correction_candidate
+      correction_applied: false
+      source_pdf_page: 25
+      source_printed_page: 24
+    - cell: five_class_vedha_viswa/three_quarter/malefic_4
+      source_reading: "2|18"
+      assessment: repeats_non_proportional_printing_unresolved
+      correction_applied: false
+      source_pdf_page: 26
+      source_printed_page: 25
+price_unit_evidence:
+  divisor: 20
+  fraction: "0.05"
+  percent: "5"
+  interpretation: one_reference_price_unit_only_not_a_forecast
+  witnesses:
+    - source_id: KRISHNA_RAU_CHOUDHARY_SBC_1962_CHISTABO_2013_TRANSCRIPTION
+      source_pdf_pages: [26, 27]
+      source_printed_pages: [25, 26]
+    - source_id: AGARWAL_MYSTICS_INCOMPLETE_IMAGE_SCAN
+      source_pdf_page: 115
+      source_printed_page: 118
+worked_example_evidence:
+  - example_id: silver_bombay_1951_05_12_to_1951_05_14
+    source_id: PUBLIC_PAGE_PHOTOGRAPHS_UNIDENTIFIED_EDITION
+    status: partial_primary_image_witness
+    location: Bombay
+    commodity: silver_forward
+    base_datetime_text: 1951-05-12 15:00 standard_time
+    target_datetime_text: 1951-05-14 15:00 standard_time
+    base_price_printed: "2041"
+    target_price_printed: "2011"
+    base_net_benefic_raw: "0|32|15"
+    base_net_benefic_decimal: "0.5375"
+    target_benefic_raw: "1|3|45"
+    target_benefic_decimal: "1.0625"
+    observed_direction: lower_price
+    direction_consistent_with_abundance_rule: true
+    certifies_price_formula: false
+    reusable_prediction_allowed: false
+    missing_evidence:
+      - final_score_to_price_working_page
+      - complete_rule_of_three_or_slab_count
+      - prospective_timestamped_forecast_record
+  - example_id: iron_steel_retrospective_1962_booklet
+    source_id: KRISHNA_RAU_CHOUDHARY_SBC_1962_CHISTABO_2013_TRANSCRIPTION
+    status: retrospective_illustration_only
+    source_pdf_page: 34
+    source_printed_page: 33
+    stated_unit: one_slab_or_5_percent
+    certifies_price_formula: false
+    reusable_prediction_allowed: false
+    missing_evidence:
+      - numeric_subtotal_to_slab_count
+      - prospective_timestamped_forecast_record
 blocked_outputs:
   - direct_predicted_price
   - bullish_or_bearish_market_label

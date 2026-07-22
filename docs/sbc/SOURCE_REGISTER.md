@@ -17,7 +17,8 @@ The machine-readable register is `configs/sbc/sources.yaml`.
 | Trailokya Dipika 1972 OCR companion, SHA-256 `7F220E0F...` | Derivative OCR navigation layer | Search and translation aid only; page images and original scan control citations |
 | Trailokya Dipika Khemraj 2016 reprint, SHA-256 `19CC2387...` | Same-work later edition | All 108 Arghya cells match the 1972 pass; same-lineage agreement is not independent doctrine or price validation |
 | P.V.R. Narasimha Rao SBC article, SHA-256 `D2D03024...` | Modern secondary commentary | Private page-rendered reference layer; its all-planets three-line interpretation remains non-executable |
-| Krishna Rau/Choudhary, ChiStaBo 2013, SHA-256 `786A2041...` | Edited transcription of a 1962 booklet | Comparison source; selected financial pages are opt-in hypotheses only |
+| Krishna Rau/Choudhary, ChiStaBo 2013, SHA-256 `786A2041...` | Edited transcription of a 1962 booklet | Independent secondary table witness and 1/20 price-unit witness; no price-formula certification |
+| Public 12/14 May 1951 Bombay silver page photographs | Primary page photographs from an unidentified edition | Partial historical worked-example witness; direction only, with final score-to-price page unavailable |
 | Unattributed 2010 introduction, SHA-256 `47D8F8E3...` | Secondary compilation and duplicate text | Registered for duplicate detection; deliberately excluded from the corpus |
 | Complete Agarwal edition | Pending modern candidate | Still required for whole-book and missing-page certification; no executable use |
 | Agarwal image scan, SHA-256 `5644DFC4...` | Incomplete modern-practitioner scan | Page-image research only; eight printed pages are missing and no edition imprint is present |
@@ -73,9 +74,15 @@ Arghya tables now have 108-cell independent passes from the 1972 and 2016 page
 images, with zero cross-edition mismatches. Both editions also preserve two
 internal scaling anomalies. The direction-only twenty-part availability index
 is isolated in a research lab; direct price, financial labels and trades remain
-blocked pending an independent worked example. See
+blocked. A Krishna Rau/Choudhary table independently supports `11|15` for the
+first printed anomaly, independently repeats unresolved `2|18` for the second,
+and supports the 1/20 or 5-percent reference unit. Public page photographs of a
+12-14 May 1951 Bombay silver example support the abundance/lower-price
+direction in one historical case, but the final score-to-price working page is
+unavailable. See
 `docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md` and
-`docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md`.
+`docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md`, plus
+`docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md`.
 
 ## Additional Source Cross-reference
 

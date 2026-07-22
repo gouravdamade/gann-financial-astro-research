@@ -8,6 +8,7 @@ from research_labs.trailokya_arghya.reconcile import (
     ArghyaExecutionLockedError,
     PASS_1972_PATH,
     _load_cells,
+    calculate_reference_price_unit,
     evaluate_availability_direction,
     load_reconciliation_profile,
     parse_house_list,
@@ -27,7 +28,11 @@ def test_two_same_lineage_passes_reconcile_cell_for_cell() -> None:
         "five_class_vedha_viswa": 40,
     }
     assert report["cross_edition_mismatches"] == []
+    assert report["independent_table_witness"]["source_id"].startswith(
+        "KRISHNA_RAU_CHOUDHARY"
+    )
     assert report["independent_worked_witness"] is None
+    assert report["price_formula_certified"] is False
     assert report["execution_allowed"] is False
 
 
@@ -55,6 +60,34 @@ def test_both_printed_scaling_anomalies_are_preserved_and_flagged() -> None:
     ]
 
 
+def test_independent_readings_never_silently_change_source_cells() -> None:
+    report = reconciliation_report()
+    findings = {
+        item["cell"]: item for item in report["anomaly_witness_assessment"]
+    }
+    cells = {cell.key: cell for cell in _load_cells(PASS_1972_PATH)}
+
+    assert findings[
+        "relationship_vedha_viswa/three_quarter/malefic_neutral"
+    ]["source_reading"] == "11|15"
+    assert findings[
+        "relationship_vedha_viswa/three_quarter/malefic_neutral"
+    ]["correction_applied"] is False
+    assert cells[
+        ("relationship_vedha_viswa", "three_quarter", "malefic_neutral")
+    ].raw_token == "11|45"
+
+    assert findings[
+        "five_class_vedha_viswa/three_quarter/malefic_4"
+    ]["source_reading"] == "2|18"
+    assert findings[
+        "five_class_vedha_viswa/three_quarter/malefic_4"
+    ]["assessment"] == "repeats_non_proportional_printing_unresolved"
+    assert cells[
+        ("five_class_vedha_viswa", "three_quarter", "malefic_4")
+    ].raw_token == "2|18"
+
+
 def test_planetary_aspect_table_preserves_printed_house_order() -> None:
     cells = {cell.key: cell for cell in _load_cells(PASS_1972_PATH)}
 
@@ -75,6 +108,36 @@ def test_direction_only_sanity_fixture_never_becomes_a_price_prediction() -> Non
     scarcity = evaluate_availability_direction(benefic_viswa=0, malefic_viswa=2)
     assert scarcity.availability_index == Decimal("18")
     assert scarcity.interpretation == "scarcity_higher_price_pressure"
+
+
+def test_witnessed_twentieth_is_exposed_only_as_a_research_unit() -> None:
+    unit = calculate_reference_price_unit("2041")
+
+    assert unit.divisor == Decimal("20")
+    assert unit.fraction == Decimal("0.05")
+    assert unit.percent == Decimal("5")
+    assert unit.unit_value == Decimal("102.05")
+    assert unit.forecast_allowed is False
+    assert unit.execution_allowed is False
+    with pytest.raises(ValueError, match="must be positive"):
+        calculate_reference_price_unit(0)
+
+
+def test_dated_silver_example_is_partial_evidence_not_a_formula_certificate() -> None:
+    report = reconciliation_report()
+    silver = next(
+        item
+        for item in report["worked_example_evidence"]
+        if item["example_id"] == "silver_bombay_1951_05_12_to_1951_05_14"
+    )
+
+    assert silver["base_price_printed"] == "2041"
+    assert silver["target_price_printed"] == "2011"
+    assert silver["observed_direction"] == "lower_price"
+    assert silver["direction_consistent_with_abundance_rule"] is True
+    assert silver["certifies_price_formula"] is False
+    assert silver["reusable_prediction_allowed"] is False
+    assert "final_score_to_price_working_page" in silver["missing_evidence"]
 
 
 def test_profile_and_price_api_fail_closed() -> None:
