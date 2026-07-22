@@ -90,15 +90,37 @@ sources:
     notes: A lawful retail acquisition route was located for the 1972 Lucknow Tej Kumar Book Depot edition. The copy has not been acquired or page-audited; no 64-cell mapping or executable rule may cite it yet.
 
   - source_id: AGARWAL_2000_SBC_PENDING
-    title: Sarvatobhadra Chakra, Agarwal 2000 edition
+    title: Complete published edition of Mystics of Sarvato Bhadra Chakra and Astrological Predictions
     authority: modern_practitioner_source_candidate
-    content_layer: commentary_pending_identification
-    status: pending_legal_acquisition_and_page_certification
-    rights_status: unknown_do_not_ingest_or_redistribute
+    content_layer: complete_commentary_edition_pending_identification
+    status: complete_edition_pending_acquisition_and_page_certification
+    rights_status: commercial_or_private_copy_not_acquired
     sha256: null
     registry_ref: null
     source_url: null
-    notes: Candidate secondary authority only; no executable rule may cite it yet.
+    notes: A complete imprint-bearing edition is still required. The two locally acquired files are registered separately because the image scan is incomplete and the 2013 file is an edited derivative of that scan. No executable rule may cite this unresolved complete-edition candidate.
+
+  - source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    title: Mystics of Sarvato Bhadra Chakra and Astrological Predictions (incomplete image scan)
+    authority: modern_practitioner_source_candidate
+    content_layer: incomplete_scanned_commentary_with_partial_ocr
+    status: locally_acquired_incomplete_scan_pending_edition_and_page_certification
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    registry_ref: D:/GannFinancialAstro/sources/private/AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    source_url: null
+    notes: The 191-page PDF preserves original page images through printed page 194 but omits printed pages 46-47, 54-55, 62-63, 133, and 144. It contains no extractable ISBN, copyright, edition, or publisher statement, and 51 PDF pages have little or no usable OCR. Visible pages may be considered for later page-level certification, but the scan is not a complete-edition or whole-method witness and currently has no executable use.
+
+  - source_id: AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_2013
+    title: Mystics of Sarvatobhadra Chakra, ChiStaBo edited version v3
+    authority: derivative_transcription
+    content_layer: editorial_reformat_with_changed_terminology_redrawn_figures_and_bracketed_additions
+    status: locally_acquired_derivative_comparison_only_not_doctrinal
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: D93B9B97D2B8C902168FE83C1E6796FE22AD644C55903BA85154D1C6D610E38D
+    registry_ref: D:/GannFinancialAstro/sources/private/AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_D93B9B97.pdf
+    source_url: null
+    notes: The 95-page Word-generated PDF identifies itself as a 2013 edited version of an Internet scan. Its editor changed names to Vedic terminology, abbreviated planets, replicated or redrew figures, and inserted additions in square brackets. It is not an independent witness and does not repair the source scan's missing pages; use it only as a searchable navigation and comparison aid.
 
   - source_id: MAITREYA8_COMPARISON_V1
     title: Maitreya8 Sarvatobhadra behavior comparison

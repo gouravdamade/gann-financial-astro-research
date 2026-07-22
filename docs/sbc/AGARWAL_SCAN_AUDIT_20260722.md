@@ -1,0 +1,76 @@
+# Agarwal Scan Acquisition Audit
+
+Audit date: 2026-07-22
+
+## Scope
+
+This audit compares two user-provided private research PDFs of M. K. Agarwal's
+`Mystics of Sarvato Bhadra Chakra and Astrological Predictions`. It establishes
+file identity, completeness, provenance, and the permitted evidence role. It
+does not certify doctrine or authorize redistribution.
+
+## Files
+
+| Candidate | PDF pages | Size | SHA-256 | Evidence role |
+| --- | ---: | ---: | --- | --- |
+| Image scan | 191 | 3,603,273 bytes | `5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050` | Incomplete primary page-image candidate |
+| ChiStaBo edited version v3 | 95 | 4,410,319 bytes | `D93B9B97D2B8C902168FE83C1E6796FE22AD644C55903BA85154D1C6D610E38D` | Derivative search and comparison aid only |
+
+The private files are stored outside Git under
+`D:/GannFinancialAstro/sources/private/`, using hash-suffixed filenames recorded
+in the machine-readable source register.
+
+## Provenance Finding
+
+The files are not independent copies. The 2013 ChiStaBo foreword identifies
+that PDF as an edited version of an Internet scan. It also discloses changed
+planet names and abbreviations, replicated or redrawn pictures, and editor
+additions enclosed in square brackets. Its Microsoft Word metadata, 95-page
+reflow, and full text layer are consistent with a derivative transcription,
+not a separately scanned edition.
+
+The image scan preserves the original typography, pagination, tables, and page
+images. Its metadata records OmniPage and Adobe paper-capture processing, but
+the scan itself contains no extractable ISBN, copyright, publisher, or edition
+statement. The presumed publication year and edition therefore remain
+unverified from these files.
+
+## Completeness Finding
+
+The image scan reaches printed page 194 but is not complete. Page-header and
+chapter-boundary inspection establishes these omissions:
+
+| Neighboring evidence in image scan | Missing printed pages |
+| --- | --- |
+| PDF page 50 is printed page 45; PDF page 51 starts Chapter 6 at printed page 48 | 46-47 |
+| PDF page 56 is printed page 53; PDF page 57 is printed page 56 | 54-55 |
+| PDF page 62 is printed page 61; PDF page 63 starts Chapter 9 at printed page 64 | 62-63 |
+| PDF page 131 starts Chapter 16 at printed page 132; PDF page 132 starts Chapter 17 at printed page 134 | 133 |
+| PDF page 141 is printed page 143; PDF page 142 starts Chapter 18 at printed page 145 | 144 |
+
+The ChiStaBo derivative explicitly acknowledges missing pages 54-55 and two
+pages after its Shadbala summary, corresponding to printed pages 62-63. It also
+flags smaller missing-text uncertainties. It does not supply an independent
+image witness for any omitted source page and must not be used to reconstruct
+those gaps as if they were Agarwal's verified words.
+
+OCR is incomplete in the image scan: 51 PDF pages have little or no extractable
+text. Visual inspection of page images is therefore mandatory for every future
+citation.
+
+## Decision
+
+1. Keep both PDFs private and outside Git.
+2. Use the image scan only to nominate visible passages for page-level visual
+   certification.
+3. Use the ChiStaBo derivative only for search, navigation, and comparison.
+4. Never treat editor-added bracketed text, changed terminology, or redrawn
+   figures as an independent doctrinal witness.
+5. Do not enable an executable Agarwal profile from either file as a whole.
+6. Acquire an imprint-bearing complete edition or an independent complete scan
+   before certifying the missing pages, edition identity, or complete method.
+
+This boundary does not prevent later use of a visible, intact page. Such a page
+still requires the repository's normal edition, page-range, content-layer,
+quotation, and manual visual-certification gates before it can support a
+derived fixture or executable rule.

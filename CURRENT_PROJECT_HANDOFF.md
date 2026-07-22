@@ -1,8 +1,36 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 14:03 IST
+Last updated: 2026-07-22 15:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-22 (Agarwal SBC Private-Source Audit)
+
+- Audited two user-provided private PDFs of M. K. Agarwal's `Mystics of
+  Sarvato Bhadra Chakra and Astrological Predictions` and registered their
+  distinct evidence roles in `configs/sbc/sources.yaml`.
+- The 191-page image scan has SHA-256
+  `5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050`.
+  It preserves printed pages through page 194 but is incomplete: printed pages
+  46-47, 54-55, 62-63, 133, and 144 are absent. It also has no extractable
+  ISBN, copyright, publisher, or edition statement, and 51 PDF pages have
+  little or no usable OCR.
+- The 95-page ChiStaBo edited version v3 has SHA-256
+  `D93B9B97D2B8C902168FE83C1E6796FE22AD644C55903BA85154D1C6D610E38D`.
+  Its own foreword identifies it as an edited derivative of an Internet scan;
+  terminology was changed, figures were replicated/redrawn, and bracketed
+  editor additions were inserted. It is therefore a search/navigation aid,
+  not an independent doctrinal witness.
+- Neither private PDF was copied into Git or enabled for executable SBC
+  doctrine. Intact image-scan pages may only become evidence after the normal
+  page-level visual-certification gates. A complete imprint-bearing edition
+  remains pending for whole-book and missing-page certification.
+- Both PDFs were moved off the Desktop and hash-verified under
+  `D:\GannFinancialAstro\sources\private`; the source register points to those
+  private, non-Git locations.
+- Added `docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md` and updated
+  `docs/sbc/SOURCE_REGISTER.md`. Focused SBC verification passed `53/53`.
+- Runtime-only SQLite/log/Android files remain deliberately untouched.
 
 ## Latest Update - 2026-07-22 (Aspect Evidence Trace / Windows Candidate 0.10.19)
 
