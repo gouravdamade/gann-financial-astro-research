@@ -84,7 +84,7 @@ geometry. They are not relabeled as Trailokya verses.
 
 ## Financial Arghya Findings
 
-PDF pages 92-108, beginning at printed page 76, contain a genuine financial or
+PDF pages 92-108, beginning at printed page 46, contain a genuine financial or
 commodity-price method rather than a passing market reference. The visible
 workflow includes:
 
@@ -96,11 +96,14 @@ workflow includes:
 - a twenty-part current-price conversion;
 - abundance/lower-price versus scarcity/higher-price interpretation.
 
-The exact tables and conversion arithmetic are not yet certified. The wording
-also distinguishes `bhava` and `mulya` and begins an alternate method. A wrong
-sign or table cell here would invert a financial result, so
-`ARGHYA_PRICE_CONVERSION`, financial labels, Auto Suggest, live inference,
-official ML notes, and execution remain blocked.
+The three numeric tables now have independent image-controlled transcriptions
+from the 1972 edition and its same-lineage 2016 reprint. All 108 cells agree,
+including two printed values that violate the surrounding proportional
+pattern: `11|45` where `11|15` is expected and `2|18` where `2|24` is
+expected. The wording also distinguishes `bhava` and `mulya` and begins an
+alternate method. Therefore only the twenty-part availability direction is
+available in an isolated lab. `ARGHYA_PRICE_CONVERSION`, financial labels,
+Auto Suggest, live inference, official ML notes, and execution remain blocked.
 
 ## Current Safe Uses
 
@@ -108,12 +111,15 @@ official ML notes, and execution remain blocked.
 - Page-provenanced source comparison.
 - Opt-in retrieval of the Stage 1 English research translation when the user
   asks about Trailokya, its Vedha profile, or its Arghya chapter.
-- Planning a bilingual table transcription and validation fixture.
+- Running the isolated, direction-only double-transcription validator.
 
 ## Next Certification Gate
 
-Transcribe PDF pages 93-103 twice, independently, into a bilingual table with
-page, verse, row, column, Sanskrit/Hindi token, English rendering, and numeric
-value. Reconcile both passes and reproduce at least one worked example before
-building an execution-locked Arghya calculator. No tolerance widening or LLM
-guess may substitute for that witness.
+The double transcription and reconciliation are complete. The next gate is an
+independently sourced, page-cited worked example that exposes the selected
+lords, input strengths, every Viswa subtotal, the twenty-part conversion, and
+the final amount/value result. That example must resolve the two inherited
+table anomalies and the `bhava` versus `mulya` conversion before direct price
+code can exist. No tolerance widening or LLM guess may substitute for that
+witness. See
+`docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md`.

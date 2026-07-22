@@ -1,0 +1,115 @@
+schema_version: 1
+profile_id: trailokya_arghya_reconciliation_v1
+status: numeric_tables_reconciled_direction_only_price_formula_blocked
+execution_allowed: false
+promotion_allowed: false
+market_mapping_allowed: false
+source_lineage:
+  primary:
+    source_id: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+    sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  same_lineage_reading_witness:
+    source_id: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+    sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+  independent_worked_witness: null
+page_alignment:
+  relationship_vedha_viswa:
+    primary_pdf_page: 98
+    primary_printed_page: 52
+    witness_pdf_page: 82
+    witness_printed_page: 72
+  planet_aspect_houses:
+    primary_pdf_page: 99
+    primary_printed_page: 53
+    witness_pdf_page: 83
+    witness_printed_page: 73
+  five_class_vedha_viswa:
+    primary_pdf_page: 101
+    primary_printed_page: 55
+    witness_pdf_page: 85
+    witness_printed_page: 75
+  availability_direction_prose:
+    primary_pdf_page: 102
+    primary_printed_page: 56
+    witness_pdf_page: 86
+    witness_printed_page: 76
+transcriptions:
+  - pass_id: pass_1_1972_original_images
+    path: configs/sbc/arghya/trailokya_1972_arghya_pass1.csv
+    expected_cells: 108
+  - pass_id: pass_2_2016_reprint_images
+    path: configs/sbc/arghya/trailokya_2016_arghya_pass2.csv
+    expected_cells: 108
+notation:
+  viswa_kala:
+    separator: "|"
+    kala_per_viswa: 60
+    example: "11|15 = 11 + 15/60 = 11.25"
+  house_list:
+    separator: "|"
+    meaning: listed whole-sign houses
+    warning: not sexagesimal
+dimensions:
+  country:
+    - desha
+    - mandala
+    - sthana
+  time:
+    - year
+    - month
+    - day
+  commodity:
+    - dhatu
+    - mula
+    - jiva
+candidate_lords:
+  desha: [RAHU, SATURN, JUPITER]
+  mandala: [KETU, SUN, VENUS]
+  sthana: [MOON, MARS, MERCURY]
+  year: [RAHU, KETU, SATURN, JUPITER]
+  month: [MARS, SUN, MERCURY, VENUS]
+  day: [MOON]
+  dhatu: [SATURN, RAHU, MARS]
+  mula: [KETU, VENUS, SUN]
+  jiva: [MERCURY, MOON, JUPITER]
+selection_rule:
+  summary: choose the strongest candidate lord for each dimension
+  status: prose_transcribed_combination_precedence_not_certified
+availability_index:
+  base_parts: 20
+  formula: base_parts + benefic_viswa - malefic_viswa
+  above_base:
+    source_interpretation: greater abundance or availability and lower-price pressure
+    prohibited_aliases: [bullish, guaranteed_price_fall]
+  below_base:
+    source_interpretation: scarcity or reduced availability and higher-price pressure
+    prohibited_aliases: [bearish, guaranteed_price_rise]
+  equal_base:
+    source_interpretation: balanced by this narrow arithmetic only
+source_preserved_anomalies:
+  - cell: relationship_vedha_viswa/three_quarter/malefic_neutral
+    printed_value: "11|45"
+    proportional_expectation: "11|15"
+    action: preserve_and_flag
+  - cell: five_class_vedha_viswa/three_quarter/malefic_4
+    printed_value: "2|18"
+    proportional_expectation: "2|24"
+    action: preserve_and_flag
+blocked_outputs:
+  - direct_predicted_price
+  - bullish_or_bearish_market_label
+  - stock_or_fx_signal
+  - auto_suggest_input
+  - live_inference_input
+  - official_ml_note_evidence
+  - mt5_execution
+synthetic_direction_only_fixture:
+  label: arithmetic_sanity_check_not_validation
+  reference_value: 100
+  reference_part_unit: 5
+  benefic_viswa: 3
+  malefic_viswa: 0
+  expected_availability_index: 23
+  expected_interpretation: abundance_lower_price_pressure
+  predicted_price: null
+notes: Same-lineage agreement establishes a stable reading, not independent doctrinal or financial validation. The two printed scaling anomalies remain source data and are never silently corrected.

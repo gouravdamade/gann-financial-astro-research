@@ -61,10 +61,14 @@ def load_research_profiles(root: Path | None = None) -> ResearchProfiles:
     if graph.get("yoga_edges_enabled") is not False:
         raise ValueError("Milestone 1 graph profile must keep yoga edges disabled")
     blocked = set(str(item) for item in manifest.get("blocked_source_profiles", []))
-    if not {"TRAILOKYA_DIPIKA_1972", "AGARWAL_FINANCIAL_COMPLETE_EDITION"}.issubset(
-        blocked
-    ):
-        raise ValueError("missing-book source profiles must remain explicitly blocked")
+    required_blocks = {
+        "TRAILOKYA_DIPIKA_ARGHYA_FINANCIAL_PROFILE",
+        "AGARWAL_FINANCIAL_COMPLETE_EDITION",
+    }
+    if not required_blocks.issubset(blocked):
+        raise ValueError(
+            "uncertified financial source profiles must remain explicitly blocked"
+        )
     payload = {
         "lordship": lordship,
         "domains": domains,

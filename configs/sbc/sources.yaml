@@ -82,12 +82,12 @@ sources:
     title: Sarvatobhadra Chakra with Trailokya Dipika commentary, Pt. Mithalal Vyas, 1972 original scan
     authority: traditional_compilation_with_hindi_commentary
     content_layer: sanskrit_verse_compilation_hindi_commentary_and_practical_publisher_introduction
-    status: locally_acquired_complete_scan_page_aligned_and_partially_page_certified
+    status: locally_acquired_complete_scan_page_aligned_vedha_partial_and_arghya_tables_reconciled
     rights_status: user_provided_private_research_copy_no_redistribution
     sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
     registry_ref: D:/GannFinancialAstro/sources/private/TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN_1EF82899.pdf
     source_url: "https://www.gyanbooks.com/index.php?Book=Sarvatobhadra+Chakra+%28+Sanskrit+And+Hindi+Text%29+With+Trailokya+Dipika+Commentary+By+Pt.+Mi...&Field=bookcode&String=1111025950008&format=fullpage&p=sr"
-    notes: The 118-page image scan identifies the 1972 Lucknow Tej Kumar Book Depot edition. PDF pages 20-21, printed pages 4-5, certify the source-specific three-direction and ray rules used by the explicit Trailokya Vedha profile. The later Arghya chapter is research-only pending full table transcription and arithmetic certification.
+    notes: The 118-page image scan identifies the 1972 Lucknow Tej Kumar Book Depot edition. PDF pages 20-21, printed pages 4-5, certify the source-specific three-direction and ray rules used by the explicit Trailokya Vedha profile. Arghya tables on PDF pages 98, 99 and 101 were independently transcribed and reconciled against the 2016 reprint; two shared scaling anomalies and the unresolved direct-price equation keep all financial use locked.
 
   - source_id: TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION
     title: Sarvatobhadra Chakra with Trailokya Dipika commentary, 1972 OCR companion
@@ -109,7 +109,7 @@ sources:
     sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
     registry_ref: D:/GannFinancialAstro/sources/private/TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT_19CC2387.pdf
     source_url: null
-    notes: The 100-page OCR PDF identifies a June 2016 Khemraj Shri Krishnadas edition of the same Mithalal Vyas work. Title, chapter sequence, opening Vedha verses and later Arghya material substantially overlap the 1972 edition. It may resolve cross-edition readings but cannot count as an independent doctrinal witness or independently certify the price arithmetic.
+    notes: The 100-page OCR PDF identifies a June 2016 Khemraj Shri Krishnadas edition of the same Mithalal Vyas work. Its Arghya tables on PDF pages 82, 83 and 85 match all 108 cells transcribed from the 1972 edition, including two proportional anomalies. It is a same-lineage reading witness, not an independent doctrinal or worked-price witness, so direct price and trading arithmetic remain blocked.
 
   - source_id: PVR_NARASIMHA_RAO_SBC_ARTICLE_2000
     title: Sarvatobhadra Chakra article extracted from Vedic Astrology - An Integrated Approach

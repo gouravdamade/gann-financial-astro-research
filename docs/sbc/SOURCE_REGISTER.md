@@ -13,9 +13,9 @@ The machine-readable register is `configs/sbc/sources.yaml`.
 | Phaladeepika 1937 SBC editor supplement | Editor-supplied Horaratna extract/free rendering | Rotation-normalized 81-cell topology, construction text, letter witness, worked standard Vedha examples, nature rules, and modifiers |
 | Sanjay Rath, Crux, Figure 1.2 | Modern secondary commentary | Figure-relative 81-cell coordinate frame and letter-glyph comparison |
 | Sanjay Rath, Crux, printed page 11 | Modern secondary commentary | Independent motion-class comparison only |
-| Trailokya Dipika 1972 original scan, SHA-256 `1EF82899...` | Sanskrit compilation, Hindi commentary, and practical introduction | Complete 118-page private scan; narrow Vedha pages certified for an explicit guidance-only profile |
+| Trailokya Dipika 1972 original scan, SHA-256 `1EF82899...` | Sanskrit compilation, Hindi commentary, and practical introduction | Complete 118-page private scan; narrow Vedha pages certified and three Arghya tables double-transcribed into an execution-locked lab |
 | Trailokya Dipika 1972 OCR companion, SHA-256 `7F220E0F...` | Derivative OCR navigation layer | Search and translation aid only; page images and original scan control citations |
-| Trailokya Dipika Khemraj 2016 reprint, SHA-256 `19CC2387...` | Same-work later edition | Cross-edition reading witness only; it is not independent doctrine and does not separately certify Arghya |
+| Trailokya Dipika Khemraj 2016 reprint, SHA-256 `19CC2387...` | Same-work later edition | All 108 Arghya cells match the 1972 pass; same-lineage agreement is not independent doctrine or price validation |
 | P.V.R. Narasimha Rao SBC article, SHA-256 `D2D03024...` | Modern secondary commentary | Private page-rendered reference layer; its all-planets three-line interpretation remains non-executable |
 | Krishna Rau/Choudhary, ChiStaBo 2013, SHA-256 `786A2041...` | Edited transcription of a 1962 booklet | Comparison source; selected financial pages are opt-in hypotheses only |
 | Unattributed 2010 introduction, SHA-256 `47D8F8E3...` | Secondary compilation and duplicate text | Registered for duplicate detection; deliberately excluded from the corpus |
@@ -68,11 +68,14 @@ whereas the existing Phaladeepika-editor profile gives them single fixed rays.
 Both profiles are retained and must be selected explicitly.
 
 The OCR companion is not an independent witness. It is used only for search and
-draft translation. The page images remain authoritative. The Arghya chapter on
-PDF pages 92-108 is materially relevant to commodity prices, but its Viswa
-tables and twenty-part price conversion are not yet certified and cannot affect
-financial labels or trades. See
-`docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md`.
+draft translation. The page images remain authoritative. The three numeric
+Arghya tables now have 108-cell independent passes from the 1972 and 2016 page
+images, with zero cross-edition mismatches. Both editions also preserve two
+internal scaling anomalies. The direction-only twenty-part availability index
+is isolated in a research lab; direct price, financial labels and trades remain
+blocked pending an independent worked example. See
+`docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md` and
+`docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md`.
 
 ## Additional Source Cross-reference
 

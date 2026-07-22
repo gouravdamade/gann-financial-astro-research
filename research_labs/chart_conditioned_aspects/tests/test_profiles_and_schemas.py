@@ -7,7 +7,9 @@ from pathlib import Path
 ROOT = Path(__file__).parents[1]
 
 
-def test_all_profiles_are_locked_and_missing_books_are_blocked(profiles) -> None:
+def test_all_profiles_are_locked_and_uncertified_financial_sources_are_blocked(
+    profiles,
+) -> None:
     for raw in (
         profiles.lordship,
         profiles.domains,
@@ -18,7 +20,10 @@ def test_all_profiles_are_locked_and_missing_books_are_blocked(profiles) -> None
         assert raw["execution_allowed"] is False
         assert raw["promotion_allowed"] is False
     blocked = set(profiles.manifest["blocked_source_profiles"])
-    assert {"TRAILOKYA_DIPIKA_1972", "AGARWAL_FINANCIAL_COMPLETE_EDITION"} <= blocked
+    assert {
+        "TRAILOKYA_DIPIKA_ARGHYA_FINANCIAL_PROFILE",
+        "AGARWAL_FINANCIAL_COMPLETE_EDITION",
+    } <= blocked
     assert profiles.graph["configured_drishti_enabled"] is False
     assert profiles.graph["yoga_edges_enabled"] is False
 

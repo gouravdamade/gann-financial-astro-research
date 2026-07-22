@@ -1,8 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-07-23 02:04 IST
+Last updated: 2026-07-23 02:34 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Trailokya Arghya Double Transcription)
+
+- Completed independent image-controlled transcriptions of the three numeric
+  Trailokya Arghya tables from the 1972 Tej Kumar edition and the same-lineage
+  2016 Khemraj reprint. Each pass contains 108 cells: 32 relationship/quarter
+  values, 36 planetary aspect-house values, and 40 five-class values.
+- All 108 comparable cells agree across editions. The fixture distinguishes
+  sexagesimal `Viswa|Kala` from house lists, preserving printed house order
+  such as Mars `4|8|7` and Saturn `3|10|7`.
+- The reconciliation exposes two values printed identically in both editions
+  that break their tables' proportional pattern:
+  - relationship / three-quarter / malefic-neutral is `11|45`, while the
+    three-quarter scaling expectation is `11|15`;
+  - five-class / three-quarter / four malefics is `2|18`, while the
+    proportional expectation is `2|24`.
+  They remain source data and are never silently corrected.
+- Added isolated lab `research_labs/trailokya_arghya`. It can calculate only
+  the prose-supported direction-only availability index
+  `20 + benefic Viswa - malefic Viswa`: above 20 means
+  abundance/lower-price pressure and below 20 means
+  scarcity/higher-price pressure. It refuses direct predicted prices.
+- Direct price, bullish/bearish mapping, stocks/FX, SBC score, RAG official
+  evidence, Auto Suggest, live inference, validation-ledger promotion, and MT5
+  execution remain blocked. The next gate is an independent page-cited worked
+  example resolving both table anomalies and `bhava` versus `mulya`.
+- Machine fixtures:
+  - `configs/sbc/arghya/trailokya_1972_arghya_pass1.csv`;
+  - `configs/sbc/arghya/trailokya_2016_arghya_pass2.csv`;
+  - `configs/sbc/arghya/trailokya_arghya_reconciliation_v1.yaml`.
+- Full audit:
+  `docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md`.
+- Corrected two stale machine guards found during verification:
+  `sourceCertified=partial` became the valid locked state `no`, and the
+  chart-conditioned source manifest now blocks the specific uncertified
+  Trailokya Arghya financial profile rather than incorrectly calling the
+  acquired 1972 book missing.
+- Verification passes: 108 rows in each CSV; zero cross-edition mismatches;
+  exactly two declared scaling anomalies; 79 SBC/corpus/local-Jyotish tests;
+  12 status/profile/Arghya tests; structured JSON/YAML/CSV validation; audit
+  command; and `git diff --check`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_023456_trailokya_arghya_double_transcription`.
+- No installer was rebuilt. The current Windows candidate remains 0.10.21.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-23 (Additional SBC Source Cross-reference)
 
