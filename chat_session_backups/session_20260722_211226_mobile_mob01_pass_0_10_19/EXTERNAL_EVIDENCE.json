@@ -1,0 +1,9 @@
+﻿{
+    "contract":  "GANN_EXTERNAL_MOBILE_EVIDENCE_POINTER_V1",
+    "resultPath":  "D:\\GannFinancialAstro\\acceptance\\mobile\\mobile_acceptance_results.local.json",
+    "resultSha256":  "A8AE8D6626F941BE6635EE28D17946A12DA89963A37A28731DCDF525197F1180",
+    "mob01EvidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-01-install-first-launch-20260722",
+    "mob02EvidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722",
+    "rawEvidenceStoredOutsideGit":  true,
+    "executionAllowed":  false
+}

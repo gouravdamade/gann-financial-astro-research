@@ -1,0 +1,37 @@
+{
+  "contract": "GANN_MOBILE_PHYSICAL_ACCEPTANCE_CHECKPOINT_V1",
+  "auditedAtUtc": "2026-07-22T15:41:20.769570Z",
+  "planId": "GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1",
+  "candidatePair": {
+    "desktopVersion": "0.10.19",
+    "androidVersion": "0.10.19"
+  },
+  "tests": {
+    "MOB-01": {
+      "status": "passed",
+      "finding": "Exact app version, usable first-launch pairing layout, safe areas, and Execution locked are visible.",
+      "evidence": [
+        {
+          "name": "android_pairing_screen_execution_locked.jpeg",
+          "sha256": "A605C874092B640A303B32968057693A07E82E2FE74FE2D1B1A38EF1387FBCFB",
+          "bytes": 58013,
+          "storedOutsideGit": true
+        },
+        {
+          "name": "android_app_info_version_0_10_19.jpeg",
+          "sha256": "7BE003186A1E5CF754CB7B1045B78582B5128C0BF59629D5BEE95C3751499B1B",
+          "bytes": 54452,
+          "storedOutsideGit": true
+        }
+      ]
+    },
+    "MOB-02": {
+      "status": "pending",
+      "finding": "Gateway pairing and stream events are preserved, but the supplied app screenshot predates pairing and says Laptop not paired.",
+      "missingEvidence": "Post-pairing connected workspace screenshot"
+    }
+  },
+  "resultPath": "D:/GannFinancialAstro/acceptance/mobile/mobile_acceptance_results.local.json",
+  "promotionAllowed": false,
+  "executionAllowed": false
+}
