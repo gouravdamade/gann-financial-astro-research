@@ -1,6 +1,6 @@
 {
   "contract": "GANN_RELEASE_STATUS_V1",
-  "asOfUtc": "2026-07-22T16:52:44Z",
+  "asOfUtc": "2026-07-22T18:25:32Z",
   "executionAllowed": false,
   "selectedAcceptancePair": {
     "desktopReleaseId": "gann-astro-desk-0.10.19-windows",
@@ -14,6 +14,28 @@
     "the Android physical-test candidate is debug-signed; production promotion requires controlled release signing"
   ],
   "releases": [
+    {
+      "releaseId": "gann-astro-desk-0.10.21-windows",
+      "product": "Gann Astro Desk",
+      "platform": "windows-x64",
+      "version": "0.10.21",
+      "state": "PACKAGED_CANDIDATE",
+      "sourceGitCommit": "bfbf4ad56cf035ef9d42876a13711d53162b03b2",
+      "sourceGitDirty": false,
+      "artifactPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.21-tauri/GannAstroDesk.exe",
+      "artifactSha256": "4D15187D4F250C3F104DF38BBB9916128B0580664E0B10DC1303BB8390D4B636",
+      "artifactBytes": 15757824,
+      "artifactHashVerifiedAtUtc": "2026-07-22T18:25:32Z",
+      "installerPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.21-tauri/Gann Astro Desk_0.10.21_x64-setup.exe",
+      "installerSha256": "E97E49BC2BBCB7A458C46C5C815D06994EFC7CCCF9A24B334B514219F88CF11D",
+      "installerBytes": 176467766,
+      "automatedVerification": "passed_live_sr_and_guarded_agarwal_hypothesis_candidate",
+      "verificationEvidenceRef": "status/audits/windows_live_sr_candidate_0_10_21_20260722.json",
+      "selectionStatus": "latest_windows_research_candidate_not_selected_for_existing_mobile_acceptance_pair",
+      "physicallyTested": false,
+      "promotedStable": false,
+      "executionAllowed": false
+    },
     {
       "releaseId": "gann-astro-desk-0.10.19-windows",
       "product": "Gann Astro Desk",

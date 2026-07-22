@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-22T16:52:44Z",
+  "asOfUtc": "2026-07-22T18:25:32Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -106,6 +106,42 @@
       "statusDetail": "Packaged in desktop 0.10.19; retrospective extrema stay barred from live inference.",
       "evidenceRefs": [
         "aspect_evidence_trace_native_release_20260722.md"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "live_sr_planetary_line_lab",
+      "label": "Per-planet Live SR research overlay",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "yes",
+        "physicallyTested": "no",
+        "promotedStable": "no",
+        "sourceCertified": "not_applicable",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Packaged in desktop 0.10.21 with automatic chart/settings/range recalculation, explicit refresh and generated time; remains excluded from Auto Suggest, inference, validation and execution.",
+      "evidenceRefs": [
+        "live_sr_agarwal_hypothesis_release_20260722.md",
+        "status/audits/windows_live_sr_candidate_0_10_21_20260722.json"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "agarwal_financial_hypothesis_rag",
+      "label": "Agarwal financial chapter private hypothesis retrieval",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "yes",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Printed pages 180-194 are visually checked and available only as an opt-in hypothesis_reference; the incomplete scan and derivative copies do not certify a complete Agarwal method.",
+      "evidenceRefs": [
+        "docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md",
+        "status/source_certification.json"
       ],
       "executionAllowed": false
     }

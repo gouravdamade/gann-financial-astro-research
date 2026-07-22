@@ -68,3 +68,21 @@ prospective-ledger input, or execution permission.
 
 The existing Vite warning for a 524 KB main chunk is a performance follow-up,
 not a functional or source-integrity failure.
+
+## Windows Candidate
+
+Clean source commit `bfbf4ad56cf035ef9d42876a13711d53162b03b2` was packaged as:
+
+- portable executable:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.21-tauri\GannAstroDesk.exe`
+  (15,757,824 bytes; SHA-256
+  `4D15187D4F250C3F104DF38BBB9916128B0580664E0B10DC1303BB8390D4B636`);
+- installer:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.21-tauri\Gann Astro Desk_0.10.21_x64-setup.exe`
+  (176,467,766 bytes; SHA-256
+  `E97E49BC2BBCB7A458C46C5C815D06994EFC7CCCF9A24B334B514219F88CF11D`).
+
+The release manifest reports clean source, Live SR guardrails, Agarwal's
+`hypothesis_reference` layer, and `execution_allowed=false`. This is the latest
+Windows research candidate, but it is not silently substituted into the
+existing formal Windows 0.10.19 plus Android 0.10.20 mobile acceptance pair.

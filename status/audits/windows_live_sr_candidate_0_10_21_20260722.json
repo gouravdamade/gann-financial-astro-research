@@ -1,0 +1,41 @@
+{
+  "contract": "GANN_WINDOWS_CLEAN_CANDIDATE_AUDIT_V1",
+  "auditedAtUtc": "2026-07-22T18:25:32Z",
+  "releaseId": "gann-astro-desk-0.10.21-windows",
+  "candidate": {
+    "version": "0.10.21",
+    "sourceGitCommit": "bfbf4ad56cf035ef9d42876a13711d53162b03b2",
+    "sourceGitDirty": false,
+    "executablePath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.21-tauri/GannAstroDesk.exe",
+    "executableBytes": 15757824,
+    "executableSha256": "4D15187D4F250C3F104DF38BBB9916128B0580664E0B10DC1303BB8390D4B636",
+    "installerPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.21-tauri/Gann Astro Desk_0.10.21_x64-setup.exe",
+    "installerBytes": 176467766,
+    "installerSha256": "E97E49BC2BBCB7A458C46C5C815D06994EFC7CCCF9A24B334B514219F88CF11D"
+  },
+  "features": {
+    "liveSrUi": "Live SR Lab",
+    "planetaryLineContract": "GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1",
+    "agarwalFinancialRagSource": "AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722",
+    "agarwalFinancialRagLayer": "hypothesis_reference"
+  },
+  "guardrails": {
+    "planetaryLinesConsumedByAutoSuggest": false,
+    "planetaryLinesConsumedByLiveInference": false,
+    "agarwalConsumedByDeterministicScoring": false,
+    "agarwalConsumedByOfficialMlNotes": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "frontendLint": "passed",
+    "frontendTests": "71_passed_across_resource_bounded_suite_and_focused_rerun",
+    "frontendProductionBuild": "passed",
+    "backendTests": "117_passed",
+    "corpusAndRagTests": "13_passed",
+    "rustTests": "18_passed",
+    "manifestHashes": "passed",
+    "physicalWindowsUi": "pending"
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

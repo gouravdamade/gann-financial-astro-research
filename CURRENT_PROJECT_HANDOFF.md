@@ -40,9 +40,22 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   resource-bounded run plus focused rerun; TypeScript/Vite production build;
   117 backend tests; and 18 Rust tests. The existing 524 KB main-bundle warning
   remains a performance follow-up only.
+- Packaged clean-source Windows candidate 0.10.21 from commit `bfbf4ad`:
+  - portable executable:
+    `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.21-tauri\GannAstroDesk.exe`
+    (SHA-256 `4D15187D4F250C3F104DF38BBB9916128B0580664E0B10DC1303BB8390D4B636`);
+  - installer:
+    `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.21-tauri\Gann Astro Desk_0.10.21_x64-setup.exe`
+    (SHA-256 `E97E49BC2BBCB7A458C46C5C815D06994EFC7CCCF9A24B334B514219F88CF11D`).
+  The manifest hashes match, the executable reports file version 0.10.21, and
+  source dirty is false. It is registered as the latest Windows research
+  candidate but does not replace the existing formal 0.10.19/Android 0.10.20
+  mobile acceptance pair without new physical evidence.
 - Full milestone details: `live_sr_agarwal_hypothesis_release_20260722.md`.
 - Recovery snapshot:
   `D:\PycharmProjects\chat_session_backups\session_20260722_232813_live_sr_agarwal_0_10_21_source`.
+- Packaged-candidate recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_235703_live_sr_agarwal_0_10_21_candidate`.
 - Existing runtime-only SQLite/log/Android files remain deliberately untouched:
   `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
   `logs/`, and `tryapp-android/`.
