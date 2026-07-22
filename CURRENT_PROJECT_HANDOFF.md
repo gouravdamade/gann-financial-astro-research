@@ -1,8 +1,41 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 13:05 IST
+Last updated: 2026-07-22 14:03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-22 (Aspect Evidence Trace / Windows Candidate 0.10.19)
+
+- Built the versioned Tauri/Rust Windows candidate `0.10.19` from clean source
+  commit `79a99005e3c59c95868f1ccea88247e504ab82ce`. The release manifest reports
+  `source_git_dirty=false` and status `aspect_evidence_trace_candidate`.
+- Portable EXE:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.19-tauri\GannAstroDesk.exe`;
+  SHA-256
+  `45B7087DDBEC3BC535B0575912ECACB167652FA427703002DEE7BE4BBB64B017`.
+- NSIS installer:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.19-tauri\Gann Astro Desk_0.10.19_x64-setup.exe`;
+  SHA-256
+  `94FA71119210E135B5B941A3F57FD45A74E8856DC427B81E7D20F91176B26041`.
+  Both files report product/file version `0.10.19`.
+- Release verification passed: backend `117/117`, frontend `71/71` across 22
+  files, Oxlint, TypeScript/Vite production build, and packager syntax.
+- Native crash/recovery soak passed every assertion with no errors or deferred
+  checks, same-port sidecar recovery, execution locked, and no descendant
+  survivors:
+  `D:\GannFinancialAstro\soak\tauri_0.10.19_20260722_082546\logs\native_soak_report.json`.
+- A direct request against the packaged sidecar loaded 47 bundled USDJPY
+  aspects and verified `GANN_ASPECT_EVIDENCE_TRACE_V1`, retrospective
+  highest/lowest checkpoints, timestamp safety, no look-ahead, and all
+  live/shadow/execution locks:
+  `D:\GannFinancialAstro\smoke\trace_20260722_083233\packaged_trace_smoke.json`.
+- Full release record:
+  `D:\PycharmProjects\aspect_evidence_trace_native_release_20260722.md`.
+- This is a candidate only. The current stable installation and previous
+  candidates were not replaced. Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_140349_aspect_trace_windows_candidate_0_10_19`.
+- Runtime-only SQLite/log/Android items remain deliberately untouched and
+  outside this release commit.
 
 ## Latest Update - 2026-07-22 (Aspect Reaction Checkpoints / Source)
 
