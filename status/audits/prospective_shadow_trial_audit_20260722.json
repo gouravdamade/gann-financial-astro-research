@@ -1,0 +1,52 @@
+{
+  "contract": "GANN_FROZEN_SHADOW_TRIAL_READ_ONLY_AUDIT_V1",
+  "auditedAtUtc": "2026-07-22T12:58:56.096573Z",
+  "status": "pass_frozen_cohort_collecting",
+  "database": {
+    "path": "D:\\GannFinancialAstro\\app_data\\gann_aspect_annotations_raman_v2.sqlite",
+    "sha256Before": "7562F708930CF72C98DEE94F474F18D5D9593D014938BBA5303C306DC8F253B8",
+    "sha256After": "7562F708930CF72C98DEE94F474F18D5D9593D014938BBA5303C306DC8F253B8",
+    "bytes": 10366976,
+    "openedReadOnly": true,
+    "sqliteDataVersionBefore": 2,
+    "sqliteDataVersionAfter": 2,
+    "unchangedDuringAudit": true
+  },
+  "immutability": {
+    "requiredTriggersPresent": [
+      "trg_shadow_ledger_no_delete",
+      "trg_shadow_ledger_no_update",
+      "trg_shadow_trial_manifest_no_delete",
+      "trg_shadow_trial_manifest_no_update"
+    ],
+    "missingTriggers": [],
+    "triggerGatePassed": true
+  },
+  "manifest": {
+    "contract": "GANN_FROZEN_PROSPECTIVE_SHADOW_TRIAL_V1",
+    "trialId": "2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16",
+    "manifestIdentitySha256": "D74E67ABFABC85474CABD93DB2607EBA611C621D4879201B886D1ACC145626BF",
+    "gateConfigurationSha256": "6151D98F5967958EA05C7EB9918615FB0A34079E5B6907E66476ECA9D2B17B70",
+    "engineVersion": "timestamp_safe_auto_suggest_v1_1_20260713",
+    "policyVersion": "fx_doctrine_consensus_watch_only_v1",
+    "astronomyContract": "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2",
+    "symbol": "USDJPY",
+    "timeframe": "H1",
+    "horizonHours": 72,
+    "cohortMutable": false
+  },
+  "ledger": {
+    "chainValid": true,
+    "entryCount": 14,
+    "headHash": "AAE4E6ECB2A59097E8E131BC93A9E0F96C509875C2D5E9680E4E44E5B894538A",
+    "cohortCount": 1,
+    "decisionCount": 7,
+    "abstainDecisionCount": 7,
+    "watchDecisionCount": 0,
+    "settledDecisionCount": 7,
+    "pendingOutcomeCount": 0,
+    "dueOutcomeCountAtAudit": 0
+  },
+  "financiallyValidated": false,
+  "executionAllowed": false
+}

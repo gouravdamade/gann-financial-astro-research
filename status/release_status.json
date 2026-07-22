@@ -1,0 +1,68 @@
+{
+  "contract": "GANN_RELEASE_STATUS_V1",
+  "asOfUtc": "2026-07-22T12:45:00Z",
+  "executionAllowed": false,
+  "selectedAcceptancePair": {
+    "desktopReleaseId": "gann-astro-desk-0.10.19-windows",
+    "mobileReleaseId": "gann-astro-mobile-0.10.17-android-debug",
+    "planId": "GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_17_V1"
+  },
+  "promotionAllowed": false,
+  "promotionBlockers": [
+    "MOB-01 through MOB-08 have no complete hash-addressed physical evidence set",
+    "the selected Android APK was built from a dirty source tree",
+    "the Windows installer is not code-signed"
+  ],
+  "releases": [
+    {
+      "releaseId": "gann-astro-desk-0.10.19-windows",
+      "product": "Gann Astro Desk",
+      "platform": "windows-x64",
+      "version": "0.10.19",
+      "state": "PACKAGED_CANDIDATE",
+      "sourceGitCommit": "79a99005e3c59c95868f1ccea88247e504ab82ce",
+      "sourceGitDirty": false,
+      "artifactPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.19-tauri/GannAstroDesk.exe",
+      "artifactSha256": "45B7087DDBEC3BC535B0575912ECACB167652FA427703002DEE7BE4BBB64B017",
+      "artifactHashVerifiedAtUtc": "2026-07-22T13:00:00Z",
+      "installerPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.19-tauri/Gann Astro Desk_0.10.19_x64-setup.exe",
+      "installerSha256": "94FA71119210E135B5B941A3F57FD45A74E8856DC427B81E7D20F91176B26041",
+      "automatedVerification": "passed",
+      "physicallyTested": false,
+      "promotedStable": false,
+      "executionAllowed": false
+    },
+    {
+      "releaseId": "gann-astro-mobile-0.10.17-android-debug",
+      "product": "Gann Astro Mobile",
+      "platform": "android-arm64-debug",
+      "version": "0.10.17",
+      "state": "PACKAGED_CANDIDATE",
+      "sourceGitCommit": "b06300b6863fbd96bef9ed189c60e8fad58a0787",
+      "sourceGitDirty": true,
+      "artifactPath": "D:/GannFinancialAstro/mobile/release_candidate/GannAstroMobile-0.10.17-debug/GannAstroMobile-0.10.17-debug.apk",
+      "artifactSha256": "75E1126A4F688F3B3376370B5D559CABAA6B35037CB0B4307CA5933227DF9E25",
+      "artifactHashVerifiedAtUtc": "2026-07-22T13:00:00Z",
+      "automatedVerification": "passed_network_level",
+      "physicallyTested": false,
+      "promotedStable": false,
+      "informalObservation": "Tailscale pairing succeeded on the user's phone, but no complete formal evidence matrix is recorded.",
+      "executionAllowed": false
+    },
+    {
+      "releaseId": "gann-astro-desk-0.10.14-installed-baseline",
+      "product": "Gann Astro Desk",
+      "platform": "windows-x64",
+      "version": "0.10.14",
+      "state": "PACKAGED_CANDIDATE",
+      "sourceGitCommit": "0036b5242d53c9628069d2d0b76d01b094bf52a7",
+      "sourceGitDirty": false,
+      "artifactPath": "D:/GannFinancialAstro/release/GannAstroDesk/GannAstroDesk.exe",
+      "artifactSha256": "2DCC84088CE31EBCE2AC02D7C5EACB35474DD80BDE7FEE6EE17F4D28239C539F",
+      "automatedVerification": "passed_at_build",
+      "physicallyTested": false,
+      "promotedStable": false,
+      "executionAllowed": false
+    }
+  ]
+}

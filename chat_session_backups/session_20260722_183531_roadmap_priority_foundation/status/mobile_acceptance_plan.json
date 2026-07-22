@@ -1,0 +1,69 @@
+{
+  "contract": "GANN_MOBILE_PHYSICAL_ACCEPTANCE_V1",
+  "planId": "GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_17_V1",
+  "createdAtUtc": "2026-07-22T12:45:00Z",
+  "status": "collecting_evidence",
+  "desktopCandidate": {
+    "releaseId": "gann-astro-desk-0.10.19-windows",
+    "version": "0.10.19",
+    "artifactSha256": "45B7087DDBEC3BC535B0575912ECACB167652FA427703002DEE7BE4BBB64B017"
+  },
+  "mobileCandidate": {
+    "releaseId": "gann-astro-mobile-0.10.17-android-debug",
+    "version": "0.10.17",
+    "artifactSha256": "75E1126A4F688F3B3376370B5D559CABAA6B35037CB0B4307CA5933227DF9E25",
+    "sourceGitDirty": true
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false,
+  "tests": [
+    {
+      "testId": "MOB-01",
+      "title": "Install and first launch",
+      "requiredEvidence": ["APK install record", "pairing screen screenshot", "execution-locked indicator"],
+      "acceptance": "The exact APK installs and launches without crash; safe areas are visible and execution remains locked."
+    },
+    {
+      "testId": "MOB-02",
+      "title": "Valid Tailscale pairing",
+      "requiredEvidence": ["gateway audit excerpt", "paired workspace screenshot", "candidate hashes"],
+      "acceptance": "Pinned HTTPS pairing succeeds over the private tailnet and no Python token reaches the WebView."
+    },
+    {
+      "testId": "MOB-03",
+      "title": "Wrong-code rejection and lockout",
+      "requiredEvidence": ["five rejected attempts", "gateway lockout audit excerpt"],
+      "acceptance": "Wrong proofs create no session and the configured failure limit blocks further attempts."
+    },
+    {
+      "testId": "MOB-04",
+      "title": "Desktop device revocation",
+      "requiredEvidence": ["revoke action screenshot", "rejected authenticated request", "gateway audit excerpt"],
+      "acceptance": "Revoking the paired device immediately invalidates its current session."
+    },
+    {
+      "testId": "MOB-05",
+      "title": "Android process restart",
+      "requiredEvidence": ["before/after screen recording or screenshots"],
+      "acceptance": "Because credentials are memory-only, a killed Android process returns to pairing and cannot reuse the prior session."
+    },
+    {
+      "testId": "MOB-06",
+      "title": "Laptop restart and certificate change",
+      "requiredEvidence": ["old-session rejection", "new fingerprint", "successful re-pair"],
+      "acceptance": "A laptop restart invalidates the old session; Android rejects the changed certificate until a new explicit pairing completes."
+    },
+    {
+      "testId": "MOB-07",
+      "title": "Network loss, sleep, wake, and resume",
+      "requiredEvidence": ["disconnect state", "resume state", "gateway audit excerpt"],
+      "acceptance": "Loss and recovery are visible, bounded, and do not duplicate mutations or bypass reauthentication."
+    },
+    {
+      "testId": "MOB-08",
+      "title": "Usability and least-privilege scope",
+      "requiredEvidence": ["portrait and landscape screenshots", "touch workflow", "blocked-route checks"],
+      "acceptance": "Status/navigation bars do not cover controls; chart touch works; review scopes work; generation, promotion, MT5 mutation, and every trade route remain blocked."
+    }
+  ]
+}

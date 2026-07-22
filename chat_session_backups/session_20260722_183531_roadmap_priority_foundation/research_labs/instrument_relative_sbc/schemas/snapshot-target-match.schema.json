@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gann-astro.local/schemas/snapshot-target-match.schema.json",
+  "title": "Immutable SBC snapshot target match",
+  "type": "object",
+  "required": [
+    "contract",
+    "connector_version",
+    "connector_run_id",
+    "source_snapshot_sha256",
+    "snapshot_id",
+    "snapshot_as_of_utc",
+    "evidence_cutoff_utc",
+    "instrument_id",
+    "identity_gate_status",
+    "matches",
+    "blockers",
+    "scoring_allowed",
+    "contribution_emission_allowed",
+    "financially_validated",
+    "auto_suggest_allowed",
+    "ml_training_allowed",
+    "mt5_input_allowed",
+    "execution_allowed"
+  ],
+  "properties": {
+    "contract": {"const": "SBC_IMMUTABLE_SNAPSHOT_TARGET_CONNECTOR_V1"},
+    "connector_version": {"const": 1},
+    "connector_run_id": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+    "source_snapshot_sha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+    "snapshot_id": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+    "snapshot_as_of_utc": {"type": "string", "format": "date-time"},
+    "evidence_cutoff_utc": {"type": "string", "format": "date-time"},
+    "instrument_id": {"type": "string", "minLength": 1},
+    "identity_gate_status": {"type": "string", "minLength": 1},
+    "accepted_target_count": {"type": "integer", "minimum": 0},
+    "snapshot_target_count": {"type": "integer", "minimum": 0},
+    "matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "match_id",
+          "instrument_id",
+          "snapshot_id",
+          "timestamp_utc",
+          "layer",
+          "target_type",
+          "target_value",
+          "mapping_review_status",
+          "status",
+          "signed_value",
+          "scoring_allowed",
+          "contribution_emission_allowed",
+          "execution_allowed"
+        ],
+        "properties": {
+          "match_id": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+          "mapping_review_status": {"const": "accepted"},
+          "status": {"const": "matched_unscored"},
+          "signed_value": {"type": "null"},
+          "scoring_allowed": {"const": false},
+          "contribution_emission_allowed": {"const": false},
+          "execution_allowed": {"const": false}
+        }
+      }
+    },
+    "blockers": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+    "scoring_allowed": {"const": false},
+    "contribution_emission_allowed": {"const": false},
+    "financially_validated": {"const": false},
+    "auto_suggest_allowed": {"const": false},
+    "ml_training_allowed": {"const": false},
+    "mt5_input_allowed": {"const": false},
+    "execution_allowed": {"const": false}
+  },
+  "additionalProperties": false
+}

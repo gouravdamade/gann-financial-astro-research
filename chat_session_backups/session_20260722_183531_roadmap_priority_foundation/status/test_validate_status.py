@@ -1,0 +1,36 @@
+from __future__ import annotations
+
+import copy
+import unittest
+
+from status.validate_status import (
+    STATUS_ROOT,
+    _load,
+    validate_all,
+    validate_capabilities,
+    validate_release,
+)
+
+
+class StatusValidationTests(unittest.TestCase):
+    def test_canonical_documents_validate(self) -> None:
+        result = validate_all()
+        self.assertTrue(result["valid"])
+        self.assertFalse(result["executionAllowed"])
+        self.assertEqual(result["documentCount"], 5)
+
+    def test_release_cannot_promote_with_blockers(self) -> None:
+        document = _load(STATUS_ROOT / "release_status.json")
+        document["promotionAllowed"] = True
+        with self.assertRaisesRegex(ValueError, "blockers"):
+            validate_release(document)
+
+    def test_capability_cannot_enable_execution(self) -> None:
+        document = copy.deepcopy(_load(STATUS_ROOT / "capability_status.json"))
+        document["capabilities"][0]["executionAllowed"] = True
+        with self.assertRaisesRegex(ValueError, "enables execution"):
+            validate_capabilities(document)
+
+
+if __name__ == "__main__":
+    unittest.main()

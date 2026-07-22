@@ -1,0 +1,62 @@
+{
+  "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
+  "asOfUtc": "2026-07-22T12:45:00Z",
+  "executionAllowed": false,
+  "certifications": [
+    {
+      "certificationId": "drik_reconciled_formula_v2",
+      "status": "tier_b_aligned_pending_independent_witness",
+      "sourceCertified": false,
+      "summary": "PyJHora comparator passes 35 of 35 Drik rows; Jagannatha Hora or a cited independent worked example is still required.",
+      "evidenceRefs": [
+        "astro_external_validation_gate_20260718.json"
+      ]
+    },
+    {
+      "certificationId": "strict_shadbala_full_total",
+      "status": "failed_external_validation",
+      "sourceCertified": false,
+      "summary": "Thirty-five full-total rows remain outside the frozen tolerance because Kaala and Chesta profiles differ.",
+      "evidenceRefs": [
+        "astro_function_certification_report_20260718.md"
+      ]
+    },
+    {
+      "certificationId": "sbc_grid_and_vedha_guidance",
+      "status": "page_certified_partial_layers",
+      "sourceCertified": false,
+      "summary": "Specific grid and editor-supplement guidance pages are certified; absolute orientation and complete financial doctrine are not.",
+      "evidenceRefs": [
+        "docs/sbc/SOURCE_REGISTER.md",
+        "docs/sbc/VEDHA_GUIDANCE_AUDIT.md"
+      ]
+    },
+    {
+      "certificationId": "agarwal_complete_financial_sbc_profile",
+      "status": "blocked_missing_complete_edition",
+      "sourceCertified": false,
+      "summary": "The image scan is incomplete and the searchable edition is derivative; neither enables an executable financial profile.",
+      "evidenceRefs": [
+        "docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md"
+      ]
+    },
+    {
+      "certificationId": "trailokya_dipika_profile",
+      "status": "blocked_pending_acquisition",
+      "sourceCertified": false,
+      "summary": "A lawful acquisition route is recorded, but no copy or page-level certification exists.",
+      "evidenceRefs": [
+        "configs/sbc/sources.yaml"
+      ]
+    },
+    {
+      "certificationId": "chart_conditioned_aspect_polarity_v0",
+      "status": "implemented_execution_locked_pending_sources",
+      "sourceCertified": false,
+      "summary": "Research mechanics are tested, but the missing Agarwal and Trailokya profiles remain blocked.",
+      "evidenceRefs": [
+        "chart_conditioned_aspects_milestone1_20260722.md"
+      ]
+    }
+  ]
+}
