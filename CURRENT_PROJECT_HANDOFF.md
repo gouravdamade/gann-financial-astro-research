@@ -1,8 +1,67 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 15:05 IST
+Last updated: 2026-07-22 15:53 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-22 (Chart-Conditioned Aspect Polarity Milestone 1)
+
+- Implemented the revised chart-conditioned planetary aspect recommendation as
+  a new isolated research package at
+  `research_labs/chart_conditioned_aspects`. It does not change production
+  Auto Suggest, live inference, MT5, SBC, or execution behavior.
+- Added versioned organization-chart hypotheses with provenance, effective
+  dates, explicit human acceptance, and strict time-accuracy gates. Exact or
+  documented exchange-open charts may use houses; date-only and unknown-time
+  charts cannot use ascendants, houses, or functional lordship. Multiple
+  active chart hypotheses are never selected silently.
+- Added provisional profile-driven Parashari functional lordship and a separate
+  modern corporate-domain mapping. The same Saturn transit can therefore be
+  supportive for a Taurus chart (9th/10th lord, Yogakaraka candidate) and
+  adverse for a Cancer chart (7th/8th lord), while the modern financial domains
+  never become a hidden price-direction sign.
+- Added an immutable, hash-addressed natal graph with conjunction geometry,
+  dispositors, lordship, and house occupancy. Configured special Drishti and
+  Yoga edges remain disabled. Uncertified exaltation/debilitation and
+  friendship tables remain explicitly unknown.
+- Added an explicit transit-to-natal adapter. It rejects TT events, missing or
+  inferred transit/natal roles, out-of-profile orbs, naive timestamps, and
+  retrospective/outcome/P&L/future fields recursively. It does not use the
+  legacy sorted-pair role-recovery heuristic.
+- Added separate symbolic outputs for direction, activation, and volatility;
+  aspect geometry affects activation/volatility only and cannot invent
+  direction. Runtime evaluation is bounded, timestamp-safe, rejects future
+  dynamic evidence, and preserves opposing evidence as `MIXED` with an explicit
+  conflict flag.
+- Added an FX bridge that delegates numeric composition to the existing
+  instrument-relative SBC base-minus-quote engine and its identity, inversion,
+  and triangle invariants. No hidden numeric mapping from categorical chart
+  priors was introduced.
+- Added five strict JSON schemas, locked YAML profiles, a source manifest,
+  doctrine registration
+  `chart_conditioned_aspect_polarity_v0_execution_locked`, and 20 focused
+  adversarial tests. Full repository verification passed `322/322`; Ruff check
+  passed.
+- The still-missing complete Agarwal financial edition and *Trailokya Dipika*
+  remain explicit blocked source profiles. No substitute doctrine was invented,
+  and execution/promotion flags remain false throughout the package.
+- Moved the two received implementation specifications off `C:` and
+  hash-verified them under `D:\GannFinancialAstro\sources\specifications`:
+  - chart-conditioned revised v2 SHA-256
+    `7812701297CA1430CF6BC3541F183208A9BC0279719A55600A0C4CD3FE33385D`;
+  - SBC/Shadbala/Drik certification guide SHA-256
+    `ABFA2F9E7957D92381344B419F2217AC8762E1D90175083F6B8B63305DD00686`.
+- Full milestone record:
+  `chart_conditioned_aspects_milestone1_20260722.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260722_155439_chart_conditioned_aspect_m1`.
+- Next gate: acquire and page-certify the two missing books as new versioned
+  profiles, then register a purged walk-forward experiment with chart-hypothesis
+  sensitivity checks, negative controls, and untouched holdout data. Do not
+  promote this research layer before those gates pass.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-22 (Agarwal SBC Private-Source Audit)
 

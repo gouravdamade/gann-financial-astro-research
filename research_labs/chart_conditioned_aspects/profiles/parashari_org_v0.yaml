@@ -1,0 +1,58 @@
+profile_id: PARASHARI_ORG_V0
+status: experimental_source_alignment_pending
+evidence_class: CLASSICAL_TEXT
+doctrine_status: SOURCE_ALIGNED_PROVISIONAL_PENDING_EDITION_CERTIFICATION
+source_dependencies:
+  - BPHS_CHAPTERS_34_36_EDITION_PENDING
+  - LAGHU_PARASARI_OR_JATAKA_CHANDRIKA_EDITION_PENDING
+sign_sequence:
+  - ARIES
+  - TAURUS
+  - GEMINI
+  - CANCER
+  - LEO
+  - VIRGO
+  - LIBRA
+  - SCORPIO
+  - SAGITTARIUS
+  - CAPRICORN
+  - AQUARIUS
+  - PISCES
+sign_rulers:
+  ARIES: MARS
+  TAURUS: VENUS
+  GEMINI: MERCURY
+  CANCER: MOON
+  LEO: SUN
+  VIRGO: MERCURY
+  LIBRA: VENUS
+  SCORPIO: MARS
+  SAGITTARIUS: JUPITER
+  CAPRICORN: SATURN
+  AQUARIUS: SATURN
+  PISCES: JUPITER
+natural_nature:
+  SUN: MALEFIC
+  MOON: CONDITIONAL
+  MARS: MALEFIC
+  MERCURY: CONDITIONAL
+  JUPITER: BENEFIC
+  VENUS: BENEFIC
+  SATURN: MALEFIC
+house_groups:
+  trikona: [1, 5, 9]
+  kendra: [1, 4, 7, 10]
+  trishadaya: [3, 6, 11]
+  dusthana: [6, 8, 12]
+  maraka: [2, 7]
+resolution:
+  yogakaraka_requires_kendra_and_trikona: true
+  yogakaraka_class: SUPPORTIVE
+  supportive_flags: [TRIKONA_LORD]
+  adverse_flags: [TRISHADAYA_LORD, DUSTHANA_LORD, MARAKA_CANDIDATE]
+  preserve_mixed_lordship: true
+  target_role_may_not_silently_override_transit_role: true
+base_confidence: 0.55
+unknown_ascendant_behavior: RETURN_UNKNOWN
+execution_allowed: false
+promotion_allowed: false

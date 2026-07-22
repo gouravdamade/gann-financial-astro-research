@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gann-astro/research/chart-conditioned/aspect-prior.schema.json",
+  "title": "Chart-conditioned structural aspect prior",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "prior_id", "chart_id", "transit_body", "natal_target_type", "natal_target",
+    "aspect_type", "natal_context_id", "directional_prior", "activation_prior",
+    "volatility_prior", "explanation_ledger", "unknowns", "doctrine_status",
+    "profile_hash", "prior_hash", "execution_allowed", "automatic_order_placement"
+  ],
+  "properties": {
+    "prior_id": {"type": "string", "minLength": 1},
+    "chart_id": {"type": "string", "minLength": 1},
+    "transit_body": {"type": "string", "minLength": 1},
+    "natal_target_type": {"enum": ["PLANET", "ANGLE"]},
+    "natal_target": {"type": "string", "minLength": 1},
+    "aspect_type": {"type": "string", "minLength": 1},
+    "natal_context_id": {"type": "string", "minLength": 1},
+    "directional_prior": {"enum": ["SUPPORTIVE", "ADVERSE", "MIXED", "INDETERMINATE"]},
+    "activation_prior": {"enum": ["WEAK", "MODERATE", "STRONG", "EXCEPTIONAL", "UNKNOWN"]},
+    "volatility_prior": {"enum": ["LOW", "ELEVATED", "HIGH", "UNKNOWN"]},
+    "explanation_ledger": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "unknowns": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "doctrine_status": {"type": "string", "minLength": 1},
+    "profile_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "prior_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "execution_allowed": {"const": false},
+    "automatic_order_placement": {"const": false}
+  }
+}

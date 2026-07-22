@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gann-astro/research/chart-conditioned/organization-chart.schema.json",
+  "title": "Organization chart hypothesis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chart_id", "instrument_id", "entity_id", "chart_type", "timestamp_utc",
+    "location", "sources", "time_accuracy", "ayanamsa", "house_model",
+    "astronomy_contract", "effective_from", "status"
+  ],
+  "properties": {
+    "chart_id": {"type": "string", "minLength": 1},
+    "instrument_id": {"type": "string", "minLength": 1},
+    "entity_id": {"type": "string", "minLength": 1},
+    "chart_type": {"type": "string", "minLength": 1},
+    "timestamp_utc": {"type": ["string", "null"], "format": "date-time"},
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "latitude", "longitude"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "latitude": {"type": ["number", "null"], "minimum": -90, "maximum": 90},
+        "longitude": {"type": ["number", "null"], "minimum": -180, "maximum": 180}
+      }
+    },
+    "sources": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "time_accuracy": {
+      "enum": ["EXACT_TIME", "DOCUMENTED_EXCHANGE_OPEN", "DATE_ONLY_STABLE_MOON", "DATE_ONLY_UNSTABLE_MOON", "UNKNOWN"]
+    },
+    "ayanamsa": {"type": "string", "minLength": 1},
+    "house_model": {"type": "string", "minLength": 1},
+    "astronomy_contract": {"type": "string", "minLength": 1},
+    "effective_from": {"type": "string", "format": "date"},
+    "effective_to": {"type": ["string", "null"], "format": "date"},
+    "status": {"enum": ["CANDIDATE", "ACCEPTED_RESEARCH", "REJECTED"]},
+    "accepted_by": {"type": ["string", "null"]},
+    "accepted_at": {"type": ["string", "null"], "format": "date-time"}
+  }
+}

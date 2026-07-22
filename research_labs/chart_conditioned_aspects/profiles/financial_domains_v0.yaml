@@ -1,0 +1,24 @@
+profile_id: FINANCIAL_DOMAINS_V0
+status: experimental_modern_financial_extension
+evidence_class: MODERN_FINANCIAL_EXTENSION
+doctrine_status: MODERN_MAPPING_REQUIRES_EMPIRICAL_VALIDATION
+house_domains:
+  1: [entity_vitality]
+  2: [capital_resources]
+  3: [communications_initiative]
+  4: [assets_foundation]
+  5: [speculation_innovation]
+  6: [operations_competition, debt_servicing]
+  7: [contracts_counterparties]
+  8: [disruption_hidden_liability]
+  9: [policy_reputation]
+  10: [management_public_activity]
+  11: [gains_networks]
+  12: [outflow_foreign_loss]
+mapping_source:
+  source_id: CHART_CONDITIONED_ASPECT_POLARITY_REVISED_V2_20260722
+  locator: pages 10-11
+  status: WORKSPACE_SPECIFICATION_MODERN_EXTENSION
+direction_policy: NO_AUTOMATIC_DOMAIN_TO_PRICE_SIGN
+execution_allowed: false
+promotion_allowed: false

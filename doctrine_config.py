@@ -119,7 +119,26 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "gann_research_context",
         "usdjpy_base_minus_quote_score",
         "repeatation_manual_marker_review",
+        "instrument_relative_sbc_fx_v1_execution_locked",
+        "chart_conditioned_aspect_polarity_v0_execution_locked",
     ],
+    "chart_conditioned_aspects": {
+        "status": "experimental_isolated",
+        "contract": "GANN_CHART_CONDITIONED_ASPECT_POLARITY_V0",
+        "specification": "CHART_CONDITIONED_ASPECT_POLARITY_REVISED_V2_20260722",
+        "implementation_root": "research_labs/chart_conditioned_aspects",
+        "primary_event_stream": "explicit_transit_to_natal_only",
+        "static_context": "immutable_natal_aspect_graph",
+        "output_contract": ["direction", "activation", "volatility"],
+        "unknown_policy": "preserve_unknown_never_impute_direction",
+        "fx_pair_method": "delegate_to_instrument_relative_base_minus_quote",
+        "blocked_source_profiles": [
+            "TRAILOKYA_DIPIKA_1972",
+            "AGARWAL_FINANCIAL_COMPLETE_EDITION",
+        ],
+        "execution_allowed": False,
+        "promotion_allowed": False,
+    },
     "source_ids": ["STRICT_VEDIC_LLM", "SHADBALA_JAYA", "BPHS", "PHALADEEPIKA", "SANJAY_RATH_CRUX_1998"],
 }
 

@@ -1,0 +1,17 @@
+profile_id: NATAL_GRAPH_V0
+status: experimental_geometry_foundation
+doctrine_status: DETERMINISTIC_GEOMETRY_PLUS_PROVISIONAL_LORDSHIP
+conjunction_orb_deg: 8.0
+configured_drishti_enabled: false
+yoga_edges_enabled: false
+enabled_edge_types:
+  - CONJUNCTION
+  - DISPOSITOR
+  - LORD_OF
+  - OCCUPIES_HOUSE
+max_activation_depth: 2
+cycle_policy: VISIT_EACH_NODE_ONCE_AT_SHORTEST_DEPTH
+same_sign_is_conjunction: false
+edge_polarity_policy: NO_HIDDEN_POLARITY
+execution_allowed: false
+promotion_allowed: false

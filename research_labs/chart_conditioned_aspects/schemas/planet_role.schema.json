@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gann-astro/research/chart-conditioned/planet-role.schema.json",
+  "title": "Chart-conditioned planet role",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "chart_id", "planet", "natural_nature", "owned_houses", "functional_class",
+    "flags", "conflicts", "source_profile", "doctrine_status", "confidence", "evidence_refs"
+  ],
+  "properties": {
+    "chart_id": {"type": "string", "minLength": 1},
+    "planet": {"type": "string", "minLength": 1},
+    "natural_nature": {"type": "string", "minLength": 1},
+    "owned_houses": {"type": "array", "uniqueItems": true, "items": {"type": "integer", "minimum": 1, "maximum": 12}},
+    "functional_class": {"enum": ["SUPPORTIVE", "ADVERSE", "MIXED", "INDETERMINATE", "UNKNOWN"]},
+    "flags": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "conflicts": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "source_profile": {"type": "string", "minLength": 1},
+    "doctrine_status": {"type": "string", "minLength": 1},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gann-astro/research/chart-conditioned/event-evaluation.schema.json",
+  "title": "Timestamp-safe chart-conditioned event evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id", "as_of_utc", "event_contract", "chart_id", "prior_id",
+    "natal_context_id", "directional_result", "activation_result", "volatility_result",
+    "activation_paths", "dynamic_contributions", "conflict_flags", "unknowns",
+    "timestamp_safe", "evaluation_hash", "execution_allowed", "automatic_order_placement"
+  ],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 1},
+    "as_of_utc": {"type": "string", "format": "date-time"},
+    "event_contract": {"type": "string", "minLength": 1},
+    "chart_id": {"type": "string", "minLength": 1},
+    "prior_id": {"type": "string", "minLength": 1},
+    "natal_context_id": {"type": "string", "minLength": 1},
+    "directional_result": {"enum": ["SUPPORTIVE", "ADVERSE", "MIXED", "INDETERMINATE"]},
+    "activation_result": {"enum": ["WEAK", "MODERATE", "STRONG", "EXCEPTIONAL", "UNKNOWN"]},
+    "volatility_result": {"enum": ["LOW", "ELEVATED", "HIGH", "UNKNOWN"]},
+    "activation_paths": {"type": "array", "items": {"type": "object"}},
+    "dynamic_contributions": {"type": "array", "items": {"type": "object"}},
+    "conflict_flags": {"type": "array", "items": {"type": "string"}},
+    "unknowns": {"type": "array", "items": {"type": "string"}},
+    "timestamp_safe": {"const": true},
+    "evaluation_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "execution_allowed": {"const": false},
+    "automatic_order_placement": {"const": false}
+  }
+}

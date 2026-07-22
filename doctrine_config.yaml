@@ -136,6 +136,7 @@ experimental_layers:
   - usdjpy_base_minus_quote_score
   - repeatation_manual_marker_review
   - instrument_relative_sbc_fx_v1_execution_locked
+  - chart_conditioned_aspect_polarity_v0_execution_locked
 
 instrument_relative_sbc:
   status: experimental_isolated
@@ -153,6 +154,27 @@ instrument_relative_sbc:
     - source_verified_contribution_rules
     - timestamp_safe_cross_sectional_research_harness
     - purged_walk_forward_and_random_mapping_placebos
+
+chart_conditioned_aspects:
+  status: experimental_isolated
+  contract: GANN_CHART_CONDITIONED_ASPECT_POLARITY_V0
+  specification: CHART_CONDITIONED_ASPECT_POLARITY_REVISED_V2_20260722
+  implementation_root: research_labs/chart_conditioned_aspects
+  primary_event_stream: explicit_transit_to_natal_only
+  static_context: immutable_natal_aspect_graph
+  output_contract: [direction, activation, volatility]
+  unknown_policy: preserve_unknown_never_impute_direction
+  fx_pair_method: delegate_to_instrument_relative_base_minus_quote
+  blocked_source_profiles:
+    - TRAILOKYA_DIPIKA_1972
+    - AGARWAL_FINANCIAL_COMPLETE_EDITION
+  execution_allowed: false
+  promotion_allowed: false
+  pending:
+    - page_certified_edition_for_functional_lordship_profile
+    - complete_agarwal_financial_source_profile
+    - trailokya_dipika_source_profile
+    - registered_purged_walk_forward_validation
 
 source_ids:
   - STRICT_VEDIC_LLM

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.gann-astro/research/chart-conditioned/natal-structure.schema.json",
+  "title": "Immutable natal structure graph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "natal_context_id", "chart_id", "chart_hash", "snapshot_hash", "doctrine_profile_id",
+    "graph_profile_id", "nodes", "edges", "financial_domains", "doctrine_status",
+    "graph_hash", "execution_allowed"
+  ],
+  "properties": {
+    "natal_context_id": {"type": "string", "minLength": 1},
+    "chart_id": {"type": "string", "minLength": 1},
+    "chart_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "snapshot_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "doctrine_profile_id": {"type": "string", "minLength": 1},
+    "graph_profile_id": {"type": "string", "minLength": 1},
+    "nodes": {"type": "array", "items": {"type": "object"}},
+    "edges": {"type": "array", "items": {"type": "object"}},
+    "financial_domains": {"type": "array", "items": {"type": "object"}},
+    "doctrine_status": {"type": "string", "minLength": 1},
+    "graph_hash": {"type": "string", "pattern": "^[A-F0-9]{64}$"},
+    "execution_allowed": {"const": false}
+  }
+}

@@ -1,0 +1,32 @@
+profile_id: ASPECT_STRENGTH_V0
+status: experimental_geometry_profile
+doctrine_status: ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE
+aspects:
+  conjunction:
+    exact_angle_deg: 0.0
+    max_orb_deg: 3.0
+    activation: STRONG
+    volatility: HIGH
+  sextile:
+    exact_angle_deg: 60.0
+    max_orb_deg: 3.0
+    activation: MODERATE
+    volatility: ELEVATED
+  square:
+    exact_angle_deg: 90.0
+    max_orb_deg: 3.0
+    activation: STRONG
+    volatility: HIGH
+  trine:
+    exact_angle_deg: 120.0
+    max_orb_deg: 3.0
+    activation: MODERATE
+    volatility: ELEVATED
+  opposition:
+    exact_angle_deg: 180.0
+    max_orb_deg: 3.0
+    activation: STRONG
+    volatility: HIGH
+direction_policy: ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF
+execution_allowed: false
+promotion_allowed: false
