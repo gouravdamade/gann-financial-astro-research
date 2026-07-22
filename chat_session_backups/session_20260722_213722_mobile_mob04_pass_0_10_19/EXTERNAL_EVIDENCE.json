@@ -1,0 +1,16 @@
+﻿{
+    "contract":  "GANN_EXTERNAL_MOBILE_EVIDENCE_POINTER_V1",
+    "resultPath":  "D:\\GannFinancialAstro\\acceptance\\mobile\\mobile_acceptance_results.local.json",
+    "resultSha256":  "EBDFEBE01280E6B3FB940D94A5FE593B42D7BA3BDA41B30691D66EF2B0C7272D",
+    "mob01Status":  "passed",
+    "mob02Status":  "passed",
+    "mob03Status":  "passed",
+    "mob04Status":  "passed",
+    "mob01EvidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-01-install-first-launch-20260722",
+    "mob02EvidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-02-pairing-20260722",
+    "mob03EvidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-03-wrong-code-lockout-20260722",
+    "mob04EvidenceRoot":  "D:\\GannFinancialAstro\\acceptance\\mobile\\GANN_MOBILE_ACCEPTANCE_0_10_19_0_10_19_V1\\MOB-04-device-revocation-20260722",
+    "rawEvidenceStoredOutsideGit":  true,
+    "promotionAllowed":  false,
+    "executionAllowed":  false
+}
