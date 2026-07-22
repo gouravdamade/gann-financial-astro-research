@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-22T18:25:32Z",
+  "asOfUtc": "2026-07-22T19:53:04Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -141,6 +141,25 @@
       "statusDetail": "Printed pages 180-194 are visually checked and available only as an opt-in hypothesis_reference; the incomplete scan and derivative copies do not certify a complete Agarwal method.",
       "evidenceRefs": [
         "docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md",
+        "status/source_certification.json"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "trailokya_dipika_source_profile",
+      "label": "Trailokya Dipika page-certified Vedha profile and translated research reference",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "partial",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "Original and OCR-companion 118-page files are aligned. The explicit profile preserves the source's all-three fixed-body Vedha rule, and the Stage 1 English layer is opt-in only. Arghya tables, price conversion, financial labels and execution remain blocked.",
+      "evidenceRefs": [
+        "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md",
+        "configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml",
         "status/source_certification.json"
       ],
       "executionAllowed": false

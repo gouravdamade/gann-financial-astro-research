@@ -78,16 +78,27 @@ sources:
     source_url: null
     notes: PDF page 22, printed page 11, independently summarizes normal/front, faster/next, and retrograde/previous Vedha. It is a cross-check only and remains distinct from the editor-supplement board-ray fixture.
 
-  - source_id: TRAILOKYA_DIPIKA_1972_PENDING
-    title: Sarvatobhadra Chakra with Trailokya Dipika commentary, Pt. Mithalal Vyas, 1972
-    authority: traditional_source_candidate
-    content_layer: root_or_commentary_pending_identification
-    status: retail_listing_located_pending_acquisition_and_page_certification
-    rights_status: commercial_retail_copy_not_acquired
-    sha256: null
-    registry_ref: null
+  - source_id: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+    title: Sarvatobhadra Chakra with Trailokya Dipika commentary, Pt. Mithalal Vyas, 1972 original scan
+    authority: traditional_compilation_with_hindi_commentary
+    content_layer: sanskrit_verse_compilation_hindi_commentary_and_practical_publisher_introduction
+    status: locally_acquired_complete_scan_page_aligned_and_partially_page_certified
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+    registry_ref: D:/GannFinancialAstro/sources/private/TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN_1EF82899.pdf
     source_url: "https://www.gyanbooks.com/index.php?Book=Sarvatobhadra+Chakra+%28+Sanskrit+And+Hindi+Text%29+With+Trailokya+Dipika+Commentary+By+Pt.+Mi...&Field=bookcode&String=1111025950008&format=fullpage&p=sr"
-    notes: A lawful retail acquisition route was located for the 1972 Lucknow Tej Kumar Book Depot edition. The copy has not been acquired or page-audited; no 64-cell mapping or executable rule may cite it yet.
+    notes: The 118-page image scan identifies the 1972 Lucknow Tej Kumar Book Depot edition. PDF pages 20-21, printed pages 4-5, certify the source-specific three-direction and ray rules used by the explicit Trailokya Vedha profile. The later Arghya chapter is research-only pending full table transcription and arithmetic certification.
+
+  - source_id: TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION
+    title: Sarvatobhadra Chakra with Trailokya Dipika commentary, 1972 OCR companion
+    authority: derivative_ocr_navigation_aid
+    content_layer: internet_archive_ocr_layer_over_matching_page_images
+    status: locally_acquired_page_aligned_search_and_translation_aid_only
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 7F220E0FA4523DE4624449E72B62248434760AF0E3C842844ADAEBB3CBB13E9B
+    registry_ref: D:/GannFinancialAstro/sources/private/TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION_7F220E0F.pdf
+    source_url: null
+    notes: All 118 page images align with the original scan. The text layer contains 131071 extracted characters, including 99610 Devanagari characters, across 113 pages. It is used only for search and translation navigation; the original page images control citations and disputed readings.
 
   - source_id: AGARWAL_2000_SBC_PENDING
     title: Complete published edition of Mystics of Sarvato Bhadra Chakra and Astrological Predictions

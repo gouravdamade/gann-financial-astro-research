@@ -226,6 +226,14 @@
       "ingestion_policy": "private_page_provenanced_hypothesis_reference_never_doctrine_or_execution",
       "priority": "3",
       "text_path": "D:\\GannFinancialAstro\\sources\\private\\derived\\AGARWAL_FINANCIAL_CHAPTER20_PDF_PAGES_177_191_5644DFC4.txt"
+    },
+    {
+      "source_id": "TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723",
+      "title": "Trailokya Dipika 1972 Stage 1 English Research Translation",
+      "source_url": null,
+      "ingestion_policy": "private_page_provenanced_translated_source_reference_explicit_opt_in_never_execution",
+      "priority": "2",
+      "text_path": "D:\\GannFinancialAstro\\sources\\private\\derived\\TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723.md"
     }
   ]
 }

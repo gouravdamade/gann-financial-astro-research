@@ -129,7 +129,7 @@ class VedhaProfileDefinition:
     citations: tuple[VedhaCitation, ...]
     target_layers: tuple[str, ...]
     direction_geometry: dict[str, str]
-    fixed_directions: dict[str, VedhaDirection]
+    fixed_directions: dict[str, tuple[VedhaDirection, ...]]
     variable_bodies: tuple[str, ...]
     motion_to_direction: dict[MotionClass, VedhaDirection]
     natural_benefics: tuple[str, ...]
@@ -343,18 +343,30 @@ def validate_vedha_profile(
     mapping_raw = motion_raw.get("motion_to_direction")
     if not isinstance(fixed_raw, dict) or not isinstance(mapping_raw, dict):
         raise ValueError("fixed_directions and motion_to_direction must be mappings")
-    fixed_directions = {
-        str(body).strip().upper(): VedhaDirection(str(direction).strip().upper())
-        for body, direction in fixed_raw.items()
+    fixed_directions: dict[str, tuple[VedhaDirection, ...]] = {}
+    for raw_body, raw_directions in fixed_raw.items():
+        body = str(raw_body).strip().upper()
+        values = raw_directions if isinstance(raw_directions, list) else [raw_directions]
+        directions = tuple(
+            VedhaDirection(str(direction).strip().upper()) for direction in values
+        )
+        if not directions or len(set(directions)) != len(directions):
+            raise ValueError(f"fixed Vedha directions for {body} must be unique and non-empty")
+        fixed_directions[body] = directions
+    expected_single = {
+        "SUN": (VedhaDirection.LEFT,),
+        "MOON": (VedhaDirection.LEFT,),
+        "RAHU": (VedhaDirection.RIGHT,),
+        "KETU": (VedhaDirection.RIGHT,),
     }
-    expected_fixed = {
-        "SUN": VedhaDirection.LEFT,
-        "MOON": VedhaDirection.LEFT,
-        "RAHU": VedhaDirection.RIGHT,
-        "KETU": VedhaDirection.RIGHT,
-    }
-    if fixed_directions != expected_fixed:
-        raise ValueError("fixed Vedha directions drifted from the cited profile")
+    all_three = (
+        VedhaDirection.LEFT,
+        VedhaDirection.FRONT,
+        VedhaDirection.RIGHT,
+    )
+    expected_all_three = {body: all_three for body in expected_single}
+    if fixed_directions != expected_single and fixed_directions != expected_all_three:
+        raise ValueError("fixed Vedha directions drifted from a cited source profile")
     variable_bodies = _unique_upper_strings(
         motion_raw.get("variable_bodies"), "variable_bodies"
     )
@@ -695,9 +707,9 @@ class VedhaGuidanceEngine:
                     f"missing={missing}, extra={extra}"
                 )
 
-    def _resolve_direction(
+    def _resolve_directions(
         self, actor: VedhaActor
-    ) -> tuple[VedhaDirection, MotionClass | None, str]:
+    ) -> tuple[tuple[VedhaDirection, ...], MotionClass | None, str]:
         body = actor.body.strip().upper()
         fixed = self.profile.fixed_directions.get(body)
         supplied_motion = _normalize_enum(
@@ -712,13 +724,15 @@ class VedhaGuidanceEngine:
                 expected_motion = None
             if supplied_motion is not None and supplied_motion != expected_motion:
                 raise ValueError(
-                    f"{body} uses fixed {fixed.value} Vedha in this profile; "
+                    f"{body} uses fixed {'/'.join(item.value for item in fixed)} "
+                    "Vedha in this profile; "
                     f"motion_class {supplied_motion.value} conflicts"
                 )
             return (
                 fixed,
                 effective_motion,
-                f"{body} has fixed {fixed.value} Vedha in the selected source profile",
+                f"{body} has fixed {'/'.join(item.value for item in fixed)} Vedha "
+                "in the selected source profile",
             )
         if body not in self.profile.variable_bodies:
             raise ValueError(f"body is outside the certified Vedha profile: {body}")
@@ -728,7 +742,7 @@ class VedhaGuidanceEngine:
                 "automatic direct-speed thresholds are not certified"
             )
         return (
-            self.profile.motion_to_direction[supplied_motion],
+            (self.profile.motion_to_direction[supplied_motion],),
             supplied_motion,
             f"{supplied_motion.value} maps to "
             f"{self.profile.motion_to_direction[supplied_motion].value}",
@@ -796,26 +810,41 @@ class VedhaGuidanceEngine:
             f"{dignity.value.lower()} source multiplier",
         )
 
-    def resolve_actor(self, actor: VedhaActor) -> VedhaActorResolution:
+    def resolve_actor_directions(
+        self, actor: VedhaActor
+    ) -> tuple[VedhaActorResolution, ...]:
         body = actor.body.strip().upper()
         source = actor.source_nakshatra.strip().upper()
-        direction, effective_motion, direction_reason = self._resolve_direction(actor)
+        directions, effective_motion, direction_reason = self._resolve_directions(actor)
         nature, nature_reason = self._resolve_nature(actor)
         multiplier, multiplier_status, multiplier_reason = self._resolve_multiplier(
             actor, effective_motion
         )
-        return VedhaActorResolution(
-            body=body,
-            source_nakshatra=source,
-            direction=direction,
-            direction_reason=direction_reason,
-            nature=nature,
-            nature_reason=nature_reason,
-            effective_multiplier=multiplier,
-            multiplier_status=multiplier_status,
-            multiplier_reason=multiplier_reason,
-            targets=self.targets_for_direction(source, direction),
+        return tuple(
+            VedhaActorResolution(
+                body=body,
+                source_nakshatra=source,
+                direction=direction,
+                direction_reason=direction_reason,
+                nature=nature,
+                nature_reason=nature_reason,
+                effective_multiplier=multiplier,
+                multiplier_status=multiplier_status,
+                multiplier_reason=multiplier_reason,
+                targets=self.targets_for_direction(source, direction),
+            )
+            for direction in directions
         )
+
+    def resolve_actor(self, actor: VedhaActor) -> VedhaActorResolution:
+        resolutions = self.resolve_actor_directions(actor)
+        if len(resolutions) != 1:
+            directions = "/".join(item.direction.value for item in resolutions)
+            raise ValueError(
+                f"{actor.body.strip().upper()} resolves to {directions}; "
+                "use resolve_actor_directions() or evaluate() for this source profile"
+            )
+        return resolutions[0]
 
     def _normalize_target_context(
         self, target_context: Mapping[str, Iterable[str]]
@@ -843,7 +872,11 @@ class VedhaGuidanceEngine:
         target_context: Mapping[str, Iterable[str]],
     ) -> VedhaGuidanceReport:
         context = self._normalize_target_context(target_context)
-        resolutions = tuple(self.resolve_actor(actor) for actor in actors)
+        resolutions = tuple(
+            resolution
+            for actor in actors
+            for resolution in self.resolve_actor_directions(actor)
+        )
         if not resolutions:
             raise ValueError("at least one Vedha actor is required")
 

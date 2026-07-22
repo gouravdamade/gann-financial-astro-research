@@ -13,7 +13,8 @@ The machine-readable register is `configs/sbc/sources.yaml`.
 | Phaladeepika 1937 SBC editor supplement | Editor-supplied Horaratna extract/free rendering | Rotation-normalized 81-cell topology, construction text, letter witness, worked standard Vedha examples, nature rules, and modifiers |
 | Sanjay Rath, Crux, Figure 1.2 | Modern secondary commentary | Figure-relative 81-cell coordinate frame and letter-glyph comparison |
 | Sanjay Rath, Crux, printed page 11 | Modern secondary commentary | Independent motion-class comparison only |
-| Trailokya Dipika 1972, Pt. Mithalal Vyas | Pending traditional candidate with lawful retail listing | Acquisition lead only; no executable use |
+| Trailokya Dipika 1972 original scan, SHA-256 `1EF82899...` | Sanskrit compilation, Hindi commentary, and practical introduction | Complete 118-page private scan; narrow Vedha pages certified for an explicit guidance-only profile |
+| Trailokya Dipika 1972 OCR companion, SHA-256 `7F220E0F...` | Derivative OCR navigation layer | Search and translation aid only; page images and original scan control citations |
 | Complete Agarwal edition | Pending modern candidate | Still required for whole-book and missing-page certification; no executable use |
 | Agarwal image scan, SHA-256 `5644DFC4...` | Incomplete modern-practitioner scan | Page-image research only; eight printed pages are missing and no edition imprint is present |
 | Agarwal financial chapter, printed pages 180-194 | Intact chapter inside incomplete scan | Private opt-in LLM hypothesis reference only; no doctrine, Auto Suggest, live inference, or execution use |
@@ -53,3 +54,18 @@ retrieved only when a question explicitly asks for Agarwal, Sarvatobhadra, or
 financial/share-market hypotheses. Its claims remain modern practitioner
 hypotheses for falsification and cannot affect deterministic calculations,
 official ML notes, Auto Suggest, live inference, validation ledgers, or orders.
+
+## Trailokya Dipika Acquisition Audit
+
+The 118-page original scan and matching 118-page OCR companion were acquired
+and aligned on 2026-07-23. PDF pages 20-21, printed pages 4-5, visibly support a
+source-specific rule: Sun, Moon, Rahu, and Ketu cast all three Vedha directions,
+whereas the existing Phaladeepika-editor profile gives them single fixed rays.
+Both profiles are retained and must be selected explicitly.
+
+The OCR companion is not an independent witness. It is used only for search and
+draft translation. The page images remain authoritative. The Arghya chapter on
+PDF pages 92-108 is materially relevant to commodity prices, but its Viswa
+tables and twenty-part price conversion are not yet certified and cannot affect
+financial labels or trades. See
+`docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md`.

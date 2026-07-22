@@ -1,0 +1,118 @@
+schema_version: 1
+vedha_profile_id: trailokya_dipika_1972_vedha_guidance_v1
+grid_profile_id: sbc_81_rotation_normalized_partial_v1
+status: source_profiled_figure_relative_guidance_not_financially_validated
+authority: trailokya_dipika_1972_sanskrit_hindi_commentary_cross_checked_with_certified_board_fixture
+selection_policy: EXPLICIT_ONLY
+compile_enabled: true
+citations:
+  - source_id: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+    locator: PDF pages 20-21; printed pages 4-5; verses 12-17
+    rule_scope: variable-planet motion directions, three fixed directions for Sun Moon Rahu Ketu, and side/front ray extent
+  - source_id: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+    locator: PDF pages 9-11; practical Hindi introduction
+    rule_scope: 81-cell board, five target classes, planet nature, and practical Vedha summary
+  - source_id: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT
+    locator: PDF page 349; printed page 312
+    rule_scope: rotation-normalized board-ray worked fixtures used only to verify the shared 81-cell geometry
+target_layers:
+  - NAKSHATRA
+  - VOWEL
+  - NAME_INITIAL
+  - RASHI
+  - TITHI_GROUP
+direction_geometry:
+  LEFT: INWARD_PLUS_FIGURE_LEFT_DIAGONAL
+  FRONT: OPPOSITE_OUTER_NAKSHATRA_ONLY
+  RIGHT: INWARD_PLUS_FIGURE_RIGHT_DIAGONAL
+motion_rules:
+  fixed_directions:
+    SUN: [LEFT, FRONT, RIGHT]
+    MOON: [LEFT, FRONT, RIGHT]
+    RAHU: [LEFT, FRONT, RIGHT]
+    KETU: [LEFT, FRONT, RIGHT]
+  variable_bodies:
+    - MARS
+    - MERCURY
+    - JUPITER
+    - VENUS
+    - SATURN
+  motion_to_direction:
+    DIRECT_SWIFT: LEFT
+    MEAN: FRONT
+    RETROGRADE: RIGHT
+nature_rules:
+  natural_benefics:
+    - JUPITER
+    - VENUS
+  natural_malefics:
+    - SATURN
+    - SUN
+    - RAHU
+    - KETU
+    - MARS
+  conditional_bodies:
+    - MERCURY
+    - MOON
+guidance_model:
+  model_id: EXPERIMENTAL_NORMALIZED_GUIDANCE_V1
+  base_evidence_unit: 1.0
+  benefic_sign: 1.0
+  malefic_sign: -1.0
+  conditional_sign: null
+  modifiers:
+    ORDINARY: 1.0
+    RETROGRADE: 2.0
+    EXALTED: 3.0
+    DEBILITATED: 0.5
+  modifier_combination_policy: BLOCK_RETROGRADE_WITH_NON_ORDINARY_DIGNITY
+  financial_validation_status: NOT_VALIDATED
+  guidance_only: true
+worked_examples:
+  - source_nakshatra: KRITTIKA
+    locator: Shared board-ray fixture; Phaladeepika editor supplement PDF page 349
+    expected_targets:
+      - NAKSHATRA:BHARANI
+      - NAME_INITIAL:A
+      - RASHI:VRISHABHA
+      - TITHI_GROUP:NANDA
+      - TITHI_GROUP:BHADRA
+      - RASHI:TULA
+      - NAME_INITIAL:TA
+      - NAKSHATRA:VISHAKHA
+      - NAKSHATRA:SHRAVANA
+  - source_nakshatra: ROHINI
+    locator: Shared board-ray fixture; Phaladeepika editor supplement PDF page 349
+    expected_targets:
+      - VOWEL:U
+      - NAKSHATRA:ASHWINI
+      - NAME_INITIAL:VA
+      - RASHI:MITHUNA
+      - VOWEL:AU
+      - RASHI:KANYA
+      - NAME_INITIAL:RA
+      - NAKSHATRA:SWATI
+      - NAKSHATRA:ABHIJIT
+  - source_nakshatra: MRIGASHIRA
+    locator: Shared board-ray fixture; Phaladeepika editor supplement PDF page 349
+    expected_targets:
+      - RASHI:KARKA
+      - NAME_INITIAL:KA
+      - RASHI:SIMHA
+      - NAME_INITIAL:PA
+      - NAKSHATRA:CHITRA
+      - NAKSHATRA:REVATI
+      - NAME_INITIAL:LA
+      - NAME_INITIAL:A
+      - NAKSHATRA:UTTARA_ASHADHA
+blocked_capabilities:
+  - AUTOMATIC_DIRECT_SPEED_CLASSIFICATION
+  - SPECIAL_CORNER_JUNCTION_RULES
+  - ASSOCIATION_NATURE_INFERENCE
+  - MODIFIER_STACKING
+  - CLASSICAL_NATAL_SEVERITY_TRANSLATION
+  - ARGHYA_PRICE_CONVERSION
+  - FINANCIAL_LABELS
+  - TRADES
+  - MT5_EXECUTION
+notes: This profile preserves the Trailokya Dipika witness that Sun, Moon, Rahu, and Ketu cast all three Vedha directions. It does not replace the Phaladeepika-editor profile. Shared board-ray examples validate only geometry. Arghya price conversion remains blocked until its tables and arithmetic are independently transcribed and certified.

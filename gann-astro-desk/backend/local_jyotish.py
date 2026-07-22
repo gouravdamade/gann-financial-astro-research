@@ -41,6 +41,9 @@ HYPOTHESIS_REFERENCE_SOURCES = {
     "GANN_TUNNEL_1927",
     "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
 }
+TRANSLATED_SOURCE_REFERENCE_SOURCES = {
+    "TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723",
+}
 HYPOTHESIS_QUERY_TERMS = {
     "agarwal",
     "bullish market",
@@ -56,6 +59,16 @@ HYPOTHESIS_QUERY_TERMS = {
     "share market",
     "tunnel thru the air",
     "tunnel through the air",
+}
+TRANSLATED_SOURCE_QUERY_TERMS = {
+    "argha",
+    "arghya",
+    "brihad-arghamartanda",
+    "mithalal vyas",
+    "trailokya",
+    "trailokya dipika",
+    "twenty-part price",
+    "viswa",
 }
 
 
@@ -81,12 +94,19 @@ def _source_layer(source_id: str) -> str:
         return "source_provenance"
     if normalized in HYPOTHESIS_REFERENCE_SOURCES:
         return "hypothesis_reference"
+    if normalized in TRANSLATED_SOURCE_REFERENCE_SOURCES:
+        return "translated_source_reference"
     return "unclassified_reference"
 
 
 def _query_requests_hypotheses(query: str) -> bool:
     normalized = " ".join(str(query or "").lower().split())
     return any(term in normalized for term in HYPOTHESIS_QUERY_TERMS)
+
+
+def _query_requests_translated_sources(query: str) -> bool:
+    normalized = " ".join(str(query or "").lower().split())
+    return any(term in normalized for term in TRANSLATED_SOURCE_QUERY_TERMS)
 
 
 class LocalJyotishService:
@@ -255,7 +275,7 @@ class LocalJyotishService:
             "model": selected or self.preferred_model,
             "availableModels": models,
             "corpusChunks": len(chunks),
-            "retrievalPolicy": "provenance_classical_commentary_hypothesis_opt_in_v3",
+            "retrievalPolicy": "provenance_classical_commentary_hypothesis_translation_opt_in_v4",
             "layerCounts": dict(sorted(layer_counts.items())),
             "corpusPath": str(self.corpus_path),
             "error": error,
@@ -304,6 +324,7 @@ class LocalJyotishService:
                 "Classical-doctrine passages, secondary commentary, source-provenance audits, hypothesis references, and local-research memory are different evidence layers.",
                 "A source-provenance passage controls attribution and recension warnings; do not treat it as root doctrine.",
                 "A hypothesis-reference passage is unverified research material. It may suggest a test, but it is never doctrine, proof, certification, ground truth, or permission to alter deterministic output.",
+                "A translated-source-reference passage is a page-provenanced workspace rendering, not a critical edition. Preserve its page citation, attribution layer, and stated uncertainty; never use it to fill an untranslated table or alter deterministic output.",
                 "Never present a local note, forum claim, or literary Gann passage as classical authority.",
                 "Raw output is an untrusted draft. It must not be promoted to an official ML note without deterministic verification and Codex/human review.",
                 "Return concise sections: Observed, Deterministic evidence, Jyotish hypothesis, ML features to test, Uncertainty.",
@@ -371,6 +392,28 @@ class LocalJyotishService:
                         "Draft overstates a hypothesis-reference source as doctrine, proof, certification, or ground truth."
                     )
                     break
+        translated_sources = [
+            item for item in sources if item.get("layer") == "translated_source_reference"
+        ]
+        if translated_sources:
+            translated_ids = {str(item["chunkId"]) for item in translated_sources}
+            for sentence in re.split(r"(?<=[.!?])\s+|\n+", text):
+                sentence_ids = set(re.findall(r"\[([A-Za-z0-9_.:-]+)\]", sentence))
+                if not (sentence_ids & translated_ids):
+                    continue
+                if re.search(
+                    r"\b(critical edition|certified translation|complete translation|proven|ground\s+truth|execution-ready)\b",
+                    sentence,
+                    re.I,
+                ) and not re.search(
+                    r"\b(not|never|incomplete|research|uncertified|draft)\b",
+                    sentence,
+                    re.I,
+                ):
+                    issues.append(
+                        "Draft overstates a translated research reference as a certified or complete source."
+                    )
+                    break
         if "shadbala" in text.lower() and "shadbala" not in deterministic_keys:
             issues.append("Draft discusses Shadbala although this occurrence exposes no deterministic Shadbala field.")
         if "drik bala" in text.lower() and "drik" not in deterministic_keys:
@@ -425,6 +468,11 @@ class LocalJyotishService:
             if _query_requests_hypotheses(normalized_question)
             else []
         )
+        translated_sources = (
+            self.retrieve(query, limit=3, layer="translated_source_reference")
+            if _query_requests_translated_sources(normalized_question)
+            else []
+        )
         local_candidates = self.retrieve(query, limit=10, layer="local_research")
         family_needles = {
             str(event.get("familyKey") or "").upper(),
@@ -439,6 +487,7 @@ class LocalJyotishService:
             *doctrine_sources,
             *commentary_sources,
             *hypothesis_sources,
+            *translated_sources,
             *local_sources,
         ]
         if self.diagnostics is not None:

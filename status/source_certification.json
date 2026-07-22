@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-22T18:10:00Z",
+  "asOfUtc": "2026-07-22T19:53:04Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -52,18 +52,20 @@
     },
     {
       "certificationId": "trailokya_dipika_profile",
-      "status": "blocked_pending_acquisition",
+      "status": "page_certified_partial_profile_execution_locked",
       "sourceCertified": false,
-      "summary": "A lawful acquisition route is recorded, but no copy or page-level certification exists.",
+      "summary": "The complete 118-page scan and aligned OCR companion are acquired. Printed pages 4-5 certify a source-specific guidance profile with all three directions for Sun, Moon, Rahu, and Ketu; the Arghya price arithmetic remains blocked pending table transcription and independent validation.",
       "evidenceRefs": [
-        "configs/sbc/sources.yaml"
+        "configs/sbc/sources.yaml",
+        "configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml",
+        "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md"
       ]
     },
     {
       "certificationId": "chart_conditioned_aspect_polarity_v0",
       "status": "implemented_execution_locked_pending_sources",
       "sourceCertified": false,
-      "summary": "Research mechanics are tested, but the missing Agarwal and Trailokya profiles remain blocked.",
+      "summary": "Research mechanics are tested. A narrow Trailokya Vedha profile now exists, but its financial Arghya layer and the complete Agarwal profile remain blocked; a separate purged validation gate is still required.",
       "evidenceRefs": [
         "chart_conditioned_aspects_milestone1_20260722.md"
       ]

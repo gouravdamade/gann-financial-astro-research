@@ -20,6 +20,7 @@ from sbc.vedha import (
 
 
 PROFILE_ID = "phaladeepika_editor_vedha_guidance_v1"
+TRAILOKYA_PROFILE_ID = "trailokya_dipika_1972_vedha_guidance_v1"
 
 
 def _keys(engine: VedhaGuidanceEngine, source: str, direction: str) -> tuple[str, ...]:
@@ -121,6 +122,42 @@ def test_motion_rules_are_explicit_and_uncertified_speed_inference_fails_closed(
         engine.resolve_actor(VedhaActor("JUPITER", "KRITTIKA"))
     with pytest.raises(ValueError, match="outside the certified Vedha profile"):
         engine.resolve_actor(VedhaActor("NEPTUNE", "KRITTIKA", MotionClass.MEAN))
+
+
+def test_trailokya_profile_preserves_all_three_fixed_body_directions() -> None:
+    engine = VedhaGuidanceEngine(TRAILOKYA_PROFILE_ID)
+
+    resolutions = engine.resolve_actor_directions(
+        VedhaActor("SUN", "KRITTIKA", nature=PlanetNature.MALEFIC)
+    )
+
+    assert tuple(item.direction for item in resolutions) == (
+        VedhaDirection.LEFT,
+        VedhaDirection.FRONT,
+        VedhaDirection.RIGHT,
+    )
+    assert sum(len(item.targets) for item in resolutions) == 9
+    assert {
+        target.target_key for item in resolutions for target in item.targets
+    } == {
+        target.target_key for target in engine.all_direction_targets("KRITTIKA")
+    }
+    with pytest.raises(ValueError, match="resolves to LEFT/FRONT/RIGHT"):
+        engine.resolve_actor(VedhaActor("SUN", "KRITTIKA"))
+
+
+def test_trailokya_all_direction_fixed_body_is_scored_once_per_matched_cell() -> None:
+    engine = VedhaGuidanceEngine(TRAILOKYA_PROFILE_ID)
+    report = engine.evaluate(
+        (VedhaActor("SUN", "KRITTIKA"),),
+        {"NAKSHATRA": {"BHARANI", "SHRAVANA", "VISHAKHA"}},
+    )
+
+    assert len(report.actor_resolutions) == 3
+    assert report.matched_target_count == 3
+    assert report.adverse_guidance_units == -3.0
+    assert report.guidance_band == "ADVERSE_EVIDENCE_DOMINANT"
+    assert "ARGHYA_PRICE_CONVERSION" in report.blocked_capabilities
 
 
 def test_guidance_ledger_keeps_favorable_adverse_and_net_units_visible() -> None:

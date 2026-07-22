@@ -1,8 +1,58 @@
 # Current Project Handoff
 
-Last updated: 2026-07-22 23:30 IST
+Last updated: 2026-07-23 01:27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Trailokya Dipika Source Profile and Stage 1 Translation)
+
+- Acquired and audited the user-supplied 1972 Tej Kumar Book Depot edition of
+  *Sarvatobhadra Chakra* with *Trailokya Dipika* commentary by Pt. Mithalal
+  Vyas. The original image scan and OCR companion both contain 118 aligned
+  pages. The original is the citation authority; the OCR derivative is search
+  and translation navigation only.
+- Private archive files:
+  - `D:\GannFinancialAstro\sources\private\TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN_1EF82899.pdf`
+    (`SHA-256 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194`);
+  - `D:\GannFinancialAstro\sources\private\TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION_7F220E0F.pdf`
+    (`SHA-256 7F220E0FA4523DE4624449E72B62248434760AF0E3C842844ADAEBB3CBB13E9B`).
+- Added explicit source profile
+  `trailokya_dipika_1972_vedha_guidance_v1`. PDF pages 20-21, printed pages
+  4-5, visibly support all three Vedha directions for Sun, Moon, Rahu, and
+  Ketu. The existing Phaladeepika-editor single-direction profile is unchanged;
+  selection remains explicit and both profiles retain financial/trade locks.
+- Extended the Vedha engine to support source profiles with one or several
+  fixed rays. Single-ray callers remain backward compatible; multi-ray callers
+  use `resolve_actor_directions()` or `evaluate()`.
+- Added a private page-provenanced Stage 1 English research translation at
+  `D:\GannFinancialAstro\sources\private\derived\TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723.md`.
+  It covers edition/source layers, practical board rules, verses 12-17, and an
+  initial map of the Arghya chapter. It is explicitly incomplete and not a
+  critical translation.
+- The local Jyotish corpus now indexes the Stage 1 file only as opt-in
+  `translated_source_reference` material. Ordinary case drafts cannot retrieve
+  it. Trailokya/Arghya-specific questions may retrieve it, and the verifier
+  rejects claims that it is complete, certified, proven, or execution-ready.
+- The financial Arghya chapter is genuinely relevant: it contains planetary
+  lord/strength selection, benefic/malefic Viswa tables, a twenty-part price
+  conversion, and abundance-versus-scarcity price logic. Numeric conversion is
+  withheld because the tables and sign direction have not yet passed bilingual
+  double transcription and independent worked-example validation.
+- Important semantic guardrail: in the commodity discussion, favorable or
+  benefic influence can mean abundance and therefore lower price, while adverse
+  influence can mean scarcity and higher price. Favorable must never be mapped
+  mechanically to bullish.
+- Verification passes: 69 SBC/corpus/local-Jyotish tests; all focused legacy and
+  new-profile tests pass. Generated corpus/index files remain local and ignored.
+- Full source audit:
+  `docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_012900_trailokya_dipika_source_profile`.
+- This source milestone is not yet in a rebuilt Windows installer. Current
+  packaged candidate remains 0.10.21.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-22 (Live SR Lab and Agarwal Financial Hypothesis Source 0.10.21)
 

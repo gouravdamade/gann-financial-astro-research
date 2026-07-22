@@ -73,6 +73,12 @@ class LocalJyotishTests(unittest.TestCase):
                 "title": "Astrological Norms for Financial Gain in Share Market",
                 "text": "A modern practitioner proposes bullish and bearish share-market combinations for prospective testing only.",
             },
+            {
+                "source_id": "TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723",
+                "chunk_id": "TRAILOKYA-STAGE1-0001",
+                "title": "Trailokya Dipika Stage 1 English Research Translation",
+                "text": "PDF page 21 says Sun Moon Rahu and Ketu cast all three Vedha directions. This is an incomplete page-provenanced workspace research rendering.",
+            },
         ]
         path.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
         return path
@@ -148,6 +154,10 @@ class LocalJyotishTests(unittest.TestCase):
             self.assertFalse(result["guardrails"]["executionAllowed"])
             self.assertTrue(any(item["chunkId"] == "BPHS-0123" for item in result["citations"]))
             self.assertFalse(any(item["layer"] == "hypothesis_reference" for item in result["citations"]))
+            self.assertFalse(any(
+                item["layer"] == "translated_source_reference"
+                for item in result["citations"]
+            ))
 
     def test_gann_hypothesis_is_opt_in_and_overclaim_requires_review(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -179,6 +189,48 @@ class LocalJyotishTests(unittest.TestCase):
             self.assertEqual(result["verifier"]["status"], "review_required")
             self.assertTrue(any(
                 "hypothesis-reference" in issue for issue in result["verifier"]["issues"]
+            ))
+
+    def test_trailokya_translation_is_explicit_opt_in_and_overclaim_is_blocked(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            service = LocalJyotishService(
+                FakeRepository(root),
+                corpus_path=self.write_corpus(root),
+                preferred_model="gemma4:12b",
+            )
+
+            ordinary = service.retrieve(
+                "Explain Saturn square Moon and Shadbala.",
+                layer="translated_source_reference",
+            )
+            self.assertTrue(any(
+                item["chunkId"] == "TRAILOKYA-STAGE1-0001" for item in ordinary
+            ))
+
+            def fake_request(path: str, **_kwargs):
+                if path == "/api/tags":
+                    return {"models": [{"name": "gemma4:12b"}]}
+                return {
+                    "response": (
+                        "This is a certified complete translation and proven ground truth "
+                        "[TRAILOKYA-STAGE1-0001]."
+                    )
+                }
+
+            with patch.object(service, "_request_json", side_effect=fake_request):
+                result = service.analyze(
+                    "event-1",
+                    "What does Trailokya Dipika say about three-direction Vedha?",
+                )
+            self.assertTrue(any(
+                item["layer"] == "translated_source_reference"
+                for item in result["citations"]
+            ))
+            self.assertEqual(result["verifier"]["status"], "review_required")
+            self.assertTrue(any(
+                "translated research reference" in issue
+                for issue in result["verifier"]["issues"]
             ))
 
     def test_health_is_offline_when_runtime_is_unavailable(self) -> None:

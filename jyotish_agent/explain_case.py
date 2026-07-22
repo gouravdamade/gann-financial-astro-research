@@ -38,6 +38,9 @@ HYPOTHESIS_REFERENCE_IDS = {
     "GANN_TUNNEL_1927",
     "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
 }
+TRANSLATED_SOURCE_REFERENCE_IDS = {
+    "TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723",
+}
 HYPOTHESIS_QUERY_TERMS = {
     "agarwal",
     "bullish market",
@@ -54,6 +57,16 @@ HYPOTHESIS_QUERY_TERMS = {
     "tunnel thru the air",
     "tunnel through the air",
 }
+TRANSLATED_SOURCE_QUERY_TERMS = {
+    "argha",
+    "arghya",
+    "brihad-arghamartanda",
+    "mithalal vyas",
+    "trailokya",
+    "trailokya dipika",
+    "twenty-part price",
+    "viswa",
+}
 
 
 def source_layer(source_id: str) -> str:
@@ -64,6 +77,8 @@ def source_layer(source_id: str) -> str:
         return "source_provenance"
     if normalized in HYPOTHESIS_REFERENCE_IDS:
         return "hypothesis_reference"
+    if normalized in TRANSLATED_SOURCE_REFERENCE_IDS:
+        return "translated_source_reference"
     if normalized in {"SHADBALA_JAYA", "STRICT_VEDIC_LLM", "SANJAY_RATH_CRUX_1998"}:
         return "reference_commentary"
     return "classical_or_unclassified_reference"
@@ -72,6 +87,11 @@ def source_layer(source_id: str) -> str:
 def question_requests_hypotheses(question: str) -> bool:
     normalized = " ".join(str(question or "").lower().split())
     return any(term in normalized for term in HYPOTHESIS_QUERY_TERMS)
+
+
+def question_requests_translated_sources(question: str) -> bool:
+    normalized = " ".join(str(question or "").lower().split())
+    return any(term in normalized for term in TRANSLATED_SOURCE_QUERY_TERMS)
 
 
 ROOT = Path(__file__).resolve().parent
@@ -312,6 +332,8 @@ Rules:
 - Source-provenance passages control attribution and recension warnings; they are not root doctrine.
 - Hypothesis-reference passages are unverified research material, never doctrine, proof, certification, or ground truth. They may only suggest a test.
 - Never let a hypothesis-reference passage alter deterministic evidence, Auto Suggest, or an official ML note.
+- Translated-source-reference passages are page-provenanced workspace research renderings, not critical editions or complete translations. Preserve their page and uncertainty labels.
+- Never fill an untranslated table or change deterministic output from a translated-source-reference passage.
 - Say when a citation is only a local note or when doctrine citation is missing.
 - Output practical ML features/rules to test, not trading advice.
 - Keep the answer about the exact case in the evidence. Do not drift to generic planets or unrelated aspects.
@@ -595,7 +617,11 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
     case_summary = compact_case_summary(packet)
     retrieval_query = case_summary + "\n" + question
     structured_sources = {"CURRENT_RULE_NOTES", "TOUCH_LOG"}
-    excluded_by_default = structured_sources | HYPOTHESIS_REFERENCE_IDS
+    excluded_by_default = (
+        structured_sources
+        | HYPOTHESIS_REFERENCE_IDS
+        | TRANSLATED_SOURCE_REFERENCE_IDS
+    )
     retrieved = [
         *retrieve(retrieval_query, top_k=4, source_ids=structured_sources),
         *retrieve(retrieval_query, top_k=4, exclude_source_ids=excluded_by_default),
@@ -603,6 +629,14 @@ def explain(case_id: int, question: str, db_path: Path, out_dir: Path, use_llm: 
     if question_requests_hypotheses(question):
         retrieved.extend(
             retrieve(retrieval_query, top_k=2, source_ids=HYPOTHESIS_REFERENCE_IDS)
+        )
+    if question_requests_translated_sources(question):
+        retrieved.extend(
+            retrieve(
+                retrieval_query,
+                top_k=3,
+                source_ids=TRANSLATED_SOURCE_REFERENCE_IDS,
+            )
         )
     prompt = build_prompt(case_summary, retrieved, question)
     llm_text = ollama_generate(prompt) if use_llm else None
