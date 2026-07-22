@@ -35,6 +35,7 @@ except ImportError:  # Direct script execution from jyotish_agent/.
 SOURCE_PROVENANCE_IDS = {"CHAKRA_DOCTRINE_AUDIT"}
 HYPOTHESIS_REFERENCE_IDS = {
     "AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722",
+    "KRISHNA_RAU_CHOUDHARY_SBC_FINANCIAL_HYPOTHESIS_2013",
     "GANN_TUNNEL_1927",
     "FINANCIAL_ASTRO_FORUM_HYPOTHESES",
 }
@@ -79,7 +80,12 @@ def source_layer(source_id: str) -> str:
         return "hypothesis_reference"
     if normalized in TRANSLATED_SOURCE_REFERENCE_IDS:
         return "translated_source_reference"
-    if normalized in {"SHADBALA_JAYA", "STRICT_VEDIC_LLM", "SANJAY_RATH_CRUX_1998"}:
+    if normalized in {
+        "SHADBALA_JAYA",
+        "STRICT_VEDIC_LLM",
+        "SANJAY_RATH_CRUX_1998",
+        "PVR_NARASIMHA_RAO_SBC_ARTICLE_2000",
+    }:
         return "reference_commentary"
     return "classical_or_unclassified_reference"
 

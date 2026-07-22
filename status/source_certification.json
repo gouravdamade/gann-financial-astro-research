@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-22T19:53:04Z",
+  "asOfUtc": "2026-07-22T20:29:29Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -54,11 +54,23 @@
       "certificationId": "trailokya_dipika_profile",
       "status": "page_certified_partial_profile_execution_locked",
       "sourceCertified": false,
-      "summary": "The complete 118-page scan and aligned OCR companion are acquired. Printed pages 4-5 certify a source-specific guidance profile with all three directions for Sun, Moon, Rahu, and Ketu; the Arghya price arithmetic remains blocked pending table transcription and independent validation.",
+      "summary": "The complete 118-page scan and aligned OCR companion are acquired. Printed pages 4-5 certify a source-specific guidance profile with all three directions for Sun, Moon, Rahu, and Ketu. A 2016 Khemraj reprint cross-checks difficult readings but is the same textual lineage, not an independent witness; Arghya price arithmetic remains blocked pending double transcription and independent validation.",
       "evidenceRefs": [
         "configs/sbc/sources.yaml",
         "configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml",
-        "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md"
+        "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md",
+        "docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md"
+      ]
+    },
+    {
+      "certificationId": "sbc_additional_private_source_cross_reference",
+      "status": "bounded_layers_integrated_no_executable_upgrade",
+      "sourceCertified": false,
+      "summary": "Four additional private files were classified without double counting: the Khemraj file is a same-lineage Trailokya reprint, the unattributed introduction is a Phaladeepika-derived duplicate and is excluded, the P.V.R. article is modern reference commentary, and selected Krishna Rau/Choudhary financial pages are an opt-in hypothesis reference. No deterministic SBC or trading capability is upgraded.",
+      "evidenceRefs": [
+        "docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md",
+        "docs/sbc/SOURCE_REGISTER.md",
+        "configs/sbc/sources.yaml"
       ]
     },
     {

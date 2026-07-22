@@ -100,6 +100,61 @@ sources:
     source_url: null
     notes: All 118 page images align with the original scan. The text layer contains 131071 extracted characters, including 99610 Devanagari characters, across 113 pages. It is used only for search and translation navigation; the original page images control citations and disputed readings.
 
+  - source_id: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+    title: Sarvatobhadra Chakra with Trailokya Dipika commentary, Khemraj 2016 reprint
+    authority: same_work_later_reprint
+    content_layer: later_reprint_of_mithalal_vyas_sanskrit_hindi_compilation
+    status: locally_acquired_cross_edition_reading_witness_not_independent_doctrine
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+    registry_ref: D:/GannFinancialAstro/sources/private/TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT_19CC2387.pdf
+    source_url: null
+    notes: The 100-page OCR PDF identifies a June 2016 Khemraj Shri Krishnadas edition of the same Mithalal Vyas work. Title, chapter sequence, opening Vedha verses and later Arghya material substantially overlap the 1972 edition. It may resolve cross-edition readings but cannot count as an independent doctrinal witness or independently certify the price arithmetic.
+
+  - source_id: PVR_NARASIMHA_RAO_SBC_ARTICLE_2000
+    title: Sarvatobhadra Chakra article extracted from Vedic Astrology - An Integrated Approach
+    authority: modern_secondary_commentary
+    content_layer: explicit_three_line_vedha_interpretation_and_application_examples
+    status: locally_acquired_page_rendered_reference_commentary_execution_locked
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: D2D03024EAD7ECD70A67A7A3DD981C947B75943BB888C879B46571223D8CE529
+    registry_ref: D:/GannFinancialAstro/sources/private/PVR_NARASIMHA_RAO_SBC_ARTICLE_D2D03024.doc
+    source_url: null
+    notes: The four-page article identifies P.V.R. Narasimha Rao and says it is extracted from the December 2000 Sagar Publications book. It teaches one inward line plus two diagonals for any transiting planet and gives retrospective natal examples. This differs from both existing motion-profiled Vedha sources, so it is reference commentary only and does not create an executable profile.
+
+  - source_id: KRISHNA_RAU_CHOUDHARY_SBC_CHISTABO_2013
+    title: Varaha Mihira's Sarvatobhadra Chakra, Krishna Rau and Choudhary, ChiStaBo 2013 edition
+    authority: edited_derivative_transcription
+    content_layer: edited_reformat_of_1962_booklet_with_editor_additions
+    status: locally_acquired_derivative_comparison_only_not_doctrinal
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 786A20415DAFC791CA7374C33458B30465EA5B93DD7F2856B1969FB7374A8F6A
+    registry_ref: D:/GannFinancialAstro/sources/private/KRISHNA_RAU_CHOUDHARY_SBC_CHISTABO_2013_786A2041.pdf
+    source_url: null
+    notes: The 43-page Word-generated PDF identifies N.N. Krishna Rau and V.B. Choudhary, a 20 January 1962 Bombay booklet context, and ChiStaBo editing in A.D. 2013. It says editor additions are bracketed. It is useful for navigation and comparison but is not a root or independent classical witness.
+
+  - source_id: KRISHNA_RAU_CHOUDHARY_SBC_FINANCIAL_HYPOTHESIS_2013
+    title: Sarvatobhadra commodity-price method and iron-steel example, bounded pages
+    authority: modern_practitioner_hypothesis_reference
+    content_layer: commodity_price_method_reported_modifications_and_retrospective_example
+    status: selected_pages_visually_checked_private_hypothesis_only
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 786A20415DAFC791CA7374C33458B30465EA5B93DD7F2856B1969FB7374A8F6A
+    registry_ref: D:/GannFinancialAstro/sources/private/KRISHNA_RAU_CHOUDHARY_SBC_CHISTABO_2013_786A2041.pdf#pdf-pages-24-27-and-34
+    source_url: null
+    notes: PDF pages 24-27 and 34 describe commodity categories, dignity and relationship weights, a one-degree aspect condition, division of price into twenty units, and a retrospective 1961-62 iron-steel example. The text labels several rules as local modifications said to be used by astrologers. These pages are opt-in hypothesis material only and cannot affect doctrine, deterministic scoring, Auto Suggest, live inference, official notes, validation or execution.
+
+  - source_id: SBC_INTRODUCTION_UNATTRIBUTED_COMPILATION_2010
+    title: Introduction to Sarvatobhadra Chakra, unattributed 2010 compilation
+    authority: unattributed_secondary_compilation
+    content_layer: introductory_pages_plus_reproduced_phaladeepika_editor_supplement
+    status: locally_acquired_duplicate_comparison_only_excluded_from_corpus
+    rights_status: user_provided_private_research_copy_no_redistribution
+    sha256: 47D8F8E3DB687435238EADB5C7CC6B729E91C601E9927155D7A38AC112AA68CD
+    registry_ref: D:/GannFinancialAstro/sources/private/SBC_INTRODUCTION_UNATTRIBUTED_COMPILATION_47D8F8E3.pdf
+    source_url: null
+    notes: The 17-page file has no credited author or edition. Pages 3-17 reproduce substantial portions of Phaladeepika chapter 26 and the same editor-supplied SBC supplement already page-provenanced in the 1937 edition. It is registered for duplicate detection only and is deliberately not indexed, preventing double counting.
+
   - source_id: AGARWAL_2000_SBC_PENDING
     title: Complete published edition of Mystics of Sarvato Bhadra Chakra and Astrological Predictions
     authority: modern_practitioner_source_candidate

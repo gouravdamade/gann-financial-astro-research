@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-22T19:53:04Z",
+  "asOfUtc": "2026-07-22T20:29:29Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -156,9 +156,10 @@
         "sourceCertified": "partial",
         "financiallyValidated": "no"
       },
-      "statusDetail": "Original and OCR-companion 118-page files are aligned. The explicit profile preserves the source's all-three fixed-body Vedha rule, and the Stage 1 English layer is opt-in only. Arghya tables, price conversion, financial labels and execution remain blocked.",
+      "statusDetail": "Original and OCR-companion 118-page files are aligned. The explicit profile preserves the source's all-three fixed-body Vedha rule, and the Stage 1 English layer is opt-in only. A 2016 same-lineage Khemraj reprint is available as a reading witness but does not independently certify doctrine. Arghya tables, price conversion, financial labels and execution remain blocked.",
       "evidenceRefs": [
         "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md",
+        "docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md",
         "configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml",
         "status/source_certification.json"
       ],

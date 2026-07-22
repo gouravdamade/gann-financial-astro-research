@@ -15,6 +15,10 @@ The machine-readable register is `configs/sbc/sources.yaml`.
 | Sanjay Rath, Crux, printed page 11 | Modern secondary commentary | Independent motion-class comparison only |
 | Trailokya Dipika 1972 original scan, SHA-256 `1EF82899...` | Sanskrit compilation, Hindi commentary, and practical introduction | Complete 118-page private scan; narrow Vedha pages certified for an explicit guidance-only profile |
 | Trailokya Dipika 1972 OCR companion, SHA-256 `7F220E0F...` | Derivative OCR navigation layer | Search and translation aid only; page images and original scan control citations |
+| Trailokya Dipika Khemraj 2016 reprint, SHA-256 `19CC2387...` | Same-work later edition | Cross-edition reading witness only; it is not independent doctrine and does not separately certify Arghya |
+| P.V.R. Narasimha Rao SBC article, SHA-256 `D2D03024...` | Modern secondary commentary | Private page-rendered reference layer; its all-planets three-line interpretation remains non-executable |
+| Krishna Rau/Choudhary, ChiStaBo 2013, SHA-256 `786A2041...` | Edited transcription of a 1962 booklet | Comparison source; selected financial pages are opt-in hypotheses only |
+| Unattributed 2010 introduction, SHA-256 `47D8F8E3...` | Secondary compilation and duplicate text | Registered for duplicate detection; deliberately excluded from the corpus |
 | Complete Agarwal edition | Pending modern candidate | Still required for whole-book and missing-page certification; no executable use |
 | Agarwal image scan, SHA-256 `5644DFC4...` | Incomplete modern-practitioner scan | Page-image research only; eight printed pages are missing and no edition imprint is present |
 | Agarwal financial chapter, printed pages 180-194 | Intact chapter inside incomplete scan | Private opt-in LLM hypothesis reference only; no doctrine, Auto Suggest, live inference, or execution use |
@@ -69,3 +73,15 @@ PDF pages 92-108 is materially relevant to commodity prices, but its Viswa
 tables and twenty-part price conversion are not yet certified and cannot affect
 financial labels or trades. See
 `docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md`.
+
+## Additional Source Cross-reference
+
+Four further files were classified on 2026-07-23. The Khemraj file is a 2016
+reprint of the same Mithalal Vyas work, not an independent authority. The
+unattributed 2010 introduction reproduces substantial portions of the already
+page-provenanced Phaladeepika editor supplement and is not indexed. The P.V.R.
+Narasimha Rao article enters only the `reference_commentary` layer, while PDF
+pages 24-27 and 34 of the ChiStaBo-edited Krishna Rau/Choudhary booklet enter
+only opt-in `hypothesis_reference` retrieval. No deterministic or executable
+rule changed. See
+`docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md`.

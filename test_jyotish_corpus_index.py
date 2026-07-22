@@ -141,6 +141,14 @@ class CorpusChunkingTests(unittest.TestCase):
             source_layer("AGARWAL_FINANCIAL_CHAPTER20_HYPOTHESIS_20260722"),
             "hypothesis_reference",
         )
+        self.assertEqual(
+            source_layer("KRISHNA_RAU_CHOUDHARY_SBC_FINANCIAL_HYPOTHESIS_2013"),
+            "hypothesis_reference",
+        )
+        self.assertEqual(
+            source_layer("PVR_NARASIMHA_RAO_SBC_ARTICLE_2000"),
+            "reference_commentary",
+        )
         self.assertFalse(question_requests_hypotheses("Explain this Moon square recurrence"))
         self.assertTrue(question_requests_hypotheses("Test Gann planetary price lines"))
         self.assertTrue(question_requests_hypotheses("Compare this Sarvatobhadra share market hypothesis"))

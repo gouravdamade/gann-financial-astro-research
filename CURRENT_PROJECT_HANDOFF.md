@@ -1,8 +1,50 @@
 # Current Project Handoff
 
-Last updated: 2026-07-23 01:27 IST
+Last updated: 2026-07-23 02:04 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Additional SBC Source Cross-reference)
+
+- Audited four additional user-supplied Sarvatobhadra files after the 1972
+  *Trailokya Dipika* acquisition. The full classifications and page evidence
+  are recorded in
+  `docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md`.
+- The 100-page June 2016 Khemraj Shri Krishnadas file is a later reprint of the
+  same Pt. Mithalal Vyas *Sarvatobhadra Chakra / Trailokya Dipika* work. It can
+  resolve difficult readings across editions but is not an independent
+  doctrinal vote and does not certify the Arghya arithmetic.
+- The 17-page unattributed 2010 introduction substantially reproduces the
+  already page-provenanced Phaladeepika chapter and editor supplement. It is
+  registered for duplicate detection and deliberately excluded from the local
+  corpus so it cannot inflate confidence through double counting.
+- The P.V.R. Narasimha Rao article identifies itself as an extract from the
+  December 2000 *Vedic Astrology: An Integrated Approach*. It teaches three
+  rays for every planet, unlike both current executable profiles, and is
+  indexed only as `reference_commentary`; it does not create a third profile.
+- The ChiStaBo 2013 Krishna Rau/Choudhary booklet is an edited derivative of a
+  1962 booklet. Only visually checked PDF pages 24-27 and 34, covering the
+  twenty-part commodity-price proposal and retrospective iron/steel example,
+  are indexed as opt-in `hypothesis_reference` material.
+- Private source archives and page-marked derived text remain under
+  `D:\GannFinancialAstro\sources\private`. Generated corpus/index artifacts
+  remain local and uncommitted. The rebuilt corpus contains 5,224 chunks, and
+  smoke retrieval returned P.V.R. only from `reference_commentary` and the
+  bounded financial extract only from `hypothesis_reference`.
+- No deterministic SBC scoring, Vedha profile, Auto Suggest, live inference,
+  official ML-note, validation-ledger, or MT5 execution behavior changed.
+  Trailokya Arghya arithmetic remains blocked pending bilingual double
+  transcription and an independently sourced worked example.
+- Verification passes: source hashes; JSON/YAML/CSV validation; corpus rebuild;
+  retrieval-layer smoke checks; 63 SBC/corpus tests; 6 local-Jyotish tests;
+  and `git diff --check`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_020405_additional_sbc_source_cross_reference`.
+- This source-only milestone is not in a rebuilt Windows installer. The current
+  packaged candidate remains 0.10.21.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-23 (Trailokya Dipika Source Profile and Stage 1 Translation)
 

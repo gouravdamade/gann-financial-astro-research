@@ -79,6 +79,18 @@ class LocalJyotishTests(unittest.TestCase):
                 "title": "Trailokya Dipika Stage 1 English Research Translation",
                 "text": "PDF page 21 says Sun Moon Rahu and Ketu cast all three Vedha directions. This is an incomplete page-provenanced workspace research rendering.",
             },
+            {
+                "source_id": "PVR_NARASIMHA_RAO_SBC_ARTICLE_2000",
+                "chunk_id": "PVR-SBC-0001",
+                "title": "P.V.R. Narasimha Rao Sarvatobhadra commentary",
+                "text": "This modern commentary describes three Vedha lines from a planet's occupied nakshatra and retrospective examples.",
+            },
+            {
+                "source_id": "KRISHNA_RAU_CHOUDHARY_SBC_FINANCIAL_HYPOTHESIS_2013",
+                "chunk_id": "KRC-SBC-FINANCIAL-0001",
+                "title": "Sarvatobhadra commodity-price hypothesis",
+                "text": "An edited modern booklet proposes a twenty-part commodity price method and a retrospective iron-steel example for prospective testing only.",
+            },
         ]
         path.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
         return path
@@ -124,6 +136,22 @@ class LocalJyotishTests(unittest.TestCase):
             )
             self.assertTrue(any(
                 item["chunkId"] == "AGARWAL-FINANCIAL-0001" for item in agarwal
+            ))
+
+            commentary = service.retrieve(
+                "How does P.V.R. Narasimha Rao describe Sarvatobhadra Vedha lines?",
+                layer="reference_commentary",
+            )
+            self.assertTrue(any(
+                item["chunkId"] == "PVR-SBC-0001" for item in commentary
+            ))
+
+            financial = service.retrieve(
+                "Which Sarvatobhadra twenty-part commodity price method is only a hypothesis?",
+                layer="hypothesis_reference",
+            )
+            self.assertTrue(any(
+                item["chunkId"] == "KRC-SBC-FINANCIAL-0001" for item in financial
             ))
 
     def test_analyze_returns_guarded_untrusted_draft_with_citations(self) -> None:

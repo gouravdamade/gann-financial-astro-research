@@ -234,6 +234,22 @@
       "ingestion_policy": "private_page_provenanced_translated_source_reference_explicit_opt_in_never_execution",
       "priority": "2",
       "text_path": "D:\\GannFinancialAstro\\sources\\private\\derived\\TRAILOKYA_DIPIKA_VYAS_1972_ENGLISH_STAGE1_20260723.md"
+    },
+    {
+      "source_id": "PVR_NARASIMHA_RAO_SBC_ARTICLE_2000",
+      "title": "Sarvatobhadra Chakra article",
+      "source_url": null,
+      "ingestion_policy": "private_page_provenanced_reference_commentary_never_execution",
+      "priority": "2",
+      "text_path": "D:\\GannFinancialAstro\\sources\\private\\derived\\PVR_NARASIMHA_RAO_SBC_ARTICLE_2000_D2D03024.txt"
+    },
+    {
+      "source_id": "KRISHNA_RAU_CHOUDHARY_SBC_FINANCIAL_HYPOTHESIS_2013",
+      "title": "Sarvatobhadra commodity-price method bounded pages",
+      "source_url": null,
+      "ingestion_policy": "private_page_provenanced_hypothesis_reference_never_doctrine_or_execution",
+      "priority": "3",
+      "text_path": "D:\\GannFinancialAstro\\sources\\private\\derived\\KRISHNA_RAU_CHOUDHARY_SBC_FINANCIAL_PAGES_24_27_34_786A2041.txt"
     }
   ]
 }
