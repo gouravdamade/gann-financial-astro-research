@@ -1,0 +1,72 @@
+{
+  "contract": "GANN_WINDOWS_CLEAN_CANDIDATE_AUDIT_V1",
+  "auditedAtUtc": "2026-07-23T08:07:52Z",
+  "releaseId": "gann-astro-desk-0.10.22-windows",
+  "candidate": {
+    "version": "0.10.22",
+    "status": "arghya_independent_witness_candidate",
+    "sourceGitCommit": "802c7ee4184c0dfaa6d14c447509e11535adda9b",
+    "sourceGitDirty": false,
+    "executablePath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.22-tauri/GannAstroDesk.exe",
+    "executableBytes": 15757824,
+    "executableSha256": "B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C",
+    "installerPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.22-tauri/Gann Astro Desk_0.10.22_x64-setup.exe",
+    "installerBytes": 176513415,
+    "installerSha256": "C975437394A07247A91B5FD44543150AA40653E902F0885DFC6E01D53BEDE79F",
+    "manifestFileCount": 1471,
+    "manifestTotalBytes": 896962011
+  },
+  "features": {
+    "arghyaReconciliationContract": "TRAILOKYA_ARGHYA_RECONCILIATION_V1",
+    "arghyaReconciliationProfile": "trailokya_arghya_reconciliation_v1",
+    "arghyaReferencePriceUnitFraction": 0.05,
+    "arghyaPackagedModules": [
+      "research_labs.trailokya_arghya",
+      "research_labs.trailokya_arghya.reconcile"
+    ],
+    "arghyaPackagedData": [
+      "trailokya_1972_arghya_pass1.csv",
+      "trailokya_2016_arghya_pass2.csv",
+      "trailokya_arghya_reconciliation_v1.yaml"
+    ],
+    "liveSrUi": "Live SR Lab",
+    "planetaryLineContract": "GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1",
+    "aspectEvidenceTraceContract": "GANN_ASPECT_EVIDENCE_TRACE_V1"
+  },
+  "guardrails": {
+    "arghyaPriceFormulaCertified": false,
+    "arghyaMarketMappingAllowed": false,
+    "arghyaConsumedByAutoSuggest": false,
+    "arghyaConsumedByLiveInference": false,
+    "arghyaConsumedByOfficialMlNotes": false,
+    "arghyaExecutionAllowed": false,
+    "planetaryLinesConsumedByAutoSuggest": false,
+    "planetaryLinesConsumedByLiveInference": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "frontendLint": "passed",
+    "frontendTests": "71_passed",
+    "frontendProductionBuild": "passed_with_existing_500kb_chunk_warning",
+    "backendTests": "119_passed",
+    "rustTests": "18_passed_with_existing_companion_test_dead_code_warnings",
+    "packageIdentityAndArghyaTests": "13_passed",
+    "manifestHashes": "passed",
+    "windowsFileAndProductVersion": "0.10.22",
+    "packagedArghyaModules": "passed",
+    "packagedArghyaData": "passed",
+    "nativeSoak": {
+      "contract": "GANN_TAURI_NATIVE_SOAK_V1",
+      "reportPath": "D:/GannFinancialAstro/soak/tauri_0.10.22_20260723_080439/logs/native_soak_report.json",
+      "checks": 44,
+      "failedChecks": 0,
+      "deferredChecks": 0,
+      "conditionalPass": false,
+      "survivingDescendants": 0,
+      "passed": true
+    },
+    "physicalWindowsUi": "pending"
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

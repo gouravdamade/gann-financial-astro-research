@@ -1,8 +1,46 @@
 # Current Project Handoff
 
-Last updated: 2026-07-23 13:10 IST
+Last updated: 2026-07-23 13:38 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Windows Arghya Guard 0.10.22 Candidate)
+
+- Built the clean-source Windows research candidate `0.10.22` from Git commit
+  `802c7ee4184c0dfaa6d14c447509e11535adda9b`.
+- Installer:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.22-tauri\Gann Astro Desk_0.10.22_x64-setup.exe`
+  (`176513415` bytes; SHA-256
+  `C975437394A07247A91B5FD44543150AA40653E902F0885DFC6E01D53BEDE79F`).
+- Portable executable:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.22-tauri\GannAstroDesk.exe`
+  (`15757824` bytes; SHA-256
+  `B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C`).
+- File and product versions are both `0.10.22`; both hashes match
+  `release.manifest.json`, whose source is clean and whose source commit is the
+  release commit above.
+- The packaged backend contains both Trailokya Arghya reconciliation modules,
+  both independent transcription CSVs, and the guarded reconciliation YAML.
+  The manifest carries the `1/20 = 5%` reference unit while explicitly
+  disabling certified price prediction, market mapping, Auto Suggest, live
+  inference, official ML-note evidence, validation promotion, and execution.
+- Verification passes: frontend lint; 71 frontend tests; 119 backend tests;
+  production web build; 18 Rust tests; 13 package-identity/Arghya tests; and
+  package module/data inspection.
+- The isolated native soak passed all 44 checks with zero failures, zero
+  deferrals, clean crash recovery and shutdown, and execution locked:
+  `D:\GannFinancialAstro\soak\tauri_0.10.22_20260723_080439\logs\native_soak_report.json`.
+- Release audit:
+  `status/audits/windows_arghya_candidate_0_10_22_20260723.json`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_133952_windows_arghya_candidate_0_10_22`.
+- This is the latest Windows research candidate, not a promoted stable build.
+  Physical installer/UI acceptance and code signing remain pending. The
+  selected desktop/mobile physical acceptance pair remains Windows `0.10.19`
+  and Android `0.10.20`.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-23 (Windows Arghya Guard 0.10.22 Source)
 
