@@ -197,7 +197,7 @@ npm run build
 
 ## Native Windows Status
 
-The current native source version is `0.10.21`; the promoted Windows release is at
+The current native source version is `0.10.22`; the promoted Windows release is at
 `D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
@@ -210,6 +210,12 @@ pinned certificate to the WebView. Explicit Disconnect, 401/WSS revocation,
 expiry, corrupt storage, a certificate mismatch, or an unsafe execution claim
 clears the protected session and returns the phone to pairing. The desktop
 gateway remains execution locked and keeps its own sessions in memory.
+
+Windows candidate `0.10.22` packages the guarded Trailokya Arghya independent
+witness profile and research reconciliation code. It records a witnessed
+`1/20 = 5%` reference unit and partial historical evidence while explicitly
+keeping the score-to-price formula uncertified. Arghya output cannot feed Auto
+Suggest, live inference, official ML notes, validation promotion, or execution.
 
 Windows candidate `0.10.21` exposes the existing timestamp-safe planetary-line
 overlay as **Live SR Lab**, adds an explicit recalculation command and generated

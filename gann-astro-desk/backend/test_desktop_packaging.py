@@ -33,6 +33,29 @@ class DesktopPackagingTests(unittest.TestCase):
         self.assertEqual(paths.price_sources_dir, root / "price_sources")
         self.assertEqual(paths.source_events.parent, root)
 
+    def test_arghya_research_contract_is_packaged_fail_closed(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        sidecar_spec = (
+            app_root / "packaging" / "gann_backend_sidecar.spec"
+        ).read_text(encoding="utf-8")
+        windows_build = (
+            app_root / "packaging" / "build_tauri_windows.ps1"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            '"research_labs.trailokya_arghya.reconcile"', sidecar_spec
+        )
+        self.assertIn(
+            'arghya_reconciliation_contract = "TRAILOKYA_ARGHYA_RECONCILIATION_V1"',
+            windows_build,
+        )
+        self.assertIn("arghya_price_formula_certified = $false", windows_build)
+        self.assertIn("arghya_market_mapping_allowed = $false", windows_build)
+        self.assertIn("arghya_auto_suggest_allowed = $false", windows_build)
+        self.assertIn("arghya_live_inference_allowed = $false", windows_build)
+        self.assertIn("arghya_official_ml_note_allowed = $false", windows_build)
+        self.assertIn("arghya_execution_allowed = $false", windows_build)
+
 
 if __name__ == "__main__":
     unittest.main()

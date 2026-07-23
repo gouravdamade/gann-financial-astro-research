@@ -79,6 +79,8 @@ hiddenimports = [
     "sbc.panchanga",
     "sbc.snapshot",
     "sbc.vedha",
+    "research_labs.trailokya_arghya",
+    "research_labs.trailokya_arghya.reconcile",
     "swisseph",
     "build_corrected_natal_event_source",
     "build_aspect_sr_touch_log",

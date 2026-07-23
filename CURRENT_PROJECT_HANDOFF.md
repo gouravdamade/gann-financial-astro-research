@@ -1,8 +1,40 @@
 # Current Project Handoff
 
-Last updated: 2026-07-23 03:58 IST
+Last updated: 2026-07-23 13:10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Windows Arghya Guard 0.10.22 Source)
+
+- Prepared the Windows desktop source release `0.10.22` so the guarded
+  Trailokya Arghya independent-witness work is packaged rather than remaining
+  source-only.
+- The backend sidecar now explicitly includes
+  `research_labs.trailokya_arghya` and
+  `research_labs.trailokya_arghya.reconcile`. Existing SBC configuration
+  collection carries the reconciliation YAML and source tables into the
+  packaged backend.
+- The release manifest now records reconciliation contract
+  `TRAILOKYA_ARGHYA_RECONCILIATION_V1`, profile
+  `trailokya_arghya_reconciliation_v1`, and the independently witnessed
+  reference unit `1/20 = 5%`.
+- Fail-closed package declarations explicitly keep the following disabled:
+  certified Arghya price formula, market/instrument mapping, Auto Suggest,
+  live inference, official ML-note evidence, validation-ledger promotion, and
+  execution.
+- Verification passes: frontend lint; 71 frontend tests; 119 backend tests;
+  production web build; and 18 Rust tests. The production build retains the
+  known non-blocking main-chunk size warning, and the Rust test target retains
+  existing companion-client dead-code warnings.
+- The clean source checkpoint is being committed before packaging so the
+  installer manifest can identify an exact clean Git commit. Installer build,
+  package hashes, and physical Windows UI acceptance remain pending in this
+  checkpoint.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_131116_windows_arghya_guard_0_10_22_source`.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-23 (Arghya Independent Witness Gate)
 
