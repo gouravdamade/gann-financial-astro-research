@@ -1,6 +1,6 @@
 {
   "contract": "GANN_RELEASE_STATUS_V1",
-  "asOfUtc": "2026-07-23T08:07:52Z",
+  "asOfUtc": "2026-07-23T08:56:41Z",
   "executionAllowed": false,
   "selectedAcceptancePair": {
     "desktopReleaseId": "gann-astro-desk-0.10.19-windows",
@@ -31,8 +31,14 @@
       "installerBytes": 176513415,
       "automatedVerification": "passed_guarded_arghya_package_and_44_check_native_soak",
       "verificationEvidenceRef": "status/audits/windows_arghya_candidate_0_10_22_20260723.json",
+      "bundleIdentityEvidenceRef": "status/audits/windows_bundle_identity_0_10_22_20260723.json",
+      "physicalAcceptanceEvidenceRef": "status/audits/windows_physical_acceptance_0_10_22_20260723.json",
+      "installedArtifactPath": "D:/Gann Astro Desk/gann-astro-desk.exe",
+      "installedArtifactSha256": "B7336AEC2FE7A7FB215AF73B312DB5A2237B6D75F244C956B02F3CFAE824B270",
+      "installedArtifactNormalizedSha256": "B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C",
+      "physicalVerificationAtUtc": "2026-07-23T08:56:41Z",
       "selectionStatus": "latest_windows_research_candidate_not_selected_for_existing_mobile_acceptance_pair",
-      "physicallyTested": false,
+      "physicallyTested": true,
       "promotedStable": false,
       "executionAllowed": false
     },

@@ -1,0 +1,70 @@
+{
+  "contract": "GANN_WINDOWS_PHYSICAL_ACCEPTANCE_AUDIT_V1",
+  "auditedAtUtc": "2026-07-23T08:56:41Z",
+  "releaseId": "gann-astro-desk-0.10.22-windows",
+  "version": "0.10.22",
+  "userReportedInstalled": true,
+  "installedArtifact": {
+    "path": "D:/Gann Astro Desk/gann-astro-desk.exe",
+    "bytes": 15757824,
+    "fileVersion": "0.10.22",
+    "productVersion": "0.10.22",
+    "rawSha256": "B7336AEC2FE7A7FB215AF73B312DB5A2237B6D75F244C956B02F3CFAE824B270",
+    "normalizedSha256": "B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C",
+    "candidateNormalizedMatch": true,
+    "bundleMarkerOnlyDifference": true,
+    "bundleIdentityEvidenceRef": "status/audits/windows_bundle_identity_0_10_22_20260723.json"
+  },
+  "directNativeUiInspection": {
+    "performed": true,
+    "applicationResponsive": true,
+    "blankCanvasObserved": false,
+    "incoherentOverlapObserved": false,
+    "checks": [
+      {
+        "surface": "chart",
+        "result": "passed",
+        "evidence": "USDJPY D1 chart rendered 795 live MT5 bars, 735 transparent aspect windows, eight stored SR lines, twelve Live SR lines, RSI 14, drawing tools, Bar Replay, layouts and bottom analysis tabs."
+      },
+      {
+        "surface": "execution_guard",
+        "result": "passed",
+        "evidence": "The installed app displayed MT5 data only, terminal algo enabled but app execution locked, and Read-only."
+      },
+      {
+        "surface": "live_sr_lab",
+        "result": "passed",
+        "evidence": "Per-planet rows, visibility controls, line counts, sample control, reset and refresh rendered. The panel explicitly excluded its output from Auto Suggest, validation and execution."
+      },
+      {
+        "surface": "sarvatobhadra_chakra",
+        "result": "passed",
+        "evidence": "The 9x9 Chakra rendered with moment/location inputs, Vedha actor controls, matched cells, actor evidence, cell inspector and guidance ledger."
+      },
+      {
+        "surface": "square_of_nine",
+        "result": "passed",
+        "evidence": "The Square of Nine rendered with price, time, date and date-time modes; first value, increment, grid size, direction, angle, offset, marking, notes and zoom controls."
+      },
+      {
+        "surface": "aspect_inspector",
+        "result": "passed",
+        "evidence": "A selected aspect exposed window, recurrence count, SR evidence and expandable deterministic details. Shadbala/Drik correctly displayed Certification blocked instead of a certified claim."
+      },
+      {
+        "surface": "analyze_aspect_window",
+        "result": "passed",
+        "evidence": "Review Aspect opened a separate native recurrence window with annotations, outcome review, evidence, local Jyotish, Codex, candle, RSI, synthesis, family history and timestamp-safe inference."
+      }
+    ]
+  },
+  "physicalAcceptancePassed": true,
+  "promotionAllowed": false,
+  "promotionBlockers": [
+    "Windows installer is not code-signed.",
+    "Selected Android 0.10.20 physical MOB-01 through MOB-08 evidence is incomplete.",
+    "Shadbala/Drik and Trailokya Arghya research gates remain source-certification blocked."
+  ],
+  "promotedStable": false,
+  "executionAllowed": false
+}

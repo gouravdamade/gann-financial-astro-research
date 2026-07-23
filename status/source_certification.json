@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-22T20:56:37Z",
+  "asOfUtc": "2026-07-23T08:56:41Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -54,26 +54,38 @@
       "certificationId": "trailokya_dipika_profile",
       "status": "page_certified_partial_profile_execution_locked",
       "sourceCertified": false,
-      "summary": "The complete 118-page scan and aligned OCR companion are acquired. Printed pages 4-5 certify a source-specific guidance profile with all three directions for Sun, Moon, Rahu, and Ketu. The Arghya numeric tables now have matching 108-cell passes from 1972 and the same-lineage 2016 reprint, but direct price arithmetic remains blocked by two preserved scaling anomalies and the missing independent worked witness.",
+      "summary": "The complete 118-page scan and aligned OCR companion are acquired. Printed pages 4-5 certify a source-specific guidance profile with all three directions for Sun, Moon, Rahu, and Ketu. The Arghya numeric tables have matching 108-cell passes from 1972 and the same-lineage 2016 reprint. An independent Krishna Rau witness supports the 11|15 correction candidate and 1/20 reference unit, but 2|18 and score-to-price arithmetic remain unresolved.",
       "evidenceRefs": [
         "configs/sbc/sources.yaml",
         "configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml",
         "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md",
         "docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md",
-        "docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md"
+        "docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md",
+        "docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md"
       ]
     },
     {
       "certificationId": "trailokya_arghya_double_transcription",
-      "status": "numeric_tables_reconciled_direction_only_price_formula_blocked",
+      "status": "independent_partial_witness_reference_unit_confirmed_price_formula_blocked",
       "sourceCertified": false,
-      "summary": "Two image-controlled passes agree on all 108 cells and distinguish Viswa-Kala from house-list notation. Both editions preserve 11|45 and 2|18 cells that violate their tables' proportional pattern. Only the twenty-part abundance/scarcity direction is available in an isolated lab; direct price, market labels, Auto Suggest, inference and execution remain blocked.",
+      "summary": "Two image-controlled passes agree on all 108 cells and distinguish Viswa-Kala from house-list notation. Krishna Rau independently prints 11|15 and confirms the 1/20 reference unit, but also independently prints 2|18. No complete page-cited rule maps a net score to units or a target price. Only guarded direction/reference-unit evidence is available; direct price, market labels, Auto Suggest, inference and execution remain blocked.",
       "evidenceRefs": [
         "configs/sbc/arghya/trailokya_1972_arghya_pass1.csv",
         "configs/sbc/arghya/trailokya_2016_arghya_pass2.csv",
         "configs/sbc/arghya/trailokya_arghya_reconciliation_v1.yaml",
         "docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md",
+        "docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md",
         "research_labs/trailokya_arghya/README.md"
+      ]
+    },
+    {
+      "certificationId": "trailokya_arghya_independent_witness",
+      "status": "partial_independent_witness_reference_unit_confirmed_formula_blocked",
+      "sourceCertified": false,
+      "summary": "Krishna Rau/Choudhary independently supports 11|15 and the 1/20 = 5% reference unit. The same source preserves 2|18, and the available 1951 silver pages omit the complete score-to-price working. No correction is applied at runtime and reusable price prediction remains blocked.",
+      "evidenceRefs": [
+        "docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md",
+        "configs/sbc/arghya/trailokya_arghya_reconciliation_v1.yaml"
       ]
     },
     {

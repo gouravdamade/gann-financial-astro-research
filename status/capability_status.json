@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-22T20:56:37Z",
+  "asOfUtc": "2026-07-23T08:56:41Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -98,14 +98,15 @@
       "states": {
         "implementedInSource": "yes",
         "packagedCandidate": "yes",
-        "physicallyTested": "no",
+        "physicallyTested": "yes",
         "promotedStable": "no",
         "sourceCertified": "not_applicable",
         "financiallyValidated": "no"
       },
-      "statusDetail": "Packaged in desktop 0.10.19; retrospective extrema stay barred from live inference.",
+      "statusDetail": "Packaged in desktop 0.10.22 and directly inspected in the installed native app. The aspect inspector and separate Analyze Aspect recurrence window render deterministic evidence, annotations, review controls, family history, and timestamp-safe inference; retrospective extrema stay barred from live inference.",
       "evidenceRefs": [
-        "aspect_evidence_trace_native_release_20260722.md"
+        "aspect_evidence_trace_native_release_20260722.md",
+        "status/audits/windows_physical_acceptance_0_10_22_20260723.json"
       ],
       "executionAllowed": false
     },
@@ -115,15 +116,16 @@
       "states": {
         "implementedInSource": "yes",
         "packagedCandidate": "yes",
-        "physicallyTested": "no",
+        "physicallyTested": "yes",
         "promotedStable": "no",
         "sourceCertified": "not_applicable",
         "financiallyValidated": "no"
       },
-      "statusDetail": "Packaged in desktop 0.10.21 with automatic chart/settings/range recalculation, explicit refresh and generated time; remains excluded from Auto Suggest, inference, validation and execution.",
+      "statusDetail": "Packaged in desktop 0.10.22 and directly inspected in the installed native app with per-planet rows, visibility controls, line counts, sample control, reset and refresh. The UI explicitly states that the overlay remains excluded from Auto Suggest, inference, validation and execution.",
       "evidenceRefs": [
         "live_sr_agarwal_hypothesis_release_20260722.md",
-        "status/audits/windows_live_sr_candidate_0_10_21_20260722.json"
+        "status/audits/windows_live_sr_candidate_0_10_21_20260722.json",
+        "status/audits/windows_physical_acceptance_0_10_22_20260723.json"
       ],
       "executionAllowed": false
     },
@@ -150,19 +152,22 @@
       "label": "Trailokya Dipika page-certified Vedha profile and translated research reference",
       "states": {
         "implementedInSource": "yes",
-        "packagedCandidate": "no",
+        "packagedCandidate": "yes",
         "physicallyTested": "not_applicable",
         "promotedStable": "no",
         "sourceCertified": "no",
         "financiallyValidated": "no"
       },
-      "statusDetail": "Original and OCR-companion 118-page files are aligned. The explicit profile preserves the source's all-three fixed-body Vedha rule, and the Stage 1 English layer is opt-in only. The 1972 and same-lineage 2016 Arghya passes now match all 108 numeric cells; two printed scaling anomalies are preserved. A direction-only availability lab exists, while direct price, market labels, Auto Suggest, inference and execution remain blocked pending an independent worked witness.",
+      "statusDetail": "Original and OCR-companion 118-page files are aligned. The explicit profile preserves the source's all-three fixed-body Vedha rule, and the Stage 1 English layer is opt-in only. Desktop 0.10.22 packages the guarded profile, both 108-cell Arghya passes and reconciliation metadata. An independent Krishna Rau witness supports 11|15 and the 1/20 reference unit, but 2|18 and the score-to-price mapping remain unresolved. Direct price, market labels, Auto Suggest, inference and execution stay blocked.",
       "evidenceRefs": [
         "docs/sbc/TRAILOKYA_DIPIKA_ACQUISITION_AUDIT_20260723.md",
         "docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md",
         "configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml",
         "status/source_certification.json",
         "docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md",
+        "docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md",
+        "status/audits/windows_arghya_candidate_0_10_22_20260723.json",
+        "status/audits/windows_physical_acceptance_0_10_22_20260723.json",
         "research_labs/trailokya_arghya/README.md"
       ],
       "executionAllowed": false

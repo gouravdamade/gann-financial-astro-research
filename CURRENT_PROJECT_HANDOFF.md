@@ -1,8 +1,59 @@
 # Current Project Handoff
 
-Last updated: 2026-07-23 13:38 IST
+Last updated: 2026-07-23 14:26 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-23 (Windows 0.10.22 Installed Physical Acceptance)
+
+- The user installed Windows candidate `0.10.22`. The installed binary is
+  `D:\Gann Astro Desk\gann-astro-desk.exe` (`15757824` bytes), with file and
+  product version `0.10.22`.
+- Its raw installed SHA-256 is
+  `B7336AEC2FE7A7FB215AF73B312DB5A2237B6D75F244C956B02F3CFAE824B270`.
+  Windows changed only the three expected bundle-marker bytes. After
+  normalizing those bytes, its SHA-256 is
+  `B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C`,
+  exactly matching the clean release-candidate executable.
+- Bundle identity evidence:
+  `status/audits/windows_bundle_identity_0_10_22_20260723.json`.
+- Direct native UI inspection passed:
+  - USDJPY D1 rendered 795 live MT5 bars, 735 transparent aspect windows,
+    eight stored SR lines, twelve Live SR lines, RSI 14, drawing tools,
+    Bar Replay, layouts and all bottom analysis tabs;
+  - Live SR Lab rendered per-planet controls and explicitly remained excluded
+    from Auto Suggest, validation and execution;
+  - Sarvatobhadra Chakra rendered its 9x9 board, Vedha actors, matched cells,
+    actor evidence, cell inspector and guidance ledger;
+  - Square of Nine rendered price/time/date/date-time modes plus center,
+    increment, size, direction, angle, marking, notes and zoom controls;
+  - the aspect inspector exposed recurrence and deterministic evidence, and
+    correctly showed Shadbala/Drik as `Certification blocked`;
+  - `Review Aspect` opened a separate recurrence window with annotations,
+    outcome review, Jyotish/Codex tabs, candle/RSI/synthesis tabs, family
+    history and timestamp-safe inference.
+- The runtime visibly remained `MT5 data only`, `app execution locked` and
+  `Read-only`. No blank canvas or incoherent overlap was observed.
+- Physical acceptance audit:
+  `status/audits/windows_physical_acceptance_0_10_22_20260723.json`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260723_143028_windows_0_10_22_physical_acceptance`.
+- `status/release_status.json`, `status/capability_status.json` and
+  `status/source_certification.json` now distinguish installed physical
+  acceptance from promotion and source certification. The older ledgers also
+  now record the partial independent Trailokya Arghya witness: `11|15` and
+  `1/20 = 5%` are independently supported, while `2|18` and score-to-price
+  mapping remain unresolved and execution locked.
+- Windows `0.10.22` is physically accepted as an installed research
+  candidate, but it is not promoted stable. The installer remains unsigned,
+  Android `0.10.20` still lacks a complete MOB-01 through MOB-08 evidence set,
+  and the Shadbala/Drik and Arghya source gates remain blocked.
+- The selected desktop/mobile acceptance pair remains Windows `0.10.19` and
+  Android `0.10.20`; this Windows-only acceptance does not silently replace
+  the paired mobile test identity.
+- Existing runtime-only SQLite/log/Android files remain deliberately untouched:
+  `gann_aspect_annotations_raman_v2.sqlite`, `candlestick_shadow_v3.sqlite`,
+  `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-23 (Windows Arghya Guard 0.10.22 Candidate)
 

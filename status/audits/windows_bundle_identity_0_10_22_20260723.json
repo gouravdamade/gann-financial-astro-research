@@ -1,0 +1,30 @@
+{
+  "contract": "GANN_WINDOWS_BUNDLE_IDENTITY_V1",
+  "auditedAtUtc": "2026-07-23T08:48:31.770497Z",
+  "candidate": {
+    "path": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.22-tauri\\GannAstroDesk.exe",
+    "bytes": 15757824,
+    "sha256": "B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C",
+    "bundleType": "UNK",
+    "normalizedSha256": "B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C"
+  },
+  "installed": {
+    "path": "D:\\Gann Astro Desk\\gann-astro-desk.exe",
+    "bytes": 15757824,
+    "sha256": "B7336AEC2FE7A7FB215AF73B312DB5A2237B6D75F244C956B02F3CFAE824B270",
+    "bundleType": "NSS",
+    "normalizedSha256": "B329325C203A28B8D73244CF83A97BD0AEE6115627DB62F6C0E084D6176C104C"
+  },
+  "comparison": {
+    "normalizedMatch": true,
+    "bundleMarkerOnlyDifference": true,
+    "differingBytes": 3,
+    "differingOffsets": [
+      "0xBFCDC2",
+      "0xBFCDC3",
+      "0xBFCDC4"
+    ]
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false
+}
