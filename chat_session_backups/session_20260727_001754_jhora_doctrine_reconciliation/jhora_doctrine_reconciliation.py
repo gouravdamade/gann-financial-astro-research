@@ -1,0 +1,725 @@
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import json
+from collections import defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+from statistics import mean
+from typing import Any
+
+
+CONTRACT = "GANN_JHORA_DOCTRINE_RECONCILIATION_V1"
+FROZEN_TOLERANCE_VIRUPA = 0.5
+CLASSICAL_PLANETS = (
+    "SUN",
+    "MOON",
+    "MARS",
+    "MERCURY",
+    "JUPITER",
+    "VENUS",
+    "SATURN",
+)
+TOTAL_COMPONENTS = ("sthana", "kaala", "dig", "chesta", "naisargika", "drik")
+
+REPO_ROOT = Path(__file__).resolve().parent
+EVIDENCE_DIR = REPO_ROOT / "status" / "evidence" / "jhora_shadbala_20260723"
+DEFAULT_COMPARISON = (
+    EVIDENCE_DIR / "jhora_pyjhora_component_comparison_20260726.csv"
+)
+DEFAULT_LOCAL_COMPONENTS = REPO_ROOT / "shadbala_component_residuals_20260718.csv"
+DEFAULT_KAALA_COMPONENTS = (
+    REPO_ROOT / "shadbala_kaala_subcomponent_residuals_20260718.csv"
+)
+DEFAULT_DRIK_LEDGER = REPO_ROOT / "drik_contribution_ledger_20260726.csv"
+DEFAULT_FORMULA_INPUTS = REPO_ROOT / "pyjhora_shadbala_formula_inputs_20260718.csv"
+DEFAULT_TOP_LEVEL_OUTPUT = (
+    EVIDENCE_DIR / "jhora_local_doctrine_reconciliation_20260726.csv"
+)
+DEFAULT_DRIK_OUTPUT = (
+    EVIDENCE_DIR / "jhora_drik_candidate_residuals_20260726.csv"
+)
+DEFAULT_JSON_OUTPUT = (
+    EVIDENCE_DIR / "jhora_doctrine_reconciliation_20260726.json"
+)
+DEFAULT_REPORT_OUTPUT = REPO_ROOT / "jhora_doctrine_reconciliation_20260726.md"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Reconcile the locked JHora witness against the local source profile "
+            "and named Drik sensitivity profiles without changing production doctrine."
+        )
+    )
+    parser.add_argument("--comparison", type=Path, default=DEFAULT_COMPARISON)
+    parser.add_argument(
+        "--local-components", type=Path, default=DEFAULT_LOCAL_COMPONENTS
+    )
+    parser.add_argument(
+        "--kaala-components", type=Path, default=DEFAULT_KAALA_COMPONENTS
+    )
+    parser.add_argument("--drik-ledger", type=Path, default=DEFAULT_DRIK_LEDGER)
+    parser.add_argument(
+        "--formula-inputs", type=Path, default=DEFAULT_FORMULA_INPUTS
+    )
+    parser.add_argument(
+        "--top-level-output", type=Path, default=DEFAULT_TOP_LEVEL_OUTPUT
+    )
+    parser.add_argument("--drik-output", type=Path, default=DEFAULT_DRIK_OUTPUT)
+    parser.add_argument("--json-output", type=Path, default=DEFAULT_JSON_OUTPUT)
+    parser.add_argument("--report-output", type=Path, default=DEFAULT_REPORT_OUTPUT)
+    return parser.parse_args()
+
+
+def read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8-sig") as handle:
+        return list(csv.DictReader(handle))
+
+
+def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
+    if not rows:
+        raise ValueError(f"refusing to write empty CSV: {path}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest().upper()
+
+
+def relative_path(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path.resolve())
+
+
+def unique_index(
+    rows: list[dict[str, str]],
+    keys: tuple[str, ...],
+    *,
+    source: Path,
+) -> dict[tuple[str, ...], dict[str, str]]:
+    indexed: dict[tuple[str, ...], dict[str, str]] = {}
+    for row_number, row in enumerate(rows, start=2):
+        key = tuple(row[name].strip() for name in keys)
+        if key in indexed:
+            raise ValueError(f"{source}: row {row_number}: duplicate key {key}")
+        indexed[key] = row
+    return indexed
+
+
+def local_component_values(
+    path: Path = DEFAULT_LOCAL_COMPONENTS,
+) -> dict[tuple[str, str, str], float]:
+    indexed: dict[tuple[str, str, str], float] = {}
+    for row in read_csv(path):
+        key = (
+            row["sample_id"].strip(),
+            row["planet"].strip().upper(),
+            row["component"].strip().lower(),
+        )
+        if key in indexed:
+            raise ValueError(f"{path}: duplicate local component {key}")
+        indexed[key] = float(row["local_value_virupa"])
+    return indexed
+
+
+def corrected_local_total(
+    components: dict[tuple[str, str, str], float],
+    sample_id: str,
+    planet: str,
+) -> float:
+    values = {
+        component: components[(sample_id, planet, component)]
+        for component in TOTAL_COMPONENTS
+    }
+    if planet in {"SUN", "MOON"}:
+        values["chesta"] = 0.0
+    return sum(values.values())
+
+
+def reconciliation_classification(measure: str, planet: str) -> str:
+    if measure == "kaala":
+        return "local_source_profile_closer_requires_subcomponent_witness"
+    if measure == "chesta" and planet in {"SUN", "MOON"}:
+        return "luminary_display_only_excluded_from_total"
+    if measure == "chesta":
+        return "mean_longitude_profile_mixed_requires_reconciliation"
+    if measure == "drik":
+        return "independent_drik_profile_mismatch"
+    if measure == "total" and planet in {"SUN", "MOON"}:
+        return "corrected_total_excludes_luminary_chesta"
+    return "corrected_local_source_total"
+
+
+def build_top_level_rows(
+    comparison_path: Path = DEFAULT_COMPARISON,
+    local_components_path: Path = DEFAULT_LOCAL_COMPONENTS,
+) -> list[dict[str, str]]:
+    local = local_component_values(local_components_path)
+    rows: list[dict[str, str]] = []
+    for row in read_csv(comparison_path):
+        measure = row["measure"].strip().lower()
+        if measure not in {"kaala", "chesta", "drik", "total"}:
+            continue
+        sample_id = row["sample_id"].strip()
+        planet = row["planet"].strip().upper()
+        if measure == "total":
+            local_value = corrected_local_total(local, sample_id, planet)
+        else:
+            local_value = local[(sample_id, planet, measure)]
+        jhora_value = float(row["jhora_value_virupa"])
+        pyjhora_value = float(row["pyjhora_value_virupa"])
+        local_delta = jhora_value - local_value
+        pyjhora_delta = jhora_value - pyjhora_value
+        local_absolute = abs(local_delta)
+        pyjhora_absolute = abs(pyjhora_delta)
+        nearest = (
+            "local_source_profile"
+            if local_absolute < pyjhora_absolute
+            else "pyjhora_secondary_profile"
+            if pyjhora_absolute < local_absolute
+            else "tie"
+        )
+        rows.append(
+            {
+                "contract": CONTRACT,
+                "sample_id": sample_id,
+                "planet": planet,
+                "measure": measure,
+                "jhora_value_virupa": f"{jhora_value:.9f}",
+                "local_source_value_virupa": f"{local_value:.9f}",
+                "pyjhora_value_virupa": f"{pyjhora_value:.9f}",
+                "jhora_minus_local_virupa": f"{local_delta:.9f}",
+                "jhora_minus_pyjhora_virupa": f"{pyjhora_delta:.9f}",
+                "local_absolute_delta_virupa": f"{local_absolute:.9f}",
+                "pyjhora_absolute_delta_virupa": f"{pyjhora_absolute:.9f}",
+                "nearest_profile": nearest,
+                "local_pass_fail": (
+                    "pass"
+                    if local_absolute <= FROZEN_TOLERANCE_VIRUPA
+                    else "fail"
+                ),
+                "classification": reconciliation_classification(measure, planet),
+                "notes": (
+                    "Diagnostic only. Luminary totals exclude displayed Chesta; "
+                    "no tolerance widening and no execution authorization."
+                ),
+            }
+        )
+    if len(rows) != 140:
+        raise ValueError(f"top-level reconciliation expected 140 rows, got {len(rows)}")
+    return rows
+
+
+def summarize_rows(rows: list[dict[str, str]]) -> dict[str, Any]:
+    by_measure: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        by_measure[row["measure"]].append(row)
+
+    result: dict[str, Any] = {}
+    for measure in ("kaala", "chesta", "drik", "total"):
+        group = by_measure[measure]
+        local_deltas = [float(row["local_absolute_delta_virupa"]) for row in group]
+        pyjhora_deltas = [
+            float(row["pyjhora_absolute_delta_virupa"]) for row in group
+        ]
+        result[measure] = {
+            "rows": len(group),
+            "localPass": sum(row["local_pass_fail"] == "pass" for row in group),
+            "localFail": sum(row["local_pass_fail"] == "fail" for row in group),
+            "localCloser": sum(
+                row["nearest_profile"] == "local_source_profile" for row in group
+            ),
+            "pyjhoraCloser": sum(
+                row["nearest_profile"] == "pyjhora_secondary_profile"
+                for row in group
+            ),
+            "ties": sum(row["nearest_profile"] == "tie" for row in group),
+            "localMeanAbsoluteDeltaVirupa": round(mean(local_deltas), 9),
+            "localMaxAbsoluteDeltaVirupa": round(max(local_deltas), 9),
+            "pyjhoraMeanAbsoluteDeltaVirupa": round(mean(pyjhora_deltas), 9),
+            "pyjhoraMaxAbsoluteDeltaVirupa": round(max(pyjhora_deltas), 9),
+        }
+    return result
+
+
+def kaala_categorical_residuals(
+    top_level_rows: list[dict[str, str]],
+) -> list[dict[str, Any]]:
+    quanta = (15.0, 30.0, 45.0, 60.0, 75.0, 90.0, 105.0, 120.0)
+    diagnostics: list[dict[str, Any]] = []
+    for row in top_level_rows:
+        if row["measure"] != "kaala":
+            continue
+        residual = float(row["jhora_minus_local_virupa"])
+        quantum = min(quanta, key=lambda value: abs(abs(residual) - value))
+        remainder = abs(residual) - quantum
+        if abs(residual) < 14.0 or abs(remainder) > 1.0:
+            continue
+        diagnostics.append(
+            {
+                "sampleId": row["sample_id"],
+                "planet": row["planet"],
+                "jhoraMinusLocalVirupa": round(residual, 9),
+                "nearestCategoricalQuantumVirupa": quantum,
+                "absoluteRemainderVirupa": round(abs(remainder), 9),
+                "interpretation": (
+                    "Possible 15/30/45/60-virupa lord-award disagreement; "
+                    "requires a visible JHora Kaala subcomponent table."
+                ),
+            }
+        )
+    return diagnostics
+
+
+def formula_longitudes(path: Path) -> dict[str, dict[str, float]]:
+    longitudes: dict[str, dict[str, float]] = {}
+    for row in read_csv(path):
+        sample_id = row["sample_id"].strip()
+        parsed = {
+            str(planet).upper(): float(value)
+            for planet, value in json.loads(row["classical_longitudes_json"]).items()
+        }
+        previous = longitudes.setdefault(sample_id, parsed)
+        if previous != parsed:
+            raise ValueError(f"{path}: inconsistent longitudes for {sample_id}")
+    return longitudes
+
+
+def bright_half_moon_nature(longitudes: dict[str, float]) -> tuple[str, float]:
+    elongation = (longitudes["MOON"] - longitudes["SUN"]) % 360.0
+    nature = "benefic" if 90.0 <= elongation <= 270.0 else "malefic"
+    return nature, elongation
+
+
+DRIK_PROFILES: tuple[dict[str, Any], ...] = (
+    {
+        "profile_id": "current_dynamic_nature_range_special",
+        "moon_policy": "current",
+        "mercury_policy": "current",
+        "special_scale": 1.0,
+    },
+    {
+        "profile_id": "current_dynamic_nature_no_range_special",
+        "moon_policy": "current",
+        "mercury_policy": "current",
+        "special_scale": 0.0,
+    },
+    {
+        "profile_id": "bright_half_moon_current_mercury_no_range_special",
+        "moon_policy": "bright_half",
+        "mercury_policy": "current",
+        "special_scale": 0.0,
+    },
+    {
+        "profile_id": "bright_half_moon_benefic_mercury_no_range_special",
+        "moon_policy": "bright_half",
+        "mercury_policy": "benefic",
+        "special_scale": 0.0,
+    },
+    {
+        "profile_id": "bright_half_moon_malefic_mercury_no_range_special",
+        "moon_policy": "bright_half",
+        "mercury_policy": "malefic",
+        "special_scale": 0.0,
+    },
+)
+
+
+def build_drik_candidate_rows(
+    comparison_path: Path = DEFAULT_COMPARISON,
+    drik_ledger_path: Path = DEFAULT_DRIK_LEDGER,
+    formula_inputs_path: Path = DEFAULT_FORMULA_INPUTS,
+) -> list[dict[str, str]]:
+    jhora = {
+        (row["sample_id"].strip(), row["planet"].strip().upper()): float(
+            row["jhora_value_virupa"]
+        )
+        for row in read_csv(comparison_path)
+        if row["measure"].strip().lower() == "drik"
+    }
+    contributions: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
+    for row in read_csv(drik_ledger_path):
+        key = (row["sample_id"].strip(), row["target"].strip().upper())
+        contributions[key].append(row)
+    longitudes = formula_longitudes(formula_inputs_path)
+    if set(jhora) != set(contributions):
+        raise ValueError(
+            "Drik comparison/contribution key mismatch: "
+            f"missing={sorted(set(jhora) - set(contributions))}, "
+            f"extra={sorted(set(contributions) - set(jhora))}"
+        )
+
+    rows: list[dict[str, str]] = []
+    for profile in DRIK_PROFILES:
+        for key in sorted(jhora):
+            sample_id, target = key
+            moon_nature, elongation = bright_half_moon_nature(
+                longitudes[sample_id]
+            )
+            raw_net = 0.0
+            for contribution in contributions[key]:
+                nature = contribution["nature"].strip().lower()
+                aspector = contribution["aspector"].strip().upper()
+                if aspector == "MOON" and profile["moon_policy"] == "bright_half":
+                    nature = moon_nature
+                if (
+                    aspector == "MERCURY"
+                    and profile["mercury_policy"] != "current"
+                ):
+                    nature = str(profile["mercury_policy"])
+                gross = float(contribution["base_virupa"]) + (
+                    float(profile["special_scale"])
+                    * float(contribution["special_bonus_virupa"])
+                )
+                raw_net += gross if nature == "benefic" else -gross
+            predicted = raw_net / 4.0
+            expected = jhora[key]
+            residual = expected - predicted
+            rows.append(
+                {
+                    "contract": CONTRACT,
+                    "profile_id": str(profile["profile_id"]),
+                    "sample_id": sample_id,
+                    "target": target,
+                    "moon_policy": str(profile["moon_policy"]),
+                    "moon_elongation_deg": f"{elongation:.9f}",
+                    "moon_candidate_nature": moon_nature,
+                    "mercury_policy": str(profile["mercury_policy"]),
+                    "special_aspect_scale": f"{float(profile['special_scale']):.1f}",
+                    "normalization_divisor": "4.0",
+                    "jhora_value_virupa": f"{expected:.9f}",
+                    "candidate_value_virupa": f"{predicted:.9f}",
+                    "signed_residual_virupa": f"{residual:.9f}",
+                    "absolute_residual_virupa": f"{abs(residual):.9f}",
+                    "pass_fail": (
+                        "pass"
+                        if abs(residual) <= FROZEN_TOLERANCE_VIRUPA
+                        else "fail"
+                    ),
+                    "notes": (
+                        "Sensitivity profile only. It cannot replace production "
+                        "Drik without an explicit doctrine decision."
+                    ),
+                }
+            )
+    expected_count = len(DRIK_PROFILES) * 35
+    if len(rows) != expected_count:
+        raise ValueError(
+            f"Drik candidate matrix expected {expected_count} rows, got {len(rows)}"
+        )
+    return rows
+
+
+def summarize_drik_candidates(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
+    grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        grouped[row["profile_id"]].append(row)
+    summaries: list[dict[str, Any]] = []
+    for profile in DRIK_PROFILES:
+        profile_id = str(profile["profile_id"])
+        group = grouped[profile_id]
+        deltas = [float(row["absolute_residual_virupa"]) for row in group]
+        summaries.append(
+            {
+                "profileId": profile_id,
+                "rows": len(group),
+                "pass": sum(row["pass_fail"] == "pass" for row in group),
+                "fail": sum(row["pass_fail"] == "fail" for row in group),
+                "meanAbsoluteDeltaVirupa": round(mean(deltas), 9),
+                "maxAbsoluteDeltaVirupa": round(max(deltas), 9),
+                "moonPolicy": profile["moon_policy"],
+                "mercuryPolicy": profile["mercury_policy"],
+                "specialAspectScale": profile["special_scale"],
+                "normalizationDivisor": 4.0,
+            }
+        )
+    return summaries
+
+
+def chesta_diagnostics(
+    top_level_rows: list[dict[str, str]],
+) -> dict[str, Any]:
+    moon_rows = [
+        row
+        for row in top_level_rows
+        if row["measure"] == "chesta" and row["planet"] == "MOON"
+    ]
+    moon_half_residuals = [
+        float(row["jhora_value_virupa"])
+        - (float(row["local_source_value_virupa"]) / 2.0)
+        for row in moon_rows
+    ]
+    non_luminary = [
+        row
+        for row in top_level_rows
+        if row["measure"] == "chesta" and row["planet"] not in {"SUN", "MOON"}
+    ]
+    return {
+        "moonRows": len(moon_rows),
+        "moonDisplayMatchesHalfLocalPaksha": sum(
+            abs(value) <= FROZEN_TOLERANCE_VIRUPA
+            for value in moon_half_residuals
+        ),
+        "moonHalfLocalMeanAbsoluteDeltaVirupa": round(
+            mean(abs(value) for value in moon_half_residuals), 9
+        ),
+        "moonHalfLocalMaxAbsoluteDeltaVirupa": round(
+            max(abs(value) for value in moon_half_residuals), 9
+        ),
+        "nonLuminaryRows": len(non_luminary),
+        "nonLuminaryLocalCloser": sum(
+            row["nearest_profile"] == "local_source_profile"
+            for row in non_luminary
+        ),
+        "nonLuminaryPyjhoraCloser": sum(
+            row["nearest_profile"] == "pyjhora_secondary_profile"
+            for row in non_luminary
+        ),
+        "totalPolicy": (
+            "Sun and Moon Chesta is preserved as display evidence but excluded "
+            "from Shadbala totals to prevent Ayana/Paksha double counting."
+        ),
+    }
+
+
+def build_summary(
+    comparison_path: Path = DEFAULT_COMPARISON,
+    local_components_path: Path = DEFAULT_LOCAL_COMPONENTS,
+    kaala_components_path: Path = DEFAULT_KAALA_COMPONENTS,
+    drik_ledger_path: Path = DEFAULT_DRIK_LEDGER,
+    formula_inputs_path: Path = DEFAULT_FORMULA_INPUTS,
+) -> tuple[dict[str, Any], list[dict[str, str]], list[dict[str, str]]]:
+    top_level = build_top_level_rows(comparison_path, local_components_path)
+    drik_rows = build_drik_candidate_rows(
+        comparison_path,
+        drik_ledger_path,
+        formula_inputs_path,
+    )
+    inputs = {
+        "comparison": comparison_path,
+        "localComponents": local_components_path,
+        "kaalaComponents": kaala_components_path,
+        "drikLedger": drik_ledger_path,
+        "formulaInputs": formula_inputs_path,
+    }
+    summary = {
+        "contract": CONTRACT,
+        "generatedAtUtc": datetime.now(timezone.utc)
+        .isoformat()
+        .replace("+00:00", "Z"),
+        "status": "diagnostic_reconciliation_not_certified",
+        "toleranceVirupa": FROZEN_TOLERANCE_VIRUPA,
+        "tolerancePolicy": "frozen; no widening",
+        "inputs": {
+            name: {
+                "path": relative_path(path),
+                "sha256": sha256(path),
+            }
+            for name, path in inputs.items()
+        },
+        "topLevel": summarize_rows(top_level),
+        "kaalaCategoricalResiduals": kaala_categorical_residuals(top_level),
+        "chesta": chesta_diagnostics(top_level),
+        "drikCandidateProfiles": summarize_drik_candidates(drik_rows),
+        "decisions": [
+            (
+                "Promote luminary Chesta total exclusion: classical text and "
+                "locked JHora totals independently agree that displayed Sun/Moon "
+                "Chesta must not be added again."
+            ),
+            (
+                "Retain the current production Drik profile as provisional and "
+                "execution-ineligible. Named candidate profiles are sensitivity "
+                "tests, not silent replacements."
+            ),
+            (
+                "Capture a visible JHora Kaala subcomponent table before changing "
+                "Abda/Masa/Hora or other categorical lord awards."
+            ),
+        ],
+    }
+    return summary, top_level, drik_rows
+
+
+def markdown_table(headers: list[str], rows: list[list[Any]]) -> list[str]:
+    output = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _ in headers) + " |",
+    ]
+    output.extend(
+        "| " + " | ".join(str(value) for value in row) + " |" for row in rows
+    )
+    return output
+
+
+def render_report(summary: dict[str, Any]) -> str:
+    lines = [
+        "# JHora Doctrine Reconciliation",
+        "",
+        f"Contract: `{CONTRACT}`",
+        "",
+        "Status: diagnostic reconciliation; no execution authorization.",
+        "",
+        "Tolerance remains frozen at 0.5 virupa.",
+        "",
+        "## Top-Level Profile Comparison",
+        "",
+    ]
+    lines.extend(
+        markdown_table(
+            [
+                "Measure",
+                "Local pass",
+                "Local closer",
+                "PyJHora closer",
+                "Local MAE",
+                "PyJHora MAE",
+            ],
+            [
+                [
+                    measure.title(),
+                    f"{values['localPass']}/{values['rows']}",
+                    values["localCloser"],
+                    values["pyjhoraCloser"],
+                    f"{values['localMeanAbsoluteDeltaVirupa']:.3f}",
+                    f"{values['pyjhoraMeanAbsoluteDeltaVirupa']:.3f}",
+                ]
+                for measure, values in summary["topLevel"].items()
+            ],
+        )
+    )
+    lines.extend(
+        [
+            "",
+            "The local Kaala source profile is closer than PyJHora for every "
+            "locked row, although only exact subcomponent evidence can certify it.",
+            "",
+            "## Kaala Categorical Leads",
+            "",
+        ]
+    )
+    categorical = summary["kaalaCategoricalResiduals"]
+    if categorical:
+        lines.extend(
+            markdown_table(
+                ["Sample", "Planet", "JHora-local", "Nearest award", "Remainder"],
+                [
+                    [
+                        row["sampleId"],
+                        row["planet"],
+                        f"{row['jhoraMinusLocalVirupa']:+.3f}",
+                        f"{row['nearestCategoricalQuantumVirupa']:.0f}",
+                        f"{row['absoluteRemainderVirupa']:.3f}",
+                    ]
+                    for row in categorical
+                ],
+            )
+        )
+    else:
+        lines.append("No residual matched a categorical award quantum.")
+    lines.extend(
+        [
+            "",
+            "These are leads, not inferred values. They require a visible JHora "
+            "Kaala subcomponent table before any calendar-lord rule changes.",
+            "",
+            "## Chesta Decision",
+            "",
+            (
+                f"Moon display values match half the local doubled-Paksha value in "
+                f"{summary['chesta']['moonDisplayMatchesHalfLocalPaksha']}/"
+                f"{summary['chesta']['moonRows']} fixtures at frozen tolerance."
+            ),
+            "",
+            summary["chesta"]["totalPolicy"],
+            "",
+            "Non-luminary Chesta remains mixed across mean-longitude profiles and "
+            "is not promoted.",
+            "",
+            "## Drik Sensitivity Profiles",
+            "",
+        ]
+    )
+    lines.extend(
+        markdown_table(
+            ["Profile", "Pass", "MAE", "Max", "Moon", "Mercury", "Special scale"],
+            [
+                [
+                    row["profileId"],
+                    f"{row['pass']}/{row['rows']}",
+                    f"{row['meanAbsoluteDeltaVirupa']:.3f}",
+                    f"{row['maxAbsoluteDeltaVirupa']:.3f}",
+                    row["moonPolicy"],
+                    row["mercuryPolicy"],
+                    row["specialAspectScale"],
+                ]
+                for row in summary["drikCandidateProfiles"]
+            ],
+        )
+    )
+    lines.extend(
+        [
+            "",
+            "The bright-half Moon/no-range-special profile is a useful doctrine "
+            "lead, but the remaining Mercury and special-aspect residuals prevent "
+            "promotion. Production Drik remains provisional and execution-locked.",
+            "",
+            "## Locked Decisions",
+            "",
+        ]
+    )
+    lines.extend(f"- {decision}" for decision in summary["decisions"])
+    lines.append("")
+    return "\n".join(lines)
+
+
+def main() -> int:
+    args = parse_args()
+    summary, top_level, drik_rows = build_summary(
+        args.comparison,
+        args.local_components,
+        args.kaala_components,
+        args.drik_ledger,
+        args.formula_inputs,
+    )
+    write_csv(args.top_level_output, top_level)
+    write_csv(args.drik_output, drik_rows)
+    args.json_output.parent.mkdir(parents=True, exist_ok=True)
+    args.json_output.write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    args.report_output.parent.mkdir(parents=True, exist_ok=True)
+    args.report_output.write_text(render_report(summary), encoding="utf-8")
+    print(
+        json.dumps(
+            {
+                "contract": CONTRACT,
+                "topLevelRows": len(top_level),
+                "drikCandidateRows": len(drik_rows),
+                "topLevelOutput": str(args.top_level_output),
+                "drikOutput": str(args.drik_output),
+                "jsonOutput": str(args.json_output),
+                "reportOutput": str(args.report_output),
+            },
+            indent=2,
+        )
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

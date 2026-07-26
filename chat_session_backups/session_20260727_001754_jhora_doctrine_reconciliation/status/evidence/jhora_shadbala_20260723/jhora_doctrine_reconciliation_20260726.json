@@ -1,0 +1,174 @@
+{
+  "chesta": {
+    "moonDisplayMatchesHalfLocalPaksha": 5,
+    "moonHalfLocalMaxAbsoluteDeltaVirupa": 0.004402541,
+    "moonHalfLocalMeanAbsoluteDeltaVirupa": 0.003527168,
+    "moonRows": 5,
+    "nonLuminaryLocalCloser": 12,
+    "nonLuminaryPyjhoraCloser": 13,
+    "nonLuminaryRows": 25,
+    "totalPolicy": "Sun and Moon Chesta is preserved as display evidence but excluded from Shadbala totals to prevent Ayana/Paksha double counting."
+  },
+  "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V1",
+  "decisions": [
+    "Promote luminary Chesta total exclusion: classical text and locked JHora totals independently agree that displayed Sun/Moon Chesta must not be added again.",
+    "Retain the current production Drik profile as provisional and execution-ineligible. Named candidate profiles are sensitivity tests, not silent replacements.",
+    "Capture a visible JHora Kaala subcomponent table before changing Abda/Masa/Hora or other categorical lord awards."
+  ],
+  "drikCandidateProfiles": [
+    {
+      "fail": 26,
+      "maxAbsoluteDeltaVirupa": 35.385,
+      "meanAbsoluteDeltaVirupa": 7.319928571,
+      "mercuryPolicy": "current",
+      "moonPolicy": "current",
+      "normalizationDivisor": 4.0,
+      "pass": 9,
+      "profileId": "current_dynamic_nature_range_special",
+      "rows": 35,
+      "specialAspectScale": 1.0
+    },
+    {
+      "fail": 24,
+      "maxAbsoluteDeltaVirupa": 24.135,
+      "meanAbsoluteDeltaVirupa": 6.7775,
+      "mercuryPolicy": "current",
+      "moonPolicy": "current",
+      "normalizationDivisor": 4.0,
+      "pass": 11,
+      "profileId": "current_dynamic_nature_no_range_special",
+      "rows": 35,
+      "specialAspectScale": 0.0
+    },
+    {
+      "fail": 16,
+      "maxAbsoluteDeltaVirupa": 19.4025,
+      "meanAbsoluteDeltaVirupa": 3.290214286,
+      "mercuryPolicy": "current",
+      "moonPolicy": "bright_half",
+      "normalizationDivisor": 4.0,
+      "pass": 19,
+      "profileId": "bright_half_moon_current_mercury_no_range_special",
+      "rows": 35,
+      "specialAspectScale": 0.0
+    },
+    {
+      "fail": 18,
+      "maxAbsoluteDeltaVirupa": 22.1175,
+      "meanAbsoluteDeltaVirupa": 5.963357143,
+      "mercuryPolicy": "benefic",
+      "moonPolicy": "bright_half",
+      "normalizationDivisor": 4.0,
+      "pass": 17,
+      "profileId": "bright_half_moon_benefic_mercury_no_range_special",
+      "rows": 35,
+      "specialAspectScale": 0.0
+    },
+    {
+      "fail": 15,
+      "maxAbsoluteDeltaVirupa": 21.635,
+      "meanAbsoluteDeltaVirupa": 2.3715,
+      "mercuryPolicy": "malefic",
+      "moonPolicy": "bright_half",
+      "normalizationDivisor": 4.0,
+      "pass": 20,
+      "profileId": "bright_half_moon_malefic_mercury_no_range_special",
+      "rows": 35,
+      "specialAspectScale": 0.0
+    }
+  ],
+  "generatedAtUtc": "2026-07-26T18:39:18.856158Z",
+  "inputs": {
+    "comparison": {
+      "path": "status\\evidence\\jhora_shadbala_20260723\\jhora_pyjhora_component_comparison_20260726.csv",
+      "sha256": "DDA6C65606D167041B6C7707FF1A6EF20663C56E2C076C1A46D233EBE9763776"
+    },
+    "drikLedger": {
+      "path": "drik_contribution_ledger_20260726.csv",
+      "sha256": "7328CDF261826E502731E7880366ADAD41AF91120EC94913BE308B5643A2AE4E"
+    },
+    "formulaInputs": {
+      "path": "pyjhora_shadbala_formula_inputs_20260718.csv",
+      "sha256": "077EB4AAC0D048F6555168855986BBD21EDC306AD892073D0E377D561075B9F3"
+    },
+    "kaalaComponents": {
+      "path": "shadbala_kaala_subcomponent_residuals_20260718.csv",
+      "sha256": "56DF643DD037D6B43FA490AA0BDB09A9FCDEAE54BB2AD9873CBE35E79AC96326"
+    },
+    "localComponents": {
+      "path": "shadbala_component_residuals_20260718.csv",
+      "sha256": "8263D8C0FC7289584C7FFFA6E42382A76F47F2239A08B72E075147CAF3CB56FF"
+    }
+  },
+  "kaalaCategoricalResiduals": [
+    {
+      "absoluteRemainderVirupa": 0.677900892,
+      "interpretation": "Possible 15/30/45/60-virupa lord-award disagreement; requires a visible JHora Kaala subcomponent table.",
+      "jhoraMinusLocalVirupa": 90.677900892,
+      "nearestCategoricalQuantumVirupa": 90.0,
+      "planet": "MOON",
+      "sampleId": "case_127_sr_touch_start"
+    },
+    {
+      "absoluteRemainderVirupa": 0.08062872,
+      "interpretation": "Possible 15/30/45/60-virupa lord-award disagreement; requires a visible JHora Kaala subcomponent table.",
+      "jhoraMinusLocalVirupa": 44.91937128,
+      "nearestCategoricalQuantumVirupa": 45.0,
+      "planet": "MERCURY",
+      "sampleId": "case_127_sr_touch_start"
+    }
+  ],
+  "status": "diagnostic_reconciliation_not_certified",
+  "tolerancePolicy": "frozen; no widening",
+  "toleranceVirupa": 0.5,
+  "topLevel": {
+    "chesta": {
+      "localCloser": 16,
+      "localFail": 23,
+      "localMaxAbsoluteDeltaVirupa": 62.594665109,
+      "localMeanAbsoluteDeltaVirupa": 14.73246742,
+      "localPass": 12,
+      "pyjhoraCloser": 19,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 86.13,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 26.397142857,
+      "rows": 35,
+      "ties": 0
+    },
+    "drik": {
+      "localCloser": 2,
+      "localFail": 26,
+      "localMaxAbsoluteDeltaVirupa": 35.39,
+      "localMeanAbsoluteDeltaVirupa": 7.319714286,
+      "localPass": 9,
+      "pyjhoraCloser": 2,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 35.39,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 7.319714286,
+      "rows": 35,
+      "ties": 31
+    },
+    "kaala": {
+      "localCloser": 35,
+      "localFail": 31,
+      "localMaxAbsoluteDeltaVirupa": 90.677900892,
+      "localMeanAbsoluteDeltaVirupa": 7.982740686,
+      "localPass": 4,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 220.29,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 57.030571429,
+      "rows": 35,
+      "ties": 0
+    },
+    "total": {
+      "localCloser": 33,
+      "localFail": 35,
+      "localMaxAbsoluteDeltaVirupa": 100.785937738,
+      "localMeanAbsoluteDeltaVirupa": 17.416464092,
+      "localPass": 0,
+      "pyjhoraCloser": 2,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 235.05,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 71.741714286,
+      "rows": 35,
+      "ties": 0
+    }
+  }
+}
