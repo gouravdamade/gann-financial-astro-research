@@ -1,0 +1,67 @@
+{
+  "contract": "GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1",
+  "reportVersion": "astro_certification_4_gate_v6_named_formula_diagnostics_20260718",
+  "generatedAtUtc": "2026-07-26T15:25:36+00:00",
+  "status": "failed_external_validation",
+  "certified": false,
+  "executionAllowed": false,
+  "rows": {
+    "total": 95,
+    "pass": 60,
+    "fail": 35,
+    "pending": 0
+  },
+  "strengthMatrix": {
+    "expectedRows": 70,
+    "actualRows": 70,
+    "pass": 35,
+    "fail": 35,
+    "pending": 0,
+    "classicalPlanets": [
+      "SUN",
+      "MOON",
+      "MARS",
+      "MERCURY",
+      "JUPITER",
+      "VENUS",
+      "SATURN"
+    ],
+    "measures": [
+      "shadbala_implemented_total_virupa.",
+      "drik_bala_virupa."
+    ]
+  },
+  "externalImport": {
+    "path": "D:\\PycharmProjects\\pyjhora_external_strength_values_20260718.csv",
+    "sha256": "C5A4E6C60C448AE546D3BD84291C0DB370DEC67919C3BE54E4390FDCCD809FF6",
+    "issues": []
+  },
+  "requirements": [
+    "Every selected classical-planet Shadbala total must match a saved Tier B export within 0.5 virupa.",
+    "Every selected classical-planet Drik Bala value must match a saved Tier B export within 0.5 virupa.",
+    "External source settings must record Raman ayanamsa, true node, event time, timezone, and location.",
+    "Any missing, duplicate, unknown, non-numeric, or out-of-tolerance row blocks certification.",
+    "PyJHora is a Tier B comparator only; independent Jagannatha Hora or cited worked-example Drik evidence must also pass before certification."
+  ],
+  "independentDrikWitness": {
+    "required": true,
+    "acceptedSources": [
+      "Jagannatha Hora saved export/screenshot with settings",
+      "cited independent worked classical example"
+    ],
+    "status": "failed_independent_validation",
+    "certified": false,
+    "rows": {
+      "expected": 35,
+      "actual": 35,
+      "pass": 9,
+      "fail": 26,
+      "pending": 0
+    },
+    "import": {
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_shadbala_20260723\\jhora_drik_independent_validation_values_20260726.csv",
+      "sha256": "DECDB00B58E0B4C4D3E6A14295DCAFE72D72E2D91584B8F3050C587D6000F1BF",
+      "issues": []
+    }
+  }
+}

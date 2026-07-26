@@ -1,0 +1,5 @@
+# Certification evidence is byte-hashed and must survive Windows checkouts unchanged.
+status/evidence/jhora_shadbala_20260723/* binary
+astro_external_validation_gate_20260726.json binary
+astro_function_certification_report_20260726.md binary
+chat_session_backups/session_20260726_205738_jhora_independent_witness/** binary

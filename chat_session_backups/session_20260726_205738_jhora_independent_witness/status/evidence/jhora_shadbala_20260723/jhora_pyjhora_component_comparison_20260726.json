@@ -1,0 +1,79 @@
+{
+  "contract": "GANN_JHORA_PYJHORA_COMPARISON_V1",
+  "generatedAtUtc": "2026-07-26T15:13:52.858847Z",
+  "status": "diagnostic_disagreement",
+  "toleranceVirupa": 0.5,
+  "tolerancePolicy": "frozen; not widened for certification",
+  "jhora": {
+    "contract": "GANN_JHORA_SHADBALA_WITNESS_V1",
+    "version": "8.0.0.0",
+    "executableSha256": "3DDBE5FB0458AD1F0AD91B002C7EFB8BBA9F08891D3F46190ABA97D570B17908",
+    "witnessPath": "status\\evidence\\jhora_shadbala_20260723\\jhora_shadbala_witness_completed_20260726.csv",
+    "witnessSha256": "3DFF36A1415881522F152F690C3856C3F736BEE60ED202F7F5EDD100C055DF42"
+  },
+  "pyjhora": {
+    "componentsPath": "pyjhora_shadbala_components_20260718.csv",
+    "componentsSha256": "9FD387D50D802A6AF4ACCF905A3D171492E149D6FC5FF18EE9F54A0D2B745A50",
+    "totalsPath": "pyjhora_external_strength_values_20260718.csv",
+    "totalsSha256": "C5A4E6C60C448AE546D3BD84291C0DB370DEC67919C3BE54E4390FDCCD809FF6"
+  },
+  "overall": {
+    "rows": 245,
+    "pass": 108,
+    "fail": 137,
+    "meanAbsoluteDeltaVirupa": 23.514326531,
+    "maxAbsoluteDeltaVirupa": 235.05
+  },
+  "byMeasure": {
+    "sthana": {
+      "rows": 35,
+      "pass": 33,
+      "fail": 2,
+      "meanAbsoluteDeltaVirupa": 0.965714286,
+      "maxAbsoluteDeltaVirupa": 18.75
+    },
+    "kaala": {
+      "rows": 35,
+      "pass": 0,
+      "fail": 35,
+      "meanAbsoluteDeltaVirupa": 57.030571429,
+      "maxAbsoluteDeltaVirupa": 220.29
+    },
+    "dig": {
+      "rows": 35,
+      "pass": 19,
+      "fail": 16,
+      "meanAbsoluteDeltaVirupa": 1.141142857,
+      "maxAbsoluteDeltaVirupa": 3.56
+    },
+    "chesta": {
+      "rows": 35,
+      "pass": 12,
+      "fail": 23,
+      "meanAbsoluteDeltaVirupa": 26.397142857,
+      "maxAbsoluteDeltaVirupa": 86.13
+    },
+    "naisargika": {
+      "rows": 35,
+      "pass": 35,
+      "fail": 0,
+      "meanAbsoluteDeltaVirupa": 0.004285714,
+      "maxAbsoluteDeltaVirupa": 0.01
+    },
+    "drik": {
+      "rows": 35,
+      "pass": 9,
+      "fail": 26,
+      "meanAbsoluteDeltaVirupa": 7.319714286,
+      "maxAbsoluteDeltaVirupa": 35.39
+    },
+    "total": {
+      "rows": 35,
+      "pass": 0,
+      "fail": 35,
+      "meanAbsoluteDeltaVirupa": 71.741714286,
+      "maxAbsoluteDeltaVirupa": 235.05
+    }
+  },
+  "certificationInterpretation": "The locked independent JHora witness does not certify the PyJHora profile. Component differences require doctrine/profile reconciliation; they must not be hidden by tolerance widening."
+}

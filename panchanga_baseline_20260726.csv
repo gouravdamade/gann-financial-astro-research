@@ -1,0 +1,6 @@
+sample_id,local_time,sun_sidereal_lon_deg,moon_sidereal_lon_deg,tithi,paksha,nakshatra,pada,yoga,karana,weekday,weekday_lord,validation_status
+case_8_event_start,2025-03-07T19:30:00+05:30,324.485078254,65.838285879,Navami,Shukla,Mrigashira,4,Ayushman,Balava,Friday,VENUS,local_formula_baseline_pending_traditional_panchanga_check
+case_43_event_start,2025-04-04T02:30:00+05:30,351.587295526,66.176779716,Saptami,Shukla,Mrigashira,4,Shobhana,Gara,Friday,VENUS,local_formula_baseline_pending_traditional_panchanga_check
+case_103_event_start,2025-05-15T22:30:00+05:30,32.342266392,245.719064875,Tritiya,Krishna,Mula,2,Siddha,Vishti,Thursday,JUPITER,local_formula_baseline_pending_traditional_panchanga_check
+case_127_sr_touch_start,2025-05-28T22:00:00+05:30,44.827534764,66.595833426,Dvitiya,Shukla,Mrigashira,4,Shoola,Kaulava,Wednesday,MERCURY,local_formula_baseline_pending_traditional_panchanga_check
+gann_reference_tokyo,1889-02-11T00:00:00+09:00,301.26895583,61.083642978,Dashami,Shukla,Mrigashira,3,Vishkambha,Gara,Sunday,SUN,local_formula_baseline_pending_traditional_panchanga_check

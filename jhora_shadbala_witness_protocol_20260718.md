@@ -60,6 +60,44 @@ The independent Drik gate can consume the 35 Drik rows after the completed
 ledger validates. Full Shadbala remains diagnostic until all component
 differences have an explicit doctrine/profile decision.
 
+## Locked Capture Result
+
+The five-fixture capture was completed on 2026-07-26 and assembled into:
+
+- `status/evidence/jhora_shadbala_20260723/`
+  `jhora_shadbala_witness_completed_20260726.csv`
+- ledger SHA-256:
+  `3DFF36A1415881522F152F690C3856C3F736BEE60ED202F7F5EDD100C055DF42`
+- matrix validation: 245 of 245 required rows present, uniquely keyed, numeric,
+  and linked to matching hashed visual evidence;
+- rounded component consistency: maximum 0.01 virupa residual;
+- rounded Rupa-to-Virupa consistency: maximum 0.29 virupa residual.
+
+JHora displays a Chesta value for the Sun and Moon in the breakup table but
+does not include those two displayed values in its reported Shadbala totals.
+The assembler preserves the displayed values as evidence and explicitly
+excludes only Sun/Moon Chesta when checking JHora's own reported total. It does
+not silently alter any captured value.
+
+The fixed 0.5-virupa comparison with the pinned PyJHora profile produces:
+
+| Measure | Pass | Fail |
+| --- | ---: | ---: |
+| Sthana | 33 | 2 |
+| Kaala | 0 | 35 |
+| Dig | 19 | 16 |
+| Chesta | 12 | 23 |
+| Naisargika | 35 | 0 |
+| Drik | 9 | 26 |
+| Total | 0 | 35 |
+| **All rows** | **108** | **137** |
+
+Therefore the independent witness is complete, but it does not certify the
+current PyJHora/local doctrine profile. Drik is
+`failed_independent_validation`, not pending. Formula/profile reconciliation
+must explain the differences before certification; the tolerance remains
+frozen.
+
 ## Fail-Closed Rules
 
 - no value without visual evidence;

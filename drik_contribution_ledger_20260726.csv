@@ -1,0 +1,211 @@
+sample_id,target,aspector,angle_deg,nature,nature_reason,base_virupa,special_bonus_virupa,gross_virupa,raw_signed_virupa,normalized_signed_virupa
+case_8_event_start,SUN,MOON,258.65,benefic,Moon is waxing; Sun-to-Moon elongation is 101.35 degrees.,20.68,0.0,20.68,20.68,5.17
+case_8_event_start,SUN,MARS,239.45,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",30.28,15.0,45.28,-45.28,-11.32
+case_8_event_start,SUN,MERCURY,341.86,benefic,Mercury shares its sign with more benefics than malefics.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,SUN,JUPITER,274.39,benefic,Jupiter and Venus are treated as natural benefics.,12.81,0.0,12.81,12.81,3.2025
+case_8_event_start,SUN,VENUS,337.05,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,SUN,SATURN,355.75,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,MOON,SUN,101.35,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",39.33,0.0,39.33,-39.33,-9.8325
+case_8_event_start,MOON,MARS,340.80,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,MOON,MERCURY,83.21,benefic,Mercury shares its sign with more benefics than malefics.,38.21,0.0,38.21,38.21,9.5525
+case_8_event_start,MOON,JUPITER,15.74,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,MOON,VENUS,78.41,benefic,Jupiter and Venus are treated as natural benefics.,33.41,0.0,33.41,33.41,8.3525
+case_8_event_start,MOON,SATURN,97.10,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",41.45,0.0,41.45,-41.45,-10.3625
+case_8_event_start,MARS,SUN,120.55,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",29.45,0.0,29.45,-29.45,-7.3625
+case_8_event_start,MARS,MOON,19.20,benefic,Moon is waxing; Sun-to-Moon elongation is 101.35 degrees.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,MARS,MERCURY,102.41,benefic,Mercury shares its sign with more benefics than malefics.,38.8,0.0,38.8,38.8,9.7
+case_8_event_start,MARS,JUPITER,34.94,benefic,Jupiter and Venus are treated as natural benefics.,2.47,0.0,2.47,2.47,0.6175
+case_8_event_start,MARS,VENUS,97.60,benefic,Jupiter and Venus are treated as natural benefics.,41.2,0.0,41.2,41.2,10.3
+case_8_event_start,MARS,SATURN,116.30,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",31.85,0.0,31.85,-31.85,-7.9625
+case_8_event_start,MERCURY,SUN,18.14,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,MERCURY,MOON,276.79,benefic,Moon is waxing; Sun-to-Moon elongation is 101.35 degrees.,11.6,0.0,11.6,11.6,2.9
+case_8_event_start,MERCURY,MARS,257.59,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",21.21,0.0,21.21,-21.21,-5.3025
+case_8_event_start,MERCURY,JUPITER,292.53,benefic,Jupiter and Venus are treated as natural benefics.,3.74,0.0,3.74,3.74,0.935
+case_8_event_start,MERCURY,VENUS,355.20,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,MERCURY,SATURN,13.89,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,JUPITER,SUN,85.61,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",40.61,0.0,40.61,-40.61,-10.1525
+case_8_event_start,JUPITER,MOON,344.26,benefic,Moon is waxing; Sun-to-Moon elongation is 101.35 degrees.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,JUPITER,MARS,325.06,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,JUPITER,MERCURY,67.47,benefic,Mercury shares its sign with more benefics than malefics.,22.47,0.0,22.47,22.47,5.6175
+case_8_event_start,JUPITER,VENUS,62.66,benefic,Jupiter and Venus are treated as natural benefics.,17.66,0.0,17.66,17.66,4.415
+case_8_event_start,JUPITER,SATURN,81.36,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",36.36,45.0,81.36,-81.36,-20.34
+case_8_event_start,VENUS,SUN,22.95,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,VENUS,MOON,281.59,benefic,Moon is waxing; Sun-to-Moon elongation is 101.35 degrees.,9.21,0.0,9.21,9.21,2.3025
+case_8_event_start,VENUS,MARS,262.40,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",18.8,0.0,18.8,-18.8,-4.7
+case_8_event_start,VENUS,MERCURY,4.80,benefic,Mercury shares its sign with more benefics than malefics.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,VENUS,JUPITER,297.34,benefic,Jupiter and Venus are treated as natural benefics.,1.33,0.0,1.33,1.33,0.3325
+case_8_event_start,VENUS,SATURN,18.70,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,SATURN,SUN,4.25,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_8_event_start,SATURN,MOON,262.90,benefic,Moon is waxing; Sun-to-Moon elongation is 101.35 degrees.,18.55,0.0,18.55,18.55,4.6375
+case_8_event_start,SATURN,MARS,243.70,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",28.15,0.0,28.15,-28.15,-7.0375
+case_8_event_start,SATURN,MERCURY,346.11,benefic,Mercury shares its sign with more benefics than malefics.,0.0,0.0,0.0,0.0,0.0
+case_8_event_start,SATURN,JUPITER,278.64,benefic,Jupiter and Venus are treated as natural benefics.,10.68,0.0,10.68,10.68,2.67
+case_8_event_start,SATURN,VENUS,341.30,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,SUN,MOON,285.41,benefic,Moon is waxing; Sun-to-Moon elongation is 74.59 degrees.,7.29,0.0,7.29,7.29,1.8225
+case_43_event_start,SUN,MARS,259.79,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",20.1,0.0,20.1,-20.1,-5.025
+case_43_event_start,SUN,MERCURY,16.93,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,SUN,JUPITER,297.92,benefic,Jupiter and Venus are treated as natural benefics.,1.04,0.0,1.04,1.04,0.26
+case_43_event_start,SUN,VENUS,18.03,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,SUN,SATURN,19.52,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,MOON,SUN,74.59,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",29.59,0.0,29.59,-29.59,-7.3975
+case_43_event_start,MOON,MARS,334.38,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,MOON,MERCURY,91.52,malefic,Mercury shares its sign with more malefics than benefics.,44.24,0.0,44.24,-44.24,-11.06
+case_43_event_start,MOON,JUPITER,12.51,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,MOON,VENUS,92.62,benefic,Jupiter and Venus are treated as natural benefics.,43.69,0.0,43.69,43.69,10.9225
+case_43_event_start,MOON,SATURN,94.11,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",42.95,0.0,42.95,-42.95,-10.7375
+case_43_event_start,MARS,SUN,100.21,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",39.9,0.0,39.9,-39.9,-9.975
+case_43_event_start,MARS,MOON,25.62,benefic,Moon is waxing; Sun-to-Moon elongation is 74.59 degrees.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,MARS,MERCURY,117.15,malefic,Mercury shares its sign with more malefics than benefics.,31.42,0.0,31.42,-31.42,-7.855
+case_43_event_start,MARS,JUPITER,38.13,benefic,Jupiter and Venus are treated as natural benefics.,4.07,0.0,4.07,4.07,1.0175
+case_43_event_start,MARS,VENUS,118.24,benefic,Jupiter and Venus are treated as natural benefics.,30.88,0.0,30.88,30.88,7.72
+case_43_event_start,MARS,SATURN,119.73,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",30.13,0.0,30.13,-30.13,-7.5325
+case_43_event_start,MERCURY,SUN,343.07,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,MERCURY,MOON,268.48,benefic,Moon is waxing; Sun-to-Moon elongation is 74.59 degrees.,15.76,0.0,15.76,15.76,3.94
+case_43_event_start,MERCURY,MARS,242.85,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",28.58,0.0,28.58,-28.58,-7.145
+case_43_event_start,MERCURY,JUPITER,280.99,benefic,Jupiter and Venus are treated as natural benefics.,9.5,0.0,9.5,9.5,2.375
+case_43_event_start,MERCURY,VENUS,1.09,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,MERCURY,SATURN,2.59,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,JUPITER,SUN,62.08,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",17.08,0.0,17.08,-17.08,-4.27
+case_43_event_start,JUPITER,MOON,347.49,benefic,Moon is waxing; Sun-to-Moon elongation is 74.59 degrees.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,JUPITER,MARS,321.87,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,JUPITER,MERCURY,79.01,malefic,Mercury shares its sign with more malefics than benefics.,34.01,0.0,34.01,-34.01,-8.5025
+case_43_event_start,JUPITER,VENUS,80.11,benefic,Jupiter and Venus are treated as natural benefics.,35.11,0.0,35.11,35.11,8.7775
+case_43_event_start,JUPITER,SATURN,81.60,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",36.6,45.0,81.6,-81.6,-20.4
+case_43_event_start,VENUS,SUN,341.97,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,VENUS,MOON,267.38,benefic,Moon is waxing; Sun-to-Moon elongation is 74.59 degrees.,16.31,0.0,16.31,16.31,4.0775
+case_43_event_start,VENUS,MARS,241.76,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",29.12,0.0,29.12,-29.12,-7.28
+case_43_event_start,VENUS,MERCURY,358.91,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,VENUS,JUPITER,279.89,benefic,Jupiter and Venus are treated as natural benefics.,10.06,0.0,10.06,10.06,2.515
+case_43_event_start,VENUS,SATURN,1.49,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,SATURN,SUN,340.48,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_43_event_start,SATURN,MOON,265.89,benefic,Moon is waxing; Sun-to-Moon elongation is 74.59 degrees.,17.06,0.0,17.06,17.06,4.265
+case_43_event_start,SATURN,MARS,240.27,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",29.86,0.0,29.86,-29.86,-7.465
+case_43_event_start,SATURN,MERCURY,357.41,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_43_event_start,SATURN,JUPITER,278.40,benefic,Jupiter and Venus are treated as natural benefics.,10.8,0.0,10.8,10.8,2.7
+case_43_event_start,SATURN,VENUS,358.51,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_103_event_start,SUN,MOON,146.62,malefic,Moon is waning; Sun-to-Moon elongation is 213.38 degrees.,3.38,0.0,3.38,-3.38,-0.845
+case_103_event_start,SUN,MARS,282.46,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",8.77,0.0,8.77,-8.77,-2.1925
+case_103_event_start,SUN,MERCURY,15.92,benefic,"Mercury is alone in its sign, so it is treated as benefic.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,SUN,JUPITER,330.68,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_103_event_start,SUN,VENUS,44.71,benefic,Jupiter and Venus are treated as natural benefics.,7.36,0.0,7.36,7.36,1.84
+case_103_event_start,SUN,SATURN,55.87,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",12.93,0.0,12.93,-12.93,-3.2325
+case_103_event_start,MOON,SUN,213.38,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",43.31,0.0,43.31,-43.31,-10.8275
+case_103_event_start,MOON,MARS,135.84,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",14.16,0.0,14.16,-14.16,-3.54
+case_103_event_start,MOON,MERCURY,229.30,benefic,"Mercury is alone in its sign, so it is treated as benefic.",35.35,0.0,35.35,35.35,8.8375
+case_103_event_start,MOON,JUPITER,184.06,benefic,Jupiter and Venus are treated as natural benefics.,57.97,0.0,57.97,57.97,14.4925
+case_103_event_start,MOON,VENUS,258.09,benefic,Jupiter and Venus are treated as natural benefics.,20.96,0.0,20.96,20.96,5.24
+case_103_event_start,MOON,SATURN,269.25,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",15.38,0.0,15.38,-15.38,-3.845
+case_103_event_start,MARS,SUN,77.54,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",32.54,0.0,32.54,-32.54,-8.135
+case_103_event_start,MARS,MOON,224.16,malefic,Moon is waning; Sun-to-Moon elongation is 213.38 degrees.,37.92,0.0,37.92,-37.92,-9.48
+case_103_event_start,MARS,MERCURY,93.46,benefic,"Mercury is alone in its sign, so it is treated as benefic.",43.27,0.0,43.27,43.27,10.8175
+case_103_event_start,MARS,JUPITER,48.22,benefic,Jupiter and Venus are treated as natural benefics.,9.11,0.0,9.11,9.11,2.2775
+case_103_event_start,MARS,VENUS,122.25,benefic,Jupiter and Venus are treated as natural benefics.,27.75,0.0,27.75,27.75,6.9375
+case_103_event_start,MARS,SATURN,133.41,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",16.59,0.0,16.59,-16.59,-4.1475
+case_103_event_start,MERCURY,SUN,344.08,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,MERCURY,MOON,130.70,malefic,Moon is waning; Sun-to-Moon elongation is 213.38 degrees.,19.3,0.0,19.3,-19.3,-4.825
+case_103_event_start,MERCURY,MARS,266.54,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",16.73,0.0,16.73,-16.73,-4.1825
+case_103_event_start,MERCURY,JUPITER,314.76,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_103_event_start,MERCURY,VENUS,28.79,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_103_event_start,MERCURY,SATURN,39.95,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",4.98,0.0,4.98,-4.98,-1.245
+case_103_event_start,JUPITER,SUN,29.32,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,JUPITER,MOON,175.94,malefic,Moon is waning; Sun-to-Moon elongation is 213.38 degrees.,51.88,0.0,51.88,-51.88,-12.97
+case_103_event_start,JUPITER,MARS,311.78,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,JUPITER,MERCURY,45.24,benefic,"Mercury is alone in its sign, so it is treated as benefic.",7.62,0.0,7.62,7.62,1.905
+case_103_event_start,JUPITER,VENUS,74.03,benefic,Jupiter and Venus are treated as natural benefics.,29.03,0.0,29.03,29.03,7.2575
+case_103_event_start,JUPITER,SATURN,85.19,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",40.19,45.0,85.19,-85.19,-21.2975
+case_103_event_start,VENUS,SUN,315.29,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,VENUS,MOON,101.91,malefic,Moon is waning; Sun-to-Moon elongation is 213.38 degrees.,39.05,0.0,39.05,-39.05,-9.7625
+case_103_event_start,VENUS,MARS,237.75,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",31.12,15.0,46.12,-46.12,-11.53
+case_103_event_start,VENUS,MERCURY,331.21,benefic,"Mercury is alone in its sign, so it is treated as benefic.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,VENUS,JUPITER,285.97,benefic,Jupiter and Venus are treated as natural benefics.,7.01,0.0,7.01,7.01,1.7525
+case_103_event_start,VENUS,SATURN,11.16,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,SATURN,SUN,304.13,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,SATURN,MOON,90.75,malefic,Moon is waning; Sun-to-Moon elongation is 213.38 degrees.,44.62,0.0,44.62,-44.62,-11.155
+case_103_event_start,SATURN,MARS,226.59,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",36.7,15.0,51.7,-51.7,-12.925
+case_103_event_start,SATURN,MERCURY,320.05,benefic,"Mercury is alone in its sign, so it is treated as benefic.",0.0,0.0,0.0,0.0,0.0
+case_103_event_start,SATURN,JUPITER,274.81,benefic,Jupiter and Venus are treated as natural benefics.,12.59,0.0,12.59,12.59,3.1475
+case_103_event_start,SATURN,VENUS,348.84,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,SUN,MOON,338.23,benefic,Moon is waxing; Sun-to-Moon elongation is 21.77 degrees.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,SUN,MARS,288.29,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",5.85,0.0,5.85,-5.85,-1.4625
+case_127_sr_touch_start,SUN,MERCURY,1.84,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,SUN,JUPITER,340.33,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,SUN,VENUS,45.81,benefic,Jupiter and Venus are treated as natural benefics.,7.91,0.0,7.91,7.91,1.9775
+case_127_sr_touch_start,SUN,SATURN,67.33,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",22.33,45.0,67.33,-67.33,-16.8325
+case_127_sr_touch_start,MOON,SUN,21.77,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MOON,MARS,310.06,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MOON,MERCURY,23.61,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MOON,JUPITER,2.10,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MOON,VENUS,67.57,benefic,Jupiter and Venus are treated as natural benefics.,22.57,0.0,22.57,22.57,5.6425
+case_127_sr_touch_start,MOON,SATURN,89.10,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",44.1,45.0,89.1,-89.1,-22.275
+case_127_sr_touch_start,MARS,SUN,71.71,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",26.71,0.0,26.71,-26.71,-6.6775
+case_127_sr_touch_start,MARS,MOON,49.94,benefic,Moon is waxing; Sun-to-Moon elongation is 21.77 degrees.,9.97,0.0,9.97,9.97,2.4925
+case_127_sr_touch_start,MARS,MERCURY,73.55,malefic,Mercury shares its sign with more malefics than benefics.,28.55,0.0,28.55,-28.55,-7.1375
+case_127_sr_touch_start,MARS,JUPITER,52.04,benefic,Jupiter and Venus are treated as natural benefics.,11.02,0.0,11.02,11.02,2.755
+case_127_sr_touch_start,MARS,VENUS,117.52,benefic,Jupiter and Venus are treated as natural benefics.,31.24,0.0,31.24,31.24,7.81
+case_127_sr_touch_start,MARS,SATURN,139.04,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",10.96,0.0,10.96,-10.96,-2.74
+case_127_sr_touch_start,MERCURY,SUN,358.16,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MERCURY,MOON,336.39,benefic,Moon is waxing; Sun-to-Moon elongation is 21.77 degrees.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MERCURY,MARS,286.45,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",6.78,0.0,6.78,-6.78,-1.695
+case_127_sr_touch_start,MERCURY,JUPITER,338.49,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,MERCURY,VENUS,43.97,benefic,Jupiter and Venus are treated as natural benefics.,6.98,0.0,6.98,6.98,1.745
+case_127_sr_touch_start,MERCURY,SATURN,65.49,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",20.49,45.0,65.49,-65.49,-16.3725
+case_127_sr_touch_start,JUPITER,SUN,19.67,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,JUPITER,MOON,357.90,benefic,Moon is waxing; Sun-to-Moon elongation is 21.77 degrees.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,JUPITER,MARS,307.96,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,JUPITER,MERCURY,21.51,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,JUPITER,VENUS,65.47,benefic,Jupiter and Venus are treated as natural benefics.,20.47,0.0,20.47,20.47,5.1175
+case_127_sr_touch_start,JUPITER,SATURN,87.00,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",42.0,45.0,87.0,-87.0,-21.75
+case_127_sr_touch_start,VENUS,SUN,314.19,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,VENUS,MOON,292.43,benefic,Moon is waxing; Sun-to-Moon elongation is 21.77 degrees.,3.78,0.0,3.78,3.78,0.945
+case_127_sr_touch_start,VENUS,MARS,242.48,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",28.76,0.0,28.76,-28.76,-7.19
+case_127_sr_touch_start,VENUS,MERCURY,316.03,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,VENUS,JUPITER,294.53,benefic,Jupiter and Venus are treated as natural benefics.,2.74,0.0,2.74,2.74,0.685
+case_127_sr_touch_start,VENUS,SATURN,21.53,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+case_127_sr_touch_start,SATURN,SUN,292.67,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",3.66,0.0,3.66,-3.66,-0.915
+case_127_sr_touch_start,SATURN,MOON,270.90,benefic,Moon is waxing; Sun-to-Moon elongation is 21.77 degrees.,14.55,0.0,14.55,14.55,3.6375
+case_127_sr_touch_start,SATURN,MARS,220.96,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",39.52,15.0,54.52,-54.52,-13.63
+case_127_sr_touch_start,SATURN,MERCURY,294.51,malefic,Mercury shares its sign with more malefics than benefics.,2.75,0.0,2.75,-2.75,-0.6875
+case_127_sr_touch_start,SATURN,JUPITER,273.00,benefic,Jupiter and Venus are treated as natural benefics.,13.5,0.0,13.5,13.5,3.375
+case_127_sr_touch_start,SATURN,VENUS,338.47,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,SUN,MOON,240.19,benefic,Moon is waxing; Sun-to-Moon elongation is 119.81 degrees.,29.91,0.0,29.91,29.91,7.4775
+gann_reference_tokyo,SUN,MARS,327.28,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,SUN,MERCURY,351.11,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,SUN,JUPITER,51.28,benefic,Jupiter and Venus are treated as natural benefics.,10.64,0.0,10.64,10.64,2.66
+gann_reference_tokyo,SUN,VENUS,313.59,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,SUN,SATURN,185.64,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",57.18,0.0,57.18,-57.18,-14.295
+gann_reference_tokyo,MOON,SUN,119.81,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",30.09,0.0,30.09,-30.09,-7.5225
+gann_reference_tokyo,MOON,MARS,87.09,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",42.09,0.0,42.09,-42.09,-10.5225
+gann_reference_tokyo,MOON,MERCURY,110.93,malefic,Mercury shares its sign with more malefics than benefics.,34.53,0.0,34.53,-34.53,-8.6325
+gann_reference_tokyo,MOON,JUPITER,171.09,benefic,Jupiter and Venus are treated as natural benefics.,42.18,0.0,42.18,42.18,10.545
+gann_reference_tokyo,MOON,VENUS,73.41,benefic,Jupiter and Venus are treated as natural benefics.,28.41,0.0,28.41,28.41,7.1025
+gann_reference_tokyo,MOON,SATURN,305.45,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,MARS,SUN,32.72,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",1.36,0.0,1.36,-1.36,-0.34
+gann_reference_tokyo,MARS,MOON,272.91,benefic,Moon is waxing; Sun-to-Moon elongation is 119.81 degrees.,13.54,0.0,13.54,13.54,3.385
+gann_reference_tokyo,MARS,MERCURY,23.84,malefic,Mercury shares its sign with more malefics than benefics.,0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,MARS,JUPITER,84.00,benefic,Jupiter and Venus are treated as natural benefics.,39.0,0.0,39.0,39.0,9.75
+gann_reference_tokyo,MARS,VENUS,346.32,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,MARS,SATURN,218.36,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",40.82,0.0,40.82,-40.82,-10.205
+gann_reference_tokyo,MERCURY,SUN,8.89,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,MERCURY,MOON,249.07,benefic,Moon is waxing; Sun-to-Moon elongation is 119.81 degrees.,25.47,0.0,25.47,25.47,6.3675
+gann_reference_tokyo,MERCURY,MARS,336.16,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,MERCURY,JUPITER,60.16,benefic,Jupiter and Venus are treated as natural benefics.,15.16,0.0,15.16,15.16,3.79
+gann_reference_tokyo,MERCURY,VENUS,322.48,benefic,Jupiter and Venus are treated as natural benefics.,0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,MERCURY,SATURN,194.52,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",52.74,0.0,52.74,-52.74,-13.185
+gann_reference_tokyo,JUPITER,SUN,308.72,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,JUPITER,MOON,188.91,benefic,Moon is waxing; Sun-to-Moon elongation is 119.81 degrees.,55.55,0.0,55.55,55.55,13.8875
+gann_reference_tokyo,JUPITER,MARS,276.00,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",12.0,0.0,12.0,-12.0,-3.0
+gann_reference_tokyo,JUPITER,MERCURY,299.84,malefic,Mercury shares its sign with more malefics than benefics.,0.08,0.0,0.08,-0.08,-0.02
+gann_reference_tokyo,JUPITER,VENUS,262.32,benefic,Jupiter and Venus are treated as natural benefics.,18.84,0.0,18.84,18.84,4.71
+gann_reference_tokyo,JUPITER,SATURN,134.36,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",15.64,0.0,15.64,-15.64,-3.91
+gann_reference_tokyo,VENUS,SUN,46.41,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",8.2,0.0,8.2,-8.2,-2.05
+gann_reference_tokyo,VENUS,MOON,286.59,benefic,Moon is waxing; Sun-to-Moon elongation is 119.81 degrees.,6.71,0.0,6.71,6.71,1.6775
+gann_reference_tokyo,VENUS,MARS,13.68,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",0.0,0.0,0.0,0.0,0.0
+gann_reference_tokyo,VENUS,MERCURY,37.52,malefic,Mercury shares its sign with more malefics than benefics.,3.76,0.0,3.76,-3.76,-0.94
+gann_reference_tokyo,VENUS,JUPITER,97.68,benefic,Jupiter and Venus are treated as natural benefics.,41.16,0.0,41.16,41.16,10.29
+gann_reference_tokyo,VENUS,SATURN,232.04,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",33.98,0.0,33.98,-33.98,-8.495
+gann_reference_tokyo,SATURN,SUN,174.36,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",48.72,0.0,48.72,-48.72,-12.18
+gann_reference_tokyo,SATURN,MOON,54.55,benefic,Moon is waxing; Sun-to-Moon elongation is 119.81 degrees.,12.27,0.0,12.27,12.27,3.0675
+gann_reference_tokyo,SATURN,MARS,141.64,malefic,"Sun, Mars, and Saturn are treated as natural malefics.",8.36,0.0,8.36,-8.36,-2.09
+gann_reference_tokyo,SATURN,MERCURY,165.48,malefic,Mercury shares its sign with more malefics than benefics.,30.96,0.0,30.96,-30.96,-7.74
+gann_reference_tokyo,SATURN,JUPITER,225.64,benefic,Jupiter and Venus are treated as natural benefics.,37.18,0.0,37.18,37.18,9.295
+gann_reference_tokyo,SATURN,VENUS,127.96,benefic,Jupiter and Venus are treated as natural benefics.,22.04,0.0,22.04,22.04,5.51

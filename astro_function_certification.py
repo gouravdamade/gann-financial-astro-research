@@ -613,12 +613,12 @@ def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
             "Parashara six-formula foundation plus PyJHora 4.8.7 reconciliation",
             str(drik.get("method")),
             "strict_shadbala_doctrine.strict_drik_bala_for_planet",
-            "tier_b_aligned_pending_independent_validation",
+            "failed_independent_validation",
             "versioned reconciled formula",
-            str(drik.get("status")),
-            "Tier B covers five fixtures; independent Jagannatha Hora or a saved worked example is still required.",
-            "Import the prepared independent-source witness without changing the 0.5 virupa tolerance.",
-            "train_as_provisional_numeric_feature_only",
+            "tier_b_pyjhora_aligned_independent_jhora_disagrees_9_of_35",
+            "The locked JHora 8.0 witness is complete, but only 9 of 35 Drik rows match within the frozen 0.5-virupa tolerance.",
+            "Reconcile the PyJHora/local and JHora aspect, relationship, and contribution profiles; do not widen tolerance.",
+            "exclude_from_certified_ml_features_keep_research_diagnostic",
         ),
         InventoryRow(
             "Gate 1",
@@ -924,6 +924,9 @@ def render_report(
     drik_passed = sum(row.pass_fail == "pass" for row in drik_rows)
     drik_failed = sum(row.pass_fail == "fail" for row in drik_rows)
     independent_drik = dict(external_gate.get("independentDrikWitness") or {})
+    independent_rows = dict(independent_drik.get("rows") or {})
+    independent_passed = int(independent_rows.get("pass") or 0)
+    independent_failed = int(independent_rows.get("fail") or 0)
     if external_gate["certified"]:
         external_verdict = (
             "- Shadbala/Drik external certification passed for the declared matrix."
@@ -936,8 +939,10 @@ def render_report(
             "comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass "
             "60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The "
             "35 full-total rows still fail against the alternate PyJHora Kaala/Chesta "
-            "profile. Keep full Shadbala provisional and require the independent JHora "
-            "or cited worked-example witness before certification."
+            f"profile. The completed independent JHora Drik witness passes "
+            f"{independent_passed}/35 and fails {independent_failed}/35. Keep full "
+            "Shadbala and Drik excluded from certified ML/execution until the "
+            "doctrine profiles are explicitly reconciled."
         )
     else:
         external_verdict = (
