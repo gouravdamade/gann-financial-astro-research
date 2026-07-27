@@ -52,11 +52,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   complete repository run remains `355/355`.
 - Recovery snapshot:
   `C:\Users\ADMIN\Documents\Codex\2026-05-16\this-is-my-private-gann-financial\chat_session_backups\session_20260727_092727_jhora_visible_kaala_reconciliation`.
-  Canonical `D:\PycharmProjects` became read-only to this sandbox during the
-  run, so the snapshot and recovery commit are retained in the writable
-  workspace. The remote is set to the GitHub recovery repository, but both
-  HTTPS and SSH push attempts were blocked by this task's network sandbox;
-  the push remains pending rather than being reported as complete.
+  Canonical `D:\PycharmProjects` became read-only to the earlier sandbox during
+  the run, so the snapshot and recovery commit were first retained in the
+  writable workspace. Network and laptop access resumed on 2026-07-27, and the
+  JHora visible-Kaala reconciliation commit was successfully pushed to the
+  GitHub recovery repository on `origin/master`.
 - Runtime-only SQLite/log/Android state remains untouched and must not be
   committed: `gann_aspect_annotations_raman_v2.sqlite`,
   `candlestick_shadow_v3.sqlite`, `logs/`, and `tryapp-android/`.
