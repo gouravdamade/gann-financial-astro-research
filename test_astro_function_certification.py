@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 from astro_function_certification import (
@@ -14,6 +15,7 @@ from astro_function_certification import (
     independent_drik_gate_summary,
     merge_external_values,
     validate_external_import,
+    visible_kaala_gate_summary,
 )
 from doctrine_config import load_doctrine_config
 
@@ -161,6 +163,70 @@ def test_independent_drik_witness_is_a_separate_fail_closed_gate() -> None:
     gate = independent_drik_gate_summary(passed, [], Path("missing.csv"))
     assert gate["status"] == "passed_independent_validation"
     assert gate["certified"] is True
+
+
+def test_visible_kaala_witness_promotes_only_complete_subcomponents(
+    tmp_path: Path,
+) -> None:
+    components = {
+        name: {
+            "rows": 35,
+            "localPass": 35,
+            "localMaeVirupa": 0.0,
+            "localMaxVirupa": 0.0,
+        }
+        for name in (
+            "abda",
+            "masa",
+            "vara",
+            "tribhaga",
+            "yuddha",
+            "paksha",
+            "hora",
+            "nathonnatha",
+            "ayana",
+            "total",
+        )
+    }
+    for name, passed in {
+        "hora": 33,
+        "nathonnatha": 11,
+        "ayana": 13,
+        "total": 4,
+    }.items():
+        components[name]["localPass"] = passed
+    path = tmp_path / "visible_kaala.json"
+    path.write_text(
+        json.dumps(
+            {
+                "witnessRows": 350,
+                "comparisonRows": 350,
+                "toleranceVirupa": 0.5,
+                "components": components,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    gate = visible_kaala_gate_summary(path)
+
+    assert gate["status"] == "partial_component_validation"
+    assert gate["certified"] is False
+    assert gate["aggregateKaalaCertified"] is False
+    assert gate["promotedComponents"] == ["paksha"]
+    assert gate["retainedValidatedComponents"] == [
+        "abda",
+        "masa",
+        "vara",
+        "tribhaga",
+        "yuddha",
+    ]
+    assert gate["provisionalComponents"] == [
+        "hora",
+        "nathonnatha",
+        "ayana",
+        "total",
+    ]
 
 
 def test_local_certification_matrix_contains_finite_planet_values() -> None:

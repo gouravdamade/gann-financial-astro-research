@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-26T18:38:12Z",
+  "asOfUtc": "2026-07-27T00:00:00Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -20,13 +20,16 @@
       "certificationId": "strict_shadbala_full_total",
       "status": "failed_external_validation",
       "sourceCertified": false,
-      "summary": "The locked JHora witness is internally complete and valid at 245 rows. Excluding displayed Sun/Moon Chesta from the local total corrects a source-supported double count and reduces local full-total mean absolute error to 17.416 virupa versus PyJHora's 71.742, but the strict total still passes 0 of 35 at the frozen 0.5-virupa tolerance. Full Shadbala remains uncertified.",
+      "summary": "The locked JHora witness now includes 245 top-level and 350 visible Kaala-subcomponent rows. Dynamic Paksha passes 35 of 35 and is promoted; displayed Sun/Moon Chesta remains excluded from totals. Full-total mean absolute error improves to 12.626 virupa versus PyJHora's 71.742, but still passes 0 of 35 at the frozen 0.5-virupa tolerance. Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala remain uncertified.",
       "evidenceRefs": [
         "astro_function_certification_report_20260726.md",
         "status/evidence/jhora_shadbala_20260723/jhora_shadbala_witness_completed_20260726.csv",
         "status/evidence/jhora_shadbala_20260723/jhora_pyjhora_component_comparison_20260726.csv",
         "status/evidence/jhora_shadbala_20260723/jhora_local_doctrine_reconciliation_20260726.csv",
         "status/evidence/jhora_shadbala_20260723/jhora_doctrine_reconciliation_20260726.json",
+        "status/evidence/jhora_kaala_witness_20260727/jhora_kaala_profile_comparison_20260727.json",
+        "status/evidence/jhora_kaala_witness_20260727/JHORA_KAALA_EVIDENCE_MANIFEST_20260727.md",
+        "jhora_kaala_reconciliation_20260727.md",
         "jhora_doctrine_reconciliation_20260726.md",
         "status/evidence/jhora_shadbala_20260723/JHORA_SHADBALA_EVIDENCE_MANIFEST_20260726.md"
       ]

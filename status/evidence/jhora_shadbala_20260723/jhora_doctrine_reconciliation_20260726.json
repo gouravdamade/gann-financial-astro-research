@@ -1,19 +1,22 @@
 {
   "chesta": {
-    "moonDisplayMatchesHalfLocalPaksha": 5,
-    "moonHalfLocalMaxAbsoluteDeltaVirupa": 0.004402541,
-    "moonHalfLocalMeanAbsoluteDeltaVirupa": 0.003527168,
-    "moonRows": 5,
+    "excludedChestaMaxDisplayResidualVirupa": 0.01,
+    "includedChestaMinAbsoluteResidualVirupa": 7.26,
+    "jhoraTotalExcludesDisplayedChesta": 10,
+    "luminaryRows": 10,
     "nonLuminaryLocalCloser": 12,
     "nonLuminaryPyjhoraCloser": 13,
     "nonLuminaryRows": 25,
     "totalPolicy": "Sun and Moon Chesta is preserved as display evidence but excluded from Shadbala totals to prevent Ayana/Paksha double counting."
   },
-  "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V1",
+  "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V2",
   "decisions": [
-    "Promote luminary Chesta total exclusion: classical text and locked JHora totals independently agree that displayed Sun/Moon Chesta must not be added again.",
-    "Retain the current production Drik profile as provisional and execution-ineligible. Named candidate profiles are sensitivity tests, not silent replacements.",
-    "Capture a visible JHora Kaala subcomponent table before changing Abda/Masa/Hora or other categorical lord awards."
+    "Promote dynamic Paksha classification: classical phase/nature rules and the locked visible JHora table agree in 35/35 rows within the frozen 0.5-virupa tolerance.",
+    "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each matches all 35 visible JHora rows.",
+    "Keep Hora provisional. It matches 33/35 rows, but the case-8 Moon/Saturn award remains a sunrise-boundary disagreement; do not replace the current algorithm with a temporal-hour guess.",
+    "Keep Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, and full Shadbala uncertified until their remaining formula and time-basis residuals are independently reconciled.",
+    "Promote luminary Chesta total exclusion: classical text and locked JHora total arithmetic independently agree that displayed Sun/Moon Chesta must not be added again.",
+    "Retain the current production Drik profile as provisional and execution-ineligible. Named candidate profiles are sensitivity tests, not silent replacements."
   ],
   "drikCandidateProfiles": [
     {
@@ -77,7 +80,7 @@
       "specialAspectScale": 0.0
     }
   ],
-  "generatedAtUtc": "2026-07-26T18:39:18.856158Z",
+  "generatedAtUtc": "2026-07-27T03:56:21.976723Z",
   "inputs": {
     "comparison": {
       "path": "status\\evidence\\jhora_shadbala_20260723\\jhora_pyjhora_component_comparison_20260726.csv",
@@ -93,42 +96,162 @@
     },
     "kaalaComponents": {
       "path": "shadbala_kaala_subcomponent_residuals_20260718.csv",
-      "sha256": "56DF643DD037D6B43FA490AA0BDB09A9FCDEAE54BB2AD9873CBE35E79AC96326"
+      "sha256": "BAD0045AD53B7E2B9A22B5292E6E8CCF0D1A1BF96843046AD4F506DEF278CE99"
+    },
+    "kaalaVisibleWitness": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\jhora_kaala_profile_comparison_20260727.json",
+      "sha256": "2FD0BBDCBFA07432FAE97F74F8F947FCF1A4AF036AD4004477F4C912AE1D9904"
     },
     "localComponents": {
       "path": "shadbala_component_residuals_20260718.csv",
-      "sha256": "8263D8C0FC7289584C7FFFA6E42382A76F47F2239A08B72E075147CAF3CB56FF"
+      "sha256": "64E4E32A27AF1CFA6AF2D29A0B915E24BACD61AB71A9E209E49233A0C2F07F0F"
     }
   },
-  "kaalaCategoricalResiduals": [
-    {
-      "absoluteRemainderVirupa": 0.677900892,
-      "interpretation": "Possible 15/30/45/60-virupa lord-award disagreement; requires a visible JHora Kaala subcomponent table.",
-      "jhoraMinusLocalVirupa": 90.677900892,
-      "nearestCategoricalQuantumVirupa": 90.0,
-      "planet": "MOON",
-      "sampleId": "case_127_sr_touch_start"
+  "kaalaCategoricalResiduals": [],
+  "kaalaVisibleWitness": {
+    "comparisonRows": 350,
+    "components": {
+      "abda": {
+        "localCloser": 0,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 0.0,
+        "pyjhoraMaxVirupa": 0.0,
+        "pyjhoraPass": 35,
+        "rows": 35,
+        "ties": 35
+      },
+      "ayana": {
+        "localCloser": 8,
+        "localMaeVirupa": 1.973373426,
+        "localMaxVirupa": 9.010454001,
+        "localPass": 13,
+        "pyjhoraCloser": 27,
+        "pyjhoraMaeVirupa": 2.591428571,
+        "pyjhoraMaxVirupa": 29.14,
+        "pyjhoraPass": 26,
+        "rows": 35,
+        "ties": 0
+      },
+      "hora": {
+        "localCloser": 9,
+        "localMaeVirupa": 3.428571429,
+        "localMaxVirupa": 60.0,
+        "localPass": 33,
+        "pyjhoraCloser": 1,
+        "pyjhoraMaeVirupa": 17.142857143,
+        "pyjhoraMaxVirupa": 60.0,
+        "pyjhoraPass": 25,
+        "rows": 35,
+        "ties": 25
+      },
+      "masa": {
+        "localCloser": 0,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 0.0,
+        "pyjhoraMaxVirupa": 0.0,
+        "pyjhoraPass": 35,
+        "rows": 35,
+        "ties": 35
+      },
+      "nathonnatha": {
+        "localCloser": 30,
+        "localMaeVirupa": 1.842805714,
+        "localMaxVirupa": 4.8899,
+        "localPass": 11,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 19.332,
+        "pyjhoraMaxVirupa": 42.75,
+        "pyjhoraPass": 5,
+        "rows": 35,
+        "ties": 5
+      },
+      "paksha": {
+        "localCloser": 35,
+        "localMaeVirupa": 0.039841769,
+        "localMaxVirupa": 0.123677207,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 46.681428571,
+        "pyjhoraMaxVirupa": 120.13,
+        "pyjhoraPass": 6,
+        "rows": 35,
+        "ties": 0
+      },
+      "total": {
+        "localCloser": 35,
+        "localMaeVirupa": 6.349790459,
+        "localMaxVirupa": 62.908905083,
+        "localPass": 4,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 60.376571429,
+        "pyjhoraMaxVirupa": 222.84,
+        "pyjhoraPass": 0,
+        "rows": 35,
+        "ties": 0
+      },
+      "tribhaga": {
+        "localCloser": 4,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 6.857142857,
+        "pyjhoraMaxVirupa": 60.0,
+        "pyjhoraPass": 31,
+        "rows": 35,
+        "ties": 31
+      },
+      "vara": {
+        "localCloser": 0,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 0.0,
+        "pyjhoraMaxVirupa": 0.0,
+        "pyjhoraPass": 35,
+        "rows": 35,
+        "ties": 35
+      },
+      "yuddha": {
+        "localCloser": 4,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
+        "pyjhoraMaeVirupa": 0.336,
+        "pyjhoraMaxVirupa": 4.28,
+        "pyjhoraPass": 31,
+        "rows": 35,
+        "ties": 31
+      }
     },
-    {
-      "absoluteRemainderVirupa": 0.08062872,
-      "interpretation": "Possible 15/30/45/60-virupa lord-award disagreement; requires a visible JHora Kaala subcomponent table.",
-      "jhoraMinusLocalVirupa": 44.91937128,
-      "nearestCategoricalQuantumVirupa": 45.0,
-      "planet": "MERCURY",
-      "sampleId": "case_127_sr_touch_start"
-    }
-  ],
+    "contract": "GANN_JHORA_KAALA_WITNESS_COMPARATOR_V1",
+    "evidenceConclusions": [
+      "Promote dynamic Paksha classification: the local profile passes 35/35 visible rows with 0.040 virupa MAE and 0.124 virupa maximum error.",
+      "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each local subcomponent passes all 35 visible rows.",
+      "Retain Hora as provisional: it passes 33/35 rows, with the case-8 sunrise-boundary award unresolved.",
+      "Do not promote Nathonnatha, Ayana, or aggregate Kaala: they pass 11/35, 13/35, and 4/35 rows respectively.",
+      "The frozen 0.5-virupa certification tolerance is unchanged; the 0.06 display-sum allowance only checks arithmetic over JHora values rounded to two decimal places."
+    ]
+  },
   "status": "diagnostic_reconciliation_not_certified",
   "tolerancePolicy": "frozen; no widening",
   "toleranceVirupa": 0.5,
   "topLevel": {
     "chesta": {
-      "localCloser": 16,
+      "localCloser": 15,
       "localFail": 23,
-      "localMaxAbsoluteDeltaVirupa": 62.594665109,
-      "localMeanAbsoluteDeltaVirupa": 14.73246742,
+      "localMaxAbsoluteDeltaVirupa": 98.227800892,
+      "localMeanAbsoluteDeltaVirupa": 17.918837597,
       "localPass": 12,
-      "pyjhoraCloser": 19,
+      "pyjhoraCloser": 20,
       "pyjhoraMaxAbsoluteDeltaVirupa": 86.13,
       "pyjhoraMeanAbsoluteDeltaVirupa": 26.397142857,
       "rows": 35,
@@ -148,10 +271,10 @@
     },
     "kaala": {
       "localCloser": 35,
-      "localFail": 31,
-      "localMaxAbsoluteDeltaVirupa": 90.677900892,
-      "localMeanAbsoluteDeltaVirupa": 7.982740686,
-      "localPass": 4,
+      "localFail": 30,
+      "localMaxAbsoluteDeltaVirupa": 8.879168018,
+      "localMeanAbsoluteDeltaVirupa": 2.762988508,
+      "localPass": 5,
       "pyjhoraCloser": 0,
       "pyjhoraMaxAbsoluteDeltaVirupa": 220.29,
       "pyjhoraMeanAbsoluteDeltaVirupa": 57.030571429,
@@ -161,8 +284,8 @@
     "total": {
       "localCloser": 33,
       "localFail": 35,
-      "localMaxAbsoluteDeltaVirupa": 100.785937738,
-      "localMeanAbsoluteDeltaVirupa": 17.416464092,
+      "localMaxAbsoluteDeltaVirupa": 35.059176475,
+      "localMeanAbsoluteDeltaVirupa": 12.626402633,
       "localPass": 0,
       "pyjhoraCloser": 2,
       "pyjhoraMaxAbsoluteDeltaVirupa": 235.05,

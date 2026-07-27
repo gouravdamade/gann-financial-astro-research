@@ -4,6 +4,32 @@ Date: 2026-07-18
 
 Status: research-source milestone; execution remains locked.
 
+## 2026-07-27 Visible Kaala Witness Addendum
+
+- Captured and hash-pinned all ten visible Kaala columns for five fixtures and
+  seven classical planets: `350/350` rows under
+  `GANN_JHORA_KAALA_WITNESS_COMPARATOR_V1`.
+- Promoted only dynamic Paksha nature under
+  `STRICT_SHADBALA_V9_DYNAMIC_PAKSHA_JHORA_WITNESS_PROVISIONAL`. Moon nature
+  follows the phase window; Mercury becomes malefic when it shares a whole
+  sign with a malefic. The result passes `35/35` visible JHora Paksha rows with
+  `0.040` virupa mean and `0.124` virupa maximum residual.
+- Abda, Masa, Vara, Tribhaga, and Yuddha each pass `35/35` and are retained.
+  Hora passes `33/35`; only the case-8 Moon/Saturn award differs, so the
+  current fixed-hour implementation stays provisional rather than being
+  replaced by an unsupported temporal-hour guess.
+- Nathonnatha, Ayana, and aggregate Kaala pass `11/35`, `13/35`, and `4/35`
+  visible rows respectively and remain provisional.
+- The corrected top-level Kaala mean absolute residual is now `2.763` virupa
+  with `5/35` strict passes. Full-total mean absolute residual improves to
+  `12.626` virupa, but full Shadbala still passes `0/35`; certification and
+  execution remain locked.
+- JHora total arithmetic independently confirms Sun/Moon Chesta exclusion in
+  all `10/10` luminary rows with at most `0.01` virupa display-rounding
+  residual. Their displayed Chesta values remain provisional evidence rather
+  than certified numeric features.
+- Evidence: `jhora_kaala_reconciliation_20260727.md` and
+  `status/evidence/jhora_kaala_witness_20260727/`.
 ## 2026-07-26 Independent Witness Addendum
 
 - The locked Jagannatha Hora 8.0 witness is complete and internally valid:
@@ -156,8 +182,8 @@ Jagannatha Hora or worked-example witness is saved.
 
 ## Remaining Certification Gates
 
-1. Capture a visible Jagannatha Hora Kaala subcomponent table for the locked
-   fixtures before changing categorical lord awards.
+1. Reconcile the case-8 Hora sunrise boundary and the remaining Nathonnatha
+   and Ayana formula/time-basis residuals without widening tolerance.
 2. Cross-check the Swiss osculating mean-longitude Chesta model for
    non-luminaries against visible JHora subcomponent values.
 3. Resolve the remaining Sthana and Dig profile differences without copying a

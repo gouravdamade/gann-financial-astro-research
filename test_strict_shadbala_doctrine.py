@@ -23,6 +23,7 @@ from strict_shadbala_doctrine import (
     nathonnatha_bala_virupa,
     ojayugma_bala_virupa,
     paksha_bala_virupa,
+    paksha_planet_nature,
     saptavargaja_bala,
     shadbala_components_for_planet,
     strict_drik_bala_for_planet,
@@ -239,6 +240,26 @@ def test_source_aligned_drekkana_paksha_ayana_and_luminary_chesta() -> None:
     assert_close(chesta_total_contribution_virupa("SUN", sun_chesta), 0.0)
     assert_close(chesta_total_contribution_virupa("MOON", moon_chesta), 0.0)
     assert_close(chesta_total_contribution_virupa("MARS", 22.5), 22.5)
+
+
+def test_paksha_uses_phase_aware_moon_and_association_aware_mercury() -> None:
+    crescent = {
+        "SUN": 0.0,
+        "MOON": 30.0,
+        "MARS": 95.0,
+        "MERCURY": 5.0,
+        "JUPITER": 150.0,
+        "VENUS": 210.0,
+        "SATURN": 275.0,
+    }
+    assert paksha_planet_nature("MOON", 0.0, 30.0, crescent) == "malefic"
+    assert_close(paksha_bala_virupa("MOON", 0.0, 30.0, crescent), 100.0)
+    assert paksha_planet_nature("MERCURY", 0.0, 30.0, crescent) == "malefic"
+    assert_close(paksha_bala_virupa("MERCURY", 0.0, 30.0, crescent), 50.0)
+
+    crescent["MERCURY"] = 65.0
+    assert paksha_planet_nature("MERCURY", 0.0, 30.0, crescent) == "benefic"
+    assert_close(paksha_bala_virupa("MERCURY", 0.0, 30.0, crescent), 10.0)
 
 
 def test_luminary_chesta_is_displayed_but_not_double_counted_in_total() -> None:

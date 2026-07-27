@@ -1,7 +1,8 @@
 # Astro Function Certification 4-Gate Report
 
-- Report version: `astro_certification_4_gate_v7_independent_jhora_reconciliation_20260726`
+- Report version: `astro_certification_4_gate_v8_visible_kaala_reconciliation_20260727`
 - Generated: `2026-07-27T00:09:24+05:30`
+- Evidence reconciliation addendum: `2026-07-27`; regenerated from the hash-pinned visible JHora capture without a fresh astronomy calculation.
 - Important interpretation: this report certifies traceability and local reproducibility first. Pending and failed external checks remain explicit and fail closed.
 
 ## Gate Summary
@@ -29,7 +30,7 @@
 | --- | --- | --- | --- | --- |
 | astronomy.raman_ayanamsa | implemented_unvalidated | strict astronomy setting | baseline_generated_pending_external_reference | allow_as_feature_after_external_position_check |
 | astronomy.true_node_rahu_ketu | implemented_unvalidated | strict node position, proxy strength | baseline_generated_pending_external_reference | position_feature_ok_strength_policy_guarded |
-| shadbala.bphs_component_reconciliation_v8 | implemented_unvalidated | versioned source profile with named comparator variants | provisional_independent_jhora_witness_failed_reconciliation_in_progress | train_as_provisional_numeric_feature_only |
+| shadbala.bphs_component_reconciliation_v9 | implemented_unvalidated | versioned source profile with named comparator variants | provisional_independent_jhora_witness_failed_reconciliation_in_progress | train_as_provisional_numeric_feature_only |
 | shadbala.avg_all_policy | implemented_unvalidated | research aggregation | pending_walk_forward_and_external_component_validation | train_with_explicit_artificial_feature_label |
 | drik_bala.reconciled_formula_v2 | failed_independent_validation | versioned reconciled formula | tier_b_pyjhora_aligned_independent_jhora_disagrees_9_of_35 | exclude_from_certified_ml_features_keep_research_diagnostic |
 | drishti.event_orb_strength | proxy_research_feature | proxy | event_orb_proxy_not_drik_bala | do_not_train_as_doctrine_strength |
@@ -97,6 +98,25 @@ Gate status: `failed_external_validation`
 | Tier B PyJHora comparator | 35 pass / 0 fail |
 | Independent JHora/worked-example witness | failed_independent_validation |
 
+### Visible JHora Kaala Witness
+
+Status: `partial_component_validation`. This 350-row matrix can validate individual Kaala subcomponents; it does not certify aggregate Kaala or full Shadbala.
+
+| Component | Local pass | Rows | MAE virupa | Max error virupa |
+| --- | --- | --- | --- | --- |
+| Abda | 35 | 35 | 0.000 | 0.000 |
+| Ayana | 13 | 35 | 1.973 | 9.010 |
+| Hora | 33 | 35 | 3.429 | 60.000 |
+| Masa | 35 | 35 | 0.000 | 0.000 |
+| Nathonnatha | 11 | 35 | 1.843 | 4.890 |
+| Paksha | 35 | 35 | 0.040 | 0.124 |
+| Total | 4 | 35 | 6.350 | 62.909 |
+| Tribhaga | 35 | 35 | 0.000 | 0.000 |
+| Vara | 35 | 35 | 0.000 | 0.000 |
+| Yuddha | 35 | 35 | 0.000 | 0.000 |
+
+Decision: promote dynamic Paksha classification and retain the five already exact components. Keep Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala provisional.
+
 External import issues:
 
 - none
@@ -126,6 +146,6 @@ reviewer replay skipped by CLI flag
 ## Current Verdict
 
 - Safe to continue astronomy/doctrine inspection with these labels visible.
-- Tier B Drik comparison is 35 pass / 0 fail. The end-to-end component diagnostic is 145 pass / 55 fail / 10 structural N/A: Dig 35/35, Drik 35/35, Naisargika 35/35, Sthana 34/35, comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass 60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The locked local-versus-JHora reconciliation excludes displayed Sun/Moon Chesta from the total, reducing local full-total mean absolute error to 17.416 virupa versus PyJHora's 71.742, but still passes 0/35 at the frozen tolerance. Local Kaala is closer than PyJHora in 35/35 rows with 4/35 strict passes and 7.983 virupa mean absolute error. The completed independent JHora Drik witness passes 9/35 and fails 26/35. Keep full Shadbala and Drik excluded from certified ML/execution until the doctrine profiles are explicitly reconciled.
+- Tier B Drik comparison is 35 pass / 0 fail. The visible 350-row JHora Kaala matrix promotes dynamic Paksha at 35/35 and retains Abda, Masa, Vara, Tribhaga, and Yuddha at 35/35 each. Top-level local Kaala now passes 5/35 with 2.763 virupa mean absolute error. The locked local-versus-JHora reconciliation excludes displayed Sun/Moon Chesta from the total, reducing local full-total mean absolute error to 12.626 virupa versus PyJHora's 71.742, but full total still passes 0/35 at the frozen tolerance. Independent JHora Drik passes 9/35 and fails 26/35. Keep Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala excluded from certified ML/execution until their doctrine profiles pass independently.
 - Do not train on raw local LLM prose. Train on deterministic evidence, manual notes, verified rule lessons, and verifier corrections.
 - Gate 4 is blocked until corrected versioned data replaces the legacy double-sidereal case records.

@@ -1,8 +1,65 @@
 # Current Project Handoff
 
-Last updated: 2026-07-27 00:18 IST
+Last updated: 2026-07-27 09:27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-27 (Visible JHora Kaala Reconciliation And Dynamic Paksha)
+
+- Captured and hash-pinned the visible Jagannatha Hora Kaala Bala breakup for
+  all five locked fixtures and seven classical planets: `350/350` required
+  rows (`total` plus nine subcomponents). Screenshots and accessibility trees
+  are under `status/evidence/jhora_kaala_witness_20260727`.
+- Added the reproducible parser/comparator
+  `jhora_kaala_witness_comparator.py`, its locked regression tests, the
+  350-row local/JHora/PyJHora matrix, JSON summary, and
+  `jhora_kaala_reconciliation_20260727.md`. The complete artifact hashes are
+  pinned in
+  `status/evidence/jhora_kaala_witness_20260727/JHORA_KAALA_EVIDENCE_MANIFEST_20260727.md`.
+- Promoted only the independently supported Paksha correction under
+  `STRICT_SHADBALA_V9_DYNAMIC_PAKSHA_JHORA_WITNESS_PROVISIONAL`:
+  - dynamic Moon benefic/malefic phase classification;
+  - doubled Moon Paksha strength;
+  - Mercury becomes malefic when it shares a whole sign with a supported
+    malefic association.
+  Paksha passes `35/35` visible rows with `0.040` virupa mean absolute error
+  and `0.124` maximum error at the unchanged `0.5`-virupa tolerance.
+- Retained Abda, Masa, Vara, Tribhaga, and Yuddha because each passes
+  `35/35`. Hora remains provisional at `33/35`; Nathonnatha at `11/35`;
+  Ayana at `13/35`; and visible aggregate Kaala at `4/35`.
+- Reconciled JHora's displayed arithmetic: all `10/10` Sun/Moon rows show
+  Chesta in the breakup but exclude it from the reported total. This remains
+  an explicit total-contribution rule rather than deleting the evidence.
+- After the supported changes, top-level local Kaala passes `5/35` with
+  `2.763` virupa mean absolute error. Full Shadbala mean absolute error is
+  `12.626` virupa versus PyJHora's `71.742`, but full total still passes
+  `0/35`; independent JHora Drik remains `9/35`. Hora, Nathonnatha, Ayana,
+  aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala therefore
+  remain excluded from certified ML/execution.
+- Upgraded the certification contract to
+  `astro_certification_4_gate_v8_visible_kaala_reconciliation_20260727`.
+  Gate 3 now records a separate `visibleKaalaWitness` block and promotes an
+  individual subcomponent only after all 35 rows pass. The report explicitly
+  notes that its 2026-07-27 evidence addendum reuses the locked capture and is
+  not a fresh astronomy calculation.
+- Verification in the restricted recovery sandbox: Python compilation
+  passed; four pure visible-Kaala comparator assertions and three doctrine
+  reconciliation assertions passed after regeneration; certification JSON
+  artifacts load successfully; and `git diff --check` passes. The production
+  Paksha correction had already passed the focused tests before the sandbox
+  changed. A fresh full astronomical suite was not claimed because this
+  sandbox lacks `pytest` and a compatible Swiss Ephemeris extension; the last
+  complete repository run remains `355/355`.
+- Recovery snapshot:
+  `C:\Users\ADMIN\Documents\Codex\2026-05-16\this-is-my-private-gann-financial\chat_session_backups\session_20260727_092727_jhora_visible_kaala_reconciliation`.
+  Canonical `D:\PycharmProjects` became read-only to this sandbox during the
+  run, so the snapshot and recovery commit are retained in the writable
+  workspace. The remote is set to the GitHub recovery repository, but both
+  HTTPS and SSH push attempts were blocked by this task's network sandbox;
+  the push remains pending rather than being reported as complete.
+- Runtime-only SQLite/log/Android state remains untouched and must not be
+  committed: `gann_aspect_annotations_raman_v2.sqlite`,
+  `candlestick_shadow_v3.sqlite`, `logs/`, and `tryapp-android/`.
 
 ## Latest Update - 2026-07-27 (JHora Doctrine Reconciliation And Luminary Chesta Correction)
 

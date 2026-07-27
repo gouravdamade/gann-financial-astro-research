@@ -26,7 +26,7 @@ agreement cannot be confused with source-doctrine certification.
 | chesta | 25 | 6 | 19 | 10 | 28.156280 | 84.113708 |
 | dig | 35 | 35 | 0 | 0 | 0.002959 | 0.008614 |
 | drik | 35 | 35 | 0 | 0 | 0.001143 | 0.010000 |
-| kaala | 35 | 0 | 35 | 0 | 54.605393 | 238.423777 |
+| kaala | 35 | 0 | 35 | 0 | 57.859167 | 217.876423 |
 | naisargika | 35 | 35 | 0 | 0 | 0.000000 | 0.000000 |
 | sthana | 35 | 34 | 1 | 0 | 0.538503 | 18.755998 |
 
@@ -39,8 +39,8 @@ agreement cannot be confused with source-doctrine certification.
 | hora | 35 | 25 | 10 | 0 | 17.142857 | 60.000000 |
 | masa | 35 | 35 | 0 | 0 | 0.000000 | 0.000000 |
 | nathonnatha | 35 | 5 | 30 | 0 | 19.292589 | 37.860100 |
-| paksha | 35 | 6 | 29 | 0 | 46.036441 | 140.553677 |
-| total | 35 | 0 | 35 | 0 | 54.605393 | 238.423777 |
+| paksha | 35 | 6 | 29 | 0 | 46.690912 | 120.006323 |
+| total | 35 | 0 | 35 | 0 | 57.859167 | 217.876423 |
 | tribhaga | 35 | 31 | 4 | 0 | 6.857143 | 60.000000 |
 | vara | 35 | 35 | 0 | 0 | 0.000000 | 0.000000 |
 | yuddha | 35 | 31 | 4 | 0 | 0.336000 | 4.280000 |
@@ -56,9 +56,10 @@ agreement cannot be confused with source-doctrine certification.
 
 | Sample | Planet | Component | Local | External | Signed delta |
 | --- | --- | --- | ---: | ---: | ---: |
-| case_43_event_start | MOON | kaala | 93.176223 | 331.600000 | -238.423777 |
+| case_43_event_start | MOON | kaala | 113.723577 | 331.600000 | -217.876423 |
 | case_43_event_start | SUN | kaala | 141.163925 | 4.090000 | +137.073925 |
 | case_127_sr_touch_start | VENUS | kaala | 54.842933 | 175.700000 | -120.857067 |
+| case_127_sr_touch_start | MOON | kaala | 171.437701 | 60.220000 | +111.217701 |
 | case_103_event_start | MARS | kaala | 203.453469 | 103.750000 | +99.703469 |
 | case_8_event_start | SATURN | kaala | 119.327320 | 27.420000 | +91.907320 |
 | case_8_event_start | JUPITER | kaala | 155.336735 | 245.470000 | -90.133265 |
@@ -70,7 +71,6 @@ agreement cannot be confused with source-doctrine certification.
 | case_127_sr_touch_start | SATURN | chesta | 21.887369 | 97.960000 | -76.072631 |
 | case_43_event_start | JUPITER | chesta | 22.179133 | 97.340000 | -75.160867 |
 | gann_reference_tokyo | MERCURY | chesta | 22.988458 | 97.400000 | -74.411542 |
-| case_8_event_start | MERCURY | chesta | 14.073907 | 84.570000 | -70.496093 |
 
 ## Interpretation Lock
 

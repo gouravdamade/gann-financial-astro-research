@@ -1,0 +1,267 @@
+{
+  "categoricalLords": {
+    "jhora": {
+      "case_103_event_start": {
+        "abda": "MOON",
+        "hora": "JUPITER",
+        "masa": "MARS",
+        "vara": "JUPITER"
+      },
+      "case_127_sr_touch_start": {
+        "abda": "MOON",
+        "hora": "MERCURY",
+        "masa": "MARS",
+        "vara": "MERCURY"
+      },
+      "case_43_event_start": {
+        "abda": "MOON",
+        "hora": "VENUS",
+        "masa": "VENUS",
+        "vara": "VENUS"
+      },
+      "case_8_event_start": {
+        "abda": "MOON",
+        "hora": "SATURN",
+        "masa": "MERCURY",
+        "vara": "VENUS"
+      },
+      "gann_reference_tokyo": {
+        "abda": "SUN",
+        "hora": "MOON",
+        "masa": "MARS",
+        "vara": "SUN"
+      }
+    },
+    "local": {
+      "case_103_event_start": {
+        "abda": "MOON",
+        "hora": "JUPITER",
+        "masa": "MARS",
+        "vara": "JUPITER"
+      },
+      "case_127_sr_touch_start": {
+        "abda": "MOON",
+        "hora": "MERCURY",
+        "masa": "MARS",
+        "vara": "MERCURY"
+      },
+      "case_43_event_start": {
+        "abda": "MOON",
+        "hora": "VENUS",
+        "masa": "VENUS",
+        "vara": "VENUS"
+      },
+      "case_8_event_start": {
+        "abda": "MOON",
+        "hora": "MOON",
+        "masa": "MERCURY",
+        "vara": "VENUS"
+      },
+      "gann_reference_tokyo": {
+        "abda": "SUN",
+        "hora": "MOON",
+        "masa": "MARS",
+        "vara": "SUN"
+      }
+    },
+    "pyjhora": {
+      "case_103_event_start": {
+        "abda": "MOON",
+        "hora": "MOON",
+        "masa": "MARS",
+        "vara": "JUPITER"
+      },
+      "case_127_sr_touch_start": {
+        "abda": "MOON",
+        "hora": "VENUS",
+        "masa": "MARS",
+        "vara": "MERCURY"
+      },
+      "case_43_event_start": {
+        "abda": "MOON",
+        "hora": "MOON",
+        "masa": "VENUS",
+        "vara": "VENUS"
+      },
+      "case_8_event_start": {
+        "abda": "MOON",
+        "hora": "MARS",
+        "masa": "MERCURY",
+        "vara": "VENUS"
+      },
+      "gann_reference_tokyo": {
+        "abda": "SUN",
+        "hora": "VENUS",
+        "masa": "MARS",
+        "vara": "SUN"
+      }
+    }
+  },
+  "comparisonRows": 350,
+  "components": {
+    "abda": {
+      "localCloser": 0,
+      "localMaeVirupa": 0.0,
+      "localMaxVirupa": 0.0,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 0.0,
+      "pyjhoraMaxVirupa": 0.0,
+      "pyjhoraPass": 35,
+      "rows": 35,
+      "ties": 35
+    },
+    "ayana": {
+      "localCloser": 8,
+      "localMaeVirupa": 1.973373426,
+      "localMaxVirupa": 9.010454001,
+      "localPass": 13,
+      "pyjhoraCloser": 27,
+      "pyjhoraMaeVirupa": 2.591428571,
+      "pyjhoraMaxVirupa": 29.14,
+      "pyjhoraPass": 26,
+      "rows": 35,
+      "ties": 0
+    },
+    "hora": {
+      "localCloser": 9,
+      "localMaeVirupa": 3.428571429,
+      "localMaxVirupa": 60.0,
+      "localPass": 33,
+      "pyjhoraCloser": 1,
+      "pyjhoraMaeVirupa": 17.142857143,
+      "pyjhoraMaxVirupa": 60.0,
+      "pyjhoraPass": 25,
+      "rows": 35,
+      "ties": 25
+    },
+    "masa": {
+      "localCloser": 0,
+      "localMaeVirupa": 0.0,
+      "localMaxVirupa": 0.0,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 0.0,
+      "pyjhoraMaxVirupa": 0.0,
+      "pyjhoraPass": 35,
+      "rows": 35,
+      "ties": 35
+    },
+    "nathonnatha": {
+      "localCloser": 30,
+      "localMaeVirupa": 1.842805714,
+      "localMaxVirupa": 4.8899,
+      "localPass": 11,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 19.332,
+      "pyjhoraMaxVirupa": 42.75,
+      "pyjhoraPass": 5,
+      "rows": 35,
+      "ties": 5
+    },
+    "paksha": {
+      "localCloser": 35,
+      "localMaeVirupa": 0.039841769,
+      "localMaxVirupa": 0.123677207,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 46.681428571,
+      "pyjhoraMaxVirupa": 120.13,
+      "pyjhoraPass": 6,
+      "rows": 35,
+      "ties": 0
+    },
+    "total": {
+      "localCloser": 35,
+      "localMaeVirupa": 6.349790459,
+      "localMaxVirupa": 62.908905083,
+      "localPass": 4,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 60.376571429,
+      "pyjhoraMaxVirupa": 222.84,
+      "pyjhoraPass": 0,
+      "rows": 35,
+      "ties": 0
+    },
+    "tribhaga": {
+      "localCloser": 4,
+      "localMaeVirupa": 0.0,
+      "localMaxVirupa": 0.0,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 6.857142857,
+      "pyjhoraMaxVirupa": 60.0,
+      "pyjhoraPass": 31,
+      "rows": 35,
+      "ties": 31
+    },
+    "vara": {
+      "localCloser": 0,
+      "localMaeVirupa": 0.0,
+      "localMaxVirupa": 0.0,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 0.0,
+      "pyjhoraMaxVirupa": 0.0,
+      "pyjhoraPass": 35,
+      "rows": 35,
+      "ties": 35
+    },
+    "yuddha": {
+      "localCloser": 4,
+      "localMaeVirupa": 0.0,
+      "localMaxVirupa": 0.0,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaeVirupa": 0.336,
+      "pyjhoraMaxVirupa": 4.28,
+      "pyjhoraPass": 31,
+      "rows": 35,
+      "ties": 31
+    }
+  },
+  "contract": "GANN_JHORA_KAALA_WITNESS_COMPARATOR_V1",
+  "displaySumToleranceVirupa": 0.06,
+  "evidenceConclusions": [
+    "Promote dynamic Paksha classification: the local profile passes 35/35 visible rows with 0.040 virupa MAE and 0.124 virupa maximum error.",
+    "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each local subcomponent passes all 35 visible rows.",
+    "Retain Hora as provisional: it passes 33/35 rows, with the case-8 sunrise-boundary award unresolved.",
+    "Do not promote Nathonnatha, Ayana, or aggregate Kaala: they pass 11/35, 13/35, and 4/35 rows respectively.",
+    "The frozen 0.5-virupa certification tolerance is unchanged; the 0.06 display-sum allowance only checks arithmetic over JHora values rounded to two decimal places."
+  ],
+  "generatedAtUtc": "2026-07-27T03:56:12.307990Z",
+  "inputs": {
+    "doctrineConfig": {
+      "path": "doctrine_config.yaml",
+      "sha256": "386A40285CF41A121CF9485F0770290BCDC17A702EE825ABD4D9509BE4066E46"
+    },
+    "jhora_case_103_event_start": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\case_103_event_start_kaala_bala_accessibility.txt",
+      "sha256": "D44C1EEBFA80E19B60BC5E15BF0C97D55D4C66DD97159B72B7DEE7C2CC3BEDF6"
+    },
+    "jhora_case_127_sr_touch_start": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\case_127_sr_touch_start_kaala_bala_accessibility.txt",
+      "sha256": "CCEEDC44B38F4027ED781E902AFDE62C490C434253C41A2E742ADCC49B57D169"
+    },
+    "jhora_case_43_event_start": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\case_43_event_start_kaala_bala_accessibility.txt",
+      "sha256": "5605E634B7CE9982B02292F1A32F327F9E1DF1F5042A3AC0928717AE838E0D90"
+    },
+    "jhora_case_8_event_start": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_kaala_bala_accessibility.txt",
+      "sha256": "C4829A82A1E46862FA44C5AF94A67602B1827ADA9259B581A1CBA5626D30F236"
+    },
+    "jhora_gann_reference_tokyo": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\gann_reference_tokyo_kaala_bala_accessibility.txt",
+      "sha256": "6C2A814D51037C8FD174B08E846A7FF9F4A064716307D0226135535AFE6B17CB"
+    },
+    "pyjhora": {
+      "path": "pyjhora_kaala_subcomponents_20260718.csv",
+      "sha256": "6DDD82E0185649901D8C34C63E829975817547FA6F33A4B5225E51FEAD3A054A"
+    }
+  },
+  "status": "diagnostic_reconciliation_not_certified",
+  "tolerancePolicy": "frozen; no widening",
+  "toleranceVirupa": 0.5,
+  "witnessRows": 350
+}

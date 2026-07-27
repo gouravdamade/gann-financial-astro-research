@@ -13,18 +13,39 @@ def test_locked_reconciliation_metrics_are_reproducible() -> None:
     kaala = summary["topLevel"]["kaala"]
     assert kaala["localCloser"] == 35
     assert kaala["pyjhoraCloser"] == 0
-    assert kaala["localPass"] == 4
-    assert kaala["localMeanAbsoluteDeltaVirupa"] == 7.982740686
+    assert kaala["localPass"] == 5
+    assert kaala["localMeanAbsoluteDeltaVirupa"] == 2.762988508
     assert kaala["pyjhoraMeanAbsoluteDeltaVirupa"] == 57.030571429
 
     corrected_total = summary["topLevel"]["total"]
     assert corrected_total["localCloser"] == 33
-    assert corrected_total["localMeanAbsoluteDeltaVirupa"] == 17.416464092
+    assert corrected_total["localMeanAbsoluteDeltaVirupa"] == 12.626402633
     assert corrected_total["pyjhoraMeanAbsoluteDeltaVirupa"] == 71.741714286
 
-    assert summary["chesta"]["moonRows"] == 5
-    assert summary["chesta"]["moonDisplayMatchesHalfLocalPaksha"] == 5
-    assert summary["chesta"]["moonHalfLocalMaxAbsoluteDeltaVirupa"] < 0.005
+    chesta = summary["chesta"]
+    assert chesta["luminaryRows"] == 10
+    assert chesta["jhoraTotalExcludesDisplayedChesta"] == 10
+    assert chesta["excludedChestaMaxDisplayResidualVirupa"] <= 0.01
+    assert chesta["includedChestaMinAbsoluteResidualVirupa"] > 0.5
+
+
+def test_visible_kaala_witness_locks_promoted_and_pending_components() -> None:
+    summary, _, _ = build_summary()
+    visible = summary["kaalaVisibleWitness"]
+
+    assert visible["comparisonRows"] == 350
+    for measure in ("abda", "masa", "vara", "tribhaga", "yuddha"):
+        assert visible["components"][measure]["localPass"] == 35
+
+    paksha = visible["components"]["paksha"]
+    assert paksha["localPass"] == 35
+    assert paksha["localMaxVirupa"] < 0.5
+
+    assert visible["components"]["hora"]["localPass"] == 33
+    assert visible["components"]["nathonnatha"]["localPass"] == 11
+    assert visible["components"]["ayana"]["localPass"] == 13
+    assert visible["components"]["total"]["localPass"] == 4
+    assert summary["kaalaCategoricalResiduals"] == []
 
 
 def test_named_drik_profiles_remain_diagnostic() -> None:
@@ -46,27 +67,7 @@ def test_named_drik_profiles_remain_diagnostic() -> None:
     assert bright_half["meanAbsoluteDeltaVirupa"] == 3.290214286
 
     assert summary["status"] == "diagnostic_reconciliation_not_certified"
-    assert summary["kaalaCategoricalResiduals"] == [
-        {
-            "sampleId": "case_127_sr_touch_start",
-            "planet": "MOON",
-            "jhoraMinusLocalVirupa": 90.677900892,
-            "nearestCategoricalQuantumVirupa": 90.0,
-            "absoluteRemainderVirupa": 0.677900892,
-            "interpretation": (
-                "Possible 15/30/45/60-virupa lord-award disagreement; "
-                "requires a visible JHora Kaala subcomponent table."
-            ),
-        },
-        {
-            "sampleId": "case_127_sr_touch_start",
-            "planet": "MERCURY",
-            "jhoraMinusLocalVirupa": 44.91937128,
-            "nearestCategoricalQuantumVirupa": 45.0,
-            "absoluteRemainderVirupa": 0.08062872,
-            "interpretation": (
-                "Possible 15/30/45/60-virupa lord-award disagreement; "
-                "requires a visible JHora Kaala subcomponent table."
-            ),
-        },
-    ]
+    assert any(
+        "Paksha" in decision and "35/35" in decision
+        for decision in summary["decisions"]
+    )

@@ -11,7 +11,7 @@ from statistics import mean
 from typing import Any
 
 
-CONTRACT = "GANN_JHORA_DOCTRINE_RECONCILIATION_V1"
+CONTRACT = "GANN_JHORA_DOCTRINE_RECONCILIATION_V2"
 FROZEN_TOLERANCE_VIRUPA = 0.5
 CLASSICAL_PLANETS = (
     "SUN",
@@ -32,6 +32,13 @@ DEFAULT_COMPARISON = (
 DEFAULT_LOCAL_COMPONENTS = REPO_ROOT / "shadbala_component_residuals_20260718.csv"
 DEFAULT_KAALA_COMPONENTS = (
     REPO_ROOT / "shadbala_kaala_subcomponent_residuals_20260718.csv"
+)
+DEFAULT_KAALA_WITNESS_COMPARISON = (
+    REPO_ROOT
+    / "status"
+    / "evidence"
+    / "jhora_kaala_witness_20260727"
+    / "jhora_kaala_profile_comparison_20260727.json"
 )
 DEFAULT_DRIK_LEDGER = REPO_ROOT / "drik_contribution_ledger_20260726.csv"
 DEFAULT_FORMULA_INPUTS = REPO_ROOT / "pyjhora_shadbala_formula_inputs_20260718.csv"
@@ -60,6 +67,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--kaala-components", type=Path, default=DEFAULT_KAALA_COMPONENTS
+    )
+    parser.add_argument(
+        "--kaala-witness-comparison",
+        type=Path,
+        default=DEFAULT_KAALA_WITNESS_COMPARISON,
     )
     parser.add_argument("--drik-ledger", type=Path, default=DEFAULT_DRIK_LEDGER)
     parser.add_argument(
@@ -451,33 +463,59 @@ def summarize_drik_candidates(rows: list[dict[str, str]]) -> list[dict[str, Any]
 
 def chesta_diagnostics(
     top_level_rows: list[dict[str, str]],
+    comparison_path: Path = DEFAULT_COMPARISON,
 ) -> dict[str, Any]:
-    moon_rows = [
-        row
-        for row in top_level_rows
-        if row["measure"] == "chesta" and row["planet"] == "MOON"
-    ]
-    moon_half_residuals = [
-        float(row["jhora_value_virupa"])
-        - (float(row["local_source_value_virupa"]) / 2.0)
-        for row in moon_rows
-    ]
     non_luminary = [
         row
         for row in top_level_rows
         if row["measure"] == "chesta" and row["planet"] not in {"SUN", "MOON"}
     ]
+    jhora_values: dict[tuple[str, str, str], float] = {}
+    for row in read_csv(comparison_path):
+        key = (
+            row["sample_id"].strip(),
+            row["planet"].strip().upper(),
+            row["measure"].strip().lower(),
+        )
+        jhora_values[key] = float(row["jhora_value_virupa"])
+
+    excluded_residuals: list[float] = []
+    included_residuals: list[float] = []
+    sample_ids = sorted({key[0] for key in jhora_values})
+    for sample_id in sample_ids:
+        for planet in ("SUN", "MOON"):
+            required = {
+                measure: jhora_values[(sample_id, planet, measure)]
+                for measure in (
+                    "sthana",
+                    "kaala",
+                    "dig",
+                    "chesta",
+                    "naisargika",
+                    "drik",
+                    "total",
+                )
+            }
+            without_chesta = sum(
+                required[measure]
+                for measure in ("sthana", "kaala", "dig", "naisargika", "drik")
+            )
+            excluded_residuals.append(required["total"] - without_chesta)
+            included_residuals.append(
+                required["total"] - (without_chesta + required["chesta"])
+            )
+
+    display_sum_tolerance = 0.06
     return {
-        "moonRows": len(moon_rows),
-        "moonDisplayMatchesHalfLocalPaksha": sum(
-            abs(value) <= FROZEN_TOLERANCE_VIRUPA
-            for value in moon_half_residuals
+        "luminaryRows": len(excluded_residuals),
+        "jhoraTotalExcludesDisplayedChesta": sum(
+            abs(value) <= display_sum_tolerance for value in excluded_residuals
         ),
-        "moonHalfLocalMeanAbsoluteDeltaVirupa": round(
-            mean(abs(value) for value in moon_half_residuals), 9
+        "excludedChestaMaxDisplayResidualVirupa": round(
+            max(abs(value) for value in excluded_residuals), 9
         ),
-        "moonHalfLocalMaxAbsoluteDeltaVirupa": round(
-            max(abs(value) for value in moon_half_residuals), 9
+        "includedChestaMinAbsoluteResidualVirupa": round(
+            min(abs(value) for value in included_residuals), 9
         ),
         "nonLuminaryRows": len(non_luminary),
         "nonLuminaryLocalCloser": sum(
@@ -494,11 +532,11 @@ def chesta_diagnostics(
         ),
     }
 
-
 def build_summary(
     comparison_path: Path = DEFAULT_COMPARISON,
     local_components_path: Path = DEFAULT_LOCAL_COMPONENTS,
     kaala_components_path: Path = DEFAULT_KAALA_COMPONENTS,
+    kaala_witness_comparison_path: Path = DEFAULT_KAALA_WITNESS_COMPARISON,
     drik_ledger_path: Path = DEFAULT_DRIK_LEDGER,
     formula_inputs_path: Path = DEFAULT_FORMULA_INPUTS,
 ) -> tuple[dict[str, Any], list[dict[str, str]], list[dict[str, str]]]:
@@ -508,10 +546,34 @@ def build_summary(
         drik_ledger_path,
         formula_inputs_path,
     )
+    kaala_witness = json.loads(
+        kaala_witness_comparison_path.read_text(encoding="utf-8")
+    )
+    if kaala_witness.get("contract") != "GANN_JHORA_KAALA_WITNESS_COMPARATOR_V1":
+        raise ValueError("unexpected JHora Kaala witness contract")
+    if kaala_witness.get("comparisonRows") != 350:
+        raise ValueError("JHora Kaala witness must contain 350 comparison rows")
+    kaala_components = dict(kaala_witness.get("components") or {})
+    required_measures = {
+        "abda",
+        "ayana",
+        "hora",
+        "masa",
+        "nathonnatha",
+        "paksha",
+        "total",
+        "tribhaga",
+        "vara",
+        "yuddha",
+    }
+    if set(kaala_components) != required_measures:
+        raise ValueError("JHora Kaala witness component set is incomplete")
+
     inputs = {
         "comparison": comparison_path,
         "localComponents": local_components_path,
         "kaalaComponents": kaala_components_path,
+        "kaalaVisibleWitness": kaala_witness_comparison_path,
         "drikLedger": drik_ledger_path,
         "formulaInputs": formula_inputs_path,
     }
@@ -531,28 +593,50 @@ def build_summary(
             for name, path in inputs.items()
         },
         "topLevel": summarize_rows(top_level),
+        "kaalaVisibleWitness": {
+            "contract": kaala_witness["contract"],
+            "comparisonRows": kaala_witness["comparisonRows"],
+            "components": kaala_components,
+            "evidenceConclusions": list(
+                kaala_witness.get("evidenceConclusions") or []
+            ),
+        },
         "kaalaCategoricalResiduals": kaala_categorical_residuals(top_level),
-        "chesta": chesta_diagnostics(top_level),
+        "chesta": chesta_diagnostics(top_level, comparison_path),
         "drikCandidateProfiles": summarize_drik_candidates(drik_rows),
         "decisions": [
             (
+                "Promote dynamic Paksha classification: classical phase/nature "
+                "rules and the locked visible JHora table agree in 35/35 rows "
+                "within the frozen 0.5-virupa tolerance."
+            ),
+            (
+                "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each matches "
+                "all 35 visible JHora rows."
+            ),
+            (
+                "Keep Hora provisional. It matches 33/35 rows, but the case-8 "
+                "Moon/Saturn award remains a sunrise-boundary disagreement; do "
+                "not replace the current algorithm with a temporal-hour guess."
+            ),
+            (
+                "Keep Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, "
+                "and full Shadbala uncertified until their remaining formula and "
+                "time-basis residuals are independently reconciled."
+            ),
+            (
                 "Promote luminary Chesta total exclusion: classical text and "
-                "locked JHora totals independently agree that displayed Sun/Moon "
-                "Chesta must not be added again."
+                "locked JHora total arithmetic independently agree that displayed "
+                "Sun/Moon Chesta must not be added again."
             ),
             (
                 "Retain the current production Drik profile as provisional and "
                 "execution-ineligible. Named candidate profiles are sensitivity "
                 "tests, not silent replacements."
             ),
-            (
-                "Capture a visible JHora Kaala subcomponent table before changing "
-                "Abda/Masa/Hora or other categorical lord awards."
-            ),
         ],
     }
     return summary, top_level, drik_rows
-
 
 def markdown_table(headers: list[str], rows: list[list[Any]]) -> list[str]:
     output = [
@@ -604,44 +688,60 @@ def render_report(summary: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "The local Kaala source profile is closer than PyJHora for every "
-            "locked row, although only exact subcomponent evidence can certify it.",
-            "",
-            "## Kaala Categorical Leads",
+            "## Visible Kaala Subcomponent Witness",
             "",
         ]
     )
-    categorical = summary["kaalaCategoricalResiduals"]
-    if categorical:
-        lines.extend(
-            markdown_table(
-                ["Sample", "Planet", "JHora-local", "Nearest award", "Remainder"],
+    kaala = summary["kaalaVisibleWitness"]["components"]
+    lines.extend(
+        markdown_table(
+            ["Measure", "Local pass", "Local MAE", "Local max", "Decision"],
+            [
                 [
-                    [
-                        row["sampleId"],
-                        row["planet"],
-                        f"{row['jhoraMinusLocalVirupa']:+.3f}",
-                        f"{row['nearestCategoricalQuantumVirupa']:.0f}",
-                        f"{row['absoluteRemainderVirupa']:.3f}",
-                    ]
-                    for row in categorical
-                ],
-            )
+                    measure,
+                    f"{kaala[measure]['localPass']}/{kaala[measure]['rows']}",
+                    f"{kaala[measure]['localMaeVirupa']:.3f}",
+                    f"{kaala[measure]['localMaxVirupa']:.3f}",
+                    (
+                        "retain"
+                        if measure in {"abda", "masa", "vara", "tribhaga", "yuddha"}
+                        else "promote dynamic nature"
+                        if measure == "paksha"
+                        else "provisional"
+                    ),
+                ]
+                for measure in (
+                    "abda",
+                    "masa",
+                    "vara",
+                    "hora",
+                    "tribhaga",
+                    "paksha",
+                    "nathonnatha",
+                    "ayana",
+                    "yuddha",
+                    "total",
+                )
+            ],
         )
-    else:
-        lines.append("No residual matched a categorical award quantum.")
+    )
     lines.extend(
         [
             "",
-            "These are leads, not inferred values. They require a visible JHora "
-            "Kaala subcomponent table before any calendar-lord rule changes.",
+            "Paksha now has direct visible support in 35/35 rows. Hora remains "
+            "33/35 because only case 8 changes the categorical award; the current "
+            "fixed-hour algorithm is retained until that sunrise boundary is "
+            "independently resolved. Nathonnatha, Ayana, and aggregate Kaala remain "
+            "provisional.",
             "",
             "## Chesta Decision",
             "",
             (
-                f"Moon display values match half the local doubled-Paksha value in "
-                f"{summary['chesta']['moonDisplayMatchesHalfLocalPaksha']}/"
-                f"{summary['chesta']['moonRows']} fixtures at frozen tolerance."
+                f"JHora's displayed total equals the sum with Sun/Moon Chesta "
+                f"excluded in {summary['chesta']['jhoraTotalExcludesDisplayedChesta']}/"
+                f"{summary['chesta']['luminaryRows']} luminary rows; maximum residual "
+                f"is {summary['chesta']['excludedChestaMaxDisplayResidualVirupa']:.3f} "
+                "virupa from two-decimal display rounding."
             ),
             "",
             summary["chesta"]["totalPolicy"],
@@ -685,13 +785,13 @@ def render_report(summary: dict[str, Any]) -> str:
     lines.append("")
     return "\n".join(lines)
 
-
 def main() -> int:
     args = parse_args()
     summary, top_level, drik_rows = build_summary(
         args.comparison,
         args.local_components,
         args.kaala_components,
+        args.kaala_witness_comparison,
         args.drik_ledger,
         args.formula_inputs,
     )

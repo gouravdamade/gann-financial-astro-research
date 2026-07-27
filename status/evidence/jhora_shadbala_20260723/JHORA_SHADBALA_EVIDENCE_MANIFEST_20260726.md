@@ -69,12 +69,12 @@ coordinates or timezone.
 | `jhora_pyjhora_component_comparison_20260726.csv` | `DDA6C65606D167041B6C7707FF1A6EF20663C56E2C076C1A46D233EBE9763776` |
 | `jhora_pyjhora_component_comparison_20260726.json` | `8B690D2BBD753AC1ABBD9E59BC707B9D49FE82BD2403D1A6C778D385A2BF0F47` |
 | `jhora_drik_independent_validation_values_20260726.csv` | `DECDB00B58E0B4C4D3E6A14295DCAFE72D72E2D91584B8F3050C587D6000F1BF` |
-| `jhora_local_doctrine_reconciliation_20260726.csv` | `99E5D6C2BF026C9AF12248DFC0A986E4C99A0F8013857A3E8C57FC0043F3E156` |
-| `jhora_drik_candidate_residuals_20260726.csv` | `819E20B5013D199A89520BF3541D92DAD83DB860F687D7162B782C89A5EA3D38` |
-| `jhora_doctrine_reconciliation_20260726.json` | `561C6FC2243397B74BECE411A89B5176CC0577511B2D78B6465D2A1F7DDA8B85` |
-| `jhora_doctrine_reconciliation_20260726.md` | `34B5036FE1A07D60A491CF82C438F389A0009324492BE8D4675C5F9B4AC04476` |
-| `astro_external_validation_gate_20260726.json` | `29F00E959986C709816A790280D0C577A09B87B24FBDF897B96E81E36E17CDD4` |
-| `astro_function_certification_report_20260726.md` | `EFA3072BDB64F22A710AEAADA122FEE7ADD63702A639E13C30D87EB19EC88589` |
+| `jhora_local_doctrine_reconciliation_20260726.csv` | `8D7A7509C900B5AED1EA988F783CD4E55932426C3632A71CBA3AA663A03C5B14` |
+| `jhora_drik_candidate_residuals_20260726.csv` | `0476F39034E742069CD4D57032AB91704375915F863AC5012D219CC33C6D3541` |
+| `jhora_doctrine_reconciliation_20260726.json` | `1C048D4BD2FA269604B4CEB10D0CE2F52F6681A3F4AE58B940D4FDC7E2257E4B` |
+| `jhora_doctrine_reconciliation_20260726.md` | `36C5799957487C329E144D90DD3D2151846213E38B4E6CD9B1C0198A15BAD2A3` |
+| `astro_external_validation_gate_20260726.json` | `1B6470F3756A4F078D33C14647992F4A5EC0F7C500261052CAC0C177F4B0B352` |
+| `astro_function_certification_report_20260726.md` | `F8C77930401CEF82D1A8C1D628A6FE1105AF454A8315637F15D1995F7C304319` |
 
 The ledger links every numeric row to the appropriate locked summary or breakup
 screenshot and stores that screenshot's SHA-256. The raw text files preserve
@@ -103,15 +103,20 @@ It is not permission to widen tolerance or authorize execution.
 
 ## Doctrine Reconciliation Result
 
-The source-profile reconciliation applies one independently supported
-correction: displayed Sun/Moon Chesta remains visible but contributes zero to
-the total because Ayana/Paksha already owns it. Corrected local full-total mean
-absolute error is `17.416` virupa versus PyJHora's `71.742`, but the strict
-result remains `0/35` at the frozen tolerance.
+The source-profile reconciliation applies two independently supported
+corrections: displayed Sun/Moon Chesta remains visible but contributes zero to
+the total because Ayana/Paksha already owns it, and dynamic Paksha is promoted
+after passing all `35/35` visible rows in the separate 350-row Kaala witness.
+Corrected local full-total mean absolute error is `12.626` virupa versus
+PyJHora's `71.742`, but the strict result remains `0/35` at the frozen
+tolerance.
 
-Local Kaala is closer than PyJHora in `35/35` rows but passes only `4/35`.
-Named Drik sensitivity profiles remain non-production diagnostics. Full
-Shadbala and Drik therefore remain uncertified and execution-locked.
+Top-level local Kaala passes `5/35` with `2.763` virupa mean absolute error.
+Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, and named Drik
+sensitivity profiles remain non-production diagnostics. Full Shadbala and
+Drik therefore remain uncertified and execution-locked. The visible Kaala
+capture is tracked separately under
+`status/evidence/jhora_kaala_witness_20260727`.
 
 ## Legacy And Pre-Lock Evidence
 

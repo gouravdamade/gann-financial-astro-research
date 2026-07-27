@@ -34,7 +34,7 @@ from shadbala_doctrine import (
 
 
 STRICT_SHADBALA_RULE_ID = (
-    "STRICT_SHADBALA_V8_LUMINARY_CHESTA_TOTAL_EXCLUSION_PROVISIONAL"
+    "STRICT_SHADBALA_V9_DYNAMIC_PAKSHA_JHORA_WITNESS_PROVISIONAL"
 )
 STRICT_DRIK_RULE_ID = DRIK_ENGINE_RULE_ID
 STRICT_SHADBALA_STATUS = (
@@ -44,7 +44,7 @@ STRICT_DRIK_STATUS = DRIK_ENGINE_STATUS
 SAPTAVARGAJA_RULE_ID = "BPHS_CH27_SAPTAVARGA_COMPOUND_RELATION_V2"
 SAPTAVARGAJA_COMPARATOR_RULE_ID = "PYJHORA_4_8_7_SAPTAVARGA_COMPATIBILITY_PROFILE_V1"
 OJAYUGMA_RULE_ID = "OJAYUGMA_ODD_EVEN_RASHI_NAVAMSA_V1"
-KAALA_RULE_ID = "BPHS_CH27_KAALA_ASTRONOMICAL_SUNRISE_AHARGANA_V2"
+KAALA_RULE_ID = "BPHS_CH27_KAALA_DYNAMIC_PAKSHA_JHORA_WITNESS_V3"
 CHESTA_RULE_ID = (
     "BPHS_CH27_CHESTA_MEAN_TRUE_LONGITUDE_V4_LUMINARY_TOTAL_EXCLUSION_PROVISIONAL"
 )
@@ -720,7 +720,66 @@ def nathonnatha_bala_virupa(planet: Any, timestamp: Any, geo_lon: Any = None) ->
     return np.nan
 
 
-def paksha_bala_virupa(planet: Any, sun_lon: Any, moon_lon: Any) -> float:
+def _same_whole_sign(left: Any, right: Any) -> bool:
+    left_lon = normalize_longitude(left)
+    right_lon = normalize_longitude(right)
+    if left_lon is None or right_lon is None:
+        return False
+    return int(left_lon // 30.0) == int(right_lon // 30.0)
+
+
+def paksha_planet_nature(
+    planet: Any,
+    sun_lon: Any,
+    moon_lon: Any,
+    longitudes: dict[str, float] | None = None,
+) -> str:
+    body = normalize_body(planet)
+    sun = normalize_longitude(sun_lon)
+    moon = normalize_longitude(moon_lon)
+    if body not in CLASSICAL_PLANETS or sun is None or moon is None:
+        return ""
+    phase = (moon - sun) % 360.0
+    moon_nature = "benefic" if 90.0 <= phase <= 270.0 else "malefic"
+    if body == "MOON":
+        return moon_nature
+    if body == "MERCURY":
+        if not longitudes:
+            return "benefic"
+        mercury = normalize_longitude(longitudes.get("MERCURY"))
+        if mercury is None:
+            return "benefic"
+        malefic_longitudes = [
+            longitudes.get(name)
+            for name in ("SUN", "MARS", "SATURN")
+        ]
+        if moon_nature == "malefic":
+            malefic_longitudes.append(longitudes.get("MOON"))
+        for node_name in ("RAHU_TRUE_NODE", "RAHU", "KETU_DERIVED", "KETU"):
+            if node_name in longitudes:
+                malefic_longitudes.append(longitudes.get(node_name))
+        rahu = normalize_longitude(
+            longitudes.get("RAHU_TRUE_NODE", longitudes.get("RAHU"))
+        )
+        if rahu is not None:
+            malefic_longitudes.append((rahu + 180.0) % 360.0)
+        return (
+            "malefic"
+            if any(
+                _same_whole_sign(mercury, associated)
+                for associated in malefic_longitudes
+            )
+            else "benefic"
+        )
+    return "benefic" if body in {"JUPITER", "VENUS"} else "malefic"
+
+
+def paksha_bala_virupa(
+    planet: Any,
+    sun_lon: Any,
+    moon_lon: Any,
+    longitudes: dict[str, float] | None = None,
+) -> float:
     body = normalize_body(planet)
     sun = normalize_longitude(sun_lon)
     moon = normalize_longitude(moon_lon)
@@ -729,11 +788,11 @@ def paksha_bala_virupa(planet: Any, sun_lon: Any, moon_lon: Any) -> float:
     phase = (moon - sun) % 360.0
     bright_strength = (phase / 3.0) if phase <= 180.0 else ((360.0 - phase) / 3.0)
     bright_strength = max(0.0, min(60.0, bright_strength))
+    nature = paksha_planet_nature(body, sun, moon, longitudes)
+    strength = bright_strength if nature == "benefic" else 60.0 - bright_strength
     if body == "MOON":
-        return float(2.0 * bright_strength)
-    if body in NATURAL_BENEFICS:
-        return float(bright_strength)
-    return float(60.0 - bright_strength)
+        return float(2.0 * strength)
+    return float(strength)
 
 
 def tribhaga_bala_virupa(
@@ -980,7 +1039,12 @@ def kaala_bala_components(
     yuddha, yuddha_status = yuddha_bala_virupa(body, longitudes, latitudes)
     parts = {
         "nathonnatha_virupa": nathonnatha_bala_virupa(body, timestamp, geo_lon),
-        "paksha_virupa": paksha_bala_virupa(body, sun_lon, moon_lon),
+        "paksha_virupa": paksha_bala_virupa(
+            body,
+            sun_lon,
+            moon_lon,
+            longitudes,
+        ),
         "tribhaga_virupa": tribhaga_bala_virupa(
             body,
             timestamp,
@@ -1028,6 +1092,12 @@ def kaala_bala_components(
             geo_lon,
             resolved_sunrise,
             geo_lat,
+        ),
+        "paksha_nature": paksha_planet_nature(
+            body,
+            sun_lon,
+            moon_lon,
+            longitudes,
         ),
     }
     seven_keys = [
@@ -1469,6 +1539,7 @@ def shadbala_components_for_planet(
         ),
         "nathonnatha_virupa": kaala.get("nathonnatha_virupa", np.nan),
         "paksha_virupa": kaala.get("paksha_virupa", np.nan),
+        "paksha_nature": kaala.get("paksha_nature", ""),
         "tribhaga_virupa": kaala.get("tribhaga_virupa", np.nan),
         "abda_virupa": kaala.get("abda_virupa", np.nan),
         "masa_virupa": kaala.get("masa_virupa", np.nan),
@@ -1585,6 +1656,7 @@ def aggregate_components(components: list[dict[str, Any]]) -> dict[str, Any]:
         out["implemented_total_virupa"] = np.nan
         out["implemented_total_ratio"] = np.nan
     out["solar_time_status"] = "avg_all_component_context"
+    out["paksha_nature"] = "avg_all_mixed"
     out["chesta_motion_state_status"] = "avg_all_component_mean"
     out["chesta_status"] = "avg_all_component_mean"
     out["yuddha_status"] = "avg_all_component_mean"
@@ -1670,6 +1742,7 @@ def prefix_components(prefix: str, components: dict[str, Any]) -> dict[str, Any]
         "drik_normalization_divisor": "strict_drik_normalization_divisor",
         "nathonnatha_virupa": "strict_nathonnatha_bala_virupa",
         "paksha_virupa": "strict_paksha_bala_virupa",
+        "paksha_nature": "strict_paksha_nature",
         "tribhaga_virupa": "strict_tribhaga_bala_virupa",
         "abda_virupa": "strict_abda_bala_virupa",
         "masa_virupa": "strict_masa_bala_virupa",

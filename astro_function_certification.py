@@ -20,7 +20,7 @@ from strict_shadbala_doctrine import CLASSICAL_PLANETS, components_for_body
 
 
 REPORT_VERSION = (
-    "astro_certification_4_gate_v7_independent_jhora_reconciliation_20260726"
+    "astro_certification_4_gate_v8_visible_kaala_reconciliation_20260727"
 )
 IST = ZoneInfo("Asia/Kolkata")
 UTC = ZoneInfo("UTC")
@@ -191,6 +191,18 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Optional independent Jagannatha Hora or worked-example CSV derived from the generated "
             "independent Drik template. PyJHora alone never satisfies this witness."
+        ),
+    )
+    parser.add_argument(
+        "--jhora-kaala-summary",
+        default=(
+            "status/evidence/jhora_kaala_witness_20260727/"
+            "jhora_kaala_profile_comparison_20260727.json"
+        ),
+        help=(
+            "Locked visible JHora Kaala comparison summary. The report promotes "
+            "only explicitly supported subcomponents and keeps aggregate Kaala "
+            "fail closed."
         ),
     )
     parser.add_argument("--skip-replay", action="store_true", help="Skip reviewer_rule_replay.py execution.")
@@ -503,6 +515,117 @@ def independent_drik_gate_summary(
     }
 
 
+def visible_kaala_gate_summary(summary_path: Path) -> dict[str, Any]:
+    source_sha = None
+    if summary_path.exists():
+        source_sha = hashlib.sha256(summary_path.read_bytes()).hexdigest().upper()
+    base = {
+        "required": True,
+        "status": "blocked_missing_visible_kaala_witness",
+        "certified": False,
+        "aggregateKaalaCertified": False,
+        "promotedComponents": [],
+        "retainedValidatedComponents": [],
+        "provisionalComponents": [
+            "hora",
+            "nathonnatha",
+            "ayana",
+            "total",
+        ],
+        "input": {
+            "path": str(summary_path),
+            "sha256": source_sha,
+            "issues": [],
+        },
+    }
+    if not summary_path.exists():
+        base["input"]["issues"].append("visible Kaala witness summary is missing")
+        return base
+    try:
+        payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        base["status"] = "blocked_invalid_visible_kaala_witness"
+        base["input"]["issues"].append(f"cannot read visible Kaala witness: {exc}")
+        return base
+
+    components = dict(payload.get("components") or {})
+    expected_rows = len(SAMPLES) * len(CLASSICAL_PLANETS)
+    required = (
+        "abda",
+        "masa",
+        "vara",
+        "tribhaga",
+        "yuddha",
+        "paksha",
+        "hora",
+        "nathonnatha",
+        "ayana",
+        "total",
+    )
+    missing = sorted(set(required).difference(components))
+    comparison_rows = int(payload.get("comparisonRows") or 0)
+    if missing:
+        base["input"]["issues"].append(
+            "missing Kaala components: " + ", ".join(missing)
+        )
+    if comparison_rows != expected_rows * len(required):
+        base["input"]["issues"].append(
+            f"expected {expected_rows * len(required)} comparison rows; "
+            f"found {comparison_rows}"
+        )
+    if base["input"]["issues"]:
+        base["status"] = "blocked_incomplete_visible_kaala_witness"
+        return base
+
+    retained = ("abda", "masa", "vara", "tribhaga", "yuddha")
+    retained_ok = all(
+        int(components[name].get("rows") or 0) == expected_rows
+        and int(components[name].get("localPass") or 0) == expected_rows
+        for name in retained
+    )
+    paksha = dict(components["paksha"])
+    paksha_max = paksha.get("localMaxVirupa")
+    paksha_ok = (
+        int(paksha.get("rows") or 0) == expected_rows
+        and int(paksha.get("localPass") or 0) == expected_rows
+        and paksha_max is not None
+        and float(paksha_max) <= 0.5
+    )
+    base.update(
+        {
+            "status": (
+                "partial_component_validation"
+                if retained_ok and paksha_ok
+                else "failed_visible_kaala_component_validation"
+            ),
+            "witnessRows": int(payload.get("witnessRows") or 0),
+            "comparisonRows": comparison_rows,
+            "toleranceVirupa": float(payload.get("toleranceVirupa") or 0.5),
+            "promotedComponents": ["paksha"] if paksha_ok else [],
+            "retainedValidatedComponents": list(retained) if retained_ok else [],
+            "provisionalComponents": [
+                name
+                for name in ("hora", "nathonnatha", "ayana", "total")
+                if int(components[name].get("localPass") or 0) < expected_rows
+            ],
+            "components": {
+                name: {
+                    "rows": int(components[name].get("rows") or 0),
+                    "localPass": int(components[name].get("localPass") or 0),
+                    "localMaeVirupa": float(
+                        components[name].get("localMaeVirupa") or 0.0
+                    ),
+                    "localMaxVirupa": float(
+                        components[name].get("localMaxVirupa") or 0.0
+                    ),
+                }
+                for name in required
+            },
+        }
+    )
+    return base
+
+
 def markdown_table(headers: list[str], rows: list[list[Any]]) -> str:
     out = ["| " + " | ".join(headers) + " |", "| " + " | ".join("---" for _ in headers) + " |"]
     for row in rows:
@@ -583,15 +706,15 @@ def build_inventory(config: dict[str, Any]) -> list[InventoryRow]:
         ),
         InventoryRow(
             "Gate 1",
-            "shadbala.bphs_component_reconciliation_v8",
-            "BPHS chapter 27 source profile + uploaded Shadbala notes + pinned PyJHora diagnostics",
+            "shadbala.bphs_component_reconciliation_v9",
+            "BPHS chapter 27 source profile + locked JHora Kaala witness + pinned PyJHora diagnostics",
             str(shadbala.get("method")),
             "strict_shadbala_doctrine.event_strict_shadbala_context",
             "implemented_unvalidated",
             "versioned source profile with named comparator variants",
             str(shadbala.get("status")),
             "|".join(shadbala.get("missing", [])),
-            "Use the locked JHora reconciliation, Kaala-subcomponent, and shared-input matrices diagnostically; capture a visible JHora Kaala breakup before changing categorical awards, and retain non-luminary Chesta/Yuddha as provisional.",
+            "Use the locked JHora reconciliation and visible Kaala matrix: dynamic Paksha passes 35/35 and is promoted; Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, and full total remain provisional.",
             "train_as_provisional_numeric_feature_only",
         ),
         InventoryRow(
@@ -842,7 +965,7 @@ def build_position_baseline(
                         external_source="",
                         pass_fail="pending",
                         notes=(
-                            f"Local strict-v8 BPHS source-profile value at {sample.location}; Raman "
+                            f"Local strict-v9 BPHS source-profile value at {sample.location}; Raman "
                             "ayanamsa; true node; Porphyry houses. Sthana uses degree-bounded D1 "
                             "Moolatrikona and source weights; Kaala uses astronomical sunrise and the "
                             "published Ahargana scheme; displayed Sun/Moon Chesta is excluded from the "
@@ -928,6 +1051,18 @@ def render_report(
     independent_rows = dict(independent_drik.get("rows") or {})
     independent_passed = int(independent_rows.get("pass") or 0)
     independent_failed = int(independent_rows.get("fail") or 0)
+    visible_kaala = dict(external_gate.get("visibleKaalaWitness") or {})
+    visible_components = dict(visible_kaala.get("components") or {})
+    visible_kaala_rows = [
+        [
+            name,
+            values.get("localPass", 0),
+            values.get("rows", 0),
+            values.get("localMaeVirupa", ""),
+            values.get("localMaxVirupa", ""),
+        ]
+        for name, values in sorted(visible_components.items())
+    ]
     if external_gate["certified"]:
         external_verdict = (
             "- Shadbala/Drik external certification passed for the declared matrix."
@@ -940,10 +1075,12 @@ def render_report(
             "comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass "
             "60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The "
             "locked local-versus-JHora reconciliation excludes displayed Sun/Moon "
-            "Chesta from the total, reducing local full-total mean absolute error "
-            "to 17.416 virupa versus PyJHora's 71.742, but still passes 0/35 at the "
-            "frozen tolerance. Local Kaala is closer than PyJHora in 35/35 rows "
-            "with 4/35 strict passes and 7.983 virupa mean absolute error. The "
+            "Chesta from the total and promotes dynamic Paksha after 35/35 visible "
+            "subcomponent matches. Local full-total mean absolute error is now "
+            "12.626 virupa versus PyJHora's 71.742, but still passes 0/35 at the "
+            "frozen tolerance. Top-level local Kaala passes 5/35 with 2.763 virupa "
+            "mean absolute error; Hora, Nathonnatha, Ayana, and aggregate Kaala "
+            "remain provisional. The "
             f"completed independent JHora Drik witness passes "
             f"{independent_passed}/35 and fails {independent_failed}/35. Keep full "
             "Shadbala and Drik excluded from certified ML/execution until the "
@@ -1037,6 +1174,21 @@ def render_report(
             ],
         ),
         "",
+        "### Visible JHora Kaala Witness",
+        "",
+        (
+            f"Status: `{visible_kaala.get('status', 'not generated')}`. "
+            "This evidence can validate individual Kaala subcomponents; it does "
+            "not certify aggregate Kaala or full Shadbala."
+        ),
+        "",
+        markdown_table(
+            ["Component", "Local pass", "Rows", "MAE virupa", "Max error virupa"],
+            visible_kaala_rows,
+        )
+        if visible_kaala_rows
+        else "No complete visible Kaala witness was loaded.",
+        "",
         "External import issues:",
         "",
         *(
@@ -1126,10 +1278,20 @@ def main() -> None:
         independent_import_issues,
         independent_values_path,
     )
+    visible_kaala_path = Path(args.jhora_kaala_summary)
+    if not visible_kaala_path.is_absolute():
+        visible_kaala_path = root / visible_kaala_path
+    visible_kaala_gate = visible_kaala_gate_summary(visible_kaala_path)
     external_gate["independentDrikWitness"] = independent_gate
+    external_gate["visibleKaalaWitness"] = visible_kaala_gate
     external_gate["requirements"].append(
         "PyJHora is a Tier B comparator only; independent Jagannatha Hora or cited worked-example "
         "Drik evidence must also pass before certification."
+    )
+    external_gate["requirements"].append(
+        "Visible JHora Kaala evidence may promote an individual subcomponent only "
+        "when all 35 rows pass at the frozen 0.5-virupa tolerance; aggregate Kaala "
+        "and full Shadbala remain uncertified until their complete matrices pass."
     )
     if external_gate["certified"] and not independent_gate["certified"]:
         external_gate["status"] = "blocked_pending_independent_drik_validation"

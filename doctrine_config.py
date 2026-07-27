@@ -22,7 +22,7 @@ SHADBALA_MINIMUM_TOTAL_VIRUPA: dict[str, float] = {
 AVG_ALL_CLASSICAL = ("SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN")
 
 DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
-    "config_id": "doctrine_v5_20260726_independent_jhora_reconciliation",
+    "config_id": "doctrine_v6_20260727_visible_kaala_reconciliation",
     "status": "provisional_audited",
     "time_standard": {
         "internal_time": "UTC/JD_UT",
@@ -50,7 +50,7 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
         "current_virupa_field": "event_bphs_like_orb_virupa",
     },
     "shadbala": {
-        "method": "strict_shadbala_v8_luminary_chesta_total_exclusion_provisional",
+        "method": "strict_shadbala_v9_dynamic_paksha_jhora_witness_provisional",
         "status": "provisional_independent_jhora_witness_failed_reconciliation_in_progress",
         "current_fields": ["shadbala_tag", "shadbala_avg"],
         "implemented_components": [
@@ -79,6 +79,7 @@ DEFAULT_DOCTRINE_CONFIG: dict[str, Any] = {
             "saptavargaja_policy": "BPHS_source_weights_and_D1_degree_moolatrikona_with_named_PyJHora_comparator_profile",
             "tribhaga_policy": "Jupiter_permanent_60_virupa_plus_segment_lord_60_virupa",
             "kaala_abda_masa_policy": "BPHS_Ahargana_anchor_1860_sunrise_boundary_and_astronomical_rise_set",
+            "paksha_policy": "dynamic_Moon_phase_and_Mercury_malefic_association_JHora_visible_witness_35_of_35",
             "chesta_policy": "sun_moon_display_only_excluded_from_total_others_mean_true_seegrocha_model",
             "luminary_chesta_total_policy": "display_carryover_excluded_to_prevent_ayana_paksha_double_count",
             "chesta_motion_policy": "eight_motion_state_speed_buckets_are_diagnostic_not_base_Chesta",

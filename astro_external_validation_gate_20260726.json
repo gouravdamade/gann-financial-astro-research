@@ -1,6 +1,6 @@
 {
   "contract": "GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1",
-  "reportVersion": "astro_certification_4_gate_v7_independent_jhora_reconciliation_20260726",
+  "reportVersion": "astro_certification_4_gate_v8_visible_kaala_reconciliation_20260727",
   "generatedAtUtc": "2026-07-26T18:39:24+00:00",
   "status": "failed_external_validation",
   "certified": false,
@@ -41,7 +41,8 @@
     "Every selected classical-planet Drik Bala value must match a saved Tier B export within 0.5 virupa.",
     "External source settings must record Raman ayanamsa, true node, event time, timezone, and location.",
     "Any missing, duplicate, unknown, non-numeric, or out-of-tolerance row blocks certification.",
-    "PyJHora is a Tier B comparator only; independent Jagannatha Hora or cited worked-example Drik evidence must also pass before certification."
+    "PyJHora is a Tier B comparator only; independent Jagannatha Hora or cited worked-example Drik evidence must also pass before certification.",
+    "Visible JHora Kaala evidence may promote an individual subcomponent only when all 35 rows pass at the frozen 0.5-virupa tolerance; aggregate Kaala and full Shadbala remain uncertified until their complete matrices pass."
   ],
   "independentDrikWitness": {
     "required": true,
@@ -61,6 +62,100 @@
     "import": {
       "path": "D:\\PycharmProjects\\status\\evidence\\jhora_shadbala_20260723\\jhora_drik_independent_validation_values_20260726.csv",
       "sha256": "DECDB00B58E0B4C4D3E6A14295DCAFE72D72E2D91584B8F3050C587D6000F1BF",
+      "issues": []
+    }
+  },
+  "evidenceReconciliationUpdatedAtUtc": "2026-07-27T03:56:38.959280Z",
+  "evidenceReconciliationMode": "hash_pinned_visible_JHora_capture; no_fresh_astronomy_rerun",
+  "visibleKaalaWitness": {
+    "required": true,
+    "status": "partial_component_validation",
+    "certified": false,
+    "aggregateKaalaCertified": false,
+    "witnessRows": 350,
+    "comparisonRows": 350,
+    "toleranceVirupa": 0.5,
+    "promotedComponents": [
+      "paksha"
+    ],
+    "retainedValidatedComponents": [
+      "abda",
+      "masa",
+      "vara",
+      "tribhaga",
+      "yuddha"
+    ],
+    "provisionalComponents": [
+      "hora",
+      "nathonnatha",
+      "ayana",
+      "total"
+    ],
+    "components": {
+      "abda": {
+        "rows": 35,
+        "localPass": 35,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0
+      },
+      "ayana": {
+        "rows": 35,
+        "localPass": 13,
+        "localMaeVirupa": 1.973373426,
+        "localMaxVirupa": 9.010454001
+      },
+      "hora": {
+        "rows": 35,
+        "localPass": 33,
+        "localMaeVirupa": 3.428571429,
+        "localMaxVirupa": 60.0
+      },
+      "masa": {
+        "rows": 35,
+        "localPass": 35,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0
+      },
+      "nathonnatha": {
+        "rows": 35,
+        "localPass": 11,
+        "localMaeVirupa": 1.842805714,
+        "localMaxVirupa": 4.8899
+      },
+      "paksha": {
+        "rows": 35,
+        "localPass": 35,
+        "localMaeVirupa": 0.039841769,
+        "localMaxVirupa": 0.123677207
+      },
+      "total": {
+        "rows": 35,
+        "localPass": 4,
+        "localMaeVirupa": 6.349790459,
+        "localMaxVirupa": 62.908905083
+      },
+      "tribhaga": {
+        "rows": 35,
+        "localPass": 35,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0
+      },
+      "vara": {
+        "rows": 35,
+        "localPass": 35,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0
+      },
+      "yuddha": {
+        "rows": 35,
+        "localPass": 35,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0
+      }
+    },
+    "input": {
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\jhora_kaala_profile_comparison_20260727.json",
+      "sha256": "2FD0BBDCBFA07432FAE97F74F8F947FCF1A4AF036AD4004477F4C912AE1D9904",
       "issues": []
     }
   }
