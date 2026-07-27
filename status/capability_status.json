@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-27T08:03:42Z",
+  "asOfUtc": "2026-07-27T13:33:41Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -8,18 +8,20 @@
       "label": "Auditable AVG(ALL) collective geometry",
       "states": {
         "implementedInSource": "yes",
-        "packagedCandidate": "no",
+        "packagedCandidate": "yes",
         "physicallyTested": "not_applicable",
         "promotedStable": "no",
         "sourceCertified": "not_applicable",
         "financiallyValidated": "no"
       },
-      "statusDetail": "The equal-weight ten-body AVG(ALL) profile exposes R1/R2 geometry, reliability-safe motion and research events in a dedicated synchronized desktop inspector. Reliable mean-rashi ingress brackets may be refined with bounded Raman-sidereal Swiss Ephemeris bisection; all heuristic events and failed or budget-excess roots remain explicit sampled fallbacks. Selected exact source-bar audits can be persisted in named chart layouts or exported as immutable JSON evidence. Every sample includes deterministic leave-one-out member influence; unreliable means expose no invented leverage. Legacy line values remain unchanged. The source remains context-only with coefficient 0.0 and is barred from live inference, Auto Suggest, shadow validation, official ML notes, SBC Vedha and execution.",
+      "statusDetail": "The equal-weight ten-body AVG(ALL) profile exposes R1/R2 geometry, reliability-safe motion and research events in a dedicated synchronized desktop inspector. Reliable mean-rashi ingress brackets may be refined with bounded Raman-sidereal Swiss Ephemeris bisection; all heuristic events and failed or budget-excess roots remain explicit sampled fallbacks. Selected exact source-bar audits can be persisted in named chart layouts or exported as immutable JSON evidence. M7 can make a sealed visual-study dossier that joins one exact audit, visible user-authored Gann fans, and a timestamp-matched SBC snapshot whose Vedha actors are limited to Sun, Moon, Rahu, and Ketu. The dossier is export-only, non-voting, contains no outcome labels, and is not a registered prospective trial. Every sample includes deterministic leave-one-out member influence; unreliable means expose no invented leverage. Legacy line values remain unchanged. The source remains context-only with coefficient 0.0 and is barred from live inference, Auto Suggest, shadow validation, official ML notes, SBC Vedha and execution.",
       "evidenceRefs": [
         "avg_all_collective_geometry_v1_20260727.md",
         "avg_all_collective_motion_events_m4_20260727.md",
         "avg_all_collective_inspector_m5_20260727.md",
         "avg_all_ephemeris_refinement_audit_m6_20260727.md",
+        "avg_all_visual_study_freeze_m7_20260727.md",
+        "status/audits/windows_avg_visual_study_candidate_0_10_24_20260727.json",
         "gann-astro-desk/backend/collective_refinement.py",
         "gann-astro-desk/src/collectiveAudit.ts",
         "gann-astro-desk/backend/collective_geometry.py",

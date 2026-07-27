@@ -1,0 +1,69 @@
+{
+  "contract": "GANN_WINDOWS_CLEAN_CANDIDATE_AUDIT_V1",
+  "auditedAtUtc": "2026-07-27T13:33:41Z",
+  "releaseId": "gann-astro-desk-0.10.24-windows",
+  "candidate": {
+    "version": "0.10.24",
+    "status": "avg_all_visual_study_m7_experimental_candidate",
+    "sourceGitCommit": "2f223647da9ee98c929d39bd3ee0598dda5b0f8e",
+    "sourceGitDirty": false,
+    "executablePath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.24-tauri/GannAstroDesk.exe",
+    "executableBytes": 15770112,
+    "executableSha256": "CEEA6C4A4B7632445B01E56550299B30D2A9018C9C6B699FDE5DD7EA3085A139",
+    "installerPath": "D:/GannFinancialAstro/release_candidate/GannAstroDesk-0.10.24-tauri/Gann Astro Desk_0.10.24_x64-setup.exe",
+    "installerBytes": 176553652,
+    "installerSha256": "650329D8929D5124986A2FE5D096A91D07E4ABD801F0006F18EB6D493C5315A1",
+    "manifestFileCount": 1471,
+    "manifestTotalBytes": 897103029
+  },
+  "features": {
+    "dossierContract": "GANN_AVG_ALL_VISUAL_STUDY_DOSSIER_V1",
+    "gannStudyContract": "GANN_AVG_ALL_GANN_VISUAL_STUDY_V1",
+    "sbcStudyContract": "GANN_AVG_ALL_SBC_VISUAL_STUDY_V1",
+    "prospectiveFreezeCandidateContract": "GANN_AVG_ALL_PROSPECTIVE_FREEZE_CANDIDATE_V1",
+    "auditInputContract": "GANN_PLANETARY_COLLECTIVE_AUDIT_SNAPSHOT_V1",
+    "gannScope": "visible_user_authored_fans_only",
+    "sbcActorScope": "SUN_MOON_RAHU_KETU_ONLY",
+    "seal": "canonical_sha256"
+  },
+  "guardrails": {
+    "researchOnly": true,
+    "countsAsIndependentVote": false,
+    "directionalContribution": 0,
+    "consumedByLiveInference": false,
+    "consumedByAutoSuggest": false,
+    "consumedByShadowLedger": false,
+    "consumedByOfficialMlNotes": false,
+    "executionAllowed": false,
+    "outcomeLabelsIncluded": false,
+    "prospectiveTrialRegistered": false,
+    "existingShadowTrialModified": false
+  },
+  "verification": {
+    "focusedM7FrontendTests": "8_passed",
+    "frontendTests": "91_passed",
+    "frontendLint": "passed",
+    "frontendProductionBuild": "passed_with_existing_500kb_chunk_warning",
+    "backendTests": "147_passed",
+    "repositoryPythonTests": "390_passed",
+    "pythonRuff": "passed",
+    "rustTests": "18_passed_with_existing_dead_code_warnings",
+    "statusValidation": "6_passed",
+    "desktopPackagingContractTests": "3_passed",
+    "manifestHashes": "passed",
+    "windowsFileAndProductVersion": "0.10.24",
+    "nativeSoak": {
+      "contract": "GANN_TAURI_NATIVE_SOAK_V1",
+      "reportPath": "D:/GannFinancialAstro/soak/tauri_0.10.24_20260727_133210/logs/native_soak_report.json",
+      "checks": 44,
+      "failedChecks": 0,
+      "deferredChecks": 0,
+      "conditionalPass": false,
+      "survivingDescendants": 0,
+      "passed": true
+    },
+    "physicalWindowsUi": "pending"
+  },
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

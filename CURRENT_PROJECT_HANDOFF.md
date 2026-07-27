@@ -1,8 +1,60 @@
 # Current Project Handoff
 
-Last updated: 2026-07-27 13:33 IST
+Last updated: 2026-07-27 19:06 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-27 (AVG(ALL) Gann/SBC Visual Study M7 And Windows 0.10.24)
+
+- Added `GANN_AVG_ALL_VISUAL_STUDY_DOSSIER_V1`: an exportable, SHA-256-sealed
+  research packet joined at one exact source bar. It combines the immutable M6
+  AVG audit, all currently visible user-authored Gann fans (maximum 32), and a
+  timestamp-matched Chakra Lab SBC snapshot.
+- SBC requests retain all nine supported body positions, while the current
+  certified fixed-body actor scope is deliberately limited to `SUN`, `MOON`,
+  `RAHU`, and `KETU`. `AVG(ALL)` does not cast Vedha and no motion class is
+  invented for other bodies.
+- The visual study is guarded at the UI, TypeScript contract, package manifest,
+  and tests: research-only, no independent vote, `0.0` directional
+  contribution, no live inference, no Auto Suggest, no shadow ledger, no
+  official ML notes, and no execution. It contains no outcome labels.
+- Added `GANN_AVG_ALL_PROSPECTIVE_FREEZE_CANDIDATE_V1` only as an immutable
+  export packet. Its registry state is `export_only_not_registered`; it does
+  not alter the existing frozen USDJPY shadow cohort. A future observer trial
+  still needs predeclared outcomes, horizons, exclusions, thresholds, an
+  immutable manifest, and an untouched future start time.
+- Fixed a stale-response race: if the chart/date range/reference location or
+  Gann drawings change while the SBC request is pending, the old result is
+  discarded rather than shown against new geometry.
+- Built Windows candidate `0.10.24` from clean source commit
+  `2f223647da9ee98c929d39bd3ee0598dda5b0f8e`. The intermediate M6-only
+  `0.10.23` package is superseded and should not be installed.
+  - portable executable:
+    `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.24-tauri\GannAstroDesk.exe`
+    SHA-256 `CEEA6C4A4B7632445B01E56550299B30D2A9018C9C6B699FDE5DD7EA3085A139`;
+  - installer:
+    `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.24-tauri\Gann Astro Desk_0.10.24_x64-setup.exe`
+    SHA-256 `650329D8929D5124986A2FE5D096A91D07E4ABD801F0006F18EB6D493C5315A1`.
+- Hashes and Windows File/Product Version `0.10.24` match the generated
+  manifest. Native soak passed `44/44` checks with no deferred or failed
+  checks, including packaged sidecar startup/recovery, timestamp-safe Chakra
+  guardrails, read-only MT5 posture, and execution locks. Physical UI
+  acceptance remains pending; no financial validation or execution promotion
+  is claimed.
+- Verification: M7 focused frontend `8/8`; full desktop frontend `91/91`;
+  desktop backend `147/147`; repository Python `390/390`; Rust `18/18`;
+  packaging checks `3/3`; status validation `6/6`; frontend lint, targeted
+  Python Ruff, and production build passed. The known approximately 534 KiB
+  main-bundle advisory remains a separate performance task.
+- Evidence:
+  `avg_all_visual_study_freeze_m7_20260727.md` and
+  `status/audits/windows_avg_visual_study_candidate_0_10_24_20260727.json`.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260727_190658_avg_all_visual_study_m7_windows_0_10_24`.
+- Next work: physical native UI inspection of the M7 inspector, further
+  main-workspace code splitting, and only then an independently predeclared
+  future AVG visual-observer trial. Runtime-only SQLite/log/Android state
+  remains untouched and must not be committed.
 
 ## Latest Update - 2026-07-27 (AVG(ALL) Exact Ingress And Audit Persistence M6)
 
