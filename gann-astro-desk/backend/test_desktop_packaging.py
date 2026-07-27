@@ -108,6 +108,28 @@ class DesktopPackagingTests(unittest.TestCase):
             "collective_official_ml_note_allowed = $false", windows_build
         )
         self.assertIn("collective_execution_allowed = $false", windows_build)
+        self.assertIn(
+            'collective_visual_study_dossier_contract = '
+            '"GANN_AVG_ALL_VISUAL_STUDY_DOSSIER_V1"',
+            windows_build,
+        )
+        self.assertIn(
+            'collective_prospective_freeze_candidate_contract = '
+            '"GANN_AVG_ALL_PROSPECTIVE_FREEZE_CANDIDATE_V1"',
+            windows_build,
+        )
+        self.assertIn(
+            "collective_visual_study_outcome_labels_included = $false",
+            windows_build,
+        )
+        self.assertIn(
+            "collective_visual_study_trial_registered = $false",
+            windows_build,
+        )
+        self.assertIn(
+            "collective_visual_study_existing_shadow_trial_modified = $false",
+            windows_build,
+        )
 
 
 if __name__ == "__main__":

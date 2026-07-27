@@ -535,6 +535,65 @@ export type PlanetaryCollectiveAuditSnapshot = {
   }
 }
 
+export type PlanetaryCollectiveVisualStudyDossier = {
+  contract: 'GANN_AVG_ALL_VISUAL_STUDY_DOSSIER_V1'
+  schemaVersion: 1
+  dossierId: string
+  createdAtUtc: string
+  studyFingerprintSha256: string
+  audit: PlanetaryCollectiveAuditSnapshot
+  gannStudy: {
+    contract: 'GANN_AVG_ALL_GANN_VISUAL_STUDY_V1'
+    mode: 'VISIBLE_USER_AUTHORED_FANS'
+    fanCount: number
+    fans: Array<{
+      drawingId: string
+      name: string
+      anchors: ChartDrawingAnchor[]
+      style: ChartDrawingStyle
+      ratios: number[]
+    }>
+    guardrails: {
+      geometryOnly: true
+      directionalInterpretation: false
+      outcomeLabelsIncluded: false
+    }
+  }
+  sbcStudy: {
+    contract: 'GANN_AVG_ALL_SBC_VISUAL_STUDY_V1'
+    mode: 'TIMESTAMP_MATCHED_FIXED_BODY_CONTEXT'
+    actorScope: 'SUN_MOON_RAHU_KETU_ONLY'
+    snapshot: ChakraLabSnapshot
+    guardrails: {
+      avgAllCastsVedha: false
+      guidanceOnly: true
+      financiallyValidated: false
+      outcomeLabelsIncluded: false
+    }
+  }
+  prospectiveFreeze: {
+    contract: 'GANN_AVG_ALL_PROSPECTIVE_FREEZE_CANDIDATE_V1'
+    policyVersion: 'avg_all_visual_observer_v1'
+    status: 'EXPORT_ONLY_NOT_REGISTERED'
+    packetFrozen: true
+    trialRegistered: false
+    evidenceCutoffUtc: string
+    outcomeLabelsIncluded: false
+    existingShadowTrialModified: false
+    requirementsBeforeRegistration: string[]
+  }
+  guardrails: {
+    researchOnly: true
+    countsAsIndependentVote: false
+    directionalContribution: 0
+    consumedByLiveInference: false
+    consumedByAutoSuggest: false
+    consumedByShadowLedger: false
+    consumedByOfficialMlNotes: false
+    executionAllowed: false
+  }
+}
+
 export type PlanetaryLineOverlay = {
   contract: 'GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1'
   symbol: string

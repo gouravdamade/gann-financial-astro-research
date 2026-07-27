@@ -5202,7 +5202,7 @@ html.android-runtime .loading-state {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: auto auto minmax(72px, 1fr) auto auto 29px;
+  grid-template-rows: auto auto minmax(72px, 1fr) auto auto auto 29px;
   background: #141a20;
 }
 
@@ -5336,6 +5336,87 @@ html.android-runtime .loading-state {
 .collective-field-event-list time { color: #8b969f; font-variant-numeric: tabular-nums; }
 .collective-field-event-list small { grid-column: 1 / -1; color: #6f7a84; }
 
+.collective-field-visual-study {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  padding: 6px 8px;
+  border-top: 1px solid #303943;
+  background: #151d20;
+  color: #7d8992;
+  font-size: 7px;
+}
+
+.collective-field-visual-study > div:first-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.collective-field-visual-study > div:first-child strong {
+  color: #b9c8c3;
+  font-size: 8px;
+}
+
+.collective-field-visual-study > div:first-child span {
+  overflow: hidden;
+  color: #70817c;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collective-field-visual-study p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.collective-field-visual-study p.is-error { color: #e18b91; }
+.collective-field-visual-study > code {
+  overflow: hidden;
+  color: #8fb8ac;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collective-field-visual-study-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.collective-field-visual-study-summary > span {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+  padding: 4px 5px;
+  border: 1px solid #2f4440;
+  border-radius: 3px;
+  background: #111819;
+}
+
+.collective-field-visual-study-summary small { color: #65736f; font-size: 6px; }
+.collective-field-visual-study-summary strong {
+  overflow: hidden;
+  color: #b8c8c3;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collective-field-visual-study-freeze {
+  color: #c6aa59;
+  line-height: 1.35;
+}
+
+.collective-field-visual-study .secondary-command {
+  width: max-content;
+  height: 23px;
+  padding: 0 7px;
+  font-size: 7px;
+}
+
 .collective-field-snapshot-list {
   max-height: 70px;
   overflow: auto;
@@ -5419,7 +5500,7 @@ html.android-runtime .loading-state {
 
   .collective-field-inspector > header {
     display: grid;
-    grid-template-columns: 19px minmax(0, 1fr) repeat(4, 26px);
+    grid-template-columns: 19px minmax(0, 1fr) repeat(5, 26px);
     grid-template-rows: 34px 18px;
   }
 
@@ -5459,6 +5540,11 @@ html.android-runtime .loading-state {
     grid-row: 1;
   }
 
+  .collective-field-inspector > header .icon-button:nth-of-type(5) {
+    grid-column: 7;
+    grid-row: 1;
+  }
+
   .collective-field-inspector-body {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(160px, 0.85fr) minmax(180px, 1.15fr);
@@ -5474,7 +5560,7 @@ html.android-runtime .loading-state {
   }
 
   .collective-field-audit-pane {
-    grid-template-rows: auto auto minmax(76px, 1fr) auto auto 29px;
+    grid-template-rows: auto auto minmax(76px, 1fr) auto auto auto 29px;
   }
 
   .collective-field-member-table {

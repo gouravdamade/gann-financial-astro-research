@@ -2,6 +2,7 @@ import {
   BookmarkPlus,
   Crosshair,
   Download,
+  FlaskConical,
   Pin,
   PinOff,
   ShieldCheck,
@@ -16,6 +17,7 @@ import type {
   PlanetaryCollectiveEvent,
   PlanetaryCollectiveField,
   PlanetaryCollectiveSample,
+  PlanetaryCollectiveVisualStudyDossier,
 } from '../types'
 
 type CollectiveFieldInspectorProps = {
@@ -29,6 +31,11 @@ type CollectiveFieldInspectorProps = {
   onExportAudit: (time: number) => void
   onExportSavedAudit: (snapshot: PlanetaryCollectiveAuditSnapshot) => void
   onDeleteSavedAudit: (snapshotId: string) => void
+  visualStudy: PlanetaryCollectiveVisualStudyDossier | null
+  visualStudyBusy: boolean
+  visualStudyError: string
+  onBuildVisualStudy: (time: number) => void
+  onExportVisualStudy: (dossier: PlanetaryCollectiveVisualStudyDossier) => void
   onClose: () => void
 }
 
@@ -93,6 +100,11 @@ export function CollectiveFieldInspector({
   onExportAudit,
   onExportSavedAudit,
   onDeleteSavedAudit,
+  visualStudy,
+  visualStudyBusy,
+  visualStudyError,
+  onBuildVisualStudy,
+  onExportVisualStudy,
   onClose,
 }: CollectiveFieldInspectorProps) {
   const samples = field.samples.length ? field.samples : [field.latest]
@@ -221,6 +233,15 @@ export function CollectiveFieldInspector({
           aria-label="Export selected collective audit"
         >
           <Download size={15} />
+        </button>
+        <button
+          className="icon-button"
+          onClick={() => onBuildVisualStudy(selected.time)}
+          disabled={visualStudyBusy}
+          title="Build timestamp-matched M7 Gann and SBC visual study"
+          aria-label="Build M7 visual study"
+        >
+          <FlaskConical size={15} />
         </button>
         <button className="icon-button" onClick={onClose} title="Close collective field inspector" aria-label="Close collective field inspector">
           <X size={15} />
@@ -380,6 +401,44 @@ export function CollectiveFieldInspector({
                 </small>
               </div>
             )) : <span>No research event in this range</span>}
+          </div>
+          <div className="collective-field-visual-study">
+            <div>
+              <strong>M7 visual study</strong>
+              <span>Gann geometry + timestamp-matched SBC</span>
+            </div>
+            {visualStudyBusy && <p>Building guarded evidence dossier...</p>}
+            {visualStudyError && <p className="is-error">{visualStudyError}</p>}
+            {!visualStudyBusy && !visualStudyError && !visualStudy && (
+              <p>Build an export-only packet. No direction or outcome label is inferred.</p>
+            )}
+            {visualStudy && (
+              <>
+                <div className="collective-field-visual-study-summary">
+                  <span>
+                    <small>Gann</small>
+                    <strong>{visualStudy.gannStudy.fanCount} visible fan{visualStudy.gannStudy.fanCount === 1 ? '' : 's'}</strong>
+                  </span>
+                  <span>
+                    <small>SBC</small>
+                    <strong>{visualStudy.sbcStudy.snapshot.guidance?.guidance_band ?? 'context only'}</strong>
+                  </span>
+                </div>
+                <code title={visualStudy.studyFingerprintSha256}>
+                  {visualStudy.studyFingerprintSha256.slice(0, 16)}...
+                </code>
+                <div className="collective-field-visual-study-freeze">
+                  Frozen packet | trial not registered | existing cohort unchanged
+                </div>
+                <button
+                  className="secondary-command"
+                  onClick={() => onExportVisualStudy(visualStudy)}
+                >
+                  <Download size={12} />
+                  Export M7 dossier
+                </button>
+              </>
+            )}
           </div>
           <div className="collective-field-snapshot-list">
             <strong>Saved audit snapshots</strong>

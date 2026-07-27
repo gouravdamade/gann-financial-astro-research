@@ -7,6 +7,7 @@ import type {
   PlanetaryCollectiveAuditSnapshot,
   PlanetaryCollectiveField,
   PlanetaryCollectiveSample,
+  PlanetaryCollectiveVisualStudyDossier,
 } from '../types'
 import { CollectiveFieldInspector } from './CollectiveFieldInspector'
 
@@ -124,6 +125,11 @@ function inspectorProps(overrides: Partial<Parameters<typeof CollectiveFieldInsp
     onExportAudit: vi.fn(),
     onExportSavedAudit: vi.fn(),
     onDeleteSavedAudit: vi.fn(),
+    visualStudy: null as PlanetaryCollectiveVisualStudyDossier | null,
+    visualStudyBusy: false,
+    visualStudyError: '',
+    onBuildVisualStudy: vi.fn(),
+    onExportVisualStudy: vi.fn(),
     onClose: vi.fn(),
     ...overrides,
   }
@@ -244,5 +250,29 @@ describe('CollectiveFieldInspector', () => {
     expect(onDeleteSavedAudit).toHaveBeenCalledWith('audit-1')
     fireEvent.click(screen.getByTitle('Pin this saved audit timestamp'))
     expect(onPinTime).toHaveBeenCalledWith(firstTime)
+  })
+
+  it('builds and exports the guarded M7 visual-study dossier', () => {
+    const onBuildVisualStudy = vi.fn()
+    const onExportVisualStudy = vi.fn()
+    const visualStudy = {
+      contract: 'GANN_AVG_ALL_VISUAL_STUDY_DOSSIER_V1',
+      studyFingerprintSha256: 'A'.repeat(64),
+      gannStudy: { fanCount: 2 },
+      sbcStudy: { snapshot: { guidance: { guidance_band: 'mixed' } } },
+      prospectiveFreeze: { trialRegistered: false },
+    } as PlanetaryCollectiveVisualStudyDossier
+    render(<CollectiveFieldInspector {...inspectorProps({
+      visualStudy,
+      onBuildVisualStudy,
+      onExportVisualStudy,
+    })} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Build M7 visual study' }))
+    expect(onBuildVisualStudy).toHaveBeenCalledWith(secondTime)
+    expect(screen.getByText('2 visible fans')).toBeInTheDocument()
+    expect(screen.getByText(/trial not registered/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Export M7 dossier' }))
+    expect(onExportVisualStudy).toHaveBeenCalledWith(visualStudy)
   })
 })

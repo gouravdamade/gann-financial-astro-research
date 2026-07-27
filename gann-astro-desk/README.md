@@ -197,7 +197,7 @@ npm run build
 
 ## Native Windows Status
 
-The current native source version is `0.10.23`; the most recently installed
+The current native source version is `0.10.24`; the most recently installed
 Windows research candidate remains `0.10.22` until the user installs the new
 candidate. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
@@ -225,6 +225,13 @@ audit snapshots. The original sampled estimate is retained and every failure or
 work-budget skip remains an explicit fallback. These collective features remain
 research-only: they cannot vote, feed Auto Suggest, enter live inference or
 official ML notes, validate a strategy, or execute trades.
+
+Windows candidate `0.10.24` adds the M7 export-only Visual Study Dossier. At a
+selected collective timestamp it joins the immutable AVG audit with visible
+user-authored Gann fans and a timestamp-matched fixed-body SBC context snapshot,
+then seals the dossier with SHA-256. The packet is only a freeze candidate for
+a future untouched trial: it includes no outcome labels, does not register a
+trial, and does not modify the existing frozen shadow cohort.
 
 Windows candidate `0.10.21` exposes the existing timestamp-safe planetary-line
 overlay as **Live SR Lab**, adds an explicit recalculation command and generated

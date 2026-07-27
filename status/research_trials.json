@@ -1,6 +1,6 @@
 {
   "contract": "GANN_RESEARCH_TRIAL_STATUS_V1",
-  "asOfUtc": "2026-07-22T12:45:00Z",
+  "asOfUtc": "2026-07-27T11:46:26Z",
   "executionAllowed": false,
   "trials": [
     {
@@ -60,6 +60,30 @@
         "source-profiled snapshot contributions are not certified",
         "financial validation protocol is not frozen"
       ],
+      "financiallyValidated": false,
+      "executionAllowed": false
+    },
+    {
+      "trialId": "avg_all_visual_observer_v1_candidate",
+      "label": "AVG(ALL) Gann and SBC visual observer freeze candidate",
+      "contract": "GANN_AVG_ALL_PROSPECTIVE_FREEZE_CANDIDATE_V1",
+      "status": "export_only_not_registered",
+      "frozen": false,
+      "packetCopiesFrozen": true,
+      "trialRegistered": false,
+      "cohortMutable": false,
+      "outcomeLabelsIncluded": false,
+      "existingShadowTrialModified": false,
+      "separateFromTrialIds": [
+        "2E25E421CADE41689806F23319ED937973CA0EDEE38DF627CDAB4A8EBA5F8C16"
+      ],
+      "blockers": [
+        "outcomes, horizons, exclusions, and pass/fail thresholds are not predeclared",
+        "separate immutable trial manifest and untouched future start are not registered",
+        "minimum prospective cohort size is not frozen",
+        "observer measurements have not completed prospective validation"
+      ],
+      "evidenceRef": "avg_all_visual_study_freeze_m7_20260727.md",
       "financiallyValidated": false,
       "executionAllowed": false
     }

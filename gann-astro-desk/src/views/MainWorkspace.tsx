@@ -26,6 +26,7 @@ import {
 import {
   fetchChart,
   fetchCandlestickShadow,
+  fetchChakraLabSnapshot,
   fetchDataArtifacts,
   fetchEventDetail,
   fetchMt5Status,
@@ -48,6 +49,11 @@ import {
   downloadCollectiveAuditSnapshot,
   upsertCollectiveAuditSnapshot,
 } from '../collectiveAudit'
+import {
+  createCollectiveStudySbcRequest,
+  createCollectiveVisualStudyDossier,
+  downloadCollectiveVisualStudyDossier,
+} from '../collectiveVisualStudy'
 import {
   defaultPlanetaryLineOverlaySettings,
   normalizePlanetaryLineSettings,
@@ -81,6 +87,7 @@ import type {
   EventDetail,
   Mt5Status,
   ParameterSchema,
+  PlanetaryCollectiveVisualStudyDossier,
   RuntimeDiagnosticsBundle,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
@@ -188,10 +195,14 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [collectiveInspectorOpen, setCollectiveInspectorOpen] = useState(false)
   const [collectiveCursorTime, setCollectiveCursorTime] = useState<number | null>(null)
   const [collectivePinnedTime, setCollectivePinnedTime] = useState<number | null>(null)
+  const [collectiveVisualStudy, setCollectiveVisualStudy] = useState<PlanetaryCollectiveVisualStudyDossier | null>(null)
+  const [collectiveVisualStudyBusy, setCollectiveVisualStudyBusy] = useState(false)
+  const [collectiveVisualStudyError, setCollectiveVisualStudyError] = useState('')
   const [replaySelecting, setReplaySelecting] = useState(false)
   const [replayPlaying, setReplayPlaying] = useState(false)
   const replayBusyRef = useRef(false)
   const collectiveBottomRestoreRef = useRef<boolean | null>(null)
+  const collectiveVisualStudyRequestRef = useRef(0)
   const chartRef = useRef<MarketChartHandle>(null)
   const artifactActivationRef = useRef('')
   const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
@@ -306,6 +317,40 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
       ),
     })
   }, [collectiveAuditSnapshots, updateLayoutChartState])
+  const buildCollectiveVisualStudy = useCallback(async (time: number) => {
+    const audit = createCollectiveAudit(time)
+    if (!audit || !parameters) return
+    const requestId = collectiveVisualStudyRequestRef.current + 1
+    collectiveVisualStudyRequestRef.current = requestId
+    setCollectiveVisualStudyBusy(true)
+    setCollectiveVisualStudyError('')
+    try {
+      const sbcSnapshot = await fetchChakraLabSnapshot(
+        createCollectiveStudySbcRequest({
+          selectedTimeUnix: audit.selectedTimeUnix,
+          latitude: parameters.reference.latitude,
+          longitude: parameters.reference.longitude,
+        }),
+      )
+      const dossier = await createCollectiveVisualStudyDossier({
+        audit,
+        drawings: chartLayouts.drawings,
+        sbcSnapshot,
+      })
+      if (collectiveVisualStudyRequestRef.current !== requestId) return
+      setCollectiveVisualStudy(dossier)
+    } catch (reason) {
+      if (collectiveVisualStudyRequestRef.current !== requestId) return
+      setCollectiveVisualStudy(null)
+      setCollectiveVisualStudyError(
+        reason instanceof Error ? reason.message : String(reason),
+      )
+    } finally {
+      if (collectiveVisualStudyRequestRef.current === requestId) {
+        setCollectiveVisualStudyBusy(false)
+      }
+    }
+  }, [chartLayouts.drawings, createCollectiveAudit, parameters])
 
   useEffect(() => {
     if (!activeChartLayout) return
@@ -316,9 +361,21 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   }, [activeChartLayout, updateLayoutChartState, workspace.showAspects, workspace.showSrLines])
 
   useEffect(() => {
+    collectiveVisualStudyRequestRef.current += 1
     setCollectiveCursorTime(null)
     setCollectivePinnedTime(null)
-  }, [chart?.end, chart?.start, chart?.symbol, chart?.timeframe])
+    setCollectiveVisualStudy(null)
+    setCollectiveVisualStudyBusy(false)
+    setCollectiveVisualStudyError('')
+  }, [
+    chart?.end,
+    chart?.start,
+    chart?.symbol,
+    chart?.timeframe,
+    chartLayouts.drawings,
+    parameters?.reference.latitude,
+    parameters?.reference.longitude,
+  ])
 
   useEffect(() => {
     if (collectiveInspectorOpen && !collectiveField) {
@@ -891,6 +948,13 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
                 onExportAudit={exportCollectiveAudit}
                 onExportSavedAudit={downloadCollectiveAuditSnapshot}
                 onDeleteSavedAudit={deleteCollectiveAudit}
+                visualStudy={collectiveVisualStudy}
+                visualStudyBusy={collectiveVisualStudyBusy}
+                visualStudyError={collectiveVisualStudyError}
+                onBuildVisualStudy={(time) => {
+                  void buildCollectiveVisualStudy(time)
+                }}
+                onExportVisualStudy={downloadCollectiveVisualStudyDossier}
                 onClose={closeCollectiveInspector}
               />
             </Suspense>
