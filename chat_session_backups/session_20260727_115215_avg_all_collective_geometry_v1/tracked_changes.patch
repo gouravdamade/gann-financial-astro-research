@@ -1,0 +1,522 @@
+﻿diff --git a/CURRENT_PROJECT_HANDOFF.md b/CURRENT_PROJECT_HANDOFF.md
+index b2f2aad..291a6e0 100644
+--- a/CURRENT_PROJECT_HANDOFF.md
++++ b/CURRENT_PROJECT_HANDOFF.md
+@@ -1,9 +1,47 @@
+ # Current Project Handoff
+
+-Last updated: 2026-07-27 09:27 IST
++Last updated: 2026-07-27 11:52 IST
+
+ Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
++## Latest Update - 2026-07-27 (Auditable AVG(ALL) Collective Geometry V1)
++
++- Added `GANN_PLANETARY_COLLECTIVE_FIELD_V1` for the existing equal-weight
++  ten-body `AVG(ALL)` synthetic longitude. The member profile is explicit and
++  hash-pinned; Rahu/Ketu remain excluded.
++- Added exact-bar R1 concentration, circular variance/deviation, R2
++  two-pole/opposition geometry, polarisation axis, state, and longitude
++  reliability. Versioned thresholds are identified as display-only research
++  heuristics rather than Jyotisha doctrine or market rules.
++- Preserved the former circular-mean vector formula behind
++  `legacy_circular_mean`; direct/mirror line formulas and all legacy plotted
++  values are unchanged. Reliability does not hide or alter a line.
++- Added reusable `GANN_RESEARCH_EVIDENCE_PACKET_V1` with explicit direction,
++  activation, conflict, and confidence channels. AVG(ALL) is deliberately
++  `CONTEXT_ONLY`; all four channels are `NOT_APPLICABLE`, its empirical
++  coefficient is `0.0`, and live inference, Auto Suggest, official ML notes,
++  and execution remain locked.
++- Added a compact Live SR panel summary for AVG state, R1, R2, reliability,
++  reliable sample count, and the explicit `legacy lines unchanged` notice.
++- Verification passes `12/12` focused backend tests, `7/7` focused frontend
++  tests, the complete desktop suites at `127/127` backend and `72/72`
++  frontend, the complete repository Python suite at `370/370`, frontend
++  lint, status validation, and the TypeScript/Vite production build. The
++  existing main-bundle size warning remains non-blocking; the new
++  planetary-line panel is already a separate lazy-loaded chunk.
++- Native-size browser inspection at `1280 x 720` passed with the Live SR
++  drawer showing the compact geometry strip without overlap and no browser
++  console warnings/errors. The temporary development services were stopped
++  after inspection.
++- Capability status records the feature as implemented in source, not yet
++  packaged, not promoted, and not financially validated. Full design and
++  safety notes are in `avg_all_collective_geometry_v1_20260727.md`.
++- Recovery snapshot:
++  `D:\PycharmProjects\chat_session_backups\session_20260727_115215_avg_all_collective_geometry_v1`.
++- Runtime-only SQLite/log/Android state remains untouched and must not be
++  committed: `gann_aspect_annotations_raman_v2.sqlite`,
++  `candlestick_shadow_v3.sqlite`, `logs/`, and `tryapp-android/`.
++
+ ## Latest Update - 2026-07-27 (Visible JHora Kaala Reconciliation And Dynamic Paksha)
+
+ - Captured and hash-pinned the visible Jagannatha Hora Kaala Bala breakup for
+diff --git a/gann-astro-desk/backend/planetary_lines.py b/gann-astro-desk/backend/planetary_lines.py
+index 54cb75d..e3d85bc 100644
+--- a/gann-astro-desk/backend/planetary_lines.py
++++ b/gann-astro-desk/backend/planetary_lines.py
+@@ -11,6 +11,11 @@ from typing import Any
+ import numpy as np
+ import pandas as pd
+
++from collective_geometry import (
++    AVG_ALL_MEMBERS,
++    calculate_collective_field,
++    legacy_circular_mean,
++)
+
+ SHARED_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ if str(SHARED_PROJECT_ROOT) not in sys.path:
+@@ -35,18 +40,7 @@ SUPPORTED_PLANETS = (
+     "PLUTO",
+     "AVG(ALL)",
+ )
+-AVG_ALL_PLANETS = (
+-    "SUN",
+-    "MOON",
+-    "MERCURY",
+-    "VENUS",
+-    "MARS",
+-    "JUPITER",
+-    "SATURN",
+-    "URANUS",
+-    "NEPTUNE",
+-    "PLUTO",
+-)
++AVG_ALL_PLANETS = AVG_ALL_MEMBERS
+ MAX_TIMESTAMPS = 1_200
+ MAX_LINES = 96
+ MAX_POINTS = 100_000
+@@ -92,10 +86,7 @@ def _timestamps(value: Any) -> tuple[int, ...]:
+
+
+ def _circular_average(member_values: list[np.ndarray]) -> np.ndarray:
+-    radians = np.deg2rad(np.vstack(member_values))
+-    sin_sum = np.sin(radians).sum(axis=0)
+-    cos_sum = np.cos(radians).sum(axis=0)
+-    return np.degrees(np.arctan2(sin_sum, cos_sum)) % 360.0
++    return legacy_circular_mean(member_values)
+
+
+ def _number_label(value: float) -> str:
+@@ -194,6 +185,12 @@ def build_planetary_line_overlay(payload: dict[str, Any]) -> dict[str, Any]:
+                 longitudes[planet] = values.reindex(index).to_numpy(dtype=np.float64)
+
+     lines: list[dict[str, Any]] = []
++    collective_field = (
++        calculate_collective_field(longitudes, timestamps)
++        if "AVG(ALL)" in seen_planets
++        and any(group["planet"] == "AVG(ALL)" for group in groups)
++        else None
++    )
+     for group in groups:
+         planet = group["planet"]
+         longitude = (
+@@ -251,6 +248,7 @@ def build_planetary_line_overlay(payload: dict[str, Any]) -> dict[str, Any]:
+             "maxLines": MAX_LINES,
+             "maxPoints": MAX_POINTS,
+         },
++        "collectiveField": collective_field,
+         "lines": lines,
+         "guardrails": {
+             "researchOnly": True,
+diff --git a/gann-astro-desk/backend/test_planetary_lines.py b/gann-astro-desk/backend/test_planetary_lines.py
+index 84b80ca..2381bc7 100644
+--- a/gann-astro-desk/backend/test_planetary_lines.py
++++ b/gann-astro-desk/backend/test_planetary_lines.py
+@@ -54,6 +54,32 @@ class PlanetaryLineOverlayTests(unittest.TestCase):
+         self.assertTrue(overlay["guardrails"]["researchOnly"])
+         self.assertFalse(overlay["guardrails"]["consumedByLiveInference"])
+         self.assertFalse(overlay["guardrails"]["executionAllowed"])
++        self.assertIsNone(overlay["collectiveField"])
++
++    @patch("planetary_lines.fetch_planetary_longitude", deterministic_longitude)
++    def test_avg_all_adds_context_only_collective_geometry(self) -> None:
++        request = self.request()
++        request["groups"] = [
++            {
++                "planet": "AVG(ALL)",
++                "enabled": True,
++                "color": "#f2e96b",
++                "mode": "direct",
++                "nValues": [2],
++                "fValues": [0.5],
++                "degrees": [180],
++            }
++        ]
++        overlay = build_planetary_line_overlay(request)
++        collective = overlay["collectiveField"]
++
++        self.assertIsNotNone(collective)
++        self.assertEqual(collective["latest"]["state"], "CONCENTRATED")
++        self.assertEqual(collective["latest"]["coherenceR1"], 1.0)
++        self.assertTrue(collective["legacyCompatibility"]["legacyLineValuesPreserved"])
++        self.assertEqual(collective["evidence"]["role"], "CONTEXT_ONLY")
++        self.assertFalse(collective["guardrails"]["consumedByAutoSuggest"])
++        self.assertFalse(collective["guardrails"]["executionAllowed"])
+
+     @patch("planetary_lines.fetch_planetary_longitude", deterministic_longitude)
+     def test_disabled_planets_do_not_trigger_calculation(self) -> None:
+diff --git a/gann-astro-desk/src/App.css b/gann-astro-desk/src/App.css
+index 8024079..73e8d0f 100644
+--- a/gann-astro-desk/src/App.css
++++ b/gann-astro-desk/src/App.css
+@@ -4824,7 +4824,7 @@ html.android-runtime .loading-state {
+   bottom: 0;
+   width: min(372px, 100%);
+   display: grid;
+-  grid-template-rows: 44px auto auto minmax(0, 1fr) 38px;
++  grid-template-rows: 44px auto auto auto minmax(0, 1fr) 38px;
+   border-left: 1px solid #3a4652;
+   background: #14191f;
+   color: #aab2bc;
+@@ -4899,6 +4899,68 @@ html.android-runtime .loading-state {
+ .planetary-line-runtime.is-error { color: #e18b90; }
+ .planetary-line-runtime.is-error i { background: #df6d75; }
+
++.collective-field-summary {
++  display: grid;
++  gap: 6px;
++  padding: 8px 10px;
++  border-bottom: 1px solid #2b333c;
++  background: #121a1f;
++}
++
++.collective-field-summary-heading {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 8px;
++}
++
++.collective-field-summary-heading strong {
++  color: #d7dde3;
++  font-size: 9px;
++}
++
++.collective-field-summary-heading span {
++  color: #82b9cc;
++  font-size: 7px;
++  text-transform: uppercase;
++}
++
++.collective-field-metrics {
++  display: grid;
++  grid-template-columns: 58px 58px minmax(0, 1fr);
++  gap: 4px;
++}
++
++.collective-field-metrics > span {
++  min-width: 0;
++  padding: 4px 5px;
++  border: 1px solid #2d3941;
++  border-radius: 3px;
++  background: #0e1519;
++  color: #758590;
++  font-size: 7px;
++  text-align: center;
++}
++
++.collective-field-metrics strong {
++  color: #d4b867;
++  font-variant-numeric: tabular-nums;
++}
++
++.collective-field-summary > small {
++  color: #687681;
++  font-size: 7px;
++}
++
++.collective-field-summary.is-low_coherence .collective-field-summary-heading span,
++.collective-field-summary.is-unstable .collective-field-summary-heading span {
++  color: #e4a65f;
++}
++
++.collective-field-summary.is-invalid_input .collective-field-summary-heading span {
++  color: #e17f85;
++}
++
+ .planetary-line-groups { min-height: 0; overflow: auto; }
+ .planetary-line-group { border-bottom: 1px solid #262d35; }
+ .planetary-line-group[open] { background: #171d23; }
+diff --git a/gann-astro-desk/src/components/PlanetaryLinePanel.tsx b/gann-astro-desk/src/components/PlanetaryLinePanel.tsx
+index 9cbd229..48cfd30 100644
+--- a/gann-astro-desk/src/components/PlanetaryLinePanel.tsx
++++ b/gann-astro-desk/src/components/PlanetaryLinePanel.tsx
+@@ -9,6 +9,7 @@ import {
+ } from '../planetaryLines'
+ import type { PlanetaryLineOverlayStatus } from '../usePlanetaryLineOverlay'
+ import type {
++  PlanetaryCollectiveField,
+   PlanetaryLineGroup,
+   PlanetaryLineOverlaySettings,
+ } from '../types'
+@@ -20,6 +21,7 @@ type PlanetaryLinePanelProps = {
+   plottedLineCount: number
+   sampledTimestampCount: number
+   generatedAtUtc: string
++  collectiveField: PlanetaryCollectiveField | null
+   onChange: (settings: PlanetaryLineOverlaySettings) => void
+   onRecalculate: () => void
+   onReset: () => void
+@@ -36,6 +38,10 @@ function listText(values: number[]): string {
+   return values.join(', ')
+ }
+
++function ratioText(value: number | null): string {
++  return value == null ? 'n/a' : value.toFixed(3)
++}
++
+ export function PlanetaryLinePanel({
+   settings,
+   status,
+@@ -43,6 +49,7 @@ export function PlanetaryLinePanel({
+   plottedLineCount,
+   sampledTimestampCount,
+   generatedAtUtc,
++  collectiveField,
+   onChange,
+   onRecalculate,
+   onReset,
+@@ -176,6 +183,33 @@ export function PlanetaryLinePanel({
+         </span>
+       </section>
+
++      {collectiveField && (
++        <section
++          className={`collective-field-summary is-${collectiveField.latest.reliability.toLowerCase()}`}
++          aria-label="AVG collective geometry"
++        >
++          <div className="collective-field-summary-heading">
++            <strong>AVG collective geometry</strong>
++            <span>{collectiveField.latest.state.replaceAll('_', ' ')}</span>
++          </div>
++          <div className="collective-field-metrics">
++            <span title="R1 measures concentration of the ten-body circular field">
++              R1 <strong>{ratioText(collectiveField.latest.coherenceR1)}</strong>
++            </span>
++            <span title="R2 measures two-pole or opposition-like geometry">
++              R2 <strong>{ratioText(collectiveField.latest.polarisationR2)}</strong>
++            </span>
++            <span title="Whether the collective longitude has enough concentration to be treated as stable">
++              <strong>{collectiveField.latest.reliability.replaceAll('_', ' ')}</strong>
++            </span>
++          </div>
++          <small>
++            {collectiveField.summary.reliabilityCounts.RELIABLE ?? 0} reliable of{' '}
++            {collectiveField.summary.sampleCount} samples | legacy lines unchanged
++          </small>
++        </section>
++      )}
++
+       <div className="planetary-line-groups">
+         {settings.groups.map((group) => {
+           const groupCount = planetaryLineGroupCount(group)
+diff --git a/gann-astro-desk/src/types.ts b/gann-astro-desk/src/types.ts
+index c214bae..ddc55ab 100644
+--- a/gann-astro-desk/src/types.ts
++++ b/gann-astro-desk/src/types.ts
+@@ -185,6 +185,127 @@ export type PlanetaryLineSeries = {
+   points: PlanetaryLinePoint[]
+ }
+
++export type ResearchEvidenceStatus =
++  | 'MEASURED'
++  | 'UNKNOWN'
++  | 'NOT_APPLICABLE'
++  | 'BLOCKED'
++
++export type ResearchEvidenceChannel = {
++  status: ResearchEvidenceStatus
++  value: number | null
++  unit: string | null
++  label: string
++  reason: string | null
++}
++
++export type ResearchEvidencePacket = {
++  contract: 'GANN_RESEARCH_EVIDENCE_PACKET_V1'
++  sourceFamily: string
++  sourceProfileId: string
++  calculationVersion: string
++  observedAtUnix: number
++  role: string
++  channels: Record<'direction' | 'activation' | 'conflict' | 'confidence', ResearchEvidenceChannel>
++  descriptors: Array<{
++    key: string
++    label: string
++    value: number | string | null
++    unit: string | null
++    status: string
++  }>
++  unknownReasons: string[]
++  provenance: Record<string, unknown>
++  empiricalCoefficient: 0
++  guardrails: {
++    timestampSafe: true
++    researchOnly: true
++    consumedByLiveInference: false
++    consumedByAutoSuggest: false
++    consumedByOfficialMlNotes: false
++    executionAllowed: false
++  }
++}
++
++export type PlanetaryCollectiveReliability =
++  | 'RELIABLE'
++  | 'LOW_COHERENCE'
++  | 'UNSTABLE'
++  | 'INVALID_INPUT'
++
++export type PlanetaryCollectiveState =
++  | 'CONCENTRATED'
++  | 'PARTIALLY_COHERENT'
++  | 'BIPOLAR'
++  | 'DISPERSED'
++  | 'UNSTABLE'
++  | 'INVALID_INPUT'
++
++export type PlanetaryCollectiveSample = {
++  time: number
++  meanLongitudeDeg: number | null
++  coherenceR1: number | null
++  circularVariance: number | null
++  circularStdDeg: number | null
++  polarisationR2: number | null
++  polarisationAxisDeg: number | null
++  state: PlanetaryCollectiveState
++  reliability: PlanetaryCollectiveReliability
++  longitudeReliable: boolean
++}
++
++export type PlanetaryCollectiveField = {
++  contract: 'GANN_PLANETARY_COLLECTIVE_FIELD_V1'
++  calculationVersion: string
++  profile: {
++    profileId: string
++    members: string[]
++    weights: number[]
++    nodePolicy: string
++    memberSetHash: string
++    thresholdProfile: {
++      profileId: string
++      classification: 'UI_HEURISTIC_RESEARCH_ONLY'
++      unstableResultantFloor: number
++      lowCoherenceFloor: number
++      concentratedFloor: number
++      bipolarR2Floor: number
++    }
++  }
++  samples: PlanetaryCollectiveSample[]
++  latest: PlanetaryCollectiveSample
++  summary: {
++    sampleCount: number
++    reliabilityCounts: Partial<Record<PlanetaryCollectiveReliability, number>>
++    stateCounts: Partial<Record<PlanetaryCollectiveState, number>>
++    coherenceR1: {
++      minimum: number | null
++      median: number | null
++      maximum: number | null
++    }
++    polarisationR2: {
++      minimum: number | null
++      median: number | null
++      maximum: number | null
++    }
++  }
++  evidence: ResearchEvidencePacket
++  legacyCompatibility: {
++    legacyLineFormulaUnchanged: true
++    legacyLineValuesPreserved: true
++    reliabilityChangesLineVisibility: false
++  }
++  guardrails: {
++    researchOnly: true
++    contextOnly: true
++    empiricalCoefficient: 0
++    consumedByLiveInference: false
++    consumedByAutoSuggest: false
++    consumedByOfficialMlNotes: false
++    executionAllowed: false
++  }
++}
++
+ export type PlanetaryLineOverlay = {
+   contract: 'GANN_EXPLORATORY_PLANETARY_LINE_OVERLAY_V1'
+   symbol: string
+@@ -203,6 +324,7 @@ export type PlanetaryLineOverlay = {
+     maxLines: number
+     maxPoints: number
+   }
++  collectiveField: PlanetaryCollectiveField | null
+   lines: PlanetaryLineSeries[]
+   guardrails: {
+     researchOnly: true
+diff --git a/gann-astro-desk/src/usePlanetaryLineOverlay.ts b/gann-astro-desk/src/usePlanetaryLineOverlay.ts
+index 1492c61..ab33b12 100644
+--- a/gann-astro-desk/src/usePlanetaryLineOverlay.ts
++++ b/gann-astro-desk/src/usePlanetaryLineOverlay.ts
+@@ -80,6 +80,18 @@ export function usePlanetaryLineOverlay(
+         ) {
+           throw new Error('Planetary line response violated its research-only contract')
+         }
++        if (
++          result.collectiveField
++          && (
++            result.collectiveField.contract !== 'GANN_PLANETARY_COLLECTIVE_FIELD_V1'
++            || result.collectiveField.guardrails.executionAllowed
++            || result.collectiveField.guardrails.consumedByLiveInference
++            || result.collectiveField.evidence.contract !== 'GANN_RESEARCH_EVIDENCE_PACKET_V1'
++            || result.collectiveField.evidence.empiricalCoefficient !== 0
++          )
++        ) {
++          throw new Error('AVG collective geometry violated its context-only contract')
++        }
+         setOverlay(result)
+         setStatus('ready')
+       }).catch((reason) => {
+diff --git a/gann-astro-desk/src/views/MainWorkspace.tsx b/gann-astro-desk/src/views/MainWorkspace.tsx
+index 68a7d31..4929bb3 100644
+--- a/gann-astro-desk/src/views/MainWorkspace.tsx
++++ b/gann-astro-desk/src/views/MainWorkspace.tsx
+@@ -805,6 +805,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
+                 plottedLineCount={planetaryLineOverlay.overlay?.lineCount ?? 0}
+                 sampledTimestampCount={planetaryLineOverlay.overlay?.timestampCount ?? planetaryLineOverlay.sampledTimestampCount}
+                 generatedAtUtc={planetaryLineOverlay.generatedAtUtc}
++                collectiveField={planetaryLineOverlay.overlay?.collectiveField ?? null}
+                 onChange={(planetaryLines) => chartLayouts.updateChartState({ planetaryLines })}
+                 onRecalculate={planetaryLineOverlay.recalculate}
+                 onReset={() => chartLayouts.updateChartState({
+diff --git a/status/capability_status.json b/status/capability_status.json
+index 4527147..7e96a3d 100644
+--- a/status/capability_status.json
++++ b/status/capability_status.json
+@@ -1,8 +1,27 @@
+ {
+   "contract": "GANN_CAPABILITY_STATUS_V1",
+-  "asOfUtc": "2026-07-23T08:56:41Z",
++  "asOfUtc": "2026-07-27T06:22:00Z",
+   "executionAllowed": false,
+   "capabilities": [
++    {
++      "capabilityId": "avg_all_collective_geometry",
++      "label": "Auditable AVG(ALL) collective geometry",
++      "states": {
++        "implementedInSource": "yes",
++        "packagedCandidate": "no",
++        "physicallyTested": "not_applicable",
++        "promotedStable": "no",
++        "sourceCertified": "not_applicable",
++        "financiallyValidated": "no"
++      },
++      "statusDetail": "The equal-weight ten-body AVG(ALL) profile now exposes R1 coherence, R2 bipolar geometry, circular reliability and a profile hash while preserving every legacy line value. It is context-only with coefficient 0.0 and is barred from live inference, Auto Suggest, official ML notes and execution.",
++      "evidenceRefs": [
++        "avg_all_collective_geometry_v1_20260727.md",
++        "gann-astro-desk/backend/collective_geometry.py",
++        "gann-astro-desk/backend/research_evidence.py"
++      ],
++      "executionAllowed": false
++    },
+     {
+       "capabilityId": "android_companion_pinned_https",
+       "label": "Android companion over pinned HTTPS/WSS and Tailscale",

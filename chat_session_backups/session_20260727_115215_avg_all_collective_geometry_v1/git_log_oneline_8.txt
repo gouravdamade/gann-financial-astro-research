@@ -1,0 +1,8 @@
+﻿f4468b7 Record successful JHora reconciliation push
+dbf8af9 Reconcile visible JHora Kaala doctrine
+86e4ebe Reconcile Shadbala doctrine with JHora witness
+952288b Complete independent JHora Shadbala witness
+713447b Record Windows 0.10.22 physical acceptance
+06f9e7d Record Windows 0.10.22 Arghya candidate
+802c7ee Prepare guarded Arghya Windows 0.10.22
+cec3eb6 Add independent Arghya witness gate

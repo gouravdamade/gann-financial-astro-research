@@ -1,0 +1,19 @@
+﻿ M CURRENT_PROJECT_HANDOFF.md
+ M gann-astro-desk/backend/planetary_lines.py
+ M gann-astro-desk/backend/test_planetary_lines.py
+ M gann-astro-desk/src/App.css
+ M gann-astro-desk/src/components/PlanetaryLinePanel.tsx
+ M gann-astro-desk/src/types.ts
+ M gann-astro-desk/src/usePlanetaryLineOverlay.ts
+ M gann-astro-desk/src/views/MainWorkspace.tsx
+ M gann_aspect_annotations_raman_v2.sqlite
+ M status/capability_status.json
+?? avg_all_collective_geometry_v1_20260727.md
+?? candlestick_shadow_v3.sqlite
+?? gann-astro-desk/backend/collective_geometry.py
+?? gann-astro-desk/backend/research_evidence.py
+?? gann-astro-desk/backend/test_collective_geometry.py
+?? gann-astro-desk/backend/test_research_evidence.py
+?? gann-astro-desk/src/PlanetaryLinePanel.test.tsx
+?? logs/
+?? tryapp-android/
