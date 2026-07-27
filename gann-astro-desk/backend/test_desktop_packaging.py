@@ -56,6 +56,59 @@ class DesktopPackagingTests(unittest.TestCase):
         self.assertIn("arghya_official_ml_note_allowed = $false", windows_build)
         self.assertIn("arghya_execution_allowed = $false", windows_build)
 
+    def test_collective_refinement_and_audit_are_packaged_fail_closed(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        sidecar_spec = (
+            app_root / "packaging" / "gann_backend_sidecar.spec"
+        ).read_text(encoding="utf-8")
+        windows_build = (
+            app_root / "packaging" / "build_tauri_windows.ps1"
+        ).read_text(encoding="utf-8")
+
+        for module in (
+            "planetary_lines",
+            "collective_geometry",
+            "collective_influence",
+            "collective_motion",
+            "collective_refinement",
+        ):
+            self.assertIn(f'"{module}"', sidecar_spec)
+        self.assertIn(
+            'collective_event_refinement_contract = '
+            '"GANN_PLANETARY_COLLECTIVE_EVENT_REFINEMENT_V1"',
+            windows_build,
+        )
+        self.assertIn(
+            'collective_event_refinement_policy = '
+            '"AVG_ALL_EPHEMERIS_ROOT_REFINEMENT_V1"',
+            windows_build,
+        )
+        self.assertIn(
+            'collective_audit_snapshot_contract = '
+            '"GANN_PLANETARY_COLLECTIVE_AUDIT_SNAPSHOT_V1"',
+            windows_build,
+        )
+        self.assertIn("collective_research_only = $true", windows_build)
+        self.assertIn(
+            "collective_counts_as_independent_vote = $false", windows_build
+        )
+        self.assertIn(
+            "collective_directional_contribution = 0.0", windows_build
+        )
+        self.assertIn(
+            "collective_live_inference_allowed = $false", windows_build
+        )
+        self.assertIn(
+            "collective_auto_suggest_allowed = $false", windows_build
+        )
+        self.assertIn(
+            "collective_shadow_ledger_allowed = $false", windows_build
+        )
+        self.assertIn(
+            "collective_official_ml_note_allowed = $false", windows_build
+        )
+        self.assertIn("collective_execution_allowed = $false", windows_build)
+
 
 if __name__ == "__main__":
     unittest.main()

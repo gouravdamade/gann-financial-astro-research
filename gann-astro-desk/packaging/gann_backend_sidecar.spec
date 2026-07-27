@@ -84,6 +84,11 @@ hiddenimports = [
     "swisseph",
     "build_corrected_natal_event_source",
     "build_aspect_sr_touch_log",
+    "planetary_lines",
+    "collective_geometry",
+    "collective_influence",
+    "collective_motion",
+    "collective_refinement",
     "strict_shadbala_doctrine",
     "drik_bala_engine",
 ]

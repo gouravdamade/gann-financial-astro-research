@@ -197,8 +197,9 @@ npm run build
 
 ## Native Windows Status
 
-The current native source version is `0.10.22`; the promoted Windows release is at
-`D:\GannFinancialAstro\release\GannAstroDesk\GannAstroDesk.exe`. It includes the
+The current native source version is `0.10.23`; the most recently installed
+Windows research candidate remains `0.10.22` until the user installs the new
+candidate. It includes the
 timestamp-safe Sarvatobhadra Chakra Lab as read-only guidance. The Chakra
 surface contains no order action, cannot consume market data, and reports
 `execution_allowed=false` and `financially_validated=false`.
@@ -216,6 +217,14 @@ witness profile and research reconciliation code. It records a witnessed
 `1/20 = 5%` reference unit and partial historical evidence while explicitly
 keeping the score-to-price formula uncertified. Arghya output cannot feed Auto
 Suggest, live inference, official ML notes, validation promotion, or execution.
+
+Windows candidate `0.10.23` packages the experimental `AVG(ALL)` collective
+field inspector, reliability-safe motion and sampled events, ephemeris-refined
+mean-rashi ingress where a bracketed root is proven, and immutable chart-layout
+audit snapshots. The original sampled estimate is retained and every failure or
+work-budget skip remains an explicit fallback. These collective features remain
+research-only: they cannot vote, feed Auto Suggest, enter live inference or
+official ML notes, validate a strategy, or execute trades.
 
 Windows candidate `0.10.21` exposes the existing timestamp-safe planetary-line
 overlay as **Live SR Lab**, adds an explicit recalculation command and generated
