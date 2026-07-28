@@ -1,6 +1,8 @@
 import {
   AlertTriangle,
   CircleDot,
+  Grid3X3,
+  Network,
   RefreshCw,
   ShieldCheck,
 } from 'lucide-react'
@@ -22,6 +24,7 @@ import type {
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
 import { InstrumentKeyConverter } from './InstrumentKeyConverter'
+import { SbcLinkedAuditWorkspace } from './SbcLinkedAuditWorkspace'
 
 
 const BODIES = [
@@ -103,6 +106,7 @@ export function ChakraLabWorkspace({
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
+  const [workspaceMode, setWorkspaceMode] = useState<'BOARD' | 'AUDIT'>('BOARD')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const initialRun = useRef(false)
@@ -202,6 +206,28 @@ export function ChakraLabWorkspace({
             <span>Raman sidereal · current-moment context</span>
           </div>
         </div>
+        <div className="chakra-mode-switch" role="tablist" aria-label="Chakra workspace mode">
+          <button
+            role="tab"
+            aria-selected={workspaceMode === 'BOARD'}
+            className={workspaceMode === 'BOARD' ? 'is-active' : ''}
+            onClick={() => setWorkspaceMode('BOARD')}
+            title="Single-moment Chakra board"
+          >
+            <Grid3X3 size={12} />
+            Board
+          </button>
+          <button
+            role="tab"
+            aria-selected={workspaceMode === 'AUDIT'}
+            className={workspaceMode === 'AUDIT' ? 'is-active' : ''}
+            onClick={() => setWorkspaceMode('AUDIT')}
+            title="Linked timestamp-safe audit"
+          >
+            <Network size={12} />
+            Audit
+          </button>
+        </div>
         <span className="chakra-contract-chip"><ShieldCheck size={12} /> Read only</span>
         <span className="chakra-contract-chip">No lookahead</span>
         <span className="chakra-contract-chip is-warning">Not financially validated</span>
@@ -221,6 +247,7 @@ export function ChakraLabWorkspace({
         </button>
       </div>
 
+      {workspaceMode === 'BOARD' ? (
       <div className="chakra-lab-body">
         <aside className="chakra-settings-panel">
           <section>
@@ -487,6 +514,9 @@ export function ChakraLabWorkspace({
           </section>
         </aside>
       </div>
+      ) : (
+        <SbcLinkedAuditWorkspace currentRequest={request} />
+      )}
     </section>
   )
 }

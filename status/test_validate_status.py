@@ -12,6 +12,7 @@ from status.validate_status import (
     validate_cross_document_links,
     validate_release,
     validate_sbc_atomic_intervals_p1_audit,
+    validate_sbc_linked_audit_views_p3_audit,
     validate_sbc_multidimensional_ledger_p2_audit,
     validate_sbc_phase_p0_audit,
 )
@@ -22,8 +23,8 @@ class StatusValidationTests(unittest.TestCase):
         result = validate_all()
         self.assertTrue(result["valid"])
         self.assertFalse(result["executionAllowed"])
-        self.assertEqual(result["documentCount"], 8)
-        self.assertEqual(result["auditCount"], 3)
+        self.assertEqual(result["documentCount"], 9)
+        self.assertEqual(result["auditCount"], 4)
 
     def test_release_cannot_promote_with_blockers(self) -> None:
         document = _load(STATUS_ROOT / "release_status.json")
@@ -118,6 +119,39 @@ class StatusValidationTests(unittest.TestCase):
         document["implementation"]["ledgerAxes"].append("MARKET_DIRECTION")
         with self.assertRaisesRegex(ValueError, "ledger axes drifted"):
             validate_sbc_multidimensional_ledger_p2_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_linked_audit_p3_cannot_enable_phase_output(self) -> None:
+        document = copy.deepcopy(
+            _load(STATUS_ROOT / "audits/sbc_linked_audit_views_p3_20260728.json")
+        )
+        document["guardrails"]["phaseOutputIncluded"] = True
+        with self.assertRaisesRegex(ValueError, "phaseOutputIncluded"):
+            validate_sbc_linked_audit_views_p3_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_linked_audit_p3_detects_module_hash_drift(self) -> None:
+        document = copy.deepcopy(
+            _load(STATUS_ROOT / "audits/sbc_linked_audit_views_p3_20260728.json")
+        )
+        document["implementation"]["moduleCanonicalTextSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "module hash differs"):
+            validate_sbc_linked_audit_views_p3_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_linked_audit_p3_preserves_exact_view_ids(self) -> None:
+        document = copy.deepcopy(
+            _load(STATUS_ROOT / "audits/sbc_linked_audit_views_p3_20260728.json")
+        )
+        document["implementation"]["viewIds"].append("MARKET_DIRECTION")
+        with self.assertRaisesRegex(ValueError, "view IDs drifted"):
+            validate_sbc_linked_audit_views_p3_audit(
                 document,
                 STATUS_ROOT.parent,
             )

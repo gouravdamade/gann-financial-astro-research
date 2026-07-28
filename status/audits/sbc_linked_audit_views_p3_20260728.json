@@ -1,0 +1,97 @@
+{
+  "contract": "GANN_SBC_LINKED_AUDIT_VIEWS_P3_AUDIT_V1",
+  "auditedAtUtc": "2026-07-28T14:14:37Z",
+  "capabilityId": "sbc_linked_audit_views_v1",
+  "status": "implemented_in_source_research_only",
+  "implementation": {
+    "modulePath": "sbc/audit_views.py",
+    "moduleCanonicalTextSha256": "9E1BE8552B73A103AB12DFB605C34CEE6BDF4F369A4EC79117ABDD7664DB18C0",
+    "testPath": "test_sbc_phase5c_linked_audit_views.py",
+    "servicePath": "gann-astro-desk/backend/chakra_lab_service.py",
+    "serviceTestPath": "gann-astro-desk/backend/test_chakra_lab_service.py",
+    "uiPath": "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx",
+    "uiTestPath": "gann-astro-desk/src/chakraLabWorkspace.test.tsx",
+    "acceptancePath": "docs/sbc/PHASE5C_ACCEPTANCE.md",
+    "milestonePath": "sbc_linked_audit_views_p3_20260728.md",
+    "adrPath": "docs/sbc/ADR-0007-linked-read-only-audit-projection.md",
+    "linkedAuditContract": "SBC_LINKED_AUDIT_VIEW_V1",
+    "schemaVersion": 1,
+    "policy": "LINKED_READ_ONLY_PROGRESSIVE_DISCLOSURE_V1",
+    "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    "validationStates": [
+      "PASS",
+      "FAIL",
+      "UNKNOWN"
+    ],
+    "viewIds": [
+      "TIMELINE",
+      "LEDGER",
+      "RAY_AUDIT",
+      "SOURCE_LINEAGE",
+      "RECONCILIATION",
+      "VALIDATION"
+    ]
+  },
+  "projection": {
+    "inputContract": "SBC_MULTIDIMENSIONAL_LEDGER_SERIES_V1",
+    "inputSchemaVersion": 1,
+    "recomputesEvidenceWeights": false,
+    "preservesIntervalIds": true,
+    "preservesCellIds": true,
+    "preservesClusterIds": true,
+    "preservesSourceLineage": true,
+    "crossLinksValidated": true,
+    "unreconciledInputRejected": true,
+    "unknownEvidenceVisible": true,
+    "unknownMagnitudeMayRemainNull": true,
+    "deterministicAuditHash": true
+  },
+  "validationGates": [
+    "TIMESTAMP_SAFETY",
+    "AXIS_RECONCILIATION",
+    "UNKNOWN_EVIDENCE",
+    "FINANCIAL_VALIDATION",
+    "PHASE_PROFILE",
+    "EXECUTION_LOCK"
+  ],
+  "transport": {
+    "browserDevelopment": "private_http_post",
+    "nativeDesktop": "tauri_ipc_private_sidecar",
+    "browserSuppliesComputedEvidence": false,
+    "backendRecomputesChakraP1P2P3": true
+  },
+  "guardrails": {
+    "researchOnly": true,
+    "readOnly": true,
+    "timestampSafe": true,
+    "noLookahead": true,
+    "sourceProfiledExperimental": true,
+    "countsAsIndependentVote": false,
+    "directionalContribution": 0,
+    "fxSubtractionIncluded": false,
+    "phaseOutputIncluded": false,
+    "confidenceOutputIncluded": false,
+    "marketDirectionIncluded": false,
+    "consumedByAutoSuggest": false,
+    "consumedByLiveInference": false,
+    "consumedByOfficialMlNotes": false,
+    "consumedByShadowLedger": false,
+    "tradeOutputIncluded": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "newLinkedAuditTests": "6_passed",
+    "chakraServiceTests": "6_passed",
+    "focusedFrontendTests": "9_passed",
+    "statusValidation": "14_passed",
+    "repositoryPythonTests": "430_passed",
+    "pythonRuff": "passed",
+    "frontendProductionBuild": "passed",
+    "nativeRustCheck": "passed",
+    "browserVisualAcceptance": "passed"
+  },
+  "packagedCandidate": false,
+  "financiallyValidated": false,
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

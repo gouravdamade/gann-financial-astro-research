@@ -18,8 +18,22 @@ from sbc.chakra_lab import (  # noqa: E402
     ChakraLabEngine,
     ChakraLabRequest,
 )
+from sbc.atomic_intervals import (  # noqa: E402
+    SbcAtomicIntervalCompiler,
+    boundary_from_chakra_snapshot,
+)
+from sbc.audit_views import SbcLinkedAuditViewCompiler  # noqa: E402
 from sbc.models import GeoLocation  # noqa: E402
-from sbc.vedha import DignityState, MotionClass, PlanetNature  # noqa: E402
+from sbc.multidimensional_ledger import (  # noqa: E402
+    SbcMultidimensionalLedgerCompiler,
+)
+from sbc.vedha import (  # noqa: E402
+    GUIDANCE_MODEL_ID,
+    DignityState,
+    MotionClass,
+    PlanetNature,
+    load_vedha_profile,
+)
 
 
 DEFAULT_BODIES = (
@@ -54,6 +68,15 @@ ACTOR_KEYS = {
     "dignity",
     "mercuryAssociationNature",
 }
+AUDIT_REQUEST_KEYS = {
+    "instrumentIdentity",
+    "terminalEnd",
+    "boundaries",
+}
+AUDIT_BOUNDARY_KEYS = {
+    "reason",
+    "request",
+}
 
 
 def _reject_unknown(payload: dict[str, Any], allowed: set[str], label: str) -> None:
@@ -69,11 +92,11 @@ def _required_text(value: Any, label: str) -> str:
     return text
 
 
-def _offset_datetime(value: Any) -> datetime:
-    text = _required_text(value, "at").replace("Z", "+00:00")
+def _offset_datetime(value: Any, label: str = "at") -> datetime:
+    text = _required_text(value, label).replace("Z", "+00:00")
     parsed = datetime.fromisoformat(text)
     if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise ValueError("at must include a UTC offset")
+        raise ValueError(f"{label} must include a UTC offset")
     return parsed
 
 
@@ -125,14 +148,14 @@ def _actor(value: Any) -> ChakraLabActorSelection:
     )
 
 
-def build_chakra_lab_snapshot(payload: Any) -> dict[str, Any]:
+def _chakra_lab_request(payload: Any) -> ChakraLabRequest:
     if not isinstance(payload, dict):
         raise ValueError("Chakra Lab request must be an object")
     _reject_unknown(payload, REQUEST_KEYS, "Chakra Lab request")
     actors_raw = payload.get("actors") or []
     if not isinstance(actors_raw, list):
         raise ValueError("actors must be an array")
-    request = ChakraLabRequest(
+    return ChakraLabRequest(
         at=_offset_datetime(payload.get("at")),
         location=GeoLocation(
             latitude=float(payload.get("latitude", 28.6139)),
@@ -154,4 +177,57 @@ def build_chakra_lab_snapshot(payload: Any) -> dict[str, Any]:
         vowels=_string_tuple(payload.get("vowels"), "vowels"),
         name_initials=_string_tuple(payload.get("nameInitials"), "nameInitials"),
     )
+
+
+def build_chakra_lab_snapshot(payload: Any) -> dict[str, Any]:
+    request = _chakra_lab_request(payload)
     return ChakraLabEngine().snapshot(request).to_dict()
+
+
+def build_chakra_lab_audit(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("Chakra Lab audit request must be an object")
+    _reject_unknown(payload, AUDIT_REQUEST_KEYS, "Chakra Lab audit request")
+    instrument_identity = _required_text(
+        payload.get("instrumentIdentity"),
+        "instrumentIdentity",
+    )
+    terminal_end = _offset_datetime(payload.get("terminalEnd"), "terminalEnd")
+    boundaries_raw = payload.get("boundaries")
+    if not isinstance(boundaries_raw, list) or not boundaries_raw:
+        raise ValueError("boundaries must be a non-empty array")
+
+    engine = ChakraLabEngine()
+    boundaries = []
+    for index, item in enumerate(boundaries_raw):
+        if not isinstance(item, dict):
+            raise ValueError(f"boundary {index + 1} must be an object")
+        _reject_unknown(item, AUDIT_BOUNDARY_KEYS, f"boundary {index + 1}")
+        reason = _required_text(item.get("reason"), f"boundary {index + 1}.reason")
+        request = _chakra_lab_request(item.get("request"))
+        snapshot = engine.snapshot(request)
+        if snapshot.guidance is None:
+            profile = load_vedha_profile(request.vedha_profile_id)
+            boundary = boundary_from_chakra_snapshot(
+                snapshot,
+                boundary_reason=reason,
+                unavailable_vedha_profile_id=profile.vedha_profile_id,
+                unavailable_vedha_profile_hash=profile.profile_hash,
+                unavailable_guidance_model_id=GUIDANCE_MODEL_ID,
+            )
+        else:
+            boundary = boundary_from_chakra_snapshot(
+                snapshot,
+                boundary_reason=reason,
+            )
+        boundaries.append(boundary)
+
+    atomic = SbcAtomicIntervalCompiler().compile(
+        boundaries,
+        terminal_end_utc=terminal_end,
+    )
+    ledger = SbcMultidimensionalLedgerCompiler().compile(
+        atomic,
+        instrument_identity=instrument_identity,
+    )
+    return SbcLinkedAuditViewCompiler().compile(ledger).to_dict()

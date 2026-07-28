@@ -1,8 +1,77 @@
 # Current Project Handoff
 
-Last updated: 2026-07-28 18:46 IST
+Last updated: 2026-07-28 19:55 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-28 (Linked Read-Only SBC Audit Views P3)
+
+- Completed P3/Phase 5C in source with `SBC_LINKED_AUDIT_VIEW_V1`, schema `1`,
+  under `LINKED_READ_ONLY_PROGRESSIVE_DISCLOSURE_V1`. The deterministic
+  projection is `sbc/audit_views.py`; its audited line-ending-independent
+  canonical-text SHA-256 is
+  `9E1BE8552B73A103AB12DFB605C34CEE6BDF4F369A4EC79117ABDD7664DB18C0`.
+- Froze the P3 boundary in
+  `docs/sbc/ADR-0007-linked-read-only-audit-projection.md`. P3 accepts only the
+  canonical reconciled Phase 5B ledger, preserves interval/cell/cluster/source
+  identities, validates every cross-link, and fails closed on weakened locks,
+  broken links, or unreconciled input.
+- Added six linked views: Timeline, Ledger, Ray audit, Source lineage,
+  Reconciliation, and Validation. The same primary cluster IDs remain visible
+  across all dimensions without creating extra votes.
+- Ray audit preserves figure-relative Vedha direction only. Every phase angle
+  is null, no phase vector exists, and no ray or ledger row contributes market
+  direction.
+- Explicit unresolved and missing evidence remains visible with null unknown
+  magnitude and incomplete coverage. Typed `PASS`, `FAIL`, or `UNKNOWN` gates
+  cover timestamp safety, P2 reconciliation, unknown evidence, financial
+  validation, timing-phase doctrine, and execution lock.
+- Added a backend recomputation path:
+  - POST `/api/chakra-lab/audit`;
+  - the caller supplies explicit timezone-aware Chakra boundaries, reasons,
+    opaque instrument identity, and one terminal end;
+  - the backend recomputes each Chakra snapshot, then Phase 5A, Phase 5B, and
+    Phase 5C instead of trusting browser-computed evidence.
+- Added native Tauri command `chakra_lab_audit`. Native builds use Tauri IPC to
+  the supervised private sidecar; browser development uses the private HTTP
+  endpoint. Both remain read-only and execution-locked.
+- Integrated a separate Audit mode into Chakra Lab without replacing the
+  current-moment Board. The audit workspace supports explicit boundary
+  capture, compilation, linked row selection, progressive disclosure, source
+  inspection, reconciliation, and visible validation blockers.
+- Added public `sbc` package exports for the P3 contract, compiler, row models,
+  view IDs, and validation states.
+- Acceptance and recovery evidence:
+  - `docs/sbc/PHASE5C_ACCEPTANCE.md`;
+  - `sbc_linked_audit_views_p3_20260728.md`;
+  - `status/audits/sbc_linked_audit_views_p3_20260728.json`;
+  - capability `sbc_linked_audit_views_v1` in canonical status.
+- Verification on the final source state:
+  - new P3 compiler tests `6/6`;
+  - Chakra Lab service tests `6/6`;
+  - focused Chakra/API frontend tests `9/9`;
+  - complete repository Python suite `430/430`;
+  - complete frontend suite `93/93`;
+  - status tests `14/14`;
+  - changed Python files pass Ruff;
+  - frontend lint and production build pass;
+  - native Rust `cargo check --locked` passes;
+  - canonical status validation reports nine documents, four audits, and
+    execution false.
+- Live in-app-browser acceptance passed at `http://127.0.0.1:5173/`: an
+  explicit boundary was captured and compiled through the real backend,
+  Validation showed expected `PASS` and `UNKNOWN` states, unknown
+  `MOTION_REQUIRED` evidence stayed visible, and the browser console had no
+  errors. A stale older Flask process initially held port `8788`; it was
+  stopped and the clean current backend was verified.
+- P3 remains `SOURCE_PROFILED_EXPERIMENTAL`, directional weight `0.0`, and
+  disconnected from FX subtraction, phase, confidence, market direction, Auto
+  Suggest, live inference, official ML notes, shadow validation, trades, and
+  MT5. No Windows or Android package was rebuilt.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260728_195500_sbc_linked_audit_views_p3`.
+- Runtime-only SQLite, logs, and Android workspace state remain untouched and
+  uncommitted.
 
 ## Latest Update - 2026-07-28 (Reconciled SBC Multidimensional Ledger P2)
 

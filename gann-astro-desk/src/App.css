@@ -6663,9 +6663,385 @@ html.android-runtime .loading-state {
 .chakra-cell-evidence strong { overflow: hidden; color: #cbd1d8; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
 .chakra-muted-row { display: block; padding: 7px 0; color: #69737e; font-size: 8px; }
 
+.chakra-mode-switch {
+  height: 24px;
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid #39434d;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #0f1419;
+}
+
+.chakra-mode-switch button {
+  min-width: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 0;
+  border-right: 1px solid #39434d;
+  background: transparent;
+  color: #78838e;
+  cursor: pointer;
+  font-size: 8px;
+}
+
+.chakra-mode-switch button:last-child { border-right: 0; }
+.chakra-mode-switch button:hover { color: #c9d0d7; background: #1b2229; }
+.chakra-mode-switch button.is-active { color: #d9edf0; background: #24505a; }
+
+.chakra-audit-shell {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr) 286px;
+  overflow: hidden;
+  background: #10151a;
+}
+
+.chakra-audit-capture,
+.chakra-audit-inspector {
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #151a20;
+  scrollbar-color: #46515d #151a20;
+}
+
+.chakra-audit-capture { border-right: 1px solid #303740; }
+.chakra-audit-inspector { border-left: 1px solid #303740; }
+.chakra-audit-capture > section,
+.chakra-audit-inspector > section {
+  padding: 10px 11px;
+  border-bottom: 1px solid #2b323a;
+}
+
+.chakra-audit-capture label {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  margin-top: 7px;
+  color: #7f8995;
+  font-size: 8px;
+}
+
+.chakra-audit-capture input {
+  min-width: 0;
+  height: 27px;
+  border: 1px solid #3a424d;
+  border-radius: 3px;
+  background: #101419;
+  color: #c8ced6;
+  padding: 0 6px;
+  font: 8px/1 Inter, "Segoe UI", sans-serif;
+}
+
+.chakra-audit-action {
+  width: 100%;
+  min-height: 27px !important;
+  justify-content: center;
+  margin-top: 8px;
+  border-radius: 3px !important;
+  font-size: 8px !important;
+}
+
+.chakra-audit-action svg.is-spinning { animation: chakra-spin 0.8s linear infinite; }
+.chakra-boundary-list { display: grid; gap: 3px; }
+.chakra-boundary-row {
+  min-width: 0;
+  min-height: 38px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 25px;
+  align-items: center;
+  border: 1px solid #2d353e;
+  border-radius: 3px;
+  background: #11171c;
+}
+
+.chakra-boundary-moment {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding: 5px 7px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.chakra-boundary-moment strong,
+.chakra-boundary-moment span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chakra-boundary-moment strong { color: #cbd2d9; font-size: 8px; }
+.chakra-boundary-moment span { color: #727d88; font-size: 7px; }
+.chakra-boundary-row .icon-button { width: 22px; height: 22px; min-height: 22px; color: #8a6266; }
+
+.chakra-audit-main {
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  display: grid;
+  grid-template-rows: 34px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.chakra-audit-tabs {
+  min-width: 0;
+  height: 34px;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  border-bottom: 1px solid #303740;
+  background: #141a20;
+  scrollbar-width: thin;
+}
+
+.chakra-audit-tabs button {
+  min-width: 82px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-right: 1px solid #2d353e;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #7d8792;
+  cursor: pointer;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.chakra-audit-tabs button:hover { color: #c3cbd3; background: #1a2229; }
+.chakra-audit-tabs button.is-active {
+  border-bottom-color: #5cbcaf;
+  background: #18252a;
+  color: #d6e7e5;
+}
+
+.chakra-audit-error {
+  position: absolute;
+  z-index: 4;
+  top: 42px;
+  right: 10px;
+  left: 10px;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border: 1px solid #74464c;
+  background: #3b2227;
+  color: #efadb2;
+  font-size: 8px;
+}
+
+.chakra-audit-empty {
+  min-height: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 7px;
+  color: #68727d;
+  background-image:
+    linear-gradient(#1a222a 1px, transparent 1px),
+    linear-gradient(90deg, #1a222a 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.chakra-audit-empty strong { color: #aeb7c0; font-size: 10px; }
+.chakra-audit-empty span { font: 8px/1 Consolas, monospace; }
+.chakra-audit-view { min-width: 0; min-height: 0; overflow: auto; padding: 10px; }
+
+.chakra-audit-table {
+  min-width: 700px;
+  display: grid;
+  align-content: start;
+  border: 1px solid #313a44;
+  background: #11171c;
+}
+
+.chakra-audit-table-head,
+.chakra-audit-table > button {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 0.65fr 1.25fr 1.25fr 0.75fr 0.65fr 0.65fr 0.65fr;
+  align-items: center;
+}
+
+.chakra-audit-table-head {
+  min-height: 27px;
+  border-bottom: 1px solid #39434d;
+  background: #1a2128;
+  color: #727d88;
+  font-size: 7px;
+  text-transform: uppercase;
+}
+
+.chakra-audit-table-head span,
+.chakra-audit-table > button > * {
+  min-width: 0;
+  padding: 0 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chakra-audit-table > button {
+  min-height: 31px;
+  border: 0;
+  border-bottom: 1px solid #272f37;
+  background: transparent;
+  color: #929ca6;
+  cursor: pointer;
+  font: 8px/1.2 Inter, "Segoe UI", sans-serif;
+  text-align: left;
+}
+
+.chakra-audit-table > button:hover { background: #1b242b; color: #c6cdd4; }
+.chakra-audit-table > button.is-selected { background: #173039; box-shadow: inset 2px 0 #55b4a7; }
+.chakra-audit-table > button strong { color: #d0d6dc; font-size: 8px; }
+.chakra-audit-table.is-ledger .chakra-audit-table-head,
+.chakra-audit-table.is-ledger > button,
+.chakra-audit-table.is-rays .chakra-audit-table-head,
+.chakra-audit-table.is-rays > button,
+.chakra-audit-table.is-lineage .chakra-audit-table-head,
+.chakra-audit-table.is-lineage > button {
+  grid-template-columns: 0.8fr 1.35fr repeat(5, 0.72fr);
+}
+.chakra-audit-table.is-lineage { min-width: 900px; }
+.chakra-audit-table.is-lineage .chakra-audit-table-head,
+.chakra-audit-table.is-lineage > button {
+  grid-template-columns: 0.65fr 0.65fr 1.2fr 1.2fr 1.35fr 0.9fr 0.75fr;
+}
+
+.chakra-reconciliation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 6px;
+}
+
+.chakra-reconciliation-grid > div {
+  min-width: 0;
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 3px 8px;
+  padding: 8px;
+  border: 1px solid #315044;
+  border-left: 2px solid #4eaa8e;
+  background: #121a19;
+}
+
+.chakra-reconciliation-grid strong { color: #d0d7d5; font-size: 9px; }
+.chakra-reconciliation-grid span { color: #748079; font-size: 7px; }
+.chakra-reconciliation-grid em { grid-row: 1 / 3; grid-column: 2; color: #72c9a8; font: 8px/1 Consolas, monospace; font-style: normal; }
+
+.chakra-validation-list { display: grid; gap: 5px; }
+.chakra-validation-list > div:not(.chakra-blocked-capabilities) {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 58px minmax(130px, 0.45fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 7px 8px;
+  border: 1px solid #303942;
+  border-left: 2px solid #6c7882;
+  background: #12181d;
+}
+.chakra-validation-list > div.is-pass { border-left-color: #4ca886; }
+.chakra-validation-list > div.is-fail { border-left-color: #c96168; }
+.chakra-validation-list > div.is-unknown { border-left-color: #c49b50; }
+.chakra-validation-list span { color: #98a2ac; font: 8px/1 Consolas, monospace; }
+.chakra-validation-list strong { color: #d0d6dc; font-size: 9px; }
+.chakra-validation-list p { margin: 0; color: #7e8994; font-size: 8px; line-height: 1.4; }
+
+.chakra-blocked-capabilities {
+  display: grid;
+  gap: 7px;
+  padding: 9px;
+  border-top: 1px solid #303942;
+}
+.chakra-blocked-capabilities > strong { color: #d0d6dc; font-size: 9px; }
+.chakra-blocked-capabilities > div { display: flex; flex-wrap: wrap; gap: 4px; }
+.chakra-blocked-capabilities span {
+  padding: 3px 5px;
+  border: 1px solid #624349;
+  background: #2c1e22;
+  color: #d08e96;
+  font: 7px/1.2 Inter, "Segoe UI", sans-serif;
+}
+
+.chakra-audit-inspector dl { display: grid; gap: 1px; margin: 0; }
+.chakra-audit-inspector dl > div {
+  min-width: 0;
+  min-height: 24px;
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #252d35;
+}
+.chakra-audit-inspector dt { color: #6f7984; font-size: 7px; }
+.chakra-audit-inspector dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #c7ced5;
+  font: 8px/1.3 Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chakra-audit-unknown {
+  margin: 7px 0 0;
+  padding: 6px;
+  border-left: 2px solid #c39a4e;
+  background: #252118;
+  color: #c6ac76;
+  font-size: 8px;
+  line-height: 1.4;
+}
+.chakra-source-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 7px; }
+.chakra-source-tags span {
+  max-width: 100%;
+  padding: 3px 4px;
+  overflow: hidden;
+  border: 1px solid #38434d;
+  background: #11171c;
+  color: #7f8a94;
+  font: 7px/1.2 Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chakra-audit-locks { display: flex; flex-wrap: wrap; gap: 4px; }
+.chakra-audit-locks span {
+  padding: 3px 5px;
+  border: 1px solid #385f55;
+  background: #172721;
+  color: #78bfa8;
+  font-size: 7px;
+}
+
 @media (max-width: 1280px) {
   .chakra-lab-body { grid-template-columns: 244px minmax(0, 1fr) 270px; }
+  .chakra-audit-shell { grid-template-columns: 232px minmax(0, 1fr) 246px; }
   .chakra-grid { grid-template-columns: repeat(var(--chakra-columns), 60px); grid-template-rows: repeat(var(--chakra-rows), 54px); }
   .chakra-cell strong { max-width: 50px; }
   .chakra-contract-chip:nth-of-type(2) { display: none; }
+}
+
+@media (max-width: 900px) {
+  .chakra-title-block { min-width: 150px; }
+  .chakra-contract-chip { display: none; }
+  .chakra-audit-shell {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+  .chakra-audit-inspector { display: none; }
 }

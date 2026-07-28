@@ -4,19 +4,22 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { ChakraLabSnapshot } from './types'
+import type { ChakraLabSnapshot, ChakraLinkedAuditView } from './types'
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
 
-const { fetchSnapshot } = vi.hoisted(() => ({
+const { fetchAudit, fetchSnapshot } = vi.hoisted(() => ({
+  fetchAudit: vi.fn(),
   fetchSnapshot: vi.fn(),
 }))
 
 vi.mock('./api', () => ({
+  fetchChakraLabAudit: fetchAudit,
   fetchChakraLabSnapshot: fetchSnapshot,
 }))
 
 afterEach(() => {
   cleanup()
+  fetchAudit.mockReset()
   fetchSnapshot.mockReset()
 })
 
@@ -124,6 +127,118 @@ const snapshot: ChakraLabSnapshot = {
   },
 }
 
+const audit: ChakraLinkedAuditView = {
+  contract: 'SBC_LINKED_AUDIT_VIEW_V1',
+  schema_version: 1,
+  view_policy: 'LINKED_READ_ONLY_PROGRESSIVE_DISCLOSURE_V1',
+  classification: 'SOURCE_PROFILED_EXPERIMENTAL',
+  audit_view_id: 'audit-test-0001',
+  source_ledger_id: 'ledger-test-0001',
+  source_atomic_series_id: 'atomic-test-0001',
+  instrument_identity: 'FX:USDJPY',
+  range_start_utc: '2026-07-17T06:30:00Z',
+  range_end_utc: '2026-07-17T07:30:00Z',
+  source_ids: ['witness-test'],
+  views: [
+    {
+      view_id: 'TIMELINE',
+      label: 'Timeline',
+      purpose: 'Intervals',
+      phase_vector_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    },
+    {
+      view_id: 'LEDGER',
+      label: 'Ledger',
+      purpose: 'Dimensions',
+      phase_vector_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    },
+    {
+      view_id: 'RAY_AUDIT',
+      label: 'Ray audit',
+      purpose: 'Directions',
+      phase_vector_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    },
+    {
+      view_id: 'SOURCE_LINEAGE',
+      label: 'Lineage',
+      purpose: 'Sources',
+      phase_vector_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    },
+    {
+      view_id: 'RECONCILIATION',
+      label: 'Reconciliation',
+      purpose: 'Checks',
+      phase_vector_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    },
+    {
+      view_id: 'VALIDATION',
+      label: 'Validation',
+      purpose: 'Safety',
+      phase_vector_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    },
+  ],
+  intervals: [{
+    interval_id: 'interval-test-0001',
+    interval_ledger_id: 'interval-ledger-test-0001',
+    start_utc: '2026-07-17T06:30:00Z',
+    end_utc: '2026-07-17T07:30:00Z',
+    evidence_cutoff_utc: '2026-07-17T06:30:00Z',
+    duration_seconds: 3600,
+    cluster_ids: [],
+    cell_ids: [],
+    duplicate_primary_evidence_count: 0,
+    total_summary: {
+      favorable_guidance_units: 0,
+      adverse_guidance_units: 0,
+      net_guidance_units: 0,
+      gross_activation_units: 0,
+      scored_contribution_count: 0,
+      unknown_contribution_count: 0,
+      missing_evidence_count: 0,
+      total_evidence_count: 0,
+      unknown_magnitude_units: 0,
+      scoring_coverage_ratio: 0,
+    },
+    all_axes_reconciled: true,
+  }],
+  ledger_cells: [],
+  ray_rows: [],
+  lineage_rows: [],
+  reconciliations: [],
+  validation_gates: [{
+    gate_id: 'EXECUTION_LOCK',
+    state: 'PASS',
+    label: 'Execution lock',
+    detail: 'Market direction and execution remain blocked.',
+  }],
+  guardrails: {
+    read_only: true,
+    timestamp_safe: true,
+    no_lookahead: true,
+    source_profiled_experimental: true,
+    financially_validated: false,
+    phase_included: false,
+    fx_subtraction_included: false,
+    confidence_included: false,
+    counts_as_independent_vote: false,
+    directional_contribution: 0,
+    execution_allowed: false,
+    blocked_capabilities: ['MARKET_DIRECTION', 'MT5_EXECUTION'],
+  },
+}
+
 describe('ChakraLabWorkspace', () => {
   it('renders source-profiled guidance without trading direction labels', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
@@ -162,5 +277,37 @@ describe('ChakraLabWorkspace', () => {
 
     await user.click(screen.getByRole('button', { name: 'Use selected key' }))
     expect(screen.getByLabelText('Name-initial keys')).toHaveValue('YA')
+  })
+
+  it('captures explicit moments and opens the linked read-only audit', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchAudit.mockResolvedValue(audit)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
+    await user.click(screen.getByRole('tab', { name: 'Audit' }))
+    expect(screen.getByText('Linked audit not compiled')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Capture current moment' }))
+    await user.click(screen.getByRole('button', { name: 'Compile linked audit' }))
+
+    await waitFor(() => expect(fetchAudit).toHaveBeenCalledTimes(1))
+    expect(fetchAudit).toHaveBeenCalledWith(expect.objectContaining({
+      instrumentIdentity: 'FX:USDJPY',
+      boundaries: [expect.objectContaining({
+        reason: 'manual review boundary',
+      })],
+    }))
+    expect(await screen.findByText('1h 0m')).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Validation' }))
+    expect(screen.getByText('Execution lock')).toBeInTheDocument()
+    expect(screen.getByText('No phase')).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 })

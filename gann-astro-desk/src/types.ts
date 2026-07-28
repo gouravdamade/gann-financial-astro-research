@@ -2212,3 +2212,162 @@ export type ChakraLabSnapshot = {
     guidance_only: true
   }
 }
+
+export type ChakraLabAuditBoundaryInput = {
+  reason: string
+  request: ChakraLabRequest
+}
+
+export type ChakraLabAuditRequest = {
+  instrumentIdentity: string
+  terminalEnd: string
+  boundaries: ChakraLabAuditBoundaryInput[]
+}
+
+export type ChakraAuditLedgerSummary = {
+  favorable_guidance_units: number
+  adverse_guidance_units: number
+  net_guidance_units: number
+  gross_activation_units: number
+  scored_contribution_count: number
+  unknown_contribution_count: number
+  missing_evidence_count: number
+  total_evidence_count: number
+  unknown_magnitude_units: number | null
+  scoring_coverage_ratio: number
+}
+
+export type ChakraAuditInterval = {
+  interval_id: string
+  interval_ledger_id: string
+  start_utc: string
+  end_utc: string
+  evidence_cutoff_utc: string
+  duration_seconds: number
+  cluster_ids: string[]
+  cell_ids: string[]
+  duplicate_primary_evidence_count: number
+  total_summary: ChakraAuditLedgerSummary
+  all_axes_reconciled: true
+}
+
+export type ChakraAuditLedgerCell = {
+  cell_id: string
+  interval_id: string
+  axis: string
+  key: string
+  derivation_role: 'DERIVED_AXIS'
+  cluster_ids: string[]
+  summary: ChakraAuditLedgerSummary
+  counts_as_independent_vote: false
+  directional_contribution: 0
+}
+
+export type ChakraAuditRay = {
+  cluster_id: string
+  interval_id: string
+  cell_ids: string[]
+  evidence_kind: 'CONTRIBUTION' | 'MISSING_EVIDENCE'
+  derivation_role: 'PRIMARY_EVIDENCE'
+  actor_identity: string | null
+  source_nakshatra: string | null
+  vedha_direction: 'LEFT' | 'FRONT' | 'RIGHT' | null
+  target_row: number | null
+  target_column: number | null
+  target_layer: string | null
+  target_value: string | null
+  nature: ChakraPlanetNature | null
+  effective_multiplier: number | null
+  signed_guidance_units: number | null
+  status: string
+  unknown_reason: string | null
+  phase_angle: null
+  phase_vector_included: false
+  counts_as_independent_vote: false
+  directional_contribution: 0
+}
+
+export type ChakraAuditLineage = {
+  cluster_id: string
+  interval_id: string
+  source_lineage_id: string
+  source_ids: string[]
+  citation_source_ids: string[]
+  snapshot_id: string
+  foundation_profile_id: string
+  foundation_profile_hash: string
+  grid_profile_id: string
+  grid_profile_hash: string
+  vedha_profile_id: string
+  vedha_profile_hash: string
+  guidance_model_id: string
+  target_witness_set_id: string | null
+  target_evidence_status: string | null
+  status: string
+}
+
+export type ChakraAuditReconciliation = {
+  interval_id: string
+  axis: string
+  cell_count: number
+  cluster_count: number
+  every_cluster_exactly_once: boolean
+  favorable_matches: boolean
+  adverse_matches: boolean
+  net_matches: boolean
+  gross_matches: boolean
+  scored_count_matches: boolean
+  unknown_count_matches: boolean
+  missing_count_matches: boolean
+  total_count_matches: boolean
+  reconciled: true
+}
+
+export type ChakraAuditValidationGate = {
+  gate_id: string
+  state: 'PASS' | 'FAIL' | 'UNKNOWN'
+  label: string
+  detail: string
+}
+
+export type ChakraLinkedAuditView = {
+  contract: 'SBC_LINKED_AUDIT_VIEW_V1'
+  schema_version: 1
+  view_policy: 'LINKED_READ_ONLY_PROGRESSIVE_DISCLOSURE_V1'
+  classification: 'SOURCE_PROFILED_EXPERIMENTAL'
+  audit_view_id: string
+  source_ledger_id: string
+  source_atomic_series_id: string
+  instrument_identity: string
+  range_start_utc: string
+  range_end_utc: string
+  source_ids: string[]
+  views: Array<{
+    view_id: 'TIMELINE' | 'LEDGER' | 'RAY_AUDIT' | 'SOURCE_LINEAGE' | 'RECONCILIATION' | 'VALIDATION'
+    label: string
+    purpose: string
+    phase_vector_included: false
+    counts_as_independent_vote: false
+    directional_contribution: 0
+  }>
+  intervals: ChakraAuditInterval[]
+  ledger_cells: ChakraAuditLedgerCell[]
+  ray_rows: ChakraAuditRay[]
+  lineage_rows: ChakraAuditLineage[]
+  reconciliations: ChakraAuditReconciliation[]
+  validation_gates: ChakraAuditValidationGate[]
+  guardrails: {
+    read_only: true
+    timestamp_safe: true
+    no_lookahead: true
+    source_profiled_experimental: true
+    financially_validated: false
+    phase_included: false
+    fx_subtraction_included: false
+    confidence_included: false
+    counts_as_independent_vote: false
+    directional_contribution: 0
+    execution_allowed: false
+    blocked_capabilities: string[]
+  }
+}

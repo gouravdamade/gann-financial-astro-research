@@ -746,6 +746,28 @@ async fn chakra_lab_snapshot(
     .map_err(|error| format!("Chakra Lab bridge task failed: {error}"))?
 }
 
+#[cfg(not(mobile))]
+#[tauri::command]
+async fn chakra_lab_audit(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Chakra Lab audit requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/audit",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("Chakra Lab audit bridge task failed: {error}"))?
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     companion_protocol::install_crypto_provider()
@@ -768,6 +790,7 @@ pub fn run() {
             runtime_profile,
             backend_runtime,
             chakra_lab_snapshot,
+            chakra_lab_audit,
             companion_gateway_info,
             companion_start_pairing,
             companion_gateway_sessions,

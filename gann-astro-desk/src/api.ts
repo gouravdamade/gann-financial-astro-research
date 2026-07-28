@@ -35,8 +35,10 @@ import type {
   SavedParameterProfile,
   ShadowLedgerSnapshot,
   WorkspacePreferences,
+  ChakraLabAuditRequest,
   ChakraLabRequest,
   ChakraLabSnapshot,
+  ChakraLinkedAuditView,
 } from './types'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
@@ -648,4 +650,31 @@ export async function fetchChakraLabSnapshot(
     },
   )
   return payload.snapshot
+}
+
+export async function fetchChakraLabAudit(
+  input: ChakraLabAuditRequest,
+): Promise<ChakraLinkedAuditView> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ audit: ChakraLinkedAuditView }>>(
+      'chakra_lab_audit',
+      { request: input },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Chakra Lab audit request failed')
+    }
+    if (payload.audit.guardrails.execution_allowed) {
+      throw new Error('Chakra Lab audit response violated the execution lock')
+    }
+    return payload.audit
+  }
+  const payload = await request<{ audit: ChakraLinkedAuditView }>(
+    '/api/chakra-lab/audit',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+  return payload.audit
 }

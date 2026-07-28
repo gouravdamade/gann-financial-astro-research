@@ -23,7 +23,7 @@ from chart_layouts import (
     save_drawing_template,
 )
 from candlestick_shadow import CandlestickShadowSupervisor, default_model_path
-from chakra_lab_service import build_chakra_lab_snapshot
+from chakra_lab_service import build_chakra_lab_audit, build_chakra_lab_snapshot
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -236,6 +236,20 @@ def create_chakra_lab_snapshot() -> Any:
             {
                 "ok": True,
                 "snapshot": build_chakra_lab_snapshot(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/audit")
+def create_chakra_lab_audit() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "audit": build_chakra_lab_audit(payload),
             }
         )
     except (TypeError, ValueError) as exc:

@@ -8,7 +8,9 @@ research guidance ledger. Phase 4A binds those layers to one immutable,
 timestamp-safe Chakra Lab snapshot. Phase 5A compiles explicit state
 boundaries into deterministic half-open atomic intervals. Phase 5B organizes
 those interval facts into reconciled, non-voting causal-cluster ledger views.
-It does not emit a market opinion or trade decision.
+Phase 5C projects the same ledger into linked, read-only Timeline, Ledger, Ray
+audit, Lineage, Reconciliation, and Validation views. It does not emit a market
+opinion or trade decision.
 
 Primary profile: `sbc_raman_foundation_v1`.
 
@@ -84,6 +86,22 @@ Phase 5B multidimensional ledger contract:
 - figure-relative Vedha direction is not market direction;
 - FX subtraction, phase, confidence, all trading consumers, and execution
   remain blocked.
+
+Phase 5C linked audit-view contract:
+
+- the projection accepts only a canonical, reconciled Phase 5B ledger;
+- interval, cell, cluster, and lineage links use the existing canonical IDs;
+- Timeline, Ledger, Ray audit, Lineage, Reconciliation, and Validation expose
+  the same facts without multiplying them into extra votes;
+- ray direction remains figure-relative Vedha direction, with no phase angle
+  or market direction;
+- explicit missing evidence, null unknown magnitude, incomplete coverage, and
+  absent financial or phase validation remain visible;
+- browser development uses private HTTP while packaged desktop transport uses
+  a dedicated execution-locked Tauri command;
+- FX subtraction, phase, confidence, Auto Suggest, live inference, official ML
+  notes, shadow votes, trades, packaging promotion, and execution remain
+  blocked.
 
 Minimal use:
 

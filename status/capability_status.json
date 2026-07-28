@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-28T12:59:37Z",
+  "asOfUtc": "2026-07-28T14:14:37Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -243,6 +243,29 @@
         "status/audits/sbc_multidimensional_ledger_p2_20260728.json",
         "sbc/multidimensional_ledger.py",
         "test_sbc_phase5b_multidimensional_ledger.py"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "sbc_linked_audit_views_v1",
+      "label": "Linked read-only SBC audit workspace",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "P3 is implemented in source. Explicit timestamped Chakra boundaries are recomputed through Phase 5A and Phase 5B, then projected into linked Timeline, Ledger, Ray audit, Source lineage, Reconciliation and Validation views. Canonical interval, cell, cluster and lineage IDs remain intact; unresolved evidence and absent financial or timing-phase validation stay visible. Ray direction is not phase or market direction. The workspace is read-only and disconnected from FX subtraction, confidence, Auto Suggest, live inference, official ML notes, shadow validation, trade output and MT5.",
+      "evidenceRefs": [
+        "docs/sbc/ADR-0007-linked-read-only-audit-projection.md",
+        "docs/sbc/PHASE5C_ACCEPTANCE.md",
+        "sbc_linked_audit_views_p3_20260728.md",
+        "status/audits/sbc_linked_audit_views_p3_20260728.json",
+        "sbc/audit_views.py",
+        "test_sbc_phase5c_linked_audit_views.py",
+        "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx"
       ],
       "executionAllowed": false
     },

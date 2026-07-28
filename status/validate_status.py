@@ -24,6 +24,9 @@ CANONICAL_AUDITS = {
     "audits/sbc_multidimensional_ledger_p2_20260728.json": (
         "GANN_SBC_MULTIDIMENSIONAL_LEDGER_P2_AUDIT_V1"
     ),
+    "audits/sbc_linked_audit_views_p3_20260728.json": (
+        "GANN_SBC_LINKED_AUDIT_VIEWS_P3_AUDIT_V1"
+    ),
 }
 P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
 P0_INVENTORY_STATES = {"implemented_reuse", "partial_reuse", "absent", "blocked"}
@@ -541,6 +544,154 @@ def validate_sbc_multidimensional_ledger_p2_audit(
         )
 
 
+def validate_sbc_linked_audit_views_p3_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    _utc_timestamp(
+        document.get("auditedAtUtc"),
+        "SBC linked audit P3 auditedAtUtc",
+    )
+    _execution_locked(document, "SBC linked audit P3")
+    if document.get("capabilityId") != "sbc_linked_audit_views_v1":
+        raise ValueError("SBC linked audit P3 has an unexpected capability")
+    if document.get("status") != "implemented_in_source_research_only":
+        raise ValueError("SBC linked audit P3 has an unexpected status")
+    if document.get("packagedCandidate") is not False:
+        raise ValueError("SBC linked audit P3 cannot claim packaging")
+    if document.get("financiallyValidated") is not False:
+        raise ValueError("SBC linked audit P3 cannot claim financial validation")
+    if document.get("promotionAllowed") is not False:
+        raise ValueError("SBC linked audit P3 cannot allow promotion")
+
+    implementation = document.get("implementation") or {}
+    expected_contracts = {
+        "linkedAuditContract": "SBC_LINKED_AUDIT_VIEW_V1",
+        "schemaVersion": 1,
+        "policy": "LINKED_READ_ONLY_PROGRESSIVE_DISCLOSURE_V1",
+        "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    }
+    for field, expected in expected_contracts.items():
+        if implementation.get(field) != expected:
+            raise ValueError(f"SBC linked audit P3 {field} differs from {expected}")
+    for field in (
+        "modulePath",
+        "testPath",
+        "servicePath",
+        "serviceTestPath",
+        "uiPath",
+        "uiTestPath",
+        "acceptancePath",
+        "milestonePath",
+        "adrPath",
+    ):
+        path = project_root / _required_text(implementation.get(field), field)
+        if not path.is_file():
+            raise ValueError(f"SBC linked audit P3 evidence is missing: {path}")
+    module_path = project_root / implementation["modulePath"]
+    expected_hash = _sha256(
+        implementation.get("moduleCanonicalTextSha256"),
+        "SBC linked audit P3 module canonical text",
+    )
+    if _canonical_text_sha256(module_path) != expected_hash:
+        raise ValueError("SBC linked audit P3 module hash differs from the audit")
+
+    expected_states = ["PASS", "FAIL", "UNKNOWN"]
+    if implementation.get("validationStates") != expected_states:
+        raise ValueError("SBC linked audit P3 validation states drifted")
+    expected_views = [
+        "TIMELINE",
+        "LEDGER",
+        "RAY_AUDIT",
+        "SOURCE_LINEAGE",
+        "RECONCILIATION",
+        "VALIDATION",
+    ]
+    if implementation.get("viewIds") != expected_views:
+        raise ValueError("SBC linked audit P3 view IDs drifted")
+
+    expected_projection = {
+        "inputContract": "SBC_MULTIDIMENSIONAL_LEDGER_SERIES_V1",
+        "inputSchemaVersion": 1,
+        "recomputesEvidenceWeights": False,
+        "preservesIntervalIds": True,
+        "preservesCellIds": True,
+        "preservesClusterIds": True,
+        "preservesSourceLineage": True,
+        "crossLinksValidated": True,
+        "unreconciledInputRejected": True,
+        "unknownEvidenceVisible": True,
+        "unknownMagnitudeMayRemainNull": True,
+        "deterministicAuditHash": True,
+    }
+    if (document.get("projection") or {}) != expected_projection:
+        raise ValueError("SBC linked audit P3 projection contract drifted")
+
+    expected_gates = [
+        "TIMESTAMP_SAFETY",
+        "AXIS_RECONCILIATION",
+        "UNKNOWN_EVIDENCE",
+        "FINANCIAL_VALIDATION",
+        "PHASE_PROFILE",
+        "EXECUTION_LOCK",
+    ]
+    if document.get("validationGates") != expected_gates:
+        raise ValueError("SBC linked audit P3 validation gates drifted")
+
+    expected_transport = {
+        "browserDevelopment": "private_http_post",
+        "nativeDesktop": "tauri_ipc_private_sidecar",
+        "browserSuppliesComputedEvidence": False,
+        "backendRecomputesChakraP1P2P3": True,
+    }
+    if (document.get("transport") or {}) != expected_transport:
+        raise ValueError("SBC linked audit P3 transport contract drifted")
+
+    guardrails = document.get("guardrails") or {}
+    for field in (
+        "researchOnly",
+        "readOnly",
+        "timestampSafe",
+        "noLookahead",
+        "sourceProfiledExperimental",
+    ):
+        if guardrails.get(field) is not True:
+            raise ValueError(f"SBC linked audit P3 guardrail {field} must remain true")
+    false_locks = {
+        "countsAsIndependentVote",
+        "fxSubtractionIncluded",
+        "phaseOutputIncluded",
+        "confidenceOutputIncluded",
+        "marketDirectionIncluded",
+        "consumedByAutoSuggest",
+        "consumedByLiveInference",
+        "consumedByOfficialMlNotes",
+        "consumedByShadowLedger",
+        "tradeOutputIncluded",
+        "executionAllowed",
+    }
+    for field in false_locks:
+        if guardrails.get(field) is not False:
+            raise ValueError(
+                f"SBC linked audit P3 guardrail {field} must remain false"
+            )
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError("SBC linked audit P3 directional contribution must remain zero")
+
+    expected_verification = {
+        "newLinkedAuditTests": "6_passed",
+        "chakraServiceTests": "6_passed",
+        "focusedFrontendTests": "9_passed",
+        "statusValidation": "14_passed",
+        "repositoryPythonTests": "430_passed",
+        "pythonRuff": "passed",
+        "frontendProductionBuild": "passed",
+        "nativeRustCheck": "passed",
+        "browserVisualAcceptance": "passed",
+    }
+    if (document.get("verification") or {}) != expected_verification:
+        raise ValueError("SBC linked audit P3 verification evidence is incomplete")
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -608,6 +759,10 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         audits["audits/sbc_multidimensional_ledger_p2_20260728.json"],
         root.parent,
     )
+    validate_sbc_linked_audit_views_p3_audit(
+        audits["audits/sbc_linked_audit_views_p3_20260728.json"],
+        root.parent,
+    )
     validate_cross_document_links(documents, root)
     capability_ids = {
         item["capabilityId"]
@@ -616,6 +771,7 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     required_capabilities = {
         "multidimensional_sbc_atomic_intervals_v1",
         "multidimensional_sbc_ledger_v1",
+        "sbc_linked_audit_views_v1",
         "phase_interference_research_engine_v1",
     }
     if not required_capabilities <= capability_ids:
@@ -639,6 +795,15 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     ):
         raise ValueError(
             "SBC multidimensional P2 capability is not registered as source-implemented"
+        )
+    if (
+        capability_by_id["sbc_linked_audit_views_v1"]["states"][
+            "implementedInSource"
+        ]
+        != "yes"
+    ):
+        raise ValueError(
+            "SBC linked audit P3 capability is not registered as source-implemented"
         )
     return {
         "contract": "GANN_PROJECT_STATUS_VALIDATION_V1",
