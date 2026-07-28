@@ -1,0 +1,169 @@
+{
+  "contract": "GANN_SBC_PHASE_P0_GAP_AUDIT_V1",
+  "auditedAtUtc": "2026-07-28T09:56:24Z",
+  "phase": "P0_GAP_AUDIT",
+  "status": "accepted_architecture_no_runtime_change",
+  "sourceDocuments": [
+    {
+      "sourceId": "priority_experimental_engines_original",
+      "role": "private_project_proposal",
+      "sha256": "BE3DEC3C7CD0A7A49D0688D23732D2345AAFA7313DBDD71B38959D5653681847",
+      "doctrineAuthority": false
+    },
+    {
+      "sourceId": "revised_sbc_phase_architecture",
+      "role": "private_project_specification",
+      "sha256": "6982705193E1501C30FFBB93CED2990378498574CB137AFF946640A114EB7A88",
+      "doctrineAuthority": false
+    },
+    {
+      "sourceId": "independent_repository_review",
+      "role": "tracked_implementation_review",
+      "sha256": "4A1A58B1A914397B5E56139F28DA3BD4F9A14C9779046707D6A72C6B4D73B279",
+      "repositoryPath": "output/pdf/Priority_Experimental_Engines_Honest_Review.pdf",
+      "doctrineAuthority": false
+    }
+  ],
+  "currentInventory": [
+    {
+      "capabilityId": "timestamp_safe_sbc_foundation",
+      "state": "implemented_reuse",
+      "evidencePath": "sbc"
+    },
+    {
+      "capabilityId": "source_profiled_vedha_ledger",
+      "state": "implemented_reuse",
+      "evidencePath": "sbc/vedha.py"
+    },
+    {
+      "capabilityId": "chakra_lab_workspace",
+      "state": "implemented_reuse",
+      "evidencePath": "gann-astro-desk/src/views/ChakraLabWorkspace.tsx"
+    },
+    {
+      "capabilityId": "instrument_relative_fx_arithmetic",
+      "state": "partial_reuse",
+      "evidencePath": "research_labs/instrument_relative_sbc"
+    },
+    {
+      "capabilityId": "sbc_atomic_state_intervals",
+      "state": "absent",
+      "evidencePath": null
+    },
+    {
+      "capabilityId": "multidimensional_sbc_time_series",
+      "state": "absent",
+      "evidencePath": null
+    },
+    {
+      "capabilityId": "fixed_phasor_visualization",
+      "state": "absent",
+      "evidencePath": null
+    },
+    {
+      "capabilityId": "directional_timing_phase",
+      "state": "blocked",
+      "evidencePath": null
+    },
+    {
+      "capabilityId": "external_shadbala_drik_weights",
+      "state": "blocked",
+      "evidencePath": "status/capability_status.json"
+    },
+    {
+      "capabilityId": "prospective_financial_validation",
+      "state": "blocked",
+      "evidencePath": "status/research_trials.json"
+    }
+  ],
+  "adoptedCorrections": [
+    "true_gross_activation_from_absolute_contribution_units",
+    "separate_fx_differential_signed_common_mode_joint_net_and_gross_activation",
+    "count_based_unknown_share_with_null_unknown_magnitude",
+    "gated_normalized_weighted_geometric_confidence_candidate",
+    "canonical_content_hashed_causal_clusters",
+    "source_profiled_experimental_label",
+    "direction_suppressed_outside_safe_timing_sector",
+    "existing_chakra_and_fx_foundations_reused"
+  ],
+  "residualContractCorrections": [
+    {
+      "correctionId": "P0-R1",
+      "title": "mixed_safe_and_unsafe_timing_evidence",
+      "requiredBefore": "directional_timing_aggregation"
+    },
+    {
+      "correctionId": "P0-R2",
+      "title": "scale_aware_low_activity_and_cancellation",
+      "requiredBefore": "multidimensional_interference_labels"
+    },
+    {
+      "correctionId": "P0-R3",
+      "title": "complete_versioned_timing_phase_profile",
+      "requiredBefore": "directional_timing_phase_code"
+    },
+    {
+      "correctionId": "P0-R4",
+      "title": "one_confidence_equation_typed_gates_and_missing_policy",
+      "requiredBefore": "confidence_output"
+    },
+    {
+      "correctionId": "P0-R5",
+      "title": "canonical_causal_cluster_hash_and_role_contract",
+      "requiredBefore": "multidimensional_vote_aggregation"
+    },
+    {
+      "correctionId": "P0-R6",
+      "title": "comparable_fx_subtraction_and_coverage_gate",
+      "requiredBefore": "fx_multidimensional_aggregation"
+    },
+    {
+      "correctionId": "P0-R7",
+      "title": "duration_aware_calendar_aggregation",
+      "requiredBefore": "daily_weekly_or_monthly_summary"
+    },
+    {
+      "correctionId": "P0-R8",
+      "title": "linked_progressive_audit_ui",
+      "requiredBefore": "multidimensional_desktop_workspace"
+    }
+  ],
+  "p1Boundary": {
+    "capabilityId": "sbc_atomic_state_intervals_v1",
+    "entryCriteria": [
+      "p0_audit_and_adr_committed",
+      "machine_readable_p0_audit_valid",
+      "private_specification_classified_as_non_doctrine",
+      "existing_sbc_and_fx_tests_green",
+      "execution_and_inference_locks_false"
+    ],
+    "exitCriteria": [
+      "ordered_non_overlapping_half_open_intervals",
+      "one_timestamp_safe_evidence_cutoff_per_interval",
+      "source_profile_and_contribution_lineage_preserved",
+      "favorable_adverse_net_gross_unknown_and_coverage_separated",
+      "boundary_overlap_missing_serialization_and_replay_tests_pass",
+      "no_phase_financial_direction_confidence_trade_or_execution_fields"
+    ],
+    "phaseEngineIncluded": false,
+    "completed": false
+  },
+  "guardrails": {
+    "researchOnly": true,
+    "sourceProfiledExperimentalOnly": true,
+    "countsAsIndependentVote": false,
+    "directionalContribution": 0,
+    "consumedByLiveInference": false,
+    "consumedByAutoSuggest": false,
+    "consumedByShadowLedger": false,
+    "consumedByOfficialMlNotes": false,
+    "prospectiveTrialRegistered": false,
+    "windowsPackageChanged": false,
+    "androidPackageChanged": false,
+    "runtimeBehaviorChanged": false,
+    "executionAllowed": false
+  },
+  "implementationChanged": false,
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

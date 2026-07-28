@@ -7,6 +7,8 @@ The machine-readable register is `configs/sbc/sources.yaml`.
 | Source | Layer | Current use |
 | --- | --- | --- |
 | Sarvatobhadra Chakra Codex Implementation Guide | Workspace implementation specification | Architecture and phase gates only |
+| Priority Experimental Engines SBC/Phase guide, SHA-256 `BE3DEC3C...` | Private workspace project proposal | Historical design input only; not doctrine |
+| Revised SBC Phase Engine Review and Visualisation Architecture, SHA-256 `69827051...` | Private workspace project specification | P0 architecture and research-gate input only; not doctrine |
 | Chakra and Gann source audit | Workspace source-conflict register | Prevents premature grid/rule selection |
 | Panchanga formula foundation | Computational formula | Phase 1 facts only |
 | Phaladeepika, Subrahmanya Sastri edition | Root translation plus editor supplement | Citation research; layers remain separate |

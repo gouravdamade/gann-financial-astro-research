@@ -1,8 +1,44 @@
 # Current Project Handoff
 
-Last updated: 2026-07-28 13:11 IST
+Last updated: 2026-07-28 15:32 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-28 (SBC/Phase P0 Gap Audit And Frozen Boundary)
+
+- Completed P0 of the revised SBC/phase architecture. This is an architecture
+  and gap-audit milestone only; no score, phase, chart, inference, Auto Suggest,
+  official ML note, broker, Windows package, or Android behavior changed.
+- Added `docs/sbc/SBC_PHASE_P0_GAP_AUDIT_20260728.md` and
+  `docs/sbc/ADR-0005-multidimensional-sbc-phase-research-boundary.md`.
+  They inventory the working SBC/Vedha/Chakra/FX foundations, reject a duplicate
+  implementation, and define P1 as timestamp-safe SBC atomic intervals only.
+- Classified the original and revised private PDFs as project specifications,
+  not Jyotisha doctrine. Their exact SHA-256 hashes are recorded without
+  committing the private PDFs.
+- Froze eight unresolved contracts: mixed safe/unsafe timing evidence,
+  scale-aware activity versus cancellation, complete timing profiles, one
+  typed-gate confidence equation, canonical causal-cluster hashes, comparable
+  FX subtraction, duration-aware aggregation, and a linked progressive UI.
+- Added machine-readable audit
+  `status/audits/sbc_phase_p0_gap_audit_20260728.json` and status entries for
+  the not-yet-implemented multidimensional atomic-interval and phase engines.
+  The status validator checks the tracked review PDF hash, all eight residual
+  corrections, existing evidence paths, the P1 boundary, and every
+  no-inference/no-execution lock.
+- Verification: canonical status validation passes with six documents and one
+  audit; status tests pass `6/6`; focused SBC, Vedha, Chakra, service, and
+  instrument-relative FX tests remain `82/82`; changed Python files pass Ruff;
+  `git diff --check` reports no whitespace errors.
+- Next phase: P1 must implement ordered, non-overlapping half-open SBC atomic
+  intervals with one evidence cutoff, source lineage, separate favorable,
+  adverse, net, gross, unknown-count, unknown-magnitude, and coverage fields.
+  P1 must expose no phase, confidence, market direction, trade, or execution
+  field.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260728_153333_sbc_phase_p0_gap_audit`.
+- Runtime-only SQLite, logs, and Android workspace state remain untouched and
+  uncommitted.
 
 ## Latest Update - 2026-07-28 (Priority Experimental Engines Independent Review)
 

@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-27T13:33:41Z",
+  "asOfUtc": "2026-07-28T09:56:24Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -198,6 +198,44 @@
         "status/audits/windows_arghya_candidate_0_10_22_20260723.json",
         "status/audits/windows_physical_acceptance_0_10_22_20260723.json",
         "research_labs/trailokya_arghya/README.md"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "multidimensional_sbc_atomic_intervals_v1",
+      "label": "Multidimensional SBC atomic interval research engine",
+      "states": {
+        "implementedInSource": "no",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "P0 architecture is accepted, but the full capability is not implemented. Existing timestamp-safe SBC facts, source-profiled Vedha evidence and Chakra UI must be reused. P1 must first add ordered half-open atomic intervals with explicit cutoff, lineage, gross/net, unknown and coverage fields and no market or phase output.",
+      "evidenceRefs": [
+        "docs/sbc/SBC_PHASE_P0_GAP_AUDIT_20260728.md",
+        "docs/sbc/ADR-0005-multidimensional-sbc-phase-research-boundary.md",
+        "status/audits/sbc_phase_p0_gap_audit_20260728.json"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "phase_interference_research_engine_v1",
+      "label": "SBC phase-interference research engine",
+      "states": {
+        "implementedInSource": "no",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "No phase engine exists. Fixed 0/pi phasors may later be tested only as a non-voting scalar-equivalent visualization. Directional timing phase remains blocked until a complete versioned sector, boundary, loop, station, missing-state and safety profile plus prospective validation are available.",
+      "evidenceRefs": [
+        "docs/sbc/SBC_PHASE_P0_GAP_AUDIT_20260728.md",
+        "docs/sbc/ADR-0005-multidimensional-sbc-phase-research-boundary.md",
+        "status/audits/sbc_phase_p0_gap_audit_20260728.json"
       ],
       "executionAllowed": false
     }

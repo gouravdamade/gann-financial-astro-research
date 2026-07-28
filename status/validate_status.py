@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from datetime import datetime
@@ -17,6 +18,11 @@ EXPECTED_CONTRACTS = {
     "source_certification.json": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
     "mobile_acceptance_plan.json": "GANN_MOBILE_PHYSICAL_ACCEPTANCE_V1",
 }
+CANONICAL_AUDITS = {
+    "audits/sbc_phase_p0_gap_audit_20260728.json": "GANN_SBC_PHASE_P0_GAP_AUDIT_V1",
+}
+P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
+P0_INVENTORY_STATES = {"implemented_reuse", "partial_reuse", "absent", "blocked"}
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -162,6 +168,98 @@ def validate_mobile_plan(document: dict[str, Any]) -> None:
         _sha256(document.get(side, {}).get("artifactSha256"), f"{side} artifact")
 
 
+def validate_sbc_phase_p0_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    _utc_timestamp(document.get("auditedAtUtc"), "SBC phase P0 audit auditedAtUtc")
+    _execution_locked(document, "SBC phase P0 audit")
+    if document.get("phase") != "P0_GAP_AUDIT":
+        raise ValueError("SBC phase P0 audit has an unexpected phase")
+    if document.get("implementationChanged") is not False:
+        raise ValueError("SBC phase P0 audit must not claim an implementation change")
+    if document.get("promotionAllowed") is not False:
+        raise ValueError("SBC phase P0 audit cannot allow promotion")
+
+    sources = list(document.get("sourceDocuments") or [])
+    _unique(sources, "sourceId", "SBC phase P0 source documents")
+    for source in sources:
+        _sha256(source.get("sha256"), f"SBC phase P0 source {source['sourceId']}")
+        if source.get("doctrineAuthority") is not False:
+            raise ValueError(
+                f"SBC phase P0 source {source['sourceId']} must not claim doctrine authority"
+            )
+        repository_path = source.get("repositoryPath")
+        if repository_path:
+            path = (project_root / str(repository_path)).resolve()
+            if not path.is_file():
+                raise ValueError(f"SBC phase P0 tracked source is missing: {repository_path}")
+            actual_hash = hashlib.sha256(path.read_bytes()).hexdigest().upper()
+            if actual_hash != source["sha256"]:
+                raise ValueError(
+                    f"SBC phase P0 tracked source hash differs: {repository_path}"
+                )
+
+    inventory = list(document.get("currentInventory") or [])
+    _unique(inventory, "capabilityId", "SBC phase P0 inventory")
+    for item in inventory:
+        if item.get("state") not in P0_INVENTORY_STATES:
+            raise ValueError(
+                f"SBC phase P0 inventory {item['capabilityId']} has an unknown state"
+            )
+        evidence_path = item.get("evidencePath")
+        if evidence_path and not (project_root / str(evidence_path)).exists():
+            raise ValueError(
+                f"SBC phase P0 inventory evidence is missing: {evidence_path}"
+            )
+
+    corrections = list(document.get("residualContractCorrections") or [])
+    _unique(corrections, "correctionId", "SBC phase P0 residual corrections")
+    correction_ids = {item["correctionId"] for item in corrections}
+    if correction_ids != P0_CORRECTION_IDS:
+        raise ValueError("SBC phase P0 audit must retain corrections P0-R1 through P0-R8")
+    if any(not str(item.get("requiredBefore") or "") for item in corrections):
+        raise ValueError("SBC phase P0 corrections must name their dependent milestone")
+
+    adopted = list(document.get("adoptedCorrections") or [])
+    if len(adopted) != len(set(adopted)) or any(not str(item) for item in adopted):
+        raise ValueError("SBC phase P0 adopted corrections must be unique and non-empty")
+
+    boundary = document.get("p1Boundary") or {}
+    if boundary.get("capabilityId") != "sbc_atomic_state_intervals_v1":
+        raise ValueError("SBC phase P0 audit has an unexpected P1 capability")
+    if boundary.get("phaseEngineIncluded") is not False:
+        raise ValueError("SBC phase P1 must exclude the phase engine")
+    if boundary.get("completed") is not False:
+        raise ValueError("SBC phase P1 cannot be complete during P0")
+    for field in ("entryCriteria", "exitCriteria"):
+        values = list(boundary.get(field) or [])
+        if not values or len(values) != len(set(values)):
+            raise ValueError(f"SBC phase P1 {field} must be unique and non-empty")
+
+    guardrails = document.get("guardrails") or {}
+    if guardrails.get("researchOnly") is not True:
+        raise ValueError("SBC phase P0 audit must remain research-only")
+    if guardrails.get("sourceProfiledExperimentalOnly") is not True:
+        raise ValueError("SBC phase P0 audit must remain source-profiled experimental")
+    false_locks = {
+        "countsAsIndependentVote",
+        "consumedByLiveInference",
+        "consumedByAutoSuggest",
+        "consumedByShadowLedger",
+        "consumedByOfficialMlNotes",
+        "prospectiveTrialRegistered",
+        "windowsPackageChanged",
+        "androidPackageChanged",
+        "runtimeBehaviorChanged",
+        "executionAllowed",
+    }
+    for field in false_locks:
+        if guardrails.get(field) is not False:
+            raise ValueError(f"SBC phase P0 guardrail {field} must remain false")
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError("SBC phase P0 directional contribution must remain zero")
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -208,16 +306,36 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         if document.get("contract") != contract:
             raise ValueError(f"{filename} contract does not match {contract}")
         documents[filename] = document
+    audits: dict[str, dict[str, Any]] = {}
+    for filename, contract in CANONICAL_AUDITS.items():
+        document = _load(root / filename)
+        if document.get("contract") != contract:
+            raise ValueError(f"{filename} contract does not match {contract}")
+        audits[filename] = document
     validate_release(documents["release_status.json"])
     validate_capabilities(documents["capability_status.json"])
     validate_trials(documents["research_trials.json"])
     validate_sources(documents["source_certification.json"])
     validate_mobile_plan(documents["mobile_acceptance_plan.json"])
+    validate_sbc_phase_p0_audit(
+        audits["audits/sbc_phase_p0_gap_audit_20260728.json"], root.parent
+    )
     validate_cross_document_links(documents, root)
+    capability_ids = {
+        item["capabilityId"]
+        for item in documents["capability_status.json"]["capabilities"]
+    }
+    required_capabilities = {
+        "multidimensional_sbc_atomic_intervals_v1",
+        "phase_interference_research_engine_v1",
+    }
+    if not required_capabilities <= capability_ids:
+        raise ValueError("SBC phase P0 capability status entries are missing")
     return {
         "contract": "GANN_PROJECT_STATUS_VALIDATION_V1",
         "valid": True,
-        "documentCount": len(documents),
+        "documentCount": len(documents) + len(audits),
+        "auditCount": len(audits),
         "executionAllowed": False,
     }
 
