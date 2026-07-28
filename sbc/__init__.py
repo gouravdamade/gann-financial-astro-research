@@ -5,8 +5,9 @@ explicit-only, partial 81-cell topology and Sanskrit letter fixture. Phase 3A
 adds figure-relative Vedha guidance with a transparent experimental evidence
 score. Phase 4A binds those layers to one timestamp-safe, read-only Chakra Lab
 snapshot. Phase 5A compiles explicit boundary states into non-overlapping
-atomic intervals. Absolute cardinal orientation, Latta, phase, confidence,
-financial labels, and trade decisions remain disabled.
+atomic intervals. Phase 5B exposes reconciled, non-voting causal-cluster ledger
+views. Absolute cardinal orientation, Latta, phase, confidence, financial
+labels, and trade decisions remain disabled.
 """
 
 from .atomic_intervals import (
@@ -45,6 +46,32 @@ from .grid import (
     load_grid_profile,
 )
 from .models import GeoLocation, SbcSnapshot, SbcSnapshotRequest
+from .multidimensional_ledger import (
+    ACTOR_AXIS,
+    CAUSAL_CLUSTER_CONTRACT,
+    DERIVATION_ROLES,
+    DERIVED_AXIS_ROLE,
+    LEDGER_AXES,
+    MISSING_EVIDENCE,
+    MULTIDIMENSIONAL_LEDGER_CONTRACT,
+    NATURE_AXIS,
+    NON_VOTING_CONTEXT_ROLE,
+    PRIMARY_EVIDENCE_ROLE,
+    SOURCE_LINEAGE_AXIS,
+    TARGET_LAYER_AXIS,
+    TOTAL_AXIS,
+    UNAVAILABLE_DIMENSION_KEY,
+    VEDHA_DIRECTION_AXIS,
+    VISUALIZATION_ONLY_ROLE,
+    SbcCausalCluster,
+    SbcLedgerAxisReconciliation,
+    SbcLedgerDimensionCell,
+    SbcLedgerFieldRole,
+    SbcMultidimensionalIntervalLedger,
+    SbcMultidimensionalLedgerCompiler,
+    SbcMultidimensionalLedgerGuardrails,
+    SbcMultidimensionalLedgerSeries,
+)
 from .snapshot import SbcFoundationEngine
 from .vedha import (
     DignityState,
@@ -60,8 +87,10 @@ from .vedha import (
 )
 
 __all__ = [
+    "ACTOR_AXIS",
     "ATOMIC_INTERVAL_CONTRACT",
     "ATOMIC_INTERVAL_POLICY",
+    "CAUSAL_CLUSTER_CONTRACT",
     "CHAKRA_LAB_CONTRACT",
     "ChakraLabActorReadiness",
     "ChakraLabActorSelection",
@@ -74,10 +103,18 @@ __all__ = [
     "CompiledProfile",
     "CompiledGrid",
     "DignityState",
+    "DERIVATION_ROLES",
+    "DERIVED_AXIS_ROLE",
     "GeoLocation",
     "GridProfileBlockedError",
+    "LEDGER_AXES",
+    "MISSING_EVIDENCE",
+    "MULTIDIMENSIONAL_LEDGER_CONTRACT",
     "MotionClass",
+    "NATURE_AXIS",
+    "NON_VOTING_CONTEXT_ROLE",
     "PlanetNature",
+    "PRIMARY_EVIDENCE_ROLE",
     "RESEARCH_CLASSIFICATION",
     "SbcAtomicBoundary",
     "SbcAtomicContribution",
@@ -87,16 +124,30 @@ __all__ = [
     "SbcAtomicIntervalSeries",
     "SbcAtomicLedgerSummary",
     "SbcAtomicProfileIdentity",
+    "SbcCausalCluster",
     "SbcFoundationEngine",
+    "SbcLedgerAxisReconciliation",
+    "SbcLedgerDimensionCell",
+    "SbcLedgerFieldRole",
+    "SbcMultidimensionalIntervalLedger",
+    "SbcMultidimensionalLedgerCompiler",
+    "SbcMultidimensionalLedgerGuardrails",
+    "SbcMultidimensionalLedgerSeries",
     "SbcSnapshot",
     "SbcSnapshotRequest",
+    "SOURCE_LINEAGE_AXIS",
     "SwissEphemerisProvider",
+    "TARGET_LAYER_AXIS",
+    "TOTAL_AXIS",
+    "UNAVAILABLE_DIMENSION_KEY",
     "VedhaActor",
     "VedhaDirection",
     "VedhaGuidanceEngine",
     "VedhaGuidanceReport",
     "VedhaMotionRequiredError",
     "VedhaProfileBlockedError",
+    "VEDHA_DIRECTION_AXIS",
+    "VISUALIZATION_ONLY_ROLE",
     "boundary_from_chakra_snapshot",
     "compile_grid",
     "contribution_from_vedha",

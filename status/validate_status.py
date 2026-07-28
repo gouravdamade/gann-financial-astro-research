@@ -21,6 +21,9 @@ EXPECTED_CONTRACTS = {
 CANONICAL_AUDITS = {
     "audits/sbc_phase_p0_gap_audit_20260728.json": "GANN_SBC_PHASE_P0_GAP_AUDIT_V1",
     "audits/sbc_atomic_intervals_p1_20260728.json": "GANN_SBC_ATOMIC_INTERVALS_P1_AUDIT_V1",
+    "audits/sbc_multidimensional_ledger_p2_20260728.json": (
+        "GANN_SBC_MULTIDIMENSIONAL_LEDGER_P2_AUDIT_V1"
+    ),
 }
 P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
 P0_INVENTORY_STATES = {"implemented_reuse", "partial_reuse", "absent", "blocked"}
@@ -393,6 +396,151 @@ def validate_sbc_atomic_intervals_p1_audit(
         raise ValueError("SBC atomic P1 verification evidence is incomplete")
 
 
+def validate_sbc_multidimensional_ledger_p2_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    _utc_timestamp(
+        document.get("auditedAtUtc"),
+        "SBC multidimensional P2 audit auditedAtUtc",
+    )
+    _execution_locked(document, "SBC multidimensional P2 audit")
+    if document.get("capabilityId") != "multidimensional_sbc_ledger_v1":
+        raise ValueError("SBC multidimensional P2 audit has an unexpected capability")
+    if document.get("status") != "implemented_in_source_research_only":
+        raise ValueError("SBC multidimensional P2 audit has an unexpected status")
+    if document.get("packagedCandidate") is not False:
+        raise ValueError("SBC multidimensional P2 audit cannot claim packaging")
+    if document.get("financiallyValidated") is not False:
+        raise ValueError("SBC multidimensional P2 audit cannot claim financial validation")
+    if document.get("promotionAllowed") is not False:
+        raise ValueError("SBC multidimensional P2 audit cannot allow promotion")
+
+    implementation = document.get("implementation") or {}
+    expected_contracts = {
+        "seriesContract": "SBC_MULTIDIMENSIONAL_LEDGER_SERIES_V1",
+        "causalClusterContract": "SBC_CAUSAL_CLUSTER_V1",
+        "dimensionCellContract": "SBC_LEDGER_DIMENSION_CELL_V1",
+        "missingEvidenceLineageContract": "SBC_MISSING_EVIDENCE_LINEAGE_V1",
+        "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    }
+    for field, expected in expected_contracts.items():
+        if implementation.get(field) != expected:
+            raise ValueError(f"SBC multidimensional P2 {field} differs from {expected}")
+    for field in (
+        "modulePath",
+        "testPath",
+        "acceptancePath",
+        "milestonePath",
+        "adrPath",
+    ):
+        path = project_root / _required_text(implementation.get(field), field)
+        if not path.is_file():
+            raise ValueError(f"SBC multidimensional P2 evidence is missing: {path}")
+    module_path = project_root / implementation["modulePath"]
+    expected_hash = _sha256(
+        implementation.get("moduleCanonicalTextSha256"),
+        "SBC multidimensional P2 module canonical text",
+    )
+    if _canonical_text_sha256(module_path) != expected_hash:
+        raise ValueError("SBC multidimensional P2 module hash differs from the audit")
+
+    expected_roles = [
+        "PRIMARY_EVIDENCE",
+        "DERIVED_AXIS",
+        "VISUALIZATION_ONLY",
+        "NON_VOTING_CONTEXT",
+    ]
+    if implementation.get("derivationRoles") != expected_roles:
+        raise ValueError("SBC multidimensional P2 derivation roles drifted")
+    expected_axes = [
+        "TOTAL",
+        "ACTOR",
+        "TARGET_LAYER",
+        "NATURE",
+        "VEDHA_DIRECTION",
+        "SOURCE_LINEAGE",
+    ]
+    if implementation.get("ledgerAxes") != expected_axes:
+        raise ValueError("SBC multidimensional P2 ledger axes drifted")
+
+    deduplication = document.get("deduplication") or {}
+    expected_deduplication = {
+        "unit": "one_source_lineage_per_atomic_interval",
+        "exactRepeat": "deduplicated",
+        "conflictingEvaluations": "rejected",
+        "missingEvidenceRepeat": "deduplicated",
+        "evaluatedMagnitudeInClusterIdentity": False,
+        "contributionIdPreservedSeparately": True,
+    }
+    if deduplication != expected_deduplication:
+        raise ValueError("SBC multidimensional P2 deduplication contract drifted")
+
+    reconciliation = document.get("reconciliation") or {}
+    expected_reconciliation = {
+        "scalarP1LedgerReproduced": True,
+        "everyClusterExactlyOncePerAxis": True,
+        "unavailableDimensionKey": "UNAVAILABLE",
+        "fields": [
+            "favorable_guidance_units",
+            "adverse_guidance_units",
+            "net_guidance_units",
+            "gross_activation_units",
+            "scored_contribution_count",
+            "unknown_contribution_count",
+            "missing_evidence_count",
+            "total_evidence_count",
+        ],
+    }
+    if reconciliation != expected_reconciliation:
+        raise ValueError("SBC multidimensional P2 reconciliation contract drifted")
+
+    guardrails = document.get("guardrails") or {}
+    for field in (
+        "researchOnly",
+        "timestampSafe",
+        "noLookahead",
+        "sourceProfiledExperimental",
+    ):
+        if guardrails.get(field) is not True:
+            raise ValueError(
+                f"SBC multidimensional P2 guardrail {field} must remain true"
+            )
+    false_locks = {
+        "countsAsIndependentVote",
+        "fxSubtractionIncluded",
+        "phaseOutputIncluded",
+        "confidenceOutputIncluded",
+        "marketDirectionIncluded",
+        "consumedByAutoSuggest",
+        "consumedByLiveInference",
+        "consumedByOfficialMlNotes",
+        "consumedByShadowLedger",
+        "tradeOutputIncluded",
+        "executionAllowed",
+    }
+    for field in false_locks:
+        if guardrails.get(field) is not False:
+            raise ValueError(
+                f"SBC multidimensional P2 guardrail {field} must remain false"
+            )
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError(
+            "SBC multidimensional P2 directional contribution must remain zero"
+        )
+
+    expected_verification = {
+        "newMultidimensionalLedgerTests": "10_passed",
+        "focusedSbcChakraFxTests": "103_passed",
+        "statusValidation": "11_passed",
+        "repositoryPythonTests": "418_passed",
+        "pythonRuff": "passed",
+    }
+    if (document.get("verification") or {}) != expected_verification:
+        raise ValueError(
+            "SBC multidimensional P2 verification evidence is incomplete"
+        )
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -456,6 +604,10 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     validate_sbc_atomic_intervals_p1_audit(
         audits["audits/sbc_atomic_intervals_p1_20260728.json"], root.parent
     )
+    validate_sbc_multidimensional_ledger_p2_audit(
+        audits["audits/sbc_multidimensional_ledger_p2_20260728.json"],
+        root.parent,
+    )
     validate_cross_document_links(documents, root)
     capability_ids = {
         item["capabilityId"]
@@ -463,6 +615,7 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     }
     required_capabilities = {
         "multidimensional_sbc_atomic_intervals_v1",
+        "multidimensional_sbc_ledger_v1",
         "phase_interference_research_engine_v1",
     }
     if not required_capabilities <= capability_ids:
@@ -478,6 +631,15 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         != "yes"
     ):
         raise ValueError("SBC atomic P1 capability is not registered as source-implemented")
+    if (
+        capability_by_id["multidimensional_sbc_ledger_v1"]["states"][
+            "implementedInSource"
+        ]
+        != "yes"
+    ):
+        raise ValueError(
+            "SBC multidimensional P2 capability is not registered as source-implemented"
+        )
     return {
         "contract": "GANN_PROJECT_STATUS_VALIDATION_V1",
         "valid": True,

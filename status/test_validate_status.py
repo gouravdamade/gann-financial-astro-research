@@ -12,6 +12,7 @@ from status.validate_status import (
     validate_cross_document_links,
     validate_release,
     validate_sbc_atomic_intervals_p1_audit,
+    validate_sbc_multidimensional_ledger_p2_audit,
     validate_sbc_phase_p0_audit,
 )
 
@@ -21,8 +22,8 @@ class StatusValidationTests(unittest.TestCase):
         result = validate_all()
         self.assertTrue(result["valid"])
         self.assertFalse(result["executionAllowed"])
-        self.assertEqual(result["documentCount"], 7)
-        self.assertEqual(result["auditCount"], 2)
+        self.assertEqual(result["documentCount"], 8)
+        self.assertEqual(result["auditCount"], 3)
 
     def test_release_cannot_promote_with_blockers(self) -> None:
         document = _load(STATUS_ROOT / "release_status.json")
@@ -78,6 +79,48 @@ class StatusValidationTests(unittest.TestCase):
         document["implementation"]["moduleCanonicalTextSha256"] = "0" * 64
         with self.assertRaisesRegex(ValueError, "module hash differs"):
             validate_sbc_atomic_intervals_p1_audit(document, STATUS_ROOT.parent)
+
+    def test_sbc_multidimensional_p2_audit_cannot_count_as_vote(self) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_multidimensional_ledger_p2_20260728.json"
+            )
+        )
+        document["guardrails"]["countsAsIndependentVote"] = True
+        with self.assertRaisesRegex(ValueError, "countsAsIndependentVote"):
+            validate_sbc_multidimensional_ledger_p2_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_multidimensional_p2_audit_detects_module_hash_drift(self) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_multidimensional_ledger_p2_20260728.json"
+            )
+        )
+        document["implementation"]["moduleCanonicalTextSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "module hash differs"):
+            validate_sbc_multidimensional_ledger_p2_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_multidimensional_p2_audit_preserves_exact_axes(self) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_multidimensional_ledger_p2_20260728.json"
+            )
+        )
+        document["implementation"]["ledgerAxes"].append("MARKET_DIRECTION")
+        with self.assertRaisesRegex(ValueError, "ledger axes drifted"):
+            validate_sbc_multidimensional_ledger_p2_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
 
 
 if __name__ == "__main__":

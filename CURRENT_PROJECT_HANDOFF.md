@@ -1,8 +1,58 @@
 # Current Project Handoff
 
-Last updated: 2026-07-28 17:24 IST
+Last updated: 2026-07-28 18:46 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-28 (Reconciled SBC Multidimensional Ledger P2)
+
+- Completed P2/Phase 5B in source with
+  `SBC_MULTIDIMENSIONAL_LEDGER_SERIES_V1`. The implementation is
+  `sbc/multidimensional_ledger.py`; its audited line-ending-independent
+  canonical-text SHA-256 is
+  `81857E4C909F826B5DF65265339CA0E8C9B60D6FAD77A9683FA753DFC0D72750`.
+- Froze P0-R5 in
+  `docs/sbc/ADR-0006-causal-cluster-and-ledger-deduplication.md`.
+  One source lineage inside one atomic interval is one causal fact. Exact
+  repeats are deduplicated; different evaluated contribution IDs sharing that
+  lineage fail closed rather than being selected or double counted.
+- Added stable causal-cluster IDs containing the opaque instrument identity,
+  interval, no-lookahead cutoff, snapshot, profile/source lineage, actor,
+  target, and exact derivation role. Evaluated nature, multiplier, signed
+  units, status, explanation, and unknown reason remain sealed separately by
+  the Phase 5A contribution ID.
+- Added explicit roles `PRIMARY_EVIDENCE`, `DERIVED_AXIS`,
+  `VISUALIZATION_ONLY`, and `NON_VOTING_CONTEXT`. Total, actor, target-layer,
+  nature, figure-relative Vedha-direction, and source-lineage cells all
+  reference the same primary cluster IDs and never become extra votes.
+- Every axis must contain each cluster exactly once and reconcile to the Phase
+  5A scalar ledger for favorable, negative adverse, net, true gross, scored,
+  unknown, missing, and total counts. Explicit missing evidence receives a
+  deterministic lineage and uses visible `UNAVAILABLE` dimension keys instead
+  of invented actor/nature/layer/ray facts.
+- The compiler fails closed if deduplicated clusters do not reproduce the
+  Phase 5A ledger, any axis fails reconciliation, a source guardrail weakens,
+  or profile/timestamp/interval invariants drift.
+- P2 remains `SOURCE_PROFILED_EXPERIMENTAL` with market directional weight
+  `0.0`. Opaque instrument identity is provenance only: base-minus-quote FX
+  subtraction, phase, confidence, market direction, Auto Suggest, live
+  inference, official ML notes, shadow validation votes, trades, and MT5 all
+  remain blocked.
+- Acceptance and recovery evidence:
+  - `docs/sbc/PHASE5B_ACCEPTANCE.md`;
+  - `sbc_multidimensional_ledger_p2_20260728.md`;
+  - `status/audits/sbc_multidimensional_ledger_p2_20260728.json`.
+- Verification on the final source state: new P2 tests `10/10`; focused
+  SBC/Vedha/Chakra/service/FX tests `103/103`; status tests `11/11`; complete
+  repository Python suite `418/418`; changed Python files pass Ruff; canonical
+  status validation reports eight documents, three audits, and execution false.
+- No Windows or Android package was rebuilt and no runtime trading behavior
+  changed. P3 may add linked audit views only; P0-R6 comparable FX subtraction
+  and P0-R1 through P0-R4 timing/phase/confidence remain separate future gates.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260728_184725_sbc_multidimensional_ledger_p2`.
+- Runtime-only SQLite, logs, and Android workspace state remain untouched and
+  uncommitted.
 
 ## Latest Update - 2026-07-28 (Timestamp-Safe SBC Atomic Intervals P1)
 

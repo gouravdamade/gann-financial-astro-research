@@ -1,0 +1,85 @@
+{
+  "contract": "GANN_SBC_MULTIDIMENSIONAL_LEDGER_P2_AUDIT_V1",
+  "auditedAtUtc": "2026-07-28T12:59:37Z",
+  "capabilityId": "multidimensional_sbc_ledger_v1",
+  "status": "implemented_in_source_research_only",
+  "implementation": {
+    "modulePath": "sbc/multidimensional_ledger.py",
+    "moduleCanonicalTextSha256": "81857E4C909F826B5DF65265339CA0E8C9B60D6FAD77A9683FA753DFC0D72750",
+    "testPath": "test_sbc_phase5b_multidimensional_ledger.py",
+    "acceptancePath": "docs/sbc/PHASE5B_ACCEPTANCE.md",
+    "milestonePath": "sbc_multidimensional_ledger_p2_20260728.md",
+    "adrPath": "docs/sbc/ADR-0006-causal-cluster-and-ledger-deduplication.md",
+    "seriesContract": "SBC_MULTIDIMENSIONAL_LEDGER_SERIES_V1",
+    "causalClusterContract": "SBC_CAUSAL_CLUSTER_V1",
+    "dimensionCellContract": "SBC_LEDGER_DIMENSION_CELL_V1",
+    "missingEvidenceLineageContract": "SBC_MISSING_EVIDENCE_LINEAGE_V1",
+    "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    "derivationRoles": [
+      "PRIMARY_EVIDENCE",
+      "DERIVED_AXIS",
+      "VISUALIZATION_ONLY",
+      "NON_VOTING_CONTEXT"
+    ],
+    "ledgerAxes": [
+      "TOTAL",
+      "ACTOR",
+      "TARGET_LAYER",
+      "NATURE",
+      "VEDHA_DIRECTION",
+      "SOURCE_LINEAGE"
+    ]
+  },
+  "deduplication": {
+    "unit": "one_source_lineage_per_atomic_interval",
+    "exactRepeat": "deduplicated",
+    "conflictingEvaluations": "rejected",
+    "missingEvidenceRepeat": "deduplicated",
+    "evaluatedMagnitudeInClusterIdentity": false,
+    "contributionIdPreservedSeparately": true
+  },
+  "reconciliation": {
+    "scalarP1LedgerReproduced": true,
+    "everyClusterExactlyOncePerAxis": true,
+    "unavailableDimensionKey": "UNAVAILABLE",
+    "fields": [
+      "favorable_guidance_units",
+      "adverse_guidance_units",
+      "net_guidance_units",
+      "gross_activation_units",
+      "scored_contribution_count",
+      "unknown_contribution_count",
+      "missing_evidence_count",
+      "total_evidence_count"
+    ]
+  },
+  "guardrails": {
+    "researchOnly": true,
+    "timestampSafe": true,
+    "noLookahead": true,
+    "sourceProfiledExperimental": true,
+    "countsAsIndependentVote": false,
+    "directionalContribution": 0,
+    "fxSubtractionIncluded": false,
+    "phaseOutputIncluded": false,
+    "confidenceOutputIncluded": false,
+    "marketDirectionIncluded": false,
+    "consumedByAutoSuggest": false,
+    "consumedByLiveInference": false,
+    "consumedByOfficialMlNotes": false,
+    "consumedByShadowLedger": false,
+    "tradeOutputIncluded": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "newMultidimensionalLedgerTests": "10_passed",
+    "focusedSbcChakraFxTests": "103_passed",
+    "statusValidation": "11_passed",
+    "repositoryPythonTests": "418_passed",
+    "pythonRuff": "passed"
+  },
+  "packagedCandidate": false,
+  "financiallyValidated": false,
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

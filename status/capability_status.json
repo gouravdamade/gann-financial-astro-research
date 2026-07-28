@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-28T11:42:15Z",
+  "asOfUtc": "2026-07-28T12:59:37Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -221,6 +221,28 @@
         "sbc_atomic_intervals_p1_20260728.md",
         "status/audits/sbc_atomic_intervals_p1_20260728.json",
         "sbc/atomic_intervals.py"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "multidimensional_sbc_ledger_v1",
+      "label": "Reconciled multidimensional SBC evidence ledger",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "P2 is implemented in source. Each Phase 5A interval compiles to canonical primary causal clusters and reconciled total, actor, target-layer, nature, figure-relative Vedha-direction and source-lineage views. Exact source-lineage repeats are deduplicated, conflicting evaluations fail closed, explicit missing evidence remains unknown, and every axis reproduces the scalar favorable/adverse/net/true-gross/count ledger. The views are non-voting and remain disconnected from FX subtraction, phase, confidence, market direction, Auto Suggest, live inference, official ML notes, shadow validation, trades and MT5.",
+      "evidenceRefs": [
+        "docs/sbc/ADR-0006-causal-cluster-and-ledger-deduplication.md",
+        "docs/sbc/PHASE5B_ACCEPTANCE.md",
+        "sbc_multidimensional_ledger_p2_20260728.md",
+        "status/audits/sbc_multidimensional_ledger_p2_20260728.json",
+        "sbc/multidimensional_ledger.py",
+        "test_sbc_phase5b_multidimensional_ledger.py"
       ],
       "executionAllowed": false
     },

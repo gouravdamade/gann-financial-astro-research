@@ -6,8 +6,9 @@ one explicit-only, figure-relative 81-cell topology and Sanskrit-letter
 fixture. Phase 3A adds standard figure-relative Vedha rays and a transparent
 research guidance ledger. Phase 4A binds those layers to one immutable,
 timestamp-safe Chakra Lab snapshot. Phase 5A compiles explicit state
-boundaries into deterministic half-open atomic intervals. It does not emit a
-market opinion or trade decision.
+boundaries into deterministic half-open atomic intervals. Phase 5B organizes
+those interval facts into reconciled, non-voting causal-cluster ledger views.
+It does not emit a market opinion or trade decision.
 
 Primary profile: `sbc_raman_foundation_v1`.
 
@@ -67,6 +68,22 @@ Phase 5A atomic interval contract:
 - reversed boundary input produces the same canonical series;
 - phase, confidence, market direction, Auto Suggest, live inference, official
   ML notes, validation votes, trades, and MT5 execution remain blocked.
+
+Phase 5B multidimensional ledger contract:
+
+- one source lineage inside one interval is one causal fact;
+- exact repeats are deduplicated and conflicting evaluations sharing one
+  lineage fail closed;
+- causal-cluster identity contains instrument, interval, cutoff, source and
+  profile lineage, actor, target, and exact derivation role;
+- total, actor, target-layer, nature, Vedha-direction, and source-lineage views
+  reference the same primary cluster IDs;
+- every view reconciles to the Phase 5A favorable, adverse, net, true-gross,
+  scored, unknown, missing, total, and coverage ledger;
+- unavailable dimensions remain visibly `UNAVAILABLE`;
+- figure-relative Vedha direction is not market direction;
+- FX subtraction, phase, confidence, all trading consumers, and execution
+  remain blocked.
 
 Minimal use:
 
