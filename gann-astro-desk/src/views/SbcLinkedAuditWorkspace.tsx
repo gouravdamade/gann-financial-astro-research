@@ -1,4 +1,5 @@
 import {
+  Archive,
   BookmarkPlus,
   Clock3,
   Columns3,
@@ -17,11 +18,15 @@ import {
 } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import {
+  buildChakraLabAuditCatalog,
   buildChakraLabAuditPackage,
   fetchChakraLabAudit,
+  verifyChakraLabAuditCatalog,
   verifyChakraLabAuditPackage,
 } from '../api'
 import type {
+  ChakraAuditCatalogBuild,
+  ChakraAuditCatalogVerification,
   ChakraAuditBookmarkInput,
   ChakraAuditBookmarkTarget,
   ChakraAuditInterval,
@@ -34,6 +39,7 @@ import type {
   ChakraLabRequest,
   ChakraLinkedAuditView,
   ChakraReproducibleAuditPackage,
+  ChakraSignedAuditCatalogBundle,
 } from '../types'
 
 
@@ -46,6 +52,7 @@ type AuditTab =
   | 'VALIDATION'
   | 'COMPARE'
   | 'PACKAGE'
+  | 'CATALOG'
 
 const TAB_ICONS = {
   TIMELINE: Clock3,
@@ -56,6 +63,7 @@ const TAB_ICONS = {
   VALIDATION: ShieldAlert,
   COMPARE: Columns3,
   PACKAGE: PackageCheck,
+  CATALOG: Archive,
 } as const
 
 function offsetIst(value: string): string {
@@ -138,10 +146,15 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const [bookmarkNote, setBookmarkNote] = useState('')
   const [packageBuild, setPackageBuild] = useState<ChakraAuditPackageBuild | null>(null)
   const [verification, setVerification] = useState<ChakraAuditPackageVerification | null>(null)
+  const [catalogPackages, setCatalogPackages] = useState<ChakraReproducibleAuditPackage[]>([])
+  const [catalogBuild, setCatalogBuild] = useState<ChakraAuditCatalogBuild | null>(null)
+  const [catalogVerification, setCatalogVerification] = useState<ChakraAuditCatalogVerification | null>(null)
   const [busy, setBusy] = useState(false)
   const [packageBusy, setPackageBusy] = useState(false)
+  const [catalogBusy, setCatalogBusy] = useState(false)
   const [error, setError] = useState('')
   const importInputRef = useRef<HTMLInputElement>(null)
+  const catalogImportInputRef = useRef<HTMLInputElement>(null)
 
   const selectedInterval = audit?.intervals.find(
     (item) => item.interval_id === selectedIntervalId,
@@ -376,6 +389,105 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     }
   }
 
+  const addPackageToCatalog = () => {
+    const value = packageBuild?.package
+    if (!value || verification?.state !== 'PASS') return
+    setCatalogPackages((current) => (
+      current.some((item) => item.package_id === value.package_id)
+        ? current
+        : [...current, value]
+    ))
+    setCatalogBuild(null)
+    setCatalogVerification(null)
+    setError('')
+  }
+
+  const removeCatalogPackage = (packageId: string) => {
+    setCatalogPackages((current) => (
+      current.filter((item) => item.package_id !== packageId)
+    ))
+    setCatalogBuild(null)
+    setCatalogVerification(null)
+  }
+
+  const buildCatalog = async () => {
+    if (!catalogPackages.length) return
+    setCatalogBusy(true)
+    setError('')
+    try {
+      const now = new Date().toISOString()
+      const result = await buildChakraLabAuditCatalog({
+        packages: catalogPackages,
+        createdAt: now,
+        signedAt: now,
+      })
+      setCatalogBuild(result)
+      setCatalogVerification(result.verification)
+      setActiveTab('CATALOG')
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      setCatalogBusy(false)
+    }
+  }
+
+  const verifyCatalog = async (
+    bundle = catalogBuild?.bundle,
+    fullReplay = true,
+  ) => {
+    if (!bundle) return
+    setCatalogBusy(true)
+    setError('')
+    try {
+      const result = await verifyChakraLabAuditCatalog(bundle, fullReplay)
+      setCatalogVerification(result)
+      setActiveTab('CATALOG')
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      setCatalogBusy(false)
+    }
+  }
+
+  const importCatalog = async (file: File | undefined) => {
+    if (!file) return
+    try {
+      const bundle = JSON.parse(
+        await file.text(),
+      ) as ChakraSignedAuditCatalogBundle
+      setCatalogPackages(bundle.catalog.entries.map((item) => item.package))
+      setCatalogBuild({
+        bundle,
+        verification: {
+          contract: 'SBC_AUDIT_CATALOG_VERIFICATION_V1',
+          state: 'FAIL',
+          catalog_id: bundle.catalog.catalog_id,
+          key_id: bundle.signature.key_id,
+          catalog_hash_match: false,
+          signature_valid: false,
+          embedded_packages_valid: false,
+          semantic_replay_state: 'NOT_PERFORMED',
+          entry_count: bundle.catalog.entries.length,
+          entry_verifications: [],
+          errors: ['Imported bundle has not been verified yet.'],
+        },
+        signingIdentity: {
+          algorithm: 'ED25519',
+          keyId: bundle.signature.key_id,
+          storage: 'LOCAL_USER_FILE',
+          claim: 'Imported public signature; integrity must be verified before use.',
+        },
+      })
+      await verifyCatalog(bundle, true)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      if (catalogImportInputRef.current) {
+        catalogImportInputRef.current.value = ''
+      }
+    }
+  }
+
   return (
     <div className="chakra-audit-shell">
       <aside className="chakra-audit-capture">
@@ -535,6 +647,63 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
             Import and replay
           </button>
         </section>
+
+        <section>
+          <div className="chakra-section-heading">
+            <strong>P5 signed catalog</strong>
+            <span>{catalogPackages.length} package(s)</span>
+          </div>
+          <button
+            className="secondary-command chakra-audit-action"
+            onClick={addPackageToCatalog}
+            disabled={!packageBuild || verification?.state !== 'PASS'}
+            title="Add the fully replay-verified P4 package to the local catalog"
+          >
+            <Archive size={13} />
+            Add verified P4
+          </button>
+          <div className="chakra-catalog-picks">
+            {catalogPackages.map((item) => (
+              <div key={item.package_id}>
+                <span>{item.instrument_identity}</span>
+                <code>{shortId(item.package_id)}</code>
+                <button
+                  className="icon-button"
+                  onClick={() => removeCatalogPackage(item.package_id)}
+                  title="Remove package from catalog draft"
+                  aria-label={`Remove package ${shortId(item.package_id)}`}
+                >
+                  <Trash2 size={11} />
+                </button>
+              </div>
+            ))}
+            {!catalogPackages.length && (
+              <span className="chakra-muted-row">No verified P4 package added</span>
+            )}
+          </div>
+          <button
+            className="primary-command chakra-audit-action"
+            onClick={() => void buildCatalog()}
+            disabled={catalogBusy || !catalogPackages.length}
+          >
+            <Archive size={13} />
+            {catalogBusy ? 'Sealing catalog' : 'Seal and sign catalog'}
+          </button>
+          <input
+            ref={catalogImportInputRef}
+            className="chakra-package-file"
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => void importCatalog(event.target.files?.[0])}
+          />
+          <button
+            className="secondary-command chakra-audit-action"
+            onClick={() => catalogImportInputRef.current?.click()}
+          >
+            <Upload size={13} />
+            Import signed catalog
+          </button>
+        </section>
       </aside>
 
       <section className="chakra-audit-main">
@@ -558,6 +727,11 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
               label: 'Package',
               purpose: 'Export, import, and full replay verification',
             },
+            {
+              view_id: 'CATALOG',
+              label: 'Catalog',
+              purpose: 'Signed package exchange without cross-audit inference',
+            },
           ].map((view) => {
             const viewId = view.view_id as AuditTab
             const Icon = TAB_ICONS[viewId]
@@ -568,7 +742,11 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                 aria-selected={activeTab === viewId}
                 className={activeTab === viewId ? 'is-active' : ''}
                 onClick={() => setActiveTab(viewId)}
-                disabled={!audit && (viewId === 'COMPARE' || viewId === 'PACKAGE')}
+                disabled={
+                  (!audit && viewId === 'COMPARE')
+                  || (!packageBuild && viewId === 'PACKAGE')
+                  || (!catalogBuild && !catalogPackages.length && viewId === 'CATALOG')
+                }
                 title={view.purpose}
               >
                 <Icon size={12} />
@@ -585,7 +763,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
           </div>
         )}
 
-        {!audit ? (
+        {!audit && activeTab !== 'PACKAGE' && activeTab !== 'CATALOG' ? (
           <div className="chakra-audit-empty">
             <Clock3 size={23} />
             <strong>Linked audit not compiled</strong>
@@ -600,7 +778,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                   <span>Duration</span><span>Net</span><span>Gross</span>
                   <span>Coverage</span>
                 </div>
-                {audit.intervals.map((item, index) => (
+                {(audit?.intervals ?? []).map((item, index) => (
                   <button
                     key={item.interval_id}
                     className={intervalId === item.interval_id ? 'is-selected' : ''}
@@ -708,7 +886,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
 
             {activeTab === 'VALIDATION' && (
               <div className="chakra-validation-list">
-                {audit.validation_gates.map((item) => (
+                {(audit?.validation_gates ?? []).map((item) => (
                   <div key={item.gate_id} className={`is-${item.state.toLowerCase()}`}>
                     <span>{item.state}</span>
                     <strong>{item.label}</strong>
@@ -718,7 +896,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                 <div className="chakra-blocked-capabilities">
                   <strong>Blocked capabilities</strong>
                   <div>
-                    {audit.guardrails.blocked_capabilities.map((item) => (
+                    {(audit?.guardrails.blocked_capabilities ?? []).map((item) => (
                       <span key={item}>{displayToken(item)}</span>
                     ))}
                   </div>
@@ -886,6 +1064,129 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                       {!packageBuild.package.bookmarks.length && (
                         <span className="chakra-muted-row">No manual bookmarks</span>
                       )}
+                    </div>
+                  </section>
+                </div>
+              )
+            )}
+
+            {activeTab === 'CATALOG' && (
+              !catalogBuild ? (
+                <div className="chakra-audit-empty is-inline">
+                  <Archive size={21} />
+                  <strong>Signed catalog not built</strong>
+                  <span>
+                    Add at least one replay-verified P4 package, then seal the catalog.
+                  </span>
+                </div>
+              ) : (
+                <div className="chakra-package-view">
+                  <header className="chakra-package-toolbar">
+                    <div>
+                      <strong>Signed P5 audit catalog</strong>
+                      <span>{shortId(catalogBuild.bundle.catalog.catalog_id)}</span>
+                    </div>
+                    <div>
+                      <button
+                        className="icon-button"
+                        title="Download signed catalog bundle"
+                        aria-label="Download signed catalog bundle"
+                        onClick={() => downloadText(
+                          JSON.stringify(catalogBuild.bundle, null, 2),
+                          'application/json',
+                          `sbc-catalog-${catalogBuild.bundle.catalog.catalog_id.slice(0, 12)}.json`,
+                        )}
+                      >
+                        <Download size={13} />
+                      </button>
+                      <button
+                        className="secondary-command"
+                        disabled={catalogBusy}
+                        onClick={() => void verifyCatalog(
+                          catalogBuild.bundle,
+                          false,
+                        )}
+                        title="Check hashes and Ed25519 signature without semantic replay"
+                      >
+                        <FileCheck2 size={12} />
+                        Integrity
+                      </button>
+                      <button
+                        className="secondary-command"
+                        disabled={catalogBusy}
+                        onClick={() => void verifyCatalog(
+                          catalogBuild.bundle,
+                          true,
+                        )}
+                        title="Recompute every embedded P4 package after integrity verification"
+                      >
+                        <RefreshCw size={12} />
+                        Full replay
+                      </button>
+                    </div>
+                  </header>
+
+                  <p className="chakra-comparison-warning">
+                    Catalog membership and the Ed25519 signature prove portable
+                    integrity and local provenance only. Packages are not added,
+                    averaged, voted, ranked, or converted into market direction.
+                  </p>
+
+                  <dl className="chakra-package-meta">
+                    <div><dt>Catalog</dt><dd>{catalogBuild.bundle.catalog.catalog_id}</dd></div>
+                    <div><dt>Public key</dt><dd>{catalogBuild.bundle.signature.key_id}</dd></div>
+                    <div><dt>Algorithm</dt><dd>{catalogBuild.bundle.signature.algorithm}</dd></div>
+                    <div><dt>Signed UTC</dt><dd>{catalogBuild.bundle.signature.signed_at_utc}</dd></div>
+                    <div><dt>Packages</dt><dd>{catalogBuild.bundle.catalog.entries.length}</dd></div>
+                  </dl>
+
+                  {catalogVerification && (
+                    <div className={`chakra-package-verification is-${catalogVerification.state.toLowerCase()}`}>
+                      <span>{catalogVerification.state}</span>
+                      <strong>
+                        {catalogVerification.state === 'PASS'
+                          ? `Signature and structure matched; semantic replay ${displayToken(catalogVerification.semantic_replay_state)}`
+                          : 'Catalog verification failed'}
+                      </strong>
+                      {catalogVerification.errors.map((item) => <p key={item}>{item}</p>)}
+                    </div>
+                  )}
+
+                  <div className="chakra-validation-list">
+                    {catalogBuild.bundle.catalog.validation_gates.map((item) => (
+                      <div key={item.gate_id} className={`is-${item.state.toLowerCase()}`}>
+                        <span>{item.state}</span>
+                        <strong>{item.label}</strong>
+                        <p>{item.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <section>
+                    <div className="chakra-section-heading">
+                      <strong>Embedded replay-verified P4 packages</strong>
+                      <span>{catalogBuild.bundle.catalog.entries.length}</span>
+                    </div>
+                    <div className="chakra-catalog-entries">
+                      {catalogBuild.bundle.catalog.entries.map((item) => {
+                        const replay = catalogVerification?.entry_verifications.find(
+                          (entry) => entry.package_id === item.package_id,
+                        )
+                        return (
+                          <div key={item.entry_id}>
+                            <div>
+                              <strong>{item.instrument_identity}</strong>
+                              <span>{formatMoment(item.sealed_at_utc)}</span>
+                            </div>
+                            <code>{shortId(item.package_id)}</code>
+                            <span>
+                              Structure {replay?.structural_integrity ?? 'PASS'}
+                              {' | '}
+                              Replay {replay?.semantic_replay ?? item.p4_replay_state}
+                            </span>
+                          </div>
+                        )
+                      })}
                     </div>
                   </section>
                 </div>

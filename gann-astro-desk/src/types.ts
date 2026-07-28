@@ -2514,3 +2514,102 @@ export type ChakraAuditPackageVerification = {
   replay_package_match: boolean
   errors: string[]
 }
+
+export type ChakraAuditCatalogRequest = {
+  packages: ChakraReproducibleAuditPackage[]
+  createdAt: string
+  signedAt: string
+}
+
+export type ChakraAuditCatalogEntry = {
+  entry_id: string
+  package_id: string
+  package_digest: string
+  source_audit_id: string
+  instrument_identity: string
+  sealed_at_utc: string
+  p4_replay_state: 'PASS'
+  package: ChakraReproducibleAuditPackage
+}
+
+export type ChakraAuditPackageCatalog = {
+  contract: 'SBC_AUDIT_PACKAGE_CATALOG_V1'
+  schema_version: 1
+  catalog_policy: 'SEALED_PACKAGE_CATALOG_NO_CROSS_AUDIT_INFERENCE_V1'
+  classification: 'SOURCE_PROFILED_EXPERIMENTAL'
+  catalog_id: string
+  created_at_utc: string
+  entries: ChakraAuditCatalogEntry[]
+  validation_gates: ChakraAuditPackageValidationGate[]
+  guardrails: {
+    research_only: true
+    read_only: true
+    timestamp_safe: true
+    no_lookahead: true
+    source_profiled_experimental: true
+    financially_validated: false
+    catalog_only: true
+    embedded_p4_replay_required: true
+    no_cross_package_arithmetic: true
+    no_cross_package_voting: true
+    no_market_direction: true
+    no_confidence_output: true
+    signatures_prove_integrity_only: true
+    counts_as_independent_vote: false
+    directional_contribution: 0
+    execution_allowed: false
+    blocked_capabilities: string[]
+  }
+}
+
+export type ChakraAuditCatalogSignature = {
+  contract: 'SBC_AUDIT_CATALOG_SIGNATURE_V1'
+  schema_version: 1
+  algorithm: 'ED25519'
+  key_id: string
+  public_key_base64: string
+  catalog_id: string
+  catalog_digest: string
+  signed_at_utc: string
+  signature_base64: string
+}
+
+export type ChakraSignedAuditCatalogBundle = {
+  contract: 'SBC_SIGNED_AUDIT_CATALOG_BUNDLE_V1'
+  schema_version: 1
+  bundle_policy: 'SIGNED_PORTABLE_RESEARCH_EXCHANGE_V1'
+  catalog: ChakraAuditPackageCatalog
+  signature: ChakraAuditCatalogSignature
+}
+
+export type ChakraAuditCatalogEntryVerification = {
+  package_id: string
+  structural_integrity: 'PASS' | 'FAIL'
+  semantic_replay: 'PASS' | 'FAIL' | 'NOT_PERFORMED'
+  errors: string[]
+}
+
+export type ChakraAuditCatalogVerification = {
+  contract: 'SBC_AUDIT_CATALOG_VERIFICATION_V1'
+  state: 'PASS' | 'FAIL'
+  catalog_id: string | null
+  key_id: string | null
+  catalog_hash_match: boolean
+  signature_valid: boolean
+  embedded_packages_valid: boolean
+  semantic_replay_state: 'PASS' | 'FAIL' | 'NOT_PERFORMED'
+  entry_count: number
+  entry_verifications: ChakraAuditCatalogEntryVerification[]
+  errors: string[]
+}
+
+export type ChakraAuditCatalogBuild = {
+  bundle: ChakraSignedAuditCatalogBundle
+  verification: ChakraAuditCatalogVerification
+  signingIdentity: {
+    algorithm: 'ED25519'
+    keyId: string
+    storage: 'WINDOWS_DPAPI_APP_DATA' | 'LOCAL_USER_FILE'
+    claim: string
+  }
+}

@@ -31,6 +31,12 @@ from sbc.audit_packages import (  # noqa: E402
     validate_audit_package_payload,
     verify_audit_package_replay,
 )
+from sbc.audit_catalog import (  # noqa: E402
+    SbcAuditPackageCatalogCompiler,
+    load_or_create_signing_key,
+    sign_audit_catalog,
+    verify_signed_audit_catalog,
+)
 from sbc.models import GeoLocation  # noqa: E402
 from sbc.multidimensional_ledger import (  # noqa: E402
     SbcMultidimensionalLedgerCompiler,
@@ -108,6 +114,15 @@ AUDIT_PACKAGE_REPLAY_KEYS = {
     "comparison_interval_ids",
     "bookmarks",
     "sealed_at_utc",
+}
+AUDIT_CATALOG_REQUEST_KEYS = {
+    "packages",
+    "createdAt",
+    "signedAt",
+}
+AUDIT_CATALOG_VERIFY_KEYS = {
+    "bundle",
+    "fullReplay",
 }
 
 
@@ -419,3 +434,119 @@ def verify_chakra_lab_audit_package(payload: Any) -> dict[str, Any]:
             replay_package_match=False,
             errors=(str(exc),),
         ).to_dict()
+
+
+def _audit_catalog_signing_key_path() -> Path:
+    configured_key = str(
+        os.environ.get("GANN_ASTRO_SBC_CATALOG_SIGNING_KEY") or ""
+    ).strip()
+    if configured_key:
+        return Path(configured_key).resolve()
+    configured_root = str(
+        os.environ.get("GANN_ASTRO_DESKTOP_DATA") or ""
+    ).strip()
+    if configured_root:
+        data_root = Path(configured_root).resolve()
+    elif Path(r"D:\GannFinancialAstro").exists():
+        data_root = Path(r"D:\GannFinancialAstro\app_data")
+    else:
+        data_root = PROJECT_ROOT / ".local_app_data"
+    return data_root / "sbc_audit_catalog" / "ed25519_signing_key.dpapi"
+
+
+def _audit_catalog_packages(value: Any) -> tuple[dict[str, Any], ...]:
+    if not isinstance(value, list) or not value:
+        raise ValueError("packages must be a non-empty array")
+    packages: list[dict[str, Any]] = []
+    for index, item in enumerate(value):
+        if not isinstance(item, dict):
+            raise ValueError(f"package {index + 1} must be an object")
+        packages.append(item)
+    return tuple(packages)
+
+
+def build_chakra_lab_audit_catalog(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("Chakra Lab audit catalog request must be an object")
+    _reject_unknown(
+        payload,
+        AUDIT_CATALOG_REQUEST_KEYS,
+        "Chakra Lab audit catalog request",
+    )
+    packages = _audit_catalog_packages(payload.get("packages"))
+    created_at = _offset_datetime(payload.get("createdAt"), "createdAt")
+    signed_at = _offset_datetime(payload.get("signedAt"), "signedAt")
+    replay_verifications = {
+        package.get("package_id"): verify_chakra_lab_audit_package(
+            {"package": package}
+        )
+        for package in packages
+    }
+    catalog = SbcAuditPackageCatalogCompiler().compile(
+        packages,
+        replay_verifications=replay_verifications,
+        created_at_utc=created_at,
+    )
+    private_key = load_or_create_signing_key(_audit_catalog_signing_key_path())
+    bundle = sign_audit_catalog(
+        catalog,
+        private_key,
+        signed_at_utc=signed_at,
+    ).to_dict()
+    verification = verify_signed_audit_catalog(
+        bundle,
+        replay_verifications=replay_verifications,
+    ).to_dict()
+    return {
+        "bundle": bundle,
+        "verification": verification,
+        "signingIdentity": {
+            "algorithm": bundle["signature"]["algorithm"],
+            "keyId": bundle["signature"]["key_id"],
+            "storage": "WINDOWS_DPAPI_APP_DATA"
+            if os.name == "nt"
+            else "LOCAL_USER_FILE",
+            "claim": (
+                "Local research provenance and integrity only; this is not an "
+                "external identity, doctrine, or financial certification."
+            ),
+        },
+    }
+
+
+def verify_chakra_lab_audit_catalog(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("Chakra Lab audit catalog verification must be an object")
+    _reject_unknown(
+        payload,
+        AUDIT_CATALOG_VERIFY_KEYS,
+        "Chakra Lab audit catalog verification",
+    )
+    bundle = payload.get("bundle")
+    full_replay = payload.get("fullReplay", True)
+    if not isinstance(full_replay, bool):
+        raise ValueError("fullReplay must be a boolean")
+
+    integrity = verify_signed_audit_catalog(bundle)
+    if not full_replay or integrity.state != "PASS":
+        return integrity.to_dict()
+
+    replay_verifications: dict[str, dict[str, Any]] | None = None
+    if isinstance(bundle, dict):
+        catalog = bundle.get("catalog")
+        entries = catalog.get("entries") if isinstance(catalog, dict) else None
+        if isinstance(entries, list):
+            replay_verifications = {}
+            for item in entries:
+                if not isinstance(item, dict):
+                    continue
+                package = item.get("package")
+                package_id = item.get("package_id")
+                if isinstance(package, dict) and isinstance(package_id, str):
+                    replay_verifications[package_id] = (
+                        verify_chakra_lab_audit_package({"package": package})
+                    )
+    return verify_signed_audit_catalog(
+        bundle,
+        replay_verifications=replay_verifications,
+    ).to_dict()

@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-28T17:38:07Z",
+  "asOfUtc": "2026-07-28T18:28:45Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -288,6 +288,30 @@
         "status/audits/sbc_reproducible_audit_packages_p4_20260728.json",
         "sbc/audit_packages.py",
         "test_sbc_phase5d_audit_packages.py",
+        "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "sbc_signed_audit_catalogs_v1",
+      "label": "Signed replay-verified SBC audit package catalogs",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "P5 is implemented in source. One or more unique P4 packages can enter a catalog only after complete Chakra-to-P4 replay PASS. Portable package, entry and catalog SHA-256 identities are signed with Ed25519; the Windows private key is protected by DPAPI outside Git. The app separates integrity-only checking from full semantic replay, and an independent verifier explicitly reports semantic replay NOT_PERFORMED. Catalog membership never adds, averages, ranks, votes, infers direction, enters ML notes, affects live inference, creates trades or reaches MT5.",
+      "evidenceRefs": [
+        "docs/sbc/ADR-0009-signed-audit-package-catalogs.md",
+        "docs/sbc/PHASE5E_ACCEPTANCE.md",
+        "sbc_signed_audit_catalogs_p5_20260728.md",
+        "status/audits/sbc_signed_audit_catalogs_p5_20260728.json",
+        "sbc/audit_catalog.py",
+        "test_sbc_phase5e_audit_catalog.py",
+        "tools/verify_sbc_audit_catalog.py",
         "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx"
       ],
       "executionAllowed": false

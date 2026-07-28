@@ -814,6 +814,52 @@ async fn chakra_lab_verify_audit_package(
     .map_err(|error| format!("Chakra Lab package verification bridge task failed: {error}"))?
 }
 
+#[cfg(not(mobile))]
+#[tauri::command]
+async fn chakra_lab_audit_catalog(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Chakra Lab audit catalog requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/audit-catalog",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("Chakra Lab audit catalog bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
+async fn chakra_lab_verify_audit_catalog(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err(
+            "Chakra Lab audit catalog verification requires the read-only runtime lock".to_string(),
+        );
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/audit-catalog/verify",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("Chakra Lab catalog verification bridge task failed: {error}"))?
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     companion_protocol::install_crypto_provider()
@@ -839,6 +885,8 @@ pub fn run() {
             chakra_lab_audit,
             chakra_lab_audit_package,
             chakra_lab_verify_audit_package,
+            chakra_lab_audit_catalog,
+            chakra_lab_verify_audit_catalog,
             companion_gateway_info,
             companion_start_pairing,
             companion_gateway_sessions,

@@ -5,6 +5,7 @@ pyarrow>=16
 pyswisseph>=2.10.3.2
 PyYAML>=6
 requests>=2.32
+cryptography>=49,<50
 
 # Modeling and local retrieval
 joblib>=1.4

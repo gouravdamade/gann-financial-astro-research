@@ -39,10 +39,14 @@ import type {
   ChakraAuditPackageBuild,
   ChakraAuditPackageRequest,
   ChakraAuditPackageVerification,
+  ChakraAuditCatalogBuild,
+  ChakraAuditCatalogRequest,
+  ChakraAuditCatalogVerification,
   ChakraLabRequest,
   ChakraLabSnapshot,
   ChakraLinkedAuditView,
   ChakraReproducibleAuditPackage,
+  ChakraSignedAuditCatalogBundle,
 } from './types'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
@@ -739,6 +743,70 @@ export async function verifyChakraLabAuditPackage(
     {
       method: 'POST',
       body: JSON.stringify({ package: input }),
+    },
+  )
+  return payload.verification
+}
+
+export async function buildChakraLabAuditCatalog(
+  input: ChakraAuditCatalogRequest,
+): Promise<ChakraAuditCatalogBuild> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<ChakraAuditCatalogBuild>>(
+      'chakra_lab_audit_catalog',
+      { request: input },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Audit catalog request failed')
+    }
+    if (payload.bundle.catalog.guardrails.execution_allowed) {
+      throw new Error('Audit catalog response violated the execution lock')
+    }
+    return {
+      bundle: payload.bundle,
+      verification: payload.verification,
+      signingIdentity: payload.signingIdentity,
+    }
+  }
+  const payload = await request<ChakraAuditCatalogBuild>(
+    '/api/chakra-lab/audit-catalog',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+  if (payload.bundle.catalog.guardrails.execution_allowed) {
+    throw new Error('Audit catalog response violated the execution lock')
+  }
+  return payload
+}
+
+export async function verifyChakraLabAuditCatalog(
+  bundle: ChakraSignedAuditCatalogBundle,
+  fullReplay = true,
+): Promise<ChakraAuditCatalogVerification> {
+  const input = { bundle, fullReplay }
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{
+      verification: ChakraAuditCatalogVerification
+    }>>(
+      'chakra_lab_verify_audit_catalog',
+      { request: input },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Audit catalog verification failed')
+    }
+    return payload.verification
+  }
+  const payload = await request<{
+    verification: ChakraAuditCatalogVerification
+  }>(
+    '/api/chakra-lab/audit-catalog/verify',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
     },
   )
   return payload.verification

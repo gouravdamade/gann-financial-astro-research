@@ -25,6 +25,11 @@ if (-not (Test-Path -LiteralPath $PackagingPython -PathType Leaf)) {
     throw "Packaging Python was not found: $PackagingPython"
 }
 
+& $PackagingPython -c "import cryptography; from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey"
+if ($LASTEXITCODE -ne 0) {
+    throw "Packaging Python is missing the pinned cryptography dependency from requirements.txt"
+}
+
 Remove-VerifiedDirectory $pyinstallerWork $safeBuildRoot
 Remove-VerifiedDirectory $resourceRoot $appRoot
 New-Item -ItemType Directory -Path $pyinstallerWork,$tempRoot,$resourceRoot -Force | Out-Null

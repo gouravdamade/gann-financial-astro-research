@@ -69,6 +69,8 @@ hiddenimports = [
     "doctrine_config",
     "panchanga_doctrine",
     "sbc",
+    "sbc.audit_catalog",
+    "sbc.audit_packages",
     "sbc.chakra_lab",
     "sbc.config",
     "sbc.ephemeris",
@@ -91,6 +93,8 @@ hiddenimports = [
     "collective_refinement",
     "strict_shadbala_doctrine",
     "drik_bala_engine",
+    "cryptography",
+    "cryptography.hazmat.primitives.asymmetric.ed25519",
 ]
 
 a = Analysis(

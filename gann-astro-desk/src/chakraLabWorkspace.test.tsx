@@ -5,6 +5,7 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type {
+  ChakraAuditCatalogBuild,
   ChakraAuditPackageBuild,
   ChakraAuditPackageVerification,
   ChakraLabSnapshot,
@@ -13,29 +14,37 @@ import type {
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
 
 const {
+  buildAuditCatalog,
   buildAuditPackage,
   fetchAudit,
   fetchSnapshot,
+  verifyAuditCatalog,
   verifyAuditPackage,
 } = vi.hoisted(() => ({
+  buildAuditCatalog: vi.fn(),
   buildAuditPackage: vi.fn(),
   fetchAudit: vi.fn(),
   fetchSnapshot: vi.fn(),
+  verifyAuditCatalog: vi.fn(),
   verifyAuditPackage: vi.fn(),
 }))
 
 vi.mock('./api', () => ({
+  buildChakraLabAuditCatalog: buildAuditCatalog,
   buildChakraLabAuditPackage: buildAuditPackage,
   fetchChakraLabAudit: fetchAudit,
   fetchChakraLabSnapshot: fetchSnapshot,
+  verifyChakraLabAuditCatalog: verifyAuditCatalog,
   verifyChakraLabAuditPackage: verifyAuditPackage,
 }))
 
 afterEach(() => {
   cleanup()
+  buildAuditCatalog.mockReset()
   buildAuditPackage.mockReset()
   fetchAudit.mockReset()
   fetchSnapshot.mockReset()
+  verifyAuditCatalog.mockReset()
   verifyAuditPackage.mockReset()
 })
 
@@ -377,6 +386,92 @@ const packageVerification: ChakraAuditPackageVerification = {
   errors: [],
 }
 
+const catalogBuild: ChakraAuditCatalogBuild = {
+  bundle: {
+    contract: 'SBC_SIGNED_AUDIT_CATALOG_BUNDLE_V1',
+    schema_version: 1,
+    bundle_policy: 'SIGNED_PORTABLE_RESEARCH_EXCHANGE_V1',
+    catalog: {
+      contract: 'SBC_AUDIT_PACKAGE_CATALOG_V1',
+      schema_version: 1,
+      catalog_policy: 'SEALED_PACKAGE_CATALOG_NO_CROSS_AUDIT_INFERENCE_V1',
+      classification: 'SOURCE_PROFILED_EXPERIMENTAL',
+      catalog_id: 'catalog-test-0001',
+      created_at_utc: '2026-07-17T10:00:00Z',
+      entries: [{
+        entry_id: 'entry-test-0001',
+        package_id: auditPackageBuild.package.package_id,
+        package_digest: 'package-digest-test',
+        source_audit_id: auditPackageBuild.package.source_audit_id,
+        instrument_identity: auditPackageBuild.package.instrument_identity,
+        sealed_at_utc: auditPackageBuild.package.sealed_at_utc,
+        p4_replay_state: 'PASS',
+        package: auditPackageBuild.package,
+      }],
+      validation_gates: [{
+        gate_id: 'CROSS_PACKAGE_INFERENCE',
+        state: 'UNKNOWN',
+        label: 'Cross-package inference',
+        detail: 'No arithmetic, voting, direction, or execution is permitted.',
+      }],
+      guardrails: {
+        research_only: true,
+        read_only: true,
+        timestamp_safe: true,
+        no_lookahead: true,
+        source_profiled_experimental: true,
+        financially_validated: false,
+        catalog_only: true,
+        embedded_p4_replay_required: true,
+        no_cross_package_arithmetic: true,
+        no_cross_package_voting: true,
+        no_market_direction: true,
+        no_confidence_output: true,
+        signatures_prove_integrity_only: true,
+        counts_as_independent_vote: false,
+        directional_contribution: 0,
+        execution_allowed: false,
+        blocked_capabilities: ['CROSS_AUDIT_ARITHMETIC', 'MT5_EXECUTION'],
+      },
+    },
+    signature: {
+      contract: 'SBC_AUDIT_CATALOG_SIGNATURE_V1',
+      schema_version: 1,
+      algorithm: 'ED25519',
+      key_id: 'key-test-0001',
+      public_key_base64: 'public-key',
+      catalog_id: 'catalog-test-0001',
+      catalog_digest: 'catalog-digest-test',
+      signed_at_utc: '2026-07-17T10:01:00Z',
+      signature_base64: 'signature',
+    },
+  },
+  verification: {
+    contract: 'SBC_AUDIT_CATALOG_VERIFICATION_V1',
+    state: 'PASS',
+    catalog_id: 'catalog-test-0001',
+    key_id: 'key-test-0001',
+    catalog_hash_match: true,
+    signature_valid: true,
+    embedded_packages_valid: true,
+    semantic_replay_state: 'PASS',
+    entry_count: 1,
+    entry_verifications: [{
+      package_id: auditPackageBuild.package.package_id,
+      structural_integrity: 'PASS',
+      semantic_replay: 'PASS',
+      errors: [],
+    }],
+    errors: [],
+  },
+  signingIdentity: {
+    algorithm: 'ED25519',
+    keyId: 'key-test-0001',
+    storage: 'WINDOWS_DPAPI_APP_DATA',
+    claim: 'Integrity only.',
+  },
+}
+
 describe('ChakraLabWorkspace', () => {
   it('renders source-profiled guidance without trading direction labels', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
@@ -454,6 +549,8 @@ describe('ChakraLabWorkspace', () => {
     fetchAudit.mockResolvedValue(comparisonAudit)
     buildAuditPackage.mockResolvedValue(auditPackageBuild)
     verifyAuditPackage.mockResolvedValue(packageVerification)
+    buildAuditCatalog.mockResolvedValue(catalogBuild)
+    verifyAuditCatalog.mockResolvedValue(catalogBuild.verification)
     const user = userEvent.setup()
 
     render(
@@ -510,6 +607,24 @@ describe('ChakraLabWorkspace', () => {
     expect(
       screen.getByText('Full Chakra to P1 to P2 to P3 to P4 replay matched'),
     ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Add verified P4' }))
+    await user.click(screen.getByRole('button', { name: 'Seal and sign catalog' }))
+    await waitFor(() => expect(buildAuditCatalog).toHaveBeenCalledTimes(1))
+    expect(buildAuditCatalog).toHaveBeenCalledWith(expect.objectContaining({
+      packages: [auditPackageBuild.package],
+    }))
+    expect(screen.getByText('Signed P5 audit catalog')).toBeInTheDocument()
+    expect(
+      screen.getByText(/Packages are not added, averaged, voted, ranked/),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Integrity' }))
+    await waitFor(() => expect(verifyAuditCatalog).toHaveBeenCalledWith(
+      catalogBuild.bundle,
+      false,
+    ))
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 })
+  buildAuditCatalog.mockReset()

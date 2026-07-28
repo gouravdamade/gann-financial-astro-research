@@ -1,8 +1,86 @@
 # Current Project Handoff
 
-Last updated: 2026-07-28 23:17 IST
+Last updated: 2026-07-29 00:23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-29 (Signed SBC Audit Catalogs P5)
+
+- Completed P5/Phase 5E in source with:
+  - catalog `SBC_AUDIT_PACKAGE_CATALOG_V1`;
+  - signature `SBC_AUDIT_CATALOG_SIGNATURE_V1`;
+  - bundle `SBC_SIGNED_AUDIT_CATALOG_BUNDLE_V1`;
+  - verification `SBC_AUDIT_CATALOG_VERIFICATION_V1`;
+  - Ed25519 signing under
+    `SEALED_PACKAGE_CATALOG_NO_CROSS_AUDIT_INFERENCE_V1`.
+- The deterministic implementation is `sbc/audit_catalog.py`; its audited
+  line-ending-independent canonical-text SHA-256 is
+  `260744F08AC1BB7F44BCF854049459ACFF74E4BBE5A28B215A0A4C6FECE1EEC1`.
+- Froze the design, acceptance boundary, and canonical status evidence in:
+  - `docs/sbc/ADR-0009-signed-audit-package-catalogs.md`;
+  - `docs/sbc/PHASE5E_ACCEPTANCE.md`;
+  - `sbc_signed_audit_catalogs_p5_20260728.md`;
+  - `status/audits/sbc_signed_audit_catalogs_p5_20260728.json`.
+- A catalog accepts one or more unique P4 packages only after each package
+  passes complete Chakra -> P1 -> P2 -> P3 -> P4 replay. Members are sorted by
+  package identity and preserve their exact sealed P4 payloads.
+- Portable SHA-256 identities cover each P4 package, catalog entry, complete
+  catalog, signing key, and signature. The Ed25519 signature covers the exact
+  canonical catalog bytes.
+- The backend generates one local research signing key on first use. Windows
+  DPAPI protects the private key for the current user under
+  `D:\GannFinancialAstro\app_data\sbc_audit_catalog` by default. Private bytes
+  stay outside Git and exports; only the public key and signature leave the
+  backend. This is local provenance, not independently attested identity.
+- Added `tools/verify_sbc_audit_catalog.py`, an intentionally independent
+  integrity verifier that imports no application SBC module. It validates the
+  contracts, strict structure, hashes, guardrails, embedded P4 structure, and
+  signature, while explicitly reporting semantic replay `NOT_PERFORMED`.
+- Imported catalog verification now has two distinct modes:
+  - Integrity verifies contracts, hashes, locks, and Ed25519 signature only;
+  - Full replay performs integrity checks first, then independently rebuilds
+    every embedded P4 recipe and requires semantic replay `PASS`.
+- Added private backend routes:
+  - POST `/api/chakra-lab/audit-catalog`;
+  - POST `/api/chakra-lab/audit-catalog/verify`.
+  Native desktop uses dedicated read-only Tauri commands and the supervised
+  private sidecar; browser development uses private loopback HTTP.
+- Chakra Audit UI now supports a local P5 catalog draft, adding only the
+  currently replay-verified P4 package, removing draft members, sealing and
+  signing, JSON import/export, integrity-only verification, full replay, and a
+  linked Catalog view with package, catalog, and public-key identities.
+- The UI and contracts explicitly prohibit cross-package arithmetic, ranking,
+  voting, confidence, market direction, official ML notes, Auto Suggest, live
+  inference, shadow votes, trade output, and MT5 execution.
+- Verification on the final source state:
+  - new P5 engine and standalone-verifier tests `6/6`;
+  - Chakra Lab service tests `10/10`;
+  - Chakra Audit workspace tests `4/4`;
+  - complete repository Python suite `452/452`;
+  - complete frontend suite `96/96`;
+  - status tests `25/25`;
+  - P5 changed Python scope passes Ruff;
+  - frontend lint and production build pass;
+  - native Rust `cargo check` and focused `rustfmt --check` pass;
+  - packaging environment imports Ed25519 successfully;
+  - canonical status validation reports eleven documents, six audits, and
+    execution false.
+- A repository-wide Ruff scan also reports 19 pre-existing, out-of-scope
+  findings in unrelated backend/manual/Android files. They were not changed or
+  hidden by this milestone.
+- Real in-app-browser acceptance passed at `http://127.0.0.1:5173/`: two
+  explicit boundaries compiled through P3; a sealed P4 package replayed
+  `PASS`; the replay-verified P4 entered a signed catalog; Integrity reported
+  signature/structure `PASS` with semantic replay `NOT_PERFORMED`; Full replay
+  then reported semantic replay `PASS`. The 1280-pixel layout had no overlap
+  and the browser console had no errors.
+- P5 remains `SOURCE_PROFILED_EXPERIMENTAL`, unpackaged, externally
+  unattested, financially unvalidated, and execution-locked. No Windows or
+  Android package was rebuilt.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260729_002300_sbc_signed_audit_catalogs_p5`.
+- Runtime-only SQLite databases, logs, Android workspace state, and the
+  DPAPI-protected signing key remain local and uncommitted.
 
 ## Latest Update - 2026-07-28 (Reproducible SBC Audit Packages P4)
 
@@ -12,7 +90,8 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   `READ_ONLY_COMPARISON_EXPORT_REPLAY_V1`.
 - The deterministic implementation is `sbc/audit_packages.py`; its audited
   line-ending-independent canonical-text SHA-256 is
-  `7D1CF634BEAA93B7B1B0A7F7FC3FEBF13D5070934B1CEB65B5CE1C2F66BA4A03`.
+  `A61DA1821F5EBDF2FF5DFEAF305B87391D4AC26874C40BB79FE4307973577087`
+  after exposing the same portable canonicalization helpers to P5.
 - Froze the design and acceptance boundary in:
   - `docs/sbc/ADR-0008-reproducible-audit-comparison-packages.md`;
   - `docs/sbc/PHASE5D_ACCEPTANCE.md`;

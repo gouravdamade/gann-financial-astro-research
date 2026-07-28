@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import copy
+import os
+import tempfile
 import unittest
+from unittest.mock import patch
 
 from chakra_lab_service import (
     build_chakra_lab_audit,
+    build_chakra_lab_audit_catalog,
     build_chakra_lab_audit_package,
     build_chakra_lab_snapshot,
+    verify_chakra_lab_audit_catalog,
     verify_chakra_lab_audit_package,
 )
 
@@ -212,6 +217,61 @@ class ChakraLabServiceTests(unittest.TestCase):
         )
         self.assertEqual(verification["state"], "FAIL")
         self.assertIn("hash", verification["errors"][0])
+
+    def test_signed_catalog_runs_full_embedded_p4_replay(self) -> None:
+        audit_request = self._two_interval_audit_request()
+        audit = build_chakra_lab_audit(audit_request)
+        package = build_chakra_lab_audit_package(
+            {
+                "auditRequest": audit_request,
+                "baselineIntervalId": audit["intervals"][0]["interval_id"],
+                "comparisonIntervalIds": [audit["intervals"][1]["interval_id"]],
+                "bookmarks": [],
+                "sealedAt": "2026-07-17T16:30:00+05:30",
+            }
+        )["package"]
+        with tempfile.TemporaryDirectory() as directory:
+            key_path = os.path.join(directory, "catalog-key.dpapi")
+            with patch.dict(
+                os.environ,
+                {"GANN_ASTRO_SBC_CATALOG_SIGNING_KEY": key_path},
+            ):
+                result = build_chakra_lab_audit_catalog(
+                    {
+                        "packages": [package],
+                        "createdAt": "2026-07-17T17:00:00+05:30",
+                        "signedAt": "2026-07-17T17:01:00+05:30",
+                    }
+                )
+
+        self.assertEqual(
+            result["bundle"]["contract"],
+            "SBC_SIGNED_AUDIT_CATALOG_BUNDLE_V1",
+        )
+        self.assertEqual(result["verification"]["state"], "PASS")
+        self.assertEqual(
+            result["verification"]["semantic_replay_state"],
+            "PASS",
+        )
+        self.assertFalse(
+            result["bundle"]["catalog"]["guardrails"]["execution_allowed"]
+        )
+        self.assertIn("integrity only", result["signingIdentity"]["claim"])
+
+        independent = verify_chakra_lab_audit_catalog(
+            {"bundle": result["bundle"], "fullReplay": False}
+        )
+        self.assertEqual(independent["state"], "PASS")
+        self.assertEqual(
+            independent["semantic_replay_state"],
+            "NOT_PERFORMED",
+        )
+
+        full = verify_chakra_lab_audit_catalog(
+            {"bundle": result["bundle"], "fullReplay": True}
+        )
+        self.assertEqual(full["state"], "PASS")
+        self.assertEqual(full["semantic_replay_state"], "PASS")
 
     def test_audit_preserves_missing_guidance_as_unknown(self) -> None:
         audit = build_chakra_lab_audit(

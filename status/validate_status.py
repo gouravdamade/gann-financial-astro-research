@@ -30,6 +30,9 @@ CANONICAL_AUDITS = {
     "audits/sbc_reproducible_audit_packages_p4_20260728.json": (
         "GANN_SBC_REPRODUCIBLE_AUDIT_PACKAGES_P4_AUDIT_V1"
     ),
+    "audits/sbc_signed_audit_catalogs_p5_20260728.json": (
+        "GANN_SBC_SIGNED_AUDIT_CATALOGS_P5_AUDIT_V1"
+    ),
 }
 P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
 P0_INVENTORY_STATES = {"implemented_reuse", "partial_reuse", "absent", "blocked"}
@@ -853,6 +856,204 @@ def validate_sbc_reproducible_audit_packages_p4_audit(
         )
 
 
+def validate_sbc_signed_audit_catalogs_p5_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    _utc_timestamp(
+        document.get("auditedAtUtc"),
+        "SBC signed audit catalog P5 auditedAtUtc",
+    )
+    _execution_locked(document, "SBC signed audit catalog P5")
+    if document.get("capabilityId") != "sbc_signed_audit_catalogs_v1":
+        raise ValueError("SBC signed audit catalog P5 has an unexpected capability")
+    if document.get("status") != "implemented_in_source_research_only":
+        raise ValueError("SBC signed audit catalog P5 has an unexpected status")
+    for field in (
+        "packagedCandidate",
+        "externallyAttestedIdentity",
+        "financiallyValidated",
+        "promotionAllowed",
+    ):
+        if document.get(field) is not False:
+            raise ValueError(f"SBC signed audit catalog P5 {field} must remain false")
+
+    implementation = document.get("implementation") or {}
+    expected_contracts = {
+        "catalogContract": "SBC_AUDIT_PACKAGE_CATALOG_V1",
+        "signatureContract": "SBC_AUDIT_CATALOG_SIGNATURE_V1",
+        "bundleContract": "SBC_SIGNED_AUDIT_CATALOG_BUNDLE_V1",
+        "verificationContract": "SBC_AUDIT_CATALOG_VERIFICATION_V1",
+        "schemaVersion": 1,
+        "catalogPolicy": "SEALED_PACKAGE_CATALOG_NO_CROSS_AUDIT_INFERENCE_V1",
+        "bundlePolicy": "SIGNED_PORTABLE_RESEARCH_EXCHANGE_V1",
+        "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+        "signatureAlgorithm": "ED25519",
+    }
+    for field, expected in expected_contracts.items():
+        if implementation.get(field) != expected:
+            raise ValueError(
+                f"SBC signed audit catalog P5 {field} differs from {expected}"
+            )
+    for field in (
+        "modulePath",
+        "testPath",
+        "standaloneVerifierPath",
+        "servicePath",
+        "serviceTestPath",
+        "uiPath",
+        "uiTestPath",
+        "acceptancePath",
+        "milestonePath",
+        "adrPath",
+    ):
+        path = project_root / _required_text(implementation.get(field), field)
+        if not path.is_file():
+            raise ValueError(
+                f"SBC signed audit catalog P5 evidence is missing: {path}"
+            )
+    module_path = project_root / implementation["modulePath"]
+    expected_hash = _sha256(
+        implementation.get("moduleCanonicalTextSha256"),
+        "SBC signed audit catalog P5 module canonical text",
+    )
+    if _canonical_text_sha256(module_path) != expected_hash:
+        raise ValueError(
+            "SBC signed audit catalog P5 module hash differs from the audit"
+        )
+
+    expected_catalog = {
+        "minimumPackages": 1,
+        "uniquePackageIdsRequired": True,
+        "completeP4ReplayRequired": True,
+        "stableOrder": "package_id",
+        "embedsCanonicalP4Bytes": True,
+        "portablePackageIdentity": True,
+        "portableEntryIdentity": True,
+        "portableCatalogIdentity": True,
+        "crossPackageComputation": False,
+    }
+    if (document.get("catalog") or {}) != expected_catalog:
+        raise ValueError("SBC signed audit catalog P5 catalog contract drifted")
+
+    expected_verification_levels = {
+        "integrityOnly": {
+            "signatureAndStructure": True,
+            "embeddedP4SemanticReplay": False,
+            "semanticReplayState": "NOT_PERFORMED",
+        },
+        "fullReplay": {
+            "signatureAndStructure": True,
+            "embeddedP4SemanticReplay": True,
+            "requiredPassState": "PASS",
+        },
+        "standaloneVerifierImportsApplicationSbc": False,
+        "standaloneSemanticReplayState": "NOT_PERFORMED",
+    }
+    if (document.get("verificationLevels") or {}) != expected_verification_levels:
+        raise ValueError(
+            "SBC signed audit catalog P5 verification levels drifted"
+        )
+
+    expected_key_management = {
+        "platform": "Windows",
+        "privateKeyProtection": "DPAPI_CURRENT_USER",
+        "privateKeyOutsideGit": True,
+        "defaultDirectory": (
+            "D:\\GannFinancialAstro\\app_data\\sbc_audit_catalog"
+        ),
+        "privateKeyExported": False,
+        "publicKeyExported": True,
+        "externallyAttestedIdentity": False,
+    }
+    if (document.get("keyManagement") or {}) != expected_key_management:
+        raise ValueError("SBC signed audit catalog P5 key management drifted")
+
+    expected_transport = {
+        "browserDevelopment": "private_http_post",
+        "nativeDesktop": "tauri_ipc_private_sidecar",
+        "browserSuppliesPrivateKey": False,
+        "backendRecomputesChakraP1P2P3P4": True,
+        "readOnlyRuntimeRequired": True,
+    }
+    if (document.get("transport") or {}) != expected_transport:
+        raise ValueError("SBC signed audit catalog P5 transport contract drifted")
+
+    guardrails = document.get("guardrails") or {}
+    for field in (
+        "researchOnly",
+        "readOnly",
+        "timestampSafe",
+        "noLookahead",
+        "sourceProfiledExperimental",
+        "catalogOnly",
+        "embeddedP4ReplayRequired",
+        "noCrossPackageArithmetic",
+        "noCrossPackageVoting",
+        "noMarketDirection",
+        "noConfidenceOutput",
+        "signaturesProveIntegrityOnly",
+    ):
+        if guardrails.get(field) is not True:
+            raise ValueError(
+                f"SBC signed audit catalog P5 guardrail {field} must remain true"
+            )
+    for field in (
+        "financiallyValidated",
+        "countsAsIndependentVote",
+        "executionAllowed",
+    ):
+        if guardrails.get(field) is not False:
+            raise ValueError(
+                f"SBC signed audit catalog P5 guardrail {field} must remain false"
+            )
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError(
+            "SBC signed audit catalog P5 directional contribution must remain zero"
+        )
+    expected_blocked = [
+        "CROSS_AUDIT_ARITHMETIC",
+        "CROSS_PACKAGE_VOTING",
+        "FX_SUBTRACTION",
+        "PHASE_OUTPUT",
+        "CONFIDENCE_OUTPUT",
+        "MARKET_DIRECTION",
+        "AUTO_SUGGEST",
+        "LIVE_INFERENCE",
+        "OFFICIAL_ML_NOTES",
+        "SHADOW_VALIDATION_VOTE",
+        "TRADE_OUTPUT",
+        "MT5_EXECUTION",
+    ]
+    if guardrails.get("blockedCapabilities") != expected_blocked:
+        raise ValueError(
+            "SBC signed audit catalog P5 blockedCapabilities drifted"
+        )
+
+    expected_verification = {
+        "newAuditCatalogTests": "6_passed",
+        "chakraServiceTests": "10_passed",
+        "chakraAuditWorkspaceTests": "4_passed",
+        "frontendTests": "96_passed",
+        "statusValidation": "25_passed",
+        "repositoryPythonTests": "452_passed",
+        "pythonRuff": "changed_scope_passed",
+        "repositoryWidePythonRuff": "blocked_by_19_out_of_scope_findings",
+        "frontendLint": "passed",
+        "frontendProductionBuild": "passed",
+        "nativeRustCheck": "passed",
+        "standaloneVerifier": "passed",
+        "dpapiKeyRoundTrip": "passed",
+        "packagingDependencyPreflight": "passed",
+        "browserVisualAcceptance": "passed",
+        "browserIntegrityOnlyVerification": "semantic_replay_not_performed",
+        "browserFullReplayVerification": "semantic_replay_passed",
+    }
+    if (document.get("verification") or {}) != expected_verification:
+        raise ValueError(
+            "SBC signed audit catalog P5 verification evidence is incomplete"
+        )
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -928,6 +1129,10 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         audits["audits/sbc_reproducible_audit_packages_p4_20260728.json"],
         root.parent,
     )
+    validate_sbc_signed_audit_catalogs_p5_audit(
+        audits["audits/sbc_signed_audit_catalogs_p5_20260728.json"],
+        root.parent,
+    )
     validate_cross_document_links(documents, root)
     capability_ids = {
         item["capabilityId"]
@@ -938,6 +1143,7 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         "multidimensional_sbc_ledger_v1",
         "sbc_linked_audit_views_v1",
         "sbc_reproducible_audit_packages_v1",
+        "sbc_signed_audit_catalogs_v1",
         "phase_interference_research_engine_v1",
     }
     if not required_capabilities <= capability_ids:
@@ -979,6 +1185,15 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     ):
         raise ValueError(
             "SBC reproducible audit P4 capability is not registered as source-implemented"
+        )
+    if (
+        capability_by_id["sbc_signed_audit_catalogs_v1"]["states"][
+            "implementedInSource"
+        ]
+        != "yes"
+    ):
+        raise ValueError(
+            "SBC signed audit catalog P5 capability is not registered as source-implemented"
         )
     return {
         "contract": "GANN_PROJECT_STATUS_VALIDATION_V1",

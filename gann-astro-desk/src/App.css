@@ -7088,6 +7088,36 @@ html.android-runtime .loading-state {
 .chakra-package-bookmarks strong { color: #c8d0d6; font-size: 8px; }
 .chakra-package-bookmarks p { margin: 0; color: #7e8994; font-size: 8px; }
 .chakra-package-bookmarks code { color: #68747f; font-size: 7px; }
+.chakra-catalog-picks,
+.chakra-catalog-entries { display: grid; gap: 4px; }
+.chakra-catalog-picks > div {
+  min-width: 0;
+  min-height: 27px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px 24px;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px 7px;
+  border: 1px solid #303943;
+  background: #11171c;
+}
+.chakra-catalog-picks span { overflow: hidden; color: #aeb8c1; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.chakra-catalog-picks code { color: #68747f; font-size: 7px; }
+.chakra-catalog-entries > div {
+  min-width: 0;
+  min-height: 38px;
+  display: grid;
+  grid-template-columns: minmax(145px, 1fr) 82px minmax(170px, 0.8fr);
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid #303943;
+  background: #11171c;
+}
+.chakra-catalog-entries > div > div { min-width: 0; display: grid; gap: 3px; }
+.chakra-catalog-entries strong { color: #c8d0d6; font-size: 8px; }
+.chakra-catalog-entries span { color: #78838e; font-size: 7px; }
+.chakra-catalog-entries code { color: #68747f; font-size: 7px; }
 
 .chakra-reconciliation-grid {
   display: grid;

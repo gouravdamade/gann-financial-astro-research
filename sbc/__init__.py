@@ -8,8 +8,10 @@ snapshot. Phase 5A compiles explicit boundary states into non-overlapping
 atomic intervals. Phase 5B exposes reconciled, non-voting causal-cluster ledger
 views. Phase 5C projects those ledgers into linked, read-only audit views.
 Phase 5D adds reproducible descriptive comparison and replayable export
-packages. Absolute cardinal orientation, Latta, phase, confidence, financial
-labels, and trade decisions remain disabled.
+packages. Phase 5E catalogs fully replay-verified P4 packages in signed
+portable exchange bundles without cross-package inference. Absolute cardinal
+orientation, Latta, phase, confidence, financial labels, and trade decisions
+remain disabled.
 """
 
 from .audit_packages import (
@@ -30,9 +32,33 @@ from .audit_packages import (
     SbcAuditPackageValidationGate,
     SbcAuditPackageVerification,
     SbcReproducibleAuditPackage,
+    portable_canonical_hash,
+    portable_canonical_json,
     render_audit_package_html,
     validate_audit_package_payload,
     verify_audit_package_replay,
+)
+from .audit_catalog import (
+    AUDIT_CATALOG_BUNDLE_CONTRACT,
+    AUDIT_CATALOG_BUNDLE_POLICY,
+    AUDIT_CATALOG_CONTRACT,
+    AUDIT_CATALOG_POLICY,
+    AUDIT_CATALOG_SCHEMA_VERSION,
+    AUDIT_CATALOG_SIGNATURE_CONTRACT,
+    AUDIT_CATALOG_VERIFICATION_CONTRACT,
+    SbcAuditCatalogEntry,
+    SbcAuditCatalogEntryVerification,
+    SbcAuditCatalogGuardrails,
+    SbcAuditCatalogSignature,
+    SbcAuditCatalogValidationGate,
+    SbcAuditCatalogVerification,
+    SbcAuditPackageCatalog,
+    SbcAuditPackageCatalogCompiler,
+    SbcSignedAuditCatalogBundle,
+    load_or_create_signing_key,
+    sign_audit_catalog,
+    validate_audit_catalog_payload,
+    verify_signed_audit_catalog,
 )
 from .audit_views import (
     AUDIT_VIEW_IDS,
@@ -138,6 +164,13 @@ from .vedha import (
 
 __all__ = [
     "ACTOR_AXIS",
+    "AUDIT_CATALOG_BUNDLE_CONTRACT",
+    "AUDIT_CATALOG_BUNDLE_POLICY",
+    "AUDIT_CATALOG_CONTRACT",
+    "AUDIT_CATALOG_POLICY",
+    "AUDIT_CATALOG_SCHEMA_VERSION",
+    "AUDIT_CATALOG_SIGNATURE_CONTRACT",
+    "AUDIT_CATALOG_VERIFICATION_CONTRACT",
     "AUDIT_PACKAGE_CONTRACT",
     "AUDIT_PACKAGE_POLICY",
     "AUDIT_PACKAGE_SCHEMA_VERSION",
@@ -195,6 +228,14 @@ __all__ = [
     "SbcAuditPackageGuardrails",
     "SbcAuditPackageValidationGate",
     "SbcAuditPackageVerification",
+    "SbcAuditCatalogEntry",
+    "SbcAuditCatalogEntryVerification",
+    "SbcAuditCatalogGuardrails",
+    "SbcAuditCatalogSignature",
+    "SbcAuditCatalogValidationGate",
+    "SbcAuditCatalogVerification",
+    "SbcAuditPackageCatalog",
+    "SbcAuditPackageCatalogCompiler",
     "SbcAuditRayRow",
     "SbcAuditReconciliationRow",
     "SbcAuditValidationGate",
@@ -220,6 +261,7 @@ __all__ = [
     "SbcMultidimensionalLedgerGuardrails",
     "SbcMultidimensionalLedgerSeries",
     "SbcReproducibleAuditPackage",
+    "SbcSignedAuditCatalogBundle",
     "SbcSnapshot",
     "SbcSnapshotRequest",
     "SOURCE_LINEAGE_AXIS",
@@ -243,11 +285,17 @@ __all__ = [
     "compile_grid",
     "contribution_from_vedha",
     "load_grid_profile",
+    "load_or_create_signing_key",
     "load_profile",
     "load_source_register",
     "load_vedha_profile",
     "rashi_from_longitude",
+    "portable_canonical_hash",
+    "portable_canonical_json",
     "render_audit_package_html",
+    "sign_audit_catalog",
+    "validate_audit_catalog_payload",
     "validate_audit_package_payload",
     "verify_audit_package_replay",
+    "verify_signed_audit_catalog",
 ]

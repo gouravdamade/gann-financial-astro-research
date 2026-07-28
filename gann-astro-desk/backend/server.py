@@ -25,8 +25,10 @@ from chart_layouts import (
 from candlestick_shadow import CandlestickShadowSupervisor, default_model_path
 from chakra_lab_service import (
     build_chakra_lab_audit,
+    build_chakra_lab_audit_catalog,
     build_chakra_lab_audit_package,
     build_chakra_lab_snapshot,
+    verify_chakra_lab_audit_catalog,
     verify_chakra_lab_audit_package,
 )
 from companion_capabilities import build_companion_capabilities
@@ -279,6 +281,34 @@ def verify_imported_chakra_lab_audit_package() -> Any:
             {
                 "ok": True,
                 "verification": verify_chakra_lab_audit_package(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/audit-catalog")
+def create_chakra_lab_audit_catalog() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                **build_chakra_lab_audit_catalog(payload),
+            }
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/audit-catalog/verify")
+def verify_imported_chakra_lab_audit_catalog() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "verification": verify_chakra_lab_audit_catalog(payload),
             }
         )
     except (TypeError, ValueError) as exc:

@@ -111,6 +111,16 @@ def _portable_canonical_hash(value: Any) -> str:
     ).hexdigest().upper()
 
 
+def portable_canonical_json(value: Any) -> str:
+    """Return the browser-safe canonical JSON representation used by P4+."""
+    return _portable_canonical_json(value)
+
+
+def portable_canonical_hash(value: Any) -> str:
+    """Return the uppercase SHA-256 digest used by portable SBC contracts."""
+    return _portable_canonical_hash(value)
+
+
 def _required_text(value: Any, label: str) -> str:
     normalized = str(value or "").strip()
     if not normalized:

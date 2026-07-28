@@ -211,6 +211,80 @@ describe('Tauri backend transport', () => {
     expect(verification.state).toBe('PASS')
   })
 
+  it('uses native IPC for signed audit catalogs and full replay verification', async () => {
+    const sealedPackage = {
+      package_id: 'package-test',
+      guardrails: { execution_allowed: false },
+    }
+    const bundle = {
+      contract: 'SBC_SIGNED_AUDIT_CATALOG_BUNDLE_V1',
+      catalog: {
+        catalog_id: 'catalog-test',
+        guardrails: { execution_allowed: false },
+      },
+      signature: { key_id: 'key-test' },
+    }
+    const verification = {
+      contract: 'SBC_AUDIT_CATALOG_VERIFICATION_V1',
+      state: 'PASS',
+      catalog_id: 'catalog-test',
+      key_id: 'key-test',
+      catalog_hash_match: true,
+      signature_valid: true,
+      embedded_packages_valid: true,
+      semantic_replay_state: 'PASS',
+      entry_count: 1,
+      entry_verifications: [],
+      errors: [],
+    }
+    invokeMock
+      .mockResolvedValueOnce({
+        ok: true,
+        bundle,
+        verification,
+        signingIdentity: {
+          algorithm: 'ED25519',
+          keyId: 'key-test',
+          storage: 'WINDOWS_DPAPI_APP_DATA',
+          claim: 'Integrity only.',
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        verification,
+      })
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+
+    const {
+      buildChakraLabAuditCatalog,
+      verifyChakraLabAuditCatalog,
+    } = await import('./api')
+    const request = {
+      packages: [sealedPackage],
+      createdAt: '2026-07-17T17:00:00+05:30',
+      signedAt: '2026-07-17T17:01:00+05:30',
+    }
+    const result = await buildChakraLabAuditCatalog(request as never)
+    const replayed = await verifyChakraLabAuditCatalog(
+      result.bundle,
+      true,
+    )
+
+    expect(invokeMock).toHaveBeenNthCalledWith(
+      1,
+      'chakra_lab_audit_catalog',
+      { request },
+    )
+    expect(invokeMock).toHaveBeenNthCalledWith(
+      2,
+      'chakra_lab_verify_audit_catalog',
+      { request: { bundle, fullReplay: true } },
+    )
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(replayed.semantic_replay_state).toBe('PASS')
+  })
+
   it('rediscovers the runtime after a network failure so Rust can recover the sidecar', async () => {
     vi.useFakeTimers()
     invokeMock.mockResolvedValue({

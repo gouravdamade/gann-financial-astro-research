@@ -5,7 +5,7 @@
   "status": "implemented_in_source_research_only",
   "implementation": {
     "modulePath": "sbc/audit_packages.py",
-    "moduleCanonicalTextSha256": "7D1CF634BEAA93B7B1B0A7F7FC3FEBF13D5070934B1CEB65B5CE1C2F66BA4A03",
+    "moduleCanonicalTextSha256": "A61DA1821F5EBDF2FF5DFEAF305B87391D4AC26874C40BB79FE4307973577087",
     "testPath": "test_sbc_phase5d_audit_packages.py",
     "servicePath": "gann-astro-desk/backend/chakra_lab_service.py",
     "serviceTestPath": "gann-astro-desk/backend/test_chakra_lab_service.py",
