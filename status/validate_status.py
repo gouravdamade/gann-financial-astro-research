@@ -20,6 +20,7 @@ EXPECTED_CONTRACTS = {
 }
 CANONICAL_AUDITS = {
     "audits/sbc_phase_p0_gap_audit_20260728.json": "GANN_SBC_PHASE_P0_GAP_AUDIT_V1",
+    "audits/sbc_atomic_intervals_p1_20260728.json": "GANN_SBC_ATOMIC_INTERVALS_P1_AUDIT_V1",
 }
 P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
 P0_INVENTORY_STATES = {"implemented_reuse", "partial_reuse", "absent", "blocked"}
@@ -52,9 +53,24 @@ def _execution_locked(document: dict[str, Any], label: str) -> None:
         raise ValueError(f"{label} must keep executionAllowed=false")
 
 
-def _sha256(value: Any, label: str) -> None:
-    if not re.fullmatch(r"[0-9A-F]{64}", str(value or "")):
+def _sha256(value: Any, label: str) -> str:
+    normalized = str(value or "")
+    if not re.fullmatch(r"[0-9A-F]{64}", normalized):
         raise ValueError(f"{label} must be an uppercase SHA-256 digest")
+    return normalized
+
+
+def _required_text(value: Any, label: str) -> str:
+    normalized = str(value or "").strip()
+    if not normalized:
+        raise ValueError(f"{label} is required")
+    return normalized
+
+
+def _canonical_text_sha256(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest().upper()
 
 
 def validate_release(document: dict[str, Any]) -> None:
@@ -260,6 +276,123 @@ def validate_sbc_phase_p0_audit(
         raise ValueError("SBC phase P0 directional contribution must remain zero")
 
 
+def validate_sbc_atomic_intervals_p1_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    _utc_timestamp(document.get("auditedAtUtc"), "SBC atomic P1 audit auditedAtUtc")
+    _execution_locked(document, "SBC atomic P1 audit")
+    if document.get("capabilityId") != "multidimensional_sbc_atomic_intervals_v1":
+        raise ValueError("SBC atomic P1 audit has an unexpected capability")
+    if document.get("status") != "implemented_in_source_research_only":
+        raise ValueError("SBC atomic P1 audit has an unexpected status")
+    if document.get("packagedCandidate") is not False:
+        raise ValueError("SBC atomic P1 audit cannot claim a packaged candidate")
+    if document.get("financiallyValidated") is not False:
+        raise ValueError("SBC atomic P1 audit cannot claim financial validation")
+    if document.get("promotionAllowed") is not False:
+        raise ValueError("SBC atomic P1 audit cannot allow promotion")
+
+    implementation = document.get("implementation") or {}
+    expected_contracts = {
+        "seriesContract": "SBC_ATOMIC_INTERVAL_SERIES_V1",
+        "boundaryPolicy": "EXPLICIT_BOUNDARY_STATES_V1",
+        "contributionContract": "SBC_ATOMIC_CONTRIBUTION_V1",
+        "sourceLineageContract": "SBC_ATOMIC_SOURCE_LINEAGE_V1",
+        "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    }
+    for field, expected in expected_contracts.items():
+        if implementation.get(field) != expected:
+            raise ValueError(f"SBC atomic P1 {field} differs from {expected}")
+    for field in ("modulePath", "testPath", "acceptancePath", "milestonePath"):
+        path = project_root / _required_text(implementation.get(field), field)
+        if not path.is_file():
+            raise ValueError(f"SBC atomic P1 evidence is missing: {path}")
+    module_path = project_root / implementation["modulePath"]
+    expected_hash = _sha256(
+        implementation.get("moduleCanonicalTextSha256"),
+        "SBC atomic P1 module canonical text",
+    )
+    actual_hash = _canonical_text_sha256(module_path)
+    if actual_hash != expected_hash:
+        raise ValueError("SBC atomic P1 module hash differs from the audit")
+
+    semantics = document.get("intervalSemantics") or {}
+    expected_semantics = {
+        "intervalForm": "[startUtc,endUtc)",
+        "inputOrder": "canonical_chronological_sort",
+        "duplicateBoundaryTimestamps": "rejected",
+        "nonPositiveDuration": "rejected",
+        "profileMixing": "rejected",
+        "evidenceCutoffRule": "cutoff_not_later_than_interval_start",
+        "boundaryDiscoveryIncluded": False,
+    }
+    if semantics != expected_semantics:
+        raise ValueError("SBC atomic P1 interval semantics drifted")
+
+    accounting = document.get("accounting") or {}
+    if accounting.get("grossActivationUnits") != "sum_absolute_scored_contributions":
+        raise ValueError("SBC atomic P1 gross activation semantics drifted")
+    if accounting.get("unknownMagnitudeWhenUnknown") is not None:
+        raise ValueError("SBC atomic P1 unknown magnitude must remain null")
+    if accounting.get("unknownMagnitudeWhenKnown") != 0:
+        raise ValueError("SBC atomic P1 known-empty unknown magnitude must remain zero")
+    unknown_sources = set(accounting.get("unknownCountIncludes") or [])
+    if unknown_sources != {"unresolved_contributions", "explicit_missing_evidence"}:
+        raise ValueError("SBC atomic P1 unknown-count sources drifted")
+
+    lineage = document.get("lineage") or {}
+    required_true_lineage = {
+        "sourceAndEvaluationIdentitySeparated",
+        "canonicalSha256",
+        "profileHashesPreserved",
+        "targetWitnessMetadataPreserved",
+        "citationSourceIdsPreserved",
+    }
+    for field in required_true_lineage:
+        if lineage.get(field) is not True:
+            raise ValueError(f"SBC atomic P1 lineage lock {field} must remain true")
+    if lineage.get("causalClusterVotingImplemented") is not False:
+        raise ValueError("SBC atomic P1 cannot claim causal-cluster voting")
+
+    guardrails = document.get("guardrails") or {}
+    for field in (
+        "researchOnly",
+        "timestampSafe",
+        "noLookahead",
+        "sourceProfiledExperimental",
+    ):
+        if guardrails.get(field) is not True:
+            raise ValueError(f"SBC atomic P1 guardrail {field} must remain true")
+    false_locks = {
+        "countsAsIndependentVote",
+        "phaseOutputIncluded",
+        "confidenceOutputIncluded",
+        "marketDirectionIncluded",
+        "consumedByAutoSuggest",
+        "consumedByLiveInference",
+        "consumedByOfficialMlNotes",
+        "consumedByShadowLedger",
+        "tradeOutputIncluded",
+        "executionAllowed",
+    }
+    for field in false_locks:
+        if guardrails.get(field) is not False:
+            raise ValueError(f"SBC atomic P1 guardrail {field} must remain false")
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError("SBC atomic P1 directional contribution must remain zero")
+
+    verification = document.get("verification") or {}
+    expected_verification = {
+        "newAtomicIntervalTests": "11_passed",
+        "focusedSbcChakraFxTests": "93_passed",
+        "statusValidation": "8_passed",
+        "repositoryPythonTests": "405_passed",
+        "pythonRuff": "passed",
+    }
+    if verification != expected_verification:
+        raise ValueError("SBC atomic P1 verification evidence is incomplete")
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -320,6 +453,9 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     validate_sbc_phase_p0_audit(
         audits["audits/sbc_phase_p0_gap_audit_20260728.json"], root.parent
     )
+    validate_sbc_atomic_intervals_p1_audit(
+        audits["audits/sbc_atomic_intervals_p1_20260728.json"], root.parent
+    )
     validate_cross_document_links(documents, root)
     capability_ids = {
         item["capabilityId"]
@@ -331,6 +467,17 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     }
     if not required_capabilities <= capability_ids:
         raise ValueError("SBC phase P0 capability status entries are missing")
+    capability_by_id = {
+        item["capabilityId"]: item
+        for item in documents["capability_status.json"]["capabilities"]
+    }
+    if (
+        capability_by_id["multidimensional_sbc_atomic_intervals_v1"]["states"][
+            "implementedInSource"
+        ]
+        != "yes"
+    ):
+        raise ValueError("SBC atomic P1 capability is not registered as source-implemented")
     return {
         "contract": "GANN_PROJECT_STATUS_VALIDATION_V1",
         "valid": True,

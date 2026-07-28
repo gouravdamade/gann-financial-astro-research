@@ -1,8 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-07-28 15:32 IST
+Last updated: 2026-07-28 17:24 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-28 (Timestamp-Safe SBC Atomic Intervals P1)
+
+- Completed P1/Phase 5A in source with
+  `SBC_ATOMIC_INTERVAL_SERIES_V1` under
+  `EXPLICIT_BOUNDARY_STATES_V1`. The implementation is
+  `sbc/atomic_intervals.py`; its audited line-ending-independent canonical-text
+  SHA-256 is
+  `98AE01328946975C08015DFD1D17EED92BF30D0BBB4173BC01AAFAB7D7EDF112`.
+- Explicit SBC boundary states now compile into deterministic ordered,
+  non-overlapping half-open `[startUtc, endUtc)` intervals. Each interval has
+  one timezone-safe evidence cutoff that cannot be later than its start.
+  Duplicate timestamps, non-positive duration, and mixed foundation/grid/Vedha
+  or guidance profiles fail closed.
+- Added canonical SHA-256 identities for source lineage, evaluated
+  contributions, boundaries, intervals, and series. Profile identity is deeply
+  immutable, source lineage remains separate from evaluated contribution
+  identity, and unordered boundary input replays to the same payload and ID.
+- The ledger preserves favorable units, negative adverse units, net units, and
+  true gross activation as `sum(abs(scored contribution units))`. Unresolved
+  and explicitly missing evidence remain counted; unknown magnitude is null
+  whenever unknown evidence exists and is `0.0` only when none exists.
+- Added `boundary_from_chakra_snapshot` without changing the existing Chakra
+  snapshot contract. It verifies all timestamp/read-only/no-execution locks,
+  preserves source/profile/witness/citation lineage, and records requested
+  actors such as `MOTION_REQUIRED` as missing evidence rather than silently
+  excluding them.
+- P1 remains `SOURCE_PROFILED_EXPERIMENTAL`, contributes directional weight
+  `0.0`, and is blocked from phase, confidence, market direction, Auto Suggest,
+  live inference, official ML notes, validation votes, trades, and MT5.
+- Acceptance and recovery evidence:
+  - `docs/sbc/PHASE5A_ACCEPTANCE.md`;
+  - `sbc_atomic_intervals_p1_20260728.md`;
+  - `status/audits/sbc_atomic_intervals_p1_20260728.json`.
+- Verification on the final source state: new interval tests `11/11`; focused
+  SBC/Vedha/Chakra/service/FX tests `93/93`; status tests `8/8`; complete
+  repository Python suite `405/405`; changed Python files pass Ruff; canonical
+  status validation reports seven documents, two audits, and execution false.
+- No desktop or Android package was rebuilt and no runtime trading behavior
+  changed. Boundary discovery remains explicit-input only.
+- Next phase: P2 should build the versioned multidimensional ledger on top of
+  these intervals. Before FX or voting joins it, P0-R5 and P0-R6 must freeze
+  causal-cluster deduplication, shared units/cutoffs/profiles, coverage
+  mismatch behavior, signed common mode, joint net strength, and true gross
+  activation.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260728_172430_sbc_atomic_intervals_p1`.
 
 ## Latest Update - 2026-07-28 (SBC/Phase P0 Gap Audit And Frozen Boundary)
 

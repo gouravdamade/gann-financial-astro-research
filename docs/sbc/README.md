@@ -5,8 +5,9 @@ calculates astronomy, nakshatra membership, and Panchanga facts. Phase 2 adds
 one explicit-only, figure-relative 81-cell topology and Sanskrit-letter
 fixture. Phase 3A adds standard figure-relative Vedha rays and a transparent
 research guidance ledger. Phase 4A binds those layers to one immutable,
-timestamp-safe Chakra Lab snapshot. It does not emit a market opinion or trade
-decision.
+timestamp-safe Chakra Lab snapshot. Phase 5A compiles explicit state
+boundaries into deterministic half-open atomic intervals. It does not emit a
+market opinion or trade decision.
 
 Primary profile: `sbc_raman_foundation_v1`.
 
@@ -54,6 +55,18 @@ Phase 4A Chakra Lab contract:
   variable actor without explicit motion is returned as `MOTION_REQUIRED`;
 - market data, Auto Suggest, financial labels, orders, and MT5 execution are
   absent and explicitly locked.
+
+Phase 5A atomic interval contract:
+
+- boundaries are explicit, timezone-aware state transitions;
+- each interval is `[startUtc, endUtc)` with one no-lookahead evidence cutoff;
+- one series cannot mix foundation, grid, Vedha, or guidance profiles;
+- source lineage and evaluated-contribution identities remain separate;
+- favorable, adverse, net, true gross activation, unknown count, unknown
+  magnitude, and coverage remain separately visible;
+- reversed boundary input produces the same canonical series;
+- phase, confidence, market direction, Auto Suggest, live inference, official
+  ML notes, validation votes, trades, and MT5 execution remain blocked.
 
 Minimal use:
 

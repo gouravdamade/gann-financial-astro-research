@@ -1,0 +1,76 @@
+{
+  "contract": "GANN_SBC_ATOMIC_INTERVALS_P1_AUDIT_V1",
+  "auditedAtUtc": "2026-07-28T11:42:15Z",
+  "capabilityId": "multidimensional_sbc_atomic_intervals_v1",
+  "status": "implemented_in_source_research_only",
+  "implementation": {
+    "modulePath": "sbc/atomic_intervals.py",
+    "moduleCanonicalTextSha256": "98AE01328946975C08015DFD1D17EED92BF30D0BBB4173BC01AAFAB7D7EDF112",
+    "testPath": "test_sbc_phase5a_atomic_intervals.py",
+    "acceptancePath": "docs/sbc/PHASE5A_ACCEPTANCE.md",
+    "milestonePath": "sbc_atomic_intervals_p1_20260728.md",
+    "seriesContract": "SBC_ATOMIC_INTERVAL_SERIES_V1",
+    "boundaryPolicy": "EXPLICIT_BOUNDARY_STATES_V1",
+    "contributionContract": "SBC_ATOMIC_CONTRIBUTION_V1",
+    "sourceLineageContract": "SBC_ATOMIC_SOURCE_LINEAGE_V1",
+    "classification": "SOURCE_PROFILED_EXPERIMENTAL"
+  },
+  "intervalSemantics": {
+    "intervalForm": "[startUtc,endUtc)",
+    "inputOrder": "canonical_chronological_sort",
+    "duplicateBoundaryTimestamps": "rejected",
+    "nonPositiveDuration": "rejected",
+    "profileMixing": "rejected",
+    "evidenceCutoffRule": "cutoff_not_later_than_interval_start",
+    "boundaryDiscoveryIncluded": false
+  },
+  "accounting": {
+    "favorableUnits": "sum_positive_scored_contributions",
+    "adverseUnits": "sum_negative_scored_contributions",
+    "netUnits": "sum_scored_contributions",
+    "grossActivationUnits": "sum_absolute_scored_contributions",
+    "unknownCountIncludes": [
+      "unresolved_contributions",
+      "explicit_missing_evidence"
+    ],
+    "unknownMagnitudeWhenUnknown": null,
+    "unknownMagnitudeWhenKnown": 0.0,
+    "coverageDenominator": "scored_plus_unresolved_plus_missing_evidence"
+  },
+  "lineage": {
+    "sourceAndEvaluationIdentitySeparated": true,
+    "canonicalSha256": true,
+    "profileHashesPreserved": true,
+    "targetWitnessMetadataPreserved": true,
+    "citationSourceIdsPreserved": true,
+    "causalClusterVotingImplemented": false
+  },
+  "guardrails": {
+    "researchOnly": true,
+    "timestampSafe": true,
+    "noLookahead": true,
+    "sourceProfiledExperimental": true,
+    "countsAsIndependentVote": false,
+    "directionalContribution": 0,
+    "phaseOutputIncluded": false,
+    "confidenceOutputIncluded": false,
+    "marketDirectionIncluded": false,
+    "consumedByAutoSuggest": false,
+    "consumedByLiveInference": false,
+    "consumedByOfficialMlNotes": false,
+    "consumedByShadowLedger": false,
+    "tradeOutputIncluded": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "newAtomicIntervalTests": "11_passed",
+    "focusedSbcChakraFxTests": "93_passed",
+    "statusValidation": "8_passed",
+    "repositoryPythonTests": "405_passed",
+    "pythonRuff": "passed"
+  },
+  "packagedCandidate": false,
+  "financiallyValidated": false,
+  "promotionAllowed": false,
+  "executionAllowed": false
+}

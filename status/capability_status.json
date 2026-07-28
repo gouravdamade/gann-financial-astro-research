@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-28T09:56:24Z",
+  "asOfUtc": "2026-07-28T11:42:15Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -205,18 +205,22 @@
       "capabilityId": "multidimensional_sbc_atomic_intervals_v1",
       "label": "Multidimensional SBC atomic interval research engine",
       "states": {
-        "implementedInSource": "no",
+        "implementedInSource": "yes",
         "packagedCandidate": "no",
         "physicallyTested": "not_applicable",
         "promotedStable": "no",
         "sourceCertified": "no",
         "financiallyValidated": "no"
       },
-      "statusDetail": "P0 architecture is accepted, but the full capability is not implemented. Existing timestamp-safe SBC facts, source-profiled Vedha evidence and Chakra UI must be reused. P1 must first add ordered half-open atomic intervals with explicit cutoff, lineage, gross/net, unknown and coverage fields and no market or phase output.",
+      "statusDetail": "P1 is implemented in source. Explicit timestamp-safe Chakra boundary states compile into deterministic non-overlapping half-open intervals with one no-lookahead cutoff, profile and contribution lineage, separate favorable/adverse/net/true-gross accounting, unknown counts, null unknown magnitude and coverage. Boundary discovery, multidimensional voting, phase, confidence, market direction, packaging, financial validation and execution remain absent.",
       "evidenceRefs": [
         "docs/sbc/SBC_PHASE_P0_GAP_AUDIT_20260728.md",
         "docs/sbc/ADR-0005-multidimensional-sbc-phase-research-boundary.md",
-        "status/audits/sbc_phase_p0_gap_audit_20260728.json"
+        "status/audits/sbc_phase_p0_gap_audit_20260728.json",
+        "docs/sbc/PHASE5A_ACCEPTANCE.md",
+        "sbc_atomic_intervals_p1_20260728.md",
+        "status/audits/sbc_atomic_intervals_p1_20260728.json",
+        "sbc/atomic_intervals.py"
       ],
       "executionAllowed": false
     },

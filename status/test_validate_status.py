@@ -11,6 +11,7 @@ from status.validate_status import (
     validate_capabilities,
     validate_cross_document_links,
     validate_release,
+    validate_sbc_atomic_intervals_p1_audit,
     validate_sbc_phase_p0_audit,
 )
 
@@ -20,8 +21,8 @@ class StatusValidationTests(unittest.TestCase):
         result = validate_all()
         self.assertTrue(result["valid"])
         self.assertFalse(result["executionAllowed"])
-        self.assertEqual(result["documentCount"], 6)
-        self.assertEqual(result["auditCount"], 1)
+        self.assertEqual(result["documentCount"], 7)
+        self.assertEqual(result["auditCount"], 2)
 
     def test_release_cannot_promote_with_blockers(self) -> None:
         document = _load(STATUS_ROOT / "release_status.json")
@@ -61,6 +62,22 @@ class StatusValidationTests(unittest.TestCase):
         document["residualContractCorrections"].pop()
         with self.assertRaisesRegex(ValueError, "P0-R1 through P0-R8"):
             validate_sbc_phase_p0_audit(document, STATUS_ROOT.parent)
+
+    def test_sbc_atomic_p1_audit_cannot_enable_phase_output(self) -> None:
+        document = copy.deepcopy(
+            _load(STATUS_ROOT / "audits/sbc_atomic_intervals_p1_20260728.json")
+        )
+        document["guardrails"]["phaseOutputIncluded"] = True
+        with self.assertRaisesRegex(ValueError, "phaseOutputIncluded"):
+            validate_sbc_atomic_intervals_p1_audit(document, STATUS_ROOT.parent)
+
+    def test_sbc_atomic_p1_audit_detects_module_hash_drift(self) -> None:
+        document = copy.deepcopy(
+            _load(STATUS_ROOT / "audits/sbc_atomic_intervals_p1_20260728.json")
+        )
+        document["implementation"]["moduleCanonicalTextSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "module hash differs"):
+            validate_sbc_atomic_intervals_p1_audit(document, STATUS_ROOT.parent)
 
 
 if __name__ == "__main__":
