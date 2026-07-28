@@ -15,6 +15,7 @@ from status.validate_status import (
     validate_sbc_linked_audit_views_p3_audit,
     validate_sbc_multidimensional_ledger_p2_audit,
     validate_sbc_phase_p0_audit,
+    validate_sbc_reproducible_audit_packages_p4_audit,
 )
 
 
@@ -23,8 +24,8 @@ class StatusValidationTests(unittest.TestCase):
         result = validate_all()
         self.assertTrue(result["valid"])
         self.assertFalse(result["executionAllowed"])
-        self.assertEqual(result["documentCount"], 9)
-        self.assertEqual(result["auditCount"], 4)
+        self.assertEqual(result["documentCount"], 10)
+        self.assertEqual(result["auditCount"], 5)
 
     def test_release_cannot_promote_with_blockers(self) -> None:
         document = _load(STATUS_ROOT / "release_status.json")
@@ -152,6 +153,48 @@ class StatusValidationTests(unittest.TestCase):
         document["implementation"]["viewIds"].append("MARKET_DIRECTION")
         with self.assertRaisesRegex(ValueError, "view IDs drifted"):
             validate_sbc_linked_audit_views_p3_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_reproducible_audit_p4_requires_replay(self) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_reproducible_audit_packages_p4_20260728.json"
+            )
+        )
+        document["guardrails"]["replayRequiredForVerification"] = False
+        with self.assertRaisesRegex(ValueError, "replayRequiredForVerification"):
+            validate_sbc_reproducible_audit_packages_p4_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_reproducible_audit_p4_detects_module_hash_drift(self) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_reproducible_audit_packages_p4_20260728.json"
+            )
+        )
+        document["implementation"]["moduleCanonicalTextSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "module hash differs"):
+            validate_sbc_reproducible_audit_packages_p4_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_reproducible_audit_p4_cannot_enable_market_direction(self) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_reproducible_audit_packages_p4_20260728.json"
+            )
+        )
+        document["guardrails"]["marketDirectionIncluded"] = True
+        with self.assertRaisesRegex(ValueError, "marketDirectionIncluded"):
+            validate_sbc_reproducible_audit_packages_p4_audit(
                 document,
                 STATUS_ROOT.parent,
             )

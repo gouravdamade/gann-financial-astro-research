@@ -7,10 +7,33 @@ score. Phase 4A binds those layers to one timestamp-safe, read-only Chakra Lab
 snapshot. Phase 5A compiles explicit boundary states into non-overlapping
 atomic intervals. Phase 5B exposes reconciled, non-voting causal-cluster ledger
 views. Phase 5C projects those ledgers into linked, read-only audit views.
-Absolute cardinal orientation, Latta, phase, confidence, financial labels, and
-trade decisions remain disabled.
+Phase 5D adds reproducible descriptive comparison and replayable export
+packages. Absolute cardinal orientation, Latta, phase, confidence, financial
+labels, and trade decisions remain disabled.
 """
 
+from .audit_packages import (
+    AUDIT_PACKAGE_CONTRACT,
+    AUDIT_PACKAGE_POLICY,
+    AUDIT_PACKAGE_SCHEMA_VERSION,
+    AUDIT_PACKAGE_VERIFICATION_CONTRACT,
+    BOOKMARK_TARGET_TYPES,
+    DESCRIPTIVE_COMPARISON_ROLE,
+    MANUAL_RESEARCH_ANNOTATION_ROLE,
+    SbcAuditBookmark,
+    SbcAuditBookmarkInput,
+    SbcAuditCellComparison,
+    SbcAuditComparisonPackageCompiler,
+    SbcAuditIntervalComparison,
+    SbcAuditMetricDelta,
+    SbcAuditPackageGuardrails,
+    SbcAuditPackageValidationGate,
+    SbcAuditPackageVerification,
+    SbcReproducibleAuditPackage,
+    render_audit_package_html,
+    validate_audit_package_payload,
+    verify_audit_package_replay,
+)
 from .audit_views import (
     AUDIT_VIEW_IDS,
     FAIL,
@@ -115,9 +138,14 @@ from .vedha import (
 
 __all__ = [
     "ACTOR_AXIS",
+    "AUDIT_PACKAGE_CONTRACT",
+    "AUDIT_PACKAGE_POLICY",
+    "AUDIT_PACKAGE_SCHEMA_VERSION",
+    "AUDIT_PACKAGE_VERIFICATION_CONTRACT",
     "AUDIT_VIEW_IDS",
     "ATOMIC_INTERVAL_CONTRACT",
     "ATOMIC_INTERVAL_POLICY",
+    "BOOKMARK_TARGET_TYPES",
     "CAUSAL_CLUSTER_CONTRACT",
     "CHAKRA_LAB_CONTRACT",
     "ChakraLabActorReadiness",
@@ -133,6 +161,7 @@ __all__ = [
     "DignityState",
     "DERIVATION_ROLES",
     "DERIVED_AXIS_ROLE",
+    "DESCRIPTIVE_COMPARISON_ROLE",
     "FAIL",
     "GeoLocation",
     "GridProfileBlockedError",
@@ -142,6 +171,7 @@ __all__ = [
     "LINKED_AUDIT_VIEW_POLICY",
     "LINKED_AUDIT_VIEW_SCHEMA_VERSION",
     "MISSING_EVIDENCE",
+    "MANUAL_RESEARCH_ANNOTATION_ROLE",
     "MULTIDIMENSIONAL_LEDGER_CONTRACT",
     "MotionClass",
     "NATURE_AXIS",
@@ -153,9 +183,18 @@ __all__ = [
     "RECONCILIATION_VIEW",
     "RESEARCH_CLASSIFICATION",
     "SOURCE_LINEAGE_VIEW",
+    "SbcAuditBookmark",
+    "SbcAuditBookmarkInput",
+    "SbcAuditCellComparison",
+    "SbcAuditComparisonPackageCompiler",
     "SbcAuditIntervalRow",
+    "SbcAuditIntervalComparison",
     "SbcAuditLedgerCellRow",
     "SbcAuditLineageRow",
+    "SbcAuditMetricDelta",
+    "SbcAuditPackageGuardrails",
+    "SbcAuditPackageValidationGate",
+    "SbcAuditPackageVerification",
     "SbcAuditRayRow",
     "SbcAuditReconciliationRow",
     "SbcAuditValidationGate",
@@ -180,6 +219,7 @@ __all__ = [
     "SbcMultidimensionalLedgerCompiler",
     "SbcMultidimensionalLedgerGuardrails",
     "SbcMultidimensionalLedgerSeries",
+    "SbcReproducibleAuditPackage",
     "SbcSnapshot",
     "SbcSnapshotRequest",
     "SOURCE_LINEAGE_AXIS",
@@ -207,4 +247,7 @@ __all__ = [
     "load_source_register",
     "load_vedha_profile",
     "rashi_from_longitude",
+    "render_audit_package_html",
+    "validate_audit_package_payload",
+    "verify_audit_package_replay",
 ]

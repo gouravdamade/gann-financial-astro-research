@@ -4,23 +4,39 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { ChakraLabSnapshot, ChakraLinkedAuditView } from './types'
+import type {
+  ChakraAuditPackageBuild,
+  ChakraAuditPackageVerification,
+  ChakraLabSnapshot,
+  ChakraLinkedAuditView,
+} from './types'
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
 
-const { fetchAudit, fetchSnapshot } = vi.hoisted(() => ({
+const {
+  buildAuditPackage,
+  fetchAudit,
+  fetchSnapshot,
+  verifyAuditPackage,
+} = vi.hoisted(() => ({
+  buildAuditPackage: vi.fn(),
   fetchAudit: vi.fn(),
   fetchSnapshot: vi.fn(),
+  verifyAuditPackage: vi.fn(),
 }))
 
 vi.mock('./api', () => ({
+  buildChakraLabAuditPackage: buildAuditPackage,
   fetchChakraLabAudit: fetchAudit,
   fetchChakraLabSnapshot: fetchSnapshot,
+  verifyChakraLabAuditPackage: verifyAuditPackage,
 }))
 
 afterEach(() => {
   cleanup()
+  buildAuditPackage.mockReset()
   fetchAudit.mockReset()
   fetchSnapshot.mockReset()
+  verifyAuditPackage.mockReset()
 })
 
 const snapshot: ChakraLabSnapshot = {
@@ -239,6 +255,128 @@ const audit: ChakraLinkedAuditView = {
   },
 }
 
+const secondInterval = {
+  ...audit.intervals[0],
+  interval_id: 'interval-test-0002',
+  interval_ledger_id: 'interval-ledger-test-0002',
+  start_utc: '2026-07-17T07:30:00Z',
+  end_utc: '2026-07-17T08:30:00Z',
+  evidence_cutoff_utc: '2026-07-17T07:30:00Z',
+  total_summary: {
+    ...audit.intervals[0].total_summary,
+    favorable_guidance_units: 2,
+    net_guidance_units: 2,
+    gross_activation_units: 2,
+    scored_contribution_count: 1,
+    total_evidence_count: 1,
+    scoring_coverage_ratio: 1,
+  },
+}
+
+const comparisonAudit: ChakraLinkedAuditView = {
+  ...audit,
+  audit_view_id: 'audit-test-0002',
+  range_end_utc: secondInterval.end_utc,
+  intervals: [audit.intervals[0], secondInterval],
+}
+
+const auditPackageBuild: ChakraAuditPackageBuild = {
+  package: {
+    contract: 'SBC_REPRODUCIBLE_AUDIT_PACKAGE_V1',
+    schema_version: 1,
+    package_policy: 'READ_ONLY_COMPARISON_EXPORT_REPLAY_V1',
+    classification: 'SOURCE_PROFILED_EXPERIMENTAL',
+    package_id: 'package-test-0001',
+    source_audit_id: comparisonAudit.audit_view_id,
+    source_projection_hash: 'projection-test-0001',
+    instrument_identity: 'FX:USDJPY',
+    sealed_at_utc: '2026-07-17T09:30:00Z',
+    replay_recipe_hash: 'recipe-test-0001',
+    replay_recipe: {},
+    source_audit: comparisonAudit,
+    comparisons: [{
+      comparison_id: 'comparison-test-0001',
+      baseline_interval_id: audit.intervals[0].interval_id,
+      comparison_interval_id: secondInterval.interval_id,
+      baseline_summary: audit.intervals[0].total_summary,
+      comparison_summary: secondInterval.total_summary,
+      total_delta: {
+        favorable_guidance_units: 2,
+        adverse_guidance_units: 0,
+        net_guidance_units: 2,
+        gross_activation_units: 2,
+        scored_contribution_count: 1,
+        unknown_contribution_count: 0,
+        missing_evidence_count: 0,
+        total_evidence_count: 1,
+        unknown_magnitude_units: 0,
+        scoring_coverage_ratio: 1,
+        derivation_role: 'DESCRIPTIVE_COMPARISON_ONLY',
+        counts_as_independent_vote: false,
+        directional_contribution: 0,
+      },
+      cell_comparisons: [],
+      shared_source_lineage_ids: [],
+      baseline_only_source_lineage_ids: [],
+      comparison_only_source_lineage_ids: [],
+      interpretation: 'Descriptive only.',
+      derivation_role: 'DESCRIPTIVE_COMPARISON_ONLY',
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+    }],
+    bookmarks: [{
+      bookmark_id: 'bookmark-test-0001',
+      target_type: 'INTERVAL',
+      target_id: audit.intervals[0].interval_id,
+      label: 'Manual contrast',
+      note: 'Research observation only.',
+      created_at_utc: '2026-07-17T09:00:00Z',
+      annotation_role: 'MANUAL_RESEARCH_ANNOTATION_ONLY',
+      counts_as_evidence: false,
+      official_ml_note: false,
+      directional_contribution: 0,
+    }],
+    validation_gates: [{
+      gate_id: 'EXECUTION_LOCK',
+      state: 'PASS',
+      label: 'Execution lock',
+      detail: 'Inference and execution remain blocked.',
+    }],
+    guardrails: {
+      research_only: true,
+      read_only: true,
+      timestamp_safe: true,
+      no_lookahead: true,
+      source_profiled_experimental: true,
+      financially_validated: false,
+      descriptive_comparison_only: true,
+      manual_annotations_only: true,
+      replay_required_for_verification: true,
+      phase_included: false,
+      fx_subtraction_included: false,
+      confidence_included: false,
+      counts_as_independent_vote: false,
+      directional_contribution: 0,
+      execution_allowed: false,
+      blocked_capabilities: ['MARKET_DIRECTION', 'MT5_EXECUTION'],
+    },
+  },
+  htmlReport: '<!doctype html><title>SBC audit</title>',
+}
+
+const packageVerification: ChakraAuditPackageVerification = {
+  contract: 'SBC_AUDIT_PACKAGE_VERIFICATION_V1',
+  state: 'PASS',
+  package_id: auditPackageBuild.package.package_id,
+  source_audit_id: comparisonAudit.audit_view_id,
+  structural_hash_match: true,
+  source_projection_match: true,
+  replay_recipe_match: true,
+  replay_audit_match: true,
+  replay_package_match: true,
+  errors: [],
+}
+
 describe('ChakraLabWorkspace', () => {
   it('renders source-profiled guidance without trading direction labels', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
@@ -294,7 +432,7 @@ describe('ChakraLabWorkspace', () => {
     await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
     await user.click(screen.getByRole('tab', { name: 'Audit' }))
     expect(screen.getByText('Linked audit not compiled')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Capture current moment' }))
+    await user.click(screen.getByRole('button', { name: 'Capture boundary' }))
     await user.click(screen.getByRole('button', { name: 'Compile linked audit' }))
 
     await waitFor(() => expect(fetchAudit).toHaveBeenCalledTimes(1))
@@ -308,6 +446,70 @@ describe('ChakraLabWorkspace', () => {
     await user.click(screen.getByRole('tab', { name: 'Validation' }))
     expect(screen.getByText('Execution lock')).toBeInTheDocument()
     expect(screen.getByText('No phase')).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
+  it('builds a descriptive P4 package with bookmarks and verifies full replay', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchAudit.mockResolvedValue(comparisonAudit)
+    buildAuditPackage.mockResolvedValue(auditPackageBuild)
+    verifyAuditPackage.mockResolvedValue(packageVerification)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
+    await user.click(screen.getByRole('tab', { name: 'Audit' }))
+    const boundaryMoment = screen.getByLabelText('Boundary moment (IST)')
+    await user.clear(boundaryMoment)
+    await user.type(boundaryMoment, '2026-07-28T21:00')
+    await user.click(screen.getByRole('button', { name: 'Capture boundary' }))
+    await user.clear(boundaryMoment)
+    await user.type(boundaryMoment, '2026-07-28T22:00')
+    await user.click(screen.getByRole('button', { name: 'Capture boundary' }))
+    await user.click(screen.getByRole('button', { name: 'Compile linked audit' }))
+    await waitFor(() => expect(fetchAudit).toHaveBeenCalledTimes(1))
+    expect(fetchAudit).toHaveBeenCalledWith(expect.objectContaining({
+      boundaries: [
+        expect.objectContaining({
+          request: expect.objectContaining({ at: '2026-07-28T21:00:00+05:30' }),
+        }),
+        expect.objectContaining({
+          request: expect.objectContaining({ at: '2026-07-28T22:00:00+05:30' }),
+        }),
+      ],
+    }))
+
+    await user.type(screen.getByPlaceholderText('Bookmark label'), 'Manual contrast')
+    await user.type(
+      screen.getByPlaceholderText('Manual observation only'),
+      'Research observation only.',
+    )
+    await user.click(screen.getByRole('button', { name: 'Add bookmark' }))
+    await user.click(screen.getByRole('button', { name: 'Build sealed package' }))
+
+    await waitFor(() => expect(buildAuditPackage).toHaveBeenCalledTimes(1))
+    expect(buildAuditPackage).toHaveBeenCalledWith(expect.objectContaining({
+      baselineIntervalId: audit.intervals[0].interval_id,
+      comparisonIntervalIds: [secondInterval.interval_id],
+      bookmarks: [expect.objectContaining({
+        targetType: 'INTERVAL',
+        label: 'Manual contrast',
+      })],
+    }))
+    expect(screen.getByText(/Candidate minus baseline/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('tab', { name: 'Package' }))
+    await user.click(screen.getByRole('button', { name: 'Replay verify' }))
+    await waitFor(() => expect(verifyAuditPackage).toHaveBeenCalledTimes(1))
+    expect(
+      screen.getByText('Full Chakra to P1 to P2 to P3 to P4 replay matched'),
+    ).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 })

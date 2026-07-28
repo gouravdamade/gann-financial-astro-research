@@ -36,9 +36,13 @@ import type {
   ShadowLedgerSnapshot,
   WorkspacePreferences,
   ChakraLabAuditRequest,
+  ChakraAuditPackageBuild,
+  ChakraAuditPackageRequest,
+  ChakraAuditPackageVerification,
   ChakraLabRequest,
   ChakraLabSnapshot,
   ChakraLinkedAuditView,
+  ChakraReproducibleAuditPackage,
 } from './types'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
@@ -677,4 +681,65 @@ export async function fetchChakraLabAudit(
     },
   )
   return payload.audit
+}
+
+export async function buildChakraLabAuditPackage(
+  input: ChakraAuditPackageRequest,
+): Promise<ChakraAuditPackageBuild> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<ChakraAuditPackageBuild>>(
+      'chakra_lab_audit_package',
+      { request: input },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Chakra Lab audit package request failed')
+    }
+    if (payload.package.guardrails.execution_allowed) {
+      throw new Error('Audit package response violated the execution lock')
+    }
+    return {
+      package: payload.package,
+      htmlReport: payload.htmlReport,
+    }
+  }
+  const payload = await request<ChakraAuditPackageBuild>(
+    '/api/chakra-lab/audit-package',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+  if (payload.package.guardrails.execution_allowed) {
+    throw new Error('Audit package response violated the execution lock')
+  }
+  return payload
+}
+
+export async function verifyChakraLabAuditPackage(
+  input: ChakraReproducibleAuditPackage,
+): Promise<ChakraAuditPackageVerification> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{
+      verification: ChakraAuditPackageVerification
+    }>>(
+      'chakra_lab_verify_audit_package',
+      { request: { package: input } },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Audit package verification failed')
+    }
+    return payload.verification
+  }
+  const payload = await request<{
+    verification: ChakraAuditPackageVerification
+  }>(
+    '/api/chakra-lab/audit-package/verify',
+    {
+      method: 'POST',
+      body: JSON.stringify({ package: input }),
+    },
+  )
+  return payload.verification
 }

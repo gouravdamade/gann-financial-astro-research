@@ -6727,7 +6727,8 @@ html.android-runtime .loading-state {
   font-size: 8px;
 }
 
-.chakra-audit-capture input {
+.chakra-audit-capture input,
+.chakra-audit-capture select {
   min-width: 0;
   height: 27px;
   border: 1px solid #3a424d;
@@ -6737,6 +6738,43 @@ html.android-runtime .loading-state {
   padding: 0 6px;
   font: 8px/1 Inter, "Segoe UI", sans-serif;
 }
+
+.chakra-comparison-picks {
+  display: grid;
+  gap: 3px;
+  max-height: 116px;
+  margin-top: 7px;
+  overflow-y: auto;
+}
+.chakra-comparison-picks button {
+  min-width: 0;
+  min-height: 25px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #303943;
+  border-radius: 3px;
+  background: #11171c;
+  color: #7f8993;
+  cursor: pointer;
+  font-size: 7px;
+  text-align: left;
+}
+.chakra-comparison-picks button span {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  border-right: 1px solid #303943;
+  color: #68737e;
+  font: 7px/1 Consolas, monospace;
+}
+.chakra-comparison-picks button.is-selected {
+  border-color: #40796f;
+  background: #172924;
+  color: #a9d2c7;
+}
+.chakra-package-file { display: none; }
 
 .chakra-audit-action {
   width: 100%;
@@ -6818,6 +6856,7 @@ html.android-runtime .loading-state {
 }
 
 .chakra-audit-tabs button:hover { color: #c3cbd3; background: #1a2229; }
+.chakra-audit-tabs button:disabled { color: #48515a; cursor: default; }
 .chakra-audit-tabs button.is-active {
   border-bottom-color: #5cbcaf;
   background: #18252a;
@@ -6856,6 +6895,7 @@ html.android-runtime .loading-state {
 
 .chakra-audit-empty strong { color: #aeb7c0; font-size: 10px; }
 .chakra-audit-empty span { font: 8px/1 Consolas, monospace; }
+.chakra-audit-empty.is-inline { min-height: 260px; }
 .chakra-audit-view { min-width: 0; min-height: 0; overflow: auto; padding: 10px; }
 
 .chakra-audit-table {
@@ -6919,6 +6959,135 @@ html.android-runtime .loading-state {
 .chakra-audit-table.is-lineage > button {
   grid-template-columns: 0.65fr 0.65fr 1.2fr 1.2fr 1.35fr 0.9fr 0.75fr;
 }
+.chakra-audit-table.is-comparison { min-width: 860px; }
+
+.chakra-comparison-list { display: grid; gap: 10px; }
+.chakra-comparison-warning {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 2px solid #c09143;
+  background: #242016;
+  color: #bca46f;
+  font-size: 8px;
+  line-height: 1.45;
+}
+.chakra-comparison-section {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+.chakra-comparison-section > header {
+  min-width: 0;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid #313a44;
+  border-bottom: 0;
+  background: #171e24;
+}
+.chakra-comparison-section > header > div:first-child {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.chakra-comparison-section > header strong { color: #d0d6dc; font-size: 9px; }
+.chakra-comparison-section > header span { color: #78838e; font: 7px/1.2 Consolas, monospace; }
+.chakra-comparison-metrics { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+.chakra-comparison-metrics span {
+  padding: 3px 5px;
+  border: 1px solid #365047;
+  background: #14201c;
+  color: #91b9ad !important;
+}
+
+.chakra-package-view { display: grid; gap: 10px; }
+.chakra-package-toolbar {
+  min-width: 0;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid #313a44;
+  background: #171e24;
+}
+.chakra-package-toolbar > div:first-child { min-width: 0; display: grid; gap: 3px; }
+.chakra-package-toolbar > div:last-child { display: flex; align-items: center; gap: 4px; }
+.chakra-package-toolbar strong { color: #d0d6dc; font-size: 9px; }
+.chakra-package-toolbar span { color: #78838e; font: 7px/1 Consolas, monospace; }
+.chakra-package-toolbar .secondary-command { min-height: 26px; font-size: 8px; }
+.chakra-package-meta {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  border: 1px solid #303943;
+}
+.chakra-package-meta > div {
+  min-width: 0;
+  min-height: 27px;
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  border-bottom: 1px solid #272f37;
+  background: #11171c;
+}
+.chakra-package-meta dt { color: #6f7984; font-size: 7px; }
+.chakra-package-meta dd {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #aeb8c1;
+  font: 7px/1.2 Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chakra-package-verification {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 5px 8px;
+  padding: 8px;
+  border: 1px solid #365d50;
+  border-left: 2px solid #55ac8d;
+  background: #13211c;
+}
+.chakra-package-verification.is-fail {
+  border-color: #704349;
+  border-left-color: #cf6871;
+  background: #27191c;
+}
+.chakra-package-verification span { color: #82c6ad; font: 8px/1 Consolas, monospace; }
+.chakra-package-verification.is-fail span { color: #db858c; }
+.chakra-package-verification strong { color: #d0d6dc; font-size: 9px; }
+.chakra-package-verification p {
+  grid-column: 2;
+  margin: 0;
+  color: #a57d81;
+  font-size: 8px;
+}
+.chakra-package-bookmarks { display: grid; gap: 4px; }
+.chakra-package-bookmarks > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 105px minmax(120px, 0.45fr) minmax(0, 1fr) 80px;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 5px 7px;
+  border: 1px solid #303943;
+  background: #11171c;
+}
+.chakra-package-bookmarks span { color: #8aa59b; font-size: 7px; }
+.chakra-package-bookmarks strong { color: #c8d0d6; font-size: 8px; }
+.chakra-package-bookmarks p { margin: 0; color: #7e8994; font-size: 8px; }
+.chakra-package-bookmarks code { color: #68747f; font-size: 7px; }
 
 .chakra-reconciliation-grid {
   display: grid;
@@ -7020,6 +7189,58 @@ html.android-runtime .loading-state {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.chakra-bookmark-editor { display: grid; gap: 5px; }
+.chakra-bookmark-editor select,
+.chakra-bookmark-editor input,
+.chakra-bookmark-editor textarea {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #3a424d;
+  border-radius: 3px;
+  background: #101419;
+  color: #c8ced6;
+  padding: 0 6px;
+  font: 8px/1.3 Inter, "Segoe UI", sans-serif;
+}
+.chakra-bookmark-editor select,
+.chakra-bookmark-editor input { height: 27px; }
+.chakra-bookmark-editor textarea {
+  min-height: 54px;
+  padding-top: 6px;
+  resize: vertical;
+}
+.chakra-bookmark-editor .secondary-command {
+  min-height: 27px;
+  justify-content: center;
+  font-size: 8px;
+}
+.chakra-bookmark-drafts { display: grid; gap: 3px; margin-top: 6px; }
+.chakra-bookmark-drafts > div {
+  min-width: 0;
+  min-height: 29px;
+  display: grid;
+  grid-template-columns: 23px minmax(0, 1fr);
+  align-items: center;
+  gap: 0 5px;
+  border: 1px solid #2f3841;
+  background: #11171c;
+}
+.chakra-bookmark-drafts .icon-button {
+  grid-row: 1 / 3;
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  color: #956168;
+}
+.chakra-bookmark-drafts strong,
+.chakra-bookmark-drafts span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chakra-bookmark-drafts strong { color: #bec6cd; font-size: 8px; }
+.chakra-bookmark-drafts span { color: #68737e; font-size: 7px; }
 .chakra-audit-locks { display: flex; flex-wrap: wrap; gap: 4px; }
 .chakra-audit-locks span {
   padding: 3px 5px;
@@ -7041,7 +7262,13 @@ html.android-runtime .loading-state {
   .chakra-title-block { min-width: 150px; }
   .chakra-contract-chip { display: none; }
   .chakra-audit-shell {
-    grid-template-columns: 210px minmax(0, 1fr);
+    grid-template-columns: 190px minmax(320px, 1fr) 210px;
+  }
+}
+
+@media (max-width: 680px) {
+  .chakra-audit-shell {
+    grid-template-columns: 180px minmax(0, 1fr);
   }
   .chakra-audit-inspector { display: none; }
 }

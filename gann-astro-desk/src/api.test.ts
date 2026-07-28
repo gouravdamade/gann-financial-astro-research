@@ -1,7 +1,11 @@
 // @vitest-environment jsdom
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ChakraLabAuditRequest, ChakraLabRequest } from './types'
+import type {
+  ChakraAuditPackageRequest,
+  ChakraLabAuditRequest,
+  ChakraLabRequest,
+} from './types'
 
 const { invokeMock } = vi.hoisted(() => ({ invokeMock: vi.fn() }))
 
@@ -142,6 +146,69 @@ describe('Tauri backend transport', () => {
     expect(invokeMock).toHaveBeenCalledWith('chakra_lab_audit', { request })
     expect(fetchMock).not.toHaveBeenCalled()
     expect(audit.guardrails.execution_allowed).toBe(false)
+  })
+
+  it('uses native IPC for sealed audit packages and replay verification', async () => {
+    const sealedPackage = {
+      package_id: 'package-test',
+      guardrails: {
+        execution_allowed: false,
+      },
+    }
+    invokeMock
+      .mockResolvedValueOnce({
+        ok: true,
+        package: sealedPackage,
+        htmlReport: '<!doctype html>',
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        verification: {
+          contract: 'SBC_AUDIT_PACKAGE_VERIFICATION_V1',
+          state: 'PASS',
+          package_id: 'package-test',
+          source_audit_id: 'audit-test',
+          structural_hash_match: true,
+          source_projection_match: true,
+          replay_recipe_match: true,
+          replay_audit_match: true,
+          replay_package_match: true,
+          errors: [],
+        },
+      })
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const request = {
+      auditRequest: {
+        instrumentIdentity: 'FX:USDJPY',
+        terminalEnd: '2026-07-17T13:00:00+05:30',
+        boundaries: [],
+      },
+      baselineIntervalId: 'baseline',
+      comparisonIntervalIds: ['comparison'],
+      bookmarks: [],
+      sealedAt: '2026-07-17T13:30:00+05:30',
+    } as ChakraAuditPackageRequest
+
+    const {
+      buildChakraLabAuditPackage,
+      verifyChakraLabAuditPackage,
+    } = await import('./api')
+    const built = await buildChakraLabAuditPackage(request)
+    const verification = await verifyChakraLabAuditPackage(built.package)
+
+    expect(invokeMock).toHaveBeenNthCalledWith(
+      1,
+      'chakra_lab_audit_package',
+      { request },
+    )
+    expect(invokeMock).toHaveBeenNthCalledWith(
+      2,
+      'chakra_lab_verify_audit_package',
+      { request: { package: sealedPackage } },
+    )
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(verification.state).toBe('PASS')
   })
 
   it('rediscovers the runtime after a network failure so Rust can recover the sidecar', async () => {

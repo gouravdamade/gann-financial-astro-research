@@ -1,8 +1,84 @@
 # Current Project Handoff
 
-Last updated: 2026-07-28 19:55 IST
+Last updated: 2026-07-28 23:17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-28 (Reproducible SBC Audit Packages P4)
+
+- Completed P4/Phase 5D in source with
+  `SBC_REPRODUCIBLE_AUDIT_PACKAGE_V1`, verification contract
+  `SBC_AUDIT_PACKAGE_VERIFICATION_V1`, schema `1`, and policy
+  `READ_ONLY_COMPARISON_EXPORT_REPLAY_V1`.
+- The deterministic implementation is `sbc/audit_packages.py`; its audited
+  line-ending-independent canonical-text SHA-256 is
+  `7D1CF634BEAA93B7B1B0A7F7FC3FEBF13D5070934B1CEB65B5CE1C2F66BA4A03`.
+- Froze the design and acceptance boundary in:
+  - `docs/sbc/ADR-0008-reproducible-audit-comparison-packages.md`;
+  - `docs/sbc/PHASE5D_ACCEPTANCE.md`;
+  - `sbc_reproducible_audit_packages_p4_20260728.md`;
+  - `status/audits/sbc_reproducible_audit_packages_p4_20260728.json`.
+- One canonical P3 audit is the sole source. The user chooses one baseline and
+  one or more comparison intervals. Comparisons are ordered by the source
+  audit and report comparison-minus-baseline totals and per-axis/key rows.
+  They preserve interval, cell, primary cluster, and source-lineage links.
+- Comparison values are explicitly descriptive. They are not bullish,
+  bearish, confidence, performance, or trade signals and contribute no vote or
+  directional weight.
+- Added linked manual research bookmarks for the audit, intervals, cells,
+  primary clusters, and validation gates. Bookmark text is annotation-only,
+  never evidence, never an official ML note, and cannot reach any inference or
+  execution consumer.
+- Added canonical JSON export plus an escaped, self-contained HTML report.
+  Packages seal the P3 projection, explicit replay recipe, comparisons,
+  bookmarks, validation gates, guardrails, and complete package with SHA-256.
+- Fixed an acceptance-discovered cross-runtime reproducibility defect:
+  JavaScript serializes whole-valued JSON numbers such as `0.0` as `0`.
+  Portable P4 hashing now treats those JSON-equivalent representations
+  identically while preserving the strict original P3 identity check before
+  packaging. A dedicated browser numeric round-trip regression test was added.
+- Full replay verification reruns Chakra -> P1 -> P2 -> P3 -> P4 and fails
+  closed on altered package content, weakened guardrails, invalid links, or
+  replay drift.
+- Added backend routes:
+  - POST `/api/chakra-lab/audit-package`;
+  - POST `/api/chakra-lab/audit-package/verify`.
+  Native desktop uses dedicated private Tauri commands and the supervised
+  sidecar; browser development uses the private HTTP path.
+- Chakra Audit UI improvements:
+  - explicit boundary timestamp control inside Audit so switching views cannot
+    discard captured research state;
+  - duplicate timestamps rejected and the next boundary advances by one hour;
+  - linked comparison rows open the correct source interval/cell/cluster;
+  - Compare and Package tabs, multiple comparison selection, bookmark editing,
+    JSON/HTML export, JSON import, and PASS/FAIL replay;
+  - the linked inspector remains visible at a compact 900-pixel desktop width.
+- Verification on the final source state:
+  - new P4 engine tests `6/6`;
+  - Chakra Lab service tests `9/9`;
+  - Chakra Audit workspace tests `4/4`;
+  - complete repository Python suite `442/442`;
+  - complete frontend suite `95/95`;
+  - status tests `17/17`;
+  - changed Python files pass Ruff;
+  - frontend lint and production build pass;
+  - native Rust `cargo check --locked` passes;
+  - canonical status validation reports ten documents, five audits, and
+    execution false.
+- Real in-app-browser acceptance passed at `http://127.0.0.1:5173/`: two
+  explicit IST boundaries were captured, the P3 audit compiled, one linked
+  manual bookmark was added, a sealed package was built, descriptive metrics
+  displayed without bullish/bearish language, and replay returned:
+  `PASS - Full Chakra to P1 to P2 to P3 to P4 replay matched`.
+- P4 remains `SOURCE_PROFILED_EXPERIMENTAL`, financially unvalidated,
+  directional weight `0.0`, and disconnected from cross-audit arithmetic, FX
+  subtraction, phase, confidence, market direction, Auto Suggest, live
+  inference, official ML notes, shadow validation, trade output, and MT5.
+  No Windows or Android package was rebuilt.
+- Recovery snapshot:
+  `D:\PycharmProjects\chat_session_backups\session_20260728_231700_sbc_reproducible_audit_packages_p4`.
+- Runtime-only SQLite databases, logs, and Android workspace state remain
+  untouched and uncommitted.
 
 ## Latest Update - 2026-07-28 (Linked Read-Only SBC Audit Views P3)
 

@@ -1,6 +1,6 @@
 {
   "contract": "GANN_CAPABILITY_STATUS_V1",
-  "asOfUtc": "2026-07-28T14:14:37Z",
+  "asOfUtc": "2026-07-28T17:38:07Z",
   "executionAllowed": false,
   "capabilities": [
     {
@@ -265,6 +265,29 @@
         "status/audits/sbc_linked_audit_views_p3_20260728.json",
         "sbc/audit_views.py",
         "test_sbc_phase5c_linked_audit_views.py",
+        "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx"
+      ],
+      "executionAllowed": false
+    },
+    {
+      "capabilityId": "sbc_reproducible_audit_packages_v1",
+      "label": "Reproducible SBC comparison and audit packages",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "P4 is implemented in source. One canonical P3 audit can be sealed with a baseline, multiple stable-order comparison intervals, descriptive candidate-minus-baseline rows, linked manual-only bookmarks, portable JSON hashes, JSON and escaped HTML exports, and full Chakra to P1 to P2 to P3 to P4 replay verification. Unknown evidence and absent financial validation remain visible. Comparisons and bookmarks cannot vote, create market direction, enter official ML notes, affect Auto Suggest or live inference, produce trades, or reach MT5.",
+      "evidenceRefs": [
+        "docs/sbc/ADR-0008-reproducible-audit-comparison-packages.md",
+        "docs/sbc/PHASE5D_ACCEPTANCE.md",
+        "sbc_reproducible_audit_packages_p4_20260728.md",
+        "status/audits/sbc_reproducible_audit_packages_p4_20260728.json",
+        "sbc/audit_packages.py",
+        "test_sbc_phase5d_audit_packages.py",
         "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx"
       ],
       "executionAllowed": false

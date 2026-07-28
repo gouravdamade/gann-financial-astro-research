@@ -27,6 +27,9 @@ CANONICAL_AUDITS = {
     "audits/sbc_linked_audit_views_p3_20260728.json": (
         "GANN_SBC_LINKED_AUDIT_VIEWS_P3_AUDIT_V1"
     ),
+    "audits/sbc_reproducible_audit_packages_p4_20260728.json": (
+        "GANN_SBC_REPRODUCIBLE_AUDIT_PACKAGES_P4_AUDIT_V1"
+    ),
 }
 P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
 P0_INVENTORY_STATES = {"implemented_reuse", "partial_reuse", "absent", "blocked"}
@@ -692,6 +695,164 @@ def validate_sbc_linked_audit_views_p3_audit(
         raise ValueError("SBC linked audit P3 verification evidence is incomplete")
 
 
+def validate_sbc_reproducible_audit_packages_p4_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    _utc_timestamp(
+        document.get("auditedAtUtc"),
+        "SBC reproducible audit P4 auditedAtUtc",
+    )
+    _execution_locked(document, "SBC reproducible audit P4")
+    if document.get("capabilityId") != "sbc_reproducible_audit_packages_v1":
+        raise ValueError("SBC reproducible audit P4 has an unexpected capability")
+    if document.get("status") != "implemented_in_source_research_only":
+        raise ValueError("SBC reproducible audit P4 has an unexpected status")
+    if document.get("packagedCandidate") is not False:
+        raise ValueError("SBC reproducible audit P4 cannot claim packaging")
+    if document.get("financiallyValidated") is not False:
+        raise ValueError("SBC reproducible audit P4 cannot claim financial validation")
+    if document.get("promotionAllowed") is not False:
+        raise ValueError("SBC reproducible audit P4 cannot allow promotion")
+
+    implementation = document.get("implementation") or {}
+    expected_contracts = {
+        "packageContract": "SBC_REPRODUCIBLE_AUDIT_PACKAGE_V1",
+        "verificationContract": "SBC_AUDIT_PACKAGE_VERIFICATION_V1",
+        "schemaVersion": 1,
+        "policy": "READ_ONLY_COMPARISON_EXPORT_REPLAY_V1",
+        "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    }
+    for field, expected in expected_contracts.items():
+        if implementation.get(field) != expected:
+            raise ValueError(
+                f"SBC reproducible audit P4 {field} differs from {expected}"
+            )
+    for field in (
+        "modulePath",
+        "testPath",
+        "servicePath",
+        "serviceTestPath",
+        "uiPath",
+        "uiTestPath",
+        "acceptancePath",
+        "milestonePath",
+        "adrPath",
+    ):
+        path = project_root / _required_text(implementation.get(field), field)
+        if not path.is_file():
+            raise ValueError(f"SBC reproducible audit P4 evidence is missing: {path}")
+    module_path = project_root / implementation["modulePath"]
+    expected_hash = _sha256(
+        implementation.get("moduleCanonicalTextSha256"),
+        "SBC reproducible audit P4 module canonical text",
+    )
+    if _canonical_text_sha256(module_path) != expected_hash:
+        raise ValueError("SBC reproducible audit P4 module hash differs from the audit")
+    if implementation.get("validationStates") != ["PASS", "FAIL", "UNKNOWN"]:
+        raise ValueError("SBC reproducible audit P4 validation states drifted")
+
+    expected_projection = {
+        "inputContract": "SBC_LINKED_AUDIT_VIEW_V1",
+        "inputSchemaVersion": 1,
+        "singleCanonicalSourceAudit": True,
+        "baselineRequired": True,
+        "multipleComparisonsAllowed": True,
+        "comparisonOrder": "stable_source_interval_order",
+        "deltaConvention": "comparison_minus_baseline",
+        "descriptiveOnly": True,
+        "preservesIntervalIds": True,
+        "preservesCellIds": True,
+        "preservesClusterIds": True,
+        "preservesSourceLineage": True,
+        "manualBookmarksOnly": True,
+        "jsonExport": True,
+        "escapedHtmlExport": True,
+        "portableNumericCanonicalization": True,
+        "fullReplayChain": "CHAKRA_TO_P1_TO_P2_TO_P3_TO_P4",
+    }
+    if (document.get("projection") or {}) != expected_projection:
+        raise ValueError("SBC reproducible audit P4 projection contract drifted")
+
+    expected_gates = [
+        "SOURCE_AUDIT_LOCKS",
+        "COMPARISON_LINKS",
+        "REPLAY_RECIPE",
+        "MANUAL_BOOKMARKS",
+        "UNKNOWN_EVIDENCE",
+        "FINANCIAL_INTERPRETATION",
+        "EXECUTION_LOCK",
+    ]
+    if document.get("validationGates") != expected_gates:
+        raise ValueError("SBC reproducible audit P4 validation gates drifted")
+
+    expected_transport = {
+        "browserDevelopment": "private_http_post",
+        "nativeDesktop": "tauri_ipc_private_sidecar",
+        "browserSuppliesComputedEvidence": False,
+        "backendRecomputesChakraP1P2P3P4": True,
+        "replayRequiredForVerification": True,
+    }
+    if (document.get("transport") or {}) != expected_transport:
+        raise ValueError("SBC reproducible audit P4 transport contract drifted")
+
+    guardrails = document.get("guardrails") or {}
+    for field in (
+        "researchOnly",
+        "readOnly",
+        "timestampSafe",
+        "noLookahead",
+        "sourceProfiledExperimental",
+        "descriptiveComparisonOnly",
+        "manualAnnotationsOnly",
+        "replayRequiredForVerification",
+    ):
+        if guardrails.get(field) is not True:
+            raise ValueError(
+                f"SBC reproducible audit P4 guardrail {field} must remain true"
+            )
+    for field in (
+        "financiallyValidated",
+        "countsAsIndependentVote",
+        "fxSubtractionIncluded",
+        "phaseOutputIncluded",
+        "confidenceOutputIncluded",
+        "marketDirectionIncluded",
+        "consumedByAutoSuggest",
+        "consumedByLiveInference",
+        "consumedByOfficialMlNotes",
+        "consumedByShadowLedger",
+        "tradeOutputIncluded",
+        "executionAllowed",
+    ):
+        if guardrails.get(field) is not False:
+            raise ValueError(
+                f"SBC reproducible audit P4 guardrail {field} must remain false"
+            )
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError(
+            "SBC reproducible audit P4 directional contribution must remain zero"
+        )
+
+    expected_verification = {
+        "newAuditPackageTests": "6_passed",
+        "chakraServiceTests": "9_passed",
+        "chakraAuditWorkspaceTests": "4_passed",
+        "frontendTests": "95_passed",
+        "statusValidation": "17_passed",
+        "repositoryPythonTests": "442_passed",
+        "pythonRuff": "passed",
+        "frontendLint": "passed",
+        "frontendProductionBuild": "passed",
+        "nativeRustCheck": "passed",
+        "browserVisualAcceptance": "passed",
+        "browserReplayVerification": "passed",
+    }
+    if (document.get("verification") or {}) != expected_verification:
+        raise ValueError(
+            "SBC reproducible audit P4 verification evidence is incomplete"
+        )
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -763,6 +924,10 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         audits["audits/sbc_linked_audit_views_p3_20260728.json"],
         root.parent,
     )
+    validate_sbc_reproducible_audit_packages_p4_audit(
+        audits["audits/sbc_reproducible_audit_packages_p4_20260728.json"],
+        root.parent,
+    )
     validate_cross_document_links(documents, root)
     capability_ids = {
         item["capabilityId"]
@@ -772,6 +937,7 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         "multidimensional_sbc_atomic_intervals_v1",
         "multidimensional_sbc_ledger_v1",
         "sbc_linked_audit_views_v1",
+        "sbc_reproducible_audit_packages_v1",
         "phase_interference_research_engine_v1",
     }
     if not required_capabilities <= capability_ids:
@@ -804,6 +970,15 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     ):
         raise ValueError(
             "SBC linked audit P3 capability is not registered as source-implemented"
+        )
+    if (
+        capability_by_id["sbc_reproducible_audit_packages_v1"]["states"][
+            "implementedInSource"
+        ]
+        != "yes"
+    ):
+        raise ValueError(
+            "SBC reproducible audit P4 capability is not registered as source-implemented"
         )
     return {
         "contract": "GANN_PROJECT_STATUS_VALIDATION_V1",

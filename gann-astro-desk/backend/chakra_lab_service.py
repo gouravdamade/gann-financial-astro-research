@@ -23,6 +23,14 @@ from sbc.atomic_intervals import (  # noqa: E402
     boundary_from_chakra_snapshot,
 )
 from sbc.audit_views import SbcLinkedAuditViewCompiler  # noqa: E402
+from sbc.audit_packages import (  # noqa: E402
+    SbcAuditBookmarkInput,
+    SbcAuditComparisonPackageCompiler,
+    SbcAuditPackageVerification,
+    render_audit_package_html,
+    validate_audit_package_payload,
+    verify_audit_package_replay,
+)
 from sbc.models import GeoLocation  # noqa: E402
 from sbc.multidimensional_ledger import (  # noqa: E402
     SbcMultidimensionalLedgerCompiler,
@@ -76,6 +84,30 @@ AUDIT_REQUEST_KEYS = {
 AUDIT_BOUNDARY_KEYS = {
     "reason",
     "request",
+}
+AUDIT_PACKAGE_REQUEST_KEYS = {
+    "auditRequest",
+    "baselineIntervalId",
+    "comparisonIntervalIds",
+    "bookmarks",
+    "sealedAt",
+}
+AUDIT_PACKAGE_BOOKMARK_KEYS = {
+    "targetType",
+    "targetId",
+    "label",
+    "note",
+    "createdAt",
+}
+AUDIT_PACKAGE_VERIFY_KEYS = {
+    "package",
+}
+AUDIT_PACKAGE_REPLAY_KEYS = {
+    "audit_request",
+    "baseline_interval_id",
+    "comparison_interval_ids",
+    "bookmarks",
+    "sealed_at_utc",
 }
 
 
@@ -184,7 +216,7 @@ def build_chakra_lab_snapshot(payload: Any) -> dict[str, Any]:
     return ChakraLabEngine().snapshot(request).to_dict()
 
 
-def build_chakra_lab_audit(payload: Any) -> dict[str, Any]:
+def _build_chakra_lab_audit(payload: Any):
     if not isinstance(payload, dict):
         raise ValueError("Chakra Lab audit request must be an object")
     _reject_unknown(payload, AUDIT_REQUEST_KEYS, "Chakra Lab audit request")
@@ -230,4 +262,160 @@ def build_chakra_lab_audit(payload: Any) -> dict[str, Any]:
         atomic,
         instrument_identity=instrument_identity,
     )
-    return SbcLinkedAuditViewCompiler().compile(ledger).to_dict()
+    return SbcLinkedAuditViewCompiler().compile(ledger)
+
+
+def build_chakra_lab_audit(payload: Any) -> dict[str, Any]:
+    return _build_chakra_lab_audit(payload).to_dict()
+
+
+def _bookmark_input(payload: Any, label: str) -> SbcAuditBookmarkInput:
+    if not isinstance(payload, dict):
+        raise ValueError(f"{label} must be an object")
+    _reject_unknown(payload, AUDIT_PACKAGE_BOOKMARK_KEYS, label)
+    return SbcAuditBookmarkInput(
+        target_type=_required_text(payload.get("targetType"), f"{label}.targetType"),
+        target_id=_required_text(payload.get("targetId"), f"{label}.targetId"),
+        label=_required_text(payload.get("label"), f"{label}.label"),
+        note=_required_text(payload.get("note"), f"{label}.note"),
+        created_at_utc=_offset_datetime(
+            payload.get("createdAt"),
+            f"{label}.createdAt",
+        ),
+    )
+
+
+def _bookmark_recipe(value: SbcAuditBookmarkInput) -> dict[str, Any]:
+    return {
+        "targetType": value.target_type,
+        "targetId": value.target_id,
+        "label": value.label,
+        "note": value.note,
+        "createdAt": value.created_at_utc.isoformat(),
+    }
+
+
+def _audit_package_inputs(payload: Any) -> tuple[
+    Any,
+    str,
+    tuple[str, ...],
+    tuple[SbcAuditBookmarkInput, ...],
+    datetime,
+    dict[str, Any],
+]:
+    if not isinstance(payload, dict):
+        raise ValueError("Chakra Lab audit package request must be an object")
+    _reject_unknown(
+        payload,
+        AUDIT_PACKAGE_REQUEST_KEYS,
+        "Chakra Lab audit package request",
+    )
+    audit_request = payload.get("auditRequest")
+    source_audit = _build_chakra_lab_audit(audit_request)
+    baseline_interval_id = _required_text(
+        payload.get("baselineIntervalId"),
+        "baselineIntervalId",
+    )
+    comparison_interval_ids = _string_tuple(
+        payload.get("comparisonIntervalIds"),
+        "comparisonIntervalIds",
+    )
+    bookmark_payloads = payload.get("bookmarks") or []
+    if not isinstance(bookmark_payloads, list):
+        raise ValueError("bookmarks must be an array")
+    bookmarks = tuple(
+        _bookmark_input(item, f"bookmark {index + 1}")
+        for index, item in enumerate(bookmark_payloads)
+    )
+    sealed_at_utc = _offset_datetime(payload.get("sealedAt"), "sealedAt")
+    replay_recipe = {
+        "audit_request": audit_request,
+        "baseline_interval_id": baseline_interval_id,
+        "comparison_interval_ids": list(comparison_interval_ids),
+        "bookmarks": [_bookmark_recipe(item) for item in bookmarks],
+        "sealed_at_utc": sealed_at_utc.isoformat(),
+    }
+    return (
+        source_audit,
+        baseline_interval_id,
+        comparison_interval_ids,
+        bookmarks,
+        sealed_at_utc,
+        replay_recipe,
+    )
+
+
+def build_chakra_lab_audit_package(payload: Any) -> dict[str, Any]:
+    (
+        source_audit,
+        baseline_interval_id,
+        comparison_interval_ids,
+        bookmarks,
+        sealed_at_utc,
+        replay_recipe,
+    ) = _audit_package_inputs(payload)
+    package = SbcAuditComparisonPackageCompiler().compile(
+        source_audit,
+        baseline_interval_id=baseline_interval_id,
+        comparison_interval_ids=comparison_interval_ids,
+        bookmark_inputs=bookmarks,
+        sealed_at_utc=sealed_at_utc,
+        replay_recipe=replay_recipe,
+    )
+    return {
+        "package": package.to_dict(),
+        "htmlReport": render_audit_package_html(package),
+    }
+
+
+def _package_request_from_recipe(recipe: Any) -> dict[str, Any]:
+    if not isinstance(recipe, dict):
+        raise ValueError("replay_recipe must be an object")
+    _reject_unknown(recipe, AUDIT_PACKAGE_REPLAY_KEYS, "replay recipe")
+    return {
+        "auditRequest": recipe.get("audit_request"),
+        "baselineIntervalId": recipe.get("baseline_interval_id"),
+        "comparisonIntervalIds": recipe.get("comparison_interval_ids"),
+        "bookmarks": recipe.get("bookmarks"),
+        "sealedAt": recipe.get("sealed_at_utc"),
+    }
+
+
+def verify_chakra_lab_audit_package(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("Chakra Lab audit package verification must be an object")
+    _reject_unknown(
+        payload,
+        AUDIT_PACKAGE_VERIFY_KEYS,
+        "Chakra Lab audit package verification",
+    )
+    package_payload = payload.get("package")
+    try:
+        validate_audit_package_payload(package_payload)
+        rebuilt = build_chakra_lab_audit_package(
+            _package_request_from_recipe(package_payload["replay_recipe"])
+        )["package"]
+        return verify_audit_package_replay(package_payload, rebuilt).to_dict()
+    except (KeyError, TypeError, ValueError) as exc:
+        package_id = (
+            package_payload.get("package_id")
+            if isinstance(package_payload, dict)
+            else None
+        )
+        source_audit_id = (
+            package_payload.get("source_audit_id")
+            if isinstance(package_payload, dict)
+            else None
+        )
+        return SbcAuditPackageVerification(
+            contract="SBC_AUDIT_PACKAGE_VERIFICATION_V1",
+            state="FAIL",
+            package_id=package_id,
+            source_audit_id=source_audit_id,
+            structural_hash_match=False,
+            source_projection_match=False,
+            replay_recipe_match=False,
+            replay_audit_match=False,
+            replay_package_match=False,
+            errors=(str(exc),),
+        ).to_dict()

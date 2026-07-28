@@ -2371,3 +2371,146 @@ export type ChakraLinkedAuditView = {
     blocked_capabilities: string[]
   }
 }
+
+export type ChakraAuditBookmarkTarget =
+  | 'AUDIT'
+  | 'INTERVAL'
+  | 'CELL'
+  | 'CLUSTER'
+  | 'VALIDATION_GATE'
+
+export type ChakraAuditBookmarkInput = {
+  targetType: ChakraAuditBookmarkTarget
+  targetId: string
+  label: string
+  note: string
+  createdAt: string
+}
+
+export type ChakraAuditPackageRequest = {
+  auditRequest: ChakraLabAuditRequest
+  baselineIntervalId: string
+  comparisonIntervalIds: string[]
+  bookmarks: ChakraAuditBookmarkInput[]
+  sealedAt: string
+}
+
+export type ChakraAuditMetricDelta = {
+  favorable_guidance_units: number
+  adverse_guidance_units: number
+  net_guidance_units: number
+  gross_activation_units: number
+  scored_contribution_count: number
+  unknown_contribution_count: number
+  missing_evidence_count: number
+  total_evidence_count: number
+  unknown_magnitude_units: number | null
+  scoring_coverage_ratio: number
+  derivation_role: 'DESCRIPTIVE_COMPARISON_ONLY'
+  counts_as_independent_vote: false
+  directional_contribution: 0
+}
+
+export type ChakraAuditCellComparison = {
+  axis: string
+  key: string
+  baseline_cell_id: string | null
+  comparison_cell_id: string | null
+  baseline_summary: ChakraAuditLedgerSummary | null
+  comparison_summary: ChakraAuditLedgerSummary | null
+  delta: ChakraAuditMetricDelta
+  derivation_role: 'DESCRIPTIVE_COMPARISON_ONLY'
+  counts_as_independent_vote: false
+  directional_contribution: 0
+}
+
+export type ChakraAuditIntervalComparison = {
+  comparison_id: string
+  baseline_interval_id: string
+  comparison_interval_id: string
+  baseline_summary: ChakraAuditLedgerSummary
+  comparison_summary: ChakraAuditLedgerSummary
+  total_delta: ChakraAuditMetricDelta
+  cell_comparisons: ChakraAuditCellComparison[]
+  shared_source_lineage_ids: string[]
+  baseline_only_source_lineage_ids: string[]
+  comparison_only_source_lineage_ids: string[]
+  interpretation: string
+  derivation_role: 'DESCRIPTIVE_COMPARISON_ONLY'
+  counts_as_independent_vote: false
+  directional_contribution: 0
+}
+
+export type ChakraAuditBookmark = {
+  bookmark_id: string
+  target_type: ChakraAuditBookmarkTarget
+  target_id: string
+  label: string
+  note: string
+  created_at_utc: string
+  annotation_role: 'MANUAL_RESEARCH_ANNOTATION_ONLY'
+  counts_as_evidence: false
+  official_ml_note: false
+  directional_contribution: 0
+}
+
+export type ChakraAuditPackageValidationGate = {
+  gate_id: string
+  state: 'PASS' | 'UNKNOWN'
+  label: string
+  detail: string
+}
+
+export type ChakraReproducibleAuditPackage = {
+  contract: 'SBC_REPRODUCIBLE_AUDIT_PACKAGE_V1'
+  schema_version: 1
+  package_policy: 'READ_ONLY_COMPARISON_EXPORT_REPLAY_V1'
+  classification: 'SOURCE_PROFILED_EXPERIMENTAL'
+  package_id: string
+  source_audit_id: string
+  source_projection_hash: string
+  instrument_identity: string
+  sealed_at_utc: string
+  replay_recipe_hash: string
+  replay_recipe: Record<string, unknown>
+  source_audit: ChakraLinkedAuditView
+  comparisons: ChakraAuditIntervalComparison[]
+  bookmarks: ChakraAuditBookmark[]
+  validation_gates: ChakraAuditPackageValidationGate[]
+  guardrails: {
+    research_only: true
+    read_only: true
+    timestamp_safe: true
+    no_lookahead: true
+    source_profiled_experimental: true
+    financially_validated: false
+    descriptive_comparison_only: true
+    manual_annotations_only: true
+    replay_required_for_verification: true
+    phase_included: false
+    fx_subtraction_included: false
+    confidence_included: false
+    counts_as_independent_vote: false
+    directional_contribution: 0
+    execution_allowed: false
+    blocked_capabilities: string[]
+  }
+}
+
+export type ChakraAuditPackageBuild = {
+  package: ChakraReproducibleAuditPackage
+  htmlReport: string
+}
+
+export type ChakraAuditPackageVerification = {
+  contract: 'SBC_AUDIT_PACKAGE_VERIFICATION_V1'
+  state: 'PASS' | 'FAIL'
+  package_id: string | null
+  source_audit_id: string | null
+  structural_hash_match: boolean
+  source_projection_match: boolean
+  replay_recipe_match: boolean
+  replay_audit_match: boolean
+  replay_package_match: boolean
+  errors: string[]
+}

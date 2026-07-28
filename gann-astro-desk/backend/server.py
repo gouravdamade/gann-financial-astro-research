@@ -23,7 +23,12 @@ from chart_layouts import (
     save_drawing_template,
 )
 from candlestick_shadow import CandlestickShadowSupervisor, default_model_path
-from chakra_lab_service import build_chakra_lab_audit, build_chakra_lab_snapshot
+from chakra_lab_service import (
+    build_chakra_lab_audit,
+    build_chakra_lab_audit_package,
+    build_chakra_lab_snapshot,
+    verify_chakra_lab_audit_package,
+)
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -250,6 +255,30 @@ def create_chakra_lab_audit() -> Any:
             {
                 "ok": True,
                 "audit": build_chakra_lab_audit(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/audit-package")
+def create_chakra_lab_audit_package() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        result = build_chakra_lab_audit_package(payload)
+        return jsonify({"ok": True, **result})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/audit-package/verify")
+def verify_imported_chakra_lab_audit_package() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "verification": verify_chakra_lab_audit_package(payload),
             }
         )
     except (TypeError, ValueError) as exc:

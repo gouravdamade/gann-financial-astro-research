@@ -1,23 +1,39 @@
 import {
+  BookmarkPlus,
   Clock3,
+  Columns3,
+  Download,
+  FileCheck2,
   GitBranch,
   ListChecks,
+  PackageCheck,
   Plus,
   Radar,
   RefreshCw,
   ShieldAlert,
   Table2,
   Trash2,
+  Upload,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { fetchChakraLabAudit } from '../api'
+import { useMemo, useRef, useState } from 'react'
+import {
+  buildChakraLabAuditPackage,
+  fetchChakraLabAudit,
+  verifyChakraLabAuditPackage,
+} from '../api'
 import type {
+  ChakraAuditBookmarkInput,
+  ChakraAuditBookmarkTarget,
   ChakraAuditInterval,
   ChakraAuditLedgerCell,
+  ChakraAuditPackageBuild,
+  ChakraAuditPackageVerification,
   ChakraAuditRay,
   ChakraLabAuditBoundaryInput,
+  ChakraLabAuditRequest,
   ChakraLabRequest,
   ChakraLinkedAuditView,
+  ChakraReproducibleAuditPackage,
 } from '../types'
 
 
@@ -28,6 +44,8 @@ type AuditTab =
   | 'SOURCE_LINEAGE'
   | 'RECONCILIATION'
   | 'VALIDATION'
+  | 'COMPARE'
+  | 'PACKAGE'
 
 const TAB_ICONS = {
   TIMELINE: Clock3,
@@ -36,6 +54,8 @@ const TAB_ICONS = {
   SOURCE_LINEAGE: GitBranch,
   RECONCILIATION: ListChecks,
   VALIDATION: ShieldAlert,
+  COMPARE: Columns3,
+  PACKAGE: PackageCheck,
 } as const
 
 function offsetIst(value: string): string {
@@ -82,12 +102,26 @@ function units(value: number): string {
   return value.toFixed(2)
 }
 
+function signedUnits(value: number): string {
+  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}`
+}
+
+function downloadText(content: string, type: string, filename: string) {
+  const url = URL.createObjectURL(new Blob([content], { type }))
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 type Props = {
   currentRequest: ChakraLabRequest
 }
 
 export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const [instrumentIdentity, setInstrumentIdentity] = useState('FX:USDJPY')
+  const [boundaryLocal, setBoundaryLocal] = useState(() => istInput(currentRequest.at))
   const [boundaryReason, setBoundaryReason] = useState('manual review boundary')
   const [terminalLocal, setTerminalLocal] = useState(() => plusHour(currentRequest.at))
   const [boundaries, setBoundaries] = useState<ChakraLabAuditBoundaryInput[]>([])
@@ -96,8 +130,18 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const [selectedIntervalId, setSelectedIntervalId] = useState('')
   const [selectedClusterId, setSelectedClusterId] = useState('')
   const [selectedCellId, setSelectedCellId] = useState('')
+  const [baselineIntervalId, setBaselineIntervalId] = useState('')
+  const [comparisonIntervalIds, setComparisonIntervalIds] = useState<string[]>([])
+  const [bookmarks, setBookmarks] = useState<ChakraAuditBookmarkInput[]>([])
+  const [bookmarkTargetType, setBookmarkTargetType] = useState<ChakraAuditBookmarkTarget>('INTERVAL')
+  const [bookmarkLabel, setBookmarkLabel] = useState('')
+  const [bookmarkNote, setBookmarkNote] = useState('')
+  const [packageBuild, setPackageBuild] = useState<ChakraAuditPackageBuild | null>(null)
+  const [verification, setVerification] = useState<ChakraAuditPackageVerification | null>(null)
   const [busy, setBusy] = useState(false)
+  const [packageBusy, setPackageBusy] = useState(false)
   const [error, setError] = useState('')
+  const importInputRef = useRef<HTMLInputElement>(null)
 
   const selectedInterval = audit?.intervals.find(
     (item) => item.interval_id === selectedIntervalId,
@@ -124,6 +168,14 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const selectedCell = audit?.ledger_cells.find(
     (item) => item.cell_id === selectedCellId,
   ) ?? null
+  const bookmarkTargetId = bookmarkTargetType === 'AUDIT'
+    ? audit?.audit_view_id ?? ''
+    : bookmarkTargetType === 'INTERVAL'
+      ? selectedInterval?.interval_id ?? ''
+      : bookmarkTargetType === 'CELL'
+        ? selectedCell?.cell_id ?? ''
+        : selectedCluster?.cluster_id ?? ''
+  const packageComparisons = packageBuild?.package.comparisons ?? []
 
   const sortedBoundaries = useMemo(
     () => [...boundaries].sort(
@@ -132,37 +184,57 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     [boundaries],
   )
 
+  const auditRequest = (): ChakraLabAuditRequest => ({
+    instrumentIdentity: instrumentIdentity.trim(),
+    terminalEnd: offsetIst(terminalLocal),
+    boundaries: sortedBoundaries,
+  })
+
+  const resetPackage = () => {
+    setPackageBuild(null)
+    setVerification(null)
+  }
+
   const captureBoundary = () => {
+    const capturedAt = offsetIst(boundaryLocal)
+    if (boundaries.some((item) => item.request.at === capturedAt)) {
+      setError('That boundary moment is already captured.')
+      return
+    }
     const captured: ChakraLabAuditBoundaryInput = {
       reason: boundaryReason.trim() || 'manual review boundary',
-      request: structuredClone(currentRequest),
+      request: {
+        ...structuredClone(currentRequest),
+        at: capturedAt,
+      },
     }
     setBoundaries((current) => {
       const next = [...current, captured]
       return next.sort((left, right) => left.request.at.localeCompare(right.request.at))
     })
-    const candidate = plusHour(currentRequest.at)
-    if (new Date(offsetIst(terminalLocal)) <= new Date(currentRequest.at)) {
+    const candidate = plusHour(capturedAt)
+    setBoundaryLocal(candidate)
+    if (new Date(offsetIst(terminalLocal)) <= new Date(capturedAt)) {
       setTerminalLocal(candidate)
     }
     setAudit(null)
+    setBookmarks([])
+    resetPackage()
     setError('')
   }
 
   const removeBoundary = (index: number) => {
     setBoundaries((current) => current.filter((_, itemIndex) => itemIndex !== index))
     setAudit(null)
+    setBookmarks([])
+    resetPackage()
   }
 
   const buildAudit = async () => {
     setBusy(true)
     setError('')
     try {
-      const result = await fetchChakraLabAudit({
-        instrumentIdentity: instrumentIdentity.trim(),
-        terminalEnd: offsetIst(terminalLocal),
-        boundaries: sortedBoundaries,
-      })
+      const result = await fetchChakraLabAudit(auditRequest())
       setAudit(result)
       const firstInterval = result.intervals[0]
       setSelectedIntervalId(firstInterval?.interval_id ?? '')
@@ -174,6 +246,12 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
         (item) => item.interval_id === firstInterval?.interval_id,
       )
       setSelectedCellId(firstCell?.cell_id ?? '')
+      setBaselineIntervalId(firstInterval?.interval_id ?? '')
+      setComparisonIntervalIds(
+        result.intervals.slice(1).map((item) => item.interval_id),
+      )
+      setBookmarks([])
+      resetPackage()
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
     } finally {
@@ -203,6 +281,101 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     setSelectedCellId(item.cell_ids[0] ?? '')
   }
 
+  const openLedgerCell = (cellId: string) => {
+    const nextCell = audit?.ledger_cells.find((item) => item.cell_id === cellId)
+    if (!nextCell) return
+    const nextInterval = audit?.intervals.find(
+      (item) => item.interval_id === nextCell.interval_id,
+    )
+    if (nextInterval) {
+      setSelectedIntervalId(nextInterval.interval_id)
+    }
+    setSelectedCellId(nextCell.cell_id)
+    setSelectedClusterId(nextCell.cluster_ids[0] ?? '')
+    setActiveTab('LEDGER')
+  }
+
+  const toggleComparison = (intervalIdToToggle: string) => {
+    setComparisonIntervalIds((current) => (
+      current.includes(intervalIdToToggle)
+        ? current.filter((item) => item !== intervalIdToToggle)
+        : [...current, intervalIdToToggle]
+    ))
+    resetPackage()
+  }
+
+  const addBookmark = () => {
+    if (!bookmarkTargetId || !bookmarkLabel.trim() || !bookmarkNote.trim()) return
+    setBookmarks((current) => [
+      ...current,
+      {
+        targetType: bookmarkTargetType,
+        targetId: bookmarkTargetId,
+        label: bookmarkLabel.trim(),
+        note: bookmarkNote.trim(),
+        createdAt: new Date().toISOString(),
+      },
+    ])
+    setBookmarkLabel('')
+    setBookmarkNote('')
+    resetPackage()
+  }
+
+  const removeBookmark = (index: number) => {
+    setBookmarks((current) => current.filter((_, itemIndex) => itemIndex !== index))
+    resetPackage()
+  }
+
+  const buildPackage = async () => {
+    if (!audit || !baselineIntervalId || comparisonIntervalIds.length === 0) return
+    setPackageBusy(true)
+    setError('')
+    setVerification(null)
+    try {
+      const result = await buildChakraLabAuditPackage({
+        auditRequest: auditRequest(),
+        baselineIntervalId,
+        comparisonIntervalIds,
+        bookmarks,
+        sealedAt: new Date().toISOString(),
+      })
+      setPackageBuild(result)
+      setActiveTab('COMPARE')
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      setPackageBusy(false)
+    }
+  }
+
+  const verifyPackage = async (value = packageBuild?.package) => {
+    if (!value) return
+    setPackageBusy(true)
+    setError('')
+    try {
+      const result = await verifyChakraLabAuditPackage(value)
+      setVerification(result)
+      setActiveTab('PACKAGE')
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      setPackageBusy(false)
+    }
+  }
+
+  const importPackage = async (file: File | undefined) => {
+    if (!file) return
+    try {
+      const parsed = JSON.parse(await file.text()) as ChakraReproducibleAuditPackage
+      setPackageBuild({ package: parsed, htmlReport: '' })
+      await verifyPackage(parsed)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      if (importInputRef.current) importInputRef.current.value = ''
+    }
+  }
+
   return (
     <div className="chakra-audit-shell">
       <aside className="chakra-audit-capture">
@@ -219,6 +392,14 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
             />
           </label>
           <label>
+            Boundary moment (IST)
+            <input
+              type="datetime-local"
+              value={boundaryLocal}
+              onChange={(event) => setBoundaryLocal(event.target.value)}
+            />
+          </label>
+          <label>
             Boundary reason
             <input
               value={boundaryReason}
@@ -228,10 +409,10 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
           <button
             className="secondary-command chakra-audit-action"
             onClick={captureBoundary}
-            title="Capture the current Chakra Lab moment as an explicit audit boundary"
+            title="Capture this explicit audit boundary"
           >
             <Plus size={13} />
-            Capture current moment
+            Capture boundary
           </button>
           <label>
             Terminal end (IST)
@@ -282,18 +463,102 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
             )}
           </div>
         </section>
+
+        <section>
+          <div className="chakra-section-heading">
+            <strong>P4 comparison package</strong>
+            <span>{comparisonIntervalIds.length} selected</span>
+          </div>
+          <label>
+            Baseline interval
+            <select
+              value={baselineIntervalId}
+              onChange={(event) => {
+                setBaselineIntervalId(event.target.value)
+                setComparisonIntervalIds((current) => (
+                  current.filter((item) => item !== event.target.value)
+                ))
+                resetPackage()
+              }}
+              disabled={!audit}
+            >
+              {(audit?.intervals ?? []).map((item, index) => (
+                <option key={item.interval_id} value={item.interval_id}>
+                  {index + 1} - {formatMoment(item.start_utc)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="chakra-comparison-picks">
+            {(audit?.intervals ?? [])
+              .filter((item) => item.interval_id !== baselineIntervalId)
+              .map((item, index) => (
+                <button
+                  key={item.interval_id}
+                  className={comparisonIntervalIds.includes(item.interval_id) ? 'is-selected' : ''}
+                  aria-pressed={comparisonIntervalIds.includes(item.interval_id)}
+                  onClick={() => toggleComparison(item.interval_id)}
+                >
+                  <span>{index + 1}</span>
+                  {formatMoment(item.start_utc)}
+                </button>
+              ))}
+            {audit && audit.intervals.length < 2 && (
+              <span className="chakra-muted-row">Capture at least two intervals</span>
+            )}
+          </div>
+          <button
+            className="primary-command chakra-audit-action"
+            onClick={() => void buildPackage()}
+            disabled={
+              packageBusy
+              || !audit
+              || !baselineIntervalId
+              || comparisonIntervalIds.length === 0
+            }
+          >
+            <PackageCheck size={13} />
+            {packageBusy ? 'Recomputing package' : 'Build sealed package'}
+          </button>
+          <input
+            ref={importInputRef}
+            className="chakra-package-file"
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => void importPackage(event.target.files?.[0])}
+          />
+          <button
+            className="secondary-command chakra-audit-action"
+            onClick={() => importInputRef.current?.click()}
+          >
+            <Upload size={13} />
+            Import and replay
+          </button>
+        </section>
       </aside>
 
       <section className="chakra-audit-main">
         <div className="chakra-audit-tabs" role="tablist" aria-label="SBC audit views">
-          {(audit?.views ?? [
-            { view_id: 'TIMELINE', label: 'Timeline', purpose: 'Intervals' },
-            { view_id: 'LEDGER', label: 'Ledger', purpose: 'Dimensions' },
-            { view_id: 'RAY_AUDIT', label: 'Ray audit', purpose: 'Vedha directions' },
-            { view_id: 'SOURCE_LINEAGE', label: 'Lineage', purpose: 'Sources' },
-            { view_id: 'RECONCILIATION', label: 'Reconciliation', purpose: 'Checks' },
-            { view_id: 'VALIDATION', label: 'Validation', purpose: 'Safety gates' },
-          ]).map((view) => {
+          {[
+            ...(audit?.views ?? [
+              { view_id: 'TIMELINE', label: 'Timeline', purpose: 'Intervals' },
+              { view_id: 'LEDGER', label: 'Ledger', purpose: 'Dimensions' },
+              { view_id: 'RAY_AUDIT', label: 'Ray audit', purpose: 'Vedha directions' },
+              { view_id: 'SOURCE_LINEAGE', label: 'Lineage', purpose: 'Sources' },
+              { view_id: 'RECONCILIATION', label: 'Reconciliation', purpose: 'Checks' },
+              { view_id: 'VALIDATION', label: 'Validation', purpose: 'Safety gates' },
+            ]),
+            {
+              view_id: 'COMPARE',
+              label: 'Compare',
+              purpose: 'Descriptive interval differences only',
+            },
+            {
+              view_id: 'PACKAGE',
+              label: 'Package',
+              purpose: 'Export, import, and full replay verification',
+            },
+          ].map((view) => {
             const viewId = view.view_id as AuditTab
             const Icon = TAB_ICONS[viewId]
             return (
@@ -303,6 +568,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                 aria-selected={activeTab === viewId}
                 className={activeTab === viewId ? 'is-active' : ''}
                 onClick={() => setActiveTab(viewId)}
+                disabled={!audit && (viewId === 'COMPARE' || viewId === 'PACKAGE')}
                 title={view.purpose}
               >
                 <Icon size={12} />
@@ -459,6 +725,172 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                 </div>
               </div>
             )}
+
+            {activeTab === 'COMPARE' && (
+              !packageBuild ? (
+                <div className="chakra-audit-empty is-inline">
+                  <Columns3 size={21} />
+                  <strong>Comparison package not built</strong>
+                  <span>Select a baseline and at least one comparison interval.</span>
+                </div>
+              ) : (
+                <div className="chakra-comparison-list">
+                  <p className="chakra-comparison-warning">
+                    Candidate minus baseline. These are descriptive ledger differences,
+                    not market direction, confidence, performance, or trade signals.
+                  </p>
+                  {packageComparisons.map((comparison) => (
+                    <section key={comparison.comparison_id} className="chakra-comparison-section">
+                      <header>
+                        <div>
+                          <strong>{shortId(comparison.comparison_id)}</strong>
+                          <span>
+                            {shortId(comparison.baseline_interval_id)}
+                            {' to '}
+                            {shortId(comparison.comparison_interval_id)}
+                          </span>
+                        </div>
+                        <div className="chakra-comparison-metrics">
+                          <span>Net {signedUnits(comparison.total_delta.net_guidance_units)}</span>
+                          <span>Gross {signedUnits(comparison.total_delta.gross_activation_units)}</span>
+                          <span>Coverage {signedUnits(comparison.total_delta.scoring_coverage_ratio * 100)}%</span>
+                          <span>Unknown {comparison.total_delta.unknown_contribution_count >= 0 ? '+' : ''}{comparison.total_delta.unknown_contribution_count}</span>
+                        </div>
+                      </header>
+                      <div className="chakra-audit-table is-comparison">
+                        <div className="chakra-audit-table-head">
+                          <span>Axis</span><span>Key</span><span>Baseline</span>
+                          <span>Comparison</span><span>Net delta</span>
+                          <span>Gross delta</span><span>Unknown delta</span>
+                        </div>
+                        {comparison.cell_comparisons.map((item) => (
+                          <button
+                            key={`${comparison.comparison_id}-${item.axis}-${item.key}`}
+                            onClick={() => {
+                              openLedgerCell(
+                                item.comparison_cell_id ?? item.baseline_cell_id ?? '',
+                              )
+                            }}
+                          >
+                            <strong>{displayToken(item.axis)}</strong>
+                            <span>{displayToken(item.key)}</span>
+                            <span>{item.baseline_cell_id ? units(item.baseline_summary?.net_guidance_units ?? 0) : 'Absent'}</span>
+                            <span>{item.comparison_cell_id ? units(item.comparison_summary?.net_guidance_units ?? 0) : 'Absent'}</span>
+                            <span>{signedUnits(item.delta.net_guidance_units)}</span>
+                            <span>{signedUnits(item.delta.gross_activation_units)}</span>
+                            <span>{item.delta.unknown_contribution_count >= 0 ? '+' : ''}{item.delta.unknown_contribution_count}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              )
+            )}
+
+            {activeTab === 'PACKAGE' && (
+              !packageBuild ? (
+                <div className="chakra-audit-empty is-inline">
+                  <PackageCheck size={21} />
+                  <strong>No sealed package</strong>
+                  <span>Build or import a P4 package to inspect and verify it.</span>
+                </div>
+              ) : (
+                <div className="chakra-package-view">
+                  <header className="chakra-package-toolbar">
+                    <div>
+                      <strong>Sealed audit package</strong>
+                      <span>{shortId(packageBuild.package.package_id)}</span>
+                    </div>
+                    <div>
+                      <button
+                        className="icon-button"
+                        title="Download sealed JSON"
+                        aria-label="Download sealed JSON"
+                        onClick={() => downloadText(
+                          JSON.stringify(packageBuild.package, null, 2),
+                          'application/json',
+                          `sbc-audit-${packageBuild.package.package_id.slice(0, 12)}.json`,
+                        )}
+                      >
+                        <Download size={13} />
+                      </button>
+                      <button
+                        className="icon-button"
+                        title="Download readable HTML report"
+                        aria-label="Download readable HTML report"
+                        disabled={!packageBuild.htmlReport}
+                        onClick={() => downloadText(
+                          packageBuild.htmlReport,
+                          'text/html',
+                          `sbc-audit-${packageBuild.package.package_id.slice(0, 12)}.html`,
+                        )}
+                      >
+                        <FileCheck2 size={13} />
+                      </button>
+                      <button
+                        className="secondary-command"
+                        disabled={packageBusy}
+                        onClick={() => void verifyPackage()}
+                      >
+                        <RefreshCw size={12} />
+                        Replay verify
+                      </button>
+                    </div>
+                  </header>
+
+                  <dl className="chakra-package-meta">
+                    <div><dt>Package</dt><dd>{packageBuild.package.package_id}</dd></div>
+                    <div><dt>Source audit</dt><dd>{packageBuild.package.source_audit_id}</dd></div>
+                    <div><dt>Projection</dt><dd>{packageBuild.package.source_projection_hash}</dd></div>
+                    <div><dt>Replay recipe</dt><dd>{packageBuild.package.replay_recipe_hash}</dd></div>
+                    <div><dt>Sealed UTC</dt><dd>{packageBuild.package.sealed_at_utc}</dd></div>
+                  </dl>
+
+                  {verification && (
+                    <div className={`chakra-package-verification is-${verification.state.toLowerCase()}`}>
+                      <span>{verification.state}</span>
+                      <strong>
+                        {verification.state === 'PASS'
+                          ? 'Full Chakra to P1 to P2 to P3 to P4 replay matched'
+                          : 'Replay verification failed'}
+                      </strong>
+                      {verification.errors.map((item) => <p key={item}>{item}</p>)}
+                    </div>
+                  )}
+
+                  <div className="chakra-validation-list">
+                    {packageBuild.package.validation_gates.map((item) => (
+                      <div key={item.gate_id} className={`is-${item.state.toLowerCase()}`}>
+                        <span>{item.state}</span>
+                        <strong>{item.label}</strong>
+                        <p>{item.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <section>
+                    <div className="chakra-section-heading">
+                      <strong>Manual research bookmarks</strong>
+                      <span>{packageBuild.package.bookmarks.length}</span>
+                    </div>
+                    <div className="chakra-package-bookmarks">
+                      {packageBuild.package.bookmarks.map((item) => (
+                        <div key={item.bookmark_id}>
+                          <span>{displayToken(item.target_type)}</span>
+                          <strong>{item.label}</strong>
+                          <p>{item.note}</p>
+                          <code>{shortId(item.target_id)}</code>
+                        </div>
+                      ))}
+                      {!packageBuild.package.bookmarks.length && (
+                        <span className="chakra-muted-row">No manual bookmarks</span>
+                      )}
+                    </div>
+                  </section>
+                </div>
+              )
+            )}
           </div>
         )}
       </section>
@@ -510,10 +942,72 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
           </div>
         </section>
 
+        <section>
+          <div className="chakra-section-heading">
+            <strong>Research bookmark</strong>
+            <span>Not ML evidence</span>
+          </div>
+          <div className="chakra-bookmark-editor">
+            <select
+              value={bookmarkTargetType}
+              onChange={(event) => setBookmarkTargetType(
+                event.target.value as ChakraAuditBookmarkTarget,
+              )}
+              disabled={!audit}
+            >
+              <option value="AUDIT">Whole audit</option>
+              <option value="INTERVAL">Selected interval</option>
+              <option value="CELL">Selected ledger cell</option>
+              <option value="CLUSTER">Selected evidence cluster</option>
+            </select>
+            <input
+              value={bookmarkLabel}
+              onChange={(event) => setBookmarkLabel(event.target.value)}
+              placeholder="Bookmark label"
+              disabled={!bookmarkTargetId}
+            />
+            <textarea
+              value={bookmarkNote}
+              onChange={(event) => setBookmarkNote(event.target.value)}
+              placeholder="Manual observation only"
+              disabled={!bookmarkTargetId}
+            />
+            <button
+              className="secondary-command"
+              onClick={addBookmark}
+              disabled={
+                !bookmarkTargetId
+                || !bookmarkLabel.trim()
+                || !bookmarkNote.trim()
+              }
+            >
+              <BookmarkPlus size={12} />
+              Add bookmark
+            </button>
+          </div>
+          <div className="chakra-bookmark-drafts">
+            {bookmarks.map((item, index) => (
+              <div key={`${item.createdAt}-${index}`}>
+                <button
+                  className="icon-button"
+                  aria-label={`Remove bookmark ${index + 1}`}
+                  title="Remove bookmark"
+                  onClick={() => removeBookmark(index)}
+                >
+                  <Trash2 size={11} />
+                </button>
+                <strong>{item.label}</strong>
+                <span>{displayToken(item.targetType)} · {shortId(item.targetId)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="chakra-audit-locks">
           <span>Read only</span>
           <span>No phase</span>
           <span>No direction</span>
+          <span>Bookmarks not ML</span>
           <span>No execution</span>
         </section>
       </aside>
