@@ -114,10 +114,12 @@
         "sourceCertified": "no",
         "financiallyValidated": "no"
       },
-      "statusDetail": "Drik passes the Tier B comparator, but full Shadbala has 35 failed total rows and the independent witness is pending.",
+      "statusDetail": "The independent JHora 8.0 witness is complete, not pending. At the frozen 0.5-virupa tolerance, Naisargika aligns in 35/35 top-level rows and Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha align in 35/35 visible Kaala rows. Sthana, Dig, aggregate Kaala, Chesta, Drik, and full total remain provisional; full total passes 0/35 and Drik passes 9/35. Component alignment is not source certification, financial validation, or execution permission.",
       "evidenceRefs": [
-        "astro_external_validation_gate_20260718.json",
-        "astro_function_certification_report_20260718.md"
+        "astro_external_validation_gate_20260729.json",
+        "astro_function_certification_report_20260729.md",
+        "status/evidence/jhora_shadbala_20260723/jhora_doctrine_reconciliation_20260726.json",
+        "status/source_certification.json"
       ],
       "executionAllowed": false
     },

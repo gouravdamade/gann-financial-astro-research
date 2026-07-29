@@ -6,7 +6,7 @@ from jhora_doctrine_reconciliation import build_summary
 def test_locked_reconciliation_metrics_are_reproducible() -> None:
     summary, top_level, drik_rows = build_summary()
 
-    assert len(top_level) == 140
+    assert len(top_level) == 245
     assert len(drik_rows) == 175
     assert summary["toleranceVirupa"] == 0.5
 
@@ -21,6 +21,25 @@ def test_locked_reconciliation_metrics_are_reproducible() -> None:
     assert corrected_total["localCloser"] == 33
     assert corrected_total["localMeanAbsoluteDeltaVirupa"] == 12.626402633
     assert corrected_total["pyjhoraMeanAbsoluteDeltaVirupa"] == 71.741714286
+
+    naisargika = summary["topLevel"]["naisargika"]
+    assert naisargika["localPass"] == 35
+    assert naisargika["localMaxAbsoluteDeltaVirupa"] == 0.01
+
+    component_gate = summary["componentCertification"]
+    assert component_gate["status"] == "partial_independent_witness_alignment"
+    assert component_gate["witnessAlignedTopLevel"] == ["naisargika"]
+    assert component_gate["witnessAlignedKaalaSubcomponents"] == [
+        "abda",
+        "masa",
+        "paksha",
+        "tribhaga",
+        "vara",
+        "yuddha",
+    ]
+    assert component_gate["fullShadbalaCertified"] is False
+    assert component_gate["drikCertified"] is False
+    assert component_gate["executionAllowed"] is False
 
     chesta = summary["chesta"]
     assert chesta["luminaryRows"] == 10

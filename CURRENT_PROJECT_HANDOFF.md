@@ -1,8 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-07-29 12:05 IST
+Last updated: 2026-07-29 12:50 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-29 (Shadbala Component Witness Admission Boundary)
+
+- Expanded the locked local-versus-JHora reconciliation from four aggregate
+  measures to the complete seven-part top-level matrix:
+  Sthana, Kaala, Dig, Chesta, Naisargika, Drik, and total.
+- `jhora_doctrine_reconciliation.py` now emits contract
+  `GANN_JHORA_DOCTRINE_RECONCILIATION_V3` with `245/245` deterministic
+  top-level rows plus the existing `175` named Drik sensitivity rows.
+- Added a machine-readable, fail-closed component admission boundary:
+  - a component is independently witness-aligned only when all `35/35` locked
+    rows pass at the unchanged `0.5`-virupa tolerance;
+  - top-level Naisargika is aligned at `35/35`;
+  - visible Kaala subcomponents Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha
+    are aligned at `35/35` each;
+  - Sthana `34/35`, Dig `19/35`, aggregate Kaala `5/35`, Chesta `12/35`,
+    Drik `9/35`, and full total `0/35` remain provisional.
+- Alignment is deliberately distinct from source certification, financial
+  validation, and execution permission. All three remain false. No tolerance
+  was widened, and no formula was changed merely to resemble JHora.
+- `astro_function_certification.py` now consumes the V3 reconciliation as a
+  required Gate-3 input, verifies the aligned/provisional partitions, rejects
+  stale or incomplete contracts, and exposes the complete top-level component
+  table in `astro_external_validation_gate_20260729.json` and
+  `astro_function_certification_report_20260729.md`.
+- Corrected stale capability wording: the independent JHora witness is
+  complete and failed full reconciliation; it is not pending.
+- Updated `doctrine_config.yaml` and `status/source_certification.json` with the
+  explicit component boundary while retaining full Shadbala/Drik and execution
+  locks.
+- Verification on the final source state:
+  - focused reconciliation/certification tests `13/13`;
+  - complete repository Python suite `563/563`;
+  - changed Python scope passes Ruff and compilation;
+  - canonical status validation passes with 21 documents, 13 audits, and
+    execution false;
+  - deterministic reconciliation and four-gate report regeneration pass.
+- No frontend, Rust, Windows installer, Android package, Auto Suggest, live
+  inference, official ML-note, or MT5 execution behavior changed.
+- Runtime-only SQLite databases, logs, and Android workspace state remain
+  local and uncommitted.
+- Timestamped source recovery snapshot:
+  `chat_session_backups/session_20260729_1250_shadbala_component_witness_matrix`.
+- Next bounded doctrine work: reconcile the single Sthana residual first, then
+  case-8 Hora sunrise-boundary behavior and Nathonnatha/Ayana residuals from
+  visible inputs. Drik and non-luminary Chesta remain separate doctrine
+  investigations; do not improve their pass ratios by tolerance widening.
 
 ## Latest Update - 2026-07-29 (Source-Certification Authority Gate S5)
 

@@ -70,6 +70,16 @@ shadbala:
     comparator_policy: locked_jhora_witness_plus_pyjhora_secondary_and_named_reconciliation_profiles
     pyjhora_epoch_chesta_policy: named_diagnostic_only_never_production
     yuddha_policy: detect_within_1deg_candidates_and_fail_closed_pending_disc_diameter_certification
+  validation_decisions:
+    component_witness_contract: GANN_JHORA_DOCTRINE_RECONCILIATION_V3
+    tolerance_virupa: 0.5
+    tolerance_policy: frozen_no_widening
+    witness_aligned_top_level: [naisargika]
+    witness_aligned_kaala_subcomponents: [abda, masa, vara, tribhaga, paksha, yuddha]
+    provisional_top_level: [sthana, kaala, dig, chesta, drik, total]
+    source_certified: false
+    financially_validated: false
+    execution_allowed: false
   minimum_total_virupa:
     SUN: 390
     MOON: 360

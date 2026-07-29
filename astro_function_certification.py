@@ -20,7 +20,7 @@ from strict_shadbala_doctrine import CLASSICAL_PLANETS, components_for_body
 
 
 REPORT_VERSION = (
-    "astro_certification_4_gate_v8_visible_kaala_reconciliation_20260727"
+    "astro_certification_4_gate_v9_component_witness_boundary_20260729"
 )
 IST = ZoneInfo("Asia/Kolkata")
 UTC = ZoneInfo("UTC")
@@ -203,6 +203,17 @@ def parse_args() -> argparse.Namespace:
             "Locked visible JHora Kaala comparison summary. The report promotes "
             "only explicitly supported subcomponents and keeps aggregate Kaala "
             "fail closed."
+        ),
+    )
+    parser.add_argument(
+        "--jhora-shadbala-reconciliation",
+        default=(
+            "status/evidence/jhora_shadbala_20260723/"
+            "jhora_doctrine_reconciliation_20260726.json"
+        ),
+        help=(
+            "Locked local-versus-JHora reconciliation summary. The report admits "
+            "only components that pass every locked row at the frozen tolerance."
         ),
     )
     parser.add_argument("--skip-replay", action="store_true", help="Skip reviewer_rule_replay.py execution.")
@@ -620,6 +631,188 @@ def visible_kaala_gate_summary(summary_path: Path) -> dict[str, Any]:
                     ),
                 }
                 for name in required
+            },
+        }
+    )
+    return base
+
+
+def shadbala_component_witness_gate_summary(
+    summary_path: Path,
+) -> dict[str, Any]:
+    source_sha = None
+    if summary_path.exists():
+        source_sha = hashlib.sha256(summary_path.read_bytes()).hexdigest().upper()
+    base = {
+        "required": True,
+        "status": "blocked_missing_component_witness",
+        "independentWitnessComplete": False,
+        "sourceCertified": False,
+        "financiallyValidated": False,
+        "executionAllowed": False,
+        "witnessAlignedTopLevel": [],
+        "provisionalTopLevel": [],
+        "witnessAlignedKaalaSubcomponents": [],
+        "provisionalKaalaSubcomponents": [],
+        "fullShadbalaCertified": False,
+        "drikCertified": False,
+        "input": {
+            "path": str(summary_path),
+            "sha256": source_sha,
+            "issues": [],
+        },
+    }
+    if not summary_path.exists():
+        base["input"]["issues"].append(
+            "JHora Shadbala reconciliation summary is missing"
+        )
+        return base
+    try:
+        payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        base["status"] = "blocked_invalid_component_witness"
+        base["input"]["issues"].append(
+            f"cannot read JHora Shadbala reconciliation: {exc}"
+        )
+        return base
+
+    if payload.get("contract") != "GANN_JHORA_DOCTRINE_RECONCILIATION_V3":
+        base["status"] = "blocked_stale_component_witness_contract"
+        base["input"]["issues"].append(
+            "expected GANN_JHORA_DOCTRINE_RECONCILIATION_V3"
+        )
+        return base
+
+    expected_top_level = {
+        "sthana",
+        "kaala",
+        "dig",
+        "chesta",
+        "naisargika",
+        "drik",
+        "total",
+    }
+    top_level = dict(payload.get("topLevel") or {})
+    missing = sorted(expected_top_level.difference(top_level))
+    if missing:
+        base["input"]["issues"].append(
+            "missing top-level Shadbala measures: " + ", ".join(missing)
+        )
+    expected_rows = len(SAMPLES) * len(CLASSICAL_PLANETS)
+    for name, values in top_level.items():
+        if name not in expected_top_level:
+            base["input"]["issues"].append(
+                f"unexpected top-level Shadbala measure: {name}"
+            )
+            continue
+        if int(values.get("rows") or 0) != expected_rows:
+            base["input"]["issues"].append(
+                f"{name} expected {expected_rows} rows"
+            )
+    component_gate = dict(payload.get("componentCertification") or {})
+    if not component_gate:
+        base["input"]["issues"].append(
+            "componentCertification decision ledger is missing"
+        )
+    if base["input"]["issues"]:
+        base["status"] = "blocked_incomplete_component_witness"
+        return base
+
+    aligned_top_level = sorted(
+        name
+        for name, values in top_level.items()
+        if int(values.get("localPass") or 0) == expected_rows
+        and float(values.get("localMaxAbsoluteDeltaVirupa") or 0.0) <= 0.5
+    )
+    declared_top_level = sorted(
+        component_gate.get("witnessAlignedTopLevel") or []
+    )
+    if aligned_top_level != declared_top_level:
+        base["status"] = "blocked_component_witness_decision_mismatch"
+        base["input"]["issues"].append(
+            "derived and declared top-level witness-aligned components differ"
+        )
+        return base
+    provisional_top_level = sorted(
+        component_gate.get("provisionalTopLevel") or []
+    )
+    if (
+        set(declared_top_level).intersection(provisional_top_level)
+        or set(declared_top_level).union(provisional_top_level)
+        != expected_top_level
+    ):
+        base["status"] = "blocked_component_witness_partition_mismatch"
+        base["input"]["issues"].append(
+            "top-level aligned/provisional component partition is invalid"
+        )
+        return base
+    expected_kaala = {
+        "abda",
+        "masa",
+        "vara",
+        "hora",
+        "tribhaga",
+        "paksha",
+        "nathonnatha",
+        "ayana",
+        "yuddha",
+        "total",
+    }
+    aligned_kaala = sorted(
+        component_gate.get("witnessAlignedKaalaSubcomponents") or []
+    )
+    provisional_kaala = sorted(
+        component_gate.get("provisionalKaalaSubcomponents") or []
+    )
+    if (
+        set(aligned_kaala).intersection(provisional_kaala)
+        or set(aligned_kaala).union(provisional_kaala) != expected_kaala
+    ):
+        base["status"] = "blocked_component_witness_partition_mismatch"
+        base["input"]["issues"].append(
+            "Kaala aligned/provisional component partition is invalid"
+        )
+        return base
+    witness_complete = bool(
+        component_gate.get("independentWitnessComplete")
+    )
+    if not witness_complete:
+        base["status"] = "blocked_incomplete_independent_witness"
+        base["input"]["issues"].append(
+            "independent witness is not marked complete"
+        )
+        return base
+    full_certified = bool(component_gate.get("fullShadbalaCertified")) and (
+        set(declared_top_level) == expected_top_level
+    )
+    drik_certified = bool(component_gate.get("drikCertified")) and (
+        "drik" in declared_top_level
+    )
+
+    base.update(
+        {
+            "status": "partial_independent_witness_alignment",
+            "independentWitnessComplete": witness_complete,
+            "witnessAlignedTopLevel": declared_top_level,
+            "provisionalTopLevel": provisional_top_level,
+            "witnessAlignedKaalaSubcomponents": aligned_kaala,
+            "provisionalKaalaSubcomponents": provisional_kaala,
+            "fullShadbalaCertified": full_certified,
+            "drikCertified": drik_certified,
+            "topLevel": {
+                name: {
+                    "rows": int(values.get("rows") or 0),
+                    "pass": int(values.get("localPass") or 0),
+                    "fail": int(values.get("localFail") or 0),
+                    "maeVirupa": float(
+                        values.get("localMeanAbsoluteDeltaVirupa") or 0.0
+                    ),
+                    "maxErrorVirupa": float(
+                        values.get("localMaxAbsoluteDeltaVirupa") or 0.0
+                    ),
+                    "witnessAligned": name in declared_top_level,
+                }
+                for name, values in sorted(top_level.items())
             },
         }
     )
@@ -1063,6 +1256,23 @@ def render_report(
         ]
         for name, values in sorted(visible_components.items())
     ]
+    component_witness = dict(
+        external_gate.get("shadbalaComponentWitness") or {}
+    )
+    top_level_components = dict(component_witness.get("topLevel") or {})
+    top_level_component_rows = [
+        [
+            name,
+            values.get("pass", 0),
+            values.get("rows", 0),
+            f"{float(values.get('maeVirupa') or 0.0):.3f}",
+            f"{float(values.get('maxErrorVirupa') or 0.0):.3f}",
+            "witness aligned"
+            if values.get("witnessAligned")
+            else "provisional",
+        ]
+        for name, values in sorted(top_level_components.items())
+    ]
     if external_gate["certified"]:
         external_verdict = (
             "- Shadbala/Drik external certification passed for the declared matrix."
@@ -1189,6 +1399,39 @@ def render_report(
         if visible_kaala_rows
         else "No complete visible Kaala witness was loaded.",
         "",
+        "### Shadbala Component Admission Boundary",
+        "",
+        (
+            f"Status: `{component_witness.get('status', 'not generated')}`. "
+            "Independent witness alignment requires every one of the 35 locked "
+            "rows to pass at 0.5 virupa. It does not establish source "
+            "certification, financial validation, or execution permission."
+        ),
+        "",
+        markdown_table(
+            [
+                "Top-level component",
+                "Pass",
+                "Rows",
+                "MAE virupa",
+                "Max error virupa",
+                "Admission",
+            ],
+            top_level_component_rows,
+        )
+        if top_level_component_rows
+        else "No complete top-level Shadbala component witness was loaded.",
+        "",
+        (
+            "Witness-aligned Kaala subcomponents: "
+            + ", ".join(
+                component_witness.get(
+                    "witnessAlignedKaalaSubcomponents", []
+                )
+            )
+            + "."
+        ),
+        "",
         "External import issues:",
         "",
         *(
@@ -1282,8 +1525,15 @@ def main() -> None:
     if not visible_kaala_path.is_absolute():
         visible_kaala_path = root / visible_kaala_path
     visible_kaala_gate = visible_kaala_gate_summary(visible_kaala_path)
+    shadbala_reconciliation_path = Path(args.jhora_shadbala_reconciliation)
+    if not shadbala_reconciliation_path.is_absolute():
+        shadbala_reconciliation_path = root / shadbala_reconciliation_path
+    component_witness_gate = shadbala_component_witness_gate_summary(
+        shadbala_reconciliation_path
+    )
     external_gate["independentDrikWitness"] = independent_gate
     external_gate["visibleKaalaWitness"] = visible_kaala_gate
+    external_gate["shadbalaComponentWitness"] = component_witness_gate
     external_gate["requirements"].append(
         "PyJHora is a Tier B comparator only; independent Jagannatha Hora or cited worked-example "
         "Drik evidence must also pass before certification."
@@ -1293,10 +1543,24 @@ def main() -> None:
         "when all 35 rows pass at the frozen 0.5-virupa tolerance; aggregate Kaala "
         "and full Shadbala remain uncertified until their complete matrices pass."
     )
+    external_gate["requirements"].append(
+        "Top-level Shadbala component admission is row-complete and fail-closed. "
+        "Independent witness alignment never implies source certification, "
+        "financial validation, or execution permission."
+    )
     if external_gate["certified"] and not independent_gate["certified"]:
         external_gate["status"] = "blocked_pending_independent_drik_validation"
+    elif external_gate["certified"] and not component_witness_gate[
+        "fullShadbalaCertified"
+    ]:
+        external_gate["status"] = (
+            "blocked_partial_shadbala_component_witness"
+        )
     external_gate["certified"] = bool(
-        external_gate["certified"] and independent_gate["certified"]
+        external_gate["certified"]
+        and independent_gate["certified"]
+        and component_witness_gate["fullShadbalaCertified"]
+        and component_witness_gate["drikCertified"]
     )
 
     csv_write(inventory_path, inventory)

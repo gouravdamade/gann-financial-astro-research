@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-27T00:00:00Z",
+  "asOfUtc": "2026-07-29T07:14:32Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -32,6 +32,20 @@
         "jhora_kaala_reconciliation_20260727.md",
         "jhora_doctrine_reconciliation_20260726.md",
         "status/evidence/jhora_shadbala_20260723/JHORA_SHADBALA_EVIDENCE_MANIFEST_20260726.md"
+      ]
+    },
+    {
+      "certificationId": "strict_shadbala_component_witness_matrix_v1",
+      "status": "partial_independent_witness_alignment_not_source_certified",
+      "sourceCertified": false,
+      "summary": "The completed 245-row locked JHora witness is now admitted component by component at the unchanged 0.5-virupa tolerance. Naisargika is aligned in 35/35 top-level rows. Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha are aligned in 35/35 visible Kaala rows. Sthana, Dig, aggregate Kaala, Chesta, Drik, and full total remain provisional. Independent witness alignment is not source certification, financial validation, or execution permission.",
+      "evidenceRefs": [
+        "astro_external_validation_gate_20260729.json",
+        "astro_function_certification_report_20260729.md",
+        "status/evidence/jhora_shadbala_20260723/jhora_doctrine_reconciliation_20260726.json",
+        "status/evidence/jhora_shadbala_20260723/jhora_local_doctrine_reconciliation_20260726.csv",
+        "status/evidence/jhora_kaala_witness_20260727/jhora_kaala_profile_comparison_20260727.json",
+        "jhora_doctrine_reconciliation_20260726.md"
       ]
     },
     {

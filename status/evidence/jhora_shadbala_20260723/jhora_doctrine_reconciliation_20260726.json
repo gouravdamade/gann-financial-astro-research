@@ -9,12 +9,48 @@
     "nonLuminaryRows": 25,
     "totalPolicy": "Sun and Moon Chesta is preserved as display evidence but excluded from Shadbala totals to prevent Ayana/Paksha double counting."
   },
-  "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V2",
+  "componentCertification": {
+    "drikCertified": false,
+    "executionAllowed": false,
+    "financiallyValidated": false,
+    "fullShadbalaCertified": false,
+    "independentWitnessComplete": true,
+    "policy": "A component is witness-aligned only when all 35 locked rows pass at the frozen 0.5-virupa tolerance. Alignment does not by itself establish source certification, financial validity, or execution permission.",
+    "provisionalKaalaSubcomponents": [
+      "ayana",
+      "hora",
+      "nathonnatha",
+      "total"
+    ],
+    "provisionalTopLevel": [
+      "chesta",
+      "dig",
+      "drik",
+      "kaala",
+      "sthana",
+      "total"
+    ],
+    "sourceCertified": false,
+    "status": "partial_independent_witness_alignment",
+    "witnessAlignedKaalaSubcomponents": [
+      "abda",
+      "masa",
+      "paksha",
+      "tribhaga",
+      "vara",
+      "yuddha"
+    ],
+    "witnessAlignedTopLevel": [
+      "naisargika"
+    ]
+  },
+  "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V3",
   "decisions": [
+    "Recognize Naisargika as independently witness-aligned in 35/35 top-level rows. This is component evidence only, not full Shadbala source certification or financial validation.",
     "Promote dynamic Paksha classification: classical phase/nature rules and the locked visible JHora table agree in 35/35 rows within the frozen 0.5-virupa tolerance.",
     "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each matches all 35 visible JHora rows.",
     "Keep Hora provisional. It matches 33/35 rows, but the case-8 Moon/Saturn award remains a sunrise-boundary disagreement; do not replace the current algorithm with a temporal-hour guess.",
-    "Keep Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, and full Shadbala uncertified until their remaining formula and time-basis residuals are independently reconciled.",
+    "Keep Sthana, Dig, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala uncertified until their remaining formula and time-basis residuals are independently reconciled.",
     "Promote luminary Chesta total exclusion: classical text and locked JHora total arithmetic independently agree that displayed Sun/Moon Chesta must not be added again.",
     "Retain the current production Drik profile as provisional and execution-ineligible. Named candidate profiles are sensitivity tests, not silent replacements."
   ],
@@ -80,7 +116,7 @@
       "specialAspectScale": 0.0
     }
   ],
-  "generatedAtUtc": "2026-07-27T03:56:21.976723Z",
+  "generatedAtUtc": "2026-07-29T07:12:49.889180Z",
   "inputs": {
     "comparison": {
       "path": "status\\evidence\\jhora_shadbala_20260723\\jhora_pyjhora_component_comparison_20260726.csv",
@@ -257,6 +293,18 @@
       "rows": 35,
       "ties": 0
     },
+    "dig": {
+      "localCloser": 11,
+      "localFail": 16,
+      "localMaxAbsoluteDeltaVirupa": 3.562156094,
+      "localMeanAbsoluteDeltaVirupa": 1.141702532,
+      "localPass": 19,
+      "pyjhoraCloser": 24,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 3.56,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 1.141142857,
+      "rows": 35,
+      "ties": 0
+    },
     "drik": {
       "localCloser": 2,
       "localFail": 26,
@@ -278,6 +326,30 @@
       "pyjhoraCloser": 0,
       "pyjhoraMaxAbsoluteDeltaVirupa": 220.29,
       "pyjhoraMeanAbsoluteDeltaVirupa": 57.030571429,
+      "rows": 35,
+      "ties": 0
+    },
+    "naisargika": {
+      "localCloser": 0,
+      "localFail": 0,
+      "localMaxAbsoluteDeltaVirupa": 0.01,
+      "localMeanAbsoluteDeltaVirupa": 0.004285714,
+      "localPass": 35,
+      "pyjhoraCloser": 0,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 0.01,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 0.004285714,
+      "rows": 35,
+      "ties": 35
+    },
+    "sthana": {
+      "localCloser": 7,
+      "localFail": 1,
+      "localMaxAbsoluteDeltaVirupa": 14.998302322,
+      "localMeanAbsoluteDeltaVirupa": 0.430800382,
+      "localPass": 34,
+      "pyjhoraCloser": 28,
+      "pyjhoraMaxAbsoluteDeltaVirupa": 18.75,
+      "pyjhoraMeanAbsoluteDeltaVirupa": 0.965714286,
       "rows": 35,
       "ties": 0
     },

@@ -11,7 +11,7 @@ from statistics import mean
 from typing import Any
 
 
-CONTRACT = "GANN_JHORA_DOCTRINE_RECONCILIATION_V2"
+CONTRACT = "GANN_JHORA_DOCTRINE_RECONCILIATION_V3"
 FROZEN_TOLERANCE_VIRUPA = 0.5
 CLASSICAL_PLANETS = (
     "SUN",
@@ -162,12 +162,18 @@ def corrected_local_total(
 
 
 def reconciliation_classification(measure: str, planet: str) -> str:
+    if measure == "sthana":
+        return "independent_sthana_profile_residual"
     if measure == "kaala":
         return "local_source_profile_closer_requires_subcomponent_witness"
+    if measure == "dig":
+        return "independent_dig_profile_residual"
     if measure == "chesta" and planet in {"SUN", "MOON"}:
         return "luminary_display_only_excluded_from_total"
     if measure == "chesta":
         return "mean_longitude_profile_mixed_requires_reconciliation"
+    if measure == "naisargika":
+        return "independent_naisargika_alignment"
     if measure == "drik":
         return "independent_drik_profile_mismatch"
     if measure == "total" and planet in {"SUN", "MOON"}:
@@ -183,7 +189,7 @@ def build_top_level_rows(
     rows: list[dict[str, str]] = []
     for row in read_csv(comparison_path):
         measure = row["measure"].strip().lower()
-        if measure not in {"kaala", "chesta", "drik", "total"}:
+        if measure not in {*TOTAL_COMPONENTS, "total"}:
             continue
         sample_id = row["sample_id"].strip()
         planet = row["planet"].strip().upper()
@@ -230,8 +236,12 @@ def build_top_level_rows(
                 ),
             }
         )
-    if len(rows) != 140:
-        raise ValueError(f"top-level reconciliation expected 140 rows, got {len(rows)}")
+    expected_rows = 5 * len(CLASSICAL_PLANETS) * (len(TOTAL_COMPONENTS) + 1)
+    if len(rows) != expected_rows:
+        raise ValueError(
+            f"top-level reconciliation expected {expected_rows} rows, "
+            f"got {len(rows)}"
+        )
     return rows
 
 
@@ -241,7 +251,7 @@ def summarize_rows(rows: list[dict[str, str]]) -> dict[str, Any]:
         by_measure[row["measure"]].append(row)
 
     result: dict[str, Any] = {}
-    for measure in ("kaala", "chesta", "drik", "total"):
+    for measure in (*TOTAL_COMPONENTS, "total"):
         group = by_measure[measure]
         local_deltas = [float(row["local_absolute_delta_virupa"]) for row in group]
         pyjhora_deltas = [
@@ -577,6 +587,23 @@ def build_summary(
         "drikLedger": drik_ledger_path,
         "formulaInputs": formula_inputs_path,
     }
+    top_level_summary = summarize_rows(top_level)
+    top_level_aligned = sorted(
+        measure
+        for measure, values in top_level_summary.items()
+        if values["rows"] == 35
+        and values["localPass"] == 35
+        and values["localMaxAbsoluteDeltaVirupa"] <= FROZEN_TOLERANCE_VIRUPA
+    )
+    kaala_aligned = sorted(
+        measure
+        for measure, values in kaala_components.items()
+        if measure != "total"
+        and int(values.get("rows") or 0) == 35
+        and int(values.get("localPass") or 0) == 35
+        and float(values.get("localMaxVirupa") or 0.0)
+        <= FROZEN_TOLERANCE_VIRUPA
+    )
     summary = {
         "contract": CONTRACT,
         "generatedAtUtc": datetime.now(timezone.utc)
@@ -592,7 +619,30 @@ def build_summary(
             }
             for name, path in inputs.items()
         },
-        "topLevel": summarize_rows(top_level),
+        "topLevel": top_level_summary,
+        "componentCertification": {
+            "status": "partial_independent_witness_alignment",
+            "independentWitnessComplete": True,
+            "sourceCertified": False,
+            "financiallyValidated": False,
+            "executionAllowed": False,
+            "policy": (
+                "A component is witness-aligned only when all 35 locked rows pass "
+                "at the frozen 0.5-virupa tolerance. Alignment does not by itself "
+                "establish source certification, financial validity, or execution "
+                "permission."
+            ),
+            "witnessAlignedTopLevel": top_level_aligned,
+            "provisionalTopLevel": sorted(
+                set(top_level_summary).difference(top_level_aligned)
+            ),
+            "witnessAlignedKaalaSubcomponents": kaala_aligned,
+            "provisionalKaalaSubcomponents": sorted(
+                set(kaala_components).difference(kaala_aligned)
+            ),
+            "fullShadbalaCertified": False,
+            "drikCertified": False,
+        },
         "kaalaVisibleWitness": {
             "contract": kaala_witness["contract"],
             "comparisonRows": kaala_witness["comparisonRows"],
@@ -605,6 +655,11 @@ def build_summary(
         "chesta": chesta_diagnostics(top_level, comparison_path),
         "drikCandidateProfiles": summarize_drik_candidates(drik_rows),
         "decisions": [
+            (
+                "Recognize Naisargika as independently witness-aligned in 35/35 "
+                "top-level rows. This is component evidence only, not full "
+                "Shadbala source certification or financial validation."
+            ),
             (
                 "Promote dynamic Paksha classification: classical phase/nature "
                 "rules and the locked visible JHora table agree in 35/35 rows "
@@ -620,9 +675,10 @@ def build_summary(
                 "not replace the current algorithm with a temporal-hour guess."
             ),
             (
-                "Keep Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, "
-                "and full Shadbala uncertified until their remaining formula and "
-                "time-basis residuals are independently reconciled."
+                "Keep Sthana, Dig, Nathonnatha, Ayana, aggregate Kaala, "
+                "non-luminary Chesta, Drik, and full Shadbala uncertified until "
+                "their remaining formula and time-basis residuals are "
+                "independently reconciled."
             ),
             (
                 "Promote luminary Chesta total exclusion: classical text and "
@@ -687,6 +743,31 @@ def render_report(summary: dict[str, Any]) -> str:
     )
     lines.extend(
         [
+            "",
+            "## Component Admission Boundary",
+            "",
+            summary["componentCertification"]["policy"],
+            "",
+            (
+                "Witness-aligned top-level components: "
+                + ", ".join(
+                    summary["componentCertification"]["witnessAlignedTopLevel"]
+                )
+                + "."
+            ),
+            (
+                "Witness-aligned Kaala subcomponents: "
+                + ", ".join(
+                    summary["componentCertification"][
+                        "witnessAlignedKaalaSubcomponents"
+                    ]
+                )
+                + "."
+            ),
+            (
+                "Full Shadbala, Drik, source certification, financial validation, "
+                "and execution remain blocked."
+            ),
             "",
             "## Visible Kaala Subcomponent Witness",
             "",

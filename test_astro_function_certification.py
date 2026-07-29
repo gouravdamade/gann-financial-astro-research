@@ -14,6 +14,7 @@ from astro_function_certification import (
     external_gate_summary,
     independent_drik_gate_summary,
     merge_external_values,
+    shadbala_component_witness_gate_summary,
     validate_external_import,
     visible_kaala_gate_summary,
 )
@@ -227,6 +228,89 @@ def test_visible_kaala_witness_promotes_only_complete_subcomponents(
         "ayana",
         "total",
     ]
+
+
+def test_shadbala_component_witness_admits_only_row_complete_components(
+    tmp_path: Path,
+) -> None:
+    top_level = {
+        name: {
+            "rows": 35,
+            "localPass": 35 if name == "naisargika" else 34,
+            "localFail": 0 if name == "naisargika" else 1,
+            "localMeanAbsoluteDeltaVirupa": 0.01,
+            "localMaxAbsoluteDeltaVirupa": (
+                0.01 if name == "naisargika" else 1.0
+            ),
+        }
+        for name in (
+            "sthana",
+            "kaala",
+            "dig",
+            "chesta",
+            "naisargika",
+            "drik",
+            "total",
+        )
+    }
+    path = tmp_path / "shadbala_components.json"
+    path.write_text(
+        json.dumps(
+            {
+                "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V3",
+                "topLevel": top_level,
+                "componentCertification": {
+                    "independentWitnessComplete": True,
+                    "witnessAlignedTopLevel": ["naisargika"],
+                    "provisionalTopLevel": [
+                        "chesta",
+                        "dig",
+                        "drik",
+                        "kaala",
+                        "sthana",
+                        "total",
+                    ],
+                    "witnessAlignedKaalaSubcomponents": [
+                        "abda",
+                        "masa",
+                        "paksha",
+                        "tribhaga",
+                        "vara",
+                        "yuddha",
+                    ],
+                    "provisionalKaalaSubcomponents": [
+                        "ayana",
+                        "hora",
+                        "nathonnatha",
+                        "total",
+                    ],
+                    "fullShadbalaCertified": False,
+                    "drikCertified": False,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    gate = shadbala_component_witness_gate_summary(path)
+
+    assert gate["status"] == "partial_independent_witness_alignment"
+    assert gate["independentWitnessComplete"] is True
+    assert gate["witnessAlignedTopLevel"] == ["naisargika"]
+    assert gate["topLevel"]["naisargika"]["witnessAligned"] is True
+    assert gate["topLevel"]["drik"]["witnessAligned"] is False
+    assert gate["sourceCertified"] is False
+    assert gate["financiallyValidated"] is False
+    assert gate["executionAllowed"] is False
+    assert gate["fullShadbalaCertified"] is False
+
+    stale = json.loads(path.read_text(encoding="utf-8"))
+    stale["contract"] = "GANN_JHORA_DOCTRINE_RECONCILIATION_V2"
+    path.write_text(json.dumps(stale), encoding="utf-8")
+
+    stale_gate = shadbala_component_witness_gate_summary(path)
+    assert stale_gate["status"] == "blocked_stale_component_witness_contract"
+    assert stale_gate["executionAllowed"] is False
 
 
 def test_local_certification_matrix_contains_finite_planet_values() -> None:
