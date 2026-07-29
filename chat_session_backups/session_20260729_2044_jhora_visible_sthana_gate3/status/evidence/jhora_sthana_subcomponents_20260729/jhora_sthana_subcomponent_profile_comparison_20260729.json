@@ -1,0 +1,178 @@
+{
+  "contract": "GANN_JHORA_STHANA_SUBCOMPONENT_COMPARATOR_V1",
+  "generatedAtUtc": "2026-07-29T15:05:11.060719Z",
+  "status": "visible_witness_reconciled_diagnostic_only",
+  "witnessContract": "GANN_JHORA_STHANA_SUBCOMPONENT_WITNESS_V1",
+  "witnessRows": 175,
+  "comparisonRows": 175,
+  "toleranceVirupa": 0.5,
+  "tolerancePolicy": "frozen; no widening",
+  "productionProfile": "bphs_ch27_source",
+  "productionChangeAllowed": false,
+  "sourceCertified": false,
+  "financiallyValidated": false,
+  "executionAllowed": false,
+  "profiles": {
+    "source": {
+      "profileId": "bphs_ch27_source",
+      "components": {
+        "uchcha": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.002289641,
+          "maxErrorVirupa": 0.005991431
+        },
+        "saptavargaja": {
+          "rows": 35,
+          "pass": 3,
+          "fail": 32,
+          "maeVirupa": 6.296,
+          "maxErrorVirupa": 12.62
+        },
+        "ojayugma": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        },
+        "kendradi": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        },
+        "drekkana": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        }
+      },
+      "total": {
+        "rows": 35,
+        "pass": 1,
+        "fail": 34,
+        "maeVirupa": 6.295683718,
+        "maxErrorVirupa": 12.618361564
+      }
+    },
+    "pyjhora": {
+      "profileId": "pyjhora_4_8_7_compatibility",
+      "components": {
+        "uchcha": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.002289641,
+          "maxErrorVirupa": 0.005991431
+        },
+        "saptavargaja": {
+          "rows": 35,
+          "pass": 34,
+          "fail": 1,
+          "maeVirupa": 0.429,
+          "maxErrorVirupa": 15.0
+        },
+        "ojayugma": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        },
+        "kendradi": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        },
+        "drekkana": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        }
+      },
+      "total": {
+        "rows": 35,
+        "pass": 34,
+        "fail": 1,
+        "maeVirupa": 0.431054387,
+        "maxErrorVirupa": 14.998314103
+      }
+    },
+    "jhora_visible": {
+      "profileId": "jhora_8_visible_compatibility",
+      "components": {
+        "uchcha": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.002289641,
+          "maxErrorVirupa": 0.005991431
+        },
+        "saptavargaja": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.000428571,
+          "maxErrorVirupa": 0.005
+        },
+        "ojayugma": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        },
+        "kendradi": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        },
+        "drekkana": {
+          "rows": 35,
+          "pass": 35,
+          "fail": 0,
+          "maeVirupa": 0.0,
+          "maxErrorVirupa": 0.0
+        }
+      },
+      "total": {
+        "rows": 35,
+        "pass": 35,
+        "fail": 0,
+        "maeVirupa": 0.002579295,
+        "maxErrorVirupa": 0.007808165
+      }
+    }
+  },
+  "inputs": {
+    "witness": {
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_sthana_subcomponents_20260729\\jhora_sthana_subcomponent_witness_completed_20260729.csv",
+      "sha256": "EE40B301BD0FDBE7E6E0D331F953C23F36531D1DBE01530B290D879F9B508CF6"
+    },
+    "topLevelWitness": {
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_shadbala_20260723\\jhora_shadbala_witness_completed_20260726.csv",
+      "sha256": "A0D5B7E3A0BDDDA54B7C47B80CEAA1DC2ADC16E3B33E632505A0554DC70FA02D"
+    },
+    "doctrineConfig": {
+      "path": "D:\\PycharmProjects\\doctrine_config.yaml",
+      "sha256": "8FE9DE78F2EEED86F5872FA8009F3F77DB53D9AE98FD7AD98093AA06BF88F7AA"
+    }
+  },
+  "evidenceConclusions": [
+    "Uchcha, Ojayugma, Kendradi, and Drekkana each match visible JHora in all 35 locked rows.",
+    "The BPHS-labeled source Saptavargaja weight profile remains a distinct doctrine and does not match the JHora table.",
+    "The PyJHora profile fails one Saturn row because it treats all Aquarius as Moolatrikona instead of respecting Saturn's degree-bounded Moolatrikona range.",
+    "The named JHora-visible profile combines JHora's observed weights with degree-bounded D1 Moolatrikona and matches the complete visible matrix. It remains diagnostic only."
+  ]
+}

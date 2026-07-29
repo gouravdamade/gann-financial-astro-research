@@ -1,0 +1,72 @@
+{
+  "SUN": {
+    "planet": "Sun",
+    "sthana_bala": 141.99,
+    "in_rupas": 2.37,
+    "uchcha": 53.86,
+    "saptavargaja": 73.13,
+    "ojayugma": 0,
+    "kendradi": 15,
+    "drekkana": 0
+  },
+  "MOON": {
+    "planet": "Moon",
+    "sthana_bala": 228.94,
+    "in_rupas": 3.82,
+    "uchcha": 48.94,
+    "saptavargaja": 150,
+    "ojayugma": 15,
+    "kendradi": 15,
+    "drekkana": 0
+  },
+  "MARS": {
+    "planet": "Mars",
+    "sthana_bala": 203.73,
+    "in_rupas": 3.4,
+    "uchcha": 8.73,
+    "saptavargaja": 120,
+    "ojayugma": 0,
+    "kendradi": 60,
+    "drekkana": 15
+  },
+  "MERCURY": {
+    "planet": "Mercury",
+    "sthana_bala": 97.2,
+    "in_rupas": 1.62,
+    "uchcha": 3.45,
+    "saptavargaja": 63.75,
+    "ojayugma": 15,
+    "kendradi": 15,
+    "drekkana": 0
+  },
+  "JUPITER": {
+    "planet": "Jupiter",
+    "sthana_bala": 211.22,
+    "in_rupas": 3.52,
+    "uchcha": 46.22,
+    "saptavargaja": 120,
+    "ojayugma": 15,
+    "kendradi": 30,
+    "drekkana": 0
+  },
+  "VENUS": {
+    "planet": "Venus",
+    "sthana_bala": 162.81,
+    "in_rupas": 2.71,
+    "uchcha": 52.19,
+    "saptavargaja": 80.63,
+    "ojayugma": 15,
+    "kendradi": 15,
+    "drekkana": 0
+  },
+  "SATURN": {
+    "planet": "Saturn",
+    "sthana_bala": 105.98,
+    "in_rupas": 1.77,
+    "uchcha": 15.98,
+    "saptavargaja": 75,
+    "ojayugma": 0,
+    "kendradi": 15,
+    "drekkana": 0
+  }
+}
