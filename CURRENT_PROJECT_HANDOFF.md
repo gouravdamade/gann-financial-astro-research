@@ -1,8 +1,71 @@
 # Current Project Handoff
 
-Last updated: 2026-07-29 21:20 IST
+Last updated: 2026-07-29 22:24 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-29 (Ayana BPHS Source Comparator V3)
+
+- Completed the bounded Ayana Bala reconciliation without changing production,
+  the frozen `0.5`-virupa tolerance, ML features, Auto Suggest, live inference,
+  or execution.
+- Upgraded the diagnostic contract to
+  `GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V3`.
+- Implemented an independently source-labelled BPHS chapter-27 verse-15
+  comparator:
+  - converts nirayana longitude to sayana longitude;
+  - folds the longitude to a `0..90` degree nearest-equinox Bhuja;
+  - accumulates the `45/33/12` Khanda segments;
+  - applies the stated north/south planet groups, Mercury's always-additive
+    rule, division by three, and the Sun doubling rule;
+  - records sayana longitude, Bhuja, Khanda yoga, candidate value, visible
+    JHora value, residual, and frozen pass/fail result for every historical
+    planet.
+- Source provenance is embedded in the diagnostic and Gate 3:
+  `Brihat Parashara Hora Shastra`, chapter 27, verse 15,
+  `https://vedicpupil.in/library/brihat-parashara-hora-shastra-book-by-parashara/spashtabal-ch27/15`.
+- Locked visible-JHora results:
+  - BPHS Khanda source profile: `25/35`, MAE `0.376257605`, maximum error
+    `1.720463737`, recent `24/28`, historical `1/7`;
+  - modern tropical-projection candidate remains `30/35`, MAE `0.307594721`,
+    recent `28/28`, historical `2/7`;
+  - production actual-declination profile remains `13/35`.
+- The BPHS source profile also cross-checks the fourteen rounded published
+  worked-table values at MAE `0.5738205` and maximum error `1.576816`.
+- Inspected pinned JHora `8.0.0.0` under the locked 1889 fixture:
+  - its contextual position view exposes longitude/speed, ecliptic
+    latitude/speed, distance, and distance speed;
+  - it does not expose the internal Kranti/declination used by Ayana;
+  - F1 redirects to an unrelated Microsoft Windows support page instead of
+    JHora formula documentation.
+- Saved and hash-locked the visible coordinate view as
+  `status/evidence/jhora_kaala_witness_20260727/`
+  `jhora_1889_coordinate_view_20260729.jpg`; Gate 3 rejects a missing or altered
+  copy.
+- Honest conclusion: the BPHS implementation is now auditable and credible as
+  doctrine, but neither it nor the modern projection reproduces historical
+  JHora closely enough to claim software compatibility. No tolerance was
+  widened and no candidate was promoted.
+- Gate 3 independently validates the source-profile identity, no-production
+  guardrail, all seven historical diagnostic rows, comparator hash, visible
+  matrix hash, doctrine config hash, and worked-example hash. It remains
+  `failed_external_validation`; Gate 4 remains `blocked_legacy_dataset`.
+- Regenerated the formula CSV/JSON, reconciliation report, canonical
+  certification report, external gate, and blocked replay result.
+- Verification:
+  - focused formula/Gate-3 tests `21/21`;
+  - complete Python suite `604/604`;
+  - touched-file Ruff and compilation pass;
+  - canonical status validation passes with 21 documents, 13 audits, and
+    execution false;
+  - Git diff whitespace check passes.
+- Runtime-only SQLite databases and logs remain local and uncommitted.
+- Timestamped recovery snapshot:
+  `chat_session_backups/session_20260729_2223_ayana_bphs_source_comparator_v3`
+  (`21` files plus a SHA-256 manifest; all backup hashes verified).
+- Required Ayana compatibility witness remains a visible internal JHora Kranti
+  value or JHora implementation documentation. The next bounded doctrine work
+  is non-luminary Chesta Bala, followed by independent Drik.
 
 ## Latest Update - 2026-07-29 (Nathonnatha Formula Reconciliation V2)
 

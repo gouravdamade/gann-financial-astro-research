@@ -1,7 +1,7 @@
 # Astro Function Certification 4-Gate Report
 
 - Report version: `astro_certification_4_gate_v14_visible_sthana_packet_20260729`
-- Generated: `2026-07-29T21:31:16+05:30`
+- Generated: `2026-07-29T22:14:47+05:30`
 - Important interpretation: this report certifies traceability and local reproducibility first. Pending and failed external checks remain explicit and fail closed.
 
 ## Gate Summary
@@ -95,7 +95,7 @@ Gate status: `failed_external_validation`
 | Drik validation layer | Status |
 | --- | --- |
 | Tier B PyJHora comparator | 35 pass / 0 fail |
-| Independent JHora/worked-example witness | failed_independent_validation |
+| Independent JHora/worked-example witness | blocked_pending_independent_values |
 
 ### Visible JHora Kaala Witness
 
@@ -154,6 +154,7 @@ Status: `diagnostic_profiles_only_no_production_change`. These profiles diagnose
 | Hora - variable day/night hours | 27 | 35 | 13.714 | 22/28 | 5/7 |
 | Ayana - current actual declination | 13 | 35 | 1.973 | 11/28 | 2/7 |
 | Ayana - tropical Kranti candidate | 30 | 35 | 0.308 | 28/28 | 2/7 |
+| Ayana - BPHS chapter-27 Khanda source profile | 25 | 35 | 0.376 | 24/28 | 1/7 |
 
 Case 8 Hora boundary: current lord `MOON`, visible JHora lord `MOON`; the award flips across only `3.436` minutes of sunrise input. The separate visible packet is complete and binds JHora's exact LMT sunrise, Moon Hora lord, and all seven awards. This supports the narrow Hora witness but does not certify aggregate Kaala or full Shadbala.
 
@@ -208,6 +209,6 @@ Trading replay is intentionally blocked: current case records use the quarantine
 ## Current Verdict
 
 - Safe to continue astronomy/doctrine inspection with these labels visible.
-- Tier B Drik comparison is 35 pass / 0 fail. The end-to-end component diagnostic is 145 pass / 55 fail / 10 structural N/A: Dig 35/35, Drik 35/35, Naisargika 35/35, Sthana 34/35, comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass 60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The locked local-versus-JHora reconciliation excludes displayed Sun/Moon Chesta from the total and promotes dynamic Paksha after 35/35 visible subcomponent matches. The actual production source profile, rather than the separately named PyJHora-compatible Sthana profile, is used for this gate: Sthana passes 1/35 and full total passes 3/35 with 11.829 virupa mean absolute error. Top-level local Kaala passes 5/35 with 2.763 virupa mean absolute error; Hora is independently witness-aligned at 35/35, while Nathonnatha, Ayana, and aggregate Kaala remain provisional. The completed independent JHora Drik witness passes 9/35 and fails 26/35. Keep full Shadbala and Drik excluded from certified ML/execution until the doctrine profiles are explicitly reconciled.
+- Tier B Drik comparison is 35 pass / 0 fail. The end-to-end component diagnostic is 145 pass / 55 fail / 10 structural N/A: Dig 35/35, Drik 35/35, Naisargika 35/35, Sthana 34/35, comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass 60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The locked local-versus-JHora reconciliation excludes displayed Sun/Moon Chesta from the total and promotes dynamic Paksha after 35/35 visible subcomponent matches. The actual production source profile, rather than the separately named PyJHora-compatible Sthana profile, is used for this gate: Sthana passes 1/35 and full total passes 3/35 with 11.829 virupa mean absolute error. Top-level local Kaala passes 5/35 with 2.763 virupa mean absolute error; Hora is independently witness-aligned at 35/35, while Nathonnatha, Ayana, and aggregate Kaala remain provisional. The completed independent JHora Drik witness passes 0/35 and fails 0/35. Keep full Shadbala and Drik excluded from certified ML/execution until the doctrine profiles are explicitly reconciled.
 - Do not train on raw local LLM prose. Train on deterministic evidence, manual notes, verified rule lessons, and verifier corrections.
 - Gate 4 is blocked until corrected versioned data replaces the legacy double-sidereal case records.

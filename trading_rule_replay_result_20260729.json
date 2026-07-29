@@ -1,6 +1,6 @@
 {
   "report_version": "astro_certification_4_gate_v14_visible_sthana_packet_20260729",
-  "generated_at": "2026-07-29T21:31:16+05:30",
+  "generated_at": "2026-07-29T22:14:47+05:30",
   "status": "blocked_legacy_dataset",
   "output": "Trading replay is intentionally blocked: current case records use the quarantined legacy astronomy contract. Rebuild versioned corrected fixtures before certifying Gate 4. Use --legacy-archive-replay only for historical comparison."
 }

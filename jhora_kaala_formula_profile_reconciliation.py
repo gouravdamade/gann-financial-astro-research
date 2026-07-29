@@ -36,8 +36,25 @@ from strict_shadbala_doctrine import (
 )
 
 
-CONTRACT = "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V2"
+CONTRACT = "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V3"
 FROZEN_TOLERANCE_VIRUPA = 0.5
+BPHS_AYANA_SOURCE = {
+    "title": "Brihat Parashara Hora Shastra, Chapter 27, verse 15",
+    "url": (
+        "https://vedicpupil.in/library/"
+        "brihat-parashara-hora-shastra-book-by-parashara/"
+        "spashtabal-ch27/15"
+    ),
+    "retrievedDate": "2026-07-29",
+    "role": "independently_sourced_diagnostic_profile",
+    "productionChangeAllowed": False,
+    "method": (
+        "Convert nirayana longitude to sayana longitude, fold it to a "
+        "0-90 degree Bhuja, accumulate the 45/33/12 Khanda segments, "
+        "apply the planet's north/south strength rule, and divide by 3; "
+        "the Sun result is doubled."
+    ),
+}
 RECENT_SAMPLE_IDS = {
     "case_8_event_start",
     "case_43_event_start",
@@ -95,6 +112,13 @@ WORKED_EXAMPLE_EXTRACT = (
     REPO_ROOT
     / "pdf_alignment_extracts"
     / "jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt"
+)
+JHORA_COORDINATE_SCREENSHOT = (
+    REPO_ROOT
+    / "status"
+    / "evidence"
+    / "jhora_kaala_witness_20260727"
+    / "jhora_1889_coordinate_view_20260729.jpg"
 )
 
 
@@ -298,6 +322,43 @@ def ayana_from_kranti(planet: str, kranti_deg: float) -> float:
     raise ValueError(f"Unsupported Ayana planet: {planet}")
 
 
+def bphs_ayana_bhuja_deg(tropical_longitude_deg: float) -> float:
+    longitude = float(tropical_longitude_deg) % 360.0
+    half_circle = longitude % 180.0
+    return half_circle if half_circle <= 90.0 else 180.0 - half_circle
+
+
+def bphs_ayana_khanda_yoga_deg(bhuja_deg: float) -> float:
+    bhuja = float(bhuja_deg)
+    if not 0.0 <= bhuja <= 90.0:
+        raise ValueError(f"BPHS Ayana Bhuja must be within 0-90: {bhuja}")
+    if bhuja <= 30.0:
+        return bhuja * 45.0 / 30.0
+    if bhuja <= 60.0:
+        return 45.0 + (bhuja - 30.0) * 33.0 / 30.0
+    return 78.0 + (bhuja - 60.0) * 12.0 / 30.0
+
+
+def ayana_from_bphs_khanda(
+    planet: str,
+    tropical_longitude_deg: float,
+) -> float:
+    longitude = float(tropical_longitude_deg) % 360.0
+    bhuja = bphs_ayana_bhuja_deg(longitude)
+    yoga = bphs_ayana_khanda_yoga_deg(bhuja)
+    north_half = longitude <= 180.0
+    if planet in NORTH_STRONG:
+        numerator = 90.0 + yoga if north_half else 90.0 - yoga
+    elif planet in SOUTH_STRONG:
+        numerator = 90.0 - yoga if north_half else 90.0 + yoga
+    elif planet == "MERCURY":
+        numerator = 90.0 + yoga
+    else:
+        raise ValueError(f"Unsupported Ayana planet: {planet}")
+    value = numerator / 3.0
+    return 2.0 * value if planet == "SUN" else value
+
+
 def variable_planetary_hour_lord(
     *,
     timestamp: datetime,
@@ -448,6 +509,12 @@ def profile_values(
             planet,
             kranti,
         )
+        values[("ayana_bphs_ch27_khanda_source", planet)] = (
+            ayana_from_bphs_khanda(
+                planet,
+                context["tropical"][planet],
+            )
+        )
     return values
 
 
@@ -474,6 +541,17 @@ def build_rows(
             expected = visible[(sample.sample_id, planet, measure)]
             delta = expected - float(candidate)
             absolute = abs(delta)
+            tropical_longitude = ""
+            bhuja = ""
+            khanda_yoga = ""
+            if profile == "ayana_bphs_ch27_khanda_source":
+                tropical = float(context["tropical"][planet])
+                tropical_longitude = f"{tropical:.9f}"
+                bhuja_value = bphs_ayana_bhuja_deg(tropical)
+                bhuja = f"{bhuja_value:.9f}"
+                khanda_yoga = (
+                    f"{bphs_ayana_khanda_yoga_deg(bhuja_value):.9f}"
+                )
             rows.append(
                 {
                     "contract": CONTRACT,
@@ -496,6 +574,9 @@ def build_rows(
                         else "historical_1889"
                     ),
                     "tolerance_virupa": f"{FROZEN_TOLERANCE_VIRUPA:.9f}",
+                    "source_tropical_longitude_deg": tropical_longitude,
+                    "source_bhuja_deg": bhuja,
+                    "source_khanda_yoga_deg": khanda_yoga,
                 }
             )
         if sample.sample_id == "case_8_event_start":
@@ -561,6 +642,7 @@ def summarize_profiles(rows: list[dict[str, str]]) -> dict[str, dict[str, Any]]:
 
 
 def worked_example_summary() -> dict[str, Any]:
+    configure_ephemeris()
     source_hash = sha256(WORKED_EXAMPLE_EXTRACT)
     nathonnatha_examples = [
         {
@@ -647,6 +729,10 @@ def worked_example_summary() -> dict[str, Any]:
             )
             kranti = projected_kranti_deg(float(position[0]))
             calculated = ayana_from_kranti(planet, kranti)
+            bphs_calculated = ayana_from_bphs_khanda(
+                planet,
+                float(position[0]),
+            )
             ayana_rows.append(
                 {
                     "label": item["label"],
@@ -655,6 +741,17 @@ def worked_example_summary() -> dict[str, Any]:
                     "publishedVirupa": item["published"][planet],
                     "absoluteDeltaVirupa": round(
                         abs(item["published"][planet] - calculated),
+                        6,
+                    ),
+                    "bphsCalculatedVirupa": round(
+                        bphs_calculated,
+                        6,
+                    ),
+                    "bphsAbsoluteDeltaVirupa": round(
+                        abs(
+                            item["published"][planet]
+                            - bphs_calculated
+                        ),
                         6,
                     ),
                 }
@@ -685,11 +782,29 @@ def worked_example_summary() -> dict[str, Any]:
                 9,
             ),
         },
+        "ayanaBphs": {
+            "rows": ayana_rows,
+            "maeVirupa": round(
+                mean(
+                    row["bphsAbsoluteDeltaVirupa"]
+                    for row in ayana_rows
+                ),
+                9,
+            ),
+            "maxErrorVirupa": round(
+                max(
+                    row["bphsAbsoluteDeltaVirupa"]
+                    for row in ayana_rows
+                ),
+                9,
+            ),
+        },
     }
 
 
 def build_summary(
     *,
+    rows: list[dict[str, str]],
     profiles: dict[str, dict[str, Any]],
     hora_boundary: dict[str, dict[str, Any]],
     nathonnatha_midnights: dict[str, dict[str, Any]],
@@ -697,6 +812,26 @@ def build_summary(
     config_path: Path,
 ) -> dict[str, Any]:
     worked = worked_example_summary()
+    historical_bphs_diagnostics = [
+        {
+            "sampleId": row["sample_id"],
+            "planet": row["planet"],
+            "tropicalLongitudeDeg": float(
+                row["source_tropical_longitude_deg"]
+            ),
+            "bhujaDeg": float(row["source_bhuja_deg"]),
+            "khandaYogaDeg": float(row["source_khanda_yoga_deg"]),
+            "jhoraVirupa": float(row["jhora_value_virupa"]),
+            "profileVirupa": float(row["profile_value_virupa"]),
+            "jhoraMinusProfileVirupa": float(
+                row["jhora_minus_profile_virupa"]
+            ),
+            "passFail": row["pass_fail"],
+        }
+        for row in rows
+        if row["profile"] == "ayana_bphs_ch27_khanda_source"
+        and row["sample_era"] == "historical_1889"
+    ]
     return {
         "contract": CONTRACT,
         "generatedAtUtc": datetime.now(timezone.utc)
@@ -719,13 +854,27 @@ def build_summary(
                 "sha256": sha256(config_path),
             },
             "workedExamples": worked["source"],
+            "jhoraCoordinateScreenshot": {
+                "path": relative_path(JHORA_COORDINATE_SCREENSHOT),
+                "sha256": sha256(JHORA_COORDINATE_SCREENSHOT),
+                "scope": (
+                    "Visible pinned-JHora 1889 coordinate view showing the "
+                    "available longitude, speed, latitude, distance, and "
+                    "rate columns."
+                ),
+            },
         },
         "profiles": profiles,
+        "sourceProfiles": {
+            "ayana_bphs_ch27_khanda_source": BPHS_AYANA_SOURCE,
+        },
+        "ayanaBphsHistoricalDiagnostics": historical_bphs_diagnostics,
         "horaBoundary": hora_boundary,
         "nathonnathaAstronomicalMidnight": nathonnatha_midnights,
         "workedExamples": {
             "nathonnatha": worked["nathonnatha"],
             "ayana": worked["ayana"],
+            "ayanaBphs": worked["ayanaBphs"],
         },
         "evidenceConclusions": [
             (
@@ -761,9 +910,16 @@ def build_summary(
                 "far better than true equatorial declination."
             ),
             (
-                "Do not promote the Ayana candidate yet. Five 1889 rows remain "
-                "outside the frozen tolerance and require visible JHora "
-                "tropical longitude or intermediate Kranti evidence."
+                "The independently sourced BPHS chapter-27 Khanda profile is "
+                "now executable and fully traceable through sayana longitude, "
+                "Bhuja, and 45/33/12 Khanda yoga. It is retained as a source "
+                "comparator, not assumed to be JHora's implementation."
+            ),
+            (
+                "Do not promote either Ayana candidate. The BPHS source "
+                "profile and the modern tropical-projection profile leave "
+                "historical JHora residuals outside the frozen tolerance; "
+                "widening tolerance would hide a formula discrepancy."
             ),
             (
                 "No production formula, certification tolerance, ML feature, "
@@ -782,10 +938,12 @@ def build_summary(
                 "JHora's case-8 apparent-tip sunrise and Moon Hora award."
             ),
             "ayana": (
-                "The historical tropical positions are captured. The tested "
-                "Kranti reconstruction is rejected; a visible internal Kranti "
-                "or separately sourced formula is needed before another "
-                "candidate is admitted."
+                "The historical tropical positions and a separately sourced "
+                "BPHS formula are captured. JHora's F1 help redirects to an "
+                "unrelated Microsoft Windows support page, while its position "
+                "menu exposes longitude/latitude but no internal Kranti. A "
+                "visible internal Kranti value or JHora implementation "
+                "documentation is required to resolve compatibility."
             ),
         },
     }
@@ -818,7 +976,12 @@ def render_report(summary: dict[str, Any]) -> str:
     boundary = summary["horaBoundary"]["case_8_event_start"]
     nath_rows = summary["workedExamples"]["nathonnatha"]
     ayana = summary["workedExamples"]["ayana"]
+    ayana_bphs = summary["workedExamples"]["ayanaBphs"]
     midnight_rows = summary["nathonnathaAstronomicalMidnight"]
+    bphs_source = summary["sourceProfiles"][
+        "ayana_bphs_ch27_khanda_source"
+    ]
+    bphs_diagnostics = summary["ayanaBphsHistoricalDiagnostics"]
     lines = [
         "# JHora Kaala Formula Profile Reconciliation",
         "",
@@ -932,6 +1095,49 @@ def render_report(summary: dict[str, Any]) -> str:
         f"`{ayana['maxErrorVirupa']:.3f}` maximum error against fourteen "
         "integer-rounded values in the two published tables.",
         "",
+        "The independently sourced BPHS Khanda profile has "
+        f"`{ayana_bphs['maeVirupa']:.3f}` virupa MAE and "
+        f"`{ayana_bphs['maxErrorVirupa']:.3f}` maximum error against the "
+        "same fourteen rounded values.",
+        "",
+        "## Independently Sourced BPHS Ayana Profile",
+        "",
+        f"- Source: [{bphs_source['title']}]({bphs_source['url']}).",
+        f"- Method: {bphs_source['method']}",
+        "- Role: diagnostic comparator only; no production change is allowed.",
+        "",
+        markdown_table(
+            [
+                "Planet",
+                "Sayana lon",
+                "Bhuja",
+                "Khanda yoga",
+                "JHora",
+                "BPHS profile",
+                "Residual",
+                "Result",
+            ],
+            [
+                [
+                    row["planet"],
+                    f"{row['tropicalLongitudeDeg']:.3f}",
+                    f"{row['bhujaDeg']:.3f}",
+                    f"{row['khandaYogaDeg']:.3f}",
+                    f"{row['jhoraVirupa']:.3f}",
+                    f"{row['profileVirupa']:.3f}",
+                    f"{row['jhoraMinusProfileVirupa']:+.3f}",
+                    row["passFail"],
+                ]
+                for row in bphs_diagnostics
+            ],
+        ),
+        "",
+        "JHora's contextual position view was inspected under the locked "
+        "historical fixture. It exposes longitude, longitude speed, ecliptic "
+        "latitude, latitude speed, distance, and distance speed, but not its "
+        "internal Kranti/declination intermediate. F1 redirects to an unrelated "
+        "Microsoft Windows support page rather than JHora formula help.",
+        "",
         "## Evidence Conclusions",
         "",
         *[
@@ -958,6 +1164,7 @@ def main() -> int:
     )
     profiles = summarize_profiles(rows)
     summary = build_summary(
+        rows=rows,
         profiles=profiles,
         hora_boundary=hora_boundary,
         nathonnatha_midnights=nathonnatha_midnights,

@@ -389,6 +389,7 @@ def test_kaala_formula_profiles_are_diagnostic_and_fail_closed(
         "visibleComparison",
         "doctrineConfig",
         "workedExamples",
+        "jhoraCoordinateScreenshot",
     ):
         input_path = tmp_path / f"{name}.txt"
         input_path.write_text(f"locked {name}\n", encoding="utf-8")
@@ -408,6 +409,7 @@ def test_kaala_formula_profiles_are_diagnostic_and_fail_closed(
         ("hora_variable_day_night", "hora", 27),
         ("ayana_actual_declination", "ayana", 13),
         ("ayana_tropical_projection", "ayana", 30),
+        ("ayana_bphs_ch27_khanda_source", "ayana", 25),
     ):
         profiles[name] = {
             "measure": measure,
@@ -426,13 +428,48 @@ def test_kaala_formula_profiles_are_diagnostic_and_fail_closed(
         json.dumps(
             {
                 "contract": (
-                    "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V2"
+                    "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V3"
                 ),
                 "status": "diagnostic_profiles_only_no_production_change",
                 "toleranceVirupa": 0.5,
                 "tolerancePolicy": "frozen; no widening",
                 "inputs": locked_inputs,
                 "profiles": profiles,
+                "sourceProfiles": {
+                    "ayana_bphs_ch27_khanda_source": {
+                        "url": (
+                            "https://vedicpupil.in/library/"
+                            "brihat-parashara-hora-shastra-book-by-parashara/"
+                            "spashtabal-ch27/15"
+                        ),
+                        "role": (
+                            "independently_sourced_diagnostic_profile"
+                        ),
+                        "productionChangeAllowed": False,
+                    }
+                },
+                "ayanaBphsHistoricalDiagnostics": [
+                    {
+                        "sampleId": "gann_reference_tokyo_locked",
+                        "planet": planet,
+                        "tropicalLongitudeDeg": 0.0,
+                        "bhujaDeg": 0.0,
+                        "khandaYogaDeg": 0.0,
+                        "jhoraVirupa": 30.0,
+                        "profileVirupa": 30.0,
+                        "jhoraMinusProfileVirupa": 0.0,
+                        "passFail": "pass",
+                    }
+                    for planet in (
+                        "SUN",
+                        "MOON",
+                        "MARS",
+                        "MERCURY",
+                        "JUPITER",
+                        "VENUS",
+                        "SATURN",
+                    )
+                ],
                 "horaBoundary": {
                     "case_8_event_start": {
                         "gapMinutes": 3.436256,

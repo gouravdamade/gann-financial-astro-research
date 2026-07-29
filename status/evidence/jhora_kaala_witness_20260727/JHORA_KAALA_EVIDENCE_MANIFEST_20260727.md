@@ -42,6 +42,7 @@ aggregate Kaala, full Shadbala, ML training, Auto Suggest, or execution.
 | `gann_reference_tokyo_locked.jhd` | `A7AF9C541889785C15DA2B6D35DA930B089EA04FB98DC1A5934810A082EF1808` |
 | `gann_reference_tokyo_kaala_bala_accessibility.txt` | `2C67511E0C99CFE9F1D7132CF29259A847439D87A88A0383D331805B819C12DD` |
 | `gann_reference_tokyo_kaala_bala_locked.jpg` | `6D1F6121DC2EB0D1A18A46C297E6BDCE98A1CFEBAD1CA974AEA46A3D700D4A63` |
+| `jhora_1889_coordinate_view_20260729.jpg` | `98960A74FD2F8753E8416F67ECDCF33C4FA4CE2BC15C677E93534D707FA1DF9A` |
 
 ## Derived Artifacts
 
@@ -53,6 +54,9 @@ aggregate Kaala, full Shadbala, ML training, Auto Suggest, or execution.
 | `case_8_event_start_exact_hora_boundary_evidence_20260729.json` | `22226178A12867EE4FC2795BA03A4BF602112F377B20D727F87D64581601396E` |
 | `../jhora_kaala_intermediate_20260729/jhora_hora_boundary_witness_completed.csv` | `AF2CE318E2955506246960C9C1E7EA5CB3A17678E38F57C4AE5D80076F5BA32E` |
 | `../jhora_kaala_intermediate_20260729/jhora_ayana_intermediate_witness_completed.csv` | `85B1B2343DA57D437F81A530B88A018A76A8D8170EDABBC22D298104A319C2E4` |
+| `jhora_kaala_formula_profiles_20260729.csv` | `10E3EA62CA53BE19C55944A1B5785BE2A8EAD7B8E15C5AFCC53A082BFEF73178` |
+| `jhora_kaala_formula_profiles_20260729.json` | `05FA6A81D09075C52EA2C68B2642CE8BFECE2A490DE365DDD82CE12AB38E17A4` |
+| `../../../jhora_kaala_formula_reconciliation_20260729.md` | `AE75E25FC82E083721B73F7626F9DC297640B229F39EA483EBD17E212FAA2B24` |
 
 ## Locked Result
 
@@ -70,3 +74,13 @@ promoted. Nathonnatha, Ayana, aggregate Kaala, full Shadbala, and Drik remain
 provisional; the frozen tolerance is not widened. The historical Ayana
 observation packet is complete, but the tested tropical-longitude formula
 candidate is rejected for five residuals above tolerance.
+
+The V3 Ayana diagnostic also implements the independently source-labelled BPHS
+chapter-27 verse-15 Khanda method from
+`https://vedicpupil.in/library/brihat-parashara-hora-shastra-book-by-parashara/spashtabal-ch27/15`.
+It passes `25/35` visible rows (`24/28` recent and `1/7` historical), while the
+modern tropical-projection candidate remains `30/35` (`28/28` recent and `2/7`
+historical). The coordinate-view screenshot shows the available longitude,
+speed, ecliptic-latitude, and distance columns; it exposes no internal Kranti
+value. Both profiles therefore remain diagnostic only, and neither changes
+production.

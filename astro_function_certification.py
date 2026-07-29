@@ -1013,6 +1013,8 @@ def kaala_formula_profile_gate_summary(summary_path: Path) -> dict[str, Any]:
         "certified": False,
         "productionChangeAllowed": False,
         "profiles": {},
+        "sourceProfiles": {},
+        "ayanaBphsHistoricalDiagnostics": [],
         "horaBoundary": {},
         "workedExamples": {},
         "evidenceConclusions": [],
@@ -1037,7 +1039,7 @@ def kaala_formula_profile_gate_summary(summary_path: Path) -> dict[str, Any]:
         )
         return base
 
-    expected_contract = "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V2"
+    expected_contract = "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V3"
     if payload.get("contract") != expected_contract:
         base["input"]["issues"].append(
             f"expected contract {expected_contract}; "
@@ -1058,6 +1060,7 @@ def kaala_formula_profile_gate_summary(summary_path: Path) -> dict[str, Any]:
         "visibleComparison",
         "doctrineConfig",
         "workedExamples",
+        "jhoraCoordinateScreenshot",
     ):
         metadata = dict(raw_inputs.get(input_name) or {})
         raw_path = str(metadata.get("path") or "").strip()
@@ -1098,6 +1101,7 @@ def kaala_formula_profile_gate_summary(summary_path: Path) -> dict[str, Any]:
         "hora_variable_day_night": "hora",
         "ayana_actual_declination": "ayana",
         "ayana_tropical_projection": "ayana",
+        "ayana_bphs_ch27_khanda_source": "ayana",
     }
     raw_profiles = dict(payload.get("profiles") or {})
     missing_profiles = sorted(set(required_profiles).difference(raw_profiles))
@@ -1105,6 +1109,61 @@ def kaala_formula_profile_gate_summary(summary_path: Path) -> dict[str, Any]:
         base["input"]["issues"].append(
             "missing formula profiles: " + ", ".join(missing_profiles)
         )
+
+    source_profiles = dict(payload.get("sourceProfiles") or {})
+    bphs_source = dict(
+        source_profiles.get("ayana_bphs_ch27_khanda_source") or {}
+    )
+    expected_bphs_url = (
+        "https://vedicpupil.in/library/"
+        "brihat-parashara-hora-shastra-book-by-parashara/"
+        "spashtabal-ch27/15"
+    )
+    if bphs_source.get("url") != expected_bphs_url:
+        base["input"]["issues"].append(
+            "BPHS Ayana source profile URL is missing or unexpected"
+        )
+    if (
+        bphs_source.get("role")
+        != "independently_sourced_diagnostic_profile"
+    ):
+        base["input"]["issues"].append(
+            "BPHS Ayana source profile role is missing or unexpected"
+        )
+    if bphs_source.get("productionChangeAllowed") is not False:
+        base["input"]["issues"].append(
+            "BPHS Ayana source profile must forbid production changes"
+        )
+    base["sourceProfiles"] = source_profiles
+
+    bphs_diagnostics = list(
+        payload.get("ayanaBphsHistoricalDiagnostics") or []
+    )
+    required_diagnostic_fields = {
+        "sampleId",
+        "planet",
+        "tropicalLongitudeDeg",
+        "bhujaDeg",
+        "khandaYogaDeg",
+        "jhoraVirupa",
+        "profileVirupa",
+        "jhoraMinusProfileVirupa",
+        "passFail",
+    }
+    diagnostic_planets = {
+        str(row.get("planet") or "")
+        for row in bphs_diagnostics
+        if isinstance(row, dict)
+        and required_diagnostic_fields.issubset(row)
+    }
+    if len(bphs_diagnostics) != 7 or diagnostic_planets != set(
+        CLASSICAL_PLANETS
+    ):
+        base["input"]["issues"].append(
+            "BPHS Ayana historical diagnostics must contain seven complete "
+            "classical-planet rows"
+        )
+    base["ayanaBphsHistoricalDiagnostics"] = bphs_diagnostics
 
     normalized_profiles: dict[str, dict[str, Any]] = {}
     for name, expected_measure in required_profiles.items():
@@ -1183,9 +1242,10 @@ def kaala_formula_profile_gate_summary(summary_path: Path) -> dict[str, Any]:
                     "captured and confirm its narrow 35/35 profile."
                 ),
                 (
-                    "Ayana's visible historical tropical positions are "
-                    "captured; the rejected reconstruction now requires an "
-                    "internal Kranti or separately sourced formula."
+                    "Ayana's visible historical tropical positions and the "
+                    "independently sourced BPHS Khanda profile are captured. "
+                    "Resolving JHora compatibility still requires an internal "
+                    "Kranti value or JHora implementation documentation."
                 ),
             ],
         }
@@ -1908,6 +1968,9 @@ def render_report(
         "hora_variable_day_night": "Hora - variable day/night hours",
         "ayana_actual_declination": "Ayana - current actual declination",
         "ayana_tropical_projection": "Ayana - tropical Kranti candidate",
+        "ayana_bphs_ch27_khanda_source": (
+            "Ayana - BPHS chapter-27 Khanda source profile"
+        ),
     }
     formula_profile_rows = [
         [

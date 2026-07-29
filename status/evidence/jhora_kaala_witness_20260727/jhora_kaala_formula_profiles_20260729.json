@@ -1,13 +1,13 @@
 {
-  "contract": "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V2",
-  "generatedAtUtc": "2026-07-29T16:01:13.751799Z",
+  "contract": "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V3",
+  "generatedAtUtc": "2026-07-29T16:44:39.106469Z",
   "status": "diagnostic_profiles_only_no_production_change",
   "toleranceVirupa": 0.5,
   "tolerancePolicy": "frozen; no widening",
   "inputs": {
     "comparatorScript": {
       "path": "jhora_kaala_formula_profile_reconciliation.py",
-      "sha256": "773FD184E04E6B88FEB545D5428E851880E2C8DDC4D7E4756D08E3FE0A5854AE"
+      "sha256": "AE51A9483E1E43C1EA02E65810C79A2FD897B170FD995F07696AB0E6DCFDD5C0"
     },
     "visibleComparison": {
       "path": "status\\evidence\\jhora_kaala_witness_20260727\\jhora_kaala_profile_comparison_20260727.csv",
@@ -26,6 +26,11 @@
         "Prince William birth data and Shad Bala table: extracted pages 121-122"
       ],
       "scope": "Corroborative rounded worked tables; not a substitute for the locked visible JHora matrix."
+    },
+    "jhoraCoordinateScreenshot": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\jhora_1889_coordinate_view_20260729.jpg",
+      "sha256": "98960A74FD2F8753E8416F67ECDCF33C4FA4CE2BC15C677E93534D707FA1DF9A",
+      "scope": "Visible pinned-JHora 1889 coordinate view showing the available longitude, speed, latitude, distance, and rate columns."
     }
   },
   "profiles": {
@@ -40,6 +45,18 @@
       "recentPass": 11,
       "historicalRows": 7,
       "historicalPass": 2
+    },
+    "ayana_bphs_ch27_khanda_source": {
+      "measure": "ayana",
+      "rows": 35,
+      "pass": 25,
+      "fail": 10,
+      "maeVirupa": 0.376257605,
+      "maxErrorVirupa": 1.720463737,
+      "recentRows": 28,
+      "recentPass": 24,
+      "historicalRows": 7,
+      "historicalPass": 1
     },
     "ayana_tropical_projection": {
       "measure": "ayana",
@@ -114,6 +131,95 @@
       "historicalPass": 1
     }
   },
+  "sourceProfiles": {
+    "ayana_bphs_ch27_khanda_source": {
+      "title": "Brihat Parashara Hora Shastra, Chapter 27, verse 15",
+      "url": "https://vedicpupil.in/library/brihat-parashara-hora-shastra-book-by-parashara/spashtabal-ch27/15",
+      "retrievedDate": "2026-07-29",
+      "role": "independently_sourced_diagnostic_profile",
+      "productionChangeAllowed": false,
+      "method": "Convert nirayana longitude to sayana longitude, fold it to a 0-90 degree Bhuja, accumulate the 45/33/12 Khanda segments, apply the planet's north/south strength rule, and divide by 3; the Sun result is doubled."
+    }
+  },
+  "ayanaBphsHistoricalDiagnostics": [
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "JUPITER",
+      "tropicalLongitudeDeg": 270.854250015,
+      "bhujaDeg": 89.145749985,
+      "khandaYogaDeg": 89.658299994,
+      "jhoraVirupa": 0.22,
+      "profileVirupa": 0.113900002,
+      "jhoraMinusProfileVirupa": 0.106099998,
+      "passFail": "pass"
+    },
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "MARS",
+      "tropicalLongitudeDeg": 354.855817288,
+      "bhujaDeg": 5.144182712,
+      "khandaYogaDeg": 7.716274067,
+      "jhoraVirupa": 28.49,
+      "profileVirupa": 27.427908644,
+      "jhoraMinusProfileVirupa": 1.062091356,
+      "passFail": "fail"
+    },
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "MERCURY",
+      "tropicalLongitudeDeg": 331.016384253,
+      "bhujaDeg": 28.983615747,
+      "khandaYogaDeg": 43.47542362,
+      "jhoraVirupa": 43.15,
+      "profileVirupa": 44.491807873,
+      "jhoraMinusProfileVirupa": -1.341807873,
+      "passFail": "fail"
+    },
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "MOON",
+      "tropicalLongitudeDeg": 81.945726399,
+      "bhujaDeg": 81.945726399,
+      "khandaYogaDeg": 86.77829056,
+      "jhoraVirupa": 0.43,
+      "profileVirupa": 1.073903147,
+      "jhoraMinusProfileVirupa": -0.643903147,
+      "passFail": "fail"
+    },
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "SATURN",
+      "tropicalLongitudeDeg": 136.495646823,
+      "bhujaDeg": 43.504353177,
+      "khandaYogaDeg": 59.854788494,
+      "jhoraVirupa": 10.64,
+      "profileVirupa": 10.048403835,
+      "jhoraMinusProfileVirupa": 0.591596165,
+      "passFail": "fail"
+    },
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "SUN",
+      "tropicalLongitudeDeg": 322.131185813,
+      "bhujaDeg": 37.868814187,
+      "khandaYogaDeg": 53.655695606,
+      "jhoraVirupa": 25.95,
+      "profileVirupa": 24.229536263,
+      "jhoraMinusProfileVirupa": 1.720463737,
+      "passFail": "fail"
+    },
+    {
+      "sampleId": "gann_reference_tokyo",
+      "planet": "VENUS",
+      "tropicalLongitudeDeg": 8.536268357,
+      "bhujaDeg": 8.536268357,
+      "khandaYogaDeg": 12.804402536,
+      "jhoraVirupa": 35.37,
+      "profileVirupa": 34.268134179,
+      "jhoraMinusProfileVirupa": 1.101865821,
+      "passFail": "fail"
+    }
+  ],
   "horaBoundary": {
     "case_8_event_start": {
       "lmtHour": 23.31002,
@@ -242,102 +348,262 @@
           "planet": "SUN",
           "calculatedVirupa": 119.098959,
           "publishedVirupa": 119.0,
-          "absoluteDeltaVirupa": 0.098959
+          "absoluteDeltaVirupa": 0.098959,
+          "bphsCalculatedVirupa": 117.423184,
+          "bphsAbsoluteDeltaVirupa": 1.576816
         },
         {
           "label": "Lady Diana",
           "planet": "MOON",
           "calculatedVirupa": 46.863442,
           "publishedVirupa": 47.0,
-          "absoluteDeltaVirupa": 0.136558
+          "absoluteDeltaVirupa": 0.136558,
+          "bphsCalculatedVirupa": 46.819421,
+          "bphsAbsoluteDeltaVirupa": 0.180579
         },
         {
           "label": "Lady Diana",
           "planet": "MARS",
           "calculatedVirupa": 43.937038,
           "publishedVirupa": 44.0,
-          "absoluteDeltaVirupa": 0.062962
+          "absoluteDeltaVirupa": 0.062962,
+          "bphsCalculatedVirupa": 44.177142,
+          "bphsAbsoluteDeltaVirupa": 0.177142
         },
         {
           "label": "Lady Diana",
           "planet": "MERCURY",
           "calculatedVirupa": 59.950387,
           "publishedVirupa": 59.0,
-          "absoluteDeltaVirupa": 0.950387
+          "absoluteDeltaVirupa": 0.950387,
+          "bphsCalculatedVirupa": 59.573146,
+          "bphsAbsoluteDeltaVirupa": 0.573146
         },
         {
           "label": "Lady Diana",
           "planet": "JUPITER",
           "calculatedVirupa": 5.691022,
           "publishedVirupa": 5.0,
-          "absoluteDeltaVirupa": 0.691022
+          "absoluteDeltaVirupa": 0.691022,
+          "bphsCalculatedVirupa": 5.868931,
+          "bphsAbsoluteDeltaVirupa": 0.868931
         },
         {
           "label": "Lady Diana",
           "planet": "VENUS",
           "calculatedVirupa": 54.152322,
           "publishedVirupa": 54.0,
-          "absoluteDeltaVirupa": 0.152322
+          "absoluteDeltaVirupa": 0.152322,
+          "bphsCalculatedVirupa": 53.94661,
+          "bphsAbsoluteDeltaVirupa": 0.05339
         },
         {
           "label": "Lady Diana",
           "planet": "SATURN",
           "calculatedVirupa": 56.364184,
           "publishedVirupa": 56.0,
-          "absoluteDeltaVirupa": 0.364184
+          "absoluteDeltaVirupa": 0.364184,
+          "bphsCalculatedVirupa": 56.291466,
+          "bphsAbsoluteDeltaVirupa": 0.291466
         },
         {
           "label": "Prince William",
           "planet": "SUN",
           "calculatedVirupa": 119.999891,
           "publishedVirupa": 119.0,
-          "absoluteDeltaVirupa": 0.999891
+          "absoluteDeltaVirupa": 0.999891,
+          "bphsCalculatedVirupa": 119.971713,
+          "bphsAbsoluteDeltaVirupa": 0.971713
         },
         {
           "label": "Prince William",
           "planet": "MOON",
           "calculatedVirupa": 0.119247,
           "publishedVirupa": 0.0,
-          "absoluteDeltaVirupa": 0.119247
+          "absoluteDeltaVirupa": 0.119247,
+          "bphsCalculatedVirupa": 0.661956,
+          "bphsAbsoluteDeltaVirupa": 0.661956
         },
         {
           "label": "Prince William",
           "planet": "MARS",
           "calculatedVirupa": 25.330598,
           "publishedVirupa": 25.0,
-          "absoluteDeltaVirupa": 0.330598
+          "absoluteDeltaVirupa": 0.330598,
+          "bphsCalculatedVirupa": 25.397413,
+          "bphsAbsoluteDeltaVirupa": 0.397413
         },
         {
           "label": "Prince William",
           "planet": "MERCURY",
           "calculatedVirupa": 57.894849,
           "publishedVirupa": 58.0,
-          "absoluteDeltaVirupa": 0.105151
+          "absoluteDeltaVirupa": 0.105151,
+          "bphsCalculatedVirupa": 57.195893,
+          "bphsAbsoluteDeltaVirupa": 0.804107
         },
         {
           "label": "Prince William",
           "planet": "JUPITER",
           "calculatedVirupa": 15.097644,
           "publishedVirupa": 14.0,
-          "absoluteDeltaVirupa": 1.097644
+          "absoluteDeltaVirupa": 1.097644,
+          "bphsCalculatedVirupa": 14.820597,
+          "bphsAbsoluteDeltaVirupa": 0.820597
         },
         {
           "label": "Prince William",
           "planet": "VENUS",
           "calculatedVirupa": 54.54221,
           "publishedVirupa": 54.0,
-          "absoluteDeltaVirupa": 0.54221
+          "absoluteDeltaVirupa": 0.54221,
+          "bphsCalculatedVirupa": 54.409792,
+          "bphsAbsoluteDeltaVirupa": 0.409792
         },
         {
           "label": "Prince William",
           "planet": "SATURN",
           "calculatedVirupa": 37.813476,
           "publishedVirupa": 38.0,
-          "absoluteDeltaVirupa": 0.186524
+          "absoluteDeltaVirupa": 0.186524,
+          "bphsCalculatedVirupa": 37.753561,
+          "bphsAbsoluteDeltaVirupa": 0.246439
         }
       ],
       "maeVirupa": 0.416975643,
       "maxErrorVirupa": 1.097644
+    },
+    "ayanaBphs": {
+      "rows": [
+        {
+          "label": "Lady Diana",
+          "planet": "SUN",
+          "calculatedVirupa": 119.098959,
+          "publishedVirupa": 119.0,
+          "absoluteDeltaVirupa": 0.098959,
+          "bphsCalculatedVirupa": 117.423184,
+          "bphsAbsoluteDeltaVirupa": 1.576816
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "MOON",
+          "calculatedVirupa": 46.863442,
+          "publishedVirupa": 47.0,
+          "absoluteDeltaVirupa": 0.136558,
+          "bphsCalculatedVirupa": 46.819421,
+          "bphsAbsoluteDeltaVirupa": 0.180579
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "MARS",
+          "calculatedVirupa": 43.937038,
+          "publishedVirupa": 44.0,
+          "absoluteDeltaVirupa": 0.062962,
+          "bphsCalculatedVirupa": 44.177142,
+          "bphsAbsoluteDeltaVirupa": 0.177142
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "MERCURY",
+          "calculatedVirupa": 59.950387,
+          "publishedVirupa": 59.0,
+          "absoluteDeltaVirupa": 0.950387,
+          "bphsCalculatedVirupa": 59.573146,
+          "bphsAbsoluteDeltaVirupa": 0.573146
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "JUPITER",
+          "calculatedVirupa": 5.691022,
+          "publishedVirupa": 5.0,
+          "absoluteDeltaVirupa": 0.691022,
+          "bphsCalculatedVirupa": 5.868931,
+          "bphsAbsoluteDeltaVirupa": 0.868931
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "VENUS",
+          "calculatedVirupa": 54.152322,
+          "publishedVirupa": 54.0,
+          "absoluteDeltaVirupa": 0.152322,
+          "bphsCalculatedVirupa": 53.94661,
+          "bphsAbsoluteDeltaVirupa": 0.05339
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "SATURN",
+          "calculatedVirupa": 56.364184,
+          "publishedVirupa": 56.0,
+          "absoluteDeltaVirupa": 0.364184,
+          "bphsCalculatedVirupa": 56.291466,
+          "bphsAbsoluteDeltaVirupa": 0.291466
+        },
+        {
+          "label": "Prince William",
+          "planet": "SUN",
+          "calculatedVirupa": 119.999891,
+          "publishedVirupa": 119.0,
+          "absoluteDeltaVirupa": 0.999891,
+          "bphsCalculatedVirupa": 119.971713,
+          "bphsAbsoluteDeltaVirupa": 0.971713
+        },
+        {
+          "label": "Prince William",
+          "planet": "MOON",
+          "calculatedVirupa": 0.119247,
+          "publishedVirupa": 0.0,
+          "absoluteDeltaVirupa": 0.119247,
+          "bphsCalculatedVirupa": 0.661956,
+          "bphsAbsoluteDeltaVirupa": 0.661956
+        },
+        {
+          "label": "Prince William",
+          "planet": "MARS",
+          "calculatedVirupa": 25.330598,
+          "publishedVirupa": 25.0,
+          "absoluteDeltaVirupa": 0.330598,
+          "bphsCalculatedVirupa": 25.397413,
+          "bphsAbsoluteDeltaVirupa": 0.397413
+        },
+        {
+          "label": "Prince William",
+          "planet": "MERCURY",
+          "calculatedVirupa": 57.894849,
+          "publishedVirupa": 58.0,
+          "absoluteDeltaVirupa": 0.105151,
+          "bphsCalculatedVirupa": 57.195893,
+          "bphsAbsoluteDeltaVirupa": 0.804107
+        },
+        {
+          "label": "Prince William",
+          "planet": "JUPITER",
+          "calculatedVirupa": 15.097644,
+          "publishedVirupa": 14.0,
+          "absoluteDeltaVirupa": 1.097644,
+          "bphsCalculatedVirupa": 14.820597,
+          "bphsAbsoluteDeltaVirupa": 0.820597
+        },
+        {
+          "label": "Prince William",
+          "planet": "VENUS",
+          "calculatedVirupa": 54.54221,
+          "publishedVirupa": 54.0,
+          "absoluteDeltaVirupa": 0.54221,
+          "bphsCalculatedVirupa": 54.409792,
+          "bphsAbsoluteDeltaVirupa": 0.409792
+        },
+        {
+          "label": "Prince William",
+          "planet": "SATURN",
+          "calculatedVirupa": 37.813476,
+          "publishedVirupa": 38.0,
+          "absoluteDeltaVirupa": 0.186524,
+          "bphsCalculatedVirupa": 37.753561,
+          "bphsAbsoluteDeltaVirupa": 0.246439
+        }
+      ],
+      "maeVirupa": 0.5738205,
+      "maxErrorVirupa": 1.576816
     }
   },
   "evidenceConclusions": [
@@ -346,12 +612,13 @@
     "Visible JHora Nathonnatha remains a software-compatibility discrepancy rather than evidence that the source-backed LMT formula is wrong. LMT, apparent-solar time, and astronomical midnight all fail in different residual patterns, so no JHora-mimicking correction is admitted.",
     "Do not alter Hora merely from this diagnostic. The former case-8 disagreement is one categorical award separated by only a few minutes of sunrise input. The later fail-closed intermediate packet captured JHora's exact visible sunrise and award and now confirms the narrow 35/35 Hora profile.",
     "The tropical-longitude Kranti Ayana profile is the strongest candidate: it passes all 28 recent visible rows and 30/35 overall, and it fits the two published rounded Ayana tables far better than true equatorial declination.",
-    "Do not promote the Ayana candidate yet. Five 1889 rows remain outside the frozen tolerance and require visible JHora tropical longitude or intermediate Kranti evidence.",
+    "The independently sourced BPHS chapter-27 Khanda profile is now executable and fully traceable through sayana longitude, Bhuja, and 45/33/12 Khanda yoga. It is retained as a source comparator, not assumed to be JHora's implementation.",
+    "Do not promote either Ayana candidate. The BPHS source profile and the modern tropical-projection profile leave historical JHora residuals outside the frozen tolerance; widening tolerance would hide a formula discrepancy.",
     "No production formula, certification tolerance, ML feature, Auto Suggest rule, or execution path is changed by this diagnostic."
   ],
   "nextWitness": {
     "nathonnatha": "No production change. A JHora intermediate showing its apparent birth time or internal Unnata value is required to explain the visible compatibility residual.",
     "hora": "Completed: the separate hashed intermediate witness records JHora's case-8 apparent-tip sunrise and Moon Hora award.",
-    "ayana": "The historical tropical positions are captured. The tested Kranti reconstruction is rejected; a visible internal Kranti or separately sourced formula is needed before another candidate is admitted."
+    "ayana": "The historical tropical positions and a separately sourced BPHS formula are captured. JHora's F1 help redirects to an unrelated Microsoft Windows support page, while its position menu exposes longitude/latitude but no internal Kranti. A visible internal Kranti value or JHora implementation documentation is required to resolve compatibility."
   }
 }

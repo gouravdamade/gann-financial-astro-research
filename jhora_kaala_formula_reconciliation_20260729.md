@@ -1,6 +1,6 @@
 # JHora Kaala Formula Profile Reconciliation
 
-Contract: `GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V2`
+Contract: `GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V3`
 
 Status: diagnostic formula profiles only; no production change.
 
@@ -11,6 +11,7 @@ The frozen certification tolerance remains 0.5 virupa. A profile that looks bett
 | Profile | Pass | MAE | Max error | Recent pass | Historical pass |
 | --- | --- | --- | --- | --- | --- |
 | ayana_actual_declination | 13/35 | 1.973 | 9.010 | 11/28 | 2/7 |
+| ayana_bphs_ch27_khanda_source | 25/35 | 0.376 | 1.720 | 24/28 | 1/7 |
 | ayana_tropical_projection | 30/35 | 0.308 | 2.128 | 28/28 | 2/7 |
 | hora_astronomical_sunrise | 35/35 | 0.000 | 0.000 | 28/28 | 7/7 |
 | hora_variable_day_night | 27/35 | 13.714 | 60.000 | 22/28 | 5/7 |
@@ -55,6 +56,26 @@ This explicit astronomical-midnight profile still passes only `11/35` visible JH
 
 The tropical-longitude Kranti candidate has `0.417` virupa MAE and `1.098` maximum error against fourteen integer-rounded values in the two published tables.
 
+The independently sourced BPHS Khanda profile has `0.574` virupa MAE and `1.577` maximum error against the same fourteen rounded values.
+
+## Independently Sourced BPHS Ayana Profile
+
+- Source: [Brihat Parashara Hora Shastra, Chapter 27, verse 15](https://vedicpupil.in/library/brihat-parashara-hora-shastra-book-by-parashara/spashtabal-ch27/15).
+- Method: Convert nirayana longitude to sayana longitude, fold it to a 0-90 degree Bhuja, accumulate the 45/33/12 Khanda segments, apply the planet's north/south strength rule, and divide by 3; the Sun result is doubled.
+- Role: diagnostic comparator only; no production change is allowed.
+
+| Planet | Sayana lon | Bhuja | Khanda yoga | JHora | BPHS profile | Residual | Result |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| JUPITER | 270.854 | 89.146 | 89.658 | 0.220 | 0.114 | +0.106 | pass |
+| MARS | 354.856 | 5.144 | 7.716 | 28.490 | 27.428 | +1.062 | fail |
+| MERCURY | 331.016 | 28.984 | 43.475 | 43.150 | 44.492 | -1.342 | fail |
+| MOON | 81.946 | 81.946 | 86.778 | 0.430 | 1.074 | -0.644 | fail |
+| SATURN | 136.496 | 43.504 | 59.855 | 10.640 | 10.048 | +0.592 | fail |
+| SUN | 322.131 | 37.869 | 53.656 | 25.950 | 24.230 | +1.720 | fail |
+| VENUS | 8.536 | 8.536 | 12.804 | 35.370 | 34.268 | +1.102 | fail |
+
+JHora's contextual position view was inspected under the locked historical fixture. It exposes longitude, longitude speed, ecliptic latitude, latitude speed, distance, and distance speed, but not its internal Kranti/declination intermediate. F1 redirects to an unrelated Microsoft Windows support page rather than JHora formula help.
+
 ## Evidence Conclusions
 
 - Retain the LMT Nathonnatha source profile because BPHS defines the component from midnight to apparent birth time and the locked published worked tables are independently reproduced closely with LMT.
@@ -62,11 +83,12 @@ The tropical-longitude Kranti candidate has `0.417` virupa MAE and `1.098` maxim
 - Visible JHora Nathonnatha remains a software-compatibility discrepancy rather than evidence that the source-backed LMT formula is wrong. LMT, apparent-solar time, and astronomical midnight all fail in different residual patterns, so no JHora-mimicking correction is admitted.
 - Do not alter Hora merely from this diagnostic. The former case-8 disagreement is one categorical award separated by only a few minutes of sunrise input. The later fail-closed intermediate packet captured JHora's exact visible sunrise and award and now confirms the narrow 35/35 Hora profile.
 - The tropical-longitude Kranti Ayana profile is the strongest candidate: it passes all 28 recent visible rows and 30/35 overall, and it fits the two published rounded Ayana tables far better than true equatorial declination.
-- Do not promote the Ayana candidate yet. Five 1889 rows remain outside the frozen tolerance and require visible JHora tropical longitude or intermediate Kranti evidence.
+- The independently sourced BPHS chapter-27 Khanda profile is now executable and fully traceable through sayana longitude, Bhuja, and 45/33/12 Khanda yoga. It is retained as a source comparator, not assumed to be JHora's implementation.
+- Do not promote either Ayana candidate. The BPHS source profile and the modern tropical-projection profile leave historical JHora residuals outside the frozen tolerance; widening tolerance would hide a formula discrepancy.
 - No production formula, certification tolerance, ML feature, Auto Suggest rule, or execution path is changed by this diagnostic.
 
 ## Required Next Witness
 
 - Nathonnatha: No production change. A JHora intermediate showing its apparent birth time or internal Unnata value is required to explain the visible compatibility residual.
 - Hora: Completed: the separate hashed intermediate witness records JHora's case-8 apparent-tip sunrise and Moon Hora award.
-- Ayana: The historical tropical positions are captured. The tested Kranti reconstruction is rejected; a visible internal Kranti or separately sourced formula is needed before another candidate is admitted.
+- Ayana: The historical tropical positions and a separately sourced BPHS formula are captured. JHora's F1 help redirects to an unrelated Microsoft Windows support page, while its position menu exposes longitude/latitude but no internal Kranti. A visible internal Kranti value or JHora implementation documentation is required to resolve compatibility.
