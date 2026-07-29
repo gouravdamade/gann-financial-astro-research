@@ -7400,6 +7400,9 @@ html.android-runtime .loading-state {
 .chakra-external-review-inputs.is-three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+.chakra-external-review-inputs.is-four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .chakra-external-review-inputs > div {
   min-width: 0;
   display: grid;
@@ -7777,7 +7780,8 @@ html.android-runtime .loading-state {
     flex-direction: column;
   }
   .chakra-external-review-inputs,
-  .chakra-external-review-inputs.is-three {
+  .chakra-external-review-inputs.is-three,
+  .chakra-external-review-inputs.is-four {
     grid-template-columns: minmax(0, 1fr);
   }
   .chakra-external-review-inputs > div {

@@ -1,8 +1,106 @@
 # Current Project Handoff
 
-Last updated: 2026-07-29 11:05 IST
+Last updated: 2026-07-29 12:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-29 (Source-Certification Authority Gate S5)
+
+- Completed S5 in source under:
+  - report contract `SBC_TIMING_PROFILE_SOURCE_CERTIFICATION_REPORT_V1`;
+  - certificate contract `SBC_TIMING_PROFILE_SOURCE_CERTIFICATE_V1`;
+  - authority-registry contract
+    `SBC_TIMING_PROFILE_CERTIFICATION_AUTHORITY_REGISTRY_V1`;
+  - proposal contract `SBC_TIMING_PROFILE_REGISTRY_ENTRY_PROPOSAL_V1`;
+  - policy `ED25519_SEPARATE_AUTHORITY_EXACT_S4_BINDING_V1`;
+  - classification `SOURCE_PROFILED_EXPERIMENTAL`.
+- The deterministic implementation is
+  `sbc/timing_profile_source_certification.py`; its audited
+  line-ending-independent canonical-text SHA-256 is
+  `EB4278C5388875C2A9A7CCF0378DBC8084F359D7EB9F76F7EDD96362D75B84F0`.
+- Froze the boundary and canonical evidence in:
+  - `docs/sbc/ADR-0016-source-certification-authority-gate.md`;
+  - `docs/sbc/S5_ACCEPTANCE.md`;
+  - `sbc_timing_source_certification_s5_20260729.md`;
+  - `status/audits/sbc_timing_profile_source_certification_s5_20260729.json`;
+  - server-owned
+    `status/timing_profile_certification_authority_registry.json`.
+- S5 reruns the complete S1-S4 chain and verifies a separate Ed25519 source
+  certificate. The authority certificate binds the exact review bundle,
+  completed attestation, signed review, S3 proposal, candidate profile, and
+  source packet.
+- The client cannot supply an authority public key or authority registry. The
+  server loads the repository registry and enforces raw-key-derived key IDs,
+  validity dates, revocation, profile and packet scopes, identity,
+  organization, exact evidence binding, and administratively vetted
+  reviewer/certifier separation.
+- The certifier public key and identity must differ from the S4 reviewer. A
+  reviewer cannot self-certify, and the more specific
+  `CERTIFICATION_AUTHORITY_UNTRUSTED` state is preserved for that failure.
+- A valid `REJECTED` certificate reports `SOURCE_CERTIFICATION_REJECTED`. A
+  valid `CERTIFIED` certificate may report only
+  `READY_FOR_PROFILE_REGISTRY_ADMISSION` and emit a reproducibly hashed
+  registry-entry proposal for a separate human-reviewed Git change.
+- S5 never writes a registry, registers a profile, calculates direction or
+  confidence, affects Auto Suggest, live inference, ML evidence, or shadow
+  voting, produces a trade, or enables MT5 execution. Source certification is
+  a signed governance decision, not cryptographic proof of doctrinal truth.
+- The repository certification-authority registry intentionally contains zero
+  authorities. Therefore no real source certificate can pass until an
+  external authority and separation of duties are vetted and enrolled through
+  a separate human-reviewed change.
+- Added private backend POST
+  `/api/chakra-lab/timing-profile/source-certification/verify`, read-only native
+  command `chakra_lab_timing_source_certification`, typed frontend transport,
+  and the Chakra Audit `Source certificate` tab.
+- The tab accepts four evidence files, displays the rerun S4 state, authority
+  registry, authority trust, separation, signature, decision, proposal/manual
+  registry boundary, missing requirements, blocked capabilities, and execution
+  lock. It can download a certificate template or verified registry proposal
+  but cannot apply either one.
+- Canonical status validation now controls twenty-one documents and thirteen
+  audits. It pins the S5 module hash, contracts, signature/proposal policies,
+  empty server registry, human-control boundaries, transport, and all
+  inference, financial, registry-write, and execution locks.
+- Verification on the final source state:
+  - S5 engine tests `13/13`;
+  - Chakra Lab service tests `24/24`;
+  - Chakra Audit workspace tests `10/10`;
+  - complete repository Python suite `562/562`;
+  - complete frontend suite `102/102`;
+  - status tests `50/50`;
+  - S5 changed Python scope passes Ruff;
+  - frontend lint and production build pass;
+  - native Rust `cargo check` and focused `rustfmt --check` pass;
+  - canonical status validation passes with 21 documents, 13 audits, and
+    execution false.
+- Repository-wide Ruff still reports the same 19 known, pre-existing,
+  out-of-scope findings. Repository-wide `cargo fmt --check` remains blocked
+  only by the older formatting difference in
+  `gann-astro-desk/src-tauri/src/companion_gateway.rs`. The production build
+  still reports the existing main-bundle size advisory.
+- Live endpoint acceptance passed on port `8788`. Empty input returned
+  `S4_NOT_READY`; client-supplied `authorityRegistry` was rejected with HTTP
+  400. In every path the authority registry stayed server-owned, profile
+  registration and registry writes remained false, directional contribution
+  remained zero, and execution remained false.
+- Real in-app-browser acceptance passed at
+  `http://127.0.0.1:5173/?s5=acceptance`. The `Source certificate` tab showed
+  `S4 Not Ready`, the valid empty server registry, untrusted authority key,
+  unvetted separation, unverified certificate, manual-only registry write,
+  and execution locked without bullish or bearish output.
+- S5 remains unpackaged. No real review bundle, completed attestation, signed
+  review, source certificate, trusted authority, registry entry, timing
+  profile, directional engine, or prospective financial validation is
+  shipped. No Windows or Android package was rebuilt.
+- Runtime-only SQLite databases, logs, and Android workspace state remain
+  local and uncommitted.
+- Timestamped source recovery snapshot:
+  `chat_session_backups/session_20260729_120539_sbc_timing_source_certification_s5`.
+- Next bounded milestone: obtain genuinely external S1-S5 evidence and a
+  human-reviewed authority enrollment, then consider a separate manual timing
+  profile registry admission. The application must not populate its own
+  authority registry, certify its own evidence, or auto-register a profile.
 
 ## Latest Update - 2026-07-29 (Trusted Reviewer Signature Gate S4)
 

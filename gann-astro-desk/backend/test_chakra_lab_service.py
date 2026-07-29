@@ -15,6 +15,7 @@ from chakra_lab_service import (
     build_chakra_lab_timing_external_review,
     build_chakra_lab_timing_profile_admission,
     build_chakra_lab_timing_signed_review,
+    build_chakra_lab_timing_source_certification,
     build_chakra_lab_timing_source_packet_readiness,
     build_chakra_lab_timing_source_verification,
     verify_chakra_lab_audit_catalog,
@@ -335,6 +336,49 @@ class ChakraLabServiceTests(unittest.TestCase):
                     "attestation": None,
                     "signedReview": None,
                     "reviewerRegistry": {
+                        "executionAllowed": False,
+                    },
+                }
+            )
+
+    def test_timing_source_certification_reports_missing_s4_evidence(
+        self,
+    ) -> None:
+        certification = build_chakra_lab_timing_source_certification(
+            {
+                "reviewBundle": None,
+                "attestation": None,
+                "signedReview": None,
+                "sourceCertificate": None,
+            }
+        )
+
+        self.assertEqual(
+            certification["contract"],
+            "SBC_TIMING_PROFILE_SOURCE_CERTIFICATION_REPORT_V1",
+        )
+        self.assertEqual(certification["certification_status"], "S4_NOT_READY")
+        self.assertFalse(certification["s4_ready"])
+        self.assertTrue(certification["authority_registry_valid"])
+        self.assertFalse(certification["source_certified"])
+        self.assertFalse(certification["profile_registered"])
+        self.assertFalse(certification["registry_write_allowed"])
+        self.assertFalse(certification["guardrails"]["execution_allowed"])
+        self.assertFalse(
+            certification["guardrails"]["client_public_key_accepted"]
+        )
+
+    def test_timing_source_certification_rejects_client_authority_inputs(
+        self,
+    ) -> None:
+        with self.assertRaisesRegex(ValueError, "Unknown"):
+            build_chakra_lab_timing_source_certification(
+                {
+                    "reviewBundle": None,
+                    "attestation": None,
+                    "signedReview": None,
+                    "sourceCertificate": None,
+                    "authorityRegistry": {
                         "executionAllowed": False,
                     },
                 }

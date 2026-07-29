@@ -14,6 +14,7 @@ import type {
   ChakraTimingProfileAdmissionReport,
   ChakraTimingProfileExternalReviewReport,
   ChakraTimingProfileSignedReviewReport,
+  ChakraTimingProfileSourceCertificationReport,
   ChakraTimingProfileSourceReadinessReport,
   ChakraTimingProfileSourceVerificationReport,
 } from './types'
@@ -28,6 +29,7 @@ const {
   fetchTimingAdmission,
   fetchTimingExternalReview,
   fetchTimingSignedReview,
+  fetchTimingSourceCertification,
   fetchTimingSourceReadiness,
   fetchTimingSourceVerification,
   verifyAuditCatalog,
@@ -41,6 +43,7 @@ const {
   fetchTimingAdmission: vi.fn(),
   fetchTimingExternalReview: vi.fn(),
   fetchTimingSignedReview: vi.fn(),
+  fetchTimingSourceCertification: vi.fn(),
   fetchTimingSourceReadiness: vi.fn(),
   fetchTimingSourceVerification: vi.fn(),
   verifyAuditCatalog: vi.fn(),
@@ -56,6 +59,7 @@ vi.mock('./api', () => ({
   fetchChakraTimingProfileAdmission: fetchTimingAdmission,
   fetchChakraTimingExternalReview: fetchTimingExternalReview,
   fetchChakraTimingSignedReview: fetchTimingSignedReview,
+  fetchChakraTimingSourceCertification: fetchTimingSourceCertification,
   fetchChakraTimingSourcePacketReadiness: fetchTimingSourceReadiness,
   fetchChakraTimingSourceVerification: fetchTimingSourceVerification,
   verifyChakraLabAuditCatalog: verifyAuditCatalog,
@@ -72,6 +76,7 @@ afterEach(() => {
   fetchTimingAdmission.mockReset()
   fetchTimingExternalReview.mockReset()
   fetchTimingSignedReview.mockReset()
+  fetchTimingSourceCertification.mockReset()
   fetchTimingSourceReadiness.mockReset()
   fetchTimingSourceVerification.mockReset()
   verifyAuditCatalog.mockReset()
@@ -850,6 +855,87 @@ const timingSignedReview: ChakraTimingProfileSignedReviewReport = {
   },
 }
 
+const timingSourceCertification:
+ChakraTimingProfileSourceCertificationReport = {
+  contract: 'SBC_TIMING_PROFILE_SOURCE_CERTIFICATION_REPORT_V1',
+  schema_version: 1,
+  certification_policy: 'ED25519_SEPARATE_AUTHORITY_EXACT_S4_BINDING_V1',
+  classification: 'SOURCE_PROFILED_EXPERIMENTAL',
+  certification_status: 'S4_NOT_READY',
+  profile_id: null,
+  profile_version: null,
+  candidate_profile_hash: null,
+  packet_id: null,
+  packet_hash: null,
+  review_bundle_sha256: null,
+  attestation_sha256: null,
+  certification_proposal_sha256: null,
+  signed_review_sha256: null,
+  source_certificate_sha256: null,
+  registry_admission_proposal_sha256: null,
+  s4_ready: false,
+  authority_registry_valid: true,
+  authority_key_trusted: false,
+  certificate_signature_valid: false,
+  separation_of_duties_vetted: false,
+  certification_decision: null,
+  source_certified: false,
+  ready_for_profile_registry_admission: false,
+  validation_gates: [
+    {
+      gate_id: 's4_signed_review',
+      state: 'FAIL',
+      mandatory: true,
+      label: 'S4 signed-review evidence',
+      detail: 'S4 must pass before source certification.',
+    },
+    {
+      gate_id: 'trusted_certification_authority',
+      state: 'UNKNOWN',
+      mandatory: true,
+      label: 'Trusted certification authority',
+      detail: 'A valid source-certificate binding is required.',
+    },
+  ],
+  missing_requirements: [
+    'S4 signed-review evidence',
+    'Trusted certification authority',
+  ],
+  source_certificate_template: null,
+  registry_entry_proposal: null,
+  profile_registered: false,
+  registry_write_allowed: false,
+  guardrails: {
+    research_only: true,
+    read_only: true,
+    payloads_persisted: false,
+    client_public_key_accepted: false,
+    server_authority_registry_required: true,
+    separate_authority_required: true,
+    certificate_records_governance_decision_only: true,
+    doctrinal_truth_cryptographically_proven: false,
+    profile_registered: false,
+    registry_write_allowed: false,
+    timing_phase_calculated: false,
+    directional_phase_calculated: false,
+    confidence_calculated: false,
+    counts_as_independent_vote: false,
+    directional_contribution: 0,
+    auto_suggest_included: false,
+    live_inference_included: false,
+    official_ml_notes_included: false,
+    shadow_vote_included: false,
+    trade_output_included: false,
+    financially_validated: false,
+    execution_allowed: false,
+    blocked_capabilities: [
+      'TIMING_PROFILE_REGISTRATION',
+      'DIRECTIONAL_TIMING_PHASE',
+      'MT5_EXECUTION',
+    ],
+  },
+}
+
 const comparisonFixedPhasor: ChakraFixedPhasorSeries = {
   ...fixedPhasor,
   range_end_utc: comparisonAudit.range_end_utc,
@@ -1296,6 +1382,43 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
+  it('keeps source certification separate from registry admission', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchTimingSourceCertification.mockResolvedValue(
+      timingSourceCertification,
+    )
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
+    await user.click(screen.getByRole('tab', { name: 'Audit' }))
+    await user.click(screen.getByRole('tab', { name: 'Source certificate' }))
+
+    await waitFor(() => (
+      expect(fetchTimingSourceCertification).toHaveBeenCalledWith(
+        null,
+        null,
+        null,
+        null,
+      )
+    ))
+    expect(await screen.findByText(/S5 verifies a separate authority signature/))
+      .toBeInTheDocument()
+    expect(screen.getByText('S4 signed-review evidence')).toBeInTheDocument()
+    expect(screen.getByText('Trusted certification authority'))
+      .toBeInTheDocument()
+    expect(screen.getByText(/Certification is a signed governance decision/))
+      .toBeInTheDocument()
+    expect(screen.getAllByText('LOCKED').length).toBeGreaterThan(0)
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
   it('builds a descriptive P4 package with bookmarks and verifies full replay', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAudit.mockResolvedValue(comparisonAudit)
@@ -1378,6 +1501,6 @@ describe('ChakraLabWorkspace', () => {
       false,
     ))
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
-  })
+  }, 10_000)
 })
   buildAuditCatalog.mockReset()

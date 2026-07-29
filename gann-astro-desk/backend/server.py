@@ -32,6 +32,7 @@ from chakra_lab_service import (
     build_chakra_lab_timing_profile_admission,
     build_chakra_lab_timing_external_review,
     build_chakra_lab_timing_signed_review,
+    build_chakra_lab_timing_source_certification,
     build_chakra_lab_timing_source_packet_readiness,
     build_chakra_lab_timing_source_verification,
     verify_chakra_lab_audit_catalog,
@@ -353,6 +354,22 @@ def create_chakra_lab_timing_signed_review() -> Any:
             {
                 "ok": True,
                 "review": build_chakra_lab_timing_signed_review(payload),
+            }
+        )
+    except (OSError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/timing-profile/source-certification/verify")
+def create_chakra_lab_timing_source_certification() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "certification": (
+                    build_chakra_lab_timing_source_certification(payload)
+                ),
             }
         )
     except (OSError, TypeError, ValueError) as exc:

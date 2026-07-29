@@ -456,6 +456,30 @@
       "executionAllowed": false
     },
     {
+      "capabilityId": "timing_profile_source_certification_v1",
+      "label": "SBC separate-authority source-certification gate",
+      "states": {
+        "implementedInSource": "yes",
+        "packagedCandidate": "no",
+        "physicallyTested": "not_applicable",
+        "promotedStable": "no",
+        "sourceCertified": "no",
+        "financiallyValidated": "no"
+      },
+      "statusDetail": "S5 is implemented in source. It reruns S4 and verifies an exact Ed25519 source certificate only against a separate server-owned certification-authority registry. Reviewer and certifier keys and identities must differ, separation of duties must be administratively vetted, and all S1-S4 evidence hashes must bind exactly. The client cannot supply an authority key or registry. A valid CERTIFIED decision emits only a reproducibly hashed registry-entry proposal for a separate human Git review; the application cannot apply it. The repository authority registry is empty, so no source is certified and no timing profile is registered. S5 does not prove doctrine, calculate direction, affect inference or ML evidence, produce trades, or enable execution.",
+      "evidenceRefs": [
+        "docs/sbc/ADR-0016-source-certification-authority-gate.md",
+        "docs/sbc/S5_ACCEPTANCE.md",
+        "sbc_timing_source_certification_s5_20260729.md",
+        "status/audits/sbc_timing_profile_source_certification_s5_20260729.json",
+        "status/timing_profile_certification_authority_registry.json",
+        "sbc/timing_profile_source_certification.py",
+        "test_sbc_s5_timing_source_certification.py",
+        "gann-astro-desk/src/views/SbcLinkedAuditWorkspace.tsx"
+      ],
+      "executionAllowed": false
+    },
+    {
       "capabilityId": "phase_interference_research_engine_v1",
       "label": "SBC phase-interference research engine",
       "states": {

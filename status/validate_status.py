@@ -22,6 +22,9 @@ EXPECTED_CONTRACTS = {
     "timing_profile_reviewer_trust_registry.json": (
         "SBC_TIMING_PROFILE_REVIEWER_TRUST_REGISTRY_V1"
     ),
+    "timing_profile_certification_authority_registry.json": (
+        "SBC_TIMING_PROFILE_CERTIFICATION_AUTHORITY_REGISTRY_V1"
+    ),
 }
 CANONICAL_AUDITS = {
     "audits/sbc_phase_p0_gap_audit_20260728.json": "GANN_SBC_PHASE_P0_GAP_AUDIT_V1",
@@ -55,6 +58,9 @@ CANONICAL_AUDITS = {
     ),
     "audits/sbc_timing_profile_signed_review_s4_20260729.json": (
         "GANN_SBC_TIMING_PROFILE_SIGNED_REVIEW_S4_AUDIT_V1"
+    ),
+    "audits/sbc_timing_profile_source_certification_s5_20260729.json": (
+        "GANN_SBC_TIMING_PROFILE_SOURCE_CERTIFICATION_S5_AUDIT_V1"
     ),
 }
 P0_CORRECTION_IDS = {f"P0-R{number}" for number in range(1, 9)}
@@ -321,6 +327,118 @@ def validate_timing_profile_reviewer_trust_registry(
         )
         if item.get("independenceVetted") is not True:
             raise ValueError(f"{entry_label} independence must be vetted")
+        _required_text(item.get("vettedBy"), f"{entry_label} vettedBy")
+        _utc_timestamp(item.get("vettedAtUtc"), f"{entry_label} vettedAtUtc")
+        _utc_timestamp(item.get("validFromUtc"), f"{entry_label} validFromUtc")
+        _utc_timestamp(item.get("validUntilUtc"), f"{entry_label} validUntilUtc")
+        valid_from = datetime.fromisoformat(
+            str(item["validFromUtc"]).replace("Z", "+00:00")
+        )
+        valid_until = datetime.fromisoformat(
+            str(item["validUntilUtc"]).replace("Z", "+00:00")
+        )
+        if valid_until <= valid_from:
+            raise ValueError(f"{entry_label} validity interval is not positive")
+        for field in ("authorizedProfileIds", "authorizedPacketIds"):
+            values = item.get(field)
+            if not isinstance(values, list) or not values:
+                raise ValueError(f"{entry_label} {field} must be non-empty")
+            normalized = [
+                _required_text(value, f"{entry_label} {field}")
+                for value in values
+            ]
+            if len(normalized) != len(set(normalized)):
+                raise ValueError(f"{entry_label} {field} contains duplicates")
+        revoked = item.get("revoked")
+        if not isinstance(revoked, bool):
+            raise ValueError(f"{entry_label} revoked must be boolean")
+        revoked_at = str(item.get("revokedAtUtc") or "").strip()
+        reason = str(item.get("revocationReason") or "").strip()
+        if revoked:
+            _utc_timestamp(revoked_at, f"{entry_label} revokedAtUtc")
+            _required_text(reason, f"{entry_label} revocationReason")
+        elif revoked_at or reason:
+            raise ValueError(
+                f"{entry_label} revocation fields must be blank"
+            )
+        _required_text(item.get("note"), f"{entry_label} note")
+
+
+def validate_timing_profile_certification_authority_registry(
+    document: dict[str, Any],
+) -> None:
+    label = "timing profile certification authority registry"
+    if document.get("schemaVersion") != 1:
+        raise ValueError(f"{label} schemaVersion must be 1")
+    _execution_locked(document, label)
+    if document.get("registryWriteAllowed") is not False:
+        raise ValueError(f"{label} must keep registryWriteAllowed=false")
+    authorities = document.get("authorities")
+    if not isinstance(authorities, list):
+        raise ValueError(f"{label} authorities must be an array")
+    allowed = {
+        "authorityKeyId",
+        "publicKeyBase64",
+        "authorityIdentity",
+        "authorityOrganization",
+        "sourceCertificationAuthorized",
+        "separationOfDutiesVetted",
+        "vettedBy",
+        "vettedAtUtc",
+        "validFromUtc",
+        "validUntilUtc",
+        "authorizedProfileIds",
+        "authorizedPacketIds",
+        "revoked",
+        "revokedAtUtc",
+        "revocationReason",
+        "note",
+    }
+    key_ids: set[str] = set()
+    for index, item in enumerate(authorities):
+        entry_label = f"{label} entry {index}"
+        if not isinstance(item, dict) or set(item) != allowed:
+            raise ValueError(f"{entry_label} has an incomplete schema")
+        key_id = _sha256(
+            item.get("authorityKeyId"),
+            f"{entry_label} authorityKeyId",
+        )
+        if key_id in key_ids:
+            raise ValueError(f"{label} contains duplicate key IDs")
+        key_ids.add(key_id)
+        try:
+            public_key = base64.b64decode(
+                _required_text(
+                    item.get("publicKeyBase64"),
+                    f"{entry_label} publicKeyBase64",
+                ),
+                validate=True,
+            )
+        except ValueError as exc:
+            raise ValueError(
+                f"{entry_label} publicKeyBase64 is invalid"
+            ) from exc
+        if len(public_key) != 32:
+            raise ValueError(f"{entry_label} public key must contain 32 bytes")
+        observed_key_id = hashlib.sha256(public_key).hexdigest().upper()
+        if observed_key_id != key_id:
+            raise ValueError(f"{entry_label} key ID differs from public key")
+        _required_text(
+            item.get("authorityIdentity"),
+            f"{entry_label} authorityIdentity",
+        )
+        _required_text(
+            item.get("authorityOrganization"),
+            f"{entry_label} authorityOrganization",
+        )
+        if item.get("sourceCertificationAuthorized") is not True:
+            raise ValueError(
+                f"{entry_label} source certification must be authorized"
+            )
+        if item.get("separationOfDutiesVetted") is not True:
+            raise ValueError(
+                f"{entry_label} separation of duties must be vetted"
+            )
         _required_text(item.get("vettedBy"), f"{entry_label} vettedBy")
         _utc_timestamp(item.get("vettedAtUtc"), f"{entry_label} vettedAtUtc")
         _utc_timestamp(item.get("validFromUtc"), f"{entry_label} validFromUtc")
@@ -2609,6 +2727,261 @@ def validate_sbc_timing_profile_signed_review_s4_audit(
         raise ValueError(f"{label} verification evidence is incomplete")
 
 
+def validate_sbc_timing_profile_source_certification_s5_audit(
+    document: dict[str, Any], project_root: Path
+) -> None:
+    label = "SBC timing profile source certification S5"
+    _utc_timestamp(document.get("auditedAtUtc"), f"{label} auditedAtUtc")
+    _execution_locked(document, label)
+    if document.get("capabilityId") != "timing_profile_source_certification_v1":
+        raise ValueError(f"{label} has an unexpected capability")
+    if (
+        document.get("status")
+        != "implemented_in_source_empty_authority_registry"
+    ):
+        raise ValueError(f"{label} has an unexpected status")
+    for field in (
+        "packagedReviewBundle",
+        "packagedCompletedAttestation",
+        "packagedSignedReview",
+        "packagedSourceCertificate",
+        "trustedAuthorityRegistryPopulated",
+        "repositoryCertificateVerified",
+        "sourceCertified",
+        "profileRegistered",
+        "directionalEngineImplemented",
+        "financiallyValidated",
+        "promotionAllowed",
+    ):
+        if document.get(field) is not False:
+            raise ValueError(f"{label} {field} must remain false")
+
+    implementation = document.get("implementation") or {}
+    expected_contracts = {
+        "reportContract": (
+            "SBC_TIMING_PROFILE_SOURCE_CERTIFICATION_REPORT_V1"
+        ),
+        "sourceCertificateContract": (
+            "SBC_TIMING_PROFILE_SOURCE_CERTIFICATE_V1"
+        ),
+        "authorityRegistryContract": (
+            "SBC_TIMING_PROFILE_CERTIFICATION_AUTHORITY_REGISTRY_V1"
+        ),
+        "registryProposalContract": (
+            "SBC_TIMING_PROFILE_REGISTRY_ENTRY_PROPOSAL_V1"
+        ),
+        "schemaVersion": 1,
+        "certificationPolicy": (
+            "ED25519_SEPARATE_AUTHORITY_EXACT_S4_BINDING_V1"
+        ),
+        "signatureHashMethod": (
+            "CANONICAL_JSON_ED25519_WITH_SIGNATURE_BASE64_BLANK"
+        ),
+        "proposalHashMethod": (
+            "CANONICAL_JSON_SHA256_WITH_PROPOSAL_SHA256_BLANK"
+        ),
+        "classification": "SOURCE_PROFILED_EXPERIMENTAL",
+    }
+    for field, expected in expected_contracts.items():
+        if implementation.get(field) != expected:
+            raise ValueError(f"{label} {field} differs from {expected}")
+    for field in (
+        "modulePath",
+        "testPath",
+        "signedReviewPath",
+        "reviewerRegistryPath",
+        "authorityRegistryPath",
+        "timingRegistryPath",
+        "servicePath",
+        "serviceTestPath",
+        "serverPath",
+        "nativePath",
+        "apiPath",
+        "uiPath",
+        "uiTestPath",
+        "acceptancePath",
+        "milestonePath",
+        "adrPath",
+    ):
+        path = project_root / _required_text(implementation.get(field), field)
+        if not path.is_file():
+            raise ValueError(f"{label} evidence is missing: {path}")
+    module_path = project_root / implementation["modulePath"]
+    expected_hash = _sha256(
+        implementation.get("moduleCanonicalTextSha256"),
+        f"{label} module canonical text",
+    )
+    if _canonical_text_sha256(module_path) != expected_hash:
+        raise ValueError(f"{label} module hash differs from the audit")
+
+    reviewer_registry = _load(project_root / implementation["reviewerRegistryPath"])
+    validate_timing_profile_reviewer_trust_registry(reviewer_registry)
+    if reviewer_registry["reviewers"]:
+        raise ValueError(f"{label} reviewer registry must remain empty")
+    authority_registry = _load(
+        project_root / implementation["authorityRegistryPath"]
+    )
+    validate_timing_profile_certification_authority_registry(
+        authority_registry
+    )
+    if authority_registry["authorities"]:
+        raise ValueError(f"{label} authority registry must remain empty")
+    timing_registry = _load(project_root / implementation["timingRegistryPath"])
+    validate_timing_profile_registry(timing_registry)
+    if timing_registry["profiles"]:
+        raise ValueError(f"{label} timing registry must remain empty")
+
+    expected_authority_policy = {
+        "signatureAlgorithm": "ED25519",
+        "keyIdMethod": "SHA256_RAW_32_BYTE_PUBLIC_KEY",
+        "clientPublicKeyAccepted": False,
+        "clientRegistryAccepted": False,
+        "serverRegistryRequired": True,
+        "repositoryTrustedAuthorityCount": 0,
+        "separateReviewerAndCertifierKeyRequired": True,
+        "separateReviewerAndCertifierIdentityRequired": True,
+        "separationOfDutiesVettedRequired": True,
+        "revokedKeysRejected": True,
+        "expiredKeysRejected": True,
+        "futureValidityEnforced": True,
+        "exactProfileScopeRequired": True,
+        "exactPacketScopeRequired": True,
+        "identityMatchRequired": True,
+        "organizationMatchRequired": True,
+        "exactS1ThroughS4EvidenceBindingRequired": True,
+        "s4NotReadyState": "S4_NOT_READY",
+        "noCertificateState": "NO_SOURCE_CERTIFICATE",
+        "invalidCertificateState": "CERTIFICATE_INVALID",
+        "untrustedAuthorityState": "CERTIFICATION_AUTHORITY_UNTRUSTED",
+        "rejectedState": "SOURCE_CERTIFICATION_REJECTED",
+        "passingState": "READY_FOR_PROFILE_REGISTRY_ADMISSION",
+        "passingStateMeans": (
+            "SIGNED_GOVERNANCE_DECISION_AND_REGISTRY_PROPOSAL_ONLY"
+        ),
+    }
+    if (document.get("authorityPolicy") or {}) != expected_authority_policy:
+        raise ValueError(f"{label} authority-policy contract drifted")
+
+    expected_human_control = {
+        "registeredAuthoritySignatureAuthenticatesEvidenceBinding": True,
+        "sourceCertificationIsGovernanceDecisionOnly": True,
+        "doctrinalTruthCryptographicallyProven": False,
+        "manualAuthorityKeyEnrollmentRequired": True,
+        "manualSeparationOfDutiesVettingRequired": True,
+        "manualRegistryAdmissionReviewRequired": True,
+        "applicationMayEnrollAuthorityKey": False,
+        "applicationMayApplyRegistryProposal": False,
+        "applicationMayRegisterProfile": False,
+        "applicationMayWriteRegistry": False,
+    }
+    if (document.get("humanControl") or {}) != expected_human_control:
+        raise ValueError(f"{label} human-control contract drifted")
+
+    expected_separation = {
+        "s4ReviewAuthenticationSeparate": True,
+        "sourceCertificationSeparate": True,
+        "profileRegistryAdmissionSeparate": True,
+        "directionalEngineImplementationSeparate": True,
+        "prospectiveFinancialValidationSeparate": True,
+        "executionPermissionSeparate": True,
+        "repositoryAuthorityKeyAvailable": False,
+        "repositoryCertificateVerified": False,
+        "sourceCertified": False,
+        "profileRegistered": False,
+        "directionalEngineImplemented": False,
+        "directionalOutputAvailable": False,
+        "financialUseAllowed": False,
+    }
+    if (document.get("separation") or {}) != expected_separation:
+        raise ValueError(f"{label} separation contract drifted")
+
+    expected_transport = {
+        "browserDevelopment": "private_http_post",
+        "nativeDesktop": "tauri_ipc_private_sidecar",
+        "route": (
+            "/api/chakra-lab/timing-profile/source-certification/verify"
+        ),
+        "nativeCommand": "chakra_lab_timing_source_certification",
+        "readOnlyRuntimeRequired": True,
+        "clientSuppliesJsonObjectsOnly": True,
+        "clientSuppliesPublicKey": False,
+        "clientSuppliesRegistry": False,
+        "arbitraryClientPathsAccepted": False,
+        "payloadPersistenceAllowed": False,
+        "clientCanWriteRegistry": False,
+    }
+    if (document.get("transport") or {}) != expected_transport:
+        raise ValueError(f"{label} transport contract drifted")
+
+    guardrails = document.get("guardrails") or {}
+    for field in (
+        "researchOnly",
+        "readOnly",
+        "serverAuthorityRegistryRequired",
+        "separateAuthorityRequired",
+        "certificateRecordsGovernanceDecisionOnly",
+    ):
+        if guardrails.get(field) is not True:
+            raise ValueError(f"{label} guardrail {field} must remain true")
+    for field in (
+        "payloadsPersisted",
+        "clientPublicKeyAccepted",
+        "doctrinalTruthCryptographicallyProven",
+        "profileRegistered",
+        "registryWriteAllowed",
+        "timingPhaseCalculated",
+        "directionalPhaseCalculated",
+        "confidenceCalculated",
+        "countsAsIndependentVote",
+        "autoSuggestIncluded",
+        "liveInferenceIncluded",
+        "officialMlNotesIncluded",
+        "shadowVoteIncluded",
+        "tradeOutputIncluded",
+        "financiallyValidated",
+        "executionAllowed",
+    ):
+        if guardrails.get(field) is not False:
+            raise ValueError(f"{label} guardrail {field} must remain false")
+    if guardrails.get("directionalContribution") != 0:
+        raise ValueError(f"{label} directional contribution must remain zero")
+    expected_blocked = [
+        "TIMING_PROFILE_REGISTRATION",
+        "DIRECTIONAL_TIMING_PHASE",
+        "TIMING_CONFIDENCE",
+        "AUTO_SUGGEST",
+        "LIVE_INFERENCE",
+        "OFFICIAL_ML_NOTES",
+        "SHADOW_VOTE",
+        "TRADE_OUTPUT",
+        "MT5_EXECUTION",
+    ]
+    if guardrails.get("blockedCapabilities") != expected_blocked:
+        raise ValueError(f"{label} blockedCapabilities drifted")
+
+    expected_verification = {
+        "newTimingProfileSourceCertificationTests": "13_passed",
+        "chakraServiceTests": "24_passed",
+        "chakraAuditWorkspaceTests": "10_passed",
+        "frontendTests": "102_passed",
+        "statusValidation": "50_passed",
+        "repositoryPythonTests": "562_passed",
+        "pythonRuff": "changed_scope_passed",
+        "repositoryWidePythonRuff": "blocked_by_19_out_of_scope_findings",
+        "frontendLint": "passed",
+        "frontendProductionBuild": "passed",
+        "nativeRustFormat": "changed_scope_passed",
+        "repositoryWideRustFormat": (
+            "blocked_by_1_out_of_scope_formatting_diff"
+        ),
+        "nativeRustCheck": "passed",
+        "backendEndpointAcceptance": "passed",
+        "browserVisualAcceptance": "passed",
+    }
+    if (document.get("verification") or {}) != expected_verification:
+        raise ValueError(f"{label} verification evidence is incomplete")
+
+
 def validate_cross_document_links(
     documents: dict[str, dict[str, Any]], root: Path
 ) -> None:
@@ -2698,6 +3071,9 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     validate_timing_profile_reviewer_trust_registry(
         documents["timing_profile_reviewer_trust_registry.json"]
     )
+    validate_timing_profile_certification_authority_registry(
+        documents["timing_profile_certification_authority_registry.json"]
+    )
     validate_sbc_timing_profile_admission_t0_audit(
         audits["audits/sbc_timing_profile_admission_t0_20260729.json"],
         root.parent,
@@ -2724,6 +3100,12 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         ],
         root.parent,
     )
+    validate_sbc_timing_profile_source_certification_s5_audit(
+        audits[
+            "audits/sbc_timing_profile_source_certification_s5_20260729.json"
+        ],
+        root.parent,
+    )
     validate_cross_document_links(documents, root)
     capability_ids = {
         item["capabilityId"]
@@ -2741,6 +3123,7 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
         "timing_profile_source_verification_v1",
         "timing_profile_external_review_verification_v1",
         "timing_profile_signed_review_verification_v1",
+        "timing_profile_source_certification_v1",
         "phase_interference_research_engine_v1",
     }
     if not required_capabilities <= capability_ids:
@@ -2850,6 +3233,16 @@ def validate_all(root: Path = STATUS_ROOT) -> dict[str, Any]:
     ):
         raise ValueError(
             "SBC timing profile signed review S4 capability is not "
+            "registered as source-implemented"
+        )
+    if (
+        capability_by_id["timing_profile_source_certification_v1"]["states"][
+            "implementedInSource"
+        ]
+        != "yes"
+    ):
+        raise ValueError(
+            "SBC timing profile source certification S5 capability is not "
             "registered as source-implemented"
         )
     return {

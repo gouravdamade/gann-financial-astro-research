@@ -21,9 +21,11 @@ from status.validate_status import (
     validate_sbc_timing_profile_admission_t0_audit,
     validate_sbc_timing_profile_external_review_s3_audit,
     validate_sbc_timing_profile_signed_review_s4_audit,
+    validate_sbc_timing_profile_source_certification_s5_audit,
     validate_sbc_timing_profile_source_packet_s1_audit,
     validate_sbc_timing_profile_source_verification_s2_audit,
     validate_timing_profile_reviewer_trust_registry,
+    validate_timing_profile_certification_authority_registry,
     validate_timing_profile_registry,
 )
 
@@ -33,8 +35,8 @@ class StatusValidationTests(unittest.TestCase):
         result = validate_all()
         self.assertTrue(result["valid"])
         self.assertFalse(result["executionAllowed"])
-        self.assertEqual(result["documentCount"], 19)
-        self.assertEqual(result["auditCount"], 12)
+        self.assertEqual(result["documentCount"], 21)
+        self.assertEqual(result["auditCount"], 13)
 
     def test_release_cannot_promote_with_blockers(self) -> None:
         document = _load(STATUS_ROOT / "release_status.json")
@@ -578,6 +580,85 @@ class StatusValidationTests(unittest.TestCase):
         document["guardrails"]["registryWriteAllowed"] = True
         with self.assertRaisesRegex(ValueError, "must remain false"):
             validate_sbc_timing_profile_signed_review_s4_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_timing_profile_authority_registry_cannot_enable_writes(
+        self,
+    ) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "timing_profile_certification_authority_registry.json"
+            )
+        )
+        document["registryWriteAllowed"] = True
+        with self.assertRaisesRegex(ValueError, "registryWriteAllowed=false"):
+            validate_timing_profile_certification_authority_registry(document)
+
+    def test_sbc_timing_source_certification_s5_detects_module_hash_drift(
+        self,
+    ) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_timing_profile_source_certification_s5_20260729.json"
+            )
+        )
+        document["implementation"]["moduleCanonicalTextSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "module hash"):
+            validate_sbc_timing_profile_source_certification_s5_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_timing_source_certification_s5_rejects_client_authority_key(
+        self,
+    ) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_timing_profile_source_certification_s5_20260729.json"
+            )
+        )
+        document["authorityPolicy"]["clientPublicKeyAccepted"] = True
+        with self.assertRaisesRegex(ValueError, "authority-policy contract drifted"):
+            validate_sbc_timing_profile_source_certification_s5_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_timing_source_certification_s5_requires_separate_authority(
+        self,
+    ) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_timing_profile_source_certification_s5_20260729.json"
+            )
+        )
+        document["authorityPolicy"][
+            "separateReviewerAndCertifierKeyRequired"
+        ] = False
+        with self.assertRaisesRegex(ValueError, "authority-policy contract drifted"):
+            validate_sbc_timing_profile_source_certification_s5_audit(
+                document,
+                STATUS_ROOT.parent,
+            )
+
+    def test_sbc_timing_source_certification_s5_cannot_apply_registry_proposal(
+        self,
+    ) -> None:
+        document = copy.deepcopy(
+            _load(
+                STATUS_ROOT
+                / "audits/sbc_timing_profile_source_certification_s5_20260729.json"
+            )
+        )
+        document["humanControl"]["applicationMayApplyRegistryProposal"] = True
+        with self.assertRaisesRegex(ValueError, "human-control contract drifted"):
+            validate_sbc_timing_profile_source_certification_s5_audit(
                 document,
                 STATUS_ROOT.parent,
             )

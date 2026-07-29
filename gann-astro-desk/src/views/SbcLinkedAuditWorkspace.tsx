@@ -16,6 +16,7 @@ import {
   Radar,
   RefreshCw,
   ShieldAlert,
+  ShieldCheck,
   Table2,
   Trash2,
   Upload,
@@ -29,6 +30,7 @@ import {
   fetchChakraTimingProfileAdmission,
   fetchChakraTimingExternalReview,
   fetchChakraTimingSignedReview,
+  fetchChakraTimingSourceCertification,
   fetchChakraTimingSourcePacketReadiness,
   fetchChakraTimingSourceVerification,
   verifyChakraLabAuditCatalog,
@@ -54,6 +56,7 @@ import type {
   ChakraTimingProfileAdmissionReport,
   ChakraTimingProfileExternalReviewReport,
   ChakraTimingProfileSignedReviewReport,
+  ChakraTimingProfileSourceCertificationReport,
   ChakraTimingProfileSourceReadinessReport,
   ChakraTimingProfileSourceVerificationReport,
 } from '../types'
@@ -72,6 +75,7 @@ type AuditTab =
   | 'SOURCE_VERIFY'
   | 'REVIEW_ATTESTATION'
   | 'SIGNED_REVIEW'
+  | 'SOURCE_CERTIFICATION'
   | 'COMPARE'
   | 'PACKAGE'
   | 'CATALOG'
@@ -89,6 +93,7 @@ const TAB_ICONS = {
   SOURCE_VERIFY: FileSearch,
   REVIEW_ATTESTATION: FileSignature,
   SIGNED_REVIEW: BadgeCheck,
+  SOURCE_CERTIFICATION: ShieldCheck,
   COMPARE: Columns3,
   PACKAGE: PackageCheck,
   CATALOG: Archive,
@@ -258,6 +263,11 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const [signedReviewLabel, setSignedReviewLabel] = useState('')
   const [signedReview, setSignedReview] =
     useState<ChakraTimingProfileSignedReviewReport | null>(null)
+  const [sourceCertificateEnvelope, setSourceCertificateEnvelope] =
+    useState<unknown | null>(null)
+  const [sourceCertificateLabel, setSourceCertificateLabel] = useState('')
+  const [sourceCertification, setSourceCertification] =
+    useState<ChakraTimingProfileSourceCertificationReport | null>(null)
   const [sourcePayloads, setSourcePayloads] =
     useState<Record<string, string>>({})
   const [sourcePayloadLabels, setSourcePayloadLabels] =
@@ -288,6 +298,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const [sourceVerificationBusy, setSourceVerificationBusy] = useState(false)
   const [externalReviewBusy, setExternalReviewBusy] = useState(false)
   const [signedReviewBusy, setSignedReviewBusy] = useState(false)
+  const [sourceCertificationBusy, setSourceCertificationBusy] = useState(false)
   const [error, setError] = useState('')
   const importInputRef = useRef<HTMLInputElement>(null)
   const catalogImportInputRef = useRef<HTMLInputElement>(null)
@@ -297,6 +308,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
   const reviewBundleImportInputRef = useRef<HTMLInputElement>(null)
   const reviewAttestationImportInputRef = useRef<HTMLInputElement>(null)
   const signedReviewImportInputRef = useRef<HTMLInputElement>(null)
+  const sourceCertificateImportInputRef = useRef<HTMLInputElement>(null)
 
   const selectedInterval = audit?.intervals.find(
     (item) => item.interval_id === selectedIntervalId,
@@ -658,6 +670,12 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     )
   }
 
+  const resetTimingSourceCertification = () => {
+    setSourceCertificateEnvelope(null)
+    setSourceCertificateLabel('')
+    setSourceCertification(null)
+  }
+
   const importTimingReviewBundle = async (file: File | undefined) => {
     if (!file) return
     try {
@@ -676,6 +694,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
       setSignedReviewEnvelope(null)
       setSignedReviewLabel('')
       setSignedReview(null)
+      resetTimingSourceCertification()
       setError('')
     } catch (caught) {
       setError(
@@ -712,6 +731,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
       setSignedReviewEnvelope(null)
       setSignedReviewLabel('')
       setSignedReview(null)
+      resetTimingSourceCertification()
       setError('')
     } catch (caught) {
       setError(
@@ -736,6 +756,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
       const result = await fetchChakraTimingExternalReview(bundle, attestation)
       setExternalReview(result)
       setSignedReview(null)
+      resetTimingSourceCertification()
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
     } finally {
@@ -752,6 +773,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     setSignedReviewEnvelope(null)
     setSignedReviewLabel('')
     setSignedReview(null)
+    resetTimingSourceCertification()
     void evaluateTimingExternalReview(null, null)
   }
 
@@ -766,6 +788,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     setSignedReviewEnvelope(null)
     setSignedReviewLabel('')
     setSignedReview(null)
+    resetTimingSourceCertification()
     setActiveTab('REVIEW_ATTESTATION')
     void evaluateTimingExternalReview(bundle, null)
   }
@@ -810,6 +833,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
       setSignedReviewEnvelope(envelope)
       setSignedReviewLabel(file.name)
       setSignedReview(null)
+      resetTimingSourceCertification()
       setError('')
     } catch (caught) {
       setError(
@@ -838,6 +862,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
         envelope,
       )
       setSignedReview(result)
+      setSourceCertification(null)
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
     } finally {
@@ -849,6 +874,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     setSignedReviewEnvelope(null)
     setSignedReviewLabel('')
     setSignedReview(null)
+    resetTimingSourceCertification()
     void evaluateTimingSignedReview(reviewBundle, reviewAttestation, null)
   }
 
@@ -856,6 +882,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
     setSignedReviewEnvelope(null)
     setSignedReviewLabel('')
     setSignedReview(null)
+    resetTimingSourceCertification()
     setActiveTab('SIGNED_REVIEW')
     void evaluateTimingSignedReview(reviewBundle, reviewAttestation, null)
   }
@@ -866,6 +893,115 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
       JSON.stringify(signedReview.signed_review_template, null, 2),
       'application/json',
       `${signedReview.profile_id ?? 'timing-profile'}-signed-review-template.json`,
+    )
+  }
+
+  const importTimingSourceCertificate = async (file: File | undefined) => {
+    if (!file) return
+    try {
+      const parsed = JSON.parse(await file.text()) as unknown
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error('source certificate file must contain a JSON object')
+      }
+      const wrapped = (
+        parsed as { sourceCertificate?: unknown }
+      ).sourceCertificate
+      const certificate = wrapped ?? parsed
+      if (
+        !certificate
+        || typeof certificate !== 'object'
+        || Array.isArray(certificate)
+      ) {
+        throw new Error('sourceCertificate must be a JSON object')
+      }
+      setSourceCertificateEnvelope(certificate)
+      setSourceCertificateLabel(file.name)
+      setSourceCertification(null)
+      setError('')
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? `Source certificate import failed: ${caught.message}`
+          : String(caught),
+      )
+    } finally {
+      if (sourceCertificateImportInputRef.current) {
+        sourceCertificateImportInputRef.current.value = ''
+      }
+    }
+  }
+
+  const evaluateTimingSourceCertification = async (
+    bundle: unknown | null = reviewBundle,
+    attestation: unknown | null = reviewAttestation,
+    review: unknown | null = signedReviewEnvelope,
+    certificate: unknown | null = sourceCertificateEnvelope,
+  ) => {
+    setSourceCertificationBusy(true)
+    setError('')
+    try {
+      const result = await fetchChakraTimingSourceCertification(
+        bundle,
+        attestation,
+        review,
+        certificate,
+      )
+      setSourceCertification(result)
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      setSourceCertificationBusy(false)
+    }
+  }
+
+  const clearTimingSourceCertification = () => {
+    resetTimingSourceCertification()
+    void evaluateTimingSourceCertification(
+      reviewBundle,
+      reviewAttestation,
+      signedReviewEnvelope,
+      null,
+    )
+  }
+
+  const continueToTimingSourceCertification = () => {
+    resetTimingSourceCertification()
+    setActiveTab('SOURCE_CERTIFICATION')
+    void evaluateTimingSourceCertification(
+      reviewBundle,
+      reviewAttestation,
+      signedReviewEnvelope,
+      null,
+    )
+  }
+
+  const downloadTimingSourceCertificateTemplate = () => {
+    if (!sourceCertification?.source_certificate_template) return
+    downloadText(
+      JSON.stringify(sourceCertification.source_certificate_template, null, 2),
+      'application/json',
+      `${
+        sourceCertification.profile_id ?? 'timing-profile'
+      }-source-certificate-template.json`,
+    )
+  }
+
+  const downloadTimingRegistryProposal = () => {
+    if (!sourceCertification?.registry_entry_proposal) return
+    downloadText(
+      JSON.stringify(
+        {
+          proposalSha256:
+            sourceCertification.registry_admission_proposal_sha256,
+          proposal: sourceCertification.registry_entry_proposal,
+        },
+        null,
+        2,
+      ),
+      'application/json',
+      `${
+        sourceCertification.profile_id ?? 'timing-profile'
+      }-registry-entry-proposal.json`,
     )
   }
 
@@ -908,6 +1044,18 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
         reviewBundle,
         reviewAttestation,
         signedReviewEnvelope,
+      )
+    }
+    if (
+      viewId === 'SOURCE_CERTIFICATION'
+      && sourceCertification == null
+      && !sourceCertificationBusy
+    ) {
+      void evaluateTimingSourceCertification(
+        reviewBundle,
+        reviewAttestation,
+        signedReviewEnvelope,
+        sourceCertificateEnvelope,
       )
     }
   }
@@ -1388,6 +1536,11 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
               purpose: 'Verify a server-trusted reviewer signature without certifying it',
             },
             {
+              view_id: 'SOURCE_CERTIFICATION',
+              label: 'Source certificate',
+              purpose: 'Verify a separate authority certificate and emit a registry proposal',
+            },
+            {
               view_id: 'COMPARE',
               label: 'Compare',
               purpose: 'Descriptive interval differences only',
@@ -1441,7 +1594,8 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
         && activeTab !== 'SOURCE_PACKET'
         && activeTab !== 'SOURCE_VERIFY'
         && activeTab !== 'REVIEW_ATTESTATION'
-        && activeTab !== 'SIGNED_REVIEW' ? (
+        && activeTab !== 'SIGNED_REVIEW'
+        && activeTab !== 'SOURCE_CERTIFICATION' ? (
           <div className="chakra-audit-empty">
             <Clock3 size={23} />
             <strong>Linked audit not compiled</strong>
@@ -2995,6 +3149,13 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                             certificate or timing-profile registry entry.
                           </span>
                         </div>
+                        <button
+                          className="primary-command"
+                          onClick={continueToTimingSourceCertification}
+                        >
+                          <ShieldCheck size={13} />
+                          Continue to certificate
+                        </button>
                       </div>
                     )}
 
@@ -3026,6 +3187,406 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
                       <strong>Still blocked after S4</strong>
                       <div>
                         {signedReview.guardrails.blocked_capabilities.map(
+                          (item) => <span key={item}>{displayToken(item)}</span>,
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'SOURCE_CERTIFICATION' && (
+              <div className="chakra-timing-gate-workspace">
+                <p className="chakra-timing-gate-warning">
+                  S5 verifies a separate authority signature and source-certification
+                  decision against a server-owned registry. The certificate records a
+                  governance decision; it does not cryptographically prove doctrinal
+                  truth, register the profile, calculate direction, or unlock trading.
+                </p>
+
+                <div className="chakra-timing-gate-toolbar">
+                  <input
+                    ref={reviewBundleImportInputRef}
+                    className="chakra-package-file"
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={(event) => (
+                      void importTimingReviewBundle(event.target.files?.[0])
+                    )}
+                  />
+                  <input
+                    ref={reviewAttestationImportInputRef}
+                    className="chakra-package-file"
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={(event) => (
+                      void importTimingReviewAttestation(event.target.files?.[0])
+                    )}
+                  />
+                  <input
+                    ref={signedReviewImportInputRef}
+                    className="chakra-package-file"
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={(event) => (
+                      void importTimingSignedReview(event.target.files?.[0])
+                    )}
+                  />
+                  <input
+                    ref={sourceCertificateImportInputRef}
+                    className="chakra-package-file"
+                    type="file"
+                    accept="application/json,.json"
+                    onChange={(event) => (
+                      void importTimingSourceCertificate(event.target.files?.[0])
+                    )}
+                  />
+                  <button
+                    className="primary-command"
+                    onClick={() => void evaluateTimingSourceCertification()}
+                    disabled={
+                      sourceCertificationBusy
+                      || !reviewBundle
+                      || !reviewAttestation
+                      || !signedReviewEnvelope
+                    }
+                    title="Re-run S4, resolve the separate authority key from the server registry, and verify the exact certificate"
+                  >
+                    <ShieldCheck size={13} />
+                    Verify certificate
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={() => reviewBundleImportInputRef.current?.click()}
+                    disabled={sourceCertificationBusy}
+                  >
+                    <Upload size={13} />
+                    Load bundle
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={() => reviewAttestationImportInputRef.current?.click()}
+                    disabled={sourceCertificationBusy}
+                  >
+                    <Upload size={13} />
+                    Load attestation
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={() => signedReviewImportInputRef.current?.click()}
+                    disabled={sourceCertificationBusy}
+                  >
+                    <Upload size={13} />
+                    Load review
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={() => sourceCertificateImportInputRef.current?.click()}
+                    disabled={sourceCertificationBusy}
+                  >
+                    <Upload size={13} />
+                    Load certificate
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={downloadTimingSourceCertificateTemplate}
+                    disabled={!sourceCertification?.source_certificate_template}
+                    title="Download the exact S4-bound certificate a separate authority must sign"
+                  >
+                    <Download size={13} />
+                    Certificate template
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={downloadTimingRegistryProposal}
+                    disabled={!sourceCertification?.registry_entry_proposal}
+                    title="Download a reproducible proposal for separate human Git review"
+                  >
+                    <Download size={13} />
+                    Registry proposal
+                  </button>
+                  <button
+                    className="secondary-command"
+                    onClick={clearTimingSourceCertification}
+                    disabled={
+                      sourceCertificationBusy
+                      || (!sourceCertificateEnvelope && !sourceCertification)
+                    }
+                  >
+                    <Trash2 size={13} />
+                    Clear certificate
+                  </button>
+                </div>
+
+                <section className="chakra-source-verification-section">
+                  <header>
+                    <div>
+                      <strong>Source-certification evidence</strong>
+                      <span>
+                        Reviewer and certifier keys are resolved only from
+                        separate server registries
+                      </span>
+                    </div>
+                    <em>
+                      {[
+                        reviewBundle,
+                        reviewAttestation,
+                        signedReviewEnvelope,
+                        sourceCertificateEnvelope,
+                      ].filter(Boolean).length}
+                      /4 loaded
+                    </em>
+                  </header>
+                  <div className="chakra-external-review-inputs is-four">
+                    <div>
+                      <span className={reviewBundle ? 'is-loaded' : 'is-missing'}>
+                        {reviewBundle ? 'LOADED' : 'MISSING'}
+                      </span>
+                      <strong>Reviewer bundle</strong>
+                      <span>{reviewBundleLabel || 'No bundle selected'}</span>
+                      <small>Frozen S2 evidence</small>
+                    </div>
+                    <div>
+                      <span className={
+                        reviewAttestation ? 'is-loaded' : 'is-missing'
+                      }>
+                        {reviewAttestation ? 'LOADED' : 'MISSING'}
+                      </span>
+                      <strong>Completed attestation</strong>
+                      <span>
+                        {reviewAttestationLabel || 'No attestation selected'}
+                      </span>
+                      <small>S3 source decisions</small>
+                    </div>
+                    <div>
+                      <span className={
+                        signedReviewEnvelope ? 'is-loaded' : 'is-missing'
+                      }>
+                        {signedReviewEnvelope ? 'LOADED' : 'MISSING'}
+                      </span>
+                      <strong>Trusted signed review</strong>
+                      <span>{signedReviewLabel || 'No review selected'}</span>
+                      <small>S4 reviewer signature</small>
+                    </div>
+                    <div>
+                      <span className={
+                        sourceCertificateEnvelope ? 'is-loaded' : 'is-missing'
+                      }>
+                        {sourceCertificateEnvelope ? 'LOADED' : 'MISSING'}
+                      </span>
+                      <strong>Authority certificate</strong>
+                      <span>
+                        {sourceCertificateLabel || 'No certificate selected'}
+                      </span>
+                      <small>No client authority key is accepted</small>
+                    </div>
+                  </div>
+                </section>
+
+                {sourceCertificationBusy && (
+                  <div className="chakra-audit-empty is-inline">
+                    <RefreshCw size={21} className="is-spinning" />
+                    <strong>Checking the source certificate</strong>
+                    <span>No registry write or inference is performed.</span>
+                  </div>
+                )}
+
+                {!sourceCertificationBusy && sourceCertification && (
+                  <>
+                    <div className="chakra-timing-gate-summary is-source-verification">
+                      <div>
+                        <span>Certification status</span>
+                        <strong>
+                          {displayToken(sourceCertification.certification_status)}
+                        </strong>
+                        <em>S5 authority result</em>
+                      </div>
+                      <div>
+                        <span>S4 evidence</span>
+                        <strong>
+                          {sourceCertification.s4_ready ? 'PASS' : 'NOT READY'}
+                        </strong>
+                        <em>entire chain rerun</em>
+                      </div>
+                      <div>
+                        <span>Authority registry</span>
+                        <strong>
+                          {sourceCertification.authority_registry_valid
+                            ? 'VALID'
+                            : 'INVALID'}
+                        </strong>
+                        <em>server-owned, read-only</em>
+                      </div>
+                      <div>
+                        <span>Authority key</span>
+                        <strong>
+                          {sourceCertification.authority_key_trusted
+                            ? 'TRUSTED'
+                            : 'UNTRUSTED'}
+                        </strong>
+                        <em>valid, scoped, non-revoked</em>
+                      </div>
+                      <div>
+                        <span>Separation</span>
+                        <strong>
+                          {sourceCertification.separation_of_duties_vetted
+                            ? 'VETTED'
+                            : 'NOT VETTED'}
+                        </strong>
+                        <em>distinct reviewer and certifier</em>
+                      </div>
+                      <div>
+                        <span>Ed25519 certificate</span>
+                        <strong>
+                          {sourceCertification.certificate_signature_valid
+                            ? 'VERIFIED'
+                            : 'NOT VERIFIED'}
+                        </strong>
+                        <em>exact S1-S4 binding</em>
+                      </div>
+                      <div>
+                        <span>Decision</span>
+                        <strong>
+                          {displayToken(
+                            sourceCertification.certification_decision,
+                          )}
+                        </strong>
+                        <em>certified or rejected</em>
+                      </div>
+                      <div>
+                        <span>Registry write</span>
+                        <strong>MANUAL ONLY</strong>
+                        <em>separate Git review required</em>
+                      </div>
+                      <div>
+                        <span>Execution</span>
+                        <strong>LOCKED</strong>
+                        <em>zero directional contribution</em>
+                      </div>
+                    </div>
+
+                    {(sourceCertification.review_bundle_sha256
+                      || sourceCertification.attestation_sha256
+                      || sourceCertification.certification_proposal_sha256
+                      || sourceCertification.signed_review_sha256
+                      || sourceCertification.source_certificate_sha256
+                      || sourceCertification.registry_admission_proposal_sha256
+                    ) && (
+                      <div className="chakra-source-packet-identities">
+                        {sourceCertification.review_bundle_sha256 && (
+                          <div>
+                            <span>S2 review bundle SHA-256</span>
+                            <code>{sourceCertification.review_bundle_sha256}</code>
+                          </div>
+                        )}
+                        {sourceCertification.attestation_sha256 && (
+                          <div>
+                            <span>S3 attestation SHA-256</span>
+                            <code>{sourceCertification.attestation_sha256}</code>
+                          </div>
+                        )}
+                        {sourceCertification.certification_proposal_sha256 && (
+                          <div>
+                            <span>S3 proposal SHA-256</span>
+                            <code>
+                              {sourceCertification.certification_proposal_sha256}
+                            </code>
+                          </div>
+                        )}
+                        {sourceCertification.signed_review_sha256 && (
+                          <div>
+                            <span>S4 signed review SHA-256</span>
+                            <code>{sourceCertification.signed_review_sha256}</code>
+                          </div>
+                        )}
+                        {sourceCertification.source_certificate_sha256 && (
+                          <div>
+                            <span>S5 source certificate SHA-256</span>
+                            <code>
+                              {sourceCertification.source_certificate_sha256}
+                            </code>
+                          </div>
+                        )}
+                        {sourceCertification
+                          .registry_admission_proposal_sha256 && (
+                          <div>
+                            <span>Registry proposal SHA-256</span>
+                            <code>
+                              {
+                                sourceCertification
+                                  .registry_admission_proposal_sha256
+                              }
+                            </code>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="chakra-review-identity-warning">
+                      <ShieldAlert size={15} />
+                      <div>
+                        <strong>
+                          Certification is a signed governance decision
+                        </strong>
+                        <span>
+                          It proves which registered authority signed this exact
+                          evidence chain. It does not prove that a source doctrine is
+                          objectively true or make the profile financially valid.
+                        </span>
+                      </div>
+                    </div>
+
+                    {sourceCertification
+                      .ready_for_profile_registry_admission && (
+                      <div className="chakra-review-bundle-ready">
+                        <div>
+                          <strong>
+                            Ready for separate profile-registry admission review
+                          </strong>
+                          <span>
+                            S5 produced a reproducible proposal only. A human must
+                            inspect and commit the registry change separately.
+                          </span>
+                        </div>
+                        <button
+                          className="primary-command"
+                          onClick={downloadTimingRegistryProposal}
+                        >
+                          <Download size={13} />
+                          Download proposal
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="chakra-timing-gate-list">
+                      {sourceCertification.validation_gates.map((item) => (
+                        <div
+                          key={item.gate_id}
+                          className={`is-${item.state.toLowerCase()}`}
+                        >
+                          <span>{item.state}</span>
+                          <strong>{item.label}</strong>
+                          <p>{item.detail}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {sourceCertification.missing_requirements.length > 0 && (
+                      <div className="chakra-blocked-capabilities">
+                        <strong>Missing certification requirements</strong>
+                        <div>
+                          {sourceCertification.missing_requirements.map((item) => (
+                            <span key={item}>{displayToken(item)}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="chakra-blocked-capabilities">
+                      <strong>Still blocked after S5</strong>
+                      <div>
+                        {sourceCertification.guardrails.blocked_capabilities.map(
                           (item) => <span key={item}>{displayToken(item)}</span>,
                         )}
                       </div>

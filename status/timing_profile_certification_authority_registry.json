@@ -1,0 +1,7 @@
+{
+  "contract": "SBC_TIMING_PROFILE_CERTIFICATION_AUTHORITY_REGISTRY_V1",
+  "schemaVersion": 1,
+  "authorities": [],
+  "registryWriteAllowed": false,
+  "executionAllowed": false
+}

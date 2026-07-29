@@ -54,6 +54,9 @@ from sbc.timing_profile_external_review import (  # noqa: E402
 from sbc.timing_profile_signed_review import (  # noqa: E402
     SbcTimingProfileSignedReviewVerifier,
 )
+from sbc.timing_profile_source_certification import (  # noqa: E402
+    SbcTimingProfileSourceCertificationVerifier,
+)
 from sbc.timing_profile_source_packet import (  # noqa: E402
     SbcTimingProfileSourcePacketGate,
 )
@@ -119,6 +122,12 @@ TIMING_SIGNED_REVIEW_REQUEST_KEYS = {
     "reviewBundle",
     "attestation",
     "signedReview",
+}
+TIMING_SOURCE_CERTIFICATION_REQUEST_KEYS = {
+    "reviewBundle",
+    "attestation",
+    "signedReview",
+    "sourceCertificate",
 }
 MAX_SOURCE_PAYLOAD_BYTES = 64 * 1024 * 1024
 MAX_TOTAL_SOURCE_PAYLOAD_BYTES = 192 * 1024 * 1024
@@ -486,6 +495,42 @@ def build_chakra_lab_timing_signed_review(
         payload.get("attestation"),
         payload.get("signedReview"),
         registry,
+    ).to_dict()
+
+
+def build_chakra_lab_timing_source_certification(
+    payload: Any,
+) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("timing source certification request must be an object")
+    _reject_unknown(
+        payload,
+        TIMING_SOURCE_CERTIFICATION_REQUEST_KEYS,
+        "timing source certification request",
+    )
+    reviewer_registry_path = (
+        PROJECT_ROOT
+        / "status"
+        / "timing_profile_reviewer_trust_registry.json"
+    )
+    authority_registry_path = (
+        PROJECT_ROOT
+        / "status"
+        / "timing_profile_certification_authority_registry.json"
+    )
+    reviewer_registry = json.loads(
+        reviewer_registry_path.read_text(encoding="utf-8")
+    )
+    authority_registry = json.loads(
+        authority_registry_path.read_text(encoding="utf-8")
+    )
+    return SbcTimingProfileSourceCertificationVerifier().compile(
+        payload.get("reviewBundle"),
+        payload.get("attestation"),
+        payload.get("signedReview"),
+        payload.get("sourceCertificate"),
+        reviewer_registry,
+        authority_registry,
     ).to_dict()
 
 

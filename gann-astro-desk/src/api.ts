@@ -53,6 +53,7 @@ import type {
   ChakraTimingProfileSourceVerificationReport,
   ChakraTimingProfileExternalReviewReport,
   ChakraTimingProfileSignedReviewReport,
+  ChakraTimingProfileSourceCertificationReport,
 } from './types'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
@@ -915,6 +916,53 @@ export async function fetchChakraTimingSignedReview(
     throw new Error('Timing signed review violated the execution lock')
   }
   return payload.review
+}
+
+export async function fetchChakraTimingSourceCertification(
+  reviewBundle: unknown | null,
+  attestation: unknown | null,
+  signedReview: unknown | null,
+  sourceCertificate: unknown | null,
+): Promise<ChakraTimingProfileSourceCertificationReport> {
+  const certificationRequest = {
+    reviewBundle,
+    attestation,
+    signedReview,
+    sourceCertificate,
+  }
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<
+      ApiEnvelope<{
+        certification: ChakraTimingProfileSourceCertificationReport
+      }>
+    >(
+      'chakra_lab_timing_source_certification',
+      { request: certificationRequest },
+    )
+    if (!payload.ok) {
+      throw new Error(
+        payload.error || 'Timing source certification request failed',
+      )
+    }
+    if (payload.certification.guardrails.execution_allowed) {
+      throw new Error('Timing source certification violated the execution lock')
+    }
+    return payload.certification
+  }
+  const payload = await request<{
+    certification: ChakraTimingProfileSourceCertificationReport
+  }>(
+    '/api/chakra-lab/timing-profile/source-certification/verify',
+    {
+      method: 'POST',
+      body: JSON.stringify(certificationRequest),
+    },
+  )
+  if (payload.certification.guardrails.execution_allowed) {
+    throw new Error('Timing source certification violated the execution lock')
+  }
+  return payload.certification
 }
 
 export async function buildChakraLabAuditPackage(

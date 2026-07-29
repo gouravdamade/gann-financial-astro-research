@@ -2822,6 +2822,78 @@ export type ChakraTimingProfileSignedReviewReport = {
   }
 }
 
+export type ChakraTimingSourceCertificationGate = {
+  gate_id: string
+  state: 'PASS' | 'FAIL' | 'UNKNOWN'
+  mandatory: boolean
+  label: string
+  detail: string
+}
+
+export type ChakraTimingProfileSourceCertificationReport = {
+  contract: 'SBC_TIMING_PROFILE_SOURCE_CERTIFICATION_REPORT_V1'
+  schema_version: 1
+  certification_policy: 'ED25519_SEPARATE_AUTHORITY_EXACT_S4_BINDING_V1'
+  classification: 'SOURCE_PROFILED_EXPERIMENTAL'
+  certification_status:
+    | 'S4_NOT_READY'
+    | 'NO_SOURCE_CERTIFICATE'
+    | 'CERTIFICATE_INVALID'
+    | 'CERTIFICATION_AUTHORITY_UNTRUSTED'
+    | 'SOURCE_CERTIFICATION_REJECTED'
+    | 'READY_FOR_PROFILE_REGISTRY_ADMISSION'
+  profile_id: string | null
+  profile_version: string | null
+  candidate_profile_hash: string | null
+  packet_id: string | null
+  packet_hash: string | null
+  review_bundle_sha256: string | null
+  attestation_sha256: string | null
+  certification_proposal_sha256: string | null
+  signed_review_sha256: string | null
+  source_certificate_sha256: string | null
+  registry_admission_proposal_sha256: string | null
+  s4_ready: boolean
+  authority_registry_valid: boolean
+  authority_key_trusted: boolean
+  certificate_signature_valid: boolean
+  separation_of_duties_vetted: boolean
+  certification_decision: 'CERTIFIED' | 'REJECTED' | null
+  source_certified: boolean
+  ready_for_profile_registry_admission: boolean
+  validation_gates: ChakraTimingSourceCertificationGate[]
+  missing_requirements: string[]
+  source_certificate_template: Record<string, unknown> | null
+  registry_entry_proposal: Record<string, unknown> | null
+  profile_registered: false
+  registry_write_allowed: false
+  guardrails: {
+    research_only: true
+    read_only: true
+    payloads_persisted: false
+    client_public_key_accepted: false
+    server_authority_registry_required: true
+    separate_authority_required: true
+    certificate_records_governance_decision_only: true
+    doctrinal_truth_cryptographically_proven: false
+    profile_registered: false
+    registry_write_allowed: false
+    timing_phase_calculated: false
+    directional_phase_calculated: false
+    confidence_calculated: false
+    counts_as_independent_vote: false
+    directional_contribution: 0
+    auto_suggest_included: false
+    live_inference_included: false
+    official_ml_notes_included: false
+    shadow_vote_included: false
+    trade_output_included: false
+    financially_validated: false
+    execution_allowed: false
+    blocked_capabilities: string[]
+  }
+}
+
 export type ChakraAuditBookmarkTarget =
   | 'AUDIT'
   | 'INTERVAL'

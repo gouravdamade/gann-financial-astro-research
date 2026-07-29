@@ -904,6 +904,28 @@ async fn chakra_lab_timing_signed_review(
 
 #[cfg(not(mobile))]
 #[tauri::command]
+async fn chakra_lab_timing_source_certification(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Timing source certification requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/timing-profile/source-certification/verify",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("Timing source certification bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 async fn chakra_lab_audit_package(
     request: Value,
     state: State<'_, BackendRuntimeState>,
@@ -1023,6 +1045,7 @@ pub fn run() {
             chakra_lab_timing_source_verification,
             chakra_lab_timing_external_review,
             chakra_lab_timing_signed_review,
+            chakra_lab_timing_source_certification,
             chakra_lab_audit_package,
             chakra_lab_verify_audit_package,
             chakra_lab_audit_catalog,
