@@ -1,0 +1,7 @@
+{
+  "contract": "SBC_TIMING_PROFILE_REVIEWER_TRUST_REGISTRY_V1",
+  "schemaVersion": 1,
+  "reviewers": [],
+  "registryWriteAllowed": false,
+  "executionAllowed": false
+}
