@@ -1,0 +1,87 @@
+﻿[
+    {
+        "path":  "CURRENT_PROJECT_HANDOFF.md",
+        "sha256":  "272750A5CC23DDEA8C210E356E487C8A6B7C59F17E1B240CBAFD8BB84DF835D1",
+        "bytes":  609566
+    },
+    {
+        "path":  "astro_external_validation_gate_20260729.json",
+        "sha256":  "B9BB94612CA0A1909CF812A2FD31D869041DD4018F5905DA142368213D55E2BE",
+        "bytes":  27674
+    },
+    {
+        "path":  "astro_function_certification.py",
+        "sha256":  "12BD07A3ADA523BF009EC76BDBE052733CEE77BB95B74A7BC66E4D44714AF707",
+        "bytes":  97068
+    },
+    {
+        "path":  "astro_function_certification_report_20260729.md",
+        "sha256":  "2AF84C6BC819B90CAB03EFA15F2EF9301327394AFB80ECAFE5F2C382C59A128A",
+        "bytes":  15338
+    },
+    {
+        "path":  "jhora_kaala_formula_profile_reconciliation.py",
+        "sha256":  "773FD184E04E6B88FEB545D5428E851880E2C8DDC4D7E4756D08E3FE0A5854AE",
+        "bytes":  33959
+    },
+    {
+        "path":  "jhora_kaala_formula_reconciliation_20260729.md",
+        "sha256":  "6BFC08F060226B20EEACEA4835BDC4A950B5B207B3CC3EF55FA2B3237FCB4D86",
+        "bytes":  5031
+    },
+    {
+        "path":  "status/evidence/jhora_kaala_witness_20260727/jhora_kaala_formula_profiles_20260729.csv",
+        "sha256":  "2608CEF20D7862EEBB16718ED158BED1E968C70B75F4829F0AD892834704FDD1",
+        "bytes":  47530
+    },
+    {
+        "path":  "status/evidence/jhora_kaala_witness_20260727/jhora_kaala_formula_profiles_20260729.json",
+        "sha256":  "815EE7499826D66EABF124617695BE7126D09D637B2DFAFCFB990368397BDCB2",
+        "bytes":  13625
+    },
+    {
+        "path":  "status/evidence/jhora_kaala_witness_20260727/jhora_kaala_profile_comparison_20260727.csv",
+        "sha256":  "085B673ACC4705CD0D4C4946E60A3983415E431485DC47CA1FC70B23E020F583",
+        "bytes":  254249
+    },
+    {
+        "path":  "status/evidence/jhora_kaala_witness_20260727/case_8_event_start_exact_hora_boundary_evidence_20260729.json",
+        "sha256":  "22226178A12867EE4FC2795BA03A4BF602112F377B20D727F87D64581601396E",
+        "bytes":  3138
+    },
+    {
+        "path":  "status/evidence/jhora_kaala_intermediate_20260729/jhora_hora_boundary_witness_completed.csv",
+        "sha256":  "AF2CE318E2955506246960C9C1E7EA5CB3A17678E38F57C4AE5D80076F5BA32E",
+        "bytes":  9667
+    },
+    {
+        "path":  "status/evidence/jhora_kaala_intermediate_20260729/jhora_ayana_intermediate_witness_completed.csv",
+        "sha256":  "85B1B2343DA57D437F81A530B88A018A76A8D8170EDABBC22D298104A319C2E4",
+        "bytes":  9629
+    },
+    {
+        "path":  "status/source_certification.json",
+        "sha256":  "76C698AB8D82170E7CA56D3160D31C9B7BDE09378E5A2E590A645A45D0060A57",
+        "bytes":  13948
+    },
+    {
+        "path":  "strict_shadbala_doctrine.py",
+        "sha256":  "1B1FEE6686554730207A56214DA5AC17F3750DBB9588EBE29BA65E1CB31DFAAA",
+        "bytes":  66053
+    },
+    {
+        "path":  "test_astro_function_certification.py",
+        "sha256":  "7C1323306CECA0C70D4B244B8ADC9437D05BFDE66ECC36865B59AAEF1F6E1078",
+        "bytes":  22404
+    },
+    {
+        "path":  "test_jhora_kaala_formula_profile_reconciliation.py",
+        "sha256":  "1EB0742B972EFCC0BDE7199656188410897E6A883C68846C4A1E3FCE71B6CBCB",
+        "bytes":  3968
+    },
+    {
+        "path":  "trading_rule_replay_result_20260729.json",
+        "sha256":  "3A917721940F12A3A3535AFB38349FE79547A5D35B132FDE96B3F3C46C1ED149",
+        "bytes":  424
+    }
+]
