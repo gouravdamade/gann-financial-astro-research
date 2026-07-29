@@ -1,0 +1,293 @@
+Window: "Jagannatha Hora - case_8_event_start_corrected_1930.jhd", App: jhora.exe.
+	0 window Jagannatha Hora - case_8_event_start_corrected_1930.jhd Secondary Actions: Raise
+		1 pane ID: 9592
+			1327 pane ID: 59648
+				1328 pane ID: 59648
+				1329 pane ID: 59649
+					1342 pane ID: 59648
+						1343 list ID: 59648
+							1344 header ID: Header
+								1345 header item Planet
+								1346 header item Shadbala
+								1347 header item In rupas
+								1348 header item % Strength
+								1349 header item IshtaPhala
+								1350 header item KashtaPhala
+							1351 list item (selectable) Sun
+								1352 text Sun
+								1353 text 324.37
+								1354 text 5.41
+								1355 text 108.12
+								1356 text 34.03
+								1357 text 22.77
+							1358 list item (selectable) Moon
+								1359 text Moon
+								1360 text 434.66
+								1361 text 7.24
+								1362 text 120.74
+								1363 text 40.71
+								1364 text 16.94
+							1365 list item (selectable) Mars
+								1366 text Mars
+								1367 text 397.89
+								1368 text 6.63
+								1369 text 132.63
+								1370 text 22.35
+								1371 text 26.72
+							1372 list item (selectable) Mercury
+								1373 text Mercury
+								1374 text 375.53
+								1375 text 6.26
+								1376 text 89.41
+								1377 text 5.29
+								1378 text 38.16
+							1379 list item (selectable) Jupiter
+								1380 text Jupiter
+								1381 text 440.37
+								1382 text 7.34
+								1383 text 112.92
+								1384 text 37.12
+								1385 text 20.98
+							1386 list item (selectable) Venus
+								1387 text Venus
+								1388 text 512.97
+								1389 text 8.55
+								1390 text 155.45
+								1391 text 55.38
+								1392 text 4.38
+							1393 list item (selectable) Saturn
+								1394 text Saturn
+								1395 text 401.94
+								1396 text 6.70
+								1397 text 133.98
+								1398 text 7.13
+								1399 text 49.47
+						1400 list ID: 59664
+							1401 header ID: Header
+								1402 header item Vimsopaka
+								1403 header item Dasa Varga (10)
+								1404 header item Shodasa Varga (16)
+								1405 header item Sapta Varga (7)
+								1406 header item Shad Varga (6)
+							1407 scroll bar Vertical ID: NonClientVerticalScrollBar
+								1408 button Line up ID: UpButton
+								1409 thumb Position ID: ScrollbarThumb
+								1410 button Page down ID: DownPageButton
+								1411 button Line down ID: DownButton
+							1412 list item (selectable) Sun
+								1413 text Sun
+								1414 text 9.85 (49.25%)
+								1415 text 9.90 (49.50%)
+								1416 text 9.43 (47.13%)
+								1417 text 8.30 (41.50%)
+							1418 list item (selectable) Moon
+								1419 text Moon
+								1420 text 13.68 (68.38%)
+								1421 text 12.70 (63.50%)
+								1422 text 15.63 (78.13%)
+								1423 text 14.70 (73.50%)
+							1424 list item (selectable) Mars
+								1425 text Mars
+								1426 text 12.18 (60.88%)
+								1427 text 11.28 (56.38%)
+								1428 text 12.42 (62.12%)
+								1429 text 10.30 (51.50%)
+							1430 list item (selectable) Mercury
+								1431 text Mercury
+								1432 text 11.88 (59.38%)
+								1433 text 13.45 (67.25%)
+								1434 text 14.40 (72.00%)
+								1435 text 14.55 (72.75%)
+							1436 list item (selectable) Jupiter
+								1437 text Jupiter
+								1438 text 10.25 (51.25%)
+								1439 text 10.00 (50.00%)
+								1440 text 11.88 (59.38%)
+								1441 text 11.75 (58.75%)
+							1442 list item (selectable) Venus
+								1443 text Venus
+								1444 text 14.48 (72.38%)
+								1445 text 13.48 (67.38%)
+								1446 text 13.18 (65.88%)
+								1447 text 11.80 (59.00%)
+							1448 list item (selectable) Saturn
+								1449 text Saturn
+								1450 text 12.85 (64.25%)
+								1451 text 12.48 (62.38%)
+								1452 text 15.95 (79.75%)
+								1453 text 15.60 (78.00%)
+							1454 list item (selectable) Rahu
+								1455 text Rahu
+								1456 text 13.57 (67.88%)
+								1457 text 13.65 (68.25%)
+								1458 text 12.08 (60.38%)
+								1459 text 12.40 (62.00%)
+							1460 list item (selectable) Ketu
+								1461 text Ketu
+								1462 text 12.98 (64.88%)
+								1463 text 12.45 (62.25%)
+								1464 text 12.35 (61.75%)
+								1465 text 11.30 (56.50%)
+						1466 list ID: 59680
+							1467 header ID: Header
+								1468 header item Yoga
+								1469 header item Varga
+								1470 header item Yoga givers
+								1471 header item Results ascribed to yoga
+								1472 header item Brief definition of yoga
+							1473 scroll bar Horizontal ID: NonClientHorizontalScrollBar
+								1474 button Column left ID: UpButton
+								1475 thumb Position ID: ScrollbarThumb
+								1476 button Page right ID: DownPageButton
+								1477 button Column right ID: DownButton
+							1478 list item (selectable) Sasa
+								1479 text Sasa
+								1480 text D-1
+								1481 text Sa
+								1482 text Wandering leader of free spirit
+								1483 text Saturn in a kendra in moolatrikona or own or exaltation sign
+							1484 list item (selectable) Vesi
+								1485 text Vesi
+								1486 text D-1
+								1487 text Me, Ve
+								1488 text Balanced, truthful and happy
+								1489 text Planets other than Moon in 2nd from Sun
+							1490 list item (selectable) Anaphaa
+								1491 text Anaphaa
+								1492 text D-1
+								1493 text Ju
+								1494 text Comforts, good looks and character
+								1495 text Planets other than Sun in 12th from Moon
+							1496 list item (selectable) Chandra-Mangala
+								1497 text Chandra-Mangala
+								1498 text D-1
+								1499 text Mo, Ma
+								1500 text Worldly wise and materially successful
+								1501 text Moon and Mars together or in mutual 7ths
+							1502 list item (selectable) Kedaara
+								1503 text Kedaara
+								1504 text D-1
+								1505 text Naabhasa yoga - throughout life
+								1506 text Happy, wealthy, helpful and may be an agriculturalist
+								1507 text Seven planets in 4 rasis
+							1508 list item (selectable) Kaahala
+								1509 text Kaahala
+								1510 text D-1
+								1511 text Sa, Su
+								1512 text Strong, bold, cunning, leads a large army
+								1513 text The 4th lord is in own/exaltation sign and the 10th lord joins him
+							1514 list item (selectable) Trilochana
+								1515 text Trilochana
+								1516 text D-1
+								1517 text Su, Mo, Ma
+								1518 text Victorious over enemies, wealthy, intelligent, long-lived
+								1519 text Sun, Moon and Mars in mutual konas
+							1520 list item (selectable) Raja/Lakshmi
+								1521 text Raja/Lakshmi
+								1522 text D-1
+								1523 text Ma, Mo
+								1524 text Fortunate and high achiever
+								1525 text Conjunction, aspect or exchange of 1st/9th lords
+							1526 list item (selectable) Rajayoga
+								1527 text Rajayoga
+								1528 text D-1
+								1529 text Ve, Ju
+								1530 text Successful and high achievements
+								1531 text Conjunction, aspect or exchange of kendra/kona lords
+							1532 list item (selectable) Yogada (GL)
+								1533 text Yogada (GL)
+								1534 text D-1
+								1535 text Ma
+								1536 text Power and authority
+								1537 text Associated with lagna and GL (by aspect, conjunction or ownership)
+							1538 list item (selectable) Yogada (GL)
+								1539 text Yogada (GL)
+								1540 text D-1
+								1541 text Ke
+								1542 text Power and authority
+								1543 text Associated with lagna and GL (by aspect, conjunction or ownership)
+							1544 list item (selectable) Viparita Raja Yoga
+								1545 text Viparita Raja Yoga
+								1546 text D-1
+								1547 text Ma
+								1548 text Success after pressures or someone else's losses
+								1549 text 6th lord in 8th or 12th
+							1550 list item (selectable) Viparita Raja Yoga
+								1551 text Viparita Raja Yoga
+								1552 text D-1
+								1553 text Me, Ve
+								1554 text Success after pressures or someone else's losses
+								1555 text The 8th and 12th lords in conjunction or samasaptaka
+							1556 list item (selectable) Raja Sambandha
+								1557 text Raja Sambandha
+								1558 text D-1
+								1559 text Ra
+								1560 text A famous minister
+								1561 text Amatya karaka in a kona
+		436 status bar ID: 59393
+			437 text For Help, press F1
+			438 text
+			439 text
+			440 text
+		441 tool bar ID: 59392
+			442 combo box ID: 33373
+				443 text
+				444 button Open ID: DropDown
+			445 button
+			446 button (disabled)
+			447 button (disabled)
+			448 button
+		449 tool bar ID: 59392
+			450 combo box ID: 33302
+				451 text
+				452 button Open ID: DropDown
+			453 button
+			454 button (disabled)
+			455 button (disabled)
+			456 button
+		457 tool bar ID: 59392
+			458 button
+			459 button
+			460 button Save
+			461 button
+			462 button
+			463 button
+			464 button
+			465 button
+			466 button
+			467 button
+			468 button
+			469 button
+			470 button
+			471 button
+			472 button
+			473 button
+			474 button
+			475 button
+			476 button
+			477 button
+			478 button
+			479 button
+			480 button
+			481 button
+			482 button
+			483 button
+			484 button
+			485 button
+		486 title bar
+			487 menu bar System ID: MenuBar
+				488 menu item System
+			489 button Minimize
+			490 button Maximize
+			491 button Close
+		492 menu bar Application ID: MenuBar
+			493 menu item File
+			494 menu item Edit
+			495 menu item Modes
+			496 menu item View
+			497 menu item Preferences
+			498 menu item Websites
+			499 menu item MoreMenus
+			500 menu item Help
+
+The focused UI element is 1343 list ID: 59648.

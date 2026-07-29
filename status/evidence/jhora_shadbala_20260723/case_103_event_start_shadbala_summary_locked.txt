@@ -1,9 +1,9 @@
-Planet  Shadbala In rupas % Strength IshtaPhala KashtaPhala
+Planet Shadbala In rupas % Strength IshtaPhala KashtaPhala
 
-Sun     338.76   5.65     112.92     50.46      9.28
-Moon    434.01   7.23     120.56     23.09      23.37
-Mars    444.53   7.41     148.18     9.44       39.40
-Mercury 418.86   6.98     99.73      8.74       51.10
-Jupiter 606.94   10.12    155.62     22.95      23.39
-Venus   424.51   7.08     128.64     33.32      11.24
-Saturn  293.37   4.89     97.79      16.19      43.68
+Sun 338.76 5.65 112.92 50.46 9.28
+Moon 434.01 7.23 120.56 23.09 23.37
+Mars 444.53 7.41 148.18 9.44 39.40
+Mercury 418.86 6.98 99.73 8.74 51.10
+Jupiter 606.94 10.12 155.62 22.95 23.39
+Venus 424.51 7.08 128.64 33.32 11.24
+Saturn 293.37 4.89 97.79 16.19 43.68

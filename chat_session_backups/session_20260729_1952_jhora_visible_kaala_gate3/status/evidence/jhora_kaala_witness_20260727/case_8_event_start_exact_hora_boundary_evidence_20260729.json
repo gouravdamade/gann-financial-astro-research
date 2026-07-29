@@ -1,0 +1,68 @@
+{
+  "contract": "GANN_JHORA_VISIBLE_HORA_BOUNDARY_EVIDENCE_V1",
+  "sample_id": "case_8_event_start",
+  "fixture": {
+    "date": "2025-03-07",
+    "civil_time": "19:30:00",
+    "timezone": "+05:30",
+    "longitude": "139 E 39 1.0799999",
+    "latitude": "35 N 40 34.32",
+    "jhora_file": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_locked.jhd"
+  },
+  "jhora": {
+    "version": "8.0.0.0",
+    "executable_sha256": "3DDBE5FB0458AD1F0AD91B002C7EFB8BBA9F08891D3F46190ABA97D570B17908"
+  },
+  "visible_observation": {
+    "lmt_birth_time": "23:18:36.072",
+    "sunrise_lmt_display": "6:22:22",
+    "hora_lord": "MOON",
+    "hora_awards_virupa": {
+      "SUN": 0.0,
+      "MOON": 60.0,
+      "MARS": 0.0,
+      "MERCURY": 0.0,
+      "JUPITER": 0.0,
+      "VENUS": 0.0,
+      "SATURN": 0.0
+    }
+  },
+  "sources": [
+    {
+      "purpose": "Locked exact-time JHora fixture",
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_locked.jhd",
+      "sha256": "E94A5B44257026C6FD777EE227F114CA12CEC7B546B8FA093888DDC86C4BC7E6"
+    },
+    {
+      "purpose": "Exact civil fixture identity before LMT conversion",
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_exact_1930_birthdata_dialog_20260729.jpg",
+      "sha256": "70B6238FC25237E928C0D607E1D7516B6A323AD618109CA38F2DC03AF45BCCB7"
+    },
+    {
+      "purpose": "Exact 19:30 Kaala Bala table with visible Moon Hora award of 60 and six zero awards",
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_exact_1930_kaala_bala_20260729.jpg",
+      "sha256": "DDB76AF913913F78AF4E55EC51A2B4AE4DB961128A5A438ABE3B52A23215E3DD"
+    },
+    {
+      "purpose": "Same instant converted to LMT with Use LMT enabled",
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_exact_lmt_birthdata_20260729.jpg",
+      "sha256": "FBE1B0C51A6B9944CBC1BF88E063A4A79B53E123FB80B5A44903220BFD29212D"
+    },
+    {
+      "purpose": "Full JHora window with visible Sunrise 6:22:22 after LMT conversion",
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_exact_lmt_sunrise_20260729.jpg",
+      "sha256": "8DA639F1B0FECC43BFA1A86B596B7D52E2ED4051B825137FCE188DCEA7DABD98"
+    },
+    {
+      "purpose": "Accessibility transcription of the exact Kaala Bala table",
+      "path": "D:\\PycharmProjects\\status\\evidence\\jhora_kaala_witness_20260727\\case_8_event_start_exact_1930_kaala_bala_accessibility_20260729.txt",
+      "sha256": "209B76E6F26BA23A19F77B8C1F9BC1576E68D9EDADA099E4BC84F17EB9DD0C13"
+    }
+  ],
+  "reviewer": "Codex visible JHora transcription",
+  "notes": [
+    "The manifest binds multiple uncropped visible sources because the sunrise and Hora award are shown in different JHora views.",
+    "The decimal sunrise used by the machine packet must be derived from sunrise_lmt_display and not entered independently.",
+    "This visible witness does not certify the production Hora formula by itself."
+  ]
+}

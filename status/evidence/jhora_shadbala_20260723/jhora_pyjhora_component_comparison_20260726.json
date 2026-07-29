@@ -1,6 +1,6 @@
 {
   "contract": "GANN_JHORA_PYJHORA_COMPARISON_V1",
-  "generatedAtUtc": "2026-07-26T15:13:52.858847Z",
+  "generatedAtUtc": "2026-07-29T13:53:05.649611Z",
   "status": "diagnostic_disagreement",
   "toleranceVirupa": 0.5,
   "tolerancePolicy": "frozen; not widened for certification",
@@ -9,7 +9,7 @@
     "version": "8.0.0.0",
     "executableSha256": "3DDBE5FB0458AD1F0AD91B002C7EFB8BBA9F08891D3F46190ABA97D570B17908",
     "witnessPath": "status\\evidence\\jhora_shadbala_20260723\\jhora_shadbala_witness_completed_20260726.csv",
-    "witnessSha256": "3DFF36A1415881522F152F690C3856C3F736BEE60ED202F7F5EDD100C055DF42"
+    "witnessSha256": "A0D5B7E3A0BDDDA54B7C47B80CEAA1DC2ADC16E3B33E632505A0554DC70FA02D"
   },
   "pyjhora": {
     "componentsPath": "pyjhora_shadbala_components_20260718.csv",

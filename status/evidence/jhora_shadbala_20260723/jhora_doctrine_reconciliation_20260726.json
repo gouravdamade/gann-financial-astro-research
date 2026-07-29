@@ -18,7 +18,6 @@
     "policy": "Production source-profile values are compared directly with the locked JHora witness. A component is witness-aligned only when all 35 locked rows pass at the frozen 0.5-virupa tolerance. Alignment does not by itself establish source certification, financial validity, or execution permission.",
     "provisionalKaalaSubcomponents": [
       "ayana",
-      "hora",
       "nathonnatha",
       "total"
     ],
@@ -34,6 +33,7 @@
     "status": "partial_independent_witness_alignment",
     "witnessAlignedKaalaSubcomponents": [
       "abda",
+      "hora",
       "masa",
       "paksha",
       "tribhaga",
@@ -50,7 +50,7 @@
     "Keep production Sthana provisional. The BPHS-labeled source profile passes only 1/35 locked JHora rows; the separately named PyJHora-compatible profile must remain diagnostic and must not be substituted into the production total.",
     "Promote dynamic Paksha classification: classical phase/nature rules and the locked visible JHora table agree in 35/35 rows within the frozen 0.5-virupa tolerance.",
     "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each matches all 35 visible JHora rows.",
-    "Keep Hora provisional. It matches 33/35 rows, but the case-8 Moon/Saturn award remains a sunrise-boundary disagreement; do not replace the current algorithm with a temporal-hour guess.",
+    "Recognize Hora as independently witness-aligned in 35/35 rows. The exact case-8 packet binds the visible LMT sunrise, Moon Hora lord, and all seven awards. This is component evidence only, not aggregate Kaala or full Shadbala certification.",
     "Keep Sthana, Dig, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala uncertified until their remaining formula and time-basis residuals are independently reconciled.",
     "Promote luminary Chesta total exclusion: classical text and locked JHora total arithmetic independently agree that displayed Sun/Moon Chesta must not be added again.",
     "Retain the current production Drik profile as provisional and execution-ineligible. Named candidate profiles are sensitivity tests, not silent replacements."
@@ -117,11 +117,11 @@
       "specialAspectScale": 0.0
     }
   ],
-  "generatedAtUtc": "2026-07-29T08:02:32.709099Z",
+  "generatedAtUtc": "2026-07-29T13:59:51.031228Z",
   "inputs": {
     "comparison": {
       "path": "status\\evidence\\jhora_shadbala_20260723\\jhora_pyjhora_component_comparison_20260726.csv",
-      "sha256": "DDA6C65606D167041B6C7707FF1A6EF20663C56E2C076C1A46D233EBE9763776"
+      "sha256": "FFF21FE38497138772435E77C0B77E19777DE619468ABA6FA90D384CC6DAC0F7"
     },
     "drikLedger": {
       "path": "drik_contribution_ledger_20260726.csv",
@@ -137,7 +137,7 @@
     },
     "kaalaVisibleWitness": {
       "path": "status\\evidence\\jhora_kaala_witness_20260727\\jhora_kaala_profile_comparison_20260727.json",
-      "sha256": "2FD0BBDCBFA07432FAE97F74F8F947FCF1A4AF036AD4004477F4C912AE1D9904"
+      "sha256": "D059C229442B4E3D99F34041349A633AA5061262FF6FB67A1B28DC28FF65FDB4"
     },
     "localDoctrineConfig": {
       "path": "doctrine_config.yaml",
@@ -170,22 +170,22 @@
       },
       "ayana": {
         "localCloser": 8,
-        "localMaeVirupa": 1.973373426,
-        "localMaxVirupa": 9.010454001,
+        "localMaeVirupa": 1.973396577,
+        "localMaxVirupa": 9.010495615,
         "localPass": 13,
         "pyjhoraCloser": 27,
         "pyjhoraMaeVirupa": 2.591428571,
-        "pyjhoraMaxVirupa": 29.14,
+        "pyjhoraMaxVirupa": 29.13,
         "pyjhoraPass": 26,
         "rows": 35,
         "ties": 0
       },
       "hora": {
-        "localCloser": 9,
-        "localMaeVirupa": 3.428571429,
-        "localMaxVirupa": 60.0,
-        "localPass": 33,
-        "pyjhoraCloser": 1,
+        "localCloser": 10,
+        "localMaeVirupa": 0.0,
+        "localMaxVirupa": 0.0,
+        "localPass": 35,
+        "pyjhoraCloser": 0,
         "pyjhoraMaeVirupa": 17.142857143,
         "pyjhoraMaxVirupa": 60.0,
         "pyjhoraPass": 25,
@@ -206,36 +206,36 @@
       },
       "nathonnatha": {
         "localCloser": 30,
-        "localMaeVirupa": 1.842805714,
-        "localMaxVirupa": 4.8899,
+        "localMaeVirupa": 1.484554286,
+        "localMaxVirupa": 4.4501,
         "localPass": 11,
         "pyjhoraCloser": 0,
-        "pyjhoraMaeVirupa": 19.332,
-        "pyjhoraMaxVirupa": 42.75,
+        "pyjhoraMaeVirupa": 19.138285714,
+        "pyjhoraMaxVirupa": 40.34,
         "pyjhoraPass": 5,
         "rows": 35,
         "ties": 5
       },
       "paksha": {
         "localCloser": 35,
-        "localMaeVirupa": 0.039841769,
-        "localMaxVirupa": 0.123677207,
+        "localMaeVirupa": 0.003345381,
+        "localMaxVirupa": 0.004405858,
         "localPass": 35,
         "pyjhoraCloser": 0,
-        "pyjhoraMaeVirupa": 46.681428571,
-        "pyjhoraMaxVirupa": 120.13,
+        "pyjhoraMaeVirupa": 46.693142857,
+        "pyjhoraMaxVirupa": 120.01,
         "pyjhoraPass": 6,
         "rows": 35,
         "ties": 0
       },
       "total": {
         "localCloser": 35,
-        "localMaeVirupa": 6.349790459,
-        "localMaxVirupa": 62.908905083,
-        "localPass": 4,
+        "localMaeVirupa": 2.762980006,
+        "localMaxVirupa": 8.879306473,
+        "localPass": 5,
         "pyjhoraCloser": 0,
-        "pyjhoraMaeVirupa": 60.376571429,
-        "pyjhoraMaxVirupa": 222.84,
+        "pyjhoraMaeVirupa": 57.030571429,
+        "pyjhoraMaxVirupa": 220.29,
         "pyjhoraPass": 0,
         "rows": 35,
         "ties": 0
@@ -279,10 +279,10 @@
     },
     "contract": "GANN_JHORA_KAALA_WITNESS_COMPARATOR_V1",
     "evidenceConclusions": [
-      "Promote dynamic Paksha classification: the local profile passes 35/35 visible rows with 0.040 virupa MAE and 0.124 virupa maximum error.",
+      "Promote dynamic Paksha classification: the local profile passes 35/35 visible rows with 0.003 virupa MAE and 0.004 virupa maximum error.",
       "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each local subcomponent passes all 35 visible rows.",
-      "Retain Hora as provisional: it passes 33/35 rows, with the case-8 sunrise-boundary award unresolved.",
-      "Do not promote Nathonnatha, Ayana, or aggregate Kaala: they pass 11/35, 13/35, and 4/35 rows respectively.",
+      "The exact-time visible Hora award matrix matches the local profile for 35/35 rows, and the categorical Hora lord matches for every fixture. The separate fail-closed intermediate gate determines whether the visible case-8 apparent-tip sunrise and award provenance packet is complete.",
+      "Do not promote Nathonnatha, Ayana, or aggregate Kaala: they pass 11/35, 13/35, and 5/35 rows respectively.",
       "The frozen 0.5-virupa certification tolerance is unchanged; the 0.06 display-sum allowance only checks arithmetic over JHora values rounded to two decimal places."
     ]
   },
