@@ -79,7 +79,9 @@ The assembler preserves the displayed values as evidence and explicitly
 excludes only Sun/Moon Chesta when checking JHora's own reported total. It does
 not silently alter any captured value.
 
-The fixed 0.5-virupa comparison with the pinned PyJHora profile produces:
+The fixed 0.5-virupa comparison below is the separately named pinned
+PyJHora-compatible diagnostic profile. It is not the BPHS-labeled production
+source profile and must not be substituted into the production total:
 
 | Measure | Pass | Fail |
 | --- | ---: | ---: |
@@ -97,6 +99,10 @@ current PyJHora/local doctrine profile. Drik is
 `failed_independent_validation`, not pending. Formula/profile reconciliation
 must explain the differences before certification; the tolerance remains
 frozen.
+
+The top-level JHora table does not identify which Sthana subcomponent causes a
+residual. Any Sthana formula change now requires the separate visible-capture
+contract in `jhora_sthana_subcomponent_witness_protocol_20260729.md`.
 
 ## Fail-Closed Rules
 

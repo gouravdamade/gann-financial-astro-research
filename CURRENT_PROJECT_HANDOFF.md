@@ -1,8 +1,53 @@
 # Current Project Handoff
 
-Last updated: 2026-07-29 13:42 IST
+Last updated: 2026-07-29 14:03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-29 (Visible JHora Sthana Capture Gate)
+
+- Completed the next bounded Sthana certification step without changing a
+  doctrine formula or widening tolerance.
+- First-party JHora material confirms that version 8.0 calculates Shadabala and
+  supports configurable divisional-chart variants and relationship scopes, but
+  it does not publish numerical Uchcha, Saptavargaja, Ojayugma, Kendradi, and
+  Drekkana breakdowns.
+- The completed locked JHora screenshots/clipboard tables contain only
+  top-level Sthana. The pinned legacy JHora window did not expose a reliable
+  screenshot/accessibility surface in the current Codex desktop session.
+  No subcomponent value was copied, inferred, or reverse-engineered.
+- Added fail-closed contract
+  `GANN_JHORA_STHANA_SUBCOMPONENT_WITNESS_V1`:
+  - implementation:
+    `jhora_sthana_subcomponent_witness_protocol.py`;
+  - pending `175`-row template:
+    `jhora_sthana_subcomponent_witness_template_20260729.csv`;
+  - protocol:
+    `jhora_sthana_subcomponent_witness_protocol_20260729.md`;
+  - tests:
+    `test_jhora_sthana_subcomponent_witness_protocol.py`.
+- The required matrix is five fixtures x seven classical planets x five
+  Sthana subcomponents. Every value needs visible uncropped JHora evidence,
+  an evidence hash, reviewer, timezone-aware capture time, and captured status.
+  Missing or inferred values are rejected.
+- Each five-component sum must match the already locked top-level JHora Sthana
+  value within the unchanged `0.5`-virupa tolerance. Completing this matrix
+  would still not grant source certification, financial validation, or
+  execution permission.
+- Updated the original JHora witness protocol and
+  `status/source_certification.json` to label the `34/35` Sthana result as the
+  separate PyJHora-compatible diagnostic and the production subcomponent gate
+  as `blocked_pending_visible_sthana_subcomponent_witness`.
+- Verification on the final source state:
+  - complete Python suite `568/568`;
+  - new capture-contract tests `3/3`;
+  - changed Python scope passes Ruff and compilation;
+  - status validation passes with execution false.
+- Timestamped recovery snapshot:
+  `chat_session_backups/session_20260729_1403_jhora_sthana_capture_gate`.
+- Next bounded work: reconcile the visible Hora, Nathonnatha, and Ayana
+  residuals. Production Sthana remains fail-closed until a genuine visible
+  subcomponent table is available.
 
 ## Latest Update - 2026-07-29 (Shadbala Evidence-Lineage Correction)
 

@@ -1,6 +1,6 @@
 {
   "contract": "GANN_SOURCE_CERTIFICATION_STATUS_V1",
-  "asOfUtc": "2026-07-29T07:14:32Z",
+  "asOfUtc": "2026-07-29T08:30:00Z",
   "executionAllowed": false,
   "certifications": [
     {
@@ -46,6 +46,19 @@
         "status/evidence/jhora_shadbala_20260723/jhora_local_doctrine_reconciliation_20260726.csv",
         "status/evidence/jhora_kaala_witness_20260727/jhora_kaala_profile_comparison_20260727.json",
         "jhora_doctrine_reconciliation_20260726.md"
+      ]
+    },
+    {
+      "certificationId": "strict_shadbala_sthana_subcomponents_v1",
+      "status": "blocked_pending_visible_sthana_subcomponent_witness",
+      "sourceCertified": false,
+      "summary": "The locked JHora evidence contains top-level Sthana only. Production Sthana passes 1 of 35 rows, but there is no visible independent breakdown for Uchcha, Saptavargaja, Ojayugma, Kendradi, and Drekkana. A fail-closed 175-row capture contract now rejects missing, inferred, unhashed, or top-level-inconsistent values. No production formula or tolerance changes are admitted until that witness is complete.",
+      "evidenceRefs": [
+        "jhora_sthana_subcomponent_witness_protocol_20260729.md",
+        "jhora_sthana_subcomponent_witness_template_20260729.csv",
+        "jhora_sthana_subcomponent_witness_protocol.py",
+        "status/evidence/jhora_shadbala_20260723/jhora_shadbala_witness_completed_20260726.csv",
+        "status/evidence/jhora_shadbala_20260723/JHORA_SHADBALA_EVIDENCE_MANIFEST_20260726.md"
       ]
     },
     {
