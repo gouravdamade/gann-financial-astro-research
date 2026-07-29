@@ -97,6 +97,8 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   local and uncommitted.
 - Timestamped source recovery snapshot:
   `chat_session_backups/session_20260729_120539_sbc_timing_source_certification_s5`.
+- S5 implementation commit before this publication marker:
+  `c740a96` (`Implement S5 source certification authority gate`).
 - Next bounded milestone: obtain genuinely external S1-S5 evidence and a
   human-reviewed authority enrollment, then consider a separate manual timing
   profile registry admission. The application must not populate its own
