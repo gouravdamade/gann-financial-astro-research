@@ -20,7 +20,7 @@
       "certificationId": "strict_shadbala_full_total",
       "status": "failed_external_validation",
       "sourceCertified": false,
-      "summary": "The locked JHora witness now includes 245 top-level and 350 visible Kaala-subcomponent rows. Dynamic Paksha passes 35 of 35 and is promoted; displayed Sun/Moon Chesta remains excluded from totals. Full-total mean absolute error improves to 12.626 virupa versus PyJHora's 71.742, but still passes 0 of 35 at the frozen 0.5-virupa tolerance. Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, and full Shadbala remain uncertified.",
+      "summary": "The locked JHora witness includes 245 top-level and 350 visible Kaala-subcomponent rows. Dynamic Paksha passes 35 of 35 and is promoted; displayed Sun/Moon Chesta remains excluded from totals. The corrected reconciliation now uses the actual BPHS-labeled production Sthana profile rather than substituting the separate PyJHora-compatible diagnostic profile. Production Sthana passes 1 of 35; full total passes 3 of 35 with 11.829 virupa mean absolute error at the frozen 0.5-virupa tolerance. Hora, Nathonnatha, Ayana, aggregate Kaala, non-luminary Chesta, Drik, Sthana, and full Shadbala remain uncertified.",
       "evidenceRefs": [
         "astro_function_certification_report_20260726.md",
         "status/evidence/jhora_shadbala_20260723/jhora_shadbala_witness_completed_20260726.csv",
@@ -38,7 +38,7 @@
       "certificationId": "strict_shadbala_component_witness_matrix_v1",
       "status": "partial_independent_witness_alignment_not_source_certified",
       "sourceCertified": false,
-      "summary": "The completed 245-row locked JHora witness is now admitted component by component at the unchanged 0.5-virupa tolerance. Naisargika is aligned in 35/35 top-level rows. Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha are aligned in 35/35 visible Kaala rows. Sthana, Dig, aggregate Kaala, Chesta, Drik, and full total remain provisional. Independent witness alignment is not source certification, financial validation, or execution permission.",
+      "summary": "The completed 245-row locked JHora witness is admitted component by component at the unchanged 0.5-virupa tolerance. Naisargika is aligned in 35/35 top-level rows. Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha are aligned in 35/35 visible Kaala rows. The gate compares the actual production source profile: Sthana passes 1/35 and full total passes 3/35. Dig, aggregate Kaala, Chesta, Drik, Sthana, and full total remain provisional. Independent witness alignment is not source certification, financial validation, or execution permission.",
       "evidenceRefs": [
         "astro_external_validation_gate_20260729.json",
         "astro_function_certification_report_20260729.md",

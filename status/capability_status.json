@@ -114,7 +114,7 @@
         "sourceCertified": "no",
         "financiallyValidated": "no"
       },
-      "statusDetail": "The independent JHora 8.0 witness is complete, not pending. At the frozen 0.5-virupa tolerance, Naisargika aligns in 35/35 top-level rows and Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha align in 35/35 visible Kaala rows. Sthana, Dig, aggregate Kaala, Chesta, Drik, and full total remain provisional; full total passes 0/35 and Drik passes 9/35. Component alignment is not source certification, financial validation, or execution permission.",
+      "statusDetail": "The independent JHora 8.0 witness is complete, not pending. At the frozen 0.5-virupa tolerance, Naisargika aligns in 35/35 top-level rows and Abda, Masa, Vara, Tribhaga, Paksha, and Yuddha align in 35/35 visible Kaala rows. The corrected gate uses the actual BPHS-labeled production Sthana profile, which passes 1/35; full total passes 3/35 and Drik passes 9/35. Sthana, Dig, aggregate Kaala, Chesta, Drik, and full total remain provisional. Component alignment is not source certification, financial validation, or execution permission.",
       "evidenceRefs": [
         "astro_external_validation_gate_20260729.json",
         "astro_function_certification_report_20260729.md",

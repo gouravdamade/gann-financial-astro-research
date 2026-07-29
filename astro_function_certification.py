@@ -1273,6 +1273,9 @@ def render_report(
         ]
         for name, values in sorted(top_level_components.items())
     ]
+    sthana_witness = dict(top_level_components.get("sthana") or {})
+    kaala_witness = dict(top_level_components.get("kaala") or {})
+    total_witness = dict(top_level_components.get("total") or {})
     if external_gate["certified"]:
         external_verdict = (
             "- Shadbala/Drik external certification passed for the declared matrix."
@@ -1286,9 +1289,15 @@ def render_report(
             "60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The "
             "locked local-versus-JHora reconciliation excludes displayed Sun/Moon "
             "Chesta from the total and promotes dynamic Paksha after 35/35 visible "
-            "subcomponent matches. Local full-total mean absolute error is now "
-            "12.626 virupa versus PyJHora's 71.742, but still passes 0/35 at the "
-            "frozen tolerance. Top-level local Kaala passes 5/35 with 2.763 virupa "
+            "subcomponent matches. The actual production source profile, rather "
+            "than the separately named PyJHora-compatible Sthana profile, is used "
+            f"for this gate: Sthana passes {sthana_witness.get('pass', 0)}/"
+            f"{sthana_witness.get('rows', 35)} and full total passes "
+            f"{total_witness.get('pass', 0)}/{total_witness.get('rows', 35)} "
+            f"with {float(total_witness.get('maeVirupa') or 0.0):.3f} virupa "
+            "mean absolute error. Top-level local Kaala passes "
+            f"{kaala_witness.get('pass', 0)}/{kaala_witness.get('rows', 35)} "
+            f"with {float(kaala_witness.get('maeVirupa') or 0.0):.3f} virupa "
             "mean absolute error; Hora, Nathonnatha, Ayana, and aggregate Kaala "
             "remain provisional. The "
             f"completed independent JHora Drik witness passes "

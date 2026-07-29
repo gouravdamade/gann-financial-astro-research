@@ -21,6 +21,7 @@ from astro_function_certification import (
     sidereal_house_cusps,
 )
 from doctrine_config import configure_swiss_ephemeris_sidereal, load_doctrine_config
+from financial_astro_ephemeris import configure_ephemeris
 from pyjhora_external_strength_export import (
     KAALA_SUBCOMPONENTS,
     SHADBALA_COMPONENTS,
@@ -41,6 +42,10 @@ LOCAL_COMPONENT_FIELDS = {
     "chesta": "chesta_virupa",
     "naisargika": "naisargika_virupa",
     "drik": "drik_virupa",
+}
+LOCAL_SOURCE_COMPONENT_FIELDS = {
+    **LOCAL_COMPONENT_FIELDS,
+    "sthana": "sthana_partial_virupa",
 }
 LOCAL_KAALA_FIELDS = {
     "nathonnatha": "nathonnatha_virupa",
@@ -121,6 +126,7 @@ def sha256(path: Path) -> str:
 
 def _sample_contexts(config_path: Path) -> list[dict[str, Any]]:
     config = load_doctrine_config(config_path)
+    configure_ephemeris()
     configure_swiss_ephemeris_sidereal(swe, config)
     contexts: list[dict[str, Any]] = []
     for sample in SAMPLES:
@@ -165,6 +171,22 @@ def _sample_contexts(config_path: Path) -> list[dict[str, Any]]:
 def calculate_local_component_values(
     config_path: Path,
 ) -> dict[tuple[str, str, str], float]:
+    return _calculate_local_component_values(config_path, LOCAL_COMPONENT_FIELDS)
+
+
+def calculate_local_source_component_values(
+    config_path: Path,
+) -> dict[tuple[str, str, str], float]:
+    return _calculate_local_component_values(
+        config_path,
+        LOCAL_SOURCE_COMPONENT_FIELDS,
+    )
+
+
+def _calculate_local_component_values(
+    config_path: Path,
+    fields: dict[str, str],
+) -> dict[tuple[str, str, str], float]:
     values: dict[tuple[str, str, str], float] = {}
     for context in _sample_contexts(config_path):
         sample = context["sample"]
@@ -181,7 +203,7 @@ def calculate_local_component_values(
                 context["declinations"],
                 sample.latitude,
             )
-            for component, field in LOCAL_COMPONENT_FIELDS.items():
+            for component, field in fields.items():
                 value = float(components[field])
                 if not math.isfinite(value):
                     raise RuntimeError(

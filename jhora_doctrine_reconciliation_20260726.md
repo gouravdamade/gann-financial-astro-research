@@ -10,17 +10,17 @@ Tolerance remains frozen at 0.5 virupa.
 
 | Measure | Local pass | Local closer | PyJHora closer | Local MAE | PyJHora MAE |
 | --- | --- | --- | --- | --- | --- |
-| Sthana | 34/35 | 7 | 28 | 0.431 | 0.966 |
+| Sthana | 1/35 | 2 | 33 | 6.296 | 0.966 |
 | Kaala | 5/35 | 35 | 0 | 2.763 | 57.031 |
 | Dig | 19/35 | 11 | 24 | 1.142 | 1.141 |
 | Chesta | 12/35 | 15 | 20 | 17.919 | 26.397 |
 | Naisargika | 35/35 | 0 | 0 | 0.004 | 0.004 |
 | Drik | 9/35 | 2 | 2 | 7.320 | 7.320 |
-| Total | 0/35 | 33 | 2 | 12.626 | 71.742 |
+| Total | 3/35 | 33 | 2 | 11.829 | 71.742 |
 
 ## Component Admission Boundary
 
-A component is witness-aligned only when all 35 locked rows pass at the frozen 0.5-virupa tolerance. Alignment does not by itself establish source certification, financial validity, or execution permission.
+Production source-profile values are compared directly with the locked JHora witness. A component is witness-aligned only when all 35 locked rows pass at the frozen 0.5-virupa tolerance. Alignment does not by itself establish source certification, financial validity, or execution permission.
 
 Witness-aligned top-level components: naisargika.
 Witness-aligned Kaala subcomponents: abda, masa, paksha, tribhaga, vara, yuddha.
@@ -66,6 +66,7 @@ The bright-half Moon/no-range-special profile is a useful doctrine lead, but the
 ## Locked Decisions
 
 - Recognize Naisargika as independently witness-aligned in 35/35 top-level rows. This is component evidence only, not full Shadbala source certification or financial validation.
+- Keep production Sthana provisional. The BPHS-labeled source profile passes only 1/35 locked JHora rows; the separately named PyJHora-compatible profile must remain diagnostic and must not be substituted into the production total.
 - Promote dynamic Paksha classification: classical phase/nature rules and the locked visible JHora table agree in 35/35 rows within the frozen 0.5-virupa tolerance.
 - Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each matches all 35 visible JHora rows.
 - Keep Hora provisional. It matches 33/35 rows, but the case-8 Moon/Saturn award remains a sunrise-boundary disagreement; do not replace the current algorithm with a temporal-hour guess.

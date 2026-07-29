@@ -1,7 +1,7 @@
 # Astro Function Certification 4-Gate Report
 
 - Report version: `astro_certification_4_gate_v9_component_witness_boundary_20260729`
-- Generated: `2026-07-29T12:43:18+05:30`
+- Generated: `2026-07-29T13:32:56+05:30`
 - Important interpretation: this report certifies traceability and local reproducibility first. Pending and failed external checks remain explicit and fail closed.
 
 ## Gate Summary
@@ -125,8 +125,8 @@ Status: `partial_independent_witness_alignment`. Independent witness alignment r
 | drik | 9 | 35 | 7.320 | 35.390 | provisional |
 | kaala | 5 | 35 | 2.763 | 8.879 | provisional |
 | naisargika | 35 | 35 | 0.004 | 0.010 | witness aligned |
-| sthana | 34 | 35 | 0.431 | 14.998 | provisional |
-| total | 0 | 35 | 12.626 | 35.059 | provisional |
+| sthana | 1 | 35 | 6.296 | 12.628 | provisional |
+| total | 3 | 35 | 11.829 | 30.258 | provisional |
 
 Witness-aligned Kaala subcomponents: abda, masa, paksha, tribhaga, vara, yuddha.
 
@@ -159,6 +159,6 @@ reviewer replay skipped by CLI flag
 ## Current Verdict
 
 - Safe to continue astronomy/doctrine inspection with these labels visible.
-- Tier B Drik comparison is 35 pass / 0 fail. The end-to-end component diagnostic is 145 pass / 55 fail / 10 structural N/A: Dig 35/35, Drik 35/35, Naisargika 35/35, Sthana 34/35, comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass 60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The locked local-versus-JHora reconciliation excludes displayed Sun/Moon Chesta from the total and promotes dynamic Paksha after 35/35 visible subcomponent matches. Local full-total mean absolute error is now 12.626 virupa versus PyJHora's 71.742, but still passes 0/35 at the frozen tolerance. Top-level local Kaala passes 5/35 with 2.763 virupa mean absolute error; Hora, Nathonnatha, Ayana, and aggregate Kaala remain provisional. The completed independent JHora Drik witness passes 9/35 and fails 26/35. Keep full Shadbala and Drik excluded from certified ML/execution until the doctrine profiles are explicitly reconciled.
+- Tier B Drik comparison is 35 pass / 0 fail. The end-to-end component diagnostic is 145 pass / 55 fail / 10 structural N/A: Dig 35/35, Drik 35/35, Naisargika 35/35, Sthana 34/35, comparable Chesta 6/25, and Kaala 0/35. Shared-input formulas pass 60/60 comparable rows: Sthana 35/35 and Mars-Saturn Chesta 25/25. The locked local-versus-JHora reconciliation excludes displayed Sun/Moon Chesta from the total and promotes dynamic Paksha after 35/35 visible subcomponent matches. The actual production source profile, rather than the separately named PyJHora-compatible Sthana profile, is used for this gate: Sthana passes 1/35 and full total passes 3/35 with 11.829 virupa mean absolute error. Top-level local Kaala passes 5/35 with 2.763 virupa mean absolute error; Hora, Nathonnatha, Ayana, and aggregate Kaala remain provisional. The completed independent JHora Drik witness passes 9/35 and fails 26/35. Keep full Shadbala and Drik excluded from certified ML/execution until the doctrine profiles are explicitly reconciled.
 - Do not train on raw local LLM prose. Train on deterministic evidence, manual notes, verified rule lessons, and verifier corrections.
 - Gate 4 is blocked until corrected versioned data replaces the legacy double-sidereal case records.

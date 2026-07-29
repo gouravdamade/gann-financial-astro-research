@@ -1,8 +1,55 @@
 # Current Project Handoff
 
-Last updated: 2026-07-29 12:50 IST
+Last updated: 2026-07-29 13:42 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-07-29 (Shadbala Evidence-Lineage Correction)
+
+- Corrected a real audit defect exposed by the component witness trace:
+  the previous reconciliation fed the separately named PyJHora-compatible
+  Sthana comparator profile into the local total instead of the actual
+  BPHS-labeled production source profile.
+- Production evidence now comes directly from `doctrine_config.yaml` and
+  `strict_shadbala_doctrine.py`:
+  - production Sthana uses `sthana_partial_virupa`;
+  - the Tier-B diagnostic continues to use `sthana_comparator_virupa`;
+  - a regression test prevents either profile from silently replacing the
+    other.
+- This section supersedes the production interpretation in the immediately
+  following component-boundary entry. At the unchanged `0.5`-virupa
+  tolerance, the corrected production-versus-JHora results are:
+  - Sthana `1/35`, mean absolute error `6.296255146` virupa;
+  - full total `3/35`, mean absolute error `11.829084359` virupa;
+  - aggregate Kaala `5/35`, Dig `19/35`, Chesta `12/35`,
+    Naisargika `35/35`, and Drik `9/35`.
+- The stronger Sthana `34/35` figure remains useful only as a clearly labeled
+  PyJHora-compatible Tier-B diagnostic. It is not a production formula,
+  production total, source certification, financial validation, or execution
+  permission.
+- Fixed a second reproducibility defect found by the complete test suite:
+  astrology tests could change Swiss Ephemeris' process-global file path and
+  shift frozen metrics by tiny amounts. Each component calculation now resets
+  the canonical ephemeris path and doctrine-locked sidereal mode. A regression
+  test proves the results survive a hostile prior path change.
+- Regenerated the V3 reconciliation CSV/JSON/report and the four-gate
+  certification report. Updated source/capability status and the external
+  validation gate with the corrected production lineage.
+- No doctrine formula or tolerance was changed to improve agreement.
+  Full Shadbala, Sthana, Drik, and execution remain fail-closed.
+- Final verification:
+  - complete Python suite `565/565`;
+  - scoped lineage/reconciliation suite `9/9`;
+  - changed Python scope passes Ruff and compilation;
+  - status validation passes with 21 documents, 13 audits, and execution false.
+- Runtime-only SQLite databases, logs, and Android workspace state remain
+  local and uncommitted.
+- Timestamped recovery snapshot:
+  `chat_session_backups/session_20260729_1342_shadbala_evidence_lineage`.
+- Next bounded certification work: obtain or create a visible JHora Sthana
+  subcomponent witness for Uchcha, Saptavargaja, Ojayugma, Kendradi, and
+  Drekkana before changing the production formula. Then continue with visible
+  Hora, Nathonnatha, and Ayana reconciliation. Do not widen tolerances.
 
 ## Latest Update - 2026-07-29 (Shadbala Component Witness Admission Boundary)
 

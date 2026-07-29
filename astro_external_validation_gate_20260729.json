@@ -1,7 +1,7 @@
 {
   "contract": "GANN_ASTRO_EXTERNAL_CERTIFICATION_GATE_V1",
   "reportVersion": "astro_certification_4_gate_v9_component_witness_boundary_20260729",
-  "generatedAtUtc": "2026-07-29T07:13:18+00:00",
+  "generatedAtUtc": "2026-07-29T08:02:56+00:00",
   "status": "failed_external_validation",
   "certified": false,
   "executionAllowed": false,
@@ -194,7 +194,7 @@
     "drikCertified": false,
     "input": {
       "path": "D:\\PycharmProjects\\status\\evidence\\jhora_shadbala_20260723\\jhora_doctrine_reconciliation_20260726.json",
-      "sha256": "DBEAAB8E2FC4087D1125EBD5753662B31D3D3C9D6F468C765EA6D9B1FE464C07",
+      "sha256": "5DA3EE374E0CF4E3E0545C943BEB9D84B75758679FE82D3127E745BDAB9967FA",
       "issues": []
     },
     "topLevel": {
@@ -202,16 +202,16 @@
         "rows": 35,
         "pass": 12,
         "fail": 23,
-        "maeVirupa": 17.918837597,
-        "maxErrorVirupa": 98.227800892,
+        "maeVirupa": 17.918806163,
+        "maxErrorVirupa": 98.22760226,
         "witnessAligned": false
       },
       "dig": {
         "rows": 35,
         "pass": 19,
         "fail": 16,
-        "maeVirupa": 1.141702532,
-        "maxErrorVirupa": 3.562156094,
+        "maeVirupa": 1.141708824,
+        "maxErrorVirupa": 3.562155298,
         "witnessAligned": false
       },
       "drik": {
@@ -226,8 +226,8 @@
         "rows": 35,
         "pass": 5,
         "fail": 30,
-        "maeVirupa": 2.762988508,
-        "maxErrorVirupa": 8.879168018,
+        "maeVirupa": 2.762980006,
+        "maxErrorVirupa": 8.879306473,
         "witnessAligned": false
       },
       "naisargika": {
@@ -240,18 +240,18 @@
       },
       "sthana": {
         "rows": 35,
-        "pass": 34,
-        "fail": 1,
-        "maeVirupa": 0.430800382,
-        "maxErrorVirupa": 14.998302322,
+        "pass": 1,
+        "fail": 34,
+        "maeVirupa": 6.296255146,
+        "maxErrorVirupa": 12.628361564,
         "witnessAligned": false
       },
       "total": {
         "rows": 35,
-        "pass": 0,
-        "fail": 35,
-        "maeVirupa": 12.626402633,
-        "maxErrorVirupa": 35.059176475,
+        "pass": 3,
+        "fail": 32,
+        "maeVirupa": 11.829084359,
+        "maxErrorVirupa": 30.257669061,
         "witnessAligned": false
       }
     }

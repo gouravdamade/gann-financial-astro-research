@@ -15,7 +15,7 @@
     "financiallyValidated": false,
     "fullShadbalaCertified": false,
     "independentWitnessComplete": true,
-    "policy": "A component is witness-aligned only when all 35 locked rows pass at the frozen 0.5-virupa tolerance. Alignment does not by itself establish source certification, financial validity, or execution permission.",
+    "policy": "Production source-profile values are compared directly with the locked JHora witness. A component is witness-aligned only when all 35 locked rows pass at the frozen 0.5-virupa tolerance. Alignment does not by itself establish source certification, financial validity, or execution permission.",
     "provisionalKaalaSubcomponents": [
       "ayana",
       "hora",
@@ -47,6 +47,7 @@
   "contract": "GANN_JHORA_DOCTRINE_RECONCILIATION_V3",
   "decisions": [
     "Recognize Naisargika as independently witness-aligned in 35/35 top-level rows. This is component evidence only, not full Shadbala source certification or financial validation.",
+    "Keep production Sthana provisional. The BPHS-labeled source profile passes only 1/35 locked JHora rows; the separately named PyJHora-compatible profile must remain diagnostic and must not be substituted into the production total.",
     "Promote dynamic Paksha classification: classical phase/nature rules and the locked visible JHora table agree in 35/35 rows within the frozen 0.5-virupa tolerance.",
     "Retain Abda, Masa, Vara, Tribhaga, and Yuddha: each matches all 35 visible JHora rows.",
     "Keep Hora provisional. It matches 33/35 rows, but the case-8 Moon/Saturn award remains a sunrise-boundary disagreement; do not replace the current algorithm with a temporal-hour guess.",
@@ -116,7 +117,7 @@
       "specialAspectScale": 0.0
     }
   ],
-  "generatedAtUtc": "2026-07-29T07:12:49.889180Z",
+  "generatedAtUtc": "2026-07-29T08:02:32.709099Z",
   "inputs": {
     "comparison": {
       "path": "status\\evidence\\jhora_shadbala_20260723\\jhora_pyjhora_component_comparison_20260726.csv",
@@ -138,7 +139,15 @@
       "path": "status\\evidence\\jhora_kaala_witness_20260727\\jhora_kaala_profile_comparison_20260727.json",
       "sha256": "2FD0BBDCBFA07432FAE97F74F8F947FCF1A4AF036AD4004477F4C912AE1D9904"
     },
-    "localComponents": {
+    "localDoctrineConfig": {
+      "path": "doctrine_config.yaml",
+      "sha256": "599B8DDBD917BEFD86E0052F896D501DDFE80F42BDDE34A6B65195F7E620C1D9"
+    },
+    "localDoctrineModule": {
+      "path": "strict_shadbala_doctrine.py",
+      "sha256": "664077773CE11AC8B484C94F61759B7E0A738C7352DB7565DAAA31F2130CF550"
+    },
+    "tierBLocalComponents": {
       "path": "shadbala_component_residuals_20260718.csv",
       "sha256": "64E4E32A27AF1CFA6AF2D29A0B915E24BACD61AB71A9E209E49233A0C2F07F0F"
     }
@@ -284,8 +293,8 @@
     "chesta": {
       "localCloser": 15,
       "localFail": 23,
-      "localMaxAbsoluteDeltaVirupa": 98.227800892,
-      "localMeanAbsoluteDeltaVirupa": 17.918837597,
+      "localMaxAbsoluteDeltaVirupa": 98.22760226,
+      "localMeanAbsoluteDeltaVirupa": 17.918806163,
       "localPass": 12,
       "pyjhoraCloser": 20,
       "pyjhoraMaxAbsoluteDeltaVirupa": 86.13,
@@ -296,8 +305,8 @@
     "dig": {
       "localCloser": 11,
       "localFail": 16,
-      "localMaxAbsoluteDeltaVirupa": 3.562156094,
-      "localMeanAbsoluteDeltaVirupa": 1.141702532,
+      "localMaxAbsoluteDeltaVirupa": 3.562155298,
+      "localMeanAbsoluteDeltaVirupa": 1.141708824,
       "localPass": 19,
       "pyjhoraCloser": 24,
       "pyjhoraMaxAbsoluteDeltaVirupa": 3.56,
@@ -320,8 +329,8 @@
     "kaala": {
       "localCloser": 35,
       "localFail": 30,
-      "localMaxAbsoluteDeltaVirupa": 8.879168018,
-      "localMeanAbsoluteDeltaVirupa": 2.762988508,
+      "localMaxAbsoluteDeltaVirupa": 8.879306473,
+      "localMeanAbsoluteDeltaVirupa": 2.762980006,
       "localPass": 5,
       "pyjhoraCloser": 0,
       "pyjhoraMaxAbsoluteDeltaVirupa": 220.29,
@@ -342,12 +351,12 @@
       "ties": 35
     },
     "sthana": {
-      "localCloser": 7,
-      "localFail": 1,
-      "localMaxAbsoluteDeltaVirupa": 14.998302322,
-      "localMeanAbsoluteDeltaVirupa": 0.430800382,
-      "localPass": 34,
-      "pyjhoraCloser": 28,
+      "localCloser": 2,
+      "localFail": 34,
+      "localMaxAbsoluteDeltaVirupa": 12.628361564,
+      "localMeanAbsoluteDeltaVirupa": 6.296255146,
+      "localPass": 1,
+      "pyjhoraCloser": 33,
       "pyjhoraMaxAbsoluteDeltaVirupa": 18.75,
       "pyjhoraMeanAbsoluteDeltaVirupa": 0.965714286,
       "rows": 35,
@@ -355,10 +364,10 @@
     },
     "total": {
       "localCloser": 33,
-      "localFail": 35,
-      "localMaxAbsoluteDeltaVirupa": 35.059176475,
-      "localMeanAbsoluteDeltaVirupa": 12.626402633,
-      "localPass": 0,
+      "localFail": 32,
+      "localMaxAbsoluteDeltaVirupa": 30.257669061,
+      "localMeanAbsoluteDeltaVirupa": 11.829084359,
+      "localPass": 3,
       "pyjhoraCloser": 2,
       "pyjhoraMaxAbsoluteDeltaVirupa": 235.05,
       "pyjhoraMeanAbsoluteDeltaVirupa": 71.741714286,

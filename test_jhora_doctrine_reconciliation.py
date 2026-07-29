@@ -14,13 +14,19 @@ def test_locked_reconciliation_metrics_are_reproducible() -> None:
     assert kaala["localCloser"] == 35
     assert kaala["pyjhoraCloser"] == 0
     assert kaala["localPass"] == 5
-    assert kaala["localMeanAbsoluteDeltaVirupa"] == 2.762988508
+    assert kaala["localMeanAbsoluteDeltaVirupa"] == 2.762980006
     assert kaala["pyjhoraMeanAbsoluteDeltaVirupa"] == 57.030571429
 
     corrected_total = summary["topLevel"]["total"]
     assert corrected_total["localCloser"] == 33
-    assert corrected_total["localMeanAbsoluteDeltaVirupa"] == 12.626402633
+    assert corrected_total["localPass"] == 3
+    assert corrected_total["localMeanAbsoluteDeltaVirupa"] == 11.829084359
     assert corrected_total["pyjhoraMeanAbsoluteDeltaVirupa"] == 71.741714286
+
+    sthana = summary["topLevel"]["sthana"]
+    assert sthana["localPass"] == 1
+    assert sthana["localMeanAbsoluteDeltaVirupa"] == 6.296255146
+    assert sthana["pyjhoraMeanAbsoluteDeltaVirupa"] == 0.965714286
 
     naisargika = summary["topLevel"]["naisargika"]
     assert naisargika["localPass"] == 35

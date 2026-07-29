@@ -10,6 +10,10 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
+from shadbala_component_comparator import (
+    calculate_local_source_component_values,
+)
+
 
 CONTRACT = "GANN_JHORA_DOCTRINE_RECONCILIATION_V3"
 FROZEN_TOLERANCE_VIRUPA = 0.5
@@ -30,6 +34,8 @@ DEFAULT_COMPARISON = (
     EVIDENCE_DIR / "jhora_pyjhora_component_comparison_20260726.csv"
 )
 DEFAULT_LOCAL_COMPONENTS = REPO_ROOT / "shadbala_component_residuals_20260718.csv"
+DEFAULT_DOCTRINE_CONFIG = REPO_ROOT / "doctrine_config.yaml"
+DEFAULT_DOCTRINE_MODULE = REPO_ROOT / "strict_shadbala_doctrine.py"
 DEFAULT_KAALA_COMPONENTS = (
     REPO_ROOT / "shadbala_kaala_subcomponent_residuals_20260718.csv"
 )
@@ -64,6 +70,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--comparison", type=Path, default=DEFAULT_COMPARISON)
     parser.add_argument(
         "--local-components", type=Path, default=DEFAULT_LOCAL_COMPONENTS
+    )
+    parser.add_argument(
+        "--doctrine-config", type=Path, default=DEFAULT_DOCTRINE_CONFIG
     )
     parser.add_argument(
         "--kaala-components", type=Path, default=DEFAULT_KAALA_COMPONENTS
@@ -131,22 +140,6 @@ def unique_index(
     return indexed
 
 
-def local_component_values(
-    path: Path = DEFAULT_LOCAL_COMPONENTS,
-) -> dict[tuple[str, str, str], float]:
-    indexed: dict[tuple[str, str, str], float] = {}
-    for row in read_csv(path):
-        key = (
-            row["sample_id"].strip(),
-            row["planet"].strip().upper(),
-            row["component"].strip().lower(),
-        )
-        if key in indexed:
-            raise ValueError(f"{path}: duplicate local component {key}")
-        indexed[key] = float(row["local_value_virupa"])
-    return indexed
-
-
 def corrected_local_total(
     components: dict[tuple[str, str, str], float],
     sample_id: str,
@@ -183,9 +176,9 @@ def reconciliation_classification(measure: str, planet: str) -> str:
 
 def build_top_level_rows(
     comparison_path: Path = DEFAULT_COMPARISON,
-    local_components_path: Path = DEFAULT_LOCAL_COMPONENTS,
+    doctrine_config_path: Path = DEFAULT_DOCTRINE_CONFIG,
 ) -> list[dict[str, str]]:
-    local = local_component_values(local_components_path)
+    local = calculate_local_source_component_values(doctrine_config_path)
     rows: list[dict[str, str]] = []
     for row in read_csv(comparison_path):
         measure = row["measure"].strip().lower()
@@ -545,12 +538,13 @@ def chesta_diagnostics(
 def build_summary(
     comparison_path: Path = DEFAULT_COMPARISON,
     local_components_path: Path = DEFAULT_LOCAL_COMPONENTS,
+    doctrine_config_path: Path = DEFAULT_DOCTRINE_CONFIG,
     kaala_components_path: Path = DEFAULT_KAALA_COMPONENTS,
     kaala_witness_comparison_path: Path = DEFAULT_KAALA_WITNESS_COMPARISON,
     drik_ledger_path: Path = DEFAULT_DRIK_LEDGER,
     formula_inputs_path: Path = DEFAULT_FORMULA_INPUTS,
 ) -> tuple[dict[str, Any], list[dict[str, str]], list[dict[str, str]]]:
-    top_level = build_top_level_rows(comparison_path, local_components_path)
+    top_level = build_top_level_rows(comparison_path, doctrine_config_path)
     drik_rows = build_drik_candidate_rows(
         comparison_path,
         drik_ledger_path,
@@ -581,7 +575,9 @@ def build_summary(
 
     inputs = {
         "comparison": comparison_path,
-        "localComponents": local_components_path,
+        "tierBLocalComponents": local_components_path,
+        "localDoctrineConfig": doctrine_config_path,
+        "localDoctrineModule": DEFAULT_DOCTRINE_MODULE,
         "kaalaComponents": kaala_components_path,
         "kaalaVisibleWitness": kaala_witness_comparison_path,
         "drikLedger": drik_ledger_path,
@@ -627,10 +623,11 @@ def build_summary(
             "financiallyValidated": False,
             "executionAllowed": False,
             "policy": (
-                "A component is witness-aligned only when all 35 locked rows pass "
-                "at the frozen 0.5-virupa tolerance. Alignment does not by itself "
-                "establish source certification, financial validity, or execution "
-                "permission."
+                "Production source-profile values are compared directly with the "
+                "locked JHora witness. A component is witness-aligned only when "
+                "all 35 locked rows pass at the frozen 0.5-virupa tolerance. "
+                "Alignment does not by itself establish source certification, "
+                "financial validity, or execution permission."
             ),
             "witnessAlignedTopLevel": top_level_aligned,
             "provisionalTopLevel": sorted(
@@ -659,6 +656,12 @@ def build_summary(
                 "Recognize Naisargika as independently witness-aligned in 35/35 "
                 "top-level rows. This is component evidence only, not full "
                 "Shadbala source certification or financial validation."
+            ),
+            (
+                "Keep production Sthana provisional. The BPHS-labeled source "
+                "profile passes only 1/35 locked JHora rows; the separately named "
+                "PyJHora-compatible profile must remain diagnostic and must not "
+                "be substituted into the production total."
             ),
             (
                 "Promote dynamic Paksha classification: classical phase/nature "
@@ -871,6 +874,7 @@ def main() -> int:
     summary, top_level, drik_rows = build_summary(
         args.comparison,
         args.local_components,
+        args.doctrine_config,
         args.kaala_components,
         args.kaala_witness_comparison,
         args.drik_ledger,
