@@ -1,0 +1,246 @@
+{
+  "contract": "GANN_JHORA_KAALA_FORMULA_PROFILE_RECONCILIATION_V1",
+  "generatedAtUtc": "2026-07-29T09:07:23.426051Z",
+  "status": "diagnostic_profiles_only_no_production_change",
+  "toleranceVirupa": 0.5,
+  "tolerancePolicy": "frozen; no widening",
+  "inputs": {
+    "visibleComparison": {
+      "path": "status\\evidence\\jhora_kaala_witness_20260727\\jhora_kaala_profile_comparison_20260727.csv",
+      "sha256": "13AFFCAB4B4E29AEAB77E6F2A60A7209D9C0DAA77B66D66669CF00FA5D8D6DA8"
+    },
+    "doctrineConfig": {
+      "path": "doctrine_config.yaml",
+      "sha256": "599B8DDBD917BEFD86E0052F896D501DDFE80F42BDDE34A6B65195F7E620C1D9"
+    },
+    "workedExamples": {
+      "path": "pdf_alignment_extracts\\jyotish_best-way-to-use-shad-bala_k-jaya-sekhar.txt",
+      "sha256": "AAEA84D820E9C8CAF6409139EAD3891BF9469D5A7342D4FD308F018503E2DEDE",
+      "references": [
+        "Lady Diana birth data and Shad Bala table: extracted pages 32-33",
+        "Ayana explanation and table: extracted pages 69-72",
+        "Prince William birth data and Shad Bala table: extracted pages 121-122"
+      ],
+      "scope": "Corroborative rounded worked tables; not a substitute for the locked visible JHora matrix."
+    }
+  },
+  "profiles": {
+    "ayana_actual_declination": {
+      "measure": "ayana",
+      "rows": 35,
+      "pass": 13,
+      "fail": 22,
+      "maeVirupa": 1.973396577,
+      "maxErrorVirupa": 9.010495615,
+      "recentRows": 28,
+      "recentPass": 11,
+      "historicalRows": 7,
+      "historicalPass": 2
+    },
+    "ayana_tropical_projection": {
+      "measure": "ayana",
+      "rows": 35,
+      "pass": 30,
+      "fail": 5,
+      "maeVirupa": 0.307594721,
+      "maxErrorVirupa": 2.127736434,
+      "recentRows": 28,
+      "recentPass": 28,
+      "historicalRows": 7,
+      "historicalPass": 2
+    },
+    "hora_astronomical_sunrise": {
+      "measure": "hora",
+      "rows": 35,
+      "pass": 33,
+      "fail": 2,
+      "maeVirupa": 3.428571429,
+      "maxErrorVirupa": 60.0,
+      "recentRows": 28,
+      "recentPass": 26,
+      "historicalRows": 7,
+      "historicalPass": 7
+    },
+    "hora_variable_day_night": {
+      "measure": "hora",
+      "rows": 35,
+      "pass": 27,
+      "fail": 8,
+      "maeVirupa": 13.714285714,
+      "maxErrorVirupa": 60.0,
+      "recentRows": 28,
+      "recentPass": 22,
+      "historicalRows": 7,
+      "historicalPass": 5
+    },
+    "nathonnatha_apparent_solar": {
+      "measure": "nathonnatha",
+      "rows": 35,
+      "pass": 11,
+      "fail": 24,
+      "maeVirupa": 1.847431781,
+      "maxErrorVirupa": 5.145991717,
+      "recentRows": 28,
+      "recentPass": 10,
+      "historicalRows": 7,
+      "historicalPass": 1
+    },
+    "nathonnatha_lmt_source": {
+      "measure": "nathonnatha",
+      "rows": 35,
+      "pass": 11,
+      "fail": 24,
+      "maeVirupa": 1.842805714,
+      "maxErrorVirupa": 4.8899,
+      "recentRows": 28,
+      "recentPass": 10,
+      "historicalRows": 7,
+      "historicalPass": 1
+    }
+  },
+  "horaBoundary": {
+    "case_8_event_start": {
+      "lmtHour": 23.31002,
+      "swissApparentTipSunriseLmtHour": 6.367290929,
+      "awardFlipSunriseLmtHour": 6.31002,
+      "gapMinutes": 3.436256,
+      "currentLord": "MOON",
+      "jhoraLord": "SATURN"
+    }
+  },
+  "workedExamples": {
+    "nathonnatha": [
+      {
+        "label": "Lady Diana",
+        "calculatedDayVirupa": 26.083333,
+        "publishedDayVirupa": 26.0,
+        "calculatedNightVirupa": 33.916667,
+        "publishedNightVirupa": 33.0,
+        "timeBasis": "published birth time adjusted to LMT"
+      },
+      {
+        "label": "Prince William",
+        "calculatedDayVirupa": 19.809267,
+        "publishedDayVirupa": 19.0,
+        "calculatedNightVirupa": 40.190733,
+        "publishedNightVirupa": 40.0,
+        "timeBasis": "published birth time adjusted to LMT"
+      }
+    ],
+    "ayana": {
+      "rows": [
+        {
+          "label": "Lady Diana",
+          "planet": "SUN",
+          "calculatedVirupa": 119.098959,
+          "publishedVirupa": 119.0,
+          "absoluteDeltaVirupa": 0.098959
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "MOON",
+          "calculatedVirupa": 46.863442,
+          "publishedVirupa": 47.0,
+          "absoluteDeltaVirupa": 0.136558
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "MARS",
+          "calculatedVirupa": 43.937038,
+          "publishedVirupa": 44.0,
+          "absoluteDeltaVirupa": 0.062962
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "MERCURY",
+          "calculatedVirupa": 59.950387,
+          "publishedVirupa": 59.0,
+          "absoluteDeltaVirupa": 0.950387
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "JUPITER",
+          "calculatedVirupa": 5.691022,
+          "publishedVirupa": 5.0,
+          "absoluteDeltaVirupa": 0.691022
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "VENUS",
+          "calculatedVirupa": 54.152322,
+          "publishedVirupa": 54.0,
+          "absoluteDeltaVirupa": 0.152322
+        },
+        {
+          "label": "Lady Diana",
+          "planet": "SATURN",
+          "calculatedVirupa": 56.364184,
+          "publishedVirupa": 56.0,
+          "absoluteDeltaVirupa": 0.364184
+        },
+        {
+          "label": "Prince William",
+          "planet": "SUN",
+          "calculatedVirupa": 119.999891,
+          "publishedVirupa": 119.0,
+          "absoluteDeltaVirupa": 0.999891
+        },
+        {
+          "label": "Prince William",
+          "planet": "MOON",
+          "calculatedVirupa": 0.119247,
+          "publishedVirupa": 0.0,
+          "absoluteDeltaVirupa": 0.119247
+        },
+        {
+          "label": "Prince William",
+          "planet": "MARS",
+          "calculatedVirupa": 25.330598,
+          "publishedVirupa": 25.0,
+          "absoluteDeltaVirupa": 0.330598
+        },
+        {
+          "label": "Prince William",
+          "planet": "MERCURY",
+          "calculatedVirupa": 57.894849,
+          "publishedVirupa": 58.0,
+          "absoluteDeltaVirupa": 0.105151
+        },
+        {
+          "label": "Prince William",
+          "planet": "JUPITER",
+          "calculatedVirupa": 15.097644,
+          "publishedVirupa": 14.0,
+          "absoluteDeltaVirupa": 1.097644
+        },
+        {
+          "label": "Prince William",
+          "planet": "VENUS",
+          "calculatedVirupa": 54.54221,
+          "publishedVirupa": 54.0,
+          "absoluteDeltaVirupa": 0.54221
+        },
+        {
+          "label": "Prince William",
+          "planet": "SATURN",
+          "calculatedVirupa": 37.813476,
+          "publishedVirupa": 38.0,
+          "absoluteDeltaVirupa": 0.186524
+        }
+      ],
+      "maeVirupa": 0.416975643,
+      "maxErrorVirupa": 1.097644
+    }
+  },
+  "evidenceConclusions": [
+    "Retain the LMT Nathonnatha source profile. It is the best of the tested time bases against visible JHora and independently reproduces the two published rounded worked tables closely.",
+    "Do not alter Hora. The two-row case-8 disagreement is one categorical award only; the award flips across a sunrise input separated by only a few minutes, so a visible JHora sunrise witness is required.",
+    "The tropical-longitude Kranti Ayana profile is the strongest candidate: it passes all 28 recent visible rows and 30/35 overall, and it fits the two published rounded Ayana tables far better than true equatorial declination.",
+    "Do not promote the Ayana candidate yet. Five 1889 rows remain outside the frozen tolerance and require visible JHora tropical longitude or intermediate Kranti evidence.",
+    "No production formula, certification tolerance, ML feature, Auto Suggest rule, or execution path is changed by this diagnostic."
+  ],
+  "nextWitness": {
+    "hora": "Capture case-8 JHora apparent-tip sunrise in LMT under the locked settings.",
+    "ayana": "Capture visible JHora tropical longitudes or intermediate Kranti for the seven 1889 planets."
+  }
+}
