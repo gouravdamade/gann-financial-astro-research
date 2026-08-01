@@ -103,7 +103,16 @@ Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $sourceGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
-$sourceGitDirty = [bool](& git.exe -C $projectRoot status --porcelain | Select-Object -First 1)
+# Tauri may rewrite a tracked TOML file's line endings while packaging on Windows.
+# Compare content to HEAD and inspect nonignored untracked files so metadata stays
+# strict about real source changes without treating that checkout-only rewrite as dirty.
+& git.exe -C $projectRoot diff --quiet HEAD --
+$sourceTrackedDirty = $LASTEXITCODE -ne 0
+$sourceUntrackedDirty = [bool](
+    & git.exe -C $projectRoot ls-files --others --exclude-standard |
+        Select-Object -First 1
+)
+$sourceGitDirty = $sourceTrackedDirty -or $sourceUntrackedDirty
 $nodeVersion = (& node.exe --version).Trim()
 $npmVersion = (& npm.cmd --version).Trim()
 $manifest = [ordered]@{
