@@ -1,8 +1,20 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 11:05 IST
+Last updated: 2026-08-01 11:25 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (Product Beta Scroll-Zoom Repair)
+
+- Founder reported that the `0.10.25` portable beta could blank and close when
+  a wheel gesture zoomed the chart out. The repair coalesces costly chart
+  overlay updates and delays saved-view persistence until scrolling settles,
+  instead of rendering and persisting a new view for every wheel tick.
+- `0.10.26` is being built as the direct replacement. It changes no
+  calculation, chart data, experimental SBC state, execution lock, or
+  safety behavior.
+- Validation before native packaging: lint passed; focused chart/product tests
+  passed (`21/21`); production frontend build passed.
 
 ## Latest Update - 2026-08-01 (Product-First Recovery PFR-7 Candidate)
 

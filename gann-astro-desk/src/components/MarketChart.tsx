@@ -221,6 +221,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const renderedSeriesKeyRef = useRef('')
   const srLinesSignatureRef = useRef('')
   const crosshairFrameRef = useRef<number | null>(null)
+  const overlayFrameRef = useRef<number | null>(null)
+  const overlayTimerRef = useRef<number | null>(null)
+  const lastOverlayRefreshAtRef = useRef(0)
+  const viewStateDebounceRef = useRef<number | null>(null)
+  const pendingViewStateRef = useRef<Pick<ChartLayoutState, 'visibleStartUtc' | 'visibleEndUtc'> | null>(null)
   const pendingLegendRef = useRef<Candle | null>(null)
   const [bands, setBands] = useState<BandPosition[]>([])
   const [hoveredAspectId, setHoveredAspectId] = useState<string | null>(null)
@@ -501,20 +506,49 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       ))
     }
 
-    const refreshOverlays = () => {
-      setOverlayRevision((value) => value + 1)
-      refreshPaneBounds()
-      if (applyingViewRef.current) return
-      const visible = chart.timeScale().getVisibleRange()
-      if (!visible || typeof visible.from !== 'number' || typeof visible.to !== 'number') return
-      const next = {
-        visibleStartUtc: new Date(Number(visible.from) * 1000).toISOString(),
-        visibleEndUtc: new Date(Number(visible.to) * 1000).toISOString(),
-      }
+    const flushSavedView = () => {
+      viewStateDebounceRef.current = null
+      const next = pendingViewStateRef.current
+      pendingViewStateRef.current = null
+      if (next) viewStateChangeRef.current?.(next)
+    }
+    const queueSavedView = (next: Pick<ChartLayoutState, 'visibleStartUtc' | 'visibleEndUtc'>) => {
       const signature = `${next.visibleStartUtc}:${next.visibleEndUtc}`
       if (signature === notifiedViewRef.current) return
       notifiedViewRef.current = signature
-      viewStateChangeRef.current?.(next)
+      pendingViewStateRef.current = next
+      if (viewStateDebounceRef.current != null) window.clearTimeout(viewStateDebounceRef.current)
+      // Scaling can emit dozens of logical-range changes per wheel gesture.
+      // Persist only the settled range, rather than causing a full parent render per tick.
+      viewStateDebounceRef.current = window.setTimeout(flushSavedView, 180)
+    }
+    const refreshOverlays = () => {
+      if (overlayFrameRef.current != null || overlayTimerRef.current != null) return
+      const run = () => {
+        overlayFrameRef.current = null
+        overlayTimerRef.current = null
+        lastOverlayRefreshAtRef.current = performance.now()
+        setOverlayRevision((value) => value + 1)
+        refreshPaneBounds()
+        if (applyingViewRef.current) return
+        const visible = chart.timeScale().getVisibleRange()
+        if (!visible || typeof visible.from !== 'number' || typeof visible.to !== 'number') return
+        queueSavedView({
+          visibleStartUtc: new Date(Number(visible.from) * 1000).toISOString(),
+          visibleEndUtc: new Date(Number(visible.to) * 1000).toISOString(),
+        })
+      }
+      // Keep the native chart itself fully responsive while coalescing expensive
+      // aspect-band and drawing overlays to a stable presentation cadence.
+      const delay = Math.max(0, 48 - (performance.now() - lastOverlayRefreshAtRef.current))
+      if (delay > 0) {
+        overlayTimerRef.current = window.setTimeout(() => {
+          overlayTimerRef.current = null
+          overlayFrameRef.current = window.requestAnimationFrame(run)
+        }, delay)
+      } else {
+        overlayFrameRef.current = window.requestAnimationFrame(run)
+      }
     }
     chart.timeScale().subscribeVisibleLogicalRangeChange(refreshOverlays)
     const resizeObserver = new ResizeObserver(refreshOverlays)
@@ -678,6 +712,19 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       resizeObserver.disconnect()
       chart.timeScale().unsubscribeVisibleLogicalRangeChange(refreshOverlays)
       chart.unsubscribeClick(clickHandler)
+      if (overlayFrameRef.current != null) {
+        window.cancelAnimationFrame(overlayFrameRef.current)
+        overlayFrameRef.current = null
+      }
+      if (overlayTimerRef.current != null) {
+        window.clearTimeout(overlayTimerRef.current)
+        overlayTimerRef.current = null
+      }
+      if (viewStateDebounceRef.current != null) {
+        window.clearTimeout(viewStateDebounceRef.current)
+        viewStateDebounceRef.current = null
+      }
+      flushSavedView()
       if (crosshairFrameRef.current != null) {
         window.cancelAnimationFrame(crosshairFrameRef.current)
         crosshairFrameRef.current = null
