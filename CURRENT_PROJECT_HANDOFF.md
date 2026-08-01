@@ -1,8 +1,43 @@
 # Current Project Handoff
 
-Last updated: 2026-07-29 22:24 IST
+Last updated: 2026-08-01 09:51 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (Product-First Recovery PFR-1)
+
+- The supplied `Product_First_Codex_Recovery_Directive.pdf` is now the active
+  product scope. New Shadbala/Drik reconciliation work is parked after its
+  clean Ayana handoff; existing safety locks remain unchanged.
+- Created branch `product-first-sbc-phase-lab`, concise
+  `docs/sbc/ADR-0017-product-first-recovery-scope.md`, and
+  `docs/sbc/PRODUCT_FIRST_PFR_GAP_MATRIX_20260801.md`.
+- Completed PFR-1: Chakra now opens by default as an integrated founder-facing
+  SBC workspace rather than the old audit surface. It brings together:
+  - the loaded chart's price context and transparent overlapping aspect lanes;
+  - a candle-click synchronized IST Chakra snapshot;
+  - supportive, obstructive, gross-activity, conflict, coverage, and explicit
+    unknown-input context without making a market call;
+  - the 81-cell Chakra with matched/context highlights; and
+  - a plain-language Why drawer with resolved Vedha evidence, selected cell,
+    and actor readiness.
+- The existing raw Board and linked Audit remain available for inspection, but
+  no certification, signature, authority, trade, Auto Suggest, ML, shadow,
+  inference, execution, or MT5 behavior was added or changed.
+- Corrected a product-display-only issue found in visual QA: gross SBC activity
+  now sums absolute supportive/obstructive magnitudes, and the compact chart
+  uses its actual price range instead of a zero floor.
+- Verification: production frontend build passes; focused Chakra frontend
+  suite `11/11`; focused Chakra backend suite `24/24`; live browser visual
+  inspection passed at `http://127.0.0.1:5173/`.
+- Recovery snapshot:
+  `chat_session_backups/20260801_095918_product_first_pfr1/` with a SHA-256
+  manifest covers the PFR-1 source, tests, handoff, ADR, and gap matrix.
+- Runtime-only SQLite databases, logs, and the untracked JHora witness remain
+  local and uncommitted.
+- Next directive milestone: PFR-2, founder-friendly time and profile views
+  sharing the selected timestamp. Do not begin additional certification work
+  before the product-first PFR-7 acceptance checkpoint.
 
 ## Latest Update - 2026-07-29 (Ayana BPHS Source Comparator V3)
 

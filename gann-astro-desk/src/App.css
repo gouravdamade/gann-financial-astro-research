@@ -6350,6 +6350,156 @@ html.android-runtime .loading-state {
 .chakra-run-button svg.is-spinning { animation: chakra-spin 0.8s linear infinite; }
 @keyframes chakra-spin { to { transform: rotate(360deg); } }
 
+/* Product-first integrated SBC workspace -------------------------------- */
+.product-first-sbc {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: #10151a;
+}
+
+.product-first-sbc-summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(190px, 1.2fr) repeat(5, minmax(84px, 0.72fr)) auto;
+  align-items: stretch;
+  gap: 1px;
+  border-bottom: 1px solid #303942;
+  background: #303942;
+}
+
+.product-first-summary-title,
+.product-first-metric,
+.product-first-lock {
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  background: #151b21;
+}
+
+.product-first-summary-title { color: #6dc7c0; }
+.product-first-summary-title > div { min-width: 0; display: grid; gap: 3px; }
+.product-first-summary-title strong { color: #e3e8ed; font-size: 10px; }
+.product-first-summary-title span { overflow: hidden; color: #7b8792; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-metric { display: grid; align-content: center; gap: 3px; }
+.product-first-metric span { color: #73808b; font-size: 7px; text-transform: uppercase; }
+.product-first-metric strong { overflow: hidden; color: #cad4db; font: 700 9px/1.2 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-metric.is-adverse strong { color: #dbab91; }
+.product-first-lock { color: #81cbb8; font-size: 8px; white-space: nowrap; }
+
+.product-first-sbc-body {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(420px, 1.7fr) minmax(360px, 1fr) minmax(260px, 0.72fr);
+  overflow: hidden;
+}
+
+.product-first-market-panel,
+.product-first-chakra-panel,
+.product-first-why-drawer {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  background: #10151a;
+}
+
+.product-first-market-panel { border-right: 1px solid #303942; }
+.product-first-chakra-panel { border-right: 1px solid #303942; }
+.product-first-why-drawer { display: block; overflow-y: auto; background: #151a20; scrollbar-color: #46515d #151a20; }
+
+.product-first-panel-heading {
+  min-width: 0;
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid #29323b;
+  background: #151b21;
+  color: #6dc7c0;
+}
+
+.product-first-panel-heading > div { min-width: 0; display: grid; gap: 3px; }
+.product-first-panel-heading strong { color: #e0e6eb; font-size: 9px; }
+.product-first-panel-heading span,
+.product-first-panel-heading time { overflow: hidden; color: #7d8791; font-size: 7px; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-panel-heading time { color: #91a1ae; font-family: Consolas, monospace; }
+
+.product-first-market-viewport { min-width: 0; min-height: 0; overflow: auto; background: #0d1319; }
+.product-first-market-viewport svg { display: block; width: 100%; min-width: 560px; min-height: 420px; }
+.product-first-chart-bg { fill: #10161d; }
+.product-first-chart-grid { stroke: #25313a; stroke-width: 1; }
+.product-first-chart-axis { fill: #72808b; font: 11px/1 Consolas, monospace; }
+.product-first-aspect-lane rect { opacity: 0.22; stroke: currentColor; stroke-width: 1; }
+.product-first-aspect-lane text { fill: #d0d8df; font: 10px/1 Inter, "Segoe UI", sans-serif; pointer-events: none; }
+.product-first-candle { cursor: crosshair; }
+.product-first-candle:hover { opacity: 0.72; }
+.product-first-candle .is-up { fill: #57c69d; stroke: #57c69d; }
+.product-first-candle .is-down { fill: #df7c79; stroke: #df7c79; }
+.product-first-selected-moment { stroke: #72c9e8; stroke-width: 1.5; stroke-dasharray: 5 4; }
+.product-first-event-strip { min-height: 42px; display: flex; align-items: center; gap: 5px; overflow-x: auto; padding: 7px 9px; border-top: 1px solid #29323b; background: #131a20; scrollbar-width: thin; }
+.product-first-event-strip > strong { color: #bfc8d0; font-size: 8px; white-space: nowrap; }
+.product-first-event-strip > span { max-width: 150px; overflow: hidden; padding: 3px 5px; border: 1px solid #596774; border-left-width: 3px; border-radius: 2px; color: #94a1ad; font-size: 7px; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-event-strip em { color: #737e89; font-size: 8px; font-style: normal; white-space: nowrap; }
+
+.product-first-chakra-grid {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--chakra-columns), minmax(32px, 1fr));
+  grid-template-rows: repeat(var(--chakra-rows), minmax(29px, 1fr));
+  gap: 2px;
+  padding: 8px;
+  overflow: auto;
+  background: #0d1319;
+}
+
+.product-first-chakra-cell { min-width: 0; min-height: 0; position: relative; overflow: hidden; border: 1px solid #34414c; border-radius: 2px; background: #182029; color: #b5bec7; cursor: pointer; padding: 4px; }
+.product-first-chakra-cell:hover { border-color: #718391; background: #222d36; }
+.product-first-chakra-cell.is-context { border-color: #418d7d; background: #173b34; }
+.product-first-chakra-cell.is-hit { box-shadow: inset 0 0 0 1px #d4a74d; }
+.product-first-chakra-cell.is-selected { z-index: 1; outline: 2px solid #6fc9e7; outline-offset: 1px; }
+.product-first-chakra-cell small { position: absolute; top: 3px; left: 4px; color: #72808c; font: 6px/1 Consolas, monospace; }
+.product-first-chakra-cell strong { display: block; overflow: hidden; color: inherit; font-size: 7px; text-overflow: ellipsis; white-space: nowrap; }
+
+.product-first-why-drawer .product-first-panel-heading { position: sticky; top: 0; z-index: 1; }
+.product-first-why-card { display: grid; gap: 6px; padding: 10px; border-bottom: 1px solid #2a333c; }
+.product-first-why-card > span { color: #84a8ae; font-size: 7px; letter-spacing: .04em; text-transform: uppercase; }
+.product-first-why-card > strong { color: #d5dde3; font-size: 10px; }
+.product-first-why-card p { margin: 0; color: #8b969f; font-size: 8px; line-height: 1.45; }
+.product-first-why-card > div { min-width: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.product-first-why-card > div em { color: #76828c; font-size: 7px; font-style: normal; }
+.product-first-why-card > div strong { overflow: hidden; color: #cbd3db; font-size: 8px; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-why-card button { min-width: 0; display: grid; grid-template-columns: 43px minmax(0, 1fr) 36px; gap: 4px; align-items: center; padding: 5px 0; border: 0; border-bottom: 1px solid #263039; background: transparent; color: #94a0aa; cursor: pointer; font-size: 7px; text-align: left; }
+.product-first-why-card button:hover { color: #d4dde3; }
+.product-first-why-card button strong { color: #cbd5dd; font-size: 8px; }
+.product-first-why-card button em { overflow: hidden; color: #84909b; font-style: normal; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-why-card button b { color: #e0c474; font: 8px/1 Consolas, monospace; text-align: right; }
+.product-first-empty { min-height: 180px; display: grid; place-content: center; justify-items: center; gap: 8px; padding: 18px; color: #75818c; font-size: 9px; text-align: center; }
+
+@media (max-width: 1320px) {
+  .product-first-sbc-summary { grid-template-columns: minmax(170px, 1fr) repeat(4, minmax(78px, .65fr)) auto; }
+  .product-first-sbc-summary .product-first-metric:nth-of-type(5) { display: none; }
+  .product-first-sbc-body { grid-template-columns: minmax(390px, 1.5fr) minmax(330px, 1fr) 235px; }
+}
+
+@media (max-width: 980px) {
+  .product-first-sbc-summary { grid-template-columns: minmax(155px, 1fr) repeat(3, minmax(70px, .6fr)) auto; }
+  .product-first-sbc-summary .product-first-metric:nth-of-type(4),
+  .product-first-sbc-summary .product-first-metric:nth-of-type(5) { display: none; }
+  .product-first-sbc-body { grid-template-columns: minmax(380px, 1.45fr) minmax(300px, 1fr); }
+  .product-first-why-drawer { display: none; }
+}
+
 .chakra-lab-body {
   min-width: 0;
   min-height: 0;

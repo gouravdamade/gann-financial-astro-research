@@ -1045,6 +1045,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
           <ChakraLabWorkspace
             defaultLatitude={parameters.reference.latitude}
             defaultLongitude={parameters.reference.longitude}
+            chart={chart}
           />
         </Suspense>
       )}

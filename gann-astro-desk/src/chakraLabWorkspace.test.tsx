@@ -1152,6 +1152,7 @@ const catalogBuild: ChakraAuditCatalogBuild = {
 describe('ChakraLabWorkspace', () => {
   it('renders source-profiled guidance without trading direction labels', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
+    const user = userEvent.setup()
 
     render(
       <ChakraLabWorkspace
@@ -1161,6 +1162,7 @@ describe('ChakraLabWorkspace', () => {
     )
 
     await waitFor(() => expect(fetchSnapshot).toHaveBeenCalledTimes(1))
+    await user.click(screen.getByRole('tab', { name: 'Board' }))
     expect(await screen.findByText('chakra-test-')).toBeInTheDocument()
     expect(screen.getByText('Guidance ledger')).toBeInTheDocument()
     expect(screen.getByText('Not financially validated')).toBeInTheDocument()
@@ -1179,6 +1181,7 @@ describe('ChakraLabWorkspace', () => {
     )
 
     await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
+    await user.click(screen.getByRole('tab', { name: 'Board' }))
     await user.click(screen.getByText('English stock key converter'))
     await user.type(screen.getByPlaceholderText('USDJPY or AAPL'), 'USD')
 
@@ -1187,6 +1190,22 @@ describe('ChakraLabWorkspace', () => {
 
     await user.click(screen.getByRole('button', { name: 'Use selected key' }))
     expect(screen.getByLabelText('Name-initial keys')).toHaveValue('YA')
+  })
+
+  it('opens the integrated workspace as the founder-facing default', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await screen.findByText('Integrated SBC workspace')
+    expect(screen.getByText('Why this state')).toBeInTheDocument()
+    expect(screen.getByText('Read-only experimental')).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
   it('captures explicit moments and opens the linked read-only audit', async () => {

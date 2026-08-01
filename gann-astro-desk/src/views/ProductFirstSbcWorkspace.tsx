@@ -1,0 +1,236 @@
+import { CircleHelp, Grid3X3, Layers3, ShieldCheck } from 'lucide-react'
+import type { CSSProperties } from 'react'
+import type { ChakraGridCell, ChakraLabSnapshot, ChartPayload } from '../types'
+
+type Props = {
+  chart?: ChartPayload | null
+  snapshot: ChakraLabSnapshot | null
+  selectedCell: string
+  onSelectCell: (cell: string) => void
+  onSelectMoment: (value: string) => void
+}
+
+function display(value: string | null | undefined): string {
+  if (!value) return 'Unavailable'
+  return value.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
+}
+
+function cellKey(cell: ChakraGridCell): string {
+  return `${cell.row}:${cell.column}`
+}
+
+function toIstInput(epochSeconds: number): string {
+  return new Date((epochSeconds + 19_800) * 1000).toISOString().slice(0, 16)
+}
+
+function compactAspectLabel(value: string): string {
+  return value.replace('AVG(ALL)', 'AVG').replaceAll('|', ' / ')
+}
+
+export function ProductFirstSbcWorkspace({
+  chart,
+  snapshot,
+  selectedCell,
+  onSelectCell,
+  onSelectMoment,
+}: Props) {
+  const guidance = snapshot?.guidance ?? null
+  const candles = chart?.candles.slice(-110) ?? []
+  const firstTime = candles[0]?.time ?? 0
+  const lastTime = candles.at(-1)?.time ?? firstTime + 1
+  const rangeSeconds = Math.max(1, lastTime - firstTime)
+  const highs = candles.map((candle) => candle.high)
+  const lows = candles.map((candle) => candle.low)
+  const low = lows.length ? Math.min(...lows) : 0
+  const high = highs.length ? Math.max(...highs) : 1
+  const priceSpan = Math.max(0.000001, high - low)
+  const chartWidth = 1000
+  const chartHeight = 440
+  const selectedEpoch = snapshot ? Date.parse(snapshot.as_of_utc) / 1000 : lastTime
+  const xFor = (epoch: number) => 28 + ((epoch - firstTime) / rangeSeconds) * 944
+  const yFor = (price: number) => 28 + ((high - price) / priceSpan) * 360
+  const candleWidth = Math.max(2, Math.min(11, 820 / Math.max(candles.length, 1)))
+  const visibleAspects = (chart?.aspects ?? []).filter((aspect) => (
+    aspect.end >= firstTime && aspect.start <= lastTime
+  ))
+  const selected = snapshot?.grid.cells.find((cell) => cellKey(cell) === selectedCell)
+  const targetCells = new Set(guidance?.contributions.map((item) => (
+    `${item.target.row}:${item.target.column}`
+  )) ?? [])
+  const contextCells = new Set(snapshot?.target_context.flatMap((layer) => (
+    layer.values.map((value) => `${layer.layer}:${value}`)
+  )) ?? [])
+  const readiness = snapshot?.actor_readiness.filter((item) => item.requested) ?? []
+  const unknownCount = readiness.filter((item) => item.status !== 'READY').length
+    + (guidance?.contributions.filter((item) => item.signed_guidance_units == null).length ?? 0)
+  const supportive = Math.abs(guidance?.favorable_guidance_units ?? 0)
+  const obstructive = Math.abs(guidance?.adverse_guidance_units ?? 0)
+  const gross = supportive + obstructive
+  const conflict = guidance && supportive > 0 && obstructive > 0
+    ? 'Mixed support and obstruction'
+    : guidance?.adverse_guidance_units
+      ? 'Obstruction only'
+      : guidance?.favorable_guidance_units
+        ? 'Support only'
+        : 'No resolved contribution'
+
+  return (
+    <section className="product-first-sbc" aria-label="Integrated Sarvatobhadra Chakra workspace">
+      <header className="product-first-sbc-summary">
+        <div className="product-first-summary-title">
+          <Layers3 size={16} />
+          <div>
+            <strong>Integrated SBC workspace</strong>
+            <span>{chart ? `${chart.symbol} ${chart.timeframe} market context` : 'No market context loaded'}</span>
+          </div>
+        </div>
+        <div className="product-first-metric">
+          <span>Supportive</span>
+          <strong>{guidance ? supportive.toFixed(1) : 'Unknown'}</strong>
+        </div>
+        <div className="product-first-metric is-adverse">
+          <span>Obstructive</span>
+          <strong>{guidance ? obstructive.toFixed(1) : 'Unknown'}</strong>
+        </div>
+        <div className="product-first-metric">
+          <span>Gross activity</span>
+          <strong>{guidance ? gross.toFixed(1) : 'Unknown'}</strong>
+        </div>
+        <div className="product-first-metric">
+          <span>Conflict</span>
+          <strong>{conflict}</strong>
+        </div>
+        <div className="product-first-metric">
+          <span>Coverage / unknown</span>
+          <strong>{guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}% / ${unknownCount}` : 'Unavailable'}</strong>
+        </div>
+        <span className="product-first-lock"><ShieldCheck size={12} /> Read-only experimental</span>
+      </header>
+
+      <div className="product-first-sbc-body">
+        <section className="product-first-market-panel">
+          <div className="product-first-panel-heading">
+            <div>
+              <strong>Price and aspect context</strong>
+              <span>Click a candle to synchronize the SBC moment in IST</span>
+            </div>
+            <time>{snapshot ? new Intl.DateTimeFormat('en-IN', {
+              dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata',
+            }).format(new Date(snapshot.as_of_utc)) : 'Moment unavailable'}</time>
+          </div>
+          {candles.length ? (
+            <div className="product-first-market-viewport">
+              <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label="Price chart with aspect event lanes">
+                <rect x="0" y="0" width={chartWidth} height={chartHeight} className="product-first-chart-bg" />
+                {[0, 1, 2, 3, 4].map((index) => {
+                  const y = 28 + index * 90
+                  const price = high - (priceSpan * index) / 4
+                  return <g key={index}>
+                    <line x1="28" y1={y} x2="972" y2={y} className="product-first-chart-grid" />
+                    <text x="4" y={y + 3} className="product-first-chart-axis">{price.toFixed(3)}</text>
+                  </g>
+                })}
+                {visibleAspects.map((aspect, index) => {
+                  const x = Math.max(28, xFor(Math.max(firstTime, aspect.start)))
+                  const end = Math.min(972, xFor(Math.min(lastTime, aspect.end)))
+                  const lane = index % 4
+                  const y = 4 + lane * 19
+                  return <g key={aspect.eventId} className="product-first-aspect-lane">
+                    <rect x={x} y={y} width={Math.max(2, end - x)} height="16" fill={aspect.color} />
+                    {end - x > 74 && <text x={x + 4} y={y + 11}>{compactAspectLabel(aspect.aspectLabel)}</text>}
+                  </g>
+                })}
+                {candles.map((candle) => {
+                  const x = xFor(candle.time)
+                  const up = candle.close >= candle.open
+                  const bodyTop = yFor(Math.max(candle.open, candle.close))
+                  const bodyBottom = yFor(Math.min(candle.open, candle.close))
+                  return <g key={candle.time} className="product-first-candle" onClick={() => onSelectMoment(toIstInput(candle.time))}>
+                    <line x1={x} y1={yFor(candle.high)} x2={x} y2={yFor(candle.low)} className={up ? 'is-up' : 'is-down'} />
+                    <rect x={x - candleWidth / 2} y={bodyTop} width={candleWidth} height={Math.max(1.2, bodyBottom - bodyTop)} className={up ? 'is-up' : 'is-down'} />
+                  </g>
+                })}
+                <line x1={xFor(selectedEpoch)} y1="24" x2={xFor(selectedEpoch)} y2="392" className="product-first-selected-moment" />
+                <text x={Math.min(835, Math.max(32, xFor(selectedEpoch) + 5))} y="420" className="product-first-chart-axis">Selected moment</text>
+              </svg>
+            </div>
+          ) : (
+            <div className="product-first-empty"><CircleHelp size={20} /><span>Open this workspace from a loaded chart to see price and aspect context.</span></div>
+          )}
+          <div className="product-first-event-strip">
+            <strong>Visible aspects</strong>
+            {visibleAspects.slice(0, 12).map((aspect) => (
+              <span key={aspect.eventId} style={{ borderColor: aspect.color }} title={`${aspect.startIso} to ${aspect.endIso}`}>
+                {compactAspectLabel(aspect.aspectLabel)}
+              </span>
+            ))}
+            {!visibleAspects.length && <em>No aspects in the loaded chart range</em>}
+          </div>
+        </section>
+
+        <section className="product-first-chakra-panel">
+          <div className="product-first-panel-heading">
+            <div><strong>81-cell Chakra</strong><span>Selected cell follows evidence and manual clicks</span></div>
+            <Grid3X3 size={15} />
+          </div>
+          {snapshot ? (
+            <div className="product-first-chakra-grid" style={{
+              '--chakra-columns': snapshot.grid.columns,
+              '--chakra-rows': snapshot.grid.rows,
+            } as CSSProperties}>
+              {snapshot.grid.cells.map((cell) => {
+                const key = cellKey(cell)
+                const primary = cell.entries.find((entry) => entry.layer === 'NAKSHATRA') ?? cell.entries[0]
+                const isContext = cell.entries.some((entry) => contextCells.has(`${entry.layer}:${entry.value}`))
+                return <button
+                  key={key}
+                  className={[
+                    'product-first-chakra-cell',
+                    selectedCell === key ? 'is-selected' : '',
+                    targetCells.has(key) ? 'is-hit' : '',
+                    isContext ? 'is-context' : '',
+                  ].filter(Boolean).join(' ')}
+                  onClick={() => onSelectCell(key)}
+                  title={cell.entries.map((entry) => `${entry.layer}: ${entry.value}`).join('\n')}
+                >
+                  <small>{cell.row},{cell.column}</small>
+                  <strong>{primary ? display(primary.value) : '·'}</strong>
+                </button>
+              })}
+            </div>
+          ) : <div className="product-first-empty"><span>Calculating the Chakra snapshot.</span></div>}
+        </section>
+
+        <aside className="product-first-why-drawer">
+          <div className="product-first-panel-heading">
+            <div><strong>Why this state</strong><span>Evidence only, not a market call</span></div>
+            <CircleHelp size={15} />
+          </div>
+          <section className="product-first-why-card">
+            <span>Current state</span>
+            <strong>{guidance ? display(guidance.guidance_band) : 'Unknown'}</strong>
+            <p>{conflict}. Coverage is {guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}%` : 'unavailable'}; unresolved inputs remain explicit.</p>
+          </section>
+          <section className="product-first-why-card">
+            <span>Selected Chakra cell</span>
+            {selected?.entries.map((entry) => <div key={`${entry.layer}:${entry.value}`}><em>{display(entry.layer)}</em><strong>{display(entry.value)}</strong></div>)}
+            {!selected?.entries.length && <p>No certified layer at this cell.</p>}
+          </section>
+          <section className="product-first-why-card">
+            <span>Resolved Vedha evidence</span>
+            {(guidance?.contributions ?? []).slice(0, 9).map((item, index) => (
+              <button key={`${item.body}-${index}`} onClick={() => onSelectCell(`${item.target.row}:${item.target.column}`)}>
+                <strong>{item.body}</strong><em>{display(item.direction)} → {display(item.target.value)}</em><b>{item.signed_guidance_units == null ? 'Unknown' : item.signed_guidance_units.toFixed(1)}</b>
+              </button>
+            ))}
+            {!guidance?.contributions.length && <p>No resolved Vedha contribution for this moment.</p>}
+          </section>
+          <section className="product-first-why-card">
+            <span>Actor readiness</span>
+            {readiness.map((item) => <div key={item.body}><em>{item.body}</em><strong>{display(item.status)}</strong></div>)}
+          </section>
+        </aside>
+      </div>
+    </section>
+  )
+}

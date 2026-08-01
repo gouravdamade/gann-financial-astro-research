@@ -21,10 +21,12 @@ import type {
   ChakraLabRequest,
   ChakraLabSnapshot,
   ChakraMotionClass,
+  ChartPayload,
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
 import { InstrumentKeyConverter } from './InstrumentKeyConverter'
 import { SbcLinkedAuditWorkspace } from './SbcLinkedAuditWorkspace'
+import { ProductFirstSbcWorkspace } from './ProductFirstSbcWorkspace'
 
 
 const BODIES = [
@@ -91,11 +93,13 @@ function cellKey(cell: ChakraGridCell): string {
 type Props = {
   defaultLatitude: number
   defaultLongitude: number
+  chart?: ChartPayload | null
 }
 
 export function ChakraLabWorkspace({
   defaultLatitude,
   defaultLongitude,
+  chart = null,
 }: Props) {
   const [atLocal, setAtLocal] = useState(currentIstInput)
   const [latitude, setLatitude] = useState(defaultLatitude)
@@ -106,7 +110,7 @@ export function ChakraLabWorkspace({
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
-  const [workspaceMode, setWorkspaceMode] = useState<'BOARD' | 'AUDIT'>('BOARD')
+  const [workspaceMode, setWorkspaceMode] = useState<'WORKSPACE' | 'BOARD' | 'AUDIT'>('WORKSPACE')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const initialRun = useRef(false)
@@ -142,17 +146,24 @@ export function ChakraLabWorkspace({
     vowels,
   ])
 
-  const loadSnapshot = useCallback(async () => {
+  const loadSnapshot = useCallback(async (atOverride?: string) => {
     setBusy(true)
     setError('')
     try {
-      setSnapshot(await fetchChakraLabSnapshot(request))
+      setSnapshot(await fetchChakraLabSnapshot(
+        atOverride ? { ...request, at: offsetIst(atOverride) } : request,
+      ))
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
     } finally {
       setBusy(false)
     }
   }, [request])
+
+  const selectMoment = useCallback((at: string) => {
+    setAtLocal(at)
+    void loadSnapshot(at)
+  }, [loadSnapshot])
 
   useEffect(() => {
     if (initialRun.current) return
@@ -209,6 +220,16 @@ export function ChakraLabWorkspace({
         <div className="chakra-mode-switch" role="tablist" aria-label="Chakra workspace mode">
           <button
             role="tab"
+            aria-selected={workspaceMode === 'WORKSPACE'}
+            className={workspaceMode === 'WORKSPACE' ? 'is-active' : ''}
+            onClick={() => setWorkspaceMode('WORKSPACE')}
+            title="Integrated SBC analysis workspace"
+          >
+            <Network size={12} />
+            Workspace
+          </button>
+          <button
+            role="tab"
             aria-selected={workspaceMode === 'BOARD'}
             className={workspaceMode === 'BOARD' ? 'is-active' : ''}
             onClick={() => setWorkspaceMode('BOARD')}
@@ -247,7 +268,15 @@ export function ChakraLabWorkspace({
         </button>
       </div>
 
-      {workspaceMode === 'BOARD' ? (
+      {workspaceMode === 'WORKSPACE' ? (
+        <ProductFirstSbcWorkspace
+          chart={chart}
+          snapshot={snapshot}
+          selectedCell={selectedCell}
+          onSelectCell={setSelectedCell}
+          onSelectMoment={selectMoment}
+        />
+      ) : workspaceMode === 'BOARD' ? (
       <div className="chakra-lab-body">
         <aside className="chakra-settings-panel">
           <section>
