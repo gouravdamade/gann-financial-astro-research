@@ -1271,6 +1271,27 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
+  it('opens the fixed real-axis wheel as a visualization-only display', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchFixedPhasor.mockResolvedValue(fixedPhasor)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await screen.findByText('Integrated SBC workspace')
+    await user.click(screen.getByRole('button', { name: 'Wheel' }))
+    expect(await screen.findByText('Fixed real-axis phasor wheel')).toBeInTheDocument()
+    expect(fetchFixedPhasor).toHaveBeenCalledTimes(1)
+    expect(screen.getByText(/not timing phase, a vote, or a price signal/i)).toBeInTheDocument()
+    expect(screen.getByText('JUPITER')).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
   it('captures explicit moments and opens the linked read-only audit', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAudit.mockResolvedValue(audit)

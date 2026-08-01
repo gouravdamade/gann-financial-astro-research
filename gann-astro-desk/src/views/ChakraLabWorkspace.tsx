@@ -14,9 +14,10 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
-import { fetchChakraLabSnapshot } from '../api'
+import { fetchChakraLabFixedPhasor, fetchChakraLabSnapshot } from '../api'
 import type {
   ChakraDignityState,
+  ChakraFixedPhasorSeries,
   ChakraGridCell,
   ChakraLabRequest,
   ChakraLabSnapshot,
@@ -72,6 +73,10 @@ function offsetIst(localValue: string): string {
   return `${localValue}${seconds}+05:30`
 }
 
+function oneHourAfter(value: string): string {
+  return new Date(Date.parse(value) + 60 * 60 * 1000).toISOString()
+}
+
 function splitValues(value: string): string[] {
   return value
     .split(',')
@@ -114,9 +119,12 @@ export function ChakraLabWorkspace({
   const [nameInitials, setNameInitials] = useState('')
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
+  const [fixedPhasor, setFixedPhasor] = useState<ChakraFixedPhasorSeries | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
   const [workspaceMode, setWorkspaceMode] = useState<'WORKSPACE' | 'BOARD' | 'AUDIT'>('WORKSPACE')
   const [busy, setBusy] = useState(false)
+  const [phasorBusy, setPhasorBusy] = useState(false)
+  const [phasorError, setPhasorError] = useState('')
   const [error, setError] = useState('')
   const initialRun = useRef(false)
 
@@ -167,8 +175,31 @@ export function ChakraLabWorkspace({
 
   const selectMoment = useCallback((at: string) => {
     setAtLocal(at)
+    setFixedPhasor(null)
+    setPhasorError('')
     void loadSnapshot(at)
   }, [loadSnapshot])
+
+  const loadFixedPhasor = useCallback(async () => {
+    setPhasorBusy(true)
+    setPhasorError('')
+    try {
+      const at = request.at
+      const result = await fetchChakraLabFixedPhasor({
+        instrumentIdentity: `FX:${chart?.symbol ?? 'USDJPY'}`,
+        terminalEnd: oneHourAfter(at),
+        boundaries: [{
+          reason: 'selected product moment',
+          request: structuredClone(request),
+        }],
+      })
+      setFixedPhasor(result)
+    } catch (caught) {
+      setPhasorError(caught instanceof Error ? caught.message : String(caught))
+    } finally {
+      setPhasorBusy(false)
+    }
+  }, [chart?.symbol, request])
 
   useEffect(() => {
     if (initialRun.current) return
@@ -282,6 +313,10 @@ export function ChakraLabWorkspace({
           onSelectMoment={selectMoment}
           currencyPairEvidence={currencyPairEvidence}
           selectedAspectLabel={selectedAspectLabel}
+          fixedPhasorInterval={fixedPhasor?.intervals[0] ?? null}
+          phasorBusy={phasorBusy}
+          phasorError={phasorError}
+          onLoadFixedPhasor={() => void loadFixedPhasor()}
         />
       ) : workspaceMode === 'BOARD' ? (
       <div className="chakra-lab-body">

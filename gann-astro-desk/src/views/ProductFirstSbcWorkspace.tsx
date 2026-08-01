@@ -1,6 +1,6 @@
-import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, ShieldCheck, SlidersHorizontal } from 'lucide-react'
+import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
-import type { ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
+import type { ChakraFixedPhasorInterval, ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
 
 type Props = {
   chart?: ChartPayload | null
@@ -10,6 +10,10 @@ type Props = {
   onSelectMoment: (value: string) => void
   currencyPairEvidence?: CurrencyPairEvidence | null
   selectedAspectLabel?: string | null
+  fixedPhasorInterval?: ChakraFixedPhasorInterval | null
+  phasorBusy: boolean
+  phasorError: string
+  onLoadFixedPhasor: () => void
 }
 
 function display(value: string | null | undefined): string {
@@ -41,9 +45,15 @@ export function ProductFirstSbcWorkspace({
   onSelectMoment,
   currencyPairEvidence = null,
   selectedAspectLabel = null,
+  fixedPhasorInterval = null,
+  phasorBusy,
+  phasorError,
+  onLoadFixedPhasor,
 }: Props) {
   const [sideView, setSideView] = useState<'TIME' | 'PROFILE' | null>(null)
   const [draftMoment, setDraftMoment] = useState('')
+  const [wheelOpen, setWheelOpen] = useState(false)
+  const [selectedVectorId, setSelectedVectorId] = useState('')
   const guidance = snapshot?.guidance ?? null
   const candles = chart?.candles.slice(-110) ?? []
   const firstTime = candles[0]?.time ?? 0
@@ -93,9 +103,13 @@ export function ProductFirstSbcWorkspace({
   const pairScore = currencyPairEvidence?.pair.doctrineNetScore ?? currencyPairEvidence?.pair.netScore ?? null
   const commonMode = baseScore != null && quoteScore != null ? (baseScore + quoteScore) / 2 : null
   const pairConflict = currencyPairEvidence?.pair.doctrineConflictRatio ?? currencyPairEvidence?.pair.conflictRatio ?? null
+  const plottedVectors = fixedPhasorInterval?.vectors.filter((vector) => vector.projection_status === 'PLOTTED') ?? []
+  const unknownVectors = fixedPhasorInterval?.vectors.filter((vector) => vector.projection_status === 'UNKNOWN_NOT_PLOTTED') ?? []
+  const maxVectorMagnitude = Math.max(1, ...plottedVectors.map((vector) => vector.magnitude_units ?? 0))
+  const selectedVector = plottedVectors.find((vector) => vector.vector_id === selectedVectorId) ?? plottedVectors[0] ?? null
 
   return (
-    <section className={`product-first-sbc${sideView || currencyPairEvidence ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
+    <section className={`product-first-sbc${sideView || currencyPairEvidence || wheelOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
       <header className="product-first-sbc-summary">
         <div className="product-first-summary-title">
           <Layers3 size={16} />
@@ -140,6 +154,15 @@ export function ProductFirstSbcWorkspace({
             onClick={() => setSideView((current) => current === 'PROFILE' ? null : 'PROFILE')}
           >
             <SlidersHorizontal size={12} /> Profile
+          </button>
+          <button
+            className={wheelOpen ? 'is-active' : ''}
+            onClick={() => {
+              setWheelOpen((current) => !current)
+              if (!fixedPhasorInterval && !phasorBusy) onLoadFixedPhasor()
+            }}
+          >
+            <Orbit size={12} /> Wheel
           </button>
         </div>
       </header>
@@ -222,6 +245,61 @@ export function ProductFirstSbcWorkspace({
             <div><dt>Conflict</dt><dd>{pairConflict == null ? 'Unknown' : `${(pairConflict * 100).toFixed(1)}%`}</dd></div>
           </dl>
           <p>Both currencies remain visible. These descriptive values are not a price prediction and cannot unlock an order or execution path.</p>
+        </section>
+      )}
+
+      {wheelOpen && (
+        <section className="product-first-wheel" aria-label="Fixed phasor wheel">
+          <div className="product-first-wheel-heading">
+            <Orbit size={15} />
+            <div><strong>Fixed real-axis phasor wheel</strong><span>Existing scalar display only: 0 at right, pi at left. It is not timing phase, a vote, or a price signal.</span></div>
+          </div>
+          {phasorBusy && <p className="product-first-wheel-state">Loading the read-only fixed-vector display for this selected timestamp.</p>}
+          {phasorError && <p className="product-first-wheel-state is-error">{phasorError}</p>}
+          {!phasorBusy && !phasorError && !fixedPhasorInterval && <p className="product-first-wheel-state">No fixed-vector display is available for this selected timestamp.</p>}
+          {fixedPhasorInterval && <>
+            <div className="product-first-wheel-layout">
+              <svg viewBox="0 0 300 300" role="img" aria-label="Fixed zero and pi circular phasor display">
+                <circle cx="150" cy="150" r="118" className="product-first-wheel-ring" />
+                <line x1="24" y1="150" x2="276" y2="150" className="product-first-wheel-axis" />
+                <text x="276" y="142" textAnchor="end" className="product-first-wheel-label is-positive">fixed 0</text>
+                <text x="24" y="142" className="product-first-wheel-label is-negative">fixed pi</text>
+                <circle cx="150" cy="150" r="5" className="product-first-wheel-origin" />
+                {plottedVectors.map((vector, index) => {
+                  const magnitude = vector.magnitude_units ?? 0
+                  const radius = 24 + (magnitude / maxVectorMagnitude) * 88
+                  const verticalOffset = (index - (plottedVectors.length - 1) / 2) * 8
+                  const positive = vector.fixed_angle === 'ZERO'
+                  const x = 150 + (positive ? radius : -radius)
+                  const y = 150 + verticalOffset
+                  return <g
+                    key={vector.vector_id}
+                    className={`product-first-wheel-vector ${positive ? 'is-positive' : 'is-negative'}${selectedVector?.vector_id === vector.vector_id ? ' is-selected' : ''}`}
+                    onClick={() => setSelectedVectorId(vector.vector_id)}
+                  >
+                    <line x1="150" y1="150" x2={x} y2={y} />
+                    <circle cx={x} cy={y} r="6" />
+                  </g>
+                })}
+              </svg>
+              <div className="product-first-wheel-detail">
+                <span>Selected vector</span>
+                {selectedVector ? <>
+                  <strong>{selectedVector.actor_identity ?? 'Unlabelled contribution'}</strong>
+                  <div><em>Fixed side</em><b>{selectedVector.fixed_angle === 'ZERO' ? '0 / right' : 'Pi / left'}</b></div>
+                  <div><em>Scalar units</em><b>{(selectedVector.real_component_units ?? 0).toFixed(1)}</b></div>
+                  <div><em>Target</em><b>{selectedVector.target_value ?? 'Unknown'}</b></div>
+                </> : <p>No resolved vector was plotted.</p>}
+              </div>
+            </div>
+            <div className="product-first-wheel-summary">
+              <span>Real sum <b>{fixedPhasorInterval.vector_real_sum_units.toFixed(1)}</b></span>
+              <span>Gross magnitude <b>{fixedPhasorInterval.vector_magnitude_sum_units.toFixed(1)}</b></span>
+              <span>Imaginary sum <b>{fixedPhasorInterval.vector_imaginary_sum_units.toFixed(1)}</b></span>
+              <span>Known coverage <b>{(fixedPhasorInterval.known_scored_coherence_ratio * 100).toFixed(1)}%</b></span>
+            </div>
+            {unknownVectors.length > 0 && <p className="product-first-wheel-unknown">{unknownVectors.length} unknown vector{unknownVectors.length === 1 ? '' : 's'} remain unplotted.</p>}
+          </>}
         </section>
       )}
 
