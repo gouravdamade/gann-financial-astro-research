@@ -1,6 +1,6 @@
 # PFR-C1 Product Integrity Acceptance Report
 
-Status: in progress  
+Status: corrected candidate packaged; founder acceptance pending
 Branch: `product-first-sbc-phase-lab`  
 Scope: bounded correction only; no execution or model-promotion authority.
 
@@ -76,9 +76,30 @@ Completed on 2026-08-01.
 - Fixed wheel groups are native keyboard-reachable buttons with pressed state;
   their labels convey side and magnitude without relying on color alone.
 
+## C1-7 Regression, Packaging, and Founder Review
+
+Completed for the corrected candidate on 2026-08-01.
+
+- The complete PFR-C1 regression passed: frontend lint, focused frontend
+  mode/product tests, the production frontend build, and the focused SBC Python
+  suite.
+- The corrected Windows candidate is `Gann Astro Desk 0.10.28`, packaged at
+  `releases/GannAstroDesk-0.10.28-three-mode-boundary/`. Both the installer and
+  portable distribution were produced from this branch revision.
+- Native smoke testing confirmed that the portable launcher and its adjacent
+  backend start together from the release directory. This proves the candidate
+  can be opened; it does not substitute for founder workflow acceptance.
+- The corrected boundaries were re-checked: score-suppressed modes cannot
+  expose scalar audit/package data, all three modes retain their own visible
+  identity, and the execution/fusion locks remain in force.
+
 ## Remaining Acceptance Work
 
-- C1-7: complete regression, corrected Windows candidate, and founder review.
+- Founder review of the exact `0.10.28` packaged candidate. The review must
+  confirm that the founder can select a market period, change modes, inspect
+  the synchronized views, and export the visible research state. No new
+  product, certification, inference, ML, or execution work is authorized by
+  this report until that review is recorded.
 
 ## Invariants Confirmed
 

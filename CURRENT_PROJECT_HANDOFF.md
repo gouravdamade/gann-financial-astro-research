@@ -6,6 +6,18 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 
 ## Latest Update - 2026-08-01 (PFR-C1 Product Integrity Correction)
 
+## Latest Update - 2026-08-01 (PFR-C1 Acceptance Record Reconciled)
+
+- Corrected an internal status contradiction: the consolidated PFR-C1 report
+  had still listed C1-7 as pending even though the corrected `0.10.28`
+  candidate had been built, tested, smoke-launched, and pushed. It now records
+  those facts accurately and names founder inspection as the sole remaining
+  acceptance action.
+- This is documentation-only. It changes no calculation, visualization mode,
+  source profile, inference path, ML evidence, execution lock, or packaged
+  binary. The exact founder checkpoint remains: inspect `0.10.28`, change
+  modes, synchronize a selected time across the workspace, and export state.
+
 ## Latest Update - 2026-08-01 (Three-Mode Visualization Engine Candidate)
 
 ## Latest Update - 2026-08-01 (Three-Mode Boundary Correction)
