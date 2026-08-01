@@ -42,9 +42,21 @@ Completed on 2026-08-01.
   `ABSTAIN`, zero vote weight, zero directional contribution, zero fusion, and
   execution locked.
 
+## C1-4 Fixed Wheel Semantics
+
+Completed on 2026-08-01.
+
+- The fixed 0/pi wheel continues to be a scalar parity visualization, but its
+  rays are now exact horizontal rays on the real axis. There are no artificial
+  vertical offsets or implied extra angles.
+- The wheel visibly distinguishes gross scalar magnitude (dashed gross ring),
+  real-axis resultant, a visual-only near-zero marker, and an unresolved tray.
+  Individual inspection is done through 0/right and pi/left visual-only groups.
+- This did not alter source ledger values, the backend scalar-parity contract,
+  timing status, votes, fusion, or execution locks.
+
 ## Remaining Acceptance Work
 
-- C1-4: fixed-wheel semantic correction.
 - C1-5/C1-6: timing visual integrity, opt-in flag, and accessibility.
 - C1-7: complete regression, corrected Windows candidate, and founder review.
 

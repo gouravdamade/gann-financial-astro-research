@@ -124,6 +124,13 @@ export function ProductFirstSbcWorkspace({
   const unknownVectors = fixedPhasorInterval?.vectors.filter((vector) => vector.projection_status === 'UNKNOWN_NOT_PLOTTED') ?? []
   const maxVectorMagnitude = Math.max(1, ...plottedVectors.map((vector) => vector.magnitude_units ?? 0))
   const selectedVector = plottedVectors.find((vector) => vector.vector_id === selectedVectorId) ?? plottedVectors[0] ?? null
+  const fixedGrossRadius = 24 + Math.min(1, (fixedPhasorInterval?.vector_magnitude_sum_units ?? 0) / (maxVectorMagnitude * 4)) * 88
+  const fixedResultantRadius = Math.min(112, Math.abs(fixedPhasorInterval?.vector_real_sum_units ?? 0) / maxVectorMagnitude * 88)
+  const fixedResultantPositive = (fixedPhasorInterval?.vector_real_sum_units ?? 0) >= 0
+  const fixedNearZero = Boolean(fixedPhasorInterval)
+    && Math.abs(fixedPhasorInterval?.vector_real_sum_units ?? 0) <= Math.max(0.25, (fixedPhasorInterval?.vector_magnitude_sum_units ?? 0) * 0.15)
+  const fixedZeroVectors = plottedVectors.filter((vector) => vector.fixed_angle === 'ZERO')
+  const fixedPiVectors = plottedVectors.filter((vector) => vector.fixed_angle === 'PI')
   const timingExperiment = calculateProductFirstTimingPhase({
     enabled: TIMING_PHASE_EXPERIMENT_ENABLED,
     snapshot,
@@ -302,29 +309,35 @@ export function ProductFirstSbcWorkspace({
             <div className="product-first-wheel-layout">
               <svg viewBox="0 0 300 300" role="img" aria-label="Fixed zero and pi circular phasor display">
                 <circle cx="150" cy="150" r="118" className="product-first-wheel-ring" />
+                <circle cx="150" cy="150" r={fixedGrossRadius} className="product-first-wheel-gross-ring" />
                 <line x1="24" y1="150" x2="276" y2="150" className="product-first-wheel-axis" />
                 <text x="276" y="142" textAnchor="end" className="product-first-wheel-label is-positive">fixed 0</text>
                 <text x="24" y="142" className="product-first-wheel-label is-negative">fixed pi</text>
-                <circle cx="150" cy="150" r="5" className="product-first-wheel-origin" />
-                {plottedVectors.map((vector, index) => {
+                {plottedVectors.map((vector) => {
                   const magnitude = vector.magnitude_units ?? 0
                   const radius = 24 + (magnitude / maxVectorMagnitude) * 88
-                  const verticalOffset = (index - (plottedVectors.length - 1) / 2) * 8
                   const positive = vector.fixed_angle === 'ZERO'
                   const x = 150 + (positive ? radius : -radius)
-                  const y = 150 + verticalOffset
                   return <g
                     key={vector.vector_id}
                     className={`product-first-wheel-vector ${positive ? 'is-positive' : 'is-negative'}${selectedVector?.vector_id === vector.vector_id ? ' is-selected' : ''}`}
-                    onClick={() => setSelectedVectorId(vector.vector_id)}
                   >
-                    <line x1="150" y1="150" x2={x} y2={y} />
-                    <circle cx={x} cy={y} r="6" />
+                    <title>{`${vector.actor_identity ?? 'Unlabelled'}: ${positive ? '0/right' : 'pi/left'} (${magnitude.toFixed(2)} scalar units)`}</title>
+                    <line x1="150" y1="150" x2={x} y2="150" />
                   </g>
                 })}
+                <line
+                  x1="150"
+                  y1="150"
+                  x2={150 + (fixedResultantPositive ? fixedResultantRadius : -fixedResultantRadius)}
+                  y2="150"
+                  className="product-first-wheel-resultant"
+                />
+                {fixedNearZero && <g className="product-first-wheel-near-zero"><circle cx="150" cy="150" r="10" /><line x1="142" y1="142" x2="158" y2="158" /><line x1="158" y1="142" x2="142" y2="158" /></g>}
+                <circle cx="150" cy="150" r="5" className="product-first-wheel-origin" />
               </svg>
               <div className="product-first-wheel-detail">
-                <span>Selected vector</span>
+                <span>Selected vector from visual-only group</span>
                 {selectedVector ? <>
                   <strong>{selectedVector.actor_identity ?? 'Unlabelled contribution'}</strong>
                   <div><em>Fixed side</em><b>{selectedVector.fixed_angle === 'ZERO' ? '0 / right' : 'Pi / left'}</b></div>
@@ -333,13 +346,18 @@ export function ProductFirstSbcWorkspace({
                 </> : <p>No resolved vector was plotted.</p>}
               </div>
             </div>
+            <div className="product-first-wheel-groups" aria-label="Visual-only vector groups">
+              <div><span>0 / right ({fixedZeroVectors.length})</span>{fixedZeroVectors.map((vector) => <button key={vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
+              <div><span>Pi / left ({fixedPiVectors.length})</span>{fixedPiVectors.map((vector) => <button key={vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
+            </div>
             <div className="product-first-wheel-summary">
               <span>Real sum <b>{fixedPhasorInterval.vector_real_sum_units.toFixed(1)}</b></span>
               <span>Gross magnitude <b>{fixedPhasorInterval.vector_magnitude_sum_units.toFixed(1)}</b></span>
               <span>Imaginary sum <b>{fixedPhasorInterval.vector_imaginary_sum_units.toFixed(1)}</b></span>
               <span>Known coverage <b>{(fixedPhasorInterval.known_scored_coherence_ratio * 100).toFixed(1)}%</b></span>
             </div>
-            {unknownVectors.length > 0 && <p className="product-first-wheel-unknown">{unknownVectors.length} unknown vector{unknownVectors.length === 1 ? '' : 's'} remain unplotted.</p>}
+            <p className="product-first-wheel-interpretation">Resultant: fixed real-axis sum only. Gross ring: total scalar magnitude. {fixedNearZero ? 'Near-zero resultant marker shown using a visual threshold of max(0.25, 15% of gross).' : 'No near-zero resultant marker.'} These are visual parity checks, not a timing or physical-wave claim.</p>
+            {unknownVectors.length > 0 && <div className="product-first-wheel-unknown"><b>Unresolved tray</b><span>{unknownVectors.length} unknown vector{unknownVectors.length === 1 ? '' : 's'} remain unplotted and outside the fixed-axis geometry.</span></div>}
           </>}
         </section>
       )}

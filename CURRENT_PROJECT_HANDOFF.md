@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 12:23 IST
+Last updated: 2026-08-01 12:28 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -26,6 +26,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   Overlaps are no longer forced through one nearest-event phase. The aggregate
   is still a read-only experimental visual with `ABSTAIN`, zero vote,
   zero directional contribution, zero fusion, and execution locked.
+- C1-4 completed: the fixed 0/pi wheel now plots rays exactly on the horizontal
+  real axis, with selection moved to visual-only groups. Gross magnitude,
+  resultant, near-zero state, and unresolved evidence are visually distinct.
+  This preserves the scalar parity contract and introduces no angle, timing,
+  vote, fusion, financial, or execution meaning.
 
 ## Latest Update - 2026-08-01 (Product Beta Scroll-Zoom Repair)
 

@@ -6492,20 +6492,21 @@ html.android-runtime .loading-state {
 .product-first-wheel-layout { grid-column: 1 / -1; display: grid; grid-template-columns: 300px minmax(190px, 1fr); gap: 16px; align-items: center; }
 .product-first-wheel-layout svg { width: 280px; max-width: 100%; justify-self: center; }
 .product-first-wheel-ring { fill: #10171d; stroke: #49616e; stroke-width: 1.5; }
+.product-first-wheel-gross-ring { fill: none; stroke: #c6a35e; stroke-width: 1; stroke-dasharray: 3 3; opacity: .76; }
 .product-first-wheel-axis { stroke: #7b8993; stroke-dasharray: 4 4; }
 .product-first-wheel-origin { fill: #e0c474; }
 .product-first-wheel-label { font: 9px/1 Consolas, monospace; }
 .product-first-wheel-label.is-positive { fill: #65c3b4; }
 .product-first-wheel-label.is-negative { fill: #dc7e88; }
-.product-first-wheel-vector { cursor: pointer; }
+.product-first-wheel-vector { pointer-events: none; }
 .product-first-wheel-vector line { stroke-width: 2; opacity: .76; }
-.product-first-wheel-vector circle { stroke: #dbe5e8; stroke-width: 1; }
 .product-first-wheel-vector.is-positive line,
-.product-first-wheel-vector.is-positive circle { stroke: #59b9aa; fill: #1f615a; }
-.product-first-wheel-vector.is-negative line,
-.product-first-wheel-vector.is-negative circle { stroke: #d97883; fill: #6d3641; }
+.product-first-wheel-vector.is-positive line { stroke: #59b9aa; }
+.product-first-wheel-vector.is-negative line { stroke: #d97883; }
 .product-first-wheel-vector.is-selected line { stroke-width: 4; opacity: 1; }
-.product-first-wheel-vector.is-selected circle { stroke: #f1d67a; stroke-width: 2; }
+.product-first-wheel-resultant { stroke: #f1d67a; stroke-width: 3.5; }
+.product-first-wheel-near-zero circle { fill: #2d2226; stroke: #e0a0a7; stroke-width: 1.5; }
+.product-first-wheel-near-zero line { stroke: #e0a0a7; stroke-width: 1.5; }
 .product-first-wheel-detail { display: grid; gap: 6px; padding: 9px; border: 1px solid #36434d; background: #10171d; }
 .product-first-wheel-detail > span { color: #83b5bb; font-size: 7px; letter-spacing: .04em; text-transform: uppercase; }
 .product-first-wheel-detail > strong { color: #dbe3e8; font-size: 10px; }
@@ -6516,7 +6517,14 @@ html.android-runtime .loading-state {
 .product-first-wheel-summary { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(95px, 1fr)); gap: 4px; }
 .product-first-wheel-summary span { display: grid; gap: 3px; padding: 5px 6px; border: 1px solid #35424c; background: #10171d; color: #85929d; font-size: 7px; }
 .product-first-wheel-summary b { color: #d2dce1; font: 9px/1 Consolas, monospace; }
-.product-first-wheel-unknown { grid-column: 1 / -1; margin: 0; color: #c6a35e; font-size: 8px; }
+.product-first-wheel-unknown { grid-column: 1 / -1; display: grid; gap: 3px; padding: 6px; border: 1px dashed #816d42; background: #231f17; color: #c6a35e; font-size: 8px; }
+.product-first-wheel-unknown b { font-size: 8px; color: #e0c474; }
+.product-first-wheel-interpretation { grid-column: 1 / -1; margin: 0; color: #a7b5bd; font-size: 8px; line-height: 1.45; }
+.product-first-wheel-groups { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.product-first-wheel-groups > div { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 6px; border: 1px solid #35424c; background: #10171d; }
+.product-first-wheel-groups span { width: 100%; color: #8396a2; font-size: 7px; text-transform: uppercase; }
+.product-first-wheel-groups button { min-height: 22px; padding: 3px 5px; border: 1px solid #42545f; background: #182129; color: #b9c9d0; font: 8px/1 Consolas, monospace; cursor: pointer; }
+.product-first-wheel-groups button.is-selected { border-color: #e0c474; color: #f1d67a; background: #342f21; }
 
 .product-first-timing-phase {
   min-width: 0;
