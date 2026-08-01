@@ -30,6 +30,13 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   passed; production frontend build passed; `python -m pytest -q sbc` passed
   (5 tests). A broad Vitest run recorded 100 passing tests but also two worker
   startup timeouts, so it is not counted as a clean all-suite certification.
+- Windows candidate built and smoke-tested: `0.10.27` is available at
+  `D:\PycharmProjects\releases\GannAstroDesk-0.10.27-three-mode-visualization\`.
+  Installer SHA-256:
+  `0984D012C21A3D11108ED04A6E063175DFB9E792807A543471FFC40E5641940B`.
+  Portable launcher SHA-256:
+  `E466F980262C948034D10EAFB3FFF33E602925D93FB4B0CF52F10A924CC39941`.
+  The portable executable and its bundled backend were launched successfully.
 
 - The attached Terra High review was accepted as the bounded correction
   contract for `product-first-sbc-phase-lab`: perform PFR-C1 only, then build a
