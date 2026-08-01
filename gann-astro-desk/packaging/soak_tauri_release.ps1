@@ -142,10 +142,19 @@ function Wait-ForNormalizedShadow(
         try {
             $last = Invoke-PrivateRestMethod -Uri `
                 ("http://127.0.0.1:{0}/api/candlestick-shadow" -f $Port) -TimeoutSec 10
+            if ($last.shadow.availability -eq "NOT_CONFIGURED") {
+                return [pscustomobject]@{
+                    Snapshot = $last
+                    Deferred = $true
+                    NotConfigured = $true
+                    Message = [string]$last.shadow.optionalFeature.reason
+                }
+            }
             if ($last.shadow.lastScan.timeNormalization.valid -eq $true) {
                 return [pscustomobject]@{
                     Snapshot = $last
                     Deferred = $false
+                    NotConfigured = $false
                     Message = ""
                 }
             }
@@ -162,6 +171,7 @@ function Wait-ForNormalizedShadow(
         return [pscustomobject]@{
             Snapshot = $last
             Deferred = $true
+            NotConfigured = $false
             Message = $message
         }
     }
@@ -307,8 +317,8 @@ try {
     $report.candlestick_event_id = $candleEventId
     $report.checks.candlestick_health_contract = `
         $candleHealth.localCandlestick.contract -eq "GANN_LOCAL_CANDLE_RAG_DRAFT_V1"
-    $report.checks.candlestick_corpus_ready = `
-        $candleHealth.localCandlestick.corpusReady -eq $true
+    $report.checks.candlestick_corpus_state_known = `
+        $null -ne $candleHealth.localCandlestick.corpusReady
     $report.checks.candlestick_evidence_contract = `
         $candleEvidence.evidence.contract -eq "GANN_CANDLESTICK_EVIDENCE_V1"
     $report.checks.candlestick_closed_bars_only = `
@@ -362,12 +372,27 @@ try {
     $report.checks.candlestick_shadow_trial_frozen = `
         $candleShadow.shadow.trial.contract -eq "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3"
     $report.checks.mt5_clock_probe_contract = `
-        $candleShadow.shadow.lastScan.timeNormalization.probe.contract -eq `
-        "GANN_MT5_CLOCK_PROBE_V1"
+        $shadowResult.NotConfigured -or (
+            $candleShadow.shadow.lastScan.timeNormalization.probe.contract -eq `
+            "GANN_MT5_CLOCK_PROBE_V1"
+        )
     $report.checks.mt5_time_normalization_contract = `
-        $candleShadow.shadow.lastScan.timeNormalization.contract -eq `
-        "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
-    if ($shadowResult.Deferred) {
+        $shadowResult.NotConfigured -or (
+            $candleShadow.shadow.lastScan.timeNormalization.contract -eq `
+            "GANN_MT5_SERVER_TIME_NORMALIZATION_V1"
+        )
+    if ($shadowResult.NotConfigured) {
+        $report.deferred_checks += "candlestick_specialist_optional_not_configured"
+        $report.checks.candlestick_optional_absence_safe = (
+            $candleShadow.shadow.availability -eq "NOT_CONFIGURED" -and
+            $candleShadow.shadow.optionalFeature.status -eq "NOT_CONFIGURED" -and
+            $candleShadow.shadow.guardrails.executionAllowed -eq $false
+        )
+        Write-SoakPhase "candlestick_specialist_optional" ([ordered]@{
+            reason = $shadowResult.Message
+            execution_allowed = $candleShadow.shadow.guardrails.executionAllowed
+        })
+    } elseif ($shadowResult.Deferred) {
         $report.deferred_checks += "mt5_time_normalization_closed_market"
         $report.checks.mt5_time_normalization_deferred_closed_market = (
             $AllowClosedMarketMt5Defer -and
@@ -395,7 +420,10 @@ try {
         $candleShadow.shadow.model.retrospectiveGate.status -eq "failed"
     $report.checks.candlestick_shadow_execution_locked = (
         $candleShadow.shadow.guardrails.executionAllowed -eq $false -and
-        $candleShadow.shadow.guardrails.mt5ReadOnly -eq $true
+        (
+            $shadowResult.NotConfigured -or
+            $candleShadow.shadow.guardrails.mt5ReadOnly -eq $true
+        )
     )
     Write-SoakPhase "candlestick_shadow_verified" ([ordered]@{
         trial_id = $candleShadow.shadow.trial.trialId
