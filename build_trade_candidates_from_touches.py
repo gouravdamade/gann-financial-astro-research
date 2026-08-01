@@ -518,6 +518,7 @@ def score_transit_natal_hits(
             doctrine_direction = "CONFLICT"
 
     return {
+        "candidate_hit_count": int(len(hits)),
         "jyotish_bullish_score": float(bullish),
         "jyotish_bearish_score": float(bearish),
         "jyotish_net_score": float(net),
@@ -651,6 +652,15 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         "fx_doctrine_quote_dignity_virupa_avg": float(quote["doctrine_dignity_virupa_avg"]),
         "fx_base_scored_hit_count": int(base["jyotish_scored_hit_count"]),
         "fx_quote_scored_hit_count": int(quote["jyotish_scored_hit_count"]),
+        "fx_base_candidate_hit_count": int(base["candidate_hit_count"]),
+        "fx_quote_candidate_hit_count": int(quote["candidate_hit_count"]),
+        "fx_base_reference_available": int(has_base_reference),
+        "fx_doctrine_base_supportive_units": float(base["doctrine_bullish_score"]),
+        "fx_doctrine_base_adverse_units": float(base["doctrine_bearish_score"]),
+        "fx_doctrine_base_gross_activation_units": float(doctrine_base_total),
+        "fx_doctrine_quote_supportive_units": float(quote["doctrine_bullish_score"]),
+        "fx_doctrine_quote_adverse_units": float(quote["doctrine_bearish_score"]),
+        "fx_doctrine_quote_gross_activation_units": float(doctrine_quote_total),
         "fx_dominant_base_hit": str(base["dominant_aspect_id"]),
         "fx_dominant_quote_hit": str(quote["dominant_aspect_id"]),
         "fx_doctrine_dominant_base_hit": str(base["doctrine_dominant_aspect_id"]),

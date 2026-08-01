@@ -7,10 +7,12 @@ import pandas as pd
 import pytest
 
 from decision_engine import (
+    CURRENCY_PAIR_EVIDENCE_CONTRACT,
     DECISION_PACKET_CONTRACT,
     ENGINE,
     LIVE_INFERENCE,
     RESEARCH_REPLAY,
+    currency_pair_evidence_contract,
     validate_decision_packet,
 )
 
@@ -73,6 +75,58 @@ SCORES = {
     "fx_base_scored_hit_count": 1,
     "fx_quote_scored_hit_count": 1,
 }
+
+
+def test_currency_contract_keeps_gross_activation_when_nets_cancel() -> None:
+    cancellation_scores = {
+        **SCORES,
+        "fx_base_reference_available": 1,
+        "fx_base_reference_label": "USD reference",
+        "fx_quote_reference_label": "JPY reference",
+        "fx_doctrine_base_supportive_units": 10.0,
+        "fx_doctrine_base_adverse_units": 9.0,
+        "fx_doctrine_base_gross_activation_units": 19.0,
+        "fx_doctrine_base_net_score": 1.0,
+        "fx_doctrine_quote_supportive_units": 8.0,
+        "fx_doctrine_quote_adverse_units": 9.0,
+        "fx_doctrine_quote_gross_activation_units": 17.0,
+        "fx_doctrine_quote_net_score": -1.0,
+        "fx_base_candidate_hit_count": 4,
+        "fx_quote_candidate_hit_count": 4,
+        "fx_base_scored_hit_count": 4,
+        "fx_quote_scored_hit_count": 4,
+    }
+    with patch("decision_engine.score_currency_pair_for_row", return_value=cancellation_scores):
+        result = currency_pair_evidence_contract(
+            touch_fixture(),
+            base_currency="USD",
+            quote_currency="JPY",
+            evidence_cutoff="2026-07-02T09:00:00+00:00",
+        )
+
+    assert result["contract"] == CURRENCY_PAIR_EVIDENCE_CONTRACT
+    assert result["status"] == "provisional_research_only"
+    assert result["base"]["grossActivationUnits"] == 19.0
+    assert result["quote"]["grossActivationUnits"] == 17.0
+    assert result["pair"]["commonActivationUnits"] == 18.0
+    assert result["pair"]["netDifferenceUnits"] == 2.0
+    assert result["pair"]["jointNetStrengthUnits"] == 1.0
+    assert result["pair"]["state"] == "KNOWN"
+
+
+def test_currency_contract_blocks_missing_base_mapping() -> None:
+    with patch("decision_engine.score_currency_pair_for_row", return_value={**SCORES, "fx_base_reference_available": 0}):
+        result = currency_pair_evidence_contract(
+            touch_fixture(),
+            base_currency="USD",
+            quote_currency="JPY",
+            evidence_cutoff="2026-07-02T09:00:00+00:00",
+        )
+
+    assert result["status"] == "blocked_mapping"
+    assert result["base"]["state"] == "BLOCKED_MAPPING"
+    assert result["pair"]["state"] == "UNKNOWN"
+    assert result["pair"]["netDifferenceUnits"] is None
 
 
 def test_live_packet_excludes_future_labels_and_unclosed_bars() -> None:

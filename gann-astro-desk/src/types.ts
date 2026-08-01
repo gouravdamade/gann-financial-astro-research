@@ -986,9 +986,18 @@ export type AstroEvidence = {
 export type CurrencySideEvidence = {
   label: string
   referenceLabel: string
+  state: 'KNOWN' | 'UNKNOWN' | 'BLOCKED_MAPPING'
+  supportiveUnits: number | null
+  adverseUnits: number | null
+  netUnits: number | null
+  grossActivationUnits: number | null
+  conflictRatio: number | null
+  eligibleCount: number
   netScore: number | null
   doctrineNetScore: number | null
   scoredHitCount: number | null
+  unresolvedCount: number
+  unknownCoverage: number
   dominantHit: string | null
   doctrineDominantHit: string | null
   doctrineDominantDignity: string | null
@@ -996,13 +1005,23 @@ export type CurrencySideEvidence = {
 }
 
 export type CurrencyPairEvidence = {
-  contract: 'GANN_FX_PAIR_EVIDENCE_V1'
-  status: 'provisional_research_only' | 'insufficient_pair_evidence'
+  contract: 'GANN_FX_PAIR_EVIDENCE_V2'
+  status: 'provisional_research_only' | 'insufficient_pair_evidence' | 'blocked_mapping'
+  profileId: string
+  asOfUtc: string | null
+  evidenceCutoffUtc: string | null
+  mappingIdentity: string
   base: CurrencySideEvidence
   quote: CurrencySideEvidence
   pair: {
+    state: 'KNOWN' | 'UNKNOWN'
+    netDifferenceUnits: number | null
+    jointNetStrengthUnits: number | null
+    commonActivationUnits: number | null
+    grossActivationUnits: number | null
     netScore: number | null
     conflictRatio: number | null
+    conflictRatioLegacy: number | null
     direction: string | null
     doctrineNetScore: number | null
     doctrineConflictRatio: number | null

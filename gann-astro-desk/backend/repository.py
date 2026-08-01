@@ -40,7 +40,12 @@ if str(SHARED_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(SHARED_PROJECT_ROOT))
 
 # The shared engine is outside backend/ in source and at the bundle root when frozen.
-from decision_engine import ENGINE, LIVE_FEATURE_ALLOWLIST, currency_pair_evidence  # noqa: E402
+from decision_engine import (  # noqa: E402
+    CURRENCY_PAIR_EVIDENCE_CONTRACT,
+    ENGINE,
+    LIVE_FEATURE_ALLOWLIST,
+    currency_pair_evidence_contract,
+)
 
 
 IST = "Asia/Kolkata"
@@ -1444,7 +1449,7 @@ class AstroRepository:
                 "status": "provisional" if pair_available else "blocked",
                 "badge": "Research only" if pair_available else "Insufficient evidence",
                 "detail": "Deterministic USD-versus-JPY research scoring. It is not a certified trade signal.",
-                "contract": "GANN_FX_PAIR_EVIDENCE_V1",
+            "contract": CURRENCY_PAIR_EVIDENCE_CONTRACT,
                 "sourceSha256": None,
             },
             {
@@ -1744,7 +1749,6 @@ class AstroRepository:
         touch = self.touch_by_event.get(event_id)
         pair_evidence = None
         if touch is not None:
-            pair_scores = currency_pair_evidence(touch)
             symbol_letters = re.sub(
                 r"[^A-Z]",
                 "",
@@ -1752,68 +1756,12 @@ class AstroRepository:
             )
             base_currency = symbol_letters[:3] if len(symbol_letters) >= 6 else "BASE"
             quote_currency = symbol_letters[3:6] if len(symbol_letters) >= 6 else "QUOTE"
-            pair_evidence = {
-                "contract": "GANN_FX_PAIR_EVIDENCE_V1",
-                "status": (
-                    "provisional_research_only"
-                    if str(pair_scores.get("fx_hypothesis_direction") or "UNKNOWN")
-                    != "UNKNOWN"
-                    else "insufficient_pair_evidence"
-                ),
-                "base": {
-                    "label": base_currency,
-                    "referenceLabel": str(
-                        pair_scores.get("fx_base_reference_label") or base_currency
-                    ),
-                    "netScore": pair_scores.get("fx_base_net_score"),
-                    "doctrineNetScore": pair_scores.get("fx_doctrine_base_net_score"),
-                    "scoredHitCount": pair_scores.get("fx_base_scored_hit_count"),
-                    "dominantHit": pair_scores.get("fx_dominant_base_hit"),
-                    "doctrineDominantHit": pair_scores.get(
-                        "fx_doctrine_dominant_base_hit"
-                    ),
-                    "doctrineDominantDignity": pair_scores.get(
-                        "fx_doctrine_dominant_base_dignity"
-                    ),
-                    "doctrineDignityVirupaAvg": pair_scores.get(
-                        "fx_doctrine_base_dignity_virupa_avg"
-                    ),
-                },
-                "quote": {
-                    "label": quote_currency,
-                    "referenceLabel": str(
-                        pair_scores.get("fx_quote_reference_label") or quote_currency
-                    ),
-                    "netScore": pair_scores.get("fx_quote_net_score"),
-                    "doctrineNetScore": pair_scores.get("fx_doctrine_quote_net_score"),
-                    "scoredHitCount": pair_scores.get("fx_quote_scored_hit_count"),
-                    "dominantHit": pair_scores.get("fx_dominant_quote_hit"),
-                    "doctrineDominantHit": pair_scores.get(
-                        "fx_doctrine_dominant_quote_hit"
-                    ),
-                    "doctrineDominantDignity": pair_scores.get(
-                        "fx_doctrine_dominant_quote_dignity"
-                    ),
-                    "doctrineDignityVirupaAvg": pair_scores.get(
-                        "fx_doctrine_quote_dignity_virupa_avg"
-                    ),
-                },
-                "pair": {
-                    "netScore": pair_scores.get("fx_pair_net_score"),
-                    "conflictRatio": pair_scores.get("fx_pair_conflict_ratio"),
-                    "direction": pair_scores.get("fx_hypothesis_direction"),
-                    "doctrineNetScore": pair_scores.get(
-                        "fx_doctrine_pair_net_score"
-                    ),
-                    "doctrineConflictRatio": pair_scores.get(
-                        "fx_doctrine_pair_conflict_ratio"
-                    ),
-                    "doctrineDirection": pair_scores.get(
-                        "fx_doctrine_hypothesis_direction"
-                    ),
-                },
-                "notes": pair_scores.get("fx_scoring_notes"),
-            }
+            pair_evidence = currency_pair_evidence_contract(
+                touch,
+                base_currency=base_currency,
+                quote_currency=quote_currency,
+                evidence_cutoff=row["timestamp"],
+            )
             touch_context = {
                 key: json_value(touch.get(key))
                 for key in TOUCH_CONTEXT_COLUMNS

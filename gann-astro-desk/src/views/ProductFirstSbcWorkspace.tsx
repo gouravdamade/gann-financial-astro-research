@@ -36,6 +36,17 @@ function momentInput(snapshot: ChakraLabSnapshot | null): string {
   return snapshot?.requested_at_local.slice(0, 16) ?? ''
 }
 
+function compactUtc(value: string | null): string {
+  if (!value) return 'Unknown'
+  const date = new Date(value)
+  return Number.isNaN(date.valueOf())
+    ? value
+    : new Intl.DateTimeFormat('en-IN', {
+      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+      timeZone: 'UTC', timeZoneName: 'short',
+    }).format(date)
+}
+
 function compactAspectLabel(value: string): string {
   return value.replace('AVG(ALL)', 'AVG').replaceAll('|', ' / ')
 }
@@ -103,11 +114,12 @@ export function ProductFirstSbcWorkspace({
       : guidance?.favorable_guidance_units
         ? 'Support only'
         : 'No resolved contribution'
-  const baseScore = currencyPairEvidence?.base.doctrineNetScore ?? currencyPairEvidence?.base.netScore ?? null
-  const quoteScore = currencyPairEvidence?.quote.doctrineNetScore ?? currencyPairEvidence?.quote.netScore ?? null
-  const pairScore = currencyPairEvidence?.pair.doctrineNetScore ?? currencyPairEvidence?.pair.netScore ?? null
-  const commonMode = baseScore != null && quoteScore != null ? (baseScore + quoteScore) / 2 : null
-  const pairConflict = currencyPairEvidence?.pair.doctrineConflictRatio ?? currencyPairEvidence?.pair.conflictRatio ?? null
+  const baseScore = currencyPairEvidence?.base.netUnits ?? null
+  const quoteScore = currencyPairEvidence?.quote.netUnits ?? null
+  const pairScore = currencyPairEvidence?.pair.netDifferenceUnits ?? null
+  const commonActivation = currencyPairEvidence?.pair.commonActivationUnits ?? null
+  const jointNetStrength = currencyPairEvidence?.pair.jointNetStrengthUnits ?? null
+  const pairConflict = currencyPairEvidence?.pair.conflictRatio ?? null
   const plottedVectors = fixedPhasorInterval?.vectors.filter((vector) => vector.projection_status === 'PLOTTED') ?? []
   const unknownVectors = fixedPhasorInterval?.vectors.filter((vector) => vector.projection_status === 'UNKNOWN_NOT_PLOTTED') ?? []
   const maxVectorMagnitude = Math.max(1, ...plottedVectors.map((vector) => vector.magnitude_units ?? 0))
@@ -264,13 +276,16 @@ export function ProductFirstSbcWorkspace({
             </div>
           </div>
           <dl>
+            <div><dt>{currencyPairEvidence.base.label} mapping</dt><dd>{currencyPairEvidence.base.referenceLabel} · {display(currencyPairEvidence.base.state)}</dd></div>
+            <div><dt>{currencyPairEvidence.quote.label} mapping</dt><dd>{currencyPairEvidence.quote.referenceLabel} · {display(currencyPairEvidence.quote.state)}</dd></div>
             <div><dt>{currencyPairEvidence.base.label}</dt><dd>{baseScore == null ? 'Unknown' : baseScore.toFixed(3)}</dd></div>
             <div><dt>{currencyPairEvidence.quote.label}</dt><dd>{quoteScore == null ? 'Unknown' : quoteScore.toFixed(3)}</dd></div>
-            <div><dt>Base minus quote</dt><dd>{pairScore == null ? 'Unknown' : pairScore.toFixed(3)}</dd></div>
-            <div><dt>Common mode</dt><dd>{commonMode == null ? 'Unknown' : commonMode.toFixed(3)}</dd></div>
+            <div><dt>Pair net difference</dt><dd>{pairScore == null ? 'Unknown' : pairScore.toFixed(3)}</dd></div>
+            <div><dt>Common activation</dt><dd>{commonActivation == null ? 'Unknown' : commonActivation.toFixed(3)}</dd></div>
+            <div><dt>Joint net strength</dt><dd>{jointNetStrength == null ? 'Unknown' : jointNetStrength.toFixed(3)}</dd></div>
             <div><dt>Conflict</dt><dd>{pairConflict == null ? 'Unknown' : `${(pairConflict * 100).toFixed(1)}%`}</dd></div>
           </dl>
-          <p>Both currencies remain visible. These descriptive values are not a price prediction and cannot unlock an order or execution path.</p>
+          <p>Evidence cutoff: {compactUtc(currencyPairEvidence.evidenceCutoffUtc)}. Gross activation is calculated before supportive and adverse activity can cancel. Both currencies remain visible; this is not a price prediction and cannot unlock an order or execution path.</p>
         </section>
       )}
 

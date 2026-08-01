@@ -197,7 +197,7 @@ class AstroRepositoryTests(unittest.TestCase):
         )
         pair = detail["currencyPairEvidence"]
         self.assertIsNotNone(pair)
-        self.assertEqual(pair["contract"], "GANN_FX_PAIR_EVIDENCE_V1")
+        self.assertEqual(pair["contract"], "GANN_FX_PAIR_EVIDENCE_V2")
         self.assertEqual(pair["base"]["label"], "USD")
         self.assertEqual(pair["quote"]["label"], "JPY")
         self.assertEqual(pair["base"]["referenceLabel"], "USD")
@@ -213,8 +213,12 @@ class AstroRepositoryTests(unittest.TestCase):
         )
         self.assertIn(
             pair["status"],
-            {"provisional_research_only", "insufficient_pair_evidence"},
+            {"provisional_research_only", "insufficient_pair_evidence", "blocked_mapping"},
         )
+        self.assertIn(pair["base"]["state"], {"KNOWN", "UNKNOWN", "BLOCKED_MAPPING"})
+        self.assertIn(pair["quote"]["state"], {"KNOWN", "UNKNOWN"})
+        self.assertIn(pair["pair"]["state"], {"KNOWN", "UNKNOWN"})
+        self.assertIn("commonActivationUnits", pair["pair"])
         certification = {item["key"]: item for item in detail["evidenceCertifications"]}
         self.assertEqual(certification["astronomy_geometry"]["status"], "versioned")
         self.assertIn(certification["shadbala_drik"]["status"], {"certified", "failed", "blocked"})

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
@@ -189,20 +189,29 @@ const snapshot: ChakraLabSnapshot = {
 }
 
 const currencyPairEvidence: CurrencyPairEvidence = {
-  contract: 'GANN_FX_PAIR_EVIDENCE_V1',
+  contract: 'GANN_FX_PAIR_EVIDENCE_V2',
   status: 'provisional_research_only',
+  profileId: 'fx_doctrine_consensus_watch_only_v1',
+  asOfUtc: '2026-08-01T00:00:00+00:00',
+  evidenceCutoffUtc: '2026-08-01T00:00:00+00:00',
+  mappingIdentity: 'USD:USD reference|JPY:JPY reference',
   base: {
     label: 'USD', referenceLabel: 'USD reference', netScore: 1.4, doctrineNetScore: 1.2,
-    scoredHitCount: 2, dominantHit: null, doctrineDominantHit: null,
+    state: 'KNOWN', supportiveUnits: 1.6, adverseUnits: 0.4, netUnits: 1.2, grossActivationUnits: 2.0,
+    conflictRatio: 0.2, eligibleCount: 2, scoredHitCount: 2, unresolvedCount: 0, unknownCoverage: 0,
+    dominantHit: null, doctrineDominantHit: null,
     doctrineDominantDignity: null, doctrineDignityVirupaAvg: null,
   },
   quote: {
     label: 'JPY', referenceLabel: 'JPY reference', netScore: -0.4, doctrineNetScore: -0.2,
-    scoredHitCount: 1, dominantHit: null, doctrineDominantHit: null,
+    state: 'KNOWN', supportiveUnits: 0.4, adverseUnits: 0.6, netUnits: -0.2, grossActivationUnits: 1.0,
+    conflictRatio: 0.4, eligibleCount: 1, scoredHitCount: 1, unresolvedCount: 0, unknownCoverage: 0,
+    dominantHit: null, doctrineDominantHit: null,
     doctrineDominantDignity: null, doctrineDignityVirupaAvg: null,
   },
   pair: {
-    netScore: 1.8, conflictRatio: 0.25, direction: 'UP',
+    state: 'KNOWN', netDifferenceUnits: 1.4, jointNetStrengthUnits: 0.7, commonActivationUnits: 1.5, grossActivationUnits: 3.0,
+    netScore: 1.8, conflictRatio: 0.3, conflictRatioLegacy: 0.25, direction: 'UP',
     doctrineNetScore: 1.4, doctrineConflictRatio: 0.2, doctrineDirection: 'UP',
   },
   notes: null,
@@ -1265,8 +1274,8 @@ describe('ChakraLabWorkspace', () => {
     )
 
     await screen.findByText('USDJPY relative context')
-    expect(screen.getByText('Base minus quote')).toBeInTheDocument()
-    expect(screen.getByText('Common mode')).toBeInTheDocument()
+    expect(screen.getByText('Pair net difference')).toBeInTheDocument()
+    expect(screen.getByText('Common activation')).toBeInTheDocument()
     expect(screen.getByText(/not a price prediction/i)).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })

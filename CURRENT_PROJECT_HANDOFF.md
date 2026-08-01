@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 11:25 IST
+Last updated: 2026-08-01 12:18 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -14,6 +14,13 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   `PFR_C1_ACCEPTANCE_REPORT.md` is the single consolidated progress report.
 - No product behavior, calculation, source-certification, Shadbala, ML,
   trading, Android, RAG, or execution code changed in C1-1.
+- C1-2 completed: the product panel now consumes the backend-owned
+  `GANN_FX_PAIR_EVIDENCE_V2` contract. It identifies each currency/reference
+  mapping and evidence cutoff, preserves known/unknown/blocked state and
+  coverage, and separates net difference from gross common activation. The
+  prior frontend average of cancelling USD/JPY net values has been removed.
+  This remains read-only descriptive research; it has no trade, vote, fusion,
+  or execution role.
 
 ## Latest Update - 2026-08-01 (Product Beta Scroll-Zoom Repair)
 

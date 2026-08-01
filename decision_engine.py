@@ -12,6 +12,7 @@ from build_trade_candidates_from_touches import score_currency_pair_for_row
 
 
 DECISION_PACKET_CONTRACT = "GANN_TIMESTAMP_SAFE_DECISION_PACKET_V1"
+CURRENCY_PAIR_EVIDENCE_CONTRACT = "GANN_FX_PAIR_EVIDENCE_V2"
 ENGINE_VERSION = "timestamp_safe_auto_suggest_v1_1_20260713"
 POLICY_VERSION = "fx_doctrine_consensus_watch_only_v1"
 VALIDATION_CONTRACT = "GANN_TIMESTAMP_SAFE_WALK_FORWARD_EVALUATION_V1"
@@ -117,6 +118,138 @@ def currency_pair_evidence(
         if key in raw
     }
     return _json_safe(score_currency_pair_for_row(pd.Series(scorer_input)))
+
+
+def _finite_or_none(value: Any) -> float | None:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if np.isfinite(number) else None
+
+
+def _event_cutoff_utc(value: Any) -> str | None:
+    if value is None:
+        return None
+    timestamp = pd.Timestamp(value)
+    if pd.isna(timestamp):
+        return None
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.tz_localize("Asia/Kolkata")
+    return timestamp.tz_convert("UTC").isoformat()
+
+
+def currency_pair_evidence_contract(
+    value: Mapping[str, Any] | pd.Series | None,
+    *,
+    base_currency: str,
+    quote_currency: str,
+    evidence_cutoff: Any,
+) -> dict[str, Any]:
+    """Build the displayed FX composition from timestamp-safe scored evidence.
+
+    This is intentionally descriptive: gross activation is never derived from
+    net values, and no field has an execution or directional vote role.
+    """
+    scores = currency_pair_evidence(value)
+    base_reference_available = bool(scores.get("fx_base_reference_available"))
+
+    def side(prefix: str, currency: str, mapping_available: bool) -> dict[str, Any]:
+        supportive = _finite_or_none(scores.get(f"fx_doctrine_{prefix}_supportive_units"))
+        adverse = _finite_or_none(scores.get(f"fx_doctrine_{prefix}_adverse_units"))
+        gross = _finite_or_none(scores.get(f"fx_doctrine_{prefix}_gross_activation_units"))
+        eligible = scores.get(f"fx_{prefix}_candidate_hit_count")
+        scored = scores.get(f"fx_{prefix}_scored_hit_count")
+        eligible_count = int(eligible) if eligible is not None else 0
+        scored_count = int(scored) if scored is not None else 0
+        unresolved_count = max(0, eligible_count - scored_count)
+        if not mapping_available:
+            state = "BLOCKED_MAPPING"
+        elif eligible_count <= 0:
+            state = "UNKNOWN"
+        else:
+            state = "KNOWN"
+        if gross is None and supportive is not None and adverse is not None:
+            gross = supportive + adverse
+        conflict_ratio = (
+            min(supportive or 0.0, adverse or 0.0) / gross
+            if gross is not None and gross > 0
+            else None
+        )
+        unknown_coverage = unresolved_count / eligible_count if eligible_count > 0 else 1.0
+        return {
+            "label": currency,
+            "referenceLabel": str(scores.get(f"fx_{prefix}_reference_label") or currency),
+            "state": state,
+            "supportiveUnits": supportive,
+            "adverseUnits": adverse,
+            "netUnits": _finite_or_none(scores.get(f"fx_doctrine_{prefix}_net_score")),
+            "grossActivationUnits": gross,
+            "conflictRatio": conflict_ratio,
+            "eligibleCount": eligible_count,
+            "scoredHitCount": scored_count,
+            "unresolvedCount": unresolved_count,
+            "unknownCoverage": unknown_coverage,
+            # Legacy diagnostic fields are retained for other existing panels.
+            "netScore": _finite_or_none(scores.get(f"fx_{prefix}_net_score")),
+            "doctrineNetScore": _finite_or_none(scores.get(f"fx_doctrine_{prefix}_net_score")),
+            "dominantHit": scores.get(f"fx_dominant_{prefix}_hit"),
+            "doctrineDominantHit": scores.get(f"fx_doctrine_dominant_{prefix}_hit"),
+            "doctrineDominantDignity": scores.get(f"fx_doctrine_dominant_{prefix}_dignity"),
+            "doctrineDignityVirupaAvg": _finite_or_none(scores.get(f"fx_doctrine_{prefix}_dignity_virupa_avg")),
+        }
+
+    base = side("base", base_currency, base_reference_available)
+    quote = side("quote", quote_currency, True)
+    both_known = base["state"] == "KNOWN" and quote["state"] == "KNOWN"
+    base_gross = base["grossActivationUnits"] or 0.0
+    quote_gross = quote["grossActivationUnits"] or 0.0
+    pair_gross = base_gross + quote_gross if both_known else None
+    pair_net = (
+        float(base["netUnits"] or 0.0) - float(quote["netUnits"] or 0.0)
+        if both_known
+        else None
+    )
+    joint_net = (
+        (abs(float(base["netUnits"] or 0.0)) + abs(float(quote["netUnits"] or 0.0))) / 2
+        if both_known
+        else None
+    )
+    return {
+        "contract": CURRENCY_PAIR_EVIDENCE_CONTRACT,
+        "status": "provisional_research_only" if both_known else (
+            "blocked_mapping" if base["state"] == "BLOCKED_MAPPING" else "insufficient_pair_evidence"
+        ),
+        "profileId": POLICY_VERSION,
+        "asOfUtc": _event_cutoff_utc(evidence_cutoff),
+        "evidenceCutoffUtc": _event_cutoff_utc(evidence_cutoff),
+        "mappingIdentity": f"{base_currency}:{base['referenceLabel']}|{quote_currency}:{quote['referenceLabel']}",
+        "base": base,
+        "quote": quote,
+        "pair": {
+            "state": "KNOWN" if both_known else "UNKNOWN",
+            "netDifferenceUnits": pair_net,
+            "jointNetStrengthUnits": joint_net,
+            "commonActivationUnits": pair_gross / 2 if pair_gross is not None else None,
+            "grossActivationUnits": pair_gross,
+            "conflictRatio": (
+                ((base["conflictRatio"] or 0.0) + (quote["conflictRatio"] or 0.0)) / 2
+                if both_known
+                else None
+            ),
+            # Legacy fields are retained only so existing diagnostic consumers remain stable.
+            "netScore": _finite_or_none(scores.get("fx_pair_net_score")),
+            "conflictRatioLegacy": _finite_or_none(scores.get("fx_pair_conflict_ratio")),
+            "direction": scores.get("fx_hypothesis_direction"),
+            "doctrineNetScore": _finite_or_none(scores.get("fx_doctrine_pair_net_score")),
+            "doctrineConflictRatio": _finite_or_none(scores.get("fx_doctrine_pair_conflict_ratio")),
+            "doctrineDirection": scores.get("fx_doctrine_hypothesis_direction"),
+        },
+        "notes": (
+            "Timestamp-safe descriptive FX composition. Gross activation is the sum of supportive and adverse doctrine units; "
+            "it is not a forecast, vote, or execution input."
+        ),
+    }
 
 
 def _json_safe(value: Any) -> Any:
