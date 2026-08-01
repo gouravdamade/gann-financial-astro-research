@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   CircleDot,
+  Download,
   Grid3X3,
   Network,
   RefreshCw,
@@ -29,6 +30,8 @@ import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
 import { InstrumentKeyConverter } from './InstrumentKeyConverter'
 import { SbcLinkedAuditWorkspace } from './SbcLinkedAuditWorkspace'
 import { ProductFirstSbcWorkspace } from './ProductFirstSbcWorkspace'
+import { VISUALIZATION_ENGINE_MODES, visualizationModePolicy, type VisualizationEngineMode } from '../visualizationModes'
+import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
 
 
 const BODIES = [
@@ -122,6 +125,12 @@ export function ChakraLabWorkspace({
   const [fixedPhasor, setFixedPhasor] = useState<ChakraFixedPhasorSeries | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
   const [workspaceMode, setWorkspaceMode] = useState<'WORKSPACE' | 'BOARD' | 'AUDIT'>('WORKSPACE')
+  const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
+    const stored = localStorage.getItem('gann-astro.visualization-mode')
+    return VISUALIZATION_ENGINE_MODES.includes(stored as VisualizationEngineMode)
+      ? stored as VisualizationEngineMode
+      : 'SOURCE_ONLY_BASELINE'
+  })
   const [busy, setBusy] = useState(false)
   const [phasorBusy, setPhasorBusy] = useState(false)
   const [phasorError, setPhasorError] = useState('')
@@ -207,6 +216,10 @@ export function ChakraLabWorkspace({
     void loadSnapshot()
   }, [loadSnapshot])
 
+  useEffect(() => {
+    localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
+  }, [visualizationMode])
+
   const contextKeys = useMemo(() => new Set(
     snapshot?.target_context.flatMap((layer) => (
       layer.values.map((value) => `${layer.layer}:${value}`)
@@ -224,6 +237,8 @@ export function ChakraLabWorkspace({
   ), [snapshot])
   const selected = snapshot?.grid.cells.find((cell) => cellKey(cell) === selectedCell)
   const guidance = snapshot?.guidance
+  const visualizationPolicy = visualizationModePolicy(visualizationMode)
+  const visualizationSourceGaps = sourceGapsForVisualizationMode(visualizationMode)
   const resolvedByBody = new Map(
     guidance?.actor_resolutions.map((actor) => [actor.body, actor]) ?? [],
   )
@@ -241,6 +256,30 @@ export function ChakraLabWorkspace({
       return
     }
     setNameInitials((current) => mergeValue(current, candidate.key))
+  }
+
+  const exportVisualizationManifest = () => {
+    const payload = {
+      export_type: 'GANN_ASTRO_VISUALIZATION_STATE_V1',
+      generated_at_utc: new Date().toISOString(),
+      visualization_mode: visualizationPolicy.mode,
+      evidence_status: visualizationPolicy.evidenceStatus,
+      profile: visualizationPolicy.calibrationProfile,
+      source_gaps: visualizationSourceGaps,
+      snapshot_id: snapshot?.snapshot_id ?? null,
+      as_of_utc: snapshot?.as_of_utc ?? null,
+      evidence_cutoff_utc: snapshot?.evidence_cutoff_utc ?? null,
+      request,
+      guardrails: visualizationPolicy.guardrails,
+      note: 'Experimental visualization state only. Not financially validated. No execution or automatic order placement is permitted.',
+    }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `gann-astro-${visualizationPolicy.mode.toLowerCase()}-${new Date().toISOString().replaceAll(':', '-')}.json`
+    anchor.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
@@ -285,6 +324,20 @@ export function ChakraLabWorkspace({
             Audit
           </button>
         </div>
+        <div className="visualization-mode-switch" role="tablist" aria-label="Visualization calculation mode">
+          {VISUALIZATION_ENGINE_MODES.map((mode) => {
+            const policy = visualizationModePolicy(mode)
+            return <button
+              key={mode}
+              role="tab"
+              aria-selected={visualizationMode === mode}
+              className={visualizationMode === mode ? 'is-active' : ''}
+              onClick={() => setVisualizationMode(mode)}
+              title={policy.explanation}
+            >{policy.shortLabel}</button>
+          })}
+        </div>
+        <span className="visualization-mode-id" title={visualizationPolicy.explanation}>{visualizationPolicy.mode}</span>
         <span className="chakra-contract-chip"><ShieldCheck size={12} /> Read only</span>
         <span className="chakra-contract-chip">No lookahead</span>
         <span className="chakra-contract-chip is-warning">Not financially validated</span>
@@ -302,7 +355,30 @@ export function ChakraLabWorkspace({
           <RefreshCw size={14} className={busy ? 'is-spinning' : ''} />
           {busy ? 'Calculating' : 'Refresh snapshot'}
         </button>
+        <button
+          className="secondary-command chakra-run-button"
+          onClick={exportVisualizationManifest}
+          title="Export this visualization mode, source gaps, timestamp, and safety locks"
+        >
+          <Download size={14} /> Export state
+        </button>
       </div>
+
+      <section className="visualization-mode-status" aria-label="Visualization mode status">
+        <div>
+          <strong>{visualizationPolicy.label}</strong>
+          <span>{visualizationPolicy.explanation}</span>
+        </div>
+        <div>
+          <b>Profile</b>
+          <span>{visualizationPolicy.calibrationProfile.profileId}</span>
+          <small>{visualizationPolicy.calibrationProfile.status} · {visualizationPolicy.calibrationProfile.parameterCount} fitted parameters</small>
+        </div>
+        {visualizationSourceGaps.length > 0 && <details>
+          <summary>Source gaps ({visualizationSourceGaps.length})</summary>
+          {visualizationSourceGaps.map((gap) => <p key={gap.gapId}><b>{gap.status}</b> · {gap.title}: {gap.explanation}</p>)}
+        </details>}
+      </section>
 
       {workspaceMode === 'WORKSPACE' ? (
         <ProductFirstSbcWorkspace
@@ -314,6 +390,7 @@ export function ChakraLabWorkspace({
           currencyPairEvidence={currencyPairEvidence}
           selectedAspectLabel={selectedAspectLabel}
           fixedPhasorInterval={fixedPhasor?.intervals[0] ?? null}
+          visualizationPolicy={visualizationPolicy}
           phasorBusy={phasorBusy}
           phasorError={phasorError}
           onLoadFixedPhasor={() => void loadFixedPhasor()}
@@ -516,6 +593,7 @@ export function ChakraLabWorkspace({
               <strong>Guidance ledger</strong>
               <span>{guidance?.financial_validation_status ?? 'PENDING'}</span>
             </div>
+            {visualizationPolicy.scoringVisible ? <>
             <div className="chakra-score-line">
               <strong>
                 {guidance ? `${(guidance.normalized_guidance_score * 100).toFixed(1)}%` : '—'}
@@ -528,6 +606,11 @@ export function ChakraLabWorkspace({
               <div><span>Net</span><strong>{guidance?.net_guidance_units.toFixed(1) ?? '—'}</strong></div>
               <div><span>Coverage</span><strong>{guidance ? `${(guidance.scoring_coverage_ratio * 100).toFixed(0)}%` : '—'}</strong></div>
             </div>
+            </> : <div className="chakra-mode-suppressed-score">
+              <strong>{visualizationPolicy.evidenceStatus}</strong>
+              <span>{visualizationPolicy.explanation}</span>
+              <small>Scores, directions, and execution remain unavailable in this mode.</small>
+            </div>}
           </section>
 
           <section>
@@ -542,7 +625,7 @@ export function ChakraLabWorkspace({
                   <div className={`chakra-evidence-row is-${item.status.toLowerCase()}`} key={item.body}>
                     <strong>{item.body}</strong>
                     <span>{displayToken(item.source_nakshatra)}</span>
-                    <span>{resolution?.direction ?? displayToken(item.status)}</span>
+                    <span>{visualizationMode === 'VISUAL_ONLY_NO_SCORE' ? displayToken(item.status) : (resolution?.direction ?? displayToken(item.status))}</span>
                     <em>{resolution?.nature ?? item.motion_class ?? '—'}</em>
                   </div>
                 )
@@ -563,7 +646,7 @@ export function ChakraLabWorkspace({
                 >
                   <strong>{item.body}</strong>
                   <span>{item.target.layer}: {displayToken(item.target.value)}</span>
-                  <em>{item.signed_guidance_units?.toFixed(1) ?? 'Unresolved'}</em>
+                  <em>{visualizationPolicy.scoringVisible ? (item.signed_guidance_units?.toFixed(1) ?? 'Unresolved') : displayToken(item.status)}</em>
                 </button>
               )) : <span className="chakra-muted-row">No matched target cells</span>}
             </div>
@@ -586,7 +669,7 @@ export function ChakraLabWorkspace({
         </aside>
       </div>
       ) : (
-        <SbcLinkedAuditWorkspace currentRequest={request} />
+        <SbcLinkedAuditWorkspace currentRequest={request} visualizationPolicy={visualizationPolicy} />
       )}
     </section>
   )

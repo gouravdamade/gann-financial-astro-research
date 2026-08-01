@@ -1,10 +1,35 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 12:41 IST
+Last updated: 2026-08-01 18:00 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
 ## Latest Update - 2026-08-01 (PFR-C1 Product Integrity Correction)
+
+## Latest Update - 2026-08-01 (Three-Mode Visualization Engine Candidate)
+
+- Implemented the founder-visible visualization engine modes requested by the
+  `Gann_Astro_Desk_Visualization_Engine_Three_Mode_Codex_Addendum`:
+  `SOURCE_ONLY_BASELINE`, `CALIBRATED_RESEARCH`, and
+  `VISUAL_ONLY_NO_SCORE`. The selected mode persists locally and is shown in
+  the main Chakra workspace, product panel, audit panel, and exported state
+  manifest.
+- Source-only baseline retains only the existing source-profiled ledger and
+  fixed 0/pi representation. Timing geometry is unavailable in this mode.
+  Calibrated research has no fitted parameter profile loaded and therefore
+  visibly reports `SOURCE_MISSING`, with score values withheld. Visual-only
+  shows chart/geometry context without scores or direction labels.
+- Added an explicit source-gap register rather than inserting invented
+  doctrine, calibration values, or authority. The exported JSON manifest
+  includes the active mode, profile state, source gaps, snapshot/cutoff,
+  request, and absolute non-execution locks.
+- Added matching deterministic Python mode contracts and focused tests. All
+  modes remain experimental, non-financially-validated, non-execution, and
+  incapable of automatic order placement.
+- Validation before native packaging: frontend lint passed; focused mode tests
+  passed; production frontend build passed; `python -m pytest -q sbc` passed
+  (5 tests). A broad Vitest run recorded 100 passing tests but also two worker
+  startup timeouts, so it is not counted as a clean all-suite certification.
 
 - The attached Terra High review was accepted as the bounded correction
   contract for `product-first-sbc-phase-lab`: perform PFR-C1 only, then build a

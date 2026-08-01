@@ -36,6 +36,7 @@ import {
   verifyChakraLabAuditCatalog,
   verifyChakraLabAuditPackage,
 } from '../api'
+import type { VisualizationModePolicy } from '../visualizationModes'
 import type {
   ChakraAuditCatalogBuild,
   ChakraAuditCatalogVerification,
@@ -232,9 +233,10 @@ function fileBase64(file: File): Promise<string> {
 
 type Props = {
   currentRequest: ChakraLabRequest
+  visualizationPolicy: VisualizationModePolicy
 }
 
-export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
+export function SbcLinkedAuditWorkspace({ currentRequest, visualizationPolicy }: Props) {
   const [instrumentIdentity, setInstrumentIdentity] = useState('FX:USDJPY')
   const [boundaryLocal, setBoundaryLocal] = useState(() => istInput(currentRequest.at))
   const [boundaryReason, setBoundaryReason] = useState('manual review boundary')
@@ -1278,6 +1280,11 @@ export function SbcLinkedAuditWorkspace({ currentRequest }: Props) {
 
   return (
     <div className="chakra-audit-shell">
+      <div className="visualization-audit-mode" role="status">
+        <strong>Visualization mode</strong>
+        <span>{visualizationPolicy.mode}</span>
+        <em>{visualizationPolicy.evidenceStatus} · execution locked</em>
+      </div>
       <aside className="chakra-audit-capture">
         <section>
           <div className="chakra-section-heading">

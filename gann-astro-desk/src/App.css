@@ -6289,7 +6289,7 @@ html.android-runtime .loading-state {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: 34px minmax(0, 1fr);
+  grid-template-rows: 34px auto minmax(0, 1fr);
   overflow: hidden;
   background: #11151a;
   color: #aeb5bf;
@@ -6349,6 +6349,76 @@ html.android-runtime .loading-state {
 
 .chakra-run-button svg.is-spinning { animation: chakra-spin 0.8s linear infinite; }
 @keyframes chakra-spin { to { transform: rotate(360deg); } }
+
+.visualization-mode-switch {
+  display: inline-flex;
+  align-self: stretch;
+  border: 1px solid #3a4855;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #10161c;
+}
+.visualization-mode-switch button {
+  border: 0;
+  border-right: 1px solid #3a4855;
+  padding: 0 7px;
+  background: transparent;
+  color: #83909a;
+  cursor: pointer;
+  font-size: 8px;
+}
+.visualization-mode-switch button:last-child { border-right: 0; }
+.visualization-mode-switch button.is-active { background: #24505a; color: #edf7f7; }
+.visualization-mode-id,
+.visualization-panel-mode {
+  align-self: center;
+  max-width: 240px;
+  overflow: hidden;
+  color: #9ad3cd;
+  font: 8px/1.2 Consolas, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.visualization-mode-status {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, .8fr) minmax(220px, 1fr);
+  gap: 1px;
+  border-bottom: 1px solid #303842;
+  background: #303842;
+}
+.visualization-mode-status > div,
+.visualization-mode-status details {
+  min-width: 0;
+  padding: 7px 11px;
+  background: #13191f;
+  color: #89949e;
+  font-size: 8px;
+}
+.visualization-mode-status strong,
+.visualization-mode-status b { color: #dde7eb; }
+.visualization-mode-status span,
+.visualization-mode-status small { display: block; margin-top: 3px; }
+.visualization-mode-status details { cursor: pointer; color: #d8bc74; }
+.visualization-mode-status details p { margin: 6px 0 0; color: #aeb8c1; line-height: 1.45; }
+.chakra-mode-suppressed-score { display: grid; gap: 5px; color: #a9b5be; font-size: 9px; line-height: 1.4; }
+.chakra-mode-suppressed-score strong { color: #dfc47b; font: 700 9px/1 Consolas, monospace; }
+.mode-visual_only_no_score .product-first-wheel-resultant,
+.mode-visual_only_no_score .product-first-wheel-vector { stroke: #91a2ad; }
+.mode-visual_only_no_score .product-first-wheel-gross-ring { stroke: #667985; }
+.visualization-audit-mode {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-bottom: 1px solid #34414b;
+  background: #12191f;
+  color: #83909b;
+  font-size: 8px;
+}
+.visualization-audit-mode strong { color: #dce7ea; }
+.visualization-audit-mode span { color: #95d4cc; font-family: Consolas, monospace; }
+.visualization-audit-mode em { color: #d6b46e; font-style: normal; }
 
 /* Product-first integrated SBC workspace -------------------------------- */
 .product-first-sbc {
