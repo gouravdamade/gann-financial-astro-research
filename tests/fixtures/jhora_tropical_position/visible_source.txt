@@ -1,0 +1,1 @@
+Minimal deterministic test fixture. No external screenshot is included.

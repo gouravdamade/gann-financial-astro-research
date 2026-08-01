@@ -1,7 +1,8 @@
 {
   "name": "gann-astro-desk",
   "private": true,
-  "version": "0.10.30",
+  "version": "0.10.31",
+  "packageManager": "npm@11.12.1",
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --names backend,codex,ui --prefix-colors cyan,magenta,green \"python backend/server.py\" \"node server/codexBridge.mjs\" \"vite\"",
@@ -11,7 +12,7 @@
     "dev:codex": "node server/codexBridge.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "test": "vitest run --maxWorkers=2",
+    "test": "vitest run --maxWorkers=1",
     "test:backend": "python -m unittest discover -s backend -p \"test_*.py\"",
     "preview": "vite preview",
     "tauri": "tauri",

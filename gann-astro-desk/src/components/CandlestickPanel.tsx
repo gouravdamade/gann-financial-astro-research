@@ -157,7 +157,7 @@ export function CandlestickPanel({ eventId, selectedAnnotation }: CandlestickPan
 
       {!health?.ready && health && (
         <div className="local-jyotish-unavailable">
-          <strong>{health.runtimeReady ? 'Candlestick corpus unavailable' : 'Commentary model offline'}</strong>
+          <strong>{health.corpusReady ? 'Commentary model offline' : 'Candlestick specialist unavailable - optional corpus not installed'}</strong>
           <span>Deterministic candle evidence above remains available. {health.error}</span>
         </div>
       )}

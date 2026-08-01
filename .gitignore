@@ -12,6 +12,7 @@ __pycache__/
 
 # Generated market/astro datasets and exports
 *.csv
+!tests/fixtures/jhora_tropical_position/*.csv
 *.parquet
 *.pkl
 *.html

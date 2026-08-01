@@ -985,6 +985,69 @@ class CandlestickShadowSupervisor:
         return snapshot
 
 
+class CandlestickShadowUnavailable:
+    """Keeps the core desktop package usable without private candle artifacts."""
+
+    def __init__(self, model_path: Path | str) -> None:
+        self.model_path = str(Path(model_path).expanduser())
+        self.message = (
+            "Candlestick specialist unavailable - optional model/corpus is not configured."
+        )
+
+    def status(self, limit: int = 100) -> dict[str, Any]:
+        del limit
+        return {
+            "contract": "GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3",
+            "availability": "NOT_CONFIGURED",
+            "trial": {
+                "trialId": "not_configured",
+                "contract": "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3",
+                "identitySha256": "",
+                "establishedAtUtc": "",
+            },
+            "model": {
+                "artifactId": "not_configured",
+                "artifactSha256": "",
+                "primaryModelId": "not_configured",
+                "retrospectiveGate": {
+                    "status": "failed",
+                    "primaryCandidate": "not_configured",
+                    "reason": self.message,
+                    "promotionAuthorized": False,
+                },
+            },
+            "summary": {"decisions": 0, "outcomes": 0, "pending": 0},
+            "integrity": {"ok": True, "entries": 0, "headHash": ""},
+            "records": [],
+            "lastScan": {
+                "state": "skipped",
+                "observedAtUtc": None,
+                "decisionAppended": False,
+                "outcomesAppended": 0,
+                "message": self.message,
+            },
+            "databasePath": "",
+            "guardrails": {
+                "consumedByAstrologyRules": False,
+                "consumedByAutoSuggest": False,
+                "consumedByOfficialMlNotes": False,
+                "consumedByCoordinator": False,
+                "executionAllowed": False,
+            },
+            "optionalFeature": {
+                "status": "NOT_CONFIGURED",
+                "reason": self.message,
+                "expectedModelPath": self.model_path,
+            },
+        }
+
+    def scan_once(self) -> dict[str, Any]:
+        return self.status()
+
+    def stop(self) -> None:
+        return None
+
+
 def default_model_path(project_root: Path) -> Path:
     configured = str(os.environ.get("GANN_ASTRO_CANDLE_SHADOW_MODEL") or "").strip()
     if configured:

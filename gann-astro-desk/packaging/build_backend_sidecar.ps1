@@ -42,10 +42,6 @@ $env:PYTHONPYCACHEPREFIX = Join-Path $safeBuildRoot "pycache"
 
 Push-Location $appRoot
 try {
-    & $PackagingPython (Join-Path $projectRoot "candlestick_agent\build_corpus_index.py")
-    if ($LASTEXITCODE -ne 0) {
-        throw "Candlestick corpus build failed with exit code $LASTEXITCODE"
-    }
     & $PackagingPython -m PyInstaller `
         --noconfirm `
         --clean `

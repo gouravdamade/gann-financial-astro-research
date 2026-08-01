@@ -52,19 +52,20 @@ function recordValues(record: CandlestickShadowRecord): {
 }
 
 export function CandlestickShadowPanel({ snapshot, busy, error, onScan }: CandlestickShadowPanelProps) {
+  const optionalUnavailable = snapshot?.availability === 'NOT_CONFIGURED'
   const chainValid = snapshot?.integrity.ok ?? true
   return (
     <section className="candle-shadow-panel">
       <div className="shadow-ledger-summary">
         <span className={chainValid ? 'is-valid' : 'is-invalid'}>
           {chainValid ? <ShieldCheck size={15} /> : <ShieldAlert size={15} />}
-          <strong>{chainValid ? 'Chain verified' : 'Chain failed'}</strong>
-          <small>{snapshot?.integrity.entries ?? 0} immutable entries</small>
+          <strong>{optionalUnavailable ? 'Optional specialist unavailable' : chainValid ? 'Chain verified' : 'Chain failed'}</strong>
+          <small>{optionalUnavailable ? 'core workspace remains available' : `${snapshot?.integrity.entries ?? 0} immutable entries`}</small>
         </span>
         <span><strong>{snapshot?.summary.decisions ?? 0}</strong><small>timely H1 decisions</small></span>
         <span><strong>{snapshot?.summary.pending ?? 0}</strong><small>awaiting six bars</small></span>
         <span><strong>{snapshot?.summary.outcomes ?? 0}</strong><small>settled observations</small></span>
-        <span className="candle-gate-failed"><Activity size={13} /><strong>Primary failed</strong><small>retrospective gate</small></span>
+        <span className="candle-gate-failed"><Activity size={13} /><strong>{optionalUnavailable ? 'Not configured' : 'Primary failed'}</strong><small>{optionalUnavailable ? 'optional local pack' : 'retrospective gate'}</small></span>
         <span className="shadow-execution-lock"><LockKeyhole size={14} /><strong>Execution locked</strong></span>
         <button type="button" onClick={onScan} disabled={busy} title="Scan the read-only H1 candle shadow ledger now">
           <RefreshCw size={14} className={busy ? 'is-spinning' : ''} /> Scan now

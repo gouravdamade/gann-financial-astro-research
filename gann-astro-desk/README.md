@@ -144,15 +144,18 @@ cd D:\PycharmProjects\gann-astro-desk
 .\packaging\build_tauri_windows.ps1
 ```
 
-The release manifest records the executable hash, bundled file count, astronomy
-contract, and read-only MT5 execution policy.
+The release manifest records the executable hash, source commit, source-clean
+state, Node/npm versions, bundled file count, astronomy contract, and read-only
+MT5 execution policy. The candlestick specialist is optional and is intentionally
+not bundled with the core product. An authorized local source pack can be added
+after installation with `packaging\setup_optional_candlestick_pack.ps1`.
 
 ## Development Runtime
 
 From `D:\PycharmProjects\gann-astro-desk`:
 
 ```powershell
-npm install
+npm ci
 npm run dev
 ```
 
@@ -189,6 +192,7 @@ and activating research data cannot place an order.
 ## Verify
 
 ```powershell
+npm ci
 npm run lint
 npm test
 npm run test:backend

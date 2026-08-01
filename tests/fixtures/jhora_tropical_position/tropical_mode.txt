@@ -1,0 +1,1 @@
+Minimal deterministic test fixture. Tropical mode provenance is intentionally synthetic.

@@ -1575,6 +1575,7 @@ export type CandlestickShadowRecord = {
 
 export type CandlestickShadowSnapshot = {
   contract: 'GANN_CANDLESTICK_APPEND_ONLY_SHADOW_LEDGER_V3'
+  availability?: 'AVAILABLE' | 'NOT_CONFIGURED'
   trial: {
     trialId: string
     contract: 'GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3'

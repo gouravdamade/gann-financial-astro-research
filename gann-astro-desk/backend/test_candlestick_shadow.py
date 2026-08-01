@@ -26,6 +26,7 @@ from candlestick_agent.usdjpy_walk_forward import (
 from candlestick_shadow import (
     CandlestickShadowStore,
     CandlestickShadowSupervisor,
+    CandlestickShadowUnavailable,
     bars_to_frame,
     build_decision_payload,
     build_outcome_payload,
@@ -434,6 +435,16 @@ class CandlestickShadowTests(unittest.TestCase):
                 "GANN_CANDLESTICK_FROZEN_SHADOW_TRIAL_V3",
             )
             supervisor.stop()
+
+    def test_optional_specialist_is_startup_safe_without_a_private_model(self) -> None:
+        unavailable = CandlestickShadowUnavailable("C:/missing/private-model.json")
+        status = unavailable.status()
+
+        self.assertEqual(status["availability"], "NOT_CONFIGURED")
+        self.assertEqual(status["lastScan"]["state"], "skipped")
+        self.assertFalse(status["guardrails"]["executionAllowed"])
+        self.assertIn("optional", status["lastScan"]["message"].lower())
+        self.assertEqual(unavailable.scan_once()["availability"], "NOT_CONFIGURED")
 
 
 if __name__ == "__main__":

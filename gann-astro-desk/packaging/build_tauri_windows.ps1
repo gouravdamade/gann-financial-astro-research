@@ -104,10 +104,12 @@ Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $sourceGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
 $sourceGitDirty = [bool](& git.exe -C $projectRoot status --porcelain | Select-Object -First 1)
+$nodeVersion = (& node.exe --version).Trim()
+$npmVersion = (& npm.cmd --version).Trim()
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
     version = $appVersion
-    status = "pfr_c2r_reconciliation_candidate"
+    status = "pfr_c2f_founder_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -118,6 +120,12 @@ $manifest = [ordered]@{
     shell = "Tauri 2 / Rust"
     source_git_commit = $sourceGitCommit
     source_git_dirty = $sourceGitDirty
+    node_version = $nodeVersion
+    package_manager = "npm@$npmVersion"
+    build_commands = @("npm ci", "npm run desktop:build -- --bundles nsis")
+    candlestick_specialist_status = "NOT_CONFIGURED_OPTIONAL"
+    timing_model = "UNLINKED_EVENT_GEOMETRY"
+    market_direction = "ABSTAIN"
     tool_rail_contract = "GANN_CHART_TOOL_RAIL_V2"
     chart_tools = @(
         "select",
@@ -223,13 +231,17 @@ $manifest = [ordered]@{
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
 $releaseReadme = @"
-# Gann Astro Desk $appVersion - PFR-C2R candidate
+# Gann Astro Desk $appVersion - PFR-C2F founder candidate
 
 This is a read-only experimental research candidate, not a validated or executable trading product.
 
 - Source commit: $sourceGitCommit
 - Source working tree clean: $(-not $sourceGitDirty)
-- Reconciliation: PFR-C2R
+- Reconciliation: PFR-C2F
+- Node: $nodeVersion
+- Package manager: npm@$npmVersion
+- Candlestick specialist: NOT_CONFIGURED_OPTIONAL (private corpus not bundled)
+- Timing model: UNLINKED_EVENT_GEOMETRY
 - Execution allowed: false
 - Automatic order placement: false
 - Market direction: ABSTAIN
@@ -241,6 +253,8 @@ Set-Content -LiteralPath (Join-Path $candidate "BETA_README.md") -Value $release
 $checksumLines = @(
     "$(Get-FileHash -LiteralPath $portableExe -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  GannAstroDesk.exe",
     "$(Get-FileHash -LiteralPath $installerTarget -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  $($installer.Name)",
+    "$(Get-FileHash -LiteralPath $sidecarExe -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  backend/GannAstroBackend.exe",
+    "$(Get-FileHash -LiteralPath (Join-Path $candidate 'release.manifest.json') -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  release.manifest.json",
     "SOURCE_GIT_COMMIT  $sourceGitCommit",
     "SOURCE_GIT_DIRTY  $sourceGitDirty"
 )

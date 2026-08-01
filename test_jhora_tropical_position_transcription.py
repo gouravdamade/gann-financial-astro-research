@@ -17,17 +17,17 @@ from jhora_tropical_position_transcription import (
 REPO_ROOT = Path(__file__).resolve().parent
 TRANSCRIPTION = (
     REPO_ROOT
-    / "status"
-    / "evidence"
-    / "jhora_kaala_witness_20260727"
-    / "gann_reference_tokyo_tropical_positions_visible_20260729.csv"
+    / "tests"
+    / "fixtures"
+    / "jhora_tropical_position"
+    / "visible_positions.csv"
 )
 LOCKED_KAALA = (
     REPO_ROOT
-    / "status"
-    / "evidence"
-    / "jhora_kaala_witness_20260727"
-    / "jhora_kaala_profile_comparison_20260727.csv"
+    / "tests"
+    / "fixtures"
+    / "jhora_tropical_position"
+    / "locked_ayana.csv"
 )
 
 

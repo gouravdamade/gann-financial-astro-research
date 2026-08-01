@@ -108,19 +108,25 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
     corpus = packaged_corpus if packaged_corpus.is_file() else source_corpus
     if corpus.is_file():
         os.environ["GANN_ASTRO_JYOTISH_CORPUS"] = str(corpus)
+    installed_candle_corpus = paths.data_root / "candlestick" / "corpus_chunks.jsonl"
     packaged_candle_corpus = paths.project_root / "candlestick" / "corpus_chunks.jsonl"
     source_candle_corpus = paths.project_root / "candlestick_agent" / "corpus_chunks.jsonl"
     candle_corpus = (
-        packaged_candle_corpus
+        installed_candle_corpus
+        if installed_candle_corpus.is_file()
+        else packaged_candle_corpus
         if packaged_candle_corpus.is_file()
         else source_candle_corpus
     )
     if candle_corpus.is_file():
         os.environ["GANN_ASTRO_CANDLE_CORPUS"] = str(candle_corpus)
+    installed_candle_model = paths.data_root / "candlestick" / "usdjpy_shadow_model_v1.json"
     packaged_candle_model = paths.project_root / "candlestick" / "usdjpy_shadow_model_v1.json"
     source_candle_model = paths.project_root / "candlestick_agent" / "usdjpy_shadow_model_v1.json"
     candle_model = (
-        packaged_candle_model
+        installed_candle_model
+        if installed_candle_model.is_file()
+        else packaged_candle_model
         if packaged_candle_model.is_file()
         else source_candle_model
     )
