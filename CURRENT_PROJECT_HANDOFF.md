@@ -1,8 +1,33 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 10:41 IST
+Last updated: 2026-08-01 10:43 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (Product-First Recovery PFR-6)
+
+- Completed PFR-6 on `product-first-sbc-phase-lab`. The new Compare surface
+  places the original scalar SBC baseline, fixed `0/pi` wheel representation,
+  and the isolated timing-phase experiment beside each other for one selected
+  timestamp.
+- Scalar supportive/obstructive/net/gross remains the visible baseline. The
+  fixed card explicitly reports real/imaginary/gross and scalar parity. The
+  timing card reports lifecycle/resultant/coherence but retains market result
+  `ABSTAIN` and a safe-sector suppression explanation where applicable.
+- The panel records the pinned UTC timestamp and the existing evidence cutoff,
+  states that no future market data is read, and gives a plain explanation of
+  why the representations differ. It does not perform a model fusion or alter
+  the stored scalar ledger.
+- PFR-6 verification: production frontend build and lint pass; focused
+  phase/workspace suite `20/20` passes; live browser inspection confirmed the
+  three side-by-side states, scalar parity, evidence cutoff, and non-actionable
+  labels.
+- Recovery snapshot:
+  `chat_session_backups/20260801_104300_product_first_pfr6/` with a SHA-256
+  manifest covers PFR-6 source, tests, CSS, documentation, and handoff.
+- Next directive milestone: PFR-7 Windows beta candidate. It requires a clean
+  build, portable/installer artifacts, hashes, and founder-visible native UI
+  acceptance before this branch can stop at the requested checkpoint.
 
 ## Latest Update - 2026-08-01 (Product-First Recovery PFR-5)
 

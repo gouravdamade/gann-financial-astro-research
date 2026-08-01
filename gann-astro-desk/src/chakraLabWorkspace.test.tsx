@@ -1312,6 +1312,29 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
+  it('compares scalar, fixed, and timing states at one pinned moment without replacing the scalar baseline', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchFixedPhasor.mockResolvedValue(fixedPhasor)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await screen.findByText('Integrated SBC workspace')
+    await user.click(screen.getByRole('button', { name: 'Compare' }))
+    expect(await screen.findByText('Three-model comparison')).toBeInTheDocument()
+    expect(screen.getByText('Scalar SBC baseline')).toBeInTheDocument()
+    expect(screen.getByText('Fixed 0/pi wheel')).toBeInTheDocument()
+    expect(screen.getByText('Timing phase lab')).toBeInTheDocument()
+    expect(screen.getByText(/no future market data is read/i)).toBeInTheDocument()
+    expect(screen.getAllByText('ABSTAIN').length).toBeGreaterThan(0)
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
   it('captures explicit moments and opens the linked read-only audit', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAudit.mockResolvedValue(audit)

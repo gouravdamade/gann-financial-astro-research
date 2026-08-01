@@ -6559,6 +6559,30 @@ html.android-runtime .loading-state {
 .product-first-timing-metrics b { overflow: hidden; color: #d7d4e5; font: 8px/1.25 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .product-first-phase-note { grid-column: 1 / -1; margin: 0; color: #a6a2b8; font-size: 8px; line-height: 1.45; }
 
+.product-first-comparison {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #3b5059;
+  background: #101a20;
+}
+.product-first-comparison-grid { display: grid; grid-template-columns: repeat(3, minmax(170px, 1fr)); gap: 6px; }
+.product-first-comparison-grid article { min-width: 0; display: grid; gap: 7px; padding: 8px; border: 1px solid #334650; background: #0e151a; }
+.product-first-comparison-grid article > header { display: grid; gap: 3px; }
+.product-first-comparison-grid header strong { color: #d7e2e5; font-size: 9px; }
+.product-first-comparison-grid header span { color: #7d9da5; font-size: 7px; }
+.product-first-comparison-grid dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; margin: 0; }
+.product-first-comparison-grid dl > div { min-width: 0; display: grid; gap: 2px; padding: 5px; border: 1px solid #283941; background: #101b20; }
+.product-first-comparison-grid dt { color: #81929a; font-size: 7px; }
+.product-first-comparison-grid dd { margin: 0; overflow: hidden; color: #d6e0e3; font: 8px/1.2 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-comparison-grid p { margin: 0; color: #93a1a6; font-size: 8px; line-height: 1.4; }
+.product-first-comparison-unavailable { padding: 8px; border: 1px dashed #3c5260; }
+.product-first-comparison-causes { display: grid; grid-template-columns: 1.4fr .8fr 1.2fr; gap: 4px; }
+.product-first-comparison-causes > div { min-width: 0; display: grid; gap: 3px; padding: 6px; border-top: 1px solid #34505b; background: #121f26; }
+.product-first-comparison-causes b { color: #b8d2d9; font-size: 7px; }
+.product-first-comparison-causes span { overflow: hidden; color: #82959d; font: 7px/1.4 Consolas, monospace; text-overflow: ellipsis; }
+
 .product-first-sbc-body {
   min-width: 0;
   min-height: 0;
@@ -6664,6 +6688,8 @@ html.android-runtime .loading-state {
   .product-first-wheel { grid-template-columns: 1fr; }
   .product-first-wheel-state { grid-column: 1; }
   .product-first-timing-phase { grid-template-columns: 1fr; }
+  .product-first-comparison-grid { grid-template-columns: 1fr; }
+  .product-first-comparison-causes { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 980px) {

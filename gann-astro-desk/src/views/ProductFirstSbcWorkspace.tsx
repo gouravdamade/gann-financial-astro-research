@@ -58,6 +58,7 @@ export function ProductFirstSbcWorkspace({
   const [wheelOpen, setWheelOpen] = useState(false)
   const [selectedVectorId, setSelectedVectorId] = useState('')
   const [timingOpen, setTimingOpen] = useState(false)
+  const [comparisonOpen, setComparisonOpen] = useState(false)
   const guidance = snapshot?.guidance ?? null
   const candles = chart?.candles.slice(-110) ?? []
   const firstTime = candles[0]?.time ?? 0
@@ -118,7 +119,7 @@ export function ProductFirstSbcWorkspace({
   })
 
   return (
-    <section className={`product-first-sbc${sideView || currencyPairEvidence || wheelOpen || timingOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
+    <section className={`product-first-sbc${sideView || currencyPairEvidence || wheelOpen || timingOpen || comparisonOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
       <header className="product-first-sbc-summary">
         <div className="product-first-summary-title">
           <Layers3 size={16} />
@@ -179,6 +180,15 @@ export function ProductFirstSbcWorkspace({
             onClick={() => setTimingOpen((current) => !current)}
           >
             <Orbit size={12} /> Phase lab
+          </button>
+          <button
+            className={comparisonOpen ? 'is-active' : ''}
+            onClick={() => {
+              setComparisonOpen((current) => !current)
+              if (!fixedPhasorInterval && !phasorBusy) onLoadFixedPhasor()
+            }}
+          >
+            <Layers3 size={12} /> Compare
           </button>
         </div>
       </header>
@@ -349,6 +359,56 @@ export function ProductFirstSbcWorkspace({
             </div>
             <p className="product-first-phase-note">Every resolved SBC contribution keeps its original supportive/adverse polarity while its declared lifecycle displacement is visible in Re and Im. {timingExperiment.unknownVectorCount} unresolved item{timingExperiment.unknownVectorCount === 1 ? '' : 's'} remain outside the geometry. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
           </>}
+        </section>
+      )}
+
+      {comparisonOpen && (
+        <section className="product-first-comparison" aria-label="Scalar fixed timing comparison">
+          <div className="product-first-wheel-heading">
+            <Layers3 size={15} />
+            <div>
+              <strong>Three-model comparison</strong>
+              <span>One synchronized moment; the scalar baseline stays visible and no model can issue a market call.</span>
+            </div>
+            <span className="product-first-phase-badge">Read-only</span>
+          </div>
+          <div className="product-first-comparison-grid">
+            <article>
+              <header><strong>Scalar SBC baseline</strong><span>Existing source guidance</span></header>
+              <dl>
+                <div><dt>Supportive</dt><dd>{guidance ? supportive.toFixed(2) : 'Unknown'}</dd></div>
+                <div><dt>Obstructive</dt><dd>{guidance ? obstructive.toFixed(2) : 'Unknown'}</dd></div>
+                <div><dt>Net</dt><dd>{guidance ? guidance.net_guidance_units.toFixed(2) : 'Unknown'}</dd></div>
+                <div><dt>Gross</dt><dd>{guidance ? gross.toFixed(2) : 'Unknown'}</dd></div>
+              </dl>
+              <p>Original units and explicit unknowns; this remains the visible baseline.</p>
+            </article>
+            <article>
+              <header><strong>Fixed 0/pi wheel</strong><span>Existing scalar visualization</span></header>
+              {fixedPhasorInterval ? <dl>
+                <div><dt>Real</dt><dd>{fixedPhasorInterval.vector_real_sum_units.toFixed(2)}</dd></div>
+                <div><dt>Imaginary</dt><dd>{fixedPhasorInterval.vector_imaginary_sum_units.toFixed(2)}</dd></div>
+                <div><dt>Gross</dt><dd>{fixedPhasorInterval.vector_magnitude_sum_units.toFixed(2)}</dd></div>
+                <div><dt>Parity</dt><dd>{fixedPhasorInterval.real_matches_net ? 'Matches scalar' : 'Check required'}</dd></div>
+              </dl> : <p className="product-first-comparison-unavailable">{phasorBusy ? 'Loading existing fixed-vector display.' : 'Fixed display unavailable for this timestamp.'}</p>}
+              <p>Only re-expresses scalar polarity on the fixed real axis; it adds no independent vote.</p>
+            </article>
+            <article>
+              <header><strong>Timing phase lab</strong><span>Feature-flagged engineering coordinate</span></header>
+              <dl>
+                <div><dt>Lifecycle</dt><dd>{timingExperiment.timingWindow ? display(timingExperiment.timingWindow.lifecycle) : 'Unknown'}</dd></div>
+                <div><dt>Resultant</dt><dd>{timingExperiment.resultantUnits?.toFixed(2) ?? 'Unknown'}</dd></div>
+                <div><dt>Coherence</dt><dd>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</dd></div>
+                <div><dt>Market result</dt><dd>{timingExperiment.marketDirection}</dd></div>
+              </dl>
+              <p>{timingExperiment.safeSector ? 'Inside the declared safe sector, but still nonvoting.' : 'Outside its safe sector: interpretation is suppressed.'}</p>
+            </article>
+          </div>
+          <div className="product-first-comparison-causes">
+            <div><b>Why values differ</b><span>Fixed uses the same scalar signs at 0/pi; timing applies a declared lifecycle displacement to those same magnitudes. It does not alter the scalar ledger.</span></div>
+            <div><b>Pinned timestamp</b><span>{snapshot ? new Date(snapshot.as_of_utc).toISOString() : 'Unavailable'}</span></div>
+            <div><b>Evidence cutoff</b><span>{snapshot?.evidence_cutoff_utc ?? 'Unavailable'} · no future market data is read by this comparison.</span></div>
+          </div>
         </section>
       )}
 
