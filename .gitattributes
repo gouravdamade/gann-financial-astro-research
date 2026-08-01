@@ -5,3 +5,5 @@ astro_function_certification_report_20260726.md binary
 jhora_doctrine_reconciliation_20260726.md binary
 chat_session_backups/session_20260726_205738_jhora_independent_witness/** binary
 chat_session_backups/session_20260727_001754_jhora_doctrine_reconciliation/** binary
+# These JHora parser-fixture evidence files are byte-hashed by the test contract.
+tests/fixtures/jhora_tropical_position/** binary
