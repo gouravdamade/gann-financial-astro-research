@@ -4,6 +4,17 @@ Last updated: 2026-08-01 11:25 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-01 (PFR-C1 Product Integrity Correction)
+
+- The attached Terra High review was accepted as the bounded correction
+  contract for `product-first-sbc-phase-lab`: perform PFR-C1 only, then build a
+  corrected Windows candidate and stop for founder acceptance.
+- C1-1 completed: `ADR-0018` now defines the scope and hard locks; the gap
+  matrix records PFR-2 through PFR-5 honestly as partial/prototype work;
+  `PFR_C1_ACCEPTANCE_REPORT.md` is the single consolidated progress report.
+- No product behavior, calculation, source-certification, Shadbala, ML,
+  trading, Android, RAG, or execution code changed in C1-1.
+
 ## Latest Update - 2026-08-01 (Product Beta Scroll-Zoom Repair)
 
 - Founder reported that the `0.10.25` portable beta could blank and close when
