@@ -123,6 +123,7 @@ $manifest = [ordered]@{
     node_version = $nodeVersion
     package_manager = "npm@$npmVersion"
     build_commands = @("npm ci", "npm run desktop:build -- --bundles nsis")
+    jyotish_corpus_status = "NOT_CONFIGURED_OPTIONAL"
     candlestick_specialist_status = "NOT_CONFIGURED_OPTIONAL"
     timing_model = "UNLINKED_EVENT_GEOMETRY"
     market_direction = "ABSTAIN"
@@ -240,6 +241,7 @@ This is a read-only experimental research candidate, not a validated or executab
 - Reconciliation: PFR-C2F
 - Node: $nodeVersion
 - Package manager: npm@$npmVersion
+- Jyotish corpus: NOT_CONFIGURED_OPTIONAL (private corpus not bundled)
 - Candlestick specialist: NOT_CONFIGURED_OPTIONAL (private corpus not bundled)
 - Timing model: UNLINKED_EVENT_GEOMETRY
 - Execution allowed: false
