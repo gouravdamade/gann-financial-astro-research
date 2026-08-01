@@ -12,6 +12,7 @@ export type VisualizationModePolicy = {
   shortLabel: string
   evidenceStatus: 'SOURCE_ONLY' | 'SOURCE_MISSING' | 'NOT_APPLICABLE'
   scoringVisible: boolean
+  allowScalarAudit: boolean
   allowFixedPhasor: boolean
   allowTimingGeometry: boolean
   calibrationProfile: {
@@ -45,6 +46,7 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
         shortLabel: 'Source only',
         evidenceStatus: 'SOURCE_ONLY',
         scoringVisible: true,
+        allowScalarAudit: true,
         allowFixedPhasor: true,
         allowTimingGeometry: false,
         calibrationProfile: {
@@ -63,6 +65,7 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
         shortLabel: 'Calibrated',
         evidenceStatus: 'SOURCE_MISSING',
         scoringVisible: false,
+        allowScalarAudit: false,
         allowFixedPhasor: true,
         allowTimingGeometry: true,
         calibrationProfile: {
@@ -81,6 +84,7 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
         shortLabel: 'Visual only',
         evidenceStatus: 'NOT_APPLICABLE',
         scoringVisible: false,
+        allowScalarAudit: false,
         allowFixedPhasor: true,
         allowTimingGeometry: true,
         calibrationProfile: {

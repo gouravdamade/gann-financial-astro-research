@@ -32,6 +32,7 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
             "mode": mode,
             "evidenceStatus": "SOURCE_ONLY",
             "scoringVisible": True,
+            "allowScalarAudit": True,
             "allowFixedPhasor": True,
             "allowTimingGeometry": False,
             "profile": {
@@ -47,6 +48,7 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
             "mode": mode,
             "evidenceStatus": "SOURCE_MISSING",
             "scoringVisible": False,
+            "allowScalarAudit": False,
             "allowFixedPhasor": True,
             "allowTimingGeometry": True,
             "profile": {
@@ -61,6 +63,7 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
         "mode": mode,
         "evidenceStatus": "NOT_APPLICABLE",
         "scoringVisible": False,
+        "allowScalarAudit": False,
         "allowFixedPhasor": True,
         "allowTimingGeometry": True,
         "profile": {

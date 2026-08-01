@@ -1114,8 +1114,8 @@ export function SbcLinkedAuditWorkspace({ currentRequest, visualizationPolicy }:
       {
         targetType: bookmarkTargetType,
         targetId: bookmarkTargetId,
-        label: bookmarkLabel.trim(),
-        note: bookmarkNote.trim(),
+        label: `[${visualizationPolicy.mode}] ${bookmarkLabel.trim()}`,
+        note: `[mode=${visualizationPolicy.mode}; evidence=${visualizationPolicy.evidenceStatus}; execution=locked] ${bookmarkNote.trim()}`,
         createdAt: new Date().toISOString(),
       },
     ])
@@ -1276,6 +1276,29 @@ export function SbcLinkedAuditWorkspace({ currentRequest, visualizationPolicy }:
         catalogImportInputRef.current.value = ''
       }
     }
+  }
+
+  if (!visualizationPolicy.allowScalarAudit) {
+    return (
+      <section className="visualization-audit-suppressed" aria-label="Mode-aware audit status">
+        <div className="visualization-audit-mode" role="status">
+          <strong>Visualization mode</strong>
+          <span>{visualizationPolicy.mode}</span>
+          <em>{visualizationPolicy.evidenceStatus} · execution locked</em>
+        </div>
+        <div>
+          <h2>Audit values withheld</h2>
+          <p>{visualizationPolicy.explanation}</p>
+          <dl>
+            <div><dt>Profile</dt><dd>{visualizationPolicy.calibrationProfile.profileId}</dd></div>
+            <div><dt>Profile hash</dt><dd>{visualizationPolicy.calibrationProfile.profileHash ?? 'SOURCE_MISSING'}</dd></div>
+            <div><dt>Fitted parameters</dt><dd>{visualizationPolicy.calibrationProfile.parameterCount}</dd></div>
+            <div><dt>Current timestamp</dt><dd>{currentRequest.at}</dd></div>
+          </dl>
+          <small>This mode may show descriptive geometry elsewhere, but audit units, directional summaries, comparisons, and package generation are intentionally unavailable.</small>
+        </div>
+      </section>
+    )
   }
 
   return (

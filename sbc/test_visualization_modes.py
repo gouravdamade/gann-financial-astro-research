@@ -20,3 +20,10 @@ class VisualizationModeContractTests(unittest.TestCase):
         self.assertTrue(contract["allowFixedPhasor"])
         self.assertFalse(contract["allowTimingGeometry"])
 
+    def test_score_suppressed_modes_cannot_open_scalar_audit(self) -> None:
+        self.assertFalse(
+            visualization_mode_contract("CALIBRATED_RESEARCH")["allowScalarAudit"],
+        )
+        self.assertFalse(
+            visualization_mode_contract("VISUAL_ONLY_NO_SCORE")["allowScalarAudit"],
+        )

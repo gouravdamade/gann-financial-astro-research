@@ -31,5 +31,11 @@ describe('visualization mode policies', () => {
     const policy = visualizationModePolicy('SOURCE_ONLY_BASELINE')
     expect(policy.allowFixedPhasor).toBe(true)
     expect(policy.allowTimingGeometry).toBe(false)
+    expect(policy.allowScalarAudit).toBe(true)
+  })
+
+  it('does not allow scalar audit in score-suppressed modes', () => {
+    expect(visualizationModePolicy('CALIBRATED_RESEARCH').allowScalarAudit).toBe(false)
+    expect(visualizationModePolicy('VISUAL_ONLY_NO_SCORE').allowScalarAudit).toBe(false)
   })
 })

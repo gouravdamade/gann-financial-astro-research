@@ -625,7 +625,7 @@ export function ChakraLabWorkspace({
                   <div className={`chakra-evidence-row is-${item.status.toLowerCase()}`} key={item.body}>
                     <strong>{item.body}</strong>
                     <span>{displayToken(item.source_nakshatra)}</span>
-                    <span>{visualizationMode === 'VISUAL_ONLY_NO_SCORE' ? displayToken(item.status) : (resolution?.direction ?? displayToken(item.status))}</span>
+                    <span>{visualizationPolicy.scoringVisible ? (resolution?.direction ?? displayToken(item.status)) : displayToken(item.status)}</span>
                     <em>{resolution?.nature ?? item.motion_class ?? '—'}</em>
                   </div>
                 )
@@ -671,6 +671,11 @@ export function ChakraLabWorkspace({
       ) : (
         <SbcLinkedAuditWorkspace currentRequest={request} visualizationPolicy={visualizationPolicy} />
       )}
+      <footer className="visualization-export-footer">
+        <span>{visualizationPolicy.mode}</span>
+        <span>{visualizationPolicy.evidenceStatus}</span>
+        <span>Experimental · not financially validated · execution locked</span>
+      </footer>
     </section>
   )
 }

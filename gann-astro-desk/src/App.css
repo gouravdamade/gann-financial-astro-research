@@ -6289,7 +6289,7 @@ html.android-runtime .loading-state {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-rows: 34px auto minmax(0, 1fr);
+  grid-template-rows: 34px auto minmax(0, 1fr) 20px;
   overflow: hidden;
   background: #11151a;
   color: #aeb5bf;
@@ -6419,6 +6419,49 @@ html.android-runtime .loading-state {
 .visualization-audit-mode strong { color: #dce7ea; }
 .visualization-audit-mode span { color: #95d4cc; font-family: Consolas, monospace; }
 .visualization-audit-mode em { color: #d6b46e; font-style: normal; }
+.visualization-audit-suppressed {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: #10151a;
+}
+.visualization-audit-suppressed > div:last-child {
+  align-self: center;
+  justify-self: center;
+  width: min(690px, calc(100% - 42px));
+  padding: 22px;
+  border: 1px solid #3b4752;
+  background: #151c23;
+  color: #9ba8b1;
+}
+.visualization-audit-suppressed h2 { margin: 0; color: #e3e9ed; font-size: 15px; }
+.visualization-audit-suppressed p { max-width: 620px; line-height: 1.5; }
+.visualization-audit-suppressed dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 16px 0;
+  background: #34414b;
+}
+.visualization-audit-suppressed dl > div { padding: 9px; background: #111820; }
+.visualization-audit-suppressed dt { color: #74818b; font-size: 8px; text-transform: uppercase; }
+.visualization-audit-suppressed dd { margin: 4px 0 0; color: #cad5da; font: 9px/1.35 Consolas, monospace; overflow-wrap: anywhere; }
+.visualization-audit-suppressed small { color: #d6b46e; line-height: 1.45; }
+.visualization-export-footer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 0 10px;
+  border-top: 1px solid #303942;
+  background: #10161c;
+  color: #75828c;
+  font-size: 8px;
+}
+.visualization-export-footer span:first-child { color: #94d4cc; font-family: Consolas, monospace; }
+.visualization-export-footer span:nth-child(2) { color: #d7ba74; }
 
 /* Product-first integrated SBC workspace -------------------------------- */
 .product-first-sbc {

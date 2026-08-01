@@ -384,9 +384,10 @@ export function ProductFirstSbcWorkspace({
             </div>
             <span className="product-first-phase-badge">Zero vote</span>
           </div>
+          {!visualizationPolicy.scoringVisible && <p className="product-first-wheel-state">{visualizationPolicy.evidenceStatus}: timing geometry is descriptive only in this mode. {timingExperiment.activeEvents.length} active event window{timingExperiment.activeEvents.length === 1 ? '' : 's'} may be drawn, but polarity, aggregate values, and any market interpretation are withheld.</p>}
           {!TIMING_PHASE_EXPERIMENT_ENABLED && <p className="product-first-wheel-state">This feature-flagged experiment is disabled.</p>}
-          {TIMING_PHASE_EXPERIMENT_ENABLED && !timingExperiment.activeEvents.length && <p className="product-first-wheel-state">No aspect window is active at this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
-          {TIMING_PHASE_EXPERIMENT_ENABLED && timingExperiment.activeEvents.length > 0 && <>
+          {TIMING_PHASE_EXPERIMENT_ENABLED && visualizationPolicy.scoringVisible && !timingExperiment.activeEvents.length && <p className="product-first-wheel-state">No aspect window is active at this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
+          {TIMING_PHASE_EXPERIMENT_ENABLED && visualizationPolicy.scoringVisible && timingExperiment.activeEvents.length > 0 && <>
             <div className="product-first-timing-meta">
               <span><b>Active events</b>{timingExperiment.activeEvents.length}</span>
               <span><b>Source polarity</b>{timingSupportiveCount} supportive / {timingAdverseCount} adverse</span>
@@ -430,20 +431,20 @@ export function ProductFirstSbcWorkspace({
             <article>
               <header><strong>Scalar SBC baseline</strong><span>Existing source guidance</span></header>
               <dl>
-                <div><dt>Supportive</dt><dd>{guidance ? supportive.toFixed(2) : 'Unknown'}</dd></div>
-                <div><dt>Obstructive</dt><dd>{guidance ? obstructive.toFixed(2) : 'Unknown'}</dd></div>
-                <div><dt>Net</dt><dd>{guidance ? guidance.net_guidance_units.toFixed(2) : 'Unknown'}</dd></div>
-                <div><dt>Gross</dt><dd>{guidance ? gross.toFixed(2) : 'Unknown'}</dd></div>
+                <div><dt>Supportive</dt><dd>{visibleNumber(guidance ? supportive : null)}</dd></div>
+                <div><dt>Obstructive</dt><dd>{visibleNumber(guidance ? obstructive : null)}</dd></div>
+                <div><dt>Net</dt><dd>{visibleNumber(guidance?.net_guidance_units ?? null)}</dd></div>
+                <div><dt>Gross</dt><dd>{visibleNumber(guidance ? gross : null)}</dd></div>
               </dl>
               <p>Original units and explicit unknowns; this remains the visible baseline.</p>
             </article>
             <article>
               <header><strong>Fixed 0/pi wheel</strong><span>Existing scalar visualization</span></header>
               {fixedPhasorInterval ? <dl>
-                <div><dt>Real</dt><dd>{fixedPhasorInterval.vector_real_sum_units.toFixed(2)}</dd></div>
-                <div><dt>Imaginary</dt><dd>{fixedPhasorInterval.vector_imaginary_sum_units.toFixed(2)}</dd></div>
-                <div><dt>Gross</dt><dd>{fixedPhasorInterval.vector_magnitude_sum_units.toFixed(2)}</dd></div>
-                <div><dt>Parity</dt><dd>{fixedPhasorInterval.real_matches_net ? 'Matches scalar' : 'Check required'}</dd></div>
+                <div><dt>Real</dt><dd>{visibleNumber(fixedPhasorInterval.vector_real_sum_units)}</dd></div>
+                <div><dt>Imaginary</dt><dd>{visibleNumber(fixedPhasorInterval.vector_imaginary_sum_units)}</dd></div>
+                <div><dt>Gross</dt><dd>{visibleNumber(fixedPhasorInterval.vector_magnitude_sum_units)}</dd></div>
+                <div><dt>Parity</dt><dd>{visualizationPolicy.scoringVisible ? (fixedPhasorInterval.real_matches_net ? 'Matches scalar' : 'Check required') : visualizationPolicy.evidenceStatus}</dd></div>
               </dl> : <p className="product-first-comparison-unavailable">{phasorBusy ? 'Loading existing fixed-vector display.' : 'Fixed display unavailable for this timestamp.'}</p>}
               <p>Only re-expresses scalar polarity on the fixed real axis; it adds no independent vote.</p>
             </article>
@@ -451,9 +452,9 @@ export function ProductFirstSbcWorkspace({
               <header><strong>Timing phase lab</strong><span>Feature-flagged engineering coordinate</span></header>
               <dl>
                 <div><dt>Active events</dt><dd>{timingExperiment.activeEvents.length || 'Unknown'}</dd></div>
-                <div><dt>Resultant</dt><dd>{timingExperiment.resultantUnits?.toFixed(2) ?? 'Unknown'}</dd></div>
-                <div><dt>Coherence</dt><dd>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</dd></div>
-                <div><dt>Market result</dt><dd>{timingExperiment.marketDirection}</dd></div>
+                <div><dt>Resultant</dt><dd>{visibleNumber(timingExperiment.resultantUnits)}</dd></div>
+                <div><dt>Coherence</dt><dd>{visualizationPolicy.scoringVisible && timingExperiment.coherence != null ? `${(timingExperiment.coherence * 100).toFixed(1)}%` : visualizationPolicy.evidenceStatus}</dd></div>
+                <div><dt>Market result</dt><dd>{visualizationPolicy.scoringVisible ? timingExperiment.marketDirection : 'Not applicable'}</dd></div>
               </dl>
               <p>{timingExperiment.safeSector ? 'Inside the declared safe sector, but still nonvoting.' : 'Outside its safe sector: interpretation is suppressed.'}</p>
             </article>
@@ -567,8 +568,8 @@ export function ProductFirstSbcWorkspace({
           </div>
           <section className="product-first-why-card">
             <span>Current state</span>
-            <strong>{guidance ? display(guidance.guidance_band) : 'Unknown'}</strong>
-            <p>{conflict}. Coverage is {guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}%` : 'unavailable'}; unresolved inputs remain explicit.</p>
+            <strong>{visualizationPolicy.scoringVisible ? (guidance ? display(guidance.guidance_band) : 'Unknown') : visualizationPolicy.evidenceStatus}</strong>
+            <p>{visualizationPolicy.scoringVisible ? `${conflict}. Coverage is ${guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}%` : 'unavailable'}; unresolved inputs remain explicit.` : 'This mode keeps source status and geometry visible while withholding directional and aggregate guidance.'}</p>
           </section>
           <section className="product-first-why-card">
             <span>Selected Chakra cell</span>
@@ -579,7 +580,7 @@ export function ProductFirstSbcWorkspace({
             <span>Resolved Vedha evidence</span>
             {(guidance?.contributions ?? []).slice(0, 9).map((item, index) => (
               <button key={`${item.body}-${index}`} onClick={() => onSelectCell(`${item.target.row}:${item.target.column}`)}>
-                <strong>{item.body}</strong><em>{display(item.direction)} → {display(item.target.value)}</em><b>{item.signed_guidance_units == null ? 'Unknown' : item.signed_guidance_units.toFixed(1)}</b>
+                <strong>{item.body}</strong><em>{visualizationPolicy.scoringVisible ? `${display(item.direction)} → ${display(item.target.value)}` : display(item.status)}</em><b>{visualizationPolicy.scoringVisible ? (item.signed_guidance_units == null ? 'Unknown' : item.signed_guidance_units.toFixed(1)) : visualizationPolicy.evidenceStatus}</b>
               </button>
             ))}
             {!guidance?.contributions.length && <p>No resolved Vedha contribution for this moment.</p>}

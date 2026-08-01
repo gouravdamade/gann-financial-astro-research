@@ -8,6 +8,24 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 
 ## Latest Update - 2026-08-01 (Three-Mode Visualization Engine Candidate)
 
+## Latest Update - 2026-08-01 (Three-Mode Boundary Correction)
+
+- Completion audit found a genuine display leak in the first candidate: the
+  detailed audit, comparison, and “why” surfaces could still expose scalar
+  units or direction after selecting a score-suppressed mode. This is now
+  corrected. `CALIBRATED_RESEARCH` and `VISUAL_ONLY_NO_SCORE` cannot open the
+  scalar audit/package surface; they show an explicit source/status panel
+  instead. Product comparison, fixed vectors, timing values, and Vedha detail
+  also mask scalar values whenever the active profile withholds scores.
+- Scalar audit is now an explicit mode policy capability, true only for
+  `SOURCE_ONLY_BASELINE`. Audit bookmarks stamp their source mode and evidence
+  state. A persistent workspace footer provides the active mode/status for
+  screenshots, and exported state already contains the same immutable fields.
+- Rebuilding as `0.10.28` so the corrected candidate is distinct from the
+  earlier `0.10.27` build. Validation before package rebuild: frontend lint,
+  focused frontend tests (7), frontend production build, and SBC Python tests
+  (6) passed.
+
 - Implemented the founder-visible visualization engine modes requested by the
   `Gann_Astro_Desk_Visualization_Engine_Three_Mode_Codex_Addendum`:
   `SOURCE_ONLY_BASELINE`, `CALIBRATED_RESEARCH`, and
