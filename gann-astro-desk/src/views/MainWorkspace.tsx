@@ -1046,6 +1046,8 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             defaultLatitude={parameters.reference.latitude}
             defaultLongitude={parameters.reference.longitude}
             chart={chart}
+            currencyPairEvidence={detail?.currencyPairEvidence}
+            selectedAspectLabel={selected ? `${selected.transitBody} to ${selected.natalBody} ${selected.aspectLabel}` : null}
           />
         </Suspense>
       )}

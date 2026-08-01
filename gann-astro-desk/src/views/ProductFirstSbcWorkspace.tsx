@@ -1,6 +1,6 @@
 import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
-import type { ChakraGridCell, ChakraLabSnapshot, ChartPayload } from '../types'
+import type { ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
 
 type Props = {
   chart?: ChartPayload | null
@@ -8,6 +8,8 @@ type Props = {
   selectedCell: string
   onSelectCell: (cell: string) => void
   onSelectMoment: (value: string) => void
+  currencyPairEvidence?: CurrencyPairEvidence | null
+  selectedAspectLabel?: string | null
 }
 
 function display(value: string | null | undefined): string {
@@ -37,6 +39,8 @@ export function ProductFirstSbcWorkspace({
   selectedCell,
   onSelectCell,
   onSelectMoment,
+  currencyPairEvidence = null,
+  selectedAspectLabel = null,
 }: Props) {
   const [sideView, setSideView] = useState<'TIME' | 'PROFILE' | null>(null)
   const [draftMoment, setDraftMoment] = useState('')
@@ -84,9 +88,14 @@ export function ProductFirstSbcWorkspace({
       : guidance?.favorable_guidance_units
         ? 'Support only'
         : 'No resolved contribution'
+  const baseScore = currencyPairEvidence?.base.doctrineNetScore ?? currencyPairEvidence?.base.netScore ?? null
+  const quoteScore = currencyPairEvidence?.quote.doctrineNetScore ?? currencyPairEvidence?.quote.netScore ?? null
+  const pairScore = currencyPairEvidence?.pair.doctrineNetScore ?? currencyPairEvidence?.pair.netScore ?? null
+  const commonMode = baseScore != null && quoteScore != null ? (baseScore + quoteScore) / 2 : null
+  const pairConflict = currencyPairEvidence?.pair.doctrineConflictRatio ?? currencyPairEvidence?.pair.conflictRatio ?? null
 
   return (
-    <section className={`product-first-sbc${sideView ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
+    <section className={`product-first-sbc${sideView || currencyPairEvidence ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
       <header className="product-first-sbc-summary">
         <div className="product-first-summary-title">
           <Layers3 size={16} />
@@ -193,6 +202,26 @@ export function ProductFirstSbcWorkspace({
             <span><b>Included layers</b>{snapshot?.grid.certified_layers.length ? snapshot.grid.certified_layers.map(display).join(', ') : 'Unavailable'}</span>
           </div>
           <p className="product-first-profile-note">This workspace reports the loaded profile context only. It does not alter a formula, create a market call, or unlock any execution path.</p>
+        </section>
+      )}
+
+      {currencyPairEvidence && (
+        <section className="product-first-fx-panel" aria-label="USDJPY relative context">
+          <div>
+            <Layers3 size={15} />
+            <div>
+              <strong>USDJPY relative context</strong>
+              <span>{selectedAspectLabel ?? 'Selected aspect'} · existing provisional research arithmetic only</span>
+            </div>
+          </div>
+          <dl>
+            <div><dt>{currencyPairEvidence.base.label}</dt><dd>{baseScore == null ? 'Unknown' : baseScore.toFixed(3)}</dd></div>
+            <div><dt>{currencyPairEvidence.quote.label}</dt><dd>{quoteScore == null ? 'Unknown' : quoteScore.toFixed(3)}</dd></div>
+            <div><dt>Base minus quote</dt><dd>{pairScore == null ? 'Unknown' : pairScore.toFixed(3)}</dd></div>
+            <div><dt>Common mode</dt><dd>{commonMode == null ? 'Unknown' : commonMode.toFixed(3)}</dd></div>
+            <div><dt>Conflict</dt><dd>{pairConflict == null ? 'Unknown' : `${(pairConflict * 100).toFixed(1)}%`}</dd></div>
+          </dl>
+          <p>Both currencies remain visible. These descriptive values are not a price prediction and cannot unlock an order or execution path.</p>
         </section>
       )}
 

@@ -17,6 +17,7 @@ import type {
   ChakraTimingProfileSourceCertificationReport,
   ChakraTimingProfileSourceReadinessReport,
   ChakraTimingProfileSourceVerificationReport,
+  CurrencyPairEvidence,
 } from './types'
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
 
@@ -185,6 +186,26 @@ const snapshot: ChakraLabSnapshot = {
     financially_validated: false,
     guidance_only: true,
   },
+}
+
+const currencyPairEvidence: CurrencyPairEvidence = {
+  contract: 'GANN_FX_PAIR_EVIDENCE_V1',
+  status: 'provisional_research_only',
+  base: {
+    label: 'USD', referenceLabel: 'USD reference', netScore: 1.4, doctrineNetScore: 1.2,
+    scoredHitCount: 2, dominantHit: null, doctrineDominantHit: null,
+    doctrineDominantDignity: null, doctrineDignityVirupaAvg: null,
+  },
+  quote: {
+    label: 'JPY', referenceLabel: 'JPY reference', netScore: -0.4, doctrineNetScore: -0.2,
+    scoredHitCount: 1, dominantHit: null, doctrineDominantHit: null,
+    doctrineDominantDignity: null, doctrineDignityVirupaAvg: null,
+  },
+  pair: {
+    netScore: 1.8, conflictRatio: 0.25, direction: 'UP',
+    doctrineNetScore: 1.4, doctrineConflictRatio: 0.2, doctrineDirection: 'UP',
+  },
+  notes: null,
 }
 
 const audit: ChakraLinkedAuditView = {
@@ -1228,6 +1249,25 @@ describe('ChakraLabWorkspace', () => {
     await user.click(screen.getByRole('button', { name: 'Profile' }))
     expect(screen.getByText('Current profile')).toBeInTheDocument()
     expect(screen.getByText(/This workspace reports the loaded profile context only/i)).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
+  it('shows existing USDJPY relative arithmetic as descriptive context only', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+        currencyPairEvidence={currencyPairEvidence}
+        selectedAspectLabel="MOON to MARS Square"
+      />,
+    )
+
+    await screen.findByText('USDJPY relative context')
+    expect(screen.getByText('Base minus quote')).toBeInTheDocument()
+    expect(screen.getByText('Common mode')).toBeInTheDocument()
+    expect(screen.getByText(/not a price prediction/i)).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 

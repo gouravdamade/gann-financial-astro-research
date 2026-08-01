@@ -22,6 +22,7 @@ import type {
   ChakraLabSnapshot,
   ChakraMotionClass,
   ChartPayload,
+  CurrencyPairEvidence,
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
 import { InstrumentKeyConverter } from './InstrumentKeyConverter'
@@ -94,12 +95,16 @@ type Props = {
   defaultLatitude: number
   defaultLongitude: number
   chart?: ChartPayload | null
+  currencyPairEvidence?: CurrencyPairEvidence | null
+  selectedAspectLabel?: string | null
 }
 
 export function ChakraLabWorkspace({
   defaultLatitude,
   defaultLongitude,
   chart = null,
+  currencyPairEvidence = null,
+  selectedAspectLabel = null,
 }: Props) {
   const [atLocal, setAtLocal] = useState(currentIstInput)
   const [latitude, setLatitude] = useState(defaultLatitude)
@@ -275,6 +280,8 @@ export function ChakraLabWorkspace({
           selectedCell={selectedCell}
           onSelectCell={setSelectedCell}
           onSelectMoment={selectMoment}
+          currencyPairEvidence={currencyPairEvidence}
+          selectedAspectLabel={selectedAspectLabel}
         />
       ) : workspaceMode === 'BOARD' ? (
       <div className="chakra-lab-body">
