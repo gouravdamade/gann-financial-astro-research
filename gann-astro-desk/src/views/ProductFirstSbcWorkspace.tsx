@@ -1,6 +1,9 @@
 import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
 import type { ChakraFixedPhasorInterval, ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
+import { calculateProductFirstTimingPhase, PROJECT_CONVENTION_TIMING_PHASE_V0 } from '../productFirstTimingPhase'
+
+const TIMING_PHASE_EXPERIMENT_ENABLED = import.meta.env.VITE_ENABLE_TIMING_PHASE_EXPERIMENT !== 'false'
 
 type Props = {
   chart?: ChartPayload | null
@@ -54,6 +57,7 @@ export function ProductFirstSbcWorkspace({
   const [draftMoment, setDraftMoment] = useState('')
   const [wheelOpen, setWheelOpen] = useState(false)
   const [selectedVectorId, setSelectedVectorId] = useState('')
+  const [timingOpen, setTimingOpen] = useState(false)
   const guidance = snapshot?.guidance ?? null
   const candles = chart?.candles.slice(-110) ?? []
   const firstTime = candles[0]?.time ?? 0
@@ -107,9 +111,14 @@ export function ProductFirstSbcWorkspace({
   const unknownVectors = fixedPhasorInterval?.vectors.filter((vector) => vector.projection_status === 'UNKNOWN_NOT_PLOTTED') ?? []
   const maxVectorMagnitude = Math.max(1, ...plottedVectors.map((vector) => vector.magnitude_units ?? 0))
   const selectedVector = plottedVectors.find((vector) => vector.vector_id === selectedVectorId) ?? plottedVectors[0] ?? null
+  const timingExperiment = calculateProductFirstTimingPhase({
+    enabled: TIMING_PHASE_EXPERIMENT_ENABLED,
+    snapshot,
+    aspects: visibleAspects,
+  })
 
   return (
-    <section className={`product-first-sbc${sideView || currencyPairEvidence || wheelOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
+    <section className={`product-first-sbc${sideView || currencyPairEvidence || wheelOpen || timingOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
       <header className="product-first-sbc-summary">
         <div className="product-first-summary-title">
           <Layers3 size={16} />
@@ -163,6 +172,13 @@ export function ProductFirstSbcWorkspace({
             }}
           >
             <Orbit size={12} /> Wheel
+          </button>
+          <button
+            className={timingOpen ? 'is-active' : ''}
+            disabled={!TIMING_PHASE_EXPERIMENT_ENABLED}
+            onClick={() => setTimingOpen((current) => !current)}
+          >
+            <Orbit size={12} /> Phase lab
           </button>
         </div>
       </header>
@@ -299,6 +315,39 @@ export function ProductFirstSbcWorkspace({
               <span>Known coverage <b>{(fixedPhasorInterval.known_scored_coherence_ratio * 100).toFixed(1)}%</b></span>
             </div>
             {unknownVectors.length > 0 && <p className="product-first-wheel-unknown">{unknownVectors.length} unknown vector{unknownVectors.length === 1 ? '' : 's'} remain unplotted.</p>}
+          </>}
+        </section>
+      )}
+
+      {timingOpen && (
+        <section className="product-first-timing-phase" aria-label="Experimental timing phase lab">
+          <div className="product-first-wheel-heading">
+            <Orbit size={15} />
+            <div>
+              <strong>Timing phase lab</strong>
+              <span>{PROJECT_CONVENTION_TIMING_PHASE_V0.contract} · engineering test coordinate only</span>
+            </div>
+            <span className="product-first-phase-badge">Zero vote</span>
+          </div>
+          {!TIMING_PHASE_EXPERIMENT_ENABLED && <p className="product-first-wheel-state">This feature-flagged experiment is disabled.</p>}
+          {TIMING_PHASE_EXPERIMENT_ENABLED && !timingExperiment.timingWindow && <p className="product-first-wheel-state">No aspect window is available near this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
+          {TIMING_PHASE_EXPERIMENT_ENABLED && timingExperiment.timingWindow && <>
+            <div className="product-first-timing-meta">
+              <span><b>Window</b>{compactAspectLabel(timingExperiment.timingWindow.label)}</span>
+              <span><b>Lifecycle</b>{display(timingExperiment.timingWindow.lifecycle)}</span>
+              <span><b>Safe sector</b>{timingExperiment.safeSector ? 'Inside declared safe sector' : 'Suppressed outside safe sector'}</span>
+              <span><b>Market result</b>{timingExperiment.marketDirection}</span>
+              <span><b>State</b>{display(timingExperiment.state)}</span>
+            </div>
+            <div className="product-first-timing-metrics">
+              <span>Re <b>{timingExperiment.realUnits?.toFixed(2) ?? 'Unknown'}</b></span>
+              <span>Im <b>{timingExperiment.imaginaryUnits?.toFixed(2) ?? 'Unknown'}</b></span>
+              <span>Resultant <b>{timingExperiment.resultantUnits?.toFixed(2) ?? 'Unknown'}</b></span>
+              <span>Gross <b>{timingExperiment.grossUnits?.toFixed(2) ?? 'Unknown'}</b></span>
+              <span>Coherence <b>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</b></span>
+              <span>Conflict <b>{timingExperiment.conflict == null ? 'Unknown' : `${(timingExperiment.conflict * 100).toFixed(1)}%`}</b></span>
+            </div>
+            <p className="product-first-phase-note">Every resolved SBC contribution keeps its original supportive/adverse polarity while its declared lifecycle displacement is visible in Re and Im. {timingExperiment.unknownVectorCount} unresolved item{timingExperiment.unknownVectorCount === 1 ? '' : 's'} remain outside the geometry. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
           </>}
         </section>
       )}

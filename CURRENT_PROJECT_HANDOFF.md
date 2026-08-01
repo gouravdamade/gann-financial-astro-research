@@ -1,8 +1,37 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 10:35 IST
+Last updated: 2026-08-01 10:41 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (Product-First Recovery PFR-5)
+
+- Completed PFR-5 on `product-first-sbc-phase-lab` as the deliberately
+  isolated `PROJECT_CONVENTION_TIMING_PHASE_V0` feature-flagged experiment.
+  It is an engineering coordinate, not classical doctrine or a physical-wave
+  claim.
+- The Phase lab chooses the closest loaded aspect window, records its declared
+  applying/exact/separating lifecycle, and rotates only existing resolved SBC
+  contribution magnitudes around a versioned phase span. It shows Re, Im,
+  resultant, gross activity, coherence, conflict, exact-window context, and
+  unresolved contribution count.
+- Safety behavior is hard-coded and tested: phase geometry is preserved but
+  interpretation is suppressed outside the declared safe sector; a near-zero
+  resultant has a null collective phase and market result `ABSTAIN`; every
+  other state still reports `ABSTAIN`. Vote weight, directional contribution,
+  and fusion coefficient are all `0`; financial validation, order placement,
+  and execution remain false.
+- PFR-5 verification: production frontend build and lint pass; focused
+  phase/workspace suite `19/19` passes; running-workspace inspection confirmed
+  the Phase lab, lifecycle, safe-sector suppression, Zero vote, and ABSTAIN
+  presentation at the shared selected timestamp.
+- Recovery snapshot:
+  `chat_session_backups/20260801_104100_product_first_pfr5/` with a SHA-256
+  manifest covers the PFR-5 source, tests, CSS, documentation, and handoff.
+- Next directive milestone: PFR-6, a read-only, timestamp-safe side-by-side
+  comparison of scalar, fixed-wheel, and timing-experiment states with their
+  difference causes. It must preserve the scalar baseline and add no inference,
+  financial, or execution linkage.
 
 ## Latest Update - 2026-08-01 (Product-First Recovery PFR-4)
 

@@ -1292,6 +1292,26 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
+  it('opens the feature-flagged timing phase lab without creating a market call', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await screen.findByText('Integrated SBC workspace')
+    await user.click(screen.getByRole('button', { name: 'Phase lab' }))
+    expect(await screen.findByText('Timing phase lab')).toBeInTheDocument()
+    expect(screen.getByText(/engineering test coordinate only/i)).toBeInTheDocument()
+    expect(screen.getByText('Zero vote')).toBeInTheDocument()
+    expect(screen.getByText(/market direction stays ABSTAIN/i)).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
   it('captures explicit moments and opens the linked read-only audit', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAudit.mockResolvedValue(audit)

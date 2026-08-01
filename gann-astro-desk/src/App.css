@@ -6518,6 +6518,47 @@ html.android-runtime .loading-state {
 .product-first-wheel-summary b { color: #d2dce1; font: 9px/1 Consolas, monospace; }
 .product-first-wheel-unknown { grid-column: 1 / -1; margin: 0; color: #c6a35e; font-size: 8px; }
 
+.product-first-timing-phase {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, .8fr) minmax(300px, 1.2fr);
+  gap: 9px 14px;
+  padding: 10px 12px;
+  border: 1px solid #4a455f;
+  background: #151522;
+}
+.product-first-phase-badge {
+  justify-self: end;
+  padding: 4px 6px;
+  border: 1px solid #7665a8;
+  background: #282240;
+  color: #c6b7ec;
+  font: 700 7px/1 Consolas, monospace;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.product-first-timing-meta,
+.product-first-timing-metrics {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(100px, 1fr));
+  gap: 4px;
+}
+.product-first-timing-meta span,
+.product-first-timing-metrics span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid #403b56;
+  background: #10111a;
+  color: #9290a5;
+  font-size: 7px;
+}
+.product-first-timing-meta b,
+.product-first-timing-metrics b { overflow: hidden; color: #d7d4e5; font: 8px/1.25 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.product-first-phase-note { grid-column: 1 / -1; margin: 0; color: #a6a2b8; font-size: 8px; line-height: 1.45; }
+
 .product-first-sbc-body {
   min-width: 0;
   min-height: 0;
@@ -6622,6 +6663,7 @@ html.android-runtime .loading-state {
   .product-first-fx-panel p { grid-column: 1 / -1; }
   .product-first-wheel { grid-template-columns: 1fr; }
   .product-first-wheel-state { grid-column: 1; }
+  .product-first-timing-phase { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 980px) {
@@ -6634,6 +6676,8 @@ html.android-runtime .loading-state {
   .product-first-fx-panel { grid-template-columns: 1fr; }
   .product-first-wheel-layout { grid-template-columns: 1fr; }
   .product-first-wheel-summary { grid-template-columns: repeat(2, minmax(95px, 1fr)); }
+  .product-first-timing-meta,
+  .product-first-timing-metrics { grid-template-columns: repeat(2, minmax(100px, 1fr)); }
 }
 
 .chakra-lab-body {
