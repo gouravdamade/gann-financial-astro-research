@@ -18,8 +18,22 @@ export const PROJECT_CONVENTION_TIMING_PHASE_V0 = {
 export type TimingLifecycle = 'APPLYING' | 'EXACT' | 'SEPARATING' | 'UNKNOWN'
 export type TimingGeometryState = 'PROJECT_CONVENTION_GEOMETRY' | 'NON_DIRECTIONAL_TIMING_GEOMETRY' | 'RESULTANT_NEAR_ZERO' | 'UNKNOWN'
 
+export type TimingEventPhase = {
+  eventId: string
+  label: string
+  startUtc: string
+  exactUtc: string
+  endUtc: string
+  lifecycle: TimingLifecycle
+  halfWindowSeconds: number
+  timingPhaseRadians: number
+  safeSector: boolean
+}
+
 export type TimingPhaseVector = {
   vectorId: string
+  eventId: string
+  eventLabel: string
   body: string
   target: string
   sourcePolarity: 'SUPPORTIVE' | 'ADVERSE'
@@ -40,15 +54,7 @@ export type TimingPhaseExperiment = {
   state: TimingGeometryState
   marketDirection: 'ABSTAIN'
   directionalInterpretation: 'SUPPRESSED' | 'NOT_AVAILABLE'
-  timingWindow: {
-    eventId: string
-    label: string
-    startUtc: string
-    exactUtc: string
-    endUtc: string
-    lifecycle: TimingLifecycle
-    halfWindowSeconds: number
-  } | null
+  activeEvents: TimingEventPhase[]
   vectors: TimingPhaseVector[]
   unknownVectorCount: number
   realUnits: number | null
@@ -72,15 +78,6 @@ export type TimingPhaseExperiment = {
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.max(minimum, Math.min(maximum, value))
-}
-
-function selectTimingWindow(asOfSeconds: number, aspects: AspectWindow[]): AspectWindow | null {
-  if (!aspects.length) return null
-  return [...aspects].sort((left, right) => {
-    const leftDistance = asOfSeconds < left.start ? left.start - asOfSeconds : asOfSeconds > left.end ? asOfSeconds - left.end : 0
-    const rightDistance = asOfSeconds < right.start ? right.start - asOfSeconds : asOfSeconds > right.end ? asOfSeconds - right.end : 0
-    return leftDistance - rightDistance || left.durationMinutes - right.durationMinutes || left.eventId.localeCompare(right.eventId)
-  })[0]
 }
 
 function lifecycleFor(asOfSeconds: number, exactSeconds: number): TimingLifecycle {
@@ -113,7 +110,7 @@ export function calculateProductFirstTimingPhase({
       state: 'UNKNOWN',
       marketDirection: 'ABSTAIN',
       directionalInterpretation: 'NOT_AVAILABLE',
-      timingWindow: null,
+      activeEvents: [],
       vectors: [],
       unknownVectorCount: 0,
       realUnits: null,
@@ -130,8 +127,29 @@ export function calculateProductFirstTimingPhase({
   }
 
   const asOfSeconds = Date.parse(snapshot.as_of_utc) / 1000
-  const timingWindow = selectTimingWindow(asOfSeconds, aspects)
-  if (!timingWindow) {
+  const activeEvents = aspects
+    .filter((aspect) => asOfSeconds >= aspect.start && asOfSeconds <= aspect.end)
+    .sort((left, right) => left.start - right.start || left.eventId.localeCompare(right.eventId))
+    .map((aspect): TimingEventPhase => {
+      const halfWindowSeconds = Math.max(1, (aspect.end - aspect.start) / 2)
+      const timingPhaseRadians = PROJECT_CONVENTION_TIMING_PHASE_V0.phaseSpanRadians * clamp(
+        (asOfSeconds - aspect.peak) / halfWindowSeconds,
+        -1,
+        1,
+      )
+      return {
+        eventId: aspect.eventId,
+        label: aspect.aspectLabel,
+        startUtc: aspect.startIso,
+        exactUtc: aspect.peakIso,
+        endUtc: aspect.endIso,
+        lifecycle: lifecycleFor(asOfSeconds, aspect.peak),
+        halfWindowSeconds,
+        timingPhaseRadians,
+        safeSector: Math.abs(timingPhaseRadians) < Math.PI / 2 - PROJECT_CONVENTION_TIMING_PHASE_V0.safeMarginRadians,
+      }
+    })
+  if (!activeEvents.length) {
     return {
       contract: PROJECT_CONVENTION_TIMING_PHASE_V0.contract,
       classification: PROJECT_CONVENTION_TIMING_PHASE_V0.classification,
@@ -139,7 +157,7 @@ export function calculateProductFirstTimingPhase({
       state: 'UNKNOWN',
       marketDirection: 'ABSTAIN',
       directionalInterpretation: 'NOT_AVAILABLE',
-      timingWindow: null,
+      activeEvents: [],
       vectors: [],
       unknownVectorCount: snapshot.guidance?.contributions.length ?? 0,
       realUnits: null,
@@ -155,36 +173,29 @@ export function calculateProductFirstTimingPhase({
     }
   }
 
-  const exactSeconds = timingWindow.peak
-  const halfWindowSeconds = Math.max(1, (timingWindow.end - timingWindow.start) / 2)
-  const lifecycle = lifecycleFor(asOfSeconds, exactSeconds)
-  const timingPhaseRadians = PROJECT_CONVENTION_TIMING_PHASE_V0.phaseSpanRadians * clamp(
-    (asOfSeconds - exactSeconds) / halfWindowSeconds,
-    -1,
-    1,
-  )
-  const safeSector = Math.abs(timingPhaseRadians) < Math.PI / 2 - PROJECT_CONVENTION_TIMING_PHASE_V0.safeMarginRadians
   const resolved = snapshot.guidance?.contributions.filter((contribution) => contribution.signed_guidance_units != null) ?? []
-  const vectors = resolved.map((contribution, index): TimingPhaseVector => {
+  const vectors = resolved.flatMap((contribution, contributionIndex) => activeEvents.map((event): TimingPhaseVector => {
     const sourcePolarity = (contribution.signed_guidance_units ?? 0) >= 0 ? 'SUPPORTIVE' : 'ADVERSE'
     const sourcePhaseRadians = sourcePolarity === 'SUPPORTIVE' ? 0 : Math.PI
     const magnitudeUnits = Math.abs(contribution.signed_guidance_units ?? 0)
-    const totalPhaseRadians = sourcePhaseRadians + timingPhaseRadians
+    const totalPhaseRadians = sourcePhaseRadians + event.timingPhaseRadians
     return {
-      vectorId: `${timingWindow.eventId}:${contribution.body}:${contribution.target.row}:${contribution.target.column}:${index}`,
+      vectorId: `${event.eventId}:${contribution.body}:${contribution.target.row}:${contribution.target.column}:${contributionIndex}`,
+      eventId: event.eventId,
+      eventLabel: event.label,
       body: contribution.body,
       target: contribution.target.value,
       sourcePolarity,
       sourcePhaseRadians,
-      timingPhaseRadians,
+      timingPhaseRadians: event.timingPhaseRadians,
       totalPhaseRadians,
       magnitudeUnits,
       realUnits: magnitudeUnits * Math.cos(totalPhaseRadians),
       imaginaryUnits: magnitudeUnits * Math.sin(totalPhaseRadians),
-      lifecycle,
-      safeSector,
+      lifecycle: event.lifecycle,
+      safeSector: event.safeSector,
     }
-  })
+  }))
   const realUnits = vectors.reduce((sum, vector) => sum + vector.realUnits, 0)
   const imaginaryUnits = vectors.reduce((sum, vector) => sum + vector.imaginaryUnits, 0)
   const resultantUnits = Math.hypot(realUnits, imaginaryUnits)
@@ -194,6 +205,7 @@ export function calculateProductFirstTimingPhase({
     grossUnits * PROJECT_CONVENTION_TIMING_PHASE_V0.relativeResultantFloor,
   )
   const nearZero = vectors.length === 0 || resultantUnits < resultantFloorUnits
+  const safeSector = activeEvents.every((event) => event.safeSector)
   const state: TimingGeometryState = nearZero
     ? 'RESULTANT_NEAR_ZERO'
     : safeSector
@@ -206,17 +218,9 @@ export function calculateProductFirstTimingPhase({
     state,
     marketDirection: 'ABSTAIN',
     directionalInterpretation: safeSector && !nearZero ? 'SUPPRESSED' : 'NOT_AVAILABLE',
-    timingWindow: {
-      eventId: timingWindow.eventId,
-      label: timingWindow.aspectLabel,
-      startUtc: timingWindow.startIso,
-      exactUtc: timingWindow.peakIso,
-      endUtc: timingWindow.endIso,
-      lifecycle,
-      halfWindowSeconds,
-    },
+    activeEvents,
     vectors,
-    unknownVectorCount: (snapshot.guidance?.contributions.length ?? 0) - resolved.length,
+    unknownVectorCount: ((snapshot.guidance?.contributions.length ?? 0) - resolved.length) * activeEvents.length,
     realUnits,
     imaginaryUnits,
     resultantUnits,

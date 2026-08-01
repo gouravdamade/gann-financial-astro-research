@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 12:18 IST
+Last updated: 2026-08-01 12:23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -21,6 +21,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   prior frontend average of cancelling USD/JPY net values has been removed.
   This remains read-only descriptive research; it has no trade, vote, fusion,
   or execution role.
+- C1-3 completed: timing phase now includes only currently active aspect
+  windows, with an independent lifecycle and displacement for every event.
+  Overlaps are no longer forced through one nearest-event phase. The aggregate
+  is still a read-only experimental visual with `ABSTAIN`, zero vote,
+  zero directional contribution, zero fusion, and execution locked.
 
 ## Latest Update - 2026-08-01 (Product Beta Scroll-Zoom Repair)
 

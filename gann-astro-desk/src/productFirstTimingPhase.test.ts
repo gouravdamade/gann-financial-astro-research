@@ -76,7 +76,8 @@ describe('PROJECT_CONVENTION_TIMING_PHASE_V0', () => {
     })
 
     expect(result.contract).toBe(PROJECT_CONVENTION_TIMING_PHASE_V0.contract)
-    expect(result.timingWindow?.lifecycle).toBe('EXACT')
+    expect(result.activeEvents).toHaveLength(1)
+    expect(result.activeEvents[0]?.lifecycle).toBe('EXACT')
     expect(result.realUnits).toBeCloseTo(1)
     expect(result.imaginaryUnits).toBeCloseTo(0)
     expect(result.marketDirection).toBe('ABSTAIN')
@@ -97,6 +98,29 @@ describe('PROJECT_CONVENTION_TIMING_PHASE_V0', () => {
     expect(result.state).toBe('NON_DIRECTIONAL_TIMING_GEOMETRY')
     expect(result.directionalInterpretation).toBe('NOT_AVAILABLE')
     expect(result.marketDirection).toBe('ABSTAIN')
+  })
+
+  it('keeps overlapping windows independently phased instead of rotating all contributions by one nearest event', () => {
+    const earlierEvent: AspectWindow = {
+      ...aspect,
+      eventId: 'event-2',
+      aspectLabel: 'VENUS to SATURN Trine',
+      peak: 1_250,
+      peakIso: '1970-01-01T00:20:50.000Z',
+    }
+    const result = calculateProductFirstTimingPhase({
+      enabled: true,
+      snapshot: snapshotAt(1_500, [{ body: 'MOON', signed: 2 }]),
+      aspects: [aspect, earlierEvent],
+    })
+
+    expect(result.activeEvents).toHaveLength(2)
+    expect(result.activeEvents.map((event) => event.lifecycle)).toEqual(['EXACT', 'SEPARATING'])
+    expect(result.vectors).toHaveLength(2)
+    expect(new Set(result.vectors.map((vector) => vector.eventId))).toEqual(new Set(['event-1', 'event-2']))
+    expect(result.vectors[0]?.timingPhaseRadians).not.toBe(result.vectors[1]?.timingPhaseRadians)
+    expect(result.marketDirection).toBe('ABSTAIN')
+    expect(result.guardrails).toMatchObject({ voteWeight: 0, directionalContribution: 0, fusionCoefficient: 0, executionAllowed: false })
   })
 
   it('uses near-zero abstention when opposing vectors cancel despite gross activity', () => {

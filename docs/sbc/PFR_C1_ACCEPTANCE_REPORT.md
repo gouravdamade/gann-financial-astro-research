@@ -29,9 +29,21 @@ Completed on 2026-08-01.
 - The interface labels this as read-only descriptive research. It does not
   produce a prediction, vote, execution permission, or automatic order.
 
+## C1-3 Per-Event Timing Phase
+
+Completed on 2026-08-01.
+
+- The timing lab now selects only aspect windows active at the pinned
+  timestamp. It does not select a nearest window before or after the moment.
+- Every active event has an independent applying/exact/separating lifecycle,
+  timing displacement, and vector identity. Overlapping events are separate
+  event-contribution vectors rather than one common rotation.
+- The summary remains an experimental visualization aggregate only. It keeps
+  `ABSTAIN`, zero vote weight, zero directional contribution, zero fusion, and
+  execution locked.
+
 ## Remaining Acceptance Work
 
-- C1-3: deterministic per-event timing phase V1.
 - C1-4: fixed-wheel semantic correction.
 - C1-5/C1-6: timing visual integrity, opt-in flag, and accessibility.
 - C1-7: complete regression, corrected Windows candidate, and founder review.

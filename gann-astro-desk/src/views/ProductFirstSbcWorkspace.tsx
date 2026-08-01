@@ -355,14 +355,18 @@ export function ProductFirstSbcWorkspace({
             <span className="product-first-phase-badge">Zero vote</span>
           </div>
           {!TIMING_PHASE_EXPERIMENT_ENABLED && <p className="product-first-wheel-state">This feature-flagged experiment is disabled.</p>}
-          {TIMING_PHASE_EXPERIMENT_ENABLED && !timingExperiment.timingWindow && <p className="product-first-wheel-state">No aspect window is available near this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
-          {TIMING_PHASE_EXPERIMENT_ENABLED && timingExperiment.timingWindow && <>
+          {TIMING_PHASE_EXPERIMENT_ENABLED && !timingExperiment.activeEvents.length && <p className="product-first-wheel-state">No aspect window is active at this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
+          {TIMING_PHASE_EXPERIMENT_ENABLED && timingExperiment.activeEvents.length > 0 && <>
             <div className="product-first-timing-meta">
-              <span><b>Window</b>{compactAspectLabel(timingExperiment.timingWindow.label)}</span>
-              <span><b>Lifecycle</b>{display(timingExperiment.timingWindow.lifecycle)}</span>
+              <span><b>Active events</b>{timingExperiment.activeEvents.length}</span>
               <span><b>Safe sector</b>{timingExperiment.safeSector ? 'Inside declared safe sector' : 'Suppressed outside safe sector'}</span>
               <span><b>Market result</b>{timingExperiment.marketDirection}</span>
               <span><b>State</b>{display(timingExperiment.state)}</span>
+            </div>
+            <div className="product-first-timing-meta" aria-label="Per-event timing lifecycle">
+              {timingExperiment.activeEvents.map((event) => (
+                <span key={event.eventId}><b>{compactAspectLabel(event.label)}</b>{display(event.lifecycle)} · {event.timingPhaseRadians.toFixed(2)} rad</span>
+              ))}
             </div>
             <div className="product-first-timing-metrics">
               <span>Re <b>{timingExperiment.realUnits?.toFixed(2) ?? 'Unknown'}</b></span>
@@ -372,7 +376,7 @@ export function ProductFirstSbcWorkspace({
               <span>Coherence <b>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</b></span>
               <span>Conflict <b>{timingExperiment.conflict == null ? 'Unknown' : `${(timingExperiment.conflict * 100).toFixed(1)}%`}</b></span>
             </div>
-            <p className="product-first-phase-note">Every resolved SBC contribution keeps its original supportive/adverse polarity while its declared lifecycle displacement is visible in Re and Im. {timingExperiment.unknownVectorCount} unresolved item{timingExperiment.unknownVectorCount === 1 ? '' : 's'} remain outside the geometry. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
+            <p className="product-first-phase-note">Each active event keeps its own lifecycle displacement; overlapping events are never collapsed into one nearest-event rotation. Every resolved SBC contribution retains its original supportive/adverse polarity. {timingExperiment.unknownVectorCount} unresolved event-contribution item{timingExperiment.unknownVectorCount === 1 ? '' : 's'} remain outside the geometry. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
           </>}
         </section>
       )}
@@ -411,7 +415,7 @@ export function ProductFirstSbcWorkspace({
             <article>
               <header><strong>Timing phase lab</strong><span>Feature-flagged engineering coordinate</span></header>
               <dl>
-                <div><dt>Lifecycle</dt><dd>{timingExperiment.timingWindow ? display(timingExperiment.timingWindow.lifecycle) : 'Unknown'}</dd></div>
+                <div><dt>Active events</dt><dd>{timingExperiment.activeEvents.length || 'Unknown'}</dd></div>
                 <div><dt>Resultant</dt><dd>{timingExperiment.resultantUnits?.toFixed(2) ?? 'Unknown'}</dd></div>
                 <div><dt>Coherence</dt><dd>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</dd></div>
                 <div><dt>Market result</dt><dd>{timingExperiment.marketDirection}</dd></div>
