@@ -4,6 +4,28 @@ Last updated: 2026-08-01 09:51 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-01 (Product-First Recovery PFR-2)
+
+- Completed PFR-2 on `product-first-sbc-phase-lab` as a bounded product view.
+  The integrated workspace now has Time and Profile controls that share the
+  exact selected IST moment with the loaded price chart, aspect lanes, Chakra,
+  and Why drawer.
+- The Time view supports prior/next loaded-candle stepping and a deliberate
+  manual IST timestamp synchronization. It makes the selected location and
+  Panchanga values visible without creating a price or trading prediction.
+- The Profile view shows the already-loaded foundation, 81-cell grid, Vedha
+  guidance, selected actors, and included layers in plain language. It is
+  read-only and does not alter formulas or locks.
+- PFR-2 verification: production frontend build and focused Chakra frontend
+  suite `12/12` pass; browser visual inspection covered both Time and Profile
+  panels at `http://127.0.0.1:5173/`.
+- Recovery snapshot:
+  `chat_session_backups/20260801_100905_product_first_pfr2/` with a SHA-256
+  manifest covers the PFR-2 changes and its acceptance evidence.
+- Next directive milestone: PFR-3, a clearly labelled experimental USDJPY
+  base-minus-quote and common-mode product panel. Do not change inference,
+  execution, or MT5 behavior.
+
 ## Latest Update - 2026-08-01 (Product-First Recovery PFR-1)
 
 - The supplied `Product_First_Codex_Recovery_Directive.pdf` is now the active

@@ -1208,6 +1208,29 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
+  it('shows synchronized time and profile context without creating a market call', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+      />,
+    )
+
+    await screen.findByText('Integrated SBC workspace')
+    await user.click(screen.getByRole('button', { name: 'Time' }))
+    expect(screen.getByText('Selected time')).toBeInTheDocument()
+    expect(screen.getByLabelText('Selected IST moment')).toBeInTheDocument()
+    expect(screen.getByText('Saptami')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Profile' }))
+    expect(screen.getByText('Current profile')).toBeInTheDocument()
+    expect(screen.getByText(/This workspace reports the loaded profile context only/i)).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
   it('captures explicit moments and opens the linked read-only audit', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAudit.mockResolvedValue(audit)

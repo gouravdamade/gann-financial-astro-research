@@ -1,5 +1,5 @@
-import { CircleHelp, Grid3X3, Layers3, ShieldCheck } from 'lucide-react'
-import type { CSSProperties } from 'react'
+import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, ShieldCheck, SlidersHorizontal } from 'lucide-react'
+import { useState, type CSSProperties } from 'react'
 import type { ChakraGridCell, ChakraLabSnapshot, ChartPayload } from '../types'
 
 type Props = {
@@ -23,6 +23,10 @@ function toIstInput(epochSeconds: number): string {
   return new Date((epochSeconds + 19_800) * 1000).toISOString().slice(0, 16)
 }
 
+function momentInput(snapshot: ChakraLabSnapshot | null): string {
+  return snapshot?.requested_at_local.slice(0, 16) ?? ''
+}
+
 function compactAspectLabel(value: string): string {
   return value.replace('AVG(ALL)', 'AVG').replaceAll('|', ' / ')
 }
@@ -34,6 +38,8 @@ export function ProductFirstSbcWorkspace({
   onSelectCell,
   onSelectMoment,
 }: Props) {
+  const [sideView, setSideView] = useState<'TIME' | 'PROFILE' | null>(null)
+  const [draftMoment, setDraftMoment] = useState('')
   const guidance = snapshot?.guidance ?? null
   const candles = chart?.candles.slice(-110) ?? []
   const firstTime = candles[0]?.time ?? 0
@@ -61,6 +67,11 @@ export function ProductFirstSbcWorkspace({
     layer.values.map((value) => `${layer.layer}:${value}`)
   )) ?? [])
   const readiness = snapshot?.actor_readiness.filter((item) => item.requested) ?? []
+  const selectedCandleIndex = candles.length
+    ? candles.reduce((closest, candle, index) => (
+      Math.abs(candle.time - selectedEpoch) < Math.abs(candles[closest].time - selectedEpoch) ? index : closest
+    ), 0)
+    : -1
   const unknownCount = readiness.filter((item) => item.status !== 'READY').length
     + (guidance?.contributions.filter((item) => item.signed_guidance_units == null).length ?? 0)
   const supportive = Math.abs(guidance?.favorable_guidance_units ?? 0)
@@ -75,7 +86,7 @@ export function ProductFirstSbcWorkspace({
         : 'No resolved contribution'
 
   return (
-    <section className="product-first-sbc" aria-label="Integrated Sarvatobhadra Chakra workspace">
+    <section className={`product-first-sbc${sideView ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
       <header className="product-first-sbc-summary">
         <div className="product-first-summary-title">
           <Layers3 size={16} />
@@ -105,7 +116,85 @@ export function ProductFirstSbcWorkspace({
           <strong>{guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}% / ${unknownCount}` : 'Unavailable'}</strong>
         </div>
         <span className="product-first-lock"><ShieldCheck size={12} /> Read-only experimental</span>
+        <div className="product-first-view-controls" aria-label="Workspace view controls">
+          <button
+            className={sideView === 'TIME' ? 'is-active' : ''}
+            onClick={() => {
+              setDraftMoment(momentInput(snapshot))
+              setSideView((current) => current === 'TIME' ? null : 'TIME')
+            }}
+          >
+            <CalendarClock size={12} /> Time
+          </button>
+          <button
+            className={sideView === 'PROFILE' ? 'is-active' : ''}
+            onClick={() => setSideView((current) => current === 'PROFILE' ? null : 'PROFILE')}
+          >
+            <SlidersHorizontal size={12} /> Profile
+          </button>
+        </div>
       </header>
+
+      {sideView === 'TIME' && (
+        <section className="product-first-time-profile" aria-label="Selected time view">
+          <div>
+            <CalendarClock size={15} />
+            <div><strong>Selected time</strong><span>Changes the same timestamp used by price, event lanes, and the Chakra.</span></div>
+          </div>
+          <div className="product-first-time-actions">
+            <button
+              title="Previous loaded candle"
+              disabled={selectedCandleIndex <= 0}
+              onClick={() => onSelectMoment(toIstInput(candles[selectedCandleIndex - 1].time))}
+            ><ChevronLeft size={14} /> Previous candle</button>
+            <input
+              type="datetime-local"
+              value={draftMoment}
+              aria-label="Selected IST moment"
+              onChange={(event) => setDraftMoment(event.target.value)}
+            />
+            <button
+              className="is-primary"
+              disabled={!draftMoment}
+              onClick={() => onSelectMoment(draftMoment)}
+            >Synchronize moment</button>
+            <button
+              title="Next loaded candle"
+              disabled={selectedCandleIndex < 0 || selectedCandleIndex >= candles.length - 1}
+              onClick={() => onSelectMoment(toIstInput(candles[selectedCandleIndex + 1].time))}
+            >Next candle <ChevronRight size={14} /></button>
+          </div>
+          <div className="product-first-time-facts">
+            <span><b>IST</b>{snapshot ? new Intl.DateTimeFormat('en-IN', { dateStyle: 'full', timeStyle: 'medium', timeZone: 'Asia/Kolkata' }).format(new Date(snapshot.as_of_utc)) : 'Unavailable'}</span>
+            <span><b>Location</b>{snapshot ? `${snapshot.location.latitude.toFixed(4)}, ${snapshot.location.longitude.toFixed(4)}` : 'Unavailable'}</span>
+            <span><b>Chart candle</b>{selectedCandleIndex >= 0 ? `${selectedCandleIndex + 1} of ${candles.length}` : 'No chart candle'}</span>
+          </div>
+          {snapshot && <div className="product-first-panchanga-strip">
+            <span>Tithi <b>{display(snapshot.foundation_snapshot.panchanga.tithi_name)}</b></span>
+            <span>Paksha <b>{display(snapshot.foundation_snapshot.panchanga.paksha)}</b></span>
+            <span>Yoga <b>{display(snapshot.foundation_snapshot.panchanga.yoga_name)}</b></span>
+            <span>Karana <b>{display(snapshot.foundation_snapshot.panchanga.karana_name)}</b></span>
+            <span>Weekday <b>{display(snapshot.foundation_snapshot.panchanga.vara.weekday)}</b></span>
+          </div>}
+        </section>
+      )}
+
+      {sideView === 'PROFILE' && (
+        <section className="product-first-time-profile" aria-label="Current profile view">
+          <div>
+            <SlidersHorizontal size={15} />
+            <div><strong>Current profile</strong><span>These are the existing read-only configurations behind the synchronized display.</span></div>
+          </div>
+          <div className="product-first-profile-facts">
+            <span><b>Foundation</b>{snapshot ? display(snapshot.foundation_snapshot.profile_id) : 'Unavailable'}</span>
+            <span><b>Chakra grid</b>{snapshot ? display(snapshot.grid.grid_profile_id) : 'Unavailable'}</span>
+            <span><b>Vedha guidance</b>{snapshot?.guidance ? display(snapshot.guidance.vedha_profile_id) : 'No resolved guidance'}</span>
+            <span><b>Active actors</b>{readiness.length ? readiness.map((item) => item.body).join(', ') : 'None selected'}</span>
+            <span><b>Included layers</b>{snapshot?.grid.certified_layers.length ? snapshot.grid.certified_layers.map(display).join(', ') : 'Unavailable'}</span>
+          </div>
+          <p className="product-first-profile-note">This workspace reports the loaded profile context only. It does not alter a formula, create a market call, or unlock any execution path.</p>
+        </section>
+      )}
 
       <div className="product-first-sbc-body">
         <section className="product-first-market-panel">

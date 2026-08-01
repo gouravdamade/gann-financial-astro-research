@@ -6359,6 +6359,7 @@ html.android-runtime .loading-state {
   overflow: hidden;
   background: #10151a;
 }
+.product-first-sbc.has-product-first-panel { grid-template-rows: auto auto minmax(0, 1fr); }
 
 .product-first-sbc-summary {
   min-width: 0;
@@ -6391,6 +6392,68 @@ html.android-runtime .loading-state {
 .product-first-metric strong { overflow: hidden; color: #cad4db; font: 700 9px/1.2 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .product-first-metric.is-adverse strong { color: #dbab91; }
 .product-first-lock { color: #81cbb8; font-size: 8px; white-space: nowrap; }
+.product-first-view-controls { display: inline-flex; align-items: stretch; border: 1px solid #3c4955; border-radius: 3px; overflow: hidden; background: #10161c; }
+.product-first-view-controls button {
+  min-height: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 0;
+  border-right: 1px solid #3c4955;
+  background: transparent;
+  color: #8e9aa5;
+  cursor: pointer;
+  padding: 0 7px;
+  font-size: 8px;
+}
+.product-first-view-controls button:last-child { border-right: 0; }
+.product-first-view-controls button:hover { background: #202a32; color: #d3dde4; }
+.product-first-view-controls button.is-active { background: #244955; color: #cde9ec; }
+
+.product-first-time-profile {
+  display: grid;
+  grid-template-columns: minmax(180px, .8fr) minmax(360px, 1.4fr);
+  gap: 8px 14px;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #35404a;
+  background: #172028;
+}
+.product-first-time-profile > div:first-child { display: flex; align-items: center; gap: 8px; color: #78c4c1; }
+.product-first-time-profile > div:first-child > div { display: grid; gap: 3px; }
+.product-first-time-profile > div:first-child strong { color: #dce6eb; font-size: 9px; }
+.product-first-time-profile > div:first-child span { color: #8b98a3; font-size: 8px; line-height: 1.3; }
+.product-first-time-actions { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 5px; }
+.product-first-time-actions button {
+  min-height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid #465765;
+  border-radius: 3px;
+  background: #11181f;
+  color: #b7c3cb;
+  cursor: pointer;
+  padding: 0 7px;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.product-first-time-actions button:hover:not(:disabled) { border-color: #6f9faa; color: #e0ebef; }
+.product-first-time-actions button:disabled { cursor: not-allowed; opacity: .42; }
+.product-first-time-actions button.is-primary { border-color: #4f9992; background: #1b4745; color: #bfe5dd; }
+.product-first-time-actions input { min-width: 0; height: 27px; border: 1px solid #465765; border-radius: 3px; background: #0f151b; color: #d3dde4; padding: 0 6px; font: 8px/1 Consolas, monospace; }
+.product-first-time-facts,
+.product-first-panchanga-strip,
+.product-first-profile-facts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 5px; }
+.product-first-time-facts span,
+.product-first-panchanga-strip span,
+.product-first-profile-facts span { display: inline-flex; align-items: baseline; gap: 5px; max-width: 100%; padding: 4px 6px; border: 1px solid #33414c; background: #11191f; color: #aab5be; font: 8px/1.25 Consolas, monospace; }
+.product-first-time-facts b,
+.product-first-panchanga-strip b,
+.product-first-profile-facts b { color: #6eacb2; font-weight: 700; }
+.product-first-profile-note { grid-column: 1 / -1; margin: 0; color: #8a97a1; font-size: 8px; line-height: 1.4; }
 
 .product-first-sbc-body {
   min-width: 0;
@@ -6490,6 +6553,8 @@ html.android-runtime .loading-state {
   .product-first-sbc-summary { grid-template-columns: minmax(170px, 1fr) repeat(4, minmax(78px, .65fr)) auto; }
   .product-first-sbc-summary .product-first-metric:nth-of-type(5) { display: none; }
   .product-first-sbc-body { grid-template-columns: minmax(390px, 1.5fr) minmax(330px, 1fr) 235px; }
+  .product-first-time-profile { grid-template-columns: 1fr; }
+  .product-first-time-actions { justify-content: flex-start; }
 }
 
 @media (max-width: 980px) {
@@ -6498,6 +6563,7 @@ html.android-runtime .loading-state {
   .product-first-sbc-summary .product-first-metric:nth-of-type(5) { display: none; }
   .product-first-sbc-body { grid-template-columns: minmax(380px, 1.45fr) minmax(300px, 1fr); }
   .product-first-why-drawer { display: none; }
+  .product-first-time-actions { flex-wrap: wrap; }
 }
 
 .chakra-lab-body {
