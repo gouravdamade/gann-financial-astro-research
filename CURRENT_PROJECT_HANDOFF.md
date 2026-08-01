@@ -1,8 +1,32 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 20:45 IST
+Last updated: 2026-08-01 21:30 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (PFR-C2R Repository Reconciliation)
+
+- Executed the bounded PFR-C2R repository reconciliation. Current truth is
+  `PFR_C2_STATUS = PARTIAL_REPOSITORY_INCONSISTENT`,
+  `FOUNDER_ACCEPTANCE_READY = false`, and
+  `CANDIDATE_SOURCE_REPRODUCIBLE = false`. No new feature or doctrine work was
+  added.
+- Source at `9f65649` is genuinely V1, including the no-aggregate timing
+  quarantine and score-suppressed display contract. New direct frontend
+  invariance tests confirm that changing hidden magnitude does not alter
+  score-suppressed SVG/text, while source-only baseline values remain visible.
+- Clean checks passed for frontend lint/build/Vitest (`31` files, `123` tests),
+  focused SBC Python (`9` tests), and Rust fmt/check/full tests (`18` tests).
+  Full Python is blocked: `612` tests passed but `3` JHora transcription tests
+  require an ignored local witness CSV absent from a clean clone.
+- The old `0.10.29-pfr-c2` release is retired for acceptance: its manifest names
+  old commit `81ccba3` and `source_git_dirty=true`. It must not be used as a
+  reproducible candidate.
+- A clean `0.10.30` package could not be built because the sidecar build needs
+  another ignored local file, `candlestick_agent/source_registry.csv`; strict
+  pnpm installation is also blocked because `pnpm-lock.yaml` is not tracked.
+  No 0.10.30 installer has been represented as ready. Full evidence and the
+  exact next actions are in `docs/sbc/PFR_C2R_RECONCILIATION_REPORT.md`.
 
 ## Latest Update - 2026-08-01 (PFR-C2 Founder Acceptance and Visualization Integrity)
 

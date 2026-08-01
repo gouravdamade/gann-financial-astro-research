@@ -2,7 +2,13 @@
 
 ## Status
 
-Implementation complete; founder physical acceptance pending.
+Superseded by the C2R reconciliation record. Do not use this report or the
+`0.10.29-pfr-c2` artifact for founder acceptance. See
+`docs/sbc/PFR_C2R_RECONCILIATION_REPORT.md`.
+
+The prior implementation claim remains historical context only; C2R found
+that the packaged artifact was built from a dirty, older source commit and
+that the current repository cannot yet reproduce a package from a clean clone.
 
 - Branch: `product-first-sbc-phase-lab`
 - Starting reconciliation commit: `81ccba3`
