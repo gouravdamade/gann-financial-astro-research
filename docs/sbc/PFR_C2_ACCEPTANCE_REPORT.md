@@ -2,9 +2,10 @@
 
 ## Status
 
-Superseded by the C2R reconciliation record. Do not use this report or the
-`0.10.29-pfr-c2` artifact for founder acceptance. See
-`docs/sbc/PFR_C2R_RECONCILIATION_REPORT.md`.
+The `0.10.29-pfr-c2` artifact remains superseded. The current founder-ready
+candidate is `0.10.31-pfr-c2f`; its clean-source gates, hashes, and two native
+smoke reports are recorded in `docs/sbc/PFR_C2R_RECONCILIATION_REPORT.md`.
+Founder physical inspection remains pending.
 
 The prior implementation claim remains historical context only; C2R found
 that the packaged artifact was built from a dirty, older source commit and
