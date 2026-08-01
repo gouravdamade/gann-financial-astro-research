@@ -25,6 +25,14 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   earlier `0.10.27` build. Validation before package rebuild: frontend lint,
   focused frontend tests (7), frontend production build, and SBC Python tests
   (6) passed.
+- Corrected Windows candidate built and smoke-tested at
+  `D:\PycharmProjects\releases\GannAstroDesk-0.10.28-three-mode-boundary\`.
+  Installer SHA-256:
+  `3496BAA4E76A255E342D4136122989CD2BC39A794B4FEB61A41DD345AFE8243A`.
+  Portable launcher SHA-256:
+  `E5417582ADCFFC2E87D2A6317522B87514CB28DDA67FCD62DC936463FA055C9D`.
+  The portable `Gann Astro Desk.exe` and its adjacent `GannAstroBackend` both
+  launched successfully from that exact release folder.
 
 - Implemented the founder-visible visualization engine modes requested by the
   `Gann_Astro_Desk_Visualization_Engine_Three_Mode_Codex_Addendum`:
