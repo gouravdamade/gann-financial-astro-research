@@ -55,9 +55,29 @@ Completed on 2026-08-01.
 - This did not alter source ledger values, the backend scalar-parity contract,
   timing status, votes, fusion, or execution locks.
 
+## C1-5/C1-6 Timing Integrity, Opt-In, and Accessibility
+
+Completed on 2026-08-01.
+
+- The timing aggregate now shows the count of supportive and adverse source
+  contributions separately, while retaining the original source polarity on
+  every event-contribution vector. It never labels the geometry bullish or
+  bearish.
+- The panel explicitly presents per-event lifecycle/phase, real and imaginary
+  components, resultant, gross, coherence, conflict, safe-sector state,
+  unresolved evidence, and `ABSTAIN`. A near-zero resultant remains null for
+  collective phase and suppresses interpretation without deleting vectors.
+- The production feature is disabled unless the dedicated build environment
+  sets `VITE_ENABLE_TIMING_PHASE_EXPERIMENT=true`. The comparison card remains
+  descriptive when the experiment is unavailable.
+- A deterministic Python mirror now compiles active-event timing geometry with
+  a stable calculation ID for replay inspection. It carries the same zero-vote,
+  no-execution guardrails as the UI and has a focused overlap regression test.
+- Fixed wheel groups are native keyboard-reachable buttons with pressed state;
+  their labels convey side and magnitude without relying on color alone.
+
 ## Remaining Acceptance Work
 
-- C1-5/C1-6: timing visual integrity, opt-in flag, and accessibility.
 - C1-7: complete regression, corrected Windows candidate, and founder review.
 
 ## Invariants Confirmed

@@ -3,7 +3,7 @@ import { useState, type CSSProperties } from 'react'
 import type { ChakraFixedPhasorInterval, ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
 import { calculateProductFirstTimingPhase, PROJECT_CONVENTION_TIMING_PHASE_V0 } from '../productFirstTimingPhase'
 
-const TIMING_PHASE_EXPERIMENT_ENABLED = import.meta.env.VITE_ENABLE_TIMING_PHASE_EXPERIMENT !== 'false'
+const TIMING_PHASE_EXPERIMENT_ENABLED = import.meta.env.VITE_ENABLE_TIMING_PHASE_EXPERIMENT === 'true'
 
 type Props = {
   chart?: ChartPayload | null
@@ -136,6 +136,9 @@ export function ProductFirstSbcWorkspace({
     snapshot,
     aspects: visibleAspects,
   })
+  const timingSupportiveCount = timingExperiment.vectors.filter((vector) => vector.sourcePolarity === 'SUPPORTIVE').length
+  const timingAdverseCount = timingExperiment.vectors.filter((vector) => vector.sourcePolarity === 'ADVERSE').length
+  const unresolvedTiming = snapshot?.guidance?.contributions.filter((contribution) => contribution.signed_guidance_units == null) ?? []
 
   return (
     <section className={`product-first-sbc${sideView || currencyPairEvidence || wheelOpen || timingOpen || comparisonOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
@@ -347,8 +350,8 @@ export function ProductFirstSbcWorkspace({
               </div>
             </div>
             <div className="product-first-wheel-groups" aria-label="Visual-only vector groups">
-              <div><span>0 / right ({fixedZeroVectors.length})</span>{fixedZeroVectors.map((vector) => <button key={vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
-              <div><span>Pi / left ({fixedPiVectors.length})</span>{fixedPiVectors.map((vector) => <button key={vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
+              <div><span>0 / right ({fixedZeroVectors.length})</span>{fixedZeroVectors.map((vector) => <button key={vector.vector_id} aria-pressed={selectedVector?.vector_id === vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
+              <div><span>Pi / left ({fixedPiVectors.length})</span>{fixedPiVectors.map((vector) => <button key={vector.vector_id} aria-pressed={selectedVector?.vector_id === vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
             </div>
             <div className="product-first-wheel-summary">
               <span>Real sum <b>{fixedPhasorInterval.vector_real_sum_units.toFixed(1)}</b></span>
@@ -377,6 +380,7 @@ export function ProductFirstSbcWorkspace({
           {TIMING_PHASE_EXPERIMENT_ENABLED && timingExperiment.activeEvents.length > 0 && <>
             <div className="product-first-timing-meta">
               <span><b>Active events</b>{timingExperiment.activeEvents.length}</span>
+              <span><b>Source polarity</b>{timingSupportiveCount} supportive / {timingAdverseCount} adverse</span>
               <span><b>Safe sector</b>{timingExperiment.safeSector ? 'Inside declared safe sector' : 'Suppressed outside safe sector'}</span>
               <span><b>Market result</b>{timingExperiment.marketDirection}</span>
               <span><b>State</b>{display(timingExperiment.state)}</span>
@@ -394,6 +398,10 @@ export function ProductFirstSbcWorkspace({
               <span>Coherence <b>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</b></span>
               <span>Conflict <b>{timingExperiment.conflict == null ? 'Unknown' : `${(timingExperiment.conflict * 100).toFixed(1)}%`}</b></span>
             </div>
+            {unresolvedTiming.length > 0 && <div className="product-first-timing-unknown" aria-label="Unresolved timing evidence">
+              <b>Unresolved timing evidence</b>
+              <span>{unresolvedTiming.map((contribution) => `${contribution.body}: ${contribution.explanation || contribution.status}`).join('; ')}</span>
+            </div>}
             <p className="product-first-phase-note">Each active event keeps its own lifecycle displacement; overlapping events are never collapsed into one nearest-event rotation. Every resolved SBC contribution retains its original supportive/adverse polarity. {timingExperiment.unknownVectorCount} unresolved event-contribution item{timingExperiment.unknownVectorCount === 1 ? '' : 's'} remain outside the geometry. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
           </>}
         </section>

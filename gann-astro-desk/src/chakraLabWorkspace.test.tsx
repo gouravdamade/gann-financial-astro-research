@@ -1301,7 +1301,24 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
-  it('opens the feature-flagged timing phase lab without creating a market call', async () => {
+  it('keeps fixed-wheel vector selection keyboard reachable and non-directional', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchFixedPhasor.mockResolvedValue(fixedPhasor)
+    const user = userEvent.setup()
+
+    render(<ChakraLabWorkspace defaultLatitude={18.5204} defaultLongitude={73.8567} />)
+
+    await screen.findByText('Integrated SBC workspace')
+    await user.click(screen.getByRole('button', { name: 'Wheel' }))
+    const saturn = await screen.findByRole('button', { name: /^SATURN/ })
+    saturn.focus()
+    await user.keyboard(' ')
+    expect(saturn).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText('Pi / left')).toBeInTheDocument()
+    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
+  it('keeps the timing phase lab disabled until a dedicated build opts in', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     const user = userEvent.setup()
 
@@ -1313,12 +1330,10 @@ describe('ChakraLabWorkspace', () => {
     )
 
     await screen.findByText('Integrated SBC workspace')
-    await user.click(screen.getByRole('button', { name: 'Phase lab' }))
-    expect(await screen.findByText('Timing phase lab')).toBeInTheDocument()
-    expect(screen.getByText(/engineering test coordinate only/i)).toBeInTheDocument()
-    expect(screen.getByText('Zero vote')).toBeInTheDocument()
-    expect(screen.getByText(/market direction stays ABSTAIN/i)).toBeInTheDocument()
-    expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+    const phaseLab = screen.getByRole('button', { name: 'Phase lab' })
+    expect(phaseLab).toBeDisabled()
+    await user.click(phaseLab)
+    expect(screen.queryByText('Timing phase lab')).not.toBeInTheDocument()
   })
 
   it('compares scalar, fixed, and timing states at one pinned moment without replacing the scalar baseline', async () => {

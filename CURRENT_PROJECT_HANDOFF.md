@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 12:28 IST
+Last updated: 2026-08-01 12:41 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -31,6 +31,14 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   resultant, near-zero state, and unresolved evidence are visually distinct.
   This preserves the scalar parity contract and introduces no angle, timing,
   vote, fusion, financial, or execution meaning.
+- C1-5/C1-6 completed: source polarity, per-event timing lifecycle, aggregate
+  geometry, unresolved evidence, safe-sector suppression, and `ABSTAIN` are
+  explicit without a directional label. The timing experiment now defaults off
+  unless `VITE_ENABLE_TIMING_PHASE_EXPERIMENT=true` is deliberately supplied to
+  a beta build. Fixed-wheel selection is keyboard reachable and non-colour
+  labelled. A deterministic Python mirror provides replayable phase output with
+  a stable calculation ID, while retaining zero vote, zero fusion, and locked
+  execution.
 
 ## Latest Update - 2026-08-01 (Product Beta Scroll-Zoom Repair)
 

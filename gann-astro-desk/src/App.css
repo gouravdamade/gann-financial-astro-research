@@ -6566,6 +6566,8 @@ html.android-runtime .loading-state {
 .product-first-timing-meta b,
 .product-first-timing-metrics b { overflow: hidden; color: #d7d4e5; font: 8px/1.25 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .product-first-phase-note { grid-column: 1 / -1; margin: 0; color: #a6a2b8; font-size: 8px; line-height: 1.45; }
+.product-first-timing-unknown { grid-column: 1 / -1; display: grid; gap: 3px; padding: 6px; border: 1px dashed #816d42; background: #231f17; color: #c6a35e; font-size: 8px; line-height: 1.4; }
+.product-first-timing-unknown b { color: #e0c474; font-size: 8px; }
 
 .product-first-comparison {
   min-width: 0;
