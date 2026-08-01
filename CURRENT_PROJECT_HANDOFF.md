@@ -10,7 +10,17 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   a wheel gesture zoomed the chart out. The repair coalesces costly chart
   overlay updates and delays saved-view persistence until scrolling settles,
   instead of rendering and persisting a new view for every wheel tick.
-- `0.10.26` is being built as the direct replacement. It changes no
+- `0.10.26` is available as the direct replacement at
+  `D:\PycharmProjects\releases\GannAstroDesk-0.10.26-portable-zoom-repair\`.
+  Use `Gann Astro Desk 0.10.26 x64 setup.exe`, or run
+  `portable\Gann Astro Desk.exe` while keeping its adjacent `backend` folder.
+  SHA-256: installer
+  `38073F7D17824F7E5D623AB5944F4177D94D6150C942713ED92E0A3D5C4D2E75`;
+  portable launcher
+  `7836C57E2DF652CCD0E4D4C5D78530A7830716843012245171ABA9A7AB5F66F5`.
+  The exact portable folder was launched successfully: both its native window
+  and bundled backend were responsive.
+- It changes no
   calculation, chart data, experimental SBC state, execution lock, or
   safety behavior.
 - Validation before native packaging: lint passed; focused chart/product tests
