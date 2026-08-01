@@ -29,6 +29,10 @@ describe('visualization mode policies', () => {
 
   it('keeps baseline fixed geometry distinct from timing geometry', () => {
     const policy = visualizationModePolicy('SOURCE_ONLY_BASELINE')
+    expect(policy.label).toBe('Source-profiled partial baseline')
+    expect(policy.evidenceStatus).toBe('SOURCE_PROFILED_PARTIAL')
+    expect(policy.approvalState).toBe('FOUNDER_APPROVAL_PENDING')
+    expect(policy.classicalCompletenessClaim).toBe(false)
     expect(policy.allowFixedPhasor).toBe(true)
     expect(policy.allowTimingGeometry).toBe(false)
     expect(policy.allowScalarAudit).toBe(true)

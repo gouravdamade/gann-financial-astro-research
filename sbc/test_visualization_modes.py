@@ -17,6 +17,10 @@ class VisualizationModeContractTests(unittest.TestCase):
 
     def test_baseline_has_no_timing_geometry(self) -> None:
         contract = visualization_mode_contract("SOURCE_ONLY_BASELINE")
+        self.assertEqual(contract["label"], "Source-profiled partial baseline")
+        self.assertEqual(contract["evidenceStatus"], "SOURCE_PROFILED_PARTIAL")
+        self.assertEqual(contract["approvalState"], "FOUNDER_APPROVAL_PENDING")
+        self.assertFalse(contract["classicalCompletenessClaim"])
         self.assertTrue(contract["allowFixedPhasor"])
         self.assertFalse(contract["allowTimingGeometry"])
 

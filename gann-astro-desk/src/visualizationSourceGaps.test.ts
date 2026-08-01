@@ -8,7 +8,12 @@ describe('visualization source gaps', () => {
     expect(gaps.every((gap) => gap.status === 'SOURCE_MISSING')).toBe(true)
   })
 
-  it('does not add a calibration dependency to visual-only rendering', () => {
-    expect(sourceGapsForVisualizationMode('VISUAL_ONLY_NO_SCORE')).toEqual([])
+  it('surfaces the missing event-contribution link without inventing a calibration', () => {
+    const gaps = sourceGapsForVisualizationMode('VISUAL_ONLY_NO_SCORE')
+    expect(gaps).toHaveLength(1)
+    expect(gaps[0]).toMatchObject({
+      gapId: 'EVENT_CONTRIBUTION_LINK_PROFILE_MISSING',
+      status: 'SOURCE_MISSING',
+    })
   })
 })

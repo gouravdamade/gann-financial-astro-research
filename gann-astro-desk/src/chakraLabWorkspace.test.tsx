@@ -1642,7 +1642,8 @@ describe('ChakraLabWorkspace', () => {
       comparisonIntervalIds: [secondInterval.interval_id],
       bookmarks: [expect.objectContaining({
         targetType: 'INTERVAL',
-        label: 'Manual contrast',
+        label: '[SOURCE_ONLY_BASELINE] Manual contrast',
+        note: expect.stringContaining('approval=FOUNDER_APPROVAL_PENDING'),
       })],
     }))
     expect(screen.getByText(/Candidate minus baseline/)).toBeInTheDocument()

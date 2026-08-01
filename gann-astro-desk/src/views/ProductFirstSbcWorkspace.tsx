@@ -1,7 +1,7 @@
 import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
 import type { ChakraFixedPhasorInterval, ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
-import { calculateProductFirstTimingPhase, PROJECT_CONVENTION_TIMING_PHASE_V0 } from '../productFirstTimingPhase'
+import { calculateProductFirstTimingPhase, PROJECT_CONVENTION_TIMING_PHASE_V1 } from '../productFirstTimingPhase'
 import type { VisualizationModePolicy } from '../visualizationModes'
 
 const TIMING_PHASE_EXPERIMENT_ENABLED = import.meta.env.VITE_ENABLE_TIMING_PHASE_EXPERIMENT === 'true'
@@ -139,13 +139,28 @@ export function ProductFirstSbcWorkspace({
     snapshot,
     aspects: visibleAspects,
   })
-  const timingSupportiveCount = timingExperiment.vectors.filter((vector) => vector.sourcePolarity === 'SUPPORTIVE').length
-  const timingAdverseCount = timingExperiment.vectors.filter((vector) => vector.sourcePolarity === 'ADVERSE').length
   const unresolvedTiming = snapshot?.guidance?.contributions.filter((contribution) => contribution.signed_guidance_units == null) ?? []
-  const visibleNumber = (value: number | null, digits = 2): string => (
+  const formatScalar = (value: number | null | undefined, digits = 2): string => (
     visualizationPolicy.scoringVisible
       ? (value == null ? 'Unknown' : value.toFixed(digits))
-      : visualizationPolicy.evidenceStatus
+      : 'Value suppressed'
+  )
+  const formatScalarPercent = (value: number | null | undefined, digits = 1): string => (
+    visualizationPolicy.scoringVisible
+      ? (value == null ? 'Unknown' : `${(value * 100).toFixed(digits)}%`)
+      : 'Value suppressed'
+  )
+  const formatScoreText = (value: string): string => (
+    visualizationPolicy.scoringVisible ? value : 'Value suppressed'
+  )
+  const stepLoadedCandle = (direction: -1 | 1) => {
+    const nextIndex = selectedCandleIndex + direction
+    if (nextIndex >= 0 && nextIndex < candles.length) onSelectMoment(toIstInput(candles[nextIndex].time))
+  }
+  const fixedVectorRadius = (magnitude: number): number => (
+    visualizationPolicy.scoringVisible
+      ? 24 + (magnitude / maxVectorMagnitude) * 88
+      : 72
   )
 
   return (
@@ -159,28 +174,30 @@ export function ProductFirstSbcWorkspace({
           </div>
         </div>
         <span className="visualization-panel-mode">{visualizationPolicy.mode}</span>
+        {visualizationPolicy.approvalState === 'FOUNDER_APPROVAL_PENDING' && <span className="visualization-panel-mode is-pending">Founder approval pending</span>}
         <div className="product-first-metric">
           <span>Supportive</span>
-          <strong>{visualizationPolicy.scoringVisible ? (guidance ? supportive.toFixed(1) : 'Unknown') : visualizationPolicy.evidenceStatus}</strong>
+          <strong>{formatScalar(guidance ? supportive : null, 1)}</strong>
         </div>
         <div className="product-first-metric is-adverse">
           <span>Obstructive</span>
-          <strong>{visualizationPolicy.scoringVisible ? (guidance ? obstructive.toFixed(1) : 'Unknown') : 'No score'}</strong>
+          <strong>{formatScalar(guidance ? obstructive : null, 1)}</strong>
         </div>
         <div className="product-first-metric">
           <span>Gross activity</span>
-          <strong>{visualizationPolicy.scoringVisible ? (guidance ? gross.toFixed(1) : 'Unknown') : 'Suppressed'}</strong>
+          <strong>{formatScalar(guidance ? gross : null, 1)}</strong>
         </div>
         <div className="product-first-metric">
           <span>Conflict</span>
-          <strong>{visualizationPolicy.scoringVisible ? conflict : 'No score'}</strong>
+          <strong>{formatScoreText(conflict)}</strong>
         </div>
         <div className="product-first-metric">
           <span>Coverage / unknown</span>
-          <strong>{guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}% / ${unknownCount}` : 'Unavailable'}</strong>
+          <strong>{visualizationPolicy.scoringVisible && guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}% / ${unknownCount}` : `Suppressed / ${unknownCount}`}</strong>
         </div>
         <span className="product-first-lock"><ShieldCheck size={12} /> Read-only experimental</span>
         <div className="product-first-view-controls" aria-label="Workspace view controls">
+          <button aria-label="Previous loaded candle" title="Previous loaded candle" disabled={selectedCandleIndex <= 0} onClick={() => stepLoadedCandle(-1)}><ChevronLeft size={12} /></button>
           <button
             className={sideView === 'TIME' ? 'is-active' : ''}
             onClick={() => {
@@ -221,6 +238,7 @@ export function ProductFirstSbcWorkspace({
           >
             <Layers3 size={12} /> Compare
           </button>
+          <button aria-label="Next loaded candle" title="Next loaded candle" disabled={selectedCandleIndex < 0 || selectedCandleIndex >= candles.length - 1} onClick={() => stepLoadedCandle(1)}><ChevronRight size={12} /></button>
         </div>
       </header>
 
@@ -234,7 +252,7 @@ export function ProductFirstSbcWorkspace({
             <button
               title="Previous loaded candle"
               disabled={selectedCandleIndex <= 0}
-              onClick={() => onSelectMoment(toIstInput(candles[selectedCandleIndex - 1].time))}
+              onClick={() => stepLoadedCandle(-1)}
             ><ChevronLeft size={14} /> Previous candle</button>
             <input
               type="datetime-local"
@@ -250,7 +268,7 @@ export function ProductFirstSbcWorkspace({
             <button
               title="Next loaded candle"
               disabled={selectedCandleIndex < 0 || selectedCandleIndex >= candles.length - 1}
-              onClick={() => onSelectMoment(toIstInput(candles[selectedCandleIndex + 1].time))}
+              onClick={() => stepLoadedCandle(1)}
             >Next candle <ChevronRight size={14} /></button>
           </div>
           <div className="product-first-time-facts">
@@ -297,12 +315,12 @@ export function ProductFirstSbcWorkspace({
           <dl>
             <div><dt>{currencyPairEvidence.base.label} mapping</dt><dd>{currencyPairEvidence.base.referenceLabel} · {display(currencyPairEvidence.base.state)}</dd></div>
             <div><dt>{currencyPairEvidence.quote.label} mapping</dt><dd>{currencyPairEvidence.quote.referenceLabel} · {display(currencyPairEvidence.quote.state)}</dd></div>
-            <div><dt>{currencyPairEvidence.base.label}</dt><dd>{visibleNumber(baseScore, 3)}</dd></div>
-            <div><dt>{currencyPairEvidence.quote.label}</dt><dd>{visibleNumber(quoteScore, 3)}</dd></div>
-            <div><dt>Pair net difference</dt><dd>{visibleNumber(pairScore, 3)}</dd></div>
-            <div><dt>Common activation</dt><dd>{visibleNumber(commonActivation, 3)}</dd></div>
-            <div><dt>Joint net strength</dt><dd>{visibleNumber(jointNetStrength, 3)}</dd></div>
-            <div><dt>Conflict</dt><dd>{visualizationPolicy.scoringVisible ? (pairConflict == null ? 'Unknown' : `${(pairConflict * 100).toFixed(1)}%`) : visualizationPolicy.evidenceStatus}</dd></div>
+            <div><dt>{currencyPairEvidence.base.label}</dt><dd>{formatScalar(baseScore, 3)}</dd></div>
+            <div><dt>{currencyPairEvidence.quote.label}</dt><dd>{formatScalar(quoteScore, 3)}</dd></div>
+            <div><dt>Pair net difference</dt><dd>{formatScalar(pairScore, 3)}</dd></div>
+            <div><dt>Common activation</dt><dd>{formatScalar(commonActivation, 3)}</dd></div>
+            <div><dt>Joint net strength</dt><dd>{formatScalar(jointNetStrength, 3)}</dd></div>
+            <div><dt>Conflict</dt><dd>{formatScalarPercent(pairConflict, 1)}</dd></div>
           </dl>
           <p>Evidence cutoff: {compactUtc(currencyPairEvidence.evidenceCutoffUtc)}. Gross activation is calculated before supportive and adverse activity can cancel. Both currencies remain visible; this is not a price prediction and cannot unlock an order or execution path.</p>
         </section>
@@ -321,13 +339,13 @@ export function ProductFirstSbcWorkspace({
             <div className="product-first-wheel-layout">
               <svg viewBox="0 0 300 300" role="img" aria-label="Fixed zero and pi circular phasor display">
                 <circle cx="150" cy="150" r="118" className="product-first-wheel-ring" />
-                <circle cx="150" cy="150" r={fixedGrossRadius} className="product-first-wheel-gross-ring" />
+                {visualizationPolicy.scoringVisible && <circle cx="150" cy="150" r={fixedGrossRadius} className="product-first-wheel-gross-ring" />}
                 <line x1="24" y1="150" x2="276" y2="150" className="product-first-wheel-axis" />
                 <text x="276" y="142" textAnchor="end" className={`product-first-wheel-label${visualizationPolicy.scoringVisible ? ' is-positive' : ''}`}>fixed 0</text>
                 <text x="24" y="142" className={`product-first-wheel-label${visualizationPolicy.scoringVisible ? ' is-negative' : ''}`}>fixed pi</text>
                 {plottedVectors.map((vector) => {
                   const magnitude = vector.magnitude_units ?? 0
-                  const radius = 24 + (magnitude / maxVectorMagnitude) * 88
+                  const radius = fixedVectorRadius(magnitude)
                   const positive = vector.fixed_angle === 'ZERO'
                   const x = 150 + (positive ? radius : -radius)
                   return <g
@@ -338,14 +356,14 @@ export function ProductFirstSbcWorkspace({
                     <line x1="150" y1="150" x2={x} y2="150" />
                   </g>
                 })}
-                <line
+                {visualizationPolicy.scoringVisible && <line
                   x1="150"
                   y1="150"
                   x2={150 + (fixedResultantPositive ? fixedResultantRadius : -fixedResultantRadius)}
                   y2="150"
                   className="product-first-wheel-resultant"
-                />
-                {fixedNearZero && <g className="product-first-wheel-near-zero"><circle cx="150" cy="150" r="10" /><line x1="142" y1="142" x2="158" y2="158" /><line x1="158" y1="142" x2="142" y2="158" /></g>}
+                />}
+                {visualizationPolicy.scoringVisible && fixedNearZero && <g className="product-first-wheel-near-zero"><circle cx="150" cy="150" r="10" /><line x1="142" y1="142" x2="158" y2="158" /><line x1="158" y1="142" x2="142" y2="158" /></g>}
                 <circle cx="150" cy="150" r="5" className="product-first-wheel-origin" />
               </svg>
               <div className="product-first-wheel-detail">
@@ -353,22 +371,22 @@ export function ProductFirstSbcWorkspace({
                 {selectedVector ? <>
                   <strong>{selectedVector.actor_identity ?? 'Unlabelled contribution'}</strong>
                   <div><em>Fixed side</em><b>{selectedVector.fixed_angle === 'ZERO' ? '0 / right' : 'Pi / left'}</b></div>
-                  <div><em>Scalar units</em><b>{visibleNumber(selectedVector.real_component_units, 1)}</b></div>
+                  <div><em>Scalar units</em><b>{formatScalar(selectedVector.real_component_units, 1)}</b></div>
                   <div><em>Target</em><b>{selectedVector.target_value ?? 'Unknown'}</b></div>
                 </> : <p>No resolved vector was plotted.</p>}
               </div>
             </div>
             <div className="product-first-wheel-groups" aria-label="Visual-only vector groups">
-              <div><span>0 / right ({fixedZeroVectors.length})</span>{fixedZeroVectors.map((vector) => <button key={vector.vector_id} aria-pressed={selectedVector?.vector_id === vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
-              <div><span>Pi / left ({fixedPiVectors.length})</span>{fixedPiVectors.map((vector) => <button key={vector.vector_id} aria-pressed={selectedVector?.vector_id === vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} · {(vector.magnitude_units ?? 0).toFixed(1)}</button>)}</div>
+              <div><span>0 / right ({fixedZeroVectors.length})</span>{fixedZeroVectors.map((vector) => <button key={vector.vector_id} aria-pressed={selectedVector?.vector_id === vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} - {visualizationPolicy.scoringVisible ? `${(vector.magnitude_units ?? 0).toFixed(1)} units` : 'value suppressed'}</button>)}</div>
+              <div><span>Pi / left ({fixedPiVectors.length})</span>{fixedPiVectors.map((vector) => <button key={vector.vector_id} aria-pressed={selectedVector?.vector_id === vector.vector_id} className={selectedVector?.vector_id === vector.vector_id ? 'is-selected' : ''} onClick={() => setSelectedVectorId(vector.vector_id)}>{vector.actor_identity ?? 'Unlabelled'} - {visualizationPolicy.scoringVisible ? `${(vector.magnitude_units ?? 0).toFixed(1)} units` : 'value suppressed'}</button>)}</div>
             </div>
             <div className="product-first-wheel-summary">
-              <span>Real sum <b>{visibleNumber(fixedPhasorInterval.vector_real_sum_units, 1)}</b></span>
-              <span>Gross magnitude <b>{visibleNumber(fixedPhasorInterval.vector_magnitude_sum_units, 1)}</b></span>
-              <span>Imaginary sum <b>{visibleNumber(fixedPhasorInterval.vector_imaginary_sum_units, 1)}</b></span>
-              <span>Known coverage <b>{visualizationPolicy.scoringVisible ? `${(fixedPhasorInterval.known_scored_coherence_ratio * 100).toFixed(1)}%` : visualizationPolicy.evidenceStatus}</b></span>
+              <span>Real sum <b>{formatScalar(fixedPhasorInterval.vector_real_sum_units, 1)}</b></span>
+              <span>Gross magnitude <b>{formatScalar(fixedPhasorInterval.vector_magnitude_sum_units, 1)}</b></span>
+              <span>Imaginary sum <b>{formatScalar(fixedPhasorInterval.vector_imaginary_sum_units, 1)}</b></span>
+              <span>Known coverage <b>{formatScalarPercent(fixedPhasorInterval.known_scored_coherence_ratio, 1)}</b></span>
             </div>
-            <p className="product-first-wheel-interpretation">Resultant: fixed real-axis sum only. Gross ring: total scalar magnitude. {fixedNearZero ? 'Near-zero resultant marker shown using a visual threshold of max(0.25, 15% of gross).' : 'No near-zero resultant marker.'} These are visual parity checks, not a timing or physical-wave claim.</p>
+            <p className="product-first-wheel-interpretation">{visualizationPolicy.scoringVisible ? `Resultant: fixed real-axis sum only. Gross ring: total scalar magnitude. ${fixedNearZero ? 'Near-zero resultant marker shown using a visual threshold of max(0.25, 15% of gross).' : 'No near-zero resultant marker.'}` : 'Fixed side and actor identity remain visible; scalar magnitude, resultant, gross ring, and near-zero state are withheld.'} These are visual parity checks, not a timing or physical-wave claim.</p>
             {unknownVectors.length > 0 && <div className="product-first-wheel-unknown"><b>Unresolved tray</b><span>{unknownVectors.length} unknown vector{unknownVectors.length === 1 ? '' : 's'} remain unplotted and outside the fixed-axis geometry.</span></div>}
           </>}
         </section>
@@ -380,39 +398,30 @@ export function ProductFirstSbcWorkspace({
             <Orbit size={15} />
             <div>
               <strong>Timing phase lab</strong>
-              <span>{PROJECT_CONVENTION_TIMING_PHASE_V0.contract} · engineering test coordinate only</span>
+              <span>{PROJECT_CONVENTION_TIMING_PHASE_V1.contract} - engineering test coordinate only</span>
             </div>
             <span className="product-first-phase-badge">Zero vote</span>
           </div>
-          {!visualizationPolicy.scoringVisible && <p className="product-first-wheel-state">{visualizationPolicy.evidenceStatus}: timing geometry is descriptive only in this mode. {timingExperiment.activeEvents.length} active event window{timingExperiment.activeEvents.length === 1 ? '' : 's'} may be drawn, but polarity, aggregate values, and any market interpretation are withheld.</p>}
           {!TIMING_PHASE_EXPERIMENT_ENABLED && <p className="product-first-wheel-state">This feature-flagged experiment is disabled.</p>}
-          {TIMING_PHASE_EXPERIMENT_ENABLED && visualizationPolicy.scoringVisible && !timingExperiment.activeEvents.length && <p className="product-first-wheel-state">No aspect window is active at this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
-          {TIMING_PHASE_EXPERIMENT_ENABLED && visualizationPolicy.scoringVisible && timingExperiment.activeEvents.length > 0 && <>
+          {TIMING_PHASE_EXPERIMENT_ENABLED && !timingExperiment.activeEvents.length && <p className="product-first-wheel-state">No aspect window is active at this selected timestamp. Phase geometry remains unknown and market direction stays ABSTAIN.</p>}
+          {TIMING_PHASE_EXPERIMENT_ENABLED && timingExperiment.activeEvents.length > 0 && <>
             <div className="product-first-timing-meta">
               <span><b>Active events</b>{timingExperiment.activeEvents.length}</span>
-              <span><b>Source polarity</b>{timingSupportiveCount} supportive / {timingAdverseCount} adverse</span>
-              <span><b>Safe sector</b>{timingExperiment.safeSector ? 'Inside declared safe sector' : 'Suppressed outside safe sector'}</span>
-              <span><b>Market result</b>{timingExperiment.marketDirection}</span>
+              <span><b>Safe sector</b>{timingExperiment.safeSector ? 'Inside declared safe sector' : 'Outside declared safe sector'}</span>
               <span><b>State</b>{display(timingExperiment.state)}</span>
+              <span><b>Aggregate</b>{timingExperiment.aggregateWithheld ? 'Withheld' : 'Unavailable'}</span>
             </div>
             <div className="product-first-timing-meta" aria-label="Per-event timing lifecycle">
               {timingExperiment.activeEvents.map((event) => (
-                <span key={event.eventId}><b>{compactAspectLabel(event.label)}</b>{display(event.lifecycle)} · {event.timingPhaseRadians.toFixed(2)} rad</span>
+                <span key={event.eventId}><b>{compactAspectLabel(event.label)}</b>{display(event.lifecycle)} - {event.timingPhaseRadians == null ? 'Unknown geometry' : `${event.timingPhaseRadians.toFixed(2)} rad`} - normalized {event.normalizedLifecycleProgress == null ? 'Unknown' : event.normalizedLifecycleProgress.toFixed(2)}</span>
               ))}
             </div>
-            <div className="product-first-timing-metrics">
-              <span>Re <b>{timingExperiment.realUnits?.toFixed(2) ?? 'Unknown'}</b></span>
-              <span>Im <b>{timingExperiment.imaginaryUnits?.toFixed(2) ?? 'Unknown'}</b></span>
-              <span>Resultant <b>{timingExperiment.resultantUnits?.toFixed(2) ?? 'Unknown'}</b></span>
-              <span>Gross <b>{timingExperiment.grossUnits?.toFixed(2) ?? 'Unknown'}</b></span>
-              <span>Coherence <b>{timingExperiment.coherence == null ? 'Unknown' : `${(timingExperiment.coherence * 100).toFixed(1)}%`}</b></span>
-              <span>Conflict <b>{timingExperiment.conflict == null ? 'Unknown' : `${(timingExperiment.conflict * 100).toFixed(1)}%`}</b></span>
-            </div>
+            <p className="product-first-wheel-state">{timingExperiment.aggregateWithheldReason}</p>
             {unresolvedTiming.length > 0 && <div className="product-first-timing-unknown" aria-label="Unresolved timing evidence">
               <b>Unresolved timing evidence</b>
               <span>{unresolvedTiming.map((contribution) => `${contribution.body}: ${contribution.explanation || contribution.status}`).join('; ')}</span>
             </div>}
-            <p className="product-first-phase-note">Each active event keeps its own lifecycle displacement; overlapping events are never collapsed into one nearest-event rotation. Every resolved SBC contribution retains its original supportive/adverse polarity. {timingExperiment.unknownVectorCount} unresolved event-contribution item{timingExperiment.unknownVectorCount === 1 ? '' : 's'} remain outside the geometry. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
+            <p className="product-first-phase-note">Each active event keeps its own lifecycle displacement; overlapping events are never collapsed into one nearest-event rotation. {timingExperiment.unlinkedResolvedContributionCount} resolved contribution{timingExperiment.unlinkedResolvedContributionCount === 1 ? '' : 's'} and {timingExperiment.unknownVectorCount} unresolved contribution{timingExperiment.unknownVectorCount === 1 ? '' : 's'} are not linked to events, so no aggregate interference is shown. This experiment never creates a market direction, confidence score, trade, or execution path.</p>
           </>}
         </section>
       )}
@@ -431,20 +440,20 @@ export function ProductFirstSbcWorkspace({
             <article>
               <header><strong>Scalar SBC baseline</strong><span>Existing source guidance</span></header>
               <dl>
-                <div><dt>Supportive</dt><dd>{visibleNumber(guidance ? supportive : null)}</dd></div>
-                <div><dt>Obstructive</dt><dd>{visibleNumber(guidance ? obstructive : null)}</dd></div>
-                <div><dt>Net</dt><dd>{visibleNumber(guidance?.net_guidance_units ?? null)}</dd></div>
-                <div><dt>Gross</dt><dd>{visibleNumber(guidance ? gross : null)}</dd></div>
+                <div><dt>Supportive</dt><dd>{formatScalar(guidance ? supportive : null)}</dd></div>
+                <div><dt>Obstructive</dt><dd>{formatScalar(guidance ? obstructive : null)}</dd></div>
+                <div><dt>Net</dt><dd>{formatScalar(guidance?.net_guidance_units ?? null)}</dd></div>
+                <div><dt>Gross</dt><dd>{formatScalar(guidance ? gross : null)}</dd></div>
               </dl>
-              <p>Original units and explicit unknowns; this remains the visible baseline.</p>
+              <p>{visualizationPolicy.scoringVisible ? 'Original units and explicit unknowns; this remains the visible baseline.' : 'Scalar values remain deliberately withheld in this mode.'}</p>
             </article>
             <article>
               <header><strong>Fixed 0/pi wheel</strong><span>Existing scalar visualization</span></header>
               {fixedPhasorInterval ? <dl>
-                <div><dt>Real</dt><dd>{visibleNumber(fixedPhasorInterval.vector_real_sum_units)}</dd></div>
-                <div><dt>Imaginary</dt><dd>{visibleNumber(fixedPhasorInterval.vector_imaginary_sum_units)}</dd></div>
-                <div><dt>Gross</dt><dd>{visibleNumber(fixedPhasorInterval.vector_magnitude_sum_units)}</dd></div>
-                <div><dt>Parity</dt><dd>{visualizationPolicy.scoringVisible ? (fixedPhasorInterval.real_matches_net ? 'Matches scalar' : 'Check required') : visualizationPolicy.evidenceStatus}</dd></div>
+                <div><dt>Real</dt><dd>{formatScalar(fixedPhasorInterval.vector_real_sum_units)}</dd></div>
+                <div><dt>Imaginary</dt><dd>{formatScalar(fixedPhasorInterval.vector_imaginary_sum_units)}</dd></div>
+                <div><dt>Gross</dt><dd>{formatScalar(fixedPhasorInterval.vector_magnitude_sum_units)}</dd></div>
+                <div><dt>Parity</dt><dd>{visualizationPolicy.scoringVisible ? (fixedPhasorInterval.real_matches_net ? 'Matches scalar' : 'Check required') : 'Value suppressed'}</dd></div>
               </dl> : <p className="product-first-comparison-unavailable">{phasorBusy ? 'Loading existing fixed-vector display.' : 'Fixed display unavailable for this timestamp.'}</p>}
               <p>Only re-expresses scalar polarity on the fixed real axis; it adds no independent vote.</p>
             </article>
@@ -452,15 +461,15 @@ export function ProductFirstSbcWorkspace({
               <header><strong>Timing phase lab</strong><span>Feature-flagged engineering coordinate</span></header>
               <dl>
                 <div><dt>Active events</dt><dd>{timingExperiment.activeEvents.length || 'Unknown'}</dd></div>
-                <div><dt>Resultant</dt><dd>{visibleNumber(timingExperiment.resultantUnits)}</dd></div>
-                <div><dt>Coherence</dt><dd>{visualizationPolicy.scoringVisible && timingExperiment.coherence != null ? `${(timingExperiment.coherence * 100).toFixed(1)}%` : visualizationPolicy.evidenceStatus}</dd></div>
-                <div><dt>Market result</dt><dd>{visualizationPolicy.scoringVisible ? timingExperiment.marketDirection : 'Not applicable'}</dd></div>
+                <div><dt>Aggregate interference</dt><dd>{timingExperiment.aggregateWithheld ? 'Withheld: unlinked geometry' : 'Unavailable'}</dd></div>
+                <div><dt>State</dt><dd>{display(timingExperiment.state)}</dd></div>
+                <div><dt>Market result</dt><dd>ABSTAIN</dd></div>
               </dl>
-              <p>{timingExperiment.safeSector ? 'Inside the declared safe sector, but still nonvoting.' : 'Outside its safe sector: interpretation is suppressed.'}</p>
+              <p>{timingExperiment.aggregateWithheldReason ?? 'No active event lifecycle is available.'}</p>
             </article>
           </div>
           <div className="product-first-comparison-causes">
-            <div><b>Why values differ</b><span>Fixed uses the same scalar signs at 0/pi; timing applies a declared lifecycle displacement to those same magnitudes. It does not alter the scalar ledger.</span></div>
+            <div><b>Why values differ</b><span>Fixed re-expresses the scalar ledger at 0/pi. Timing shows each event lifecycle independently, but aggregate interference is withheld until a contribution-event link profile exists.</span></div>
             <div><b>Pinned timestamp</b><span>{snapshot ? new Date(snapshot.as_of_utc).toISOString() : 'Unavailable'}</span></div>
             <div><b>Evidence cutoff</b><span>{snapshot?.evidence_cutoff_utc ?? 'Unavailable'} · no future market data is read by this comparison.</span></div>
           </div>
@@ -480,7 +489,22 @@ export function ProductFirstSbcWorkspace({
           </div>
           {candles.length ? (
             <div className="product-first-market-viewport">
-              <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label="Price chart with aspect event lanes">
+              <svg
+                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                role="img"
+                tabIndex={0}
+                aria-label="Price chart with aspect event lanes. Use Left and Right Arrow to move the selected timestamp by one loaded candle."
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowLeft') {
+                    event.preventDefault()
+                    stepLoadedCandle(-1)
+                  }
+                  if (event.key === 'ArrowRight') {
+                    event.preventDefault()
+                    stepLoadedCandle(1)
+                  }
+                }}
+              >
                 <rect x="0" y="0" width={chartWidth} height={chartHeight} className="product-first-chart-bg" />
                 {[0, 1, 2, 3, 4].map((index) => {
                   const y = 28 + index * 90
@@ -571,8 +595,13 @@ export function ProductFirstSbcWorkspace({
             <strong>{visualizationPolicy.scoringVisible ? (guidance ? display(guidance.guidance_band) : 'Unknown') : visualizationPolicy.evidenceStatus}</strong>
             <p>{visualizationPolicy.scoringVisible ? `${conflict}. Coverage is ${guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}%` : 'unavailable'}; unresolved inputs remain explicit.` : 'This mode keeps source status and geometry visible while withholding directional and aggregate guidance.'}</p>
           </section>
-          <section className="product-first-why-card">
-            <span>Selected Chakra cell</span>
+        <section className="product-first-why-card">
+          <span>Visualization evidence status</span>
+          <div><em>{display(visualizationPolicy.evidenceStatus)}</em><strong>{display(visualizationPolicy.approvalState)}</strong></div>
+          <p>{visualizationPolicy.classicalCompletenessClaim ? 'Classical completeness claim recorded.' : 'No founder-approved claim of classical completeness is made.'}</p>
+        </section>
+        <section className="product-first-why-card">
+          <span>Selected Chakra cell</span>
             {selected?.entries.map((entry) => <div key={`${entry.layer}:${entry.value}`}><em>{display(entry.layer)}</em><strong>{display(entry.value)}</strong></div>)}
             {!selected?.entries.length && <p>No certified layer at this cell.</p>}
           </section>

@@ -6379,6 +6379,10 @@ html.android-runtime .loading-state {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.visualization-mode-id.is-pending,
+.visualization-panel-mode.is-pending {
+  color: #f0c77d;
+}
 .visualization-mode-status {
   display: grid;
   grid-template-columns: minmax(260px, 1fr) minmax(220px, .8fr) minmax(220px, 1fr);
@@ -6750,6 +6754,7 @@ html.android-runtime .loading-state {
 
 .product-first-market-viewport { min-width: 0; min-height: 0; overflow: auto; background: #0d1319; }
 .product-first-market-viewport svg { display: block; width: 100%; min-width: 560px; min-height: 420px; }
+.product-first-market-viewport svg:focus-visible { outline: 2px solid #72c9e8; outline-offset: -3px; }
 .product-first-chart-bg { fill: #10161d; }
 .product-first-chart-grid { stroke: #25313a; stroke-width: 1; }
 .product-first-chart-axis { fill: #72808b; font: 11px/1 Consolas, monospace; }

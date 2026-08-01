@@ -30,7 +30,10 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
     if mode == "SOURCE_ONLY_BASELINE":
         return {
             "mode": mode,
-            "evidenceStatus": "SOURCE_ONLY",
+            "label": "Source-profiled partial baseline",
+            "evidenceStatus": "SOURCE_PROFILED_PARTIAL",
+            "approvalState": "FOUNDER_APPROVAL_PENDING",
+            "classicalCompletenessClaim": False,
             "scoringVisible": True,
             "allowScalarAudit": True,
             "allowFixedPhasor": True,
@@ -38,7 +41,7 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
             "profile": {
                 "profileId": "SBC_SOURCE_ONLY_BASELINE_V1",
                 "profileHash": None,
-                "status": "SOURCE_ONLY",
+                "status": "SOURCE_PROFILED_PARTIAL",
                 "parameterCount": 0,
             },
             "guardrails": dict(_GUARDRAILS),
@@ -46,7 +49,10 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
     if mode == "CALIBRATED_RESEARCH":
         return {
             "mode": mode,
+            "label": "Calibrated research",
             "evidenceStatus": "SOURCE_MISSING",
+            "approvalState": "NOT_REQUIRED",
+            "classicalCompletenessClaim": False,
             "scoringVisible": False,
             "allowScalarAudit": False,
             "allowFixedPhasor": True,
@@ -61,7 +67,10 @@ def visualization_mode_contract(mode: str) -> dict[str, object]:
         }
     return {
         "mode": mode,
+        "label": "Visual only, no score",
         "evidenceStatus": "NOT_APPLICABLE",
+        "approvalState": "NOT_REQUIRED",
+        "classicalCompletenessClaim": False,
         "scoringVisible": False,
         "allowScalarAudit": False,
         "allowFixedPhasor": True,

@@ -7,12 +7,11 @@ from datetime import datetime, timezone
 from typing import Any, Iterable
 
 
-PRODUCT_FIRST_TIMING_PHASE_CONTRACT = "PROJECT_CONVENTION_TIMING_PHASE_V0"
+PRODUCT_FIRST_TIMING_PHASE_CONTRACT = "PROJECT_CONVENTION_TIMING_PHASE_V1"
 PROJECT_CONVENTION_EXPERIMENTAL = "PROJECT_CONVENTION_EXPERIMENTAL"
 PHASE_SPAN_RADIANS = (3 * math.pi) / 4
 SAFE_MARGIN_RADIANS = math.pi / 12
-RESULTANT_FLOOR_UNITS = 0.25
-RELATIVE_RESULTANT_FLOOR = 0.15
+EXACT_TOLERANCE_SECONDS = 30.0
 
 
 def _utc(value: datetime | str) -> datetime:
@@ -34,9 +33,88 @@ def _clamp(value: float, minimum: float, maximum: float) -> float:
 
 def _lifecycle(as_of: datetime, exact: datetime) -> str:
     seconds = (as_of - exact).total_seconds()
-    if abs(seconds) <= 30:
+    if abs(seconds) <= EXACT_TOLERANCE_SECONDS:
         return "EXACT"
     return "APPLYING" if seconds < 0 else "SEPARATING"
+
+
+def _guardrails() -> dict[str, object]:
+    return {
+        "voteWeight": 0,
+        "directionalContribution": 0,
+        "fusionCoefficient": 0,
+        "executionAllowed": False,
+        "automaticOrderPlacement": False,
+        "financiallyValidated": False,
+    }
+
+
+def _empty(*, enabled: bool, unknown_vector_count: int = 0) -> dict[str, Any]:
+    return {
+        "contract": PRODUCT_FIRST_TIMING_PHASE_CONTRACT,
+        "classification": PROJECT_CONVENTION_EXPERIMENTAL,
+        "enabled": bool(enabled),
+        "state": "UNKNOWN",
+        "marketDirection": "ABSTAIN",
+        "directionalInterpretation": "NOT_AVAILABLE",
+        "calculationId": None,
+        "activeEvents": [],
+        "vectors": [],
+        "unknownVectorCount": unknown_vector_count,
+        "unlinkedResolvedContributionCount": 0,
+        "aggregateWithheld": True,
+        "aggregateWithheldReason": None,
+        "sourceGapId": None,
+        "realUnits": None,
+        "imaginaryUnits": None,
+        "resultantUnits": None,
+        "grossUnits": None,
+        "coherence": None,
+        "conflict": None,
+        "collectivePhaseRadians": None,
+        "resultantFloorUnits": None,
+        "safeSector": False,
+        "guardrails": _guardrails(),
+    }
+
+
+def _event_phase(as_of: datetime, aspect: dict[str, Any]) -> dict[str, Any]:
+    start, exact, end = _utc(aspect["startUtc"]), _utc(aspect["exactUtc"]), _utc(aspect["endUtc"])
+    applying_window = (exact - start).total_seconds()
+    separating_window = (end - exact).total_seconds()
+    event = {
+        "eventId": str(aspect["eventId"]),
+        "label": str(aspect["label"]),
+        "startUtc": start.isoformat(),
+        "exactUtc": exact.isoformat(),
+        "endUtc": end.isoformat(),
+        "applyingWindowSeconds": applying_window if applying_window > 0 else None,
+        "separatingWindowSeconds": separating_window if separating_window > 0 else None,
+        "symmetricTimingDeclared": False,
+    }
+    if applying_window <= 0 or separating_window <= 0:
+        return {
+            **event,
+            "lifecycle": "UNKNOWN",
+            "normalizedLifecycleProgress": None,
+            "timingPhaseRadians": None,
+            "safeSector": False,
+        }
+    lifecycle = _lifecycle(as_of, exact)
+    if lifecycle == "EXACT":
+        normalized = 0.0
+    elif lifecycle == "APPLYING":
+        normalized = _clamp((as_of - exact).total_seconds() / applying_window, -1.0, 0.0)
+    else:
+        normalized = _clamp((as_of - exact).total_seconds() / separating_window, 0.0, 1.0)
+    phase = PHASE_SPAN_RADIANS * normalized
+    return {
+        **event,
+        "lifecycle": lifecycle,
+        "normalizedLifecycleProgress": normalized,
+        "timingPhaseRadians": phase,
+        "safeSector": abs(phase) < math.pi / 2 - SAFE_MARGIN_RADIANS,
+    }
 
 
 def compile_product_first_timing_phase(
@@ -46,104 +124,50 @@ def compile_product_first_timing_phase(
     aspects: Iterable[dict[str, Any]],
     contributions: Iterable[dict[str, Any]],
 ) -> dict[str, Any]:
-    """Compile the product timing geometry without creating a market signal.
+    """Compile independent event lifecycle geometry without a market signal.
 
-    This is the backend mirror of the fixed Product First phase visual. Inputs
-    are supplied by the reviewed SBC snapshot; the result is deterministic,
-    timestamp-safe and carries no vote or execution authority.
+    There is no approved contribution-event link profile. This mirror therefore
+    keeps event timing geometry observable but refuses to construct or expose
+    the previous Cartesian aggregate interference values.
     """
-    guardrails = {
-        "voteWeight": 0,
-        "directionalContribution": 0,
-        "fusionCoefficient": 0,
-        "executionAllowed": False,
-        "automaticOrderPlacement": False,
-        "financiallyValidated": False,
-    }
-    base = {
-        "contract": PRODUCT_FIRST_TIMING_PHASE_CONTRACT,
-        "classification": PROJECT_CONVENTION_EXPERIMENTAL,
-        "enabled": bool(enabled),
-        "marketDirection": "ABSTAIN",
-        "guardrails": guardrails,
-    }
     if not enabled:
-        return {
-            **base,
-            "state": "UNKNOWN",
-            "directionalInterpretation": "NOT_AVAILABLE",
-            "calculationId": None,
-            "activeEvents": [], "vectors": [], "unknownVectorCount": 0,
-            "realUnits": None, "imaginaryUnits": None, "resultantUnits": None,
-            "grossUnits": None, "coherence": None, "conflict": None,
-            "collectivePhaseRadians": None, "resultantFloorUnits": None, "safeSector": False,
-        }
+        return _empty(enabled=False)
 
     as_of = _utc(as_of_utc)
-    normalized_aspects: list[dict[str, Any]] = []
-    for aspect in aspects:
-        start, exact, end = _utc(aspect["startUtc"]), _utc(aspect["exactUtc"]), _utc(aspect["endUtc"])
-        if start > exact or exact > end:
-            raise ValueError("timing phase event must satisfy start <= exact <= end")
-        if start <= as_of <= end:
-            half_window = max(1.0, (end - start).total_seconds() / 2.0)
-            phase = PHASE_SPAN_RADIANS * _clamp((as_of - exact).total_seconds() / half_window, -1.0, 1.0)
-            normalized_aspects.append({
-                "eventId": str(aspect["eventId"]),
-                "label": str(aspect["label"]),
-                "startUtc": start.isoformat(), "exactUtc": exact.isoformat(), "endUtc": end.isoformat(),
-                "lifecycle": _lifecycle(as_of, exact), "halfWindowSeconds": half_window,
-                "timingPhaseRadians": phase,
-                "safeSector": abs(phase) < math.pi / 2 - SAFE_MARGIN_RADIANS,
-            })
-    active_events = sorted(normalized_aspects, key=lambda event: (event["startUtc"], event["eventId"]))
     normalized_contributions = list(contributions)
-    resolved = [item for item in normalized_contributions if item.get("signedGuidanceUnits") is not None]
+    unknown_count = sum(item.get("signedGuidanceUnits") is None for item in normalized_contributions)
+    active_events: list[dict[str, Any]] = []
+    for aspect in aspects:
+        start, end = _utc(aspect["startUtc"]), _utc(aspect["endUtc"])
+        if start <= as_of <= end:
+            active_events.append(_event_phase(as_of, aspect))
+    active_events.sort(key=lambda event: (event["startUtc"], event["eventId"]))
     if not active_events:
+        return _empty(enabled=True, unknown_vector_count=unknown_count)
+
+    calculation_id = _canonical_hash({
+        "contract": PRODUCT_FIRST_TIMING_PHASE_CONTRACT,
+        "asOfUtc": as_of.isoformat(),
+        "linkProfile": "MISSING",
+        "activeEvents": active_events,
+    })
+    if any(event["lifecycle"] == "UNKNOWN" for event in active_events):
         return {
-            **base,
-            "state": "UNKNOWN", "directionalInterpretation": "NOT_AVAILABLE",
-            "calculationId": _canonical_hash({"contract": PRODUCT_FIRST_TIMING_PHASE_CONTRACT, "asOfUtc": as_of.isoformat(), "activeEvents": []}),
-            "activeEvents": [], "vectors": [], "unknownVectorCount": len(normalized_contributions),
-            "realUnits": None, "imaginaryUnits": None, "resultantUnits": None,
-            "grossUnits": None, "coherence": None, "conflict": None,
-            "collectivePhaseRadians": None, "resultantFloorUnits": None, "safeSector": False,
+            **_empty(enabled=True, unknown_vector_count=unknown_count),
+            "state": "UNKNOWN_INVALID_EVENT_WINDOW",
+            "calculationId": calculation_id,
+            "activeEvents": active_events,
+            "aggregateWithheldReason": "One or more active events has an undeclared zero-length applying or separating span. Its lifecycle geometry fails closed as unknown.",
         }
 
-    vectors: list[dict[str, Any]] = []
-    for event in active_events:
-        for index, contribution in enumerate(resolved):
-            signed = float(contribution["signedGuidanceUnits"])
-            polarity = "SUPPORTIVE" if signed >= 0 else "ADVERSE"
-            source_phase = 0.0 if polarity == "SUPPORTIVE" else math.pi
-            total_phase = source_phase + event["timingPhaseRadians"]
-            vectors.append({
-                "vectorId": f'{event["eventId"]}:{contribution.get("body", "UNKNOWN")}:{contribution.get("target", "UNKNOWN")}:{index}',
-                "eventId": event["eventId"], "eventLabel": event["label"],
-                "body": str(contribution.get("body", "UNKNOWN")), "target": str(contribution.get("target", "UNKNOWN")),
-                "sourcePolarity": polarity, "sourcePhaseRadians": source_phase,
-                "timingPhaseRadians": event["timingPhaseRadians"], "totalPhaseRadians": total_phase,
-                "magnitudeUnits": abs(signed), "realUnits": abs(signed) * math.cos(total_phase),
-                "imaginaryUnits": abs(signed) * math.sin(total_phase),
-                "lifecycle": event["lifecycle"], "safeSector": event["safeSector"],
-            })
-    real_units = sum(vector["realUnits"] for vector in vectors)
-    imaginary_units = sum(vector["imaginaryUnits"] for vector in vectors)
-    resultant_units = math.hypot(real_units, imaginary_units)
-    gross_units = sum(vector["magnitudeUnits"] for vector in vectors)
-    resultant_floor = max(RESULTANT_FLOOR_UNITS, gross_units * RELATIVE_RESULTANT_FLOOR)
-    near_zero = not vectors or resultant_units < resultant_floor
-    safe_sector = all(event["safeSector"] for event in active_events)
-    state = "RESULTANT_NEAR_ZERO" if near_zero else ("PROJECT_CONVENTION_GEOMETRY" if safe_sector else "NON_DIRECTIONAL_TIMING_GEOMETRY")
-    identity = {"contract": PRODUCT_FIRST_TIMING_PHASE_CONTRACT, "asOfUtc": as_of.isoformat(), "activeEvents": active_events, "vectors": vectors}
+    resolved_count = sum(item.get("signedGuidanceUnits") is not None for item in normalized_contributions)
     return {
-        **base, "state": state,
-        "directionalInterpretation": "SUPPRESSED" if safe_sector and not near_zero else "NOT_AVAILABLE",
-        "calculationId": _canonical_hash(identity), "activeEvents": active_events, "vectors": vectors,
-        "unknownVectorCount": (len(normalized_contributions) - len(resolved)) * len(active_events),
-        "realUnits": real_units, "imaginaryUnits": imaginary_units, "resultantUnits": resultant_units,
-        "grossUnits": gross_units, "coherence": resultant_units / gross_units if gross_units else None,
-        "conflict": 1 - resultant_units / gross_units if gross_units else None,
-        "collectivePhaseRadians": None if near_zero else math.atan2(imaginary_units, real_units),
-        "resultantFloorUnits": resultant_floor, "safeSector": safe_sector,
+        **_empty(enabled=True, unknown_vector_count=unknown_count),
+        "state": "UNLINKED_EVENT_GEOMETRY",
+        "calculationId": calculation_id,
+        "activeEvents": active_events,
+        "unlinkedResolvedContributionCount": resolved_count,
+        "aggregateWithheldReason": "EVENT_CONTRIBUTION_LINK_PROFILE_MISSING: active event lifecycle geometry is visible, but aggregate interference is withheld because no causal contribution-event mapping has been declared.",
+        "sourceGapId": "EVENT_CONTRIBUTION_LINK_PROFILE_MISSING",
+        "safeSector": all(event["safeSector"] for event in active_events),
     }

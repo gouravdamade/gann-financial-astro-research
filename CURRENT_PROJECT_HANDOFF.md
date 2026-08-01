@@ -1,8 +1,45 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 18:00 IST
+Last updated: 2026-08-01 20:45 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (PFR-C2 Founder Acceptance and Visualization Integrity)
+
+- Implemented PFR-C2 on `product-first-sbc-phase-lab` without expanding the
+  requested scope. `SOURCE_ONLY_BASELINE` is now visibly named
+  **Source-profiled partial baseline** and carries
+  `SOURCE_PROFILED_PARTIAL` plus `FOUNDER_APPROVAL_PENDING` until
+  `SBC_BASELINE_PROFILE_APPROVAL` is resolved. No founder-approved classical
+  completeness claim is made.
+- Closed the score-suppression boundary in the product panel, fixed wheel,
+  comparison, Why drawer, linked audit, bookmark metadata, manifest export,
+  and mode/profile/footer status. Score-suppressed modes retain identity and
+  fixed 0/pi geometry but no scalar magnitude, percentage, polarity, or
+  aggregate visual encoding.
+- Replaced `PROJECT_CONVENTION_TIMING_PHASE_V0` with V1: applying and
+  separating spans normalize independently around explicit exact tolerance;
+  invalid zero-length windows fail closed. A missing
+  `EVENT_CONTRIBUTION_LINK_PROFILE_MISSING` now quarantines every timing
+  aggregate, preventing the previous contribution-by-event Cartesian
+  expansion. Per-event lifecycle geometry remains descriptive only; market
+  result stays ABSTAIN and execution stays locked.
+- Added always-visible previous/next candle controls and Left/Right keyboard
+  stepping from the one focusable price-chart SVG.
+- Validation: `pnpm lint`, production build, full Vitest run
+  (`30` files / `121` tests), `python -m pytest -q sbc` (`9` tests), and
+  `cargo check --offline` passed. Rust test discovery found 18 tests and a
+  representative native test passed; the complete native suite exceeded the
+  shell time allowance after compile, so it is not claimed as a full pass.
+- Built and smoke-tested `0.10.29` at
+  `D:\PycharmProjects\releases\GannAstroDesk-0.10.29-pfr-c2\`.
+  Installer SHA-256:
+  `86ED85F7B28244345D08956ADB86F159F2D1F55FB3A7904E0E4217F1B516FD1C`.
+  Portable SHA-256:
+  `00FC365FA81D017379194BD516F74B79DF3AE2F740532FFAA2B2B7AA9F1CCD1F`.
+  The native smoke report passed with only the expected closed-market MT5
+  normalization deferral. Founder physical acceptance remains the next and
+  final C2 checkpoint; see `docs/sbc/PFR_C2_ACCEPTANCE_REPORT.md`.
 
 ## Latest Update - 2026-08-01 (PFR-C1 Product Integrity Correction)
 

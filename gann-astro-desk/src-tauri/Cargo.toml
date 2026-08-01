@@ -1,6 +1,6 @@
 [package]
 name = "gann-astro-desk"
-version = "0.10.28"
+version = "0.10.29"
 description = "Private Gann and financial astrology research desktop"
 authors = ["Gann Astro Research"]
 edition = "2021"

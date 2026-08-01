@@ -1115,7 +1115,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest, visualizationPolicy }:
         targetType: bookmarkTargetType,
         targetId: bookmarkTargetId,
         label: `[${visualizationPolicy.mode}] ${bookmarkLabel.trim()}`,
-        note: `[mode=${visualizationPolicy.mode}; evidence=${visualizationPolicy.evidenceStatus}; execution=locked] ${bookmarkNote.trim()}`,
+        note: `[mode=${visualizationPolicy.mode}; evidence=${visualizationPolicy.evidenceStatus}; approval=${visualizationPolicy.approvalState}; execution=locked] ${bookmarkNote.trim()}`,
         createdAt: new Date().toISOString(),
       },
     ])
@@ -1284,7 +1284,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest, visualizationPolicy }:
         <div className="visualization-audit-mode" role="status">
           <strong>Visualization mode</strong>
           <span>{visualizationPolicy.mode}</span>
-          <em>{visualizationPolicy.evidenceStatus} · execution locked</em>
+          <em>{visualizationPolicy.evidenceStatus} · {visualizationPolicy.approvalState} · execution locked</em>
         </div>
         <div>
           <h2>Audit values withheld</h2>
@@ -1306,7 +1306,7 @@ export function SbcLinkedAuditWorkspace({ currentRequest, visualizationPolicy }:
       <div className="visualization-audit-mode" role="status">
         <strong>Visualization mode</strong>
         <span>{visualizationPolicy.mode}</span>
-        <em>{visualizationPolicy.evidenceStatus} · execution locked</em>
+        <em>{visualizationPolicy.evidenceStatus} · {visualizationPolicy.approvalState} · execution locked</em>
       </div>
       <aside className="chakra-audit-capture">
         <section>

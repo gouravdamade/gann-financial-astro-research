@@ -10,7 +10,9 @@ export type VisualizationModePolicy = {
   mode: VisualizationEngineMode
   label: string
   shortLabel: string
-  evidenceStatus: 'SOURCE_ONLY' | 'SOURCE_MISSING' | 'NOT_APPLICABLE'
+  evidenceStatus: 'SOURCE_PROFILED_PARTIAL' | 'SOURCE_APPROVAL_PENDING' | 'SOURCE_MISSING' | 'NOT_APPLICABLE'
+  approvalState: 'FOUNDER_APPROVAL_PENDING' | 'NOT_REQUIRED'
+  classicalCompletenessClaim: false
   scoringVisible: boolean
   allowScalarAudit: boolean
   allowFixedPhasor: boolean
@@ -18,7 +20,7 @@ export type VisualizationModePolicy = {
   calibrationProfile: {
     profileId: string
     profileHash: string | null
-    status: 'SOURCE_ONLY' | 'SOURCE_MISSING' | 'NOT_APPLICABLE'
+    status: 'SOURCE_PROFILED_PARTIAL' | 'SOURCE_MISSING' | 'NOT_APPLICABLE'
     parameterCount: number
   }
   explanation: string
@@ -42,9 +44,11 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
     case 'SOURCE_ONLY_BASELINE':
       return {
         mode,
-        label: 'Source-only baseline',
-        shortLabel: 'Source only',
-        evidenceStatus: 'SOURCE_ONLY',
+        label: 'Source-profiled partial baseline',
+        shortLabel: 'Source partial',
+        evidenceStatus: 'SOURCE_PROFILED_PARTIAL',
+        approvalState: 'FOUNDER_APPROVAL_PENDING',
+        classicalCompletenessClaim: false,
         scoringVisible: true,
         allowScalarAudit: true,
         allowFixedPhasor: true,
@@ -52,10 +56,10 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
         calibrationProfile: {
           profileId: 'SBC_SOURCE_ONLY_BASELINE_V1',
           profileHash: null,
-          status: 'SOURCE_ONLY',
+          status: 'SOURCE_PROFILED_PARTIAL',
           parameterCount: 0,
         },
-        explanation: 'Shows the loaded source-profiled ledger and explicit unknowns. Fixed 0/pi geometry only re-expresses that ledger. No calibration or timing geometry is added.',
+        explanation: 'Shows the loaded source-profiled partial ledger and explicit unknowns. Founder approval of this baseline profile remains pending. Fixed 0/pi geometry only re-expresses that ledger. No calibration or timing geometry is added.',
         guardrails: GUARDRAILS,
       }
     case 'CALIBRATED_RESEARCH':
@@ -64,6 +68,8 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
         label: 'Calibrated research',
         shortLabel: 'Calibrated',
         evidenceStatus: 'SOURCE_MISSING',
+        approvalState: 'NOT_REQUIRED',
+        classicalCompletenessClaim: false,
         scoringVisible: false,
         allowScalarAudit: false,
         allowFixedPhasor: true,
@@ -83,6 +89,8 @@ export function visualizationModePolicy(mode: VisualizationEngineMode): Visualiz
         label: 'Visual only, no score',
         shortLabel: 'Visual only',
         evidenceStatus: 'NOT_APPLICABLE',
+        approvalState: 'NOT_REQUIRED',
+        classicalCompletenessClaim: false,
         scoringVisible: false,
         allowScalarAudit: false,
         allowFixedPhasor: true,

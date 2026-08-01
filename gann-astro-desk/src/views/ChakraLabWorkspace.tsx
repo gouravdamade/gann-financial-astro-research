@@ -264,6 +264,9 @@ export function ChakraLabWorkspace({
       generated_at_utc: new Date().toISOString(),
       visualization_mode: visualizationPolicy.mode,
       evidence_status: visualizationPolicy.evidenceStatus,
+      approval_state: visualizationPolicy.approvalState,
+      classical_completeness_claim: visualizationPolicy.classicalCompletenessClaim,
+      calculation_version: 'PFR_C2_VISUALIZATION_STATE_V1',
       profile: visualizationPolicy.calibrationProfile,
       source_gaps: visualizationSourceGaps,
       snapshot_id: snapshot?.snapshot_id ?? null,
@@ -338,6 +341,7 @@ export function ChakraLabWorkspace({
           })}
         </div>
         <span className="visualization-mode-id" title={visualizationPolicy.explanation}>{visualizationPolicy.mode}</span>
+        {visualizationPolicy.approvalState === 'FOUNDER_APPROVAL_PENDING' && <span className="visualization-mode-id is-pending">Founder approval pending</span>}
         <span className="chakra-contract-chip"><ShieldCheck size={12} /> Read only</span>
         <span className="chakra-contract-chip">No lookahead</span>
         <span className="chakra-contract-chip is-warning">Not financially validated</span>
@@ -372,7 +376,7 @@ export function ChakraLabWorkspace({
         <div>
           <b>Profile</b>
           <span>{visualizationPolicy.calibrationProfile.profileId}</span>
-          <small>{visualizationPolicy.calibrationProfile.status} · {visualizationPolicy.calibrationProfile.parameterCount} fitted parameters</small>
+          <small>{visualizationPolicy.calibrationProfile.status} · {visualizationPolicy.approvalState} · {visualizationPolicy.calibrationProfile.parameterCount} fitted parameters</small>
         </div>
         {visualizationSourceGaps.length > 0 && <details>
           <summary>Source gaps ({visualizationSourceGaps.length})</summary>
@@ -674,6 +678,7 @@ export function ChakraLabWorkspace({
       <footer className="visualization-export-footer">
         <span>{visualizationPolicy.mode}</span>
         <span>{visualizationPolicy.evidenceStatus}</span>
+        <span>{visualizationPolicy.approvalState}</span>
         <span>Experimental · not financially validated · execution locked</span>
       </footer>
     </section>
