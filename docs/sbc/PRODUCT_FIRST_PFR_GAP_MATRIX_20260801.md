@@ -13,7 +13,7 @@ Recovery Directive. It does not certify doctrine or financial usefulness.
 | PFR-4 Fixed phasor wheel | `SBC_FIXED_ZERO_PI_PHASOR_SERIES_V1` | Current display is a row plot, not an interactive circular view | Complete: selected timestamp calls the existing fixed 0/pi scalar visualization series and supports vector selection; no timing phase, vote, market output, or execution behavior was added |
 | PFR-5 Isolated timing experiment | No directional phase engine exists | Build the explicitly noncertified, nonvoting convention only | Complete: `PROJECT_CONVENTION_TIMING_PHASE_V0` is feature-flagged, derives lifecycle/Re/Im/resultant/coherence/conflict from the selected aspect window and existing SBC contributions, preserves unknowns, suppresses outside the safe sector, and permanently exposes a zero vote with market result `ABSTAIN` |
 | PFR-6 Model comparison | Existing scalar ledger and fixed visualization | No single comparison view | Complete: a shared-timestamp comparison keeps scalar SBC, fixed 0/pi parity, and the isolated timing experiment in separate columns, exposes why they differ, shows evidence cutoff/no-future wording, and retains ABSTAIN/no-vote labels |
-| PFR-7 Windows beta | Tauri desktop build pipeline | No focused founder acceptance package | Portable/installer candidate and native acceptance checklist/screenshots |
+| PFR-7 Windows beta | Tauri desktop build pipeline | No focused founder acceptance package | Candidate built: 0.10.25 installer and self-contained portable folder hash-verified; portable native window/backend launch passed. Founder walkthrough remains the explicit acceptance checkpoint before any new work. |
 
 ## Parked on this Branch
 

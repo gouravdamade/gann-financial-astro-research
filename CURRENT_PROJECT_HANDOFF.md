@@ -1,8 +1,38 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 10:43 IST
+Last updated: 2026-08-01 11:05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-01 (Product-First Recovery PFR-7 Candidate)
+
+- Built the Windows beta candidate from `product-first-sbc-phase-lab` as
+  `Gann Astro Desk 0.10.25`. The exact candidate release folder is:
+  `D:\PycharmProjects\releases\GannAstroDesk-0.10.25-product-first-beta\`.
+- Verified artifacts:
+  - Installer: `Gann Astro Desk 0.10.25 x64 setup.exe`
+    SHA-256 `0CAB35F38889C10297B5510FF87347528F7AF4EB2DFE625DD333A94C3EF9B033`.
+  - Portable folder: `portable\Gann Astro Desk.exe` with its adjacent
+    `portable\backend\` resources. Its launcher SHA-256 is
+    `662EEA973E1FA9BF56C49A28DF60F427286E0399271A5A83D60142E669373646`.
+  - `BETA_README.txt` and `SHA256SUMS.txt` are in the same release folder.
+- Native acceptance performed: the portable folder was launched successfully;
+  its `Gann Astro Desk` desktop window was responsive and its local
+  `GannAstroBackend` process was responsive. A bare copied executable was
+  observed to exit without its adjacent backend folder, so the README makes
+  the folder requirement explicit.
+- PFR-1 through PFR-6 are committed and pushed on this branch. The product now
+  contains the synchronized SBC workspace, Time/Profile views, USDJPY context,
+  fixed phasor wheel, isolated zero-vote timing lab, and three-model comparison.
+  Existing execution/no-lookahead/unknown/scalar-baseline locks remain intact.
+- **Stop here for founder acceptance.** Use the five-step checklist in
+  `BETA_README.txt`, especially inspecting Workspace, Wheel, Phase lab, and
+  Compare in the installed or portable app. Do not resume source certification,
+  validation, model fusion, Auto Suggest, ML, or trading work until the founder
+  explicitly accepts or reports a product issue.
+- Recovery snapshot:
+  `chat_session_backups/20260801_110500_product_first_pfr7/` with a SHA-256
+  manifest covers the PFR-7 source metadata, product documentation, and handoff.
 
 ## Latest Update - 2026-08-01 (Product-First Recovery PFR-6)
 
