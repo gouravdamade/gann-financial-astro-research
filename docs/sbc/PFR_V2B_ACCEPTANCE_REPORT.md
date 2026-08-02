@@ -2,6 +2,22 @@
 
 Date opened: 2026-08-02
 
+## PFR-V2B-R0 Remote Reconciliation
+
+- Status: `COMPLETE` on 2026-08-02.
+- The local V2B branch and `origin/master` both resolve to
+  `9677b1bb7c8b8b0c040c88c4d1442c56196e04c2`. Although the named V2B branch
+  is not a remote branch, the V2B-5 and V2B-6 source is deliberately present
+  on the inspectable remote `master` commit.
+- A clean remote clone reproduced that exact source with a clean worktree.
+  Frontend: 32 files / 132 tests; backend: 181 tests; Rust: format, check, and
+  18 tests all passed. Details:
+  `docs/sbc/PFR_V2B_R0_REPOSITORY_RECONCILIATION.md`.
+- This is a reproducibility record, not completion of V2B. The registries
+  remain empty and the product still requires live-range binding, stepped
+  visual fields, derived pair contract, and founder-reviewed evidence before
+  packaging.
+
 ## V2B-0 Baseline and Freeze
 
 - Branch: `pfr-v2b-categorical-oscillator`.

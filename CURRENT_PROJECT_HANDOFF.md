@@ -1,8 +1,34 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 22:00 IST
+Last updated: 2026-08-02 22:32 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2B-R0 Remote Reconciliation)
+
+- Completed the required remote-source reconciliation before beginning any new
+  V2B product layer. Local branch `pfr-v2b-categorical-oscillator` and
+  `origin/master` both resolve to
+  `9677b1bb7c8b8b0c040c88c4d1442c56196e04c2`
+  (`Expose FX side pilot evidence readiness`). The V2B branch name itself is
+  local-only, but its bounded implementation is deliberately published on
+  `master`; there is no unpushed V2B source dependency.
+- A fresh remote clone at
+  `D:\GannAstroDesk-Reconciliation-20260802-R0` checked out the same SHA with
+  a clean worktree. It contains V2B-5 at `86c652e` and V2B-6 at `9677b1b`.
+- Clean-clone verification passed: Oxlint; TypeScript/Vite build; frontend
+  `32 files / 132 tests`; backend `181 tests`; Rust `cargo fmt --check`,
+  `cargo check`, and `18 tests`. The Vite warning about a >500 kB JavaScript
+  chunk remains a performance observation, not a correctness failure.
+- Source manifest and full result:
+  `docs/sbc/PFR_V2B_R0_REPOSITORY_RECONCILIATION.md`. Production evidence
+  registries remain empty, `PILOT_EVIDENCE_PENDING`, and every execution,
+  magnitude, smoothing, calibration, fusion, ML, Auto Suggest, and trading
+  lock remains in force.
+- Next bounded work: PFR-V2B-R1, replace the manual last-110-candle field
+  request with a live chart-range controller and honest stepped visual panes.
+  Do not package a V2B candidate or admit polarity evidence before the later
+  explicit founder-review gate.
 
 ## Latest Update - 2026-08-02 (PFR-V2B-6 FX Side Pilot Readiness)
 
