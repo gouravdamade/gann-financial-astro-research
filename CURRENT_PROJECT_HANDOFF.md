@@ -1,8 +1,31 @@
 # Current Project Handoff
 
-Last updated: 2026-08-01 23:00 IST
+Last updated: 2026-08-02 06:12 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-U1 Founder Acceptance and Observation)
+
+- Read and adopted `PFR_U1_Founder_Acceptance_Product_Observation_and_Usability_Codex_Directive.pdf`.
+  `0.10.31-pfr-c2f` is now frozen for founder physical acceptance: no rebuild,
+  code change, tuning, source admission, calibration, event-link work, ML,
+  Auto Suggest, trading, or execution work is permitted during this milestone.
+- Preflight at `2026-08-02 06:11 IST` confirmed the exact C2F artifact hashes
+  still match the release record. The candidate source remains
+  `b8ae06fa775b152e4782157e44c9b8be47676c82`; current repository `HEAD` is
+  `4d56615cbb6576a9e6a000a7fc6862aef48fd952`. Founder acceptance is still
+  `PENDING` and must be recorded as `ACCEPTED`, `ACCEPTED_WITH_DEFECTS`, or
+  `REJECTED` after the physical checklist is completed.
+- Added the only U1 working materials permitted before acceptance:
+  `docs/sbc/PFR_U1_FOUNDER_ACCEPTANCE.md` and
+  `docs/sbc/PFR_U1_OBSERVATION_LOG_TEMPLATE.csv`. Use the exact portable in
+  `D:\\PycharmProjects\\releases\\GannAstroDesk-0.10.31-pfr-c2f\\`.
+  After acceptance, log at least five no-tuning research sessions; Codex may
+  summarize them into one bounded usability backlog but must not code until
+  the founder explicitly approves that scope.
+- The directive also flags repository visibility: the GitHub recovery repo is
+  described as private by its README but is reportedly public. Restore private
+  visibility before continuing unless public disclosure is an explicit decision.
 
 ## Latest Update - 2026-08-01 (PFR-C2F Reproducible Founder Candidate)
 

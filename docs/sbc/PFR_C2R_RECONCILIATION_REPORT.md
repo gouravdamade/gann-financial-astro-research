@@ -6,6 +6,22 @@
 `FOUNDER_ACCEPTANCE_READY = true`
 `CANDIDATE_SOURCE_REPRODUCIBLE = true`
 
+## PFR-U1 Founder Acceptance Freeze - 2026-08-02
+
+`PFR_U1_STATUS = FOUNDER_ACCEPTANCE_PENDING`
+
+The exact `0.10.31-pfr-c2f` candidate is frozen for founder physical
+acceptance and subsequent no-tuning observation. Its four recorded artifact
+hashes were rechecked on 2026-08-02 and match this report. No product code,
+candidate artifact, score, research engine, source profile, inference path,
+or execution path was changed for PFR-U1. The founder checklist is
+`PFR_U1_FOUNDER_ACCEPTANCE.md`; the five-session observation template is
+`PFR_U1_OBSERVATION_LOG_TEMPLATE.csv`.
+
+The next status cannot be inferred from smoke tests. It is set only after the
+founder records `ACCEPTED`, `ACCEPTED_WITH_DEFECTS`, or `REJECTED` against the
+exact candidate. Until then, no usability sprint or research work may begin.
+
 This is a reconciliation record, not a new product milestone. It supersedes
 the acceptance claim for the `0.10.29-pfr-c2` artifact. The requested
 Product-First C2R and C2F scope was limited to source, test, release, and

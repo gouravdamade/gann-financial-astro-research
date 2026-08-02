@@ -1,0 +1,2 @@
+session_id,timestamp_start_ist,timestamp_end_ist,artifact_version,portable_sha256,machine_windows,display_scaling,instrument,timeframe,date_range,mode,research_task,selected_events_or_timestamps,expected_behavior,observed_behavior,interpretability,issue_type,severity,reproduction,evidence_path,founder_note
+,,,,,,,,,,,,,,,,,,,,
