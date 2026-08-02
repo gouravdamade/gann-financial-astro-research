@@ -67,13 +67,12 @@ Do not change the product during acceptance. A rejection or defect report must b
   planetary lines remain visible and aligned to the same viewport.
 - Observed: candlesticks remain, while aspect lanes and planetary lines disappear.
 - Evidence: founder report in the PFR-U1 acceptance session.
-- Source finding: the aspect-band renderer requires an on-screen coordinate for
+- Original source finding: the aspect-band renderer requires an on-screen coordinate for
   an aspect's start or end boundary. When zooming inside a long active aspect,
   both boundaries may be off-screen even though the aspect covers the whole
   viewport, causing the band to be incorrectly omitted. The planetary-line
-  disappearance shares the viewport-refresh path and requires native tracing
-  before its corrective change is defined.
-- Status: `IMPLEMENTED_VALIDATED_PACKAGE_PENDING`.
+  disappearance shares the viewport-refresh path.
+- Status: `HOTFIX_CANDIDATE_READY_FOR_FOUNDER_TARGETED_CHECK`.
 
 ### Approved Bounded Correction
 
@@ -87,10 +86,14 @@ Do not change the product during acceptance. A rejection or defect report must b
 - Guard: this change affects rendering continuity only. It does not change
   aspect detection, SR values, source profiles, scores, inference, ML, orders,
   or execution permissions.
-- Source validation: 32 frontend test files / 127 tests passed; lint passed.
-- Next: package a distinct `0.10.32` hotfix candidate and repeat only the
-  zoom/overlay acceptance checks. The original `0.10.31-pfr-c2f` artifact
-  remains the historical C2F candidate and is never replaced.
+- Source validation: 32 frontend test files / 127 tests passed; lint and the production frontend build passed. The isolated native soak passed, including backend health, restart recovery, chart contracts, and execution locks.
+- Hotfix candidate: `0.10.32-pfr-u1-s1`, source `5d61fd42739603ec5e05c4e4e0d7e7a15127c557`, at `D:\PycharmProjects\releases\GannAstroDesk-0.10.32-pfr-u1-s1\`. Its manifest records `source_git_dirty=false`.
+- Portable SHA-256: `91DAF5C9011A6A064BD5E688114EFCA47E71582ED08BE134BB369E9406F881BF`. Installer SHA-256: `6B8944BE06D6F07786C2755638B0C289043B5CA5790A8323A519777C34C124D1`.
+- Next: repeat only the targeted wheel-zoom check on `0.10.32-pfr-u1-s1`:
+  with aspect lanes and Live SR lines enabled, zoom repeatedly into the middle
+  of a long aspect window. Candles, active/overlapping aspect lanes, and Live
+  SR lines must remain visible and aligned. The original `0.10.31-pfr-c2f`
+  artifact remains the historical C2F candidate and is never replaced.
 
 This record does not alter the historical C2F candidate. Under PFR-U1, only
 this approved S1 rendering repair may proceed before the corrected candidate

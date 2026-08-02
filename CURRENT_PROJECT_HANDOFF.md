@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 06:34 IST
+Last updated: 2026-08-02 07:04 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -31,8 +31,18 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   The approved bounded hotfix clips active aspect windows to the visible
   viewport and retains sparse whole-chart anchors during the Live SR viewport
   refresh. The original `0.10.31-pfr-c2f` candidate remains untouched. Source
-  validation is green (`32` frontend test files / `127` tests and lint); a
-  separate `0.10.32` U1-S1 hotfix candidate is the only permitted build next.
+  validation is green (`32` frontend test files / `127` tests and lint).
+- Built the separate U1-S1 hotfix candidate without replacing the frozen C2F
+  release: `D:\PycharmProjects\releases\GannAstroDesk-0.10.32-pfr-u1-s1\`.
+  It is sourced from `5d61fd42739603ec5e05c4e4e0d7e7a15127c557` and its manifest
+  records `source_git_dirty=false`. Portable SHA-256:
+  `91DAF5C9011A6A064BD5E688114EFCA47E71582ED08BE134BB369E9406F881BF`;
+  installer SHA-256:
+  `6B8944BE06D6F07786C2755638B0C289043B5CA5790A8323A519777C34C124D1`.
+  Its isolated native soak passed, including backend health, restart recovery,
+  chart contracts, and all execution locks. The only open U1-S1 check is the
+  founder's physical wheel-zoom confirmation that aspect lanes and enabled
+  Live SR lines remain visible during rapid zoom.
 
 ## Latest Update - 2026-08-01 (PFR-C2F Reproducible Founder Candidate)
 
