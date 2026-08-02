@@ -56,3 +56,9 @@ execution behavior is connected to this material.
   polarity rejection.
 - Empty production registries remain valid and return the explicit missing
   state.
+
+## Candidate Preparation
+
+PFR-V2A-3 adds a download-only, selected-aspect candidate worksheet to the
+desktop. It does not weaken this admission contract; see
+`docs/sbc/PFR_V2A_3_CANDIDATE_PACKET_PREPARATION.md`.

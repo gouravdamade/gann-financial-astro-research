@@ -27,6 +27,7 @@ import type {
   ChakraLabRequest,
   ChakraLabSnapshot,
   ChartConditionedPolarityLookup,
+  AspectWindow,
   ChakraMotionClass,
   ChartPayload,
   CurrencyPairEvidence,
@@ -110,6 +111,7 @@ type Props = {
   chart?: ChartPayload | null
   currencyPairEvidence?: CurrencyPairEvidence | null
   selectedAspectLabel?: string | null
+  selectedAspect?: AspectWindow | null
 }
 
 export function ChakraLabWorkspace({
@@ -118,6 +120,7 @@ export function ChakraLabWorkspace({
   chart = null,
   currencyPairEvidence = null,
   selectedAspectLabel = null,
+  selectedAspect = null,
 }: Props) {
   const [atLocal, setAtLocal] = useState(currentIstInput)
   const [latitude, setLatitude] = useState(defaultLatitude)
@@ -142,6 +145,15 @@ export function ChakraLabWorkspace({
   const [phasorError, setPhasorError] = useState('')
   const [error, setError] = useState('')
   const initialRun = useRef(false)
+  const selectedAspectIdentity = useMemo(() => (
+    selectedAspect
+      ? {
+          transitBody: selectedAspect.transitBody,
+          natalTarget: selectedAspect.natalBody,
+          aspectType: selectedAspect.aspect,
+        }
+      : null
+  ), [selectedAspect])
 
   const request = useMemo<ChakraLabRequest>(() => ({
     at: offsetIst(atLocal),
@@ -228,6 +240,7 @@ export function ChakraLabWorkspace({
       try {
         const result = await fetchChartConditionedPolarityLookup({
           instrumentIdentity: `FX:${chart?.symbol ?? 'USDJPY'}`,
+          ...(selectedAspectIdentity ?? {}),
         })
         if (active) setAspectPolarity(result ?? null)
       } catch (caught) {
@@ -238,7 +251,7 @@ export function ChakraLabWorkspace({
       }
     })()
     return () => { active = false }
-  }, [chart?.symbol])
+  }, [chart?.symbol, selectedAspectIdentity])
 
   useEffect(() => {
     localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
@@ -418,6 +431,7 @@ export function ChakraLabWorkspace({
           currencyPairEvidence={currencyPairEvidence}
           aspectPolarity={aspectPolarity}
           selectedAspectLabel={selectedAspectLabel}
+          selectedAspect={selectedAspect}
           fixedPhasorInterval={fixedPhasor?.intervals[0] ?? null}
           visualizationPolicy={visualizationPolicy}
           phasorBusy={phasorBusy}

@@ -19,6 +19,7 @@ import type {
   ChakraTimingProfileSourceVerificationReport,
   ChartConditionedPolarityLookup,
   CurrencyPairEvidence,
+  AspectWindow,
 } from './types'
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
 
@@ -243,6 +244,39 @@ const missingAspectPolarity: ChartConditionedPolarityLookup = {
     actsAsSbcConfirmation: false,
   },
 }
+
+const selectedAspect = {
+  eventId: 'event-test-001',
+  caseId: null,
+  familyKey: 'MARS|SUN::square',
+  pairKey: 'MARS|SUN',
+  aspect: 'square',
+  aspectLabel: 'Square',
+  transitBody: 'MARS',
+  natalBody: 'SUN',
+  start: 0,
+  end: 1,
+  peak: 0,
+  startIso: '2026-08-01T00:00:00Z',
+  endIso: '2026-08-01T01:00:00Z',
+  peakIso: '2026-08-01T00:30:00Z',
+  durationMinutes: 60,
+  peakOrbDeg: 0,
+  orbLimitDeg: 1,
+  color: '#ffffff',
+  occurrenceIndex: null,
+  occurrenceCount: 0,
+  knownPriorCount: 0,
+  knownOccurrenceCount: 0,
+  outcome: null,
+  returnPct: null,
+  reviewed: false,
+  reviewStatus: 'none',
+  reviewSource: 'none',
+  signedPips: null,
+  astronomyContract: 'RAMAN_SIDEREAL_SWISSEPH_V1',
+  sourceGenerator: 'test-generator',
+} as AspectWindow
 
 const audit: ChakraLinkedAuditView = {
   contract: 'SBC_LINKED_AUDIT_VIEW_V1',
@@ -1330,6 +1364,29 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.getByText(/not timing phase, a vote, or a price signal/i)).toBeInTheDocument()
     expect(screen.getByText('JUPITER')).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
+  })
+
+  it('uses the selected aspect identity for the immutable polarity lookup', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+        chart={{ symbol: 'USDJPY', candles: [] } as unknown as import('./types').ChartPayload}
+        selectedAspect={selectedAspect}
+      />,
+    )
+
+    await waitFor(() => expect(fetchAspectPolarity).toHaveBeenCalledWith({
+      instrumentIdentity: 'FX:USDJPY',
+      transitBody: 'MARS',
+      natalTarget: 'SUN',
+      aspectType: 'square',
+    }))
+    expect(await screen.findByText('Evidence packet readiness')).toBeInTheDocument()
+    expect(screen.getByText(/MARS to SUN Square/i)).toBeInTheDocument()
   })
 
   it('keeps fixed-wheel vector selection keyboard reachable and non-directional', async () => {

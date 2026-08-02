@@ -6611,6 +6611,13 @@ html.android-runtime .loading-state {
 .product-first-aspect-polarity-panel p { margin: 0; color: #a6b2ba; font-size: 8px; line-height: 1.45; }
 .product-first-aspect-polarity-panel p b { color: #dfc97e; }
 .product-first-aspect-polarity-panel small { grid-column: 1 / -1; color: #768590; font: 7px/1.35 Consolas, monospace; }
+.product-first-polarity-candidate { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(190px, .8fr) minmax(260px, 1.2fr) auto; gap: 8px 12px; align-items: center; padding: 7px 8px; border: 1px dashed #4a5863; background: #10171d; }
+.product-first-polarity-candidate > div { display: grid; gap: 3px; }
+.product-first-polarity-candidate strong { color: #b8d1dc; font-size: 8px; }
+.product-first-polarity-candidate span { color: #82929e; font: 7px/1.35 Consolas, monospace; }
+.product-first-polarity-candidate p { color: #a1adb5; font-size: 8px; }
+.product-first-polarity-candidate button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 25px; border: 1px solid #4c7b8b; border-radius: 3px; background: #16303c; color: #c5e1eb; cursor: pointer; font-size: 8px; white-space: nowrap; }
+.product-first-polarity-candidate button:hover { border-color: #76adbe; background: #1b3b48; }
 
 .product-first-wheel {
   display: grid;

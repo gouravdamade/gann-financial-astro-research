@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it } from 'vitest'
-import type { ChakraFixedPhasorInterval, ChakraLabSnapshot } from './types'
+import type { AspectWindow, ChakraFixedPhasorInterval, ChakraLabSnapshot } from './types'
 import { visualizationModePolicy } from './visualizationModes'
 import { ProductFirstSbcWorkspace } from './views/ProductFirstSbcWorkspace'
 
@@ -31,6 +31,16 @@ const snapshot = {
     scoring_coverage_ratio: 0.9,
   },
 } as unknown as ChakraLabSnapshot
+
+const selectedAspect = {
+  eventId: 'event-test-001',
+  familyKey: 'MARS|SUN::square',
+  transitBody: 'MARS',
+  natalBody: 'SUN',
+  aspect: 'square',
+  astronomyContract: 'RAMAN_SIDEREAL_SWISSEPH_V1',
+  sourceGenerator: 'test-generator',
+} as unknown as AspectWindow
 
 function interval(magnitude: number, total: number): ChakraFixedPhasorInterval {
   return {
@@ -106,5 +116,26 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
     expect(rendered.container.querySelector('.product-first-wheel-gross-ring')).toBeInTheDocument()
     expect(rendered.container.textContent).toContain('2.0 units')
     expect(rendered.container.textContent).toContain('Founder approval pending')
+  })
+
+  it('prepares a selected-aspect evidence packet without admitting polarity', () => {
+    render(
+      <ProductFirstSbcWorkspace
+        snapshot={snapshot}
+        selectedCell="1:1"
+        onSelectCell={() => undefined}
+        onSelectMoment={() => undefined}
+        selectedAspect={selectedAspect}
+        visualizationPolicy={visualizationModePolicy('SOURCE_ONLY_BASELINE')}
+        phasorBusy={false}
+        phasorError=""
+        onLoadFixedPhasor={() => undefined}
+      />,
+    )
+
+    expect(screen.getByText('Evidence packet readiness')).toBeInTheDocument()
+    expect(screen.getByText(/MARS to SUN Square/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Download candidate packet' })).toBeInTheDocument()
+    expect(screen.getByText(/Still required: accepted chart id/i)).toBeInTheDocument()
   })
 })

@@ -1048,6 +1048,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             chart={chart}
             currencyPairEvidence={detail?.currencyPairEvidence}
             selectedAspectLabel={selected ? `${selected.transitBody} to ${selected.natalBody} ${selected.aspectLabel}` : null}
+            selectedAspect={selected}
           />
         </Suspense>
       )}

@@ -1,8 +1,29 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 18:44 IST
+Last updated: 2026-08-02 19:02 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2A-3 Candidate Evidence-Packet Preparation)
+
+- Added a read-only **Evidence packet readiness** surface to the desktop
+  chart-conditioned aspect panel. When a chart aspect is selected and the
+  immutable polarity lookup is not `READY`, it shows the exact selected
+  transit/natal/aspect identity and offers a local JSON candidate worksheet.
+- The worksheet carries the same `FX:USDJPY` identity convention as the
+  immutable lookup and is deliberately marked `CANDIDATE_NOT_ADMISSIBLE`.
+  It cannot write either the packet registry or polarity catalogue, and it
+  supplies no polarity, magnitude, signal, ML evidence, Auto Suggest input,
+  live inference change, or execution behavior.
+- The founder must still fill an accepted chart id, reviewed categorical state,
+  profile hash, reviewer/timestamp, source references, and deterministic
+  packet hash before a later reviewed change can admit matching packet and
+  catalogue entries. `TARGET_CONTEXT_INCOMPLETE` without an accepted chart is
+  expected and remains fail-closed.
+- Details: `docs/sbc/PFR_V2A_3_CANDIDATE_PACKET_PREPARATION.md`. Verification:
+  focused desktop tests `29 passed`, catalogue tests `5 passed`, backend lookup
+  tests `3 passed`, lint and production frontend build passed. No installer was
+  built for this small research-only interface step.
 
 ## Latest Update - 2026-08-02 (PFR-V2A-2 Evidence Packet Admission)
 

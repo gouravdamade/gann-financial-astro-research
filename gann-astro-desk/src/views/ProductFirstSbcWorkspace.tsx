@@ -1,9 +1,10 @@
-import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
+import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Download, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
 import type {
   ChakraFixedPhasorInterval,
   ChakraGridCell,
   ChakraLabSnapshot,
+  AspectWindow,
   ChartConditionedPolarityLookup,
   ChartPayload,
   CurrencyPairEvidence,
@@ -22,6 +23,7 @@ type Props = {
   currencyPairEvidence?: CurrencyPairEvidence | null
   aspectPolarity?: ChartConditionedPolarityLookup | null
   selectedAspectLabel?: string | null
+  selectedAspect?: AspectWindow | null
   fixedPhasorInterval?: ChakraFixedPhasorInterval | null
   visualizationPolicy: VisualizationModePolicy
   phasorBusy: boolean
@@ -70,6 +72,7 @@ export function ProductFirstSbcWorkspace({
   currencyPairEvidence = null,
   aspectPolarity = null,
   selectedAspectLabel = null,
+  selectedAspect = null,
   fixedPhasorInterval = null,
   visualizationPolicy,
   phasorBusy,
@@ -171,6 +174,45 @@ export function ProductFirstSbcWorkspace({
       ? 24 + (magnitude / maxVectorMagnitude) * 88
       : 72
   )
+  const downloadCandidateEvidencePacket = () => {
+    if (!selectedAspect) return
+    const safeToken = [chart?.symbol ?? 'INSTRUMENT', selectedAspect.transitBody, selectedAspect.natalBody, selectedAspect.aspect]
+      .join('_')
+      .replace(/[^A-Za-z0-9_]+/g, '_')
+      .toUpperCase()
+    const candidate = {
+      contract: 'CHART_CONDITIONED_POLARITY_EVIDENCE_PACKET_CANDIDATE_V1',
+      status: 'CANDIDATE_NOT_ADMISSIBLE',
+      packetId: `CANDIDATE_${safeToken}`,
+      instrumentId: `FX:${chart?.symbol ?? 'USDJPY'}`,
+      chartId: '',
+      transitBody: selectedAspect.transitBody,
+      natalTarget: selectedAspect.natalBody,
+      aspectType: selectedAspect.aspect,
+      reviewedPolarity: '',
+      evidenceStatus: 'REVIEWED_RESEARCH_ONLY',
+      chartAcceptanceStatus: 'ACCEPTED_RESEARCH',
+      astronomyContract: selectedAspect.astronomyContract,
+      profileHash: '',
+      reviewedBy: '',
+      reviewedAtUtc: '',
+      sourceRefs: [],
+      packetHash: '',
+      reviewScope: {
+        eventId: selectedAspect.eventId,
+        familyKey: selectedAspect.familyKey,
+        sourceGenerator: selectedAspect.sourceGenerator,
+      },
+      admissionNote: 'Fill every blank from reviewed source material, calculate the packet hash, and add it with a matching catalogue entry in one reviewed change. This candidate cannot be loaded as production evidence.',
+    }
+    const blob = new Blob([JSON.stringify(candidate, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `${safeToken.toLowerCase()}_polarity_evidence_candidate.json`
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <section className={`product-first-sbc mode-${visualizationPolicy.mode.toLowerCase()}${sideView || currencyPairEvidence || wheelOpen || timingOpen || comparisonOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
@@ -353,6 +395,14 @@ export function ProductFirstSbcWorkspace({
           <p><b>{aspectPolarity ? display(aspectPolarity.lookupState) : 'Loading status'}</b> - {aspectPolarity?.reason ?? 'Checking the immutable target-aware polarity catalogue.'}</p>
         )}
         <small>{aspectPolarity?.stateContract ?? 'CATEGORICAL_POLARITY_STATE'} / {aspectPolarity?.magnitudeState ?? 'MAGNITUDE_NOT_CONFIGURED'}. No sign is inferred from transit geometry, natural planet nature, or SBC.</small>
+        {selectedAspect && aspectPolarity?.lookupState !== 'READY' && <div className="product-first-polarity-candidate">
+          <div>
+            <strong>Evidence packet readiness</strong>
+            <span>{selectedAspect.transitBody} to {selectedAspect.natalBody} {display(selectedAspect.aspect)} · {selectedAspect.astronomyContract}</span>
+          </div>
+          <p>Still required: accepted chart id, reviewed categorical state, profile hash, reviewer, timestamp, source references, and packet hash.</p>
+          <button onClick={downloadCandidateEvidencePacket}><Download size={12} /> Download candidate packet</button>
+        </div>}
       </section>
 
       {wheelOpen && (
