@@ -55,6 +55,29 @@ Choose exactly one: `ACCEPTED` | `ACCEPTED_WITH_DEFECTS` | `REJECTED`
 
 Do not change the product during acceptance. A rejection or defect report must be reproduced and recorded before any code is changed.
 
+## Known Acceptance Defect
+
+### U1-S1-001: Zoom removes research overlays
+
+- Reported: 2026-08-02 during founder acceptance of the exact frozen portable.
+- Severity: `S1` - navigation blocker.
+- Steps: open a historical chart with aspects and Live SR planetary lines visible,
+  then use the mouse wheel to zoom into the chart.
+- Expected: candlesticks, active/overlapping aspect lanes, and the enabled
+  planetary lines remain visible and aligned to the same viewport.
+- Observed: candlesticks remain, while aspect lanes and planetary lines disappear.
+- Evidence: founder report in the PFR-U1 acceptance session.
+- Source finding: the aspect-band renderer requires an on-screen coordinate for
+  an aspect's start or end boundary. When zooming inside a long active aspect,
+  both boundaries may be off-screen even though the aspect covers the whole
+  viewport, causing the band to be incorrectly omitted. The planetary-line
+  disappearance shares the viewport-refresh path and requires native tracing
+  before its corrective change is defined.
+- Status: `REPRODUCTION_AND_BOUNDED_HOTFIX_APPROVAL_PENDING`.
+
+This record is not a product patch. Under PFR-U1, the exact candidate remains
+frozen until the founder approves a reproducible S1 hotfix.
+
 ## What Follows Acceptance
 
 Use `PFR_U1_OBSERVATION_LOG_TEMPLATE.csv` for at least five normal research sessions. During observation, do not tune constants, weights, phase spans, thresholds, sources, colors, profiles, or any execution-related behavior. Record negative, ambiguous, and unknown results as faithfully as good-looking ones.
