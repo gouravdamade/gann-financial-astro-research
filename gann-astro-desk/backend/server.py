@@ -42,6 +42,7 @@ from chakra_lab_service import (
     verify_chakra_lab_audit_catalog,
     verify_chakra_lab_audit_package,
 )
+from chart_conditioned_polarity_service import build_chart_conditioned_polarity_lookup
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -289,6 +290,20 @@ def create_chakra_lab_fixed_phasor() -> Any:
             {
                 "ok": True,
                 "phasor": build_chakra_lab_fixed_phasor(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chart-conditioned-polarity/lookup")
+def create_chart_conditioned_polarity_lookup() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "lookup": build_chart_conditioned_polarity_lookup(payload),
             }
         )
     except (TypeError, ValueError) as exc:

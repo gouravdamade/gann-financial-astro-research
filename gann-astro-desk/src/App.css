@@ -6591,6 +6591,27 @@ html.android-runtime .loading-state {
 .product-first-fx-panel dd { overflow: hidden; margin: 0; color: #cfd8dd; font: 700 9px/1 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .product-first-fx-panel p { margin: 0; color: #8f9ba4; font-size: 8px; line-height: 1.4; }
 
+.product-first-aspect-polarity-panel {
+  display: grid;
+  grid-template-columns: minmax(240px, .9fr) minmax(280px, 1.1fr);
+  gap: 8px 14px;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid #35404a;
+  background: #151c23;
+}
+.product-first-aspect-polarity-panel > div:first-child { display: flex; align-items: center; gap: 8px; color: #92b9ce; }
+.product-first-aspect-polarity-panel > div:first-child > div { min-width: 0; display: grid; gap: 3px; }
+.product-first-aspect-polarity-panel > div:first-child strong { color: #e2e8ec; font-size: 9px; }
+.product-first-aspect-polarity-panel > div:first-child span { color: #8d99a4; font-size: 8px; line-height: 1.35; }
+.product-first-aspect-polarity-panel dl { display: grid; grid-template-columns: repeat(3, minmax(80px, 1fr)); gap: 4px; margin: 0; }
+.product-first-aspect-polarity-panel dl > div { display: grid; gap: 3px; padding: 5px 6px; border: 1px solid #384752; background: #10161c; }
+.product-first-aspect-polarity-panel dt { color: #87939e; font-size: 7px; }
+.product-first-aspect-polarity-panel dd { margin: 0; color: #cfd8dd; font: 700 9px/1 Consolas, monospace; }
+.product-first-aspect-polarity-panel p { margin: 0; color: #a6b2ba; font-size: 8px; line-height: 1.45; }
+.product-first-aspect-polarity-panel p b { color: #dfc97e; }
+.product-first-aspect-polarity-panel small { grid-column: 1 / -1; color: #768590; font: 7px/1.35 Consolas, monospace; }
+
 .product-first-wheel {
   display: grid;
   grid-template-columns: minmax(230px, .85fr) minmax(430px, 1.35fr);

@@ -1,8 +1,28 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 18:01 IST
+Last updated: 2026-08-02 18:36 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2A-1 Immutable Polarity Lookup)
+
+- Founder approved V2A-1 after the narrow V2-0 inventory. Added the read-only
+  `CHART_CONDITIONED_POLARITY_CATALOGUE_V1` seed and its desktop/backend
+  lookup. The catalogue is intentionally empty: current USDJPY shows
+  `POLARITY_CATALOGUE_MISSING` rather than fabricated bullish/bearish output.
+- Partial event identity returns `TARGET_CONTEXT_INCOMPLETE`; a future ready
+  entry must match the instrument, accepted chart, transit body, natal target,
+  and aspect type and carry an explicit reviewed evidence packet/hash.
+- The new **Chart-conditioned aspect pressure** panel is an independent
+  synchronized comparison field. It explicitly states
+  `CATEGORICAL_POLARITY_STATE / MAGNITUDE_NOT_CONFIGURED`; it never treats SBC
+  agreement as confirmation and cannot affect Auto Suggest, ML, live
+  inference, shadow validation, or MT5 execution.
+- Key documents: `docs/sbc/PFR_V2_0_INVENTORY.md` and
+  `docs/sbc/PFR_V2A_1_IMMUTABLE_POLARITY_LOOKUP.md`.
+- Verification: target-aware catalogue tests `4 passed`; backend lookup tests
+  `3 passed`; focused desktop tests `25 passed`; lint and production frontend
+  build passed. No installer was built in this small research-only milestone.
 
 ## Latest Update - 2026-08-02 (PFR-V2-0 Focused Inventory)
 

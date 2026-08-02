@@ -1,0 +1,15 @@
+{
+  "contract": "CHART_CONDITIONED_POLARITY_CATALOGUE_V1",
+  "schema_version": 1,
+  "catalogue_id": "CHART_CONDITIONED_TARGET_AWARE_POLARITY_BASELINE_V1",
+  "catalogue_status": "NO_ACCEPTED_PRODUCTION_ENTRIES",
+  "purpose": "Read-only target-aware aspect polarity lookup. Entries may only be added from an explicit reviewed evidence packet.",
+  "entries": [],
+  "guardrails": {
+    "read_only": true,
+    "execution_allowed": false,
+    "automatic_order_placement": false,
+    "magnitude_configured": false,
+    "financially_validated": false
+  }
+}

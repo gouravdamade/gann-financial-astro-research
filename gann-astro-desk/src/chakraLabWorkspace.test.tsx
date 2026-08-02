@@ -17,6 +17,7 @@ import type {
   ChakraTimingProfileSourceCertificationReport,
   ChakraTimingProfileSourceReadinessReport,
   ChakraTimingProfileSourceVerificationReport,
+  ChartConditionedPolarityLookup,
   CurrencyPairEvidence,
 } from './types'
 import { ChakraLabWorkspace } from './views/ChakraLabWorkspace'
@@ -33,6 +34,7 @@ const {
   fetchTimingSourceCertification,
   fetchTimingSourceReadiness,
   fetchTimingSourceVerification,
+  fetchAspectPolarity,
   verifyAuditCatalog,
   verifyAuditPackage,
 } = vi.hoisted(() => ({
@@ -47,6 +49,7 @@ const {
   fetchTimingSourceCertification: vi.fn(),
   fetchTimingSourceReadiness: vi.fn(),
   fetchTimingSourceVerification: vi.fn(),
+  fetchAspectPolarity: vi.fn(),
   verifyAuditCatalog: vi.fn(),
   verifyAuditPackage: vi.fn(),
 }))
@@ -57,6 +60,7 @@ vi.mock('./api', () => ({
   fetchChakraLabAudit: fetchAudit,
   fetchChakraLabFixedPhasor: fetchFixedPhasor,
   fetchChakraLabSnapshot: fetchSnapshot,
+  fetchChartConditionedPolarityLookup: fetchAspectPolarity,
   fetchChakraTimingProfileAdmission: fetchTimingAdmission,
   fetchChakraTimingExternalReview: fetchTimingExternalReview,
   fetchChakraTimingSignedReview: fetchTimingSignedReview,
@@ -80,6 +84,7 @@ afterEach(() => {
   fetchTimingSourceCertification.mockReset()
   fetchTimingSourceReadiness.mockReset()
   fetchTimingSourceVerification.mockReset()
+  fetchAspectPolarity.mockReset()
   verifyAuditCatalog.mockReset()
   verifyAuditPackage.mockReset()
 })
@@ -215,6 +220,28 @@ const currencyPairEvidence: CurrencyPairEvidence = {
     doctrineNetScore: 1.4, doctrineConflictRatio: 0.2, doctrineDirection: 'UP',
   },
   notes: null,
+}
+
+const missingAspectPolarity: ChartConditionedPolarityLookup = {
+  contract: 'CHART_CONDITIONED_POLARITY_CATALOGUE_V1',
+  schemaVersion: 1,
+  lookupState: 'POLARITY_CATALOGUE_MISSING',
+  catalogueId: 'CHART_CONDITIONED_TARGET_AWARE_POLARITY_BASELINE_V1',
+  catalogueStatus: 'NO_ACCEPTED_PRODUCTION_ENTRIES',
+  catalogueHash: 'catalogue-hash',
+  instrumentId: 'USDJPY',
+  chartId: null,
+  entry: null,
+  reason: 'No accepted immutable target-aware polarity entry is available for this instrument.',
+  stateContract: 'CATEGORICAL_POLARITY_STATE',
+  magnitudeState: 'MAGNITUDE_NOT_CONFIGURED',
+  guardrails: {
+    readOnly: true,
+    executionAllowed: false,
+    automaticOrderPlacement: false,
+    financiallyValidated: false,
+    actsAsSbcConfirmation: false,
+  },
 }
 
 const audit: ChakraLinkedAuditView = {
@@ -1224,6 +1251,7 @@ describe('ChakraLabWorkspace', () => {
 
   it('opens the integrated workspace as the founder-facing default', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
+    fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
 
     render(
       <ChakraLabWorkspace
@@ -1235,6 +1263,9 @@ describe('ChakraLabWorkspace', () => {
     await screen.findByText('Integrated SBC workspace')
     expect(screen.getByText('Why this state')).toBeInTheDocument()
     expect(screen.getByText('Read-only experimental')).toBeInTheDocument()
+    expect(await screen.findByText('Chart-conditioned aspect pressure')).toBeInTheDocument()
+    expect(screen.getByText('Polarity Catalogue Missing')).toBeInTheDocument()
+    expect(screen.getByText(/No sign is inferred from transit geometry/i)).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 

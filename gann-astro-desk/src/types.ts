@@ -2082,6 +2082,47 @@ export type ChakraLabRequest = {
   nameInitials: string[]
 }
 
+export type ChartConditionedPolarityState =
+  | 'SUPPORTIVE'
+  | 'ADVERSE'
+  | 'MIXED'
+  | 'NEUTRAL'
+
+export type ChartConditionedPolarityEntry = {
+  entryId: string
+  instrumentId: string
+  chartId: string
+  transitBody: string
+  natalTarget: string
+  aspectType: string
+  precomputedPolarity: ChartConditionedPolarityState
+  evidenceStatus: string
+  profileHash: string
+  evidencePacketHash: string
+}
+
+export type ChartConditionedPolarityLookup = {
+  contract: 'CHART_CONDITIONED_POLARITY_CATALOGUE_V1'
+  schemaVersion: 1
+  lookupState: 'READY' | 'POLARITY_CATALOGUE_MISSING' | 'TARGET_CONTEXT_INCOMPLETE'
+  catalogueId: string
+  catalogueStatus: string
+  catalogueHash: string
+  instrumentId: string
+  chartId: string | null
+  entry: ChartConditionedPolarityEntry | null
+  reason: string
+  stateContract: 'CATEGORICAL_POLARITY_STATE'
+  magnitudeState: 'MAGNITUDE_NOT_CONFIGURED'
+  guardrails: {
+    readOnly: true
+    executionAllowed: false
+    automaticOrderPlacement: false
+    financiallyValidated: false
+    actsAsSbcConfirmation: false
+  }
+}
+
 export type ChakraGridEntry = {
   row: number
   column: number

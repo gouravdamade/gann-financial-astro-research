@@ -15,13 +15,18 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
-import { fetchChakraLabFixedPhasor, fetchChakraLabSnapshot } from '../api'
+import {
+  fetchChartConditionedPolarityLookup,
+  fetchChakraLabFixedPhasor,
+  fetchChakraLabSnapshot,
+} from '../api'
 import type {
   ChakraDignityState,
   ChakraFixedPhasorSeries,
   ChakraGridCell,
   ChakraLabRequest,
   ChakraLabSnapshot,
+  ChartConditionedPolarityLookup,
   ChakraMotionClass,
   ChartPayload,
   CurrencyPairEvidence,
@@ -123,6 +128,7 @@ export function ChakraLabWorkspace({
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
   const [fixedPhasor, setFixedPhasor] = useState<ChakraFixedPhasorSeries | null>(null)
+  const [aspectPolarity, setAspectPolarity] = useState<ChartConditionedPolarityLookup | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
   const [workspaceMode, setWorkspaceMode] = useState<'WORKSPACE' | 'BOARD' | 'AUDIT'>('WORKSPACE')
   const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
@@ -215,6 +221,24 @@ export function ChakraLabWorkspace({
     initialRun.current = true
     void loadSnapshot()
   }, [loadSnapshot])
+
+  useEffect(() => {
+    let active = true
+    void (async () => {
+      try {
+        const result = await fetchChartConditionedPolarityLookup({
+          instrumentIdentity: `FX:${chart?.symbol ?? 'USDJPY'}`,
+        })
+        if (active) setAspectPolarity(result ?? null)
+      } catch (caught) {
+        if (active) {
+          setAspectPolarity(null)
+          setError(caught instanceof Error ? caught.message : String(caught))
+        }
+      }
+    })()
+    return () => { active = false }
+  }, [chart?.symbol])
 
   useEffect(() => {
     localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
@@ -392,6 +416,7 @@ export function ChakraLabWorkspace({
           onSelectCell={setSelectedCell}
           onSelectMoment={selectMoment}
           currencyPairEvidence={currencyPairEvidence}
+          aspectPolarity={aspectPolarity}
           selectedAspectLabel={selectedAspectLabel}
           fixedPhasorInterval={fixedPhasor?.intervals[0] ?? null}
           visualizationPolicy={visualizationPolicy}

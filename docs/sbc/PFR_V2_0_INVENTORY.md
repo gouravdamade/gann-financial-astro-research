@@ -87,7 +87,15 @@ missing-state surface. It must:
 - The bundled Python runtime lacks `pytest`; the repository Python runtime was
   used for the 41-test run.
 
+## V2A-1 Result
+
+`COMPLETE`. The bounded lookup is now implemented and documented in
+`PFR_V2A_1_IMMUTABLE_POLARITY_LOOKUP.md`. The seed catalogue remains empty;
+current USDJPY output is explicitly `POLARITY_CATALOGUE_MISSING`, never an
+inferred market sign.
+
 ## V2-0 Result
 
-`COMPLETE`. The focused inventory does not authorize V2A-1 code until the
-founder explicitly approves that next bounded implementation step.
+`COMPLETE`. The focused inventory authorized only the V2A-1 implementation
+above. It does not authorize oscillator magnitude, aspect/SBC fusion,
+calibration, trading, or execution work.

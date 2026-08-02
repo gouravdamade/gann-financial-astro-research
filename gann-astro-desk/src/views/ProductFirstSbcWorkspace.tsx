@@ -1,6 +1,13 @@
 import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
-import type { ChakraFixedPhasorInterval, ChakraGridCell, ChakraLabSnapshot, ChartPayload, CurrencyPairEvidence } from '../types'
+import type {
+  ChakraFixedPhasorInterval,
+  ChakraGridCell,
+  ChakraLabSnapshot,
+  ChartConditionedPolarityLookup,
+  ChartPayload,
+  CurrencyPairEvidence,
+} from '../types'
 import { calculateProductFirstTimingPhase, PROJECT_CONVENTION_TIMING_PHASE_V1 } from '../productFirstTimingPhase'
 import type { VisualizationModePolicy } from '../visualizationModes'
 
@@ -13,6 +20,7 @@ type Props = {
   onSelectCell: (cell: string) => void
   onSelectMoment: (value: string) => void
   currencyPairEvidence?: CurrencyPairEvidence | null
+  aspectPolarity?: ChartConditionedPolarityLookup | null
   selectedAspectLabel?: string | null
   fixedPhasorInterval?: ChakraFixedPhasorInterval | null
   visualizationPolicy: VisualizationModePolicy
@@ -60,6 +68,7 @@ export function ProductFirstSbcWorkspace({
   onSelectCell,
   onSelectMoment,
   currencyPairEvidence = null,
+  aspectPolarity = null,
   selectedAspectLabel = null,
   fixedPhasorInterval = null,
   visualizationPolicy,
@@ -325,6 +334,26 @@ export function ProductFirstSbcWorkspace({
           <p>Evidence cutoff: {compactUtc(currencyPairEvidence.evidenceCutoffUtc)}. Gross activation is calculated before supportive and adverse activity can cancel. Both currencies remain visible; this is not a price prediction and cannot unlock an order or execution path.</p>
         </section>
       )}
+
+      <section className="product-first-aspect-polarity-panel" aria-label="Chart-conditioned aspect pressure">
+        <div>
+          <Layers3 size={15} />
+          <div>
+            <strong>Chart-conditioned aspect pressure</strong>
+            <span>Independent synchronized comparison field. It never confirms SBC or produces an order.</span>
+          </div>
+        </div>
+        {aspectPolarity?.lookupState === 'READY' && aspectPolarity.entry ? (
+          <dl>
+            <div><dt>State</dt><dd>{display(aspectPolarity.entry.precomputedPolarity)}</dd></div>
+            <div><dt>Evidence</dt><dd>{display(aspectPolarity.entry.evidenceStatus)}</dd></div>
+            <div><dt>Magnitude</dt><dd>{display(aspectPolarity.magnitudeState)}</dd></div>
+          </dl>
+        ) : (
+          <p><b>{aspectPolarity ? display(aspectPolarity.lookupState) : 'Loading status'}</b> - {aspectPolarity?.reason ?? 'Checking the immutable target-aware polarity catalogue.'}</p>
+        )}
+        <small>{aspectPolarity?.stateContract ?? 'CATEGORICAL_POLARITY_STATE'} / {aspectPolarity?.magnitudeState ?? 'MAGNITUDE_NOT_CONFIGURED'}. No sign is inferred from transit geometry, natural planet nature, or SBC.</small>
+      </section>
 
       {wheelOpen && (
         <section className="product-first-wheel" aria-label="Fixed phasor wheel">

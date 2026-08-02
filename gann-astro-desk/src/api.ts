@@ -54,6 +54,7 @@ import type {
   ChakraTimingProfileExternalReviewReport,
   ChakraTimingProfileSignedReviewReport,
   ChakraTimingProfileSourceCertificationReport,
+  ChartConditionedPolarityLookup,
 } from './types'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
@@ -665,6 +666,26 @@ export async function fetchChakraLabSnapshot(
     },
   )
   return payload.snapshot
+}
+
+export async function fetchChartConditionedPolarityLookup(input: {
+  instrumentIdentity: string
+  chartId?: string | null
+  transitBody?: string | null
+  natalTarget?: string | null
+  aspectType?: string | null
+}): Promise<ChartConditionedPolarityLookup> {
+  const payload = await request<{ lookup: ChartConditionedPolarityLookup }>(
+    '/api/chart-conditioned-polarity/lookup',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+  if (payload.lookup.guardrails.executionAllowed || payload.lookup.guardrails.actsAsSbcConfirmation) {
+    throw new Error('Chart-conditioned polarity response violated the research-only guardrails')
+  }
+  return payload.lookup
 }
 
 export async function fetchChakraLabAudit(
