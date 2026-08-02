@@ -1,8 +1,36 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 07:04 IST
+Last updated: 2026-08-02 18:01 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2-0 Focused Inventory)
+
+- Founder authorized the post-U1 PFR-V2 inventory only. Created branch
+  `product-first-sbc-oscillator-v2`; no oscillator, polarity, calibration,
+  source, doctrine, execution, or product feature was added in this gate.
+- Inventory result is recorded in `docs/sbc/PFR_V2_0_INVENTORY.md`. The repo
+  has a sound independent SBC atomic interval/ledger foundation and a
+  chart-conditioned aspect research framework, but no usable immutable
+  target-aware polarity catalogue for a selected production instrument.
+- The existing aspect prior knows the natal target as explanatory context but
+  deliberately refuses target-domain-to-price polarity. It must not be reused
+  as a hidden universal or transit-only market sign. Absent an accepted static
+  catalogue entry, future V2 display must show
+  `UNKNOWN / POLARITY_CATALOGUE_MISSING` or `TARGET_CONTEXT_INCOMPLETE`.
+- Aspect magnitude is not configured. If a future accepted target-aware static
+  polarity exists without magnitude, the permitted visual fallback is the
+  categorical stepped state
+  `CATEGORICAL_POLARITY_STATE / MAGNITUDE_NOT_CONFIGURED`: supportive above
+  zero, adverse below zero, neutral at zero, mixed split into both components,
+  unknown as a gap. This is descriptive research display only.
+- SBC remains a separate synchronized comparison field, never automatic
+  confirmation. No fusion, calibration, curve fitting, execution influence,
+  Auto Suggest, official ML, live inference promotion, or trading was added.
+- Verification: chart-conditioned/SBC foundation `41 passed`; focused desktop
+  Chakra/API tests `25 passed`. Next gate is V2A-1 only after founder approval:
+  a narrow immutable lookup and missing-state surface which reuses existing
+  identities and never invents polarity.
 
 ## Latest Update - 2026-08-02 (PFR-U1 Founder Acceptance and Observation)
 
