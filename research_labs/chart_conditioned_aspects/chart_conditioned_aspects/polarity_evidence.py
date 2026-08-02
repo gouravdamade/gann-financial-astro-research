@@ -47,7 +47,9 @@ def _aware_timestamp(value: str | None, field_name: str) -> str:
 class TargetAwarePolarityEvidencePacket:
     packet_id: str
     instrument_id: str
+    side_identity: str
     chart_id: str
+    chart_hypothesis_id: str
     transit_body: str
     natal_target: str
     aspect_type: str
@@ -63,8 +65,14 @@ class TargetAwarePolarityEvidencePacket:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "packet_id", _required(self.packet_id, "packet_id"))
-        object.__setattr__(self, "instrument_id", _upper(self.instrument_id, "instrument_id"))
+        instrument_id = _upper(self.instrument_id, "instrument_id")
+        side_identity = _upper(self.side_identity, "side_identity")
+        if side_identity not in {"USD", "JPY"} or instrument_id != f"FX_CURRENCY:{side_identity}":
+            raise ValueError("evidence packets must use matching USD or JPY FX_CURRENCY side identities")
+        object.__setattr__(self, "instrument_id", instrument_id)
+        object.__setattr__(self, "side_identity", side_identity)
         object.__setattr__(self, "chart_id", _required(self.chart_id, "chart_id"))
+        object.__setattr__(self, "chart_hypothesis_id", _required(self.chart_hypothesis_id, "chart_hypothesis_id"))
         object.__setattr__(self, "transit_body", _upper(self.transit_body, "transit_body"))
         object.__setattr__(self, "natal_target", _upper(self.natal_target, "natal_target"))
         object.__setattr__(self, "aspect_type", _lower(self.aspect_type, "aspect_type"))
@@ -91,7 +99,9 @@ class TargetAwarePolarityEvidencePacket:
         return stable_hash({
             "packetId": self.packet_id,
             "instrumentId": self.instrument_id,
+            "sideIdentity": self.side_identity,
             "chartId": self.chart_id,
+            "chartHypothesisId": self.chart_hypothesis_id,
             "transitBody": self.transit_body,
             "natalTarget": self.natal_target,
             "aspectType": self.aspect_type,
@@ -110,7 +120,9 @@ class TargetAwarePolarityEvidencePacket:
         return cls(
             packet_id=str(raw.get("packet_id") or raw.get("packetId") or ""),
             instrument_id=str(raw.get("instrument_id") or raw.get("instrumentId") or ""),
+            side_identity=str(raw.get("side_identity") or raw.get("sideIdentity") or ""),
             chart_id=str(raw.get("chart_id") or raw.get("chartId") or ""),
+            chart_hypothesis_id=str(raw.get("chart_hypothesis_id") or raw.get("chartHypothesisId") or ""),
             transit_body=str(raw.get("transit_body") or raw.get("transitBody") or ""),
             natal_target=str(raw.get("natal_target") or raw.get("natalTarget") or ""),
             aspect_type=str(raw.get("aspect_type") or raw.get("aspectType") or ""),

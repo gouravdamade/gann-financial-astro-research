@@ -6618,6 +6618,7 @@ html.android-runtime .loading-state {
 .product-first-polarity-candidate p { color: #a1adb5; font-size: 8px; }
 .product-first-polarity-candidate button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 25px; border: 1px solid #4c7b8b; border-radius: 3px; background: #16303c; color: #c5e1eb; cursor: pointer; font-size: 8px; white-space: nowrap; }
 .product-first-polarity-candidate button:hover { border-color: #76adbe; background: #1b3b48; }
+.product-first-polarity-candidate-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .product-first-wheel {
   display: grid;

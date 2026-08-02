@@ -21,7 +21,7 @@ type Props = {
   onSelectCell: (cell: string) => void
   onSelectMoment: (value: string) => void
   currencyPairEvidence?: CurrencyPairEvidence | null
-  aspectPolarity?: ChartConditionedPolarityLookup | null
+  fxSidePolarities?: Record<'USD' | 'JPY', ChartConditionedPolarityLookup> | null
   selectedAspectLabel?: string | null
   selectedAspect?: AspectWindow | null
   fixedPhasorInterval?: ChakraFixedPhasorInterval | null
@@ -70,7 +70,7 @@ export function ProductFirstSbcWorkspace({
   onSelectCell,
   onSelectMoment,
   currencyPairEvidence = null,
-  aspectPolarity = null,
+  fxSidePolarities = null,
   selectedAspectLabel = null,
   selectedAspect = null,
   fixedPhasorInterval = null,
@@ -174,9 +174,9 @@ export function ProductFirstSbcWorkspace({
       ? 24 + (magnitude / maxVectorMagnitude) * 88
       : 72
   )
-  const downloadCandidateEvidencePacket = () => {
+  const downloadCandidateEvidencePacket = (side: 'USD' | 'JPY') => {
     if (!selectedAspect) return
-    const safeToken = [chart?.symbol ?? 'INSTRUMENT', selectedAspect.transitBody, selectedAspect.natalBody, selectedAspect.aspect]
+    const safeToken = [side, chart?.symbol ?? 'INSTRUMENT', selectedAspect.transitBody, selectedAspect.natalBody, selectedAspect.aspect]
       .join('_')
       .replace(/[^A-Za-z0-9_]+/g, '_')
       .toUpperCase()
@@ -184,14 +184,16 @@ export function ProductFirstSbcWorkspace({
       contract: 'CHART_CONDITIONED_POLARITY_EVIDENCE_PACKET_CANDIDATE_V1',
       status: 'CANDIDATE_NOT_ADMISSIBLE',
       packetId: `CANDIDATE_${safeToken}`,
-      instrumentId: `FX:${chart?.symbol ?? 'USDJPY'}`,
+      instrumentId: `FX_CURRENCY:${side}`,
+      sideIdentity: side,
       chartId: '',
+      chartHypothesisId: '',
       transitBody: selectedAspect.transitBody,
-      natalTarget: selectedAspect.natalBody,
+      natalTarget: '',
       aspectType: selectedAspect.aspect,
       reviewedPolarity: '',
-      evidenceStatus: 'REVIEWED_RESEARCH_ONLY',
-      chartAcceptanceStatus: 'ACCEPTED_RESEARCH',
+      evidenceStatus: 'PENDING_REVIEW',
+      chartAcceptanceStatus: 'PENDING_FOUNDER_REVIEW',
       astronomyContract: selectedAspect.astronomyContract,
       profileHash: '',
       reviewedBy: '',
@@ -199,11 +201,17 @@ export function ProductFirstSbcWorkspace({
       sourceRefs: [],
       packetHash: '',
       reviewScope: {
+        sourcePairSymbol: chart?.symbol ?? 'USDJPY',
         eventId: selectedAspect.eventId,
         familyKey: selectedAspect.familyKey,
         sourceGenerator: selectedAspect.sourceGenerator,
+        selectedPairAspect: {
+          transitBody: selectedAspect.transitBody,
+          natalTarget: selectedAspect.natalBody,
+          aspectType: selectedAspect.aspect,
+        },
       },
-      admissionNote: 'Fill every blank from reviewed source material, calculate the packet hash, and add it with a matching catalogue entry in one reviewed change. This candidate cannot be loaded as production evidence.',
+      admissionNote: 'The pair event is review context only. Fill this side chart identity, accepted chart id, chart hypothesis id, natal target, reviewed state, evidence, and packet hash from reviewed source material. This candidate cannot be loaded as production evidence.',
     }
     const blob = new Blob([JSON.stringify(candidate, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -385,23 +393,29 @@ export function ProductFirstSbcWorkspace({
             <span>Independent synchronized comparison field. It never confirms SBC or produces an order.</span>
           </div>
         </div>
-        {aspectPolarity?.lookupState === 'READY' && aspectPolarity.entry ? (
-          <dl>
-            <div><dt>State</dt><dd>{display(aspectPolarity.entry.precomputedPolarity)}</dd></div>
-            <div><dt>Evidence</dt><dd>{display(aspectPolarity.entry.evidenceStatus)}</dd></div>
-            <div><dt>Magnitude</dt><dd>{display(aspectPolarity.magnitudeState)}</dd></div>
-          </dl>
-        ) : (
-          <p><b>{aspectPolarity ? display(aspectPolarity.lookupState) : 'Loading status'}</b> - {aspectPolarity?.reason ?? 'Checking the immutable target-aware polarity catalogue.'}</p>
-        )}
-        <small>{aspectPolarity?.stateContract ?? 'CATEGORICAL_POLARITY_STATE'} / {aspectPolarity?.magnitudeState ?? 'MAGNITUDE_NOT_CONFIGURED'}. No sign is inferred from transit geometry, natural planet nature, or SBC.</small>
-        {selectedAspect && aspectPolarity?.lookupState !== 'READY' && <div className="product-first-polarity-candidate">
+        {(['USD', 'JPY'] as const).map((side) => {
+          const lookup = fxSidePolarities?.[side] ?? null
+          return lookup?.lookupState === 'READY' && lookup.entry ? (
+            <dl key={side}>
+              <div><dt>{side} state</dt><dd>{display(lookup.entry.precomputedPolarity)}</dd></div>
+              <div><dt>{side} evidence</dt><dd>{display(lookup.entry.evidenceStatus)}</dd></div>
+              <div><dt>{side} magnitude</dt><dd>{display(lookup.magnitudeState)}</dd></div>
+            </dl>
+          ) : (
+            <p key={side}><b>{side}: {lookup ? display(lookup.lookupState) : 'Loading status'}</b> - {lookup?.reason ?? 'Checking the immutable side-chart polarity catalogue.'}</p>
+          )
+        })}
+        <small>CATEGORICAL_POLARITY_STATE / MAGNITUDE_NOT_CONFIGURED. USDJPY is derived from two independently reviewed side-chart contexts; no sign is inferred from transit geometry, natural planet nature, or SBC.</small>
+        {selectedAspect && <div className="product-first-polarity-candidate">
           <div>
-            <strong>Evidence packet readiness</strong>
-            <span>{selectedAspect.transitBody} to {selectedAspect.natalBody} {display(selectedAspect.aspect)} · {selectedAspect.astronomyContract}</span>
+            <strong>Side-chart evidence packet readiness</strong>
+            <span>Pair review context: {selectedAspect.transitBody} to {selectedAspect.natalBody} {display(selectedAspect.aspect)} · {selectedAspect.astronomyContract}</span>
           </div>
-          <p>Still required: accepted chart id, reviewed categorical state, profile hash, reviewer, timestamp, source references, and packet hash.</p>
-          <button onClick={downloadCandidateEvidencePacket}><Download size={12} /> Download candidate packet</button>
+          <p>Still required per side: accepted chart id, chart hypothesis id, natal target, reviewed categorical state, profile hash, reviewer, timestamp, source references, and packet hash. The selected pair target is not copied into either primary chart.</p>
+          <div className="product-first-polarity-candidate-actions">
+            <button onClick={() => downloadCandidateEvidencePacket('USD')}><Download size={12} /> USD candidate</button>
+            <button onClick={() => downloadCandidateEvidencePacket('JPY')}><Download size={12} /> JPY candidate</button>
+          </div>
         </div>}
       </section>
 

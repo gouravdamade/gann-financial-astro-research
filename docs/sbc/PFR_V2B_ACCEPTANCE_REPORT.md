@@ -14,6 +14,23 @@ Date opened: 2026-08-02
 - Safety invariants: research-only; no polarity entry; no magnitude;
   `executionAllowed=false`; no automatic order placement; no aspect/SBC fusion.
 
+## V2B-1 Independent FX Side Contracts
+
+- Status: `COMPLETE` on 2026-08-02.
+- `FX_CURRENCY:USD` and `FX_CURRENCY:JPY` are now the only accepted primary
+  research identities. `FX_PAIR:USDJPY` returns `PAIR_DERIVATION_ONLY` and
+  cannot silently resolve as a primary chart.
+- Future evidence packets and catalogue entries require matching
+  `sideIdentity` and `chartHypothesisId`. The production registries remain
+  empty, so both side lookups correctly show a fail-closed missing state.
+- The desktop panel shows both side states independently and downloads two
+  non-admissible side worksheets with `PENDING_REVIEW` and
+  `PENDING_FOUNDER_REVIEW` defaults. The pair event remains review context;
+  its natal target is never copied into the primary side chart fields.
+- Verification: catalogue `7 passed`, backend `4 passed`, focused desktop
+  `21 passed`, API `8 passed`, lint and production frontend build passed.
+- Details: `docs/sbc/PFR_V2B_1_FX_SIDE_CONTRACT.md`.
+
 ## Bounded V2B Sequence
 
 1. V2B-1: migrate the primary research identity to independent USD and JPY

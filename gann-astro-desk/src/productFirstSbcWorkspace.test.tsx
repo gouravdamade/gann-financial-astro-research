@@ -133,9 +133,10 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
       />,
     )
 
-    expect(screen.getByText('Evidence packet readiness')).toBeInTheDocument()
+    expect(screen.getByText('Side-chart evidence packet readiness')).toBeInTheDocument()
     expect(screen.getByText(/MARS to SUN Square/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Download candidate packet' })).toBeInTheDocument()
-    expect(screen.getByText(/Still required: accepted chart id/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'USD candidate' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'JPY candidate' })).toBeInTheDocument()
+    expect(screen.getByText(/Still required per side: accepted chart id/i)).toBeInTheDocument()
   })
 })

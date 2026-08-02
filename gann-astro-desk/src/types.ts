@@ -2091,7 +2091,9 @@ export type ChartConditionedPolarityState =
 export type ChartConditionedPolarityEntry = {
   entryId: string
   instrumentId: string
+  sideIdentity: 'USD' | 'JPY'
   chartId: string
+  chartHypothesisId: string
   transitBody: string
   natalTarget: string
   aspectType: string
@@ -2105,11 +2107,12 @@ export type ChartConditionedPolarityEntry = {
 export type ChartConditionedPolarityLookup = {
   contract: 'CHART_CONDITIONED_POLARITY_CATALOGUE_V1'
   schemaVersion: 1
-  lookupState: 'READY' | 'POLARITY_CATALOGUE_MISSING' | 'TARGET_CONTEXT_INCOMPLETE'
+  lookupState: 'READY' | 'POLARITY_CATALOGUE_MISSING' | 'TARGET_CONTEXT_INCOMPLETE' | 'PAIR_DERIVATION_ONLY'
   catalogueId: string
   catalogueStatus: string
   catalogueHash: string
   instrumentId: string
+  sideIdentity: 'USD' | 'JPY' | null
   chartId: string | null
   entry: ChartConditionedPolarityEntry | null
   reason: string

@@ -1,8 +1,28 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 20:40 IST
+Last updated: 2026-08-02 20:54 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2B-1 Independent FX Side Contracts)
+
+- Completed the V2B-1 correction on branch `pfr-v2b-categorical-oscillator`.
+  `FX_CURRENCY:USD` and `FX_CURRENCY:JPY` are now independent primary
+  research identities. `FX_PAIR:USDJPY` explicitly returns
+  `PAIR_DERIVATION_ONLY`, so it can never act as a silent primary catalogue
+  lookup.
+- Future immutable packet/catalogue records now require a matching
+  `sideIdentity` and `chartHypothesisId`. Both real registries remain empty,
+  so the application correctly remains fail-closed with no polarity invented.
+- The desktop aspect-pressure panel shows USD and JPY independently and offers
+  two non-admissible candidate worksheets. Defaults are `PENDING_REVIEW` and
+  `PENDING_FOUNDER_REVIEW`; pair event details remain review scope only and
+  are not copied into a side chart's natal target.
+- Verification: polarity tests `7 passed`, backend `4 passed`, focused desktop
+  tests `21 passed`, API `8 passed`, lint/build passed. No installer was built
+  because this is a research identity/UI correction only. Next bounded item:
+  V2B-2 visible-range categorical aspect intervals, still with no magnitude,
+  fusion, or execution behavior.
 
 ## Latest Update - 2026-08-02 (PFR-V2B-0 Baseline and Freeze)
 

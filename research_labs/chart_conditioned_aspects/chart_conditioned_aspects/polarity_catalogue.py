@@ -16,6 +16,7 @@ LOOKUP_STATE = Literal[
     "READY",
     "POLARITY_CATALOGUE_MISSING",
     "TARGET_CONTEXT_INCOMPLETE",
+    "PAIR_DERIVATION_ONLY",
 ]
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +44,9 @@ def _lower(value: str | None, field_name: str) -> str:
 class TargetAwarePolarityEntry:
     entry_id: str
     instrument_id: str
+    side_identity: str
     chart_id: str
+    chart_hypothesis_id: str
     transit_body: str
     natal_target: str
     aspect_type: str
@@ -55,8 +58,18 @@ class TargetAwarePolarityEntry:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "entry_id", _required(self.entry_id, "entry_id"))
-        object.__setattr__(self, "instrument_id", _upper(self.instrument_id, "instrument_id"))
+        instrument = normalize_instrument_id(self.instrument_id)
+        if not instrument.startswith("FX_CURRENCY:"):
+            raise ValueError("catalogue entries must use an FX_CURRENCY primary identity")
+        side_identity = _upper(self.side_identity, "side_identity")
+        if side_identity not in {"USD", "JPY"}:
+            raise ValueError("side_identity must be USD or JPY")
+        if instrument != f"FX_CURRENCY:{side_identity}":
+            raise ValueError("side_identity must match the FX_CURRENCY primary identity")
+        object.__setattr__(self, "instrument_id", instrument)
+        object.__setattr__(self, "side_identity", side_identity)
         object.__setattr__(self, "chart_id", _required(self.chart_id, "chart_id"))
+        object.__setattr__(self, "chart_hypothesis_id", _required(self.chart_hypothesis_id, "chart_hypothesis_id"))
         object.__setattr__(self, "transit_body", _upper(self.transit_body, "transit_body"))
         object.__setattr__(self, "natal_target", _upper(self.natal_target, "natal_target"))
         object.__setattr__(self, "aspect_type", _lower(self.aspect_type, "aspect_type"))
@@ -72,7 +85,9 @@ class TargetAwarePolarityEntry:
         return cls(
             entry_id=str(raw.get("entry_id") or raw.get("entryId") or ""),
             instrument_id=str(raw.get("instrument_id") or raw.get("instrumentId") or ""),
+            side_identity=str(raw.get("side_identity") or raw.get("sideIdentity") or ""),
             chart_id=str(raw.get("chart_id") or raw.get("chartId") or ""),
+            chart_hypothesis_id=str(raw.get("chart_hypothesis_id") or raw.get("chartHypothesisId") or ""),
             transit_body=str(raw.get("transit_body") or raw.get("transitBody") or ""),
             natal_target=str(raw.get("natal_target") or raw.get("natalTarget") or ""),
             aspect_type=str(raw.get("aspect_type") or raw.get("aspectType") or ""),
@@ -87,7 +102,9 @@ class TargetAwarePolarityEntry:
         return {
             "entryId": self.entry_id,
             "instrumentId": self.instrument_id,
+            "sideIdentity": self.side_identity,
             "chartId": self.chart_id,
+            "chartHypothesisId": self.chart_hypothesis_id,
             "transitBody": self.transit_body,
             "natalTarget": self.natal_target,
             "aspectType": self.aspect_type,
@@ -140,7 +157,9 @@ class TargetAwarePolarityCatalogue:
                     raise ValueError("catalogue entry evidence packet hash does not match registry")
                 if (
                     packet.instrument_id != entry.instrument_id
+                    or packet.side_identity != entry.side_identity
                     or packet.chart_id != entry.chart_id
+                    or packet.chart_hypothesis_id != entry.chart_hypothesis_id
                     or packet.transit_body != entry.transit_body
                     or packet.natal_target != entry.natal_target
                     or packet.aspect_type != entry.aspect_type
@@ -159,7 +178,14 @@ class TargetAwarePolarityCatalogue:
 
 def normalize_instrument_id(value: str) -> str:
     token = _upper(value, "instrument_id")
-    return token.split(":", 1)[-1]
+    prefix, separator, token_value = token.partition(":")
+    if separator != ":" or not token_value:
+        raise ValueError("instrument_id must be FX_CURRENCY:<ISO code> or FX_PAIR:<pair>")
+    if prefix == "FX_CURRENCY" and token_value in {"USD", "JPY"}:
+        return f"{prefix}:{token_value}"
+    if prefix == "FX_PAIR" and token_value == "USDJPY":
+        return f"{prefix}:{token_value}"
+    raise ValueError("unsupported V2B instrument identity")
 
 
 def lookup_target_aware_polarity(
@@ -172,6 +198,14 @@ def lookup_target_aware_polarity(
     aspect_type: str | None = None,
 ) -> dict[str, Any]:
     instrument = normalize_instrument_id(instrument_id)
+    if instrument.startswith("FX_PAIR:"):
+        return _missing_result(
+            catalogue,
+            instrument=instrument,
+            chart_id=None,
+            state="PAIR_DERIVATION_ONLY",
+            reason="USDJPY is a derived comparison. Resolve USD and JPY primary chart contexts independently; a pair cannot be a primary polarity catalogue lookup.",
+        )
     supplied_context = (chart_id, transit_body, natal_target, aspect_type)
     supplied_count = sum(bool(str(value or "").strip()) for value in supplied_context)
     if supplied_count not in {0, 4}:
@@ -222,6 +256,7 @@ def lookup_target_aware_polarity(
         "catalogueStatus": catalogue.catalogue_status,
         "catalogueHash": catalogue.catalogue_hash,
         "instrumentId": instrument,
+        "sideIdentity": entry.side_identity,
         "chartId": entry.chart_id,
         "entry": entry.to_public(),
         "reason": "Accepted immutable categorical polarity entry found. Magnitude remains intentionally unconfigured.",
@@ -247,6 +282,7 @@ def _missing_result(
         "catalogueStatus": catalogue.catalogue_status,
         "catalogueHash": catalogue.catalogue_hash,
         "instrumentId": instrument,
+        "sideIdentity": instrument.split(":", 1)[1] if instrument.startswith("FX_CURRENCY:") else None,
         "chartId": chart_id,
         "entry": None,
         "reason": reason,

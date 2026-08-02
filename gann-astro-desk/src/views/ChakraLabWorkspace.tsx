@@ -131,7 +131,7 @@ export function ChakraLabWorkspace({
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
   const [fixedPhasor, setFixedPhasor] = useState<ChakraFixedPhasorSeries | null>(null)
-  const [aspectPolarity, setAspectPolarity] = useState<ChartConditionedPolarityLookup | null>(null)
+  const [fxSidePolarities, setFxSidePolarities] = useState<Record<'USD' | 'JPY', ChartConditionedPolarityLookup> | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
   const [workspaceMode, setWorkspaceMode] = useState<'WORKSPACE' | 'BOARD' | 'AUDIT'>('WORKSPACE')
   const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
@@ -145,16 +145,6 @@ export function ChakraLabWorkspace({
   const [phasorError, setPhasorError] = useState('')
   const [error, setError] = useState('')
   const initialRun = useRef(false)
-  const selectedAspectIdentity = useMemo(() => (
-    selectedAspect
-      ? {
-          transitBody: selectedAspect.transitBody,
-          natalTarget: selectedAspect.natalBody,
-          aspectType: selectedAspect.aspect,
-        }
-      : null
-  ), [selectedAspect])
-
   const request = useMemo<ChakraLabRequest>(() => ({
     at: offsetIst(atLocal),
     timezone: 'Asia/Kolkata',
@@ -238,20 +228,20 @@ export function ChakraLabWorkspace({
     let active = true
     void (async () => {
       try {
-        const result = await fetchChartConditionedPolarityLookup({
-          instrumentIdentity: `FX:${chart?.symbol ?? 'USDJPY'}`,
-          ...(selectedAspectIdentity ?? {}),
-        })
-        if (active) setAspectPolarity(result ?? null)
+        const [usd, jpy] = await Promise.all([
+          fetchChartConditionedPolarityLookup({ instrumentIdentity: 'FX_CURRENCY:USD' }),
+          fetchChartConditionedPolarityLookup({ instrumentIdentity: 'FX_CURRENCY:JPY' }),
+        ])
+        if (active) setFxSidePolarities({ USD: usd, JPY: jpy })
       } catch (caught) {
         if (active) {
-          setAspectPolarity(null)
+          setFxSidePolarities(null)
           setError(caught instanceof Error ? caught.message : String(caught))
         }
       }
     })()
     return () => { active = false }
-  }, [chart?.symbol, selectedAspectIdentity])
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
@@ -429,7 +419,7 @@ export function ChakraLabWorkspace({
           onSelectCell={setSelectedCell}
           onSelectMoment={selectMoment}
           currencyPairEvidence={currencyPairEvidence}
-          aspectPolarity={aspectPolarity}
+            fxSidePolarities={fxSidePolarities}
           selectedAspectLabel={selectedAspectLabel}
           selectedAspect={selectedAspect}
           fixedPhasorInterval={fixedPhasor?.intervals[0] ?? null}

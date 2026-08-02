@@ -230,7 +230,8 @@ const missingAspectPolarity: ChartConditionedPolarityLookup = {
   catalogueId: 'CHART_CONDITIONED_TARGET_AWARE_POLARITY_BASELINE_V1',
   catalogueStatus: 'NO_ACCEPTED_PRODUCTION_ENTRIES',
   catalogueHash: 'catalogue-hash',
-  instrumentId: 'USDJPY',
+  instrumentId: 'FX_CURRENCY:USD',
+  sideIdentity: 'USD',
   chartId: null,
   entry: null,
   reason: 'No accepted immutable target-aware polarity entry is available for this instrument.',
@@ -1298,7 +1299,8 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.getByText('Why this state')).toBeInTheDocument()
     expect(screen.getByText('Read-only experimental')).toBeInTheDocument()
     expect(await screen.findByText('Chart-conditioned aspect pressure')).toBeInTheDocument()
-    expect(screen.getByText('Polarity Catalogue Missing')).toBeInTheDocument()
+    expect(screen.getByText('USD: Polarity Catalogue Missing')).toBeInTheDocument()
+    expect(screen.getByText('JPY: Polarity Catalogue Missing')).toBeInTheDocument()
     expect(screen.getByText(/No sign is inferred from transit geometry/i)).toBeInTheDocument()
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
@@ -1366,7 +1368,7 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
   })
 
-  it('uses the selected aspect identity for the immutable polarity lookup', async () => {
+  it('resolves independent USD and JPY primary chart identities', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
 
@@ -1379,13 +1381,9 @@ describe('ChakraLabWorkspace', () => {
       />,
     )
 
-    await waitFor(() => expect(fetchAspectPolarity).toHaveBeenCalledWith({
-      instrumentIdentity: 'FX:USDJPY',
-      transitBody: 'MARS',
-      natalTarget: 'SUN',
-      aspectType: 'square',
-    }))
-    expect(await screen.findByText('Evidence packet readiness')).toBeInTheDocument()
+    await waitFor(() => expect(fetchAspectPolarity).toHaveBeenCalledWith({ instrumentIdentity: 'FX_CURRENCY:USD' }))
+    expect(fetchAspectPolarity).toHaveBeenCalledWith({ instrumentIdentity: 'FX_CURRENCY:JPY' })
+    expect(await screen.findByText('Side-chart evidence packet readiness')).toBeInTheDocument()
     expect(screen.getByText(/MARS to SUN Square/i)).toBeInTheDocument()
   })
 
