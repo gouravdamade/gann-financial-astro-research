@@ -1,8 +1,24 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 19:02 IST
+Last updated: 2026-08-02 20:40 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2B-0 Baseline and Freeze)
+
+- Founder physically confirmed the targeted `0.10.32-pfr-u1-s1` wheel-zoom
+  repair: aspect lanes and Live SR lines remained visible through repeated
+  zoom. The U1-S1 targeted check is now recorded as passed in
+  `docs/sbc/PFR_U1_FOUNDER_ACCEPTANCE.md`.
+- Opened the dedicated `pfr-v2b-categorical-oscillator` branch. V2A is frozen
+  at `b022b20`: the catalogue and packet registry remain empty, candidate
+  worksheets remain non-admissible, and every research/execution guardrail
+  remains in force.
+- The V2B sequence is recorded in `docs/sbc/PFR_V2B_ACCEPTANCE_REPORT.md`.
+  The next bounded code change is V2B-1: independent USD and JPY side
+  identities plus pending-review candidate defaults. No range oscillator,
+  polarity, magnitude, fusion, ML, Auto Suggest, live inference, or execution
+  was added in V2B-0.
 
 ## Latest Update - 2026-08-02 (PFR-V2A-3 Candidate Evidence-Packet Preparation)
 
