@@ -36,6 +36,7 @@ const {
   fetchTimingSourceReadiness,
   fetchTimingSourceVerification,
   fetchAspectPolarity,
+  fetchSynchronizedRange,
   verifyAuditCatalog,
   verifyAuditPackage,
 } = vi.hoisted(() => ({
@@ -51,6 +52,7 @@ const {
   fetchTimingSourceReadiness: vi.fn(),
   fetchTimingSourceVerification: vi.fn(),
   fetchAspectPolarity: vi.fn(),
+  fetchSynchronizedRange: vi.fn(),
   verifyAuditCatalog: vi.fn(),
   verifyAuditPackage: vi.fn(),
 }))
@@ -62,6 +64,7 @@ vi.mock('./api', () => ({
   fetchChakraLabFixedPhasor: fetchFixedPhasor,
   fetchChakraLabSnapshot: fetchSnapshot,
   fetchChartConditionedPolarityLookup: fetchAspectPolarity,
+  fetchSynchronizedIndependentRange: fetchSynchronizedRange,
   fetchChakraTimingProfileAdmission: fetchTimingAdmission,
   fetchChakraTimingExternalReview: fetchTimingExternalReview,
   fetchChakraTimingSignedReview: fetchTimingSignedReview,
@@ -86,6 +89,7 @@ afterEach(() => {
   fetchTimingSourceReadiness.mockReset()
   fetchTimingSourceVerification.mockReset()
   fetchAspectPolarity.mockReset()
+  fetchSynchronizedRange.mockReset()
   verifyAuditCatalog.mockReset()
   verifyAuditPackage.mockReset()
 })
@@ -246,6 +250,25 @@ const missingAspectPolarity: ChartConditionedPolarityLookup = {
     actsAsSbcConfirmation: false,
   },
 }
+
+const liveViewportChart = {
+  symbol: 'USDJPY',
+  timeframe: 'H1',
+  candles: [
+    { time: 1_752_250_800, open: 147, high: 147.2, low: 146.8, close: 147.1 },
+    { time: 1_752_254_400, open: 147.1, high: 147.3, low: 147, close: 147.2 },
+    { time: 1_752_258_000, open: 147.2, high: 147.4, low: 147.1, close: 147.3 },
+  ],
+  aspects: [],
+} as unknown as import('./types').ChartPayload
+
+const synchronizedViewportRange = {
+  rangeStartUtc: '2025-07-11T16:20:00.000Z',
+  rangeEndUtc: '2025-07-11T18:20:00.000Z',
+  aspectFields: { USD: { intervals: [] }, JPY: { intervals: [] } },
+  sbcField: { intervals: [] },
+  guardrails: { executionAllowed: false, fieldsFused: false, marketDirectionInferred: false },
+} as unknown as import('./types').SynchronizedIndependentRange
 
 const selectedAspect = {
   eventId: 'event-test-001',
@@ -1243,6 +1266,27 @@ const catalogBuild: ChakraAuditCatalogBuild = {
 }
 
 describe('ChakraLabWorkspace', () => {
+  it('automatically requests the settled live chart viewport rather than a trailing candle slice', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
+    fetchSynchronizedRange.mockResolvedValue(synchronizedViewportRange)
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={73.8567}
+        chart={liveViewportChart}
+        visibleRangeStartUtc="2025-07-11T16:20:00.000Z"
+        visibleRangeEndUtc="2025-07-11T18:20:00.000Z"
+      />,
+    )
+
+    await waitFor(() => expect(fetchSynchronizedRange).toHaveBeenCalledWith(expect.objectContaining({
+      rangeStartUtc: '2025-07-11T16:20:00.000Z',
+      rangeEndUtc: '2025-07-11T18:20:00.000Z',
+    })))
+  })
+
   it('renders source-profiled guidance without trading direction labels', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     const user = userEvent.setup()

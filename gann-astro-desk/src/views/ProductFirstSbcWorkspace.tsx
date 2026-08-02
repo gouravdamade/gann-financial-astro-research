@@ -33,6 +33,7 @@ type Props = {
   phasorError: string
   onLoadFixedPhasor: () => void
   synchronizedRange?: SynchronizedIndependentRange | null
+  synchronizedRangeSource?: string | null
   synchronizedBusy?: boolean
   synchronizedError?: string
   onLoadSynchronizedFields?: () => void
@@ -90,6 +91,7 @@ export function ProductFirstSbcWorkspace({
   phasorError,
   onLoadFixedPhasor,
   synchronizedRange = null,
+  synchronizedRangeSource = null,
   synchronizedBusy = false,
   synchronizedError = '',
   onLoadSynchronizedFields = () => undefined,
@@ -106,7 +108,15 @@ export function ProductFirstSbcWorkspace({
   const [comparisonOpen, setComparisonOpen] = useState(false)
   const [fieldStackOpen, setFieldStackOpen] = useState(false)
   const guidance = snapshot?.guidance ?? null
-  const candles = chart?.candles.slice(-110) ?? []
+  const requestedRangeStart = synchronizedRange ? Date.parse(synchronizedRange.rangeStartUtc) / 1000 : null
+  const requestedRangeEnd = synchronizedRange ? Date.parse(synchronizedRange.rangeEndUtc) / 1000 : null
+  const rangeCandles = (chart?.candles ?? []).filter((candle) => (
+    (requestedRangeStart == null || candle.time >= requestedRangeStart)
+    && (requestedRangeEnd == null || candle.time <= requestedRangeEnd)
+  ))
+  // An already validated field range should overlap the loaded chart. Test fixtures
+  // and stale restored layouts may not, so retain a readable chart instead of an empty tool surface.
+  const candles = rangeCandles.length ? rangeCandles : (chart?.candles ?? [])
   const firstTime = candles[0]?.time ?? 0
   const lastTime = candles.at(-1)?.time ?? firstTime + 1
   const rangeSeconds = Math.max(1, lastTime - firstTime)
@@ -463,6 +473,7 @@ export function ProductFirstSbcWorkspace({
         pilotBusy={pilotBusy}
         pilotError={pilotError}
         onLoadPilot={onLoadPilotStatus}
+        rangeSource={synchronizedRangeSource}
       />}
 
       {wheelOpen && (

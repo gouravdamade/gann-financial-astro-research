@@ -2,6 +2,20 @@
 
 Date opened: 2026-08-02
 
+## PFR-V2B-R1 Live Range and Stepped Fields
+
+- Status: `COMPLETE` on 2026-08-02.
+- Chakra Fields now follows the debounced, persisted price-chart viewport rather
+  than the old trailing 110-candle slice. A sequence guard prevents older
+  responses from replacing a later visible range.
+- USD and JPY render as separate categorical step panels with a zero axis,
+  patterned unknown gaps, and explicit mixed activity. The display is marked
+  `MAGNITUDE_NOT_CONFIGURED`; SBC remains an independent availability field.
+- Verification: Oxlint; 32 frontend files / 133 tests; production Vite build.
+  Details: `docs/sbc/PFR_V2B_R1_LIVE_RANGE_AND_STEPPED_FIELDS.md`.
+- This does not provide pair direction, evidence admission, or completion of
+  V2B. Next is crosshair/selected-interval synchronization.
+
 ## PFR-V2B-R0 Remote Reconciliation
 
 - Status: `COMPLETE` on 2026-08-02.

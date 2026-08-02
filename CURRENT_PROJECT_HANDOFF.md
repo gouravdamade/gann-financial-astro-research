@@ -1,8 +1,32 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 22:32 IST
+Last updated: 2026-08-02 22:46 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2B-R1 Live Range and Stepped Fields)
+
+- Completed the first founder-visible oscillator product layer without
+  manufacturing evidence. Chakra no longer builds its independent field request
+  from a fixed trailing `slice(-110)`. It now consumes the settled UTC visible
+  range already persisted by the price chart after a debounced pan or zoom.
+- The Chakra workspace automatically refreshes its synchronized USD, JPY, and
+  independent SBC range after a 240 ms settle window. A sequence guard discards
+  any response from an older viewport, so a slow request cannot overwrite a
+  newer chart range. `Refresh now` remains only as an explicit retry action.
+- The Fields surface now renders USD and JPY as categorical stepped panels:
+  supportive above zero, adverse below zero, explicitly reviewed neutral on
+  zero, mixed as separate positive/negative dashed activity, and unknown as a
+  patterned broken gap. Each panel is labelled `MAGNITUDE_NOT_CONFIGURED`.
+  SBC remains an independent availability timeline, never a polarity scale or
+  automatic confirmation.
+- Verification: Oxlint clean; frontend `32 files / 133 tests`; TypeScript/Vite
+  production build passed. Details:
+  `docs/sbc/PFR_V2B_R1_LIVE_RANGE_AND_STEPPED_FIELDS.md`.
+- Next bounded work: PFR-V2B-R2, establish shared crosshair/selected-interval
+  synchronization between the price chart, fields, Chakra, and Why drawer.
+  Derived USDJPY polarity and founder evidence admission remain separate later
+  milestones. No package is created at this stage.
 
 ## Latest Update - 2026-08-02 (PFR-V2B-R0 Remote Reconciliation)
 

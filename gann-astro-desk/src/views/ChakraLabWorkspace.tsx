@@ -118,6 +118,8 @@ type Props = {
   defaultLatitude: number
   defaultLongitude: number
   chart?: ChartPayload | null
+  visibleRangeStartUtc?: string | null
+  visibleRangeEndUtc?: string | null
   currencyPairEvidence?: CurrencyPairEvidence | null
   selectedAspectLabel?: string | null
   selectedAspect?: AspectWindow | null
@@ -127,6 +129,8 @@ export function ChakraLabWorkspace({
   defaultLatitude,
   defaultLongitude,
   chart = null,
+  visibleRangeStartUtc = null,
+  visibleRangeEndUtc = null,
   currencyPairEvidence = null,
   selectedAspectLabel = null,
   selectedAspect = null,
@@ -160,6 +164,7 @@ export function ChakraLabWorkspace({
   const [pilotError, setPilotError] = useState('')
   const [error, setError] = useState('')
   const initialRun = useRef(false)
+  const synchronizedRequestSequence = useRef(0)
   const request = useMemo<ChakraLabRequest>(() => ({
     at: offsetIst(atLocal),
     timezone: 'Asia/Kolkata',
@@ -190,6 +195,28 @@ export function ChakraLabWorkspace({
     nameInitials,
     vowels,
   ])
+
+  const fieldRange = useMemo(() => {
+    const candles = chart?.candles ?? []
+    if (!candles.length) return null
+    const chartStart = candles[0].time * 1000
+    const chartEnd = candles.at(-1)!.time * 1000
+    const requestedStart = visibleRangeStartUtc ? Date.parse(visibleRangeStartUtc) : Number.NaN
+    const requestedEnd = visibleRangeEndUtc ? Date.parse(visibleRangeEndUtc) : Number.NaN
+    const start = Number.isFinite(requestedStart) ? Math.max(chartStart, requestedStart) : chartStart
+    const end = Number.isFinite(requestedEnd) ? Math.min(chartEnd, requestedEnd) : chartEnd
+    if (end <= start) return null
+    const rangeStartUtc = new Date(start).toISOString()
+    const rangeEndUtc = new Date(end).toISOString()
+    return {
+      rangeStartUtc,
+      rangeEndUtc,
+      signature: `${rangeStartUtc}:${rangeEndUtc}`,
+      source: Number.isFinite(requestedStart) && Number.isFinite(requestedEnd)
+        ? 'live chart viewport'
+        : 'loaded chart extent',
+    }
+  }, [chart?.candles, visibleRangeEndUtc, visibleRangeStartUtc])
 
   const loadSnapshot = useCallback(async (atOverride?: string) => {
     setBusy(true)
@@ -234,29 +261,23 @@ export function ChakraLabWorkspace({
   }, [chart?.symbol, request])
 
   const loadSynchronizedFields = useCallback(async () => {
-    const candles = chart?.candles.slice(-110) ?? []
-    if (!candles.length) {
+    if (!fieldRange) {
       setSynchronizedRange(null)
-      setSynchronizedError('Open this workspace from a loaded chart before loading its visible range.')
+      setSynchronizedError('Open this workspace from a chart with at least two visible timestamps.')
       return
     }
-    const rangeStartUtc = new Date(candles[0].time * 1000).toISOString()
-    const rangeEndUtc = new Date(candles.at(-1)!.time * 1000).toISOString()
-    if (Date.parse(rangeEndUtc) <= Date.parse(rangeStartUtc)) {
-      setSynchronizedRange(null)
-      setSynchronizedError('The rendered chart range must contain at least two distinct timestamps.')
-      return
-    }
+    const sequence = synchronizedRequestSequence.current + 1
+    synchronizedRequestSequence.current = sequence
     setSynchronizedBusy(true)
     setSynchronizedError('')
     try {
       const boundaryRequest = {
         ...structuredClone(request),
-        at: istOffsetFromUtc(rangeStartUtc),
+        at: istOffsetFromUtc(fieldRange.rangeStartUtc),
       }
       const result = await fetchSynchronizedIndependentRange({
-        rangeStartUtc,
-        rangeEndUtc,
+        rangeStartUtc: fieldRange.rangeStartUtc,
+        rangeEndUtc: fieldRange.rangeEndUtc,
         aspectRanges: [
           {
             sideIdentity: 'USD',
@@ -281,14 +302,16 @@ export function ChakraLabWorkspace({
           }],
         },
       })
-      setSynchronizedRange(result)
+      if (sequence === synchronizedRequestSequence.current) setSynchronizedRange(result)
     } catch (caught) {
-      setSynchronizedRange(null)
-      setSynchronizedError(caught instanceof Error ? caught.message : String(caught))
+      if (sequence === synchronizedRequestSequence.current) {
+        setSynchronizedRange(null)
+        setSynchronizedError(caught instanceof Error ? caught.message : String(caught))
+      }
     } finally {
-      setSynchronizedBusy(false)
+      if (sequence === synchronizedRequestSequence.current) setSynchronizedBusy(false)
     }
-  }, [chart?.candles, chart?.symbol, request])
+  }, [chart?.symbol, fieldRange, request])
 
   const loadPilotStatus = useCallback(async () => {
     setPilotBusy(true)
@@ -310,9 +333,15 @@ export function ChakraLabWorkspace({
   }, [loadSnapshot])
 
   useEffect(() => {
-    setSynchronizedRange(null)
-    setSynchronizedError('')
-  }, [chart?.candles, request])
+    if (!fieldRange) {
+      setSynchronizedRange(null)
+      return
+    }
+    const timer = window.setTimeout(() => {
+      void loadSynchronizedFields()
+    }, 240)
+    return () => window.clearTimeout(timer)
+  }, [fieldRange, loadSynchronizedFields])
 
   useEffect(() => {
     let active = true
@@ -518,6 +547,7 @@ export function ChakraLabWorkspace({
           phasorError={phasorError}
           onLoadFixedPhasor={() => void loadFixedPhasor()}
           synchronizedRange={synchronizedRange}
+          synchronizedRangeSource={fieldRange?.source ?? null}
           synchronizedBusy={synchronizedBusy}
           synchronizedError={synchronizedError}
           onLoadSynchronizedFields={() => void loadSynchronizedFields()}
