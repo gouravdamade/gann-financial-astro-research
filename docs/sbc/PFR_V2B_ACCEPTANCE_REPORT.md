@@ -31,11 +31,27 @@ Date opened: 2026-08-02
   `21 passed`, API `8 passed`, lint and production frontend build passed.
 - Details: `docs/sbc/PFR_V2B_1_FX_SIDE_CONTRACT.md`.
 
+## V2B-2 Categorical Visible-Range Compiler
+
+- Status: `COMPLETE` on 2026-08-02.
+- Added the research-only `CHART_CONDITIONED_CATEGORICAL_RANGE_V1` compiler
+  and private backend range route. A bounded side-chart input produces
+  contiguous timestamp-safe intervals only: `SUPPORTIVE`, `ADVERSE`,
+  `NEUTRAL`, `MIXED`, or an explicit `UNKNOWN` gap.
+- An active unreviewed event always makes that atomic segment `UNKNOWN`; a
+  known event cannot paint over absent evidence. `MIXED` retains separate
+  supportive and adverse activity rather than inventing one combined sign.
+- Corrected the lookup key: `chartHypothesisId` is now required alongside
+  chart id, transit, natal target, and aspect for every event-level lookup.
+- Verification: catalogue/range `9 passed`, backend `5 passed`, focused
+  desktop/API `29 passed` when run individually, lint/build passed. Details:
+  `docs/sbc/PFR_V2B_2_CATEGORICAL_VISIBLE_RANGE.md`.
+
 ## Bounded V2B Sequence
 
 1. V2B-1: migrate the primary research identity to independent USD and JPY
    side contracts, and correct candidate defaults to pending review.
-2. V2B-2: compile chart-conditioned categorical visible-range intervals.
+2. V2B-2: compile chart-conditioned categorical visible-range intervals. `COMPLETE`.
 3. V2B-3: surface existing SBC atomic intervals as a separate visible-range
    field.
 4. V2B-4 and V2B-5: synchronize range/time selection and render the

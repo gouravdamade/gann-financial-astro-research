@@ -59,6 +59,7 @@ def test_incomplete_event_context_fails_closed() -> None:
         TargetAwarePolarityCatalogue.load(),
         instrument_id="FX_CURRENCY:USD",
         chart_id="USD-TEST",
+        chart_hypothesis_id="USD-HYPOTHESIS-001",
         transit_body="MARS",
     )
 
@@ -111,6 +112,7 @@ def test_explicit_catalogue_entry_is_categorical_without_magnitude(tmp_path) -> 
         ),
         instrument_id="FX_CURRENCY:USD",
         chart_id="USD-TEST",
+        chart_hypothesis_id="USD-HYPOTHESIS-001",
         transit_body="MARS",
         natal_target="SUN",
         aspect_type="SQUARE",
@@ -236,8 +238,8 @@ def test_usd_and_jpy_chart_contexts_resolve_independently(tmp_path) -> None:
         ),
     )
 
-    usd = lookup_target_aware_polarity(catalogue, instrument_id="FX_CURRENCY:USD", chart_id="USD-TEST", transit_body="MARS", natal_target="SUN", aspect_type="square")
-    jpy = lookup_target_aware_polarity(catalogue, instrument_id="FX_CURRENCY:JPY", chart_id="JPY-TEST", transit_body="MARS", natal_target="SUN", aspect_type="square")
+    usd = lookup_target_aware_polarity(catalogue, instrument_id="FX_CURRENCY:USD", chart_id="USD-TEST", chart_hypothesis_id="USD-HYPOTHESIS-001", transit_body="MARS", natal_target="SUN", aspect_type="square")
+    jpy = lookup_target_aware_polarity(catalogue, instrument_id="FX_CURRENCY:JPY", chart_id="JPY-TEST", chart_hypothesis_id="JPY-HYPOTHESIS-001", transit_body="MARS", natal_target="SUN", aspect_type="square")
 
     assert usd["entry"]["precomputedPolarity"] == "ADVERSE"
     assert jpy["entry"]["precomputedPolarity"] == "SUPPORTIVE"

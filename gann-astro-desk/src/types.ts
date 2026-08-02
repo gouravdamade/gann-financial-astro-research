@@ -2114,6 +2114,7 @@ export type ChartConditionedPolarityLookup = {
   instrumentId: string
   sideIdentity: 'USD' | 'JPY' | null
   chartId: string | null
+  chartHypothesisId: string | null
   entry: ChartConditionedPolarityEntry | null
   reason: string
   stateContract: 'CATEGORICAL_POLARITY_STATE'

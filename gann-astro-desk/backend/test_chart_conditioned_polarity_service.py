@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import unittest
 
-from chart_conditioned_polarity_service import build_chart_conditioned_polarity_lookup
+from chart_conditioned_polarity_service import (
+    build_chart_conditioned_polarity_lookup,
+    build_chart_conditioned_polarity_range,
+)
 
 
 class ChartConditionedPolarityServiceTests(unittest.TestCase):
@@ -37,3 +40,16 @@ class ChartConditionedPolarityServiceTests(unittest.TestCase):
 
         self.assertEqual(result["lookupState"], "PAIR_DERIVATION_ONLY")
         self.assertIsNone(result["entry"])
+
+    def test_empty_side_range_is_an_explicit_unknown_gap(self) -> None:
+        result = build_chart_conditioned_polarity_range({
+            "instrumentIdentity": "FX_CURRENCY:USD",
+            "chartId": "USD-TEST",
+            "chartHypothesisId": "USD-HYPOTHESIS-001",
+            "rangeStartUtc": "2026-08-02T00:00:00Z",
+            "rangeEndUtc": "2026-08-02T01:00:00Z",
+            "events": [],
+        })
+
+        self.assertEqual(result["intervals"][0]["polarityState"], "UNKNOWN")
+        self.assertFalse(result["guardrails"]["executionAllowed"])

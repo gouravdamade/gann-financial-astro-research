@@ -233,6 +233,7 @@ const missingAspectPolarity: ChartConditionedPolarityLookup = {
   instrumentId: 'FX_CURRENCY:USD',
   sideIdentity: 'USD',
   chartId: null,
+  chartHypothesisId: null,
   entry: null,
   reason: 'No accepted immutable target-aware polarity entry is available for this instrument.',
   stateContract: 'CATEGORICAL_POLARITY_STATE',

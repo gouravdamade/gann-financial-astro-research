@@ -1,8 +1,25 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 20:54 IST
+Last updated: 2026-08-02 21:13 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2B-2 Categorical Visible Range)
+
+- Completed V2B-2 on branch `pfr-v2b-categorical-oscillator`. Added the
+  private, research-only `CHART_CONDITIONED_CATEGORICAL_RANGE_V1` compiler and
+  `/api/chart-conditioned-polarity/range` route. It creates contiguous atomic
+  side-chart intervals across a supplied UTC range.
+- The compiler shows `SUPPORTIVE`, `ADVERSE`, `NEUTRAL`, `MIXED`, or explicit
+  `UNKNOWN` gaps. Any active event lacking accepted immutable evidence makes
+  that segment unknown, so known events never conceal missing evidence.
+- Tightened the V2B-1 primary identity contract: `chartHypothesisId` is now
+  required in the event-level lookup key as well as the stored record. This is
+  a context-correctness repair, not new market logic.
+- Verification: catalogue/range `9 passed`, backend `5 passed`, focused
+  desktop/API suites `29 passed` when run individually, lint/build passed.
+  No UI range panel or installer yet. Next bounded item is V2B-3: expose SBC
+  atomic intervals via a separate read-only range contract, with no fusion.
 
 ## Latest Update - 2026-08-02 (PFR-V2B-1 Independent FX Side Contracts)
 

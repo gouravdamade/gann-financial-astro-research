@@ -39,6 +39,7 @@ from .polarity_evidence import (
     TargetAwarePolarityEvidencePacket,
     TargetAwarePolarityEvidencePacketRegistry,
 )
+from .polarity_series import compile_categorical_visible_range
 from .transits import adapt_explicit_tn_event
 
 __all__ = [
@@ -74,5 +75,6 @@ __all__ = [
     "canonical_json",
     "load_research_profiles",
     "lookup_target_aware_polarity",
+    "compile_categorical_visible_range",
     "stable_hash",
 ]

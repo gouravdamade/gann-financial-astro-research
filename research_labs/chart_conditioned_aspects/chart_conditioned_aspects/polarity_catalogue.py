@@ -193,6 +193,7 @@ def lookup_target_aware_polarity(
     *,
     instrument_id: str,
     chart_id: str | None = None,
+    chart_hypothesis_id: str | None = None,
     transit_body: str | None = None,
     natal_target: str | None = None,
     aspect_type: str | None = None,
@@ -203,28 +204,32 @@ def lookup_target_aware_polarity(
             catalogue,
             instrument=instrument,
             chart_id=None,
+            chart_hypothesis_id=None,
             state="PAIR_DERIVATION_ONLY",
             reason="USDJPY is a derived comparison. Resolve USD and JPY primary chart contexts independently; a pair cannot be a primary polarity catalogue lookup.",
         )
-    supplied_context = (chart_id, transit_body, natal_target, aspect_type)
+    supplied_context = (chart_id, chart_hypothesis_id, transit_body, natal_target, aspect_type)
     supplied_count = sum(bool(str(value or "").strip()) for value in supplied_context)
-    if supplied_count not in {0, 4}:
+    if supplied_count not in {0, 5}:
         return _missing_result(
             catalogue,
             instrument=instrument,
             chart_id=chart_id,
+            chart_hypothesis_id=chart_hypothesis_id,
             state="TARGET_CONTEXT_INCOMPLETE",
-            reason="Chart id, transit body, natal target, and aspect type must be supplied together for an event-level lookup.",
+            reason="Chart id, chart hypothesis id, transit body, natal target, and aspect type must be supplied together for an event-level lookup.",
         )
     if supplied_count == 0:
         return _missing_result(
             catalogue,
             instrument=instrument,
             chart_id=None,
+            chart_hypothesis_id=None,
             state="POLARITY_CATALOGUE_MISSING",
             reason="No accepted immutable target-aware polarity entry is available for this instrument.",
         )
     normalized_chart = _required(chart_id, "chart_id")
+    normalized_hypothesis = _required(chart_hypothesis_id, "chart_hypothesis_id")
     normalized_transit = _upper(transit_body, "transit_body")
     normalized_target = _upper(natal_target, "natal_target")
     normalized_aspect = _lower(aspect_type, "aspect_type")
@@ -233,6 +238,7 @@ def lookup_target_aware_polarity(
         for entry in catalogue.entries
         if entry.instrument_id == instrument
         and entry.chart_id == normalized_chart
+        and entry.chart_hypothesis_id == normalized_hypothesis
         and entry.transit_body == normalized_transit
         and entry.natal_target == normalized_target
         and entry.aspect_type == normalized_aspect
@@ -242,6 +248,7 @@ def lookup_target_aware_polarity(
             catalogue,
             instrument=instrument,
             chart_id=normalized_chart,
+            chart_hypothesis_id=normalized_hypothesis,
             state="POLARITY_CATALOGUE_MISSING",
             reason="No accepted immutable target-aware polarity entry matches this chart, transit, natal target, and aspect.",
         )
@@ -258,6 +265,7 @@ def lookup_target_aware_polarity(
         "instrumentId": instrument,
         "sideIdentity": entry.side_identity,
         "chartId": entry.chart_id,
+        "chartHypothesisId": entry.chart_hypothesis_id,
         "entry": entry.to_public(),
         "reason": "Accepted immutable categorical polarity entry found. Magnitude remains intentionally unconfigured.",
         "stateContract": "CATEGORICAL_POLARITY_STATE",
@@ -271,6 +279,7 @@ def _missing_result(
     *,
     instrument: str,
     chart_id: str | None,
+    chart_hypothesis_id: str | None,
     state: LOOKUP_STATE,
     reason: str,
 ) -> dict[str, Any]:
@@ -284,6 +293,7 @@ def _missing_result(
         "instrumentId": instrument,
         "sideIdentity": instrument.split(":", 1)[1] if instrument.startswith("FX_CURRENCY:") else None,
         "chartId": chart_id,
+        "chartHypothesisId": chart_hypothesis_id,
         "entry": None,
         "reason": reason,
         "stateContract": "CATEGORICAL_POLARITY_STATE",
