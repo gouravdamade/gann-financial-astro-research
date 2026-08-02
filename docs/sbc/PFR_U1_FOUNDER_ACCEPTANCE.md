@@ -73,10 +73,28 @@ Do not change the product during acceptance. A rejection or defect report must b
   viewport, causing the band to be incorrectly omitted. The planetary-line
   disappearance shares the viewport-refresh path and requires native tracing
   before its corrective change is defined.
-- Status: `REPRODUCTION_AND_BOUNDED_HOTFIX_APPROVAL_PENDING`.
+- Status: `IMPLEMENTED_VALIDATED_PACKAGE_PENDING`.
 
-This record is not a product patch. Under PFR-U1, the exact candidate remains
-frozen until the founder approves a reproducible S1 hotfix.
+### Approved Bounded Correction
+
+- Approval: founder approved U1-S1 hotfix implementation on 2026-08-02.
+- Aspect correction: active aspect intervals are clipped to the viewport before
+  coordinates are calculated, so an aspect remains visible when its start and
+  end boundaries are both off-screen.
+- Live SR correction: a viewport request includes sparse whole-chart anchors
+  plus dense visible-range samples. A fast zoom therefore retains a line
+  segment while the denser viewport calculation catches up.
+- Guard: this change affects rendering continuity only. It does not change
+  aspect detection, SR values, source profiles, scores, inference, ML, orders,
+  or execution permissions.
+- Source validation: 32 frontend test files / 127 tests passed; lint passed.
+- Next: package a distinct `0.10.32` hotfix candidate and repeat only the
+  zoom/overlay acceptance checks. The original `0.10.31-pfr-c2f` artifact
+  remains the historical C2F candidate and is never replaced.
+
+This record does not alter the historical C2F candidate. Under PFR-U1, only
+this approved S1 rendering repair may proceed before the corrected candidate
+is physically inspected.
 
 ## What Follows Acceptance
 

@@ -118,7 +118,7 @@ $npmVersion = (& npm.cmd --version).Trim()
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
     version = $appVersion
-    status = "pfr_c2f_founder_candidate"
+    status = "pfr_u1_s1_hotfix_candidate"
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -241,13 +241,13 @@ $manifest = [ordered]@{
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
 $releaseReadme = @"
-# Gann Astro Desk $appVersion - PFR-C2F founder candidate
+# Gann Astro Desk $appVersion - PFR-U1 S1 hotfix candidate
 
 This is a read-only experimental research candidate, not a validated or executable trading product.
 
 - Source commit: $sourceGitCommit
 - Source working tree clean: $(-not $sourceGitDirty)
-- Reconciliation: PFR-C2F
+- Reconciliation: PFR-U1 S1 hotfix
 - Node: $nodeVersion
 - Package manager: npm@$npmVersion
 - Jyotish corpus: NOT_CONFIGURED_OPTIONAL (private corpus not bundled)

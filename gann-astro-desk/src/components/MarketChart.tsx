@@ -46,6 +46,7 @@ import {
   formatAspectRange,
   nextAspectAtTime,
 } from '../aspectPresentation'
+import { clipAspectWindowToViewport } from '../chartAspectBands'
 import { createChartDrawing, defaultRsiPaneSettings } from '../chartLayouts'
 import { chooseMagnetCandidate, type MagnetCandidate } from '../drawingMagnet'
 import {
@@ -889,10 +890,19 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const chart = chartRef.current
     if (!chart || !hostRef.current) return
     const width = hostRef.current.clientWidth
+    const visibleRange = chart.timeScale().getVisibleRange()
+    const visibleStart = typeof visibleRange?.from === 'number' ? Number(visibleRange.from) : null
+    const visibleEnd = typeof visibleRange?.to === 'number' ? Number(visibleRange.to) : null
     const positions = (showAspects ? payload.aspects : [])
       .map((event) => {
-        const start = nearestTime(candleTimes, event.start)
-        const end = nearestTime(candleTimes, event.end)
+        const aspectStart = nearestTime(candleTimes, event.start)
+        const aspectEnd = nearestTime(candleTimes, event.end)
+        const interval = visibleStart != null && visibleEnd != null
+          ? clipAspectWindowToViewport(aspectStart, aspectEnd, visibleStart, visibleEnd)
+          : { from: aspectStart, to: aspectEnd }
+        if (!interval) return null
+        const start = nearestTime(candleTimes, interval.from)
+        const end = nearestTime(candleTimes, interval.to)
         const startX = chart.timeScale().timeToCoordinate(start as UTCTimestamp)
         const endX = chart.timeScale().timeToCoordinate(end as UTCTimestamp)
         if (startX == null || endX == null) return null

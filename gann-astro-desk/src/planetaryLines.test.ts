@@ -79,4 +79,14 @@ describe('visible timestamp sampling', () => {
     expect(values[0]).toBeLessThan(candles[500].time)
     expect(values.at(-1)).toBeGreaterThan(candles[600].time)
   })
+
+  it('retains sparse whole-chart anchors while densely sampling the viewport', () => {
+    const start = new Date(candles[700].time * 1_000).toISOString()
+    const end = new Date(candles[760].time * 1_000).toISOString()
+    const values = sampledVisibleCandleTimes(candles, start, end, 300)
+    expect(values).toContain(candles[0].time)
+    expect(values).toContain(candles.at(-1)?.time)
+    expect(values.some((time) => time >= candles[700].time && time <= candles[760].time)).toBe(true)
+    expect(values.length).toBeLessThanOrEqual(300)
+  })
 })

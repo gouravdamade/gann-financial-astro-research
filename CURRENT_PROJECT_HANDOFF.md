@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 06:24 IST
+Last updated: 2026-08-02 06:34 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -28,10 +28,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   visibility before continuing unless public disclosure is an explicit decision.
 - Founder-reported acceptance defect `U1-S1-001`: mouse-wheel zoom can remove
   all visible aspect lanes and Live SR planetary lines while candlesticks remain.
-  It is recorded in `docs/sbc/PFR_U1_FOUNDER_ACCEPTANCE.md` as an S1 navigation
-  blocker. Source inspection confirms an aspect-window clipping defect; no
-  product code has been changed while the frozen-candidate acceptance run is
-  still pending.
+  The approved bounded hotfix clips active aspect windows to the visible
+  viewport and retains sparse whole-chart anchors during the Live SR viewport
+  refresh. The original `0.10.31-pfr-c2f` candidate remains untouched. Source
+  validation is green (`32` frontend test files / `127` tests and lint); a
+  separate `0.10.32` U1-S1 hotfix candidate is the only permitted build next.
 
 ## Latest Update - 2026-08-01 (PFR-C2F Reproducible Founder Candidate)
 

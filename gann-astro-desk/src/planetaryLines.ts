@@ -24,6 +24,7 @@ export const PLANETARY_LINE_PLANETS = [
 export const PLANETARY_LINE_MAX_VALUES = 12
 export const PLANETARY_LINE_MAX_LINES = 96
 export const PLANETARY_LINE_DEFAULT_SAMPLE_LIMIT = 600
+const PLANETARY_LINE_CONTEXT_SAMPLE_COUNT = 72
 
 type ParameterSeed = Pick<ChartParameters, 'nValues' | 'harmonics' | 'degrees'>
 
@@ -134,12 +135,28 @@ export function sampledVisibleCandleTimes(
   const visible = candles.filter((candle) => candle.time >= paddedStart && candle.time <= paddedEnd)
   const source = visible.length ? visible : candles
   const safeLimit = Math.max(2, Math.min(1_200, Math.round(limit)))
-  if (source.length <= safeLimit) return source.map((candle) => candle.time)
-  const indices = new Set<number>([0, source.length - 1])
-  for (let position = 1; position < safeLimit - 1; position += 1) {
-    indices.add(Math.round(position * (source.length - 1) / (safeLimit - 1)))
+
+  const sample = (items: Candle[], count: number) => {
+    if (items.length <= count) return items.map((candle) => candle.time)
+    const indices = new Set<number>([0, items.length - 1])
+    for (let position = 1; position < count - 1; position += 1) {
+      indices.add(Math.round(position * (items.length - 1) / (count - 1)))
+    }
+    return [...indices].sort((left, right) => left - right).map((index) => items[index].time)
   }
-  return [...indices].sort((left, right) => left - right).map((index) => source[index].time)
+
+  const hasViewport = Boolean(visibleStartUtc && visibleEndUtc)
+  if (!hasViewport || candles.length <= safeLimit) return sample(candles, safeLimit)
+
+  // Preserve sparse whole-chart anchors while adding dense viewport points. That
+  // keeps a rendered Live SR line continuous through a fast wheel zoom while
+  // the next exact viewport request is still being calculated.
+  const contextCount = Math.min(PLANETARY_LINE_CONTEXT_SAMPLE_COUNT, Math.max(2, Math.floor(safeLimit / 4)))
+  const viewportCount = Math.max(2, safeLimit - contextCount)
+  return [...new Set([
+    ...sample(candles, contextCount),
+    ...sample(source, viewportCount),
+  ])].sort((left, right) => left - right)
 }
 
 export function enabledPlanetaryLineGroups(settings: PlanetaryLineOverlaySettings): PlanetaryLineGroup[] {
