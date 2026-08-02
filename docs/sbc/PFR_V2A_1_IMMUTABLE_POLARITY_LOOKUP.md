@@ -60,7 +60,9 @@ eventual stepped visual, never a quiet zero.
 
 ## Next Bound
 
-Do not add entries merely to make a chart colorful. The next permitted work is
-to admit a concrete, separately reviewed chart/profile evidence packet, then
-add exactly the matching immutable entry and test it. A visible range oscillator
-remains a later product milestone, not an implication of this lookup.
+Do not add entries merely to make a chart colorful. V2A-2 adds the fail-closed
+packet registry that an entry must match; see
+`PFR_V2A_2_EVIDENCE_PACKET_ADMISSION.md`. The next permitted work is to admit
+a concrete, separately reviewed chart/profile evidence packet and its exact
+matching entry. A visible range oscillator remains a later product milestone,
+not an implication of this lookup.

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Literal, Mapping
 
 from .models import stable_hash
+from .polarity_evidence import TargetAwarePolarityEvidencePacketRegistry
 
 
 POLARITY_CATALOGUE_CONTRACT = "CHART_CONDITIONED_POLARITY_CATALOGUE_V1"
@@ -49,6 +50,7 @@ class TargetAwarePolarityEntry:
     precomputed_polarity: POLARITY_STATE
     evidence_status: str
     profile_hash: str
+    evidence_packet_id: str
     evidence_packet_hash: str
 
     def __post_init__(self) -> None:
@@ -60,6 +62,7 @@ class TargetAwarePolarityEntry:
         object.__setattr__(self, "aspect_type", _lower(self.aspect_type, "aspect_type"))
         object.__setattr__(self, "evidence_status", _required(self.evidence_status, "evidence_status"))
         object.__setattr__(self, "profile_hash", _required(self.profile_hash, "profile_hash"))
+        object.__setattr__(self, "evidence_packet_id", _required(self.evidence_packet_id, "evidence_packet_id"))
         object.__setattr__(self, "evidence_packet_hash", _required(self.evidence_packet_hash, "evidence_packet_hash"))
         if self.precomputed_polarity not in {"SUPPORTIVE", "ADVERSE", "MIXED", "NEUTRAL"}:
             raise ValueError("precomputed_polarity must be a categorical polarity state")
@@ -76,6 +79,7 @@ class TargetAwarePolarityEntry:
             precomputed_polarity=str(raw.get("precomputed_polarity") or raw.get("precomputedPolarity") or ""),  # type: ignore[arg-type]
             evidence_status=str(raw.get("evidence_status") or raw.get("evidenceStatus") or ""),
             profile_hash=str(raw.get("profile_hash") or raw.get("profileHash") or ""),
+            evidence_packet_id=str(raw.get("evidence_packet_id") or raw.get("evidencePacketId") or ""),
             evidence_packet_hash=str(raw.get("evidence_packet_hash") or raw.get("evidencePacketHash") or ""),
         )
 
@@ -90,6 +94,7 @@ class TargetAwarePolarityEntry:
             "precomputedPolarity": self.precomputed_polarity,
             "evidenceStatus": self.evidence_status,
             "profileHash": self.profile_hash,
+            "evidencePacketId": self.evidence_packet_id,
             "evidencePacketHash": self.evidence_packet_hash,
         }
 
@@ -102,7 +107,12 @@ class TargetAwarePolarityCatalogue:
     catalogue_hash: str
 
     @classmethod
-    def load(cls, path: Path | None = None) -> "TargetAwarePolarityCatalogue":
+    def load(
+        cls,
+        path: Path | None = None,
+        *,
+        evidence_registry: TargetAwarePolarityEvidencePacketRegistry | None = None,
+    ) -> "TargetAwarePolarityCatalogue":
         source = path or DEFAULT_CATALOGUE_PATH
         raw = json.loads(source.read_text(encoding="utf-8"))
         if raw.get("contract") != POLARITY_CATALOGUE_CONTRACT:
@@ -122,6 +132,23 @@ class TargetAwarePolarityCatalogue:
         entries = tuple(TargetAwarePolarityEntry.from_mapping(item) for item in raw_entries)
         if len({entry.entry_id for entry in entries}) != len(entries):
             raise ValueError("polarity catalogue contains duplicate entry ids")
+        if entries:
+            registry = evidence_registry or TargetAwarePolarityEvidencePacketRegistry.load()
+            for entry in entries:
+                packet = registry.require(entry.evidence_packet_id)
+                if packet.packet_hash != entry.evidence_packet_hash:
+                    raise ValueError("catalogue entry evidence packet hash does not match registry")
+                if (
+                    packet.instrument_id != entry.instrument_id
+                    or packet.chart_id != entry.chart_id
+                    or packet.transit_body != entry.transit_body
+                    or packet.natal_target != entry.natal_target
+                    or packet.aspect_type != entry.aspect_type
+                    or packet.reviewed_polarity != entry.precomputed_polarity
+                    or packet.profile_hash != entry.profile_hash
+                    or packet.evidence_status != entry.evidence_status
+                ):
+                    raise ValueError("catalogue entry does not match reviewed evidence packet")
         return cls(
             catalogue_id=_required(str(raw.get("catalogue_id") or ""), "catalogue_id"),
             catalogue_status=_required(str(raw.get("catalogue_status") or ""), "catalogue_status"),

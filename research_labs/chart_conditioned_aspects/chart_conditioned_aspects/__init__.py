@@ -30,6 +30,15 @@ from .models import (
     stable_hash,
 )
 from .profiles import ResearchProfiles, load_research_profiles
+from .polarity_catalogue import (
+    TargetAwarePolarityCatalogue,
+    TargetAwarePolarityEntry,
+    lookup_target_aware_polarity,
+)
+from .polarity_evidence import (
+    TargetAwarePolarityEvidencePacket,
+    TargetAwarePolarityEvidencePacketRegistry,
+)
 from .transits import adapt_explicit_tn_event
 
 __all__ = [
@@ -50,6 +59,10 @@ __all__ = [
     "NatalCondition",
     "OrganizationChartHypothesis",
     "PlanetFunctionalRole",
+    "TargetAwarePolarityCatalogue",
+    "TargetAwarePolarityEntry",
+    "TargetAwarePolarityEvidencePacket",
+    "TargetAwarePolarityEvidencePacketRegistry",
     "ResearchProfiles",
     "evaluate_runtime_event",
     "explain_prior",
@@ -60,5 +73,6 @@ __all__ = [
     "TransitNatalEvent",
     "canonical_json",
     "load_research_profiles",
+    "lookup_target_aware_polarity",
     "stable_hash",
 ]

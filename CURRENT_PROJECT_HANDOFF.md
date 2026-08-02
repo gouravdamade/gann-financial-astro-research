@@ -1,8 +1,24 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 18:36 IST
+Last updated: 2026-08-02 18:44 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2A-2 Evidence Packet Admission)
+
+- Hardened the V2A polarity catalogue with the separate, immutable
+  `CHART_CONDITIONED_POLARITY_EVIDENCE_PACKET_REGISTRY_V1`. The production
+  registry intentionally contains no packets, so current USDJPY continues to
+  show `POLARITY_CATALOGUE_MISSING`.
+- A future catalogue entry must now match its reviewed packet exactly:
+  instrument/chart/transit/natal target/aspect identity, categorical polarity,
+  evidence status, profile hash, packet id/hash, accepted chart status,
+  astronomy contract, source references, reviewer, and offset-aware timestamp.
+  Any mismatch fails closed during catalogue load.
+- This is a provenance control only, not validation of market success or a new
+  prediction engine. SBC remains an independent synchronized comparison field;
+  execution locks remain unchanged. Details:
+  `docs/sbc/PFR_V2A_2_EVIDENCE_PACKET_ADMISSION.md`.
 
 ## Latest Update - 2026-08-02 (PFR-V2A-1 Immutable Polarity Lookup)
 

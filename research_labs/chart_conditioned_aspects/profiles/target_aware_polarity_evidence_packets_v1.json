@@ -1,0 +1,13 @@
+{
+  "contract": "CHART_CONDITIONED_POLARITY_EVIDENCE_PACKET_REGISTRY_V1",
+  "schema_version": 1,
+  "registry_id": "CHART_CONDITIONED_TARGET_AWARE_POLARITY_EVIDENCE_BASELINE_V1",
+  "registry_status": "NO_REVIEWED_PACKETS",
+  "packets": [],
+  "guardrails": {
+    "read_only": true,
+    "execution_allowed": false,
+    "automatic_order_placement": false,
+    "financially_validated": false
+  }
+}

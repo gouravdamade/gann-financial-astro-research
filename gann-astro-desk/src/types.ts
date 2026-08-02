@@ -2098,6 +2098,7 @@ export type ChartConditionedPolarityEntry = {
   precomputedPolarity: ChartConditionedPolarityState
   evidenceStatus: string
   profileHash: string
+  evidencePacketId: string
   evidencePacketHash: string
 }
 
