@@ -211,4 +211,35 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
     expect(screen.getByText(/Pilot Evidence Pending/i)).toBeInTheDocument()
     expect(screen.getAllByText(/Needs SUPPORTIVE \+ ADVERSE/)).toHaveLength(2)
   })
+
+  it('selects a canonical field interval without deriving a pair signal', async () => {
+    const user = userEvent.setup()
+    const onSelectFieldInterval = vi.fn()
+    render(
+      <ProductFirstSbcWorkspace
+        chart={chart}
+        snapshot={snapshot}
+        selectedCell="1:1"
+        onSelectCell={() => undefined}
+        onSelectMoment={() => undefined}
+        synchronizedRange={synchronizedRange}
+        onSelectFieldInterval={onSelectFieldInterval}
+        visualizationPolicy={visualizationModePolicy('SOURCE_ONLY_BASELINE')}
+        phasorBusy={false}
+        phasorError=""
+        onLoadFixedPhasor={() => undefined}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Fields' }))
+    await user.click(screen.getByRole('button', { name: /Select USD interval UNKNOWN/i }))
+
+    expect(onSelectFieldInterval).toHaveBeenCalledWith({
+      field: 'USD',
+      intervalId: 'usd-1',
+      startUtc: '2026-08-01T10:00:00Z',
+      endUtc: '2026-08-01T12:00:00Z',
+    })
+    expect(screen.getByText(/No magnitude, fusion, automatic confirmation/i)).toBeInTheDocument()
+  })
 })

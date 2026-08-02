@@ -2205,6 +2205,37 @@ export type SynchronizedIndependentRange = {
   }
 }
 
+export type ResearchTimeUpdateSource =
+  | 'INITIAL'
+  | 'PRICE_CROSSHAIR'
+  | 'PRICE_CLICK'
+  | 'FIELD_INTERVAL'
+  | 'CHAKRA_MOMENT'
+  | 'COLLECTIVE_INSPECTOR'
+
+export type ResearchFieldIntervalSelection = {
+  field: 'USD' | 'JPY' | 'SBC'
+  intervalId: string
+  startUtc: string
+  endUtc: string
+}
+
+// R2 keeps all review surfaces on one explicit timestamp without inferring a trade signal.
+export type ResearchTimeControllerV1 = {
+  contract: 'RESEARCH_TIME_CONTROLLER_V1'
+  visibleRangeStartUtc: string | null
+  visibleRangeEndUtc: string | null
+  crosshairTimestampUtc: string | null
+  selectedTimestampUtc: string | null
+  selectedCandleTimestampUtc: string | null
+  selectedUsdIntervalId: string | null
+  selectedJpyIntervalId: string | null
+  selectedPairIntervalId: string | null
+  selectedSbcIntervalId: string | null
+  updateSource: ResearchTimeUpdateSource
+  sequenceNumber: number
+}
+
 export type SynchronizedIndependentRangeRequest = {
   rangeStartUtc: string
   rangeEndUtc: string

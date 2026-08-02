@@ -9,6 +9,7 @@ import type {
   ChartPayload,
   CurrencyPairEvidence,
   FxSidePilotStatus,
+  ResearchFieldIntervalSelection,
   SynchronizedIndependentRange,
 } from '../types'
 import { IndependentFieldStack } from './IndependentFieldStack'
@@ -41,6 +42,10 @@ type Props = {
   pilotBusy?: boolean
   pilotError?: string
   onLoadPilotStatus?: () => void
+  crosshairTimestampUtc?: string | null
+  selectedTimestampUtc?: string | null
+  selectedFieldInterval?: ResearchFieldIntervalSelection | null
+  onSelectFieldInterval?: (selection: ResearchFieldIntervalSelection) => void
 }
 
 function display(value: string | null | undefined): string {
@@ -99,6 +104,10 @@ export function ProductFirstSbcWorkspace({
   pilotBusy = false,
   pilotError = '',
   onLoadPilotStatus = () => undefined,
+  crosshairTimestampUtc = null,
+  selectedTimestampUtc = null,
+  selectedFieldInterval = null,
+  onSelectFieldInterval,
 }: Props) {
   const [sideView, setSideView] = useState<'TIME' | 'PROFILE' | null>(null)
   const [draftMoment, setDraftMoment] = useState('')
@@ -127,7 +136,9 @@ export function ProductFirstSbcWorkspace({
   const priceSpan = Math.max(0.000001, high - low)
   const chartWidth = 1000
   const chartHeight = 440
-  const selectedEpoch = snapshot ? Date.parse(snapshot.as_of_utc) / 1000 : lastTime
+  const selectedEpoch = selectedTimestampUtc
+    ? Date.parse(selectedTimestampUtc) / 1000
+    : snapshot ? Date.parse(snapshot.as_of_utc) / 1000 : lastTime
   const xFor = (epoch: number) => 28 + ((epoch - firstTime) / rangeSeconds) * 944
   const yFor = (price: number) => 28 + ((high - price) / priceSpan) * 360
   const candleWidth = Math.max(2, Math.min(11, 820 / Math.max(candles.length, 1)))
@@ -474,6 +485,15 @@ export function ProductFirstSbcWorkspace({
         pilotError={pilotError}
         onLoadPilot={onLoadPilotStatus}
         rangeSource={synchronizedRangeSource}
+        crosshairTimestampUtc={crosshairTimestampUtc}
+        selectedInterval={selectedFieldInterval}
+        onSelectInterval={(selection) => {
+          if (onSelectFieldInterval) {
+            onSelectFieldInterval(selection)
+            return
+          }
+          onSelectMoment(toIstInput(Date.parse(selection.startUtc) / 1000))
+        }}
       />}
 
       {wheelOpen && (

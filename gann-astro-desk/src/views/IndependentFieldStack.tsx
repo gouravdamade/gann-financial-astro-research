@@ -1,5 +1,5 @@
 import { Layers3, ShieldCheck } from 'lucide-react'
-import type { FxSidePilotStatus, SynchronizedIndependentRange } from '../types'
+import type { FxSidePilotStatus, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from '../types'
 
 type Props = {
   range: SynchronizedIndependentRange | null
@@ -11,6 +11,9 @@ type Props = {
   pilotBusy: boolean
   pilotError: string
   onLoadPilot: () => void
+  selectedInterval?: ResearchFieldIntervalSelection | null
+  onSelectInterval?: (selection: ResearchFieldIntervalSelection) => void
+  crosshairTimestampUtc?: string | null
 }
 
 type LaneBlock = {
@@ -82,33 +85,41 @@ function steppedPath(blocks: LaneBlock[], rangeStart: number, rangeEnd: number, 
   return path.trim()
 }
 
-function StateLane({ label, note, blocks }: {
+function StateLane({ label, note, blocks, selectedInterval, onSelectInterval }: {
   label: string
   note: string
   blocks: LaneBlock[]
+  selectedInterval: ResearchFieldIntervalSelection | null
+  onSelectInterval?: (selection: ResearchFieldIntervalSelection) => void
 }) {
   return <div className="independent-field-lane">
     <div className="independent-field-lane-label"><strong>{label}</strong><span>{note}</span></div>
     <div className="independent-field-lane-track" role="list" aria-label={`${label} intervals`}>
-      {blocks.map((block) => <div
+      {blocks.map((block) => <button
         key={block.id}
+        type="button"
         role="listitem"
-        className={`independent-field-block is-${block.state.toLowerCase()}`}
+        className={`independent-field-block is-${block.state.toLowerCase()}${selectedInterval?.field === 'SBC' && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
+        aria-label={`Select SBC interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
         style={{ flexGrow: durationSeconds(block) }}
         title={`${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}. ${block.detail}`}
+        onClick={() => onSelectInterval?.({ field: 'SBC', intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
       >
         <span>{block.state.replaceAll('_', ' ')}</span>
-      </div>)}
+      </button>)}
     </div>
   </div>
 }
 
-function CategoricalStepPane({ label, side, blocks, rangeStartUtc, rangeEndUtc }: {
+function CategoricalStepPane({ label, side, blocks, rangeStartUtc, rangeEndUtc, selectedInterval, onSelectInterval, crosshairTimestampUtc }: {
   label: string
   side: 'USD' | 'JPY'
   blocks: LaneBlock[]
   rangeStartUtc: string
   rangeEndUtc: string
+  selectedInterval: ResearchFieldIntervalSelection | null
+  onSelectInterval?: (selection: ResearchFieldIntervalSelection) => void
+  crosshairTimestampUtc: string | null
 }) {
   const start = Date.parse(rangeStartUtc)
   const end = Date.parse(rangeEndUtc)
@@ -117,6 +128,7 @@ function CategoricalStepPane({ label, side, blocks, rangeStartUtc, rangeEndUtc }
   const adverse = steppedPath(blocks, start, end, 'adverse')
   const unknown = blocks.filter((block) => block.state === 'UNKNOWN')
   const gapPatternId = `categorical-gap-${side.toLowerCase()}`
+  const crosshairX = crosshairTimestampUtc ? xFor(crosshairTimestampUtc, start, end) : null
   return <section className="categorical-step-pane" aria-label={`${label} categorical stepped field`}>
     <header>
       <strong>{label}</strong>
@@ -134,16 +146,45 @@ function CategoricalStepPane({ label, side, blocks, rangeStartUtc, rangeEndUtc }
       <line className="categorical-step-guide" x1="0" x2="1000" y1="82" y2="82" />
       {unknown.map((block) => <rect
         key={block.id}
-        className="categorical-step-gap"
         fill={`url(#${gapPatternId})`}
         x={xFor(block.startUtc, start, end)}
         width={Math.max(1, xFor(block.endUtc, start, end) - xFor(block.startUtc, start, end))}
         y="0"
         height="100"
+        className={`categorical-step-gap${selectedInterval?.field === side && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
+        role="button"
+        aria-label={`Select ${side} interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
+        tabIndex={0}
+        onClick={() => onSelectInterval?.({ field: side, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onSelectInterval?.({ field: side, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })
+          }
+        }}
       ><title>{`UNKNOWN: ${block.detail}`}</title></rect>)}
+      {blocks.filter((block) => block.state !== 'UNKNOWN').map((block) => <rect
+        key={`${block.id}-selection`}
+        className={`categorical-step-hitbox${selectedInterval?.field === side && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
+        x={xFor(block.startUtc, start, end)}
+        width={Math.max(1, xFor(block.endUtc, start, end) - xFor(block.startUtc, start, end))}
+        y="0"
+        height="100"
+        role="button"
+        aria-label={`Select ${side} interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
+        tabIndex={0}
+        onClick={() => onSelectInterval?.({ field: side, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onSelectInterval?.({ field: side, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })
+          }
+        }}
+      ><title>{`${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}. ${block.detail}`}</title></rect>)}
       {supportive && <path className="categorical-step-supportive-component" d={supportive} />}
       {adverse && <path className="categorical-step-adverse-component" d={adverse} />}
       {balance && <path className="categorical-step-balance" d={balance} />}
+      {crosshairX != null && <line className="categorical-step-crosshair" x1={crosshairX} x2={crosshairX} y1="0" y2="100" />}
     </svg>
     <div className="categorical-step-legend"><span className="supportive">Supportive</span><span className="neutral">Neutral</span><span className="adverse">Adverse</span><span className="gap">Unknown gap</span></div>
   </section>
@@ -151,6 +192,7 @@ function CategoricalStepPane({ label, side, blocks, rangeStartUtc, rangeEndUtc }
 
 export function IndependentFieldStack({
   range, rangeSource = null, busy, error, onLoad, pilotStatus, pilotBusy, pilotError, onLoadPilot,
+  selectedInterval = null, onSelectInterval, crosshairTimestampUtc = null,
 }: Props) {
   const usdBlocks: LaneBlock[] = range?.aspectFields.USD.intervals.map((interval) => ({
     id: interval.intervalId,
@@ -190,9 +232,9 @@ export function IndependentFieldStack({
     {!range && !busy && !error && <p className="independent-field-stack-empty">Open this workspace from a chart. Its current visible range will load automatically.</p>}
     {range && <>
       <div className="independent-field-stack-range"><span>{compactUtc(range.rangeStartUtc)}</span><b>Shared UTC range</b><span>{compactUtc(range.rangeEndUtc)}</span></div>
-      <CategoricalStepPane label="USD categorical field" side="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} />
-      <CategoricalStepPane label="JPY categorical field" side="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} />
-      <StateLane label="SBC atomic field" note="Independent availability only; not a polarity scale" blocks={sbcBlocks} />
+      <CategoricalStepPane label="USD categorical field" side="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} />
+      <CategoricalStepPane label="JPY categorical field" side="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} />
+      <StateLane label="SBC atomic field" note="Independent availability only; not a polarity scale" blocks={sbcBlocks} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} />
       <p className="independent-field-stack-lock"><ShieldCheck size={12} /> Categorical polarity state only. No magnitude, fusion, automatic confirmation, or execution.</p>
     </>}
     <section className="fx-side-pilot-status" aria-label="FX side pilot status">

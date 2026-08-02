@@ -2,6 +2,20 @@
 
 Date opened: 2026-08-02
 
+## PFR-V2B-R2 Shared Time Controller
+
+- Status: `COMPLETE` on 2026-08-02.
+- `RESEARCH_TIME_CONTROLLER_V1` now synchronizes price crosshair/click,
+  canonical USD/JPY/SBC interval selection, and the Chakra selected moment.
+  Field intervals use their actual stored UTC boundaries, including explicit
+  unknown gaps; no display-point interpolation is used.
+- This is a navigation layer only. SBC remains independent, pair interval id
+  remains null, and no direction, evidence admission, magnitude, fusion,
+  execution, or automation has been introduced.
+- Verification: Oxlint; focused Chakra/field tests `2 files / 24 tests`; Vite
+  production build. Details: `docs/sbc/PFR_V2B_R2_SHARED_TIME_CONTROLLER.md`.
+- Next: R3 only after independent, accepted USD and JPY side evidence exists.
+
 ## PFR-V2B-R1 Live Range and Stepped Fields
 
 - Status: `COMPLETE` on 2026-08-02.

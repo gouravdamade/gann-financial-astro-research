@@ -88,6 +88,9 @@ import type {
   Mt5Status,
   ParameterSchema,
   PlanetaryCollectiveVisualStudyDossier,
+  ResearchFieldIntervalSelection,
+  ResearchTimeControllerV1,
+  ResearchTimeUpdateSource,
   RuntimeDiagnosticsBundle,
   SavedParameterProfile,
   ShadowLedgerSnapshot,
@@ -123,6 +126,10 @@ function dateRangeLabel(parameters: ChartParameters | null): string {
 
 const WORKSPACE_PREFERENCES_KEY = 'gann-astro-desk.workspace.v1'
 const APP_BOOTSTRAP_STARTED_AT = performance.now()
+
+function timestampUtcFromEpochSeconds(value: number | null): string | null {
+  return value == null ? null : new Date(value * 1000).toISOString()
+}
 
 function recordAfterPaint(
   name: 'app_bootstrap' | 'chart_initial_render',
@@ -195,6 +202,19 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [collectiveInspectorOpen, setCollectiveInspectorOpen] = useState(false)
   const [collectiveCursorTime, setCollectiveCursorTime] = useState<number | null>(null)
   const [collectivePinnedTime, setCollectivePinnedTime] = useState<number | null>(null)
+  const [researchTimeSelection, setResearchTimeSelection] = useState<{
+    crosshairTimestampUtc: string | null
+    selectedTimestampUtc: string | null
+    selectedFieldInterval: ResearchFieldIntervalSelection | null
+    updateSource: ResearchTimeUpdateSource
+    sequenceNumber: number
+  }>({
+    crosshairTimestampUtc: null,
+    selectedTimestampUtc: null,
+    selectedFieldInterval: null,
+    updateSource: 'INITIAL',
+    sequenceNumber: 0,
+  })
   const [collectiveVisualStudy, setCollectiveVisualStudy] = useState<PlanetaryCollectiveVisualStudyDossier | null>(null)
   const [collectiveVisualStudyBusy, setCollectiveVisualStudyBusy] = useState(false)
   const [collectiveVisualStudyError, setCollectiveVisualStudyError] = useState('')
@@ -248,15 +268,76 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     () => chartLayouts.chartState.collectiveAuditSnapshots ?? [],
     [chartLayouts.chartState.collectiveAuditSnapshots],
   )
+  const updateResearchCrosshair = useCallback((time: number | null) => {
+    const timestampUtc = timestampUtcFromEpochSeconds(time)
+    setResearchTimeSelection((current) => (
+      current.crosshairTimestampUtc === timestampUtc
+        ? current
+        : {
+            ...current,
+            crosshairTimestampUtc: timestampUtc,
+            updateSource: 'PRICE_CROSSHAIR',
+            sequenceNumber: current.sequenceNumber + 1,
+          }
+    ))
+  }, [])
+  const selectResearchTimestamp = useCallback((time: number, source: ResearchTimeUpdateSource) => {
+    const timestampUtc = timestampUtcFromEpochSeconds(time)
+    setResearchTimeSelection((current) => ({
+      ...current,
+      crosshairTimestampUtc: timestampUtc,
+      selectedTimestampUtc: timestampUtc,
+      updateSource: source,
+      sequenceNumber: current.sequenceNumber + 1,
+    }))
+    chartRef.current?.setCrosshairTime(time)
+  }, [])
+  const selectResearchTimestampUtc = useCallback((timestampUtc: string, source: ResearchTimeUpdateSource) => {
+    const epoch = Date.parse(timestampUtc)
+    if (!Number.isFinite(epoch)) return
+    selectResearchTimestamp(Math.floor(epoch / 1000), source)
+  }, [selectResearchTimestamp])
+  const selectResearchFieldInterval = useCallback((selection: ResearchFieldIntervalSelection) => {
+    const epoch = Date.parse(selection.startUtc)
+    if (!Number.isFinite(epoch)) return
+    const timestampUtc = new Date(epoch).toISOString()
+    setResearchTimeSelection((current) => ({
+      ...current,
+      crosshairTimestampUtc: timestampUtc,
+      selectedTimestampUtc: timestampUtc,
+      selectedFieldInterval: selection,
+      updateSource: 'FIELD_INTERVAL',
+      sequenceNumber: current.sequenceNumber + 1,
+    }))
+  }, [])
+  const researchTimeController = useMemo<ResearchTimeControllerV1>(() => ({
+    contract: 'RESEARCH_TIME_CONTROLLER_V1',
+    visibleRangeStartUtc: chartLayouts.chartState.visibleStartUtc ?? null,
+    visibleRangeEndUtc: chartLayouts.chartState.visibleEndUtc ?? null,
+    crosshairTimestampUtc: researchTimeSelection.crosshairTimestampUtc,
+    selectedTimestampUtc: researchTimeSelection.selectedTimestampUtc,
+    selectedCandleTimestampUtc: researchTimeSelection.selectedTimestampUtc,
+    selectedUsdIntervalId: researchTimeSelection.selectedFieldInterval?.field === 'USD'
+      ? researchTimeSelection.selectedFieldInterval.intervalId : null,
+    selectedJpyIntervalId: researchTimeSelection.selectedFieldInterval?.field === 'JPY'
+      ? researchTimeSelection.selectedFieldInterval.intervalId : null,
+    selectedPairIntervalId: null,
+    selectedSbcIntervalId: researchTimeSelection.selectedFieldInterval?.field === 'SBC'
+      ? researchTimeSelection.selectedFieldInterval.intervalId : null,
+    updateSource: researchTimeSelection.updateSource,
+    sequenceNumber: researchTimeSelection.sequenceNumber,
+  }), [chartLayouts.chartState.visibleEndUtc, chartLayouts.chartState.visibleStartUtc, researchTimeSelection])
   const syncCollectiveHover = useCallback((time: number | null) => {
     setCollectiveCursorTime(time)
+    updateResearchCrosshair(time)
     chartRef.current?.setCrosshairTime(time ?? collectivePinnedTime)
-  }, [collectivePinnedTime])
+  }, [collectivePinnedTime, updateResearchCrosshair])
   const pinCollectiveTime = useCallback((time: number | null) => {
     setCollectivePinnedTime(time)
     setCollectiveCursorTime(time)
+    if (time != null) selectResearchTimestamp(time, 'COLLECTIVE_INSPECTOR')
     chartRef.current?.setCrosshairTime(time)
-  }, [])
+  }, [selectResearchTimestamp])
   const closeCollectiveInspector = useCallback(() => {
     setCollectiveInspectorOpen(false)
     setCollectiveCursorTime(null)
@@ -912,8 +993,14 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             onSelectAnnotation={setSelectedAnnotation}
             onCreateAnnotation={createAnnotation}
             onReplayCutoffSelect={selectReplayCutoff}
-            onCrosshairTimeChange={collectiveInspectorOpen ? setCollectiveCursorTime : undefined}
-            onPinTime={collectiveInspectorOpen ? (time) => pinCollectiveTime(time) : undefined}
+            onCrosshairTimeChange={(time) => {
+              updateResearchCrosshair(time)
+              if (collectiveInspectorOpen) setCollectiveCursorTime(time)
+            }}
+            onPinTime={(time) => {
+              selectResearchTimestamp(time, 'PRICE_CLICK')
+              if (collectiveInspectorOpen) pinCollectiveTime(time)
+            }}
             showAspects={workspace.showAspects}
             showSrLines={workspace.showSrLines}
             planetaryLines={planetaryLineOverlay.overlay?.lines ?? []}
@@ -1051,6 +1138,11 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             currencyPairEvidence={detail?.currencyPairEvidence}
             selectedAspectLabel={selected ? `${selected.transitBody} to ${selected.natalBody} ${selected.aspectLabel}` : null}
             selectedAspect={selected}
+            crosshairTimestampUtc={researchTimeController.crosshairTimestampUtc}
+            selectedTimestampUtc={researchTimeController.selectedTimestampUtc}
+            selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
+            onSelectTimestampUtc={selectResearchTimestampUtc}
+            onSelectFieldInterval={selectResearchFieldInterval}
           />
         </Suspense>
       )}

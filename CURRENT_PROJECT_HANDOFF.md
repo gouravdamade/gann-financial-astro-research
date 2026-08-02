@@ -1,8 +1,32 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 22:46 IST
+Last updated: 2026-08-02 23:22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-02 (PFR-V2B-R2 Shared Time Controller)
+
+- Completed the next bounded founder-visible navigation layer. The price chart,
+  Chakra workspace, and independent USD, JPY, and SBC field stack now carry a
+  single explicit `RESEARCH_TIME_CONTROLLER_V1` state: visible UTC range,
+  crosshair timestamp, selected timestamp/candle, canonical selected interval
+  ids, source, and sequence number.
+- Price hover updates the shared cursor; a click selects the nearest actual
+  candle. Selecting an exact stored field interval (including an unknown gap)
+  selects its canonical `startUtc`, highlights it, and moves the Chakra review
+  moment to the same instant. No timestamp is inferred from a reduced SVG
+  display point and no interval is stretched or resampled.
+- USD/JPY panels show a shared cursor line. SBC remains an independent
+  availability field, not aspect confirmation. This is research navigation
+  only: no pair direction, evidence admission, numerical magnitude, fusion,
+  smoothing, ML, Auto Suggest, live inference, MT5 execution, or order path
+  was added.
+- Verification: Oxlint clean; focused Chakra/field suite `2 files / 24 tests`
+  passed; TypeScript/Vite production build passed. Details:
+  `docs/sbc/PFR_V2B_R2_SHARED_TIME_CONTROLLER.md`.
+- Next bounded work: R3 can derive a pair categorical range only after genuine
+  independently accepted USD and JPY side evidence exists. No installer is
+  produced before that evidence prerequisite.
 
 ## Latest Update - 2026-08-02 (PFR-V2B-R1 Live Range and Stepped Fields)
 

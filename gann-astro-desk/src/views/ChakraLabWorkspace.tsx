@@ -34,6 +34,8 @@ import type {
   ChartPayload,
   CurrencyPairEvidence,
   FxSidePilotStatus,
+  ResearchFieldIntervalSelection,
+  ResearchTimeUpdateSource,
   SynchronizedIndependentRange,
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
@@ -95,6 +97,17 @@ function istOffsetFromUtc(value: string): string {
   return new Date(date.valueOf() + 19_800_000).toISOString().slice(0, 19) + '+05:30'
 }
 
+function istInputFromUtc(value: string): string {
+  const epoch = Date.parse(value)
+  return Number.isNaN(epoch)
+    ? currentIstInput()
+    : new Date(epoch + 19_800_000).toISOString().slice(0, 16)
+}
+
+function utcFromIstInput(value: string): string {
+  return new Date(offsetIst(value)).toISOString()
+}
+
 function splitValues(value: string): string[] {
   return value
     .split(',')
@@ -123,6 +136,11 @@ type Props = {
   currencyPairEvidence?: CurrencyPairEvidence | null
   selectedAspectLabel?: string | null
   selectedAspect?: AspectWindow | null
+  crosshairTimestampUtc?: string | null
+  selectedTimestampUtc?: string | null
+  selectedFieldInterval?: ResearchFieldIntervalSelection | null
+  onSelectTimestampUtc?: (timestampUtc: string, source: ResearchTimeUpdateSource) => void
+  onSelectFieldInterval?: (selection: ResearchFieldIntervalSelection) => void
 }
 
 export function ChakraLabWorkspace({
@@ -134,6 +152,11 @@ export function ChakraLabWorkspace({
   currencyPairEvidence = null,
   selectedAspectLabel = null,
   selectedAspect = null,
+  crosshairTimestampUtc = null,
+  selectedTimestampUtc = null,
+  selectedFieldInterval = null,
+  onSelectTimestampUtc,
+  onSelectFieldInterval,
 }: Props) {
   const [atLocal, setAtLocal] = useState(currentIstInput)
   const [latitude, setLatitude] = useState(defaultLatitude)
@@ -232,12 +255,13 @@ export function ChakraLabWorkspace({
     }
   }, [request])
 
-  const selectMoment = useCallback((at: string) => {
+  const selectMoment = useCallback((at: string, source: ResearchTimeUpdateSource = 'CHAKRA_MOMENT') => {
     setAtLocal(at)
     setFixedPhasor(null)
     setPhasorError('')
+    onSelectTimestampUtc?.(utcFromIstInput(at), source)
     void loadSnapshot(at)
-  }, [loadSnapshot])
+  }, [loadSnapshot, onSelectTimestampUtc])
 
   const loadFixedPhasor = useCallback(async () => {
     setPhasorBusy(true)
@@ -331,6 +355,16 @@ export function ChakraLabWorkspace({
     initialRun.current = true
     void loadSnapshot()
   }, [loadSnapshot])
+
+  useEffect(() => {
+    if (!selectedTimestampUtc) return
+    const nextMoment = istInputFromUtc(selectedTimestampUtc)
+    if (nextMoment === atLocal) return
+    setAtLocal(nextMoment)
+    setFixedPhasor(null)
+    setPhasorError('')
+    void loadSnapshot(nextMoment)
+  }, [atLocal, loadSnapshot, selectedTimestampUtc])
 
   useEffect(() => {
     if (!fieldRange) {
@@ -555,6 +589,13 @@ export function ChakraLabWorkspace({
           pilotBusy={pilotBusy}
           pilotError={pilotError}
           onLoadPilotStatus={() => void loadPilotStatus()}
+          crosshairTimestampUtc={crosshairTimestampUtc}
+          selectedTimestampUtc={selectedTimestampUtc}
+          selectedFieldInterval={selectedFieldInterval}
+          onSelectFieldInterval={(selection) => {
+            onSelectFieldInterval?.(selection)
+            selectMoment(istInputFromUtc(selection.startUtc), 'FIELD_INTERVAL')
+          }}
         />
       ) : workspaceMode === 'BOARD' ? (
       <div className="chakra-lab-body">

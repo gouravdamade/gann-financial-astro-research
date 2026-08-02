@@ -6643,7 +6643,8 @@ html.android-runtime .loading-state {
 .independent-field-lane-label strong { color: #c8d2d8; font-size: 8px; }
 .independent-field-lane-label span { color: #71818d; font-size: 7px; }
 .independent-field-lane-track { display: flex; min-width: 0; min-height: 28px; overflow: hidden; border: 1px solid #33424d; background: #0c1217; }
-.independent-field-block { display: grid; min-width: 2px; place-items: center; padding: 2px 4px; border-right: 1px solid rgb(10 14 18 / 78%); color: #d4dde1; font: 7px/1 Consolas, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.independent-field-block { display: grid; min-width: 2px; place-items: center; padding: 2px 4px; border: 0; border-right: 1px solid rgb(10 14 18 / 78%); color: #d4dde1; font: 7px/1 Consolas, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.independent-field-block:hover, .independent-field-block:focus-visible, .independent-field-block.is-selected { outline: 1px solid #f2d082; outline-offset: -2px; filter: brightness(1.16); }
 .independent-field-block.is-supportive { background: #1c5149; color: #bde8dc; }
 .independent-field-block.is-adverse { background: #613d44; color: #f0c1c7; }
 .independent-field-block.is-neutral { background: #3c4850; color: #d5dee1; }
@@ -6659,6 +6660,11 @@ html.android-runtime .loading-state {
 .categorical-step-axis { stroke: #6e7b84; stroke-width: 1.4; vector-effect: non-scaling-stroke; }
 .categorical-step-guide { stroke: #26343d; stroke-width: 1; vector-effect: non-scaling-stroke; }
 .categorical-step-gap { opacity: .75; }
+.categorical-step-gap, .categorical-step-hitbox { cursor: pointer; }
+.categorical-step-hitbox { fill: transparent; }
+.categorical-step-gap.is-selected, .categorical-step-hitbox.is-selected { stroke: #f2d082; stroke-width: 3; vector-effect: non-scaling-stroke; }
+.categorical-step-gap:focus-visible, .categorical-step-hitbox:focus-visible { outline: none; stroke: #f2d082; stroke-width: 3; vector-effect: non-scaling-stroke; }
+.categorical-step-crosshair { stroke: #d7ecff; stroke-width: 1.5; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; pointer-events: none; }
 .categorical-step-balance, .categorical-step-supportive-component, .categorical-step-adverse-component { fill: none; stroke-linejoin: miter; vector-effect: non-scaling-stroke; }
 .categorical-step-balance { stroke: #e7edf0; stroke-width: 2.2; }
 .categorical-step-supportive-component { stroke: #46c8a9; stroke-width: 1.25; stroke-dasharray: 4 3; }
