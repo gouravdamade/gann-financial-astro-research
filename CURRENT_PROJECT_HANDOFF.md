@@ -4,6 +4,26 @@ Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-03 (PFR-V2B-R3 Founder Chart Admission)
+
+- Founder accepted two exact-time **research hypotheses**, explicitly not
+  universally certified historical facts: USD/United States Independence in
+  Philadelphia at `1776-07-04 12:00 America/New_York`, and JPY/Yen IPO Tokyo at
+  `1889-02-11 00:00 Asia/Tokyo`. Their deterministic IDs, historical local-to-
+  UTC conversions, contracts, chart hashes, provenance, and founder acceptance
+  records live in
+  `research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json`.
+- The conversion policy uses historical IANA `zoneinfo` offsets, not a present
+  day fixed offset: the USD record resolves to `1776-07-04T16:56:02Z` from
+  `-04:56:02`; JPY resolves to `1889-02-10T15:00:00Z` from `+09:00:00`.
+  Exact-time status makes house/Ascendant calculation technically possible,
+  but functional lordship remains source-blocked under R4.
+- The loader is explicit and inert: it validates chart hashes but never
+  registers/selects a chart automatically, creates no polarity/evidence
+  catalogue record, derives no pair oscillator, and changes no execution,
+  Auto Suggest, LLM, price, or package behavior. Details:
+  `docs/sbc/PFR_V2B_R3_FOUNDER_CHART_ADMISSION.md`.
+
 ## Latest Update - 2026-08-03 (PFR-V2B-R4 Classical Coverage and Mode Promotion Audit)
 
 - Completed the R4 read-only doctrine and mode audit. Added one authoritative
@@ -25,8 +45,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   promotion checklist, machine status summary, and `test_classical_oscillator_coverage.py`.
   The coverage test validates uniqueness, required fields, forbidden Mode 1
   allocations, status counts, and all execution/promotion locks.
-- Verification: `pytest -q test_classical_oscillator_coverage.py` passed
-  (`4 passed`). Next: founder selects one narrow acquisition/page-certification
+- Verification wording reconciled: `pytest -q
+  test_classical_oscillator_coverage.py` collected and passed **4** R4-only
+  tests. `pytest -q test_classical_oscillator_coverage.py
+  sbc/test_visualization_modes.py` collected and passed **8** tests: those four
+  plus four pre-existing visualization-mode contract tests. Next: founder selects one narrow acquisition/page-certification
   priority; do not move to R3 chart evidence admission until that independent
   founder chart selection has occurred.
 

@@ -1,0 +1,102 @@
+{
+  "contract": "FOUNDER_APPROVED_CHART_HYPOTHESES_V1",
+  "version": 1,
+  "registryStatus": "RESEARCH_HYPOTHESES_ONLY_NO_POLARITY_OR_PAIR_DERIVATION",
+  "historicalCivilTimeConversionPolicy": {
+    "policyId": "HISTORICAL_CIVIL_TIME_IANA_ZONEINFO_V1",
+    "rule": "Interpret the founder-supplied local civil wall time in the named IANA region using its historical offset at that instant, then convert to UTC. Do not substitute a modern fixed offset, infer an alternative historical time, or silently normalize to a current timezone.",
+    "implementation": "Python zoneinfo.ZoneInfo",
+    "ambiguityPolicy": "Founder-approved exact-time research hypothesis; retained as a research assumption, not a universally certified historical fact."
+  },
+  "astronomyContract": {
+    "contractId": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+    "zodiac": "sidereal",
+    "ayanamsa": "Raman",
+    "ephemerisProvider": "Swiss Ephemeris",
+    "nodeType": "true_node",
+    "coordinateSystem": "geocentric",
+    "executionAllowed": false,
+    "polarityAllowed": false,
+    "pairDerivationAllowed": false
+  },
+  "records": [
+    {
+      "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+      "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+      "instrumentId": "FX_CURRENCY:USD",
+      "entityId": "UNITED_STATES_INDEPENDENCE",
+      "chartType": "FOUNDATIONAL_EVENT_RESEARCH_HYPOTHESIS",
+      "event": "United States Independence",
+      "localCivilTime": "1776-07-04T12:00:00",
+      "timezone": "America/New_York",
+      "historicalUtcOffset": "-04:56:02",
+      "timestampUtc": "1776-07-04T16:56:02Z",
+      "location": {
+        "name": "Philadelphia, Pennsylvania, USA",
+        "latitude": 39.9526,
+        "longitude": -75.1652
+      },
+      "timeAccuracy": "EXACT_TIME",
+      "houseModel": "WHOLE_SIGN_RESEARCH_NOT_ADMITTED_FOR_FUNCTIONAL_LORDSHIP_V1",
+      "houseAndAscendantPermittedByTime": true,
+      "functionalLordshipPermitted": false,
+      "functionalLordshipBlocker": "R4_FUNCTIONAL_LORDSHIP_PROFILE_SOURCE_PACKET_PENDING",
+      "effectiveFrom": "1776-07-04",
+      "effectiveTo": null,
+      "status": "ACCEPTED_RESEARCH",
+      "founderDecision": "ACCEPT_EXACT_TIME_RESEARCH",
+      "acceptedBy": "founder",
+      "acceptedAt": "2026-08-03T00:00:00+05:30",
+      "provenance": [
+        {
+          "sourceId": "FOUNDER_R3_CHART_HYPOTHESIS_DECISION_20260803",
+          "locator": "Founder-provided USD chart hypothesis in Codex task",
+          "evidenceClass": "WORKSPACE_SPECIFICATION",
+          "status": "FOUNDER_ACCEPTED_RESEARCH_ASSUMPTION_NOT_UNIVERSAL_HISTORICAL_CERTIFICATION",
+          "confidence": 1.0,
+          "note": "Records the approved research input, not a claim of universal historical certainty."
+        }
+      ],
+      "chartHash": "3A6B5F3EED9CBF0067FCB39EED1191EA66F0C347BE726DDD84424C001B89BCA7"
+    },
+    {
+      "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+      "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+      "instrumentId": "FX_CURRENCY:JPY",
+      "entityId": "YEN_IPO_TOKYO",
+      "chartType": "FOUNDATIONAL_EVENT_RESEARCH_HYPOTHESIS",
+      "event": "Yen IPO Tokyo",
+      "localCivilTime": "1889-02-11T00:00:00",
+      "timezone": "Asia/Tokyo",
+      "historicalUtcOffset": "+09:00:00",
+      "timestampUtc": "1889-02-10T15:00:00Z",
+      "location": {
+        "name": "Tokyo, Japan",
+        "latitude": 35.6762,
+        "longitude": 139.6503
+      },
+      "timeAccuracy": "EXACT_TIME",
+      "houseModel": "WHOLE_SIGN_RESEARCH_NOT_ADMITTED_FOR_FUNCTIONAL_LORDSHIP_V1",
+      "houseAndAscendantPermittedByTime": true,
+      "functionalLordshipPermitted": false,
+      "functionalLordshipBlocker": "R4_FUNCTIONAL_LORDSHIP_PROFILE_SOURCE_PACKET_PENDING",
+      "effectiveFrom": "1889-02-11",
+      "effectiveTo": null,
+      "status": "ACCEPTED_RESEARCH",
+      "founderDecision": "ACCEPT_EXACT_TIME_RESEARCH",
+      "acceptedBy": "founder",
+      "acceptedAt": "2026-08-03T00:00:00+05:30",
+      "provenance": [
+        {
+          "sourceId": "FOUNDER_R3_CHART_HYPOTHESIS_DECISION_20260803",
+          "locator": "Founder-provided JPY chart hypothesis in Codex task",
+          "evidenceClass": "WORKSPACE_SPECIFICATION",
+          "status": "FOUNDER_ACCEPTED_RESEARCH_ASSUMPTION_NOT_UNIVERSAL_HISTORICAL_CERTIFICATION",
+          "confidence": 1.0,
+          "note": "Records the approved research input, not a claim of universal historical certainty."
+        }
+      ],
+      "chartHash": "4ED100D71983BE68A24B8306C33D7D2B50504D6F122DF45A5F7707A68B171AF7"
+    }
+  ]
+}
