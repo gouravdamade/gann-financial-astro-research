@@ -1,7 +1,7 @@
 schemaVersion: SBC_TRAILOKYA_1972_VEDHA_PAGE_CERTIFICATION_V1
 packetId: PFR-V2B-R4-T1
 title: Trailokya Dipika Vedha Page-Certification Packet
-status: FOUNDER_REVIEW_PENDING
+status: PARTIALLY_FOUNDER_APPROVED_SOURCE_ONLY
 scope: source_only_page_certification_no_product_promotion
 selectedSourceProfile: SBC_TRAILOKYA_1972_V1
 source:
@@ -64,8 +64,8 @@ evidencePackets:
       - Accept an externally explicit motion state only; do not classify swift automatically.
       - No polarity, magnitude, market label, score, price, or execution use.
     reviewer: CODEX_SOURCE_REVIEW_20260803
-    founderDecision: PENDING
-    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+    founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+    founderReviewProposal: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
 
   - evidencePacketId: TD1972_VEDHA_FIXED_THREE_DIRECTIONS_V15
     category: planet_specific_direction_rule
@@ -99,8 +99,8 @@ evidencePackets:
       - Explicit Trailokya profile selection is required.
       - No score, magnitude, market direction, price, or execution use.
     reviewer: CODEX_SOURCE_REVIEW_20260803
-    founderDecision: PENDING
-    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+    founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+    founderReviewProposal: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
 
   - evidencePacketId: TD1972_VEDHA_RAY_EXTENT_V16_V17
     category: vedha_direction_or_ray_rule
@@ -134,8 +134,8 @@ evidencePackets:
       - Source-only display of categorical target reach.
       - No numeric weighting, aggregation, price conversion, or execution use.
     reviewer: CODEX_SOURCE_REVIEW_20260803
-    founderDecision: PENDING
-    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+    founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+    founderReviewProposal: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
 
   - evidencePacketId: TD1972_NATURAL_PLANET_CLASS_PRACTICAL_INTRO
     category: natural_benefic_and_malefic_classification

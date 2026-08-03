@@ -2077,9 +2077,61 @@ export type ChakraLabRequest = {
   actors: ChakraLabActorInput[]
   foundationProfileId: 'sbc_raman_foundation_v1'
   gridProfileId: 'sbc_81_rotation_normalized_partial_v1'
-  vedhaProfileId: 'phaladeepika_editor_vedha_guidance_v1'
+  vedhaProfileId:
+    | 'phaladeepika_editor_vedha_guidance_v1'
+    | 'SBC_TRAILOKYA_1972_V1'
   vowels: string[]
   nameInitials: string[]
+}
+
+export type TrailokyaSourceOnlyGeometry = {
+  contract: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1'
+  schemaVersion: 1
+  snapshot: ChakraLabSnapshot
+  approval: {
+    approvedProfileId: string
+    profileHash: string
+    sourceProfileId: 'SBC_TRAILOKYA_1972_V1'
+    packetId: string
+    decisionRecord: string
+    founderDecision: 'APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS'
+    pageLocators: Record<string, string>
+  }
+  rays: Array<{
+    body: string
+    sourceNakshatra: string
+    motionClass: string | null
+    direction: 'LEFT' | 'FRONT' | 'RIGHT'
+    directionReason: string
+    targetReach: 'REACHED' | 'NOT_REACHED'
+    targets: Array<{
+      row: number
+      column: number
+      layer: string
+      value: string
+      mappingState: 'AVAILABLE' | 'UNKNOWN'
+      reachState: 'REACHED' | 'NOT_REACHED' | 'UNKNOWN'
+    }>
+  }>
+  unavailable: Array<{
+    body: string
+    sourceNakshatra: string
+    direction?: 'LEFT' | 'FRONT' | 'RIGHT'
+    state: string
+    reason: string
+  }>
+  guardrails: {
+    readOnly: true
+    categoricalGeometryOnly: true
+    naturalPlanetPolarityUsed: false
+    numericalModifiersUsed: false
+    directionalWaveGenerated: false
+    scoreAggregationUsed: false
+    marketDirectionInferred: false
+    autoSuggestInfluenceAllowed: false
+    executionAllowed: false
+    packagingAllowed: false
+  }
 }
 
 export type ChartConditionedPolarityState =

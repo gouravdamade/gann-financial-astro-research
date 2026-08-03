@@ -1,0 +1,48 @@
+schemaVersion: SBC_APPROVED_SOURCE_ONLY_PROFILE_V1
+approvedProfileId: SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1
+selectedSourceProfile: SBC_TRAILOKYA_1972_V1
+founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+decisionDate: '2026-08-03'
+decisionRecord: PFR-V2B-R4-T2_FOUNDER_APPROVAL_20260803
+packetId: PFR-V2B-R4-T1
+packetPath: configs/sbc/evidence_packets/trailokya_dipika_1972_vedha_page_certification_v1.yaml
+approvedVariables:
+  - variableId: SBC_TD1972_VARIABLE_PLANET_DIRECTION
+    evidencePacketId: TD1972_VEDHA_VARIABLE_DIRECTION_V14
+    founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+  - variableId: SBC_TD1972_FIXED_THREE_DIRECTION_BODIES
+    evidencePacketId: TD1972_VEDHA_FIXED_THREE_DIRECTIONS_V15
+    founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+  - variableId: SBC_TD1972_RAY_EXTENT
+    evidencePacketId: TD1972_VEDHA_RAY_EXTENT_V16_V17
+    founderDecision: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+limits:
+  allowedUses:
+    - ray_selection
+    - ray_emission
+    - categorical_target_reach
+    - audit_display
+    - visual_display
+  prohibitedUses:
+    - natural_planet_polarity
+    - usd_or_jpy_support
+    - pair_direction
+    - wave_magnitude
+    - score_aggregation
+    - price_conversion
+    - confidence
+    - auto_suggest
+    - execution
+    - packaging
+  figureRelativeOrientationOnly: true
+  externallyExplicitMotionOnly: true
+  missingMotionFailClosed: true
+  missingTargetMappingFailClosed: true
+  directionalWaveAllowed: false
+  naturalPlanetClassAllowed: false
+  numericalModifierAllowed: false
+  executionAllowed: false
+  packagingAllowed: false
+pendingVariables:
+  - SBC_TD1972_BASE_NATURAL_PLANET_CLASS
+  - SBC_TD1972_ISOLATED_RESULT_FACTORS

@@ -34,6 +34,7 @@ from chakra_lab_service import (
     build_chakra_lab_audit_package,
     build_chakra_lab_fixed_phasor,
     build_chakra_lab_snapshot,
+    build_chakra_lab_trailokya_source_only_geometry,
     build_chakra_lab_timing_profile_admission,
     build_chakra_lab_timing_external_review,
     build_chakra_lab_timing_signed_review,
@@ -282,6 +283,20 @@ def create_chakra_lab_audit() -> Any:
             {
                 "ok": True,
                 "audit": build_chakra_lab_audit(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/trailokya-source-only-geometry")
+def create_chakra_lab_trailokya_source_only_geometry() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "geometry": build_chakra_lab_trailokya_source_only_geometry(payload),
             }
         )
     except (TypeError, ValueError) as exc:

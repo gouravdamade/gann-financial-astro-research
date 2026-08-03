@@ -121,6 +121,51 @@ parameters:
     sourceBackedValueOrRule: left_front_right_direction_rules_by_planet
     implementationFormula: source_profiled_actor_direction_ledger
     dependencies: [founder_approval, selected_vedha_profile, motion_input_for_variable_bodies]
+  - parameterId: SBC_TD1972_VARIABLE_PLANET_DIRECTION
+    displayName: Trailokya variable-planet figure-relative direction
+    traditionalMeaning: ray selection for Mars through Saturn by externally supplied motion state
+    domain: VEDHA
+    currentMode: SOURCE_ONLY_BASELINE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: ACTIVATION
+    sourceTitle: Trailokya Dipika 1972
+    sourceEdition: original_scan_checksum_identified
+    sourceLocator: printed_p4_pdf_image20_verses12_14
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: READY_MODE1_WITH_LIMITS
+    sourceBackedValueOrRule: RETROGRADE_RIGHT_DIRECT_SWIFT_LEFT_MEAN_FRONT
+    implementationFormula: explicit_motion_state_to_figure_relative_ray_only
+    dependencies: [SBC_TD1972_FIXED_THREE_DIRECTION_BODIES, SBC_TD1972_RAY_EXTENT, explicit_external_motion_state]
+  - parameterId: SBC_TD1972_FIXED_THREE_DIRECTION_BODIES
+    displayName: Trailokya fixed all-three ray bodies
+    traditionalMeaning: Sun Moon Rahu and Ketu emit figure-relative left front and right rays
+    domain: VEDHA
+    currentMode: SOURCE_ONLY_BASELINE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: ACTIVATION
+    sourceTitle: Trailokya Dipika 1972
+    sourceEdition: original_scan_checksum_identified
+    sourceLocator: printed_p5_pdf_image21_verse15
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: READY_MODE1_WITH_LIMITS
+    sourceBackedValueOrRule: SUN_MOON_RAHU_KETU_ALL_THREE_FIGURE_RELATIVE_RAYS
+    implementationFormula: fixed_left_front_right_ray_emission_only
+    dependencies: [SBC_TD1972_RAY_EXTENT, explicit_profile_selection]
+  - parameterId: SBC_TD1972_RAY_EXTENT
+    displayName: Trailokya ray reach extent
+    traditionalMeaning: side rays traverse mapped relevant cells and front ray reaches opposite outer nakshatra
+    domain: VEDHA
+    currentMode: SOURCE_ONLY_BASELINE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: ACTIVATION
+    sourceTitle: Trailokya Dipika 1972
+    sourceEdition: original_scan_checksum_identified
+    sourceLocator: printed_p5_pdf_image21_verses16_17
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: READY_MODE1_WITH_LIMITS
+    sourceBackedValueOrRule: SIDE_RELEVANT_MAPPED_CELLS_FRONT_OPPOSITE_OUTER_NAKSHATRA
+    implementationFormula: categorical_target_reach_or_unknown_when_mapping_missing
+    dependencies: [certified_target_cell_mapping, figure_relative_grid]
   - parameterId: VEDHA_NATURE_RULES
     displayName: Vedha natural nature rules
     traditionalMeaning: benefic or adverse character in selected guidance profile

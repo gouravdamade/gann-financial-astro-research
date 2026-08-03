@@ -13,6 +13,7 @@ from chakra_lab_service import (
     build_chakra_lab_audit_package,
     build_chakra_lab_fixed_phasor,
     build_chakra_lab_snapshot,
+    build_chakra_lab_trailokya_source_only_geometry,
     build_chakra_lab_timing_external_review,
     build_chakra_lab_timing_profile_admission,
     build_chakra_lab_timing_signed_review,
@@ -105,6 +106,21 @@ class ChakraLabServiceTests(unittest.TestCase):
             item["body"]: item["status"] for item in snapshot["actor_readiness"]
         }
         self.assertEqual(readiness["JUPITER"], "READY")
+
+    def test_trailokya_source_only_geometry_never_returns_guidance_or_scores(self) -> None:
+        report = build_chakra_lab_trailokya_source_only_geometry(
+            {
+                "at": "2026-07-17T12:00:00+05:30",
+                "vedhaProfileId": "SBC_TRAILOKYA_1972_V1",
+                "actors": [{"body": "SUN"}, {"body": "MARS", "motionClass": "MEAN"}],
+            }
+        )
+        self.assertIsNone(report["snapshot"]["guidance"])
+        self.assertEqual(report["approval"]["packetId"], "PFR-V2B-R4-T1")
+        self.assertFalse(report["guardrails"]["naturalPlanetPolarityUsed"])
+        self.assertFalse(report["guardrails"]["numericalModifiersUsed"])
+        self.assertFalse(report["guardrails"]["directionalWaveGenerated"])
+        self.assertFalse(report["guardrails"]["executionAllowed"])
 
     def test_missing_variable_motion_is_reported_not_inferred(self) -> None:
         snapshot = build_chakra_lab_snapshot(

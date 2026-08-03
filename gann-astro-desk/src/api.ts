@@ -44,6 +44,7 @@ import type {
   ChakraAuditCatalogVerification,
   ChakraLabRequest,
   ChakraLabSnapshot,
+  TrailokyaSourceOnlyGeometry,
   ChakraFixedPhasorSeries,
   ChakraLinkedAuditView,
   ChakraReproducibleAuditPackage,
@@ -669,6 +670,28 @@ export async function fetchChakraLabSnapshot(
     },
   )
   return payload.snapshot
+}
+
+export async function fetchTrailokyaSourceOnlyGeometry(
+  input: ChakraLabRequest,
+): Promise<TrailokyaSourceOnlyGeometry> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ geometry: TrailokyaSourceOnlyGeometry }>>(
+      'chakra_lab_trailokya_source_only_geometry',
+      { request: input },
+    )
+    if (!payload.ok) throw new Error(payload.error || 'Trailokya source-only geometry request failed')
+    if (payload.geometry.guardrails.executionAllowed) {
+      throw new Error('Trailokya geometry response violated the execution lock')
+    }
+    return payload.geometry
+  }
+  const payload = await request<{ geometry: TrailokyaSourceOnlyGeometry }>(
+    '/api/chakra-lab/trailokya-source-only-geometry',
+    { method: 'POST', body: JSON.stringify(input) },
+  )
+  return payload.geometry
 }
 
 export async function fetchChartConditionedPolarityLookup(input: {

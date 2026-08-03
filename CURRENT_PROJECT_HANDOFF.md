@@ -4,6 +4,32 @@ Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-03 (PFR-V2B-R4-T2 Narrow Trailokya Source-Only Geometry)
+
+- Founder-approved only three Trailokya 1972 variables, each as
+  `APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS`: variable Mars-to-Saturn direction,
+  Sun/Moon/Rahu/Ketu all-three rays, and ray extent. The immutable decision
+  record is `configs/sbc/approved_profiles/sbc_trailokya_1972_source_only_geometry_v1.yaml`.
+  Natural-planet class and isolated result factors remain pending.
+- Added the separate `sbc.trailokya_source_only_geometry` engine and the
+  backend/native endpoint `chakra_lab_trailokya_source_only_geometry`. It never
+  instantiates the older scored `VedhaGuidanceEngine`; it returns only
+  figure-relative rays, categorical target reach, provenance, and unavailable
+  states. Missing motion or missing/disputed mapping fails closed.
+- Chakra Board now explicitly selects the Trailokya profile and renders its
+  source-only rays/reached cells with a page-cited audit view. Exports include
+  the selected approval record, rays, unavailable items, and false locks.
+  No wave, polarity, USD/JPY support, pair direction, magnitude, score, price,
+  confidence, Auto Suggest, execution, or packaging behavior changed. Mode 2
+  and existing named profiles remain separate.
+- Verification: `pytest -q test_classical_oscillator_coverage.py
+  test_trailokya_dipika_vedha_page_certification.py
+  test_trailokya_source_only_geometry.py
+  gann-astro-desk/backend/test_chakra_lab_service.py` passed **40** tests;
+  focused frontend suite passed **34** tests; production frontend build and
+  native `cargo check` passed. No installer was produced because packaging
+  remains locked. Details: `docs/sbc/PFR_V2B_R4_T2_NARROW_TRAILOKYA_SOURCE_ONLY_GEOMETRY.md`.
+
 ## Latest Update - 2026-08-03 (PFR-V2B-R4-T1 Trailokya Vedha Page Packet)
 
 - Founder selected the held `SBC_TRAILOKYA_1972_V1` profile. Added the bounded

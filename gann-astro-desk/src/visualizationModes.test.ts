@@ -38,6 +38,15 @@ describe('visualization mode policies', () => {
     expect(policy.allowScalarAudit).toBe(true)
   })
 
+  it('admits Trailokya only as score-free source-only geometry', () => {
+    const policy = visualizationModePolicy('SOURCE_ONLY_BASELINE', 'SBC_TRAILOKYA_1972_V1')
+    expect(policy.approvalState).toBe('APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS')
+    expect(policy.scoringVisible).toBe(false)
+    expect(policy.allowScalarAudit).toBe(false)
+    expect(policy.allowFixedPhasor).toBe(false)
+    expect(policy.calibrationProfile.parameterCount).toBe(3)
+  })
+
   it('does not allow scalar audit in score-suppressed modes', () => {
     expect(visualizationModePolicy('CALIBRATED_RESEARCH').allowScalarAudit).toBe(false)
     expect(visualizationModePolicy('VISUAL_ONLY_NO_SCORE').allowScalarAudit).toBe(false)

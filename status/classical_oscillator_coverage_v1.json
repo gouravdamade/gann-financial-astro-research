@@ -2,9 +2,9 @@
   "contract": "CLASSICAL_OSCILLATOR_COVERAGE_STATUS_V1",
   "asOfUtc": "2026-08-03T00:00:00Z",
   "scope": "read_only_doctrine_and_mode_audit",
-  "parameterCount": 42,
+  "parameterCount": 45,
   "countsByStatus": {
-    "READY_MODE1_WITH_LIMITS": 0,
+    "READY_MODE1_WITH_LIMITS": 3,
     "MODE1_DISPLAY_TRANSFORM_ONLY": 0,
     "MODE2_PROVISIONAL_IMPLEMENTATION": 8,
     "MODE2_ENGINEERING_HYPOTHESIS": 3,
@@ -15,8 +15,8 @@
     "DEPENDENCY_BLOCKED": 7,
     "NOT_APPLICABLE": 3
   },
-  "mode1ParameterCount": 0,
-  "mode1Baseline": "EMPTY_PENDING_FOUNDER_APPROVAL_AND_SOURCE_PACKET_CLOSURE",
+  "mode1ParameterCount": 3,
+  "mode1Baseline": "TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_THREE_VARIABLES_APPROVED_WITH_LIMITS",
   "mode2ParameterCount": 14,
   "visualOnlyCurrentParameterCount": 28,
   "executionAllowed": false,
@@ -24,5 +24,5 @@
   "autoSuggestInfluenceAllowed": false,
   "financialValidationClaimed": false,
   "packagingAllowed": false,
-  "nextAction": "founder_selects_one_source_priority_then_a_page_certified_packet_is_reviewed_without_polarity_or_wave_tuning"
+  "nextAction": "keep Trailokya geometry source-only; do not promote pending polarity or modifier variables"
 }

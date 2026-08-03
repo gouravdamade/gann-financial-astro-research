@@ -11,7 +11,7 @@ export type VisualizationModePolicy = {
   label: string
   shortLabel: string
   evidenceStatus: 'SOURCE_PROFILED_PARTIAL' | 'SOURCE_APPROVAL_PENDING' | 'SOURCE_MISSING' | 'NOT_APPLICABLE'
-  approvalState: 'FOUNDER_APPROVAL_PENDING' | 'NOT_REQUIRED'
+  approvalState: 'FOUNDER_APPROVAL_PENDING' | 'APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS' | 'NOT_REQUIRED'
   classicalCompletenessClaim: false
   scoringVisible: boolean
   allowScalarAudit: boolean
@@ -39,9 +39,34 @@ const GUARDRAILS = {
   automaticOrderPlacement: false,
 } as const
 
-export function visualizationModePolicy(mode: VisualizationEngineMode): VisualizationModePolicy {
+export function visualizationModePolicy(
+  mode: VisualizationEngineMode,
+  sourceProfileId?: string,
+): VisualizationModePolicy {
   switch (mode) {
     case 'SOURCE_ONLY_BASELINE':
+      if (sourceProfileId === 'SBC_TRAILOKYA_1972_V1') {
+        return {
+          mode,
+          label: 'Trailokya 1972 source-only geometry',
+          shortLabel: 'Trailokya geometry',
+          evidenceStatus: 'SOURCE_PROFILED_PARTIAL',
+          approvalState: 'APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS',
+          classicalCompletenessClaim: false,
+          scoringVisible: false,
+          allowScalarAudit: false,
+          allowFixedPhasor: false,
+          allowTimingGeometry: false,
+          calibrationProfile: {
+            profileId: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1',
+            profileHash: null,
+            status: 'SOURCE_PROFILED_PARTIAL',
+            parameterCount: 3,
+          },
+          explanation: 'Founder-approved, figure-relative ray geometry and categorical target reach only. It has no natural planet class, numerical modifier, score, directional wave, financial mapping, or execution role.',
+          guardrails: GUARDRAILS,
+        }
+      }
       return {
         mode,
         label: 'Source-profiled partial baseline',

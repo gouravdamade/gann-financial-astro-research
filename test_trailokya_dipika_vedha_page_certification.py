@@ -63,21 +63,27 @@ def test_each_evidence_packet_is_complete_and_page_cited() -> None:
         assert entry["dependencies"]
 
 
-def test_only_narrow_candidates_can_be_founder_promoted() -> None:
+def test_founder_approved_geometry_stays_narrow_and_non_scoring() -> None:
     packet = _packet()
-    candidates = [
+    approved = [
         entry
         for entry in packet["evidencePackets"]
-        if entry["founderReviewProposal"] == "CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS"
+        if entry["founderDecision"] == "APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS"
     ]
-    assert {entry["proposedVariableId"] for entry in candidates} == {
+    assert {entry["proposedVariableId"] for entry in approved} == {
         "SBC_TD1972_VARIABLE_PLANET_DIRECTION",
         "SBC_TD1972_FIXED_THREE_DIRECTION_BODIES",
         "SBC_TD1972_RAY_EXTENT",
+    }
+    pending = {
+        entry["proposedVariableId"]
+        for entry in packet["evidencePackets"]
+        if entry["founderDecision"] == "PENDING"
+    }
+    assert {
         "SBC_TD1972_BASE_NATURAL_PLANET_CLASS",
         "SBC_TD1972_ISOLATED_RESULT_FACTORS",
-    }
-    assert all(entry["founderDecision"] == "PENDING" for entry in candidates)
+    } <= pending
 
 
 def test_global_locks_and_unresolved_doctrine_remain_explicit() -> None:

@@ -87,7 +87,18 @@ def test_status_summary_matches_machine_ledger_and_locks_remain_false() -> None:
     assert status["countsByStatus"] == {
         key: counts.get(key, 0) for key in status["countsByStatus"]
     }
-    assert status["mode1ParameterCount"] == 0
+    approved_geometry = {
+        "SBC_TD1972_VARIABLE_PLANET_DIRECTION",
+        "SBC_TD1972_FIXED_THREE_DIRECTION_BODIES",
+        "SBC_TD1972_RAY_EXTENT",
+    }
+    assert status["mode1ParameterCount"] == len(approved_geometry)
+    mode1 = {
+        item["parameterId"]
+        for item in matrix["parameters"]
+        if item["currentMode"] == "SOURCE_ONLY_BASELINE"
+    }
+    assert approved_geometry <= mode1
     assert status["executionAllowed"] is False
     assert status["automaticOrderPlacement"] is False
     assert status["autoSuggestInfluenceAllowed"] is False

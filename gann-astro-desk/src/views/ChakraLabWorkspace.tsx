@@ -19,6 +19,7 @@ import {
   fetchChartConditionedPolarityLookup,
   fetchChakraLabFixedPhasor,
   fetchChakraLabSnapshot,
+  fetchTrailokyaSourceOnlyGeometry,
   fetchFxSidePilotStatus,
   fetchSynchronizedIndependentRange,
 } from '../api'
@@ -37,6 +38,7 @@ import type {
   ResearchFieldIntervalSelection,
   ResearchTimeUpdateSource,
   SynchronizedIndependentRange,
+  TrailokyaSourceOnlyGeometry,
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
 import { InstrumentKeyConverter } from './InstrumentKeyConverter'
@@ -166,6 +168,8 @@ export function ChakraLabWorkspace({
   const [nameInitials, setNameInitials] = useState('')
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
+  const [trailokyaGeometry, setTrailokyaGeometry] = useState<TrailokyaSourceOnlyGeometry | null>(null)
+  const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
   const [fixedPhasor, setFixedPhasor] = useState<ChakraFixedPhasorSeries | null>(null)
   const [synchronizedRange, setSynchronizedRange] = useState<SynchronizedIndependentRange | null>(null)
   const [pilotStatus, setPilotStatus] = useState<FxSidePilotStatus | null>(null)
@@ -206,7 +210,7 @@ export function ChakraLabWorkspace({
       })),
     foundationProfileId: 'sbc_raman_foundation_v1',
     gridProfileId: 'sbc_81_rotation_normalized_partial_v1',
-    vedhaProfileId: 'phaladeepika_editor_vedha_guidance_v1',
+    vedhaProfileId,
     vowels: splitValues(vowels),
     nameInitials: splitValues(nameInitials),
   }), [
@@ -216,6 +220,7 @@ export function ChakraLabWorkspace({
     latitude,
     longitude,
     nameInitials,
+    vedhaProfileId,
     vowels,
   ])
 
@@ -245,9 +250,15 @@ export function ChakraLabWorkspace({
     setBusy(true)
     setError('')
     try {
-      setSnapshot(await fetchChakraLabSnapshot(
-        atOverride ? { ...request, at: offsetIst(atOverride) } : request,
-      ))
+      const nextRequest = atOverride ? { ...request, at: offsetIst(atOverride) } : request
+      if (nextRequest.vedhaProfileId === 'SBC_TRAILOKYA_1972_V1') {
+        const geometry = await fetchTrailokyaSourceOnlyGeometry(nextRequest)
+        setTrailokyaGeometry(geometry)
+        setSnapshot(geometry.snapshot)
+      } else {
+        setTrailokyaGeometry(null)
+        setSnapshot(await fetchChakraLabSnapshot(nextRequest))
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
     } finally {
@@ -406,19 +417,26 @@ export function ChakraLabWorkspace({
     )) ?? [],
   ), [snapshot])
   const targetCoordinates = useMemo(() => new Set(
-    snapshot?.guidance?.actor_resolutions.flatMap((actor) => (
+    trailokyaGeometry?.rays.flatMap((ray) => ray.targets.map((target) => `${target.row}:${target.column}`))
+    ?? snapshot?.guidance?.actor_resolutions.flatMap((actor) => (
       actor.targets.map((target) => `${target.row}:${target.column}`)
     )) ?? [],
-  ), [snapshot])
+  ), [snapshot, trailokyaGeometry])
   const hitCoordinates = useMemo(() => new Set(
-    snapshot?.guidance?.contributions.map((item) => (
+    trailokyaGeometry?.rays.flatMap((ray) => ray.targets
+      .filter((target) => target.reachState === 'REACHED')
+      .map((target) => `${target.row}:${target.column}`))
+    ?? snapshot?.guidance?.contributions.map((item) => (
       `${item.target.row}:${item.target.column}`
     )) ?? [],
-  ), [snapshot])
+  ), [snapshot, trailokyaGeometry])
   const selected = snapshot?.grid.cells.find((cell) => cellKey(cell) === selectedCell)
   const guidance = snapshot?.guidance
-  const visualizationPolicy = visualizationModePolicy(visualizationMode)
-  const visualizationSourceGaps = sourceGapsForVisualizationMode(visualizationMode)
+  const isTrailokyaSourceOnly = vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'
+  const visualizationPolicy = visualizationModePolicy(visualizationMode, vedhaProfileId)
+  const visualizationSourceGaps = vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'
+    ? []
+    : sourceGapsForVisualizationMode(visualizationMode)
   const resolvedByBody = new Map(
     guidance?.actor_resolutions.map((actor) => [actor.body, actor]) ?? [],
   )
@@ -453,6 +471,12 @@ export function ChakraLabWorkspace({
       as_of_utc: snapshot?.as_of_utc ?? null,
       evidence_cutoff_utc: snapshot?.evidence_cutoff_utc ?? null,
       request,
+      trailokya_source_only_geometry: trailokyaGeometry ? {
+        approval: trailokyaGeometry.approval,
+        rays: trailokyaGeometry.rays,
+        unavailable: trailokyaGeometry.unavailable,
+        guardrails: trailokyaGeometry.guardrails,
+      } : null,
       guardrails: visualizationPolicy.guardrails,
       note: 'Experimental visualization state only. Not financially validated. No execution or automatic order placement is permitted.',
     }
@@ -650,6 +674,16 @@ export function ChakraLabWorkspace({
               <span>Optional</span>
             </div>
             <label>
+              Vedha source profile
+              <select
+                value={vedhaProfileId}
+                onChange={(event) => setVedhaProfileId(event.target.value as ChakraLabRequest['vedhaProfileId'])}
+              >
+                <option value="phaladeepika_editor_vedha_guidance_v1">Phaladeepika editor profile</option>
+                <option value="SBC_TRAILOKYA_1972_V1">Trailokya 1972 source-only geometry</option>
+              </select>
+            </label>
+            <label>
               Vowel keys
               <input
                 value={vowels}
@@ -677,7 +711,7 @@ export function ChakraLabWorkspace({
               <span />
               <span>Body</span>
               <span>Motion</span>
-              <span>Dignity</span>
+              <span>{vedhaProfileId === 'SBC_TRAILOKYA_1972_V1' ? 'Modifier' : 'Dignity'}</span>
             </div>
             {BODIES.map((body) => (
               <div className="chakra-actor-row" key={body}>
@@ -710,6 +744,8 @@ export function ChakraLabWorkspace({
                     dignity: event.target.value as ChakraDignityState,
                   })}
                   aria-label={`${body} dignity`}
+                  disabled={vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'}
+                  title={vedhaProfileId === 'SBC_TRAILOKYA_1972_V1' ? 'Not used by Trailokya source-only geometry' : undefined}
                 >
                   <option value="ORDINARY">Ordinary</option>
                   <option value="EXALTED">Exalted</option>
@@ -795,7 +831,7 @@ export function ChakraLabWorkspace({
               <strong>Guidance ledger</strong>
               <span>{guidance?.financial_validation_status ?? 'PENDING'}</span>
             </div>
-            {visualizationPolicy.scoringVisible ? <>
+            {visualizationPolicy.scoringVisible && !isTrailokyaSourceOnly ? <>
             <div className="chakra-score-line">
               <strong>
                 {guidance ? `${(guidance.normalized_guidance_score * 100).toFixed(1)}%` : '—'}
@@ -811,7 +847,7 @@ export function ChakraLabWorkspace({
             </> : <div className="chakra-mode-suppressed-score">
               <strong>{visualizationPolicy.evidenceStatus}</strong>
               <span>{visualizationPolicy.explanation}</span>
-              <small>Scores, directions, and execution remain unavailable in this mode.</small>
+              <small>{isTrailokyaSourceOnly ? 'Approved source-only rays and target reach. No natural class, modifier, score, direction, price, or execution output.' : 'Scores, directions, and execution remain unavailable in this mode.'}</small>
             </div>}
           </section>
 
@@ -827,8 +863,8 @@ export function ChakraLabWorkspace({
                   <div className={`chakra-evidence-row is-${item.status.toLowerCase()}`} key={item.body}>
                     <strong>{item.body}</strong>
                     <span>{displayToken(item.source_nakshatra)}</span>
-                    <span>{visualizationPolicy.scoringVisible ? (resolution?.direction ?? displayToken(item.status)) : displayToken(item.status)}</span>
-                    <em>{resolution?.nature ?? item.motion_class ?? '—'}</em>
+                    <span>{isTrailokyaSourceOnly ? (trailokyaGeometry?.rays.filter((ray) => ray.body === item.body).map((ray) => ray.direction).join('/') || displayToken(item.status)) : (visualizationPolicy.scoringVisible ? (resolution?.direction ?? displayToken(item.status)) : displayToken(item.status))}</span>
+                    <em>{isTrailokyaSourceOnly ? (item.motion_class ?? 'fixed all rays') : (resolution?.nature ?? item.motion_class ?? '—')}</em>
                   </div>
                 )
               })}
@@ -838,10 +874,14 @@ export function ChakraLabWorkspace({
           <section>
             <div className="chakra-section-heading">
               <strong>Matched cells</strong>
-              <span>{guidance?.matched_target_count ?? 0}</span>
+              <span>{isTrailokyaSourceOnly ? trailokyaGeometry?.rays.flatMap((ray) => ray.targets).filter((target) => target.reachState === 'REACHED').length ?? 0 : guidance?.matched_target_count ?? 0}</span>
             </div>
             <div className="chakra-contribution-list">
-              {guidance?.contributions.length ? guidance.contributions.map((item, index) => (
+              {isTrailokyaSourceOnly ? trailokyaGeometry?.rays.flatMap((ray) => ray.targets.filter((target) => target.reachState === 'REACHED').map((target) => ({ body: ray.body, target }))).map((item, index) => (
+                <button key={`${item.body}-${item.target.row}-${item.target.column}-${index}`} onClick={() => setSelectedCell(`${item.target.row}:${item.target.column}`)}>
+                  <strong>{item.body}</strong><span>{item.target.layer}: {displayToken(item.target.value)}</span><em>Reached</em>
+                </button>
+              )) : guidance?.contributions.length ? guidance.contributions.map((item, index) => (
                 <button
                   key={`${item.body}-${item.target.row}-${item.target.column}-${index}`}
                   onClick={() => setSelectedCell(`${item.target.row}:${item.target.column}`)}
@@ -868,6 +908,19 @@ export function ChakraLabWorkspace({
               )) : <span className="chakra-muted-row">No certified layer in this cell</span>}
             </div>
           </section>
+          {isTrailokyaSourceOnly && trailokyaGeometry && <section>
+            <div className="chakra-section-heading">
+              <strong>Trailokya source audit</strong>
+              <span>{trailokyaGeometry.approval.founderDecision}</span>
+            </div>
+            <div className="chakra-cell-evidence">
+              <div><span>Source</span><strong>{trailokyaGeometry.approval.sourceProfileId}</strong></div>
+              <div><span>Packet</span><strong>{trailokyaGeometry.approval.packetId}</strong></div>
+              <div><span>Decision</span><strong>{trailokyaGeometry.approval.decisionRecord}</strong></div>
+              {Object.entries(trailokyaGeometry.approval.pageLocators).map(([key, value]) => <div key={key}><span>{displayToken(key)}</span><strong>{value}</strong></div>)}
+              {trailokyaGeometry.unavailable.map((item, index) => <div key={`${item.body}-${index}`}><span>{item.body}</span><strong>{item.state}: {item.reason}</strong></div>)}
+            </div>
+          </section>}
         </aside>
       </div>
       ) : (

@@ -749,6 +749,28 @@ async fn chakra_lab_snapshot(
 
 #[cfg(not(mobile))]
 #[tauri::command]
+async fn chakra_lab_trailokya_source_only_geometry(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Trailokya geometry requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/trailokya-source-only-geometry",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("Trailokya geometry bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 async fn chakra_lab_audit(
     request: Value,
     state: State<'_, BackendRuntimeState>,
@@ -1083,6 +1105,7 @@ pub fn run() {
             runtime_profile,
             backend_runtime,
             chakra_lab_snapshot,
+            chakra_lab_trailokya_source_only_geometry,
             chakra_lab_audit,
             chakra_lab_fixed_phasor,
             synchronized_independent_range,

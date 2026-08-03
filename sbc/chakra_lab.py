@@ -390,3 +390,73 @@ class ChakraLabEngine:
             source_ids=source_ids,
             guardrails=guardrails,
         )
+
+    def snapshot_without_guidance(
+        self,
+        request: ChakraLabRequest,
+        *,
+        additional_source_ids: tuple[str, ...] = (),
+    ) -> ChakraLabSnapshot:
+        """Build the reproducible Chakra context without a Vedha score engine.
+
+        This is intentionally separate from ``snapshot``.  It is used by
+        source-only geometry profiles whose approved scope excludes natural
+        planet class, modifiers, polarity and all numerical aggregation.
+        """
+        if request.at.tzinfo is None or request.at.utcoffset() is None:
+            raise ValueError("Chakra Lab timestamps must include a UTC offset")
+        foundation = self.foundation_engine.snapshot(
+            SbcSnapshotRequest(
+                at_utc=request.at,
+                profile_id=request.foundation_profile_id,
+                bodies=request.bodies,
+                location=request.location,
+            )
+        )
+        grid = compile_grid(request.grid_profile_id)
+        target_context, position_context = _current_context(foundation, request)
+        _, readiness = _resolve_actors(
+            foundation, _actor_selections(request.actors)
+        )
+        as_of_utc = foundation.as_of_utc.astimezone(timezone.utc)
+        requested_at_local = as_of_utc.astimezone(ZoneInfo(request.location.timezone))
+        source_ids = tuple(
+            dict.fromkeys((*foundation.source_ids, *grid.source_ids, *additional_source_ids))
+        )
+        guardrails = ChakraLabGuardrails()
+        identity = {
+            "contract": CHAKRA_LAB_CONTRACT,
+            "schema_version": CHAKRA_LAB_SCHEMA_VERSION,
+            "requested_at_local": requested_at_local.isoformat(),
+            "as_of_utc": as_of_utc.isoformat(),
+            "evidence_cutoff_utc": as_of_utc.isoformat(),
+            "timezone": request.location.timezone,
+            "location": to_primitive(request.location),
+            "foundation_snapshot_id": foundation.snapshot_id,
+            "grid_profile_id": grid.grid_profile_id,
+            "grid_profile_hash": grid.profile_hash,
+            "target_context": to_primitive(target_context),
+            "actor_readiness": to_primitive(readiness),
+            "guidance": None,
+            "source_ids": source_ids,
+            "guardrails": to_primitive(guardrails),
+        }
+        return ChakraLabSnapshot(
+            contract=CHAKRA_LAB_CONTRACT,
+            schema_version=CHAKRA_LAB_SCHEMA_VERSION,
+            snapshot_id=_canonical_hash(identity),
+            requested_at_local=requested_at_local,
+            as_of_utc=as_of_utc,
+            evidence_cutoff_utc=as_of_utc,
+            timezone=request.location.timezone,
+            location=request.location,
+            foundation_snapshot=foundation,
+            grid=grid,
+            context_contract=CURRENT_MOMENT_CONTEXT_CONTRACT,
+            target_context=target_context,
+            position_context=position_context,
+            actor_readiness=readiness,
+            guidance=None,
+            source_ids=source_ids,
+            guardrails=guardrails,
+        )

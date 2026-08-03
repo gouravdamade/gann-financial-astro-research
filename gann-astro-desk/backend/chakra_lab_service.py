@@ -70,6 +70,9 @@ from sbc.vedha import (  # noqa: E402
     PlanetNature,
     load_vedha_profile,
 )
+from sbc.trailokya_source_only_geometry import (  # noqa: E402
+    build_trailokya_source_only_geometry,
+)
 
 
 DEFAULT_BODIES = (
@@ -277,6 +280,12 @@ def _chakra_lab_request(payload: Any) -> ChakraLabRequest:
 def build_chakra_lab_snapshot(payload: Any) -> dict[str, Any]:
     request = _chakra_lab_request(payload)
     return ChakraLabEngine().snapshot(request).to_dict()
+
+
+def build_chakra_lab_trailokya_source_only_geometry(payload: Any) -> dict[str, Any]:
+    """Return the separately-approved Trailokya geometry, never scored guidance."""
+    request = _chakra_lab_request(payload)
+    return build_trailokya_source_only_geometry(request)
 
 
 def _build_chakra_lab_ledger(payload: Any):
