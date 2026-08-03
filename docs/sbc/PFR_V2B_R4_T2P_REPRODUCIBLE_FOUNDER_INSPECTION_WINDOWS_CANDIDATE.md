@@ -78,6 +78,10 @@ single-thread rerun above is the recorded focused result.
 - `cargo fmt --check`: pass.
 - `cargo check --offline`: pass.
 - Rust tests: **18 passed, 0 failed**.
+  The final repeated `cargo test --offline` wrapper exceeded the execution
+  runner ceiling during its rebuild; the resulting final test binary was then
+  run directly and produced the same **18 passed, 0 failed** result. An
+  earlier complete `cargo test --offline` run had already passed.
 - Status validator: valid, 21 documents, 13 audits, `executionAllowed=false`.
 - Status unit tests: **55 passed**.
 

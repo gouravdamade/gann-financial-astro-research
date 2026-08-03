@@ -61,9 +61,10 @@
     "rust_fmt": "passed",
     "rust_check_offline": "passed",
     "rust_tests": {
+      "command": "cargo test --offline",
       "tests_passed": 18,
       "tests_failed": 0,
-      "result": "passed"
+      "result": "passed; final test binary also passed after a repeated wrapper timeout"
     },
     "status_unit_tests": {
       "tests_passed": 55,
