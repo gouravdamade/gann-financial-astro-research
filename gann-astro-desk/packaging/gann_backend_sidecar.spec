@@ -98,7 +98,11 @@ hiddenimports = [
 
 a = Analysis(
     [str(app_root / "backend_sidecar.py")],
-    pathex=[str(app_root / "backend"), str(project_root)],
+    pathex=[
+        str(app_root / "backend"),
+        str(project_root),
+        str(project_root / "research_labs" / "chart_conditioned_aspects"),
+    ],
     binaries=[],
     datas=datas,
     hiddenimports=hiddenimports,
