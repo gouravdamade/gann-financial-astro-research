@@ -1,0 +1,127 @@
+{
+  "contract": "GANN_WINDOWS_FOUNDER_CANDIDATE_STATUS_V1",
+  "status": "FOUNDER_INSPECTION_PENDING",
+  "candidate_version": "0.10.33-pfr-r4-t2r",
+  "candidate_label": "PFR-V2B-R4-T2P Founder Inspection",
+  "application_source_commit": "1fc3853ea8268dba9c17e006e29b22f36dfa1afb",
+  "packaging_checkout_commit": "86bdcd0163c1a0c8b8cf25e5b615cccf4f044fa2",
+  "origin_master_commit": "86bdcd0163c1a0c8b8cf25e5b615cccf4f044fa2",
+  "pre_package_git_status": "empty",
+  "source_git_dirty": false,
+  "stable_candidate_untouched": "0.10.32-pfr-u1-s1",
+  "candidate_root": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.33-pfr-r4-t2r",
+  "portable": {
+    "path": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.33-pfr-r4-t2r\\GannAstroDesk.exe",
+    "sha256": "403494119C212EE4E81943EC89A9430220234DEE14DF6F5B74E8E8121A99591C"
+  },
+  "installer": {
+    "path": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.33-pfr-r4-t2r\\Gann Astro Desk_0.10.33-pfr-r4-t2r_x64-setup.exe",
+    "sha256": "5FD9B51D503E5B994AADADE3A1499C2BD74E277F3C945975A618EB41C5206684"
+  },
+  "backend_sidecar": {
+    "path": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.33-pfr-r4-t2r\\backend\\GannAstroBackend.exe",
+    "sha256": "972CF6A3C782082463480BD54A23F850769F3C51C953DF8D53CE4FA9E514E152"
+  },
+  "release_manifest_sha256": "3E707BED0C525728072C20B689E29D3CB2ADD739F6CE9C174E26A383370EE7F7",
+  "toolchain": {
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "python": "3.14.4",
+    "pyinstaller": "6.20.0",
+    "rustc": "1.97.0 (2d8144b78 2026-07-07)",
+    "cargo": "1.97.0 (c980f4866 2026-06-30)"
+  },
+  "tests": {
+    "frontend_lint": {
+      "command": "npm.cmd run lint",
+      "result": "passed",
+      "tool": "Oxlint"
+    },
+    "frontend_complete": {
+      "command": "npm.cmd test",
+      "files_collected": 32,
+      "tests_passed": 137,
+      "result": "passed"
+    },
+    "frontend_t2r_focused": {
+      "command": "npm exec -- vitest run --pool=threads --no-file-parallelism --maxWorkers=1 src/api.test.ts src/chakraLabWorkspace.test.tsx src/visualizationModes.test.ts src/visualizationSourceGaps.test.ts",
+      "files_collected": 4,
+      "tests_passed": 39,
+      "result": "passed"
+    },
+    "focused_python_t2r": {
+      "tests_passed": 44,
+      "result": "passed"
+    },
+    "full_python_regression": {
+      "tests_passed": 656,
+      "tests_skipped": 1,
+      "result": "passed_with_explicit_jhora_witness_skip"
+    },
+    "rust_fmt": "passed",
+    "rust_check_offline": "passed",
+    "rust_tests": {
+      "tests_passed": 18,
+      "tests_failed": 0,
+      "result": "passed"
+    },
+    "status_unit_tests": {
+      "tests_passed": 55,
+      "result": "passed"
+    },
+    "status_validator": {
+      "valid": true,
+      "document_count": 21,
+      "audit_count": 13,
+      "execution_allowed": false
+    }
+  },
+  "portable_smoke": [
+    {
+      "report": "D:\\GannFinancialAstro\\soak\\tauri_0.10.33-pfr-r4-t2r_20260803_053928\\logs\\native_soak_report.json",
+      "checks": 42,
+      "checks_true": 42,
+      "passed": true,
+      "errors": [],
+      "conditional_pass": true,
+      "deferred": ["candlestick_specialist_optional_not_configured"]
+    },
+    {
+      "report": "D:\\GannFinancialAstro\\soak\\tauri_0.10.33-pfr-r4-t2r_20260803_054031\\logs\\native_soak_report.json",
+      "checks": 42,
+      "checks_true": 42,
+      "passed": true,
+      "errors": [],
+      "conditional_pass": true,
+      "deferred": ["candlestick_specialist_optional_not_configured"]
+    }
+  ],
+  "guardrails": {
+    "market_direction": "ABSTAIN",
+    "mt5_execution_mode": "read_only_market_data",
+    "auto_suggest_allowed": false,
+    "order_placement_allowed": false,
+    "execution_allowed": false,
+    "trailokya_score_allowed": false,
+    "trailokya_polarity_allowed": false,
+    "trailokya_wave_allowed": false,
+    "price_conversion_allowed": false,
+    "collective_directional_contribution": 0,
+    "chakra_lab_mode": "read_only_guidance"
+  },
+  "packaged_ui_verification": {
+    "status": "PENDING_FOUNDER_PHYSICAL_INSPECTION",
+    "development_server_used_for_acceptance": false,
+    "founder_acceptance_marked": false,
+    "required_checks": [
+      "Trailokya source-only board refresh and figure-relative rays",
+      "categorical reached cells without score/polarity/wave",
+      "USD and JPY accepted chart identities in Workspace",
+      "SBC lane GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED as availability state",
+      "seven unresolved Trailokya source gaps visible",
+      "Phaladeepika atomic-range behavior unchanged"
+    ]
+  },
+  "stable_promotion": false,
+  "execution_and_financial_validation": false
+}

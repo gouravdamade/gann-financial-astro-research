@@ -6,6 +6,16 @@ This bounded correction hardens only the approved Trailokya 1972 source-only
 geometry path. It adds no doctrine, polarity, magnitude, score, price
 conversion, Auto Suggest, execution, package, or polarity event.
 
+## Windows sidecar packaging hardening
+
+During the separate founder-inspection packaging milestone, the first native
+smoke exposed a packaging-only import omission: the chart-conditioned module
+imports `instrument_relative_sbc`. The sidecar specification now explicitly
+includes that package, its connector/models/profiles/scoring modules, and its
+package root. This is packaging metadata only; the application source and the
+Trailokya contract are unchanged. A clean-checkout candidate was rebuilt after
+the fix at packaging commit `86bdcd0163c1a0c8b8cf25e5b615cccf4f044fa2`.
+
 ## Synchronized field behavior
 
 When `SBC_TRAILOKYA_1972_V1` is explicitly selected, synchronized refresh now
@@ -67,8 +77,13 @@ was added. The exact expanded T2R frontend command below now collects and passes
 test surface after integration-hardening coverage was added.
 
 ```text
-npm test -- --run src/api.test.ts src/chakraLabWorkspace.test.tsx src/visualizationModes.test.ts src/visualizationSourceGaps.test.ts
+npm exec -- vitest run --pool=threads --no-file-parallelism --maxWorkers=1 src/api.test.ts src/chakraLabWorkspace.test.tsx src/visualizationModes.test.ts src/visualizationSourceGaps.test.ts
 ```
+
+The complete frontend suite independently collected **32 files / 137 tests**
+and passed. A parallel/forked focused invocation once hit a Vitest worker-start
+timeout; it was not counted as a pass and was repeated with
+`--pool=threads --no-file-parallelism --maxWorkers=1`.
 
 The focused Python command passed **44** tests:
 
@@ -76,8 +91,11 @@ The focused Python command passed **44** tests:
 pytest -q test_classical_oscillator_coverage.py test_trailokya_dipika_vedha_page_certification.py test_trailokya_source_only_geometry.py gann-astro-desk/backend/test_chakra_lab_service.py gann-astro-desk/backend/test_synchronized_range_service.py
 ```
 
-The production frontend build plus native `cargo fmt --check` and `cargo check`
-also passed.
+The production frontend build plus native `cargo fmt --check`, `cargo check
+--offline`, and Rust tests (**18 passed**) also passed. The complete supported
+Python regression was **656 passed, 1 skipped**; the single skip is the
+explicit external JHora witness test requiring `JHORA_WITNESS_CSV`. The
+focused T2R Python suite passed **44** tests.
 
 ## Physical UI verification
 

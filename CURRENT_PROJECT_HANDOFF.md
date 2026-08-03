@@ -4,6 +4,39 @@ Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-03 (PFR-V2B-R4-T2P Founder-Inspection Windows Candidate)
+
+- Built the non-promoted Windows research candidate `0.10.33-pfr-r4-t2r` from
+  application source commit `1fc3853ea8268dba9c17e006e29b22f36dfa1afb` in a
+  clean packaging checkout. The packaging checkout is
+  `86bdcd0163c1a0c8b8cf25e5b615cccf4f044fa2`, and `origin/master` matches it.
+  The accepted `0.10.32-pfr-u1-s1` candidate was not changed.
+- Candidate folder:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.33-pfr-r4-t2r`.
+  Final portable SHA-256 is
+  `403494119C212EE4E81943EC89A9430220234DEE14DF6F5B74E8E8121A99591C`.
+  Final NSIS SHA-256 is
+  `5FD9B51D503E5B994AADADE3A1499C2BD74E277F3C945975A618EB41C5206684`.
+- The first native smoke exposed a packaging-only missing
+  `instrument_relative_sbc` import. The sidecar spec was corrected and pushed
+  as `86bdcd0`; no application doctrine or behavior was changed.
+- Verification: Oxlint passed; complete frontend **32 files / 137 tests**
+  passed; focused T2R frontend **4 files / 39 tests** passed in single-thread
+  mode; focused Python **44 passed**; full Python **656 passed / 1 skipped**;
+  `cargo fmt --check` passed; `cargo check --offline` passed; Rust **18
+  passed**; status unit tests **55 passed**; status validator valid with
+  `executionAllowed=false`.
+- The exact final portable candidate was smoke-launched twice. Each run had
+  **42/42 checks true**, no errors, and verified health, chart/Chakra
+  endpoints, read-only behavior, execution locks, sidecar restart/recovery,
+  layout survival and cleanup. Both are conditional only because the optional
+  candlestick specialist is not configured.
+- Packaged UI founder inspection remains pending. The checklist is in
+  `docs/sbc/PFR_V2B_R4_T2P_REPRODUCIBLE_FOUNDER_INSPECTION_WINDOWS_CANDIDATE.md`.
+  No stable promotion, Auto Suggest, order placement, execution, polarity,
+  magnitude, Trailokya score/wave, price conversion or natural-planet
+  promotion was enabled.
+
 ## Latest Update - 2026-08-03 (PFR-V2B-R4-T2R Source-Only Geometry Integration Hardening)
 
 - Corrected the synchronized Trailokya path so it cannot invoke the ordinary
