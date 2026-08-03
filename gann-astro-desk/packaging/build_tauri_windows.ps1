@@ -1,7 +1,10 @@
 param(
     [string]$CandidateRoot = "",
     [switch]$SkipSidecarBuild,
-    [switch]$FinalizeOnly
+    [switch]$FinalizeOnly,
+    [string]$SourceCommitOverride = "",
+    [string]$CandidateStatus = "founder_inspection_candidate",
+    [string]$CandidateLabel = "PFR-V2B-R4-T2P"
 )
 
 $ErrorActionPreference = "Stop"
@@ -102,7 +105,20 @@ $installerTarget = Join-Path $candidate $installer.Name
 Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
-$sourceGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
+$checkoutGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
+$sourceGitCommit = if ($SourceCommitOverride) {
+    $override = $SourceCommitOverride.Trim()
+    if ($override -notmatch '^[0-9a-fA-F]{40}$') {
+        throw "SourceCommitOverride must be a complete 40-character Git commit"
+    }
+    & git.exe -C $projectRoot cat-file -e "$override^{commit}"
+    if ($LASTEXITCODE -ne 0) {
+        throw "SourceCommitOverride is not present in this checkout: $override"
+    }
+    $override
+} else {
+    $checkoutGitCommit
+}
 # Tauri may rewrite a tracked TOML file's line endings while packaging on Windows.
 # Compare content to HEAD and inspect nonignored untracked files so metadata stays
 # strict about real source changes without treating that checkout-only rewrite as dirty.
@@ -118,7 +134,7 @@ $npmVersion = (& npm.cmd --version).Trim()
 $manifest = [ordered]@{
     product = "Gann Astro Desk"
     version = $appVersion
-    status = "pfr_u1_s1_hotfix_candidate"
+    status = $CandidateStatus
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
@@ -128,6 +144,7 @@ $manifest = [ordered]@{
     total_bytes = ($releaseFiles | Measure-Object -Property Length -Sum).Sum
     shell = "Tauri 2 / Rust"
     source_git_commit = $sourceGitCommit
+    checkout_git_commit = $checkoutGitCommit
     source_git_dirty = $sourceGitDirty
     node_version = $nodeVersion
     package_manager = "npm@$npmVersion"
@@ -241,13 +258,13 @@ $manifest = [ordered]@{
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
 $releaseReadme = @"
-# Gann Astro Desk $appVersion - PFR-U1 S1 hotfix candidate
+# Gann Astro Desk $appVersion - $CandidateLabel
 
 This is a read-only experimental research candidate, not a validated or executable trading product.
 
 - Source commit: $sourceGitCommit
 - Source working tree clean: $(-not $sourceGitDirty)
-- Reconciliation: PFR-U1 S1 hotfix
+- Reconciliation: $CandidateLabel
 - Node: $nodeVersion
 - Package manager: npm@$npmVersion
 - Jyotish corpus: NOT_CONFIGURED_OPTIONAL (private corpus not bundled)
