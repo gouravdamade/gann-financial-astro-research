@@ -1,0 +1,28 @@
+{
+  "contract": "CLASSICAL_OSCILLATOR_COVERAGE_STATUS_V1",
+  "asOfUtc": "2026-08-03T00:00:00Z",
+  "scope": "read_only_doctrine_and_mode_audit",
+  "parameterCount": 42,
+  "countsByStatus": {
+    "READY_MODE1_WITH_LIMITS": 0,
+    "MODE1_DISPLAY_TRANSFORM_ONLY": 0,
+    "MODE2_PROVISIONAL_IMPLEMENTATION": 8,
+    "MODE2_ENGINEERING_HYPOTHESIS": 3,
+    "MODE2_EMPIRICALLY_FITTED": 1,
+    "VISUAL_ONLY": 0,
+    "SOURCE_MISSING": 15,
+    "CONFLICTED": 5,
+    "DEPENDENCY_BLOCKED": 7,
+    "NOT_APPLICABLE": 3
+  },
+  "mode1ParameterCount": 0,
+  "mode1Baseline": "EMPTY_PENDING_FOUNDER_APPROVAL_AND_SOURCE_PACKET_CLOSURE",
+  "mode2ParameterCount": 14,
+  "visualOnlyCurrentParameterCount": 28,
+  "executionAllowed": false,
+  "automaticOrderPlacement": false,
+  "autoSuggestInfluenceAllowed": false,
+  "financialValidationClaimed": false,
+  "packagingAllowed": false,
+  "nextAction": "founder_selects_one_source_priority_then_a_page_certified_packet_is_reviewed_without_polarity_or_wave_tuning"
+}

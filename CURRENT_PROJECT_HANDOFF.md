@@ -1,8 +1,34 @@
 # Current Project Handoff
 
-Last updated: 2026-08-02 23:22 IST
+Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-03 (PFR-V2B-R4 Classical Coverage and Mode Promotion Audit)
+
+- Completed the R4 read-only doctrine and mode audit. Added one authoritative
+  42-variable coverage ledger across SBC topology, Vedha, financial SBC,
+  chart-conditioned doctrine, Shadbala/Drik, Panchanga/Muhurta,
+  Ashtakavarga, timing kernels, and display/fitted values. Its machine-readable
+  source is `configs/research/classical_oscillator_coverage_matrix_v1.yaml`.
+- The smallest truthful `SOURCE_ONLY_BASELINE` remains **empty**: its existing
+  profile has founder approval pending and zero admitted parameters. Selected
+  page-supported Vedha direction/nature/isolated modifier rules are listed as
+  possible future Mode 1 candidates, but remain dependency-blocked until an
+  exact packet and founder approval exist.
+- No source was promoted and no product calculation, chart hypothesis,
+  polarity registry, price label, wave tuning, LLM/Auto Suggest path, execution
+  path, order path, or package changed. Full Shadbala, Drik, Ashtakavarga wave
+  magnitude, Arghya conversion, financial mapping, fitted weights and smooth
+  timing kernels remain outside Mode 1.
+- Added the source acquisition plan, profile-boundary rules, Mode 2-to-Mode 1
+  promotion checklist, machine status summary, and `test_classical_oscillator_coverage.py`.
+  The coverage test validates uniqueness, required fields, forbidden Mode 1
+  allocations, status counts, and all execution/promotion locks.
+- Verification: `pytest -q test_classical_oscillator_coverage.py` passed
+  (`4 passed`). Next: founder selects one narrow acquisition/page-certification
+  priority; do not move to R3 chart evidence admission until that independent
+  founder chart selection has occurred.
 
 ## Latest Update - 2026-08-02 (PFR-V2B-R2 Shared Time Controller)
 

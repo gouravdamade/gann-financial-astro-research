@@ -1,0 +1,693 @@
+schemaVersion: CLASSICAL_OSCILLATOR_COVERAGE_MATRIX_V1
+auditAsOfUtc: '2026-08-03T00:00:00Z'
+scope: read_only_doctrine_and_mode_audit
+productBoundary:
+  executionAllowed: false
+  automaticOrderPlacement: false
+  autoSuggestInfluenceAllowed: false
+  financialValidationClaimed: false
+  packagingAllowed: false
+modeContracts:
+  SOURCE_ONLY_BASELINE: founder_approved_source_backed_rules_only
+  CALIBRATED_RESEARCH: provisional_or_engineering_hypotheses_under_versioned_profile
+  VISUAL_ONLY_NO_SCORE: geometry_and_timing_only_no_directional_score
+allowedModes: [SOURCE_ONLY_BASELINE, CALIBRATED_RESEARCH, VISUAL_ONLY_NO_SCORE]
+allowedRoles: [POLARITY, MAGNITUDE, ACTIVATION, TIMING, PROTECTION, OBSTRUCTION, CONFLICT, CAPACITY, COVERAGE, DISPLAY_ONLY]
+allowedStatuses: [READY_MODE1_WITH_LIMITS, MODE1_DISPLAY_TRANSFORM_ONLY, MODE2_PROVISIONAL_IMPLEMENTATION, MODE2_ENGINEERING_HYPOTHESIS, MODE2_EMPIRICALLY_FITTED, VISUAL_ONLY, SOURCE_MISSING, CONFLICTED, DEPENDENCY_BLOCKED, NOT_APPLICABLE]
+profiles:
+  SBC_PHALADEEPIKA_EDITOR_V1:
+    layer: editor_supplied_sbc_supplement
+    sourceStatus: PAGE_CERTIFIED_PARTIAL
+    rule: never_attribute_editor_supplement_to_mantreswara_root_text
+  SBC_TRAILOKYA_1972_V1:
+    layer: Trailokya_Dipika_commentary
+    sourceStatus: PAGE_CERTIFIED_PARTIAL
+    rule: no_financial_or_complete_grid_promotion_without_exact_page_packet
+  BPHS_1899_V1:
+    layer: classical_root_text
+    sourceStatus: HELD_NEEDS_PAGE_CERTIFICATION
+    rule: no_formula_or_weight_is_admitted_from_title_only
+  PHALADEEPIKA_1937_V1:
+    layer: classical_root_text
+    sourceStatus: HELD_NEEDS_PAGE_CERTIFICATION
+    rule: do_not_mix_with_editor_supplement
+  BRIHAT_JATAKA_1905_V1:
+    layer: classical_cross_check
+    sourceStatus: HELD_NEEDS_PAGE_CERTIFICATION
+    rule: secondary_source_profile_until_page_packet_is_approved
+  SURYA_SIDDHANTA_1858_V1:
+    layer: astronomy_and_time_definitions
+    sourceStatus: HELD_NEEDS_PAGE_CERTIFICATION
+    rule: Swiss_Ephemeris_remains_operational_position_provider
+  AGARWAL_FINANCIAL_V1:
+    layer: modern_practitioner_commentary
+    sourceStatus: INCOMPLETE_DERIVATIVE_SCAN
+    rule: no_price_or_currency_translation_from_incomplete_scan
+  KAS_RESEARCH_V1:
+    layer: modern_research_system
+    sourceStatus: NOT_CLASSICAL_AUTHORITY
+    rule: mode2_only
+  ENGINEERING_DISPLAY_V1:
+    layer: engineering
+    sourceStatus: NOT_CLASSICAL_DOCTRINE
+    rule: cannot_be_labelled_classical
+defaults:
+  unknownPolicy: SOURCE_MISSING_UNKNOWN_CONFLICTED_AND_DEPENDENCY_BLOCKED_REMAIN_NULL_GAPS_NEVER_ZERO_NEUTRAL_OR_ONE
+  conflictPolicy: KEEP_NAMED_PROFILES_SEPARATE_OR_RETURN_CONFLICTED_NEVER_AVERAGE
+  stackingPolicy: SHOW_SEPARATE_COMPONENTS_UNTIL_SOURCE_BACKED_PRECEDENCE_EXISTS
+  doubleCountingReview: REQUIRED_BEFORE_ANY_AGGREGATE_ADMISSION
+  marketDataUsedInSelection: false
+  empiricallyFitted: false
+  founderDecision: FOUNDER_REVIEW_PENDING
+  calculationHash: null
+parameters:
+  - parameterId: SBC_GRID_FORM_DEFAULT
+    displayName: SBC grid form and Abhijit construction
+    traditionalMeaning: chakra topology and membership location
+    domain: SBC
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Trailokya Dipika 1972; Horaratna/Rajavijaya targets
+    sourceEdition: held_partial_and_missing_complete_witnesses
+    sourceLocator: grid_audit_partial_only
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: CONFLICTED
+    sourceBackedValueOrRule: rotation_normalized_81_cell_partial_only
+    implementationFormula: rotation_normalized_coordinates
+    dependencies: [explicit_grid_profile, abhijit_insertion_policy, orientation]
+  - parameterId: SBC_ABSOLUTE_ORIENTATION
+    displayName: SBC absolute cardinal orientation
+    traditionalMeaning: cardinal binding of board directions
+    domain: SBC
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Trailokya Dipika 1972; Phaladeepika editor supplement
+    sourceEdition: held_partial_figures
+    sourceLocator: figures_disagree_by_rotation
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: CONFLICTED
+    sourceBackedValueOrRule: no_absolute_binding_admitted
+    implementationFormula: none
+    dependencies: [page_bound_figure, independent_witness]
+  - parameterId: SBC_SPECIAL_CELLS
+    displayName: SBC corner junction pada and special cells
+    traditionalMeaning: special target-cell behavior
+    domain: SBC
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Horaratna/Rajavijaya and Trailokya Dipika targets
+    sourceEdition: not_acquired_complete
+    sourceLocator: missing_worked_examples
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [complete_grid_profile, worked_fixtures]
+  - parameterId: VEDHA_DIRECTION_RULES
+    displayName: fixed and variable Vedha directions
+    traditionalMeaning: directional obstruction or support geometry
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: OBSTRUCTION
+    sourceTitle: Mantreswara Phaladeepika 1937 editor supplement
+    sourceEdition: held_hash_pinned_editor_supplement
+    sourceLocator: VEDHA_GUIDANCE_AUDIT page_certified_rules
+    sourceProfileId: SBC_PHALADEEPIKA_EDITOR_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: left_front_right_direction_rules_by_planet
+    implementationFormula: source_profiled_actor_direction_ledger
+    dependencies: [founder_approval, selected_vedha_profile, motion_input_for_variable_bodies]
+  - parameterId: VEDHA_NATURE_RULES
+    displayName: Vedha natural nature rules
+    traditionalMeaning: benefic or adverse character in selected guidance profile
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: POLARITY
+    sourceTitle: Mantreswara Phaladeepika 1937 editor supplement
+    sourceEdition: held_hash_pinned_editor_supplement
+    sourceLocator: VEDHA_GUIDANCE_AUDIT page_certified_rules
+    sourceProfileId: SBC_PHALADEEPIKA_EDITOR_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: profile_specific_nature_classification
+    implementationFormula: contribution_ledger_separate_from_fx_mapping
+    dependencies: [founder_approval, selected_vedha_profile, unambiguous_nature_state]
+  - parameterId: VEDHA_UNAMBIGUOUS_MODIFIERS
+    displayName: isolated Vedha multipliers
+    traditionalMeaning: documented 2x 3x and 0.5x modifier cases
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: MAGNITUDE
+    sourceTitle: Mantreswara Phaladeepika 1937 editor supplement
+    sourceEdition: held_hash_pinned_editor_supplement
+    sourceLocator: VEDHA_GUIDANCE_AUDIT page_certified_individual_modifiers
+    sourceProfileId: SBC_PHALADEEPIKA_EDITOR_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: individual_modifier_only
+    implementationFormula: isolated_multiplier_without_stacking
+    dependencies: [founder_approval, one_unambiguous_modifier, no_stacking]
+  - parameterId: VEDHA_SWIFT_MEAN_THRESHOLD
+    displayName: swift direct and mean motion threshold
+    traditionalMeaning: motion-class activation
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: ACTIVATION
+    sourceTitle: Phaladeepika supplement and Surya Siddhanta targets
+    sourceEdition: missing_page_rule
+    sourceLocator: no_numeric_boundary
+    sourceProfileId: PHALADEEPIKA_1937_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: explicit_manual_motion_input_only
+    implementationFormula: no_automatic_speed_bucket
+    dependencies: [page_rule, worked_motion_examples]
+  - parameterId: VEDHA_MODIFIER_STACKING
+    displayName: Vedha modifier stacking
+    traditionalMeaning: precedence of retrograde dignity and condition modifiers
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: CONFLICT
+    sourceTitle: Phaladeepika supplement and Trailokya Dipika targets
+    sourceEdition: partial_sources
+    sourceLocator: individual_values_no_precedence
+    sourceProfileId: SBC_PHALADEEPIKA_EDITOR_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: separate_components_only
+    implementationFormula: no_combined_magnitude
+    dependencies: [source_precedence_rule]
+  - parameterId: MERCURY_NATURE
+    displayName: Mercury conditional nature
+    traditionalMeaning: benefic or malefic state by association
+    domain: VEDHA_DRIK
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: POLARITY
+    sourceTitle: BPHS 1899; Phaladeepika 1937; Brihat Jataka 1905 targets
+    sourceEdition: held_needs_page_packet
+    sourceLocator: automatic_association_scope_unresolved
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: no_automatic_mode1_classification
+    implementationFormula: provisional_association_profile
+    dependencies: [association_definition, timing_scope, conflict_precedence]
+  - parameterId: MOON_NATURE_BOUNDARY
+    displayName: Moon bright and dark half boundary
+    traditionalMeaning: phase-dependent natural nature
+    domain: VEDHA_DRIK
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: POLARITY
+    sourceTitle: BPHS 1899; Phaladeepika 1937; Panchanga target
+    sourceEdition: held_needs_page_packet
+    sourceLocator: comparator_profiles_disagree
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: CONFLICTED
+    sourceBackedValueOrRule: profile_specific_only
+    implementationFormula: provisional_dynamic_phase_classification
+    dependencies: [phase_boundary, source_profile, independent_fixture]
+  - parameterId: VEDHA_LATTA_AND_EXTRA_LINES
+    displayName: Latta Panchashalaka and Saptashalaka systems
+    traditionalMeaning: additional obstruction line systems
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Phaladeepika chapter 26; Trailokya and Horaratna targets
+    sourceEdition: insufficient_fixture_set
+    sourceLocator: construction_activation_and_merger_missing
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [page_fixtures, activation_policy, no_double_counting_rule]
+  - parameterId: VEDHA_STAR_COUNT
+    displayName: Vedha star count severity
+    traditionalMeaning: multi-hit severity or count rule
+    domain: VEDHA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: MAGNITUDE
+    sourceTitle: Trailokya Dipika and Krishna Rau/Choudhary targets
+    sourceEdition: unavailable_rule
+    sourceLocator: count_semantics_missing
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [exact_thresholds, worked_examples]
+  - parameterId: ARGHYA_TABLE_VALUES
+    displayName: financial SBC Arghya table values
+    traditionalMeaning: traditional table entries and reference units
+    domain: FINANCIAL_SBC
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Trailokya Dipika 1972; Krishna Rau and Choudhary original targets
+    sourceEdition: partial_same_lineage_witnesses
+    sourceLocator: 11_15_supported_2_18_unresolved
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: CONFLICTED
+    sourceBackedValueOrRule: disputed_cells_remain_unknown
+    implementationFormula: diagnostic_table_only
+    dependencies: [independent_image_witness, full_context]
+  - parameterId: ARGHYA_REFERENCE_UNIT
+    displayName: Arghya one twentieth reference unit
+    traditionalMeaning: possible five percent reference unit
+    domain: FINANCIAL_SBC
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Krishna Rau/Choudhary and Trailokya targets
+    sourceEdition: partial_witness
+    sourceLocator: scope_and_exact_use_missing
+    sourceProfileId: SBC_TRAILOKYA_1972_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: diagnostic_reference_only
+    implementationFormula: no_net_to_unit_conversion
+    dependencies: [page_scope, full_formula_context]
+  - parameterId: ARGHYA_PRICE_CONVERSION
+    displayName: Arghya score to price conversion
+    traditionalMeaning: financial score to target price rule
+    domain: FINANCIAL_SBC
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Krishna Rau/Choudhary original; complete Agarwal target
+    sourceEdition: missing_complete_worked_calculation
+    sourceLocator: omitted_silver_example_and_formula
+    sourceProfileId: AGARWAL_FINANCIAL_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [independent_table_witness, raw_to_units_example, units_to_price_example]
+  - parameterId: CLASSICAL_SEVERITY_TO_MARKET
+    displayName: classical outcome language to modern market effect
+    traditionalMeaning: traditional condition language only
+    domain: FINANCIAL_INTERPRETATION
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: complete financial doctrine target
+    sourceEdition: no_accepted_financial_profile
+    sourceLocator: modern_market_analogy_is_not_doctrine
+    sourceProfileId: AGARWAL_FINANCIAL_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: do_not_infer
+    implementationFormula: none
+    dependencies: [explicit_financial_doctrine]
+  - parameterId: FX_BASE_MINUS_QUOTE
+    displayName: FX base minus quote display mapping
+    traditionalMeaning: none modern instrument-relative arithmetic
+    domain: ENGINEERING_FINANCIAL_MAPPING
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: SOURCE_ONLY_BASELINE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: engineering contract GANN_INSTRUMENT_RELATIVE_SBC_FX_V1
+    sourceEdition: repository_contract
+    sourceLocator: base_minus_quote_contract
+    sourceProfileId: ENGINEERING_DISPLAY_V1
+    sourceStatus: NOT_APPLICABLE
+    sourceBackedValueOrRule: classical_inputs_may_be_shown_pair_relative_but_mapping_is_not_classical
+    implementationFormula: base_raw_minus_quote_raw
+    dependencies: [accepted_currency_side_inputs, explicit_modern_label]
+  - parameterId: FUNCTIONAL_LORDSHIP_PROFILE
+    displayName: functional lordship
+    traditionalMeaning: benefic malefic and special roles by accepted ascendant
+    domain: CHART_CONDITIONED
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: POLARITY
+    sourceTitle: BPHS 1899; Phaladeepika 1937; Brihat Jataka 1905 targets
+    sourceEdition: held_needs_page_packets
+    sourceLocator: no_accepted_profile
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: no_automatic_polarity
+    implementationFormula: none
+    dependencies: [accepted_chart, exact_time_or_documented_exchange_open, house_system, source_profile]
+  - parameterId: HOUSE_SYSTEM_FOR_BALA
+    displayName: house construction for Bala and lordship
+    traditionalMeaning: house anchors and ownership basis
+    domain: CHART_CONDITIONED
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS and Sripati classical commentary targets
+    sourceEdition: no_accepted_computational_mapping
+    sourceLocator: porphyry_sripati_like_policy_is_provisional
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: fail_closed_for_uncertain_time
+    implementationFormula: provisional_porhyry_sripati_like
+    dependencies: [time_accuracy, location, source_formula]
+  - parameterId: YOGAKARAKA_MARAKA_BADHAKA
+    displayName: special lordship roles
+    traditionalMeaning: selected chart role classifications
+    domain: CHART_CONDITIONED
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: POLARITY
+    sourceTitle: BPHS; Phaladeepika; Brihat Jataka targets
+    sourceEdition: no_profile_selected
+    sourceLocator: precedence_and_exclusions_missing
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [accepted_chart, selected_role_profile, page_rules]
+  - parameterId: NATAL_TARGET_HIERARCHY
+    displayName: natal target hierarchy
+    traditionalMeaning: allowed transit recipients and precedence
+    domain: CHART_CONDITIONED
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: ACTIVATION
+    sourceTitle: BPHS; Phaladeepika; complete Agarwal target
+    sourceEdition: no_certified_hierarchy
+    sourceLocator: target_eligibility_missing
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: unknown_when_hierarchy_absent
+    implementationFormula: explicit_transit_to_natal_only_no_polarity
+    dependencies: [accepted_chart, target_identity, source_profile]
+  - parameterId: DIGNITY_LORDSHIP_CONFLICT
+    displayName: dignity and functional role conflict
+    traditionalMeaning: resolution of conflicting traditional conditions
+    domain: CHART_CONDITIONED
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: CONFLICT
+    sourceTitle: BPHS; Phaladeepika; Brihat Jataka targets
+    sourceEdition: unresolved_precedence
+    sourceLocator: no_rule_to_average
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: CONFLICTED
+    sourceBackedValueOrRule: mixed_conflicted_only
+    implementationFormula: no_average
+    dependencies: [dignity_rule, functional_profile, conflict_policy]
+  - parameterId: CURRENCY_CHART_TRANSLATION
+    displayName: natal condition to currency support/adversity
+    traditionalMeaning: no accepted classical FX translation
+    domain: FINANCIAL_INTERPRETATION
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: modern research mapping only
+    sourceEdition: not_classical
+    sourceLocator: no_classical_currency_market_doctrine
+    sourceProfileId: ENGINEERING_DISPLAY_V1
+    sourceStatus: NOT_APPLICABLE
+    sourceBackedValueOrRule: separate_traditional_condition_from_market_interpretation
+    implementationFormula: none
+    dependencies: [explicit_modern_research_contract]
+  - parameterId: SAPTAVARGAJA_BALA
+    displayName: Saptavargaja Bala
+    traditionalMeaning: varga dignity and relationship strength
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS 1899; Phaladeepika 1937; Brihat Jataka 1905 targets
+    sourceEdition: held_needs_page_formula_and_weights
+    sourceLocator: production_profile_3_of_35_witness_alignment
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: source_profile_and_jhora_compatibility_profile_are_separate
+    implementationFormula: degree_bounded_d1_moolatrikona_and_profiled_relationship_weights
+    dependencies: [page_weights, degree_edges, worked_fixtures]
+  - parameterId: DIG_BALA
+    displayName: Dig Bala
+    traditionalMeaning: directional strength
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS; Phaladeepika; Brihat Jataka targets
+    sourceEdition: held_needs_page_formula
+    sourceLocator: 19_of_35_external_pass
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: provisional
+    implementationFormula: current_directional_house_anchor_formula
+    dependencies: [house_mapping, page_formula, boundary_fixtures]
+  - parameterId: KAALA_BALA_COMPONENTS
+    displayName: Kaala Bala subcomponents and aggregate
+    traditionalMeaning: temporal strength components
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS; Phaladeepika; Surya Siddhanta targets
+    sourceEdition: partial_witness_and_page_work_pending
+    sourceLocator: abda_hora_masa_vara_tribhaga_paksha_yuddha_aligned_aggregate_fails
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: components_remain_separate_no_total_admission
+    implementationFormula: current_lmt_sunrise_and_declination_profiles
+    dependencies: [sunrise_policy, nathonnatha_rule, ayana_rule, aggregation_rule]
+  - parameterId: CHESTA_BALA_NON_LUMINARY
+    displayName: non-luminary Chesta Bala
+    traditionalMeaning: motional strength for Mars through Saturn
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS; Surya Siddhanta; Brihat Jataka targets
+    sourceEdition: held_needs_motion_formula
+    sourceLocator: mean_longitude_models_disagree
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: diagnostic_only
+    implementationFormula: mean_true_seegrocha_model
+    dependencies: [motion_state_definition, mean_longitude_rule, fixtures]
+  - parameterId: CHESTA_LUMINARY_POLICY
+    displayName: Sun and Moon Chesta display policy
+    traditionalMeaning: displayed but excluded from total
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: BPHS and Phaladeepika targets with JHora witness
+    sourceEdition: witness_aligned_page_packet_incomplete
+    sourceLocator: displayed_luminaries_excluded_from_total
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: display_only_exclusion_prevents_double_counting
+    implementationFormula: exclude_sun_moon_chesta_from_total
+    dependencies: [page_source_packet, regression_fixture]
+  - parameterId: GRAHA_YUDDHA_BALA
+    displayName: Graha Yuddha Bala
+    traditionalMeaning: planetary war eligibility and adjustment
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CONFLICT
+    sourceTitle: BPHS; Surya Siddhanta; Brihat Jataka targets
+    sourceEdition: witness_aligned_disc_diameter_source_missing
+    sourceLocator: 35_of_35_visible_rows_without_source_resolution
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: no_promotion_from_calculator_match
+    implementationFormula: within_one_degree_candidate_detection
+    dependencies: [eligible_planets, apparent_diameters, winner_loser_arithmetic]
+  - parameterId: DRIK_BALA
+    displayName: Drik Bala
+    traditionalMeaning: aspect strength and natural relation influence
+    domain: DRIK
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS; Phaladeepika; Brihat Jataka targets
+    sourceEdition: held_needs_page_formula
+    sourceLocator: independent_jhora_9_of_35_and_nature_special_range_conflicts
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: divide_by_four_profile_is_provisional
+    implementationFormula: parashara_six_formula_dynamic_nature_special_ranges_div4
+    dependencies: [classical_formula, mercury_rule, moon_rule, special_ranges, normalization]
+  - parameterId: SHADBALA_TOTAL
+    displayName: full Shadbala total and threshold use
+    traditionalMeaning: sixfold total strength and minimum thresholds
+    domain: SHADBALA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: BPHS Santhanam chapter 27 and classical targets
+    sourceEdition: threshold_reference_held_full_profile_not_certified
+    sourceLocator: production_total_3_of_35_external_pass
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: thresholds_do_not_certify_component_formulas
+    implementationFormula: aggregate_of_provisional_components
+    dependencies: [all_component_promotions, total_arithmetic, independent_reproduction]
+  - parameterId: ISHTA_KASHTA_PHALA
+    displayName: Ishta Kashta Phala
+    traditionalMeaning: desirable and undesirable fruition strength
+    domain: SHADBALA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: POLARITY
+    sourceTitle: BPHS; Phaladeepika; Brihat Jataka targets
+    sourceEdition: no_formula_packet
+    sourceLocator: explicit_missing
+    sourceProfileId: BPHS_1899_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [complete_formula, interpretive_scope]
+  - parameterId: PANCHANGA_CORE_FACTS
+    displayName: core Tithi Paksha Nakshatra Yoga and Karana facts
+    traditionalMeaning: calendar and lunar state facts
+    domain: PANCHANGA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: Surya Siddhanta and Panchanga doctrine targets
+    sourceEdition: deterministic_formula_needs_traditional_validation
+    sourceLocator: timezone_and_sunrise_policy_pending
+    sourceProfileId: SURYA_SIDDHANTA_1858_V1
+    sourceStatus: DEPENDENCY_BLOCKED
+    sourceBackedValueOrRule: factual_display_no_quality_score
+    implementationFormula: deterministic_sidereal_sun_moon
+    dependencies: [timezone_policy, local_sunrise_boundary, external_panchanga_fixture]
+  - parameterId: PANCHANGA_MUHURTA_QUALITY
+    displayName: Vara Rahu Kala Yamaganda Gulika Tara and Chandra Bala
+    traditionalMeaning: muhurta timing quality constructs
+    domain: PANCHANGA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: TIMING
+    sourceTitle: Muhurta Chintamani; Kalaprakashika; Dharmasindhu targets
+    sourceEdition: not_acquired_as_executable_authority
+    sourceLocator: formulas_and_veto_precedence_missing
+    sourceProfileId: SURYA_SIDDHANTA_1858_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: none
+    implementationFormula: none
+    dependencies: [edition_pages, local_time_policy, anti_double_counting_profile]
+  - parameterId: ASHTAKAVARGA_BAV_SAV
+    displayName: Bhinnashtakavarga and Sarvashtakavarga
+    traditionalMeaning: point tables and sign strength
+    domain: ASHTAKAVARGA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: CAPACITY
+    sourceTitle: Phaladeepika chapter 23; Brihat Jataka; B V Raman comparator
+    sourceEdition: isolated_lab_profile
+    sourceLocator: one_fixture_and_two_calculator_gate_unmet
+    sourceProfileId: BRIHAT_JATAKA_1905_V1
+    sourceStatus: MODE2_PROVISIONAL_IMPLEMENTATION
+    sourceBackedValueOrRule: diagnostic_only
+    implementationFormula: Raman_style_unreduced_tables
+    dependencies: [two_independent_calculators, page_tables, interpretation_thresholds]
+  - parameterId: ASHTAKAVARGA_REDUCTIONS
+    displayName: Trikona and Ekadhipatya reductions
+    traditionalMeaning: reduction ordering and applicability
+    domain: ASHTAKAVARGA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: classical Ashtakavarga profile targets
+    sourceEdition: profile_not_selected
+    sourceLocator: deliberately_not_applied
+    sourceProfileId: BRIHAT_JATAKA_1905_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: excluded
+    implementationFormula: none
+    dependencies: [profile, ordering, fixtures]
+  - parameterId: KAS_MULTIPLIERS
+    displayName: Krushna Ashtakavarga lesson multipliers
+    traditionalMeaning: modern research system
+    domain: ASHTAKAVARGA
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: MAGNITUDE
+    sourceTitle: Krushna Ashtakavarga research lessons
+    sourceEdition: modern_research_reference
+    sourceLocator: no_classical_authority
+    sourceProfileId: KAS_RESEARCH_V1
+    sourceStatus: MODE2_ENGINEERING_HYPOTHESIS
+    sourceBackedValueOrRule: experimental_ablation_only
+    implementationFormula: versioned_research_multiplier
+    dependencies: [research_profile, isolation, no_mode1_promotion]
+  - parameterId: ASHTAKAVARGA_TO_WAVE
+    displayName: Ashtakavarga wave magnitude
+    traditionalMeaning: no held classical oscillator mapping
+    domain: ASHTAKAVARGA
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: MAGNITUDE
+    sourceTitle: no accepted classical oscillator formula
+    sourceEdition: not_applicable
+    sourceLocator: explicit_engineering_hypothesis_only
+    sourceProfileId: ENGINEERING_DISPLAY_V1
+    sourceStatus: MODE2_ENGINEERING_HYPOTHESIS
+    sourceBackedValueOrRule: no_classical_mapping
+    implementationFormula: none
+    dependencies: [versioned_research_profile, no_mode1_claim]
+  - parameterId: ASPECT_PHASE_KERNEL
+    displayName: applying exact separating timing kernel
+    traditionalMeaning: aspect timing state not classical amplitude curve
+    domain: TIMING
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: TIMING
+    sourceTitle: selected source profile or research hypothesis
+    sourceEdition: no_temporal_effect_profile
+    sourceLocator: denominators_and_boundaries_missing
+    sourceProfileId: ENGINEERING_DISPLAY_V1
+    sourceStatus: MODE2_ENGINEERING_HYPOTHESIS
+    sourceBackedValueOrRule: step_or_instant_only
+    implementationFormula: no_smooth_curve
+    dependencies: [page_timing_rule_or_versioned_hypothesis]
+  - parameterId: VEDHA_DURATION_KERNEL
+    displayName: Vedha active duration kernel
+    traditionalMeaning: activation duration
+    domain: TIMING
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: VISUAL_ONLY_NO_SCORE
+    oscillatorRole: TIMING
+    sourceTitle: SBC source profile with worked timing examples
+    sourceEdition: no_timing_profile
+    sourceLocator: atomic_intervals_exist_but_no_decay_doctrine
+    sourceProfileId: SBC_PHALADEEPIKA_EDITOR_V1
+    sourceStatus: SOURCE_MISSING
+    sourceBackedValueOrRule: atomic_step_interval_only
+    implementationFormula: no_decay_kernel
+    dependencies: [state_transition_rule, worked_timing_examples]
+  - parameterId: SMOOTHING_CONSTANT
+    displayName: moving average and display smoothing
+    traditionalMeaning: none engineering display transform
+    domain: DISPLAY
+    currentMode: VISUAL_ONLY_NO_SCORE
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: DISPLAY_ONLY
+    sourceTitle: engineering only
+    sourceEdition: not_classical
+    sourceLocator: no_classical_source_possible_by_backtest
+    sourceProfileId: ENGINEERING_DISPLAY_V1
+    sourceStatus: NOT_APPLICABLE
+    sourceBackedValueOrRule: never_classical
+    implementationFormula: explicit_display_or_research_smoothing
+    dependencies: [versioned_research_profile]
+  - parameterId: CALIBRATED_WEIGHT
+    displayName: optimized planet aspect or feature multiplier
+    traditionalMeaning: none fitted research parameter
+    domain: DISPLAY
+    currentMode: CALIBRATED_RESEARCH
+    proposedMode: CALIBRATED_RESEARCH
+    oscillatorRole: MAGNITUDE
+    sourceTitle: empirical calibration only
+    sourceEdition: not_classical
+    sourceLocator: fitted_parameter
+    sourceProfileId: ENGINEERING_DISPLAY_V1
+    sourceStatus: MODE2_EMPIRICALLY_FITTED
+    sourceBackedValueOrRule: cannot_promote_by_performance
+    implementationFormula: versioned_optimization_output
+    dependencies: [purged_validation, immutable_profile, no_mode1_promotion]
