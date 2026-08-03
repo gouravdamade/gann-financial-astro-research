@@ -1,0 +1,240 @@
+schemaVersion: SBC_TRAILOKYA_1972_VEDHA_PAGE_CERTIFICATION_V1
+packetId: PFR-V2B-R4-T1
+title: Trailokya Dipika Vedha Page-Certification Packet
+status: FOUNDER_REVIEW_PENDING
+scope: source_only_page_certification_no_product_promotion
+selectedSourceProfile: SBC_TRAILOKYA_1972_V1
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  edition: Sarvatobhadra Chakra with Trailokya Dipika commentary, Pt. Mithalal Vyas, 1972, Tej Kumar Book Depot, Lucknow
+  filePath: D:/GannFinancialAstro/sources/private/TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN_1EF82899.pdf
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_PAGE_IMAGE_ONLY
+  ocrCompanionUse: NAVIGATION_AND_DRAFT_TRANSLATION_ONLY
+  ocrCompanionSha256: 7F220E0FA4523DE4624449E72B62248434760AF0E3C842844ADAEBB3CBB13E9B
+globalLocks:
+  automaticPromotion: false
+  priceDataUsed: false
+  outcomeSelectionUsed: false
+  llmGapFillingAllowed: false
+  executionModified: false
+  autoSuggestInfluenceAllowed: false
+  packageCandidateAllowed: false
+  requiredFounderStateForAnyPromotion: APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+unresolvedOutsideMode1:
+  - SBC_TD1972_NUMERIC_SWIFT_VS_MEAN_THRESHOLD
+  - SBC_TD1972_MODIFIER_STACKING_OR_PRECEDENCE
+  - SBC_TD1972_AUTOMATIC_MERCURY_ASSOCIATION
+  - SBC_TD1972_MOON_NATURE_BOUNDARY
+  - SBC_TD1972_LATTA_AND_ADDITIONAL_LINE_SYSTEMS
+  - SBC_TD1972_ABSOLUTE_CHAKRA_ORIENTATION
+  - SBC_TD1972_ARGHYA_TABLE_UNRESOLVED_VALUES
+  - SBC_TD1972_SCORE_TO_UNIT_AND_UNIT_TO_PRICE_CONVERSION
+  - SBC_TD1972_MARKET_DIRECTION_INTERPRETATION
+evidencePackets:
+  - evidencePacketId: TD1972_VEDHA_VARIABLE_DIRECTION_V14
+    category: planet_specific_direction_rule
+    sourceCitation:
+      printedPage: '4'
+      pdfImageIndex: 20
+      locator: verses 12-14 and Hindi commentary
+    originalSanskritHindiText:
+      - 'वक्रगे दक्षिणा दृष्टिर्वामा दष्टिइच शी घ्रगे । मध्यचारे तथा मध्या ज्ञेया भौमादिपञ्चके ॥ १४ ॥'
+      - 'भौमादि पांचों (मंगल, बुध, बृहस्पति, शुक्र और शनि) ग्रहों में से जो ग्रह वक्री हो उसकी दृष्टि दाहिनी ओर को, जो ग्रह शीघ्रगामी (अतिचारी) हो उसकी दृष्टि बाई ओर को, और जो ग्रह मध्यचारी हो उसकी दृष्टि सामने को होती है।'
+    literalTranscription:
+      text: 'vakrage dakshina drstir vama drsti ca sighrage; madhyacare tatha madhya jneya bhaumadipancake'
+      status: OCR_ASSISTED_SOURCE_IMAGE_CITATION_CONTROLS_DISPUTED_READING
+    literalTranslation: 'For the five planets beginning with Mars: a retrograde planet has the right-side look, a swift planet the left-side look, and a mean-moving planet the front look.'
+    implementationInterpretation: Figure-relative ray selection for Mars, Mercury, Jupiter, Venus, and Saturn only.
+    exactCategoricalRule:
+      bodies: [MARS, MERCURY, JUPITER, VENUS, SATURN]
+      RETROGRADE: RIGHT
+      SWIFT: LEFT
+      MEAN: FRONT
+    numericalValue: null
+    dependencies: [SBC_GRID_FIGURE_RELATIVE_ORIENTATION, EXPLICIT_MOTION_STATE_INPUT]
+    ambiguityNotes:
+      - The text supplies qualitative swift and mean labels but no numeric speed threshold.
+      - LEFT, FRONT, and RIGHT are figure-relative; no geographic cardinal direction is admitted.
+    conflictingWitnessNotes: Other workspace profiles use different fixed-direction conventions; profiles must remain named and separate.
+    proposedVariableId: SBC_TD1972_VARIABLE_PLANET_DIRECTION
+    permittedOscillatorRole: ACTIVATION
+    proposedMode1Limitations:
+      - Source-only categorical geometry display.
+      - Accept an externally explicit motion state only; do not classify swift automatically.
+      - No polarity, magnitude, market label, score, price, or execution use.
+    reviewer: CODEX_SOURCE_REVIEW_20260803
+    founderDecision: PENDING
+    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+
+  - evidencePacketId: TD1972_VEDHA_FIXED_THREE_DIRECTIONS_V15
+    category: planet_specific_direction_rule
+    sourceCitation:
+      printedPage: '5'
+      pdfImageIndex: 21
+      locator: verse 15 and Hindi commentary
+    originalSanskritHindiText:
+      - 'राहुकेत् सदा वक्रौ शीघ्रगो चन्द्रभास्करो | गतेरेकस्वभावत्वादेषां दृष्टित्रयं सदा ॥ १५ ॥'
+      - 'राहु तथा केतु सदाही वक्री और सूर्य तथा चन्द्र सदाही शीघ्रगामी होने से इन ४ ग्रहों का वेध सदा तीनों ही ओर को एकसा होता है।'
+    literalTranscription:
+      text: 'rahuketav sada vakrau sighrago candrabhaskaro; gater ekasvabhavat esam drstitrayam sada'
+      status: OCR_ASSISTED_SOURCE_IMAGE_CITATION_CONTROLS_DISPUTED_READING
+    literalTranslation: 'Rahu and Ketu are always retrograde; the Moon and Sun are swift. Because their motion nature is fixed, their three looks are always present.'
+    implementationInterpretation: Emit all three figure-relative rays for these four bodies in the Trailokya profile.
+    exactCategoricalRule:
+      SUN: [LEFT, FRONT, RIGHT]
+      MOON: [LEFT, FRONT, RIGHT]
+      RAHU: [LEFT, FRONT, RIGHT]
+      KETU: [LEFT, FRONT, RIGHT]
+    numericalValue: null
+    dependencies: [SBC_GRID_FIGURE_RELATIVE_ORIENTATION, TRAILOKYA_PROFILE_EXPLICIT_SELECTION]
+    ambiguityNotes:
+      - This is profile-specific and must not overwrite the Phaladeepika-editor profile.
+      - It does not settle absolute board orientation.
+    conflictingWitnessNotes: The existing Phaladeepika editor-supplement profile uses a different fixed-body treatment; no averaging is permitted.
+    proposedVariableId: SBC_TD1972_FIXED_THREE_DIRECTION_BODIES
+    permittedOscillatorRole: ACTIVATION
+    proposedMode1Limitations:
+      - Source-only categorical geometry display only.
+      - Explicit Trailokya profile selection is required.
+      - No score, magnitude, market direction, price, or execution use.
+    reviewer: CODEX_SOURCE_REVIEW_20260803
+    founderDecision: PENDING
+    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+
+  - evidencePacketId: TD1972_VEDHA_RAY_EXTENT_V16_V17
+    category: vedha_direction_or_ray_rule
+    sourceCitation:
+      printedPage: '5'
+      pdfImageIndex: 21
+      locator: verses 16-17 and Hindi commentary
+    originalSanskritHindiText:
+      - 'वामेतरा5ग्रदृष्टा च वेधास्त्रिधा प्रकोतिता: | क्रक्षाष्क्षरस्वरतिथिराशिवेधश्च पञ्चधा ॥ १६ ॥'
+      - 'ग्रह: सव्यापसव्येन चक्षुषा वेधयेत्पुनः । ऋक्षाक्षरस्वरादिस्तु संधुखेनान्त्यभं तथा ॥ १७ ॥'
+      - 'दाहिनी और बाई ओर के वेध से तो जो अक्षरादि वेध की सीध में आवेंगे उन सभी को वेध होता है, परन्तु सामने के वेध से केवल सामने के एक नक्षत्र को ही वेध होता है।'
+    literalTranscription:
+      text: 'vama-itara-agra-drsta ca vedhas tridha prakirtitah; grahah savyapasavyena caksusa vedhayet punah, rksaksarasvaradistu sammukhena antyabham tatha'
+      status: OCR_ASSISTED_SOURCE_IMAGE_CITATION_CONTROLS_DISPUTED_READING
+    literalTranslation: 'Vedha has left, right, and front forms across nakshatra, letter, vowel, tithi, and sign. Side looks strike aligned items; the front look reaches the opposite outer nakshatra.'
+    implementationInterpretation: Side rays can enumerate aligned target cells; the front ray has one opposite-outer-nakshatra target and does not traverse intermediate cells.
+    exactCategoricalRule:
+      targetLayers: [NAKSHATRA, NAME_INITIAL, VOWEL, TITHI_GROUP, RASHI]
+      LEFT: ALIGNED_LINE_ALL_RELEVANT_CELLS
+      RIGHT: ALIGNED_LINE_ALL_RELEVANT_CELLS
+      FRONT: OPPOSITE_OUTER_NAKSHATRA_ONLY
+    numericalValue: null
+    dependencies: [SBC_GRID_FIGURE_RELATIVE_ORIENTATION, SBC_GRID_TARGET_CELL_MAP]
+    ambiguityNotes:
+      - The source does not settle the workspace's absolute rotated orientation.
+      - Corner, junction, Latta, and additional-line behavior is not admitted by this packet.
+    conflictingWitnessNotes: Existing board fixtures are shared geometry tests only and are not relabeled as Trailokya worked examples.
+    proposedVariableId: SBC_TD1972_RAY_EXTENT
+    permittedOscillatorRole: ACTIVATION
+    proposedMode1Limitations:
+      - Source-only display of categorical target reach.
+      - No numeric weighting, aggregation, price conversion, or execution use.
+    reviewer: CODEX_SOURCE_REVIEW_20260803
+    founderDecision: PENDING
+    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+
+  - evidencePacketId: TD1972_NATURAL_PLANET_CLASS_PRACTICAL_INTRO
+    category: natural_benefic_and_malefic_classification
+    sourceCitation:
+      printedPage: PRACTICAL_INTRODUCTION_UNNUMBERED
+      pdfImageIndex: 11
+      locator: practical Hindi instruction item 10
+    originalSanskritHindiText:
+      - 'चन्द्र, बुध, बृहस्पति और शुक्र ये ४ ग्रह शुभ और सूर्य, मंगल, शनि, राहु और केतु-ये ५ ग्रह अशुभ हैं परन्तु चन्द्रमा तो क्षीण हो जाने से और बुध अशुभ ग्रह के साथ होने से-यह दो शुभ ग्रह भी अशुभ हो जाते हैं।'
+    literalTranscription:
+      text: 'candra, budha, brhaspati aur sukra ye char graha subha; surya, mangala, sani, rahu aur ketu ye panca graha asubha; ksina candra aur asubha-graha-sanga budha bhi asubha hote hain'
+      status: HINDI_SOURCE_TEXT_NORMALIZED_FOR_SEARCH_ONLY
+    literalTranslation: 'Moon, Mercury, Jupiter, and Venus are benefic; Sun, Mars, Saturn, Rahu, and Ketu are malefic. A diminished Moon and Mercury associated with a malefic become malefic.'
+    implementationInterpretation: Expose the unconditioned base classification as categorical source evidence; conditional Moon and Mercury states remain unknown gaps.
+    exactCategoricalRule:
+      baseBenefic: [MOON, MERCURY, JUPITER, VENUS]
+      baseMalefic: [SUN, MARS, SATURN, RAHU, KETU]
+      conditionalUnknown: [MOON_DIMINISHED, MERCURY_ASSOCIATED_WITH_MALEFIC]
+    numericalValue: null
+    dependencies: [TRAILOKYA_PROFILE_EXPLICIT_SELECTION, CONDITION_POLICY_FOR_MOON_AND_MERCURY]
+    ambiguityNotes:
+      - The text does not give a machine-safe diminished-Moon boundary.
+      - The text does not define a machine-safe Mercury association test.
+    conflictingWitnessNotes: Natural class is descriptive source doctrine, not a market-direction label and not a currency-side mapping.
+    proposedVariableId: SBC_TD1972_BASE_NATURAL_PLANET_CLASS
+    permittedOscillatorRole: POLARITY
+    proposedMode1Limitations:
+      - Categorical source label only, with Moon/Mercury conditions represented as UNKNOWN rather than inferred.
+      - No aggregation, score, magnitude, bullish/bearish, price, or execution use.
+    reviewer: CODEX_SOURCE_REVIEW_20260803
+    founderDecision: PENDING
+    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+
+  - evidencePacketId: TD1972_ISOLATED_RESULT_MODIFIERS_V166
+    category: isolated_retrograde_exaltation_debilitation_modifier
+    sourceCitation:
+      printedPage: '39'
+      pdfImageIndex: 55
+      locator: verse 166 and Hindi commentary
+    originalSanskritHindiText:
+      - 'वक्रग्रहे फलं द्विघ्नं त्रिगुणं स्वोच्चसंस्थिते । स्वभावजं फलं शीघ्रे नीचस्थोऽधंफलो ग्रहः ॥ १६६ ॥'
+      - 'स्थानफल देनेवाला ग्रह यदि वक्री हो तो पूर्वोक्त प्राप्त फल का दूना, शीघ्र गति में हो तो स्वभावानुकूल, उच्च राशि पर हो तो तिगुना, और नीच राशि पर हो तो आधा फल होता है।'
+    literalTranscription:
+      text: 'vakragrahe phalam dvighnam trigunam svoccasamsthite; svabhavajam phalam sighre nicstho ardham phalo grahah'
+      status: OCR_ASSISTED_SOURCE_IMAGE_CITATION_CONTROLS_DISPUTED_READING
+    literalTranslation: 'For a retrograde planet the result is double; for one situated in its exaltation it is triple; for a swift planet the natural result applies; for a debilitated planet it is half.'
+    implementationInterpretation: Retain four isolated categorical modifier labels with their explicitly stated factors; do not combine them automatically.
+    exactCategoricalRule:
+      RETROGRADE: 2.0
+      EXALTATION: 3.0
+      DEBILITATION: 0.5
+      SWIFT: 1.0
+    numericalValue:
+      unit: source_result_factor
+      values: {RETROGRADE: 2.0, EXALTATION: 3.0, DEBILITATION: 0.5, SWIFT: 1.0}
+    dependencies: [SOURCE_RESULT_BASE_DEFINITION, EXPLICIT_STATE_INPUT, STACKING_POLICY]
+    ambiguityNotes:
+      - The cited page does not supply a precedence or stacking method when multiple states coexist.
+      - The factor modifies a source 'result'; it is not a validated oscillator magnitude or price multiplier.
+      - The source gives no numeric swift-versus-mean motion threshold.
+    conflictingWitnessNotes: Existing guidance profile factors are not promoted by this packet and must not be treated as a calibrated financial scale.
+    proposedVariableId: SBC_TD1972_ISOLATED_RESULT_FACTORS
+    permittedOscillatorRole: MAGNITUDE
+    proposedMode1Limitations:
+      - Show individual factor labels only, never a combined scalar.
+      - No multiplication into polarity, SBC score, price, chart wave, Auto Suggest, or execution.
+      - Require explicit human selection of one isolated state until a source-backed precedence packet exists.
+    reviewer: CODEX_SOURCE_REVIEW_20260803
+    founderDecision: PENDING
+    founderReviewProposal: CANDIDATE_FOR_APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS
+
+  - evidencePacketId: TD1972_WORKED_PROCEDURE_PRACTICAL_INTRO
+    category: worked_example_present_in_source
+    sourceCitation:
+      printedPage: PRACTICAL_INTRODUCTION_UNNUMBERED
+      pdfImageIndex: 9
+      locator: practical Hindi introduction, items 1-9 continuing through PDF page 11
+    originalSanskritHindiText:
+      - 'बोध होजाने के लिये वेध देखने की सरल युक्ति उदाहरण रूप यहाँ पर लिख देता हूँ।'
+      - 'जिस किसी की हानि-वृद्धि देखनी हो उसका जन्मनाम विदित हो तब तो जन्मनाम का, नहीं तो प्रसिद्ध नाम का प्रथम अक्षर ... पांचों सर्वतोभद्रचक्र में जिन कोठों में लिखे हों उन पांच कोठों में ... मूर्तियां रख दें।'
+    literalTranscription:
+      text: 'vedha dekhne ki saral yukti udaharan rup yahan par likh deta hun; target identity is placed through name initial and its linked nakshatra, rashi, vowel, and tithi cells before planet positions are inspected'
+      status: HINDI_SOURCE_TEXT_NORMALIZED_FOR_SEARCH_ONLY
+    literalTranslation: 'The source introduces a simple example procedure: identify the subject by its birth name or, if unknown, its common-name initial and linked identity cells; place those five identity representations on the chakra; then inspect the planets placed at their current nakshatras and their Vedha.'
+    implementationInterpretation: A reproducible source procedure exists for identity placement, but the page does not provide a complete machine-verifiable target-ray fixture or a financial outcome example.
+    exactCategoricalRule:
+      identityClasses: [NAME_INITIAL, NAKSHATRA, RASHI, VOWEL, TITHI_GROUP]
+      sequence: [MAP_SUBJECT_IDENTITY, PLACE_SUBJECT_CELLS, PLACE_CURRENT_PLANETS, INSPECT_VEDHA]
+    numericalValue: null
+    dependencies: [CERTIFIED_IDENTITY_MAPPING_TABLES, SUBJECT_NAME_POLICY, SBC_GRID_TARGET_CELL_MAP]
+    ambiguityNotes:
+      - The current packet does not certify a complete name-to-identity table.
+      - No source-specific worked ray fixture or market example is admitted here.
+    conflictingWitnessNotes: Shared Krittika/Rohini/Mrigashira fixtures belong to another source profile and are excluded from this source packet.
+    proposedVariableId: SBC_TD1972_PRACTICAL_IDENTITY_PLACEMENT_SEQUENCE
+    permittedOscillatorRole: DISPLAY_ONLY
+    proposedMode1Limitations:
+      - Procedure display and manual research checklist only.
+      - No automatic identity derivation, score, market inference, price, or execution.
+    reviewer: CODEX_SOURCE_REVIEW_20260803
+    founderDecision: PENDING
+    founderReviewProposal: NOT_READY_NO_COMPLETE_MACHINE_FIXTURE

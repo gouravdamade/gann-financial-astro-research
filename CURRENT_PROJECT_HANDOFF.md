@@ -4,6 +4,39 @@ Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-03 (PFR-V2B-R4-T1 Trailokya Vedha Page Packet)
+
+- Founder selected the held `SBC_TRAILOKYA_1972_V1` profile. Added the bounded
+  `PFR-V2B-R4-T1` source packet at
+  `configs/sbc/evidence_packets/trailokya_dipika_1972_vedha_page_certification_v1.yaml`,
+  citing only the checksum-identified original 1972 Trailokya Dipika scan
+  (`1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194`).
+  The OCR companion is navigation and draft-translation help only; it is not
+  citation authority.
+- The packet page-certifies five narrow founder-review candidates: variable
+  Mars-to-Saturn direction selection, Sun/Moon/Rahu/Ketu all-three direction,
+  side/front ray reach, base natural planet class, and isolated source-result
+  factors (retrograde `2x`, exalted `3x`, debilitated `0.5x`, swift `1x`).
+  The practical identity-placement procedure is recorded separately as display
+  and manual research only because no complete source-specific machine fixture
+  is admitted.
+- No variable was promoted. Every candidate is `PENDING` founder review for
+  at most `APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS`; all global locks remain
+  false. No price data, outcome selection, wave tuning, LLM gap filling,
+  polarity catalogue, oscillator derivation, Auto Suggest, execution, or
+  packaging changed.
+- The numeric swift-versus-mean boundary, modifier stacking, automatic Mercury
+  association, Moon boundary, Latta/additional lines, absolute orientation,
+  Arghya disputed values, score/price conversion, and market direction remain
+  explicitly unresolved and outside Mode 1. The full founder form and plain
+  limits are in `docs/sbc/PFR_V2B_R4_T1_TRAILOKYA_VEDHA_PAGE_CERTIFICATION.md`.
+- Verification wording is exact: `pytest -q
+  test_classical_oscillator_coverage.py
+  test_trailokya_dipika_vedha_page_certification.py` collected and passed
+  **8** tests: four pre-existing R4 coverage tests plus four new source-packet
+  tests. This does not replace the earlier R4-only command, which correctly
+  remains `pytest -q test_classical_oscillator_coverage.py` with **4** tests.
+
 ## Latest Update - 2026-08-03 (PFR-V2B-R3 Founder Chart Admission)
 
 - Founder accepted two exact-time **research hypotheses**, explicitly not
