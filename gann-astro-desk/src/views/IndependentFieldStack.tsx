@@ -212,6 +212,15 @@ export function IndependentFieldStack({
     supportiveActive: interval.supportiveActive,
     adverseActive: interval.adverseActive,
   })) ?? []
+  const sbcGeometryOnlyRange = range && 'state' in range.sbcField
+    ? range.sbcField
+    : null
+  const sbcGeometryOnlyState = sbcGeometryOnlyRange
+    ? sbcGeometryOnlyRange.state
+    : null
+  const sbcLaneNote = sbcGeometryOnlyRange
+    ? `${sbcGeometryOnlyRange.state.replaceAll('_', ' ')}. ${sbcGeometryOnlyRange.reason}`
+    : 'Independent availability only; not a polarity scale'
   const sbcBlocks: LaneBlock[] = range?.sbcField.intervals.map((interval) => ({
     id: interval.interval_id,
     startUtc: interval.start_utc,
@@ -234,7 +243,8 @@ export function IndependentFieldStack({
       <div className="independent-field-stack-range"><span>{compactUtc(range.rangeStartUtc)}</span><b>Shared UTC range</b><span>{compactUtc(range.rangeEndUtc)}</span></div>
       <CategoricalStepPane label="USD categorical field" side="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} />
       <CategoricalStepPane label="JPY categorical field" side="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} />
-      <StateLane label="SBC atomic field" note="Independent availability only; not a polarity scale" blocks={sbcBlocks} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} />
+      <StateLane label="SBC atomic field" note={sbcLaneNote} blocks={sbcBlocks} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} />
+      {sbcGeometryOnlyState && <p className="independent-field-stack-error">SBC source-only geometry has no compiled range or score. USD and JPY remain independent descriptive fields.</p>}
       <p className="independent-field-stack-lock"><ShieldCheck size={12} /> Categorical polarity state only. No magnitude, fusion, automatic confirmation, or execution.</p>
     </>}
     <section className="fx-side-pilot-status" aria-label="FX side pilot status">

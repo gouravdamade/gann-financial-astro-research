@@ -4,6 +4,32 @@ Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-03 (PFR-V2B-R4-T2R Source-Only Geometry Integration Hardening)
+
+- Corrected the synchronized Trailokya path so it cannot invoke the ordinary
+  scored ChakraLab atomic-range compiler or silently substitute Phaladeepika or
+  another scored Vedha profile. The SBC lane now returns the explicit,
+  non-error state `GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED`, with zero intervals,
+  zero score, named source gaps, and all locks false. USD and JPY synchronized
+  fields still compile independently for the same visible range.
+- Trailokya ray reach is now tri-state aware: `REACHED`, `NOT_REACHED`,
+  `UNKNOWN`, and `PARTIAL_UNKNOWN`. Unknown mappings cannot be summarized as a
+  negative reach. The source-only UI again shows the seven active doctrine and
+  compiler gaps and retains `classicalCompletenessClaim: false`.
+- Founder-visible synchronized requests now use the accepted R3 USD and JPY
+  chart/hypothesis IDs instead of `UNCONFIGURED_*` / `PENDING_FOUNDER_REVIEW`.
+  This only wires existing registry identity; it creates no polarity events or
+  derived pair state.
+- Verification reconciliation: the original R4-T2 frontend handoff recorded
+  **34** tests; the later R4-T2 check collected **35** after its final test was
+  added. The current exact T2R frontend command collected and passed **39**:
+  `npm test -- --run src/api.test.ts src/chakraLabWorkspace.test.tsx
+  src/visualizationModes.test.ts src/visualizationSourceGaps.test.ts`.
+  Focused Python verification collected and passed **44** tests; production
+  frontend build, native `cargo fmt --check`, and native `cargo check` passed.
+  No installer was produced because packaging remains locked. Full evidence and
+  physical UI checklist: `docs/sbc/PFR_V2B_R4_T2R_SOURCE_ONLY_GEOMETRY_INTEGRATION_HARDENING.md`.
+
 ## Latest Update - 2026-08-03 (PFR-V2B-R4-T2 Narrow Trailokya Source-Only Geometry)
 
 - Founder-approved only three Trailokya 1972 variables, each as

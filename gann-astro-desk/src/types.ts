@@ -2103,7 +2103,7 @@ export type TrailokyaSourceOnlyGeometry = {
     motionClass: string | null
     direction: 'LEFT' | 'FRONT' | 'RIGHT'
     directionReason: string
-    targetReach: 'REACHED' | 'NOT_REACHED'
+    targetReach: 'REACHED' | 'NOT_REACHED' | 'UNKNOWN' | 'PARTIAL_UNKNOWN'
     targets: Array<{
       row: number
       column: number
@@ -2238,6 +2238,31 @@ export type SbcAtomicVisibleRange = {
   }
 }
 
+export type TrailokyaGeometryOnlyUnavailableRange = {
+  contract: 'SBC_TRAILOKYA_1972_GEOMETRY_ONLY_RANGE_V1'
+  schema_version: 1
+  state: 'GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED'
+  instrument_identity: string
+  range_start_utc: string
+  range_end_utc: string
+  source_profile_id: 'SBC_TRAILOKYA_1972_V1'
+  aspect_relationship: 'NOT_AUTOMATIC_CONFIRMATION'
+  magnitude_state: 'NOT_CONFIGURED'
+  classicalCompletenessClaim: false
+  source_gaps: string[]
+  intervals: []
+  reason: string
+  guardrails: {
+    read_only: true
+    execution_allowed: false
+    automatic_order_placement: false
+    financially_validated: false
+    acts_as_aspect_confirmation: false
+    score_aggregation_used: false
+    market_direction_inferred: false
+  }
+}
+
 export type SynchronizedIndependentRange = {
   contract: 'SYNCHRONIZED_INDEPENDENT_RANGE_V1'
   schemaVersion: 1
@@ -2245,7 +2270,7 @@ export type SynchronizedIndependentRange = {
   rangeEndUtc: string
   synchronizationStatus: 'SYNCHRONIZED'
   aspectFields: Record<'USD' | 'JPY', ChartConditionedPolarityRange>
-  sbcField: SbcAtomicVisibleRange
+  sbcField: SbcAtomicVisibleRange | TrailokyaGeometryOnlyUnavailableRange
   guardrails: {
     readOnly: true
     executionAllowed: false

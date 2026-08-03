@@ -46,6 +46,7 @@ import { SbcLinkedAuditWorkspace } from './SbcLinkedAuditWorkspace'
 import { ProductFirstSbcWorkspace } from './ProductFirstSbcWorkspace'
 import { VISUALIZATION_ENGINE_MODES, visualizationModePolicy, type VisualizationEngineMode } from '../visualizationModes'
 import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
+import { FOUNDER_ACCEPTED_FX_SIDE_CHARTS } from '../founderChartIdentities'
 
 
 const BODIES = [
@@ -191,6 +192,7 @@ export function ChakraLabWorkspace({
   const [pilotError, setPilotError] = useState('')
   const [error, setError] = useState('')
   const initialRun = useRef(false)
+  const loadedVedhaProfileId = useRef(vedhaProfileId)
   const synchronizedRequestSequence = useRef(0)
   const request = useMemo<ChakraLabRequest>(() => ({
     at: offsetIst(atLocal),
@@ -317,15 +319,13 @@ export function ChakraLabWorkspace({
           {
             sideIdentity: 'USD',
             instrumentIdentity: 'FX_CURRENCY:USD',
-            chartId: 'UNCONFIGURED_USD_SIDE_CHART',
-            chartHypothesisId: 'PENDING_FOUNDER_REVIEW',
+            ...FOUNDER_ACCEPTED_FX_SIDE_CHARTS.USD,
             events: [],
           },
           {
             sideIdentity: 'JPY',
             instrumentIdentity: 'FX_CURRENCY:JPY',
-            chartId: 'UNCONFIGURED_JPY_SIDE_CHART',
-            chartHypothesisId: 'PENDING_FOUNDER_REVIEW',
+            ...FOUNDER_ACCEPTED_FX_SIDE_CHARTS.JPY,
             events: [],
           },
         ],
@@ -366,6 +366,12 @@ export function ChakraLabWorkspace({
     initialRun.current = true
     void loadSnapshot()
   }, [loadSnapshot])
+
+  useEffect(() => {
+    if (!initialRun.current || loadedVedhaProfileId.current === vedhaProfileId) return
+    loadedVedhaProfileId.current = vedhaProfileId
+    void loadSnapshot()
+  }, [loadSnapshot, vedhaProfileId])
 
   useEffect(() => {
     if (!selectedTimestampUtc) return
@@ -434,9 +440,7 @@ export function ChakraLabWorkspace({
   const guidance = snapshot?.guidance
   const isTrailokyaSourceOnly = vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'
   const visualizationPolicy = visualizationModePolicy(visualizationMode, vedhaProfileId)
-  const visualizationSourceGaps = vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'
-    ? []
-    : sourceGapsForVisualizationMode(visualizationMode)
+  const visualizationSourceGaps = sourceGapsForVisualizationMode(visualizationMode, vedhaProfileId)
   const resolvedByBody = new Map(
     guidance?.actor_resolutions.map((actor) => [actor.body, actor]) ?? [],
   )

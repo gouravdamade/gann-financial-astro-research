@@ -29,6 +29,7 @@ const {
   fetchAudit,
   fetchFixedPhasor,
   fetchSnapshot,
+  fetchTrailokyaGeometry,
   fetchTimingAdmission,
   fetchTimingExternalReview,
   fetchTimingSignedReview,
@@ -45,6 +46,7 @@ const {
   fetchAudit: vi.fn(),
   fetchFixedPhasor: vi.fn(),
   fetchSnapshot: vi.fn(),
+  fetchTrailokyaGeometry: vi.fn(),
   fetchTimingAdmission: vi.fn(),
   fetchTimingExternalReview: vi.fn(),
   fetchTimingSignedReview: vi.fn(),
@@ -63,6 +65,7 @@ vi.mock('./api', () => ({
   fetchChakraLabAudit: fetchAudit,
   fetchChakraLabFixedPhasor: fetchFixedPhasor,
   fetchChakraLabSnapshot: fetchSnapshot,
+  fetchTrailokyaSourceOnlyGeometry: fetchTrailokyaGeometry,
   fetchChartConditionedPolarityLookup: fetchAspectPolarity,
   fetchSynchronizedIndependentRange: fetchSynchronizedRange,
   fetchChakraTimingProfileAdmission: fetchTimingAdmission,
@@ -82,6 +85,7 @@ afterEach(() => {
   fetchAudit.mockReset()
   fetchFixedPhasor.mockReset()
   fetchSnapshot.mockReset()
+  fetchTrailokyaGeometry.mockReset()
   fetchTimingAdmission.mockReset()
   fetchTimingExternalReview.mockReset()
   fetchTimingSignedReview.mockReset()
@@ -1284,6 +1288,90 @@ describe('ChakraLabWorkspace', () => {
     await waitFor(() => expect(fetchSynchronizedRange).toHaveBeenCalledWith(expect.objectContaining({
       rangeStartUtc: '2025-07-11T16:20:00.000Z',
       rangeEndUtc: '2025-07-11T18:20:00.000Z',
+    })))
+  })
+
+  it('auto-refreshes source-only Trailokya without provisional side-chart identities', async () => {
+    fetchSnapshot.mockResolvedValue(snapshot)
+    fetchTrailokyaGeometry.mockResolvedValue({
+      contract: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1',
+      schemaVersion: 1,
+      snapshot: { ...snapshot, guidance: null },
+      approval: {
+        approvedProfileId: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1',
+        profileHash: 'trailokya-hash',
+        sourceProfileId: 'SBC_TRAILOKYA_1972_V1',
+        packetId: 'trailokya-packet',
+        decisionRecord: 'founder-decision',
+        founderDecision: 'APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS',
+        pageLocators: {},
+      },
+      rays: [],
+      unavailable: [],
+      guardrails: {
+        readOnly: true,
+        categoricalGeometryOnly: true,
+        naturalPlanetPolarityUsed: false,
+        numericalModifiersUsed: false,
+        directionalWaveGenerated: false,
+        scoreAggregationUsed: false,
+        marketDirectionInferred: false,
+        autoSuggestInfluenceAllowed: false,
+        executionAllowed: false,
+        packagingAllowed: false,
+      },
+    })
+    fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
+    fetchSynchronizedRange.mockResolvedValue({
+      ...synchronizedViewportRange,
+      sbcField: {
+        contract: 'SBC_TRAILOKYA_1972_GEOMETRY_ONLY_RANGE_V1',
+        schema_version: 1,
+        state: 'GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED',
+        instrument_identity: 'FX:USDJPY',
+        range_start_utc: '2025-07-11T16:20:00.000Z',
+        range_end_utc: '2025-07-11T18:20:00.000Z',
+        source_profile_id: 'SBC_TRAILOKYA_1972_V1',
+        aspect_relationship: 'NOT_AUTOMATIC_CONFIRMATION',
+        magnitude_state: 'NOT_CONFIGURED',
+        classicalCompletenessClaim: false,
+        source_gaps: ['SBC_TD1972_GEOMETRY_RANGE_NOT_COMPILED'],
+        intervals: [],
+        reason: 'No scored profile used.',
+        guardrails: {
+          read_only: true,
+          execution_allowed: false,
+          automatic_order_placement: false,
+          financially_validated: false,
+          acts_as_aspect_confirmation: false,
+          score_aggregation_used: false,
+          market_direction_inferred: false,
+        },
+      },
+    })
+    const user = userEvent.setup()
+
+    render(
+      <ChakraLabWorkspace
+        defaultLatitude={18.5204}
+        defaultLongitude={77.2090}
+        chart={liveViewportChart}
+        visibleRangeStartUtc="2025-07-11T16:20:00.000Z"
+        visibleRangeEndUtc="2025-07-11T18:20:00.000Z"
+      />,
+    )
+
+    await user.click(screen.getByRole('tab', { name: 'Board' }))
+    await user.selectOptions(screen.getByLabelText('Vedha source profile'), 'SBC_TRAILOKYA_1972_V1')
+    await waitFor(() => expect(fetchTrailokyaGeometry).toHaveBeenCalled())
+    await waitFor(() => expect(fetchSynchronizedRange).toHaveBeenLastCalledWith(expect.objectContaining({
+      aspectRanges: expect.arrayContaining([
+        expect.objectContaining({ chartId: 'FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1' }),
+        expect.objectContaining({ chartId: 'FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1' }),
+      ]),
+      sbcRange: expect.objectContaining({
+        boundaries: [expect.objectContaining({ request: expect.objectContaining({ vedhaProfileId: 'SBC_TRAILOKYA_1972_V1' }) })],
+      }),
     })))
   })
 

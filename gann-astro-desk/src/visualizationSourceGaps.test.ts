@@ -16,4 +16,17 @@ describe('visualization source gaps', () => {
       status: 'SOURCE_MISSING',
     })
   })
+
+  it('keeps every unresolved Trailokya source gap visible', () => {
+    const gaps = sourceGapsForVisualizationMode('SOURCE_ONLY_BASELINE', 'SBC_TRAILOKYA_1972_V1')
+    expect(gaps.map((gap) => gap.gapId)).toEqual([
+      'SBC_TD1972_BASE_NATURAL_PLANET_CLASS_PENDING',
+      'SBC_TD1972_ISOLATED_RESULT_FACTORS_PENDING',
+      'SBC_TD1972_SWIFT_MEAN_THRESHOLD_SOURCE_MISSING',
+      'SBC_TD1972_MODIFIER_STACKING_SOURCE_MISSING',
+      'SBC_TD1972_MOON_MERCURY_CONDITIONS_PENDING',
+      'SBC_ABSOLUTE_ORIENTATION_UNRESOLVED',
+      'SBC_TD1972_GEOMETRY_RANGE_NOT_COMPILED',
+    ])
+  })
 })

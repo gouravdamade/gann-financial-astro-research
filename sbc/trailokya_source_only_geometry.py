@@ -164,6 +164,18 @@ def _targets_for_direction(
     return tuple(targets)
 
 
+def summarize_target_reach(targets: tuple[dict[str, Any], ...]) -> str:
+    """Preserve unknown mappings instead of turning them into a negative hit."""
+    states = {str(target.get("reachState") or "UNKNOWN") for target in targets}
+    if not states or states == {"UNKNOWN"}:
+        return "UNKNOWN"
+    if "UNKNOWN" in states:
+        return "PARTIAL_UNKNOWN"
+    if "REACHED" in states:
+        return "REACHED"
+    return "NOT_REACHED"
+
+
 def _directions_for_actor(body: str, motion_class: str | None) -> tuple[tuple[VedhaDirection, ...], str | None, str]:
     if body in VEDHA_FIXED_BODIES:
         return FIXED_DIRECTIONS, None, "TRAILOKYA_FIXED_ALL_THREE_RAYS"
@@ -212,7 +224,7 @@ def build_trailokya_source_only_geometry(
                 "motionClass": actor.motion_class,
                 "direction": direction.value,
                 "directionReason": reason,
-                "targetReach": "REACHED" if any(target["reachState"] == "REACHED" for target in targets) else "NOT_REACHED",
+                "targetReach": summarize_target_reach(targets),
                 "targets": targets,
             })
     guardrails = {

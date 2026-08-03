@@ -10,6 +10,7 @@ from sbc.trailokya_source_only_geometry import (
     CONTRACT,
     TRAILOKYA_PROFILE_ID,
     build_trailokya_source_only_geometry,
+    summarize_target_reach,
 )
 from sbc.vedha import MotionClass
 
@@ -84,3 +85,22 @@ def test_missing_target_mapping_is_exposed_as_unavailable_not_approximated(monke
     assert report["rays"] == []
     assert report["unavailable"]
     assert report["unavailable"][0]["state"] == "TARGET_MAPPING_UNAVAILABLE"
+
+
+def test_target_reach_summary_preserves_known_and_unknown_mapping_states() -> None:
+    assert summarize_target_reach((
+        {"reachState": "REACHED"},
+        {"reachState": "NOT_REACHED"},
+    )) == "REACHED"
+    assert summarize_target_reach((
+        {"reachState": "NOT_REACHED"},
+        {"reachState": "NOT_REACHED"},
+    )) == "NOT_REACHED"
+    assert summarize_target_reach((
+        {"reachState": "UNKNOWN"},
+        {"reachState": "UNKNOWN"},
+    )) == "UNKNOWN"
+    assert summarize_target_reach((
+        {"reachState": "NOT_REACHED"},
+        {"reachState": "UNKNOWN"},
+    )) == "PARTIAL_UNKNOWN"

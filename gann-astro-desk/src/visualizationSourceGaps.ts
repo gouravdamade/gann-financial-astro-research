@@ -1,3 +1,4 @@
+import type { ChakraLabRequest } from './types'
 import type { VisualizationEngineMode } from './visualizationModes'
 
 export type VisualizationSourceGap = {
@@ -40,6 +41,64 @@ export const VISUALIZATION_SOURCE_GAPS: VisualizationSourceGap[] = [
   },
 ]
 
-export function sourceGapsForVisualizationMode(mode: VisualizationEngineMode): VisualizationSourceGap[] {
+export const TRAILOKYA_SOURCE_ONLY_GAPS: VisualizationSourceGap[] = [
+  {
+    gapId: 'SBC_TD1972_BASE_NATURAL_PLANET_CLASS_PENDING',
+    title: 'Natural planet class remains pending',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'Trailokya source-only geometry does not use a natural benefic or malefic class.',
+  },
+  {
+    gapId: 'SBC_TD1972_ISOLATED_RESULT_FACTORS_PENDING',
+    title: 'Isolated result factors remain pending',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'No retrograde, exaltation, debilitation, or other result factor is applied to geometry.',
+  },
+  {
+    gapId: 'SBC_TD1972_SWIFT_MEAN_THRESHOLD_SOURCE_MISSING',
+    title: 'Swift and mean threshold is missing',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'Swift and mean must be supplied as explicit research states; no numeric threshold is invented.',
+  },
+  {
+    gapId: 'SBC_TD1972_MODIFIER_STACKING_SOURCE_MISSING',
+    title: 'Modifier stacking is missing',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'No modifier precedence or multiplier stacking is used.',
+  },
+  {
+    gapId: 'SBC_TD1972_MOON_MERCURY_CONDITIONS_PENDING',
+    title: 'Moon and Mercury conditions remain pending',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'The geometry profile does not infer disputed Moon or Mercury conditions.',
+  },
+  {
+    gapId: 'SBC_ABSOLUTE_ORIENTATION_UNRESOLVED',
+    title: 'Absolute orientation is unresolved',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'Left, front, and right remain figure-relative and are not mapped to geography.',
+  },
+  {
+    gapId: 'SBC_TD1972_GEOMETRY_RANGE_NOT_COMPILED',
+    title: 'Source-only geometry range is not compiled',
+    affectedModes: ['SOURCE_ONLY_BASELINE', 'VISUAL_ONLY_NO_SCORE'],
+    status: 'SOURCE_MISSING',
+    explanation: 'The synchronized SBC lane stays explicitly unavailable until a separate score-free range compiler is admitted.',
+  },
+]
+
+export function sourceGapsForVisualizationMode(
+  mode: VisualizationEngineMode,
+  sourceProfileId?: ChakraLabRequest['vedhaProfileId'],
+): VisualizationSourceGap[] {
+  if (sourceProfileId === 'SBC_TRAILOKYA_1972_V1') {
+    return TRAILOKYA_SOURCE_ONLY_GAPS.filter((gap) => gap.affectedModes.includes(mode))
+  }
   return VISUALIZATION_SOURCE_GAPS.filter((gap) => gap.affectedModes.includes(mode))
 }
