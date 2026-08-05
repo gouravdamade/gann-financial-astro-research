@@ -14,7 +14,10 @@ import type {
 import { visualizationModePolicy } from './visualizationModes'
 import { ProductFirstSbcWorkspace } from './views/ProductFirstSbcWorkspace'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  window.localStorage.removeItem('gann-astro.oscillators-open')
+})
 
 const snapshot = {
   as_of_utc: '2026-08-01T12:00:00Z',
@@ -56,6 +59,32 @@ const synchronizedRange = {
     JPY: { intervals: [{ intervalId: 'jpy-1', startUtc: '2026-08-01T10:00:00Z', endUtc: '2026-08-01T12:00:00Z', polarityState: 'UNKNOWN', reason: 'No accepted side evidence.' }] },
   },
   sbcField: { intervals: [{ interval_id: 'sbc-1', start_utc: '2026-08-01T10:00:00Z', end_utc: '2026-08-01T12:00:00Z', guidance_availability: 'AVAILABLE', missing_evidence_ids: [] }] },
+  guardrails: { executionAllowed: false, fieldsFused: false, marketDirectionInferred: false },
+} as unknown as SynchronizedIndependentRange
+
+const trailokyaSynchronizedRange = {
+  rangeStartUtc: '2026-08-01T10:00:00Z',
+  rangeEndUtc: '2026-08-01T12:00:00Z',
+  aspectFields: {
+    USD: { intervals: [{ intervalId: 'usd-unknown', startUtc: '2026-08-01T10:00:00Z', endUtc: '2026-08-01T12:00:00Z', polarityState: 'UNKNOWN', reason: 'No accepted side evidence.' }] },
+    JPY: { intervals: [{ intervalId: 'jpy-unknown', startUtc: '2026-08-01T10:00:00Z', endUtc: '2026-08-01T12:00:00Z', polarityState: 'UNKNOWN', reason: 'No accepted side evidence.' }] },
+  },
+  sbcField: {
+    contract: 'SBC_TRAILOKYA_1972_GEOMETRY_ONLY_RANGE_V1',
+    schema_version: 1,
+    state: 'GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED',
+    instrument_identity: 'FX:USDJPY',
+    range_start_utc: '2026-08-01T10:00:00Z',
+    range_end_utc: '2026-08-01T12:00:00Z',
+    source_profile_id: 'SBC_TRAILOKYA_1972_V1',
+    aspect_relationship: 'NOT_AUTOMATIC_CONFIRMATION',
+    magnitude_state: 'NOT_CONFIGURED',
+    classicalCompletenessClaim: false,
+    source_gaps: ['SBC_TD1972_GEOMETRY_RANGE_NOT_COMPILED'],
+    intervals: [],
+    reason: 'Trailokya source-only geometry has no synchronized range compiler.',
+    guardrails: { read_only: true, execution_allowed: false, automatic_order_placement: false, financially_validated: false, acts_as_aspect_confirmation: false, score_aggregation_used: false, market_direction_inferred: false },
+  },
   guardrails: { executionAllowed: false, fieldsFused: false, marketDirectionInferred: false },
 } as unknown as SynchronizedIndependentRange
 
@@ -198,11 +227,10 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
       />,
     )
 
-    await user.click(screen.getByRole('button', { name: 'Fields' }))
-
     expect(onLoadSynchronizedFields).not.toHaveBeenCalled()
     expect(onLoadPilotStatus).not.toHaveBeenCalled()
     expect(screen.getByRole('region', { name: 'Independent synchronized field stack' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Independent synchronized field stack' }).closest('.product-first-market-panel')).not.toBeNull()
     expect(screen.getByText('USD categorical field')).toBeInTheDocument()
     expect(screen.getByText('JPY categorical field')).toBeInTheDocument()
     expect(screen.getByText('SBC atomic field')).toBeInTheDocument()
@@ -210,6 +238,11 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
     expect(screen.getByRole('region', { name: 'FX side pilot status' })).toBeInTheDocument()
     expect(screen.getByText(/Pilot Evidence Pending/i)).toBeInTheDocument()
     expect(screen.getAllByText(/Needs SUPPORTIVE \+ ADVERSE/)).toHaveLength(2)
+
+    await user.click(screen.getByRole('button', { name: 'Fields' }))
+    expect(screen.queryByRole('region', { name: 'Independent synchronized field stack' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Fields' }))
+    expect(screen.getByRole('region', { name: 'Independent synchronized field stack' })).toBeInTheDocument()
   })
 
   it('selects a canonical field interval without deriving a pair signal', async () => {
@@ -231,7 +264,6 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
       />,
     )
 
-    await user.click(screen.getByRole('button', { name: 'Fields' }))
     await user.click(screen.getByRole('button', { name: /Select USD interval UNKNOWN/i }))
 
     expect(onSelectFieldInterval).toHaveBeenCalledWith({
@@ -241,5 +273,50 @@ describe('ProductFirstSbcWorkspace score suppression', () => {
       endUtc: '2026-08-01T12:00:00Z',
     })
     expect(screen.getByText(/No magnitude, fusion, automatic confirmation/i)).toBeInTheDocument()
+  })
+
+  it('keeps Trailokya source-only range unavailable without a scored fallback', () => {
+    render(
+      <ProductFirstSbcWorkspace
+        chart={chart}
+        snapshot={snapshot}
+        selectedCell="1:1"
+        onSelectCell={() => undefined}
+        onSelectMoment={() => undefined}
+        synchronizedRange={trailokyaSynchronizedRange}
+        visualizationPolicy={visualizationModePolicy('SOURCE_ONLY_BASELINE')}
+        phasorBusy={false}
+        phasorError=""
+        onLoadFixedPhasor={() => undefined}
+      />,
+    )
+
+    expect(screen.getByText(/GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED/)).toBeInTheDocument()
+    expect(screen.getByText(/has no compiled range or score/i)).toBeInTheDocument()
+    expect(screen.queryByText(/Supportive.*Obstructive.*Net/)).not.toBeInTheDocument()
+  })
+
+  it('keeps every workspace toolbar control reachable while the field stack is expanded', () => {
+    render(
+      <ProductFirstSbcWorkspace
+        chart={chart}
+        snapshot={snapshot}
+        selectedCell="1:1"
+        onSelectCell={() => undefined}
+        onSelectMoment={() => undefined}
+        synchronizedRange={synchronizedRange}
+        visualizationPolicy={visualizationModePolicy('SOURCE_ONLY_BASELINE')}
+        phasorBusy={false}
+        phasorError=""
+        onLoadFixedPhasor={() => undefined}
+      />,
+    )
+
+    const toolbar = screen.getByRole('group', { name: 'Workspace view controls' })
+    expect(toolbar).toBeInTheDocument()
+    for (const label of ['Previous loaded candle', 'Time', 'Profile', 'Wheel', 'Phase lab', 'Compare', 'Fields', 'Next loaded candle']) {
+      expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
+    }
+    expect(toolbar.className).toContain('product-first-view-controls')
   })
 })

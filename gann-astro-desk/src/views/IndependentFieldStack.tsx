@@ -219,7 +219,7 @@ export function IndependentFieldStack({
     ? sbcGeometryOnlyRange.state
     : null
   const sbcLaneNote = sbcGeometryOnlyRange
-    ? `${sbcGeometryOnlyRange.state.replaceAll('_', ' ')}. ${sbcGeometryOnlyRange.reason}`
+    ? `${sbcGeometryOnlyRange.state}. ${sbcGeometryOnlyRange.reason}`
     : 'Independent availability only; not a polarity scale'
   const sbcBlocks: LaneBlock[] = range?.sbcField.intervals.map((interval) => ({
     id: interval.interval_id,

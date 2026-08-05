@@ -6509,9 +6509,22 @@ html.android-runtime .loading-state {
 .product-first-metric strong { overflow: hidden; color: #cad4db; font: 700 9px/1.2 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
 .product-first-metric.is-adverse strong { color: #dbab91; }
 .product-first-lock { color: #81cbb8; font-size: 8px; white-space: nowrap; }
-.product-first-view-controls { display: inline-flex; align-items: stretch; border: 1px solid #3c4955; border-radius: 3px; overflow: hidden; background: #10161c; }
+.product-first-view-controls {
+  grid-column: 1 / -1;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  border: 1px solid #3c4955;
+  border-radius: 3px;
+  overflow: visible;
+  background: #10161c;
+}
 .product-first-view-controls button {
   min-height: 25px;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -6527,6 +6540,7 @@ html.android-runtime .loading-state {
 .product-first-view-controls button:last-child { border-right: 0; }
 .product-first-view-controls button:hover { background: #202a32; color: #d3dde4; }
 .product-first-view-controls button.is-active { background: #244955; color: #cde9ec; }
+.product-first-view-controls button:focus-visible { position: relative; z-index: 1; outline: 2px solid #72c9e8; outline-offset: -2px; }
 
 .product-first-time-profile {
   display: grid;
@@ -6621,11 +6635,14 @@ html.android-runtime .loading-state {
 .product-first-polarity-candidate-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
 .independent-field-stack {
+  min-height: 0;
+  max-height: clamp(190px, 32vh, 320px);
   display: grid;
   gap: 8px;
   padding: 10px 14px;
   border-bottom: 1px solid #35404a;
   background: #11191f;
+  overflow-y: auto;
 }
 .independent-field-stack > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .independent-field-stack > header > div { display: flex; min-width: 0; align-items: center; gap: 8px; color: #b6a8de; }
@@ -6824,6 +6841,11 @@ html.android-runtime .loading-state {
   background: #10151a;
 }
 
+.product-first-market-panel {
+  grid-template-rows: auto minmax(250px, minmax(0, 1fr)) auto auto;
+  overflow: auto;
+  scrollbar-color: #46515d #10151a;
+}
 .product-first-market-panel { border-right: 1px solid #303942; }
 .product-first-chakra-panel { border-right: 1px solid #303942; }
 .product-first-why-drawer { display: block; overflow-y: auto; background: #151a20; scrollbar-color: #46515d #151a20; }

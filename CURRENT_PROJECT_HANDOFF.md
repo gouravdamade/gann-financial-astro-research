@@ -4,6 +4,29 @@ Last updated: 2026-08-03 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-05 (PFR-V2B-R4-T2P-U1 Source Layout Correction)
+
+- Implemented the bounded founder-visible layout correction in source commit
+  pending below: the existing `IndependentFieldStack` is mounted directly in
+  the left price-context column after the visible-aspect legend, rather than
+  as a top-level panel outside the price/Chakra/audit body.
+- The USD, JPY, and SBC lanes are expanded by default for a loaded chart range.
+  The existing `Fields` control remains a local collapse/restore preference.
+  Unknown side evidence remains visibly gapped, and Trailokya remains the
+  explicit `GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED` availability state with no
+  scored fallback.
+- The workspace toolbar now spans its own full-width wrapping row. Previous
+  candle, Time, Profile, Wheel, Phase lab, Compare, Fields, and next candle
+  remain reachable and receive visible keyboard focus.
+- Verification: Oxlint passed; full frontend `npm.cmd test` collected and
+  passed **32 files / 139 tests**; focused product-first suite collected and
+  passed **1 file / 7 tests**; `npm.cmd run build` passed. The focused source
+  record is `docs/sbc/PFR_V2B_R4_T2P_U1_FOUNDER_VISIBLE_OSCILLATOR_TOOLBAR_CORRECTION.md`.
+- Required native viewport and packaged-candidate screenshots remain pending;
+  no founder acceptance is claimed. The next step after this source commit is
+  a new immutable non-promoted Windows candidate, without changing
+  `0.10.33-pfr-r4-t2r`.
+
 ## Latest Update - 2026-08-03 (PFR-V2B-R4-T2P Founder-Inspection Windows Candidate)
 
 - Built the non-promoted Windows research candidate `0.10.33-pfr-r4-t2r` from

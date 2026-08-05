@@ -1,5 +1,5 @@
 import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Download, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import type {
   ChakraFixedPhasorInterval,
   ChakraGridCell,
@@ -115,7 +115,20 @@ export function ProductFirstSbcWorkspace({
   const [selectedVectorId, setSelectedVectorId] = useState('')
   const [timingOpen, setTimingOpen] = useState(false)
   const [comparisonOpen, setComparisonOpen] = useState(false)
-  const [fieldStackOpen, setFieldStackOpen] = useState(false)
+  const [fieldStackOpen, setFieldStackOpen] = useState(() => {
+    try {
+      return window.localStorage.getItem('gann-astro.oscillators-open') !== 'false'
+    } catch {
+      return true
+    }
+  })
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('gann-astro.oscillators-open', String(fieldStackOpen))
+    } catch {
+      // A restricted desktop webview may not expose persistent storage.
+    }
+  }, [fieldStackOpen])
   const guidance = snapshot?.guidance ?? null
   const requestedRangeStart = synchronizedRange ? Date.parse(synchronizedRange.rangeStartUtc) / 1000 : null
   const requestedRangeEnd = synchronizedRange ? Date.parse(synchronizedRange.rangeEndUtc) / 1000 : null
@@ -264,7 +277,7 @@ export function ProductFirstSbcWorkspace({
   }
 
   return (
-    <section className={`product-first-sbc mode-${visualizationPolicy.mode.toLowerCase()}${sideView || currencyPairEvidence || wheelOpen || timingOpen || comparisonOpen || fieldStackOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
+    <section className={`product-first-sbc mode-${visualizationPolicy.mode.toLowerCase()}${sideView || currencyPairEvidence || wheelOpen || timingOpen || comparisonOpen ? ' has-product-first-panel' : ''}`} aria-label="Integrated Sarvatobhadra Chakra workspace">
       <header className="product-first-sbc-summary">
         <div className="product-first-summary-title">
           <Layers3 size={16} />
@@ -296,7 +309,7 @@ export function ProductFirstSbcWorkspace({
           <strong>{visualizationPolicy.scoringVisible && guidance ? `${Math.round(guidance.scoring_coverage_ratio * 100)}% / ${unknownCount}` : `Suppressed / ${unknownCount}`}</strong>
         </div>
         <span className="product-first-lock"><ShieldCheck size={12} /> Read-only experimental</span>
-        <div className="product-first-view-controls" aria-label="Workspace view controls">
+        <div className="product-first-view-controls" role="group" aria-label="Workspace view controls">
           <button aria-label="Previous loaded candle" title="Previous loaded candle" disabled={selectedCandleIndex <= 0} onClick={() => stepLoadedCandle(-1)}><ChevronLeft size={12} /></button>
           <button
             className={sideView === 'TIME' ? 'is-active' : ''}
@@ -341,14 +354,15 @@ export function ProductFirstSbcWorkspace({
           <button
             className={fieldStackOpen ? 'is-active' : ''}
             disabled={!candles.length}
+            title="Show or hide the synchronized oscillator fields"
             onClick={() => {
-            setFieldStackOpen((current) => !current)
-            if (!fieldStackOpen && !synchronizedRange && !synchronizedBusy) {
-              onLoadSynchronizedFields()
-            }
-            if (!fieldStackOpen && !pilotStatus && !pilotBusy) {
-              onLoadPilotStatus()
-            }
+              setFieldStackOpen((current) => !current)
+              if (!fieldStackOpen && !synchronizedRange && !synchronizedBusy) {
+                onLoadSynchronizedFields()
+              }
+              if (!fieldStackOpen && !pilotStatus && !pilotBusy) {
+                onLoadPilotStatus()
+              }
             }}
           >
             <Layers3 size={12} /> Fields
@@ -474,27 +488,6 @@ export function ProductFirstSbcWorkspace({
           </div>
         </div>}
       </section>
-
-      {fieldStackOpen && <IndependentFieldStack
-        range={synchronizedRange}
-        busy={synchronizedBusy}
-        error={synchronizedError}
-        onLoad={onLoadSynchronizedFields}
-        pilotStatus={pilotStatus}
-        pilotBusy={pilotBusy}
-        pilotError={pilotError}
-        onLoadPilot={onLoadPilotStatus}
-        rangeSource={synchronizedRangeSource}
-        crosshairTimestampUtc={crosshairTimestampUtc}
-        selectedInterval={selectedFieldInterval}
-        onSelectInterval={(selection) => {
-          if (onSelectFieldInterval) {
-            onSelectFieldInterval(selection)
-            return
-          }
-          onSelectMoment(toIstInput(Date.parse(selection.startUtc) / 1000))
-        }}
-      />}
 
       {wheelOpen && (
         <section className="product-first-wheel" aria-label="Fixed phasor wheel">
@@ -720,6 +713,26 @@ export function ProductFirstSbcWorkspace({
             ))}
             {!visibleAspects.length && <em>No aspects in the loaded chart range</em>}
           </div>
+          {fieldStackOpen && <IndependentFieldStack
+            range={synchronizedRange}
+            busy={synchronizedBusy}
+            error={synchronizedError}
+            onLoad={onLoadSynchronizedFields}
+            pilotStatus={pilotStatus}
+            pilotBusy={pilotBusy}
+            pilotError={pilotError}
+            onLoadPilot={onLoadPilotStatus}
+            rangeSource={synchronizedRangeSource}
+            crosshairTimestampUtc={crosshairTimestampUtc}
+            selectedInterval={selectedFieldInterval}
+            onSelectInterval={(selection) => {
+              if (onSelectFieldInterval) {
+                onSelectFieldInterval(selection)
+                return
+              }
+              onSelectMoment(toIstInput(Date.parse(selection.startUtc) / 1000))
+            }}
+          />}
         </section>
 
         <section className="product-first-chakra-panel">
