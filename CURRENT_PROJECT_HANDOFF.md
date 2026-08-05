@@ -1,13 +1,14 @@
 # Current Project Handoff
 
-Last updated: 2026-08-03 IST
+Last updated: 2026-08-05 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-08-05 (PFR-V2B-R4-T2P-U1 Source Layout Correction)
+## Latest Update - 2026-08-05 (PFR-V2B-R4-T2P-U1 Founder Candidate)
 
 - Implemented the bounded founder-visible layout correction in source commit
-  pending below: the existing `IndependentFieldStack` is mounted directly in
+  `b014f2e7dc3b028e60d2bcf04d0fd18e83a82399`: the existing
+  `IndependentFieldStack` is mounted directly in
   the left price-context column after the visible-aspect legend, rather than
   as a top-level panel outside the price/Chakra/audit body.
 - The USD, JPY, and SBC lanes are expanded by default for a loaded chart range.
@@ -20,12 +21,21 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   remain reachable and receive visible keyboard focus.
 - Verification: Oxlint passed; full frontend `npm.cmd test` collected and
   passed **32 files / 139 tests**; focused product-first suite collected and
-  passed **1 file / 7 tests**; `npm.cmd run build` passed. The focused source
-  record is `docs/sbc/PFR_V2B_R4_T2P_U1_FOUNDER_VISIBLE_OSCILLATOR_TOOLBAR_CORRECTION.md`.
-- Required native viewport and packaged-candidate screenshots remain pending;
-  no founder acceptance is claimed. The next step after this source commit is
-  a new immutable non-promoted Windows candidate, without changing
-  `0.10.33-pfr-r4-t2r`.
+  passed **1 file / 7 tests**; `npm.cmd run build` passed; focused Python
+  verification passed **41 tests**; full Python regression passed **657 tests
+  with 1 explicit external-witness skip**; `cargo fmt --check`, `cargo check
+  --offline`, and Rust tests passed (**18/18**). The exact candidate report is
+  `docs/sbc/PFR_V2B_R4_T2P_U1_FOUNDER_INSPECTION_CANDIDATE_0.10.35.md`.
+- Built immutable founder-inspection candidate
+  `0.10.35-pfr-r4-t2p-u1` without changing `0.10.33-pfr-r4-t2r`. The
+  portable and installer hashes are recorded in the candidate report and
+  release manifest. Two exact portable smoke launches passed all **42/42**
+  checks, with only the optional candlestick specialist deferred.
+- Packaged UI inspection confirms the responsive toolbar, default-visible
+  independent stack, USD/JPY unknown-gap lanes, and Trailokya's seven source
+  gaps plus score-free geometry-only state through the native UI inspection
+  tree. The required four-size DPI matrix, full lower SBC screenshot, and
+  founder acceptance remain pending; no founder acceptance is claimed.
 
 ## Latest Update - 2026-08-03 (PFR-V2B-R4-T2P Founder-Inspection Windows Candidate)
 
