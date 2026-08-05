@@ -49,6 +49,16 @@ release.manifest.json                                   FDFB2FA3039934A5E01101CB
 
 ## U1 implementation evidence
 
+- U1 component paths:
+  - `gann-astro-desk/src/views/ProductFirstSbcWorkspace.tsx`
+  - `gann-astro-desk/src/views/IndependentFieldStack.tsx`
+  - `gann-astro-desk/src/App.css`
+  - focused component coverage:
+    `gann-astro-desk/src/productFirstSbcWorkspace.test.tsx`
+- The packaging-only sidecar resource fix is isolated to:
+  - `gann-astro-desk/packaging/gann_backend_sidecar.spec`
+  - `gann-astro-desk/packaging/build_backend_sidecar.ps1`
+  - `gann-astro-desk/backend/test_desktop_packaging.py`
 - `IndependentFieldStack` is in the left price-context column, after the
   aspect legend, instead of below the complete price/Chakra/audit workspace.
 - The field group is expanded by default for a valid chart range.
