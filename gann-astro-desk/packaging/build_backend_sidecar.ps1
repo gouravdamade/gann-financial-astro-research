@@ -59,6 +59,17 @@ $sidecarExe = Join-Path $resourceRoot "GannAstroBackend.exe"
 if (-not (Test-Path -LiteralPath $sidecarExe -PathType Leaf)) {
     throw "Backend sidecar executable was not created: $sidecarExe"
 }
+$requiredProfileFiles = @(
+    (Join-Path $resourceRoot "_internal\profiles\target_aware_polarity_catalogue_v1.json"),
+    (Join-Path $resourceRoot "_internal\profiles\target_aware_polarity_evidence_packets_v1.json"),
+    (Join-Path $resourceRoot "_internal\profiles\founder_chart_hypotheses_v1.json")
+)
+$missingProfileFiles = @(
+    $requiredProfileFiles | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }
+)
+if ($missingProfileFiles.Count -gt 0) {
+    throw "Backend sidecar is missing chart-conditioned profile resources:`n$($missingProfileFiles -join "`n")"
+}
 $gitkeep = Join-Path $resourceRoot ".gitkeep"
 if (-not (Test-Path -LiteralPath $gitkeep -PathType Leaf)) {
     Set-Content -LiteralPath $gitkeep `

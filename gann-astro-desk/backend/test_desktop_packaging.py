@@ -131,6 +131,34 @@ class DesktopPackagingTests(unittest.TestCase):
             windows_build,
         )
 
+    def test_chart_conditioned_profiles_are_packaged_for_independent_fields(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        sidecar_spec = (
+            app_root / "packaging" / "gann_backend_sidecar.spec"
+        ).read_text(encoding="utf-8")
+        sidecar_build = (
+            app_root / "packaging" / "build_backend_sidecar.ps1"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            'chart_conditioned_profile_root = (',
+            sidecar_spec,
+        )
+        self.assertIn(
+            '(str(chart_conditioned_profile_root), "profiles")',
+            sidecar_spec,
+        )
+        for filename in (
+            "target_aware_polarity_catalogue_v1.json",
+            "target_aware_polarity_evidence_packets_v1.json",
+            "founder_chart_hypotheses_v1.json",
+        ):
+            self.assertIn(filename, sidecar_spec)
+            self.assertIn(
+                f'_internal\\profiles\\{filename}',
+                sidecar_build,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

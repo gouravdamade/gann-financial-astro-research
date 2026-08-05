@@ -7,6 +7,9 @@ app_root = Path(SPECPATH).parent.resolve()
 project_root = app_root.parent
 node_root = app_root / "node_modules" / "@openai"
 sweph_root = Path(r"D:\Trading_Algo\Desktop_Trading_Algo_root_legacy_20260530\sweph")
+chart_conditioned_profile_root = (
+    project_root / "research_labs" / "chart_conditioned_aspects" / "profiles"
+)
 
 required_files = [
     project_root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
@@ -21,6 +24,9 @@ required_files = [
     Path(r"D:\node.exe"),
     sweph_root / "sepl_18.se1",
     sweph_root / "semo_18.se1",
+    chart_conditioned_profile_root / "target_aware_polarity_catalogue_v1.json",
+    chart_conditioned_profile_root / "target_aware_polarity_evidence_packets_v1.json",
+    chart_conditioned_profile_root / "founder_chart_hypotheses_v1.json",
 ]
 missing = [str(path) for path in required_files if not path.exists()]
 if missing:
@@ -38,6 +44,9 @@ datas = [
     (str(project_root / "configs" / "sbc"), "configs/sbc"),
     (str(app_root / "mt5" / "GannClockProbe.mq5"), "mt5"),
     (str(app_root / "mt5" / "GannClockProbe.ex5"), "mt5"),
+    # The chart-conditioned modules resolve their immutable JSON profiles
+    # relative to the collected package root at runtime.
+    (str(chart_conditioned_profile_root), "profiles"),
     (r"D:\node.exe", "codex"),
     (str(node_root / "codex-sdk"), "codex/node_modules/@openai/codex-sdk"),
     (str(node_root / "codex"), "codex/node_modules/@openai/codex"),
