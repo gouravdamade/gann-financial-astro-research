@@ -23,6 +23,10 @@ from chart_conditioned_aspects.polarity_catalogue import (  # noqa: E402
     lookup_target_aware_polarity,
 )
 from chart_conditioned_aspects.polarity_series import compile_categorical_visible_range  # noqa: E402
+from chart_conditioned_transit_event_service import (  # noqa: E402
+    APPROVED_ASPECT_PROFILE_ID,
+    build_chart_conditioned_transit_event_range,
+)
 
 
 REQUEST_KEYS = {
@@ -34,12 +38,10 @@ REQUEST_KEYS = {
     "aspectType",
 }
 RANGE_REQUEST_KEYS = {
-    "instrumentIdentity",
-    "chartId",
-    "chartHypothesisId",
+    "sideIdentity",
     "rangeStartUtc",
     "rangeEndUtc",
-    "events",
+    "aspectProfileId",
 }
 
 
@@ -69,18 +71,42 @@ def _optional(value: Any) -> str | None:
 
 
 def build_chart_conditioned_polarity_range(payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Compile unreviewed categorical intervals from backend-owned TN events.
+
+    The empty catalogue intentionally keeps these intervals UNKNOWN.  Event
+    geometry is real and segmented, but it never becomes a polarity shortcut.
+    """
     unknown = sorted(set(payload) - RANGE_REQUEST_KEYS)
     if unknown:
         raise ValueError("Unknown chart-conditioned polarity range field(s): " + ", ".join(unknown))
-    events = payload.get("events")
-    if not isinstance(events, list):
-        raise ValueError("events must be a list")
-    return compile_categorical_visible_range(
+    event_range = build_chart_conditioned_transit_event_range(
+        {
+            "sideIdentity": payload.get("sideIdentity"),
+            "rangeStartUtc": payload.get("rangeStartUtc"),
+            "rangeEndUtc": payload.get("rangeEndUtc"),
+            "aspectProfileId": payload.get("aspectProfileId") or APPROVED_ASPECT_PROFILE_ID,
+        }
+    )
+    result = compile_categorical_visible_range(
         TargetAwarePolarityCatalogue.load(),
-        instrument_id=str(payload.get("instrumentIdentity") or ""),
-        chart_id=str(payload.get("chartId") or ""),
-        chart_hypothesis_id=str(payload.get("chartHypothesisId") or ""),
+        instrument_id=str(event_range["instrumentIdentity"]),
+        chart_id=str(event_range["chartId"]),
+        chart_hypothesis_id=str(event_range["chartHypothesisId"]),
         range_start_utc=str(payload.get("rangeStartUtc") or ""),
         range_end_utc=str(payload.get("rangeEndUtc") or ""),
-        events=events,
+        events=event_range["events"],
     )
+    result["eventCompiler"] = {
+        "contract": event_range["contract"],
+        "generatorVersion": event_range["generatorVersion"],
+        "generatorHash": event_range["generatorHash"],
+        "aspectProfileId": event_range["aspectProfileId"],
+        "eventCount": len(event_range["events"]),
+        "rejectedEvents": event_range["rejectedEvents"],
+        "unknownReasons": event_range["unknownReasons"],
+        "astronomyContract": event_range["astronomyContract"],
+        "ephemerisVersion": event_range["ephemerisVersion"],
+        "ayanamsha": event_range["ayanamsha"],
+        "nodePolicy": event_range["nodePolicy"],
+    }
+    return result

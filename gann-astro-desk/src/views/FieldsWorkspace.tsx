@@ -4,7 +4,6 @@ import {
   fetchFxSidePilotStatus,
   fetchSynchronizedIndependentRange,
 } from '../api'
-import { FOUNDER_ACCEPTED_FX_SIDE_CHARTS } from '../founderChartIdentities'
 import type {
   ChakraLabRequest,
   ChartPayload,
@@ -155,20 +154,8 @@ export function FieldsWorkspace({
       const result = await fetchSynchronizedIndependentRange({
         rangeStartUtc: fieldRange.rangeStartUtc,
         rangeEndUtc: fieldRange.rangeEndUtc,
-        aspectRanges: [
-          {
-            sideIdentity: 'USD',
-            instrumentIdentity: 'FX_CURRENCY:USD',
-            ...FOUNDER_ACCEPTED_FX_SIDE_CHARTS.USD,
-            events: [],
-          },
-          {
-            sideIdentity: 'JPY',
-            instrumentIdentity: 'FX_CURRENCY:JPY',
-            ...FOUNDER_ACCEPTED_FX_SIDE_CHARTS.JPY,
-            events: [],
-          },
-        ],
+        sideIdentities: ['USD', 'JPY'],
+        aspectProfileId: 'ASPECT_STRENGTH_V0',
         sbcRange: {
           instrumentIdentity: `FX:${chart.symbol}`,
           boundaries: [{ reason: 'rendered chart range start', request: boundaryRequest }],

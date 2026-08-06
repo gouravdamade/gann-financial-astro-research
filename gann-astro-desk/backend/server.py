@@ -48,6 +48,9 @@ from chart_conditioned_polarity_service import (
     build_chart_conditioned_polarity_lookup,
     build_chart_conditioned_polarity_range,
 )
+from chart_conditioned_transit_event_service import (
+    build_chart_conditioned_transit_event_range,
+)
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -350,6 +353,21 @@ def create_chart_conditioned_polarity_range() -> Any:
     try:
         payload = request.get_json(force=True, silent=False)
         return jsonify({"ok": True, "range": build_chart_conditioned_polarity_range(payload)})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chart-conditioned-events/range")
+def create_chart_conditioned_transit_event_range() -> Any:
+    """Expose the read-only canonical astronomy-event contract for audit only."""
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "range": build_chart_conditioned_transit_event_range(payload),
+            }
+        )
     except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 

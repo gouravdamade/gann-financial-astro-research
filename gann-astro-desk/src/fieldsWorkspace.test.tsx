@@ -148,10 +148,8 @@ describe('FieldsWorkspace', () => {
     expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledWith(expect.objectContaining({
       rangeStartUtc: startUtc,
       rangeEndUtc: endUtc,
-      aspectRanges: expect.arrayContaining([
-        expect.objectContaining({ sideIdentity: 'USD', chartId: expect.stringContaining('USD') }),
-        expect.objectContaining({ sideIdentity: 'JPY', chartId: expect.stringContaining('JPY') }),
-      ]),
+      sideIdentities: ['USD', 'JPY'],
+      aspectProfileId: 'ASPECT_STRENGTH_V0',
     }))
     expect(screen.getByText(/2\/2 known/)).toBeInTheDocument()
   })

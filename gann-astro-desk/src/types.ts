@@ -2372,13 +2372,8 @@ export type ResearchTimeControllerV1 = {
 export type SynchronizedIndependentRangeRequest = {
   rangeStartUtc: string
   rangeEndUtc: string
-  aspectRanges: Array<{
-    sideIdentity: 'USD' | 'JPY'
-    instrumentIdentity: 'FX_CURRENCY:USD' | 'FX_CURRENCY:JPY'
-    chartId: string
-    chartHypothesisId: string
-    events: Array<Record<string, unknown>>
-  }>
+  sideIdentities: Array<'USD' | 'JPY'>
+  aspectProfileId: 'ASPECT_STRENGTH_V0'
   sbcRange: {
     instrumentIdentity: string
     boundaries: ChakraLabAuditRequest['boundaries']

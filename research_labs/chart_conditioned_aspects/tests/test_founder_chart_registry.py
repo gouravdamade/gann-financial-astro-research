@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 from chart_conditioned_aspects.founder_chart_registry import (
     DEFAULT_REGISTRY_PATH,
+    load_founder_chart_identity_records,
     load_founder_chart_hypotheses,
 )
 
@@ -37,3 +38,21 @@ def test_founder_chart_records_do_not_contain_polarity_or_execution_fields() -> 
     for record in raw["records"]:
         assert "polarity" not in record
         assert "catalogue" not in record
+
+
+def test_identity_projection_preserves_canonical_hypothesis_ids_without_client_constants() -> None:
+    records = load_founder_chart_identity_records()
+
+    assert [(record.chart.instrument_id, record.chart.chart_id, record.chart_hypothesis_id) for record in records] == [
+        (
+            "FX_CURRENCY:USD",
+            "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+            "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        ),
+        (
+            "FX_CURRENCY:JPY",
+            "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+            "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        ),
+    ]
+    assert all(record.historical_time_policy_id == "HISTORICAL_CIVIL_TIME_IANA_ZONEINFO_V1" for record in records)

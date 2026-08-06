@@ -10,22 +10,17 @@ from chart_conditioned_polarity_service import (
 
 
 SYNCHRONIZED_RANGE_CONTRACT = "SYNCHRONIZED_INDEPENDENT_RANGE_V1"
-SYNCHRONIZED_RANGE_SCHEMA_VERSION = 1
+SYNCHRONIZED_RANGE_SCHEMA_VERSION = 2
 REQUEST_KEYS = {
     "rangeStartUtc",
     "rangeEndUtc",
-    "aspectRanges",
+    "sideIdentities",
+    "aspectProfileId",
     "sbcRange",
-}
-ASPECT_RANGE_KEYS = {
-    "sideIdentity",
-    "instrumentIdentity",
-    "chartId",
-    "chartHypothesisId",
-    "events",
 }
 SBC_RANGE_KEYS = {"instrumentIdentity", "boundaries"}
 FX_SIDE_IDENTITIES = {"USD", "JPY"}
+APPROVED_ASPECT_PROFILE_ID = "ASPECT_STRENGTH_V0"
 TRAILOKYA_SOURCE_ONLY_PROFILE_ID = "SBC_TRAILOKYA_1972_V1"
 TRAILOKYA_GEOMETRY_RANGE_CONTRACT = "SBC_TRAILOKYA_1972_GEOMETRY_ONLY_RANGE_V1"
 TRAILOKYA_GEOMETRY_RANGE_STATE = "GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED"
@@ -82,31 +77,21 @@ def _require_matching_range(
 
 
 def _side_range(
-    payload: Mapping[str, Any],
+    side_identity: str,
     *,
     range_start: datetime,
     range_end: datetime,
+    aspect_profile_id: str,
 ) -> tuple[str, dict[str, Any]]:
-    _reject_unknown(payload, ASPECT_RANGE_KEYS, "aspect range")
-    side = _required(payload.get("sideIdentity"), "aspect range.sideIdentity").upper()
+    side = _required(side_identity, "sideIdentity").upper()
     if side not in FX_SIDE_IDENTITIES:
-        raise ValueError("aspect range.sideIdentity must be USD or JPY")
-    expected_instrument = f"FX_CURRENCY:{side}"
-    if _required(payload.get("instrumentIdentity"), "aspect range.instrumentIdentity") != expected_instrument:
-        raise ValueError(
-            f"aspect range {side} must use primary identity {expected_instrument}"
-        )
+        raise ValueError("sideIdentity must be USD or JPY")
     result = build_chart_conditioned_polarity_range(
         {
-            "instrumentIdentity": expected_instrument,
-            "chartId": _required(payload.get("chartId"), "aspect range.chartId"),
-            "chartHypothesisId": _required(
-                payload.get("chartHypothesisId"),
-                "aspect range.chartHypothesisId",
-            ),
+            "sideIdentity": side,
             "rangeStartUtc": _iso(range_start),
             "rangeEndUtc": _iso(range_end),
-            "events": payload.get("events"),
+            "aspectProfileId": aspect_profile_id,
         }
     )
     _require_matching_range(
@@ -114,7 +99,7 @@ def _side_range(
         result["rangeEndUtc"],
         expected_start=range_start,
         expected_end=range_end,
-        label=f"aspect range {side}",
+        label=f"side range {side}",
     )
     return side, result
 
@@ -205,23 +190,30 @@ def build_synchronized_independent_range(payload: Mapping[str, Any]) -> dict[str
     if range_end <= range_start:
         raise ValueError("rangeEndUtc must be after rangeStartUtc")
 
-    raw_aspect_ranges = payload.get("aspectRanges")
-    if not isinstance(raw_aspect_ranges, list):
-        raise ValueError("aspectRanges must be an array")
+    raw_side_identities = payload.get("sideIdentities")
+    if not isinstance(raw_side_identities, list):
+        raise ValueError("sideIdentities must be an array")
+    aspect_profile_id = _required(
+        payload.get("aspectProfileId") or APPROVED_ASPECT_PROFILE_ID,
+        "aspectProfileId",
+    )
+    if aspect_profile_id != APPROVED_ASPECT_PROFILE_ID:
+        raise ValueError("only ASPECT_STRENGTH_V0 is available for synchronized side fields")
     compiled_sides = [
         _side_range(
             item,
             range_start=range_start,
             range_end=range_end,
+            aspect_profile_id=aspect_profile_id,
         )
-        for item in raw_aspect_ranges
-        if isinstance(item, Mapping)
+        for item in raw_side_identities
+        if isinstance(item, str)
     ]
-    if len(compiled_sides) != len(raw_aspect_ranges):
-        raise ValueError("each aspect range must be an object")
+    if len(compiled_sides) != len(raw_side_identities):
+        raise ValueError("each side identity must be a string")
     side_ids = {side for side, _ in compiled_sides}
     if side_ids != FX_SIDE_IDENTITIES or len(compiled_sides) != len(FX_SIDE_IDENTITIES):
-        raise ValueError("aspectRanges must contain exactly one USD and one JPY range")
+        raise ValueError("sideIdentities must contain exactly one USD and one JPY identity")
 
     raw_sbc = payload.get("sbcRange")
     if not isinstance(raw_sbc, Mapping):

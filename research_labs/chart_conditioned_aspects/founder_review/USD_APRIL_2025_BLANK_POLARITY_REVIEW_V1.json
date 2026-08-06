@@ -1,0 +1,538 @@
+{
+  "allowedEvidenceClassifications": [
+    "SOURCE_BACKED_CLASSICAL_CANDIDATE",
+    "FOUNDER_RESEARCH_HYPOTHESIS"
+  ],
+  "allowedFounderPolarityDecisions": [
+    "SUPPORTIVE",
+    "ADVERSE",
+    "MIXED",
+    "NEUTRAL",
+    "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+    "REJECT_EVENT_IDENTITY"
+  ],
+  "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+  "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+  "contract": "FOUNDER_BLANK_POLARITY_REVIEW_PACKET_V1",
+  "eventCompiler": {
+    "aspectProfileId": "ASPECT_STRENGTH_V0",
+    "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+    "ayanamsha": "Raman",
+    "contract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+    "ephemerisProvider": "Swiss Ephemeris",
+    "ephemerisVersion": "2.10.03",
+    "generatorHash": "8B3F7990F07A7A73AD11B0469C55B657C05908D8566914E008409D81BCC75028",
+    "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+    "historicalCivilTimeConversionPolicy": "HISTORICAL_CIVIL_TIME_IANA_ZONEINFO_V1",
+    "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+    "schemaVersion": 1
+  },
+  "founderResearchAdmission": "CALIBRATED_RESEARCH_ONLY_NON_CLASSICAL_FINANCIALLY_UNVALIDATED",
+  "guardrails": {
+    "automaticOrderPlacement": false,
+    "catalogueEntryCreated": false,
+    "executionAllowed": false,
+    "magnitudeConfigured": false,
+    "marketDirectionInferred": false,
+    "modeOneAdmission": false,
+    "polarityAssigned": false
+  },
+  "includedEventCount": 12,
+  "instrumentIdentity": "FX_CURRENCY:USD",
+  "packetStatus": "BLANK_FOUNDER_REVIEW_REQUIRED",
+  "packetVersion": 1,
+  "rows": [
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T11:27:17Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "CE5F70C72FD13CC479740159E37436FA5ABA8F16926093FCBF589F2FDBD72BEA",
+        "eventId": "TN_CE5F70C72FD13CC479740159",
+        "exactUtc": "2025-04-01T16:19:44Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "MOON",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T21:13:29Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T11:55:00Z",
+        "aspectType": "sextile",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "397A2B053BC76D9D788E5E5E041850A13658495D1E2F4557B24845F493DEDDD4",
+        "eventId": "TN_397A2B053BC76D9D788E5E5E",
+        "exactUtc": "2025-04-01T16:47:34Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "MERCURY",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "sextile",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 60.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T21:41:26Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-02T08:02:53Z",
+        "aspectType": "sextile",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "5F09789EC41603F5659F03108A6588A65ADA7562E6BDC0325543453EB9F83018",
+        "eventId": "TN_5F09789EC41603F5659F0310",
+        "exactUtc": "2025-04-02T13:01:23Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "RAHU",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "sextile",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 60.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-02T18:01:33Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-02T08:02:53Z",
+        "aspectType": "trine",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "91CFE5711918203A037CE751BDC5C81FDF14F816EC4884F0C941E9FD077CF52F",
+        "eventId": "TN_91CFE5711918203A037CE751",
+        "exactUtc": "2025-04-02T13:01:23Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "KETU",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "trine",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 120.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-02T18:01:33Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-03-09T05:55:07Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "593EA6B234B87E0EDF2918F7C54FDD83A8BA37A2256500384BBCB3E246B4C5BD",
+        "eventId": "TN_593EA6B234B87E0EDF2918F7",
+        "exactUtc": "2025-04-02T18:53:13Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "MARS",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-29T14:05:30Z",
+        "sideIdentity": "USD",
+        "transitBody": "SATURN"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-02T21:43:26Z",
+        "aspectType": "trine",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "B8750233DA923D431E1218620667A6F5D6796EFC1DDCFDA4DE96B4CA3B6890F2",
+        "eventId": "TN_B8750233DA923D431E121862",
+        "exactUtc": "2025-04-03T02:46:40Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "SATURN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "trine",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 120.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T07:51:45Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-03T08:35:23Z",
+        "aspectType": "conjunction",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "29BCE2386E5DB1962592158747E28F6EEC0BE53705C18C06F8BDC1F3BC08E051",
+        "eventId": "TN_29BCE2386E5DB19625921587",
+        "exactUtc": "2025-04-03T13:42:40Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "MARS",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "conjunction",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 0.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T18:51:55Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-03T13:20:33Z",
+        "aspectType": "trine",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "F20AD1B4AC4094C8222AE7F9C5D8F2518F16C7DB08A2B0FE1564040F73B53CC0",
+        "eventId": "TN_F20AD1B4AC4094C8222AE7F9",
+        "exactUtc": "2025-04-03T18:29:40Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "MOON",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "trine",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 120.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T23:40:48Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-04T04:35:46Z",
+        "aspectType": "conjunction",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "574C7A7407B855CD78DF8E0D2962BAD61579A09A10411A8FDE84361FB72344C6",
+        "eventId": "TN_574C7A7407B855CD78DF8E0D",
+        "exactUtc": "2025-04-04T09:50:55Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "VENUS",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "conjunction",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 0.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-04T15:08:12Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-04T09:55:52Z",
+        "aspectType": "conjunction",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "A32A6104A917D4918B269910B5A0421135BBC034C7D6CDDE43C7FE1050E26FAB",
+        "eventId": "TN_A32A6104A917D4918B269910",
+        "exactUtc": "2025-04-04T15:13:11Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "JUPITER",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "conjunction",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 0.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-04T20:32:38Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-04T22:44:16Z",
+        "aspectType": "conjunction",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "A3AE3253EF31ACAFF08CD9AAADBFEBD34297D025DD5E06E034C9BB63BCC2A607",
+        "eventId": "TN_A3AE3253EF31ACAFF08CD9AA",
+        "exactUtc": "2025-04-05T04:06:44Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "SUN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "conjunction",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 0.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-05T09:31:22Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    },
+    {
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-05T01:45:04Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "BD340A6100B173B5F254EDC150F2418A72DB177FF52D2367C3EF7454C7C7475C",
+        "eventId": "TN_BD340A6100B173B5F254EDC1",
+        "exactUtc": "2025-04-05T07:08:45Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "natalTarget": "SATURN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-05T12:34:35Z",
+        "sideIdentity": "USD",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "reasoning": "",
+        "reviewClassification": "",
+        "reviewPacketHash": null,
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      }
+    }
+  ],
+  "selectionWindow": {
+    "endUtc": "2025-05-01T00:00:00Z",
+    "llmUsed": false,
+    "nonOutcomeSelected": true,
+    "priceRead": false,
+    "sbcRead": false,
+    "selectionRule": "FIRST_TWELVE_COMPLETE_EVENT_IDENTITIES_SORTED_BY_EXACT_UTC",
+    "startUtc": "2025-04-01T00:00:00Z"
+  },
+  "sideIdentity": "USD",
+  "sourceOnlyAdmission": "REQUIRES_SEPARATE_R4_MODE2_TO_MODE1_PROMOTION_GATE",
+  "totalValidEventsInWindow": 99
+}

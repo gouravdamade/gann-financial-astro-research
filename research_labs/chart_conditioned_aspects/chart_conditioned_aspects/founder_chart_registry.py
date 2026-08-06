@@ -7,8 +7,10 @@ write an evidence packet, derive a pair field, or select a chart at runtime.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from .models import GeoLocation, OrganizationChartHypothesis, SourceRef
@@ -20,6 +22,32 @@ DEFAULT_REGISTRY_PATH = (
     / "founder_chart_hypotheses_v1.json"
 )
 _UTC = ZoneInfo("UTC")
+
+
+@dataclass(frozen=True)
+class FounderChartIdentityRecord:
+    """Canonical accepted chart identity retained with its registry hypothesis id.
+
+    The existing ``OrganizationChartHypothesis`` intentionally has no
+    ``chart_hypothesis_id`` field because it is a reusable domain model.  This
+    small registry projection retains the immutable identifier needed by the
+    transit compiler without copying those identifiers into a client.
+    """
+
+    chart: OrganizationChartHypothesis
+    chart_hypothesis_id: str
+    registry_contract: str
+    historical_time_policy_id: str
+    astronomy_contract: dict[str, Any]
+    chart_hash: str
+
+    def __post_init__(self) -> None:
+        if not self.chart_hypothesis_id.strip():
+            raise ValueError("founder chart hypothesis id is required")
+        if self.chart.status != "ACCEPTED_RESEARCH":
+            raise ValueError("founder transit compiler requires an accepted research chart")
+        if self.chart.chart_hash != self.chart_hash:
+            raise ValueError(f"chart hash mismatch for {self.chart.chart_id}")
 
 
 def _parse_utc(value: str) -> datetime:
@@ -76,18 +104,67 @@ def load_founder_chart_hypotheses(
     path: Path = DEFAULT_REGISTRY_PATH,
 ) -> tuple[OrganizationChartHypothesis, ...]:
     """Load exact founder-approved records without registering or selecting them."""
+    return tuple(record.chart for record in load_founder_chart_identity_records(path))
+
+
+def load_founder_chart_identity_records(
+    path: Path = DEFAULT_REGISTRY_PATH,
+) -> tuple[FounderChartIdentityRecord, ...]:
+    """Load the only accepted source of founder chart identities.
+
+    This remains a registry read.  It does not compile events, assign polarity,
+    create evidence, derive a pair field, or authorize execution.
+    """
     raw = json.loads(path.read_text(encoding="utf-8"))
-    if raw.get("contract") != "FOUNDER_APPROVED_CHART_HYPOTHESES_V1":
+    registry_contract = str(raw.get("contract") or "")
+    if registry_contract != "FOUNDER_APPROVED_CHART_HYPOTHESES_V1":
         raise ValueError("unexpected founder chart registry contract")
     contract = raw.get("astronomyContract")
     if not isinstance(contract, dict) or not contract.get("contractId"):
         raise ValueError("founder chart registry requires astronomy contract")
     if any(bool(contract.get(key)) for key in ("executionAllowed", "polarityAllowed", "pairDerivationAllowed")):
         raise ValueError("founder chart registry must remain inert")
+    policy = raw.get("historicalCivilTimeConversionPolicy")
+    if not isinstance(policy, dict) or not str(policy.get("policyId") or "").strip():
+        raise ValueError("founder chart registry requires a historical civil-time policy")
     records = raw.get("records")
     if not isinstance(records, list) or not records:
         raise ValueError("founder chart registry requires records")
-    charts = tuple(_chart_from_record(record, str(contract["contractId"])) for record in records if isinstance(record, dict))
-    if len(charts) != len(records) or len({chart.chart_id for chart in charts}) != len(charts):
-        raise ValueError("founder chart registry contains invalid or duplicate charts")
-    return charts
+    parsed: list[FounderChartIdentityRecord] = []
+    for raw_record in records:
+        if not isinstance(raw_record, dict):
+            raise ValueError("founder chart registry records must be objects")
+        hypothesis_id = str(raw_record.get("chartHypothesisId") or "").strip()
+        if not hypothesis_id:
+            raise ValueError("founder chart registry record requires chartHypothesisId")
+        parsed.append(
+            FounderChartIdentityRecord(
+                chart=_chart_from_record(raw_record, str(contract["contractId"])),
+                chart_hypothesis_id=hypothesis_id,
+                registry_contract=registry_contract,
+                historical_time_policy_id=str(policy["policyId"]),
+                astronomy_contract=dict(contract),
+                chart_hash=str(raw_record["chartHash"]),
+            )
+        )
+    if len({record.chart.chart_id for record in parsed}) != len(parsed):
+        raise ValueError("founder chart registry contains duplicate chart ids")
+    if len({record.chart_hypothesis_id for record in parsed}) != len(parsed):
+        raise ValueError("founder chart registry contains duplicate chart hypothesis ids")
+    return tuple(parsed)
+
+
+def require_founder_chart_identity(
+    instrument_id: str,
+    *,
+    path: Path = DEFAULT_REGISTRY_PATH,
+) -> FounderChartIdentityRecord:
+    """Return one accepted immutable chart identity for the required FX side."""
+    matches = [
+        record
+        for record in load_founder_chart_identity_records(path)
+        if record.chart.instrument_id == str(instrument_id).strip()
+    ]
+    if len(matches) != 1:
+        raise ValueError(f"expected exactly one accepted founder chart for {instrument_id}")
+    return matches[0]

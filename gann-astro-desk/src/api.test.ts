@@ -165,7 +165,8 @@ describe('Tauri backend transport', () => {
     const request = {
       rangeStartUtc: '2026-07-17T06:30:00Z',
       rangeEndUtc: '2026-07-17T08:30:00Z',
-      aspectRanges: [],
+      sideIdentities: ['USD', 'JPY'],
+      aspectProfileId: 'ASPECT_STRENGTH_V0',
       sbcRange: { instrumentIdentity: 'FX:USDJPY', boundaries: [] },
     } as unknown as SynchronizedIndependentRangeRequest
 

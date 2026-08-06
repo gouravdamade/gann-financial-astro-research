@@ -1,0 +1,53 @@
+{
+  "contract": "FOUNDER_REVIEW_ADMISSION_VALIDATOR_PREPARATION_V1",
+  "status": "PREPARED_NOT_RUN_NOT_CONNECTED_TO_CATALOGUE",
+  "purpose": "Define the immutable checks required before a separately approved review-admission milestone.",
+  "requiredExactIdentityFields": [
+    "eventId",
+    "eventHash",
+    "chartId",
+    "chartHypothesisId",
+    "transitBody",
+    "natalTarget",
+    "aspectType",
+    "applyingStartUtc",
+    "exactUtc",
+    "separatingEndUtc",
+    "astronomyContract",
+    "ayanamsha",
+    "nodePolicy",
+    "orbContract",
+    "generatorVersion"
+  ],
+  "requiredFounderReviewFields": [
+    "reviewedPolarity",
+    "evidenceClassification",
+    "reviewPacketHash"
+  ],
+  "classicalCandidateRequirements": [
+    "exact classical source references",
+    "printed page or locator",
+    "separate R4 Mode 2-to-Mode 1 promotion gate"
+  ],
+  "founderResearchHypothesisRequirements": [
+    "versioned calibrated research profile only",
+    "non-classical label",
+    "financially unvalidated state"
+  ],
+  "rejections": [
+    "astronomy identity mutation",
+    "missing event hash",
+    "frontend-invented event identity",
+    "unapproved evidence classification",
+    "classical claim without exact source references"
+  ],
+  "prohibitedUntilSeparateFounderApproval": [
+    "catalogue admission",
+    "Source Only admission",
+    "polarity rendering",
+    "magnitude configuration",
+    "pair directional field",
+    "Auto Suggest",
+    "execution"
+  ]
+}

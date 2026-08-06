@@ -1,0 +1,45 @@
+{
+  "contract": "FOUNDER_BLANK_POLARITY_REVIEW_GENERATION_MANIFEST_V1",
+  "eventCompilerContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+  "generatorHash": "8B3F7990F07A7A73AD11B0469C55B657C05908D8566914E008409D81BCC75028",
+  "guardrails": {
+    "automaticOrderPlacement": false,
+    "catalogueEntryCreated": false,
+    "executionAllowed": false,
+    "magnitudeConfigured": false,
+    "marketDirectionInferred": false,
+    "modeOneAdmission": false,
+    "polarityAssigned": false
+  },
+  "includedEventCount": 12,
+  "includedEventIds": [
+    "TN_4A15CCC7D126313A14BCB562",
+    "TN_493252F9AB112FC2408987DD",
+    "TN_B70B60AB8E4057EAE10B62EE",
+    "TN_6E2DD561FB40D45D406F808E",
+    "TN_7CCC78DA82BDAC13D3CF60B0",
+    "TN_B24B1690FD8612329198D379",
+    "TN_8C3582F7101F4F14BC4ECC4F",
+    "TN_529E2CBC72B405EAD0990350",
+    "TN_CA3C82509E5C1C1BCB64ABD0",
+    "TN_0B97DA4310F43CF2F3803720",
+    "TN_6F48D71F91F1382FAA720581",
+    "TN_97C9294ED13CD6C36FB0840B"
+  ],
+  "manifestVersion": 1,
+  "outputFile": "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+  "outputSha256": "03525A80CD948869F6A8F74A656CB15CB7C11B33E8AC603F5F75628C8CAB8E9B",
+  "rejectedEventCount": 19,
+  "selectionWindow": {
+    "endUtc": "2025-05-01T00:00:00Z",
+    "llmUsed": false,
+    "nonOutcomeSelected": true,
+    "priceRead": false,
+    "sbcRead": false,
+    "selectionRule": "FIRST_TWELVE_COMPLETE_EVENT_IDENTITIES_SORTED_BY_EXACT_UTC",
+    "startUtc": "2025-04-01T00:00:00Z"
+  },
+  "sideIdentity": "JPY",
+  "totalCompiledOverlapEvents": 117,
+  "totalValidEventsInWindow": 104
+}
