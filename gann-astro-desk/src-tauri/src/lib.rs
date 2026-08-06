@@ -658,6 +658,20 @@ impl BackendRuntimeState {
     }
 }
 
+#[cfg(not(mobile))]
+fn start_backend_watchdog(app: AppHandle) {
+    thread::spawn(move || loop {
+        thread::sleep(Duration::from_secs(1));
+        let state = app.state::<BackendRuntimeState>();
+        if state.shutting_down.load(Ordering::SeqCst) {
+            break;
+        }
+        if let Err(error) = state.snapshot() {
+            state.append_supervisor_event("sidecar_watchdog_error", Some(json!({"error": error})));
+        }
+    });
+}
+
 #[tauri::command]
 fn runtime_profile() -> RuntimeProfile {
     #[cfg(mobile)]
@@ -1099,6 +1113,7 @@ pub fn run() {
             )?;
             app.manage(backend);
             app.manage(gateway);
+            start_backend_watchdog(app.handle().clone());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
