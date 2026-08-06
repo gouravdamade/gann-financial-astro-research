@@ -1,0 +1,33 @@
+{
+  "allRowsSinglePassVerified": true,
+  "contract": "FOUNDER_BLANK_POLARITY_REVIEW_V1_IDENTITY_VERIFICATION_MANIFEST_V1",
+  "guardrails": {
+    "catalogueAdmission": false,
+    "executionAllowed": false,
+    "llmRead": false,
+    "polarityAssigned": false,
+    "priceDataRead": false,
+    "sbcRead": false
+  },
+  "identityAuditContract": "CHART_CONDITIONED_TRANSIT_EVENT_IDENTITY_AUDIT_V1",
+  "identityAuditVersion": "chart_conditioned_event_identity_audit_v1_20260806",
+  "originalGenerationManifestFile": "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.manifest.json",
+  "originalGenerationManifestOutputSha256": "08DB3837B89866519B7E0B24388537A2064F9EFE059D4FD5E6BCB77F82CA3D76",
+  "packetFile": "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+  "packetSha256": "08DB3837B89866519B7E0B24388537A2064F9EFE059D4FD5E6BCB77F82CA3D76",
+  "sideIdentity": "USD",
+  "verifiedEventIds": [
+    "TN_CE5F70C72FD13CC479740159",
+    "TN_397A2B053BC76D9D788E5E5E",
+    "TN_5F09789EC41603F5659F0310",
+    "TN_91CFE5711918203A037CE751",
+    "TN_593EA6B234B87E0EDF2918F7",
+    "TN_B8750233DA923D431E121862",
+    "TN_29BCE2386E5DB19625921587",
+    "TN_F20AD1B4AC4094C8222AE7F9",
+    "TN_574C7A7407B855CD78DF8E0D",
+    "TN_A32A6104A917D4918B269910",
+    "TN_A3AE3253EF31ACAFF08CD9AA",
+    "TN_BD340A6100B173B5F254EDC1"
+  ]
+}

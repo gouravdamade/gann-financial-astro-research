@@ -59,3 +59,25 @@ def test_blank_founder_packets_are_exactly_blank_and_non_outcome_selected() -> N
         assert manifest["includedEventCount"] == 12
         assert manifest["includedEventIds"] == [row["eventIdentity"]["eventId"] for row in packet["rows"]]
         assert manifest["outputSha256"] == hashlib.sha256(path.read_bytes()).hexdigest().upper()
+
+
+def test_v1_packets_are_preserved_after_independent_identity_audit() -> None:
+    for side in ("USD", "JPY"):
+        packet, original_manifest, path = _load(side)
+        audit_manifest = json.loads(
+            (ROOT / f"{side}_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        rendering = (ROOT / f"{side}_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.md").read_text(
+            encoding="utf-8"
+        )
+
+        assert audit_manifest["contract"] == "FOUNDER_BLANK_POLARITY_REVIEW_V1_IDENTITY_VERIFICATION_MANIFEST_V1"
+        assert audit_manifest["allRowsSinglePassVerified"] is True
+        assert audit_manifest["packetSha256"] == hashlib.sha256(path.read_bytes()).hexdigest().upper()
+        assert audit_manifest["originalGenerationManifestOutputSha256"] == original_manifest["outputSha256"]
+        assert audit_manifest["verifiedEventIds"] == [row["eventIdentity"]["eventId"] for row in packet["rows"]]
+        assert "Founder polarity" in rendering
+        assert "bullish" not in rendering.lower()
+        assert "bearish" not in rendering.lower()
