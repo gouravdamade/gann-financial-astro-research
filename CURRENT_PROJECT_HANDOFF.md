@@ -32,12 +32,42 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   Fields surface has a full chart followed by normal vertically scrollable
   lanes, all top-level navigation controls remain visible, and the live empty
   evidence state renders USD/JPY and pair as explicit gaps rather than an
-  invented wave. Full regression, Rust verification, package build, immutable
-  candidate hashes, and founder physical acceptance remain pending at this
-  handoff point.
+  invented wave.
+- Full packaging verification is complete in immutable founder-inspection
+  candidate `0.10.37-pfr-v2b-r5-f1-r1`. It contains Fields source commit
+  `95ede57ca1abcdd8986bea8a57fb2bb26b97d8d8` plus source commit
+  `f748168df079c4322ec431ad64131dea0ab4a43a`, which fixes the previously
+  discovered idle-sidecar recovery gap without altering doctrine, field values,
+  scoring, market interpretation, execution behavior, or public API. The
+  packaging checkout was `d779a23a3fb205df091e196a7cf3f7e393d04daa`, with
+  `source_git_dirty=false`.
+- Candidate location:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.37-pfr-v2b-r5-f1-r1`.
+  Portable SHA-256:
+  `A1203F2A48F29C36212F10BFE66671A6203EFB8E94B7938D17A5295E2D0DCC67`.
+  Installer SHA-256:
+  `FEDCCC43EE0D4AB004C1B40BA484339E933999D89074040D27B8B3604DEDC712`.
+  The superseded `0.10.36-pfr-v2b-r5-f1` candidate remains an honest failed
+  inspection candidate because it exposed that recovery gap.
+- Verification: frontend lint passed; focused Fields tests **4 files / 36
+  tests** passed; full frontend **34 files / 148 tests** passed; backend
+  regression **184 tests** passed; production frontend build passed; `cargo fmt
+  --check` and `cargo check --offline` passed; Rust tests **18 passed**.
+  The exact portable candidate completed two independent recovery smokes. Each
+  recovered an intentionally stopped idle sidecar on the same port, retained
+  layout, kept all execution/MT5 locks false/read-only, and left no descendant
+  processes after shutdown. The optional candlestick specialist remains the only
+  explicit deferred check.
+- Founder physical inspection remains pending. Required screenshots remain:
+  1920 x 1080 Fields workspace, top-level Fields/Chakra hand-off, Trailokya
+  geometry-only lane plus seven gaps, Phaladeepika independent SBC behavior,
+  and 1366 x 768 responsiveness. No founder acceptance or stable promotion is
+  claimed.
 - Primary specification: `docs/fields/PFR_V2B_R5_F1_DEDICATED_FIELDS_WORKSPACE_AND_PAIR_RELATIVE_FIELD.md`.
   Machine-readable pair contract:
   `docs/fields/FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1.json`.
+  Candidate record:
+  `docs/fields/PFR_V2B_R5_F1_FOUNDER_INSPECTION_CANDIDATE_0.10.37.md`.
 
 ## Latest Update - 2026-08-05 (PFR-V2B-R4-T2P-U1 Founder Candidate)
 
