@@ -1,5 +1,5 @@
 import { CalendarClock, ChevronLeft, ChevronRight, CircleHelp, Download, Grid3X3, Layers3, Orbit, ShieldCheck, SlidersHorizontal } from 'lucide-react'
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import type {
   ChakraFixedPhasorInterval,
   ChakraGridCell,
@@ -8,11 +8,7 @@ import type {
   ChartConditionedPolarityLookup,
   ChartPayload,
   CurrencyPairEvidence,
-  FxSidePilotStatus,
-  ResearchFieldIntervalSelection,
-  SynchronizedIndependentRange,
 } from '../types'
-import { IndependentFieldStack } from './IndependentFieldStack'
 import { calculateProductFirstTimingPhase, PROJECT_CONVENTION_TIMING_PHASE_V1 } from '../productFirstTimingPhase'
 import type { VisualizationModePolicy } from '../visualizationModes'
 
@@ -33,19 +29,8 @@ type Props = {
   phasorBusy: boolean
   phasorError: string
   onLoadFixedPhasor: () => void
-  synchronizedRange?: SynchronizedIndependentRange | null
-  synchronizedRangeSource?: string | null
-  synchronizedBusy?: boolean
-  synchronizedError?: string
-  onLoadSynchronizedFields?: () => void
-  pilotStatus?: FxSidePilotStatus | null
-  pilotBusy?: boolean
-  pilotError?: string
-  onLoadPilotStatus?: () => void
-  crosshairTimestampUtc?: string | null
   selectedTimestampUtc?: string | null
-  selectedFieldInterval?: ResearchFieldIntervalSelection | null
-  onSelectFieldInterval?: (selection: ResearchFieldIntervalSelection) => void
+  onOpenFields?: () => void
 }
 
 function display(value: string | null | undefined): string {
@@ -95,19 +80,8 @@ export function ProductFirstSbcWorkspace({
   phasorBusy,
   phasorError,
   onLoadFixedPhasor,
-  synchronizedRange = null,
-  synchronizedRangeSource = null,
-  synchronizedBusy = false,
-  synchronizedError = '',
-  onLoadSynchronizedFields = () => undefined,
-  pilotStatus = null,
-  pilotBusy = false,
-  pilotError = '',
-  onLoadPilotStatus = () => undefined,
-  crosshairTimestampUtc = null,
   selectedTimestampUtc = null,
-  selectedFieldInterval = null,
-  onSelectFieldInterval,
+  onOpenFields,
 }: Props) {
   const [sideView, setSideView] = useState<'TIME' | 'PROFILE' | null>(null)
   const [draftMoment, setDraftMoment] = useState('')
@@ -115,30 +89,8 @@ export function ProductFirstSbcWorkspace({
   const [selectedVectorId, setSelectedVectorId] = useState('')
   const [timingOpen, setTimingOpen] = useState(false)
   const [comparisonOpen, setComparisonOpen] = useState(false)
-  const [fieldStackOpen, setFieldStackOpen] = useState(() => {
-    try {
-      return window.localStorage.getItem('gann-astro.oscillators-open') !== 'false'
-    } catch {
-      return true
-    }
-  })
-  useEffect(() => {
-    try {
-      window.localStorage.setItem('gann-astro.oscillators-open', String(fieldStackOpen))
-    } catch {
-      // A restricted desktop webview may not expose persistent storage.
-    }
-  }, [fieldStackOpen])
   const guidance = snapshot?.guidance ?? null
-  const requestedRangeStart = synchronizedRange ? Date.parse(synchronizedRange.rangeStartUtc) / 1000 : null
-  const requestedRangeEnd = synchronizedRange ? Date.parse(synchronizedRange.rangeEndUtc) / 1000 : null
-  const rangeCandles = (chart?.candles ?? []).filter((candle) => (
-    (requestedRangeStart == null || candle.time >= requestedRangeStart)
-    && (requestedRangeEnd == null || candle.time <= requestedRangeEnd)
-  ))
-  // An already validated field range should overlap the loaded chart. Test fixtures
-  // and stale restored layouts may not, so retain a readable chart instead of an empty tool surface.
-  const candles = rangeCandles.length ? rangeCandles : (chart?.candles ?? [])
+  const candles = chart?.candles ?? []
   const firstTime = candles[0]?.time ?? 0
   const lastTime = candles.at(-1)?.time ?? firstTime + 1
   const rangeSeconds = Math.max(1, lastTime - firstTime)
@@ -350,22 +302,6 @@ export function ProductFirstSbcWorkspace({
             }}
           >
             <Layers3 size={12} /> Compare
-          </button>
-          <button
-            className={fieldStackOpen ? 'is-active' : ''}
-            disabled={!candles.length}
-            title="Show or hide the synchronized oscillator fields"
-            onClick={() => {
-              setFieldStackOpen((current) => !current)
-              if (!fieldStackOpen && !synchronizedRange && !synchronizedBusy) {
-                onLoadSynchronizedFields()
-              }
-              if (!fieldStackOpen && !pilotStatus && !pilotBusy) {
-                onLoadPilotStatus()
-              }
-            }}
-          >
-            <Layers3 size={12} /> Fields
           </button>
           <button aria-label="Next loaded candle" title="Next loaded candle" disabled={selectedCandleIndex < 0 || selectedCandleIndex >= candles.length - 1} onClick={() => stepLoadedCandle(1)}><ChevronRight size={12} /></button>
         </div>
@@ -713,26 +649,11 @@ export function ProductFirstSbcWorkspace({
             ))}
             {!visibleAspects.length && <em>No aspects in the loaded chart range</em>}
           </div>
-          {fieldStackOpen && <IndependentFieldStack
-            range={synchronizedRange}
-            busy={synchronizedBusy}
-            error={synchronizedError}
-            onLoad={onLoadSynchronizedFields}
-            pilotStatus={pilotStatus}
-            pilotBusy={pilotBusy}
-            pilotError={pilotError}
-            onLoadPilot={onLoadPilotStatus}
-            rangeSource={synchronizedRangeSource}
-            crosshairTimestampUtc={crosshairTimestampUtc}
-            selectedInterval={selectedFieldInterval}
-            onSelectInterval={(selection) => {
-              if (onSelectFieldInterval) {
-                onSelectFieldInterval(selection)
-                return
-              }
-              onSelectMoment(toIstInput(Date.parse(selection.startUtc) / 1000))
-            }}
-          />}
+          <div className="product-first-fields-summary">
+            <Layers3 size={13} />
+            <span>USD, JPY, pair-relative, and independent SBC fields are available in the dedicated Fields workspace.</span>
+            <button type="button" onClick={onOpenFields}>Open in Fields</button>
+          </div>
         </section>
 
         <section className="product-first-chakra-panel">

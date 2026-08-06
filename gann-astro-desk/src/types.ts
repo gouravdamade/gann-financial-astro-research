@@ -2282,6 +2282,62 @@ export type SynchronizedIndependentRange = {
   }
 }
 
+// R5 keeps the pair display transparent and downstream of the two independently
+// compiled side fields. It is an engineering research transform, not doctrine.
+export type FxPairRelativeCategoricalState =
+  | 'SUPPORTIVE'
+  | 'ADVERSE'
+  | 'MIXED'
+  | 'NEUTRAL'
+  | 'UNKNOWN_SIDE_EVIDENCE'
+
+export type FxPairRelativeCategoricalInterval = {
+  intervalId: string
+  startUtc: string
+  endUtc: string
+  state: FxPairRelativeCategoricalState
+  baseBalance: number | null
+  quoteBalance: number | null
+  pairRaw: number | null
+  pairDisplay: number | null
+  baseSupportiveActive: boolean
+  baseAdverseActive: boolean
+  baseGrossActivity: number | null
+  quoteSupportiveActive: boolean
+  quoteAdverseActive: boolean
+  quoteGrossActivity: number | null
+  commonActivity: number | null
+  conflict: boolean
+  coverage: 'KNOWN' | 'UNKNOWN'
+  unknownReason: string | null
+  sourceIntervalIds: {
+    base: string | null
+    quote: string | null
+  }
+}
+
+export type FxPairRelativeCategoricalField = {
+  contract: 'FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1'
+  schemaVersion: 1
+  instrumentKind: 'FX'
+  baseIdentity: 'USD'
+  quoteIdentity: 'JPY'
+  rangeStartUtc: string
+  rangeEndUtc: string
+  intervals: FxPairRelativeCategoricalInterval[]
+  magnitudeState: 'MAGNITUDE_NOT_CONFIGURED'
+  classification: 'MODERN_ENGINEERING_RESEARCH_TRANSFORM'
+  guardrails: {
+    classicalDoctrine: false
+    marketForecast: false
+    sbcConfirmation: false
+    curveFitting: false
+    smoothing: false
+    executionAllowed: false
+    automaticOrderPlacement: false
+  }
+}
+
 export type ResearchTimeUpdateSource =
   | 'INITIAL'
   | 'PRICE_CROSSHAIR'
@@ -2291,7 +2347,7 @@ export type ResearchTimeUpdateSource =
   | 'COLLECTIVE_INSPECTOR'
 
 export type ResearchFieldIntervalSelection = {
-  field: 'USD' | 'JPY' | 'SBC'
+  field: 'USD' | 'JPY' | 'PAIR' | 'SBC'
   intervalId: string
   startUtc: string
   endUtc: string

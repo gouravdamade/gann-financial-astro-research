@@ -20,8 +20,6 @@ import {
   fetchChakraLabFixedPhasor,
   fetchChakraLabSnapshot,
   fetchTrailokyaSourceOnlyGeometry,
-  fetchFxSidePilotStatus,
-  fetchSynchronizedIndependentRange,
 } from '../api'
 import type {
   ChakraDignityState,
@@ -34,10 +32,7 @@ import type {
   ChakraMotionClass,
   ChartPayload,
   CurrencyPairEvidence,
-  FxSidePilotStatus,
-  ResearchFieldIntervalSelection,
   ResearchTimeUpdateSource,
-  SynchronizedIndependentRange,
   TrailokyaSourceOnlyGeometry,
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
@@ -46,7 +41,6 @@ import { SbcLinkedAuditWorkspace } from './SbcLinkedAuditWorkspace'
 import { ProductFirstSbcWorkspace } from './ProductFirstSbcWorkspace'
 import { VISUALIZATION_ENGINE_MODES, visualizationModePolicy, type VisualizationEngineMode } from '../visualizationModes'
 import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
-import { FOUNDER_ACCEPTED_FX_SIDE_CHARTS } from '../founderChartIdentities'
 
 
 const BODIES = [
@@ -95,11 +89,6 @@ function oneHourAfter(value: string): string {
   return new Date(Date.parse(value) + 60 * 60 * 1000).toISOString()
 }
 
-function istOffsetFromUtc(value: string): string {
-  const date = new Date(value)
-  return new Date(date.valueOf() + 19_800_000).toISOString().slice(0, 19) + '+05:30'
-}
-
 function istInputFromUtc(value: string): string {
   const epoch = Date.parse(value)
   return Number.isNaN(epoch)
@@ -134,32 +123,32 @@ type Props = {
   defaultLatitude: number
   defaultLongitude: number
   chart?: ChartPayload | null
-  visibleRangeStartUtc?: string | null
-  visibleRangeEndUtc?: string | null
   currencyPairEvidence?: CurrencyPairEvidence | null
   selectedAspectLabel?: string | null
   selectedAspect?: AspectWindow | null
-  crosshairTimestampUtc?: string | null
   selectedTimestampUtc?: string | null
-  selectedFieldInterval?: ResearchFieldIntervalSelection | null
   onSelectTimestampUtc?: (timestampUtc: string, source: ResearchTimeUpdateSource) => void
-  onSelectFieldInterval?: (selection: ResearchFieldIntervalSelection) => void
+  onOpenFields?: () => void
+  vedhaProfileId?: ChakraLabRequest['vedhaProfileId']
+  onVedhaProfileIdChange?: (profileId: ChakraLabRequest['vedhaProfileId']) => void
+  visualizationMode?: VisualizationEngineMode
+  onVisualizationModeChange?: (mode: VisualizationEngineMode) => void
 }
 
 export function ChakraLabWorkspace({
   defaultLatitude,
   defaultLongitude,
   chart = null,
-  visibleRangeStartUtc = null,
-  visibleRangeEndUtc = null,
   currencyPairEvidence = null,
   selectedAspectLabel = null,
   selectedAspect = null,
-  crosshairTimestampUtc = null,
   selectedTimestampUtc = null,
-  selectedFieldInterval = null,
   onSelectTimestampUtc,
-  onSelectFieldInterval,
+  onOpenFields,
+  vedhaProfileId = 'phaladeepika_editor_vedha_guidance_v1',
+  onVedhaProfileIdChange = () => undefined,
+  visualizationMode = 'SOURCE_ONLY_BASELINE',
+  onVisualizationModeChange = () => undefined,
 }: Props) {
   const [atLocal, setAtLocal] = useState(currentIstInput)
   const [latitude, setLatitude] = useState(defaultLatitude)
@@ -170,30 +159,16 @@ export function ChakraLabWorkspace({
   const [actors, setActors] = useState(initialActors)
   const [snapshot, setSnapshot] = useState<ChakraLabSnapshot | null>(null)
   const [trailokyaGeometry, setTrailokyaGeometry] = useState<TrailokyaSourceOnlyGeometry | null>(null)
-  const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
   const [fixedPhasor, setFixedPhasor] = useState<ChakraFixedPhasorSeries | null>(null)
-  const [synchronizedRange, setSynchronizedRange] = useState<SynchronizedIndependentRange | null>(null)
-  const [pilotStatus, setPilotStatus] = useState<FxSidePilotStatus | null>(null)
   const [fxSidePolarities, setFxSidePolarities] = useState<Record<'USD' | 'JPY', ChartConditionedPolarityLookup> | null>(null)
   const [selectedCell, setSelectedCell] = useState('5:5')
   const [workspaceMode, setWorkspaceMode] = useState<'WORKSPACE' | 'BOARD' | 'AUDIT'>('WORKSPACE')
-  const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
-    const stored = localStorage.getItem('gann-astro.visualization-mode')
-    return VISUALIZATION_ENGINE_MODES.includes(stored as VisualizationEngineMode)
-      ? stored as VisualizationEngineMode
-      : 'SOURCE_ONLY_BASELINE'
-  })
   const [busy, setBusy] = useState(false)
   const [phasorBusy, setPhasorBusy] = useState(false)
   const [phasorError, setPhasorError] = useState('')
-  const [synchronizedBusy, setSynchronizedBusy] = useState(false)
-  const [synchronizedError, setSynchronizedError] = useState('')
-  const [pilotBusy, setPilotBusy] = useState(false)
-  const [pilotError, setPilotError] = useState('')
   const [error, setError] = useState('')
   const initialRun = useRef(false)
   const loadedVedhaProfileId = useRef(vedhaProfileId)
-  const synchronizedRequestSequence = useRef(0)
   const request = useMemo<ChakraLabRequest>(() => ({
     at: offsetIst(atLocal),
     timezone: 'Asia/Kolkata',
@@ -225,28 +200,6 @@ export function ChakraLabWorkspace({
     vedhaProfileId,
     vowels,
   ])
-
-  const fieldRange = useMemo(() => {
-    const candles = chart?.candles ?? []
-    if (!candles.length) return null
-    const chartStart = candles[0].time * 1000
-    const chartEnd = candles.at(-1)!.time * 1000
-    const requestedStart = visibleRangeStartUtc ? Date.parse(visibleRangeStartUtc) : Number.NaN
-    const requestedEnd = visibleRangeEndUtc ? Date.parse(visibleRangeEndUtc) : Number.NaN
-    const start = Number.isFinite(requestedStart) ? Math.max(chartStart, requestedStart) : chartStart
-    const end = Number.isFinite(requestedEnd) ? Math.min(chartEnd, requestedEnd) : chartEnd
-    if (end <= start) return null
-    const rangeStartUtc = new Date(start).toISOString()
-    const rangeEndUtc = new Date(end).toISOString()
-    return {
-      rangeStartUtc,
-      rangeEndUtc,
-      signature: `${rangeStartUtc}:${rangeEndUtc}`,
-      source: Number.isFinite(requestedStart) && Number.isFinite(requestedEnd)
-        ? 'live chart viewport'
-        : 'loaded chart extent',
-    }
-  }, [chart?.candles, visibleRangeEndUtc, visibleRangeStartUtc])
 
   const loadSnapshot = useCallback(async (atOverride?: string) => {
     setBusy(true)
@@ -297,70 +250,6 @@ export function ChakraLabWorkspace({
     }
   }, [chart?.symbol, request])
 
-  const loadSynchronizedFields = useCallback(async () => {
-    if (!fieldRange) {
-      setSynchronizedRange(null)
-      setSynchronizedError('Open this workspace from a chart with at least two visible timestamps.')
-      return
-    }
-    const sequence = synchronizedRequestSequence.current + 1
-    synchronizedRequestSequence.current = sequence
-    setSynchronizedBusy(true)
-    setSynchronizedError('')
-    try {
-      const boundaryRequest = {
-        ...structuredClone(request),
-        at: istOffsetFromUtc(fieldRange.rangeStartUtc),
-      }
-      const result = await fetchSynchronizedIndependentRange({
-        rangeStartUtc: fieldRange.rangeStartUtc,
-        rangeEndUtc: fieldRange.rangeEndUtc,
-        aspectRanges: [
-          {
-            sideIdentity: 'USD',
-            instrumentIdentity: 'FX_CURRENCY:USD',
-            ...FOUNDER_ACCEPTED_FX_SIDE_CHARTS.USD,
-            events: [],
-          },
-          {
-            sideIdentity: 'JPY',
-            instrumentIdentity: 'FX_CURRENCY:JPY',
-            ...FOUNDER_ACCEPTED_FX_SIDE_CHARTS.JPY,
-            events: [],
-          },
-        ],
-        sbcRange: {
-          instrumentIdentity: `FX:${chart?.symbol ?? 'USDJPY'}`,
-          boundaries: [{
-            reason: 'rendered chart range start',
-            request: boundaryRequest,
-          }],
-        },
-      })
-      if (sequence === synchronizedRequestSequence.current) setSynchronizedRange(result)
-    } catch (caught) {
-      if (sequence === synchronizedRequestSequence.current) {
-        setSynchronizedRange(null)
-        setSynchronizedError(caught instanceof Error ? caught.message : String(caught))
-      }
-    } finally {
-      if (sequence === synchronizedRequestSequence.current) setSynchronizedBusy(false)
-    }
-  }, [chart?.symbol, fieldRange, request])
-
-  const loadPilotStatus = useCallback(async () => {
-    setPilotBusy(true)
-    setPilotError('')
-    try {
-      setPilotStatus(await fetchFxSidePilotStatus())
-    } catch (caught) {
-      setPilotStatus(null)
-      setPilotError(caught instanceof Error ? caught.message : String(caught))
-    } finally {
-      setPilotBusy(false)
-    }
-  }, [])
-
   useEffect(() => {
     if (initialRun.current) return
     initialRun.current = true
@@ -384,17 +273,6 @@ export function ChakraLabWorkspace({
   }, [atLocal, loadSnapshot, selectedTimestampUtc])
 
   useEffect(() => {
-    if (!fieldRange) {
-      setSynchronizedRange(null)
-      return
-    }
-    const timer = window.setTimeout(() => {
-      void loadSynchronizedFields()
-    }, 240)
-    return () => window.clearTimeout(timer)
-  }, [fieldRange, loadSynchronizedFields])
-
-  useEffect(() => {
     let active = true
     void (async () => {
       try {
@@ -412,10 +290,6 @@ export function ChakraLabWorkspace({
     })()
     return () => { active = false }
   }, [])
-
-  useEffect(() => {
-    localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
-  }, [visualizationMode])
 
   const contextKeys = useMemo(() => new Set(
     snapshot?.target_context.flatMap((layer) => (
@@ -543,7 +417,7 @@ export function ChakraLabWorkspace({
               role="tab"
               aria-selected={visualizationMode === mode}
               className={visualizationMode === mode ? 'is-active' : ''}
-              onClick={() => setVisualizationMode(mode)}
+            onClick={() => onVisualizationModeChange(mode)}
               title={policy.explanation}
             >{policy.shortLabel}</button>
           })}
@@ -608,22 +482,8 @@ export function ChakraLabWorkspace({
           phasorBusy={phasorBusy}
           phasorError={phasorError}
           onLoadFixedPhasor={() => void loadFixedPhasor()}
-          synchronizedRange={synchronizedRange}
-          synchronizedRangeSource={fieldRange?.source ?? null}
-          synchronizedBusy={synchronizedBusy}
-          synchronizedError={synchronizedError}
-          onLoadSynchronizedFields={() => void loadSynchronizedFields()}
-          pilotStatus={pilotStatus}
-          pilotBusy={pilotBusy}
-          pilotError={pilotError}
-          onLoadPilotStatus={() => void loadPilotStatus()}
-          crosshairTimestampUtc={crosshairTimestampUtc}
           selectedTimestampUtc={selectedTimestampUtc}
-          selectedFieldInterval={selectedFieldInterval}
-          onSelectFieldInterval={(selection) => {
-            onSelectFieldInterval?.(selection)
-            selectMoment(istInputFromUtc(selection.startUtc), 'FIELD_INTERVAL')
-          }}
+          onOpenFields={onOpenFields}
         />
       ) : workspaceMode === 'BOARD' ? (
       <div className="chakra-lab-body">
@@ -681,7 +541,7 @@ export function ChakraLabWorkspace({
               Vedha source profile
               <select
                 value={vedhaProfileId}
-                onChange={(event) => setVedhaProfileId(event.target.value as ChakraLabRequest['vedhaProfileId'])}
+                onChange={(event) => onVedhaProfileIdChange(event.target.value as ChakraLabRequest['vedhaProfileId'])}
               >
                 <option value="phaladeepika_editor_vedha_guidance_v1">Phaladeepika editor profile</option>
                 <option value="SBC_TRAILOKYA_1972_V1">Trailokya 1972 source-only geometry</option>

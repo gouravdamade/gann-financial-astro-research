@@ -1,0 +1,66 @@
+{
+  "contractId": "FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1",
+  "schemaVersion": 1,
+  "status": "IMPLEMENTED_RESEARCH_ONLY",
+  "classification": {
+    "modernEngineeringResearchTransform": true,
+    "classicalDoctrine": false,
+    "marketForecast": false,
+    "sbcConfirmation": false,
+    "financialValidation": false,
+    "autoSuggestInfluence": false,
+    "executionInfluence": false,
+    "curveFit": false,
+    "smoothing": false,
+    "interpolation": false
+  },
+  "inputContract": {
+    "fxOnly": true,
+    "baseField": "stored independent categorical interval",
+    "quoteField": "stored independent categorical interval",
+    "boundaries": "sorted exact union of requested range and stored base/quote interval boundaries",
+    "priceInput": false,
+    "outcomeInput": false
+  },
+  "sideCalculation": {
+    "supportiveComponent": "+1 when active",
+    "adverseComponent": "-1 when active",
+    "sideGross": "count of active known supportive and adverse components",
+    "sideNet": "supportive component count minus adverse component count",
+    "sideBalance": "sideNet / sideGross when sideGross > 0",
+    "neutral": "explicit NEUTRAL may be 0",
+    "mixed": "preserve supportive activity, adverse activity, gross activity, and conflict"
+  },
+  "pairCalculation": {
+    "pairRaw": "baseBalance - quoteBalance",
+    "pairDisplay": "clamp(pairRaw / 2, -1, +1)",
+    "usdJpy": {
+      "base": "USD",
+      "quote": "JPY"
+    }
+  },
+  "unknownContract": {
+    "when": "either side is UNKNOWN or has no stored interval",
+    "pairDisplay": null,
+    "state": "UNKNOWN_SIDE_EVIDENCE",
+    "render": "visible patterned gap",
+    "neverSubstitute": ["zero", "neutral", "flat wave"]
+  },
+  "audit": [
+    "baseBalance",
+    "quoteBalance",
+    "pairRaw",
+    "pairDisplay",
+    "base and quote activity",
+    "common activity",
+    "conflict",
+    "coverage",
+    "unknownReason",
+    "sourceIntervalIds"
+  ],
+  "visualizationModes": {
+    "SOURCE_ONLY_BASELINE": "known categorical paths only",
+    "CALIBRATED_RESEARCH": "no new calibrated values configured by this milestone",
+    "VISUAL_ONLY_NO_SCORE": "directional side and pair paths suppressed with an explicit message"
+  }
+}

@@ -1,8 +1,43 @@
 # Current Project Handoff
 
-Last updated: 2026-08-05 IST
+Last updated: 2026-08-06 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-06 (PFR-V2B-R5-F1 Dedicated Fields Workspace)
+
+- Implemented a dedicated top-level **Fields** workspace. It reuses the active
+  chart payload, visible UTC range, research-time controller, profile,
+  visualization mode, chart identities, selected candle, and crosshair; it does
+  not refetch/duplicate market chart data. The product layout is now chart,
+  USD/base categorical field, JPY/quote categorical field, derived pair field,
+  independent SBC field, then audit/coverage/source-gap detail. Chakra retains
+  a compact **Open in Fields** hand-off rather than a primary embedded field
+  stack.
+- Added `FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1`, a transparent modern research
+  transform, not classical doctrine, a forecast, or SBC confirmation. It uses
+  only the exact union of stored base/quote interval boundaries. For USDJPY,
+  `pairDisplay = clamp((usdBalance - jpyBalance) / 2, -1, +1)`. An unknown side
+  produces an explicit `UNKNOWN_SIDE_EVIDENCE` gap; unknown is never replaced
+  with neutral/zero. Mixed activity retains its supportive/adverse activity,
+  gross activity, and conflict in the resulting audit.
+- Mode behavior remains honest: visual-only suppresses directional paths with
+  `DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE`; source-only renders only
+  known source-backed side data; stock symbols receive no automatic FX net
+  field. SBC remains independent. Trailokya remains the score-free
+  `GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED` availability lane with its seven source
+  gaps, while Phaladeepika behavior is unchanged.
+- Focused frontend verification passed **4 files / 36 tests** before full
+  regression. Visual checks at 1920 x 1080 and 1366 x 768 confirmed that the
+  Fields surface has a full chart followed by normal vertically scrollable
+  lanes, all top-level navigation controls remain visible, and the live empty
+  evidence state renders USD/JPY and pair as explicit gaps rather than an
+  invented wave. Full regression, Rust verification, package build, immutable
+  candidate hashes, and founder physical acceptance remain pending at this
+  handoff point.
+- Primary specification: `docs/fields/PFR_V2B_R5_F1_DEDICATED_FIELDS_WORKSPACE_AND_PAIR_RELATIVE_FIELD.md`.
+  Machine-readable pair contract:
+  `docs/fields/FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1.json`.
 
 ## Latest Update - 2026-08-05 (PFR-V2B-R4-T2P-U1 Founder Candidate)
 

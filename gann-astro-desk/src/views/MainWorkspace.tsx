@@ -83,6 +83,7 @@ import type {
   ChartParameters,
   ChartTool,
   CandlestickShadowSnapshot,
+  ChakraLabRequest,
   DataArtifact,
   EventDetail,
   Mt5Status,
@@ -96,6 +97,10 @@ import type {
   ShadowLedgerSnapshot,
   WorkspacePreferences,
 } from '../types'
+import {
+  VISUALIZATION_ENGINE_MODES,
+  type VisualizationEngineMode,
+} from '../visualizationModes'
 
 const DrawingObjectPanel = lazy(() => import('../components/DrawingObjectPanel').then((module) => ({
   default: module.DrawingObjectPanel,
@@ -114,6 +119,9 @@ const SquareOfNineWorkspace = lazy(() => import('./SquareOfNineWorkspace').then(
 })))
 const ChakraLabWorkspace = lazy(() => import('./ChakraLabWorkspace').then((module) => ({
   default: module.ChakraLabWorkspace,
+})))
+const FieldsWorkspace = lazy(() => import('./FieldsWorkspace').then((module) => ({
+  default: module.FieldsWorkspace,
 })))
 
 function dateRangeLabel(parameters: ChartParameters | null): string {
@@ -185,7 +193,14 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [aspectDetailsRequestNonce, setAspectDetailsRequestNonce] = useState(0)
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
-  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra'>('chart')
+  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra' | 'fields'>('chart')
+  const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
+  const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
+    const stored = localStorage.getItem('gann-astro.visualization-mode')
+    return VISUALIZATION_ENGINE_MODES.includes(stored as VisualizationEngineMode)
+      ? stored as VisualizationEngineMode
+      : 'SOURCE_ONLY_BASELINE'
+  })
   const [activeTool, setActiveTool] = useState<ChartTool>('select')
   const [toolActivationNonce, setToolActivationNonce] = useState(0)
   const [bottomTab, setBottomTab] = useState<'events' | 'shadow' | 'candle-shadow' | 'positions' | 'diagnostics'>('events')
@@ -227,6 +242,9 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const artifactActivationRef = useRef('')
   const inspectorVisible = activeSurface === 'chart' && workspace.inspectorOpen && !focusMode
   const bottomVisible = activeSurface === 'chart' && workspace.bottomOpen && !focusMode
+  useEffect(() => {
+    localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
+  }, [visualizationMode])
   const restoreLayoutState = useCallback((state: { showAspects: boolean; showSrLines: boolean }) => {
     setWorkspace((current) => ({
       ...current,
@@ -309,6 +327,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
       updateSource: 'FIELD_INTERVAL',
       sequenceNumber: current.sequenceNumber + 1,
     }))
+    chartRef.current?.setCrosshairTime(Math.floor(epoch / 1000))
   }, [])
   const researchTimeController = useMemo<ResearchTimeControllerV1>(() => ({
     contract: 'RESEARCH_TIME_CONTROLLER_V1',
@@ -321,7 +340,8 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
       ? researchTimeSelection.selectedFieldInterval.intervalId : null,
     selectedJpyIntervalId: researchTimeSelection.selectedFieldInterval?.field === 'JPY'
       ? researchTimeSelection.selectedFieldInterval.intervalId : null,
-    selectedPairIntervalId: null,
+    selectedPairIntervalId: researchTimeSelection.selectedFieldInterval?.field === 'PAIR'
+      ? researchTimeSelection.selectedFieldInterval.intervalId : null,
     selectedSbcIntervalId: researchTimeSelection.selectedFieldInterval?.field === 'SBC'
       ? researchTimeSelection.selectedFieldInterval.intervalId : null,
     updateSource: researchTimeSelection.updateSource,
@@ -823,8 +843,43 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     return <main className="loading-state"><span className="loading-bar" /><strong>Starting Gann Astro Desk</strong></main>
   }
 
+  const renderFieldsPriceChart = () => (
+    <MarketChart
+      ref={chartRef}
+      payload={chart}
+      selectedAspectId={selected?.eventId}
+      selectedAnnotationId={selectedAnnotation?.annotationId}
+      activeTool="select"
+      annotations={annotations}
+      onSelectAspect={selectAspect}
+      onShowAspectDetails={(aspect) => {
+        selectAspect(aspect)
+        setAspectDetailsRequestNonce((current) => current + 1)
+      }}
+      onReviewAspect={(aspect) => {
+        selectAspect(aspect)
+        void openAnalyzeAspect(aspect)
+      }}
+      onSelectAnnotation={setSelectedAnnotation}
+      onCrosshairTimeChange={updateResearchCrosshair}
+      onPinTime={(time) => selectResearchTimestamp(time, 'PRICE_CLICK')}
+      showAspects={workspace.showAspects}
+      showSrLines={workspace.showSrLines}
+      planetaryLines={planetaryLineOverlay.overlay?.lines ?? []}
+      drawings={chartLayouts.drawings}
+      selectedDrawingId={chartLayouts.selectedDrawingId}
+      layoutKey={chartLayouts.activeLayout?.layoutId}
+      viewState={chartLayouts.chartState}
+      onDrawingsChange={chartLayouts.replaceDrawings}
+      onSelectDrawing={chartLayouts.setSelectedDrawingId}
+      onViewStateChange={chartLayouts.updateChartState}
+      onUndo={chartLayouts.undo}
+      drawingPreferences={chartLayouts.chartState.drawingPreferences}
+    />
+  )
+
   return (
-    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${activeSurface === 'chakra' ? 'chakra-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
+    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${activeSurface === 'chakra' ? 'chakra-mode' : ''} ${activeSurface === 'fields' ? 'fields-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
       <header className="top-command-bar">
         <div className="product-mark">
           <span className="product-glyph">GA</span>
@@ -834,6 +889,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
           <button className={activeSurface === 'chart' ? 'is-active' : ''} onClick={() => setActiveSurface('chart')}><Activity size={13} /> Chart</button>
           <button className={activeSurface === 'square9' ? 'is-active' : ''} onClick={() => { setActiveSurface('square9'); setFocusMode(false); setObjectsOpen(false) }}><Grid3X3 size={13} /> Square of Nine</button>
           <button className={activeSurface === 'chakra' ? 'is-active' : ''} onClick={() => { setActiveSurface('chakra'); setFocusMode(false); setObjectsOpen(false) }}><CircleDot size={13} /> Chakra</button>
+          <button className={activeSurface === 'fields' ? 'is-active' : ''} onClick={() => { setActiveSurface('fields'); setFocusMode(false); setObjectsOpen(false) }}><Waves size={13} /> Fields</button>
         </div>
         <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
         {activeSurface === 'chart' && <>
@@ -1133,15 +1189,34 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             defaultLatitude={parameters.reference.latitude}
             defaultLongitude={parameters.reference.longitude}
             chart={chart}
-            visibleRangeStartUtc={chartLayouts.chartState.visibleStartUtc ?? null}
-            visibleRangeEndUtc={chartLayouts.chartState.visibleEndUtc ?? null}
             currencyPairEvidence={detail?.currencyPairEvidence}
             selectedAspectLabel={selected ? `${selected.transitBody} to ${selected.natalBody} ${selected.aspectLabel}` : null}
             selectedAspect={selected}
-            crosshairTimestampUtc={researchTimeController.crosshairTimestampUtc}
             selectedTimestampUtc={researchTimeController.selectedTimestampUtc}
-            selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
             onSelectTimestampUtc={selectResearchTimestampUtc}
+            vedhaProfileId={vedhaProfileId}
+            onVedhaProfileIdChange={setVedhaProfileId}
+            visualizationMode={visualizationMode}
+            onVisualizationModeChange={setVisualizationMode}
+            onOpenFields={() => setActiveSurface('fields')}
+          />
+        </Suspense>
+      )}
+      {activeSurface === 'fields' && (
+        <Suspense fallback={<div className="loading-state"><strong>Opening Fields</strong></div>}>
+          <FieldsWorkspace
+            chart={chart}
+            priceChart={renderFieldsPriceChart()}
+            visibleRangeStartUtc={chartLayouts.chartState.visibleStartUtc ?? null}
+            visibleRangeEndUtc={chartLayouts.chartState.visibleEndUtc ?? null}
+            defaultLatitude={parameters.reference.latitude}
+            defaultLongitude={parameters.reference.longitude}
+            vedhaProfileId={vedhaProfileId}
+            onVedhaProfileIdChange={setVedhaProfileId}
+            visualizationMode={visualizationMode}
+            onVisualizationModeChange={setVisualizationMode}
+            crosshairTimestampUtc={researchTimeController.crosshairTimestampUtc}
+            selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
             onSelectFieldInterval={selectResearchFieldInterval}
           />
         </Suspense>

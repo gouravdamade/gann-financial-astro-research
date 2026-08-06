@@ -1270,7 +1270,7 @@ const catalogBuild: ChakraAuditCatalogBuild = {
 }
 
 describe('ChakraLabWorkspace', () => {
-  it('automatically requests the settled live chart viewport rather than a trailing candle slice', async () => {
+  it('keeps synchronized range compilation out of Chakra after moving it to Fields', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
     fetchSynchronizedRange.mockResolvedValue(synchronizedViewportRange)
@@ -1280,18 +1280,15 @@ describe('ChakraLabWorkspace', () => {
         defaultLatitude={18.5204}
         defaultLongitude={73.8567}
         chart={liveViewportChart}
-        visibleRangeStartUtc="2025-07-11T16:20:00.000Z"
-        visibleRangeEndUtc="2025-07-11T18:20:00.000Z"
       />,
     )
 
-    await waitFor(() => expect(fetchSynchronizedRange).toHaveBeenCalledWith(expect.objectContaining({
-      rangeStartUtc: '2025-07-11T16:20:00.000Z',
-      rangeEndUtc: '2025-07-11T18:20:00.000Z',
-    })))
+    await waitFor(() => expect(fetchSnapshot).toHaveBeenCalled())
+    expect(fetchSynchronizedRange).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Open in Fields' })).toBeInTheDocument()
   })
 
-  it('auto-refreshes source-only Trailokya without provisional side-chart identities', async () => {
+  it('keeps Trailokya board geometry local without constructing a scored field range', async () => {
     fetchSnapshot.mockResolvedValue(snapshot)
     fetchTrailokyaGeometry.mockResolvedValue({
       contract: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1',
@@ -1322,57 +1319,17 @@ describe('ChakraLabWorkspace', () => {
       },
     })
     fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
-    fetchSynchronizedRange.mockResolvedValue({
-      ...synchronizedViewportRange,
-      sbcField: {
-        contract: 'SBC_TRAILOKYA_1972_GEOMETRY_ONLY_RANGE_V1',
-        schema_version: 1,
-        state: 'GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED',
-        instrument_identity: 'FX:USDJPY',
-        range_start_utc: '2025-07-11T16:20:00.000Z',
-        range_end_utc: '2025-07-11T18:20:00.000Z',
-        source_profile_id: 'SBC_TRAILOKYA_1972_V1',
-        aspect_relationship: 'NOT_AUTOMATIC_CONFIRMATION',
-        magnitude_state: 'NOT_CONFIGURED',
-        classicalCompletenessClaim: false,
-        source_gaps: ['SBC_TD1972_GEOMETRY_RANGE_NOT_COMPILED'],
-        intervals: [],
-        reason: 'No scored profile used.',
-        guardrails: {
-          read_only: true,
-          execution_allowed: false,
-          automatic_order_placement: false,
-          financially_validated: false,
-          acts_as_aspect_confirmation: false,
-          score_aggregation_used: false,
-          market_direction_inferred: false,
-        },
-      },
-    })
-    const user = userEvent.setup()
-
     render(
       <ChakraLabWorkspace
         defaultLatitude={18.5204}
         defaultLongitude={77.2090}
         chart={liveViewportChart}
-        visibleRangeStartUtc="2025-07-11T16:20:00.000Z"
-        visibleRangeEndUtc="2025-07-11T18:20:00.000Z"
+        vedhaProfileId="SBC_TRAILOKYA_1972_V1"
       />,
     )
 
-    await user.click(screen.getByRole('tab', { name: 'Board' }))
-    await user.selectOptions(screen.getByLabelText('Vedha source profile'), 'SBC_TRAILOKYA_1972_V1')
-    await waitFor(() => expect(fetchTrailokyaGeometry).toHaveBeenCalled())
-    await waitFor(() => expect(fetchSynchronizedRange).toHaveBeenLastCalledWith(expect.objectContaining({
-      aspectRanges: expect.arrayContaining([
-        expect.objectContaining({ chartId: 'FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1' }),
-        expect.objectContaining({ chartId: 'FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1' }),
-      ]),
-      sbcRange: expect.objectContaining({
-        boundaries: [expect.objectContaining({ request: expect.objectContaining({ vedhaProfileId: 'SBC_TRAILOKYA_1972_V1' }) })],
-      }),
-    })))
+    expect(fetchSynchronizedRange).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Open in Fields' })).toBeInTheDocument()
   })
 
   it('renders source-profiled guidance without trading direction labels', async () => {
