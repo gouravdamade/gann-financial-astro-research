@@ -1,6 +1,6 @@
 [package]
 name = "gann-astro-desk"
-version = "0.10.35-pfr-r4-t2p-u1"
+version = "0.10.36-pfr-v2b-r5-f1"
 description = "Private Gann and financial astrology research desktop"
 authors = ["Gann Astro Research"]
 edition = "2021"
