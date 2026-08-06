@@ -62,7 +62,10 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   1920 x 1080 Fields workspace, top-level Fields/Chakra hand-off, Trailokya
   geometry-only lane plus seven gaps, Phaladeepika independent SBC behavior,
   and 1366 x 768 responsiveness. No founder acceptance or stable promotion is
-  claimed.
+  claimed. A manual first launch of this new portable path displayed the normal
+  Windows Firewall consent prompt. No public/private permission was granted by
+  Codex; the prompt was dismissed, and any companion-network permission remains
+  an explicit founder decision.
 - Primary specification: `docs/fields/PFR_V2B_R5_F1_DEDICATED_FIELDS_WORKSPACE_AND_PAIR_RELATIVE_FIELD.md`.
   Machine-readable pair contract:
   `docs/fields/FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1.json`.

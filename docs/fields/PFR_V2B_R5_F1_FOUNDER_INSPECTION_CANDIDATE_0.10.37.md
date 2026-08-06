@@ -134,3 +134,13 @@ installed candidate:
 Founder acceptance, stable promotion, R4-T3, Trailokya interval compilation,
 polarity/magnitude admission, price conversion, Auto Suggest, and execution
 remain outside this candidate.
+
+## Native inspection note
+
+The first manual launch of this new portable path displayed the standard
+Windows Firewall consent prompt for `Gann Astro Desk`. No public/private
+network permission was granted during packaging verification; the prompt was
+dismissed and the manual inspection launch was closed. The automated portable
+smokes had already verified the local managed-sidecar behavior. Any later
+decision to permit companion-network access must be made deliberately during
+founder physical inspection, not inferred from this candidate record.
