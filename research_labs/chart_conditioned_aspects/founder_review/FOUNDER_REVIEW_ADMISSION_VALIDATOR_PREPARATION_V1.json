@@ -2,6 +2,15 @@
   "contract": "FOUNDER_REVIEW_ADMISSION_VALIDATOR_PREPARATION_V1",
   "status": "PREPARED_NOT_RUN_NOT_CONNECTED_TO_CATALOGUE",
   "purpose": "Define the immutable checks required before a separately approved review-admission milestone.",
+  "identityIntegrityRequirements": [
+    "identityIntegrityStatus == SINGLE_PASS_VERIFIED",
+    "identityIntegrityManifestId matches the accepted side manifest",
+    "identityIntegrityManifestHash verifies against the manifest bytes",
+    "blankPacketHash verifies against the canonical blank packet bytes",
+    "reject MULTI_PASS_EVENT_IDENTITY_UNRESOLVED",
+    "reject BOUNDARY_VERIFICATION_FAILED",
+    "reject unverified or hash-mismatched rows"
+  ],
   "requiredExactIdentityFields": [
     "eventId",
     "eventHash",
@@ -22,7 +31,20 @@
   "requiredFounderReviewFields": [
     "reviewedPolarity",
     "evidenceClassification",
-    "reviewPacketHash"
+    "reviewPacketHash",
+    "reviewedPacketHash",
+    "founderCompletionStatus"
+  ],
+  "reviewedPacketRequirements": [
+    "reviewedPacketHash reproduces from canonical reviewed packet content",
+    "reviewed packet references the original blank packet ID and hash",
+    "reviewed packet references the identity-integrity manifest ID and hash",
+    "exact event identity reproduces byte-for-byte from the verified blank row",
+    "reviewed packet manifest hash verifies against the reviewed packet bytes",
+    "REJECT_EVENT_IDENTITY requires a founder rejection reason",
+    "UNKNOWN_MORE_EVIDENCE_REQUIRED remains an unknown gap",
+    "SOURCE_BACKED_CLASSICAL_CANDIDATE requires source ID, edition, locator and event connection",
+    "FOUNDER_RESEARCH_HYPOTHESIS remains Calibrated Research only"
   ],
   "classicalCandidateRequirements": [
     "exact classical source references",

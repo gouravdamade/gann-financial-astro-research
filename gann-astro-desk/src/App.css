@@ -6775,6 +6775,8 @@ html.android-runtime .loading-state {
 .fields-workspace-header strong { color: #e3ebee; font-size: 13px; }
 .fields-workspace-header span { color: #8999a6; font-size: 9px; }
 .fields-workspace-controls { display: flex; flex-wrap: wrap; align-items: end; justify-content: end; gap: 8px; }
+.fields-founder-review-button { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 0 9px; border: 1px solid #4a8291; border-radius: 3px; background: #17313b; color: #c5e6ee; cursor: pointer; font-size: 8px; }
+.fields-founder-review-button:disabled { cursor: default; opacity: .65; }
 .fields-workspace-controls label { display: grid; gap: 3px; color: #82919c; font-size: 8px; }
 .fields-workspace-controls select { min-height: 28px; min-width: 210px; border: 1px solid #3a4650; border-radius: 3px; background: #111820; color: #c8d8df; font-size: 9px; }
 .fields-mode-switch { display: flex; min-height: 28px; overflow: hidden; border: 1px solid #38444f; border-radius: 3px; }
@@ -6804,6 +6806,59 @@ html.android-runtime .loading-state {
 .product-first-fields-summary span { flex: 1 1 auto; }
 .product-first-fields-summary button { min-height: 26px; padding: 0 8px; border: 1px solid #477b8d; border-radius: 3px; background: #17313d; color: #c9e6ef; cursor: pointer; font-size: 8px; }
 
+/* Founder review is a neutral packet editor. It never shares styling or
+   components with directional field rendering so the two contracts remain
+   visually distinct. */
+.founder-review-workbench { display: grid; gap: 10px; min-width: 0; padding: 12px 14px 18px; background: #0d141a; }
+.founder-review-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid #33404a; }
+.founder-review-header > div:first-child { display: flex; align-items: center; gap: 8px; color: #e6c77b; }
+.founder-review-header > div:first-child > div { display: grid; gap: 3px; }
+.founder-review-header strong { color: #e8eef0; font-size: 12px; }
+.founder-review-header span { color: #8d9aa3; font-size: 8px; }
+.founder-review-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.founder-review-actions button, .founder-review-footer button { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 0 9px; border: 1px solid #55798a; border-radius: 3px; background: #182b35; color: #c7e0e8; cursor: pointer; font-size: 8px; }
+.founder-review-actions button:disabled, .founder-review-footer button:disabled { cursor: not-allowed; opacity: .55; }
+.founder-review-guardrails { display: flex; align-items: flex-start; gap: 7px; padding: 8px 10px; border: 1px solid #40564e; background: #13251f; color: #a6c8b7; font: 8px/1.45 Consolas, monospace; }
+.founder-review-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; border: 1px solid #35414a; background: #35414a; }
+.founder-review-summary > div { display: grid; gap: 4px; min-width: 0; padding: 8px 10px; background: #111a21; }
+.founder-review-summary strong { color: #e3edf0; font-size: 10px; }
+.founder-review-summary span { color: #a8bbc4; font: 8px/1.3 Consolas, monospace; }
+.founder-review-summary small { overflow-wrap: anywhere; color: #657681; font: 7px/1.3 Consolas, monospace; }
+.founder-review-reviewer { display: grid; gap: 4px; max-width: 420px; color: #a9b7bf; font-size: 8px; }
+.founder-review-reviewer input, .founder-review-decision-fields select, .founder-review-decision-fields input, .founder-review-decision-fields textarea { box-sizing: border-box; width: 100%; min-height: 28px; padding: 5px 7px; border: 1px solid #3a4b57; border-radius: 3px; background: #111a21; color: #dce7eb; font: 8px/1.35 Consolas, monospace; }
+.founder-review-decision-fields textarea { min-height: 58px; resize: vertical; }
+.founder-review-instruction, .founder-review-message, .founder-review-error, .founder-review-notice { margin: 0; color: #8d9da7; font: 8px/1.45 Consolas, monospace; }
+.founder-review-error { color: #eea6ad; }
+.founder-review-notice { color: #9bd3bd; }
+.founder-review-side { display: grid; gap: 8px; min-width: 0; }
+.founder-review-side > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; padding: 8px 0 2px; border-bottom: 1px solid #3b4852; }
+.founder-review-side > header > div { display: grid; gap: 3px; min-width: 0; }
+.founder-review-side > header strong { color: #e1edf0; font-size: 12px; }
+.founder-review-side > header span { overflow-wrap: anywhere; color: #83949e; font: 7px/1.3 Consolas, monospace; }
+.founder-review-row { display: grid; gap: 8px; min-width: 0; padding: 10px; border: 1px solid #35434d; background: #111a21; }
+.founder-review-row.is-locked { opacity: .62; }
+.founder-review-row > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.founder-review-row > header > div { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.founder-review-row > header strong { overflow-wrap: anywhere; color: #dae5e9; font-size: 9px; }
+.founder-review-row-number { color: #8da6b2; font: 7px/1 Consolas, monospace; }
+.founder-review-eligible, .founder-review-ineligible { flex: 0 0 auto; color: #9bd3bd; font: 7px/1.3 Consolas, monospace; }
+.founder-review-ineligible { color: #e4a8ae; }
+.founder-review-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; border: 1px solid #2e3b44; background: #2e3b44; }
+.founder-review-fact { min-width: 0; padding: 6px 7px; background: #0d151b; }
+.founder-review-fact dt { color: #718792; font-size: 7px; text-transform: uppercase; }
+.founder-review-fact dd { margin: 3px 0 0; overflow-wrap: anywhere; color: #c7d5da; font: 8px/1.35 Consolas, monospace; }
+.founder-review-decision-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin: 0; padding: 8px; border: 1px solid #4b5360; background: #121b22; }
+.founder-review-decision-fields legend { padding: 0 4px; color: #e3c77d; font-size: 8px; }
+.founder-review-decision-fields > label { display: grid; gap: 3px; color: #aab8c0; font-size: 8px; }
+.founder-review-decision-fields > label:has(textarea), .founder-review-source-fields { grid-column: 1 / -1; }
+.founder-review-source-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; padding-top: 5px; border-top: 1px solid #33414a; }
+.founder-review-source-fields strong { grid-column: 1 / -1; color: #e3c77d; font-size: 8px; }
+.founder-review-source-fields label { display: grid; gap: 3px; color: #aab8c0; font-size: 8px; }
+.founder-review-source-fields label:last-child { grid-column: 1 / -1; }
+.founder-review-fail-closed { margin: 0; color: #e6aab0; font: 8px/1.4 Consolas, monospace; }
+.founder-review-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 8px; border-top: 1px solid #35414a; }
+.founder-review-footer span { color: #8797a1; font: 8px/1.4 Consolas, monospace; }
+
 @media (max-width: 1180px) {
   .workspace-surface-tabs button:nth-child(4) { min-width: 36px; }
   .fields-context-card { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -6817,6 +6872,9 @@ html.android-runtime .loading-state {
   .fields-price-chart, .fields-price-chart > .market-chart { min-height: 460px; }
   .fields-audit-details { grid-template-columns: 1fr; }
   .independent-field-lane { grid-template-columns: 1fr; }
+  .founder-review-summary, .founder-review-facts, .founder-review-decision-fields, .founder-review-source-fields { grid-template-columns: 1fr; }
+  .founder-review-decision-fields > label:has(textarea), .founder-review-source-fields, .founder-review-source-fields strong, .founder-review-source-fields label:last-child { grid-column: auto; }
+  .founder-review-header, .founder-review-side > header { align-items: flex-start; flex-direction: column; }
 }
 
 .product-first-wheel {

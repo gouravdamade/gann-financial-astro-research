@@ -1,4 +1,4 @@
-import { Activity, Layers3, RefreshCw, ShieldCheck } from 'lucide-react'
+import { Activity, ClipboardCheck, Layers3, RefreshCw, ShieldCheck } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   fetchFxSidePilotStatus,
@@ -18,6 +18,7 @@ import {
 } from '../visualizationModes'
 import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
 import { IndependentFieldStack } from './IndependentFieldStack'
+import { FounderReviewWorkbench } from './FounderReviewWorkbench'
 
 const BODIES = ['SUN', 'MOON', 'MARS', 'MERCURY', 'JUPITER', 'VENUS', 'SATURN', 'RAHU', 'KETU'] as const
 
@@ -99,6 +100,7 @@ export function FieldsWorkspace({
   const [pilotStatus, setPilotStatus] = useState<FxSidePilotStatus | null>(null)
   const [pilotBusy, setPilotBusy] = useState(false)
   const [pilotError, setPilotError] = useState('')
+  const [founderReviewOpen, setFounderReviewOpen] = useState(false)
   const requestSequence = useRef(0)
   const isFxPair = isSupportedFxPair(chart.symbol)
   const fieldRange = useMemo(
@@ -188,6 +190,7 @@ export function FieldsWorkspace({
         <div><strong>Fields</strong><span>{chart.symbol} {chart.timeframe} | synchronized descriptive research fields</span></div>
       </div>
       <div className="fields-workspace-controls">
+        <button type="button" className="fields-founder-review-button" onClick={() => setFounderReviewOpen(true)} disabled={founderReviewOpen}><ClipboardCheck size={13} /> Founder Review</button>
         <label>Source profile
           <select value={vedhaProfileId} onChange={(event) => onVedhaProfileIdChange(event.target.value as ChakraLabRequest['vedhaProfileId'])}>
             <option value="phaladeepika_editor_vedha_guidance_v1">Phaladeepika editor profile</option>
@@ -206,7 +209,7 @@ export function FieldsWorkspace({
         </div>
       </div>
     </header>
-
+    {founderReviewOpen ? <FounderReviewWorkbench onClose={() => setFounderReviewOpen(false)} /> : <>
     <section className="fields-context-card" aria-label="Field contract and context">
       <div><b>Instrument</b><span>{chart.symbol} {isFxPair ? 'FX base/quote' : 'single instrument'}</span></div>
       <div><b>Mode</b><span>{visualizationPolicy.label}</span></div>
@@ -243,5 +246,6 @@ export function FieldsWorkspace({
       <div><RefreshCw size={14} /><div><strong>Independent SBC availability</strong><span>{vedhaProfileId === 'SBC_TRAILOKYA_1972_V1' ? 'GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED. No score, polarity, wave, or fallback.' : 'Atomic SBC availability remains independent from USD, JPY, and pair fields.'}</span></div></div>
       <div><Layers3 size={14} /><div><strong>Source gaps ({sourceGaps.length})</strong><span>{sourceGaps.length ? sourceGaps.map((gap) => gap.gapId).join(' | ') : 'No configured visualization-source gaps.'}</span></div></div>
     </section>
+    </>}
   </section>
 }

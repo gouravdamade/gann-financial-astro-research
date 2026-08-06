@@ -65,6 +65,11 @@ from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
 from synchronized_range_service import build_synchronized_independent_range
 from fx_side_pilot_service import build_fx_side_pilot_status
+from founder_review_workbench import (
+    FounderReviewIntegrityError,
+    build_founder_review_workbench,
+    export_founder_review_packet,
+)
 from validation_gates import build_validation_gate_matrix
 from workspace_preferences import (
     read_workspace_preferences,
@@ -392,6 +397,40 @@ def create_fx_side_pilot_status() -> Any:
         payload = request.get_json(force=True, silent=False)
         return jsonify({"ok": True, "status": build_fx_side_pilot_status(payload)})
     except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/founder-review/workbench")
+def get_founder_review_workbench() -> Any:
+    try:
+        requested_side = request.args.get("side") or None
+        return jsonify(
+            {
+                "ok": True,
+                "workbench": build_founder_review_workbench(
+                    repository.paths.project_root,
+                    requested_side=requested_side,
+                ),
+            }
+        )
+    except (FounderReviewIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/founder-review/export")
+def export_founder_review() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "export": export_founder_review_packet(
+                    repository.paths.project_root,
+                    payload,
+                ),
+            }
+        )
+    except (FounderReviewIntegrityError, TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 
 

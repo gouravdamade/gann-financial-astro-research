@@ -2353,6 +2353,147 @@ export type ResearchFieldIntervalSelection = {
   endUtc: string
 }
 
+export type FounderReviewDecision =
+  | 'SUPPORTIVE'
+  | 'ADVERSE'
+  | 'MIXED'
+  | 'NEUTRAL'
+  | 'UNKNOWN_MORE_EVIDENCE_REQUIRED'
+  | 'REJECT_EVENT_IDENTITY'
+
+export type FounderReviewEvidenceClassification =
+  | 'FOUNDER_RESEARCH_HYPOTHESIS'
+  | 'SOURCE_BACKED_CLASSICAL_CANDIDATE'
+
+export type FounderReviewEventIdentity = {
+  applyingStartUtc: string
+  aspectType: string
+  astronomyContract: string
+  ayanamsha: string
+  chartHypothesisId: string
+  chartId: string
+  eventContract: string
+  eventHash: string
+  eventId: string
+  exactUtc: string
+  generatorVersion: string
+  instrumentIdentity: string
+  natalTarget: string
+  nodePolicy: string
+  orbContract: {
+    aspectType: string
+    directionPolicy: string
+    doctrineStatus: string
+    exactAngleDeg: number
+    maxOrbDeg: number
+    profileHash: string
+    profileId: string
+  }
+  separatingEndUtc: string
+  sideIdentity: 'USD' | 'JPY'
+  transitBody: string
+}
+
+export type FounderReviewSourceReference = {
+  sourceId: string
+  edition: string
+  locator: string
+  connection: string
+}
+
+export type FounderReviewFields = {
+  evidenceClassification: FounderReviewEvidenceClassification | null
+  founderReasoning: string
+  rejectionReason: string
+  reviewTimestampUtc: string | null
+  reviewedPolarity: FounderReviewDecision | null
+  reviewer: string
+  sourceReferences: FounderReviewSourceReference[]
+}
+
+export type FounderReviewWorkbenchRow = {
+  eligible: boolean
+  identityStatus: string
+  identityChecks: {
+    eventIdMatchesAudit: boolean
+    eventHashMatchesAudit: boolean
+    blankPacketHashMatchesManifest: boolean
+    integrityManifestHash: string
+    listedAsVerified: boolean
+    auditChecksPass: boolean
+  }
+  motionPhaseAtExact: {
+    phase: string
+    speedDegPerDay: number
+  } | null
+  eventIdentity: FounderReviewEventIdentity
+  founderReview: FounderReviewFields
+}
+
+export type FounderReviewSide = {
+  sideIdentity: 'USD' | 'JPY'
+  instrumentIdentity: string
+  chartId: string
+  chartHypothesisId: string
+  blankPacketId: string
+  blankPacketFile: string
+  blankPacketSha256: string
+  identityIntegrityManifestId: string
+  identityIntegrityManifestFile: string
+  identityIntegrityManifestSha256: string
+  sourcePacketStatus: string
+  rows: FounderReviewWorkbenchRow[]
+  founderCompletionStatus: 'REVIEW_NOT_STARTED' | 'REVIEW_IN_PROGRESS' | 'REVIEW_COMPLETE' | 'REVIEW_COMPLETE_WITH_UNKNOWNS'
+  completeness: {
+    eligibleRows: number
+    decidedRows: number
+    unknownRows: number
+    rejectedRows: number
+    incompleteRows: number
+    classicalCandidates: number
+    founderResearchHypotheses: number
+    nonReviewableRows: number
+  }
+  reviewedPacketHash: string
+}
+
+export type FounderReviewWorkbench = {
+  contract: 'FOUNDER_REVIEW_WORKBENCH_V1'
+  schemaVersion: 1
+  toolVersion: string
+  sides: FounderReviewSide[]
+  allowedFounderPolarityDecisions: FounderReviewDecision[]
+  allowedEvidenceClassifications: FounderReviewEvidenceClassification[]
+  reviewStatuses: Array<'REVIEW_NOT_STARTED' | 'REVIEW_IN_PROGRESS' | 'REVIEW_COMPLETE' | 'REVIEW_COMPLETE_WITH_UNKNOWNS'>
+  guardrails: {
+    blankPacketsReadOnly: true
+    priceDataRead: false
+    sbcRead: false
+    llmRead: false
+    catalogueAdmission: false
+    directionalWaveRendered: false
+    executionAllowed: false
+  }
+}
+
+export type FounderReviewExportRequest = {
+  side: 'USD' | 'JPY'
+  rows: FounderReviewWorkbenchRow[]
+}
+
+export type FounderReviewExportResult = {
+  reviewedPacketFile: string
+  reviewedPacketSha256: string
+  reviewedPacketHash: string
+  reviewedManifestFile: string
+  reviewedManifestSha256: string
+  completenessFile: string
+  statusFile: string
+  markdownFile: string
+  founderCompletionStatus: FounderReviewSide['founderCompletionStatus']
+  counts: FounderReviewSide['completeness']
+}
+
 // R2 keeps all review surfaces on one explicit timestamp without inferring a trade signal.
 export type ResearchTimeControllerV1 = {
   contract: 'RESEARCH_TIME_CONTROLLER_V1'

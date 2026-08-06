@@ -1,0 +1,32 @@
+{
+  "admission": "NOT_CONNECTED_TO_CATALOGUE",
+  "contract": "FOUNDER_REVIEW_PACKET_STATUS_V1",
+  "counts": {
+    "classicalCandidates": 0,
+    "decidedRows": 0,
+    "eligibleRows": 12,
+    "founderResearchHypotheses": 0,
+    "incompleteRows": 12,
+    "nonReviewableRows": 0,
+    "rejectedRows": 0,
+    "unknownRows": 0
+  },
+  "founderCompletionStatus": "REVIEW_NOT_STARTED",
+  "guardrails": {
+    "automaticOrderPlacement": false,
+    "catalogueEntryCreated": false,
+    "executionAllowed": false,
+    "llmRead": false,
+    "magnitudeConfigured": false,
+    "marketDirectionInferred": false,
+    "modeOneAdmission": false,
+    "polarityAssigned": false,
+    "priceDataRead": false,
+    "sbcRead": false,
+    "waveRendered": false
+  },
+  "reviewedPacketFile": "USD_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.json",
+  "reviewedPacketHash": "5B6A5FF1839C9598A47BD3F2E0C960F178F10ECDF982CBD3937DB706D2A93E8C",
+  "reviewedPacketManifestFile": "USD_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.manifest.json",
+  "sideIdentity": "USD"
+}

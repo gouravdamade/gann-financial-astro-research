@@ -1,0 +1,17 @@
+{
+  "contract": "FOUNDER_REVIEW_COMPLETENESS_REPORT_V1",
+  "counts": {
+    "classicalCandidates": 0,
+    "decidedRows": 0,
+    "eligibleRows": 12,
+    "founderResearchHypotheses": 0,
+    "incompleteRows": 12,
+    "nonReviewableRows": 0,
+    "rejectedRows": 0,
+    "unknownRows": 0
+  },
+  "founderCompletionStatus": "REVIEW_NOT_STARTED",
+  "reviewedPacketFile": "USD_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.json",
+  "reviewedPacketHash": "5B6A5FF1839C9598A47BD3F2E0C960F178F10ECDF982CBD3937DB706D2A93E8C",
+  "sideIdentity": "USD"
+}

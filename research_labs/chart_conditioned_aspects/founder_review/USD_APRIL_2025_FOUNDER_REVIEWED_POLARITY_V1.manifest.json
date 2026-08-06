@@ -1,0 +1,36 @@
+{
+  "blankPacketFile": "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+  "blankPacketSha256": "08DB3837B89866519B7E0B24388537A2064F9EFE059D4FD5E6BCB77F82CA3D76",
+  "completeness": {
+    "classicalCandidates": 0,
+    "decidedRows": 0,
+    "eligibleRows": 12,
+    "founderResearchHypotheses": 0,
+    "incompleteRows": 12,
+    "nonReviewableRows": 0,
+    "rejectedRows": 0,
+    "unknownRows": 0
+  },
+  "contract": "FOUNDER_REVIEWED_POLARITY_PACKET_MANIFEST_V1",
+  "founderCompletionStatus": "REVIEW_NOT_STARTED",
+  "guardrails": {
+    "automaticOrderPlacement": false,
+    "catalogueEntryCreated": false,
+    "executionAllowed": false,
+    "llmRead": false,
+    "magnitudeConfigured": false,
+    "marketDirectionInferred": false,
+    "modeOneAdmission": false,
+    "polarityAssigned": false,
+    "priceDataRead": false,
+    "sbcRead": false,
+    "waveRendered": false
+  },
+  "identityIntegrityManifestFile": "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
+  "identityIntegrityManifestSha256": "BB0B952B3CC30A91C41D48729139CF2985542C1A64DB1D940D74FFFDBDB2E26E",
+  "reviewToolVersion": "founder_review_workbench_v1_20260806",
+  "reviewedPacketFile": "USD_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.json",
+  "reviewedPacketHash": "5B6A5FF1839C9598A47BD3F2E0C960F178F10ECDF982CBD3937DB706D2A93E8C",
+  "reviewedPacketSha256": "483C6D377AD6D6007F19BB49B7F594864867C841180676D430013D5109B511C7",
+  "sideIdentity": "USD"
+}

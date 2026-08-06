@@ -56,6 +56,9 @@ import type {
   ChakraTimingProfileSignedReviewReport,
   ChakraTimingProfileSourceCertificationReport,
   ChartConditionedPolarityLookup,
+  FounderReviewExportRequest,
+  FounderReviewExportResult,
+  FounderReviewWorkbench,
   FxSidePilotStatus,
   SynchronizedIndependentRange,
   SynchronizedIndependentRangeRequest,
@@ -782,6 +785,19 @@ function assertFxSidePilotGuardrails(status: FxSidePilotStatus): void {
   ) {
     throw new Error('FX side pilot status violated the research-only guardrails')
   }
+}
+
+export async function fetchFounderReviewWorkbench(): Promise<FounderReviewWorkbench> {
+  const payload = await request<{ workbench: FounderReviewWorkbench }>('/api/founder-review/workbench')
+  return payload.workbench
+}
+
+export async function exportFounderReviewPacket(input: FounderReviewExportRequest): Promise<FounderReviewExportResult> {
+  const payload = await request<{ export: FounderReviewExportResult }>('/api/founder-review/export', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  return payload.export
 }
 
 export async function fetchChakraLabAudit(

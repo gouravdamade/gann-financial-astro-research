@@ -1,0 +1,17 @@
+{
+  "contract": "FOUNDER_REVIEW_COMPLETENESS_REPORT_V1",
+  "counts": {
+    "classicalCandidates": 0,
+    "decidedRows": 0,
+    "eligibleRows": 12,
+    "founderResearchHypotheses": 0,
+    "incompleteRows": 12,
+    "nonReviewableRows": 0,
+    "rejectedRows": 0,
+    "unknownRows": 0
+  },
+  "founderCompletionStatus": "REVIEW_NOT_STARTED",
+  "reviewedPacketFile": "JPY_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.json",
+  "reviewedPacketHash": "398E1F915DAB048DA50723B22225BC033F165D074AFB1B3A0B5AF1E25F0A51A1",
+  "sideIdentity": "JPY"
+}

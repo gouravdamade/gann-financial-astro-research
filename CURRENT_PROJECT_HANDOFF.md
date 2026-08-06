@@ -4,6 +4,47 @@ Last updated: 2026-08-06 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-06 (PFR-V2B-R5-F2A-R2 Founder Polarity Review Workbench)
+
+- Added an integrity-bound, founder-only review workbench at the top-level
+  Fields surface. It loads the canonical USD and JPY April 2025 blank packets
+  read-only and exposes only neutral astronomy identity facts: chart and
+  hypothesis IDs, transit/natal bodies, aspect, applying/exact/separating UTC
+  and IST timestamps, event ID/hash, astronomy contract, orb profile, and
+  independently verified motion phase.
+- Review eligibility is fail-closed. A row must match its event ID and event
+  hash, the blank packet hash, the identity-integrity manifest hash, the
+  accepted chart identity, the R5 F2A-R1 audit, and exact status
+  `SINGLE_PASS_VERIFIED`. Unverified, hash-mismatched, multi-pass, and boundary
+  failed rows cannot be reviewed or exported.
+- Every decision begins blank. The founder may enter only SUPPORTIVE, ADVERSE,
+  MIXED, NEUTRAL, UNKNOWN_MORE_EVIDENCE_REQUIRED, or REJECT_EVENT_IDENTITY.
+  Non-rejected decisions require an explicit evidence classification and
+  reviewer. Source-backed candidates require exact source ID, edition,
+  locator, and connection text. Unknown remains an unknown gap; rejection
+  requires a reason and never receives an evidence classification.
+- Created separate initial reviewed outputs, manifests, completeness reports,
+  status records, and neutral Markdown renderings for USD and JPY. Both are
+  intentionally `REVIEW_NOT_STARTED`, with 12 eligible rows, zero decisions,
+  zero catalogue entries, and no polarity, wave, price, SBC, LLM, Auto Suggest,
+  execution, or Mode 1 admission path.
+- Canonical blank packet and identity-manifest SHA-256 values remain:
+  USD blank `08DB3837B89866519B7E0B24388537A2064F9EFE059D4FD5E6BCB77F82CA3D76`,
+  USD identity manifest `BB0B952B3CC30A91C41D48729139CF2985542C1A64DB1D940D74FFFDBDB2E26E`;
+  JPY blank `03525A80CD948869F6A8F74A656CB15CB7C11B33E8AC603F5F75628C8CAB8E9B`,
+  JPY identity manifest `066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D`.
+- Initial reviewed packet body hashes are USD
+  `5B6A5FF1839C9598A47BD3F2E0C960F178F10ECDF982CBD3937DB706D2A93E8C` and JPY
+  `398E1F915DAB048DA50723B22225BC033F165D074AFB1B3A0B5AF1E25F0A51A1`.
+- Workbench documentation: `docs/fields/PFR_V2B_R5_F2A_R2_FOUNDER_REVIEW_WORKBENCH.md`.
+  Admission validation remains preparation-only in
+  `research_labs/chart_conditioned_aspects/founder_review/FOUNDER_REVIEW_ADMISSION_VALIDATOR_PREPARATION_V1.json`.
+- Verification: focused backend workbench suite **8/8 passed**; frontend
+  `npm test` **35 files, 150/150 passed**; backend `npm run test:backend`
+  **196/196 passed**; `npm run lint`, production `npm run build`, and Python
+  compilation passed. No Windows or Android candidate was built because this
+  milestone stops before packaging and F2B.
+
 ## Latest Update - 2026-08-06 (PFR-V2B-R5-F2A-R1 Transit Event Identity Integrity Audit)
 
 - Added a separate Swiss-Ephemeris, Raman-sidereal, true-node event-identity

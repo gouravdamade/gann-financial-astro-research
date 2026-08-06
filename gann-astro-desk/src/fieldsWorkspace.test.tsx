@@ -11,11 +11,15 @@ import { FieldsWorkspace } from './views/FieldsWorkspace'
 const apiMocks = vi.hoisted(() => ({
   fetchSynchronizedIndependentRange: vi.fn(),
   fetchFxSidePilotStatus: vi.fn(),
+  fetchFounderReviewWorkbench: vi.fn(),
+  exportFounderReviewPacket: vi.fn(),
 }))
 
 vi.mock('./api', () => ({
   fetchSynchronizedIndependentRange: apiMocks.fetchSynchronizedIndependentRange,
   fetchFxSidePilotStatus: apiMocks.fetchFxSidePilotStatus,
+  fetchFounderReviewWorkbench: apiMocks.fetchFounderReviewWorkbench,
+  exportFounderReviewPacket: apiMocks.exportFounderReviewPacket,
 }))
 
 const startUtc = '2026-08-01T10:00:00.000Z'

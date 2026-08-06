@@ -1,0 +1,694 @@
+{
+  "allowedEvidenceClassifications": [
+    "FOUNDER_RESEARCH_HYPOTHESIS",
+    "SOURCE_BACKED_CLASSICAL_CANDIDATE"
+  ],
+  "allowedFounderPolarityDecisions": [
+    "SUPPORTIVE",
+    "ADVERSE",
+    "MIXED",
+    "NEUTRAL",
+    "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+    "REJECT_EVENT_IDENTITY"
+  ],
+  "blankPacketFile": "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+  "blankPacketId": "FOUNDER_BLANK_POLARITY_REVIEW_PACKET_V1:JPY",
+  "blankPacketSha256": "03525A80CD948869F6A8F74A656CB15CB7C11B33E8AC603F5F75628C8CAB8E9B",
+  "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+  "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+  "completeness": {
+    "classicalCandidates": 0,
+    "decidedRows": 0,
+    "eligibleRows": 12,
+    "founderResearchHypotheses": 0,
+    "incompleteRows": 12,
+    "nonReviewableRows": 0,
+    "rejectedRows": 0,
+    "unknownRows": 0
+  },
+  "contract": "FOUNDER_REVIEWED_POLARITY_PACKET_V1",
+  "evidenceClassificationPolicy": {
+    "FOUNDER_RESEARCH_HYPOTHESIS": "CALIBRATED_RESEARCH_ONLY_NON_CLASSICAL_FINANCIALLY_UNVALIDATED",
+    "SOURCE_BACKED_CLASSICAL_CANDIDATE": "PENDING_R4_MODE_2_TO_MODE_1_PROMOTION_GATE"
+  },
+  "founderCompletionStatus": "REVIEW_NOT_STARTED",
+  "guardrails": {
+    "automaticOrderPlacement": false,
+    "catalogueEntryCreated": false,
+    "executionAllowed": false,
+    "llmRead": false,
+    "magnitudeConfigured": false,
+    "marketDirectionInferred": false,
+    "modeOneAdmission": false,
+    "polarityAssigned": false,
+    "priceDataRead": false,
+    "sbcRead": false,
+    "waveRendered": false
+  },
+  "identityIntegrityManifestFile": "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
+  "identityIntegrityManifestId": "FOUNDER_BLANK_POLARITY_REVIEW_V1_IDENTITY_VERIFICATION_MANIFEST_V1:JPY",
+  "identityIntegrityManifestSha256": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+  "instrumentIdentity": "FX_CURRENCY:JPY",
+  "packetVersion": 1,
+  "reviewToolVersion": "founder_review_workbench_v1_20260806",
+  "reviewedPacketHash": "398E1F915DAB048DA50723B22225BC033F165D074AFB1B3A0B5AF1E25F0A51A1",
+  "rows": [
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-03-31T20:48:24Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "4A15CCC7D126313A14BCB562EB5B322024498878BAC35C437E3DF235CA9B0D52",
+        "eventId": "TN_4A15CCC7D126313A14BCB562",
+        "exactUtc": "2025-04-01T01:37:31Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "SATURN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T06:27:38Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.91729826
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T03:56:18Z",
+        "aspectType": "sextile",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "493252F9AB112FC2408987DDE436FE8E9D66AC22E7D27D6B0A30825BB920AE1A",
+        "eventId": "TN_493252F9AB112FC2408987DD",
+        "exactUtc": "2025-04-01T08:46:56Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "RAHU",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "sextile",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 60.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T13:38:42Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.83612096
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T03:56:18Z",
+        "aspectType": "trine",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "B70B60AB8E4057EAE10B62EE993D1675EC0CABFE265FE6120098F08C9FD0A21E",
+        "eventId": "TN_B70B60AB8E4057EAE10B62EE",
+        "exactUtc": "2025-04-01T08:46:56Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "KETU",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "trine",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 120.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T13:38:42Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.83612096
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T05:52:19Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "6E2DD561FB40D45D406F808E3C088E8DA765C6C67B1C6E9B485333D56395D6EA",
+        "eventId": "TN_6E2DD561FB40D45D406F808E",
+        "exactUtc": "2025-04-01T10:43:24Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "SUN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T15:35:39Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.81238372
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T10:16:38Z",
+        "aspectType": "sextile",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "7CCC78DA82BDAC13D3CF60B0D2C7331FF7706148FE7880C7FBBC5E0DECE36735",
+        "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+        "exactUtc": "2025-04-01T15:08:46Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "MARS",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "sextile",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 60.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-01T20:02:12Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.75577068
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-01T20:17:56Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "B24B1690FD8612329198D379374B19A29F9727C49E3039FDFB6BE22E6D35BCE7",
+        "eventId": "TN_B24B1690FD8612329198D379",
+        "exactUtc": "2025-04-02T01:12:48Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "MERCURY",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-02T06:09:08Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.61502307
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-02T08:39:52Z",
+        "aspectType": "sextile",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "8C3582F7101F4F14BC4ECC4F17882EF7DBDA3B9E809B78FDDF998DF8724A9B2D",
+        "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+        "exactUtc": "2025-04-02T13:38:34Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "VENUS",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "sextile",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 60.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-02T18:38:57Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.42262032
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-02T21:56:04Z",
+        "aspectType": "sextile",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "529E2CBC72B405EAD09903504422B4F4E2E4C31EC2CA90319F426DF96C14ABE3",
+        "eventId": "TN_529E2CBC72B405EAD0990350",
+        "exactUtc": "2025-04-03T02:59:23Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "SATURN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "sextile",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 60.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T08:04:32Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.19994661
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-03T07:08:28Z",
+        "aspectType": "conjunction",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "CA3C82509E5C1C1BCB64ABD0BD486BFEB3D2C2739C9A00F21701FA43D9C7DEBE",
+        "eventId": "TN_CA3C82509E5C1C1BCB64ABD0",
+        "exactUtc": "2025-04-03T12:15:11Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "MOON",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "conjunction",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 0.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T17:23:53Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.03957252
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-03T07:27:22Z",
+        "aspectType": "trine",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "0B97DA4310F43CF2F3803720A19634D04857192925E7BC4F67B15FDBC7F2D2B0",
+        "eventId": "TN_0B97DA4310F43CF2F3803720",
+        "exactUtc": "2025-04-03T12:34:13Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "SUN",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "trine",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 120.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T17:43:02Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 14.0340316
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-03T12:05:58Z",
+        "aspectType": "square",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "6F48D71F91F1382FAA720581E50F038C23D80CC092DD2E6BF841B18281C689C3",
+        "eventId": "TN_6F48D71F91F1382FAA720581",
+        "exactUtc": "2025-04-03T17:14:36Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "MARS",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "square",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 90.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-03T22:25:14Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 13.95219378
+      }
+    },
+    {
+      "eligible": true,
+      "eventIdentity": {
+        "applyingStartUtc": "2025-04-03T22:25:05Z",
+        "aspectType": "opposition",
+        "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+        "ayanamsha": "RAMAN",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "eventContract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+        "eventHash": "97C9294ED13CD6C36FB0840B055EF3AC61337F2DF9900E4B00E5521611C60D93",
+        "eventId": "TN_97C9294ED13CD6C36FB0840B",
+        "exactUtc": "2025-04-04T03:37:46Z",
+        "generatorVersion": "chart_conditioned_transit_event_compiler_v1_20260806",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "natalTarget": "JUPITER",
+        "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+        "orbContract": {
+          "aspectType": "opposition",
+          "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF",
+          "doctrineStatus": "ANGULAR_GEOMETRY_ONLY_NOT_DIRECTION_DOCTRINE",
+          "exactAngleDeg": 180.0,
+          "maxOrbDeg": 3.0,
+          "profileHash": "E0953F4E4F8C553EDE9CFE20FC177A07B2CAF41EC762FA9DA9EC399089FFD53E",
+          "profileId": "ASPECT_STRENGTH_V0"
+        },
+        "separatingEndUtc": "2025-04-04T08:52:33Z",
+        "sideIdentity": "JPY",
+        "transitBody": "MOON"
+      },
+      "founderReview": {
+        "evidenceClassification": null,
+        "founderReasoning": "",
+        "rejectionReason": "",
+        "reviewTimestampUtc": null,
+        "reviewedPolarity": null,
+        "reviewer": "",
+        "sourceReferences": []
+      },
+      "identityChecks": {
+        "auditChecksPass": true,
+        "blankPacketHashMatchesManifest": true,
+        "eventHashMatchesAudit": true,
+        "eventIdMatchesAudit": true,
+        "integrityManifestHash": "066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D",
+        "listedAsVerified": true
+      },
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "motionPhaseAtExact": {
+        "phase": "DIRECT",
+        "speedDegPerDay": 13.76994688
+      }
+    }
+  ],
+  "sideIdentity": "JPY"
+}
