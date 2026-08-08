@@ -10,7 +10,7 @@ const LABELS = {
   nakshatra: 'Nakshatra',
   yoga: 'Yoga',
   karana: 'Karana',
-  weekday: 'Weekday',
+  weekday: 'Civil weekday (engineering)',
   tara: 'Tara',
 } as const
 
@@ -126,7 +126,7 @@ export function BphsClassicalTimingPane(props: Props) {
         {calendar.categoryOrder.map((category) => {
           const segments = displaySegments(calendar, category)
           return <div className="bphs-calendar-lane" key={category}>
-            <div><strong>{LABELS[category]}</strong><span>{category === 'tara' ? 'reference/mapping required' : 'calendar category'}</span></div>
+            <div><strong>{LABELS[category]}</strong><span>{category === 'tara' ? 'source mapping/reference required' : category === 'weekday' ? 'boundary not closed by Packet 1W' : 'calendar category'}</span></div>
             <div className="bphs-calendar-track">
               {segments.map((segment) => <button
                 key={`${category}:${segment.intervalId}:${segment.startUtc}`}

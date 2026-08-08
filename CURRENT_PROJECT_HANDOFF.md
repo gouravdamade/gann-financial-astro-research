@@ -4,6 +4,39 @@ Last updated: 2026-08-08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## In Progress - 2026-08-08 (PFR-V2B-R6-BPHS-T1 Source Audit Correction)
+
+- Audited the held 1899 BPHS Chapter 14 / Packet 1W witness before changing T1.
+  The source-closing evidence for Muhurta is printed page 197 / PDF image 680,
+  with a supporting Sanskrit root-text continuation over printed pages 196-197 /
+  PDF images 679-680. The source explicitly enumerates 15 daytime and 15
+  nighttime names.
+- Added the minimal machine-readable fixture
+  `research_labs/bphs_1899_classical_timing/bphs_1899_packet_1w_muhurta_fixture.json`.
+  Two independent complete transcriptions, Sanskrit commentary and Hindi Bhasha,
+  agree. It preserves source repetitions and the nighttime index-04 literal
+  `Uttara`; no modern normalization is applied.
+- The BPHS inspector now renders a source name with its day/night index, for
+  example `DAY MUHURTA 01 - Ardra`. The live sunrise/sunset segment boundaries
+  remain labelled `SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1` engineering
+  calculation, never a claimed BPHS formula.
+- The Weekday lane is now explicitly `Civil weekday (engineering)` with
+  `BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED`. Packet 1W did not close civil-midnight
+  versus sunrise/day weekday ownership, so no general Jyotisha convention was
+  imported.
+- Tara remains `DEPENDENCY_NOT_READY`: the audit did not locate a complete
+  ninefold sequence/mapping operator in the held Packet 1W and no reference
+  identity is configured. It accepts no inferred reference and imports no
+  modern Panchanga formula.
+- Removed the T1 service's low-level `sbc.*` imports. It now owns only its
+  Swiss-Ephemeris UTC conversion and lock primitives, preserving its no-SBC
+  dependency boundary. No price, return, polarity, pair, Founder Review, LLM,
+  Auto Suggest, ML, MT5, scoring, or execution path was changed or enabled.
+- Focused verification before packaging: backend **8/8 passed** and Fields UI
+  **8/8 passed**. Candidate version reserved:
+  `0.10.38-pfr-v2b-r6-bphs-t1r`; package build and founder visual inspection are
+  still pending at this handoff point.
+
 ## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1 Classical Calendar Timing Inspector)
 
 - Added the read-only **BPHS Classical Calendar** inspector inside the dedicated

@@ -17,7 +17,7 @@ Tara availability.
 
 The source profile is `BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1` using
 `BPHS_1899_GOVIND_SHARMA_SHASTRI`, 1899 Purva/Uttara witness, Chapter 14 /
-Packet 1W / printed pages 197-236, file SHA-256
+Packet 1W, file SHA-256
 `BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4`.
 
 The deterministic interval boundaries are calculated by the separately
@@ -25,9 +25,31 @@ labelled `SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1` engineering profile.
 This is not a claim that a Swiss-Ephemeris implementation is printed BPHS
 doctrine.
 
-Tara is explicitly `DEPENDENCY_NOT_READY` without both a reference input and a
-page-transcribed mapping. Muhurta names/order are likewise marked partial until
-the exact source table is transcribed. No missing doctrine is filled by an LLM.
+## Packet 1W source audit and bounded corrections
+
+The 15 daytime and 15 nighttime Muhurta rows are transcribed in
+`research_labs/bphs_1899_classical_timing/bphs_1899_packet_1w_muhurta_fixture.json`.
+Two independent passes, Sanskrit commentary and Hindi Bhasha, agree at printed
+page 197 / PDF image 680. The live UI therefore displays the source name while
+retaining period and index, for example `DAY MUHURTA 01 - Ardra`. Repeated rows
+remain repeated and the source-literal nighttime `Uttara` is not expanded.
+The fixture also records the supporting Sanskrit root-text continuation over
+printed pages 196-197 / PDF images 679-680; it is retained as evidence rather
+than used to normalize the two complete enumerations.
+
+The source confirms 15 daytime and 15 nighttime segments, but the live
+sunrise/sunset segmentation is still explicitly supplied by
+`SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1`; this is not represented as a
+literal BPHS boundary formula.
+
+The held Packet 1W witness does not close civil-midnight versus sunrise/day
+weekday ownership. The lane is therefore labelled `Civil weekday (engineering)`
+with `BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED`, not displayed as literal BPHS
+doctrine.
+
+Tara is explicitly `DEPENDENCY_NOT_READY`: the Packet 1W audit did not locate a
+complete ninefold sequence/mapping operator and no reference identity contract
+exists. No missing doctrine is filled by an LLM or a modern Panchanga source.
 
 ## Guardrails
 

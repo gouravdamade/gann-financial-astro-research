@@ -6817,6 +6817,7 @@ html.android-runtime .loading-state {
   .bphs-calendar-block:hover, .bphs-calendar-block:focus-visible, .bphs-calendar-block.is-selected { outline: 2px solid #e2c777; outline-offset: -2px; filter: brightness(1.12); }
   .bphs-calendar-block.is-engineering-calculated { background: #344852; color: #d0dce1; }
   .bphs-calendar-block.is-partial-source { background: #554b35; color: #eadcab; }
+  .bphs-calendar-block.is-source-transcribed-engineering-boundary { background: #345142; color: #d4ebd8; }
   .bphs-calendar-block.is-dependency-not-ready { background: repeating-linear-gradient(-45deg, #3b3d42 0 5px, #2a2d31 5px 10px); color: #c8c6c4; }
   .bphs-calendar-current { display: grid; gap: 7px; padding: 8px; border: 1px solid #3a4851; background: #121a20; }
   .bphs-calendar-current-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: #3a4851; }

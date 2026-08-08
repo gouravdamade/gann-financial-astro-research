@@ -7,9 +7,12 @@ polarity, SBC, score, catalogue, ML, or execution dependency.
 
 from __future__ import annotations
 
+from functools import cache
+import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
+from threading import RLock
 from typing import Any, Callable, Mapping
 from zoneinfo import ZoneInfo
 
@@ -22,9 +25,6 @@ if str(PROJECT_ROOT) not in sys.path:
 from financial_astro_ephemeris import configure_ephemeris
 
 from panchanga_doctrine import karana_context, nakshatra_pada, tithi_context, yoga_context
-from sbc.enums import Ayanamsha, Center, NodeType, ZodiacMode
-from sbc.ephemeris import _datetime_from_jd_ut, _EPHEMERIS_LOCK, _julian_ut
-from sbc.models import AstroSettings, GeoLocation
 
 
 BPHS_CLASSICAL_CALENDAR_CONTRACT = "BPHS_CLASSICAL_CALENDAR_RANGE_V1"
@@ -44,6 +44,45 @@ REQUEST_KEYS = {
 CATEGORY_ORDER = ("muhurta", "tithi", "nakshatra", "yoga", "karana", "weekday", "tara")
 _SAMPLE_STEP = timedelta(hours=6)
 _REFINEMENT_RESOLUTION = timedelta(seconds=1)
+_MUHURTA_FIXTURE_PATH = PROJECT_ROOT / "research_labs" / "bphs_1899_classical_timing" / "bphs_1899_packet_1w_muhurta_fixture.json"
+_EPHEMERIS_LOCK = RLock()
+
+
+def _julian_ut(value: datetime) -> float:
+    utc = value.astimezone(timezone.utc)
+    hour = utc.hour + (utc.minute / 60.0) + (utc.second / 3600.0) + (utc.microsecond / 3_600_000_000.0)
+    return float(swe.julday(utc.year, utc.month, utc.day, hour, swe.GREG_CAL))
+
+
+def _datetime_from_jd_ut(julian_day: float) -> datetime:
+    year, month, day, hour = swe.revjul(julian_day, swe.GREG_CAL)
+    whole_seconds = round(float(hour) * 3600.0)
+    return datetime(int(year), int(month), int(day), tzinfo=timezone.utc) + timedelta(seconds=whole_seconds)
+
+
+@cache
+def _muhurta_fixture() -> dict[str, Any]:
+    """Load the small, source-closed Packet 1W table without broad doctrine lookup."""
+    fixture = json.loads(_MUHURTA_FIXTURE_PATH.read_text(encoding="utf-8"))
+    source = fixture.get("source", {})
+    if source.get("sourceId") != BPHS_SOURCE_ID or source.get("fileSha256") != BPHS_SOURCE_SHA256:
+        raise RuntimeError("BPHS Packet 1W Muhurta fixture does not match the held witness")
+    for key in ("daytime", "nighttime"):
+        rows = fixture.get(key)
+        if not isinstance(rows, list) or [row.get("index") for row in rows] != list(range(1, 16)):
+            raise RuntimeError(f"BPHS Packet 1W Muhurta fixture has an invalid {key} order")
+    if fixture.get("transcription", {}).get("diffStatus") != "AGREED":
+        raise RuntimeError("BPHS Packet 1W Muhurta transcription passes disagree")
+    return fixture
+
+
+def _muhurta_name(period: str, index: int) -> str:
+    rows = _muhurta_fixture()["daytime" if period == "DAY" else "nighttime"]
+    return str(rows[index - 1]["name"])
+
+
+def _muhurta_source_locator() -> str:
+    return str(_muhurta_fixture()["source"]["tableLocator"])
 
 
 def _parse_utc(value: Any, label: str) -> datetime:
@@ -63,20 +102,27 @@ def _iso(value: datetime) -> str:
 
 
 def _source_profile() -> dict[str, Any]:
+    fixture = _muhurta_fixture()
     return {
         "profileId": BPHS_CLASSICAL_CALENDAR_PROFILE_ID,
         "sourceId": BPHS_SOURCE_ID,
         "edition": "1899 Purva/Uttara witness",
         "fileSha256": BPHS_SOURCE_SHA256,
-        "scope": "Chapter 14 / Packet 1W / printed pages 197-236",
+        "scope": "Chapter 14 / Packet 1W; Muhurta table printed p. 197 (PDF image 680)",
         "evidenceStatus": "PARTIAL_SOURCE_PROFILE",
         "classicalCompletenessClaim": False,
         "sourceGaps": [
-            "BPHS_1899_PACKET_1W_LITERAL_CATEGORY_TABLES_PENDING_PAGE_TRANSCRIPTION",
-            "BPHS_1899_TARA_REFERENCE_AND_MAPPING_PENDING",
-            "BPHS_1899_MUHURTA_NAME_ORDER_PENDING_PAGE_TRANSCRIPTION",
+            "BPHS_1899_PACKET_1W_OTHER_CALENDAR_CATEGORY_TABLES_NOT_TRANSCRIBED",
+            "BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED",
+            "BPHS_1899_TARA_NINEFOLD_SEQUENCE_AND_MAPPING_NOT_LOCATED_IN_PACKET_1W",
+            "BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED",
         ],
-        "interpretation": "Names and category order are displayed as a founder-visible research calendar only. No market meaning, suitability, polarity, or score is supplied.",
+        "sourceFixtures": [{
+            "fixtureId": fixture["fixtureId"],
+            "transcriptionStatus": fixture["transcription"]["status"],
+            "locator": fixture["source"]["tableLocator"],
+        }],
+        "interpretation": "The Packet 1W Muhurta name/order table is source-transcribed. Sunrise/sunset segmentation and all other calculated categories remain engineering-labelled. No market meaning, suitability, polarity, or score is supplied.",
     }
 
 
@@ -102,13 +148,8 @@ def _category(
 class _CalendarCalculator:
     def __init__(self, *, timezone_name: str, latitude: float, longitude: float) -> None:
         self.zone = ZoneInfo(timezone_name)
-        self.location = GeoLocation(latitude=latitude, longitude=longitude, timezone=timezone_name)
-        self.settings = AstroSettings(
-            zodiac=ZodiacMode.SIDEREAL,
-            ayanamsha=Ayanamsha.RAMAN,
-            center=Center.GEOCENTRIC,
-            node=NodeType.TRUE_NODE,
-        )
+        self.latitude = float(latitude)
+        self.longitude = float(longitude)
         self._solar_cache: dict[object, tuple[datetime, datetime]] = {}
 
     def configure_session(self) -> None:
@@ -127,7 +168,7 @@ class _CalendarCalculator:
         if cached is not None:
             return cached
         local_midnight = datetime.combine(local_date, datetime.min.time(), tzinfo=self.zone)
-        coordinates = (float(self.location.longitude), float(self.location.latitude), float(self.location.altitude_m))
+        coordinates = (self.longitude, self.latitude, 0.0)
         rise_result, rise_times = swe.rise_trans(
             _julian_ut(local_midnight.astimezone(timezone.utc)), swe.SUN, swe.CALC_RISE,
             coordinates, 0.0, 0.0, swe.FLG_SWIEPH,
@@ -159,13 +200,17 @@ class _CalendarCalculator:
             start, end, period = sunset, next_sunrise, "NIGHT"
         fraction = max(0.0, min(0.999999, (at_utc - start).total_seconds() / (end - start).total_seconds()))
         index = min(15, int(fraction * 15) + 1)
+        source_name = _muhurta_name(period, index)
         return _category(
-            f"{period} MUHURTA {index:02d}",
-            availability="PARTIAL_SOURCE",
-            detail=f"{period.title()} segment {index} of 15; traditional name/order source row is not yet transcribed.",
-            source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+            f"{period} MUHURTA {index:02d} - {source_name}",
+            availability="SOURCE_TRANSCRIBED_ENGINEERING_BOUNDARY",
+            detail=(
+                f"{period.title()} Muhurta {index} of 15 is named {source_name} in the held Packet 1W table. "
+                "Its live start/end are sunrise/sunset-derived engineering boundaries, not a claimed BPHS calculation formula."
+            ),
+            source_locator=_muhurta_source_locator(),
             calculation=ENGINEERING_CALCULATION_PROFILE_ID,
-            dependency="BPHS_1899_MUHURTA_NAME_ORDER_PENDING_PAGE_TRANSCRIPTION",
+            dependency="ENGINEERING_SUNRISE_SUNSET_BOUNDARY_NOT_CLASSICAL_FORMULA",
         )
 
     def state_at(self, at_utc: datetime, tara_reference: Mapping[str, Any] | None) -> dict[str, dict[str, Any]]:
@@ -175,9 +220,14 @@ class _CalendarCalculator:
         yoga = yoga_context(sun, moon)
         nakshatra = nakshatra_pada(moon)
         local = at_utc.astimezone(self.zone)
-        tara_detail = "No explicit Tara reference input/mapping was supplied."
+        tara_detail = (
+            "Packet 1W does not supply a transcribed ninefold Tara sequence/mapping, and no explicit Tara reference identity contract is configured."
+        )
         if tara_reference:
-            tara_detail = "A Tara reference was supplied, but the approved BPHS 1899 mapping table has not been transcribed."
+            tara_detail = (
+                "A Tara reference was supplied, but Packet 1W does not close the ninefold Tara mapping/operator; "
+                "the supplied reference is therefore not evaluated."
+            )
         return {
             "muhurta": self._muhurta(at_utc),
             "tithi": _category(
@@ -209,19 +259,23 @@ class _CalendarCalculator:
                 calculation=ENGINEERING_CALCULATION_PROFILE_ID,
             ),
             "weekday": _category(
-                local.strftime("%A"),
-                availability="ENGINEERING_CALCULATED",
-                detail=f"Local civil day in {self.zone.key}.",
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+                f"Civil weekday: {local.strftime('%A')}",
+                availability="PARTIAL_SOURCE",
+                detail=(
+                    f"Local civil-midnight weekday in {self.zone.key}. The audited Packet 1W witness does not close "
+                    "a classical weekday/vāra ownership boundary, so this is engineering display data rather than literal BPHS doctrine."
+                ),
+                source_locator="No weekday/vāra boundary statement located in the audited BPHS_1899 Packet 1W evidence.",
                 calculation="LOCAL_CIVIL_MIDNIGHT_WEEKDAY_V1",
+                dependency="BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED",
             ),
             "tara": _category(
                 "DEPENDENCY_NOT_READY",
                 availability="DEPENDENCY_NOT_READY",
                 detail=tara_detail,
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W; full Tara sequence/mapping not located during source audit.",
                 calculation="NOT_EVALUATED",
-                dependency="BPHS_1899_TARA_REFERENCE_AND_MAPPING_PENDING",
+                dependency="BPHS_1899_TARA_NINEFOLD_SEQUENCE_AND_MAPPING_NOT_LOCATED_IN_PACKET_1W; BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED",
             ),
         }
 

@@ -91,16 +91,16 @@ const bphsCalendarRange = {
   contract: 'BPHS_CLASSICAL_CALENDAR_RANGE_V1', schemaVersion: 1, rangeStartUtc: startUtc, rangeEndUtc: endUtc,
   timezone: 'Asia/Kolkata', location: { latitude: 18.5204, longitude: 73.8567 },
   categoryOrder: ['muhurta', 'tithi', 'nakshatra', 'yoga', 'karana', 'weekday', 'tara'],
-  sourceProfile: { profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1', sourceId: 'BPHS_1899_GOVIND_SHARMA_SHASTRI', edition: '1899', fileSha256: 'SHA', scope: 'Chapter 14', evidenceStatus: 'PARTIAL_SOURCE_PROFILE', classicalCompletenessClaim: false, sourceGaps: ['BPHS_1899_TARA_REFERENCE_AND_MAPPING_PENDING'], interpretation: 'No market meaning.' },
+  sourceProfile: { profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1', sourceId: 'BPHS_1899_GOVIND_SHARMA_SHASTRI', edition: '1899', fileSha256: 'SHA', scope: 'Chapter 14', evidenceStatus: 'PARTIAL_SOURCE_PROFILE', classicalCompletenessClaim: false, sourceGaps: ['BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED', 'BPHS_1899_TARA_NINEFOLD_SEQUENCE_AND_MAPPING_NOT_LOCATED_IN_PACKET_1W'], interpretation: 'No market meaning.' },
   engineeringCalculationProfile: 'SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1',
   intervals: [{ intervalId: 'BPHS_CAL_00001', startUtc, endUtc, categories: {
-    muhurta: { value: 'DAY MUHURTA 01', availability: 'PARTIAL_SOURCE', detail: 'Name pending.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: 'NAME_PENDING' },
+    muhurta: { value: 'DAY MUHURTA 01 - Ardra', availability: 'SOURCE_TRANSCRIBED_ENGINEERING_BOUNDARY', detail: 'Source name; engineering boundary.', sourceLocator: 'Chapter 14 printed p. 197', calculationProfile: 'engineering', dependency: 'ENGINEERING_SUNRISE_SUNSET_BOUNDARY_NOT_CLASSICAL_FORMULA' },
     tithi: { value: 'Shukla 01 Pratipada', availability: 'ENGINEERING_CALCULATED', detail: 'Tithi.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
     nakshatra: { value: '01 Ashwini pada 1', availability: 'ENGINEERING_CALCULATED', detail: 'Nakshatra.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
     yoga: { value: '01 Vishkambha', availability: 'ENGINEERING_CALCULATED', detail: 'Yoga.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
     karana: { value: '01 Kimstughna', availability: 'ENGINEERING_CALCULATED', detail: 'Karana.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
-    weekday: { value: 'Tuesday', availability: 'ENGINEERING_CALCULATED', detail: 'Weekday.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
-    tara: { value: 'DEPENDENCY_NOT_READY', availability: 'DEPENDENCY_NOT_READY', detail: 'Reference missing.', sourceLocator: 'Chapter 14', calculationProfile: 'NOT_EVALUATED', dependency: 'TARA_PENDING' },
+    weekday: { value: 'Civil weekday: Tuesday', availability: 'PARTIAL_SOURCE', detail: 'Civil weekday boundary not closed.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: 'BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED' },
+    tara: { value: 'DEPENDENCY_NOT_READY', availability: 'DEPENDENCY_NOT_READY', detail: 'Source mapping/reference missing.', sourceLocator: 'Chapter 14', calculationProfile: 'NOT_EVALUATED', dependency: 'TARA_PENDING' },
   }}],
   guardrails: { readOnly: true, marketDataRead: false, priceOutcomeRead: false, polarityCatalogueRead: false, pairRelativeFieldPath: false, founderReviewDecisionPath: false, sbcPath: false, autoSuggestPath: false, mlPath: false, executionAllowed: false, automaticOrderPlacement: false, scoreAggregationUsed: false, marketDirectionInferred: false },
 } as const
@@ -272,6 +272,8 @@ describe('FieldsWorkspace', () => {
     await user.selectOptions(screen.getByLabelText('Classical timing'), 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1')
     expect(await screen.findByText('BPHS Classical Calendar')).toBeInTheDocument()
     expect(screen.getAllByText('DEPENDENCY_NOT_READY').length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/DAY MUHURTA 01 - Ardra/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Civil weekday (engineering)').length).toBeGreaterThan(0)
     expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalledWith(expect.objectContaining({
       rangeStartUtc: startUtc, rangeEndUtc: endUtc, profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1',
     }))

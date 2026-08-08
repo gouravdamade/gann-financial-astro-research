@@ -1,0 +1,83 @@
+{
+  "fixtureId": "BPHS_1899_PACKET_1W_MUHURTA_TABLE_V1",
+  "source": {
+    "sourceId": "BPHS_1899_GOVIND_SHARMA_SHASTRI",
+    "edition": "1899 Purva/Uttara witness",
+    "fileSha256": "BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4",
+    "scope": "Chapter 14 / Packet 1W",
+    "printedPages": [196, 197],
+    "pdfImageIndexes": [679, 680],
+    "tableLocator": "Printed p. 197 / PDF image 680; Chapter 14 commentary and Bhasha enumerate all 15 daytime and 15 nighttime Muhurtas."
+  },
+  "transcription": {
+    "status": "SOURCE_CLOSED_TWO_PASS_AGREED",
+    "evidenceLayers": {
+      "rootSanskrit": {
+        "status": "SUPPORTING_CONTINUATION",
+        "locator": "Printed pp. 196-197 / PDF images 679-680",
+        "note": "The root verse spans the page turn; the complete ordered enumeration is legible in the commentary and Bhasha below."
+      },
+      "commentarySanskrit": {
+        "status": "COMPLETE_ENUMERATION",
+        "locator": "Printed p. 197 / PDF image 680"
+      },
+      "bhashaHindi": {
+        "status": "COMPLETE_ENUMERATION",
+        "locator": "Printed p. 197 / PDF image 680"
+      }
+    },
+    "passA": {
+      "evidenceLayer": "Sanskrit commentary",
+      "locator": "Printed p. 197 / PDF image 680"
+    },
+    "passB": {
+      "evidenceLayer": "Hindi Bhasha",
+      "locator": "Printed p. 197 / PDF image 680"
+    },
+    "diffStatus": "AGREED",
+    "notes": [
+      "Repeated source names are preserved rather than normalized.",
+      "Night index 04 is retained as the literal source form Uttara; it is not expanded to a more specific nakshatra name."
+    ]
+  },
+  "daytime": [
+    {"index": 1, "name": "Ardra"},
+    {"index": 2, "name": "Ashlesha"},
+    {"index": 3, "name": "Anuradha"},
+    {"index": 4, "name": "Magha"},
+    {"index": 5, "name": "Dhanishtha"},
+    {"index": 6, "name": "Uttarashada"},
+    {"index": 7, "name": "Sarvajit (Abhijit)"},
+    {"index": 8, "name": "Rohini"},
+    {"index": 9, "name": "Vishakha"},
+    {"index": 10, "name": "Jyeshtha"},
+    {"index": 11, "name": "Mula"},
+    {"index": 12, "name": "Shatataraka"},
+    {"index": 13, "name": "Bharani"},
+    {"index": 14, "name": "Purvaphalguni"},
+    {"index": 15, "name": "Vishvajit (Abhijit)"}
+  ],
+  "nighttime": [
+    {"index": 1, "name": "Uttarabhadrapada"},
+    {"index": 2, "name": "Revati"},
+    {"index": 3, "name": "Abhijit"},
+    {"index": 4, "name": "Uttara (source literal)"},
+    {"index": 5, "name": "Krittika"},
+    {"index": 6, "name": "Rohini"},
+    {"index": 7, "name": "Mula"},
+    {"index": 8, "name": "Rohini"},
+    {"index": 9, "name": "Mrigashirsha"},
+    {"index": 10, "name": "Hasta"},
+    {"index": 11, "name": "Pushya"},
+    {"index": 12, "name": "Shravana"},
+    {"index": 13, "name": "Hasta"},
+    {"index": 14, "name": "Chitra"},
+    {"index": 15, "name": "Swati"}
+  ],
+  "tara": {
+    "transcriptionStatus": "NOT_LOCATED_IN_HELD_PACKET_1W",
+    "sequence": null,
+    "operator": null,
+    "notes": "The held Chapter 14 Packet 1W audit did not locate a complete ninefold Tara sequence or mapping operator. No external Panchanga formula is imported."
+  }
+}
