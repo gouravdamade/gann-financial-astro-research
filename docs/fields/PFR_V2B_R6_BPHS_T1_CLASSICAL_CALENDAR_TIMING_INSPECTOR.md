@@ -60,3 +60,16 @@ execution or automatic order path.
 
 The panel uses neutral category colours. It has no supportive/adverse state,
 numeric magnitude, confidence, score, market direction, or trade suggestion.
+
+## Founder-inspection candidate
+
+`0.10.38-pfr-v2b-r6-bphs-t1r` is rejected before founder review because its
+frozen Python sidecar omitted the Packet 1W fixture. The replacement,
+`0.10.39-pfr-v2b-r6-bphs-t1r-p1`, is built from source commit
+`9772277991c3ce3715bb0c6cb11c5890bd094369` and checks that the fixture exists
+under the bundled `_internal/research_labs/bphs_1899_classical_timing` root.
+
+The portable executable and NSIS installer are founder-inspection artifacts,
+not a stable promotion or proof of classical/financial validity. The candidate
+report records hashes, clean-source declaration, test results, portable smoke
+evidence, and the manual visual checklist.

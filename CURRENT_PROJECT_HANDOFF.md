@@ -4,7 +4,7 @@ Last updated: 2026-08-08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## In Progress - 2026-08-08 (PFR-V2B-R6-BPHS-T1 Source Audit Correction)
+## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1R-P1 Founder-Inspection Candidate)
 
 - Audited the held 1899 BPHS Chapter 14 / Packet 1W witness before changing T1.
   The source-closing evidence for Muhurta is printed page 197 / PDF image 680,
@@ -32,14 +32,32 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   Swiss-Ephemeris UTC conversion and lock primitives, preserving its no-SBC
   dependency boundary. No price, return, polarity, pair, Founder Review, LLM,
   Auto Suggest, ML, MT5, scoring, or execution path was changed or enabled.
-- Focused verification before packaging: backend **8/8 passed** and Fields UI
-  **8/8 passed**. The first `0.10.38-pfr-v2b-r6-bphs-t1r` package build found a
-  real completeness defect before any founder review: its PyInstaller sidecar
-  omitted the new Packet 1W fixture. Do not use that folder. A bounded packaging
-  fix now collects the fixture, resolves it via `sys._MEIPASS` in the frozen
-  sidecar, and asserts its packaged presence. The replacement candidate version
-  is `0.10.39-pfr-v2b-r6-bphs-t1r-p1`; build and founder visual inspection remain
-  pending at this handoff point.
+- The first `0.10.38-pfr-v2b-r6-bphs-t1r` build is **rejected before founder
+  review**: its PyInstaller sidecar omitted the new Packet 1W fixture. Do not
+  use that folder. Commit `9772277991c3ce3715bb0c6cb11c5890bd094369` adds frozen
+  `sys._MEIPASS` resolution, bundles the fixture, and hard-fails the sidecar
+  build when it is absent.
+- The clean, immutable founder-inspection replacement is
+  `0.10.39-pfr-v2b-r6-bphs-t1r-p1` at
+  `D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.39-pfr-v2b-r6-bphs-t1r-p1-tauri`.
+  Its portable SHA-256 is
+  `4D5E9F2293155FB477FFA7A786A4D05FF4A5600C7158221C893DEEC0C02C3BDA`;
+  installer SHA-256 is
+  `6687304123DF6F74119C90E36B77E44A8838F2D8484EA0785B49515EB7EE537C`.
+  The candidate was built from a detached clean checkout and the sidecar now
+  contains the Packet 1W fixture under `_internal/research_labs/...`.
+- Verification: focused backend **9/9**; full backend **205/205**; focused
+  Fields **8/8**; full frontend **35 files, 151/151**; `oxlint`, production
+  frontend build, `cargo fmt --check`, `cargo check`, and **18 Rust tests**
+  passed. Two portable soak runs passed initial health, controlled sidecar
+  recovery, guardrails, and clean descendant shutdown. A direct packaged BPHS
+  endpoint probe returned `NIGHT MUHURTA 14 - Chitra`, partial-source civil
+  weekday, `DEPENDENCY_NOT_READY` Tara, four source gaps, and execution false.
+- Founder visual inspection is now ready but **not accepted or certified**.
+  Open USDJPY, then Fields; set `Classical timing` to `BPHS 1899 Research`;
+  move the price crosshair; inspect the separate neutral BPHS Calendar panel,
+  source names/order, provenance, and gaps. Confirm no polarity, score,
+  supportive/adverse color, Auto Suggest, or execution control appears.
 
 ## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1 Classical Calendar Timing Inspector)
 
