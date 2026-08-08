@@ -33,9 +33,13 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   dependency boundary. No price, return, polarity, pair, Founder Review, LLM,
   Auto Suggest, ML, MT5, scoring, or execution path was changed or enabled.
 - Focused verification before packaging: backend **8/8 passed** and Fields UI
-  **8/8 passed**. Candidate version reserved:
-  `0.10.38-pfr-v2b-r6-bphs-t1r`; package build and founder visual inspection are
-  still pending at this handoff point.
+  **8/8 passed**. The first `0.10.38-pfr-v2b-r6-bphs-t1r` package build found a
+  real completeness defect before any founder review: its PyInstaller sidecar
+  omitted the new Packet 1W fixture. Do not use that folder. A bounded packaging
+  fix now collects the fixture, resolves it via `sys._MEIPASS` in the frozen
+  sidecar, and asserts its packaged presence. The replacement candidate version
+  is `0.10.39-pfr-v2b-r6-bphs-t1r-p1`; build and founder visual inspection remain
+  pending at this handoff point.
 
 ## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1 Classical Calendar Timing Inspector)
 

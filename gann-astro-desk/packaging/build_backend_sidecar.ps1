@@ -70,6 +70,10 @@ $missingProfileFiles = @(
 if ($missingProfileFiles.Count -gt 0) {
     throw "Backend sidecar is missing chart-conditioned profile resources:`n$($missingProfileFiles -join "`n")"
 }
+$requiredBphsFixture = Join-Path $resourceRoot "_internal\research_labs\bphs_1899_classical_timing\bphs_1899_packet_1w_muhurta_fixture.json"
+if (-not (Test-Path -LiteralPath $requiredBphsFixture -PathType Leaf)) {
+    throw "Backend sidecar is missing the BPHS Packet 1W Muhurta fixture: $requiredBphsFixture"
+}
 $gitkeep = Join-Path $resourceRoot ".gitkeep"
 if (-not (Test-Path -LiteralPath $gitkeep -PathType Leaf)) {
     Set-Content -LiteralPath $gitkeep `

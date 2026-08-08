@@ -9,6 +9,7 @@ from bphs_classical_timing_service import (
     _CalendarCalculator,
     _EPHEMERIS_LOCK,
     _muhurta_fixture,
+    _muhurta_fixture_path,
     _muhurta_name,
     build_bphs_classical_calendar_range,
 )
@@ -58,6 +59,14 @@ class BphsClassicalTimingServiceTests(unittest.TestCase):
         self.assertEqual(_muhurta_name("NIGHT", 8), "Rohini")
         self.assertEqual(_muhurta_name("NIGHT", 10), "Hasta")
         self.assertEqual(_muhurta_name("NIGHT", 13), "Hasta")
+
+    def test_muhurta_fixture_path_supports_collected_sidecar_resources(self) -> None:
+        self.assertTrue(_muhurta_fixture_path().is_file())
+        packaged_root = Path("D:/candidate/backend/_internal")
+        self.assertEqual(
+            _muhurta_fixture_path(packaged_root),
+            packaged_root / "research_labs" / "bphs_1899_classical_timing" / "bphs_1899_packet_1w_muhurta_fixture.json",
+        )
 
     def test_sunrise_sunset_own_day_night_segments_with_source_names(self) -> None:
         calculator = _CalendarCalculator(timezone_name="Asia/Kolkata", latitude=18.5204, longitude=73.8567)

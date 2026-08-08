@@ -44,7 +44,7 @@ REQUEST_KEYS = {
 CATEGORY_ORDER = ("muhurta", "tithi", "nakshatra", "yoga", "karana", "weekday", "tara")
 _SAMPLE_STEP = timedelta(hours=6)
 _REFINEMENT_RESOLUTION = timedelta(seconds=1)
-_MUHURTA_FIXTURE_PATH = PROJECT_ROOT / "research_labs" / "bphs_1899_classical_timing" / "bphs_1899_packet_1w_muhurta_fixture.json"
+_MUHURTA_FIXTURE_RELATIVE = Path("research_labs") / "bphs_1899_classical_timing" / "bphs_1899_packet_1w_muhurta_fixture.json"
 _EPHEMERIS_LOCK = RLock()
 
 
@@ -61,9 +61,15 @@ def _datetime_from_jd_ut(julian_day: float) -> datetime:
 
 
 @cache
+def _muhurta_fixture_path(resource_root: Path | None = None) -> Path:
+    """Resolve source data in both source-tree and collected-sidecar runtimes."""
+    root = resource_root or Path(getattr(sys, "_MEIPASS", PROJECT_ROOT))
+    return root / _MUHURTA_FIXTURE_RELATIVE
+
+
 def _muhurta_fixture() -> dict[str, Any]:
     """Load the small, source-closed Packet 1W table without broad doctrine lookup."""
-    fixture = json.loads(_MUHURTA_FIXTURE_PATH.read_text(encoding="utf-8"))
+    fixture = json.loads(_muhurta_fixture_path().read_text(encoding="utf-8"))
     source = fixture.get("source", {})
     if source.get("sourceId") != BPHS_SOURCE_ID or source.get("fileSha256") != BPHS_SOURCE_SHA256:
         raise RuntimeError("BPHS Packet 1W Muhurta fixture does not match the held witness")

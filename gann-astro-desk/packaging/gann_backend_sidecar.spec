@@ -10,6 +10,8 @@ sweph_root = Path(r"D:\Trading_Algo\Desktop_Trading_Algo_root_legacy_20260530\sw
 chart_conditioned_profile_root = (
     project_root / "research_labs" / "chart_conditioned_aspects" / "profiles"
 )
+bphs_classical_timing_root = project_root / "research_labs" / "bphs_1899_classical_timing"
+bphs_muhurta_fixture = bphs_classical_timing_root / "bphs_1899_packet_1w_muhurta_fixture.json"
 
 required_files = [
     project_root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
@@ -27,6 +29,7 @@ required_files = [
     chart_conditioned_profile_root / "target_aware_polarity_catalogue_v1.json",
     chart_conditioned_profile_root / "target_aware_polarity_evidence_packets_v1.json",
     chart_conditioned_profile_root / "founder_chart_hypotheses_v1.json",
+    bphs_muhurta_fixture,
 ]
 missing = [str(path) for path in required_files if not path.exists()]
 if missing:
@@ -47,6 +50,9 @@ datas = [
     # The chart-conditioned modules resolve their immutable JSON profiles
     # relative to the collected package root at runtime.
     (str(chart_conditioned_profile_root), "profiles"),
+    # The BPHS inspector resolves this explicit source fixture beneath
+    # sys._MEIPASS when running in the collected Python sidecar.
+    (str(bphs_muhurta_fixture), "research_labs/bphs_1899_classical_timing"),
     (r"D:\node.exe", "codex"),
     (str(node_root / "codex-sdk"), "codex/node_modules/@openai/codex-sdk"),
     (str(node_root / "codex"), "codex/node_modules/@openai/codex"),
