@@ -2282,6 +2282,78 @@ export type SynchronizedIndependentRange = {
   }
 }
 
+export type BphsClassicalCalendarAvailability =
+  | 'ENGINEERING_CALCULATED'
+  | 'PARTIAL_SOURCE'
+  | 'DEPENDENCY_NOT_READY'
+
+export type BphsClassicalCalendarCategory = {
+  value: string
+  availability: BphsClassicalCalendarAvailability
+  detail: string
+  sourceLocator: string
+  calculationProfile: string
+  dependency: string | null
+}
+
+export type BphsClassicalCalendarInterval = {
+  intervalId: string
+  startUtc: string
+  endUtc: string
+  categories: Record<
+    'muhurta' | 'tithi' | 'nakshatra' | 'yoga' | 'karana' | 'weekday' | 'tara',
+    BphsClassicalCalendarCategory
+  >
+}
+
+export type BphsClassicalCalendarRangeRequest = {
+  rangeStartUtc: string
+  rangeEndUtc: string
+  timezone: string
+  latitude: number
+  longitude: number
+  profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1'
+  taraReference?: Record<string, unknown>
+}
+
+export type BphsClassicalCalendarRange = {
+  contract: 'BPHS_CLASSICAL_CALENDAR_RANGE_V1'
+  schemaVersion: 1
+  rangeStartUtc: string
+  rangeEndUtc: string
+  timezone: string
+  location: { latitude: number; longitude: number }
+  categoryOrder: Array<'muhurta' | 'tithi' | 'nakshatra' | 'yoga' | 'karana' | 'weekday' | 'tara'>
+  sourceProfile: {
+    profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1'
+    sourceId: string
+    edition: string
+    fileSha256: string
+    scope: string
+    evidenceStatus: string
+    classicalCompletenessClaim: false
+    sourceGaps: string[]
+    interpretation: string
+  }
+  engineeringCalculationProfile: string
+  intervals: BphsClassicalCalendarInterval[]
+  guardrails: {
+    readOnly: true
+    marketDataRead: false
+    priceOutcomeRead: false
+    polarityCatalogueRead: false
+    pairRelativeFieldPath: false
+    founderReviewDecisionPath: false
+    sbcPath: false
+    autoSuggestPath: false
+    mlPath: false
+    executionAllowed: false
+    automaticOrderPlacement: false
+    scoreAggregationUsed: false
+    marketDirectionInferred: false
+  }
+}
+
 // R5 keeps the pair display transparent and downstream of the two independently
 // compiled side fields. It is an engineering research transform, not doctrine.
 export type FxPairRelativeCategoricalState =

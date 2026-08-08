@@ -51,6 +51,7 @@ from chart_conditioned_polarity_service import (
 from chart_conditioned_transit_event_service import (
     build_chart_conditioned_transit_event_range,
 )
+from bphs_classical_timing_service import build_bphs_classical_calendar_range
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -373,6 +374,16 @@ def create_chart_conditioned_transit_event_range() -> Any:
                 "range": build_chart_conditioned_transit_event_range(payload),
             }
         )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/research/bphs/classical-calendar-range")
+def create_bphs_classical_calendar_range() -> Any:
+    """Return a source-labelled, read-only classical calendar range."""
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify({"ok": True, "calendar": build_bphs_classical_calendar_range(payload)})
     except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 

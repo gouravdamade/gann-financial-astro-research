@@ -19,6 +19,7 @@ import {
 import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
 import { IndependentFieldStack } from './IndependentFieldStack'
 import { FounderReviewWorkbench } from './FounderReviewWorkbench'
+import { BphsClassicalTimingPane } from './BphsClassicalTimingPane'
 
 const BODIES = ['SUN', 'MOON', 'MARS', 'MERCURY', 'JUPITER', 'VENUS', 'SATURN', 'RAHU', 'KETU'] as const
 
@@ -101,6 +102,7 @@ export function FieldsWorkspace({
   const [pilotBusy, setPilotBusy] = useState(false)
   const [pilotError, setPilotError] = useState('')
   const [founderReviewOpen, setFounderReviewOpen] = useState(false)
+  const [classicalTimingEnabled, setClassicalTimingEnabled] = useState(false)
   const requestSequence = useRef(0)
   const isFxPair = isSupportedFxPair(chart.symbol)
   const fieldRange = useMemo(
@@ -191,6 +193,12 @@ export function FieldsWorkspace({
       </div>
       <div className="fields-workspace-controls">
         <button type="button" className="fields-founder-review-button" onClick={() => setFounderReviewOpen(true)} disabled={founderReviewOpen}><ClipboardCheck size={13} /> Founder Review</button>
+        <label>Classical timing
+          <select value={classicalTimingEnabled ? 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1' : 'OFF'} onChange={(event) => setClassicalTimingEnabled(event.target.value === 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1')}>
+            <option value="OFF">Off</option>
+            <option value="BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1">BPHS 1899 Research</option>
+          </select>
+        </label>
         <label>Source profile
           <select value={vedhaProfileId} onChange={(event) => onVedhaProfileIdChange(event.target.value as ChakraLabRequest['vedhaProfileId'])}>
             <option value="phaladeepika_editor_vedha_guidance_v1">Phaladeepika editor profile</option>
@@ -240,6 +248,15 @@ export function FieldsWorkspace({
         isFxPair={isFxPair}
       />
     </section>
+
+    {classicalTimingEnabled && fieldRange ? <BphsClassicalTimingPane
+      rangeStartUtc={fieldRange.rangeStartUtc}
+      rangeEndUtc={fieldRange.rangeEndUtc}
+      timezone="Asia/Kolkata"
+      latitude={defaultLatitude}
+      longitude={defaultLongitude}
+      crosshairTimestampUtc={crosshairTimestampUtc}
+    /> : null}
 
     <section className="fields-audit-details" aria-label="Field audit details">
       <div><ShieldCheck size={14} /><div><strong>Pair-relative field contract</strong><span>FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1 is a transparent modern research transform: USD side balance minus JPY side balance. It is not classical doctrine, a forecast, or SBC confirmation.</span></div></div>

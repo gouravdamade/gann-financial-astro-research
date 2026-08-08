@@ -1,8 +1,52 @@
 # Current Project Handoff
 
-Last updated: 2026-08-06 IST
+Last updated: 2026-08-08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1 Classical Calendar Timing Inspector)
+
+- Added the read-only **BPHS Classical Calendar** inspector inside the dedicated
+  Fields workspace, behind a separate `Classical timing: Off | BPHS 1899
+  Research` control. It is intentionally separate from the SBC/Vedha profile
+  selector and does not modify Fields, polarity, pair-relative, SBC, Founder
+  Review, Auto Suggest, ML, MT5, or execution behavior.
+- The new backend contract is `BPHS_CLASSICAL_CALENDAR_RANGE_V1` at
+  `POST /api/research/bphs/classical-calendar-range`. It accepts only a visible
+  UTC range, IANA timezone, latitude/longitude, the explicit
+  `BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1` profile, and an optional Tara
+  reference object. It returns clipped chronological half-open intervals for
+  Muhurta day/night index, Tithi, Nakshatra, Yoga, Karana, Weekday, and Tara.
+- Provenance is visible in the UI and payload: held source
+  `BPHS_1899_GOVIND_SHARMA_SHASTRI`, 1899 Purva/Uttara witness, Chapter 14 /
+  Packet 1W / pages 197-236, SHA-256
+  `BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4`.
+  Calendar boundaries use the separately labelled
+  `SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1` engineering calculation
+  profile; this makes no claim that a Swiss-Ephemeris formula is literal BPHS
+  doctrine.
+- The source profile is deliberately partial. Tara is always
+  `DEPENDENCY_NOT_READY` until both an explicit reference and page-transcribed
+  mapping are approved. Muhurta labels show day/night index but retain the
+  explicit `BPHS_1899_MUHURTA_NAME_ORDER_PENDING_PAGE_TRANSCRIPTION` gap. No
+  LLM or inferred classical rule fills either gap.
+- Guardrails are explicit and tested: no market/price/future-return read, no
+  polarity-catalogue, pair-field, SBC, Founder Review, Auto Suggest, ML, score,
+  direction, MT5, or execution path. The visual palette is neutral and carries
+  no supportive/adverse state.
+- Added minimal `SwissEphemerisProvider.sunset_for_local_date` support and
+  optimized the inspector's single locked Swiss session so a calendar range
+  does not repeatedly reconfigure or rehash ephemeris data.
+- Key implementation: `gann-astro-desk/backend/bphs_classical_timing_service.py`,
+  `gann-astro-desk/src/views/BphsClassicalTimingPane.tsx`, and
+  `docs/fields/PFR_V2B_R6_BPHS_T1_CLASSICAL_CALENDAR_TIMING_INSPECTOR.md`.
+  Research boundary: `research_labs/bphs_1899_classical_timing/README.md`.
+- Verification completed: focused backend calendar suite **4/4 passed**;
+  Fields UI suite **8/8 passed**; full frontend `npm test` **35 files,
+  151/151 passed**; full backend `npm run test:backend` **200/200 passed**;
+  `npx oxlint`, TypeScript project check, production `npm run build`, and Rust
+  `cargo check --manifest-path src-tauri/Cargo.toml` passed. No Windows/Android
+  candidate is built by T1.
 
 ## Latest Update - 2026-08-06 (PFR-V2B-R5-F2A-R2 Founder Polarity Review Workbench)
 

@@ -10,6 +10,7 @@ import { FieldsWorkspace } from './views/FieldsWorkspace'
 
 const apiMocks = vi.hoisted(() => ({
   fetchSynchronizedIndependentRange: vi.fn(),
+  fetchBphsClassicalCalendarRange: vi.fn(),
   fetchFxSidePilotStatus: vi.fn(),
   fetchFounderReviewWorkbench: vi.fn(),
   exportFounderReviewPacket: vi.fn(),
@@ -17,6 +18,7 @@ const apiMocks = vi.hoisted(() => ({
 
 vi.mock('./api', () => ({
   fetchSynchronizedIndependentRange: apiMocks.fetchSynchronizedIndependentRange,
+  fetchBphsClassicalCalendarRange: apiMocks.fetchBphsClassicalCalendarRange,
   fetchFxSidePilotStatus: apiMocks.fetchFxSidePilotStatus,
   fetchFounderReviewWorkbench: apiMocks.fetchFounderReviewWorkbench,
   exportFounderReviewPacket: apiMocks.exportFounderReviewPacket,
@@ -84,6 +86,24 @@ const geometryOnlyRange = {
     guardrails: { read_only: true, execution_allowed: false, automatic_order_placement: false, financially_validated: false, acts_as_aspect_confirmation: false, score_aggregation_used: false, market_direction_inferred: false },
   },
 } as unknown as SynchronizedIndependentRange
+
+const bphsCalendarRange = {
+  contract: 'BPHS_CLASSICAL_CALENDAR_RANGE_V1', schemaVersion: 1, rangeStartUtc: startUtc, rangeEndUtc: endUtc,
+  timezone: 'Asia/Kolkata', location: { latitude: 18.5204, longitude: 73.8567 },
+  categoryOrder: ['muhurta', 'tithi', 'nakshatra', 'yoga', 'karana', 'weekday', 'tara'],
+  sourceProfile: { profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1', sourceId: 'BPHS_1899_GOVIND_SHARMA_SHASTRI', edition: '1899', fileSha256: 'SHA', scope: 'Chapter 14', evidenceStatus: 'PARTIAL_SOURCE_PROFILE', classicalCompletenessClaim: false, sourceGaps: ['BPHS_1899_TARA_REFERENCE_AND_MAPPING_PENDING'], interpretation: 'No market meaning.' },
+  engineeringCalculationProfile: 'SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1',
+  intervals: [{ intervalId: 'BPHS_CAL_00001', startUtc, endUtc, categories: {
+    muhurta: { value: 'DAY MUHURTA 01', availability: 'PARTIAL_SOURCE', detail: 'Name pending.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: 'NAME_PENDING' },
+    tithi: { value: 'Shukla 01 Pratipada', availability: 'ENGINEERING_CALCULATED', detail: 'Tithi.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
+    nakshatra: { value: '01 Ashwini pada 1', availability: 'ENGINEERING_CALCULATED', detail: 'Nakshatra.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
+    yoga: { value: '01 Vishkambha', availability: 'ENGINEERING_CALCULATED', detail: 'Yoga.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
+    karana: { value: '01 Kimstughna', availability: 'ENGINEERING_CALCULATED', detail: 'Karana.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
+    weekday: { value: 'Tuesday', availability: 'ENGINEERING_CALCULATED', detail: 'Weekday.', sourceLocator: 'Chapter 14', calculationProfile: 'engineering', dependency: null },
+    tara: { value: 'DEPENDENCY_NOT_READY', availability: 'DEPENDENCY_NOT_READY', detail: 'Reference missing.', sourceLocator: 'Chapter 14', calculationProfile: 'NOT_EVALUATED', dependency: 'TARA_PENDING' },
+  }}],
+  guardrails: { readOnly: true, marketDataRead: false, priceOutcomeRead: false, polarityCatalogueRead: false, pairRelativeFieldPath: false, founderReviewDecisionPath: false, sbcPath: false, autoSuggestPath: false, mlPath: false, executionAllowed: false, automaticOrderPlacement: false, scoreAggregationUsed: false, marketDirectionInferred: false },
+} as const
 
 function renderFields(overrides: Partial<React.ComponentProps<typeof FieldsWorkspace>> = {}) {
   const selected = vi.fn()
@@ -239,5 +259,21 @@ describe('FieldsWorkspace', () => {
     await screen.findByText(/does not receive an automatic FX relative field/i)
     expect(screen.queryByText('USDJPY pair-relative field')).not.toBeInTheDocument()
     expect(apiMocks.fetchSynchronizedIndependentRange).not.toHaveBeenCalled()
+  })
+
+  it('loads neutral BPHS timing only when its separate control is enabled', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    apiMocks.fetchBphsClassicalCalendarRange.mockResolvedValue(bphsCalendarRange)
+    const user = userEvent.setup()
+    renderFields()
+
+    expect(screen.queryByText('BPHS Classical Calendar')).not.toBeInTheDocument()
+    await user.selectOptions(screen.getByLabelText('Classical timing'), 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1')
+    expect(await screen.findByText('BPHS Classical Calendar')).toBeInTheDocument()
+    expect(screen.getAllByText('DEPENDENCY_NOT_READY').length).toBeGreaterThan(0)
+    expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalledWith(expect.objectContaining({
+      rangeStartUtc: startUtc, rangeEndUtc: endUtc, profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1',
+    }))
   })
 })

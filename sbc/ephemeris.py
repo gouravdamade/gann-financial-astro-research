@@ -254,6 +254,34 @@ class SwissEphemerisProvider:
             raise RuntimeError(f"sunrise unavailable for {local_date.isoformat()} at {location}: code {result}")
         return _datetime_from_jd_ut(float(times[0]))
 
+    def sunset_for_local_date(
+        self,
+        local_date: date,
+        location: GeoLocation,
+        settings: AstroSettings,
+    ) -> datetime:
+        """Return the local civil date's sunset for read-only calendar timing.
+
+        This is an astronomy utility only.  Source profiles decide whether a
+        product is permitted to attach any classical interpretation to it.
+        """
+        zone = ZoneInfo(location.timezone)
+        local_midnight = datetime.combine(local_date, time.min, tzinfo=zone)
+        with _EPHEMERIS_LOCK:
+            self._configure(settings, location)
+            result, times = swe.rise_trans(
+                _julian_ut(local_midnight.astimezone(timezone.utc)),
+                swe.SUN,
+                swe.CALC_SET,
+                (float(location.longitude), float(location.latitude), float(location.altitude_m)),
+                0.0,
+                0.0,
+                swe.FLG_SWIEPH,
+            )
+        if int(result) != 0:
+            raise RuntimeError(f"sunset unavailable for {local_date.isoformat()} at {location}: code {result}")
+        return _datetime_from_jd_ut(float(times[0]))
+
     def sunrise_at_or_before(
         self,
         at_utc: datetime,

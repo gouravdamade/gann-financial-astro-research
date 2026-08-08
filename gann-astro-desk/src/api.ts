@@ -59,6 +59,8 @@ import type {
   FounderReviewExportRequest,
   FounderReviewExportResult,
   FounderReviewWorkbench,
+  BphsClassicalCalendarRange,
+  BphsClassicalCalendarRangeRequest,
   FxSidePilotStatus,
   SynchronizedIndependentRange,
   SynchronizedIndependentRangeRequest,
@@ -753,6 +755,25 @@ export async function fetchSynchronizedIndependentRange(
     throw new Error('Synchronized field response violated the research-only guardrails')
   }
   return payload.range
+}
+
+export async function fetchBphsClassicalCalendarRange(
+  input: BphsClassicalCalendarRangeRequest,
+): Promise<BphsClassicalCalendarRange> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ calendar: BphsClassicalCalendarRange }>>(
+      'bphs_classical_calendar_range',
+      { request: input },
+    )
+    if (!payload.ok) throw new Error(payload.error || 'BPHS classical calendar request failed')
+    return payload.calendar
+  }
+  const payload = await request<{ calendar: BphsClassicalCalendarRange }>(
+    '/api/research/bphs/classical-calendar-range',
+    { method: 'POST', body: JSON.stringify(input) },
+  )
+  return payload.calendar
 }
 
 export async function fetchFxSidePilotStatus(): Promise<FxSidePilotStatus> {

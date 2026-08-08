@@ -851,6 +851,28 @@ async fn synchronized_independent_range(
 
 #[cfg(not(mobile))]
 #[tauri::command]
+async fn bphs_classical_calendar_range(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("BPHS classical calendar requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/research/bphs/classical-calendar-range",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("BPHS classical calendar bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 async fn fx_side_pilot_status(
     request: Value,
     state: State<'_, BackendRuntimeState>,
@@ -1124,6 +1146,7 @@ pub fn run() {
             chakra_lab_audit,
             chakra_lab_fixed_phasor,
             synchronized_independent_range,
+            bphs_classical_calendar_range,
             fx_side_pilot_status,
             chakra_lab_timing_profile_admission,
             chakra_lab_timing_source_packet_readiness,
