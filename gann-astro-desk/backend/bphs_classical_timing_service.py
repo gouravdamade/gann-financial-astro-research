@@ -32,6 +32,14 @@ BPHS_CLASSICAL_CALENDAR_PROFILE_ID = "BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1"
 BPHS_SOURCE_ID = "BPHS_1899_GOVIND_SHARMA_SHASTRI"
 BPHS_SOURCE_SHA256 = "BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4"
 ENGINEERING_CALCULATION_PROFILE_ID = "SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1"
+CHAPTER_14_CATEGORY_CONTEXT_LOCATOR = (
+    "BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W (chapter-level calendar-category context only; "
+    "no individual category name or boundary table was page-transcribed for this engineering implementation)."
+)
+TARA_FULL_CHAPTER_AUDIT_LOCATOR = (
+    "BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 full held-witness audit, printed pp. 196-258 / PDF images 679-741; "
+    "Chapter 15 starts at printed p. 259 / PDF image 742."
+)
 REQUEST_KEYS = {
     "rangeStartUtc",
     "rangeEndUtc",
@@ -120,7 +128,8 @@ def _source_profile() -> dict[str, Any]:
         "sourceGaps": [
             "BPHS_1899_PACKET_1W_OTHER_CALENDAR_CATEGORY_TABLES_NOT_TRANSCRIBED",
             "BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED",
-            "BPHS_1899_TARA_NINEFOLD_SEQUENCE_AND_MAPPING_NOT_LOCATED_IN_PACKET_1W",
+            "BPHS_1899_TARA_NINEFOLD_SEQUENCE_NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE",
+            "BPHS_1899_TARA_MAPPING_OPERATOR_NOT_CLOSED",
             "BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED",
         ],
         "sourceFixtures": [{
@@ -227,11 +236,12 @@ class _CalendarCalculator:
         nakshatra = nakshatra_pada(moon)
         local = at_utc.astimezone(self.zone)
         tara_detail = (
-            "Packet 1W does not supply a transcribed ninefold Tara sequence/mapping, and no explicit Tara reference identity contract is configured."
+            "The full held Chapter 14 audit did not locate a complete ninefold Tara sequence or a timestamp-evaluable mapping/operator, "
+            "and no explicit Tara reference identity contract is configured."
         )
         if tara_reference:
             tara_detail = (
-                "A Tara reference was supplied, but Packet 1W does not close the ninefold Tara mapping/operator; "
+                "A Tara reference was supplied, but the full held Chapter 14 audit does not close the ninefold Tara mapping/operator; "
                 "the supplied reference is therefore not evaluated."
             )
         return {
@@ -239,29 +249,41 @@ class _CalendarCalculator:
             "tithi": _category(
                 f"{tithi['paksha']} {tithi['tithi_index']:02d} {tithi['tithi_name']}",
                 availability="ENGINEERING_CALCULATED",
-                detail=f"Sidereal Sun-Moon phase {tithi['phase_angle_deg']:.4f} degrees.",
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+                detail=(
+                    f"Engineering calculation: sidereal Sun-Moon phase {tithi['phase_angle_deg']:.4f} degrees. "
+                    "The source is cited only for chapter-level calendar-category context; this displayed name and boundary were not individually page-transcribed."
+                ),
+                source_locator=CHAPTER_14_CATEGORY_CONTEXT_LOCATOR,
                 calculation=ENGINEERING_CALCULATION_PROFILE_ID,
             ),
             "nakshatra": _category(
                 f"{nakshatra['index']:02d} {nakshatra['name']} pada {nakshatra['pada']}",
                 availability="ENGINEERING_CALCULATED",
-                detail="Moon sidereal nakshatra and pada.",
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+                detail=(
+                    "Engineering calculation: Moon sidereal nakshatra and pada. "
+                    "The source is cited only for chapter-level calendar-category context; this displayed name and boundary were not individually page-transcribed."
+                ),
+                source_locator=CHAPTER_14_CATEGORY_CONTEXT_LOCATOR,
                 calculation=ENGINEERING_CALCULATION_PROFILE_ID,
             ),
             "yoga": _category(
                 f"{yoga['yoga_index']:02d} {yoga['yoga_name']}",
                 availability="ENGINEERING_CALCULATED",
-                detail=f"Sidereal Sun+Moon yoga angle {yoga['yoga_angle_deg']:.4f} degrees.",
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+                detail=(
+                    f"Engineering calculation: sidereal Sun+Moon yoga angle {yoga['yoga_angle_deg']:.4f} degrees. "
+                    "The source is cited only for chapter-level calendar-category context; this displayed name and boundary were not individually page-transcribed."
+                ),
+                source_locator=CHAPTER_14_CATEGORY_CONTEXT_LOCATOR,
                 calculation=ENGINEERING_CALCULATION_PROFILE_ID,
             ),
             "karana": _category(
                 f"{karana['karana_index']:02d} {karana['karana_name']}",
                 availability="ENGINEERING_CALCULATED",
-                detail="Half-tithi calendar category.",
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W / pages 197-236",
+                detail=(
+                    "Engineering calculation: half-tithi calendar category. "
+                    "The source is cited only for chapter-level calendar-category context; this displayed name and boundary were not individually page-transcribed."
+                ),
+                source_locator=CHAPTER_14_CATEGORY_CONTEXT_LOCATOR,
                 calculation=ENGINEERING_CALCULATION_PROFILE_ID,
             ),
             "weekday": _category(
@@ -279,9 +301,13 @@ class _CalendarCalculator:
                 "DEPENDENCY_NOT_READY",
                 availability="DEPENDENCY_NOT_READY",
                 detail=tara_detail,
-                source_locator="BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W; full Tara sequence/mapping not located during source audit.",
+                source_locator=TARA_FULL_CHAPTER_AUDIT_LOCATOR,
                 calculation="NOT_EVALUATED",
-                dependency="BPHS_1899_TARA_NINEFOLD_SEQUENCE_AND_MAPPING_NOT_LOCATED_IN_PACKET_1W; BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED",
+                dependency=(
+                    "BPHS_1899_TARA_NINEFOLD_SEQUENCE_NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE; "
+                    "BPHS_1899_TARA_MAPPING_OPERATOR_NOT_CLOSED; "
+                    "BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED"
+                ),
             ),
         }
 

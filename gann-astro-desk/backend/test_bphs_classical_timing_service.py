@@ -44,6 +44,7 @@ class BphsClassicalTimingServiceTests(unittest.TestCase):
         self.assertEqual(state["tara"]["value"], "DEPENDENCY_NOT_READY")
         self.assertEqual(state["tara"]["availability"], "DEPENDENCY_NOT_READY")
         self.assertIn("TARA_NINEFOLD_SEQUENCE", state["tara"]["dependency"])
+        self.assertIn("TARA_MAPPING_OPERATOR_NOT_CLOSED", state["tara"]["dependency"])
         self.assertIn("TARA_REFERENCE_IDENTITY", state["tara"]["dependency"])
 
     def test_source_closed_muhurta_order_preserves_literal_rows_and_repetitions(self) -> None:
@@ -59,6 +60,10 @@ class BphsClassicalTimingServiceTests(unittest.TestCase):
         self.assertEqual(_muhurta_name("NIGHT", 8), "Rohini")
         self.assertEqual(_muhurta_name("NIGHT", 10), "Hasta")
         self.assertEqual(_muhurta_name("NIGHT", 13), "Hasta")
+        self.assertEqual(fixture["source"]["tableLocator"], "Printed p. 197 / PDF image 680; Chapter 14 commentary and Bhasha enumerate all 15 daytime and 15 nighttime Muhurtas.")
+        self.assertEqual(fixture["tara"]["transcriptionStatus"], "NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE")
+        self.assertEqual(fixture["tara"]["auditLocator"]["printedPagesReviewed"], [196, 258])
+        self.assertEqual(fixture["tara"]["auditLocator"]["pdfImageIndexesReviewed"], [679, 741])
 
     def test_muhurta_fixture_path_supports_collected_sidecar_resources(self) -> None:
         self.assertTrue(_muhurta_fixture_path().is_file())
@@ -87,7 +92,15 @@ class BphsClassicalTimingServiceTests(unittest.TestCase):
         self.assertEqual(state["weekday"]["availability"], "PARTIAL_SOURCE")
         self.assertEqual(state["weekday"]["dependency"], "BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED")
         self.assertEqual(state["tara"]["value"], "DEPENDENCY_NOT_READY")
-        self.assertIn("Packet 1W", state["tara"]["detail"])
+        self.assertIn("full held Chapter 14 audit", state["tara"]["detail"])
+
+    def test_engineering_calendar_categories_do_not_claim_individual_page_transcription(self) -> None:
+        state = build_bphs_classical_calendar_range(self.request())["intervals"][0]["categories"]
+        for category in ("tithi", "nakshatra", "yoga", "karana"):
+            with self.subTest(category=category):
+                self.assertEqual(state[category]["availability"], "ENGINEERING_CALCULATED")
+                self.assertIn("chapter-level calendar-category context", state[category]["sourceLocator"])
+                self.assertIn("not individually page-transcribed", state[category]["detail"])
 
     def test_is_deterministic_and_has_no_market_or_direction_path(self) -> None:
         first = build_bphs_classical_calendar_range(self.request())

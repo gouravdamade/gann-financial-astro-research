@@ -16,18 +16,23 @@ missing commentary or Bhasha row.
 
 The profile remains intentionally partial. Packet 1W does not close a
 weekday/vāra ownership boundary, so the displayed civil-midnight weekday is
-explicit engineering display data. The audit also did not locate a complete
-ninefold Tara sequence/mapping in the held Packet 1W; Tara remains unavailable
-until both a source-closed mapping and an explicit reference identity contract
-exist. Other calendar-category tables have not been transcribed as source
-doctrine.
+explicit engineering display data. A P2 reconciliation re-audited the full
+held Chapter 14 range, printed pages 196-258 / PDF images 679-741; no complete
+ninefold Tara sequence or timestamp-evaluable mapping/operator was located.
+Chapter 15 begins on printed page 259 / PDF image 742. Tara therefore remains
+unavailable until a source-closed mapping and an explicit reference identity
+contract both exist. Other calendar-category tables have not been transcribed
+as source doctrine.
 
 The displayed boundaries come from the separately labelled engineering profile
 `SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1`. That computes sidereal
 Sun/Moon categories and local sunrise/sunset; it does not claim that an
-engineering formula is itself a literal BPHS rule. The source-closed Muhurta
-name attaches to this separately labelled sunrise/sunset segment; its boundary
-calculation remains engineering-labelled.
+engineering formula is itself a literal BPHS rule. Tithi, Nakshatra, Yoga and
+Karana are cited only as chapter-level calendar-category context in this
+profile: the displayed engineering names and boundaries are not individually
+page-transcribed from BPHS. The source-closed Muhurta name attaches to this
+separately labelled sunrise/sunset segment; its boundary calculation remains
+engineering-labelled.
 
 There is no path from this profile to price, future returns, polarity, the
 pair-relative field, SBC, Founder Review decisions, Auto Suggest, ML, MT5, or

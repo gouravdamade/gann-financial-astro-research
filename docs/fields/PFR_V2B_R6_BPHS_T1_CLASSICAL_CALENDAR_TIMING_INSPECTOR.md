@@ -47,9 +47,17 @@ weekday ownership. The lane is therefore labelled `Civil weekday (engineering)`
 with `BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED`, not displayed as literal BPHS
 doctrine.
 
-Tara is explicitly `DEPENDENCY_NOT_READY`: the Packet 1W audit did not locate a
-complete ninefold sequence/mapping operator and no reference identity contract
-exists. No missing doctrine is filled by an LLM or a modern Panchanga source.
+Tara is explicitly `DEPENDENCY_NOT_READY`: P2 re-audited the complete held
+Chapter 14 range (printed pp. 196-258 / PDF images 679-741; Chapter 15 begins
+at printed p. 259 / PDF image 742) and did not locate a complete ninefold
+sequence or a timestamp-evaluable mapping/operator. No reference identity
+contract exists. No missing doctrine is filled by an LLM or a modern Panchanga
+source.
+
+Tithi, Nakshatra, Yoga and Karana remain `ENGINEERING_CALCULATED`. The source
+citation for those lanes is intentionally only chapter-level calendar-category
+context. It does not claim that each displayed name or transition boundary has
+been individually page-transcribed from BPHS.
 
 ## Guardrails
 

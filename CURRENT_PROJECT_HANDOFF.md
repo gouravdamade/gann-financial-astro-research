@@ -1,8 +1,38 @@
 # Current Project Handoff
 
-Last updated: 2026-08-08 IST
+Last updated: 2026-08-09 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-09 (PFR-V2B-R6-BPHS-T1R-P2 Provenance Reconciliation Only)
+
+- Re-opened the held original 1899 BPHS Chapter 14 witness before touching any
+  implementation. The complete 15 daytime + 15 nighttime Muhurta facsimile is
+  confirmed at **printed page 197 / PDF image 680**. Printed p. 196 / image 679
+  is the Chapter-14 lead-in/root-text continuation; p. 198 / image 681 continues
+  the chapter but is not the complete source table. The existing 30 source names,
+  order, repetitions, and literal nighttime `Uttara` remain unchanged.
+- Re-audited the full original held Chapter 14 range: printed pp. **196-258** /
+  PDF images **679-741**. Printed p. 259 / PDF image 742 begins Chapter 15. No
+  complete ninefold Tara sequence or timestamp-evaluable mapping/operator was
+  located in that original range. The prior wording has been corrected from a
+  narrow Packet-1W absence claim to a full-held-witness finding. Tara remains
+  `DEPENDENCY_NOT_READY`; no external Panchanga convention, inferred reference,
+  or modern formula was introduced.
+- Tithi, Nakshatra, Yoga, and Karana remain explicitly
+  `ENGINEERING_CALCULATED` under
+  `SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1`. Their BPHS citation is now
+  clearly limited to chapter-level category context, not individual
+  page-transcription of a live name or boundary. Civil weekday remains
+  `PARTIAL_SOURCE` and its sunrise/day ownership is still intentionally open.
+- Added `docs/fields/PFR_V2B_R6_BPHS_T1R_P2_PROVENANCE_RECONCILIATION.md` and
+  updated the minimal fixture, backend provenance payload, tests, and research
+  notes only. No polarity, pair field, SBC, review decision, score, market data,
+  LLM, Auto Suggest, MT5, or execution behavior changed or was enabled.
+- Verification: focused BPHS backend suite **10/10 passed**. Because the
+  sidecar-visible fixture and backend provenance strings changed, build a new
+  founder-inspection candidate after committing this bounded correction; it must
+  not overwrite `0.10.39-pfr-v2b-r6-bphs-t1r-p1` and remains unaccepted.
 
 ## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1R-P1 Founder-Inspection Candidate)
 

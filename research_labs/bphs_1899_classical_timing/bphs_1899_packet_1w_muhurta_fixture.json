@@ -75,9 +75,14 @@
     {"index": 15, "name": "Swati"}
   ],
   "tara": {
-    "transcriptionStatus": "NOT_LOCATED_IN_HELD_PACKET_1W",
+    "transcriptionStatus": "NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE",
     "sequence": null,
     "operator": null,
-    "notes": "The held Chapter 14 Packet 1W audit did not locate a complete ninefold Tara sequence or mapping operator. No external Panchanga formula is imported."
+    "auditLocator": {
+      "printedPagesReviewed": [196, 258],
+      "pdfImageIndexesReviewed": [679, 741],
+      "nextChapterLocator": "Printed p. 259 / PDF image 742 begins Chapter 15."
+    },
+    "notes": "The held original Chapter 14 witness was re-audited across printed pp. 196-258 / PDF images 679-741. It did not locate a complete ninefold Tara sequence or a mapping/operator sufficient to evaluate a timestamp. A translated-ledger locator referring to a different split/page scheme is not substituted for this original-witness finding. No external Panchanga formula is imported."
   }
 }
