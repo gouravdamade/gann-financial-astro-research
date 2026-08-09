@@ -33,6 +33,26 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   sidecar-visible fixture and backend provenance strings changed, build a new
   founder-inspection candidate after committing this bounded correction; it must
   not overwrite `0.10.39-pfr-v2b-r6-bphs-t1r-p1` and remains unaccepted.
+- Built the new immutable candidate
+  `0.10.40-pfr-v2b-r6-bphs-t1r-p2` at
+  `D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.40-pfr-v2b-r6-bphs-t1r-p2-tauri`.
+  It was built from clean source commit
+  `2a5dc41dd3c2340544948d723d64b035d4e20bac`; portable SHA-256 is
+  `E0AD35EFC4920DC682C82B17B1016EE56F376B95D779237934B692D7B2C05FD7` and
+  installer SHA-256 is
+  `869D2C5768277B6B4455E725C5AF27BA76CAC8E779312ABC898F14E0FBD5E186`.
+  Two portable soak runs passed health, guarded sidecar recovery on the same
+  port, layout recovery, and clean shutdown. A direct packaged BPHS endpoint
+  probe returned the corrected printed-p.197/PDF-680 locator, a
+  source-transcribed Muhurta value, `DEPENDENCY_NOT_READY` Tara, and execution
+  false. This is **not founder accepted**.
+- Packaging verification also exposed an unrelated pre-existing full-backend
+  regression: **206 tests ran; 7 Founder Review workbench tests error** because
+  older USD packet manifests name `08DB...` while the unchanged committed packet
+  bytes hash to `0484...`. P2 did not touch either the packets or their
+  manifests. The focused BPHS suite, frontend lint/build, and Rust checks remain
+  green. Record and repair that integrity mismatch only in a separately scoped
+  milestone.
 
 ## Latest Update - 2026-08-08 (PFR-V2B-R6-BPHS-T1R-P1 Founder-Inspection Candidate)
 
