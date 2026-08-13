@@ -36,6 +36,12 @@ class BphsClassicalTimingServiceTests(unittest.TestCase):
             self.assertEqual(left["endUtc"], right["startUtc"])
             self.assertLess(left["startUtc"], left["endUtc"])
 
+    def test_rejects_an_interactive_range_longer_than_the_founder_approved_14_days(self) -> None:
+        payload = self.request()
+        payload["rangeEndUtc"] = "2025-04-15T00:00:01Z"
+        with self.assertRaisesRegex(ValueError, "BPHS_INTERACTIVE_RESEARCH_WINDOW_EXCEEDS_14_DAYS"):
+            build_bphs_classical_calendar_range(payload)
+
     def test_all_required_categories_and_explicit_tara_dependency_are_present(self) -> None:
         result = build_bphs_classical_calendar_range(self.request())
         state = result["intervals"][0]["categories"]

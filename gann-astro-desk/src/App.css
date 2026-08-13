@@ -6761,6 +6761,9 @@ html.android-runtime .loading-state {
   scrollbar-color: #43515d #10151a;
 }
 .fields-workspace-header {
+  position: sticky;
+  top: 0;
+  z-index: 18;
   min-height: 58px;
   display: flex;
   align-items: center;
@@ -6769,16 +6772,28 @@ html.android-runtime .loading-state {
   padding: 10px 14px;
   border-bottom: 1px solid #313c46;
   background: #131a21;
+  box-shadow: 0 5px 12px rgb(3 7 10 / 45%);
 }
 .fields-workspace-header > div:first-child { display: flex; align-items: center; gap: 9px; color: #7fc8d8; }
 .fields-workspace-header > div:first-child > div { display: grid; gap: 3px; }
 .fields-workspace-header strong { color: #e3ebee; font-size: 13px; }
 .fields-workspace-header span { color: #8999a6; font-size: 9px; }
 .fields-workspace-controls { display: flex; flex-wrap: wrap; align-items: end; justify-content: end; gap: 8px; }
+.fields-research-window-controls { display: flex; flex: 1 1 430px; align-items: center; flex-wrap: wrap; justify-content: end; gap: 5px; min-width: min(100%, 330px); }
+.fields-research-window-controls button { min-height: 28px; padding: 0 8px; border: 1px solid #4d6671; border-radius: 3px; background: #152931; color: #c4dce4; cursor: pointer; font-size: 8px; }
+.fields-research-window-controls button:disabled { cursor: default; opacity: .48; }
+.fields-research-window-controls span { min-width: 228px; color: #a9bbc3; font: 8px/1.25 Consolas, monospace; text-align: center; }
+.fields-load-crosshair-window { border-color: #6c9d8e !important; background: #17342d !important; color: #c5e8d7 !important; }
 .fields-founder-review-button { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 0 9px; border: 1px solid #4a8291; border-radius: 3px; background: #17313b; color: #c5e6ee; cursor: pointer; font-size: 8px; }
 .fields-founder-review-button:disabled { cursor: default; opacity: .65; }
 .fields-workspace-controls label { display: grid; gap: 3px; color: #82919c; font-size: 8px; }
 .fields-workspace-controls select { min-height: 28px; min-width: 210px; border: 1px solid #3a4650; border-radius: 3px; background: #111820; color: #c8d8df; font-size: 9px; }
+.fields-classical-timing-toggle { grid-auto-flow: column; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 7px !important; min-height: 28px; padding: 4px 8px; border: 1px solid #4d6671; border-radius: 3px; background: #12232b; color: #bdd7de !important; cursor: pointer; }
+.fields-classical-timing-toggle:has(input:checked) { border-color: #70b8a1; background: #173329; }
+.fields-classical-timing-toggle input { width: 14px; height: 14px; margin: 0; accent-color: #71c6a8; cursor: pointer; }
+.fields-classical-timing-toggle span { display: grid; gap: 1px; white-space: nowrap; }
+.fields-classical-timing-toggle strong { color: #e0eaed; font-size: 8px; }
+.fields-classical-timing-toggle small { color: #8fa6ae; font-size: 7px; }
 .fields-mode-switch { display: flex; min-height: 28px; overflow: hidden; border: 1px solid #38444f; border-radius: 3px; }
 .fields-mode-switch button { min-width: 74px; border: 0; border-right: 1px solid #38444f; background: #182029; color: #899aa5; cursor: pointer; font-size: 8px; }
 .fields-mode-switch button:last-child { border-right: 0; }
@@ -6899,6 +6914,8 @@ html.android-runtime .loading-state {
 @media (max-width: 760px) {
   .fields-workspace-header { align-items: flex-start; flex-direction: column; }
   .fields-workspace-controls { width: 100%; justify-content: start; }
+  .fields-research-window-controls { justify-content: start; }
+  .fields-research-window-controls span { min-width: 0; flex: 1 1 210px; text-align: left; }
   .fields-workspace-controls select { min-width: min(100%, 260px); }
   .fields-price-context { min-height: 500px; grid-template-rows: 38px minmax(460px, 1fr); }
   .fields-price-chart, .fields-price-chart > .market-chart { min-height: 460px; }

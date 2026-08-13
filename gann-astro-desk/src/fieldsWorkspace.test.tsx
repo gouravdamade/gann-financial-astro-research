@@ -37,6 +37,16 @@ const chart = {
   ],
 } as unknown as ChartPayload
 
+const longChart = {
+  ...chart,
+  candles: [
+    { time: Date.parse('2026-08-01T00:00:00Z') / 1000, open: 150, high: 151, low: 149, close: 150.5 },
+    { time: Date.parse('2026-08-15T00:00:00Z') / 1000, open: 150, high: 151, low: 149, close: 150.5 },
+    { time: Date.parse('2026-08-29T00:00:00Z') / 1000, open: 150, high: 151, low: 149, close: 150.5 },
+    { time: Date.parse('2026-09-01T00:00:00Z') / 1000, open: 150, high: 151, low: 149, close: 150.5 },
+  ],
+} as unknown as ChartPayload
+
 const synchronizedRange = {
   contract: 'SYNCHRONIZED_INDEPENDENT_RANGE_V1',
   schemaVersion: 1,
@@ -154,6 +164,7 @@ function ProfileSwitchHarness() {
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
+  window.sessionStorage.removeItem('gann-astro.fields.bphs-calendar.enabled.v1')
 })
 
 describe('FieldsWorkspace', () => {
@@ -261,7 +272,64 @@ describe('FieldsWorkspace', () => {
     expect(apiMocks.fetchSynchronizedIndependentRange).not.toHaveBeenCalled()
   })
 
-  it('loads neutral BPHS timing only when its separate control is enabled', async () => {
+  it('uses fixed 14-day research pages instead of the broad chart or viewport range', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    renderFields({ chart: longChart, visibleRangeStartUtc: '2026-08-20T00:00:00Z', visibleRangeEndUtc: '2026-08-30T00:00:00Z' })
+
+    await screen.findByText(/Research window 1\/3/)
+    await waitFor(() => expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledWith(expect.objectContaining({
+      rangeStartUtc: '2026-08-01T00:00:00.000Z',
+      rangeEndUtc: '2026-08-15T00:00:00.000Z',
+    })))
+    await user.click(screen.getByRole('button', { name: 'Next 14 days' }))
+    await waitFor(() => expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledWith(expect.objectContaining({
+      rangeStartUtc: '2026-08-15T00:00:00.000Z',
+      rangeEndUtc: '2026-08-29T00:00:00.000Z',
+    })))
+    await user.click(screen.getByRole('button', { name: 'Next 14 days' }))
+    await screen.findByText(/Research window 3\/3/)
+    expect(screen.getByRole('button', { name: 'Next 14 days' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Previous 14 days' })).toBeEnabled()
+  })
+
+  it('offers an explicit crosshair page load without auto-paging on crosshair movement', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    renderFields({ chart: longChart, crosshairTimestampUtc: '2026-08-20T00:00:00Z' })
+
+    await screen.findByText(/Research window 1\/3/)
+    await waitFor(() => expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(1))
+    await user.click(screen.getByRole('button', { name: 'Load window containing crosshair' }))
+    await screen.findByText(/Research window 2\/3/)
+    await waitFor(() => expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(2))
+  })
+
+  it('discards a late prior-page response after the research page changes', async () => {
+    let resolveFirst!: (value: SynchronizedIndependentRange) => void
+    apiMocks.fetchSynchronizedIndependentRange
+      .mockImplementationOnce(() => new Promise<SynchronizedIndependentRange>((resolve) => { resolveFirst = resolve }))
+      .mockResolvedValueOnce(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    renderFields({ chart: longChart })
+
+    await waitFor(() => expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(1))
+    await user.click(screen.getByRole('button', { name: 'Next 14 days' }))
+    await waitFor(() => expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(2))
+    await screen.findByText('SBC atomic field')
+    resolveFirst(geometryOnlyRange)
+    await new Promise((resolve) => window.setTimeout(resolve, 0))
+    expect(screen.getByText('SBC atomic field')).toBeInTheDocument()
+    expect(screen.queryByText(/GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED/)).not.toBeInTheDocument()
+  })
+
+  it('loads neutral BPHS timing only when its separate persistent switch is enabled', async () => {
     apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
     apiMocks.fetchBphsClassicalCalendarRange.mockResolvedValue(bphsCalendarRange)
@@ -269,7 +337,10 @@ describe('FieldsWorkspace', () => {
     renderFields()
 
     expect(screen.queryByText('BPHS Classical Calendar')).not.toBeInTheDocument()
-    await user.selectOptions(screen.getByLabelText('Classical timing'), 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1')
+    const timingSwitch = screen.getByRole('switch', { name: /BPHS Calendar/i })
+    expect(timingSwitch).not.toBeChecked()
+    await user.click(timingSwitch)
+    expect(timingSwitch).toBeChecked()
     expect(await screen.findByText('BPHS Classical Calendar')).toBeInTheDocument()
     expect(screen.getAllByText('DEPENDENCY_NOT_READY').length).toBeGreaterThan(0)
     expect(screen.getAllByText(/DAY MUHURTA 01 - Ardra/).length).toBeGreaterThan(0)
@@ -277,5 +348,6 @@ describe('FieldsWorkspace', () => {
     expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalledWith(expect.objectContaining({
       rangeStartUtc: startUtc, rangeEndUtc: endUtc, profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1',
     }))
+    expect(window.sessionStorage.getItem('gann-astro.fields.bphs-calendar.enabled.v1')).toBe('true')
   })
 })

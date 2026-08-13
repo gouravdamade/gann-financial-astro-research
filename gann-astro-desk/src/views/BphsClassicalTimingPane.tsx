@@ -77,6 +77,7 @@ export function BphsClassicalTimingPane(props: Props) {
   const [error, setError] = useState('')
   const [selected, setSelected] = useState<DisplaySegment | null>(null)
   const sequence = useRef(0)
+  const cache = useRef(new Map<string, BphsClassicalCalendarRange>())
   const signature = `${props.rangeStartUtc}:${props.rangeEndUtc}:${props.timezone}:${props.latitude}:${props.longitude}`
 
   useEffect(() => {
@@ -84,6 +85,12 @@ export function BphsClassicalTimingPane(props: Props) {
     sequence.current = request
     setBusy(true)
     setError('')
+    const cached = cache.current.get(signature)
+    if (cached) {
+      setCalendar(cached)
+      setBusy(false)
+      return
+    }
     void fetchBphsClassicalCalendarRange({
       rangeStartUtc: props.rangeStartUtc,
       rangeEndUtc: props.rangeEndUtc,
@@ -92,7 +99,10 @@ export function BphsClassicalTimingPane(props: Props) {
       longitude: props.longitude,
       profileId: PROFILE_ID,
     }).then((result) => {
-      if (request === sequence.current) setCalendar(result)
+      if (request === sequence.current) {
+        cache.current.set(signature, result)
+        setCalendar(result)
+      }
     }).catch((caught: unknown) => {
       if (request === sequence.current) {
         setCalendar(null)

@@ -52,6 +52,7 @@ REQUEST_KEYS = {
 CATEGORY_ORDER = ("muhurta", "tithi", "nakshatra", "yoga", "karana", "weekday", "tara")
 _SAMPLE_STEP = timedelta(hours=6)
 _REFINEMENT_RESOLUTION = timedelta(seconds=1)
+MAX_INTERACTIVE_RESEARCH_WINDOW = timedelta(days=14)
 _MUHURTA_FIXTURE_RELATIVE = Path("research_labs") / "bphs_1899_classical_timing" / "bphs_1899_packet_1w_muhurta_fixture.json"
 _EPHEMERIS_LOCK = RLock()
 
@@ -403,6 +404,11 @@ def build_bphs_classical_calendar_range(payload: Mapping[str, Any]) -> dict[str,
     end = _parse_utc(payload.get("rangeEndUtc"), "rangeEndUtc")
     if end <= start:
         raise ValueError("rangeEndUtc must be later than rangeStartUtc")
+    if end - start > MAX_INTERACTIVE_RESEARCH_WINDOW:
+        raise ValueError(
+            "BPHS_INTERACTIVE_RESEARCH_WINDOW_EXCEEDS_14_DAYS: "
+            "use the shared Fields research-window paging controls"
+        )
     timezone_name = str(payload.get("timezone") or "").strip()
     try:
         ZoneInfo(timezone_name)

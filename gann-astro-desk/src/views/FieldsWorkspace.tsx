@@ -20,8 +20,14 @@ import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
 import { IndependentFieldStack } from './IndependentFieldStack'
 import { FounderReviewWorkbench } from './FounderReviewWorkbench'
 import { BphsClassicalTimingPane } from './BphsClassicalTimingPane'
+import {
+  fieldsResearchWindowFor,
+  isTimestampInsideResearchWindow,
+  researchWindowPageForTimestamp,
+} from '../fieldsResearchWindow'
 
 const BODIES = ['SUN', 'MOON', 'MARS', 'MERCURY', 'JUPITER', 'VENUS', 'SATURN', 'RAHU', 'KETU'] as const
+const CLASSICAL_TIMING_SESSION_KEY = 'gann-astro.fields.bphs-calendar.enabled.v1'
 
 type Props = {
   chart: ChartPayload
@@ -39,38 +45,6 @@ type Props = {
   onSelectFieldInterval: (selection: ResearchFieldIntervalSelection) => void
 }
 
-type FieldRange = {
-  rangeStartUtc: string
-  rangeEndUtc: string
-  signature: string
-  source: 'live chart viewport' | 'loaded chart extent'
-}
-
-function fieldRangeFor(
-  chart: ChartPayload,
-  visibleRangeStartUtc: string | null,
-  visibleRangeEndUtc: string | null,
-): FieldRange | null {
-  if (!chart.candles.length) return null
-  const chartStart = chart.candles[0].time * 1000
-  const chartEnd = chart.candles.at(-1)!.time * 1000
-  const requestedStart = visibleRangeStartUtc ? Date.parse(visibleRangeStartUtc) : Number.NaN
-  const requestedEnd = visibleRangeEndUtc ? Date.parse(visibleRangeEndUtc) : Number.NaN
-  const start = Number.isFinite(requestedStart) ? Math.max(chartStart, requestedStart) : chartStart
-  const end = Number.isFinite(requestedEnd) ? Math.min(chartEnd, requestedEnd) : chartEnd
-  if (end <= start) return null
-  const rangeStartUtc = new Date(start).toISOString()
-  const rangeEndUtc = new Date(end).toISOString()
-  return {
-    rangeStartUtc,
-    rangeEndUtc,
-    signature: `${rangeStartUtc}:${rangeEndUtc}`,
-    source: Number.isFinite(requestedStart) && Number.isFinite(requestedEnd)
-      ? 'live chart viewport'
-      : 'loaded chart extent',
-  }
-}
-
 function istOffsetFromUtc(value: string): string {
   const date = new Date(value)
   return new Date(date.valueOf() + 19_800_000).toISOString().slice(0, 19) + '+05:30'
@@ -80,11 +54,17 @@ function isSupportedFxPair(symbol: string): boolean {
   return /^[A-Z]{6}$/.test(symbol) && symbol.slice(0, 3) === 'USD' && symbol.slice(3) === 'JPY'
 }
 
+function initialClassicalTimingEnabled(): boolean {
+  try {
+    return window.sessionStorage.getItem(CLASSICAL_TIMING_SESSION_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
 export function FieldsWorkspace({
   chart,
   priceChart,
-  visibleRangeStartUtc,
-  visibleRangeEndUtc,
   defaultLatitude,
   defaultLongitude,
   vedhaProfileId,
@@ -102,13 +82,19 @@ export function FieldsWorkspace({
   const [pilotBusy, setPilotBusy] = useState(false)
   const [pilotError, setPilotError] = useState('')
   const [founderReviewOpen, setFounderReviewOpen] = useState(false)
-  const [classicalTimingEnabled, setClassicalTimingEnabled] = useState(false)
+  const [classicalTimingEnabled, setClassicalTimingEnabled] = useState(initialClassicalTimingEnabled)
+  const [researchPageIndex, setResearchPageIndex] = useState(0)
   const requestSequence = useRef(0)
+  const rangeCache = useRef(new Map<string, SynchronizedIndependentRange>())
   const isFxPair = isSupportedFxPair(chart.symbol)
-  const fieldRange = useMemo(
-    () => fieldRangeFor(chart, visibleRangeStartUtc, visibleRangeEndUtc),
-    [chart, visibleRangeEndUtc, visibleRangeStartUtc],
+  const datasetSignature = `${chart.symbol}:${chart.timeframe}:${chart.candles[0]?.time ?? ''}:${chart.candles.at(-1)?.time ?? ''}`
+  const researchWindow = useMemo(
+    () => fieldsResearchWindowFor(chart, researchPageIndex),
+    [chart, researchPageIndex],
   )
+  const crosshairPageIndex = researchWindowPageForTimestamp(chart, crosshairTimestampUtc)
+  const crosshairOutsideResearchWindow = crosshairPageIndex !== null
+    && !isTimestampInsideResearchWindow(researchWindow, crosshairTimestampUtc)
   const visualizationPolicy = visualizationModePolicy(visualizationMode, vedhaProfileId)
   const sourceGaps = sourceGapsForVisualizationMode(visualizationMode, vedhaProfileId)
 
@@ -126,9 +112,9 @@ export function FieldsWorkspace({
   }, [])
 
   const loadRange = useCallback(async () => {
-    if (!fieldRange) {
+    if (!researchWindow) {
       setRange(null)
-      setRangeError('Open Fields from a chart with at least two visible timestamps.')
+      setRangeError('Open Fields from a chart with at least two loaded timestamps.')
       return
     }
     if (!isFxPair) {
@@ -138,10 +124,18 @@ export function FieldsWorkspace({
     }
     const sequence = requestSequence.current + 1
     requestSequence.current = sequence
+    const cacheKey = `${researchWindow.rangeStartUtc}:${researchWindow.rangeEndUtc}:${vedhaProfileId}`
+    const cached = rangeCache.current.get(cacheKey)
+    if (cached) {
+      setRange(cached)
+      setRangeBusy(false)
+      setRangeError('')
+      return
+    }
     setRangeBusy(true)
     setRangeError('')
     const boundaryRequest: ChakraLabRequest = {
-      at: istOffsetFromUtc(fieldRange.rangeStartUtc),
+      at: istOffsetFromUtc(researchWindow.rangeStartUtc),
       timezone: 'Asia/Kolkata',
       latitude: defaultLatitude,
       longitude: defaultLongitude,
@@ -156,16 +150,19 @@ export function FieldsWorkspace({
     }
     try {
       const result = await fetchSynchronizedIndependentRange({
-        rangeStartUtc: fieldRange.rangeStartUtc,
-        rangeEndUtc: fieldRange.rangeEndUtc,
+        rangeStartUtc: researchWindow.rangeStartUtc,
+        rangeEndUtc: researchWindow.rangeEndUtc,
         sideIdentities: ['USD', 'JPY'],
         aspectProfileId: 'ASPECT_STRENGTH_V0',
         sbcRange: {
           instrumentIdentity: `FX:${chart.symbol}`,
-          boundaries: [{ reason: 'rendered chart range start', request: boundaryRequest }],
+          boundaries: [{ reason: 'shared Fields research page start', request: boundaryRequest }],
         },
       })
-      if (sequence === requestSequence.current) setRange(result)
+      if (sequence === requestSequence.current) {
+        rangeCache.current.set(cacheKey, result)
+        setRange(result)
+      }
     } catch (caught) {
       if (sequence === requestSequence.current) {
         setRange(null)
@@ -174,7 +171,7 @@ export function FieldsWorkspace({
     } finally {
       if (sequence === requestSequence.current) setRangeBusy(false)
     }
-  }, [chart.symbol, defaultLatitude, defaultLongitude, fieldRange, isFxPair, vedhaProfileId])
+  }, [chart.symbol, defaultLatitude, defaultLongitude, isFxPair, researchWindow, vedhaProfileId])
 
   useEffect(() => {
     const timer = window.setTimeout(() => { void loadRange() }, 160)
@@ -185,6 +182,18 @@ export function FieldsWorkspace({
     void loadPilotStatus()
   }, [loadPilotStatus])
 
+  useEffect(() => {
+    setResearchPageIndex(0)
+  }, [datasetSignature])
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(CLASSICAL_TIMING_SESSION_KEY, String(classicalTimingEnabled))
+    } catch {
+      // A private or restricted WebView can still use the pane for its current session.
+    }
+  }, [classicalTimingEnabled])
+
   return <section className="fields-workspace" aria-label="Fields workspace">
     <header className="fields-workspace-header">
       <div>
@@ -192,12 +201,23 @@ export function FieldsWorkspace({
         <div><strong>Fields</strong><span>{chart.symbol} {chart.timeframe} | synchronized descriptive research fields</span></div>
       </div>
       <div className="fields-workspace-controls">
+        <div className="fields-research-window-controls" aria-label="Fields research window">
+          <button type="button" onClick={() => setResearchPageIndex((page) => Math.max(0, page - 1))} disabled={!researchWindow || researchWindow.pageIndex === 0}>Previous 14 days</button>
+          <span>{researchWindow ? `Research window ${researchWindow.pageIndex + 1}/${researchWindow.pageCount} | ${researchWindow.rangeStartUtc.slice(0, 10)} to ${researchWindow.rangeEndUtc.slice(0, 10)} | max 14 days` : 'Research window unavailable'}</span>
+          <button type="button" onClick={() => setResearchPageIndex((page) => Math.min((researchWindow?.pageCount ?? 1) - 1, page + 1))} disabled={!researchWindow || researchWindow.isFinalPage}>Next 14 days</button>
+          {crosshairOutsideResearchWindow ? <button type="button" className="fields-load-crosshair-window" onClick={() => {
+            if (crosshairPageIndex !== null) setResearchPageIndex(crosshairPageIndex)
+          }}>Load window containing crosshair</button> : null}
+        </div>
         <button type="button" className="fields-founder-review-button" onClick={() => setFounderReviewOpen(true)} disabled={founderReviewOpen}><ClipboardCheck size={13} /> Founder Review</button>
-        <label>Classical timing
-          <select value={classicalTimingEnabled ? 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1' : 'OFF'} onChange={(event) => setClassicalTimingEnabled(event.target.value === 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1')}>
-            <option value="OFF">Off</option>
-            <option value="BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1">BPHS 1899 Research</option>
-          </select>
+        <label className="fields-classical-timing-toggle">
+          <input
+            type="checkbox"
+            role="switch"
+            checked={classicalTimingEnabled}
+            onChange={(event) => setClassicalTimingEnabled(event.target.checked)}
+          />
+          <span><strong>BPHS Calendar</strong><small>1899 Research</small></span>
         </label>
         <label>Source profile
           <select value={vedhaProfileId} onChange={(event) => onVedhaProfileIdChange(event.target.value as ChakraLabRequest['vedhaProfileId'])}>
@@ -222,7 +242,7 @@ export function FieldsWorkspace({
       <div><b>Instrument</b><span>{chart.symbol} {isFxPair ? 'FX base/quote' : 'single instrument'}</span></div>
       <div><b>Mode</b><span>{visualizationPolicy.label}</span></div>
       <div><b>Chart identities</b><span>{isFxPair ? 'USD and JPY founder-approved research hypotheses' : 'No FX side identity required'}</span></div>
-      <div><b>Range</b><span>{fieldRange?.source ?? 'No usable range'}</span></div>
+      <div><b>Research range</b><span>{researchWindow ? 'Shared 14-day Fields page; price viewport remains visual only' : 'No usable loaded chart range'}</span></div>
     </section>
 
     <section className="fields-price-context" aria-label="Synchronized price chart">
@@ -233,7 +253,7 @@ export function FieldsWorkspace({
     <section className="fields-panes" aria-label="Synchronized independent fields">
       <IndependentFieldStack
         range={range}
-        rangeSource={fieldRange?.source ?? null}
+        rangeSource={researchWindow ? 'shared 14-day Fields research window' : null}
         busy={rangeBusy}
         error={rangeError}
         onLoad={() => void loadRange()}
@@ -249,9 +269,9 @@ export function FieldsWorkspace({
       />
     </section>
 
-    {classicalTimingEnabled && fieldRange ? <BphsClassicalTimingPane
-      rangeStartUtc={fieldRange.rangeStartUtc}
-      rangeEndUtc={fieldRange.rangeEndUtc}
+    {classicalTimingEnabled && researchWindow ? <BphsClassicalTimingPane
+      rangeStartUtc={researchWindow.rangeStartUtc}
+      rangeEndUtc={researchWindow.rangeEndUtc}
       timezone="Asia/Kolkata"
       latitude={defaultLatitude}
       longitude={defaultLongitude}

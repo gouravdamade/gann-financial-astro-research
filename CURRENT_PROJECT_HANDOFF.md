@@ -4,6 +4,49 @@ Last updated: 2026-08-14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P2R1 Shared 14-Day Fields Window)
+
+- Implemented the founder-approved maximum **14-calendar-day**, half-open
+  shared Fields research window. It is anchored to the loaded chart-data start
+  and advances in deterministic non-overlapping pages. The broad price chart
+  remains visual context only; it no longer expands the expensive Fields
+  calculation range.
+- The same current research page now drives the USD side field, JPY side field,
+  pair-relative field, independent SBC request/availability lane, and the
+  optional BPHS Classical Calendar. Fields has explicit Previous/Next 14-day
+  buttons, a page-count/date label, and `Load window containing crosshair`.
+  Crosshair movement alone does not page or start requests. Completed exact
+  page/profile results cache in the current session; request sequencing
+  discards a late prior-page response.
+- The BPHS endpoint now fails before Swiss-Ephemeris work for a direct request
+  longer than fourteen days with
+  `BPHS_INTERACTIVE_RESEARCH_WINDOW_EXCEEDS_14_DAYS`. The lower-level
+  synchronized-range compiler was audited: its production frontend caller is
+  Fields, so the explicit interactive page bounds Fields without silently
+  constraining unrelated direct/batch use.
+- Made the BPHS control discoverable: the Fields header remains sticky while
+  scrolling and its explicit `BPHS Calendar / 1899 Research` switch persists
+  for the desktop session. The calendar remains entirely separate from the SBC
+  profile control.
+- Recorded the founder's successful 7-day physical BPHS test and accepted
+  source/engineering semantics plus the 14-day product policy in
+  `docs/fields/PFR_V2B_R6_BPHS_T1_FOUNDER_ACCEPTANCE_20260814.md`. The old
+  unbounded `0.10.40` behavior is rejected. The new package remains pending
+  physical founder verification.
+- Development-sidecar timings: BPHS 1/7/14 days completed in 0.209/1.044/2.160
+  seconds; the full shared Fields request completed in 7.543/7.598/7.642
+  seconds. These are implementation measurements, not packaged founder proof.
+- Verification completed: focused Fields/window tests **13/13**; focused BPHS
+  plus synchronized-range backend tests **15/15**; full frontend **36 files,
+  156 tests**; Oxlint and production build; full backend **208/208**; Cargo
+  format and check. The previously documented seven Founder Review packet-hash
+  errors did not reproduce on current master, so no separate integrity repair
+  was needed and no review packet/manifests were changed.
+- This milestone changes no BPHS source output, Tara state, polarity, SBC
+  doctrine/profile, price interpretation, pair/SBC fusion, Founder Review
+  decision, Auto Suggest, ML, MT5, or execution capability. Execution remains
+  disabled.
+
 ## Latest Update - 2026-08-13 (Desktop Black-Screen Recovery)
 
 - Investigated a founder-reported all-black native application window rather than
