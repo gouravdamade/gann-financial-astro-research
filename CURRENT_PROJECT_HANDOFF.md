@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-08-13 IST
+Last updated: 2026-08-14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -39,6 +39,22 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - This is a desktop rendering/recovery change only. No doctrine, polarity,
   SBC, Fields, BPHS, Auto Suggest, MT5 execution, or research gate changed;
   execution remains disabled.
+- Packaged the clean immutable founder-inspection candidate
+  `0.10.44-black-screen-recovery` from exact source commit
+  `efa3e2876417f1dee8e589301be5cf415ee10e5c`:
+  - portable: `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.44-black-screen-recovery-tauri\GannAstroDesk.exe`;
+  - installer: `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.44-black-screen-recovery-tauri\Gann Astro Desk_0.10.44-black-screen-recovery_x64-setup.exe`;
+  - portable SHA-256:
+    `C5C2F3E43A1DC3EB7635317249B69E7FC0402F01218EB339F54C1AB014EE0F41`;
+  - installer SHA-256:
+    `AF8F2F717D9693F8F00EC926A2DD6B438CD5819402A729D2C754D5E910D90D40`.
+- Two isolated portable smokes passed. Each verified backend health, deliberate
+  sidecar restart/recovery on the same port, layout recovery, disabled
+  execution, and clean descendant shutdown. The optional candlestick corpus was
+  not configured in the isolated profiles, which is an explicitly safe deferred
+  check. The exact packaged window was also captured visibly rendering its full
+  chart workspace at
+  `D:\GannFinancialAstro\soak\window_captures_20260814\candidate_01044_visual.png`.
 
 ## Latest Update - 2026-08-13 (Corrected Chart Generation Worker Recovery)
 
