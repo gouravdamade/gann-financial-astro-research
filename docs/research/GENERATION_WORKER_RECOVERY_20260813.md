@@ -54,3 +54,12 @@ Focused worker and real artifact-generation tests cover the new heartbeat,
 PyInstaller isolation environment, private worker input handle, and the Windows
 progress-lock fallback. A replacement Windows candidate is required before desktop
 use because previously installed executables cannot receive a source-only fix.
+
+## Packaged Verification
+
+Candidate `0.10.43-generation-progress-lock-recovery` was built from clean source
+commit `a189b762f415b2797158421db937a9a85ce0eafe`. With the sidecar's managed
+stdin pipe deliberately present, the exact 10 by 10 entity grid and four aspect
+families completed in 13.2 seconds: 43 events, 34 SR touches, and successful
+artifact activation. Two separate portable smoke launches also passed backend
+health checks with execution remaining disabled.

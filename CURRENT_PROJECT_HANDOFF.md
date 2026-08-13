@@ -48,6 +48,16 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   assertions. A new immutable desktop candidate must be built as
   `0.10.43-generation-progress-lock-recovery` and pass the full real packaged
   job before retrying generation in the UI.
+- Candidate verification completed from clean source commit
+  `a189b762f415b2797158421db937a9a85ce0eafe`:
+  - portable: `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.43-generation-progress-lock-recovery-tauri\GannAstroDesk.exe`;
+  - installer: `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.43-generation-progress-lock-recovery-tauri\Gann Astro Desk_0.10.43-generation-progress-lock-recovery_x64-setup.exe`;
+  - the exact isolated packaged sidecar scenario, including the sidecar stdin
+    pipe, completed the 400-combination job in **13.2 seconds**, generated
+    **43 events** and **34 SR touches**, and activated artifact
+    `tn_48dbde130b244ba9b7ff05b16149e5d4` in the isolated verification state;
+  - two portable application smoke launches passed backend health with execution
+    still disabled.
 
 ## Latest Update - 2026-08-09 (PFR-V2B-R6-BPHS-T1R-P2 Provenance Reconciliation Only)
 
