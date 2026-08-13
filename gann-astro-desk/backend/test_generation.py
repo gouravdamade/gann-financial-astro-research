@@ -241,10 +241,56 @@ class GenerationJobTests(unittest.TestCase):
         self.assertEqual(popen.call_args.args[0], command)
         self.assertEqual(popen.call_args.kwargs["cwd"], manager.project_root)
         self.assertEqual(popen.call_args.kwargs["stderr"], subprocess.STDOUT)
+        self.assertEqual(popen.call_args.kwargs["env"]["PYINSTALLER_RESET_ENVIRONMENT"], "1")
         self.assertIn(
             subprocess.list2cmdline(command),
             log_path.read_text(encoding="utf-8"),
         )
+
+    def test_event_progress_updates_the_running_job_without_waiting_for_completion(self) -> None:
+        manager = GenerationJobManager(self.repository, autostart=False)
+        log_path = self.paths.artifacts_dir / "event_progress.log"
+        progress_path = self.paths.artifacts_dir / "events.progress.json"
+        progress_path.parent.mkdir(parents=True, exist_ok=True)
+        progress_path.write_text(
+            json.dumps(
+                {
+                    "contract": "CORRECTED_TN_EVENT_PROGRESS_V1",
+                    "phase": "aspect_windows",
+                    "completed": 25,
+                    "total": 100,
+                    "transitBody": "MOON",
+                    "natalBody": "VENUS",
+                    "aspect": "square",
+                }
+            ),
+            encoding="utf-8",
+        )
+        process = mock.Mock()
+        process.poll.side_effect = [None, 0]
+        process.returncode = 0
+        try:
+            with (
+                mock.patch("generation.subprocess.Popen", return_value=process),
+                mock.patch.object(manager, "_update_job") as update_job,
+                mock.patch("generation.time.sleep"),
+            ):
+                manager._run_command(
+                    "progress-job",
+                    ["python", "worker.py"],
+                    log_path,
+                    progress_path=progress_path,
+                    progress_start=10,
+                    progress_span=42,
+                    stage="events",
+                )
+        finally:
+            manager.stop()
+
+        update_job.assert_called_once()
+        self.assertEqual(update_job.call_args.kwargs["stage"], "events")
+        self.assertEqual(update_job.call_args.kwargs["progress"], 20.5)
+        self.assertIn("25/100", update_job.call_args.kwargs["message"])
 
     def test_frozen_worker_command_targets_the_packaged_executable(self) -> None:
         manager = GenerationJobManager(self.repository, autostart=False)

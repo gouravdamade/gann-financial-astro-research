@@ -6,6 +6,7 @@ from build_corrected_natal_event_source import (
     parse_entities,
     reference_timestamp,
     stable_event_id,
+    write_progress,
 )
 from financial_astro_ephemeris import configure_ephemeris, fetch_planetary_longitude_single
 
@@ -45,3 +46,24 @@ def test_event_id_is_scoped_and_role_ordered() -> None:
 
     assert ASTRONOMY_CONTRACT.startswith("RAMAN_SWISSEPH_SINGLE_SIDEREAL_")
     assert forward != reversed_roles
+
+
+def test_progress_file_is_atomic_and_contains_only_generator_status(tmp_path) -> None:
+    path = tmp_path / "events.progress.json"
+
+    write_progress(
+        path,
+        phase="aspect_windows",
+        completed=12,
+        total=400,
+        transit_body="MOON",
+        natal_body="VENUS",
+        aspect="square",
+    )
+
+    payload = __import__("json").loads(path.read_text(encoding="utf-8"))
+    assert payload["contract"] == "CORRECTED_TN_EVENT_PROGRESS_V1"
+    assert payload["completed"] == 12
+    assert payload["total"] == 400
+    assert payload["transitBody"] == "MOON"
+    assert not (tmp_path / "events.progress.json.tmp").exists()

@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 import numpy as np
 import pandas as pd
@@ -98,6 +98,14 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path(r"D:\PycharmProjects\astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet"),
     )
+    parser.add_argument(
+        "--progress-file",
+        type=Path,
+        help=(
+            "Optional JSON heartbeat written while event combinations are compiled. "
+            "It contains only generator progress, never market outcomes."
+        ),
+    )
     parser.add_argument("--overwrite", action="store_true")
     return parser.parse_args()
 
@@ -187,6 +195,39 @@ def parse_sr_config_json(value: str) -> dict[str, Any]:
         "moon_factor": moon_factor,
         "band_pct": band_pct,
     }
+
+
+def write_progress(
+    path: Path | None,
+    *,
+    phase: str,
+    completed: int,
+    total: int,
+    transit_body: str | None = None,
+    natal_body: str | None = None,
+    aspect: str | None = None,
+) -> None:
+    """Atomically publish generator-only progress for the desktop job manager."""
+
+    if path is None:
+        return
+    payload = {
+        "contract": "CORRECTED_TN_EVENT_PROGRESS_V1",
+        "phase": str(phase),
+        "completed": max(0, int(completed)),
+        "total": max(0, int(total)),
+        "transitBody": str(transit_body or ""),
+        "natalBody": str(natal_body or ""),
+        "aspect": str(aspect or ""),
+        "updatedAtUtc": pd.Timestamp.now(tz="UTC").isoformat(),
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")),
+        encoding="utf-8",
+    )
+    temporary.replace(path)
 
 
 def circular_average_frame(frame: pd.DataFrame) -> pd.Series:
@@ -373,11 +414,18 @@ def build_event_frame(
     interval: str,
     reference_metadata: dict[str, Any],
     min_window_minutes: float,
+    progress_callback: Callable[[str, int, int, str | None, str | None, str | None], None]
+    | None = None,
 ) -> tuple[pd.DataFrame, dict[str, float]]:
+    total_combinations = len(transit_entities) * len(natal_entities) * len(aspects)
+    if progress_callback is not None:
+        progress_callback("ephemeris", 0, total_combinations, None, None, None)
     transit_map, transit_planet_map = entity_series_map(transit_entities, timestamps)
     natal_map, natal_planets = natal_entity_map(natal_entities, natal_timestamp)
     natal_snapshot_json = json.dumps(natal_planets, sort_keys=True, separators=(",", ":"))
     rows: list[dict[str, Any]] = []
+    completed_combinations = 0
+    report_every = max(1, total_combinations // 100)
 
     for transit_body in transit_entities:
         transit_series = transit_map[transit_body]
@@ -449,6 +497,19 @@ def build_event_frame(
                             **reference_metadata,
                         }
                     )
+                completed_combinations += 1
+                if progress_callback is not None and (
+                    completed_combinations % report_every == 0
+                    or completed_combinations == total_combinations
+                ):
+                    progress_callback(
+                        "aspect_windows",
+                        completed_combinations,
+                        total_combinations,
+                        transit_body,
+                        natal_body,
+                        aspect,
+                    )
 
     frame = pd.DataFrame(rows)
     if frame.empty:
@@ -509,6 +570,32 @@ def main() -> None:
         "reference_lat": float(args.reference_lat),
         "reference_lon": float(args.reference_lon),
     }
+
+    def report_progress(
+        phase: str,
+        completed: int,
+        total: int,
+        transit_body: str | None,
+        natal_body: str | None,
+        aspect: str | None,
+    ) -> None:
+        write_progress(
+            args.progress_file,
+            phase=phase,
+            completed=completed,
+            total=total,
+            transit_body=transit_body,
+            natal_body=natal_body,
+            aspect=aspect,
+        )
+        if args.progress_file is not None:
+            print(
+                "EVENT_PROGRESS "
+                f"phase={phase} completed={completed}/{total} "
+                f"transit={transit_body or '-'} natal={natal_body or '-'} aspect={aspect or '-'}",
+                flush=True,
+            )
+
     frame, natal_planets = build_event_frame(
         timestamps=timestamps,
         transit_entities=transit_entities,
@@ -519,6 +606,7 @@ def main() -> None:
         interval=args.interval,
         reference_metadata=reference_metadata,
         min_window_minutes=args.min_window_minutes,
+        progress_callback=report_progress,
     )
     if frame.empty:
         raise RuntimeError("No aspect windows were generated for the requested contract.")

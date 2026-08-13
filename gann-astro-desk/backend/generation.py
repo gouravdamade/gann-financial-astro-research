@@ -23,6 +23,10 @@ from repository import (
     AstroRepository,
     utc_now,
 )
+
+
+EVENT_PROGRESS_CONTRACT = "CORRECTED_TN_EVENT_PROGRESS_V1"
+EVENT_WORKER_STARTUP_TIMEOUT_SECONDS = 120.0
 ACTIVE_JOB_STATUSES = {"queued", "running", "cancelling"}
 
 
@@ -468,7 +472,46 @@ class GenerationJobManager:
             ).fetchone()
         return bool(row and row["cancel_requested"])
 
-    def _run_command(self, job_id: str, command: list[str], log_path: Path) -> None:
+    @staticmethod
+    def _worker_environment() -> dict[str, str]:
+        """Keep PyInstaller worker processes isolated from their parent bootstrap state."""
+
+        environment = os.environ.copy()
+        if getattr(sys, "frozen", False):
+            # The worker is a fresh executable, not a multiprocessing child that may reuse the
+            # parent PyInstaller bootstrap context. Without this reset the Windows sidecar can
+            # remain alive before Python reaches the generator module.
+            environment["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
+        return environment
+
+    @staticmethod
+    def _read_event_progress(path: Path) -> dict[str, Any] | None:
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, json.JSONDecodeError, OSError):
+            return None
+        if not isinstance(payload, dict) or payload.get("contract") != EVENT_PROGRESS_CONTRACT:
+            return None
+        try:
+            completed = int(payload.get("completed", 0))
+            total = int(payload.get("total", 0))
+        except (TypeError, ValueError):
+            return None
+        if completed < 0 or total <= 0 or completed > total:
+            return None
+        return {**payload, "completed": completed, "total": total}
+
+    def _run_command(
+        self,
+        job_id: str,
+        command: list[str],
+        log_path: Path,
+        *,
+        progress_path: Path | None = None,
+        progress_start: float | None = None,
+        progress_span: float | None = None,
+        stage: str | None = None,
+    ) -> None:
         with log_path.open("a", encoding="utf-8", errors="replace") as log:
             log.write(f"\n$ {subprocess.list2cmdline(command)}\n")
             log.flush()
@@ -480,10 +523,14 @@ class GenerationJobManager:
                 stderr=subprocess.STDOUT,
                 text=True,
                 creationflags=creationflags,
+                env=self._worker_environment(),
             )
             with self._process_lock:
                 self._current_process = process
             try:
+                started_at = time.monotonic()
+                last_heartbeat_at = started_at
+                last_progress_signature: tuple[Any, ...] | None = None
                 while process.poll() is None:
                     if self._stop.is_set() or self._cancel_requested(job_id):
                         process.terminate()
@@ -492,6 +539,53 @@ class GenerationJobManager:
                         except subprocess.TimeoutExpired:
                             process.kill()
                         raise JobCancelled("Generation cancelled by the user.")
+                    if progress_path is not None:
+                        progress_payload = self._read_event_progress(progress_path)
+                        if progress_payload is not None:
+                            last_heartbeat_at = time.monotonic()
+                            signature = (
+                                progress_payload["phase"],
+                                progress_payload["completed"],
+                                progress_payload["total"],
+                                progress_payload.get("transitBody", ""),
+                                progress_payload.get("natalBody", ""),
+                                progress_payload.get("aspect", ""),
+                            )
+                            if signature != last_progress_signature:
+                                last_progress_signature = signature
+                                fraction = progress_payload["completed"] / progress_payload["total"]
+                                progress = float(progress_start or 0) + fraction * float(progress_span or 0)
+                                current_pair = " / ".join(
+                                    value
+                                    for value in (
+                                        progress_payload.get("transitBody", ""),
+                                        progress_payload.get("natalBody", ""),
+                                        progress_payload.get("aspect", ""),
+                                    )
+                                    if value
+                                )
+                                phase = str(progress_payload.get("phase") or "working").replace("_", " ")
+                                self._update_job(
+                                    job_id,
+                                    stage=stage or "events",
+                                    progress=round(progress, 1),
+                                    message=(
+                                        f"{phase.capitalize()}: {progress_payload['completed']}/"
+                                        f"{progress_payload['total']} aspect combinations"
+                                        + (f" ({current_pair})." if current_pair else ".")
+                                    ),
+                                )
+                        elif time.monotonic() - last_heartbeat_at >= EVENT_WORKER_STARTUP_TIMEOUT_SECONDS:
+                            process.terminate()
+                            try:
+                                process.wait(timeout=5)
+                            except subprocess.TimeoutExpired:
+                                process.kill()
+                            raise RuntimeError(
+                                "Corrected event worker did not report a startup heartbeat within "
+                                f"{int(EVENT_WORKER_STARTUP_TIMEOUT_SECONDS)} seconds. The job was stopped "
+                                "instead of remaining indefinitely at 10%."
+                            )
                     time.sleep(0.25)
                 if process.returncode:
                     raise RuntimeError(
@@ -525,6 +619,7 @@ class GenerationJobManager:
         sr_config_path = artifact_dir / "sr_config.json"
         artifact_manifest_path = artifact_dir / "artifact.manifest.json"
         events_manifest_path = events_path.with_suffix(".manifest.json")
+        event_progress_path = artifact_dir / "events.progress.json"
         source_timeframe = parameters["sourceTimeframe"]
         try:
             price_source, _ = self.repository.resolve_price_source(
@@ -608,9 +703,19 @@ class GenerationJobManager:
                 str(sr_config_path),
                 "--output",
                 str(events_path),
+                "--progress-file",
+                str(event_progress_path),
                 "--overwrite",
             ])
-            self._run_command(job_id, event_command, log_path)
+            self._run_command(
+                job_id,
+                event_command,
+                log_path,
+                progress_path=event_progress_path,
+                progress_start=10,
+                progress_span=42,
+                stage="events",
+            )
             events = self.repository._load_event_frame(events_path)
 
             self._update_job(

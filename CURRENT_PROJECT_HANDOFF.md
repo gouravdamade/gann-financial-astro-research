@@ -1,8 +1,31 @@
 # Current Project Handoff
 
-Last updated: 2026-08-09 IST
+Last updated: 2026-08-13 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-13 (Corrected Chart Generation Worker Recovery)
+
+- Investigated the founder-reported USDJPY D1 generation job for only 11 days
+  stuck at 10%. The astronomy source compiler itself completed the exact
+  10-transit x 10-natal x 4-aspect request in **7.26 seconds**, producing **45
+  events** over **400** deterministic combinations. The problem was not the
+  date range or aspect calculation.
+- The installed `0.10.40` sidecar child was alive in a PyInstaller startup wait
+  state before it reached the generator module. Its old UI exposed only a fixed
+  10% event stage and had no heartbeat or timeout, making the failure appear
+  like a stuck chart. The stale job `9b78280268e546e4a366cd572dce6ac7` was
+  explicitly cancelled; no partially generated artifact was activated.
+- Added `PYINSTALLER_RESET_ENVIRONMENT=1` to frozen generator workers, atomic
+  `CORRECTED_TN_EVENT_PROGRESS_V1` worker heartbeats, granular 10-52% event
+  progress with the active transit/natal/aspect combination, and a 120-second
+  fail-visible startup watchdog. The change does not alter astronomy doctrine,
+  aspects, polarity, SBC, Auto Suggest, MT5, execution, or any research gate.
+- Added `docs/research/GENERATION_WORKER_RECOVERY_20260813.md` and targeted
+  tests. Focused checks: `test_corrected_natal_event_source.py` **5/5** and
+  `gann-astro-desk/backend/test_generation.py` **12/12**, including real small
+  artifact generation. A new immutable desktop candidate must be built as
+  `0.10.41-generation-worker-recovery` before retrying generation in the UI.
 
 ## Latest Update - 2026-08-09 (PFR-V2B-R6-BPHS-T1R-P2 Provenance Reconciliation Only)
 
