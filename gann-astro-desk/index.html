@@ -6,9 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#101722" />
     <title>Gann Astro Desk</title>
+    <style>
+      html, body, #root { width: 100%; height: 100%; margin: 0; background: #0f1115; color: #d6d9df; }
+      .bootstrap-fallback {
+        display: grid;
+        min-height: 100%;
+        align-content: center;
+        justify-items: center;
+        gap: 8px;
+        padding: 32px;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        text-align: center;
+      }
+      .bootstrap-fallback strong { font-size: 18px; }
+      .bootstrap-fallback span { color: #a8adb7; font-size: 13px; }
+      .bootstrap-fallback.is-error strong { color: #e06c75; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="bootstrap-fallback" aria-live="polite" aria-label="Opening Gann Astro Desk">
+        <strong>Opening Gann Astro Desk</strong>
+        <span>Loading the local research workspace.</span>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

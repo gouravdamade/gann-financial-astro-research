@@ -1,6 +1,6 @@
 [package]
 name = "gann-astro-desk"
-version = "0.10.43-generation-progress-lock-recovery"
+version = "0.10.44-black-screen-recovery"
 description = "Private Gann and financial astrology research desktop"
 authors = ["Gann Astro Research"]
 edition = "2021"

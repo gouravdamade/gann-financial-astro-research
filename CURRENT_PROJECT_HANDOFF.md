@@ -4,6 +4,42 @@ Last updated: 2026-08-13 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-13 (Desktop Black-Screen Recovery)
+
+- Investigated a founder-reported all-black native application window rather than
+  assuming an astronomy or chart-data failure. The machine had two candidate
+  versions active at once: an obsolete `0.10.40` instance was still holding a
+  stuck corrected-generation worker, while `0.10.43` had a native window at the
+  invalid off-desktop rectangle `-25600, -25600`.
+- Stopped only the obsolete `0.10.40` process tree and its stale generator,
+  then restored the current candidate on-screen. The normal writable research
+  data under `D:\GannFinancialAstro\app_data` remains intact. The previous
+  WebView folder is retained non-destructively at
+  `D:\GannFinancialAstro\app_data\webview\EBWebView.black_screen_backup_20260813_234041`.
+- A clean launch of the exact `0.10.43` portable candidate rendered the full
+  chart, aspect ribbons, SR lines, tool rail, and backend correctly. This
+  isolates the incident from the packaged sidecar, market data, and astronomy
+  calculation.
+- Started the bounded replacement `0.10.44-black-screen-recovery`:
+  - the native Tauri main window is now centered with a deterministic
+    `1280 x 800` initial size and `1024 x 640` minimum, avoiding unreachable
+    saved/off-screen placement;
+  - the static document now renders a visible opening state before JavaScript
+    starts, so a WebView bundle failure cannot look like a silent black canvas;
+  - a React error boundary replaces a genuine render failure with an explicit
+    recovery state and records an existing failed `app_bootstrap` diagnostic;
+  - ordinary asynchronous request errors only record diagnostics and do not
+    replace a usable workspace.
+- Verification before candidate packaging: Oxlint passed; full frontend Vitest
+  passed **35 files / 151 tests**; TypeScript/Vite production build passed;
+  `cargo fmt --check` and `cargo check` passed. A first parallel Vitest attempt
+  hit a host worker-start timeout while Cargo/build work was competing for
+  resources; the affected Chakra workspace test subsequently passed **20/20**
+  and the full suite was rerun sequentially cleanly.
+- This is a desktop rendering/recovery change only. No doctrine, polarity,
+  SBC, Fields, BPHS, Auto Suggest, MT5 execution, or research gate changed;
+  execution remains disabled.
+
 ## Latest Update - 2026-08-13 (Corrected Chart Generation Worker Recovery)
 
 - Investigated the founder-reported USDJPY D1 generation job for only 11 days
