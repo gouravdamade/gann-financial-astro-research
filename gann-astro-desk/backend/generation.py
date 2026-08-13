@@ -519,10 +519,16 @@ class GenerationJobManager:
             process = subprocess.Popen(
                 command,
                 cwd=self.project_root,
+                # The managed desktop sidecar owns a stdin pipe so the Rust supervisor can
+                # request a graceful shutdown. A generation worker never reads stdin; letting
+                # it inherit that pipe can leave a packaged PyInstaller worker stalled before
+                # it reaches the generator module. Give the worker a closed, private stdin.
+                stdin=subprocess.DEVNULL,
                 stdout=log,
                 stderr=subprocess.STDOUT,
                 text=True,
                 creationflags=creationflags,
+                close_fds=True,
                 env=self._worker_environment(),
             )
             with self._process_lock:

@@ -240,7 +240,9 @@ class GenerationJobTests(unittest.TestCase):
         popen.assert_called_once()
         self.assertEqual(popen.call_args.args[0], command)
         self.assertEqual(popen.call_args.kwargs["cwd"], manager.project_root)
+        self.assertEqual(popen.call_args.kwargs["stdin"], subprocess.DEVNULL)
         self.assertEqual(popen.call_args.kwargs["stderr"], subprocess.STDOUT)
+        self.assertTrue(popen.call_args.kwargs["close_fds"])
         self.assertEqual(popen.call_args.kwargs["env"]["PYINSTALLER_RESET_ENVIRONMENT"], "1")
         self.assertIn(
             subprocess.list2cmdline(command),

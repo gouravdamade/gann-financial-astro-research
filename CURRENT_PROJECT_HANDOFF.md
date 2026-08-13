@@ -16,16 +16,29 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   10% event stage and had no heartbeat or timeout, making the failure appear
   like a stuck chart. The stale job `9b78280268e546e4a366cd572dce6ac7` was
   explicitly cancelled; no partially generated artifact was activated.
-- Added `PYINSTALLER_RESET_ENVIRONMENT=1` to frozen generator workers, atomic
-  `CORRECTED_TN_EVENT_PROGRESS_V1` worker heartbeats, granular 10-52% event
-  progress with the active transit/natal/aspect combination, and a 120-second
-  fail-visible startup watchdog. The change does not alter astronomy doctrine,
-  aspects, polarity, SBC, Auto Suggest, MT5, execution, or any research gate.
+- First packaged candidate `0.10.41-generation-worker-recovery` proved that the
+  heartbeat/watchdog correctly exposes the failure, but did not solve it: the
+  real packaged job stopped after 120 seconds rather than silently remaining at
+  10%. Direct execution of the same packaged worker and the same 400-combination
+  request completed in about three seconds.
+- An isolated desktop-sidecar reproduction identified the actual boundary: the
+  Rust-managed sidecar owns a piped stdin for graceful shutdown, and the nested
+  generator worker inherited that otherwise-unused handle. The generation worker
+  now receives `stdin=DEVNULL` plus `close_fds=True`, while the sidecar retains
+  its existing shutdown pipe. `PYINSTALLER_RESET_ENVIRONMENT=1`, atomic
+  `CORRECTED_TN_EVENT_PROGRESS_V1` heartbeats, granular 10-52% event progress,
+  and the 120-second fail-visible startup watchdog remain in place.
+- The replacement source version is
+  `0.10.42-generation-worker-stdin-isolation`; a clean Windows candidate must
+  still complete the same real packaged job before it is offered for founder use.
+  The change does not alter astronomy doctrine, aspects, polarity, SBC, Auto
+  Suggest, MT5, execution, or any research gate.
 - Added `docs/research/GENERATION_WORKER_RECOVERY_20260813.md` and targeted
   tests. Focused checks: `test_corrected_natal_event_source.py` **5/5** and
-  `gann-astro-desk/backend/test_generation.py` **12/12**, including real small
-  artifact generation. A new immutable desktop candidate must be built as
-  `0.10.41-generation-worker-recovery` before retrying generation in the UI.
+  `gann-astro-desk/backend/test_generation.py` **12/12** initially, then
+  **17/17** after the stdin-isolation regression assertion. A new immutable
+  desktop candidate must be built as `0.10.42-generation-worker-stdin-isolation`
+  and pass the full real packaged job before retrying generation in the UI.
 
 ## Latest Update - 2026-08-09 (PFR-V2B-R6-BPHS-T1R-P2 Provenance Reconciliation Only)
 

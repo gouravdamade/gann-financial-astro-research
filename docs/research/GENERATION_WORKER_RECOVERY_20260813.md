@@ -10,16 +10,24 @@ polarity, SBC, scoring, Auto Suggest, MT5 execution, or any research gate.
 ## Root Cause
 
 The desktop sidecar launches the packaged backend executable again for isolated
-event and SR-touch workers. The child inherited the parent PyInstaller bootstrap
-environment. On the affected live desktop instance, the generated event worker
-remained in startup wait state with no CPU work and no output artifact. The old
-job surface only reported a fixed 10 percent event stage, so the failure looked
-like chart computation instead of a failed worker startup.
+event and SR-touch workers. The sidecar correctly keeps its own standard-input
+pipe open so the Rust supervisor can request graceful shutdown. The generation
+worker neither reads nor needs standard input, but it inherited that managed
+pipe. In the packaged desktop path, the inherited handle left the nested frozen
+worker in startup wait state before it reached the generator module.
+
+This was reproduced with the exact packaged `GannAstroBackend.exe`: direct
+execution of the 400-combination request completed in seconds, while launching
+the sidecar with the same piped standard input as the Rust desktop supervisor
+reproduced the fixed 10 percent watchdog failure. The existing PyInstaller
+environment reset remains a separate worker-isolation safeguard.
 
 ## Recovery
 
 - Frozen worker subprocesses now set `PYINSTALLER_RESET_ENVIRONMENT=1` so each
   worker starts as an isolated executable.
+- Workers explicitly receive `stdin=DEVNULL` and `close_fds=True`; the sidecar's
+  shutdown pipe stays private to the sidecar and cannot reach a nested generator.
 - The corrected transit-to-natal generator writes an atomic
   `CORRECTED_TN_EVENT_PROGRESS_V1` heartbeat while compiling entity/aspect
   combinations. It contains generator identity and combination counts only.
@@ -38,7 +46,7 @@ compiler only; it does not assess market direction.
 
 ## Verification Boundary
 
-Focused worker and real artifact-generation tests cover the new heartbeat and
-the PyInstaller reset environment. A replacement Windows candidate is required
-before desktop use because the previous `0.10.40` executable cannot receive a
-source-only fix.
+Focused worker and real artifact-generation tests cover the new heartbeat,
+PyInstaller isolation environment, and private worker input handle. A replacement
+Windows candidate is required before desktop use because previously installed
+executables cannot receive a source-only fix.
