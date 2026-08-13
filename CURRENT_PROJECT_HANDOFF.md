@@ -28,17 +28,26 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   its existing shutdown pipe. `PYINSTALLER_RESET_ENVIRONMENT=1`, atomic
   `CORRECTED_TN_EVENT_PROGRESS_V1` heartbeats, granular 10-52% event progress,
   and the 120-second fail-visible startup watchdog remain in place.
+- Candidate `0.10.42-generation-worker-stdin-isolation` verified that the worker
+  now enters the real 400-combination calculation and emits live progress. It
+  then exposed a second Windows-only issue: the UI progress reader can briefly
+  lock the target heartbeat while the worker uses atomic replacement, which
+  caused an otherwise healthy job to exit during progress publication. The
+  heartbeat now retries atomic replacement and degrades to a safe in-place
+  snapshot if a reader keeps the file locked; reporting cannot terminate chart
+  generation.
 - The replacement source version is
-  `0.10.42-generation-worker-stdin-isolation`; a clean Windows candidate must
+  `0.10.43-generation-progress-lock-recovery`; a clean Windows candidate must
   still complete the same real packaged job before it is offered for founder use.
   The change does not alter astronomy doctrine, aspects, polarity, SBC, Auto
   Suggest, MT5, execution, or any research gate.
 - Added `docs/research/GENERATION_WORKER_RECOVERY_20260813.md` and targeted
   tests. Focused checks: `test_corrected_natal_event_source.py` **5/5** and
   `gann-astro-desk/backend/test_generation.py` **12/12** initially, then
-  **17/17** after the stdin-isolation regression assertion. A new immutable
-  desktop candidate must be built as `0.10.42-generation-worker-stdin-isolation`
-  and pass the full real packaged job before retrying generation in the UI.
+  **18/18** after the stdin-isolation and Windows-lock fallback regression
+  assertions. A new immutable desktop candidate must be built as
+  `0.10.43-generation-progress-lock-recovery` and pass the full real packaged
+  job before retrying generation in the UI.
 
 ## Latest Update - 2026-08-09 (PFR-V2B-R6-BPHS-T1R-P2 Provenance Reconciliation Only)
 

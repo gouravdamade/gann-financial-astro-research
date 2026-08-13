@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -24,6 +25,8 @@ from financial_astro_ephemeris import (
 
 ASTRONOMY_CONTRACT = "RAMAN_SWISSEPH_SINGLE_SIDEREAL_PORPHYRY_TN_V2"
 GENERATOR_VERSION = "native_tn_event_source_v1_20260711"
+EVENT_PROGRESS_REPLACE_ATTEMPTS = 12
+EVENT_PROGRESS_REPLACE_RETRY_SECONDS = 0.01
 DEFAULT_ENTITIES = "Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Rahu, Ketu, AVG(all)"
 ASPECT_SPECS = {
     "conjunction_orb": {"angle": 0.0, "orb": 1.5},
@@ -207,7 +210,7 @@ def write_progress(
     natal_body: str | None = None,
     aspect: str | None = None,
 ) -> None:
-    """Atomically publish generator-only progress for the desktop job manager."""
+    """Publish generator-only progress without allowing a UI reader to stop the job."""
 
     if path is None:
         return
@@ -223,11 +226,34 @@ def write_progress(
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f"{path.name}.tmp")
-    temporary.write_text(
-        json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":")),
-        encoding="utf-8",
-    )
-    temporary.replace(path)
+    serialized = json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+    try:
+        temporary.write_text(serialized, encoding="utf-8")
+        for attempt in range(EVENT_PROGRESS_REPLACE_ATTEMPTS):
+            try:
+                temporary.replace(path)
+                return
+            except PermissionError:
+                # On Windows a short-lived reader can deny the delete-share access needed by
+                # replace(). The job manager treats an unreadable in-progress snapshot as a
+                # missed heartbeat, so retry the preferred atomic handoff before degrading.
+                if attempt + 1 < EVENT_PROGRESS_REPLACE_ATTEMPTS:
+                    time.sleep(EVENT_PROGRESS_REPLACE_RETRY_SECONDS)
+    except OSError:
+        pass
+
+    # A heartbeat is advisory. If an external reader keeps the destination locked, use a
+    # best-effort in-place write and let readers ignore a transient partial JSON document.
+    # Generation must never fail merely because progress cannot be published.
+    try:
+        path.write_text(serialized, encoding="utf-8")
+    except OSError:
+        pass
+    finally:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def circular_average_frame(frame: pd.DataFrame) -> pd.Series:

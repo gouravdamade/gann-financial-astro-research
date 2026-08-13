@@ -1282,7 +1282,7 @@ dependencies = [
 
 [[package]]
 name = "gann-astro-desk"
-version = "0.10.42-generation-worker-stdin-isolation"
+version = "0.10.43-generation-progress-lock-recovery"
 dependencies = [
  "android-native-keyring-store",
  "axum",

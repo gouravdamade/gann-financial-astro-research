@@ -1,4 +1,5 @@
 import pandas as pd
+import build_corrected_natal_event_source as corrected_source
 
 from build_corrected_natal_event_source import (
     ASTRONOMY_CONTRACT,
@@ -66,4 +67,29 @@ def test_progress_file_is_atomic_and_contains_only_generator_status(tmp_path) ->
     assert payload["completed"] == 12
     assert payload["total"] == 400
     assert payload["transitBody"] == "MOON"
+    assert not (tmp_path / "events.progress.json.tmp").exists()
+
+
+def test_progress_lock_falls_back_without_aborting_the_generator(tmp_path, monkeypatch) -> None:
+    path = tmp_path / "events.progress.json"
+
+    def deny_replace(self, target):
+        raise PermissionError("simulated Windows reader lock")
+
+    monkeypatch.setattr(corrected_source, "EVENT_PROGRESS_REPLACE_ATTEMPTS", 1)
+    monkeypatch.setattr(type(path), "replace", deny_replace)
+
+    corrected_source.write_progress(
+        path,
+        phase="aspect_windows",
+        completed=16,
+        total=400,
+        transit_body="MOON",
+        natal_body="MARS",
+        aspect="trine",
+    )
+
+    payload = __import__("json").loads(path.read_text(encoding="utf-8"))
+    assert payload["completed"] == 16
+    assert payload["natalBody"] == "MARS"
     assert not (tmp_path / "events.progress.json.tmp").exists()

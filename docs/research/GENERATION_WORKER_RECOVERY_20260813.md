@@ -28,6 +28,10 @@ environment reset remains a separate worker-isolation safeguard.
   worker starts as an isolated executable.
 - Workers explicitly receive `stdin=DEVNULL` and `close_fds=True`; the sidecar's
   shutdown pipe stays private to the sidecar and cannot reach a nested generator.
+- On Windows, a very short-lived UI read can deny the delete-share access needed
+  for atomic progress-file replacement. Heartbeats now retry the atomic handoff
+  briefly and, only if the lock remains, use a best-effort in-place snapshot.
+  A transient progress-reporting lock can therefore never abort event generation.
 - The corrected transit-to-natal generator writes an atomic
   `CORRECTED_TN_EVENT_PROGRESS_V1` heartbeat while compiling entity/aspect
   combinations. It contains generator identity and combination counts only.
@@ -47,6 +51,6 @@ compiler only; it does not assess market direction.
 ## Verification Boundary
 
 Focused worker and real artifact-generation tests cover the new heartbeat,
-PyInstaller isolation environment, and private worker input handle. A replacement
-Windows candidate is required before desktop use because previously installed
-executables cannot receive a source-only fix.
+PyInstaller isolation environment, private worker input handle, and the Windows
+progress-lock fallback. A replacement Windows candidate is required before desktop
+use because previously installed executables cannot receive a source-only fix.
