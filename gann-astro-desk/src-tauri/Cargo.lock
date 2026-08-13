@@ -1282,7 +1282,7 @@ dependencies = [
 
 [[package]]
 name = "gann-astro-desk"
-version = "0.10.44-black-screen-recovery"
+version = "0.10.45-pfr-v2b-r6-bphs-t1r-p2r1"
 dependencies = [
  "android-native-keyring-store",
  "axum",
