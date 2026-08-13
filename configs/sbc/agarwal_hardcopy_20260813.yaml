@@ -1,0 +1,96 @@
+schema_version: 1
+record_id: AGARWAL_HARDCOPY_GAP_CLOSURE_20260813
+status: acquisition_gap_closed_page_level_use_still_gated
+
+source_identity:
+  source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+  title: Mystics of Sarvato Bhadra Chakra and Astrological Predictions
+  subtitle: With norms for financial gain in share market
+  author: M. K. Agarwal
+  publisher: Sagar Publications
+  publication_place: New Delhi
+  edition_statement: First Edition 2000
+  copyright_holder: M. K. Agarwal
+  printer: The Artwaves, New Delhi
+  isbn_visible_in_supplied_front_matter: false
+  authority: modern_practitioner_source_candidate
+  content_layer: founder_held_physical_edition_with_private_page_photographs
+  rights_status: user_owned_commercial_hardcopy_private_research_photographs_no_redistribution
+
+supersedes_acquisition_gap_from:
+  audit: docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md
+  old_scan_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+  old_scan_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+  note: The old Internet scan remains an incomplete historical artifact; this record does not alter its SHA-256 or claim that the file itself became complete.
+
+recovered_printed_pages:
+  - 46
+  - 47
+  - 54
+  - 55
+  - 62
+  - 63
+  - 133
+  - 144
+
+private_capture_manifest:
+  - filename: Agarwal_front.pdf
+    pdf_pages: 7
+    role: front_matter_preface_contents
+    sha256: D117CC540DD3E24CCAC3E565F1BF20A1A4FB72DED531298FB69AF3708B72E2E9
+  - filename: 44-48.pdf
+    pdf_pages: 4
+    printed_pages_visible: [44, 45, 46, 47]
+    note: Filename suggests 44-48 but printed p.48 is not photographed in this file.
+    sha256: 698E6C13A53CE8481FCF222F74B211D7CF816F834D26F98A2D26E153B05DD50D
+  - filename: 52-59.pdf
+    pdf_pages: 8
+    printed_pages_visible: [52, 53, 54, 55, 56, 57, 58, 59]
+    sha256: AB5A354C43ACBDDB68ED7EB6C1868ED8E1D766E896FB1F01448521AEA4830D49
+  - filename: 60-64.pdf
+    pdf_pages: 5
+    printed_pages_visible: [60, 61, 62, 63, 64]
+    sha256: 1DD38DCC982BD631D8E29ECEFC46423A2C92F860E33699CEDAF989358680F2CA
+  - filename: 130-136.pdf
+    pdf_pages: 7
+    printed_pages_visible: [130, 131, 132, 133, 134, 135, 136]
+    sha256: E9D20B99E594EAC5718BD14A0AD2F81E1D3FF5F7DD5A1B0EE0729D03E2201622
+  - filename: 140-146.pdf
+    pdf_pages: 6
+    printed_pages_visible: [140, 141, 142, 143, 144, "145-146 two-page spread"]
+    sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
+
+founder_cross_reference:
+  printed_page_48:
+    status: visually_compared_by_founder
+    finding: physical hardcopy content matches old online scan page 48
+    new_page_image_supplied: false
+
+chapter_boundary_checks:
+  48: "Chapter 6 - All About Signs"
+  54: "Chapter 7 - Numerical Strength of Plants"
+  60: "Chapter 8 - General Strength of Planets (Shadbala)"
+  64: "Chapter 9 - Vedha Aspect of Planets"
+  133: "Chapter 16 - Forecasting Methodology: Impact of Vedha on Hindu Casts"
+  134: "Chapter 17 - Significators for Countries, States, Cities, Commodities & other matters"
+  144: "Chapter 18 - Sarvato Bhadra Chakra & Other important Chakras"
+  180: "Chapter 20 - Astrological norms for financial gain in share market"
+
+high_value_author_figure:
+  printed_pages: [145, 146]
+  description: Complete author-published Sarvato Bhadra Chakra two-page spread with cardinal orientation, signs, navamsas, padas, nakshatras, weekday cells, vowels/consonants and numbered cells/vargas.
+  status: page_image_available_future_geometry_transcription_candidate
+  caution: Centre fold may distort exact middle-cell geometry; use a flatter archival capture before cell-exact certification if needed.
+
+use_boundary:
+  acquisition_gap_closed: true
+  edition_identity_physically_evidenced: true
+  complete_digitized_hardcopy_available: false
+  old_scan_file_reclassified_as_complete: false
+  chiStaBo_derivatives_upgraded: false
+  automatic_executable_agarwal_profile_allowed: false
+  financial_hypotheses_remain_research_only: true
+  page_level_contract_required_for_each_executable_rule: true
+
+related_document:
+  path: docs/sbc/AGARWAL_HARDCOPY_GAP_CLOSURE_20260813.md
