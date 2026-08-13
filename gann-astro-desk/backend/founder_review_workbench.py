@@ -61,7 +61,15 @@ def _sha256_bytes(value: bytes) -> str:
 
 
 def _sha256_file(path: Path) -> str:
-    return _sha256_bytes(path.read_bytes())
+    """Hash packet text independently of Git's Windows line-ending checkout.
+
+    The immutable blank-packet manifests were generated from LF canonical JSON.
+    A Windows checkout may legitimately materialize that same tracked file with
+    CRLF. Normalize only that transport conversion before hashing; any content
+    change, including an extra newline, still changes the digest.
+    """
+
+    return _sha256_bytes(path.read_bytes().replace(b"\r\n", b"\n"))
 
 
 def _read_json(path: Path) -> dict[str, Any]:

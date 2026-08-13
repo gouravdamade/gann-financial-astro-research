@@ -62,6 +62,12 @@ class FounderReviewWorkbenchTests(unittest.TestCase):
         after = hashlib.sha256(packet.read_bytes()).hexdigest().upper()
         self.assertEqual(before, after)
 
+    def test_lf_and_crlf_checkouts_verify_as_the_same_immutable_packet(self) -> None:
+        packet = self.root / PACKET_RELATIVE / "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json"
+        packet.write_bytes(packet.read_bytes().replace(b"\r\n", b"\n"))
+        workbench = self.load()
+        self.assertTrue(all(row["eligible"] for row in workbench["sides"][0]["rows"]))
+
     def test_packet_hash_mismatch_fails_closed(self) -> None:
         packet = self.root / PACKET_RELATIVE / "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json"
         packet.write_text(packet.read_text(encoding="utf-8") + "\n", encoding="utf-8")

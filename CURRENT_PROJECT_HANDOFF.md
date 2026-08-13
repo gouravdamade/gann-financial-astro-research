@@ -4,6 +4,24 @@ Last updated: 2026-08-14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-14 (PFR-V2B-R5-F2A-R3 Windows Packet Hash Portability)
+
+- The fresh clean Windows founder-candidate checkout reproduced the seven
+  Founder Review backend errors previously expected by the directive. They were
+  not astronomy, founder-packet, or decision failures: Git had checked the
+  canonical LF blank JSON packet out as CRLF and the workbench incorrectly
+  hashed raw local bytes.
+- The narrow workbench repair normalizes only CRLF-to-LF for packet-file
+  digests. It preserves the recorded canonical V1 hashes across Windows and LF
+  checkouts while still rejecting an actual packet change, including an added
+  newline. No V1 blank packet, manifest, event identity, review field,
+  catalogue entry, polarity or execution behavior changed.
+- Added a regression fixture that verifies LF and CRLF copies of the same
+  immutable packet are eligible, while the existing appended-newline mismatch
+  remains fail-closed. Full clean-checkout regression and package verification
+  are being rerun before the `0.10.45-pfr-v2b-r6-bphs-t1r-p2r1` candidate is
+  built.
+
 ## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P2R1 Shared 14-Day Fields Window)
 
 - Implemented the founder-approved maximum **14-calendar-day**, half-open
@@ -36,12 +54,13 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Development-sidecar timings: BPHS 1/7/14 days completed in 0.209/1.044/2.160
   seconds; the full shared Fields request completed in 7.543/7.598/7.642
   seconds. These are implementation measurements, not packaged founder proof.
-- Verification completed: focused Fields/window tests **13/13**; focused BPHS
+- Initial source verification completed: focused Fields/window tests **13/13**; focused BPHS
   plus synchronized-range backend tests **15/15**; full frontend **36 files,
   156 tests**; Oxlint and production build; full backend **208/208**; Cargo
-  format and check. The previously documented seven Founder Review packet-hash
-  errors did not reproduce on current master, so no separate integrity repair
-  was needed and no review packet/manifests were changed.
+  format and check. A later fresh Windows clean-checkout regression did
+  reproduce the seven Founder Review packet-hash errors; the separate narrow
+  `PFR-V2B-R5-F2A-R3` portability repair above replaces the earlier
+  development-sidecar observation. No review packet or manifest was changed.
 - This milestone changes no BPHS source output, Tara state, polarity, SBC
   doctrine/profile, price interpretation, pair/SBC fusion, Founder Review
   decision, Auto Suggest, ML, MT5, or execution capability. Execution remains
