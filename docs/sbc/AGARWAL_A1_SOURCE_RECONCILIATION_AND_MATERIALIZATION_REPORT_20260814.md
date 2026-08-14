@@ -3,8 +3,10 @@
 ## Outcome
 
 The A1 acquisition-reconciliation branch is complete. The required page-level
-extraction branch is blocked, fail-closed: none of the six checksum-identified
-private hardcopy captures are present in the searched local source roots.
+extraction branch is blocked, fail-closed: five of the six checksum-identified
+private hardcopy captures are present and verified, but `Agarwal_front.pdf` is
+still absent. The A1 directive requires the full capture set before any
+page-level extraction may begin.
 No transcription, numeric fixture, author-figure map, rule extraction, or
 financial hypothesis ledger was created from a derivative or remembered text.
 
@@ -24,19 +26,18 @@ complete or create executable source rules.
 
 ## Private Capture Gate
 
-The following exact files were not found under `D:\GannFinancialAstro`,
-`D:\PycharmProjects`, or `C:\Users\ADMIN\Desktop` during A1. Place exact
-unchanged copies in `D:\GannFinancialAstro\sources\private\agarwal_hardcopy_20260813\`
-before resuming transcription.
+The following capture state is current. The five verified files now reside in
+`D:\GannFinancialAstro\sources\private\agarwal_hardcopy_20260813\`; restore
+the one remaining unchanged file there before resuming transcription.
 
 | Filename | Required SHA-256 | A1 result |
 | --- | --- | --- |
-| `Agarwal_front.pdf` | `D117CC540DD3E24CCAC3E565F1BF20A1A4FB72DED531298FB69AF3708B72E2E9` | missing |
-| `44-48.pdf` | `698E6C13A53CE8481FCF222F74B211D7CF816F834D26F98A2D26E153B05DD50D` | missing |
-| `52-59.pdf` | `AB5A354C43ACBDDB68ED7EB6C1868ED8E1D766E896FB1F01448521AEA4830D49` | missing |
-| `60-64.pdf` | `1DD38DCC982BD631D8E29ECEFC46423A2C92F860E33699CEDAF989358680F2CA` | missing |
-| `130-136.pdf` | `E9D20B99E594EAC5718BD14A0AD2F81E1D3FF5F7DD5A1B0EE0729D03E2201622` | missing |
-| `140-146.pdf` | `1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07` | missing |
+| `Agarwal_front.pdf` | `D117CC540DD3E24CCAC3E565F1BF20A1A4FB72DED531298FB69AF3708B72E2E9` | missing - A1 extraction gate remains blocked |
+| `44-48.pdf` | `698E6C13A53CE8481FCF222F74B211D7CF816F834D26F98A2D26E153B05DD50D` | materialized and verified; 4 PDF pages |
+| `52-59.pdf` | `AB5A354C43ACBDDB68ED7EB6C1868ED8E1D766E896FB1F01448521AEA4830D49` | materialized and verified; 8 PDF pages |
+| `60-64.pdf` | `1DD38DCC982BD631D8E29ECEFC46423A2C92F860E33699CEDAF989358680F2CA` | materialized and verified; 5 PDF pages |
+| `130-136.pdf` | `E9D20B99E594EAC5718BD14A0AD2F81E1D3FF5F7DD5A1B0EE0729D03E2201622` | materialized and verified; 7 PDF pages |
+| `140-146.pdf` | `1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07` | materialized and verified; 6 PDF pages |
 
 ## Reconciled Repository State
 
@@ -47,7 +48,8 @@ before resuming transcription.
   available.
 - `configs/sbc/agarwal_2000_composite_page_map.yaml` covers every printed page
   from 1 through 194. It marks only the recovered-page and author-figure
-  branches as `BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED`.
+  branches as `BLOCKED_A1_CAPTURE_SET_INCOMPLETE` until the remaining front
+  capture is supplied.
 - Printed p.48 remains old-scan controlled with a founder visual-match note;
   no nonexistent hardcopy image or hash is asserted.
 

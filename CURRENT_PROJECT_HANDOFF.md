@@ -11,11 +11,13 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   evidenced, while the original 191-page scan remains an incomplete historical
   file and the old `AGARWAL_2000_SBC_PENDING` record is retained only as a
   superseded acquisition request.
-- The mandatory private-capture hash gate found none of the six required source
-  files locally. A deterministic composite map now covers printed pages 1-194,
-  but marks pp.46-47, 54-55, 62-63, 133, 144, and the pp.145-146 author figure
-  as `BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED`. No derivative text was used
-  to reconstruct any page.
+- Five required hardcopy captures are now materialized in the private D: source
+  directory and each matches its recorded SHA-256. The sole remaining
+  dependency is `Agarwal_front.pdf`; A1's explicit all-capture gate means the
+  page-level extraction branch remains blocked. The composite map covers
+  printed pages 1-194 and marks pp.46-47, 54-55, 62-63, 133, 144, and the
+  pp.145-146 author figure as `BLOCKED_A1_CAPTURE_SET_INCOMPLETE`. No
+  derivative text was used to reconstruct any page.
 - `AGARWAL_A2_READY = false`: no numerical-strength transcription, SBC figure
   fixture, Agarwal Vedha operator, financial-hypothesis ledger, cross-profile
   comparison, profile, polarity, score, market mapping, Auto Suggest, ML, MT5,

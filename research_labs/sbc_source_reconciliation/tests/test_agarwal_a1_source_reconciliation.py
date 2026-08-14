@@ -43,7 +43,7 @@ class AgarwalA1SourceReconciliationTests(unittest.TestCase):
             start, end = _page_span(item["printed_page_range"])
             covered.extend(range(start, end + 1))
             self.assertNotIn("CHISTABO", item["controlling_source_id"])
-            if item["transcription_status"] == "BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED":
+            if item["transcription_status"] == "BLOCKED_A1_CAPTURE_SET_INCOMPLETE":
                 blocked_ranges.add(item["printed_page_range"])
 
         self.assertEqual(covered, list(range(1, 195)))
@@ -51,7 +51,7 @@ class AgarwalA1SourceReconciliationTests(unittest.TestCase):
 
     def test_readiness_fails_closed_without_private_capture_bytes(self) -> None:
         readiness = yaml.safe_load(READINESS_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(readiness["private_capture_gate"], "BLOCKED_PRIVATE_CAPTURE_FILES_NOT_FOUND")
+        self.assertEqual(readiness["private_capture_gate"], "BLOCKED_5_OF_6_VERIFIED_FRONT_CAPTURE_MISSING")
         self.assertFalse(readiness["readiness"]["AGARWAL_GEOMETRY_READY"]["value"])
         self.assertFalse(readiness["readiness"]["AGARWAL_STRENGTH_READY"]["value"])
         self.assertFalse(readiness["readiness"]["AGARWAL_VEDHA_OPERATOR_READY"]["value"])
