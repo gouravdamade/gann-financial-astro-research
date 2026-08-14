@@ -36,9 +36,10 @@ CHAPTER_14_CATEGORY_CONTEXT_LOCATOR = (
     "BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 / Packet 1W (chapter-level calendar-category context only; "
     "no individual category name or boundary table was page-transcribed for this engineering implementation)."
 )
-TARA_FULL_CHAPTER_AUDIT_LOCATOR = (
-    "BPHS_1899_GOVIND_SHARMA_SHASTRI Chapter 14 full held-witness audit, printed pp. 196-258 / PDF images 679-741; "
-    "Chapter 15 starts at printed p. 259 / PDF image 742."
+TARA_HELD_WITNESS_AUDIT_LOCATOR = (
+    "BPHS_1899_GOVIND_SHARMA_SHASTRI held-witness source audit: Chapter 14 printed pp. 196-258 / PDF images 679-741 "
+    "contains no complete ninefold relation operator; a separate Tara Dasha heading is at printed p. 254 / PDF image 283, "
+    "and Atimitra appears in a Lakshmi-yoga passage at printed p. 234 / PDF image 717. Neither leaf supplies the required Tara relation sequence, reference, target, or mapping."
 )
 REQUEST_KEYS = {
     "rangeStartUtc",
@@ -129,8 +130,10 @@ def _source_profile() -> dict[str, Any]:
         "sourceGaps": [
             "BPHS_1899_PACKET_1W_OTHER_CALENDAR_CATEGORY_TABLES_NOT_TRANSCRIBED",
             "BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED",
-            "BPHS_1899_TARA_NINEFOLD_SEQUENCE_NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE",
-            "BPHS_1899_TARA_MAPPING_OPERATOR_NOT_CLOSED",
+            "BPHS_1899_TARA_NINEFOLD_SEQUENCE_NOT_CLOSED_IN_HELD_WITNESS",
+            "BPHS_1899_TARA_REFERENCE_TARGET_NOT_CLOSED",
+            "BPHS_1899_TARA_COUNTING_MAPPING_NOT_CLOSED",
+            "BPHS_1899_TARA_27_28_ABHIJIT_TREATMENT_NOT_CLOSED",
             "BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED",
         ],
         "sourceFixtures": [{
@@ -237,12 +240,13 @@ class _CalendarCalculator:
         nakshatra = nakshatra_pada(moon)
         local = at_utc.astimezone(self.zone)
         tara_detail = (
-            "The full held Chapter 14 audit did not locate a complete ninefold Tara sequence or a timestamp-evaluable mapping/operator, "
+            "The held-witness audit did not close a complete ninefold Tara relation sequence, reference/target rule, "
+            "counting/mapping rule, or 27/28/Abhijit treatment. A separate Tara Dasha passage is not substituted for that missing relation operator, "
             "and no explicit Tara reference identity contract is configured."
         )
         if tara_reference:
             tara_detail = (
-                "A Tara reference was supplied, but the full held Chapter 14 audit does not close the ninefold Tara mapping/operator; "
+                "A Tara reference was supplied, but the held-witness audit does not close the Tara relation sequence, reference/target rule, or counting/mapping operator; "
                 "the supplied reference is therefore not evaluated."
             )
         return {
@@ -302,11 +306,13 @@ class _CalendarCalculator:
                 "DEPENDENCY_NOT_READY",
                 availability="DEPENDENCY_NOT_READY",
                 detail=tara_detail,
-                source_locator=TARA_FULL_CHAPTER_AUDIT_LOCATOR,
+                source_locator=TARA_HELD_WITNESS_AUDIT_LOCATOR,
                 calculation="NOT_EVALUATED",
                 dependency=(
-                    "BPHS_1899_TARA_NINEFOLD_SEQUENCE_NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE; "
-                    "BPHS_1899_TARA_MAPPING_OPERATOR_NOT_CLOSED; "
+                    "BPHS_1899_TARA_NINEFOLD_SEQUENCE_NOT_CLOSED_IN_HELD_WITNESS; "
+                    "BPHS_1899_TARA_REFERENCE_TARGET_NOT_CLOSED; "
+                    "BPHS_1899_TARA_COUNTING_MAPPING_NOT_CLOSED; "
+                    "BPHS_1899_TARA_27_28_ABHIJIT_TREATMENT_NOT_CLOSED; "
                     "BPHS_1899_TARA_REFERENCE_IDENTITY_NOT_CONFIGURED"
                 ),
             ),

@@ -19,6 +19,35 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   closed unless every required operational dependency is explicitly supported
   by that witness.
 
+## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P3 Tara Source Closure)
+
+- Completed the held-witness-only Tara audit. `MODE_1_TARA_READY = false`:
+  the 1899 witness does not close an executable ninefold Tara relation
+  sequence, reference/target relation, counting or reduction rule, or
+  27/28/Abhijit treatment. The existing `DEPENDENCY_NOT_READY` UI behavior is
+  retained and its source-gap wording is now more precise.
+- The audit distinguishes a separate **Tara Dasha** passage at printed p. 254 /
+  PDF image 283 and `Atimitra` in a Lakshmi-yoga passage at printed p. 234 /
+  PDF image 717 from the missing Navatara relation operator. Neither is used
+  to create a rule. Source findings are recorded in
+  `docs/fields/PFR_V2B_R6_BPHS_T1R_P3_TARA_SOURCE_CLOSURE.md`.
+- Verification: focused BPHS/Tara service **11/11**; full Python backend
+  regression **209/209**; the two relevant Chakra/Fields frontend suites
+  **32/32** under the Windows threads pool; Oxlint clean; TypeScript/Vite
+  production build clean. A full Vitest invocation recorded **34 files / 125
+  tests passed** but exited non-zero after two Windows fork-worker start
+  timeouts; the affected files were rerun successfully under the threads
+  pool, so that runner anomaly is recorded rather than silently counted as a
+  clean full-suite result.
+- No Windows candidate was rebuilt: P3 has not activated any source-backed
+  Tārā runtime behavior or introduced a new product capability. The exact
+  unavailable-state wording will be included in the next bounded candidate
+  that otherwise requires a package build.
+- No source-backed Tara activation, polarity, score, market mapping, SBC or
+  pair influence, Auto Suggest, ML, MT5, execution, BPHS-T2, or Agarwal work
+  was added. The next decision is founder-only: retain the precise blocked
+  Tara lane or approve a separate, explicitly profiled external-source study.
+
 ## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P2R2 Candidate Completed After Restart)
 
 - Completed the founder-approved three-day BPHS display viewport. The backend

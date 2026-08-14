@@ -75,14 +75,17 @@
     {"index": 15, "name": "Swati"}
   ],
   "tara": {
-    "transcriptionStatus": "NOT_LOCATED_IN_HELD_CHAPTER_14_FULL_RANGE",
+    "transcriptionStatus": "SOURCE_NOT_CLOSED_AFTER_HELD_WITNESS_AUDIT",
     "sequence": null,
     "operator": null,
     "auditLocator": {
       "printedPagesReviewed": [196, 258],
       "pdfImageIndexesReviewed": [679, 741],
-      "nextChapterLocator": "Printed p. 259 / PDF image 742 begins Chapter 15."
+      "nextChapterLocator": "Printed p. 259 / PDF image 742 begins Chapter 15.",
+      "fullWitnessPdfImagesScannedForDiscovery": [1, 745],
+      "taraDashaLocator": "Printed p. 254 / PDF image 283",
+      "atimitraLocator": "Printed p. 234 / PDF image 717"
     },
-    "notes": "The held original Chapter 14 witness was re-audited across printed pp. 196-258 / PDF images 679-741. It did not locate a complete ninefold Tara sequence or a mapping/operator sufficient to evaluate a timestamp. A translated-ledger locator referring to a different split/page scheme is not substituted for this original-witness finding. No external Panchanga formula is imported."
+    "notes": "The held original Chapter 14 witness was re-audited across printed pp. 196-258 / PDF images 679-741. A full-witness OCR discovery scan then reviewed PDF images 1-745 and visually inspected the Tara Dasha leaf at printed p. 254 / PDF image 283 and the Atimitra leaf at printed p. 234 / PDF image 717. Neither is a complete ninefold Tara relation sequence or a source operator sufficient to evaluate a timestamp. The original witness does not close the reference object, target object, counting direction, inclusivity, reduction/remainder convention, or 27/28/Abhijit treatment. A translated-ledger assertion without page-level support is not substituted for this original-witness finding. No external Panchanga formula is imported."
   }
 }

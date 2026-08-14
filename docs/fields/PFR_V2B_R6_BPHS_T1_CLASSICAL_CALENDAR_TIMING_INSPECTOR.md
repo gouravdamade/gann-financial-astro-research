@@ -47,12 +47,16 @@ weekday ownership. The lane is therefore labelled `Civil weekday (engineering)`
 with `BPHS_1899_WEEKDAY_BOUNDARY_NOT_CLOSED`, not displayed as literal BPHS
 doctrine.
 
-Tara is explicitly `DEPENDENCY_NOT_READY`: P2 re-audited the complete held
-Chapter 14 range (printed pp. 196-258 / PDF images 679-741; Chapter 15 begins
-at printed p. 259 / PDF image 742) and did not locate a complete ninefold
-sequence or a timestamp-evaluable mapping/operator. No reference identity
-contract exists. No missing doctrine is filled by an LLM or a modern Panchanga
-source.
+Tara is explicitly `DEPENDENCY_NOT_READY`. The P3 held-witness audit confirms
+that the Chapter 14 range (printed pp. 196-258 / PDF images 679-741; Chapter
+15 begins at printed p. 259 / PDF image 742) does not supply the operational
+relation. A separate Tara Dasha passage at printed p. 254 / PDF image 283 and
+an Atimitra occurrence in a Lakshmi-yoga passage at printed p. 234 / PDF image
+717 are not treated as the missing ninefold relation. The source does not
+close the sequence, reference/target objects, counting/reduction rule,
+27/28/Abhijit treatment, or product reference identity. No missing doctrine is
+filled by an LLM or a modern Panchanga source. See
+`PFR_V2B_R6_BPHS_T1R_P3_TARA_SOURCE_CLOSURE.md`.
 
 Tithi, Nakshatra, Yoga and Karana remain `ENGINEERING_CALCULATED`. The source
 citation for those lanes is intentionally only chapter-level calendar-category

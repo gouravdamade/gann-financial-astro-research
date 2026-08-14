@@ -20,9 +20,14 @@ explicit engineering display data. A P2 reconciliation re-audited the full
 held Chapter 14 range, printed pages 196-258 / PDF images 679-741; no complete
 ninefold Tara sequence or timestamp-evaluable mapping/operator was located.
 Chapter 15 begins on printed page 259 / PDF image 742. Tara therefore remains
-unavailable until a source-closed mapping and an explicit reference identity
-contract both exist. Other calendar-category tables have not been transcribed
-as source doctrine.
+unavailable. A P3 held-witness scan also isolated a separate Tara Dasha leaf
+(printed p. 254 / PDF image 283) and an Atimitra occurrence in a Lakshmi-yoga
+passage (printed p. 234 / PDF image 717). Neither is the required ninefold
+relation operator. The witness still does not close the class sequence,
+reference object, target object, counting direction, inclusivity,
+reduction/remainder convention, or 27/28/Abhijit treatment; an explicit
+product reference identity is also unconfigured. Other calendar-category
+tables have not been transcribed as source doctrine.
 
 The displayed boundaries come from the separately labelled engineering profile
 `SWISSEPH_RAMAN_SIDEREAL_CALENDAR_BOUNDARIES_V1`. That computes sidereal
