@@ -4,6 +4,42 @@ Last updated: 2026-08-14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P2R2 Candidate Completed After Restart)
+
+- Completed the founder-approved three-day BPHS display viewport. The backend
+  still calculates/caches the same maximum 14-calendar-day half-open research
+  page; the browser now shows one shared time-aligned three-day viewport for
+  Muhurta, Tithi, Nakshatra, Yoga, Karana, civil weekday, and Tara. Horizontal
+  scrolling is local UI state and issues no BPHS request. Previous/Next 14 days
+  remain the only research-page controls.
+- Source implementation commit:
+  `ae4348cc713b68fc44398ae1b9592bb70b47c726`. Packaging metadata commit:
+  `3dbd47916a751b098f668efb261bcbc2c2562ca4`; both are pushed to
+  `origin/master`. Changed source paths are the BPHS pane, Fields workspace,
+  application CSS, and the Fields workspace tests, with the bounded design
+  note at `docs/fields/PFR_V2B_R6_BPHS_T1R_P2R2_SHARED_3_DAY_CALENDAR_VIEWPORT.md`.
+- Built immutable founder-inspection candidate
+  `0.10.46-pfr-v2b-r6-bphs-t1r-p2r2` at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.46-pfr-v2b-r6-bphs-t1r-p2r2-tauri`.
+  Portable SHA-256:
+  `257AA2B5929962D7765A7E717425994D35A771F36704BDB36D274FFFE9F0123B`;
+  installer SHA-256:
+  `9ADCDF615A3B17218040F7AE8DA4FCC4D9E2DB5AA78944C924CF5C743BAE9B6B`.
+  The accepted `0.10.45` candidate was not overwritten. The release manifest
+  records source commit `ae4348cc`, `source_git_dirty: false`, execution locks
+  false, and the BPHS fixture packaged.
+- Verification: focused Fields **12/12**; full frontend **36 files / 157
+  tests**; Oxlint; production frontend build; full backend **209/209**;
+  `cargo fmt --check`; `cargo check`; Rust **18/18**. The frontend build has
+  only the known non-blocking chunk-size warning. Two isolated portable smoke
+  launches passed every **42/42** applicable check; only the optional,
+  unconfigured candlestick specialist was deferred.
+- Candidate report:
+  `docs/fields/PFR_V2B_R6_BPHS_T1R_P2R2_FOUNDER_INSPECTION_CANDIDATE_0.10.46.md`.
+  Physical founder inspection remains pending. Do not claim founder acceptance,
+  and do not begin Tara/Agarwal work or any polarity, score, market, Auto
+  Suggest, ML, or execution milestone from this candidate.
+
 ## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P2R1 Candidate Completed After Restart)
 
 - The interrupted Windows founder-candidate build resumed from the completed
