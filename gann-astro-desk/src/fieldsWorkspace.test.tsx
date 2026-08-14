@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -114,6 +114,17 @@ const bphsCalendarRange = {
   }}],
   guardrails: { readOnly: true, marketDataRead: false, priceOutcomeRead: false, polarityCatalogueRead: false, pairRelativeFieldPath: false, founderReviewDecisionPath: false, sbcPath: false, autoSuggestPath: false, mlPath: false, executionAllowed: false, automaticOrderPlacement: false, scoreAggregationUsed: false, marketDirectionInferred: false },
 } as const
+
+const bphsFourteenDayCalendarRange = {
+  ...bphsCalendarRange,
+  rangeStartUtc: '2026-08-01T00:00:00.000Z',
+  rangeEndUtc: '2026-08-15T00:00:00.000Z',
+  intervals: [{
+    ...bphsCalendarRange.intervals[0],
+    startUtc: '2026-08-01T00:00:00.000Z',
+    endUtc: '2026-08-15T00:00:00.000Z',
+  }],
+} as unknown as typeof bphsCalendarRange
 
 function renderFields(overrides: Partial<React.ComponentProps<typeof FieldsWorkspace>> = {}) {
   const selected = vi.fn()
@@ -349,5 +360,32 @@ describe('FieldsWorkspace', () => {
       rangeStartUtc: startUtc, rangeEndUtc: endUtc, profileId: 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1',
     }))
     expect(window.sessionStorage.getItem('gann-astro.fields.bphs-calendar.enabled.v1')).toBe('true')
+  })
+
+  it('uses one loaded 14-day BPHS response behind a shared default 3-day viewport', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    apiMocks.fetchBphsClassicalCalendarRange.mockResolvedValue(bphsFourteenDayCalendarRange)
+    const user = userEvent.setup()
+
+    renderFields({ chart: longChart })
+    const timingSwitch = screen.getByRole('switch', { name: /BPHS Calendar/i })
+    await user.click(timingSwitch)
+
+    expect(await screen.findByText(/3 of 14 loaded days/)).toBeInTheDocument()
+    expect(screen.getByText('Research page').parentElement).toHaveTextContent(/2026-08-01.*2026-08-15.*page 1\/3/)
+    expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalledTimes(1)
+
+    const scroll = screen.getByLabelText('Scroll the loaded 14-day BPHS calendar')
+    Object.defineProperty(scroll, 'scrollWidth', { configurable: true, value: 1400 })
+    Object.defineProperty(scroll, 'clientWidth', { configurable: true, value: 300 })
+    Object.defineProperty(scroll, 'scrollLeft', { configurable: true, value: 300, writable: true })
+    fireEvent.scroll(scroll)
+
+    expect(await screen.findByText(/Viewing 2026-08-04.*2026-08-07/)).toBeInTheDocument()
+    expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalledTimes(1)
+    expect(document.querySelectorAll('.bphs-calendar-row')).toHaveLength(7)
+    expect(screen.getAllByText('Muhurta').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('DEPENDENCY_NOT_READY').length).toBeGreaterThan(0)
   })
 })

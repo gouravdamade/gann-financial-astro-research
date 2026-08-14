@@ -276,6 +276,7 @@ export function FieldsWorkspace({
       latitude={defaultLatitude}
       longitude={defaultLongitude}
       crosshairTimestampUtc={crosshairTimestampUtc}
+      researchPageLabel={`page ${researchWindow.pageIndex + 1}/${researchWindow.pageCount}`}
     /> : null}
 
     <section className="fields-audit-details" aria-label="Field audit details">

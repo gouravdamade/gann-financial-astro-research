@@ -6822,13 +6822,23 @@ html.android-runtime .loading-state {
   .bphs-calendar-context { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: #34414a; }
   .bphs-calendar-context span { display: grid; gap: 3px; min-width: 0; padding: 7px 9px; overflow: hidden; background: #141d23; color: #bbc7cd; font: 8px/1.3 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
   .bphs-calendar-context b, .bphs-calendar-current-grid b { color: #7f929e; font-size: 7px; text-transform: uppercase; }
-  .bphs-calendar-lanes { display: grid; gap: 5px; }
-  .bphs-calendar-lane { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 8px; align-items: center; }
-  .bphs-calendar-lane > div:first-child { display: grid; gap: 2px; }
-  .bphs-calendar-lane > div:first-child strong { color: #c8d5db; }
-  .bphs-calendar-lane > div:first-child span { color: #768791; font-size: 7px; }
-  .bphs-calendar-track { display: flex; min-width: 0; min-height: 30px; overflow: hidden; border: 1px solid #3a4851; background: repeating-linear-gradient(-45deg, #192128 0 5px, #151d23 5px 10px); }
-  .bphs-calendar-block { min-width: 2px; overflow: hidden; padding: 3px 5px; border: 0; border-right: 1px solid rgb(8 12 15 / 70%); background: #31404a; color: #d5dfe3; cursor: pointer; font: 7px/1.15 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+  .bphs-calendar-window-summary { display: flex; flex-wrap: wrap; gap: 8px; padding: 7px 9px; border: 1px solid #3a4851; background: #141d23; color: #b9c6cc; font: 8px/1.3 Consolas, monospace; }
+  .bphs-calendar-window-summary span { min-width: 0; }
+  .bphs-calendar-window-summary b { margin-right: 5px; color: #7eb7c5; text-transform: uppercase; }
+  .bphs-calendar-viewport { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 8px; min-width: 0; }
+  .bphs-calendar-viewport-labels, .bphs-calendar-timeline { display: grid; gap: 5px; min-width: 0; }
+  .bphs-calendar-axis-label, .bphs-calendar-axis { min-height: 22px; }
+  .bphs-calendar-axis-label { display: flex; align-items: center; color: #768791; font-size: 7px; text-transform: uppercase; }
+  .bphs-calendar-row-label { display: grid; align-content: center; gap: 2px; min-height: 30px; }
+  .bphs-calendar-row-label strong { color: #c8d5db; }
+  .bphs-calendar-row-label span { color: #768791; font-size: 7px; }
+  .bphs-calendar-scroll { min-width: 0; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-color: #657b87 #182128; scrollbar-width: thin; }
+  .bphs-calendar-timeline { min-height: 100%; }
+  .bphs-calendar-axis { position: relative; border-bottom: 1px solid #3a4851; color: #8fa1aa; font: 7px/22px Consolas, monospace; white-space: nowrap; }
+  .bphs-calendar-axis span { position: absolute; top: 0; padding-left: 3px; border-left: 1px solid #566873; }
+  .bphs-calendar-row { min-width: 0; }
+  .bphs-calendar-track { display: flex; min-width: 100%; min-height: 30px; overflow: hidden; border: 1px solid #3a4851; background: repeating-linear-gradient(-45deg, #192128 0 5px, #151d23 5px 10px); }
+  .bphs-calendar-block { flex: 0 0 auto; min-width: 2px; overflow: hidden; padding: 3px 5px; border: 0; border-right: 1px solid rgb(8 12 15 / 70%); background: #31404a; color: #d5dfe3; cursor: pointer; font: 7px/1.15 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
   .bphs-calendar-block:hover, .bphs-calendar-block:focus-visible, .bphs-calendar-block.is-selected { outline: 2px solid #e2c777; outline-offset: -2px; filter: brightness(1.12); }
   .bphs-calendar-block.is-engineering-calculated { background: #344852; color: #d0dce1; }
   .bphs-calendar-block.is-partial-source { background: #554b35; color: #eadcab; }
@@ -6922,7 +6932,7 @@ html.android-runtime .loading-state {
     .fields-audit-details { grid-template-columns: 1fr; }
     .independent-field-lane { grid-template-columns: 1fr; }
     .bphs-calendar-context, .bphs-calendar-current-grid { grid-template-columns: 1fr; }
-    .bphs-calendar-lane { grid-template-columns: 1fr; }
+    .bphs-calendar-viewport { grid-template-columns: 102px minmax(0, 1fr); gap: 6px; }
   .founder-review-summary, .founder-review-facts, .founder-review-decision-fields, .founder-review-source-fields { grid-template-columns: 1fr; }
   .founder-review-decision-fields > label:has(textarea), .founder-review-source-fields, .founder-review-source-fields strong, .founder-review-source-fields label:last-child { grid-column: auto; }
   .founder-review-header, .founder-review-side > header { align-items: flex-start; flex-direction: column; }
