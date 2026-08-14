@@ -115,11 +115,11 @@ page_ranges:
     controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
     private_artifact_filename: 140-146.pdf
     artifact_sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
-    image_pdf_locator: expected private two-page author figure spread, printed pp. 145-146
+    image_pdf_locator: printed p.145 core map additionally witnessed by four private page-145 photographs materialized outside Git
     evidence_role: HARDCOPY_CONTROLS_AUTHOR_FIGURE
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: A1R2_PARTIAL_AUTHOR_FIGURE_RECONCILED_NO_BETTER_CAPTURE
-    notes: Figure orientation/layer facts agree with the old scan. A1R2 searched reasonable private roots and found no newer authenticated flat or centre-fold capture. Exact small central-cell readings remain UNKNOWN_CENTER_FOLD and no derivative fills them.
+    transcription_status: A1R3_PAGE145_TWO_PASS_CORE_GEOMETRY_SOURCE_CLOSED
+    notes: A1R2's folded-capture UNKNOWN_CENTER_FOLD conclusion remains historically correct. Four later checksum-verified founder photographs show the complete p.145 diagram without the binding crossing the core grid. A1R3 admits the 9x9 core map after independent two-pass agreement; no ChiStaBo or other SBC profile fills any field, and the Vedha operator remains partial.
   - printed_page_range: "147-194"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf

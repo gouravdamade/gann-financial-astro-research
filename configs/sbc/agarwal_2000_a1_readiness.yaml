@@ -1,7 +1,7 @@
 schema_version: 1
-record_id: PFR_V2B_R6_SBC_A1R2_READINESS_20260815
+record_id: PFR_V2B_R6_SBC_A1R3_READINESS_20260815
 source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
-milestone: PFR-V2B-R6-SBC-A1R1
+milestone: PFR-V2B-R6-SBC-A1R3
 private_capture_gate: ALL_6_CAPTURE_FILES_HASH_VERIFIED_20260814
 readiness:
   AGARWAL_EDITION_READY:
@@ -11,20 +11,20 @@ readiness:
     value: true
     reason: The composite map covers printed pages 1-194 and identifies the controlling artifact or blocked hardcopy capture for every range.
   AGARWAL_GEOMETRY_READY:
-    value: false
-    reason: The p.144 allocation table and figure-level orientation/layers are source-closed, but the A1R2 search found no newer authenticated flat or centre-fold capture. Exact all-cell geometry remains unadmitted under UNKNOWN_CENTER_FOLD.
+    value: true
+    reason: Four checksum-verified founder photographs of printed p.145 provide two-pass-agreed literal assignments for every 9x9 core cell, its varga number and its source layer. The historical folded-capture-specific UNKNOWN_CENTER_FOLD is superseded for core geometry only; no board-ray semantics are inferred.
   AGARWAL_STRENGTH_READY:
     value: true
     reason: Hardcopy pp.54-55 and pp.60-63 have two-pass-agreed numerical/general-strength source fixtures. The values remain source evidence and are not executable.
   AGARWAL_VEDHA_OPERATOR_READY:
     value: false
-    reason: A1R2 closes subject/transit fact lists, direction wording, the 28-row star/sign target chart, stated planet classes and selected exceptions, but no full board-cell target map, deterministic motion-state precedence, general conflict/cancellation order, or universal validity-window contract is source-closed.
+    reason: A1R3 closes the p.145 9x9 core map, but deterministic motion-state precedence, stationary/direct-slow handling, general board-cell traversal semantics, complete simultaneous-hit/cancellation order, universal validity-window contract and a reproducible complete worked method remain unclosed.
   AGARWAL_FINANCIAL_HYPOTHESIS_READY:
     value: true
     reason: Printed pp.180-194 are represented in a page-level FINANCIAL_HYPOTHESIS ledger and are mechanically isolated from all product paths.
   AGARWAL_A2_READY:
-    value: false
-    reason: Geometry remains materially partial. Although source-record strength evidence is available, no founder-visible geometry-strength scope can honestly render the author's board without presenting an incomplete cell map as complete.
+    value: true
+    reason: A source-closed p.145 core board, author orientation and source-record strength tables support a bounded read-only Geometry/Strength Inspector. The incomplete Vedha operator and locked Chapter 20 financial hypothesis ledger remain visibly unavailable.
 contracts:
   AGARWAL_SBC_2000_SOURCE_V1:
     status: NOT_CREATED_MINIMUM_OPERATOR_DEPENDENCIES_NOT_CLOSED
@@ -36,8 +36,8 @@ contracts:
     status: NOT_AUTHORIZED
     blockers: [AGARWAL_GEOMETRY_READY_FALSE, AGARWAL_VEDHA_OPERATOR_READY_FALSE]
   A2_SCOPE_GEOMETRY_STRENGTH_INSPECTOR:
-    status: NOT_AUTHORIZED
-    blockers: [AGARWAL_GEOMETRY_READY_FALSE]
+    status: ELIGIBLE_FOR_FOUNDER_AUTHORIZATION
+    limitations: [read_only_source_geometry_and_strength_only, Vedha_DEPENDENCY_NOT_READY, Chapter_20_FINANCIAL_HYPOTHESIS_LEDGER_ONLY]
   A2_SCOPE_PROVENANCE_ONLY:
     status: NOT_RECOMMENDED_NOT_FOUNDER_REQUESTED
 prohibited: [polarity, price_mapping, score_aggregation, Auto_Suggest, ML, MT5, execution]

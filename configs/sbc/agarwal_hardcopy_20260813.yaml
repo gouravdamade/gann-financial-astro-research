@@ -60,6 +60,24 @@ private_capture_manifest:
     printed_pages_visible: [140, 141, 142, 143, 144, "145-146 two-page spread"]
     sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
 
+supplemental_private_photo_manifest:
+  - filename: 1000413731.jpg
+    printed_page_visible: 145
+    role: page145_primary_transcription_witness_A1R3
+    sha256: CF0F72F82558B9C634B13EC9936BD2322900BCC9636945C1B0CB144310A3FA3F
+  - filename: 1000413730.jpg
+    printed_page_visible: 145
+    role: page145_independent_transcription_witness_A1R3
+    sha256: BE4F77485AE29A7184D2629C4ADC6B26C31F47FFD4854DF02E4BA23DD86ECC3F
+  - filename: 1000413061.jpg
+    printed_pages_visible: [145, 146]
+    role: page145_146_spread_context_provenance_witness_A1R3
+    sha256: E777E0B334FC522F0CC5175CD19FB97A65F20894B531DD5DB64514F18FBC0937
+  - filename: 1000413732.jpg
+    printed_pages_visible: [145, 146]
+    role: page145_146_spread_context_provenance_witness_A1R3
+    sha256: 0BAF7F9D86B97EF1125C58BFC3B66815F5D1F74B2747EAFB1075404159C424C7
+
 founder_cross_reference:
   printed_page_48:
     status: visually_compared_by_founder
@@ -79,8 +97,8 @@ chapter_boundary_checks:
 high_value_author_figure:
   printed_pages: [145, 146]
   description: Complete author-published Sarvato Bhadra Chakra two-page spread with cardinal orientation, signs, navamsas, padas, nakshatras, weekday cells, vowels/consonants and numbered cells/vargas.
-  status: page_image_available_future_geometry_transcription_candidate
-  caution: Centre fold may distort exact middle-cell geometry; use a flatter archival capture before cell-exact certification if needed.
+  status: page145_core_geometry_two_pass_source_closed_a1r3
+  caution: The historical folded-spread concern remains recorded for A1R2. A1R3's independent page-145 photographs close the displayed 9x9 core only; they do not close the separate Vedha traversal/operator dependencies.
 
 use_boundary:
   acquisition_gap_closed: true

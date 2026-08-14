@@ -1,0 +1,133 @@
+schema_version: 1
+packet_id: AGARWAL_2000_PAGE145_GEOMETRY_TWO_PASS_V1
+source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+edition: "Mystics of Sarvato Bhadra Chakra and Astrological Predictions, M. K. Agarwal, Sagar Publications, New Delhi, First Edition 2000"
+source_status: SOURCE_CLOSED_FOR_MACHINE_CORE_GEOMETRY_ONLY
+prohibited_uses: [polarity, score_aggregation, price_mapping, Fields_polarity, Auto_Suggest, ML, MT5, execution]
+page_evidence:
+  printed_page: 145
+  context_page: 146
+  finding: >-
+    The author figure is printed on p.145. The p.146 facing page continues the
+    chapter but does not divide the 9x9 core board. This supersedes the older
+    folded-capture-specific UNKNOWN_CENTER_FOLD blocker only for the current
+    core-geometry readiness decision.
+  photographs:
+    - filename: 1000413731.jpg
+      sha256: CF0F72F82558B9C634B13EC9936BD2322900BCC9636945C1B0CB144310A3FA3F
+      role: PASS_A_PRIMARY_PAGE145_TRANSCRIPTION_WITNESS
+      private_locator: C:/Users/ADMIN/Desktop/c/1000413731.jpg
+    - filename: 1000413730.jpg
+      sha256: BE4F77485AE29A7184D2629C4ADC6B26C31F47FFD4854DF02E4BA23DD86ECC3F
+      role: PASS_B_INDEPENDENT_PAGE145_TRANSCRIPTION_WITNESS
+      private_locator: C:/Users/ADMIN/Desktop/c/1000413730.jpg
+    - filename: 1000413061.jpg
+      sha256: E777E0B334FC522F0CC5175CD19FB97A65F20894B531DD5DB64514F18FBC0937
+      role: CONTEXT_AND_PRINTED_PAGE_PROVENANCE_WITNESS
+      private_locator: C:/Users/ADMIN/Desktop/c/1000413061.jpg
+    - filename: 1000413732.jpg
+      sha256: 0BAF7F9D86B97EF1125C58BFC3B66815F5D1F74B2747EAFB1075404159C424C7
+      role: CONTEXT_AND_PRINTED_PAGE_PROVENANCE_WITNESS
+      private_locator: C:/Users/ADMIN/Desktop/c/1000413732.jpg
+  historical_capture:
+    filename: 140-146.pdf
+    sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
+    role: HISTORICAL_FOLDED_SPREAD_RETAINED_NOT_CONTROLLING_FOR_CURRENT_CELL_PASS
+  author_orientation:
+    east: top
+    west: bottom
+    north: left
+    south: right
+  coordinate_convention:
+    coordinate_system: AGARWAL_PAGE145_CORE_9X9_V1
+    row_1: topmost core row nearest EAST
+    row_9: bottommost core row nearest WEST
+    column_1: leftmost core column nearest NORTH
+    column_9: rightmost core column nearest SOUTH
+    normalization_note: The coordinate frame records the author's page orientation and does not rotate it to match another SBC source.
+  surrounding_mapping_bands:
+    source_closed_visible_bands:
+      - EAST_and_WEST_sign_navamsa_pada_bands
+      - NORTH_and_SOUTH_sign_navamsa_pada_bands
+      - author_cardinal_orientation_labels
+    machine_scope_note: >-
+      The admitted machine map is the source-numbered 9x9 core: each core cell
+      directly identifies its source layer and literal assignment. Peripheral
+      bands are retained as source-visible contextual lookup bands; no unprinted
+      positional interpolation or external profile mapping is used.
+transcription:
+  pass_A:
+    witness: 1000413731.jpg
+    method: Independent literal p.145 reading before comparison with Pass B.
+    core_rows:
+      - [{literal: A, varga_number: 1, layer: vowel}, {literal: KRITT-IKA, varga_number: 2, layer: star}, {literal: ROHINI, varga_number: 3, layer: star}, {literal: MRGA, varga_number: 4, layer: star}, {literal: ARDA, varga_number: 5, layer: star}, {literal: PUNAR-VASU, varga_number: 6, layer: star}, {literal: PUSYA, varga_number: 7, layer: star}, {literal: ASLESHA, varga_number: 8, layer: star}, {literal: AA, varga_number: 9, layer: vowel}]
+      - [{literal: BHARA-NI, varga_number: 32, layer: star}, {literal: OO, varga_number: 33, layer: vowel}, {literal: A, varga_number: 34, layer: consonant}, {literal: VA, varga_number: 35, layer: consonant}, {literal: KA, varga_number: 36, layer: consonant}, {literal: HA, varga_number: 37, layer: consonant}, {literal: DA, varga_number: 38, layer: consonant}, {literal: OO, varga_number: 39, layer: vowel}, {literal: MAGHA, varga_number: 10, layer: star}]
+      - [{literal: ASVINI, varga_number: 31, layer: star}, {literal: LA, varga_number: 56, layer: consonant}, {literal: LRI, varga_number: 57, layer: vowel}, {literal: TAURUS, varga_number: 58, layer: sign}, {literal: GEMINI, varga_number: 59, layer: sign}, {literal: CANCER, varga_number: 60, layer: sign}, {literal: LREE, varga_number: 61, layer: vowel}, {literal: MA, varga_number: 40, layer: consonant}, {literal: P.PHAL-GUNI, varga_number: 11, layer: star}]
+      - [{literal: REVATI, varga_number: 30, layer: star}, {literal: CHA, varga_number: 55, layer: consonant}, {literal: ARIES, varga_number: 72, layer: sign}, {literal: O, varga_number: 73, layer: vowel}, {literal: "SUN,TUE / 1,6,11", varga_number: 74, layer: weekday_tithi_group}, {literal: OU, varga_number: 75, layer: vowel}, {literal: LEO, varga_number: 62, layer: sign}, {literal: TA, varga_number: 41, layer: consonant}, {literal: U.PHAL-GUNI, varga_number: 12, layer: star}]
+      - [{literal: U.BHAD-RAPADA, varga_number: 29, layer: star}, {literal: DHA, varga_number: 54, layer: consonant}, {literal: PISCES, varga_number: 71, layer: sign}, {literal: "FRI / 4,9,14", varga_number: 80, layer: weekday_tithi_group}, {literal: "SAT / 5,10,15", varga_number: 81, layer: weekday_tithi_group}, {literal: "MON,WED / 2,7,12", varga_number: 76, layer: weekday_tithi_group}, {literal: VIRGO, varga_number: 63, layer: sign}, {literal: PA, varga_number: 42, layer: consonant}, {literal: HASTA, varga_number: 13, layer: star}]
+      - [{literal: P.BHAD-RAPADA, varga_number: 28, layer: star}, {literal: SA, varga_number: 53, layer: consonant}, {literal: AQUA, varga_number: 70, layer: sign}, {literal: AHA, varga_number: 79, layer: vowel}, {literal: "THURS / 3,8,13", varga_number: 78, layer: weekday_tithi_group}, {literal: AM, varga_number: 77, layer: vowel}, {literal: LIBRA, varga_number: 64, layer: sign}, {literal: RA, varga_number: 43, layer: consonant}, {literal: CHITRA, varga_number: 14, layer: star}]
+      - [{literal: SATA-BHISAJ, varga_number: 27, layer: star}, {literal: GA, varga_number: 52, layer: consonant}, {literal: AEI, varga_number: 69, layer: vowel}, {literal: CAPRI, varga_number: 68, layer: sign}, {literal: SAGIT, varga_number: 67, layer: sign}, {literal: SCORPIO, varga_number: 66, layer: sign}, {literal: AE, varga_number: 65, layer: vowel}, {literal: THA, varga_number: 44, layer: consonant}, {literal: SAVATI, varga_number: 15, layer: star}]
+      - [{literal: DHANI-STHA, varga_number: 26, layer: star}, {literal: REE, varga_number: 51, layer: vowel}, {literal: KHA, varga_number: 50, layer: consonant}, {literal: JA, varga_number: 49, layer: consonant}, {literal: BHA, varga_number: 48, layer: consonant}, {literal: YA, varga_number: 47, layer: consonant}, {literal: NA, varga_number: 46, layer: consonant}, {literal: RE, varga_number: 45, layer: vowel}, {literal: VISAKHA, varga_number: 16, layer: star}]
+      - [{literal: EE, varga_number: 25, layer: vowel}, {literal: SRAVANA, varga_number: 24, layer: star}, {literal: ABHIJIT, varga_number: 23, layer: star}, {literal: U.SADHA, varga_number: 22, layer: star}, {literal: P.SADHA, varga_number: 21, layer: star}, {literal: MULA, varga_number: 20, layer: star}, {literal: JYESTHA, varga_number: 19, layer: star}, {literal: ANU-RADHA, varga_number: 18, layer: star}, {literal: E, varga_number: 17, layer: vowel}]
+  pass_B:
+    witness: 1000413730.jpg
+    method: Independent literal p.145 reading before field-level comparison with Pass A.
+    core_rows:
+      - [{literal: A, varga_number: 1, layer: vowel}, {literal: KRITT-IKA, varga_number: 2, layer: star}, {literal: ROHINI, varga_number: 3, layer: star}, {literal: MRGA, varga_number: 4, layer: star}, {literal: ARDA, varga_number: 5, layer: star}, {literal: PUNAR-VASU, varga_number: 6, layer: star}, {literal: PUSYA, varga_number: 7, layer: star}, {literal: ASLESHA, varga_number: 8, layer: star}, {literal: AA, varga_number: 9, layer: vowel}]
+      - [{literal: BHARA-NI, varga_number: 32, layer: star}, {literal: OO, varga_number: 33, layer: vowel}, {literal: A, varga_number: 34, layer: consonant}, {literal: VA, varga_number: 35, layer: consonant}, {literal: KA, varga_number: 36, layer: consonant}, {literal: HA, varga_number: 37, layer: consonant}, {literal: DA, varga_number: 38, layer: consonant}, {literal: OO, varga_number: 39, layer: vowel}, {literal: MAGHA, varga_number: 10, layer: star}]
+      - [{literal: ASVINI, varga_number: 31, layer: star}, {literal: LA, varga_number: 56, layer: consonant}, {literal: LRI, varga_number: 57, layer: vowel}, {literal: TAURUS, varga_number: 58, layer: sign}, {literal: GEMINI, varga_number: 59, layer: sign}, {literal: CANCER, varga_number: 60, layer: sign}, {literal: LREE, varga_number: 61, layer: vowel}, {literal: MA, varga_number: 40, layer: consonant}, {literal: P.PHAL-GUNI, varga_number: 11, layer: star}]
+      - [{literal: REVATI, varga_number: 30, layer: star}, {literal: CHA, varga_number: 55, layer: consonant}, {literal: ARIES, varga_number: 72, layer: sign}, {literal: O, varga_number: 73, layer: vowel}, {literal: "SUN,TUE / 1,6,11", varga_number: 74, layer: weekday_tithi_group}, {literal: OU, varga_number: 75, layer: vowel}, {literal: LEO, varga_number: 62, layer: sign}, {literal: TA, varga_number: 41, layer: consonant}, {literal: U.PHAL-GUNI, varga_number: 12, layer: star}]
+      - [{literal: U.BHAD-RAPADA, varga_number: 29, layer: star}, {literal: DHA, varga_number: 54, layer: consonant}, {literal: PISCES, varga_number: 71, layer: sign}, {literal: "FRI / 4,9,14", varga_number: 80, layer: weekday_tithi_group}, {literal: "SAT / 5,10,15", varga_number: 81, layer: weekday_tithi_group}, {literal: "MON,WED / 2,7,12", varga_number: 76, layer: weekday_tithi_group}, {literal: VIRGO, varga_number: 63, layer: sign}, {literal: PA, varga_number: 42, layer: consonant}, {literal: HASTA, varga_number: 13, layer: star}]
+      - [{literal: P.BHAD-RAPADA, varga_number: 28, layer: star}, {literal: SA, varga_number: 53, layer: consonant}, {literal: AQUA, varga_number: 70, layer: sign}, {literal: AHA, varga_number: 79, layer: vowel}, {literal: "THURS / 3,8,13", varga_number: 78, layer: weekday_tithi_group}, {literal: AM, varga_number: 77, layer: vowel}, {literal: LIBRA, varga_number: 64, layer: sign}, {literal: RA, varga_number: 43, layer: consonant}, {literal: CHITRA, varga_number: 14, layer: star}]
+      - [{literal: SATA-BHISAJ, varga_number: 27, layer: star}, {literal: GA, varga_number: 52, layer: consonant}, {literal: AEI, varga_number: 69, layer: vowel}, {literal: CAPRI, varga_number: 68, layer: sign}, {literal: SAGIT, varga_number: 67, layer: sign}, {literal: SCORPIO, varga_number: 66, layer: sign}, {literal: AE, varga_number: 65, layer: vowel}, {literal: THA, varga_number: 44, layer: consonant}, {literal: SAVATI, varga_number: 15, layer: star}]
+      - [{literal: DHANI-STHA, varga_number: 26, layer: star}, {literal: REE, varga_number: 51, layer: vowel}, {literal: KHA, varga_number: 50, layer: consonant}, {literal: JA, varga_number: 49, layer: consonant}, {literal: BHA, varga_number: 48, layer: consonant}, {literal: YA, varga_number: 47, layer: consonant}, {literal: NA, varga_number: 46, layer: consonant}, {literal: RE, varga_number: 45, layer: vowel}, {literal: VISAKHA, varga_number: 16, layer: star}]
+      - [{literal: EE, varga_number: 25, layer: vowel}, {literal: SRAVANA, varga_number: 24, layer: star}, {literal: ABHIJIT, varga_number: 23, layer: star}, {literal: U.SADHA, varga_number: 22, layer: star}, {literal: P.SADHA, varga_number: 21, layer: star}, {literal: MULA, varga_number: 20, layer: star}, {literal: JYESTHA, varga_number: 19, layer: star}, {literal: ANU-RADHA, varga_number: 18, layer: star}, {literal: E, varga_number: 17, layer: vowel}]
+mechanical_diff:
+  method: Compare literal, varga_number and layer field-by-field for all 81 core coordinates.
+  total_machine_relevant_fields: 81
+  agreed_directly: 81
+  requiring_image_adjudication: 0
+  unresolved: 0
+  coordinate_status_rows:
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+    - [AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED, AGREED]
+final_machine_cell_map:
+  source: pass_A
+  admission_status: SOURCE_CLOSED_TWO_PASS_AGREED
+  coordinate_count: 81
+  coordinate_status: ALL_81_AGREED
+  note: >-
+    This admitted map is exactly Pass A after mechanical two-pass agreement;
+    Pass B remains preserved above as an independent source record. Raw source
+    abbreviations are intentionally retained. No modern normalization is used
+    to resolve an unreadable reading.
+p144_reconciliation:
+  method: Compare the p.145 admitted core layer/varga assignments with the existing p.144 allocation sets without using p.144 to place a cell.
+  status: MATCH
+  expected:
+    stars: [2-8, 10-16, 18-24, 26-32]
+    signs: [58-60, 62-64, 66-68, 70-72]
+    lunar_tithis: [74, 76, 78, 80, 81]
+    weekdays: [74, 76, 78, 80, 81]
+    vowels: [1, 9, 17, 25, 33, 39, 65, 69, 73, 75, 45, 51, 77, 79, 57, 61]
+    consonants: [34-38, 40-44, 46-50, 52-56]
+  result: >-
+    Every p.144 declared number is present in the matching p.145 source layer;
+    p.145 adds no extra number in those declared layer sets. The grouped weekday
+    and tithi cells retain their printed shared literal values.
+readiness_result:
+  AGARWAL_GEOMETRY_READY: true
+  scope: SOURCE_CLOSED_MACHINE_CORE_GEOMETRY_FOR_READ_ONLY_DISPLAY
+  active_unknown_center_fold: false
+  historical_unknown_center_fold: SUPERSEDED_BY_CLEAR_PAGE145_PHOTOGRAPHS
+  limitations:
+    - This packet closes the 9x9 page-145 core map and author orientation only.
+    - It does not create board-ray traversal semantics, a direction operator, or a timing contract.
+    - It does not convert natural class, strength, or Chapter 20 material into polarity, score, or financial output.

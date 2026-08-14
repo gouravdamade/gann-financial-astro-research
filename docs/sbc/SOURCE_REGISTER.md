@@ -138,3 +138,16 @@ state precedence, global simultaneous-hit/cancellation handling, and a
 universal validity window remain unclosed. `AGARWAL_SBC_2000_SOURCE_V1` is
 therefore still not created, and no Agarwal material enters polarity, scores,
 market mapping, Auto Suggest, ML, MT5 or execution.
+
+## Agarwal A1R3 page-145 geometry closure
+
+A1R3 adds four checksum-identified private photographs of printed p.145. Two
+independent page-145 readings agree for all 81 source-numbered core cells,
+including their literal layer labels and varga numbers. The older
+`UNKNOWN_CENTER_FOLD` remains in the historical A1R2 packet but is superseded
+for current core-map readiness by
+`AGARWAL_2000_PAGE145_GEOMETRY_TWO_PASS_V1`.
+
+This closes an auditable, read-only Geometry/Strength Inspector scope only. It
+does not make a Vedha operator, source profile, polarity output, financial
+mapping, score, market rule, Auto Suggest, ML, MT5, or execution path.

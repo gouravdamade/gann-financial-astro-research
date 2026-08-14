@@ -4,6 +4,30 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A1R3 Page-145 Geometry Source Closure)
+
+- Four newly supplied, checksum-verified private photographs of Agarwal printed
+  p.145 were materialized outside Git. `1000413731.jpg` and `1000413730.jpg`
+  independently transcribe the complete author-oriented 9x9 core board;
+  `1000413061.jpg` and `1000413732.jpg` preserve printed-page/spread context.
+- The old A1R2 `UNKNOWN_CENTER_FOLD` result is preserved as historically
+  correct for the earlier folded spread, but is now
+  `SUPERSEDED_BY_CLEAR_PAGE145_PHOTOGRAPHS` for current core-geometry
+  readiness. The new evidence fixture has **81/81** direct field agreements,
+  no image adjudications, no unresolved machine core cells, and an exact p.144
+  allocation reconciliation.
+- `AGARWAL_GEOMETRY_READY = true` for a strictly read-only core-board display;
+  `AGARWAL_VEDHA_OPERATOR_READY = false`. `AGARWAL_A2_READY = true` only for
+  an `ELIGIBLE_FOR_FOUNDER_AUTHORIZATION` Geometry/Strength Inspector scope.
+  The completed core map does not create a Vedha operator or any direction,
+  polarity, scoring, timing, or financial calculation.
+- Chapter 20 remains `FINANCIAL_HYPOTHESIS_LEDGER_ONLY`. Polarity, price
+  mapping, scoring, Fields, pair fields, Auto Suggest, ML, MT5 and execution
+  remain disabled for all Agarwal material.
+- Verification: A1R3 source-reconciliation fixtures **15/15**; touched Agarwal
+  YAML records parse; unchanged supported backend regression **209/209**. No
+  frontend or Windows candidate work belongs here.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A1R2 Geometry and Vedha Source Closure)
 
 - A bounded private-source search found **no newer authenticated flat or

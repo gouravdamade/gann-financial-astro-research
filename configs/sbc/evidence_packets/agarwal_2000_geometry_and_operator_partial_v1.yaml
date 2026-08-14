@@ -70,6 +70,20 @@ author_figure:
       folded and no authenticated replacement capture exists. This status is not
       a claim that every outer-cell label is unreadable; it prevents a misleading
       partial transcription from being presented as a complete 81-cell map.
+  a1r3_supersession:
+    status: SUPERSEDED_BY_CLEAR_PAGE145_PHOTOGRAPHS
+    superseding_packet: AGARWAL_2000_PAGE145_GEOMETRY_TWO_PASS_V1
+    reason: >-
+      This A1R2 packet is preserved as historical evidence. Four later
+      checksum-verified founder photographs of printed p.145 permit a complete
+      independent two-pass core-map transcription without the page binding
+      crossing the grid. The old UNKNOWN_CENTER_FOLD is no longer active for
+      the 9x9 core-geometry readiness decision only.
+    still_unclosed_here:
+      - board_ray_traversal_and_origin_inclusion
+      - deterministic_motion_state_precedence
+      - complete_simultaneous_hit_and_cancellation_order
+      - universal_validity_window
 operator_evidence:
   - variable_id: AGARWAL_2000_DIRECTION_CLASS_BY_MOTION
     printed_page: 65

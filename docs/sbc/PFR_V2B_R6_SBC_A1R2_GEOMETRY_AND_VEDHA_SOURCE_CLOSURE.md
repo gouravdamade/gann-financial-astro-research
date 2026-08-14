@@ -101,3 +101,13 @@ scores, market inference, ML, Auto Suggest, live inference, MT5, or execution.
 - Touched Agarwal YAML records parse with the project Python environment.
 - No frontend, Tauri, Android, installer, or Windows-candidate build was run;
   this milestone changes only source records and their regression fixtures.
+
+## A1R3 supersession note, 2026-08-15
+
+This report preserves the A1R2 conclusion as a capture-specific historical
+fact. Four later checksum-verified founder photographs provide a clear complete
+page-145 board without a binding crossing its core grid. A1R3 therefore
+supersedes `UNKNOWN_CENTER_FOLD` for the 9x9 core geometry only, through
+`AGARWAL_2000_PAGE145_GEOMETRY_TWO_PASS_V1`. The operator findings in this
+report remain controlling: the complete Agarwal Vedha operator is still not
+created or executable.
