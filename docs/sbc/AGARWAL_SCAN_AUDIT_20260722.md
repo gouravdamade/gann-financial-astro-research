@@ -92,3 +92,20 @@ This boundary does not prevent later use of a visible, intact page. Such a page
 still requires the repository's normal edition, page-range, content-layer,
 quotation, and manual visual-certification gates before it can support a
 derived fixture or executable rule.
+
+## 2026-08-14 Closure Addendum - Superseding Acquisition Evidence
+
+This July audit remains historically correct for the three files then held: the
+old image-scan file is still incomplete, and the ChiStaBo derivatives are still
+non-independent edited search aids. On 2026-08-13, founder-supplied front matter
+and private photographs of a physical Sagar Publications, New Delhi, `First
+Edition 2000` copy established the book identity and recovered the eight
+previously absent printed pages. See
+`docs/sbc/AGARWAL_HARDCOPY_GAP_CLOSURE_20260813.md` and
+`configs/sbc/agarwal_hardcopy_20260813.yaml`.
+
+The later evidence closes the project acquisition gap, not the old scan's file
+identity and not any individual executable-rule gate. A1 source reconciliation
+records the two facts separately: a composite source map may cite the hardcopy
+as controlling evidence, but literal transcription remains blocked until its
+checksum-identified private capture files are locally materialized.

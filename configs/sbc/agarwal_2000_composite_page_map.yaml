@@ -1,0 +1,131 @@
+schema_version: 1
+map_id: AGARWAL_2000_COMPOSITE_PRINTED_PAGE_MAP_V1
+source_scope: printed_pages_1_through_194
+edition_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+old_scan_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+old_scan_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+private_capture_materialization_state: PRIVATE_CAPTURE_FILES_NOT_FOUND_20260814
+private_capture_expected_directory: D:/GannFinancialAstro/sources/private/agarwal_hardcopy_20260813/
+map_rules:
+  - Hardcopy captures control recovered pages when their checksum-identified bytes are materialized.
+  - The old incomplete image scan controls intact printed pages not covered by an available hardcopy capture.
+  - A founder visual comparison is a cross-reference only and never substitutes for a page image.
+  - A private capture absent from the recorded local source roots blocks transcription; it does not transfer control to a ChiStaBo derivative.
+page_ranges:
+  - printed_page_range: "1-45"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed pages 1-45
+    evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
+    overlap_status: NOT_REVIEWED
+    transcription_status: NOT_REQUESTED
+    notes: Intact old-scan pages; no complete-edition claim follows from this range.
+  - printed_page_range: "46-47"
+    controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+    private_artifact_filename: 44-48.pdf
+    artifact_sha256: 698E6C13A53CE8481FCF222F74B211D7CF816F834D26F98A2D26E153B05DD50D
+    image_pdf_locator: expected private capture pages covering printed pp. 46-47
+    evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGES
+    overlap_status: NOT_REVIEWED_CAPTURE_NOT_MATERIALIZED
+    transcription_status: BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED
+    notes: Missing from the old scan; do not reconstruct from derivative text.
+  - printed_page_range: "48"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed p. 48
+    evidence_role: OLD_SCAN_CONTROLS_WITH_FOUNDER_VISUAL_CROSS_REFERENCE_MATCH
+    overlap_status: FOUNDER_VISUAL_CROSS_REFERENCE_MATCH
+    transcription_status: NOT_REQUESTED
+    notes: No photographed p.48 capture or image hash exists.
+  - printed_page_range: "49-53"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed pages 49-53
+    evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
+    overlap_status: NOT_REVIEWED
+    transcription_status: NOT_REQUESTED
+    notes: Intact old-scan pages.
+  - printed_page_range: "54-55"
+    controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+    private_artifact_filename: 52-59.pdf
+    artifact_sha256: AB5A354C43ACBDDB68ED7EB6C1868ED8E1D766E896FB1F01448521AEA4830D49
+    image_pdf_locator: expected private capture pages covering printed pp. 54-55
+    evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGES
+    overlap_status: NOT_REVIEWED_CAPTURE_NOT_MATERIALIZED
+    transcription_status: BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED
+    notes: Numerical-strength source branch blocked pending exact capture bytes.
+  - printed_page_range: "56-61"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed pages 56-61
+    evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
+    overlap_status: NOT_REVIEWED
+    transcription_status: NOT_REQUESTED
+    notes: Intact old-scan pages.
+  - printed_page_range: "62-63"
+    controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+    private_artifact_filename: 60-64.pdf
+    artifact_sha256: 1DD38DCC982BD631D8E29ECEFC46423A2C92F860E33699CEDAF989358680F2CA
+    image_pdf_locator: expected private capture pages covering printed pp. 62-63
+    evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGES
+    overlap_status: NOT_REVIEWED_CAPTURE_NOT_MATERIALIZED
+    transcription_status: BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED
+    notes: Strength/Shadbala continuation branch blocked pending exact capture bytes.
+  - printed_page_range: "64-132"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed pages 64-132
+    evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
+    overlap_status: NOT_REVIEWED
+    transcription_status: NOT_REQUESTED
+    notes: Intact old-scan pages.
+  - printed_page_range: "133"
+    controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+    private_artifact_filename: 130-136.pdf
+    artifact_sha256: E9D20B99E594EAC5718BD14A0AD2F81E1D3FF5F7DD5A1B0EE0729D03E2201622
+    image_pdf_locator: expected private capture page covering printed p. 133
+    evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGE
+    overlap_status: NOT_REVIEWED_CAPTURE_NOT_MATERIALIZED
+    transcription_status: BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED
+    notes: Descriptive social/caste application branch blocked; no financial mapping permitted.
+  - printed_page_range: "134-143"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed pages 134-143
+    evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
+    overlap_status: NOT_REVIEWED
+    transcription_status: NOT_REQUESTED
+    notes: Intact old-scan pages.
+  - printed_page_range: "144"
+    controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+    private_artifact_filename: 140-146.pdf
+    artifact_sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
+    image_pdf_locator: expected private capture page covering printed p. 144
+    evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGE
+    overlap_status: NOT_REVIEWED_CAPTURE_NOT_MATERIALIZED
+    transcription_status: BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED
+    notes: Chapter-18 opening statements are not transcribed without the controlling page image.
+  - printed_page_range: "145-146"
+    controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+    private_artifact_filename: 140-146.pdf
+    artifact_sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
+    image_pdf_locator: expected private two-page author figure spread, printed pp. 145-146
+    evidence_role: HARDCOPY_CONTROLS_AUTHOR_FIGURE
+    overlap_status: NOT_REVIEWED_CAPTURE_NOT_MATERIALIZED
+    transcription_status: BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED
+    notes: No cell, orientation, or center-fold reading is inferred from a derivative redraw.
+  - printed_page_range: "147-194"
+    controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
+    private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: old-scan printed pages 147-194
+    evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
+    overlap_status: NOT_REVIEWED
+    transcription_status: NOT_REQUESTED
+    notes: Includes Chapters 18-20 intact pages; any future financial extraction remains hypothesis-only and page-level.

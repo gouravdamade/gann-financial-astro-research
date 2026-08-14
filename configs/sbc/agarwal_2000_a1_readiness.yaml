@@ -1,0 +1,35 @@
+schema_version: 1
+record_id: PFR_V2B_R6_SBC_A1_READINESS_20260814
+source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+milestone: PFR-V2B-R6-SBC-A1
+private_capture_gate: BLOCKED_PRIVATE_CAPTURE_FILES_NOT_FOUND
+readiness:
+  AGARWAL_EDITION_READY:
+    value: true
+    reason: Founder-held Sagar Publications New Delhi First Edition 2000 front matter is recorded in the hardcopy supplement.
+  AGARWAL_COMPOSITE_SOURCE_READY:
+    value: true
+    reason: The composite map covers printed pages 1-194 and identifies the controlling artifact or blocked hardcopy capture for every range.
+  AGARWAL_GEOMETRY_READY:
+    value: false
+    reason: The author pp.145-146 figure capture bytes are not locally materialized or checksum-verified, so no literal cell/layer transcription exists.
+  AGARWAL_STRENGTH_READY:
+    value: false
+    reason: Recovered pp.54-55 and pp.62-63 capture bytes are unavailable; two-pass numeric transcription cannot begin.
+  AGARWAL_VEDHA_OPERATOR_READY:
+    value: false
+    reason: The hardcopy-controlled Chapter-18 opening p.144 is unavailable and no Agarwal-specific operator has been transcribed.
+  AGARWAL_FINANCIAL_HYPOTHESIS_READY:
+    value: false
+    reason: Chapter 20 remains an existing hypothesis-only source reference; A1 has not performed the required page-level extraction ledger.
+  AGARWAL_A2_READY:
+    value: false
+    reason: No intended visible Agarwal scope has source-closed geometry or operator fixtures. A2 UI integration is prohibited until a separate founder review after capture materialization and A1 extraction.
+contracts:
+  AGARWAL_SBC_2000_SOURCE_V1:
+    status: NOT_CREATED_SOURCE_EXTRACTION_BLOCKED
+    allowed_output: none
+  AGARWAL_FINANCIAL_SBC_V1:
+    status: NOT_CREATED_A1_LEDGER_EXTRACTION_BLOCKED
+    allowed_output: none
+prohibited: [polarity, price_mapping, score_aggregation, Auto_Suggest, ML, MT5, execution]

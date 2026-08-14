@@ -4,6 +4,29 @@ Last updated: 2026-08-14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-14 (PFR-V2B-R6-SBC-A1 Agarwal Source Reconciliation)
+
+- Reconciled the stale Agarwal acquisition status: the founder-held Sagar
+  Publications, New Delhi, `First Edition 2000` is now recorded as physically
+  evidenced, while the original 191-page scan remains an incomplete historical
+  file and the old `AGARWAL_2000_SBC_PENDING` record is retained only as a
+  superseded acquisition request.
+- The mandatory private-capture hash gate found none of the six required source
+  files locally. A deterministic composite map now covers printed pages 1-194,
+  but marks pp.46-47, 54-55, 62-63, 133, 144, and the pp.145-146 author figure
+  as `BLOCKED_PRIVATE_CAPTURE_NOT_MATERIALIZED`. No derivative text was used
+  to reconstruct any page.
+- `AGARWAL_A2_READY = false`: no numerical-strength transcription, SBC figure
+  fixture, Agarwal Vedha operator, financial-hypothesis ledger, cross-profile
+  comparison, profile, polarity, score, market mapping, Auto Suggest, ML, MT5,
+  or execution behavior was added. Restore and checksum-verify the six capture
+  files at `D:\GannFinancialAstro\sources\private\agarwal_hardcopy_20260813\`
+  before rerunning the page-level extraction branch.
+- Verification: A1 source-reconciliation fixture tests **3/3**; all touched
+  YAML files parse successfully; unchanged Gann Astro Desk backend regression
+  remains **209/209**. No frontend code changed, so no Windows candidate was
+  rebuilt for this source-only milestone.
+
 ## Latest Update - 2026-08-14 (P2R2 Founder Acceptance Recorded)
 
 - Founder physically accepted the `0.10.46-pfr-v2b-r6-bphs-t1r-p2r2`

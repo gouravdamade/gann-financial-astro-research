@@ -22,7 +22,8 @@ The machine-readable register is `configs/sbc/sources.yaml`.
 | Krishna Rau/Choudhary, ChiStaBo 2013, SHA-256 `786A2041...` | Edited transcription of a 1962 booklet | Independent secondary table witness and 1/20 price-unit witness; no price-formula certification |
 | Public 12/14 May 1951 Bombay silver page photographs | Primary page photographs from an unidentified edition | Partial historical worked-example witness; direction only, with final score-to-price page unavailable |
 | Unattributed 2010 introduction, SHA-256 `47D8F8E3...` | Secondary compilation and duplicate text | Registered for duplicate detection; deliberately excluded from the corpus |
-| Complete Agarwal edition | Pending modern candidate | Still required for whole-book and missing-page certification; no executable use |
+| Agarwal Sagar First Edition 2000 hardcopy | Physically evidenced modern-practitioner source | Founder-held physical edition and eight recovered pages close the acquisition gap; page-level transcription remains gated by checksum-verified private captures |
+| Complete Agarwal edition acquisition request | Historical modern candidate | Superseded acquisition request retained for audit continuity; it no longer describes the current edition-identity state |
 | Agarwal image scan, SHA-256 `5644DFC4...` | Incomplete modern-practitioner scan | Page-image research only; eight printed pages are missing and no edition imprint is present |
 | Agarwal financial chapter, printed pages 180-194 | Intact chapter inside incomplete scan | Private opt-in LLM hypothesis reference only; no doctrine, Auto Suggest, live inference, or execution use |
 | ChiStaBo January 2012 derivative, SHA-256 `8AF0045A...` | Derivative transcription | Earlier search/navigation aid only; explicit missing-page placeholders do not repair the scan |
@@ -49,10 +50,13 @@ navigation but cannot repair missing pages or certify the source.
 
 The image scan reaches printed page 194 but omits printed pages 46-47, 54-55,
 62-63, 133, and 144. It also lacks an extractable ISBN, copyright page,
-publisher statement, or edition statement. Consequently, neither file
-certifies the presumed 2000 edition or the book as a complete doctrinal
-witness. See `docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md` for the evidence and use
-boundary.
+publisher statement, or edition statement. Its standalone incompleteness
+remains historically true. Later founder-held physical Sagar Publications,
+New Delhi, `First Edition 2000` evidence closes the project acquisition and
+edition-identity gap and recovers those eight pages; see
+`docs/sbc/AGARWAL_HARDCOPY_GAP_CLOSURE_20260813.md`. This does not certify the
+book as executable doctrine: each table, geometry cell, and operator still
+requires its checksum-verified page-level source contract.
 
 One bounded exception is recorded for retrieval, not doctrine. PDF pages
 177-191 contain consecutive printed pages 180-194, Chapter 20, and all fifteen
