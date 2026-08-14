@@ -120,3 +120,21 @@ cancellation, and complete reference contract mean that
 `AGARWAL_SBC_2000_SOURCE_V1` does not exist as an executable profile. No
 Agarwal material enters classical Mode 1, Fields polarity, pair fields, scoring,
 Auto Suggest, ML labels, live inference, MT5, or execution.
+
+## Agarwal A1R2 geometry and Vedha closure audit
+
+The A1R2 source-only audit searched the private source roots for a clearer,
+authenticated p.145-146 author figure. It found no new flat-page or
+centre-fold capture. The existing hardcopy spread and the old scan retain their
+earlier limited reconciliation role; ChiStaBo derivatives remain rejected as
+controlling witnesses.
+
+The book does contain more explicit Chapter 9 material than the early packet
+recorded: five individual subject factors, nine-transit placement by longitude,
+motion/direction descriptions, a 28-row star/sign target chart, stated
+benefic/malefic Vedha classes, and selected exceptions. Those are source
+records, not an executable profile. The full 81-cell map, deterministic motion
+state precedence, global simultaneous-hit/cancellation handling, and a
+universal validity window remain unclosed. `AGARWAL_SBC_2000_SOURCE_V1` is
+therefore still not created, and no Agarwal material enters polarity, scores,
+market mapping, Auto Suggest, ML, MT5 or execution.

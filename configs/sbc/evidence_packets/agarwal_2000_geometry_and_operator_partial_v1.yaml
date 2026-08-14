@@ -34,6 +34,42 @@ author_figure:
     - UNKNOWN_CENTER_FOLD: exact central-cell readings and all small-label cell allocation are not admitted from the folded hardcopy photograph.
     - no inferred 81-cell machine map is created from symmetry, derivative redraws, or another profile.
   source_status: PARTIAL
+  a1r2_capture_search:
+    searched_private_roots:
+      - D:/GannFinancialAstro/sources/private/
+      - C:/Users/ADMIN/Desktop/
+      - D:/Ollama/app/downloads/
+    candidate_summary:
+      - filename: 140-146.pdf
+        sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
+        role: existing_authenticated_folded_author_figure
+      - filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+        sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+        role: existing_same-edition-overlap_witness_not_clearer_than_hardcopy
+      - filename: AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_2012_8AF0045A.pdf
+        sha256: 8AF0045A44BBFF8F81F470F996D7949887BEC1A63C1641586EFC579EED4ED6CA
+        role: derivative_rejected_as_controlling_source
+      - filename: AGARWAL_MYSTICS_CHISTABO_DERIVATIVE_D93B9B97.pdf
+        sha256: D93B9B97D2B8C902168FE83C1E6796FE22AD644C55903BA85154D1C6D610E38D
+        role: derivative_rejected_as_controlling_source
+    result: NO_NEW_AUTHENTICATED_FLAT_OR_CENTRE_FOLD_CAPTURE_FOUND
+    source_status: PARTIAL
+  admitted_machine_cell_mapping:
+    count: 0
+    status: NOT_CREATED
+    reason: >-
+      The source closes allocation groups and figure-level orientation/layer facts,
+      but not every source-specific 81-cell assignment. No unreadable cell is
+      reconstructed from allocation prose, symmetry, a derivative redraw, or a
+      different SBC profile.
+  unresolved_cell_scope:
+    status: UNKNOWN_CENTER_FOLD
+    cells: NOT_ENUMERATED_WITHOUT_READABLE_SOURCE_ASSIGNMENTS
+    reason: >-
+      No complete cell pass is admitted while the controlling author spread is
+      folded and no authenticated replacement capture exists. This status is not
+      a claim that every outer-cell label is unreadable; it prevents a misleading
+      partial transcription from being presented as a complete 81-cell map.
 operator_evidence:
   - variable_id: AGARWAL_2000_DIRECTION_CLASS_BY_MOTION
     printed_page: 65
@@ -57,6 +93,154 @@ operator_evidence:
     source_status: PARTIAL
     limitations:
       - This packet does not claim a complete input/reference contract for a product calculation.
+  - variable_id: AGARWAL_2000_VEDHA_TARGET_TABLE
+    printed_pages: [72, 73, 74]
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locators: [71, 72, 73]
+    transcription_pass_A: >-
+      The author prints a 28-row Chart of Vedha Aspect with columns for planet
+      star, front/right/left star Vedha, left/right sign Vedha, tithi Vedha, and
+      vowels/consonant Vedha.
+    transcription_pass_B: >-
+      The author prints a 28-row Chart of Vedha Aspect, including Abhijit, that
+      supplies star, sign, tithi, vowel and consonant targets by front, right,
+      and left category.
+    diff_status: AGREED
+    source_status: SOURCE_CLOSED_STAR_AND_SIGN_TARGET_TABLE_ONLY
+    limitations:
+      - The chart is not a source-closed 81-cell board-ray map.
+      - Origin-cell inclusion, per-cell traversal/stopping, and complete board-layer resolution remain unclosed.
+      - No target is inherited from Phaladeepika, Trailokya, or ChiStaBo.
+  - variable_id: AGARWAL_2000_MOTION_SPEED_SOURCE_RECORD
+    printed_pages: [33, 34, 39, 40]
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locators: [38, 39, 44, 45]
+    transcription_pass_A: >-
+      The book prints normal, fast and very-fast daily speed values for five
+      planets; it also says to check a standard Indian ephemeris and gives a
+      Sun-relative simple method.
+    transcription_pass_B: >-
+      The book provides a speed table and two descriptive classification paths:
+      standard ephemeris checking and a Sun-relative fallback.
+    diff_status: AGREED
+    source_status: PARTIAL
+    limitations:
+      - The text does not close one deterministic precedence rule between the printed table, ephemeris reading, and Sun-relative fallback.
+      - Stationary and direct-but-slow boundary handling is not closed.
+      - No modern ephemeris threshold is invented.
+  - variable_id: AGARWAL_2000_NATURAL_VEDHA_CLASS
+    printed_page: 66
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locator: 65
+    transcription_pass_A: >-
+      Sun, Saturn, Mars, Rahu and Ketu are stated to cause malefic Vedha; Moon,
+      Mercury, Jupiter and Venus are stated to cause benefic Vedha, with waxing
+      Moon and Mercury-alone qualifications.
+    transcription_pass_B: >-
+      The page gives a fixed class list but qualifies Moon by waxing condition
+      and Mercury by absence of a malefic association.
+    diff_status: AGREED
+    source_status: SOURCE_CLOSED_CLASSIFICATION_WITH_STATED_CONDITIONS
+    limitations:
+      - This source-record is not mapped to polarity, USD/JPY, price, score, or execution.
+  - variable_id: AGARWAL_2000_VEDHA_PRECEDENCE_AND_EXCEPTION_RECORD
+    printed_pages: [66, 67, 68, 69, 70, 71, 89, 90, 91]
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locators: [65, 66, 67, 68, 69, 70, 87, 88, 89]
+    transcription_pass_A: >-
+      The author states selected special-pada exceptions, a victorious-planet
+      statement for two or three planets in one pada, retrograde amplification,
+      and selected component propagation rules.
+    transcription_pass_B: >-
+      The pages contain local exception and influence statements, but not a
+      complete ordered conflict-resolution algorithm for every simultaneous hit.
+    diff_status: AGREED
+    source_status: PARTIAL
+    limitations:
+      - The identity and selection rule for the victorious planet is not fully defined.
+      - A generic cancellation, repeated-hit, and all-layer precedence algorithm is not source-closed.
+  - variable_id: AGARWAL_2000_VEDHA_VALIDITY_RECORD
+    printed_pages: [66, 67, 70, 71, 92]
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    image_pdf_locators: [65, 66, 69, 70, 91]
+    transcription_pass_A: >-
+      The author provides local duration statements, including a malefic effect
+      ending when the planet leaves the Vedha star and separate Sun-direction
+      and Moon/Sun-star duration statements.
+    transcription_pass_B: >-
+      The pages provide several context-specific validity statements, not one
+      uniform ingress/egress contract for every Vedha layer.
+    diff_status: AGREED
+    source_status: PARTIAL
+    limitations:
+      - No universal half-open activation interval is admitted from these statements.
+      - Layer-specific timing boundaries remain unclosed.
+vedha_dependency_matrix:
+  subject_reference_inputs:
+    status: SOURCE_CLOSED_FACT_LIST_ONLY
+    locators: ["p.64 / PDF 63", "p.75 / PDF 74"]
+    finding: "Birth Moon-star, birth Moon-sign, birth lunar tithi/birthday, first consonant/name word and vowel/swara are named; Chapter 10 additionally lists five birth figures."
+    blocker: "No USD/JPY or other product subject mapping is created."
+  transiting_object_input:
+    status: SOURCE_CLOSED_FACT_LIST_ONLY
+    locators: ["p.64 / PDF 63", "p.75 / PDF 74"]
+    finding: "Nine transiting planets are placed in star/sign padas according to longitude."
+    blocker: "No product-side chart identity or financial mapping is created."
+  motion_class:
+    status: PARTIAL
+    locators: ["pp.33-34 / PDF 38-39", "pp.39-40 / PDF 44-45", "p.71 / PDF 70"]
+    finding: "Direct-normal/front, direct-high/left and retrograde/right are stated; standard speed data and a Sun-relative fallback are printed."
+    blocker: "No deterministic precedence, stationary rule, or direct-slow boundary is source-closed."
+  direction_ray:
+    status: SOURCE_CLOSED_STAR_TABLE_ONLY
+    locators: ["pp.65-70 / PDF 64-69", "pp.72-74 / PDF 71-73"]
+    finding: "Front, right and left behavior, 45-degree side wording, special exceptions, and a 28-row target chart are printed."
+    blocker: "The figure-relative board-cell ray construction cannot be completed without the full source-specific cell map."
+  target_cell_resolution:
+    status: PARTIAL
+    locators: ["pp.72-74 / PDF 71-73", "pp.145-146 / hardcopy PDF 6"]
+    finding: "Star/sign/tithi/vowel/consonant target categories are printed in the aspect chart."
+    blocker: "Origin inclusion, cell traversal/stopping, exact board-cell mapping, and layer-intersection behavior are unclosed."
+  planet_specific_exceptions:
+    status: PARTIAL
+    locators: ["pp.65-67 / PDF 64-66", "pp.70-71 / PDF 69-70"]
+    finding: "Sun, Moon, Rahu/Ketu all-three-direction treatment and selected pada exceptions are printed."
+    blocker: "The book does not yield a complete executable exception order."
+  benefic_malefic_nature:
+    status: SOURCE_CLOSED_CLASSIFICATION_WITH_STATED_CONDITIONS
+    locators: ["p.66 / PDF 65"]
+    finding: "Agarwal's named benefic/malefic Vedha classes and Moon/Mercury conditions are printed."
+    blocker: "Source fact only; prohibited from every product polarity path."
+  numerical_strength_interaction:
+    status: PARTIAL
+    locators: ["pp.67-68 / PDF 66-67", "pp.39-40 / PDF 44-45"]
+    finding: "The text prints selected grading and difference statements plus aspect-strength tables."
+    blocker: "No complete aggregation and condition precedence is closed."
+  precedence:
+    status: PARTIAL
+    locators: ["p.66 / PDF 65", "pp.89-90 / PDF 87-89"]
+    finding: "A victorious-planet statement and several local simultaneous-hit statements exist."
+    blocker: "No general deterministic resolution order is stated."
+  cancellation_exceptions:
+    status: PARTIAL
+    locators: ["pp.66-67 / PDF 65-66", "pp.88-89 / PDF 87-88"]
+    finding: "Selected transition, conjunction and special-result statements are present."
+    blocker: "No complete cancellation/obstruction algorithm is stated."
+  time_validity_window:
+    status: PARTIAL
+    locators: ["pp.67-71 / PDF 66-70", "p.92 / PDF 91"]
+    finding: "Several context-specific duration statements are printed."
+    blocker: "No general deterministic activation and expiration boundary is stated for every layer."
+  worked_example_reproducibility:
+    status: NOT_REPRODUCIBLE
+    locators: ["pp.75-99 / PDF 74-98"]
+    finding: "The reviewed material gives procedures and scenario statements, but no complete worked input-state-to-output calculation with all required operator choices closed."
+    blocker: "A hidden convention cannot be reverse engineered into an executable operator."
 contract_status:
   AGARWAL_SBC_2000_SOURCE_V1: NOT_CREATED_MINIMUM_OPERATOR_DEPENDENCIES_NOT_CLOSED
   AGARWAL_GEOMETRY_DISPLAY_EVIDENCE_V1: PARTIAL_SOURCE_RECORD_ONLY

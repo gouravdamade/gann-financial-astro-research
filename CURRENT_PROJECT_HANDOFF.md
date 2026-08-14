@@ -4,6 +4,29 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A1R2 Geometry and Vedha Source Closure)
+
+- A bounded private-source search found **no newer authenticated flat or
+  centre-fold capture** of Agarwal printed pp.145-146. The existing hardcopy
+  figure and old-scan overlap remain the only valid witnesses; `UNKNOWN_CENTER_FOLD`
+  survives and no 81-cell map is inferred.
+- The source record now distinguishes real Chapter 9 closure from an executable
+  engine: Agarwal explicitly names the five subject factors, nine-transit
+  placement, direction/motion descriptions, a 28-row star/sign target chart,
+  stated planet classes, and selected exceptions. Motion-state precedence,
+  board-cell target resolution, complete simultaneous-hit/cancellation handling,
+  universal validity windows, and worked-method reproducibility remain partial.
+- `AGARWAL_GEOMETRY_READY = false`, `AGARWAL_VEDHA_OPERATOR_READY = false`,
+  `AGARWAL_A2_READY = false`; no Agarwal UI scope is authorized. The smallest
+  remaining dependency is an authenticated, unambiguous complete author-figure
+  capture followed by the unresolved deterministic operator dependencies.
+- No financial boundary changed: Chapter 20 remains a locked
+  `FINANCIAL_HYPOTHESIS` ledger. Polarity, price mapping, score aggregation,
+  Fields, Auto Suggest, ML, MT5 and execution remain disabled for Agarwal.
+- Verification: A1R2 source-reconciliation fixtures **9/9**; touched Agarwal
+  YAML files parse; unchanged supported backend regression **209/209**. No
+  frontend or Windows candidate work belongs in this milestone.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A1R1 Complete Capture and Page Extraction)
 
 - `Agarwal_front.pdf` is now privately materialized at

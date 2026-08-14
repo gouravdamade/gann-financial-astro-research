@@ -82,8 +82,8 @@ page_ranges:
     image_pdf_locator: old-scan printed pages 64-132
     evidence_role: OLD_SCAN_CONTROLS_INTACT_PAGE_IMAGES
     overlap_status: NOT_REVIEWED
-    transcription_status: NOT_REQUESTED
-    notes: Intact old-scan pages.
+    transcription_status: A1R2_CHAPTER9_OPERATOR_AUDIT_PARTIAL
+    notes: A1R2 audited Chapter 9 and related procedure pages using the original scan images. It source-records subject/transit facts, motion/direction wording, a 28-row target table, selected class/exception statements and explicit remaining operator gaps. No executable operator is admitted.
   - printed_page_range: "133"
     controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
     private_artifact_filename: 130-136.pdf
@@ -118,8 +118,8 @@ page_ranges:
     image_pdf_locator: expected private two-page author figure spread, printed pp. 145-146
     evidence_role: HARDCOPY_CONTROLS_AUTHOR_FIGURE
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: PARTIAL_AUTHOR_FIGURE_RECONCILED
-    notes: Figure orientation/layer facts agree with the old scan. Exact small central-cell readings remain UNKNOWN_CENTER_FOLD and no derivative fills them.
+    transcription_status: A1R2_PARTIAL_AUTHOR_FIGURE_RECONCILED_NO_BETTER_CAPTURE
+    notes: Figure orientation/layer facts agree with the old scan. A1R2 searched reasonable private roots and found no newer authenticated flat or centre-fold capture. Exact small central-cell readings remain UNKNOWN_CENTER_FOLD and no derivative fills them.
   - printed_page_range: "147-194"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf

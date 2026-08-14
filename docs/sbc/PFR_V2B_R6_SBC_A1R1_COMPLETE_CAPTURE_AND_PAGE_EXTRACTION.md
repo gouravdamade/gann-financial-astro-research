@@ -118,3 +118,13 @@ The matrix describes source separation; it neither votes nor combines rules.
 The smallest remaining source dependency is a source-closed full geometry cell
 map plus the missing executable Vedha-operator dependencies. No A2 user
 interface work is authorized by this report.
+
+## A1R2 follow-on
+
+`PFR-V2B-R6-SBC-A1R2` performed the permitted figure-capture search and the
+book-wide Chapter 9 operator audit. No newer authenticated flat or centre-fold
+capture of pp.145-146 was found. The author figure therefore remains partial;
+the new audit records the source-closed star/sign target table and other
+literal operator facts while preserving the missing board-cell, state-order,
+precedence, cancellation and validity dependencies. See
+`docs/sbc/PFR_V2B_R6_SBC_A1R2_GEOMETRY_AND_VEDHA_SOURCE_CLOSURE.md`.

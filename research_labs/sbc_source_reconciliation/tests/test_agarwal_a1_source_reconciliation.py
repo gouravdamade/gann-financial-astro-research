@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from pathlib import Path
+import subprocess
 
 import yaml
 
@@ -60,6 +61,8 @@ class AgarwalA1SourceReconciliationTests(unittest.TestCase):
             readiness["contracts"]["AGARWAL_SBC_2000_SOURCE_V1"]["status"],
             "NOT_CREATED_MINIMUM_OPERATOR_DEPENDENCIES_NOT_CLOSED",
         )
+        self.assertEqual(readiness["contracts"]["A2_SCOPE_FULL_VEDHA_INSPECTOR"]["status"], "NOT_AUTHORIZED")
+        self.assertEqual(readiness["contracts"]["A2_SCOPE_GEOMETRY_STRENGTH_INSPECTOR"]["status"], "NOT_AUTHORIZED")
 
     def test_admitted_numeric_entries_have_two_pass_evidence(self) -> None:
         packet = yaml.safe_load(STRENGTH_PATH.read_text(encoding="utf-8"))
@@ -73,7 +76,38 @@ class AgarwalA1SourceReconciliationTests(unittest.TestCase):
     def test_geometry_preserves_unknown_fold_and_operator_is_not_executable(self) -> None:
         packet = yaml.safe_load(GEOMETRY_PATH.read_text(encoding="utf-8"))
         self.assertIn("UNKNOWN_CENTER_FOLD", str(packet["author_figure"]["unresolved_properties"]))
+        self.assertEqual(
+            packet["author_figure"]["a1r2_capture_search"]["result"],
+            "NO_NEW_AUTHENTICATED_FLAT_OR_CENTRE_FOLD_CAPTURE_FOUND",
+        )
+        self.assertEqual(packet["author_figure"]["admitted_machine_cell_mapping"]["count"], 0)
+        self.assertEqual(packet["author_figure"]["admitted_machine_cell_mapping"]["status"], "NOT_CREATED")
         self.assertEqual(packet["contract_status"]["AGARWAL_SBC_2000_SOURCE_V1"], "NOT_CREATED_MINIMUM_OPERATOR_DEPENDENCIES_NOT_CLOSED")
+
+    def test_p144_allocations_are_preserved_without_inferred_cell_reconstruction(self) -> None:
+        packet = yaml.safe_load(GEOMETRY_PATH.read_text(encoding="utf-8"))
+        allocations = packet["geometry"]["source_closed_allocations"]
+        self.assertEqual(packet["geometry"]["diff_status"], "AGREED")
+        self.assertEqual(allocations["stars"], ["2-8", "10-16", "18-24", "26-32"])
+        self.assertEqual(allocations["signs"], ["58-60", "62-64", "66-68", "70-72"])
+        self.assertEqual(packet["author_figure"]["admitted_machine_cell_mapping"]["count"], 0)
+
+    def test_operator_matrix_closes_source_facts_but_fails_closed_for_execution(self) -> None:
+        packet = yaml.safe_load(GEOMETRY_PATH.read_text(encoding="utf-8"))
+        matrix = packet["vedha_dependency_matrix"]
+        self.assertEqual(matrix["subject_reference_inputs"]["status"], "SOURCE_CLOSED_FACT_LIST_ONLY")
+        self.assertEqual(matrix["transiting_object_input"]["status"], "SOURCE_CLOSED_FACT_LIST_ONLY")
+        self.assertEqual(matrix["direction_ray"]["status"], "SOURCE_CLOSED_STAR_TABLE_ONLY")
+        self.assertEqual(matrix["motion_class"]["status"], "PARTIAL")
+        self.assertEqual(matrix["target_cell_resolution"]["status"], "PARTIAL")
+        self.assertEqual(matrix["worked_example_reproducibility"]["status"], "NOT_REPRODUCIBLE")
+        self.assertEqual(packet["contract_status"]["AGARWAL_SBC_2000_SOURCE_V1"], "NOT_CREATED_MINIMUM_OPERATOR_DEPENDENCIES_NOT_CLOSED")
+
+    def test_private_source_bytes_are_not_git_tracked(self) -> None:
+        tracked = subprocess.check_output(
+            ["git", "-C", str(ROOT), "ls-files"], text=True, encoding="utf-8"
+        ).splitlines()
+        self.assertFalse(any(path.lower().startswith("sources/private/") for path in tracked))
 
     def test_financial_ledger_is_hypothesis_only_and_locked(self) -> None:
         ledger = yaml.safe_load(FINANCIAL_PATH.read_text(encoding="utf-8"))
