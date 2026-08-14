@@ -52,6 +52,7 @@ from chart_conditioned_transit_event_service import (
     build_chart_conditioned_transit_event_range,
 )
 from bphs_classical_timing_service import build_bphs_classical_calendar_range
+from agarwal_source_inspector import build_agarwal_source_profile
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -268,6 +269,19 @@ def companion_capabilities() -> Any:
 @app.get("/api/runtime-diagnostics")
 def get_runtime_diagnostics() -> Any:
     return jsonify({"ok": True, "diagnostics": runtime_diagnostics.snapshot()})
+
+
+@app.get("/api/chakra-lab/agarwal-source-profile")
+def get_agarwal_source_profile() -> Any:
+    try:
+        return jsonify(
+            {
+                "ok": True,
+                "profile": build_agarwal_source_profile(repository.paths.project_root),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
 
 
 @app.post("/api/chakra-lab/snapshot")

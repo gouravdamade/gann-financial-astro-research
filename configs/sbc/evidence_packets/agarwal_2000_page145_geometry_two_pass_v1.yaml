@@ -17,18 +17,22 @@ page_evidence:
       sha256: CF0F72F82558B9C634B13EC9936BD2322900BCC9636945C1B0CB144310A3FA3F
       role: PASS_A_PRIMARY_PAGE145_TRANSCRIPTION_WITNESS
       private_locator: C:/Users/ADMIN/Desktop/c/1000413731.jpg
+      durable_private_source_locator: D:/GannFinancialAstro/sources/private/agarwal_hardcopy_20260813/page145_photographs_20260815/1000413731.jpg
     - filename: 1000413730.jpg
       sha256: BE4F77485AE29A7184D2629C4ADC6B26C31F47FFD4854DF02E4BA23DD86ECC3F
       role: PASS_B_INDEPENDENT_PAGE145_TRANSCRIPTION_WITNESS
       private_locator: C:/Users/ADMIN/Desktop/c/1000413730.jpg
+      durable_private_source_locator: D:/GannFinancialAstro/sources/private/agarwal_hardcopy_20260813/page145_photographs_20260815/1000413730.jpg
     - filename: 1000413061.jpg
       sha256: E777E0B334FC522F0CC5175CD19FB97A65F20894B531DD5DB64514F18FBC0937
       role: CONTEXT_AND_PRINTED_PAGE_PROVENANCE_WITNESS
       private_locator: C:/Users/ADMIN/Desktop/c/1000413061.jpg
+      durable_private_source_locator: D:/GannFinancialAstro/sources/private/agarwal_hardcopy_20260813/page145_photographs_20260815/1000413061.jpg
     - filename: 1000413732.jpg
       sha256: 0BAF7F9D86B97EF1125C58BFC3B66815F5D1F74B2747EAFB1075404159C424C7
       role: CONTEXT_AND_PRINTED_PAGE_PROVENANCE_WITNESS
       private_locator: C:/Users/ADMIN/Desktop/c/1000413732.jpg
+      durable_private_source_locator: D:/GannFinancialAstro/sources/private/agarwal_hardcopy_20260813/page145_photographs_20260815/1000413732.jpg
   historical_capture:
     filename: 140-146.pdf
     sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07

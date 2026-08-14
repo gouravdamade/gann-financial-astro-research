@@ -151,3 +151,18 @@ for current core-map readiness by
 This closes an auditable, read-only Geometry/Strength Inspector scope only. It
 does not make a Vedha operator, source profile, polarity output, financial
 mapping, score, market rule, Auto Suggest, ML, MT5, or execution path.
+
+## Agarwal A2 Geometry/Strength Inspector
+
+PFR-V2B-R6-SBC-A2 adds the founder-visible adapter contract
+`AGARWAL_GEOMETRY_STRENGTH_INSPECTOR_V1`. It renders the committed A1R3
+`AGARWAL_PAGE145_CORE_9X9_V1` fixture and the two-pass source-strength packet
+without copying source cells into a second frontend table. The profile is
+explicitly labelled `MODERN_PRACTITIONER_SOURCE`, remains isolated from
+Phaladeepika and Trailokya, and does not enter synchronized Fields computation.
+
+The UI shows `VEDHA DEPENDENCY_NOT_READY`; no rays are drawn. Chapter 20 stays
+`FINANCIAL_HYPOTHESIS_LEDGER_ONLY`, and all polarity, score, market, Auto
+Suggest, ML, MT5 and execution paths remain disabled. Private page photographs
+are not bundled or exposed; only their source IDs, page locators and hashes
+remain in the derived evidence packet.

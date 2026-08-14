@@ -1,5 +1,6 @@
 import type {
   AnnotationDraft,
+  AgarwalSourceProfile,
   AspectFamily,
   AspectEvidenceTrace,
   BackendRuntimeInfo,
@@ -675,6 +676,28 @@ export async function fetchChakraLabSnapshot(
     },
   )
   return payload.snapshot
+}
+
+export async function fetchAgarwalSourceProfile(): Promise<AgarwalSourceProfile> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ profile: AgarwalSourceProfile }>>(
+      'chakra_lab_agarwal_source_profile',
+    )
+    if (!payload.ok) throw new Error(payload.error || 'Agarwal source profile request failed')
+    if (payload.profile.executionAllowed || !payload.profile.guardrails.readOnly) {
+      throw new Error('Agarwal source profile violated the read-only lock')
+    }
+    return payload.profile
+  }
+  const payload = await request<{ profile: AgarwalSourceProfile }>(
+    '/api/chakra-lab/agarwal-source-profile',
+    { method: 'GET' },
+  )
+  if (payload.profile.executionAllowed || !payload.profile.guardrails.readOnly) {
+    throw new Error('Agarwal source profile violated the read-only lock')
+  }
+  return payload.profile
 }
 
 export async function fetchTrailokyaSourceOnlyGeometry(

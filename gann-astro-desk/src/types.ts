@@ -2084,6 +2084,105 @@ export type ChakraLabRequest = {
   nameInitials: string[]
 }
 
+export type SbcSourceProfileId =
+  | ChakraLabRequest['vedhaProfileId']
+  | 'AGARWAL_2000_GEOMETRY_STRENGTH_INSPECTOR_V1'
+
+export type AgarwalSourceCell = {
+  coordinate: {
+    row: number
+    column: number
+    label: string
+  }
+  literal: string
+  normalizedLabel: string | null
+  vargaNumber: number
+  layer: string
+  sourceProfile: string
+  printedPage: number
+  evidencePacketId: string
+  sourceStatus: 'SOURCE_CLOSED_TWO_PASS_AGREED'
+}
+
+export type AgarwalStrengthEvidenceRow = {
+  variableId: string
+  categoryLiteral: string
+  literalValue: string
+  normalizedValue: unknown
+  printedPage: number | string
+  privateArtifact: string
+  artifactSha256: Record<string, string>
+  sourceStatus: 'SOURCE_CLOSED' | 'PARTIAL' | 'CONFLICT' | 'UNREADABLE'
+  diffStatus: string
+}
+
+export type AgarwalSourceProfile = {
+  contract: 'AGARWAL_GEOMETRY_STRENGTH_INSPECTOR_V1'
+  schemaVersion: 1
+  profileId: 'AGARWAL_2000_GEOMETRY_STRENGTH_INSPECTOR_V1'
+  sourceId: string
+  edition: string
+  authority: 'MODERN_PRACTITIONER_SOURCE'
+  status: 'GEOMETRY + STRENGTH SOURCE CLOSED'
+  geometry: {
+    contract: 'AGARWAL_PAGE145_CORE_9X9_V1'
+    printedPage: number
+    contextPage: number
+    orientation: Record<string, string>
+    coordinateConvention: Record<string, string>
+    cells: AgarwalSourceCell[]
+    sourceStatus: string
+    evidencePacketId: string
+    witnesses: Array<{ filename: string; sha256: string; role: string; printedPage: string | number }>
+    p144Reconciliation: {
+      status: string
+      method: string
+      result: string
+      expected: Record<string, unknown>
+    }
+    historicalUnknownCenterFold: string
+  }
+  strengthEvidence: {
+    contract: string
+    packetId: string
+    sourceStatus: string
+    rows: AgarwalStrengthEvidenceRow[]
+    aggregationStatus: string
+  }
+  vedhaStatus: 'DEPENDENCY_NOT_READY'
+  vedhaDependencies: string[]
+  partialSourceEvidence: string[]
+  financialStatus: {
+    ledgerId: string
+    classification: 'FINANCIAL_HYPOTHESIS_LEDGER_ONLY'
+    printedPages: string
+    claimCount: number
+    claims: Array<{ hypothesisId: string; printedPage: number; sourceStatus: string }>
+    labels: string[]
+    allowedUse: string
+    prohibitedUses: string[]
+  }
+  provenance: {
+    geometryPrintedPage: number
+    allocationContextPrintedPage: number
+    geometryEvidence: string
+    strengthPages: string
+    sourceStatus: string
+    privateImagePathsExposed: false
+  }
+  guardrails: {
+    readOnly: true
+    marketDirectionInferred: false
+    polarityAllowed: false
+    scoreAggregationAllowed: false
+    fieldsInfluenceAllowed: false
+    autoSuggestAllowed: false
+    mlAllowed: false
+    executionAllowed: false
+  }
+  executionAllowed: false
+}
+
 export type TrailokyaSourceOnlyGeometry = {
   contract: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1'
   schemaVersion: 1

@@ -94,6 +94,7 @@ import type {
   ResearchTimeUpdateSource,
   RuntimeDiagnosticsBundle,
   SavedParameterProfile,
+  SbcSourceProfileId,
   ShadowLedgerSnapshot,
   WorkspacePreferences,
 } from '../types'
@@ -195,6 +196,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra' | 'fields'>('chart')
   const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
+  const [chakraSourceProfileId, setChakraSourceProfileId] = useState<SbcSourceProfileId>('phaladeepika_editor_vedha_guidance_v1')
   const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
     const stored = localStorage.getItem('gann-astro.visualization-mode')
     return VISUALIZATION_ENGINE_MODES.includes(stored as VisualizationEngineMode)
@@ -1194,8 +1196,8 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             selectedAspect={selected}
             selectedTimestampUtc={researchTimeController.selectedTimestampUtc}
             onSelectTimestampUtc={selectResearchTimestampUtc}
-            vedhaProfileId={vedhaProfileId}
-            onVedhaProfileIdChange={setVedhaProfileId}
+            vedhaProfileId={chakraSourceProfileId}
+            onVedhaProfileIdChange={setChakraSourceProfileId}
             visualizationMode={visualizationMode}
             onVisualizationModeChange={setVisualizationMode}
             onOpenFields={() => setActiveSurface('fields')}

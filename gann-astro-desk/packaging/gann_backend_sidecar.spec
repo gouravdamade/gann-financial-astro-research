@@ -73,6 +73,7 @@ hiddenimports = [
     "local_candlestick",
     "candlestick_analysis",
     "chakra_lab_service",
+    "agarwal_source_inspector",
     "decision_engine",
     "build_trade_candidates_from_touches",
     "doctrine_config",

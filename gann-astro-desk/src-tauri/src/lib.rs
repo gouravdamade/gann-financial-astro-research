@@ -763,6 +763,27 @@ async fn chakra_lab_snapshot(
 
 #[cfg(not(mobile))]
 #[tauri::command]
+async fn chakra_lab_agarwal_source_profile(
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Agarwal source profile requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/agarwal-source-profile",
+            &json!({}),
+        )
+    })
+    .await
+    .map_err(|error| format!("Agarwal source profile bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 async fn chakra_lab_trailokya_source_only_geometry(
     request: Value,
     state: State<'_, BackendRuntimeState>,
@@ -1142,6 +1163,7 @@ pub fn run() {
             runtime_profile,
             backend_runtime,
             chakra_lab_snapshot,
+            chakra_lab_agarwal_source_profile,
             chakra_lab_trailokya_source_only_geometry,
             chakra_lab_audit,
             chakra_lab_fixed_phasor,

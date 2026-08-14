@@ -33,6 +33,7 @@ import type {
   ChartPayload,
   CurrencyPairEvidence,
   ResearchTimeUpdateSource,
+  SbcSourceProfileId,
   TrailokyaSourceOnlyGeometry,
 } from '../types'
 import type { InstrumentKeyCandidate } from '../instrumentKeyConverter'
@@ -41,6 +42,7 @@ import { SbcLinkedAuditWorkspace } from './SbcLinkedAuditWorkspace'
 import { ProductFirstSbcWorkspace } from './ProductFirstSbcWorkspace'
 import { VISUALIZATION_ENGINE_MODES, visualizationModePolicy, type VisualizationEngineMode } from '../visualizationModes'
 import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
+import { AgarwalSourceInspectorWorkspace } from './AgarwalSourceInspectorWorkspace'
 
 
 const BODIES = [
@@ -129,8 +131,8 @@ type Props = {
   selectedTimestampUtc?: string | null
   onSelectTimestampUtc?: (timestampUtc: string, source: ResearchTimeUpdateSource) => void
   onOpenFields?: () => void
-  vedhaProfileId?: ChakraLabRequest['vedhaProfileId']
-  onVedhaProfileIdChange?: (profileId: ChakraLabRequest['vedhaProfileId']) => void
+  vedhaProfileId?: SbcSourceProfileId
+  onVedhaProfileIdChange?: (profileId: SbcSourceProfileId) => void
   visualizationMode?: VisualizationEngineMode
   onVisualizationModeChange?: (mode: VisualizationEngineMode) => void
 }
@@ -150,6 +152,10 @@ export function ChakraLabWorkspace({
   visualizationMode = 'SOURCE_ONLY_BASELINE',
   onVisualizationModeChange = () => undefined,
 }: Props) {
+  const isAgarwalProfile = vedhaProfileId === 'AGARWAL_2000_GEOMETRY_STRENGTH_INSPECTOR_V1'
+  const operationalProfileId: ChakraLabRequest['vedhaProfileId'] = isAgarwalProfile
+    ? 'phaladeepika_editor_vedha_guidance_v1'
+    : vedhaProfileId
   const [atLocal, setAtLocal] = useState(currentIstInput)
   const [latitude, setLatitude] = useState(defaultLatitude)
   const [longitude, setLongitude] = useState(defaultLongitude)
@@ -187,7 +193,7 @@ export function ChakraLabWorkspace({
       })),
     foundationProfileId: 'sbc_raman_foundation_v1',
     gridProfileId: 'sbc_81_rotation_normalized_partial_v1',
-    vedhaProfileId,
+    vedhaProfileId: operationalProfileId,
     vowels: splitValues(vowels),
     nameInitials: splitValues(nameInitials),
   }), [
@@ -197,11 +203,15 @@ export function ChakraLabWorkspace({
     latitude,
     longitude,
     nameInitials,
-    vedhaProfileId,
+    operationalProfileId,
     vowels,
   ])
 
   const loadSnapshot = useCallback(async (atOverride?: string) => {
+    if (isAgarwalProfile) {
+      setBusy(false)
+      return
+    }
     setBusy(true)
     setError('')
     try {
@@ -219,7 +229,7 @@ export function ChakraLabWorkspace({
     } finally {
       setBusy(false)
     }
-  }, [request])
+  }, [isAgarwalProfile, request])
 
   const selectMoment = useCallback((at: string, source: ResearchTimeUpdateSource = 'CHAKRA_MOMENT') => {
     setAtLocal(at)
@@ -273,6 +283,7 @@ export function ChakraLabWorkspace({
   }, [atLocal, loadSnapshot, selectedTimestampUtc])
 
   useEffect(() => {
+    if (isAgarwalProfile) return
     let active = true
     void (async () => {
       try {
@@ -289,7 +300,7 @@ export function ChakraLabWorkspace({
       }
     })()
     return () => { active = false }
-  }, [])
+  }, [isAgarwalProfile])
 
   const contextKeys = useMemo(() => new Set(
     snapshot?.target_context.flatMap((layer) => (
@@ -312,9 +323,9 @@ export function ChakraLabWorkspace({
   ), [snapshot, trailokyaGeometry])
   const selected = snapshot?.grid.cells.find((cell) => cellKey(cell) === selectedCell)
   const guidance = snapshot?.guidance
-  const isTrailokyaSourceOnly = vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'
-  const visualizationPolicy = visualizationModePolicy(visualizationMode, vedhaProfileId)
-  const visualizationSourceGaps = sourceGapsForVisualizationMode(visualizationMode, vedhaProfileId)
+  const isTrailokyaSourceOnly = operationalProfileId === 'SBC_TRAILOKYA_1972_V1'
+  const visualizationPolicy = visualizationModePolicy(visualizationMode, operationalProfileId)
+  const visualizationSourceGaps = sourceGapsForVisualizationMode(visualizationMode, operationalProfileId)
   const resolvedByBody = new Map(
     guidance?.actor_resolutions.map((actor) => [actor.body, actor]) ?? [],
   )
@@ -365,6 +376,15 @@ export function ChakraLabWorkspace({
     anchor.download = `gann-astro-${visualizationPolicy.mode.toLowerCase()}-${new Date().toISOString().replaceAll(':', '-')}.json`
     anchor.click()
     URL.revokeObjectURL(url)
+  }
+
+  if (isAgarwalProfile) {
+    return (
+      <AgarwalSourceInspectorWorkspace
+        profileId={vedhaProfileId}
+        onProfileChange={onVedhaProfileIdChange}
+      />
+    )
   }
 
   return (
@@ -541,10 +561,11 @@ export function ChakraLabWorkspace({
               Vedha source profile
               <select
                 value={vedhaProfileId}
-                onChange={(event) => onVedhaProfileIdChange(event.target.value as ChakraLabRequest['vedhaProfileId'])}
+                onChange={(event) => onVedhaProfileIdChange(event.target.value as SbcSourceProfileId)}
               >
                 <option value="phaladeepika_editor_vedha_guidance_v1">Phaladeepika editor profile</option>
                 <option value="SBC_TRAILOKYA_1972_V1">Trailokya 1972 source-only geometry</option>
+                <option value="AGARWAL_2000_GEOMETRY_STRENGTH_INSPECTOR_V1">Agarwal 2000 Research</option>
               </select>
             </label>
             <label>
