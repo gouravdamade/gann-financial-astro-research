@@ -1,8 +1,33 @@
 # Current Project Handoff
 
-Last updated: 2026-08-14 IST
+Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A1R1 Complete Capture and Page Extraction)
+
+- `Agarwal_front.pdf` is now privately materialized at
+  `D:\GannFinancialAstro\sources\private\agarwal_hardcopy_20260813\` with the
+  expected SHA-256 `D117CC540DD3E24CCAC3E565F1BF20A1A4FB72DED531298FB69AF3708B72E2E9`
+  and seven pages. The complete private capture gate is now **6/6 verified**.
+- Source-only A1R1 work records: two-pass-agreed p.54-55 and pp.60-63
+  numerical/general-strength rows, p.144 allocation groups, partial pp.145-146
+  author-figure geometry, a partial Chapter 9 direction-by-motion record, and a
+  page-level Chapter 20 `FINANCIAL_HYPOTHESIS` ledger. No source image is tracked.
+- Old-scan/hardcopy comparisons were recorded per printed page. Recovered pages
+  remain hardcopy-controlled. No ChiStaBo derivative fills any gap, and the
+  figure's exact center/small cell data stays `UNKNOWN_CENTER_FOLD`.
+- `AGARWAL_STRENGTH_READY = true` only for source-record use and
+  `AGARWAL_FINANCIAL_HYPOTHESIS_READY = true` only for a locked research ledger.
+  `AGARWAL_GEOMETRY_READY = false`, `AGARWAL_VEDHA_OPERATOR_READY = false`, and
+  `AGARWAL_A2_READY = false`. The smallest remaining source dependency is an
+  unambiguous full cell map plus complete operator dependencies.
+- No profile/UI/execution work occurred. Agarwal remains prohibited from Mode 1,
+  Fields polarity, pair fields, scores, price conversion, Auto Suggest, ML,
+  live inference, MT5 and execution.
+- Verification: A1R1 source-reconciliation fixtures **6/6**; all touched
+  Agarwal YAML files parse; unchanged supported backend regression **209/209**.
+  No frontend or package build was run because this milestone changes neither.
 
 ## Latest Update - 2026-08-14 (PFR-V2B-R6-SBC-A1 Agarwal Source Reconciliation)
 

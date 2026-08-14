@@ -132,6 +132,15 @@ or live market rules by virtue of the edition identification.
   acquisition gap is closed. Any executable rule still requires its own
   page-level source contract and project approval.
 
+## A1R1 follow-up
+
+On 2026-08-14 the remaining front-matter capture was materialized with the
+expected seven pages and checksum. All six capture files now pass the exact
+private-capture gate. The later bounded extraction is recorded in
+`docs/sbc/PFR_V2B_R6_SBC_A1R1_COMPLETE_CAPTURE_AND_PAGE_EXTRACTION.md`.
+It adds source-only strength, geometry, partial-operator and financial-hypothesis
+records; it does not authorize a profile, financial inference, or execution.
+
 This note supersedes only the unresolved acquisition/provenance conclusions in
 `docs/sbc/AGARWAL_SCAN_AUDIT_20260722.md`; its historical file-identity and
 ChiStaBo-derivative findings remain valid.

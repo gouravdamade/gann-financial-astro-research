@@ -107,5 +107,15 @@ previously absent printed pages. See
 The later evidence closes the project acquisition gap, not the old scan's file
 identity and not any individual executable-rule gate. A1 source reconciliation
 records the two facts separately: a composite source map may cite the hardcopy
-as controlling evidence, but literal transcription remains blocked until its
-checksum-identified private capture files are locally materialized.
+as controlling evidence, but literal transcription remained blocked until its
+checksum-identified private capture files were locally materialized.
+
+## 2026-08-15 A1R1 Extraction Addendum
+
+The final front-matter capture was then materialized with the expected SHA-256,
+opening the six-of-six private capture gate. A1R1 records page-specific,
+source-only two-pass strength rows, geometry allocation evidence, partial
+direction-by-motion evidence, and a locked Chapter 20 financial-hypothesis
+ledger. It does not alter the old scan's incomplete status or create an
+executable Agarwal profile. The current extraction status and remaining gaps are
+in `docs/sbc/PFR_V2B_R6_SBC_A1R1_COMPLETE_CAPTURE_AND_PAGE_EXTRACTION.md`.

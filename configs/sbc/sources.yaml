@@ -159,23 +159,23 @@ sources:
     title: Complete published edition of Mystics of Sarvato Bhadra Chakra and Astrological Predictions
     authority: modern_practitioner_source_candidate
     content_layer: historical_acquisition_request_superseded_by_physical_hardcopy_identity
-    status: superseded_acquisition_request_page_level_transcription_still_gated
+    status: superseded_acquisition_request_page_level_extraction_partially_completed
     rights_status: founder_held_commercial_hardcopy_private_research_photographs_no_redistribution
     sha256: null
     registry_ref: configs/sbc/agarwal_hardcopy_20260813.yaml
     source_url: null
-    notes: Historical acquisition request retained for audit continuity. The founder-held Sagar Publications New Delhi First Edition 2000 now closes the edition and missing-page acquisition gap. Page-level transcription and executable-rule gates remain separate and are currently blocked because the checksum-identified private capture files are not materialized locally for A1.
+    notes: Historical acquisition request retained for audit continuity. The founder-held Sagar Publications New Delhi First Edition 2000 closes the edition and missing-page acquisition gap. A1R1 verified all six private captures and added source-only partial fixtures; executable-rule gates remain separate and closed.
 
   - source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
     title: Mystics of Sarvato Bhadra Chakra and Astrological Predictions (With norms for financial gain in share market)
     authority: modern_practitioner_source
     content_layer: founder_held_physical_edition_with_private_page_photographs
-    status: edition_identity_physically_evidenced_private_capture_materialization_pending
+    status: edition_identity_physically_evidenced_all_six_private_captures_hash_verified_partial_page_extraction
     rights_status: user_owned_commercial_hardcopy_private_research_photographs_no_redistribution
     sha256: null
     registry_ref: configs/sbc/agarwal_hardcopy_20260813.yaml
     source_url: null
-    notes: Sagar Publications, New Delhi, First Edition 2000. The physical-edition identity and recovery of eight previously absent printed pages are evidenced by the 2026-08-13 hardcopy record. A1 may not transcribe the hardcopy-controlled pages until the six named private capture files are locally materialized and checksum-verified.
+    notes: Sagar Publications, New Delhi, First Edition 2000. All six named private captures are locally materialized and SHA-256 verified as of A1R1. The source closes selected strength and geometry evidence only; a complete executable Agarwal operator remains unclosed.
 
   - source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     title: Mystics of Sarvato Bhadra Chakra and Astrological Predictions (incomplete image scan)

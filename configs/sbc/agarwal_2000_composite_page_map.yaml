@@ -4,13 +4,13 @@ source_scope: printed_pages_1_through_194
 edition_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
 old_scan_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
 old_scan_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
-private_capture_materialization_state: PARTIAL_5_OF_6_VERIFIED_FRONT_CAPTURE_MISSING_20260814
+private_capture_materialization_state: ALL_6_CAPTURE_FILES_HASH_VERIFIED_20260814
 private_capture_expected_directory: D:/GannFinancialAstro/sources/private/agarwal_hardcopy_20260813/
 map_rules:
   - Hardcopy captures control recovered pages when their checksum-identified bytes are materialized.
   - The old incomplete image scan controls intact printed pages not covered by an available hardcopy capture.
   - A founder visual comparison is a cross-reference only and never substitutes for a page image.
-  - The A1 directive requires all six private capture files before any page-level transcription; a partial materialization blocks every extraction branch and does not transfer control to a ChiStaBo derivative.
+  - All six required private captures are now checksum-verified. Page-level work remains controlled by the hardcopy for recovered pages and by the old scan for intact pages; this never transfers control to a ChiStaBo derivative.
 page_ranges:
   - printed_page_range: "1-45"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
@@ -28,8 +28,8 @@ page_ranges:
     image_pdf_locator: expected private capture pages covering printed pp. 46-47
     evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGES
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: BLOCKED_A1_CAPTURE_SET_INCOMPLETE
-    notes: Missing from the old scan; do not reconstruct from derivative text while Agarwal_front.pdf remains absent.
+    transcription_status: NOT_REQUESTED
+    notes: Missing from the old scan; capture is materialized and hash verified, but no rule extraction is claimed from this range in A1R1.
   - printed_page_range: "48"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
@@ -55,8 +55,8 @@ page_ranges:
     image_pdf_locator: expected private capture pages covering printed pp. 54-55
     evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGES
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: BLOCKED_A1_CAPTURE_SET_INCOMPLETE
-    notes: Numerical-strength source branch has exact capture bytes, but the A1 all-capture gate remains blocked by Agarwal_front.pdf.
+    transcription_status: TWO_PASS_STRENGTH_FIXTURE_ADMITTED
+    notes: Numerical strength rows are recorded in a source-only two-pass fixture; no executable formula is admitted.
   - printed_page_range: "56-61"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
@@ -73,8 +73,8 @@ page_ranges:
     image_pdf_locator: expected private capture pages covering printed pp. 62-63
     evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGES
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: BLOCKED_A1_CAPTURE_SET_INCOMPLETE
-    notes: Strength/Shadbala continuation has exact capture bytes, but the A1 all-capture gate remains blocked by Agarwal_front.pdf.
+    transcription_status: TWO_PASS_STRENGTH_FIXTURE_ADMITTED
+    notes: General strength rows are recorded in a source-only two-pass fixture; unclosed aggregation dependencies remain explicit.
   - printed_page_range: "64-132"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
@@ -91,8 +91,8 @@ page_ranges:
     image_pdf_locator: expected private capture page covering printed p. 133
     evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGE
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: BLOCKED_A1_CAPTURE_SET_INCOMPLETE
-    notes: Descriptive social/caste application capture is verified, but extraction is blocked by Agarwal_front.pdf; no financial mapping is permitted.
+    transcription_status: DESCRIPTIVE_ONLY_CLASSIFIED
+    notes: Human/caste outcome material is classified DESCRIPTIVE_ONLY. It is prohibited from market, polarity, ML, Auto Suggest and execution use.
   - printed_page_range: "134-143"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
@@ -109,8 +109,8 @@ page_ranges:
     image_pdf_locator: expected private capture page covering printed p. 144
     evidence_role: HARDCOPY_CONTROLS_RECOVERED_MISSING_PAGE
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: BLOCKED_A1_CAPTURE_SET_INCOMPLETE
-    notes: Chapter-18 opening capture is verified, but statements are not transcribed until the full A1 capture set is present.
+    transcription_status: TWO_PASS_GEOMETRY_ALLOCATION_FIXTURE_ADMITTED
+    notes: Explicit varga allocation groups are in a source-only fixture; no executable board map is inferred.
   - printed_page_range: "145-146"
     controlling_source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
     private_artifact_filename: 140-146.pdf
@@ -118,8 +118,8 @@ page_ranges:
     image_pdf_locator: expected private two-page author figure spread, printed pp. 145-146
     evidence_role: HARDCOPY_CONTROLS_AUTHOR_FIGURE
     overlap_status: CAPTURE_MATERIALIZED_HASH_VERIFIED
-    transcription_status: BLOCKED_A1_CAPTURE_SET_INCOMPLETE
-    notes: No cell, orientation, or center-fold reading is inferred from a derivative redraw while the A1 all-capture gate is incomplete.
+    transcription_status: PARTIAL_AUTHOR_FIGURE_RECONCILED
+    notes: Figure orientation/layer facts agree with the old scan. Exact small central-cell readings remain UNKNOWN_CENTER_FOLD and no derivative fills them.
   - printed_page_range: "147-194"
     controlling_source_id: AGARWAL_MYSTICS_INCOMPLETE_SCAN_20260722
     private_artifact_filename: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf

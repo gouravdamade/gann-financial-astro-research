@@ -1,0 +1,80 @@
+schema_version: 1
+packet_id: AGARWAL_2000_NUMERICAL_AND_GENERAL_STRENGTH_TWO_PASS_V1
+source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+edition: "Mystics of Sarvato Bhadra Chakra and Astrological Predictions, M. K. Agarwal, Sagar Publications, New Delhi, First Edition 2000"
+private_artifact: "52-59.pdf; 60-64.pdf"
+artifact_sha256:
+  52-59.pdf: AB5A354C43ACBDDB68ED7EB6C1868ED8E1D766E896FB1F01448521AEA4830D49
+  60-64.pdf: 1DD38DCC982BD631D8E29ECEFC46423A2C92F860E33699CEDAF989358680F2CA
+evidence_layer: founder_held_hardcopy_page_images
+transcription_method:
+  pass_A: independent visual reading of the hardcopy image pages before consulting any prior derived text.
+  pass_B: fresh visual reading of the same image pages with values captured independently from pass A.
+  comparison: exact literal-value comparison; source spelling is retained in each entry.
+  limitation: this packet records source evidence only. It is not a Shadbala implementation specification and has no product or financial role.
+source_status: PARTIAL
+prohibited_uses: [financial_polarity, price_mapping, score_aggregation, Fields_polarity, Auto_Suggest, ML, MT5, execution]
+entries:
+  - variable_id: AGARWAL_2000_NUMERICAL_BENEFIC_SIGN_STRENGTH
+    printed_page: 54
+    category_label_literal: "Strength based on sign occupied by planets"
+    transcription_pass_A: "own 100%/20; friend's 75%/15; neutral 50%/10; enemy 25%/5"
+    transcription_pass_B: "own 100%/20; friend's 75%/15; neutral 50%/10; enemy 25%/5"
+    diff_status: AGREED
+    literal_value: "Benefic rows: own=100% and 20; friend's=75% and 15; neutral=50% and 10; enemy=25% and 5."
+    normalized_value: {own: {percent: 100, points: 20}, friend: {percent: 75, points: 15}, neutral: {percent: 50, points: 10}, enemy: {percent: 25, points: 5}}
+    source_status: SOURCE_CLOSED
+  - variable_id: AGARWAL_2000_NUMERICAL_MALEFIC_SIGN_STRENGTH
+    printed_page: 55
+    category_label_literal: "Malefic strength"
+    transcription_pass_A: "own 25%/5; friend's 50%/10; neutral 75%/15; enemy 100%/20"
+    transcription_pass_B: "own 25%/5; friend's 50%/10; neutral 75%/15; enemy 100%/20"
+    diff_status: AGREED
+    literal_value: "Malefic rows: own=25% and 5; friend's=50% and 10; neutral=75% and 15; enemy=100% and 20."
+    normalized_value: {own: {percent: 25, points: 5}, friend: {percent: 50, points: 10}, neutral: {percent: 75, points: 15}, enemy: {percent: 100, points: 20}}
+    source_status: SOURCE_CLOSED
+  - variable_id: AGARWAL_2000_NUMERICAL_LONGITUDE_TABLE
+    printed_page: 55
+    category_label_literal: "Longitude of planet"
+    transcription_pass_A: "1:4/3/2/1; 5:20/15/10/5; 10:40/30/20/10; 15:60/45/30/15; 20:40/30/20/10; 25:20/15/10/5; 30:0/0/0/0; kala:4/3/2/1."
+    transcription_pass_B: "1:4/3/2/1; 5:20/15/10/5; 10:40/30/20/10; 15:60/45/30/15; 20:40/30/20/10; 25:20/15/10/5; 30:0/0/0/0; kala:4/3/2/1."
+    diff_status: AGREED
+    literal_value: "Table columns are Own sign, Friend sign, Neutral sign, Enemy sign; values are printed in minutes/seconds notation."
+    normalized_value: {degrees: [1, 5, 10, 15, 20, 25, 30], own_minutes: [4, 20, 40, 60, 40, 20, 0], friend_minutes: [3, 15, 30, 45, 30, 15, 0], neutral_minutes: [2, 10, 20, 30, 20, 10, 0], enemy_minutes: [1, 5, 10, 15, 10, 5, 0], kala_seconds: {own: 4, friend: 3, neutral: 2, enemy: 1}}
+    source_status: SOURCE_CLOSED
+  - variable_id: AGARWAL_2000_STHANA_AND_DIG_BALA_PERCENTAGES
+    printed_page: 60
+    category_label_literal: "Sthana bala; Dig bala"
+    transcription_pass_A: "Sthana: exalted 100, mool trikona 80, own 70, atimitra 60, mitra 50, navamsa-own 70, navamsa exalted 80. Dig: Jupiter/Mercury first; Sun/Mars tenth; Saturn seventh; Venus/Moon fourth; all 100%."
+    transcription_pass_B: "Sthana: exalted 100, mool trikona 80, own 70, atimitra 60, mitra 50, navamsa-own 70, navamsa exalted 80. Dig: Jupiter/Mercury first; Sun/Mars tenth; Saturn seventh; Venus/Moon fourth; all 100%."
+    diff_status: AGREED
+    literal_value: "The page gives percentage rows only; it does not supply an executable aggregation formula."
+    normalized_value: {sthana_percent: {exalted: 100, mool_trikona: 80, own: 70, atimitra: 60, mitra: 50, navamsa_own: 70, navamsa_exalted: 80}, dig_percent: 100}
+    source_status: SOURCE_CLOSED
+  - variable_id: AGARWAL_2000_CHESTA_AND_KAALA_BALA_ROWS
+    printed_page: 60-61
+    category_label_literal: "Chesta bala; Kalbala- Temporal Strength"
+    transcription_pass_A: "Chesta row and temporal rows all state 100% under their listed conditions; examples include retrograde/conjunct Moon for five planets, and day/night/bright-dark/time-of-day placements."
+    transcription_pass_B: "Chesta row and temporal rows all state 100% under their listed conditions; examples include retrograde/conjunct Moon for five planets, and day/night/bright-dark/time-of-day placements."
+    diff_status: AGREED
+    literal_value: "The conditions are source-closed on the visible pages, but their boundaries, precedence and aggregation are not closed by this packet."
+    normalized_value: {listed_condition_percent: 100}
+    source_status: PARTIAL
+  - variable_id: AGARWAL_2000_NAISARGIK_HORA_DRIK_YUDDHA
+    printed_page: 61-62
+    category_label_literal: "Naisargikbala; Hora; Drug bala; Yuddha bala"
+    transcription_pass_A: "Natural sequence Sun 7/7, Moon 6/7, Venus 5/7, Jupiter 4/7, Mercury 3/7, Mars 2/7, Saturn 1/7; visible listed hora/drug/yuddha rows are 100%."
+    transcription_pass_B: "Natural sequence Sun 7/7, Moon 6/7, Venus 5/7, Jupiter 4/7, Mercury 3/7, Mars 2/7, Saturn 1/7; visible listed hora/drug/yuddha rows are 100%."
+    diff_status: AGREED
+    literal_value: "The source describes a victorious planet as behind the other planet at the same longitude."
+    normalized_value: {natural_order: [Sun, Moon, Venus, Jupiter, Mercury, Mars, Saturn], hora_percent: 100, drig_percent: 100, yuddha_percent: 100}
+    source_status: PARTIAL
+  - variable_id: AGARWAL_2000_OJA_YUGMA_KENDRA_DREKKANA_KRANTI
+    printed_page: 62-63
+    category_label_literal: "Oja-Yugma Sign bala; Kendra Bala; Drekkana bala; Kranti bala"
+    transcription_pass_A: "Oja rows 100; Kendra 100/50/25 for listed house groups; Drekkana listed rows 25; Kranti listed declination bands 100."
+    transcription_pass_B: "Oja rows 100; Kendra 100/50/25 for listed house groups; Drekkana listed rows 25; Kranti listed declination bands 100."
+    diff_status: AGREED
+    literal_value: "Kranti rows print 23-27 north for Sun/Mars/Jupiter/Venus, 23-27 south for Moon/Saturn, and 23-27 north/south for Mercury."
+    normalized_value: {oja_yugma_percent: 100, kendra_percent: {angular: 100, succedent: 50, cadent: 25}, drekkana_percent: 25, kranti_percent: 100}
+    source_status: PARTIAL

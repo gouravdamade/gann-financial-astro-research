@@ -101,3 +101,22 @@ pages 24-27 and 34 of the ChiStaBo-edited Krishna Rau/Choudhary booklet enter
 only opt-in `hypothesis_reference` retrieval. No deterministic or executable
 rule changed. See
 `docs/sbc/ADDITIONAL_SBC_SOURCE_CROSS_REFERENCE_20260723.md`.
+
+## Agarwal A1R1 page-level extraction
+
+All six hardcopy captures, including `Agarwal_front.pdf` (seven PDF pages,
+SHA-256 `D117CC540DD3E24CCAC3E565F1BF20A1A4FB72DED531298FB69AF3708B72E2E9`),
+are privately materialized and verified. A1R1 adds source evidence only:
+
+- two-pass numerical/general-strength fixtures for hardcopy pp.54-55 and
+  pp.60-63;
+- p.144 varga-allocation groups and partial author-figure facts;
+- a partial Chapter 9 direction-by-motion record; and
+- a page-level Chapter 20 ledger classified solely as `FINANCIAL_HYPOTHESIS`.
+
+The author figure remains `UNKNOWN_CENTER_FOLD` for exact small-cell admission.
+The unclosed motion-state definition, target-cell mapping, precedence,
+cancellation, and complete reference contract mean that
+`AGARWAL_SBC_2000_SOURCE_V1` does not exist as an executable profile. No
+Agarwal material enters classical Mode 1, Fields polarity, pair fields, scoring,
+Auto Suggest, ML labels, live inference, MT5, or execution.

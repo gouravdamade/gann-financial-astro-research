@@ -1,0 +1,62 @@
+schema_version: 1
+packet_id: AGARWAL_2000_GEOMETRY_AND_OPERATOR_PARTIAL_V1
+source_id: AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY
+edition: "Mystics of Sarvato Bhadra Chakra and Astrological Predictions, M. K. Agarwal, Sagar Publications, New Delhi, First Edition 2000"
+source_status: PARTIAL
+prohibited_uses: [polarity, score_aggregation, price_mapping, Fields_polarity, Auto_Suggest, ML, MT5, execution]
+geometry:
+  printed_page: 144
+  private_artifact: 140-146.pdf
+  artifact_sha256: 1F42A64A57C19926A0D249EC204C7900503C30E111F28A608BAFA137062CCC07
+  transcription_pass_A: "Stars 2-8, 10-16, 18-24, 26-32; signs 58-60, 62-64, 66-68, 70-72; tithis and weekdays 74,76,78,80,81; vowels 1,9,17,25,33,39,65,69,73,75,45,51,77,79,57,61; consonants 34-38,40-44,46-50,52-56."
+  transcription_pass_B: "Stars 2-8, 10-16, 18-24, 26-32; signs 58-60, 62-64, 66-68, 70-72; tithis and weekdays 74,76,78,80,81; vowels 1,9,17,25,33,39,65,69,73,75,45,51,77,79,57,61; consonants 34-38,40-44,46-50,52-56."
+  diff_status: AGREED
+  source_closed_allocations:
+    stars: [2-8, 10-16, 18-24, 26-32]
+    signs: [58-60, 62-64, 66-68, 70-72]
+    lunar_tithis: [74, 76, 78, 80, 81]
+    weekdays: [74, 76, 78, 80, 81]
+    vowels: [1, 9, 17, 25, 33, 39, 65, 69, 73, 75, 45, 51, 77, 79, 57, 61]
+    consonants: [34-38, 40-44, 46-50, 52-56]
+  source_status: SOURCE_CLOSED
+author_figure:
+  printed_pages: [145, 146]
+  hardcopy_locator: "140-146.pdf, PDF image 6, two-page hardcopy spread"
+  old_scan_locator: "AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf, PDF image 143"
+  witness_reconciliation: MATCH
+  source_closed_properties:
+    - figure heading uses "Sarvato Bhadra Chakra"
+    - EAST is printed at the top and WEST at the bottom
+    - NORTH is printed at the left and SOUTH at the right
+    - Abhijit is visibly included among the star labels
+    - the figure visibly carries star, sign, navamsa, pada, weekday, vowel, consonant and numbered-varga layers
+  unresolved_properties:
+    - UNKNOWN_CENTER_FOLD: exact central-cell readings and all small-label cell allocation are not admitted from the folded hardcopy photograph.
+    - no inferred 81-cell machine map is created from symmetry, derivative redraws, or another profile.
+  source_status: PARTIAL
+operator_evidence:
+  - variable_id: AGARWAL_2000_DIRECTION_CLASS_BY_MOTION
+    printed_page: 65
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    transcription_pass_A: "Sun, Moon, Rahu and Ketu can aspect all three directions; retrograde only right; fast only left; normal only front."
+    transcription_pass_B: "Sun, Moon, Rahu and Ketu can aspect all three directions; retrograde only right; fast only left; normal only front."
+    diff_status: AGREED
+    source_status: SOURCE_CLOSED
+    limitations:
+      - Fast and normal are not numerically defined by this page-level packet.
+      - This partial evidence does not close target-cell mapping, precedence, cancellation, or a complete executable operator.
+      - It does not borrow any omitted dependency from Phaladeepika or Trailokya.
+  - variable_id: AGARWAL_2000_VEDHA_SUBJECT_FACTORS
+    printed_page: 64
+    private_artifact: AGARWAL_MYSTICS_INCOMPLETE_SCAN_5644DFC4.pdf
+    artifact_sha256: 5644DFC44DEC730A26111CA2EEA9C2A005A4291555B71A6A32F0B7B7BCF26050
+    transcription_pass_A: "Chapter 9 introduces Vedha on five important individual components; the page is source evidence only."
+    transcription_pass_B: "Chapter 9 introduces Vedha on five important individual components; the page is source evidence only."
+    diff_status: AGREED
+    source_status: PARTIAL
+    limitations:
+      - This packet does not claim a complete input/reference contract for a product calculation.
+contract_status:
+  AGARWAL_SBC_2000_SOURCE_V1: NOT_CREATED_MINIMUM_OPERATOR_DEPENDENCIES_NOT_CLOSED
+  AGARWAL_GEOMETRY_DISPLAY_EVIDENCE_V1: PARTIAL_SOURCE_RECORD_ONLY
