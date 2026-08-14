@@ -100,4 +100,14 @@ These checks remain pending and are not marked accepted by the implementer:
 7. Confirm Tara remains `DEPENDENCY_NOT_READY`, source/provenance text is
    unchanged, and execution remains locked.
 
-Founder acceptance is still pending the physical UI inspection.
+## Founder acceptance
+
+Founder physical inspection accepted the bounded P2R2 three-day viewport on
+2026-08-14 IST. This records product acceptance of the 14-day loaded page and
+the three-day shared visual viewport only. It does not certify BPHS doctrine,
+activate Tara, or relax any source, polarity, scoring, market, Auto Suggest,
+ML, or execution lock.
+
+The accepted immutable candidate remains
+`0.10.46-pfr-v2b-r6-bphs-t1r-p2r2`; no artifact was rebuilt or replaced for
+this documentation-only acceptance record.
