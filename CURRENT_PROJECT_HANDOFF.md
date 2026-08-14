@@ -4,6 +4,34 @@ Last updated: 2026-08-14 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-14 (PFR-V2B-R6-BPHS-T1R-P2R1 Candidate Completed After Restart)
+
+- The interrupted Windows founder-candidate build resumed from the completed
+  clean source commit `e632c82d8f23142532f91d52d710e339ae9167e1` rather than
+  rebuilding or changing product code. Candidate
+  `0.10.45-pfr-v2b-r6-bphs-t1r-p2r1` is now complete at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.45-pfr-v2b-r6-bphs-t1r-p2r1-tauri`.
+- It has both the self-contained portable `GannAstroDesk.exe` and the NSIS
+  installer. The release manifest records `source_git_dirty: false`, the exact
+  source commit, Node/npm versions, and execution lock state. Portable SHA-256:
+  `061C2FEFEE41896CE6CFE1C1174D7694ABA1671A234E45D66EBF211096083CFD`;
+  installer SHA-256:
+  `BFFE90D6FC809310A63A280AD6C1DB5E547063264596BE0579CBA5161E23033E`.
+- Fresh-checkout verification completed: focused Fields/window **13/13**;
+  focused BPHS/synchronized backend **15/15**; Founder Review portability
+  **9/9**; frontend **36 files / 156 tests**; full backend **209/209**;
+  Oxlint, production frontend build, Cargo format/check, and Rust **18/18**.
+- Two isolated portable smoke launches passed every **42/42** applicable
+  check. Each verified the bundled sidecar health, safety locks, controlled
+  same-port sidecar recovery, persisted layout, and clean process shutdown.
+  The only deferred test is the explicitly optional, unconfigured candlestick
+  specialist. A direct bundled BPHS endpoint probe also returned the bounded
+  `BPHS_CLASSICAL_CALENDAR_RANGE_V1`, 40 intervals, named Muhurta, Tara
+  `DEPENDENCY_NOT_READY`, and `executionAllowed: false`.
+- Candidate report:
+  `docs/fields/PFR_V2B_R6_BPHS_T1R_P2R1_FOUNDER_INSPECTION_CANDIDATE_0.10.45.md`.
+  This is founder inspection only, not founder acceptance or a stable release.
+
 ## Latest Update - 2026-08-14 (PFR-V2B-R5-F2A-R3 Windows Packet Hash Portability)
 
 - The fresh clean Windows founder-candidate checkout reproduced the seven
