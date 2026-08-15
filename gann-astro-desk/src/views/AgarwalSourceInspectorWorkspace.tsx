@@ -119,7 +119,7 @@ export function AgarwalSourceInspectorWorkspace({ profileId, onProfileChange }: 
 
       <div className="agarwal-badges" aria-label="Agarwal scope status">
         <span className="status-badge status-badge-source">MODERN PRACTITIONER SOURCE</span>
-        <span className="status-badge status-badge-positive">GEOMETRY + STRENGTH SOURCE CLOSED</span>
+        <span className="status-badge status-badge-positive">GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED</span>
         <span className="status-badge status-badge-warning">VEDHA NOT READY</span>
         <span className="status-badge"><LockKeyhole size={12} /> READ ONLY</span>
       </div>

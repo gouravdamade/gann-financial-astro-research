@@ -183,7 +183,7 @@ def build_agarwal_source_profile(project_root: Path) -> dict[str, Any]:
         "sourceId": AGARWAL_SOURCE_ID,
         "edition": AGARWAL_EDITION,
         "authority": "MODERN_PRACTITIONER_SOURCE",
-        "status": "GEOMETRY + STRENGTH SOURCE CLOSED",
+        "status": "GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED",
         "geometry": {
             "contract": "AGARWAL_PAGE145_CORE_9X9_V1",
             "printedPage": page_evidence.get("printed_page", 145),
@@ -224,7 +224,7 @@ def build_agarwal_source_profile(project_root: Path) -> dict[str, Any]:
             "allocationContextPrintedPage": 144,
             "geometryEvidence": "A1R3_TWO_PASS",
             "strengthPages": "54-55 / 60-63",
-            "sourceStatus": "SOURCE_CLOSED_FOR_READ_ONLY_GEOMETRY_AND_STRENGTH",
+            "sourceStatus": "GEOMETRY_CLOSED_STRENGTH_SOURCE_RECORDED",
             "privateImagePathsExposed": False,
         },
         "guardrails": {

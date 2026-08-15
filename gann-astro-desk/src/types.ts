@@ -2123,7 +2123,7 @@ export type AgarwalSourceProfile = {
   sourceId: string
   edition: string
   authority: 'MODERN_PRACTITIONER_SOURCE'
-  status: 'GEOMETRY + STRENGTH SOURCE CLOSED'
+  status: 'GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED'
   geometry: {
     contract: 'AGARWAL_PAGE145_CORE_9X9_V1'
     printedPage: number

@@ -39,7 +39,7 @@ const profile: AgarwalSourceProfile = {
   sourceId: 'AGARWAL_MYSTICS_SAGAR_FIRST_EDITION_2000_HARDCOPY',
   edition: 'Mystics of Sarvato Bhadra Chakra and Astrological Predictions, M. K. Agarwal, Sagar Publications, New Delhi, First Edition 2000',
   authority: 'MODERN_PRACTITIONER_SOURCE',
-  status: 'GEOMETRY + STRENGTH SOURCE CLOSED',
+  status: 'GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED',
   geometry: {
     contract: 'AGARWAL_PAGE145_CORE_9X9_V1',
     printedPage: 145,
@@ -67,6 +67,16 @@ const profile: AgarwalSourceProfile = {
       artifactSha256: { '52-59.pdf': 'hash' },
       sourceStatus: 'SOURCE_CLOSED',
       diffStatus: 'AGREED',
+    }, {
+      variableId: 'AGARWAL_2000_MOTION_STRENGTH_RECORD',
+      categoryLiteral: 'Motion strength record',
+      literalValue: 'Source qualifier retained without a closed threshold',
+      normalizedValue: null,
+      printedPage: 62,
+      privateArtifact: '60-64.pdf',
+      artifactSha256: { '60-64.pdf': 'hash' },
+      sourceStatus: 'PARTIAL',
+      diffStatus: 'PARTIAL',
     }],
     aggregationStatus: 'SOURCE_RECORD_ONLY_NO_MASTER_SCORE',
   },
@@ -88,7 +98,7 @@ const profile: AgarwalSourceProfile = {
     allocationContextPrintedPage: 144,
     geometryEvidence: 'A1R3_TWO_PASS',
     strengthPages: '54-55 / 60-63',
-    sourceStatus: 'SOURCE_CLOSED_FOR_READ_ONLY_GEOMETRY_AND_STRENGTH',
+    sourceStatus: 'GEOMETRY_CLOSED_STRENGTH_SOURCE_RECORDED',
     privateImagePathsExposed: false,
   },
   guardrails: {
@@ -121,6 +131,10 @@ describe('Agarwal source inspector', () => {
     expect(screen.getByText('NORTH')).toBeInTheDocument()
     expect(screen.getByText('SOUTH')).toBeInTheDocument()
     expect(screen.getByText('KRITT-IKA')).toBeInTheDocument()
+    expect(screen.getByText('GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED')).toBeInTheDocument()
+    expect(screen.queryByText('GEOMETRY + STRENGTH SOURCE CLOSED')).not.toBeInTheDocument()
+    expect(screen.getByText('SOURCE_CLOSED')).toBeInTheDocument()
+    expect(screen.getAllByText('PARTIAL').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('DEPENDENCY_NOT_READY')).toBeInTheDocument()
     expect(screen.getByText('Agarwal Source Strength')).toBeInTheDocument()
     expect(screen.getByText('FINANCIAL_HYPOTHESIS_LEDGER_ONLY')).toBeInTheDocument()
