@@ -16,9 +16,17 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   non-JSON sidecar failures as their HTTP status. The release smoke procedure
   now also verifies the Agarwal endpoint's contract, 81 source cells, explicit
   `VEDHA DEPENDENCY_NOT_READY`, and read-only execution lock.
-- A replacement immutable founder candidate will use a new version and will
-  not overwrite `0.10.47-pfr-v2b-r6-sbc-a2`. The original candidate remains
-  useful only as evidence of the discovered fault, not for Agarwal inspection.
+- Replacement candidate: `0.10.48-pfr-v2b-r6-sbc-a2-bridgefix`, under
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.48-pfr-v2b-r6-sbc-a2-bridgefix`.
+  Its manifest records source commit `3978e668828afba36ead64ec8bd1aee633350d4a`
+  and `source_git_dirty = false`. Portable SHA-256 is
+  `547559DA8532688D6D74ED49E2F7E3386AAFB4FF87FAF37D30BC33399D7FE38E`;
+  installer SHA-256 is
+  `A835AC241F13ADEAABFDCF77E4A0C99D23BC874BC64B6E5FDF6669D208DF6CA3`.
+  Two exact-portable smoke runs passed endpoint, recovery, layout and shutdown
+  checks, including Agarwal's 81-cell, read-only, Vedha-unavailable contract.
+  The original `0.10.47` candidate remains evidence of the discovered fault,
+  not a valid Agarwal inspection build.
 - No doctrine, board geometry, strength record, Fields/pair behavior,
   polarity, score, Auto Suggest, ML, MT5, or execution capability changed.
 

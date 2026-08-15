@@ -258,12 +258,12 @@ try {
     $report.checks.agarwal_source_profile_read_only = (
         $agarwalProfile.executionAllowed -eq $false -and
         $agarwalProfile.guardrails.readOnly -eq $true -and
-        $agarwalProfile.vedhaStatus.status -eq "DEPENDENCY_NOT_READY"
+        $agarwalProfile.vedhaStatus -eq "DEPENDENCY_NOT_READY"
     )
     Write-SoakPhase "agarwal_source_profile_verified" ([ordered]@{
         contract = [string]$agarwalProfile.contract
         cells = @($agarwalProfile.geometry.cells).Count
-        vedha_status = [string]$agarwalProfile.vedhaStatus.status
+        vedha_status = [string]$agarwalProfile.vedhaStatus
     })
     $candleHealth = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/local-candlestick/health" -f $initial.Port) -TimeoutSec 10
