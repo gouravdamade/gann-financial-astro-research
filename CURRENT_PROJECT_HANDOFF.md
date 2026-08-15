@@ -4,6 +4,37 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A2R1 Agarwal Founder Wording Correction)
+
+- The founder physically reviewed the preceding Agarwal A2 candidate. The
+  board, EAST/WEST/NORTH/SOUTH orientation, 81-cell audit, p.144 provenance,
+  source-strength panel, Vedha dependency panel, Chapter-20 research panel,
+  profile isolation and execution locks visually passed.
+- The only required correction was semantic: `GEOMETRY + STRENGTH SOURCE
+  CLOSED` overstated the mixed strength evidence. The product now displays the
+  exact badge `GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED`. Row-level
+  `SOURCE_CLOSED` and `PARTIAL` strength states remain distinct; no aggregate
+  strength claim was introduced.
+- Source implementation commit: `76a073365dcab2aec176542911f01ef18769e66d`; candidate metadata/source commit:
+  `1d3896befae4e34aa9c3804c0bee4452aad8a830`. Corrected candidate:
+  `0.10.48-pfr-v2b-r6-sbc-a2r1` under
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.48-pfr-v2b-r6-sbc-a2r1`.
+  Portable SHA-256 is
+  `1D9B263747562F89373926BF7D44126C91EDD127CCCAEB9573460C972AF3AA38`;
+  installer SHA-256 is
+  `5423D4F7C4288C6A274B6009FC1AB79272EBB24FAEE3F7FDFFF5EF5C3E38876B`.
+- Verification: focused Agarwal frontend 2/2; full frontend 37 files/159
+  tests; focused Agarwal backend 5/5; full backend 214/214; lint/build passed;
+  Rust fmt/check passed; Tauri tests 19/19. Two packaged portable smoke runs
+  passed required health, Agarwal 81-cell, recovery, layout, lock and shutdown
+  checks. The optional candlestick specialist remains not configured.
+- Final founder confirmation is pending physical inspection of this corrected
+  candidate. It is not recorded as founder-accepted yet. Locked state remains
+  `AGARWAL_GEOMETRY_READY = true`, `AGARWAL_STRENGTH_READY = true` for source
+  records only, `AGARWAL_VEDHA_OPERATOR_READY = false`,
+  `A2_SCOPE = GEOMETRY_STRENGTH_INSPECTOR_ONLY`, Chapter 20 research-only and
+  `executionAllowed = false`.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A2 Tauri GET Bridge Correction)
 
 - Founder inspection of the `0.10.47-pfr-v2b-r6-sbc-a2` candidate revealed a
