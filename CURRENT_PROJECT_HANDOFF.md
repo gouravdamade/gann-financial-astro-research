@@ -4,6 +4,24 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A2 Tauri GET Bridge Correction)
+
+- Founder inspection of the `0.10.47-pfr-v2b-r6-sbc-a2` candidate revealed a
+  native-only source-profile failure: the Tauri bridge posted to the
+  read-only `GET /api/chakra-lab/agarwal-source-profile` endpoint. FastAPI
+  returned a method error with a non-JSON body, which the native parser then
+  surfaced misleadingly as an invalid-JSON error.
+- The correction routes the authenticated desktop bridge through a dedicated
+  loopback `GET` helper. It adds exact request regression coverage and reports
+  non-JSON sidecar failures as their HTTP status. The release smoke procedure
+  now also verifies the Agarwal endpoint's contract, 81 source cells, explicit
+  `VEDHA DEPENDENCY_NOT_READY`, and read-only execution lock.
+- A replacement immutable founder candidate will use a new version and will
+  not overwrite `0.10.47-pfr-v2b-r6-sbc-a2`. The original candidate remains
+  useful only as evidence of the discovered fault, not for Agarwal inspection.
+- No doctrine, board geometry, strength record, Fields/pair behavior,
+  polarity, score, Auto Suggest, ML, MT5, or execution capability changed.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A2 Agarwal Geometry/Strength Inspector)
 
 - Implemented and pushed the founder-authorized, read-only Agarwal 2000

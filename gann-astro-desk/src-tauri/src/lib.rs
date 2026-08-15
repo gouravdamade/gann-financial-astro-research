@@ -253,16 +253,49 @@ fn parse_http_json_response(raw: &[u8]) -> Result<Value, String> {
     }) {
         return Err("Private sidecar used unsupported chunked encoding".to_string());
     }
-    let payload = serde_json::from_slice::<Value>(&raw[split + 4..])
-        .map_err(|error| format!("Private sidecar returned invalid JSON: {error}"))?;
     if !(200..300).contains(&status) {
-        let detail = payload
-            .get("error")
-            .and_then(Value::as_str)
-            .unwrap_or("Chakra Lab request failed");
+        let detail = serde_json::from_slice::<Value>(&raw[split + 4..])
+            .ok()
+            .and_then(|payload| {
+                payload
+                    .get("error")
+                    .and_then(Value::as_str)
+                    .map(str::to_owned)
+            })
+            .unwrap_or_else(|| "Non-JSON error response from private sidecar".to_string());
         return Err(format!("Private sidecar returned HTTP {status}: {detail}"));
     }
+    let payload = serde_json::from_slice::<Value>(&raw[split + 4..])
+        .map_err(|error| format!("Private sidecar returned invalid JSON: {error}"))?;
     Ok(payload)
+}
+
+#[cfg(not(mobile))]
+fn get_private_json(port: u16, api_token: &str, path: &str) -> Result<Value, String> {
+    if !path.starts_with('/') || path.contains(char::is_whitespace) {
+        return Err("Private sidecar path is invalid".to_string());
+    }
+    let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port);
+    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(3))
+        .map_err(|error| format!("Unable to connect to private sidecar: {error}"))?;
+    stream
+        .set_read_timeout(Some(Duration::from_secs(20)))
+        .map_err(|error| format!("Unable to set sidecar read timeout: {error}"))?;
+    stream
+        .set_write_timeout(Some(Duration::from_secs(5)))
+        .map_err(|error| format!("Unable to set sidecar write timeout: {error}"))?;
+    let request = format!(
+        "GET {path} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\nAccept: application/json\r\nX-Gann-Astro-Token: {api_token}\r\nConnection: close\r\n\r\n"
+    );
+    stream
+        .write_all(request.as_bytes())
+        .and_then(|_| stream.flush())
+        .map_err(|error| format!("Unable to send Chakra Lab request: {error}"))?;
+    let mut response = Vec::new();
+    stream
+        .read_to_end(&mut response)
+        .map_err(|error| format!("Unable to read Chakra Lab response: {error}"))?;
+    parse_http_json_response(&response)
 }
 
 #[cfg(not(mobile))]
@@ -771,11 +804,10 @@ async fn chakra_lab_agarwal_source_profile(
         return Err("Agarwal source profile requires the read-only runtime lock".to_string());
     }
     tauri::async_runtime::spawn_blocking(move || {
-        post_private_json(
+        get_private_json(
             runtime.port,
             &runtime.api_token,
             "/api/chakra-lab/agarwal-source-profile",
-            &json!({}),
         )
     })
     .await
@@ -1251,6 +1283,38 @@ mod tests {
         let error = parse_http_json_response(failure).unwrap_err();
         assert!(error.contains("HTTP 400"));
         assert!(error.contains("bad time"));
+
+        let html_failure = b"HTTP/1.1 405 METHOD NOT ALLOWED\r\nContent-Type: text/html\r\nContent-Length: 18\r\n\r\nmethod not allowed";
+        let error = parse_http_json_response(html_failure).unwrap_err();
+        assert!(error.contains("HTTP 405"));
+        assert!(error.contains("Non-JSON error response"));
+    }
+
+    #[test]
+    fn private_get_json_uses_authenticated_read_only_request() {
+        let listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut request = [0_u8; 2048];
+            let bytes = stream.read(&mut request).unwrap();
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 20\r\n\r\n{\"ok\":true,\"n\":81}")
+                .unwrap();
+            String::from_utf8(request[..bytes].to_vec()).unwrap()
+        });
+
+        let response = get_private_json(
+            port,
+            "test-api-token",
+            "/api/chakra-lab/agarwal-source-profile",
+        )
+        .unwrap();
+        let request = server.join().unwrap();
+        assert_eq!(response["n"], json!(81));
+        assert!(request.starts_with("GET /api/chakra-lab/agarwal-source-profile HTTP/1.1\r\n"));
+        assert!(request.contains("X-Gann-Astro-Token: test-api-token\r\n"));
+        assert!(!request.contains("Content-Length:"));
     }
 
     #[test]

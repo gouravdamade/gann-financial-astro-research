@@ -247,6 +247,24 @@ try {
         actor_status = [string]$jupiterReadiness.status
         evidence_cutoff_utc = [string]$chakraSnapshot.evidence_cutoff_utc
     })
+    $agarwal = Invoke-PrivateRestMethod -Uri `
+        ("http://127.0.0.1:{0}/api/chakra-lab/agarwal-source-profile" -f $initial.Port) `
+        -TimeoutSec 10
+    $agarwalProfile = $agarwal.profile
+    $report.checks.agarwal_source_profile_endpoint_ok = $agarwal.ok -eq $true
+    $report.checks.agarwal_source_profile_contract = `
+        $agarwalProfile.contract -eq "AGARWAL_GEOMETRY_STRENGTH_INSPECTOR_V1"
+    $report.checks.agarwal_source_profile_81_cells = @($agarwalProfile.geometry.cells).Count -eq 81
+    $report.checks.agarwal_source_profile_read_only = (
+        $agarwalProfile.executionAllowed -eq $false -and
+        $agarwalProfile.guardrails.readOnly -eq $true -and
+        $agarwalProfile.vedhaStatus.status -eq "DEPENDENCY_NOT_READY"
+    )
+    Write-SoakPhase "agarwal_source_profile_verified" ([ordered]@{
+        contract = [string]$agarwalProfile.contract
+        cells = @($agarwalProfile.geometry.cells).Count
+        vedha_status = [string]$agarwalProfile.vedhaStatus.status
+    })
     $candleHealth = Invoke-PrivateRestMethod -Uri `
         ("http://127.0.0.1:{0}/api/local-candlestick/health" -f $initial.Port) -TimeoutSec 10
     $chart = Invoke-PrivateRestMethod -Uri `
