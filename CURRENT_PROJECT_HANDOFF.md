@@ -95,6 +95,19 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - No runtime, UI, Fields, polarity, score, Auto Suggest, ML, MT5 or execution
   behavior changed. `executionAllowed=false` remains invariant.
 
+## Validation Follow-up - 2026-08-16 (Trailokya TD2R Exact Golden Coverage)
+
+- Re-verified the private controlling 1972 and same-lineage 2016 witness
+  SHA-256 values without placing either source file in Git. A direct page-image
+  spot audit re-confirmed the verse 162-166 magnitude passage.
+- Hardened the static TD2 source tests from representative sampling to exact
+  assertions for both phala tables, the verse-165 bridge, all isolated
+  verse-166 modifier records, the complete friendship matrix, sign-lord table,
+  dignity and node records, and the full Latta offset table.
+- This is test-only contract hardening. It does not change source YAML,
+  runtime/UI behavior, Fields, polarity, score, price logic, Auto Suggest, ML,
+  MT5 or execution; `executionAllowed=false` remains invariant.
+
 ## Prior Update - 2026-08-15 (Agarwal A2R1 Founder Acceptance Recorded)
 
 - The founder physically inspected and accepted `0.10.48-pfr-v2b-r6-sbc-a2r1`.

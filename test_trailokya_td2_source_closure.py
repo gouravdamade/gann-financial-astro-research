@@ -45,20 +45,74 @@ def test_sthana_bala_phala_and_isolated_v166_records_remain_distinct() -> None:
     assert semantic["TD1972_V163_SAUMYA_STHANA_PHALA"]["values"] == {
         "OWN": 20, "FRIEND": 15, "SAMA_RELATIONSHIP": 10, "ENEMY": 5
     }
-    assert magnitude["isolatedResultModifiers"]["rules"]["SWIFT"]["numericalFactor"] == "NOT_STATED_AS_1_0"
+    assert semantic["TD1972_V164_KRURA_STHANA_PHALA"]["values"] == {
+        "OWN": 5, "FRIEND": 10, "SAMA_RELATIONSHIP": 15, "ENEMY": 20
+    }
+    assert semantic["TD1972_V165_STHANA_TO_VEDHA_RESULT_BRIDGE"]["rule"] == (
+        "OBTAINED_PLANETARY_STHANA_PHALA_IS_THE_SOURCE_RESULT_MAGNITUDE_FOR_THE_STRUCK_TARGET"
+    )
+    assert magnitude["isolatedResultModifiers"]["rules"] == {
+        "RETROGRADE": {"sourceResultFactor": 2, "sourceStatus": "SOURCE_CLOSED"},
+        "EXALTATION": {"sourceResultFactor": 3, "sourceStatus": "SOURCE_CLOSED"},
+        "SWIFT": {
+            "sourceResult": "BASE_SOURCE_RESULT",
+            "numericalFactor": "NOT_STATED_AS_1_0",
+            "sourceStatus": "SOURCE_CLOSED",
+        },
+        "DEBILITATION": {"sourceResultFactor": 0.5, "sourceStatus": "SOURCE_CLOSED"},
+    }
     assert magnitude["isolatedResultModifiers"]["combinationPolicy"] == "NOT_SOURCE_CLOSED"
 
 
 def test_friendship_dignity_and_node_records_match_the_bounded_source_contract() -> None:
     magnitude = _load("trailokya_1972_vedha_magnitude_v1.yaml")
-    assert magnitude["friendshipMatrix"]["MOON"]["enemies"] == []
-    assert magnitude["friendshipMatrix"]["MERCURY"]["enemies"] == ["MOON"]
-    assert magnitude["dignity"]["planets"]["MARS"] == {
-        "exaltationSign": "CAPRICORN", "debilitationSign": "CANCER", "paramoccaDegrees": 28
+    assert magnitude["friendshipMatrix"] == {
+        "locator": {
+            "scanPage": 55,
+            "printedPage": 39,
+            "verses": "168-171",
+            "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY",
+        },
+        "SUN": {"friends": ["MOON", "MARS", "JUPITER"], "neutral": ["MERCURY"], "enemies": ["VENUS", "SATURN"]},
+        "MOON": {"friends": ["SUN", "MERCURY"], "neutral": ["MARS", "JUPITER", "VENUS", "SATURN"], "enemies": []},
+        "MARS": {"friends": ["SUN", "MOON", "JUPITER"], "neutral": ["VENUS", "SATURN"], "enemies": ["MERCURY"]},
+        "MERCURY": {"friends": ["SUN", "VENUS"], "neutral": ["MARS", "JUPITER", "SATURN"], "enemies": ["MOON"]},
+        "JUPITER": {"friends": ["SUN", "MOON", "MARS"], "neutral": ["SATURN"], "enemies": ["MERCURY", "VENUS"]},
+        "VENUS": {"friends": ["MERCURY", "SATURN"], "neutral": ["MARS", "JUPITER"], "enemies": ["SUN", "MOON"]},
+        "SATURN": {"friends": ["MERCURY", "VENUS"], "neutral": ["JUPITER"], "enemies": ["SUN", "MOON", "MARS"]},
+        "sourceStatus": "SOURCE_CLOSED",
+    }
+    assert magnitude["signLords"] == {
+        "locator": {
+            "scanPage": 56,
+            "printedPage": 40,
+            "verses": "172-174",
+            "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY",
+        },
+        "ARIES": "MARS", "TAURUS": "VENUS", "GEMINI": "MERCURY", "CANCER": "MOON",
+        "LEO": "SUN", "VIRGO": "MERCURY", "LIBRA": "VENUS", "SCORPIO": "MARS",
+        "SAGITTARIUS": "JUPITER", "CAPRICORN": "SATURN", "AQUARIUS": "SATURN", "PISCES": "JUPITER",
+        "sourceStatus": "SOURCE_CLOSED",
+    }
+    assert magnitude["dignity"]["planets"] == {
+        "SUN": {"exaltationSign": "ARIES", "debilitationSign": "LIBRA", "paramoccaDegrees": 10},
+        "MOON": {"exaltationSign": "TAURUS", "debilitationSign": "SCORPIO", "paramoccaDegrees": 3},
+        "MARS": {"exaltationSign": "CAPRICORN", "debilitationSign": "CANCER", "paramoccaDegrees": 28},
+        "MERCURY": {"exaltationSign": "VIRGO", "debilitationSign": "PISCES", "paramoccaDegrees": 15},
+        "JUPITER": {"exaltationSign": "CANCER", "debilitationSign": "CAPRICORN", "paramoccaDegrees": 5},
+        "VENUS": {"exaltationSign": "PISCES", "debilitationSign": "VIRGO", "paramoccaDegrees": 27},
+        "SATURN": {"exaltationSign": "LIBRA", "debilitationSign": "ARIES", "paramoccaDegrees": 20},
     }
     assert magnitude["dignity"]["samaSthanaNotEquivalentTo"] == "SAMA_RELATIONSHIP"
-    assert magnitude["nodes"]["RAHU"]["resultsAndNatureLike"] == "SATURN"
-    assert magnitude["nodes"]["KETU"]["relationship"]["withOtherPlanets"] == "ENEMY"
+    assert magnitude["nodes"]["RAHU"] == {
+        "locator": {"scanPages": [57, 58], "printedPages": [41, 42], "verse": 178, "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY"},
+        "ownSign": "VIRGO", "exaltationSign": "GEMINI", "debilitationSign": "SAGITTARIUS", "resultsAndNatureLike": "SATURN",
+    }
+    assert magnitude["nodes"]["KETU"] == {
+        "locator": {"scanPage": 58, "printedPage": 42, "verse": 179, "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY"},
+        "ownSign": "PISCES", "exaltationSign": "SAGITTARIUS", "debilitationSign": "GEMINI", "resultsLike": "RAHU",
+        "relationship": {"mutualWithRahu": "FRIEND", "withOtherPlanets": "ENEMY"},
+    }
 
 
 def test_contexts_are_explicitly_scoped_and_not_a_generic_resolver() -> None:
@@ -80,8 +134,19 @@ def test_latta_offsets_are_27_star_ordinal_rules_without_an_invented_origin() ->
         "notEquivalentTo": ["LEFT_FRONT_RIGHT_VEDHA", "TD1_SEMANTIC_EXPANSIONS"],
         "countingOrigin": "UNRESOLVED",
     }
-    assert latta["offsets"]["SUN"] == {"direction": "FORWARD", "offset": 12}
-    assert latta["offsets"]["FULL_MOON"] == {"direction": "BACKWARD", "offset": 22}
+    assert latta["offsets"] == {
+        "locator": {"scanPage": 75, "printedPage": 59, "verses": "261-262", "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY"},
+        "SUN": {"direction": "FORWARD", "offset": 12},
+        "MARS": {"direction": "FORWARD", "offset": 3},
+        "JUPITER": {"direction": "FORWARD", "offset": 6},
+        "SATURN": {"direction": "FORWARD", "offset": 8},
+        "MERCURY": {"direction": "BACKWARD", "offset": 7},
+        "VENUS": {"direction": "BACKWARD", "offset": 5},
+        "RAHU": {"direction": "BACKWARD", "offset": 9},
+        "KETU": {"direction": "BACKWARD", "offset": 9},
+        "FULL_MOON": {"direction": "BACKWARD", "offset": 22},
+        "sourceStatus": "SOURCE_CLOSED",
+    }
     assert latta["moonQualification"]["diminishedMoon"] == "NOT_ESTABLISHED_IN_HELD_LATTA_PASSAGE"
     assert "TD1972_LATTA_COUNTING_ORIGIN_UNRESOLVED" in latta["unresolved"]
 
