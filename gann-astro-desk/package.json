@@ -1,7 +1,7 @@
 {
   "name": "gann-astro-desk",
   "private": true,
-  "version": "0.10.48-pfr-v2b-r6-sbc-a2-bridgefix",
+  "version": "0.10.48-pfr-v2b-r6-sbc-a2r1",
   "packageManager": "npm@11.12.1",
   "type": "module",
   "scripts": {
