@@ -4,6 +4,26 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD0R Trailokya Translation Recovery Audit)
+
+- The original 1972 Trailokya scan, OCR navigation companion and same-lineage
+  2016 reprint were re-hashed against their registered values. TD0R recovered
+  the historic Vedha packet, legacy guidance profile, both 108-row Arghya
+  passes and their reconciliation record without changing runtime behavior.
+- A new page-coverage ledger distinguishes original-image statements from OCR
+  navigation, same-lineage reading support, Phaladeepika shared-fixture use and
+  engineering normalization. The legacy Trailokya runtime guidance remains
+  untouched and is explicitly not a complete Trailokya translation or market
+  model.
+- The narrow source findings remain: direction/reach passages on scan 20-21,
+  practical manual placement on scans 9-11, natural-condition text on scans
+  29-30, isolated modifier wording on scan 55 and execution-locked Arghya
+  material on scans 98-102. No new source variable, score, polarity, price
+  conversion, product surface, package or execution capability was added.
+- The next potential work remains separate and founder-directed: motion-state
+  definitions, source-specific target/corner geometry, Moon/Mercury conditions,
+  modifier precedence, Latta, or a reproducible Arghya worked arithmetic gate.
+
 ## Latest Update - 2026-08-15 (Agarwal A2R1 Founder Acceptance Recorded)
 
 - The founder physically inspected and accepted `0.10.48-pfr-v2b-r6-sbc-a2r1`.

@@ -1,0 +1,187 @@
+schemaVersion: TRAILOKYA_1972_TRANSLATION_COVERAGE_LEDGER_V1
+ledgerId: PFR-V2B-R6-SBC-TD0R
+status: SOURCE_AUDIT_COMPLETE_CONTINUATION_NOT_AUTHORIZED
+scope: prior_translation_recovery_source_audit_and_continuation_map_only
+sourcePolicy:
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGES_ONLY
+  ocrUse: NAVIGATION_AND_DRAFT_TRANSLATION_ONLY
+  laterReprintUse: SAME_LINEAGE_READING_WITNESS_ONLY
+  noRuntimeProfileBehaviorChanged: true
+  noProductCapabilityAdded: true
+  executionAllowed: false
+witnesses:
+  primary1972:
+    sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+    sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+    privateArtifact: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN_1EF82899.pdf
+    pageCount: 118
+    role: CITATION_AUTHORITY
+  ocrCompanion:
+    sourceId: TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION
+    sha256: 7F220E0FA4523DE4624449E72B62248434760AF0E3C842844ADAEBB3CBB13E9B
+    privateArtifact: TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION_7F220E0F.pdf
+    pageCount: 118
+    role: NAVIGATION_AND_DRAFT_TRANSLATION_ONLY
+  sameLineage2016:
+    sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+    sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+    privateArtifact: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT_19CC2387.pdf
+    pageCount: 100
+    role: SAME_LINEAGE_READING_WITNESS_NOT_INDEPENDENT_DOCTRINE
+meaningfulPageCoverage:
+  - scanPages: [1, 8]
+    printedPages: null
+    contentCategory: FRONT_MATTER_AND_EDITION_CONTEXT
+    translationStatus: NOT_TRANSLATED_FOR_PRODUCT_USE
+    provenanceStatus: EDITION_IDENTITY_RECORDED
+  - scanPages: [9, 11]
+    printedPages: PRACTICAL_INTRODUCTION_UNNUMBERED
+    contentCategory: PRACTICAL_IDENTITY_PLACEMENT_AND_NINE_TRANSIT_SUMMARY
+    translationStatus: SOURCE_EXCERPTS_VISUALLY_AUDITED
+    provenanceStatus: HINDI_PRACTICAL_INTRODUCTION_NOT_ROOT_VERSE_ONLY
+  - scanPages: [12, 19]
+    printedPages: [1, 3]
+    contentCategory: BOARD_CONSTRUCTION_AND_PRE_VEDHA_CONTEXT
+    translationStatus: NAVIGATION_ONLY
+    provenanceStatus: NOT_PAGE_CERTIFIED_FOR_NEW_RUNTIME_CLAIMS
+  - scanPages: [20, 21]
+    printedPages: [4, 5]
+    contentCategory: VEDHA_DIRECTION_AND_TARGET_REACH
+    translationStatus: SOURCE_EXCERPTS_VISUALLY_AUDITED
+    provenanceStatus: SANSKRIT_VERSES_12_TO_17_WITH_HINDI_COMMENTARY
+  - scanPages: [22, 28]
+    printedPages: [6, 12]
+    contentCategory: STAR_SPECIFIC_TARGET_TABLE_AND_BOARD_LOCATIONS
+    translationStatus: NAVIGATION_MAPPED_NO_NEW_MACHINE_FIXTURE
+    provenanceStatus: ORIGINAL_PAGE_IMAGES_REVIEWED_FOR_CONTINUATION_DISCOVERY
+  - scanPages: [29, 30]
+    printedPages: [13, 14]
+    contentCategory: NATURAL_CLASS_AND_MOON_MERCURY_CONDITION_TEXT
+    translationStatus: SOURCE_EXCERPTS_VISUALLY_AUDITED_CONTINUATION_CANDIDATE
+    provenanceStatus: VERSes_54_TO_58_HINDI_COMMENTARY
+  - scanPages: [31, 51]
+    printedPages: [15, 35]
+    contentCategory: SBC_DOCTRINAL_AND_PROCEDURAL_MATERIAL
+    translationStatus: NAVIGATION_ONLY
+    provenanceStatus: NO_NEW_CLAIMS_ADMITTED
+  - scanPages: [52, 62]
+    printedPages: [36, 46]
+    contentCategory: TIME_DEPENDENT_PLANETS_AND_LATTA_MATERIAL
+    translationStatus: NAVIGATION_MAPPED_ONLY
+    provenanceStatus: LATTA_EXISTS_BUT_NO_TD0R_OPERATOR_EXTRACTION
+  - scanPages: [63, 91]
+    printedPages: [47, 75]
+    contentCategory: INTERMEDIATE_SBC_COMMENTARY
+    translationStatus: NOT_AUDITED_FOR_NEW_CLAIMS
+    provenanceStatus: SOURCE_GAP_FOR_CONTINUATION
+  - scanPages: [92, 108]
+    printedPages: [46, 62]
+    contentCategory: ARGHYA_AND_FINANCIAL_AVAILABILITY_MATERIAL
+    translationStatus: SELECTED_TABLES_AND_PROSE_VISUALLY_AUDITED
+    provenanceStatus: RESEARCH_ONLY_EXECUTION_LOCKED
+  - scanPages: [109, 118]
+    printedPages: null
+    contentCategory: REMAINING_BOOK_MATERIAL
+    translationStatus: NOT_AUDITED_FOR_NEW_CLAIMS
+    provenanceStatus: SOURCE_GAP_FOR_CONTINUATION
+recoveredArtifacts:
+  - path: configs/sbc/evidence_packets/trailokya_dipika_1972_vedha_page_certification_v1.yaml
+    sha256: 6A7CDC49CD155B4A7DBCDE327AB433D790922B572624218DF5BD29C86E151B85
+    role: HISTORIC_PAGE_CERTIFICATION_PACKET
+  - path: configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml
+    sha256: F23092A7A7F00303EC357F396B5429B75E188EFD62BDCD59EE20D62AB8027BEB
+    role: LEGACY_EXPERIMENTAL_RUNTIME_GUIDANCE_AUDITED_NOT_MODIFIED
+  - path: configs/sbc/arghya/trailokya_1972_arghya_pass1.csv
+    sha256: E88A0EE72C17B78A285C241C955DD1B2E0515C907915BCAC612F5783A5C91994
+    role: PRIMARY_IMAGE_TWO_PASS_INPUT
+  - path: configs/sbc/arghya/trailokya_2016_arghya_pass2.csv
+    sha256: 5E59AA349399BCA666ABCD7B2BAD9CF3BB242C878A35D13E4A04D66E588F0110
+    role: SAME_LINEAGE_READING_WITNESS_INPUT
+  - path: configs/sbc/arghya/trailokya_arghya_reconciliation_v1.yaml
+    sha256: 66BA9AE23280C91CF08F00CF522D141A0AB0EF54C023956F0E5475B53B20810F
+    role: GUARDED_RESEARCH_RECONCILIATION
+historicVedhaPacketAudit:
+  - packetId: TD1972_VEDHA_VARIABLE_DIRECTION_V14
+    sourceLocator: scan_20_printed_4_verses_12_to_14
+    sourceFinding: SOURCE_CLOSED_FOR_QUALITATIVE_DIRECTION_SELECTION
+    literalVsImplementation: QUALITATIVE_RETROGRADE_RIGHT_SWIFT_LEFT_MEAN_FRONT; numeric_swift_threshold_absent
+    currentUseStatus: FOUNDER_APPROVED_SOURCE_ONLY_GEOMETRY_LIMITS
+  - packetId: TD1972_VEDHA_FIXED_THREE_DIRECTIONS_V15
+    sourceLocator: scan_21_printed_5_verse_15
+    sourceFinding: SOURCE_CLOSED_FOR_FIXED_ALL_THREE_DIRECTIONS
+    literalVsImplementation: SUN_MOON_RAHU_KETU_ALL_THREE_FIGURE_RELATIVE_DIRECTIONS
+    currentUseStatus: FOUNDER_APPROVED_SOURCE_ONLY_GEOMETRY_LIMITS
+  - packetId: TD1972_VEDHA_RAY_EXTENT_V16_V17
+    sourceLocator: scan_21_printed_5_verses_16_to_17
+    sourceFinding: SOURCE_CLOSED_FOR_SIDE_ALIGNMENT_AND_FRONT_OPPOSITE_OUTER_NAKSHATRA
+    literalVsImplementation: SIDE_LINE_TARGETS_AND_FRONT_SINGLE_OPPOSITE_NAKSHATRA; corner_and_junction_cases_unclosed
+    currentUseStatus: FOUNDER_APPROVED_SOURCE_ONLY_GEOMETRY_LIMITS
+  - packetId: TD1972_NATURAL_PLANET_CLASS_PRACTICAL_INTRO
+    sourceLocator: scan_11_practical_intro_and_scan_29_to_30_printed_13_to_14
+    sourceFinding: BASE_CLASSES_AND_CONDITION_TEXT_VISIBLE; current_runtime_condition_contract_not_promoted
+    literalVsImplementation: MOON_AND_MERCURY_CONDITIONS_REQUIRE_A_SEPARATE_TIMESTAMP_SAFE_CONTRACT
+    currentUseStatus: PENDING_NO_POLARITY_OR_SCORE
+  - packetId: TD1972_ISOLATED_RESULT_MODIFIERS_V166
+    sourceLocator: scan_55_printed_39_verse_166
+    sourceFinding: ISOLATED_RETROGRADE_EXALTATION_DEBILITATION_AND_SWIFT_RESULT_WORDING_VISIBLE
+    literalVsImplementation: NO_STACKING_PRECEDENCE_OR_FINANCIAL_MAGNITUDE_ADMITTED
+    currentUseStatus: PENDING_NO_COMBINED_SCALAR
+  - packetId: TD1972_WORKED_PROCEDURE_PRACTICAL_INTRO
+    sourceLocator: scan_9_to_11_practical_intro
+    sourceFinding: MANUAL_IDENTITY_PLACEMENT_SEQUENCE_VISIBLE
+    literalVsImplementation: NO_COMPLETE_MACHINE_IDENTITY_TABLE_OR_FINANCIAL_WORKED_EXAMPLE
+    currentUseStatus: DISPLAY_AND_MANUAL_RESEARCH_ONLY
+legacyRuntimeGuidanceAudit:
+  path: configs/sbc/vedha/trailokya_dipika_1972_vedha_guidance_v1.yaml
+  runtimeBehaviorChanged: false
+  sourceOnlyClaims:
+    - all_three_fixed_directions_for_sun_moon_rahu_ketu
+    - five_variable_motion_direction_rule
+    - side_and_front_reach_summary
+  crossSourceOnly:
+    - PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT_shared_board_ray_worked_fixtures
+    - sbc_81_rotation_normalized_partial_v1_geometry_dependency
+  engineeringOrExperimentalOnly:
+    - EXPERIMENTAL_NORMALIZED_GUIDANCE_V1
+    - plus_or_minus_nature_signs
+    - normalized_guidance_balance
+    - modifier_combination_policy
+  auditConclusion: LEGACY_EXPERIMENTAL_GUIDANCE_IS_NOT_A_COMPLETE_TRAILOKYA_TRANSLATION_OR_FINANCIAL_MODEL
+arghyaAudit:
+  pass1Rows: 108
+  pass2Rows: 108
+  crossEditionMismatches: 0
+  sourcePreservedAnomalies:
+    - relationship_vedha_viswa_three_quarter_malefic_neutral_11_45
+    - five_class_vedha_viswa_three_quarter_malefic_4_2_18
+  narrowAvailabilityFormula:
+    formula: base_parts_20_plus_benefic_viswa_minus_malefic_viswa
+    sourceInterpretationOnly: availability_abundance_or_scarcity_language
+    marketFormulaStatus: NOT_DERIVED_AND_NOT_AUTHORIZED
+  blockedOutputs:
+    - predicted_price
+    - bullish_bearish_label
+    - fx_or_stock_mapping
+    - auto_suggest
+    - ml_label
+    - live_inference
+    - mt5_execution
+continuationDependencies:
+  - id: TD1_MOTION_STATE_CONTRACT
+    sourceNeed: explicit_swift_mean_stationary_and_direct_slow_contract
+    status: UNRESOLVED
+  - id: TD1_TARGET_GEOMETRY_CONTRACT
+    sourceNeed: source_specific_board_mapping_and_corner_junction_rule
+    status: UNRESOLVED
+  - id: TD1_MOON_MERCURY_CONDITION_CONTRACT
+    sourceNeed: source_text_to_timestamp_safe_state_mapping
+    status: PARTIALLY_DISCOVERED_NOT_IMPLEMENTED
+  - id: TD1_MODIFIER_PRECEDENCE
+    sourceNeed: source_specific_combination_or_fail_closed_policy
+    status: UNRESOLVED
+  - id: TD1_LATTA_SEPARATE_AUDIT
+    sourceNeed: page_certified_latta_operator_and_scope
+    status: UNRESOLVED
+  - id: TD1_ARGHYA_COMPLETE_WORKED_ARITHMETIC
+    sourceNeed: independently_reproducible_score_to_price_working
+    status: UNRESOLVED

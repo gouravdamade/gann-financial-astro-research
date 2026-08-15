@@ -87,7 +87,7 @@ class AgarwalA1SourceReconciliationTests(unittest.TestCase):
     def test_readiness_authorizes_only_bounded_geometry_strength_scope(self) -> None:
         readiness = yaml.safe_load(READINESS_PATH.read_text(encoding="utf-8"))
         self.assertEqual(readiness["private_capture_gate"], "ALL_6_CAPTURE_FILES_HASH_VERIFIED_20260814")
-        self.assertEqual(readiness["milestone"], "PFR-V2B-R6-SBC-A1R3")
+        self.assertEqual(readiness["milestone"], "PFR-V2B-R6-SBC-A2R1")
         self.assertTrue(readiness["readiness"]["AGARWAL_GEOMETRY_READY"]["value"])
         self.assertTrue(readiness["readiness"]["AGARWAL_STRENGTH_READY"]["value"])
         self.assertFalse(readiness["readiness"]["AGARWAL_VEDHA_OPERATOR_READY"]["value"])
@@ -99,7 +99,7 @@ class AgarwalA1SourceReconciliationTests(unittest.TestCase):
         self.assertEqual(readiness["contracts"]["A2_SCOPE_FULL_VEDHA_INSPECTOR"]["status"], "NOT_AUTHORIZED")
         self.assertEqual(
             readiness["contracts"]["A2_SCOPE_GEOMETRY_STRENGTH_INSPECTOR"]["status"],
-            "ELIGIBLE_FOR_FOUNDER_AUTHORIZATION",
+            "FOUNDER_ACCEPTED",
         )
 
     def test_admitted_numeric_entries_have_two_pass_evidence(self) -> None:

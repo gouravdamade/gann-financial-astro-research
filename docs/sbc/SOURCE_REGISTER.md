@@ -90,6 +90,13 @@ unavailable. See
 `docs/sbc/TRAILOKYA_ARGHYA_DOUBLE_TRANSCRIPTION_20260723.md`, plus
 `docs/sbc/TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723.md`.
 
+The TD0R recovery audit adds a page-coverage ledger without promoting new
+doctrine. It records original-image confirmation of the existing narrow
+direction, reach, natural-condition and isolated-modifier passages, and
+separately classifies the legacy runtime profile's Phaladeepika shared
+fixtures and engineering normalization as non-Trailokya translation layers.
+See `docs/sbc/PFR_V2B_R6_SBC_TD0R_TRAILOKYA_1972_TRANSLATION_RECOVERY_AUDIT.md`.
+
 ## Additional Source Cross-reference
 
 Four further files were classified on 2026-07-23. The Khemraj file is a 2016
