@@ -1,8 +1,35 @@
 # Current Project Handoff
 
-Last updated: 2026-08-15 IST
+Last updated: 2026-08-16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-16 (PFR-V2B-R6-N1 Architecture, Source-to-Runtime and Reliability Audit)
+
+- N1 ran in clean `D:\PycharmProjects-n1` after preserving the dirty active
+  founder worktree unchanged. It independently re-hashed the controlling 1972
+  Trailokya witness, ingested TD3 verses 345-428 into bounded source records,
+  and kept all Arghya/commodity material outside runtime. The 28-nakshatra
+  commodity ledger is `FINANCIAL_HYPOTHESIS_LEDGER_ONLY`, with exact verified
+  source page locators and explicit FX/polarity/score/execution prohibitions.
+- The audit found and repaired two engineering defects without changing
+  research semantics: missing execution locks at frontend/Tauri/companion
+  transport boundaries now fail closed, and direct Trailokya geometry refuses
+  to borrow the generic Phaladeepika-derived grid. A source-native Trailokya
+  grid adapter remains a P1 future task; Fields continues to show the honest
+  `GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED` availability state instead of a
+  fallback wave.
+- Audit documentation now traces source-to-product-to-execution paths,
+  profile isolation, unknown propagation, numerical-system separation, test
+  quality and repository hygiene. The checkout remains about 1.09 GiB because
+  historical backup/evidence data was deliberately not deleted.
+- Verification: affected Trailokya/Chakra tests 51/51; full Python regression
+  749 passed, 1 explicitly skipped external-witness test, 16 subtests; focused
+  frontend transport suite 3 files/21 tests; full frontend 37 files/163 tests;
+  lint/build passed; `cargo fmt --check`, `cargo check`, and Rust tests 19/19
+  passed. No polarity, score, price forecast, Fields polarity, Auto Suggest,
+  ML, MT5 or execution path was added; `executionAllowed=false` remains
+  invariant.
 
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD1R1 Trailokya Source-Contract Correction)
 

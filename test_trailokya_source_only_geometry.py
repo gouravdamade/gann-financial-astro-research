@@ -8,6 +8,7 @@ from sbc.chakra_lab import ChakraLabActorSelection, ChakraLabRequest
 from sbc.models import GeoLocation
 from sbc.trailokya_source_only_geometry import (
     CONTRACT,
+    TRAILOKYA_NATIVE_GRID_PROFILE_ID,
     TRAILOKYA_PROFILE_ID,
     build_trailokya_source_only_geometry,
     summarize_target_reach,
@@ -26,14 +27,13 @@ def _request(*actors: ChakraLabActorSelection) -> ChakraLabRequest:
 
 
 def test_fixed_bodies_emit_all_three_rays_without_nature_or_scores() -> None:
-    report = build_trailokya_source_only_geometry(
-        _request(ChakraLabActorSelection(body="SUN"))
-    )
-    assert report["contract"] == CONTRACT
-    assert {ray["direction"] for ray in report["rays"]} == {"LEFT", "FRONT", "RIGHT"}
-    assert report["approval"]["founderDecision"] == "APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS"
-    assert report["snapshot"]["guidance"] is None
-    assert all(value is False for key, value in report["guardrails"].items() if key.endswith("Used") or key.endswith("Generated") or key.endswith("Inferred") or key.endswith("Allowed"))
+    request = _request(ChakraLabActorSelection(body="SUN"))
+    try:
+        build_trailokya_source_only_geometry(request)
+    except ValueError as exc:
+        assert "TRAILOKYA_SOURCE_NATIVE_GRID_ADAPTER_REQUIRED" in str(exc)
+    else:
+        raise AssertionError("a non-native grid must not render Trailokya source geometry")
 
 
 def test_all_variable_motion_states_map_to_the_approved_single_ray() -> None:
@@ -42,23 +42,19 @@ def test_all_variable_motion_states_map_to_the_approved_single_ray() -> None:
         MotionClass.DIRECT_SWIFT: "LEFT",
         MotionClass.MEAN: "FRONT",
     }
+    from sbc.trailokya_source_only_geometry import _directions_for_actor
+
     for motion, direction in expected.items():
-        report = build_trailokya_source_only_geometry(
-            _request(ChakraLabActorSelection(body="MARS", motion_class=motion))
-        )
-        rays = [ray for ray in report["rays"] if ray["body"] == "MARS"]
-        assert [ray["direction"] for ray in rays] == [direction]
+        directions, unavailable, _reason = _directions_for_actor("MARS", motion.value)
+        assert unavailable is None
+        assert [item.value for item in directions] == [direction]
 
 
 def test_missing_or_invalid_variable_motion_fails_closed() -> None:
-    missing = build_trailokya_source_only_geometry(_request(ChakraLabActorSelection(body="SATURN")))
-    assert not missing["rays"]
-    assert missing["unavailable"][0]["state"] == "MOTION_REQUIRED"
-    invalid = build_trailokya_source_only_geometry(
-        _request(ChakraLabActorSelection(body="SATURN", motion_class="UNSPECIFIED"))
-    )
-    assert not invalid["rays"]
-    assert invalid["unavailable"][0]["state"] == "MOTION_REQUIRED"
+    from sbc.trailokya_source_only_geometry import _directions_for_actor
+
+    assert _directions_for_actor("SATURN", None)[1] == "MOTION_REQUIRED"
+    assert _directions_for_actor("SATURN", "UNSPECIFIED")[1] == "MOTION_REQUIRED"
 
 
 def test_only_explicit_trailokya_profile_is_allowed() -> None:
@@ -72,19 +68,15 @@ def test_only_explicit_trailokya_profile_is_allowed() -> None:
         raise AssertionError("wrong profile must fail closed")
 
 
-def test_missing_target_mapping_is_exposed_as_unavailable_not_approximated(monkeypatch) -> None:
-    import sbc.trailokya_source_only_geometry as geometry
-
-    def unavailable(*_args, **_kwargs):
-        raise ValueError("TEST_TARGET_MAPPING_MISSING")
-
-    monkeypatch.setattr(geometry, "_targets_for_direction", unavailable)
-    report = geometry.build_trailokya_source_only_geometry(
-        _request(ChakraLabActorSelection(body="MOON"))
-    )
-    assert report["rays"] == []
-    assert report["unavailable"]
-    assert report["unavailable"][0]["state"] == "TARGET_MAPPING_UNAVAILABLE"
+def test_source_native_adapter_absence_fails_closed_not_to_a_legacy_grid() -> None:
+    request = _request(ChakraLabActorSelection(body="MOON"))
+    request = ChakraLabRequest(**{**request.__dict__, "grid_profile_id": TRAILOKYA_NATIVE_GRID_PROFILE_ID})
+    try:
+        build_trailokya_source_only_geometry(request)
+    except FileNotFoundError as exc:
+        assert TRAILOKYA_NATIVE_GRID_PROFILE_ID in str(exc)
+    else:
+        raise AssertionError("the absent source-native grid adapter must fail closed")
 
 
 def test_target_reach_summary_preserves_known_and_unknown_mapping_states() -> None:

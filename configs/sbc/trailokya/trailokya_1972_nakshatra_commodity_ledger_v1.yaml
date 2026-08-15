@@ -1,0 +1,42 @@
+schemaVersion: TRAILOKYA_1972_NAKSHATRA_COMMODITY_SOURCE_LEDGER_V1
+contractId: TRAILOKYA_1972_NAKSHATRA_COMMODITY_SOURCE_LEDGER_V1
+milestone: PFR-V2B-R6-N1
+status: FINANCIAL_HYPOTHESIS_LEDGER_ONLY
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+  translationAid: {artifactId: TRAILOKYA_DIPIKA_1972_ADVANCE_TRANSLATION_VERSES_345_428, role: CONSERVATIVE_COMMODITY_GLOSS_AID_NOT_CONTROLLING}
+entries:
+  - {verse: 379, nakshatra: KRITTIKA, literalCommodityGroup: 'rice; barley; gems; diamonds; metals; sesame', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 103, printedPage: 87}}
+  - {verse: 380, nakshatra: ROHINI, literalCommodityGroup: 'all grains; juices or liquids; metals; old woollen goods', direction: EAST, duration: '7_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 103, printedPage: 87}}
+  - {verse: 381, nakshatra: MRIGASHIRSHA, literalCommodityGroup: 'horses; buffaloes; cows; lac; kodrava; donkeys; gems; tuvar', direction: NORTH, duration: '60_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 103, printedPage: 87}}
+  - {verse: 382, nakshatra: ARDRA, literalCommodityGroup: 'oil; salt; alkalis; liquids; sandalwood; fragrant substances', direction: WEST, duration: '1_MONTH', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 104, printedPage: 88}}
+  - {verse: 383, nakshatra: PUNARVASU, literalCommodityGroup: 'gold; silver; cotton; yugandhari; kusumbha; dark silk goods', direction: NORTH, duration: '2_MONTHS', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 104, printedPage: 88}}
+  - {verse: 384, nakshatra: PUSHYA, literalCommodityGroup: 'gold; ghee; silver; rice; mineral salt; mustard; sajji; oil; asafoetida', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 104, printedPage: 88}}
+  - {verse: 385, nakshatra: ASHLESHA, literalCommodityGroup: 'madder; sugarcane; wheat; dried ginger; pepper; kodrava; rice', direction: WEST, duration: '1_MONTH', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 104, printedPage: 88}}
+  - {verse: 386, nakshatra: MAGHA, literalCommodityGroup: 'sesame; oil; ghee; coral; chickpea; flax; jaggery; kanguni', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: CONFLICT_AFFLICTION, locator: {scanPage: 104, printedPage: 88}}
+  - {verse: 387, nakshatra: PURVA_PHALGUNI, literalCommodityGroup: 'wool; blankets; yugandhari; sesame; silver goods; uncertain old commodity', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 105, printedPage: 89}}
+  - {verse: 388, nakshatra: UTTARA_PHALGUNI, literalCommodityGroup: 'urad; mung; pulses; rice; kodrava; rock salt; garlic; sajji', direction: NORTH, duration: '2_MONTHS', sourceResultClass: SOURCE_DIRECTION_DURATION_ONLY, locator: {scanPage: 105, printedPage: 89}}
+  - {verse: 389, nakshatra: HASTA, literalCommodityGroup: 'sandalwood; camphor; deodar; agarwood; red sandalwood; roots and tubers', direction: NORTH, duration: '2_MONTHS', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 105, printedPage: 89}}
+  - {verse: 390, nakshatra: CHITRA, literalCommodityGroup: 'gold; gems; mung; urad; coral; horses; vehicles', direction: NORTH, duration: '2_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 105, printedPage: 89}}
+  - {verse: 391, nakshatra: SWATI, literalCommodityGroup: 'betel nut; pepper; oils; mustard; asafoetida; dates', direction: NORTH, duration: '7_DAYS', sourceResultClass: SOURCE_DIRECTION_DURATION_ONLY, locator: {scanPage: 105, printedPage: 89}}
+  - {verse: 392, nakshatra: VISHAKHA, literalCommodityGroup: 'barley; rice; wheat; mung; mustard; lentils; grains; moth bean', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 106, printedPage: 90}}
+  - {verse: 393, nakshatra: ANURADHA, literalCommodityGroup: 'tuvar; whole pulses or grains; rice; moth bean; chickpea', direction: EAST, duration: '7_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 106, printedPage: 90}}
+  - {verse: 394, nakshatra: JYESHTHA, literalCommodityGroup: 'guggul; jaggery; lac; camphor; mercury; asafoetida; hingula; bronze', direction: EAST, duration: '7_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 106, printedPage: 90}}
+  - {verse: 395, nakshatra: MULA, literalCommodityGroup: 'white goods; liquids; grains; rock salt; cotton; salts', direction: WEST, duration: '1_MONTH', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 106, printedPage: 90}}
+  - {verse: 396, nakshatra: PURVA_ASHADHA, literalCommodityGroup: 'anjana; coarse grain products; ghee; root products; rice', direction: WEST, duration: '1_MONTH', sourceResultClass: PARTIAL_ARCHAIC_COMMODITY_GLOSS, locator: {scanPage: 106, printedPage: 90}}
+  - {verse: 397, nakshatra: UTTARA_ASHADHA, literalCommodityGroup: 'horses; bulls; elephants; iron; metals; durable goods; ghee', direction: EAST, duration: '7_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 107, printedPage: 91}}
+  - {verse: 398, nakshatra: ABHIJIT, literalCommodityGroup: 'grapes; dates; betel nut; cardamom; mung; nutmeg; horses', direction: EAST, duration: '7_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 107, printedPage: 91}}
+  - {verse: 399, nakshatra: SHRAVANA, literalCommodityGroup: 'walnuts; chironji; long pepper; betel-nut produce; coarse grains', direction: EAST, duration: '7_DAYS', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 107, printedPage: 91}}
+  - {verse: 400, nakshatra: DHANISHTHA, literalCommodityGroup: 'gold; silver; metals; coinage; gems; pearls; jewels', direction: EAST, duration: '7_DAYS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 107, printedPage: 91}}
+  - {verse: 401, nakshatra: SHATABHISHA, literalCommodityGroup: 'oil; kodrava; alcoholic substances; amla; leaves; roots; bark', direction: WEST, duration: '1_MONTH', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 107, printedPage: 91}}
+  - {verse: 402, nakshatra: PURVA_BHADRAPADA, literalCommodityGroup: 'priyangu; aromatics; grains; metals; medicines; deodar', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 107, printedPage: 91}}
+  - {verse: 403, nakshatra: UTTARA_BHADRAPADA, literalCommodityGroup: 'jaggery; khanda sugar; sugar; oil-cake; rice; ghee; gems; pearls', direction: WEST, duration: '1_MONTH', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 108, printedPage: 92}}
+  - {verse: 404, nakshatra: REVATI, literalCommodityGroup: 'coconut; betel nut; pearls and gems; uncertain grocery term; kirana goods', direction: WEST, duration: '1_MONTH', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 108, printedPage: 92}}
+  - {verse: 405, nakshatra: ASHVINI, literalCommodityGroup: 'rice; grain products; mules; camels; ghee; grains; cloth', direction: NORTH, duration: '2_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 108, printedPage: 92}}
+  - {verse: 406, nakshatra: BHARANI, literalCommodityGroup: 'coarse grains; yugandhari; pepper; medicines', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 108, printedPage: 92}}
+normalizationPolicy: PRESERVE_ARCHAIC_COMMODITY_IDENTITY_NO_MODERN_INSTRUMENT_MAPPING
+prohibitedUses: [MARKET_MAPPING, FX_MAPPING, POLARITY, SCORE, PRICE_FORECAST, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+runtimeBehaviorChanged: false
+executionAllowed: false

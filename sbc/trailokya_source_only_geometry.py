@@ -29,6 +29,7 @@ from .vedha import MotionClass, VedhaDirection
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 APPROVAL_PATH = PROJECT_ROOT / "configs" / "sbc" / "approved_profiles" / "sbc_trailokya_1972_source_only_geometry_v1.yaml"
 TRAILOKYA_PROFILE_ID = "SBC_TRAILOKYA_1972_V1"
+TRAILOKYA_NATIVE_GRID_PROFILE_ID = "trailokya_1972_native_akhanda_81_v1"
 CONTRACT = "SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1"
 TARGET_LAYERS = frozenset({"NAKSHATRA", "RASHI", "TITHI_GROUP", "VOWEL", "NAME_INITIAL"})
 VARIABLE_DIRECTIONS = {
@@ -197,6 +198,11 @@ def build_trailokya_source_only_geometry(
 ) -> dict[str, Any]:
     if request.vedha_profile_id != TRAILOKYA_PROFILE_ID:
         raise ValueError("Trailokya source-only geometry requires vedhaProfileId=SBC_TRAILOKYA_1972_V1")
+    if request.grid_profile_id != TRAILOKYA_NATIVE_GRID_PROFILE_ID:
+        raise ValueError(
+            "TRAILOKYA_SOURCE_NATIVE_GRID_ADAPTER_REQUIRED: source-only geometry "
+            "cannot borrow a Phaladeepika or normalized generic grid profile"
+        )
     approval = load_approved_profile()
     source_id = "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN"
     snapshot = (engine or ChakraLabEngine()).snapshot_without_guidance(

@@ -8,7 +8,7 @@ export function validateRuntimeProfile(profile: RuntimeProfile): RuntimeProfile 
   if (profile.contract !== 'GANN_ASTRO_RUNTIME_PROFILE_V1') {
     throw new Error(`Unsupported runtime profile contract: ${String(profile.contract)}`)
   }
-  if (profile.executionAllowed) {
+  if (profile.executionAllowed !== false) {
     throw new Error('Runtime profile violated the read-only execution lock')
   }
   if (profile.backendMode === 'managed_sidecar' && profile.platform !== 'desktop') {

@@ -1,0 +1,46 @@
+milestone: PFR-V2B-R6-N1
+baselineCommit: 8bb6a0e78bb4ef8b02b270ce804d97fb1d12ab31
+workingTreeStrategy: CLEAN_TEMPORARY_WORKTREE
+temporaryWorktreePath: D:\\PycharmProjects-n1
+originalDirtyStatePreserved: true
+td3TranslationArtifactAccessible: true
+TD3_SOURCE_INGESTION_COMPLETE: true
+architectureAuditComplete: true
+sourceRuntimeInfluenceGraphComplete: true
+profileIsolationAuditComplete: true
+unknownPropagationAuditComplete: true
+numericalLayerAuditComplete: true
+backendAuditComplete: true
+frontendStateAuditComplete: true
+eventIdentityAuditComplete: true
+testQualityAuditComplete: true
+securityAuditComplete: true
+performanceAuditComplete: true
+repositoryHygieneAuditComplete: true
+safeRemediationComplete: true
+focusedTrailokyaAndBackendTests: '51 passed'
+fullBackendRegression: '749 passed, 1 skipped (explicit external-witness condition), 16 subtests passed'
+focusedFrontendTests: '3 files, 21 tests passed'
+fullFrontendTests: '37 files, 163 tests passed'
+frontendLint: PASSED
+frontendProductionBuild: PASSED
+rustFmtCheck: PASSED
+rustCheck: PASSED
+rustTests: '19 passed'
+fullRegressionPassed: true
+semanticBehaviorChanged: false
+runtimePromotionChanged: false
+executionAllowed: false
+remainingP0: []
+remainingP1:
+  - TRAILOKYA_SOURCE_NATIVE_GRID_ADAPTER_NOT_IMPLEMENTED_FAIL_CLOSED
+remainingP2:
+  - REPOSITORY_HISTORICAL_BACKUP_SIZE_REQUIRES_FOUNDER_APPROVED_ARCHIVE_PLAN
+  - CURRENT_PROJECT_HANDOFF_ARCHIVE_REFACTOR_REQUIRES_RECOVERY_DRILL
+remainingP3:
+  - SYNCHRONIZED_FIELDS_IN_FLIGHT_REQUEST_CANCELLATION_NOT_IMPLEMENTED
+SOURCE_RUNTIME_BOUNDARIES_TRUSTED_FOR_AUDITED_PATHS: true
+UNKNOWN_PARTIAL_FAIL_CLOSED_FOR_AUDITED_PATHS: true
+PROFILE_ISOLATION_TRUSTED_FOR_AUDITED_PATHS: true
+readyForNextProductMilestone: true
+recommendedNextMilestone: ARCHITECTURE_CLEANUP_SOURCE_NATIVE_TRAILOKYA_GRID_ADAPTER

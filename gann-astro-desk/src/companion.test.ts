@@ -53,6 +53,19 @@ describe('mobile companion session', () => {
     } as unknown as CompanionSession)).toThrow('execution lock')
   })
 
+  it('rejects a server response that omits either execution lock', () => {
+    const missingTopLevel = { ...session } as Partial<CompanionSession>
+    delete missingTopLevel.executionAllowed
+    expect(() => setCompanionSession(missingTopLevel as CompanionSession)).toThrow('execution lock')
+
+    const missingCapability = {
+      ...session,
+      capabilities: { ...session.capabilities },
+    } as { capabilities: Partial<CompanionSession['capabilities']> }
+    delete missingCapability.capabilities.executionAllowed
+    expect(() => setCompanionSession(missingCapability as CompanionSession)).toThrow('execution lock')
+  })
+
   it('preserves native Rust invocation errors for remote diagnosis', () => {
     expect(formatCompanionError('Unable to reach the laptop pairing gateway: timeout')).toContain(
       'timeout',

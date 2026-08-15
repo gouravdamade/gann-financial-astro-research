@@ -87,7 +87,7 @@ export function validateCompanionSession(session: CompanionSession): CompanionSe
   if (session.transport !== 'native_pinned_https_wss') {
     throw new Error('Companion session did not enable the pinned native transport')
   }
-  if (session.executionAllowed || session.capabilities.executionAllowed) {
+  if (session.executionAllowed !== false || session.capabilities.executionAllowed !== false) {
     throw new Error('Companion session violated the execution lock')
   }
   return session

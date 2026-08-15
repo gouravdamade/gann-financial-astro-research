@@ -1,0 +1,32 @@
+schemaVersion: TRAILOKYA_1972_TD3_SOURCE_AUDIT_V1
+milestone: PFR-V2B-R6-N1
+status: COMPLETE_FOR_BOUNDED_SOURCE_RECORDS_NOT_RUNTIME_AUTHORIZED
+sourceWitnesses:
+  primary1972: {sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN, sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194, role: CONTROLLING_PAGE_IMAGE}
+  reading2016: {sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT, sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8, role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING}
+  centralTranslation: {artifactId: TRAILOKYA_DIPIKA_1972_ADVANCE_TRANSLATION_VERSES_345_428, sha256: 558C4D231B8BAE1DDF62386BFE5B0C87F836FAFC51C8765AD946936B881907E9, role: INDEXING_AND_TRANSLATION_AID_NOT_CONTROLLING}
+auditedPassages:
+  arghyaFoundation: {scanPages: [92, 97], printedPages: [76, 81], verses: '345-361', status: SOURCE_CLOSED_RECORDS_ONLY}
+  arghyaViswa: {scanPages: [97, 103], printedPages: [81, 87], verses: '362-378', status: SOURCE_CLOSED_RECORDS_ONLY}
+  commodityLedger: {scanPages: [103, 108], printedPages: [87, 92], verses: '379-406', status: FINANCIAL_HYPOTHESIS_LEDGER_ONLY}
+  descriptiveMaterial: {scanPages: [109, 114], printedPages: [93, 98], verses: '407-428', status: DESCRIPTIVE_ONLY_NOT_COMPUTATIONAL}
+contracts:
+  foundation: configs/sbc/trailokya/trailokya_1972_arghya_foundation_v1.yaml
+  viswa: configs/sbc/trailokya/trailokya_1972_arghya_viswa_v1.yaml
+  commodityLedger: configs/sbc/trailokya/trailokya_1972_nakshatra_commodity_ledger_v1.yaml
+nonMergeRules:
+  - TD2_STHANA_PHALA_MUST_NOT_BE_MERGED_WITH_TD3_VISWA_OR_ARGHYA_VALUES
+  - TD3_ARGHYA_ONLY_NETTING_MUST_NOT_BE_USED_AS_A_UNIVERSAL_SBC_REDUCER
+  - TD3_COMMODITY_RECORDS_MUST_NOT_BE_MAPPED_TO_FX_OR_MARKET_POLARITY
+  - TD3_RITUAL_AND_OMEN_MATERIAL_IS_DESCRIPTIVE_ONLY
+locks:
+  runtimeBehaviorChanged: false
+  productUIChanged: false
+  polarityAdded: false
+  scoreAdded: false
+  priceForecastAdded: false
+  fieldsPolarityAdded: false
+  autoSuggestAdded: false
+  mlAdded: false
+  mt5Added: false
+  executionAllowed: false

@@ -91,7 +91,7 @@ export async function fetchBackendRuntime(force = false): Promise<BackendRuntime
       if (typeof runtime.apiToken !== 'string' || runtime.apiToken.length < 16) {
         throw new Error('Backend runtime did not provide a private API token')
       }
-      if (runtime.executionAllowed) {
+      if (runtime.executionAllowed !== false) {
         throw new Error('Backend runtime violated the read-only execution lock')
       }
       return runtime
@@ -685,7 +685,7 @@ export async function fetchAgarwalSourceProfile(): Promise<AgarwalSourceProfile>
       'chakra_lab_agarwal_source_profile',
     )
     if (!payload.ok) throw new Error(payload.error || 'Agarwal source profile request failed')
-    if (payload.profile.executionAllowed || !payload.profile.guardrails.readOnly) {
+    if (payload.profile.executionAllowed !== false || payload.profile.guardrails.readOnly !== true) {
       throw new Error('Agarwal source profile violated the read-only lock')
     }
     return payload.profile
@@ -694,7 +694,7 @@ export async function fetchAgarwalSourceProfile(): Promise<AgarwalSourceProfile>
     '/api/chakra-lab/agarwal-source-profile',
     { method: 'GET' },
   )
-  if (payload.profile.executionAllowed || !payload.profile.guardrails.readOnly) {
+  if (payload.profile.executionAllowed !== false || payload.profile.guardrails.readOnly !== true) {
     throw new Error('Agarwal source profile violated the read-only lock')
   }
   return payload.profile
@@ -710,7 +710,7 @@ export async function fetchTrailokyaSourceOnlyGeometry(
       { request: input },
     )
     if (!payload.ok) throw new Error(payload.error || 'Trailokya source-only geometry request failed')
-    if (payload.geometry.guardrails.executionAllowed) {
+    if (payload.geometry.guardrails.executionAllowed !== false) {
       throw new Error('Trailokya geometry response violated the execution lock')
     }
     return payload.geometry
@@ -736,7 +736,7 @@ export async function fetchChartConditionedPolarityLookup(input: {
       body: JSON.stringify(input),
     },
   )
-  if (payload.lookup.guardrails.executionAllowed || payload.lookup.guardrails.actsAsSbcConfirmation) {
+  if (payload.lookup.guardrails.executionAllowed !== false || payload.lookup.guardrails.actsAsSbcConfirmation !== false) {
     throw new Error('Chart-conditioned polarity response violated the research-only guardrails')
   }
   return payload.lookup
@@ -755,9 +755,9 @@ export async function fetchSynchronizedIndependentRange(
       throw new Error(payload.error || 'Synchronized field request failed')
     }
     if (
-      payload.range.guardrails.executionAllowed
-      || payload.range.guardrails.fieldsFused
-      || payload.range.guardrails.marketDirectionInferred
+      payload.range.guardrails.executionAllowed !== false
+      || payload.range.guardrails.fieldsFused !== false
+      || payload.range.guardrails.marketDirectionInferred !== false
     ) {
       throw new Error('Synchronized field response violated the research-only guardrails')
     }
@@ -771,9 +771,9 @@ export async function fetchSynchronizedIndependentRange(
     },
   )
   if (
-    payload.range.guardrails.executionAllowed
-    || payload.range.guardrails.fieldsFused
-    || payload.range.guardrails.marketDirectionInferred
+    payload.range.guardrails.executionAllowed !== false
+    || payload.range.guardrails.fieldsFused !== false
+    || payload.range.guardrails.marketDirectionInferred !== false
   ) {
     throw new Error('Synchronized field response violated the research-only guardrails')
   }
@@ -822,10 +822,10 @@ export async function fetchFxSidePilotStatus(): Promise<FxSidePilotStatus> {
 
 function assertFxSidePilotGuardrails(status: FxSidePilotStatus): void {
   if (
-    status.guardrails.executionAllowed
-    || status.guardrails.createsCatalogueEntry
-    || status.guardrails.marketDirectionInferred
-    || status.guardrails.fieldsFused
+    status.guardrails.executionAllowed !== false
+    || status.guardrails.createsCatalogueEntry !== false
+    || status.guardrails.marketDirectionInferred !== false
+    || status.guardrails.fieldsFused !== false
   ) {
     throw new Error('FX side pilot status violated the research-only guardrails')
   }

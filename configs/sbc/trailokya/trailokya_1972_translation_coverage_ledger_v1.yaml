@@ -81,13 +81,13 @@ meaningfulPageCoverage:
   - scanPages: [92, 108]
     printedPages: [76, 92]
     contentCategory: ARGHYA_AND_FINANCIAL_AVAILABILITY_MATERIAL
-    translationStatus: SELECTED_TABLES_AND_PROSE_VISUALLY_AUDITED
-    provenanceStatus: RESEARCH_ONLY_EXECUTION_LOCKED
+    translationStatus: TD3_BOUNDED_SOURCE_RECORDS_345_TO_406_INGESTED
+    provenanceStatus: ORIGINAL_IMAGE_AUDITED_SOURCE_ONLY_ARGHYA_AND_FINANCIAL_HYPOTHESIS_RECORDS_EXECUTION_LOCKED
   - scanPages: [109, 118]
     printedPages: null
     contentCategory: REMAINING_BOOK_MATERIAL
-    translationStatus: NOT_AUDITED_FOR_NEW_CLAIMS
-    provenanceStatus: SOURCE_GAP_FOR_CONTINUATION
+    translationStatus: TD3_DESCRIPTIVE_MATERIAL_407_TO_428_AUDITED_NO_COMPUTATIONAL_CLAIMS
+    provenanceStatus: ORIGINAL_IMAGE_AUDITED_DESCRIPTIVE_ONLY_NOT_RUNTIME_AUTHORIZED
 recoveredArtifacts:
   - path: configs/sbc/evidence_packets/trailokya_dipika_1972_vedha_page_certification_v1.yaml
     sha256: 6A7CDC49CD155B4A7DBCDE327AB433D790922B572624218DF5BD29C86E151B85
@@ -185,6 +185,15 @@ td1NativeArtifacts:
     role: BOUNDED_CONTRACT_AND_DEPENDENCY_RETIREMENT
   - path: configs/sbc/trailokya/trailokya_1972_td1r1_correction_audit_v1.yaml
     role: TD1R1_TRANSCRIPTION_TOKEN_AND_LOCATOR_CORRECTION_HISTORY
+td3SourceArtifacts:
+  - path: configs/sbc/trailokya/trailokya_1972_arghya_foundation_v1.yaml
+    role: TD3_SOURCE_RECORDS_345_TO_361_NO_RUNTIME_AUTHORIZATION
+  - path: configs/sbc/trailokya/trailokya_1972_arghya_viswa_v1.yaml
+    role: TD3_SOURCE_RECORDS_362_TO_378_ARGHYA_SCOPED_ONLY
+  - path: configs/sbc/trailokya/trailokya_1972_nakshatra_commodity_ledger_v1.yaml
+    role: TD3_SOURCE_RECORDS_379_TO_406_FINANCIAL_HYPOTHESIS_LEDGER_ONLY
+  - path: configs/sbc/trailokya/trailokya_1972_td3_source_audit_v1.yaml
+    role: TD3_AUDIT_AND_RUNTIME_LOCKS
 continuationDependencies:
   - id: TD1_EXACT_SPEED_AND_STATIONARY_CONTRACT
     sourceNeed: exact continuous swift_mean threshold plus stationary/direct_slow classification

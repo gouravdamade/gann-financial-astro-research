@@ -80,7 +80,7 @@ async function invokeNative<T>(command: string, args?: Record<string, unknown>):
 }
 
 function assertLocked(value: { executionAllowed: boolean }): void {
-  if (value.executionAllowed) throw new Error('Companion gateway violated the execution lock')
+  if (value.executionAllowed !== false) throw new Error('Companion gateway violated the execution lock')
 }
 
 export async function fetchCompanionGateway(): Promise<CompanionGatewayInfo> {

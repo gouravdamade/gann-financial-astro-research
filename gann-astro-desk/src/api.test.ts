@@ -74,6 +74,21 @@ describe('Tauri backend transport', () => {
     await expect(fetchParameterSchema()).rejects.toThrow('read-only execution lock')
   })
 
+  it('refuses a runtime that omits the execution lock', async () => {
+    invokeMock.mockResolvedValue({
+      contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
+      baseUrl: 'http://127.0.0.1:53123',
+      apiToken: 'private-test-token',
+      port: 53123,
+      pid: 44,
+      status: 'ready',
+    })
+    vi.stubGlobal('fetch', vi.fn())
+
+    const { fetchParameterSchema } = await import('./api')
+    await expect(fetchParameterSchema()).rejects.toThrow('read-only execution lock')
+  })
+
   it('uses native IPC for Chakra Lab without exposing the private backend port', async () => {
     invokeMock.mockResolvedValue({
       ok: true,
@@ -200,6 +215,23 @@ describe('Tauri backend transport', () => {
 
     expect(invokeMock).toHaveBeenCalledWith('fx_side_pilot_status', { request: {} })
     expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('refuses FX pilot status when any research-only guardrail is absent', async () => {
+    invokeMock.mockResolvedValue({
+      ok: true,
+      status: {
+        guardrails: {
+          executionAllowed: false,
+          createsCatalogueEntry: false,
+          marketDirectionInferred: false,
+        },
+      },
+    })
+    vi.stubGlobal('fetch', vi.fn())
+
+    const { fetchFxSidePilotStatus } = await import('./api')
+    await expect(fetchFxSidePilotStatus()).rejects.toThrow('research-only guardrails')
   })
 
   it('uses native IPC for sealed audit packages and replay verification', async () => {

@@ -32,4 +32,13 @@ describe('runtime profile', () => {
       executionAllowed: true,
     } as unknown as RuntimeProfile)).toThrow('read-only execution lock')
   })
+
+  it('rejects a profile whose execution lock is missing', () => {
+    expect(() => validateRuntimeProfile({
+      contract: 'GANN_ASTRO_RUNTIME_PROFILE_V1',
+      platform: 'desktop',
+      backendMode: 'managed_sidecar',
+      configured: true,
+    } as unknown as RuntimeProfile)).toThrow('read-only execution lock')
+  })
 })
