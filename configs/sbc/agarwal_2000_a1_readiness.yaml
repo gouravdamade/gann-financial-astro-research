@@ -37,8 +37,14 @@ contracts:
     status: NOT_AUTHORIZED
     blockers: [AGARWAL_VEDHA_OPERATOR_READY_FALSE]
   A2_SCOPE_GEOMETRY_STRENGTH_INSPECTOR:
-    status: FOUNDER_ACCEPTANCE_CANDIDATE
+    status: FOUNDER_ACCEPTED
     limitations: [read_only_source_geometry_and_strength_only, Vedha_DEPENDENCY_NOT_READY, Chapter_20_FINANCIAL_HYPOTHESIS_LEDGER_ONLY]
   A2_SCOPE_PROVENANCE_ONLY:
     status: NOT_RECOMMENDED_NOT_FOUNDER_REQUESTED
 prohibited: [polarity, price_mapping, score_aggregation, Auto_Suggest, ML, MT5, execution]
+founder_acceptance:
+  candidate_version: 0.10.48-pfr-v2b-r6-sbc-a2r1
+  confirmation_date: 2026-08-15
+  confirmation_scope: Founder physically confirmed the corrected Geometry closed; strength source-recorded badge and accepted the bounded read-only Agarwal Geometry/Strength Inspector.
+  accepted_surface: [board_geometry, orientation, cell_audit, p144_provenance, source_strength_rows, Vedha_dependency_status, Chapter_20_research_lock, execution_lock]
+  excluded_from_acceptance: [full_Vedha_operator, polarity, score_aggregation, price_mapping, Fields_influence, Auto_Suggest, ML, MT5, execution]
