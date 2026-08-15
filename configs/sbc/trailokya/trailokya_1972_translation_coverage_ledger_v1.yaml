@@ -1,7 +1,7 @@
 schemaVersion: TRAILOKYA_1972_TRANSLATION_COVERAGE_LEDGER_V1
-ledgerId: PFR-V2B-R6-SBC-TD0R
-status: SOURCE_AUDIT_COMPLETE_CONTINUATION_NOT_AUTHORIZED
-scope: prior_translation_recovery_source_audit_and_continuation_map_only
+ledgerId: PFR-V2B-R6-SBC-TD1R
+status: TD1_NATIVE_SOURCE_CONTRACT_CLOSED_WITH_EXPLICIT_REMAINING_GAPS
+scope: TD0R_recovery_plus_TD1_A_TO_D_native_geometry_target_nature_and_sthula_motion
 sourcePolicy:
   citationAuthority: ORIGINAL_1972_PAGE_IMAGES_ONLY
   ocrUse: NAVIGATION_AND_DRAFT_TRANSLATION_ONLY
@@ -42,28 +42,28 @@ meaningfulPageCoverage:
   - scanPages: [12, 19]
     printedPages: [1, 3]
     contentCategory: BOARD_CONSTRUCTION_AND_PRE_VEDHA_CONTEXT
-    translationStatus: NAVIGATION_ONLY
-    provenanceStatus: NOT_PAGE_CERTIFIED_FOR_NEW_RUNTIME_CLAIMS
+    translationStatus: TD1_A_SOURCE_CERTIFIED
+    provenanceStatus: ORIGINAL_IMAGE_81_CELL_NATIVE_COORDINATE_CONTRACT
   - scanPages: [20, 21]
     printedPages: [4, 5]
     contentCategory: VEDHA_DIRECTION_AND_TARGET_REACH
-    translationStatus: SOURCE_EXCERPTS_VISUALLY_AUDITED
-    provenanceStatus: SANSKRIT_VERSES_12_TO_17_WITH_HINDI_COMMENTARY
+    translationStatus: TD1_B_SOURCE_CERTIFIED
+    provenanceStatus: ORIGINAL_IMAGE_DIRECTION_AND_TARGET_CONTRACT
   - scanPages: [22, 28]
     printedPages: [6, 12]
     contentCategory: STAR_SPECIFIC_TARGET_TABLE_AND_BOARD_LOCATIONS
-    translationStatus: NAVIGATION_MAPPED_NO_NEW_MACHINE_FIXTURE
-    provenanceStatus: ORIGINAL_PAGE_IMAGES_REVIEWED_FOR_CONTINUATION_DISCOVERY
+    translationStatus: TD1_B_SOURCE_CERTIFIED
+    provenanceStatus: ORIGINAL_IMAGE_28_ROW_ENUMERATED_TARGET_MAP_AND_EXPANSIONS
   - scanPages: [29, 30]
     printedPages: [13, 14]
     contentCategory: NATURAL_CLASS_AND_MOON_MERCURY_CONDITION_TEXT
-    translationStatus: SOURCE_EXCERPTS_VISUALLY_AUDITED_CONTINUATION_CANDIDATE
-    provenanceStatus: VERSes_54_TO_58_HINDI_COMMENTARY
-  - scanPages: [31, 51]
+    translationStatus: TD1_B_C_SOURCE_CERTIFIED
+    provenanceStatus: ORIGINAL_IMAGE_EXPANSIONS_AND_NATURE_CONDITIONS
+  - scanPages: [31, 36]
     printedPages: [15, 35]
     contentCategory: SBC_DOCTRINAL_AND_PROCEDURAL_MATERIAL
-    translationStatus: NAVIGATION_ONLY
-    provenanceStatus: NO_NEW_CLAIMS_ADMITTED
+    translationStatus: TD1_D_SOURCE_CERTIFIED
+    provenanceStatus: ORIGINAL_IMAGE_STHULA_MOTION_CLASSIFICATION_ONLY
   - scanPages: [52, 62]
     printedPages: [36, 46]
     contentCategory: TIME_DEPENDENT_PLANETS_AND_LATTA_MATERIAL
@@ -166,16 +166,26 @@ arghyaAudit:
     - ml_label
     - live_inference
     - mt5_execution
+td1NativeArtifacts:
+  - path: configs/sbc/trailokya/trailokya_1972_chakra_construction_v1.yaml
+    role: SOURCE_NATIVE_81_CELL_BOARD
+  - path: configs/sbc/trailokya/trailokya_1972_vedha_target_map_v1.yaml
+    role: SOURCE_ENUMERATED_28_ROW_TARGET_AUTHORITY
+  - path: configs/sbc/trailokya/trailokya_1972_special_expansion_rules_v1.yaml
+    role: SOURCE_DEFINED_SEMANTIC_EXPANSIONS
+  - path: configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml
+    role: CATEGORICAL_NATURE_WITH_MOON_BOUNDARY_GAP
+  - path: configs/sbc/trailokya/trailokya_1972_sthula_motion_classifier_v1.yaml
+    role: COARSE_SOURCE_MOTION_NOT_EXACT_VELOCITY
+  - path: configs/sbc/trailokya/trailokya_1972_td1_readiness.yaml
+    role: BOUNDED_CONTRACT_AND_DEPENDENCY_RETIREMENT
 continuationDependencies:
-  - id: TD1_MOTION_STATE_CONTRACT
-    sourceNeed: explicit_swift_mean_stationary_and_direct_slow_contract
-    status: UNRESOLVED
-  - id: TD1_TARGET_GEOMETRY_CONTRACT
-    sourceNeed: source_specific_board_mapping_and_corner_junction_rule
-    status: UNRESOLVED
-  - id: TD1_MOON_MERCURY_CONDITION_CONTRACT
-    sourceNeed: source_text_to_timestamp_safe_state_mapping
-    status: PARTIALLY_DISCOVERED_NOT_IMPLEMENTED
+  - id: TD1_EXACT_SPEED_AND_STATIONARY_CONTRACT
+    sourceNeed: exact continuous swift_mean threshold plus stationary/direct_slow classification
+    status: EXPLICITLY_FAIL_CLOSED
+  - id: TD1_MOON_SHUKLA_PANCHAMI_BOUNDARY
+    sourceNeed: source_safe inclusive_exclusive boundary policy
+    status: EXPLICITLY_FAIL_CLOSED
   - id: TD1_MODIFIER_PRECEDENCE
     sourceNeed: source_specific_combination_or_fail_closed_policy
     status: UNRESOLVED

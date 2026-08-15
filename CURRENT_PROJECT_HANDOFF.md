@@ -4,6 +4,24 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD1R Trailokya Native Source Contract)
+
+- TD1R independently re-hashed the controlling 1972 Trailokya scan and the
+  same-lineage 2016 reading witness, then visually audited the specified page
+  ranges. It adds immutable source-only artifacts for the native EAST-top,
+  WEST-bottom, NORTH-left, SOUTH-right 81-cell board; an enumerated 28-row
+  target map including Abhijit; letter/vowel/corner expansions; categorical
+  planet-nature conditions; and source coarse motion classifications.
+- The bounded contract is `TRAILOKYA_1972_STHULA_VEDHA_SOURCE_V1`. Its target
+  enumeration supersedes Phaladeepika shared board-ray fixtures as controlling
+  Trailokya source evidence, while retaining those fixtures for legacy history
+  and non-Trailokya components. No runtime engine, UI, score, market mapping or
+  package has been changed.
+- Exact instantaneous swift/mean threshold, stationary state, the Shukla
+  Panchami overlap, modifier/precedence, Latta and complete Arghya arithmetic
+  remain explicit fail-closed gaps. No polarity, price forecast, Auto Suggest,
+  ML, MT5 or execution behavior was added; `executionAllowed=false`.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD0R Trailokya Translation Recovery Audit)
 
 - The original 1972 Trailokya scan, OCR navigation companion and same-lineage

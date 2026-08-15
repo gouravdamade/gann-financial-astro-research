@@ -1,0 +1,62 @@
+schemaVersion: TRAILOKYA_1972_TD1_READINESS_V1
+milestone: PFR-V2B-R6-SBC-TD1R
+startingOriginMaster: eaa5ec48bf8822fcd183ccf628f3e2a8612f1b2d
+sourceContract:
+  contractId: TRAILOKYA_1972_STHULA_VEDHA_SOURCE_V1
+  status: SOURCE_CLOSED_WITH_EXPLICIT_FAIL_CLOSED_GAPS
+  scope:
+    - NATIVE_AKHANDA_81_BOARD
+    - ENUMERATED_28_NAKSHATRA_TARGET_MAP
+    - SOURCE_DEFINED_EXPANSIONS
+    - CATEGORICAL_PLANET_NATURE_CONDITIONS
+    - STHULA_COARSE_MOTION_CLASSIFICATION
+  notClaimed:
+    - EXACT_INSTANTANEOUS_SWIFT_MEAN_CLASSIFICATION
+    - STATIONARY_HANDLING
+    - SHUKLA_PANCHAMI_BOUNDARY_RESOLUTION
+    - COMPLETE_MODIFIER_OR_PRECEDENCE_DOCTRINE
+    - FINANCIAL_VALIDATION
+    - EXECUTION_READINESS
+  executionAllowed: false
+artifacts:
+  construction: configs/sbc/trailokya/trailokya_1972_chakra_construction_v1.yaml
+  targetMap: configs/sbc/trailokya/trailokya_1972_vedha_target_map_v1.yaml
+  expansions: configs/sbc/trailokya/trailokya_1972_special_expansion_rules_v1.yaml
+  planetNature: configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml
+  motion: configs/sbc/trailokya/trailokya_1972_sthula_motion_classifier_v1.yaml
+readiness:
+  TD1972_CORE_BOARD_GEOMETRY_SOURCE_CLOSED: true
+  TD1972_ENUMERATED_TARGET_MAP_SOURCE_CLOSED: true
+  TD1972_SPECIAL_EXPANSIONS_SOURCE_CLOSED: true
+  TD1972_PLANET_NATURE_CONDITIONS_SOURCE_CLOSED_WITH_MOON_BOUNDARY_GAP: true
+  TD1972_STHULA_SWIFT_MEAN_CLASSIFICATION_SOURCE_CLOSED: true
+  TD1972_EXACT_CONTINUOUS_SWIFT_MEAN_SPEED_THRESHOLD_SOURCE_CLOSED: false
+  TD1972_STATIONARY_STATE_SOURCE_CLOSED: false
+  TD1972_COMPLETE_VEDHA_OPERATOR_SOURCE_CLOSED: false
+  TD1972_RUNTIME_PROMOTION_AUTHORIZED: false
+phaladeepikaDependencyAudit:
+  - dependency: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT_shared_board_ray_worked_fixtures
+    classification: NO_LONGER_NEEDED_SOURCE_NATIVE_TD1_REPLACEMENT_AVAILABLE
+    replacement: TRAILOKYA_1972_ENUMERATED_NAKSHATRA_TARGETS_V1
+    action: RETAIN_HISTORICAL_FIXTURE_DO_NOT_TREAT_AS_CONTROLLING_TRAILOKYA_SOURCE_EVIDENCE
+  - dependency: sbc_81_rotation_normalized_partial_v1_geometry_dependency
+    classification: NO_LONGER_NEEDED_SOURCE_NATIVE_TD1_REPLACEMENT_AVAILABLE
+    replacement: TRAILOKYA_1972_NATIVE_AKHANDA_81_BOARD_V1
+    action: RETAIN_FOR_LEGACY_EXPERIMENTAL_PROFILE_ONLY
+  - dependency: EXPERIMENTAL_NORMALIZED_GUIDANCE_V1
+    classification: STILL_REQUIRED_FOR_NON_TRAILOKYA_COMPONENT
+    action: LEGACY_RUNTIME_ENGINEERING_ONLY_NOT_PART_OF_TD1_SOURCE_CONTRACT
+globalLocks:
+  productUIChanged: false
+  runtimeBehaviorChanged: false
+  polarityAdded: false
+  scoreAdded: false
+  priceForecastAdded: false
+  autoSuggestAdded: false
+  mlAdded: false
+  mt5Added: false
+  executionAllowed: false
+nextTranslationTarget:
+  id: TD2_MODIFIER_AND_PRECEDENCE_DOCTRINE
+  sourcePages: '1972 scan pages 52-62 / printed pages 36-46, beginning with source-isolated modifier material and Latta context'
+  status: NOT_STARTED

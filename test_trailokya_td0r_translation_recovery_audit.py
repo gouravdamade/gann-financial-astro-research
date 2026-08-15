@@ -51,6 +51,8 @@ def test_arghya_remains_source_preserved_and_execution_locked() -> None:
 def test_continuation_map_preserves_unresolved_dependencies() -> None:
     ledger = _ledger()
     dependencies = {item["id"]: item["status"] for item in ledger["continuationDependencies"]}
-    assert dependencies["TD1_MOTION_STATE_CONTRACT"] == "UNRESOLVED"
+    assert dependencies["TD1_EXACT_SPEED_AND_STATIONARY_CONTRACT"] == "EXPLICITLY_FAIL_CLOSED"
+    assert dependencies["TD1_MOON_SHUKLA_PANCHAMI_BOUNDARY"] == "EXPLICITLY_FAIL_CLOSED"
+    assert "TD1_TARGET_GEOMETRY_CONTRACT" not in dependencies
     assert dependencies["TD1_ARGHYA_COMPLETE_WORKED_ARITHMETIC"] == "UNRESOLVED"
     assert ledger["sourcePolicy"]["executionAllowed"] is False

@@ -1,0 +1,47 @@
+schemaVersion: TRAILOKYA_1972_SPECIAL_EXPANSION_RULES_V1
+contractId: TRAILOKYA_1972_DERIVED_SEMANTIC_TARGET_EXPANSIONS_V1
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+readingWitness: {sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT, role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING}
+rules:
+  - id: TD1972_V48_PAIRED_UNWRITTEN_AKSHARA
+    locator: {scanPage: 28, printedPage: 12, verse: 48, layer: HINDI_COMMENTARY}
+    literalSummary: 'A hit on one written representative co-affects its stated unwritten paired counterpart.'
+    pairs: [[BA, VA], [SHA, SA], [SHA_RETROFLEX, KHA]]
+    sourceStatus: SOURCE_CLOSED
+    twoPassAudit: DIRECT_AGREEMENT
+  - id: TD1972_V49_V50_TRIPLET_AKSHARA
+    locator: {scanPage: 29, printedPage: 13, verse: '49-50', layer: HINDI_COMMENTARY}
+    literalSummary: 'The written representative co-affects the three stated letters; context statements remain attached to the same hit.'
+    triplets:
+      - {representative: KA, derived: [GHA, NGA, CHHA], contextNakshatra: ARDRA}
+      - {representative: PA, derived: [SHA, NA, THA], contextNakshatra: HASTA}
+      - {representative: BHA, derived: [DHA, PHA, DHA_RETROFLEX], contextNakshatra: PURVA_ASHADHA}
+      - {representative: DA, derived: [THA, JNA, JA], contextNakshatra: UTTARA_BHADRAPADA}
+    sourceStatus: SOURCE_CLOSED
+    twoPassAudit: DIRECT_AGREEMENT
+  - id: TD1972_V51_VOWEL_COHIT
+    locator: {scanPage: 29, printedPage: 13, verse: 51, layer: HINDI_COMMENTARY}
+    literalSummary: 'A listed vowel hit co-affects its pair; anusvara and visarga remain attached to their accompanying vowel.'
+    vowelPairs: [[A, AA], [I, II], [U, UU], [VOCALIC_R, LONG_VOCALIC_R], [VOCALIC_L, LONG_VOCALIC_L], [E, AI], [O, AU]]
+    attachments: {ANUSVARA: ASSOCIATED_VOWEL_ONLY, VISARGA: ASSOCIATED_VOWEL_ONLY}
+    sourceStatus: SOURCE_CLOSED
+    twoPassAudit: DIRECT_AGREEMENT
+  - id: TD1972_V52_CORNER_PADA_PURNA_COHIT
+    locator: {scanPage: 30, printedPage: 13, verse: 52, layer: HINDI_COMMENTARY}
+    literalSummary: 'The four stated boundary-pada cases affect the corner vowel and the central Purna tithi together.'
+    cornerCases:
+      - {boundary: 'BHARANI_LAST_PADA_OR_KRITTIKA_FIRST_PADA', corner: NE_ISHANA, vowel: A}
+      - {boundary: 'ASHLESHA_LAST_PADA_OR_MAGHA_FIRST_PADA', corner: SE_AGNI, vowel: AA}
+      - {boundary: 'VISHAKHA_LAST_PADA_OR_ANURADHA_FIRST_PADA', corner: SW_NAIRRTYA, vowel: I}
+      - {boundary: 'SHRAVANA_LAST_PADA_OR_DHANISHTHA_FIRST_PADA', corner: NW_VAYAVYA, vowel: II}
+    coHit: {layer: TITHI_GROUP, value: PURNA}
+    sourceStatus: SOURCE_CLOSED
+    twoPassAudit: DIRECT_AGREEMENT
+causalDeduplication:
+  directTargetAndAllExpansions: ONE_CAUSAL_VEDHA_EVENT
+  forbiddenInterpretation: EXPANSIONS_ARE_NOT_INDEPENDENT_SCORES_OR_VOTES
+prohibitedUses: [POLARITY, SCORE_AGGREGATION, PRICE_MAPPING, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+executionAllowed: false

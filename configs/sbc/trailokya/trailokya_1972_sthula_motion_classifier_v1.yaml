@@ -1,0 +1,55 @@
+schemaVersion: TRAILOKYA_1972_STHULA_MOTION_CLASSIFIER_V1
+contractId: TD1972_STHULA_SWIFT_MEAN_CLASSIFICATION_V1
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+readingWitness: {sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT, role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING}
+families:
+  VAKRA: {substates: [VAKRA, ATIVAKRA, KUTILA], vedhaDirection: RIGHT}
+  SHIGHRA: {substates: [SHIGHRA, ATICARA], vedhaDirection: LEFT}
+  SAMA: {substates: [MANDA, MADHYA], vedhaDirection: FRONT}
+  locator: {scanPage: 32, printedPage: 16, verse: '65-66', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  sourceStatus: SOURCE_CLOSED
+  twoPassAudit: DIRECT_AGREEMENT
+marsJupiterSaturnRelativeSun:
+  locator: {scanPage: 34, printedPage: 17, verse: '69-71', layer: HINDI_COMMENTARY}
+  appliesTo: [MARS, JUPITER, SATURN]
+  relativeSignCases:
+    '2': SHIGHRA
+    '3': SAMA
+    '4': MANDA
+    '5-6': VAKRA
+    '7-8': ATIVAKRA
+    '9-10': KUTILA
+    '11-12': SHIGHRA
+    SAME_SIGN_OR_COMBUST: ASTA_NO_DIRECTION
+  sourceStatus: SOURCE_CLOSED
+  twoPassAudit: DIRECT_AGREEMENT
+mercuryVenusRelativeSun:
+  locator: {scanPage: 35, printedPage: 18, verse: 72, layer: HINDI_COMMENTARY}
+  appliesTo: [MERCURY, VENUS]
+  relativeSignCases: {'2': VAKRA, '12': SHIGHRA, '3_OR_11': SAMA}
+  unlistedCases: UNKNOWN_DO_NOT_INHERIT_OUTER_PLANET_TABLE
+  sourceStatus: SOURCE_CLOSED_FOR_STATED_CASES_ONLY
+  twoPassAudit: DIRECT_AGREEMENT
+aticara:
+  locator: {scanPage: 36, printedPage: 19, verse: 77, layer: HINDI_COMMENTARY}
+  definition: 'Unusually short traversal of the amount ordinarily covered during normal motion, passing onward from the current sign.'
+  family: SHIGHRA
+  literalMaximumMotionValues:
+    MARS: '46|11'
+    MERCURY: '113|32'
+    JUPITER: '14|14'
+    VENUS: '75|42'
+    SATURN: '7|45'
+  unitInterpretation: SOURCE_UNRESOLVED
+  sourceStatus: SOURCE_CLOSED_LITERAL_VALUES_UNIT_PENDING
+  twoPassAudit: DIRECT_AGREEMENT
+exactMotionBoundaries:
+  continuousSwiftMeanThreshold: NOT_SOURCE_CLOSED
+  stationaryState: SOURCE_SILENT_UNRESOLVED
+  exactAstronomy: EXTERNAL_GANITA_DELEGATED
+  residenceTimeTables: DESCRIPTIVE_STHULA_TABLES_NOT_EPHEMERIS_ENGINE
+prohibitedUses: [INSTANTANEOUS_VELOCITY_THRESHOLD, POLARITY, SCORE_AGGREGATION, PRICE_MAPPING, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+executionAllowed: false

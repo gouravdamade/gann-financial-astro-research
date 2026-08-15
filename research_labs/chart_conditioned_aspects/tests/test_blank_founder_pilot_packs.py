@@ -24,6 +24,12 @@ def _load(side: str) -> tuple[dict, dict, Path]:
     )
 
 
+def _canonical_packet_sha256(path: Path) -> str:
+    """Hash the committed JSON serialization, independent of Git CRLF checkout."""
+    canonical_bytes = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(canonical_bytes).hexdigest().upper()
+
+
 def test_blank_founder_packets_are_exactly_blank_and_non_outcome_selected() -> None:
     for side, instrument in (("USD", "FX_CURRENCY:USD"), ("JPY", "FX_CURRENCY:JPY")):
         packet, manifest, path = _load(side)
@@ -58,7 +64,7 @@ def test_blank_founder_packets_are_exactly_blank_and_non_outcome_selected() -> N
             }
         assert manifest["includedEventCount"] == 12
         assert manifest["includedEventIds"] == [row["eventIdentity"]["eventId"] for row in packet["rows"]]
-        assert manifest["outputSha256"] == hashlib.sha256(path.read_bytes()).hexdigest().upper()
+        assert manifest["outputSha256"] == _canonical_packet_sha256(path)
 
 
 def test_v1_packets_are_preserved_after_independent_identity_audit() -> None:
@@ -75,7 +81,7 @@ def test_v1_packets_are_preserved_after_independent_identity_audit() -> None:
 
         assert audit_manifest["contract"] == "FOUNDER_BLANK_POLARITY_REVIEW_V1_IDENTITY_VERIFICATION_MANIFEST_V1"
         assert audit_manifest["allRowsSinglePassVerified"] is True
-        assert audit_manifest["packetSha256"] == hashlib.sha256(path.read_bytes()).hexdigest().upper()
+        assert audit_manifest["packetSha256"] == _canonical_packet_sha256(path)
         assert audit_manifest["originalGenerationManifestOutputSha256"] == original_manifest["outputSha256"]
         assert audit_manifest["verifiedEventIds"] == [row["eventIdentity"]["eventId"] for row in packet["rows"]]
         assert "Founder polarity" in rendering
