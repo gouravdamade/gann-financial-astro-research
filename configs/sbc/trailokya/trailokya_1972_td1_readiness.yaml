@@ -1,5 +1,6 @@
 schemaVersion: TRAILOKYA_1972_TD1_READINESS_V1
-milestone: PFR-V2B-R6-SBC-TD1R1
+milestone: PFR-V2B-R6-SBC-TD1R2
+finalTrustedMilestone: PFR-V2B-R6-SBC-TD1R2
 startingOriginMaster: 39b8eff493d6b48f4e62cd07dd76233215b8e231
 sourceContract:
   contractId: TRAILOKYA_1972_STHULA_VEDHA_SOURCE_V1
@@ -69,6 +70,6 @@ globalLocks:
   mt5Added: false
   executionAllowed: false
 nextTranslationTarget:
-  id: TD2_MODIFIER_AND_PRECEDENCE_DOCTRINE
-  sourcePages: '1972 scan pages 52-62 / printed pages 36-46, beginning with source-isolated modifier material and Latta context'
+  id: TD3_ARGHYA_WORKED_RECONSTRUCTION
+  sourcePages: '1972 scan pages 92-108 / printed pages 76-92, only after separate authorization'
   status: NOT_STARTED

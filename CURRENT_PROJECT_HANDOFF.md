@@ -77,7 +77,25 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   definitions, source-specific target/corner geometry, Moon/Mercury conditions,
   modifier precedence, Latta, or a reproducible Arghya worked arithmetic gate.
 
-## Latest Update - 2026-08-15 (Agarwal A2R1 Founder Acceptance Recorded)
+## Latest Update - 2026-08-15 (Trailokya TD2R Source Closure)
+
+- Added static 1972 source contracts for Vedha magnitude/state records,
+  deliberately scoped context-resolution passages, and Graha Latta.
+- The 1972 original page images remain controlling. The same-lineage 2016
+  reprint remains a reading witness only; OCR remains navigation/draft support.
+- The recorded isolated verse-166 modifiers are not a combined scalar. Swift
+  is a base source result, not a fabricated `1.0` multiplier. The source does
+  not close modifier stacking, a continuous motion threshold or stationary
+  handling.
+- Latta is explicitly separate from left/front/right Vedha: it is a 27-star
+  ordinal record with the counting origin still unresolved and no diminished
+  Moon rule admitted.
+- Later Arghya references are context only. No 20/15/10/5 Vedha phala value is
+  merged with Viswa/Vimsopaka, and no market/FX inference was added.
+- No runtime, UI, Fields, polarity, score, Auto Suggest, ML, MT5 or execution
+  behavior changed. `executionAllowed=false` remains invariant.
+
+## Prior Update - 2026-08-15 (Agarwal A2R1 Founder Acceptance Recorded)
 
 - The founder physically inspected and accepted `0.10.48-pfr-v2b-r6-sbc-a2r1`.
   The corrected badge reads `GEOMETRY CLOSED · STRENGTH SOURCE-RECORDED`.

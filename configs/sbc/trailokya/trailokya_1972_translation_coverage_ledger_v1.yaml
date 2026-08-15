@@ -70,16 +70,16 @@ meaningfulPageCoverage:
     provenanceStatus: ORIGINAL_IMAGE_STHULA_MOTION_CLASSIFICATION_ONLY
   - scanPages: [52, 62]
     printedPages: [36, 46]
-    contentCategory: TIME_DEPENDENT_PLANETS_AND_LATTA_MATERIAL
-    translationStatus: NAVIGATION_MAPPED_ONLY
-    provenanceStatus: LATTA_EXISTS_BUT_NO_TD0R_OPERATOR_EXTRACTION
+    contentCategory: TIME_DEPENDENT_PLANETS_VEDHA_MAGNITUDE_AND_LATTA_CONTEXT
+    translationStatus: TD2R_SOURCE_CERTIFIED_FOR_BOUNDED_MAGNITUDE_CONTEXT_AND_LATTA_RECORDS
+    provenanceStatus: ORIGINAL_IMAGE_SOURCE_CONTRACTS_NO_RUNTIME_PROMOTION
   - scanPages: [63, 91]
     printedPages: [47, 75]
     contentCategory: INTERMEDIATE_SBC_COMMENTARY
     translationStatus: NOT_AUDITED_FOR_NEW_CLAIMS
     provenanceStatus: SOURCE_GAP_FOR_CONTINUATION
   - scanPages: [92, 108]
-    printedPages: [46, 62]
+    printedPages: [76, 92]
     contentCategory: ARGHYA_AND_FINANCIAL_AVAILABILITY_MATERIAL
     translationStatus: SELECTED_TABLES_AND_PROSE_VISUALLY_AUDITED
     provenanceStatus: RESEARCH_ONLY_EXECUTION_LOCKED
@@ -197,7 +197,7 @@ continuationDependencies:
     status: UNRESOLVED
   - id: TD1_LATTA_SEPARATE_AUDIT
     sourceNeed: page_certified_latta_operator_and_scope
-    status: UNRESOLVED
+    status: TD2R_OFFSETS_AND_DESCRIPTIVE_CASES_CLOSED_COUNTING_ORIGIN_UNRESOLVED
   - id: TD1_ARGHYA_COMPLETE_WORKED_ARITHMETIC
     sourceNeed: independently_reproducible_score_to_price_working
     status: UNRESOLVED

@@ -1,0 +1,80 @@
+schemaVersion: TRAILOKYA_1972_GRAHA_LATTA_SOURCE_V1
+contractId: TRAILOKYA_1972_GRAHA_LATTA_SOURCE_V1
+milestone: PFR-V2B-R6-SBC-TD2R
+status: SOURCE_CLOSED_OFFSETS_WITH_UNRESOLVED_ORIGIN
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+topology:
+  eventType: LATTA
+  nakshatras: ASHVINI_THROUGH_REVATI
+  count: 27
+  abhijit: EXCLUDED
+  geometry: FORWARD_BACKWARD_ORDINAL_ONLY
+  notEquivalentTo: [LEFT_FRONT_RIGHT_VEDHA, TD1_SEMANTIC_EXPANSIONS]
+  countingOrigin: UNRESOLVED
+offsets:
+  locator: {scanPage: 75, printedPage: 59, verses: '261-262', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  SUN: {direction: FORWARD, offset: 12}
+  MARS: {direction: FORWARD, offset: 3}
+  JUPITER: {direction: FORWARD, offset: 6}
+  SATURN: {direction: FORWARD, offset: 8}
+  MERCURY: {direction: BACKWARD, offset: 7}
+  VENUS: {direction: BACKWARD, offset: 5}
+  RAHU: {direction: BACKWARD, offset: 9}
+  KETU: {direction: BACKWARD, offset: 9}
+  FULL_MOON: {direction: BACKWARD, offset: 22}
+  sourceStatus: SOURCE_CLOSED
+moonQualification:
+  fullMoon: SOURCE_CLOSED
+  diminishedMoon: NOT_ESTABLISHED_IN_HELD_LATTA_PASSAGE
+descriptivePlanetResults:
+  locator: {scanPage: 75, printedPage: 59, verses: '263-265', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  SUN: FINANCIAL_LOSS
+  MARS: DEATH
+  JUPITER: LOSS_OF_KIN
+  SATURN: DEATH
+  MERCURY: ECONOMIC_LOSS
+  VENUS: WORK_DISRUPTION
+  RAHU: DEATH
+  KETU: SAME_AS_RAHU
+  FULL_MOON: GREAT_FEAR
+  sourceStatus: SOURCE_CLOSED_DESCRIPTIVE_ONLY
+birthNakshatraCompoundCases:
+  locator: {scanPages: [75, 76], printedPages: [59, 60], verses: '266-270', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  cases:
+    - {latta: SUN, occupant: MARS, sourceDescription: PLACE_AND_FINANCIAL_LOSS_WITH_ABDOMINAL_DISEASE}
+    - {latta: SUN, occupant: MARS_AND_MOON, sourceDescription: GREAT_FEAR_ADDITION}
+    - {latta: MARS, occupant: SUN, sourceDescription: HOME_DESTRUCTION_WEALTH_LOSS_DISEASE_WEAPON_TORMENT}
+    - {latta: MARS, occupant: SUN_AND_MOON, sourceDescription: GREATER_FEAR_ADDITION}
+    - {latta: SATURN, occupant: SUN, sourceDescription: ILLNESS_PAIN_GREAT_FEAR_THIEVES}
+    - {latta: SATURN, occupant: SUN_AND_MOON, sourceDescription: SPECIAL_ADDITION_STATED}
+    - {latta: RAHU_OR_KETU, occupant: SUN, sourceDescription: SAME_AS_SATURN}
+    - {latta: MERCURY, occupant: SUN, sourceDescription: LOSS_OF_INTELLECT}
+    - {latta: JUPITER, occupant: SUN, sourceDescription: ILLNESS}
+    - {latta: VENUS, occupant: SUN, sourceDescription: SPOUSE_LOSS_AND_URINARY_CONDITION}
+sunLattaOccupantTable:
+  locator: {scanPage: 77, printedPage: 61, verses: '271-274', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  MOON: BILIARY_CONDITION_JOURNEY_ABROAD_WOUNDS
+  MARS: THIEVES_AND_VALUE_LOSS
+  MERCURY: SEPARATION_FROM_KINSFOLK
+  JUPITER: KING_FEAR_AND_LOSS_OF_ANIMALS
+  VENUS: SPOUSE_SEPARATION_AND_LOSS_OF_CLOTHES
+  SATURN: LOSS_OF_GOLD_GEMS_LARGE_ANIMALS_WEALTH_AND_GRAIN
+  RAHU: LOSS_OF_ALL
+  KETU: WEAPON_FEAR
+  sourceStatus: SOURCE_CLOSED_DESCRIPTIVE_ONLY
+upagrahaCompound:
+  locator: {scanPage: 77, printedPage: 61, verse: 275, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  requiredConditions: [UPAGRAHA, LATTA, KRURA]
+  MARGI: DISEASE
+  RETROGRADE: DEATH
+  sourceStatus: SOURCE_CLOSED_NAMED_COMPOUND_ONLY
+unresolved:
+  - TD1972_LATTA_COUNTING_ORIGIN_UNRESOLVED
+  - TD1972_DIMINISHED_MOON_LATTA_NOT_ESTABLISHED
+  - TD1972_LATTA_GENERAL_TARGET_CONSTRUCTION_NOT_IMPLEMENTED
+prohibitedUses: [RUNTIME_LATTA_TARGETING, SCORE, POLARITY, PRICE_FORECAST, AUTO_SUGGEST, ML, MT5, EXECUTION]
+runtimeBehaviorChanged: false
+executionAllowed: false

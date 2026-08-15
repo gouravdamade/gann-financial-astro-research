@@ -97,6 +97,14 @@ separately classifies the legacy runtime profile's Phaladeepika shared
 fixtures and engineering normalization as non-Trailokya translation layers.
 See `docs/sbc/PFR_V2B_R6_SBC_TD0R_TRAILOKYA_1972_TRANSLATION_RECOVERY_AUDIT.md`.
 
+## Trailokya TD2R bounded source closure
+
+TD2R page-image-audited the 1972 magnitude passage (scan pp.53-58 / printed
+pp.37-42), scoped context passages, and Graha Latta (scan pp.74-77 / printed
+pp.58-61). It adds source contracts only; it does not create runtime Vedha,
+numeric scoring, financial interpretation, market polarity, or a Latta target
+calculator. See `docs/sbc/PFR_V2B_R6_SBC_TD2R_TRAILOKYA_1972_MAGNITUDE_CONTEXT_LATTA_SOURCE_CLOSURE.md`.
+
 ## Additional Source Cross-reference
 
 Four further files were classified on 2026-07-23. The Khemraj file is a 2016

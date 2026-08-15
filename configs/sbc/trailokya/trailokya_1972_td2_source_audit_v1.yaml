@@ -1,0 +1,31 @@
+schemaVersion: TRAILOKYA_1972_TD2_SOURCE_AUDIT_V1
+milestone: PFR-V2B-R6-SBC-TD2R
+status: COMPLETE_FOR_BOUNDED_SOURCE_CONTRACTS
+sourceWitnesses:
+  primary1972: {sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN, sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194, role: CONTROLLING_PAGE_IMAGE}
+  reading2016: {sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT, sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8, role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING}
+  ocr1972: {sourceId: TRAILOKYA_DIPIKA_VYAS_1972_OCR_COMPANION, role: NAVIGATION_AND_DRAFT_TRANSLATION_ONLY}
+auditedPassages:
+  magnitude: {scanPages: [53, 58], printedPages: [37, 42], verses: '160-179', status: SOURCE_CLOSED}
+  context: {scanPages: [46, 51, 64, 67, 71, 72, 95, 102], printedPages: [30, 35, 48, 51, 55, 56, 79, 86], status: SOURCE_CLOSED_SCOPED_ONLY}
+  latta: {scanPages: [74, 77], printedPages: [58, 61], verses: '261-275', status: SOURCE_CLOSED_WITH_UNRESOLVED_COUNTING_ORIGIN}
+contracts:
+  magnitude: configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml
+  contextResolution: configs/sbc/trailokya/trailokya_1972_context_resolution_v1.yaml
+  grahaLatta: configs/sbc/trailokya/trailokya_1972_graha_latta_v1.yaml
+nonMergeRules:
+  - TD2_20_15_10_5_VEDHA_PHALA_MUST_NOT_BE_MERGED_WITH_LATER_ARGHYA_VISWA_OR_VIMSOPAKA
+  - CONTEXT_RULES_MUST_NOT_BE_RECAST_AS_A_UNIVERSAL_RESOLVER
+  - LATTA_MUST_NOT_INHERIT_TD1_LEFT_FRONT_RIGHT_OR_SEMANTIC_EXPANSIONS
+  - ARGHYA_CONTEXT_IS_NOT_A_MARKET_OR_FX_CONTRACT
+locks:
+  runtimeBehaviorChanged: false
+  productUIChanged: false
+  polarityAdded: false
+  scoreAdded: false
+  priceForecastAdded: false
+  fieldsPolarityAdded: false
+  autoSuggestAdded: false
+  mlAdded: false
+  mt5Added: false
+  executionAllowed: false
