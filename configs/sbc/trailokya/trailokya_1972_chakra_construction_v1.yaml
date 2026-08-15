@@ -30,16 +30,51 @@ layers:
   - RASHI_12
   - TITHI_WEEKDAY_COLOCATION
   - CENTER_PURNA
+aksharaTokenRegistry:
+  # Canonical machine identifiers retain the source glyph distinction. They are
+  # not a replacement transliteration layer.
+  TA_DENTAL: {canonicalToken: TA_DENTAL, literalDevanagari: "त", normalizedDisplay: "ta"}
+  TTA_RETROFLEX: {canonicalToken: TTA_RETROFLEX, literalDevanagari: "ट", normalizedDisplay: "ṭa"}
+  DA_DENTAL: {canonicalToken: DA_DENTAL, literalDevanagari: "द", normalizedDisplay: "da"}
+  DDA_RETROFLEX: {canonicalToken: DDA_RETROFLEX, literalDevanagari: "ड", normalizedDisplay: "ḍa"}
+  THA_DENTAL: {canonicalToken: THA_DENTAL, literalDevanagari: "थ", normalizedDisplay: "tha"}
+  TTHA_RETROFLEX: {canonicalToken: TTHA_RETROFLEX, literalDevanagari: "ठ", normalizedDisplay: "ṭha"}
+  DHA_DENTAL: {canonicalToken: DHA_DENTAL, literalDevanagari: "ध", normalizedDisplay: "dha"}
+  DDHA_RETROFLEX: {canonicalToken: DDHA_RETROFLEX, literalDevanagari: "ढ", normalizedDisplay: "ḍha"}
+  NA_DENTAL: {canonicalToken: NA_DENTAL, literalDevanagari: "न", normalizedDisplay: "na"}
+  NNA_RETROFLEX: {canonicalToken: NNA_RETROFLEX, literalDevanagari: "ण", normalizedDisplay: "ṇa"}
+  SHA_PALATAL: {canonicalToken: SHA_PALATAL, literalDevanagari: "श", normalizedDisplay: "śa"}
+  SSA_RETROFLEX: {canonicalToken: SSA_RETROFLEX, literalDevanagari: "ष", normalizedDisplay: "ṣa"}
+  SA_DENTAL: {canonicalToken: SA_DENTAL, literalDevanagari: "स", normalizedDisplay: "sa"}
+  KA: {canonicalToken: KA, literalDevanagari: "क", normalizedDisplay: "ka"}
+  KHA: {canonicalToken: KHA, literalDevanagari: "ख", normalizedDisplay: "kha"}
+  GA: {canonicalToken: GA, literalDevanagari: "ग", normalizedDisplay: "ga"}
+  GHA: {canonicalToken: GHA, literalDevanagari: "घ", normalizedDisplay: "gha"}
+  NGA: {canonicalToken: NGA, literalDevanagari: "ङ", normalizedDisplay: "ṅa"}
+  CHA: {canonicalToken: CHA, literalDevanagari: "च", normalizedDisplay: "ca"}
+  CHHA: {canonicalToken: CHHA, literalDevanagari: "छ", normalizedDisplay: "cha"}
+  JA: {canonicalToken: JA, literalDevanagari: "ज", normalizedDisplay: "ja"}
+  JNA: {canonicalToken: JNA, literalDevanagari: "ज्ञ", normalizedDisplay: "jña"}
+  PA: {canonicalToken: PA, literalDevanagari: "प", normalizedDisplay: "pa"}
+  PHA: {canonicalToken: PHA, literalDevanagari: "फ", normalizedDisplay: "pha"}
+  BA: {canonicalToken: BA, literalDevanagari: "ब", normalizedDisplay: "ba"}
+  BHA: {canonicalToken: BHA, literalDevanagari: "भ", normalizedDisplay: "bha"}
+  MA: {canonicalToken: MA, literalDevanagari: "म", normalizedDisplay: "ma"}
+  YA: {canonicalToken: YA, literalDevanagari: "य", normalizedDisplay: "ya"}
+  RA: {canonicalToken: RA, literalDevanagari: "र", normalizedDisplay: "ra"}
+  LA: {canonicalToken: LA, literalDevanagari: "ल", normalizedDisplay: "la"}
+  VA: {canonicalToken: VA, literalDevanagari: "व", normalizedDisplay: "va"}
+  HA: {canonicalToken: HA, literalDevanagari: "ह", normalizedDisplay: "ha"}
 cellProjection:
   # Each array is one east-to-west row. Source literals are retained separately from normalized tokens.
   - [A, KRITTIKA, ROHINI, MRIGASHIRSHA, ARDRA, PUNARVASU, PUSHYA, ASHLESHA, AA]
-  - [BHARANI, U, A, VA, KA, HA, DDA, UU, MAGHA]
+  - [BHARANI, U, A, VA, KA, HA, DDA_RETROFLEX, UU, MAGHA]
   - [ASHVINI, LA, VOCALIC_L, TAURUS, GEMINI, CANCER, LONG_VOCALIC_L, MA, PURVA_PHALGUNI]
-  - [REVATI, CHA, ARIES, O, NANDA_SUNDAY_TUESDAY, AU, LEO, TTA, UTTARA_PHALGUNI]
-  - [UTTARA_BHADRAPADA, DA, PISCES, RIKTA_FRIDAY, PURNA_SATURDAY, BHADRA_MONDAY_WEDNESDAY, VIRGO, PA, HASTA]
-  - [PURVA_BHADRAPADA, SA, AQUARIUS, VISARGA, JAYA_THURSDAY, ANUSVARA, LIBRA, RA, CHITRA]
-  - [SHATABHISHA, GA, AI, CAPRICORN, SAGITTARIUS, SCORPIO, E, TA, SWATI]
-  - [DHANISHTHA, LONG_VOCALIC_R, KHA, JA, BHA, YA, NA, VOCALIC_R, VISHAKHA]
+  - [REVATI, CHA, ARIES, O, NANDA_SUNDAY_TUESDAY, AU, LEO, TTA_RETROFLEX, UTTARA_PHALGUNI]
+  - [UTTARA_BHADRAPADA, DA_DENTAL, PISCES, RIKTA_FRIDAY, PURNA_SATURDAY, BHADRA_MONDAY_WEDNESDAY, VIRGO, PA, HASTA]
+  - [PURVA_BHADRAPADA, SA_DENTAL, AQUARIUS, VISARGA, JAYA_THURSDAY, ANUSVARA, LIBRA, RA, CHITRA]
+  - [SHATABHISHA, GA, AI, CAPRICORN, SAGITTARIUS, SCORPIO, E, TA_DENTAL, SWATI]
+  - [DHANISHTHA, LONG_VOCALIC_R, KHA, JA, BHA, YA, NA_DENTAL, VOCALIC_R, VISHAKHA]
   - [II, SHRAVANA, ABHIJIT, UTTARA_ASHADHA, PURVA_ASHADHA, MULA, JYESHTHA, ANURADHA, I]
 literalNotes:
   - 'The figure uses Sanskrit/Hindi glyphs; normalized tokens are display aids and do not replace literals.'

@@ -13,7 +13,7 @@ families:
   sourceStatus: SOURCE_CLOSED
   twoPassAudit: DIRECT_AGREEMENT
 marsJupiterSaturnRelativeSun:
-  locator: {scanPage: 34, printedPage: 17, verse: '69-71', layer: HINDI_COMMENTARY}
+  locator: {scanPage: 33, printedPage: 17, verse: '69-71', layer: HINDI_COMMENTARY}
   appliesTo: [MARS, JUPITER, SATURN]
   relativeSignCases:
     '2': SHIGHRA
@@ -23,7 +23,10 @@ marsJupiterSaturnRelativeSun:
     '7-8': ATIVAKRA
     '9-10': KUTILA
     '11-12': SHIGHRA
-    SAME_SIGN_OR_COMBUST: ASTA_NO_DIRECTION
+    SAME_SIGN_OR_COMBUST:
+      astronomicalVisibilityState: ASTA
+      vedhaDirection: UNKNOWN_NOT_SOURCE_ESTABLISHED
+      sourceFinding: SOURCE_DESCRIBES_ASTA_CONTEXT_BUT_DOES_NOT_STATE_NO_VEDHA_DIRECTION
   sourceStatus: SOURCE_CLOSED
   twoPassAudit: DIRECT_AGREEMENT
 mercuryVenusRelativeSun:

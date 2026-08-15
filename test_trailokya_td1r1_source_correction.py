@@ -1,0 +1,119 @@
+"""Exact-content gates for the TD1R1 source correction.
+
+This test keeps a deliberately independent, compact golden rendering of every
+re-audited row. It is not a runtime implementation and contains no market use.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import yaml
+
+
+ROOT = Path(__file__).resolve().parent
+SOURCE_DIR = ROOT / "configs" / "sbc" / "trailokya"
+
+
+def _load(name: str) -> dict:
+    return yaml.safe_load((SOURCE_DIR / name).read_text(encoding="utf-8"))
+
+
+# verse|scan|printed|left sequence||right sequence||front. The independent
+# representation makes a missing member, direction reversal, or token drift a
+# targeted test failure rather than a row-count-only regression.
+EXPECTED_ROWS = {
+    "KRITTIKA": "19|22|6|NAME_INITIAL:A,RASHI:TAURUS,TITHI_GROUP:NANDA,TITHI_GROUP:BHADRA,RASHI:LIBRA,NAME_INITIAL:TA_DENTAL,NAKSHATRA:VISHAKHA||NAKSHATRA:BHARANI||NAKSHATRA:SHRAVANA",
+    "ROHINI": "21|22|6|NAME_INITIAL:VA,RASHI:GEMINI,VOWEL:AU,RASHI:VIRGO,NAME_INITIAL:RA,NAKSHATRA:SWATI||VOWEL:U,NAKSHATRA:ASHVINI||NAKSHATRA:ABHIJIT",
+    "MRIGASHIRSHA": "22|22|6|NAME_INITIAL:KA,RASHI:CANCER,RASHI:LEO,NAME_INITIAL:PA,NAKSHATRA:CHITRA||VOWEL:A,NAME_INITIAL:LA,NAKSHATRA:REVATI||NAKSHATRA:UTTARA_ASHADHA",
+    "ARDRA": "23|22|6|NAME_INITIAL:HA,VOWEL:VOCALIC_L,NAME_INITIAL:TTA_RETROFLEX,NAKSHATRA:HASTA||NAME_INITIAL:VA,VOWEL:LONG_VOCALIC_L,NAME_INITIAL:CHA,NAKSHATRA:UTTARA_BHADRAPADA||NAKSHATRA:PURVA_ASHADHA",
+    "PUNARVASU": "24|23|7|NAME_INITIAL:DDA_RETROFLEX,NAME_INITIAL:MA,NAKSHATRA:UTTARA_PHALGUNI||NAME_INITIAL:KA,RASHI:TAURUS,RASHI:ARIES,NAME_INITIAL:DA_DENTAL,NAKSHATRA:PURVA_BHADRAPADA||NAKSHATRA:MULA",
+    "PUSHYA": "25|23|7|VOWEL:UU,NAKSHATRA:PURVA_PHALGUNI||NAME_INITIAL:HA,RASHI:GEMINI,VOWEL:O,RASHI:PISCES,NAME_INITIAL:SA_DENTAL,NAKSHATRA:SHATABHISHA||NAKSHATRA:JYESHTHA",
+    "ASHLESHA": "26|23|7|NAKSHATRA:MAGHA||VOWEL:U,RASHI:CANCER,TITHI_GROUP:NANDA,TITHI_GROUP:RIKTA,RASHI:AQUARIUS,NAME_INITIAL:GA,NAKSHATRA:DHANISHTHA||NAKSHATRA:ANURADHA",
+    "MAGHA": "27|23|7|NAME_INITIAL:MA,RASHI:LEO,TITHI_GROUP:BHADRA,TITHI_GROUP:JAYA,RASHI:CAPRICORN,NAME_INITIAL:KHA,NAKSHATRA:SHRAVANA||NAKSHATRA:ASHLESHA||NAKSHATRA:BHARANI",
+    "PURVA_PHALGUNI": "28|23|7|NAME_INITIAL:TTA_RETROFLEX,RASHI:VIRGO,VOWEL:ANUSVARA,RASHI:SAGITTARIUS,NAME_INITIAL:JA,NAKSHATRA:ABHIJIT||VOWEL:UU,NAKSHATRA:PUSHYA||NAKSHATRA:ASHVINI",
+    "UTTARA_PHALGUNI": "29|24|8|NAME_INITIAL:PA,RASHI:LIBRA,RASHI:SCORPIO,NAME_INITIAL:BHA,NAKSHATRA:UTTARA_ASHADHA||NAME_INITIAL:MA,NAME_INITIAL:DDA_RETROFLEX,NAKSHATRA:PUNARVASU||NAKSHATRA:REVATI",
+    "HASTA": "30|24|8|NAME_INITIAL:RA,VOWEL:E,NAME_INITIAL:YA,NAKSHATRA:PURVA_ASHADHA||NAME_INITIAL:TTA_RETROFLEX,VOWEL:LONG_VOCALIC_L,NAME_INITIAL:HA,NAKSHATRA:ARDRA||NAKSHATRA:UTTARA_BHADRAPADA",
+    "CHITRA": "31|24|8|NAME_INITIAL:TA_DENTAL,NAME_INITIAL:NA_DENTAL,NAKSHATRA:MULA||NAME_INITIAL:PA,RASHI:LEO,RASHI:CANCER,NAME_INITIAL:KA,NAKSHATRA:MRIGASHIRSHA||NAKSHATRA:PURVA_BHADRAPADA",
+    "SWATI": "32|24|8|VOWEL:VOCALIC_R,NAKSHATRA:JYESHTHA||NAME_INITIAL:RA,RASHI:VIRGO,VOWEL:AU,RASHI:GEMINI,NAME_INITIAL:VA,NAKSHATRA:ROHINI||NAKSHATRA:SHATABHISHA",
+    "VISHAKHA": "33|24|8|NAKSHATRA:ANURADHA||NAME_INITIAL:TA_DENTAL,RASHI:LIBRA,TITHI_GROUP:BHADRA,TITHI_GROUP:NANDA,RASHI:TAURUS,VOWEL:A,NAKSHATRA:KRITTIKA||NAKSHATRA:DHANISHTHA",
+    "ANURADHA": "34|25|9|NAME_INITIAL:NA_DENTAL,RASHI:SCORPIO,TITHI_GROUP:JAYA,TITHI_GROUP:RIKTA,RASHI:ARIES,NAME_INITIAL:LA,NAKSHATRA:BHARANI||NAKSHATRA:VISHAKHA||NAKSHATRA:ASHLESHA",
+    "JYESHTHA": "35|25|9|NAME_INITIAL:YA,RASHI:SAGITTARIUS,VOWEL:ANUSVARA,RASHI:PISCES,NAME_INITIAL:CHA,NAKSHATRA:ASHVINI||VOWEL:VOCALIC_R,NAKSHATRA:SWATI||NAKSHATRA:PUSHYA",
+    "MULA": "36|25|9|NAME_INITIAL:BHA,RASHI:CAPRICORN,RASHI:AQUARIUS,NAME_INITIAL:DA_DENTAL,NAKSHATRA:REVATI||NAME_INITIAL:NA_DENTAL,NAME_INITIAL:TA_DENTAL,NAKSHATRA:CHITRA||NAKSHATRA:PUNARVASU",
+    "PURVA_ASHADHA": "37|25|9|NAME_INITIAL:JA,VOWEL:AI,NAME_INITIAL:SA_DENTAL,NAKSHATRA:UTTARA_BHADRAPADA||NAME_INITIAL:YA,VOWEL:E,NAME_INITIAL:RA,NAKSHATRA:HASTA||NAKSHATRA:ARDRA",
+    "UTTARA_ASHADHA": "38|25|9|NAME_INITIAL:KHA,NAME_INITIAL:GA,NAKSHATRA:PURVA_BHADRAPADA||NAME_INITIAL:BHA,RASHI:SCORPIO,RASHI:LIBRA,NAME_INITIAL:PA,NAKSHATRA:UTTARA_PHALGUNI||NAKSHATRA:MRIGASHIRSHA",
+    "ABHIJIT": "39|26|10|VOWEL:VOCALIC_R,NAKSHATRA:SHATABHISHA||NAME_INITIAL:JA,RASHI:SAGITTARIUS,VOWEL:ANUSVARA,RASHI:VIRGO,NAME_INITIAL:TTA_RETROFLEX,NAKSHATRA:PURVA_PHALGUNI||NAKSHATRA:ROHINI",
+    "SHRAVANA": "40|26|10|NAKSHATRA:DHANISHTHA||NAME_INITIAL:KHA,RASHI:CAPRICORN,TITHI_GROUP:JAYA,TITHI_GROUP:BHADRA,RASHI:LEO,NAME_INITIAL:MA,NAKSHATRA:MAGHA||NAKSHATRA:KRITTIKA",
+    "DHANISHTHA": "41|26|10|NAME_INITIAL:GA,RASHI:AQUARIUS,TITHI_GROUP:RIKTA,TITHI_GROUP:NANDA,RASHI:CANCER,NAME_INITIAL:DDA_RETROFLEX,NAKSHATRA:ASHLESHA||NAKSHATRA:SHRAVANA||NAKSHATRA:VISHAKHA",
+    "SHATABHISHA": "42|26|10|NAME_INITIAL:SA_DENTAL,RASHI:PISCES,VOWEL:O,RASHI:GEMINI,NAME_INITIAL:HA,NAKSHATRA:PUSHYA||VOWEL:VOCALIC_R,NAKSHATRA:ABHIJIT||NAKSHATRA:SWATI",
+    "PURVA_BHADRAPADA": "43|26|10|NAME_INITIAL:DA_DENTAL,RASHI:ARIES,RASHI:TAURUS,NAME_INITIAL:KA,NAKSHATRA:PUNARVASU||NAME_INITIAL:GA,NAME_INITIAL:KHA,NAKSHATRA:UTTARA_ASHADHA||NAKSHATRA:CHITRA",
+    "UTTARA_BHADRAPADA": "44|27|11|NAME_INITIAL:CHA,VOWEL:VOCALIC_L,NAME_INITIAL:VA,NAKSHATRA:ARDRA||NAME_INITIAL:SA_DENTAL,VOWEL:AI,NAME_INITIAL:JA,NAKSHATRA:PURVA_ASHADHA||NAKSHATRA:HASTA",
+    "REVATI": "45|27|11|NAME_INITIAL:LA,VOWEL:A,NAKSHATRA:MRIGASHIRSHA||NAME_INITIAL:DA_DENTAL,RASHI:AQUARIUS,RASHI:CAPRICORN,NAME_INITIAL:BHA,NAKSHATRA:MULA||NAKSHATRA:UTTARA_PHALGUNI",
+    "ASHVINI": "46|27|11|VOWEL:U,NAKSHATRA:ROHINI||NAME_INITIAL:CHA,RASHI:PISCES,VOWEL:VISARGA,RASHI:SAGITTARIUS,NAME_INITIAL:YA,NAKSHATRA:JYESHTHA||NAKSHATRA:PURVA_PHALGUNI",
+    "BHARANI": "47|27|11|NAKSHATRA:KRITTIKA||NAME_INITIAL:LA,RASHI:ARIES,TITHI_GROUP:RIKTA,TITHI_GROUP:JAYA,RASHI:SCORPIO,NAME_INITIAL:NA_DENTAL,NAKSHATRA:ANURADHA||NAKSHATRA:MAGHA",
+}
+
+
+def _golden(row: dict) -> str:
+    return "|".join((
+        str(row["verse"]), str(row["scanPage"]), str(row["printedPage"]),
+        ",".join(row["left"]),
+        "", ",".join(row["right"]), "", row["front"],
+    ))
+
+
+def test_full_twenty_eight_row_golden_target_map() -> None:
+    target_map = _load("trailokya_1972_vedha_target_map_v1.yaml")
+    actual = {row["source"]: _golden(row) for row in target_map["rows"]}
+    assert actual == EXPECTED_ROWS
+    assert all(row["auditStatus"] in {"DIRECT_AGREEMENT", "ADJUDICATED_AND_CORRECTED"} for row in target_map["rows"])
+
+
+def test_akshara_registry_is_lossless_for_dental_retroflex_and_sibilants() -> None:
+    registry = _load("trailokya_1972_chakra_construction_v1.yaml")["aksharaTokenRegistry"]
+    pairs = {
+        "TA_DENTAL": "त", "TTA_RETROFLEX": "ट", "DA_DENTAL": "द", "DDA_RETROFLEX": "ड",
+        "THA_DENTAL": "थ", "TTHA_RETROFLEX": "ठ", "DHA_DENTAL": "ध", "DDHA_RETROFLEX": "ढ",
+        "NA_DENTAL": "न", "NNA_RETROFLEX": "ण", "SHA_PALATAL": "श", "SSA_RETROFLEX": "ष", "SA_DENTAL": "स",
+    }
+    assert {token: registry[token]["literalDevanagari"] for token in pairs} == pairs
+    assert {token: registry[token]["canonicalToken"] for token in pairs} == {token: token for token in pairs}
+    assert len(set(pairs.values())) == len(pairs)
+
+
+def test_expansions_preserve_exact_glyph_identity_and_one_causal_event() -> None:
+    rules = _load("trailokya_1972_special_expansion_rules_v1.yaml")["rules"]
+    pairs = rules[0]["pairs"]
+    assert [[item["canonicalToken"] for item in pair] for pair in pairs] == [
+        ["BA", "VA"], ["SHA_PALATAL", "SA_DENTAL"], ["PA", "KHA"],
+    ]
+    triplets = rules[1]["triplets"]
+    assert [item["representative"]["canonicalToken"] for item in triplets] == ["KA", "PA", "BHA", "DA_DENTAL"]
+    assert [[entry["canonicalToken"] for entry in item["derived"]] for item in triplets] == [
+        ["GHA", "NGA", "CHHA"], ["SSA_RETROFLEX", "NNA_RETROFLEX", "TTHA_RETROFLEX"],
+        ["DHA_DENTAL", "PHA", "DDHA_RETROFLEX"], ["THA_DENTAL", "JNA", "JA"],
+    ]
+    assert rules[2]["vowelPairs"][-1] == ["ANUSVARA", "VISARGA"]
+    assert _load("trailokya_1972_special_expansion_rules_v1.yaml")["causalDeduplication"]["directTargetAndAllExpansions"] == "ONE_CAUSAL_VEDHA_EVENT"
+
+
+def test_locators_and_asta_are_not_overclaimed() -> None:
+    nature = _load("trailokya_1972_planet_nature_conditions_v1.yaml")
+    assert nature["baseClasses"]["locator"]["scanPage"] == 29
+    assert nature["conditionalRules"][0]["locator"]["scanPages"] == [29, 30]
+    motion = _load("trailokya_1972_sthula_motion_classifier_v1.yaml")
+    assert motion["marsJupiterSaturnRelativeSun"]["locator"] == {"scanPage": 33, "printedPage": 17, "verse": "69-71", "layer": "HINDI_COMMENTARY"}
+    asta = motion["marsJupiterSaturnRelativeSun"]["relativeSignCases"]["SAME_SIGN_OR_COMBUST"]
+    assert asta["vedhaDirection"] == "UNKNOWN_NOT_SOURCE_ESTABLISHED"
+    assert "NO_DIRECTION" not in str(asta)
+
+
+def test_source_contract_cannot_be_repurposed_into_product_or_execution() -> None:
+    for name in (
+        "trailokya_1972_vedha_target_map_v1.yaml",
+        "trailokya_1972_special_expansion_rules_v1.yaml",
+        "trailokya_1972_sthula_motion_classifier_v1.yaml",
+    ):
+        data = _load(name)
+        assert data["executionAllowed"] is False
+        assert set((data["prohibitedUses"])) >= {"POLARITY", "SCORE_AGGREGATION", "PRICE_MAPPING", "FIELDS_POLARITY", "AUTO_SUGGEST", "ML", "MT5", "EXECUTION"}

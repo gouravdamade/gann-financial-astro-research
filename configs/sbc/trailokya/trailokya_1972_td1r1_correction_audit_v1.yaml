@@ -1,0 +1,85 @@
+schemaVersion: TRAILOKYA_1972_TD1R1_CORRECTION_AUDIT_V1
+milestone: PFR-V2B-R6-SBC-TD1R1
+startingCommit: 39b8eff493d6b48f4e62cd07dd76233215b8e231
+controllingSource:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+readingWitness:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+  sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+  role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING
+knownDefectsReviewed:
+  - PUNARVASU_RIGHT_MISSING_PURVA_BHADRAPADA
+  - PUSHYA_RIGHT_MISSING_SHATABHISHA
+  - ANURADHA_LEFT_RIGHT_REVERSED
+  - GENERIC_AKSHARA_TOKEN_COLLISIONS
+  - EXPANSION_AND_LOCATOR_DRIFT
+targetMapAudit:
+  totalRows: 28
+  directAgreement: 24
+  corrected: 4
+  adjudicated: 4
+  unresolved: 0
+  correctedRows:
+    - PUNARVASU
+    - PUSHYA
+    - ANURADHA
+    - JYESHTHA
+  allRowsTwoPassStatus: DIRECT_AGREEMENT_AFTER_TD1R1_CORRECTIONS
+tokenAudit:
+  uniqueLiteralAksharas: 33
+  collisionsBefore:
+    - {ambiguousToken: TA, literals: ["त", "ट"]}
+    - {ambiguousToken: DA, literals: ["द", "ड"]}
+    - {ambiguousToken: THA, literals: ["थ", "ठ"]}
+    - {ambiguousToken: DHA, literals: ["ध", "ढ"]}
+    - {ambiguousToken: NA, literals: ["न", "ण"]}
+    - {ambiguousToken: SHA, literals: ["श", "ष", "स"]}
+  collisionsAfter: []
+  canonicalMappings:
+    - {literalDevanagari: "त", canonicalToken: TA_DENTAL}
+    - {literalDevanagari: "ट", canonicalToken: TTA_RETROFLEX}
+    - {literalDevanagari: "द", canonicalToken: DA_DENTAL}
+    - {literalDevanagari: "ड", canonicalToken: DDA_RETROFLEX}
+    - {literalDevanagari: "थ", canonicalToken: THA_DENTAL}
+    - {literalDevanagari: "ठ", canonicalToken: TTHA_RETROFLEX}
+    - {literalDevanagari: "ध", canonicalToken: DHA_DENTAL}
+    - {literalDevanagari: "ढ", canonicalToken: DDHA_RETROFLEX}
+    - {literalDevanagari: "न", canonicalToken: NA_DENTAL}
+    - {literalDevanagari: "ण", canonicalToken: NNA_RETROFLEX}
+    - {literalDevanagari: "श", canonicalToken: SHA_PALATAL}
+    - {literalDevanagari: "ष", canonicalToken: SSA_RETROFLEX}
+    - {literalDevanagari: "स", canonicalToken: SA_DENTAL}
+locatorAudit:
+  recordsChecked: 43
+  recordsCorrected: 35
+  corrections:
+    - {record: TARGET_ROWS_19_TO_47, correction: ADDED_PRINTED_PAGE_6_TO_11_PER_ROW, sourceLayer: HINDI_COMMENTARY}
+    - {record: TD1972_V48_PAIRED_UNWRITTEN_AKSHARA, before: {scanPage: 28, printedPage: 12}, after: {scanPage: 27, printedPage: 11}}
+    - {record: TD1972_V49_V50_TRIPLET_AKSHARA, before: {scanPage: 29, printedPage: 13}, after: {scanPages: [28, 29], printedPages: [12, 13]}}
+    - {record: TD1972_V51_VOWEL_COHIT, before: {scanPage: 29, printedPage: 13}, after: {scanPages: [28, 29], printedPages: [12, 13]}}
+    - {record: TD1972_V52_CORNER_PADA_PURNA_COHIT, before: {scanPage: 30, printedPage: 13}, after: {scanPages: [28, 29], printedPages: [12, 13]}}
+    - {record: TD1972_BASE_NATURE, before: {scanPage: 30, printedPage: 13}, after: {scanPage: 29, printedPage: 13}}
+    - {record: TD1972_MOON_NATURE, before: {scanPage: 30, printedPage: 13}, after: {scanPages: [29, 30], printedPages: [13, 14]}}
+    - {record: TD1972_MARS_JUPITER_SATURN_RELATIVE_SUN, before: {scanPage: 34, printedPage: 17}, after: {scanPage: 33, printedPage: 17}}
+astaAudit:
+  sourceFinding: SAME_SIGN_OR_COMBUST_ASTA_CONTEXT_IS_STATED_BUT_NO_VEDHA_DIRECTIONAL_EXCLUSION_IS_STATED
+  resultingContractState: {astronomicalVisibilityState: ASTA, vedhaDirection: UNKNOWN_NOT_SOURCE_ESTABLISHED}
+motionAudit:
+  families: {VAKRA: RIGHT, SHIGHRA: LEFT, SAMA: FRONT}
+  marsJupiterSaturnRelativeSun: SOURCE_CLOSED_FOR_STATED_SIGN_CASES_ONLY
+  mercuryVenusRelativeSun: SOURCE_CLOSED_FOR_2_12_3_11_ONLY
+  aticara: SOURCE_CLOSED_LITERAL_VALUES_UNIT_PENDING
+remainingGaps:
+  - EXACT_INSTANTANEOUS_SWIFT_MEAN_SPEED_THRESHOLD
+  - STATIONARY_STATE
+  - SHUKLA_PANCHAMI_BOUNDARY
+  - MODIFIER_AND_PRECEDENCE_DOCTRINE
+  - LATTA
+  - COMPLETE_REPRODUCIBLE_ARGHYA_CALCULATION
+  - FINANCIAL_VALIDATION
+  - EXECUTION_READINESS
+runtimeBehaviorChanged: false
+productUIChanged: false
+executionAllowed: false

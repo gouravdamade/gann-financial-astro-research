@@ -1,6 +1,6 @@
 schemaVersion: TRAILOKYA_1972_TD1_READINESS_V1
-milestone: PFR-V2B-R6-SBC-TD1R
-startingOriginMaster: eaa5ec48bf8822fcd183ccf628f3e2a8612f1b2d
+milestone: PFR-V2B-R6-SBC-TD1R1
+startingOriginMaster: 39b8eff493d6b48f4e62cd07dd76233215b8e231
 sourceContract:
   contractId: TRAILOKYA_1972_STHULA_VEDHA_SOURCE_V1
   status: SOURCE_CLOSED_WITH_EXPLICIT_FAIL_CLOSED_GAPS
@@ -24,6 +24,7 @@ artifacts:
   expansions: configs/sbc/trailokya/trailokya_1972_special_expansion_rules_v1.yaml
   planetNature: configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml
   motion: configs/sbc/trailokya/trailokya_1972_sthula_motion_classifier_v1.yaml
+  correctionAudit: configs/sbc/trailokya/trailokya_1972_td1r1_correction_audit_v1.yaml
 readiness:
   TD1972_CORE_BOARD_GEOMETRY_SOURCE_CLOSED: true
   TD1972_ENUMERATED_TARGET_MAP_SOURCE_CLOSED: true
@@ -34,6 +35,11 @@ readiness:
   TD1972_STATIONARY_STATE_SOURCE_CLOSED: false
   TD1972_COMPLETE_VEDHA_OPERATOR_SOURCE_CLOSED: false
   TD1972_RUNTIME_PROMOTION_AUTHORIZED: false
+  TD1R1_SOURCE_CORRECTION_COMPLETE: true
+  TD1972_TARGET_MAP_TWO_PASS_REAUDITED: true
+  TD1972_CANONICAL_AKSHARA_TOKEN_IDENTITY_HARDENED: true
+  TD1972_SOURCE_LOCATORS_REAUDITED: true
+  TD1972_ASTA_VEDHA_DIRECTION_SOURCE_CLOSED: false
 phaladeepikaDependencyAudit:
   - dependency: PHALADEEPIKA_1937_SBC_EDITOR_SUPPLEMENT_shared_board_ray_worked_fixtures
     classification: NO_LONGER_NEEDED_SOURCE_NATIVE_TD1_REPLACEMENT_AVAILABLE

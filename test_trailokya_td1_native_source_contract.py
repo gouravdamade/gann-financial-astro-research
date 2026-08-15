@@ -54,6 +54,8 @@ def test_enumerated_target_rows_are_complete_native_and_front_is_one_nakshatra()
         assert row["front"].startswith("NAKSHATRA:")
         assert row["left"] or row["right"]
         assert row["scanPage"] in range(22, 28)
+        assert row["printedPage"] in range(6, 12)
+        assert row["auditStatus"] in {"DIRECT_AGREEMENT", "ADJUDICATED_AND_CORRECTED"}
     assert target_map["invariants"] == [
         "DIRECT_AND_EXPANDED_TARGETS_SHARE_ONE_CAUSAL_VEDHA_EVENT_ID",
         "NO_PHALADEEPIKA_OR_AGARWAL_TARGET_ROW_MAY_FILL_A_TRAILOKYA_GAP",
@@ -65,7 +67,7 @@ def test_expansions_are_semantic_cohits_not_extra_votes() -> None:
     _assert_primary_source(expansions)
     assert len(expansions["rules"]) == 4
     assert len(expansions["rules"][1]["triplets"]) == 4
-    assert len(expansions["rules"][2]["vowelPairs"]) == 7
+    assert len(expansions["rules"][2]["vowelPairs"]) == 8
     assert len(expansions["rules"][3]["cornerCases"]) == 4
     assert expansions["causalDeduplication"]["directTargetAndAllExpansions"] == "ONE_CAUSAL_VEDHA_EVENT"
 
@@ -88,6 +90,9 @@ def test_sthula_motion_is_closed_only_at_source_granularity() -> None:
     assert motion["families"]["SHIGHRA"]["vedhaDirection"] == "LEFT"
     assert motion["families"]["SAMA"]["vedhaDirection"] == "FRONT"
     assert motion["mercuryVenusRelativeSun"]["unlistedCases"] == "UNKNOWN_DO_NOT_INHERIT_OUTER_PLANET_TABLE"
+    asta = motion["marsJupiterSaturnRelativeSun"]["relativeSignCases"]["SAME_SIGN_OR_COMBUST"]
+    assert asta["astronomicalVisibilityState"] == "ASTA"
+    assert asta["vedhaDirection"] == "UNKNOWN_NOT_SOURCE_ESTABLISHED"
     assert motion["exactMotionBoundaries"] == {
         "continuousSwiftMeanThreshold": "NOT_SOURCE_CLOSED",
         "stationaryState": "SOURCE_SILENT_UNRESOLVED",

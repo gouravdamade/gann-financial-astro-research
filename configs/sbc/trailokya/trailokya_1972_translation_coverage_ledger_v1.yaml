@@ -1,6 +1,6 @@
 schemaVersion: TRAILOKYA_1972_TRANSLATION_COVERAGE_LEDGER_V1
-ledgerId: PFR-V2B-R6-SBC-TD1R
-status: TD1_NATIVE_SOURCE_CONTRACT_CLOSED_WITH_EXPLICIT_REMAINING_GAPS
+ledgerId: PFR-V2B-R6-SBC-TD1R1
+status: TD1_NATIVE_SOURCE_CONTRACT_CORRECTED_WITH_EXPLICIT_REMAINING_GAPS
 scope: TD0R_recovery_plus_TD1_A_TO_D_native_geometry_target_nature_and_sthula_motion
 sourcePolicy:
   citationAuthority: ORIGINAL_1972_PAGE_IMAGES_ONLY
@@ -60,7 +60,7 @@ meaningfulPageCoverage:
     translationStatus: TD1_B_C_SOURCE_CERTIFIED
     provenanceStatus: ORIGINAL_IMAGE_EXPANSIONS_AND_NATURE_CONDITIONS
   - scanPages: [31, 36]
-    printedPages: [15, 35]
+    printedPages: [15, 20]
     contentCategory: SBC_DOCTRINAL_AND_PROCEDURAL_MATERIAL
     translationStatus: TD1_D_SOURCE_CERTIFIED
     provenanceStatus: ORIGINAL_IMAGE_STHULA_MOTION_CLASSIFICATION_ONLY
@@ -179,6 +179,8 @@ td1NativeArtifacts:
     role: COARSE_SOURCE_MOTION_NOT_EXACT_VELOCITY
   - path: configs/sbc/trailokya/trailokya_1972_td1_readiness.yaml
     role: BOUNDED_CONTRACT_AND_DEPENDENCY_RETIREMENT
+  - path: configs/sbc/trailokya/trailokya_1972_td1r1_correction_audit_v1.yaml
+    role: TD1R1_TRANSCRIPTION_TOKEN_AND_LOCATOR_CORRECTION_HISTORY
 continuationDependencies:
   - id: TD1_EXACT_SPEED_AND_STATIONARY_CONTRACT
     sourceNeed: exact continuous swift_mean threshold plus stationary/direct_slow classification

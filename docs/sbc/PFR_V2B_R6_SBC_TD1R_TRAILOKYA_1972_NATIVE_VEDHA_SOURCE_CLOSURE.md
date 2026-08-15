@@ -1,5 +1,14 @@
 # PFR-V2B-R6-SBC-TD1R - Trailokya Dipika 1972 Native Vedha Source Closure
 
+> **Historical correction notice (TD1R1):** this report records the original
+> TD1R milestone and is retained unchanged as its historical conclusion.
+> The initial claim of 28 direct agreements with zero adjudications was
+> superseded after central source review found target, token and locator
+> defects. See
+> `PFR_V2B_R6_SBC_TD1R1_NATIVE_VEDHA_SOURCE_CONTRACT_CORRECTION.md` and
+> `trailokya_1972_td1r1_correction_audit_v1.yaml` for the controlling current
+> TD1 source-contract state.
+
 ## Scope
 
 TD1R is a source-reconciliation milestone. It creates no product surface,

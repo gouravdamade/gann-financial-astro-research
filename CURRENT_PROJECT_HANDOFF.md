@@ -4,6 +4,26 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD1R1 Trailokya Source-Contract Correction)
+
+- Central source review found concrete TD1R machine-transcription defects, so
+  TD1R1 re-opened the private controlling 1972 page images and re-audited all
+  28 target rows. The current record corrects Punarvasu (adds Purva
+  Bhadrapada), Pushya (adds Shatabhisha), Anuradha (restores the stated
+  Vama/Dakshina direction assignment), Jyeshtha (`ANUSVARA`, not `VISARGA`),
+  canonical dental/retroflex/sibilant tokens, verse 48-52 expansions and
+  source locators.
+- The new `trailokya_1972_td1r1_correction_audit_v1.yaml` preserves the
+  historical TD1R defect record rather than rewriting history. Exact-content
+  golden tests now assert every row's ordered target lists, front target,
+  verse and source locator. The ASTA record is reduced to an astronomical
+  visibility state with `UNKNOWN_NOT_SOURCE_ESTABLISHED` Vedha direction; the
+  source does not authorize `ASTA => NO_DIRECTION`.
+- Runtime and UI remain untouched. No polarity, score, price forecast, Fields
+  polarity, Auto Suggest, ML, MT5 or execution capability was added;
+  `executionAllowed=false`. TD2, Latta and runtime promotion remain blocked
+  pending a separate directive.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD1R Trailokya Native Source Contract)
 
 - TD1R independently re-hashed the controlling 1972 Trailokya scan and the
