@@ -4,6 +4,45 @@ Last updated: 2026-08-15 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A2 Agarwal Geometry/Strength Inspector)
+
+- Implemented and pushed the founder-authorized, read-only Agarwal 2000
+  Geometry/Strength Inspector at source commit
+  `25274c68b99d87a43c24c98c5f83604565cff340`.
+- The Chakra source-profile selector now exposes `Agarwal 2000 Research` as a
+  separate profile. It renders the committed A1R3 `AGARWAL_PAGE145_CORE_9X9_V1`
+  fixture: 81 cells, EAST top, WEST bottom, NORTH left and SOUTH right. Cell
+  selection exposes literal source label, varga number, layer, page, packet ID
+  and source status. No second UI geometry table was added.
+- The backend contract is
+  `AGARWAL_GEOMETRY_STRENGTH_INSPECTOR_V1`. It reads the immutable geometry,
+  strength and Chapter-20 ledger packets without chart, price, Fields, pair or
+  Swiss-Ephemeris computation. Strength is seven source rows only; no master
+  score is calculated. Private photograph paths/bytes are not exposed or
+  packaged.
+- Metadata cleanup removed the stale `AGARWAL_GEOMETRY_READY_FALSE` full-Vedha
+  blocker and recorded durable private-source locators separately from the
+  original acquisition locators. The old A1R2 `UNKNOWN_CENTER_FOLD` finding is
+  preserved historically and remains superseded only for current p.145 core
+  geometry.
+- Visible product locks remain: `AGARWAL_VEDHA_OPERATOR_READY = false`,
+  `A2_SCOPE = GEOMETRY_STRENGTH_INSPECTOR_ONLY`, Chapter 20 is
+  `FINANCIAL_HYPOTHESIS_LEDGER_ONLY`, and `executionAllowed = false`. No
+  rays, polarity, score, Fields influence, Auto Suggest, ML, MT5 or execution
+  path was added.
+- Verification: focused UI 22/22; full frontend 37 files/159 tests; focused
+  Agarwal backend 5/5; full backend 214/214; Oxlint passed; production build
+  passed; Rust fmt/check passed; Tauri Rust tests 18/18.
+- Founder candidate: `0.10.47-pfr-v2b-r6-sbc-a2`, under
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.47-pfr-v2b-r6-sbc-a2`.
+  The release manifest reports source commit
+  `25274c68b99d87a43c24c98c5f83604565cff340` and `source_git_dirty = false`.
+  Two packaged native smoke runs passed core health/recovery/layout/shutdown
+  checks; the optional candlestick specialist was not configured. A fresh
+  packaged UI launch displayed a Windows Firewall permission prompt, so
+  packaged Agarwal profile selection remains a founder-only physical check.
+  This is not founder acceptance.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-A1R3 Page-145 Geometry Source Closure)
 
 - Four newly supplied, checksum-verified private photographs of Agarwal printed
