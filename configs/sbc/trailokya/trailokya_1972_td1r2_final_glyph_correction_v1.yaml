@@ -1,0 +1,44 @@
+schemaVersion: TRAILOKYA_1972_TD1R2_FINAL_GLYPH_CORRECTION_V1
+milestone: PFR-V2B-R6-SBC-TD1R2
+startingCommit: a829e3bf5e8733ef943f354c1bf575fc7b9a04a7
+controllingSource:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+readingWitness:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+  sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+  role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING
+  finding: AGREES_WITH_BOTH_NARROW_CORRECTIONS
+corrections:
+  - id: TD1R2_V48_THIRD_PAIR
+    prior: PA_KHA
+    corrected: SSA_RETROFLEX_KHA
+    literalDevanagari: ["ष", "ख"]
+    sourceStatus: SOURCE_CORRECTED
+    controllingLocator: {scanPage: 27, printedPage: 11, verse: 48, layer: HINDI_COMMENTARY}
+  - id: TD1R2_JYESHTHA_VISARGA
+    prior: ANUSVARA
+    corrected: VISARGA
+    literalDevanagari: "अः"
+    sourceStatus: SOURCE_CORRECTED
+    controllingLocator: {scanPage: 25, printedPage: 9, verse: 35, layer: HINDI_COMMENTARY}
+historicalImpact:
+  JYESHTHA_TD1R_VALUE_VISARGA_WAS_SOURCE_CORRECT: true
+  TD1R1_ADJUDICATION_TO_ANUSVARA_WAS_INCORRECT: true
+  TD1R2_RESTORES_VISARGA: true
+  TD1R1_TOKEN_HARDENING_STRUCTURALLY_CORRECT: true
+  TD1R1_V48_THIRD_PAIR_TRANSCRIPTION_INCORRECT: true
+  td1rArchitectureChanged: false
+  td1r1TokenSystemChanged: false
+  runtimeBehaviorChanged: false
+  productUIChanged: false
+  executionAllowed: false
+finalTrustState:
+  TRAILOKYA_NATIVE_TARGET_MAP_TRUSTED_FOR_SOURCE_CONTRACT: true
+  TD1_TRANSLATION_SOURCE_CONTRACT_CLOSED: true
+  READY_FOR_TD2_TRANSLATION: true
+  nextSourceRange: '1972 scan pages 52-62 / printed pages 36-46'
+locks:
+  prohibitedUses: [POLARITY, SCORE_AGGREGATION, PRICE_MAPPING, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+  executionAllowed: false

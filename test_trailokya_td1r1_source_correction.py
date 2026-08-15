@@ -38,7 +38,7 @@ EXPECTED_ROWS = {
     "SWATI": "32|24|8|VOWEL:VOCALIC_R,NAKSHATRA:JYESHTHA||NAME_INITIAL:RA,RASHI:VIRGO,VOWEL:AU,RASHI:GEMINI,NAME_INITIAL:VA,NAKSHATRA:ROHINI||NAKSHATRA:SHATABHISHA",
     "VISHAKHA": "33|24|8|NAKSHATRA:ANURADHA||NAME_INITIAL:TA_DENTAL,RASHI:LIBRA,TITHI_GROUP:BHADRA,TITHI_GROUP:NANDA,RASHI:TAURUS,VOWEL:A,NAKSHATRA:KRITTIKA||NAKSHATRA:DHANISHTHA",
     "ANURADHA": "34|25|9|NAME_INITIAL:NA_DENTAL,RASHI:SCORPIO,TITHI_GROUP:JAYA,TITHI_GROUP:RIKTA,RASHI:ARIES,NAME_INITIAL:LA,NAKSHATRA:BHARANI||NAKSHATRA:VISHAKHA||NAKSHATRA:ASHLESHA",
-    "JYESHTHA": "35|25|9|NAME_INITIAL:YA,RASHI:SAGITTARIUS,VOWEL:ANUSVARA,RASHI:PISCES,NAME_INITIAL:CHA,NAKSHATRA:ASHVINI||VOWEL:VOCALIC_R,NAKSHATRA:SWATI||NAKSHATRA:PUSHYA",
+    "JYESHTHA": "35|25|9|NAME_INITIAL:YA,RASHI:SAGITTARIUS,VOWEL:VISARGA,RASHI:PISCES,NAME_INITIAL:CHA,NAKSHATRA:ASHVINI||VOWEL:VOCALIC_R,NAKSHATRA:SWATI||NAKSHATRA:PUSHYA",
     "MULA": "36|25|9|NAME_INITIAL:BHA,RASHI:CAPRICORN,RASHI:AQUARIUS,NAME_INITIAL:DA_DENTAL,NAKSHATRA:REVATI||NAME_INITIAL:NA_DENTAL,NAME_INITIAL:TA_DENTAL,NAKSHATRA:CHITRA||NAKSHATRA:PUNARVASU",
     "PURVA_ASHADHA": "37|25|9|NAME_INITIAL:JA,VOWEL:AI,NAME_INITIAL:SA_DENTAL,NAKSHATRA:UTTARA_BHADRAPADA||NAME_INITIAL:YA,VOWEL:E,NAME_INITIAL:RA,NAKSHATRA:HASTA||NAKSHATRA:ARDRA",
     "UTTARA_ASHADHA": "38|25|9|NAME_INITIAL:KHA,NAME_INITIAL:GA,NAKSHATRA:PURVA_BHADRAPADA||NAME_INITIAL:BHA,RASHI:SCORPIO,RASHI:LIBRA,NAME_INITIAL:PA,NAKSHATRA:UTTARA_PHALGUNI||NAKSHATRA:MRIGASHIRSHA",
@@ -66,7 +66,14 @@ def test_full_twenty_eight_row_golden_target_map() -> None:
     target_map = _load("trailokya_1972_vedha_target_map_v1.yaml")
     actual = {row["source"]: _golden(row) for row in target_map["rows"]}
     assert actual == EXPECTED_ROWS
-    assert all(row["auditStatus"] in {"DIRECT_AGREEMENT", "ADJUDICATED_AND_CORRECTED"} for row in target_map["rows"])
+    assert all(
+        row["auditStatus"] in {
+            "DIRECT_AGREEMENT",
+            "ADJUDICATED_AND_CORRECTED",
+            "TD1R2_SOURCE_RESTORED",
+        }
+        for row in target_map["rows"]
+    )
 
 
 def test_akshara_registry_is_lossless_for_dental_retroflex_and_sibilants() -> None:
@@ -85,7 +92,7 @@ def test_expansions_preserve_exact_glyph_identity_and_one_causal_event() -> None
     rules = _load("trailokya_1972_special_expansion_rules_v1.yaml")["rules"]
     pairs = rules[0]["pairs"]
     assert [[item["canonicalToken"] for item in pair] for pair in pairs] == [
-        ["BA", "VA"], ["SHA_PALATAL", "SA_DENTAL"], ["PA", "KHA"],
+        ["BA", "VA"], ["SHA_PALATAL", "SA_DENTAL"], ["SSA_RETROFLEX", "KHA"],
     ]
     triplets = rules[1]["triplets"]
     assert [item["representative"]["canonicalToken"] for item in triplets] == ["KA", "PA", "BHA", "DA_DENTAL"]

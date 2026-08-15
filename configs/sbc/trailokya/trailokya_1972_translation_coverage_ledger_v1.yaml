@@ -1,6 +1,6 @@
 schemaVersion: TRAILOKYA_1972_TRANSLATION_COVERAGE_LEDGER_V1
-ledgerId: PFR-V2B-R6-SBC-TD1R1
-status: TD1_NATIVE_SOURCE_CONTRACT_CORRECTED_WITH_EXPLICIT_REMAINING_GAPS
+ledgerId: PFR-V2B-R6-SBC-TD1R2
+status: TD1_NATIVE_SOURCE_CONTRACT_CLOSED_AFTER_FINAL_GLYPH_CORRECTION
 scope: TD0R_recovery_plus_TD1_A_TO_D_native_geometry_target_nature_and_sthula_motion
 sourcePolicy:
   citationAuthority: ORIGINAL_1972_PAGE_IMAGES_ONLY
@@ -9,6 +9,10 @@ sourcePolicy:
   noRuntimeProfileBehaviorChanged: true
   noProductCapabilityAdded: true
   executionAllowed: false
+finalGlyphCorrection:
+  artifact: configs/sbc/trailokya/trailokya_1972_td1r2_final_glyph_correction_v1.yaml
+  status: SOURCE_CLOSED_TWO_RECORD_CORRECTION
+  scope: VERSE48_THIRD_PAIR_AND_JYESHTHA_VOWEL_ONLY
 witnesses:
   primary1972:
     sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN

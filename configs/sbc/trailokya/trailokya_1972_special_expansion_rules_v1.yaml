@@ -12,7 +12,7 @@ rules:
     pairs:
       - [{literalDevanagari: "ब", canonicalToken: BA, normalizedDisplay: "ba"}, {literalDevanagari: "व", canonicalToken: VA, normalizedDisplay: "va"}]
       - [{literalDevanagari: "श", canonicalToken: SHA_PALATAL, normalizedDisplay: "śa"}, {literalDevanagari: "स", canonicalToken: SA_DENTAL, normalizedDisplay: "sa"}]
-      - [{literalDevanagari: "प", canonicalToken: PA, normalizedDisplay: "pa"}, {literalDevanagari: "ख", canonicalToken: KHA, normalizedDisplay: "kha"}]
+      - [{literalDevanagari: "ष", canonicalToken: SSA_RETROFLEX, normalizedDisplay: "ṣa"}, {literalDevanagari: "ख", canonicalToken: KHA, normalizedDisplay: "kha"}]
     sourceStatus: SOURCE_CLOSED
     twoPassAudit: DIRECT_AGREEMENT
   - id: TD1972_V49_V50_TRIPLET_AKSHARA

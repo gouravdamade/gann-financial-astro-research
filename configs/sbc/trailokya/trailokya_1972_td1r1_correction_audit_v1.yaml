@@ -15,6 +15,12 @@ knownDefectsReviewed:
   - ANURADHA_LEFT_RIGHT_REVERSED
   - GENERIC_AKSHARA_TOKEN_COLLISIONS
   - EXPANSION_AND_LOCATOR_DRIFT
+supersededBy:
+  milestone: PFR-V2B-R6-SBC-TD1R2
+  status: HISTORICAL_TD1R1_SNAPSHOT_SUPERSEDED_FOR_FINAL_SOURCE_TRUST
+  corrections:
+    - TD1R2_V48_THIRD_PAIR
+    - TD1R2_JYESHTHA_VISARGA
 targetMapAudit:
   totalRows: 28
   directAgreement: 24
@@ -27,6 +33,8 @@ targetMapAudit:
     - ANURADHA
     - JYESHTHA
   allRowsTwoPassStatus: DIRECT_AGREEMENT_AFTER_TD1R1_CORRECTIONS
+  laterFinding:
+    JYESHTHA_TD1R1_ADJUDICATION_TO_ANUSVARA_WAS_INCORRECT; TD1R2_RESTORES_VISARGA.
 tokenAudit:
   uniqueLiteralAksharas: 33
   collisionsBefore:

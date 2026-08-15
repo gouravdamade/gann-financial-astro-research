@@ -1,5 +1,11 @@
 # PFR-V2B-R6-SBC-TD1R1 - Trailokya 1972 Native Vedha Source Contract Correction
 
+> **Historical correction notice (TD1R2):** this report remains the historical
+> TD1R1 record. Its Verse 48 third pair `PA <-> KHA` and Jyeshtha
+> `ANUSVARA` adjudication were both superseded by the narrow source-image
+> correction in `PFR_V2B_R6_SBC_TD1R2_FINAL_SOURCE_GLYPH_CORRECTION.md`.
+> The current trusted state is the TD1R2-corrected contract.
+
 ## Purpose and Boundary
 
 TD1R established the source-only architecture. Central source review then

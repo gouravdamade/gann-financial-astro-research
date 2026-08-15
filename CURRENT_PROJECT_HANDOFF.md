@@ -24,6 +24,21 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   `executionAllowed=false`. TD2, Latta and runtime promotion remain blocked
   pending a separate directive.
 
+## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD1R2 Final Trailokya Glyph Correction)
+
+- A surgical re-read of the controlling 1972 page images and the same-lineage
+  2016 reading witness corrected the final two TD1R1 residual glyph errors:
+  verse 48's third pair is `SSA_RETROFLEX <-> KHA` (`ष <-> ख`), not
+  `PA <-> KHA`; Jyeshtha's left sequence uses `VISARGA` (`अः`), not
+  `ANUSVARA`. TD1R historically held the latter source value correctly;
+  TD1R1's change is preserved as a superseded historical adjudication.
+- The current state is the TD1R2-corrected source contract. The native target
+  map is trusted for its bounded source role; the complete Vedha operator and
+  runtime promotion remain false. No runtime, UI, polarity, score, price,
+  Fields, Auto Suggest, ML, MT5 or execution behavior changed.
+- TD1 is now closed for this source range. TD2 may be proposed separately for
+  1972 scan pp.52-62 / printed pp.36-46; no TD2 work started here.
+
 ## Latest Update - 2026-08-15 (PFR-V2B-R6-SBC-TD1R Trailokya Native Source Contract)
 
 - TD1R independently re-hashed the controlling 1972 Trailokya scan and the
