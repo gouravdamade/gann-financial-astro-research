@@ -4,6 +4,24 @@ Last updated: 2026-08-16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-17 (PFR-V2B-R6-SBC-TN1R1 Founder Acceptance)
+
+- The founder physically accepted packaged candidate
+  `0.10.50-pfr-v2b-r6-sbc-tn1r1` after checking scrolling, the complete
+  81-cell inspector, cardinal orientation, Jyeshtha LEFT/FRONT/RIGHT targets,
+  direct-versus-derived target distinction, fail-closed unknowns and
+  Trailokya/Agarwal profile switching. No score, polarity, price forecast,
+  Fields influence or execution appeared.
+- The broadest current repository Python/source regression passed before this
+  acceptance was recorded: `753 passed`, `1 skipped` optional external JHora
+  witness, and `16 subtests passed`. The stale legacy Trailokya compatibility
+  regression was repaired in separately pushed commit `941902e` so it now
+  exercises TN1's native adapter.
+- The accepted binary is not rebuilt or promoted by this bookkeeping step.
+  Its artifact hashes, source commit and two packaged smoke records remain in
+  `docs/sbc/PFR_V2B_R6_SBC_TN1R1_FOUNDER_ACCEPTANCE.md`.
+  `executionAllowed=false` remains invariant.
+
 ## Latest Update - 2026-08-16 (PFR-V2B-R6-SBC-TN1R1 Founder Candidate)
 
 - TN1R1 source implementation is pushed at `36d16df475a49fc23e37726142e453700a5f35b8`.
