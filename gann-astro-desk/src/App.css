@@ -5805,6 +5805,15 @@ html.android-runtime .loading-state {
 .agarwal-inspector .error-state { display: flex; align-items: center; gap: 8px; min-height: 120px; color: #c2d3d8; }
 .agarwal-inspector .error-state { color: #e58c8c; }
 
+.trailokya-workspace-scroll {
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #475e69 #0c141b;
+}
+
 .trailokya-inspector { min-height: 100%; padding: 16px; color: #d7e4e7; background: #0c141b; }
 .trailokya-inspector-header { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid #2d3c43; }
 .trailokya-inspector-header h1 { margin: 3px 0; font-size: 18px; }

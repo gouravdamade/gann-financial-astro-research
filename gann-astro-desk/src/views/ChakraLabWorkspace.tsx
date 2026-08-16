@@ -390,7 +390,17 @@ export function ChakraLabWorkspace({
   }
 
   if (isTrailokyaNativeProfile) {
-    return <TrailokyaNativeInspectorWorkspace profileId={vedhaProfileId} onProfileChange={onVedhaProfileIdChange} />
+    return (
+      <div
+        className="trailokya-workspace-scroll"
+        data-testid="trailokya-workspace-scroll"
+        role="region"
+        aria-label="Scrollable Trailokya research workspace"
+        tabIndex={0}
+      >
+        <TrailokyaNativeInspectorWorkspace profileId={vedhaProfileId} onProfileChange={onVedhaProfileIdChange} />
+      </div>
+    )
   }
 
   return (

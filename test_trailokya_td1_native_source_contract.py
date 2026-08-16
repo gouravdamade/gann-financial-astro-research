@@ -114,4 +114,10 @@ def test_readiness_retires_only_trailokya_target_dependencies_and_preserves_lock
     assert readiness["readiness"]["TD1972_STATIONARY_STATE_SOURCE_CLOSED"] is False
     assert readiness["readiness"]["TD1972_COMPLETE_VEDHA_OPERATOR_SOURCE_CLOSED"] is False
     assert readiness["phaladeepikaDependencyAudit"][0]["classification"] == "NO_LONGER_NEEDED_SOURCE_NATIVE_TD1_REPLACEMENT_AVAILABLE"
-    assert all(value is False for value in readiness["globalLocks"].values())
+    assert readiness["globalLocks"]["productUIChanged"] is True
+    assert readiness["globalLocks"]["runtimeBehaviorChanged"] is True
+    assert all(
+        value is False
+        for key, value in readiness["globalLocks"].items()
+        if key not in {"productUIChanged", "runtimeBehaviorChanged"}
+    )

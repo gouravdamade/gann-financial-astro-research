@@ -1314,6 +1314,11 @@ describe('ChakraLabWorkspace', () => {
     )
 
     expect(await screen.findByText('Trailokya Dipika 1972 Research')).toBeInTheDocument()
+    const scrollHost = screen.getByRole('region', { name: 'Scrollable Trailokya research workspace' })
+    expect(scrollHost).toHaveClass('trailokya-workspace-scroll')
+    expect(scrollHost).toHaveAttribute('tabindex', '0')
+    expect(scrollHost).toContainElement(screen.getByRole('grid', { name: 'Trailokya 9 by 9 source board' }))
+    expect(scrollHost.querySelectorAll('[role="gridcell"]')).toHaveLength(81)
     expect(fetchSynchronizedRange).not.toHaveBeenCalled()
     expect(fetchSnapshot).not.toHaveBeenCalled()
   })

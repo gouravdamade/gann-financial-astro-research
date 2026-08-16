@@ -4,6 +4,22 @@ Last updated: 2026-08-16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-16 (PFR-V2B-R6-SBC-TN1R1 Viewport Scroll Repair)
+
+- TN1R1 fixes the founder-observed native Trailokya clipping defect. The direct
+  Trailokya branch now owns one keyboard-focusable vertical scroll region inside
+  the available Chakra content track; the desktop shell remains bounded and no
+  nested whole-inspector scroll box was introduced.
+- The source board, enumerated target authority, source literals, unknown states,
+  profile isolation and all research/execution locks are unchanged. This is a
+  layout-only correction. At 1280x720 source-browser inspection, the host is
+  650px high with 1472px of content, `overflow-y:auto`, and all 81 cells remain
+  present; scrolling reaches the WEST row and audit footer.
+- Focused and full verification plus a new immutable `0.10.50-pfr-v2b-r6-sbc-
+  tn1r1` founder-inspection candidate are recorded in
+  `docs/sbc/PFR_V2B_R6_SBC_TN1R1_VIEWPORT_SCROLL_REPAIR.md` and the candidate
+  report. Physical packaged-window inspection remains founder-only and pending.
+
 ## Latest Update - 2026-08-16 (PFR-V2B-R6-SBC-TN1 Native Trailokya Adapter)
 
 - TN1 replaces the former Trailokya generic-grid target walk with a native
