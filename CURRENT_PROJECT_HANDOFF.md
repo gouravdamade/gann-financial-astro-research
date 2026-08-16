@@ -4,6 +4,27 @@ Last updated: 2026-08-16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-16 (PFR-V2B-R6-SBC-TN1 Native Trailokya Adapter)
+
+- TN1 replaces the former Trailokya generic-grid target walk with a native
+  source adapter. `TRAILOKYA_1972_ENUMERATED_NAKSHATRA_TARGETS_V1` now controls
+  direct target identity, order and FRONT targets; the native 81-cell
+  EAST-top/WEST-bottom/NORTH-left/SOUTH-right board is a visual projection,
+  never a substitute authority.
+- Chakra now exposes `Trailokya 1972 Research`, a Manual Source Audit surface
+  that presents direct targets and verses 48-52 derived semantic targets with
+  one shared causal-event identity. Context-free reach is visibly `UNKNOWN`.
+  It has no market mapping, polarity, score, price, Fields influence, Auto
+  Suggest, ML, MT5 or execution path.
+- The native board source fixture has an honest projection gap: two visible
+  `A` glyphs mean `VOWEL:A` reports `AMBIGUOUS_SOURCE_PROJECTION` rather than
+  an arbitrarily chosen cell. The enumerated target row remains authoritative.
+- `TN1_NATIVE_BOARD_ADAPTER_COMPLETE=true`,
+  `TN1_ENUMERATED_VEDHA_ADAPTER_COMPLETE=true`,
+  `TRAILOKYA_TARGET_AUTHORITY=ENUMERATED_SOURCE_ROWS`, and generic fallback is
+  false. A founder-inspection package remains pending after the bounded test
+  and packaging sequence; execution remains false.
+
 ## Latest Update - 2026-08-16 (PFR-V2B-R6-N1 Architecture, Source-to-Runtime and Reliability Audit)
 
 - N1 ran in clean `D:\PycharmProjects-n1` after preserving the dirty active

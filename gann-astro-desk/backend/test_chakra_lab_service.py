@@ -13,6 +13,8 @@ from chakra_lab_service import (
     build_chakra_lab_audit_package,
     build_chakra_lab_fixed_phasor,
     build_chakra_lab_snapshot,
+    build_chakra_lab_trailokya_native_profile,
+    build_chakra_lab_trailokya_targets,
     build_chakra_lab_trailokya_source_only_geometry,
     build_chakra_lab_timing_external_review,
     build_chakra_lab_timing_profile_admission,
@@ -118,6 +120,24 @@ class ChakraLabServiceTests(unittest.TestCase):
                     "vedhaProfileId": "SBC_TRAILOKYA_1972_V1",
                     "actors": [{"body": "SUN"}, {"body": "MARS", "motionClass": "MEAN"}],
                 }
+            )
+
+    def test_trailokya_native_profile_and_target_resolver_are_source_only(self) -> None:
+        profile = build_chakra_lab_trailokya_native_profile()
+        self.assertEqual(profile["board"]["cellCount"], 81)
+        self.assertEqual(profile["targetAuthority"]["mode"], "ENUMERATED_SOURCE_ROWS")
+        self.assertFalse(profile["guardrails"]["executionAllowed"])
+        resolved = build_chakra_lab_trailokya_targets(
+            {"sourceNakshatra": "JYESHTHA", "direction": "LEFT"}
+        )
+        self.assertEqual(
+            [item["canonicalToken"] for item in resolved["directTargets"]],
+            ["YA", "SAGITTARIUS", "VISARGA", "PISCES", "CHA", "ASHVINI"],
+        )
+        self.assertTrue(all(item["reachState"] == "UNKNOWN" for item in resolved["directTargets"]))
+        with self.assertRaisesRegex(ValueError, "TRAILOKYA_SOURCE_PROFILE_REQUIRED"):
+            build_chakra_lab_trailokya_targets(
+                {"sourceNakshatra": "JYESHTHA", "direction": "LEFT", "sourceProfileId": "phaladeepika_editor_vedha_guidance_v1"}
             )
 
     def test_missing_variable_motion_is_reported_not_inferred(self) -> None:

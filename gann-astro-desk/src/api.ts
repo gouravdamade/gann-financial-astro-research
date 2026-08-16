@@ -46,6 +46,8 @@ import type {
   ChakraLabRequest,
   ChakraLabSnapshot,
   TrailokyaSourceOnlyGeometry,
+  TrailokyaNativeProfile,
+  TrailokyaTargetResolution,
   ChakraFixedPhasorSeries,
   ChakraLinkedAuditView,
   ChakraReproducibleAuditPackage,
@@ -720,6 +722,45 @@ export async function fetchTrailokyaSourceOnlyGeometry(
     { method: 'POST', body: JSON.stringify(input) },
   )
   return payload.geometry
+}
+
+export async function fetchTrailokyaNativeProfile(): Promise<TrailokyaNativeProfile> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ profile: TrailokyaNativeProfile }>>('chakra_lab_trailokya_native_profile')
+    if (!payload.ok) throw new Error(payload.error || 'Trailokya native profile request failed')
+    if (payload.profile.guardrails.executionAllowed !== false || payload.profile.readiness.genericGridFallbackAllowed !== false) {
+      throw new Error('Trailokya native profile violated the source/runtime locks')
+    }
+    return payload.profile
+  }
+  const payload = await request<{ profile: TrailokyaNativeProfile }>('/api/chakra-lab/trailokya-native-profile', { method: 'GET' })
+  if (payload.profile.guardrails.executionAllowed !== false || payload.profile.readiness.genericGridFallbackAllowed !== false) {
+    throw new Error('Trailokya native profile violated the source/runtime locks')
+  }
+  return payload.profile
+}
+
+export async function resolveTrailokyaTargets(input: {
+  sourceNakshatra: string
+  direction: 'LEFT' | 'FRONT' | 'RIGHT'
+  targetContext?: Record<string, string[] | string>
+}): Promise<TrailokyaTargetResolution> {
+  const body = { ...input, sourceProfileId: 'SBC_TRAILOKYA_1972_V1' as const }
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ resolution: TrailokyaTargetResolution }>>('chakra_lab_trailokya_targets', { request: body })
+    if (!payload.ok) throw new Error(payload.error || 'Trailokya target resolver request failed')
+    if (payload.resolution.guardrails.executionAllowed !== false || payload.resolution.targetAuthority !== 'ENUMERATED_SOURCE_ROWS') {
+      throw new Error('Trailokya target resolver violated the source/runtime locks')
+    }
+    return payload.resolution
+  }
+  const payload = await request<{ resolution: TrailokyaTargetResolution }>('/api/chakra-lab/trailokya-targets', { method: 'POST', body: JSON.stringify(body) })
+  if (payload.resolution.guardrails.executionAllowed !== false || payload.resolution.targetAuthority !== 'ENUMERATED_SOURCE_ROWS') {
+    throw new Error('Trailokya target resolver violated the source/runtime locks')
+  }
+  return payload.resolution
 }
 
 export async function fetchChartConditionedPolarityLookup(input: {

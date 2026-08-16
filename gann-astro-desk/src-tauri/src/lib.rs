@@ -838,6 +838,48 @@ async fn chakra_lab_trailokya_source_only_geometry(
 
 #[cfg(not(mobile))]
 #[tauri::command]
+async fn chakra_lab_trailokya_native_profile(
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Trailokya native profile requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        get_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/trailokya-native-profile",
+        )
+    })
+    .await
+    .map_err(|error| format!("Trailokya native profile bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
+async fn chakra_lab_trailokya_targets(
+    request: Value,
+    state: State<'_, BackendRuntimeState>,
+) -> Result<Value, String> {
+    let runtime = state.snapshot()?;
+    if runtime.execution_allowed {
+        return Err("Trailokya target resolver requires the read-only runtime lock".to_string());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        post_private_json(
+            runtime.port,
+            &runtime.api_token,
+            "/api/chakra-lab/trailokya-targets",
+            &request,
+        )
+    })
+    .await
+    .map_err(|error| format!("Trailokya target resolver bridge task failed: {error}"))?
+}
+
+#[cfg(not(mobile))]
+#[tauri::command]
 async fn chakra_lab_audit(
     request: Value,
     state: State<'_, BackendRuntimeState>,
@@ -1197,6 +1239,8 @@ pub fn run() {
             chakra_lab_snapshot,
             chakra_lab_agarwal_source_profile,
             chakra_lab_trailokya_source_only_geometry,
+            chakra_lab_trailokya_native_profile,
+            chakra_lab_trailokya_targets,
             chakra_lab_audit,
             chakra_lab_fixed_phasor,
             synchronized_independent_range,

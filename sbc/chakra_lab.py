@@ -460,3 +460,36 @@ class ChakraLabEngine:
             source_ids=source_ids,
             guardrails=guardrails,
         )
+
+    def source_context(self, request: ChakraLabRequest) -> dict[str, Any]:
+        """Return timestamp-safe astronomy/context facts without selecting a grid.
+
+        Source-native profile adapters use this narrow helper when a held source
+        owns its board construction.  It deliberately does not compile a
+        repository grid or construct a Vedha guidance engine.
+        """
+        if request.at.tzinfo is None or request.at.utcoffset() is None:
+            raise ValueError("Chakra Lab timestamps must include a UTC offset")
+        foundation = self.foundation_engine.snapshot(
+            SbcSnapshotRequest(
+                at_utc=request.at,
+                profile_id=request.foundation_profile_id,
+                bodies=request.bodies,
+                location=request.location,
+            )
+        )
+        target_context, position_context = _current_context(foundation, request)
+        _, readiness = _resolve_actors(
+            foundation, _actor_selections(request.actors)
+        )
+        as_of_utc = foundation.as_of_utc.astimezone(timezone.utc)
+        requested_at_local = as_of_utc.astimezone(ZoneInfo(request.location.timezone))
+        return {
+            "foundation": foundation,
+            "target_context": target_context,
+            "position_context": position_context,
+            "actor_readiness": readiness,
+            "as_of_utc": as_of_utc,
+            "requested_at_local": requested_at_local,
+            "guardrails": ChakraLabGuardrails(),
+        }

@@ -30,6 +30,8 @@ const {
   fetchFixedPhasor,
   fetchSnapshot,
   fetchTrailokyaGeometry,
+  fetchTrailokyaNativeProfile,
+  resolveTrailokyaTargets,
   fetchTimingAdmission,
   fetchTimingExternalReview,
   fetchTimingSignedReview,
@@ -47,6 +49,8 @@ const {
   fetchFixedPhasor: vi.fn(),
   fetchSnapshot: vi.fn(),
   fetchTrailokyaGeometry: vi.fn(),
+  fetchTrailokyaNativeProfile: vi.fn(),
+  resolveTrailokyaTargets: vi.fn(),
   fetchTimingAdmission: vi.fn(),
   fetchTimingExternalReview: vi.fn(),
   fetchTimingSignedReview: vi.fn(),
@@ -66,6 +70,8 @@ vi.mock('./api', () => ({
   fetchChakraLabFixedPhasor: fetchFixedPhasor,
   fetchChakraLabSnapshot: fetchSnapshot,
   fetchTrailokyaSourceOnlyGeometry: fetchTrailokyaGeometry,
+  fetchTrailokyaNativeProfile,
+  resolveTrailokyaTargets,
   fetchChartConditionedPolarityLookup: fetchAspectPolarity,
   fetchSynchronizedIndependentRange: fetchSynchronizedRange,
   fetchChakraTimingProfileAdmission: fetchTimingAdmission,
@@ -86,6 +92,8 @@ afterEach(() => {
   fetchFixedPhasor.mockReset()
   fetchSnapshot.mockReset()
   fetchTrailokyaGeometry.mockReset()
+  fetchTrailokyaNativeProfile.mockReset()
+  resolveTrailokyaTargets.mockReset()
   fetchTimingAdmission.mockReset()
   fetchTimingExternalReview.mockReset()
   fetchTimingSignedReview.mockReset()
@@ -1288,37 +1296,14 @@ describe('ChakraLabWorkspace', () => {
     expect(screen.getByRole('button', { name: 'Open in Fields' })).toBeInTheDocument()
   })
 
-  it('keeps Trailokya board geometry local without constructing a scored field range', async () => {
-    fetchSnapshot.mockResolvedValue(snapshot)
-    fetchTrailokyaGeometry.mockResolvedValue({
-      contract: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1',
-      schemaVersion: 1,
-      snapshot: { ...snapshot, guidance: null },
-      approval: {
-        approvedProfileId: 'SBC_TRAILOKYA_1972_SOURCE_ONLY_GEOMETRY_V1',
-        profileHash: 'trailokya-hash',
-        sourceProfileId: 'SBC_TRAILOKYA_1972_V1',
-        packetId: 'trailokya-packet',
-        decisionRecord: 'founder-decision',
-        founderDecision: 'APPROVED_FOR_SOURCE_ONLY_WITH_LIMITS',
-        pageLocators: {},
-      },
-      rays: [],
-      unavailable: [],
-      guardrails: {
-        readOnly: true,
-        categoricalGeometryOnly: true,
-        naturalPlanetPolarityUsed: false,
-        numericalModifiersUsed: false,
-        directionalWaveGenerated: false,
-        scoreAggregationUsed: false,
-        marketDirectionInferred: false,
-        autoSuggestInfluenceAllowed: false,
-        executionAllowed: false,
-        packagingAllowed: false,
-      },
+  it('uses the native Trailokya inspector without constructing a scored field range', async () => {
+    fetchTrailokyaNativeProfile.mockResolvedValue({
+      contract: 'TRAILOKYA_1972_NATIVE_SOURCE_PROFILE_V1', schemaVersion: 1,
+      profileId: 'SBC_TRAILOKYA_1972_V1', sourceId: 'TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN',
+      board: { contract: 'TRAILOKYA_1972_NATIVE_AKHANDA_81_BOARD_V1', gridProfileId: 'trailokya_1972_native_akhanda_81_v1', fixtureHash: 'native', orientation: { authorVisible: { east: 'TOP', west: 'BOTTOM', north: 'LEFT', south: 'RIGHT' }, repositoryCoordinates: {}, cornerMapping: {} }, cells: Array.from({ length: 81 }, (_, index) => ({ coordinate: { row: Math.floor(index / 9) + 1, column: (index % 9) + 1, label: `${Math.floor(index / 9) + 1}:${(index % 9) + 1}` }, sourceLiteral: `L${index}`, canonicalToken: `T${index}`, normalizedDisplay: `T${index}`, layer: 'NAKSHATRA', sourceStatus: 'SOURCE_CLOSED', printedPage: 1, scanPage: 13 })), cellCount: 81, sourceStatus: 'SOURCE_CLOSED' },
+      targetAuthority: { contract: 'TRAILOKYA_1972_ENUMERATED_NAKSHATRA_TARGETS_V1', fixtureHash: 'rows', rowCount: 28, mode: 'ENUMERATED_SOURCE_ROWS', frontContract: 'SINGLE_OPPOSITE_OUTER_NAKSHATRA_ONLY' }, expansions: { contract: 'TRAILOKYA_1972_DERIVED_SEMANTIC_TARGET_EXPANSIONS_V1', fixtureHash: 'expansion' }, readiness: { nativeBoardTrustedForVisualProjection: true, genericGridFallbackAllowed: false, runtimePromotionAuthorized: false, marketMappingAllowed: false, executionAllowed: false }, guardrails: { readOnly: true, enumeratedSourceAuthority: true, genericGridFallbackAllowed: false, naturalPlanetPolarityUsed: false, scoreAggregationUsed: false, marketDirectionInferred: false, fieldsInfluenceAllowed: false, autoSuggestInfluenceAllowed: false, mlAllowed: false, mt5Allowed: false, executionAllowed: false },
     })
-    fetchAspectPolarity.mockResolvedValue(missingAspectPolarity)
+    resolveTrailokyaTargets.mockResolvedValue({ contract: 'TRAILOKYA_1972_ENUMERATED_TARGET_RESOLUTION_V1', sourceProfileId: 'SBC_TRAILOKYA_1972_V1', targetAuthority: 'ENUMERATED_SOURCE_ROWS', sourceNakshatra: 'KRITTIKA', direction: 'LEFT', sourceEventId: 'event', causalVedhaEventId: 'event', sourceRow: { verse: 19, scanPage: 22, printedPage: 6, auditStatus: 'DIRECT_AGREEMENT' }, status: 'SOURCE_ROW_RESOLVED', directTargets: [], derivedTargets: [], allTargets: [], geometryDiagnostic: { status: 'GEOMETRY_DIAGNOSTIC_NOT_REQUESTED', authoritativeResult: 'SOURCE_ROW_WINS' }, guardrails: { readOnly: true, enumeratedSourceAuthority: true, genericGridFallbackAllowed: false, naturalPlanetPolarityUsed: false, scoreAggregationUsed: false, marketDirectionInferred: false, fieldsInfluenceAllowed: false, autoSuggestInfluenceAllowed: false, mlAllowed: false, mt5Allowed: false, executionAllowed: false } })
     render(
       <ChakraLabWorkspace
         defaultLatitude={18.5204}
@@ -1328,8 +1313,9 @@ describe('ChakraLabWorkspace', () => {
       />,
     )
 
+    expect(await screen.findByText('Trailokya Dipika 1972 Research')).toBeInTheDocument()
     expect(fetchSynchronizedRange).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: 'Open in Fields' })).toBeInTheDocument()
+    expect(fetchSnapshot).not.toHaveBeenCalled()
   })
 
   it('renders source-profiled guidance without trading direction labels', async () => {

@@ -34,6 +34,9 @@ from chakra_lab_service import (
     build_chakra_lab_audit_package,
     build_chakra_lab_fixed_phasor,
     build_chakra_lab_snapshot,
+    build_chakra_lab_trailokya_native_profile,
+    build_chakra_lab_trailokya_native_snapshot,
+    build_chakra_lab_trailokya_targets,
     build_chakra_lab_trailokya_source_only_geometry,
     build_chakra_lab_timing_profile_admission,
     build_chakra_lab_timing_external_review,
@@ -322,6 +325,32 @@ def create_chakra_lab_trailokya_source_only_geometry() -> Any:
                 "geometry": build_chakra_lab_trailokya_source_only_geometry(payload),
             }
         )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/chakra-lab/trailokya-native-profile")
+def get_chakra_lab_trailokya_native_profile() -> Any:
+    try:
+        return jsonify({"ok": True, "profile": build_chakra_lab_trailokya_native_profile()})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.post("/api/chakra-lab/trailokya-native-snapshot")
+def create_chakra_lab_trailokya_native_snapshot() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify({"ok": True, "snapshot": build_chakra_lab_trailokya_native_snapshot(payload)})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/chakra-lab/trailokya-targets")
+def create_chakra_lab_trailokya_targets() -> Any:
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify({"ok": True, "resolution": build_chakra_lab_trailokya_targets(payload)})
     except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 

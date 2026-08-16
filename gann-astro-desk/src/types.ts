@@ -2233,6 +2233,72 @@ export type TrailokyaSourceOnlyGeometry = {
   }
 }
 
+export type TrailokyaNativeBoardCell = {
+  coordinate: { row: number; column: number; label: string }
+  sourceLiteral: string
+  canonicalToken: string
+  normalizedDisplay: string
+  layer: string
+  sourceStatus: 'SOURCE_CLOSED'
+  printedPage: number
+  scanPage: number
+}
+
+export type TrailokyaNativeProfile = {
+  contract: 'TRAILOKYA_1972_NATIVE_SOURCE_PROFILE_V1'
+  schemaVersion: 1
+  profileId: 'SBC_TRAILOKYA_1972_V1'
+  sourceId: string
+  board: {
+    contract: 'TRAILOKYA_1972_NATIVE_AKHANDA_81_BOARD_V1'
+    gridProfileId: 'trailokya_1972_native_akhanda_81_v1'
+    fixtureHash: string
+    orientation: { authorVisible: { east: 'TOP'; west: 'BOTTOM'; north: 'LEFT'; south: 'RIGHT' }; repositoryCoordinates: Record<string, string>; cornerMapping: Record<string, string> }
+    cells: TrailokyaNativeBoardCell[]
+    cellCount: 81
+    sourceStatus: 'SOURCE_CLOSED'
+  }
+  targetAuthority: { contract: 'TRAILOKYA_1972_ENUMERATED_NAKSHATRA_TARGETS_V1'; fixtureHash: string; rowCount: 28; mode: 'ENUMERATED_SOURCE_ROWS'; frontContract: 'SINGLE_OPPOSITE_OUTER_NAKSHATRA_ONLY' }
+  expansions: { contract: 'TRAILOKYA_1972_DERIVED_SEMANTIC_TARGET_EXPANSIONS_V1'; fixtureHash: string }
+  readiness: { nativeBoardTrustedForVisualProjection: true; genericGridFallbackAllowed: false; runtimePromotionAuthorized: false; marketMappingAllowed: false; executionAllowed: false }
+  guardrails: { readOnly: true; enumeratedSourceAuthority: true; genericGridFallbackAllowed: false; naturalPlanetPolarityUsed: false; scoreAggregationUsed: false; marketDirectionInferred: false; fieldsInfluenceAllowed: false; autoSuggestInfluenceAllowed: false; mlAllowed: false; mt5Allowed: false; executionAllowed: false }
+}
+
+export type TrailokyaResolvedTarget = {
+  targetId: string
+  sourceEventId: string
+  causalVedhaEventId: string
+  sourceNakshatra: string
+  direction: 'LEFT' | 'FRONT' | 'RIGHT'
+  sourceOrderedIndex: number
+  targetType: string
+  canonicalToken: string
+  isDerived: boolean
+  derivedFromTargetId: string | null
+  derivationRuleId: string | null
+  physicalCell: { row: number; column: number; label: string } | null
+  mappingState: 'AVAILABLE' | 'UNKNOWN_SOURCE_MAPPING' | 'SEMANTIC_NO_PHYSICAL_CELL' | 'AMBIGUOUS_SOURCE_PROJECTION'
+  reachState: 'REACHED' | 'NOT_REACHED' | 'UNKNOWN'
+  sourceLocator: { verse: number; scanPage: number; printedPage: number; auditStatus: string }
+}
+
+export type TrailokyaTargetResolution = {
+  contract: 'TRAILOKYA_1972_ENUMERATED_TARGET_RESOLUTION_V1'
+  sourceProfileId: 'SBC_TRAILOKYA_1972_V1'
+  targetAuthority: 'ENUMERATED_SOURCE_ROWS'
+  sourceNakshatra: string
+  direction: 'LEFT' | 'FRONT' | 'RIGHT'
+  sourceEventId: string
+  causalVedhaEventId: string
+  sourceRow: { verse: number; scanPage: number; printedPage: number; auditStatus: string }
+  status: 'SOURCE_ROW_RESOLVED'
+  directTargets: TrailokyaResolvedTarget[]
+  derivedTargets: TrailokyaResolvedTarget[]
+  allTargets: TrailokyaResolvedTarget[]
+  geometryDiagnostic: { status: string; authoritativeResult: 'SOURCE_ROW_WINS' }
+  guardrails: TrailokyaNativeProfile['guardrails']
+}
+
 export type ChartConditionedPolarityState =
   | 'SUPPORTIVE'
   | 'ADVERSE'

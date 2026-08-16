@@ -73,6 +73,11 @@ from sbc.vedha import (  # noqa: E402
 from sbc.trailokya_source_only_geometry import (  # noqa: E402
     build_trailokya_source_only_geometry,
 )
+from sbc.trailokya_native_adapter import (  # noqa: E402
+    build_trailokya_native_snapshot,
+    load_trailokya_native_profile,
+    resolve_trailokya_targets,
+)
 
 
 DEFAULT_BODIES = (
@@ -286,6 +291,32 @@ def build_chakra_lab_trailokya_source_only_geometry(payload: Any) -> dict[str, A
     """Return the separately-approved Trailokya geometry, never scored guidance."""
     request = _chakra_lab_request(payload)
     return build_trailokya_source_only_geometry(request)
+
+
+def build_chakra_lab_trailokya_native_profile() -> dict[str, Any]:
+    """Read-only source fixture adapter; no astronomy or market request."""
+    return load_trailokya_native_profile()
+
+
+def build_chakra_lab_trailokya_native_snapshot(payload: Any) -> dict[str, Any]:
+    request = _chakra_lab_request(payload)
+    return build_trailokya_native_snapshot(request)
+
+
+def build_chakra_lab_trailokya_targets(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise ValueError("Trailokya target request must be an object")
+    allowed = {"sourceNakshatra", "direction", "targetContext", "sourceProfileId"}
+    _reject_unknown(payload, allowed, "Trailokya target request")
+    context = payload.get("targetContext")
+    if context is not None and not isinstance(context, dict):
+        raise ValueError("targetContext must be an object when supplied")
+    return resolve_trailokya_targets(
+        _required_text(payload.get("sourceNakshatra"), "sourceNakshatra").upper(),
+        _required_text(payload.get("direction"), "direction").upper(),
+        context,
+        str(payload.get("sourceProfileId") or "SBC_TRAILOKYA_1972_V1"),
+    )
 
 
 def _build_chakra_lab_ledger(payload: Any):

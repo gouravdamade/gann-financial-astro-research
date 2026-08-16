@@ -43,6 +43,7 @@ import { ProductFirstSbcWorkspace } from './ProductFirstSbcWorkspace'
 import { VISUALIZATION_ENGINE_MODES, visualizationModePolicy, type VisualizationEngineMode } from '../visualizationModes'
 import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
 import { AgarwalSourceInspectorWorkspace } from './AgarwalSourceInspectorWorkspace'
+import { TrailokyaNativeInspectorWorkspace } from './TrailokyaNativeInspectorWorkspace'
 
 
 const BODIES = [
@@ -153,6 +154,7 @@ export function ChakraLabWorkspace({
   onVisualizationModeChange = () => undefined,
 }: Props) {
   const isAgarwalProfile = vedhaProfileId === 'AGARWAL_2000_GEOMETRY_STRENGTH_INSPECTOR_V1'
+  const isTrailokyaNativeProfile = vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'
   const operationalProfileId: ChakraLabRequest['vedhaProfileId'] = isAgarwalProfile
     ? 'phaladeepika_editor_vedha_guidance_v1'
     : vedhaProfileId
@@ -208,7 +210,7 @@ export function ChakraLabWorkspace({
   ])
 
   const loadSnapshot = useCallback(async (atOverride?: string) => {
-    if (isAgarwalProfile) {
+    if (isAgarwalProfile || isTrailokyaNativeProfile) {
       setBusy(false)
       return
     }
@@ -229,7 +231,7 @@ export function ChakraLabWorkspace({
     } finally {
       setBusy(false)
     }
-  }, [isAgarwalProfile, request])
+  }, [isAgarwalProfile, isTrailokyaNativeProfile, request])
 
   const selectMoment = useCallback((at: string, source: ResearchTimeUpdateSource = 'CHAKRA_MOMENT') => {
     setAtLocal(at)
@@ -273,17 +275,17 @@ export function ChakraLabWorkspace({
   }, [loadSnapshot, vedhaProfileId])
 
   useEffect(() => {
-    if (!selectedTimestampUtc) return
+    if (isAgarwalProfile || isTrailokyaNativeProfile || !selectedTimestampUtc) return
     const nextMoment = istInputFromUtc(selectedTimestampUtc)
     if (nextMoment === atLocal) return
     setAtLocal(nextMoment)
     setFixedPhasor(null)
     setPhasorError('')
     void loadSnapshot(nextMoment)
-  }, [atLocal, loadSnapshot, selectedTimestampUtc])
+  }, [atLocal, isAgarwalProfile, isTrailokyaNativeProfile, loadSnapshot, selectedTimestampUtc])
 
   useEffect(() => {
-    if (isAgarwalProfile) return
+    if (isAgarwalProfile || isTrailokyaNativeProfile) return
     let active = true
     void (async () => {
       try {
@@ -300,7 +302,7 @@ export function ChakraLabWorkspace({
       }
     })()
     return () => { active = false }
-  }, [isAgarwalProfile])
+  }, [isAgarwalProfile, isTrailokyaNativeProfile])
 
   const contextKeys = useMemo(() => new Set(
     snapshot?.target_context.flatMap((layer) => (
@@ -385,6 +387,10 @@ export function ChakraLabWorkspace({
         onProfileChange={onVedhaProfileIdChange}
       />
     )
+  }
+
+  if (isTrailokyaNativeProfile) {
+    return <TrailokyaNativeInspectorWorkspace profileId={vedhaProfileId} onProfileChange={onVedhaProfileIdChange} />
   }
 
   return (
@@ -596,7 +602,7 @@ export function ChakraLabWorkspace({
               <span />
               <span>Body</span>
               <span>Motion</span>
-              <span>{vedhaProfileId === 'SBC_TRAILOKYA_1972_V1' ? 'Modifier' : 'Dignity'}</span>
+              <span>Dignity</span>
             </div>
             {BODIES.map((body) => (
               <div className="chakra-actor-row" key={body}>
@@ -629,8 +635,6 @@ export function ChakraLabWorkspace({
                     dignity: event.target.value as ChakraDignityState,
                   })}
                   aria-label={`${body} dignity`}
-                  disabled={vedhaProfileId === 'SBC_TRAILOKYA_1972_V1'}
-                  title={vedhaProfileId === 'SBC_TRAILOKYA_1972_V1' ? 'Not used by Trailokya source-only geometry' : undefined}
                 >
                   <option value="ORDINARY">Ordinary</option>
                   <option value="EXALTED">Exalted</option>
