@@ -22,8 +22,12 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - `TN1_NATIVE_BOARD_ADAPTER_COMPLETE=true`,
   `TN1_ENUMERATED_VEDHA_ADAPTER_COMPLETE=true`,
   `TRAILOKYA_TARGET_AUTHORITY=ENUMERATED_SOURCE_ROWS`, and generic fallback is
-  false. A founder-inspection package remains pending after the bounded test
-  and packaging sequence; execution remains false.
+  false. Founder-inspection candidate `0.10.49-pfr-v2b-r6-sbc-tn1` is built at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.49-pfr-v2b-r6-sbc-tn1-tauri`.
+  It is sourced from clean commit `1ce5c0aa5facd5c3aa1c3f5dd7e87e1d41fd79ce`.
+  Both isolated portable smoke runs passed (the optional candlestick specialist
+  remains unconfigured); physical founder inspection remains pending. Execution
+  remains false.
 
 ## Latest Update - 2026-08-16 (PFR-V2B-R6-N1 Architecture, Source-to-Runtime and Reliability Audit)
 
