@@ -51,6 +51,25 @@ function Import-BatchEnvironment([string]$BatchFile) {
     }
 }
 
+function Get-Sha256([string]$Path) {
+    $fileHash = Get-Command Get-FileHash -ErrorAction SilentlyContinue
+    if ($fileHash) {
+        return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash
+    }
+
+    # The release script is also run from restricted Windows hosts where the
+    # FileHash cmdlet is unavailable; certutil is the built-in equivalent.
+    $lines = & certutil.exe -hashfile $Path SHA256
+    if ($LASTEXITCODE -ne 0) {
+        throw "Unable to calculate SHA-256 for $Path"
+    }
+    $hashLine = $lines | Where-Object { $_ -match '^[0-9A-Fa-f ]{64,}$' } | Select-Object -First 1
+    if (-not $hashLine) {
+        throw "certutil did not return a SHA-256 digest for $Path"
+    }
+    return (($hashLine -replace '\s', '').ToUpperInvariant())
+}
+
 $candidate = Assert-UnderRoot $CandidateRoot $safeRoot
 if (Test-Path -LiteralPath $candidate) {
     Remove-Item -LiteralPath $candidate -Recurse -Force
@@ -137,9 +156,9 @@ $manifest = [ordered]@{
     status = $CandidateStatus
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
-    executable_sha256 = (Get-FileHash -LiteralPath $portableExe -Algorithm SHA256).Hash
+    executable_sha256 = Get-Sha256 $portableExe
     installer = $installer.Name
-    installer_sha256 = (Get-FileHash -LiteralPath $installerTarget -Algorithm SHA256).Hash
+    installer_sha256 = Get-Sha256 $installerTarget
     file_count = $releaseFiles.Count
     total_bytes = ($releaseFiles | Measure-Object -Property Length -Sum).Sum
     shell = "Tauri 2 / Rust"
@@ -279,10 +298,10 @@ Run `GannAstroDesk.exe` from this folder and keep the adjacent `backend` folder 
 Set-Content -LiteralPath (Join-Path $candidate "BETA_README.md") -Value $releaseReadme -Encoding utf8
 
 $checksumLines = @(
-    "$(Get-FileHash -LiteralPath $portableExe -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  GannAstroDesk.exe",
-    "$(Get-FileHash -LiteralPath $installerTarget -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  $($installer.Name)",
-    "$(Get-FileHash -LiteralPath $sidecarExe -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  backend/GannAstroBackend.exe",
-    "$(Get-FileHash -LiteralPath (Join-Path $candidate 'release.manifest.json') -Algorithm SHA256 | Select-Object -ExpandProperty Hash)  release.manifest.json",
+    "$(Get-Sha256 $portableExe)  GannAstroDesk.exe",
+    "$(Get-Sha256 $installerTarget)  $($installer.Name)",
+    "$(Get-Sha256 $sidecarExe)  backend/GannAstroBackend.exe",
+    "$(Get-Sha256 (Join-Path $candidate 'release.manifest.json'))  release.manifest.json",
     "SOURCE_GIT_COMMIT  $sourceGitCommit",
     "SOURCE_GIT_DIRTY  $sourceGitDirty"
 )
