@@ -13,6 +13,9 @@ auditedPassages:
 contracts:
   foundation: configs/sbc/trailokya/trailokya_1972_arghya_foundation_v1.yaml
   viswa: configs/sbc/trailokya/trailokya_1972_arghya_viswa_v1.yaml
+  td3rLiteralTables: configs/sbc/trailokya/trailokya_1972_argha_viswa_table_v1.yaml
+  td3rStrengthPassports: configs/sbc/trailokya/trailokya_1972_argha_strength_v1.yaml
+  td3rOperatorReadiness: configs/sbc/trailokya/trailokya_1972_argha_operator_v1.yaml
   commodityLedger: configs/sbc/trailokya/trailokya_1972_nakshatra_commodity_ledger_v1.yaml
 nonMergeRules:
   - TD2_STHANA_PHALA_MUST_NOT_BE_MERGED_WITH_TD3_VISWA_OR_ARGHYA_VALUES

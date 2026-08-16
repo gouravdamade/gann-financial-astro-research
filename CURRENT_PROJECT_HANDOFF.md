@@ -4,6 +4,31 @@ Last updated: 2026-08-16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-17 (PFR-V2B-R6-SBC-TD3R Argha source reconstruction)
+
+- TN1R1 is now founder accepted. The broad Python/source regression completed
+  before that record: `753 passed`, `1 skipped` optional external JHora witness
+  and `16 subtests passed`; the supported Windows frontend command completed
+  `38` files / `164` tests under the single-thread pool, lint/build passed and
+  Rust format/check/tests passed (`19` Rust tests).
+- TD3R audited the controlling Trailokya 1972 Argha block, verses 345-378,
+  directly against its page images. It closes literal relationship/aspect/Viswa
+  tables, verse-371's required-aspect gate, verse-375 Argha-only netting and
+  verse-376's twenty-part *commodity basis* arithmetic. It does not create a
+  financial or product feature.
+- A historical transcription locator error is reconciled without rewriting
+  history: the old 1972 table pass retained the right values but recorded
+  printed pp.52/53/55. The controlling pages are printed pp.82/83/85. The new
+  page-corrected pass preserves all 108 literal values and both published
+  anomalies (`11|45`, `2|18`).
+- `TRAILOKYA_1972_ARGHA_SOURCE_COMPONENTS_V1` provides only exact-fraction,
+  fail-closed low-level table, netting and commodity-basis components. A full
+  `ARGHA_SOURCE_CALCULATOR_READY` remains false: combined four-strength ruler
+  selection, Vakra/Udaya timestamp boundaries, complete Vedha traversal and
+  validity, a complete worked calculation, and bhava-to-price conversion are
+  not source-closed. Price, FX, polarity, score, Auto Suggest, ML, MT5 and
+  execution remain locked.
+
 ## Latest Update - 2026-08-17 (PFR-V2B-R6-SBC-TN1R1 Founder Acceptance)
 
 - The founder physically accepted packaged candidate

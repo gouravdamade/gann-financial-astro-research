@@ -1,0 +1,50 @@
+schemaVersion: TRAILOKYA_1972_ARGHA_VISWA_TABLE_SOURCE_V1
+contractId: TRAILOKYA_1972_ARGHA_VISWA_TABLE_SOURCE_V1
+milestone: PFR-V2B-R6-SBC-TD3R
+status: SOURCE_CLOSED_LITERAL_TABLES_WITH_PRESERVED_ANOMALIES
+source:
+  primary:
+    sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+    sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+    citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+    transcription:
+      path: configs/sbc/arghya/trailokya_1972_arghya_pass1_td3r_page_corrected.csv
+      sha256: 2BCAF0465A96DE7423A63A0EFA6F18D49815F7B5EB924C2C82DBC12A24E31360
+      passId: PASS_A_1972_ORIGINAL_IMAGE_RECONCILED_TD3R
+      reconciliationNote: Literal values are unchanged from the historical pass; only verified printed-page locators are corrected.
+  readingWitness:
+    sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+    sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+    role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING
+    transcription: {path: configs/sbc/arghya/trailokya_2016_arghya_pass2.csv, passId: PASS_B_2016_REPRINT_IMAGE}
+tables:
+  - id: relationship_vedha_viswa
+    locator: {scanPage: 98, printedPage: 82, verses: '362-364'}
+    cellCount: 32
+    unit: VISWA_KALA
+  - id: planet_aspect_houses
+    locator: {scanPage: 99, printedPage: 83, verses: '365-370'}
+    cellCount: 36
+    unit: WHOLE_SIGN_HOUSE_LIST
+  - id: five_class_vedha_viswa
+    locator: {scanPage: 101, printedPage: 85, verses: '372-374'}
+    cellCount: 40
+    unit: VISWA_KALA
+anomalies:
+  - id: RELATIONSHIP_THREE_QUARTER_MALEFIC_NEUTRAL
+    cell: relationship_vedha_viswa/three_quarter/malefic_neutral
+    literalPrintedValue: '11|45'
+    proportionalExpectation: '11|15'
+    sourceStatus: SOURCE_CLOSED_LITERAL_VALUE_CORRECTION_NOT_AUTHORIZED
+  - id: FIVE_CLASS_THREE_QUARTER_MALEFIC_4
+    cell: five_class_vedha_viswa/three_quarter/malefic_4
+    literalPrintedValue: '2|18'
+    proportionalExpectation: '2|24'
+    sourceStatus: SOURCE_CLOSED_LITERAL_VALUE_UNRESOLVED
+historicalLocatorCorrection:
+  historicalPass: configs/sbc/arghya/trailokya_1972_arghya_pass1.csv
+  priorPrintedPages: {relationship_vedha_viswa: 52, planet_aspect_houses: 53, five_class_vedha_viswa: 55}
+  correctedPrintedPages: {relationship_vedha_viswa: 82, planet_aspect_houses: 83, five_class_vedha_viswa: 85}
+  sourceContentChanged: false
+prohibitedUses: [PRICE_FORECAST, FX_MAPPING, POLARITY, SCORE, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+executionAllowed: false
