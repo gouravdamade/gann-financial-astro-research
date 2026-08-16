@@ -4,6 +4,37 @@ Last updated: 2026-08-16 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-16 (PFR-V2B-R6-SBC-TN1R1 Founder Candidate)
+
+- TN1R1 source implementation is pushed at `36d16df475a49fc23e37726142e453700a5f35b8`.
+  It is a layout-only correction: the native Trailokya inspector has one
+  keyboard-focusable vertical scroll owner inside the Chakra content track.
+  Source geometry, target authority, profile isolation and all safety locks are
+  unchanged.
+- Clean packaging produced founder-inspection candidate
+  `0.10.50-pfr-v2b-r6-sbc-tn1r1` at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.50-pfr-v2b-r6-sbc-tn1r1-tauri`.
+  Portable SHA-256 is
+  `69CFEE6E02F4C87E176DBBBDF41587EB963BA7FD0086C8A8DF985A022400BCAF`;
+  installer SHA-256 is
+  `07A8BA528BA57D75E7453657694DDF7B46131F71DBA846E90CC37D20E2B394C0`.
+  The release manifest records `source_git_dirty=false` and
+  `executionAllowed=false`/read-only market data mode.
+- Two isolated packaged smoke runs passed. Reports are
+  `D:\GannFinancialAstro\soak\tauri_0.10.50-pfr-v2b-r6-sbc-tn1r1_20260816_171303\logs\native_soak_report.json`
+  and
+  `D:\GannFinancialAstro\soak\tauri_0.10.50-pfr-v2b-r6-sbc-tn1r1_20260816_171712\logs\native_soak_report.json`.
+  Each verified sidecar health, Chakra 81-cell contract, Agarwal source
+  profile, locks, layout persistence, sidecar recovery and zero survivors;
+  only the optional candlestick specialist was deferred as not configured.
+- Full verification: focused source `27 passed`; focused frontend `21 passed`;
+  full frontend `164 passed`; backend `215 passed`; lint/build passed; Rust
+  format/check passed and Rust tests `19 passed`. Details and the founder-only
+  physical checklist are in
+  `docs/sbc/PFR_V2B_R6_SBC_TN1R1_FOUNDER_INSPECTION_CANDIDATE_0.10.50-pfr-v2b-r6-sbc-tn1r1.md`.
+- Physical packaged-window inspection remains pending founder review at the
+  required desktop scales. No package promotion or acceptance is recorded.
+
 ## Latest Update - 2026-08-16 (PFR-V2B-R6-SBC-TN1R1 Viewport Scroll Repair)
 
 - TN1R1 fixes the founder-observed native Trailokya clipping defect. The direct
