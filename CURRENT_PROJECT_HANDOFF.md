@@ -4,6 +4,36 @@ Last updated: 2026-08-17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-17 (PFR-V2B-R7-XE1R1 Founder Inspection Candidate)
+
+- XE1R1 is a bounded presentation and empty-state correction over the existing
+  `XE1_EXPERIMENTAL_EVIDENCE_LAB_V1`. The sticky experimental safety banner is
+  isolated to Experiments, empty Touched/Manual directional raw values are
+  `null`, evidence labels are descriptive (`POSITIVE EVIDENCE`, `NEGATIVE
+  EVIDENCE`, `MIXED EVIDENCE`, `UNKNOWN / BALANCED`), and the raw dataset badge
+  distinguishes `No observations admitted` from `Raw fixture sealed`.
+- A compact context strip states `MARKET INPUT: NONE`. XE1 raw evidence,
+  causal-group deduplication, ambiguity fail-closed behavior, modifier math,
+  source profiles, Fields, Auto Suggest, ML, MT5 and execution are unchanged.
+- Source implementation commit is `8bf9fc20a80caf48e5bf50d70a351e8ab0901629`.
+  Candidate `0.10.52-pfr-v2b-r7-xe1r1` is at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.52-pfr-v2b-r7-xe1r1-tauri`.
+  Portable SHA-256 is `AFA1FDDA171DE02FD3342274AC8682AAC722E5BE05ED8522352F6FA49E7ED116`;
+  installer SHA-256 is `F84676FAAA5C3C40C973EBD0EB169EFA5CFB4E307A932E4CD0F62F8B9814DE16`.
+- Verification passed: focused backend `13/13`; full backend `228/228`;
+  focused frontend `3/3`; full frontend `39 files / 167 tests`; broad Python
+  regression `772 passed, 1 skipped, 16 subtests passed`; lint/build passed;
+  Rust fmt/check passed and Rust tests `19/19` passed. The one broad skip is the
+  optional external JHora witness requiring `JHORA_WITNESS_CSV`.
+- Two isolated portable smokes passed with zero failed checks, sidecar recovery,
+  layout persistence, and no descendant survivors. The optional candlestick
+  specialist remains unconfigured and is reported as deferred by the existing
+  soak contract.
+- Founder inspection is ready but not accepted. Use the report
+  `docs/research/PFR_V2B_R7_XE1R1_FOUNDER_INSPECTION_CANDIDATE_0.10.52-pfr-v2b-r7-xe1r1.md`
+  for the physical checklist. `XE1R1_FOUNDER_INSPECTION_READY=true` and
+  `XE1_FOUNDER_ACCEPTED=false`.
+
 ## Latest Update - 2026-08-17 (PFR-V2B-R7-XE1 Experimental Evidence & Modifier Lab)
 
 - XE1 adds a separate top-level **Experiments** workspace. It is a read-only,
