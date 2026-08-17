@@ -255,7 +255,7 @@ def _state_vector(contributions: list[dict[str, Any]]) -> dict[str, Any]:
             "state": "UNKNOWN_NO_ACTIVE_EVIDENCE",
             "positive": positive,
             "negative": negative,
-            "directionalRaw": 0.0,
+            "directionalRaw": None,
             "activity": 0.0,
             "directionalNormalized": None,
             "conflictLinear": None,

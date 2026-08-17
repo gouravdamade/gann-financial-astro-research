@@ -70,6 +70,7 @@ class ExperimentalEvidenceServiceTests(unittest.TestCase):
     def test_no_active_evidence_keeps_conflict_unknown(self) -> None:
         snapshot = build_experimental_snapshot(self.root, {"dataMode": "MANUAL"})
         self.assertEqual(snapshot["stateVector"]["state"], "UNKNOWN_NO_ACTIVE_EVIDENCE")
+        self.assertIsNone(snapshot["stateVector"]["directionalRaw"])
         self.assertIsNone(snapshot["stateVector"]["directionalNormalized"])
         self.assertIsNone(snapshot["stateVector"]["conflictLinear"])
         self.assertEqual(snapshot["manualInputStatus"], "MANUAL_INPUT_REQUIRED")
@@ -80,6 +81,7 @@ class ExperimentalEvidenceServiceTests(unittest.TestCase):
         self.assertEqual(snapshot["rawObservations"], [])
         self.assertEqual(snapshot["manualInputStatus"], "TOUCHED_DEV_INPUT_NOT_CONFIGURED")
         self.assertEqual(snapshot["stateVector"]["state"], "UNKNOWN_NO_ACTIVE_EVIDENCE")
+        self.assertIsNone(snapshot["stateVector"]["directionalRaw"])
 
     def test_gate_is_three_state_context_not_direction(self) -> None:
         snapshot = build_experimental_snapshot(self.root, {})

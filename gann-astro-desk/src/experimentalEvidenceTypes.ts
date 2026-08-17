@@ -92,7 +92,7 @@ export type ExperimentalStateVector = {
   state: 'SUPPORTIVE' | 'ADVERSE' | 'MIXED' | 'NEUTRAL' | 'UNKNOWN_NO_ACTIVE_EVIDENCE'
   positive: number
   negative: number
-  directionalRaw: number
+  directionalRaw: number | null
   activity: number
   directionalNormalized: number | null
   conflictLinear: number | null

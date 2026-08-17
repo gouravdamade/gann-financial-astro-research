@@ -38,6 +38,14 @@ function stateTone(value: string): string {
   return 'is-unknown'
 }
 
+function stateLabel(value: string): string {
+  if (value === 'SUPPORTIVE') return 'POSITIVE EVIDENCE'
+  if (value === 'ADVERSE') return 'NEGATIVE EVIDENCE'
+  if (value === 'MIXED') return 'MIXED EVIDENCE'
+  if (value === 'NEUTRAL') return 'UNKNOWN / BALANCED'
+  return 'UNKNOWN / NO ACTIVE EVIDENCE'
+}
+
 function roleTone(role: string): string {
   if (role === 'SIGN') return 'is-sign'
   if (role === 'MODIFIER') return 'is-modifier'
@@ -55,12 +63,12 @@ function ExperimentalStateLane({ snapshot }: { snapshot: ExperimentalSnapshot })
           <span>Experimental oscillator</span>
           <strong>Categorical state vector, not a market forecast</strong>
         </div>
-        <span className={`xe1-state-chip ${stateTone(snapshot.stateVector.state)}`}>{snapshot.stateVector.state.replaceAll('_', ' ')}</span>
+        <span className={`xe1-state-chip ${stateTone(snapshot.stateVector.state)}`}>{stateLabel(snapshot.stateVector.state)}</span>
       </div>
       <div className="xe1-oscillator-lane" aria-label="Experimental directional state lane">
-        <span className="xe1-lane-negative">adverse</span>
-        <span className="xe1-lane-neutral">unknown / neutral</span>
-        <span className="xe1-lane-positive">supportive</span>
+        <span className="xe1-lane-negative">negative evidence</span>
+        <span className="xe1-lane-neutral">unknown / balanced</span>
+        <span className="xe1-lane-positive">positive evidence</span>
         {value == null
           ? <span className="xe1-lane-gap">No active evidence</span>
           : <span className="xe1-lane-marker" style={{ left: `${position}%` }} title={`Experimental normalized state ${value.toFixed(3)}`} />}
@@ -86,7 +94,7 @@ function RawEvidenceTable({ snapshot }: { snapshot: ExperimentalSnapshot }) {
     <section className="xe1-panel" aria-label="Immutable raw evidence">
       <div className="xe1-panel-heading">
         <div><span>Evidence input</span><strong>Immutable raw observations</strong></div>
-        <span className="xe1-lock-chip"><LockKeyhole size={12} /> Raw fixture sealed</span>
+        <span className="xe1-lock-chip"><LockKeyhole size={12} /> {snapshot.dataMode === 'SYNTHETIC' && snapshot.rawObservations.length > 0 ? 'Raw fixture sealed' : 'No observations admitted'}</span>
       </div>
       {!snapshot.rawObservations.length && <p className="xe1-empty">{snapshot.manualInputStatus.replaceAll('_', ' ')}. This version deliberately accepts no frontend-invented evidence.</p>}
       {!!snapshot.rawObservations.length && <div className="xe1-table-wrap">
@@ -138,7 +146,7 @@ function ModifierComparison({ comparison }: { comparison: ExperimentalComparison
       {comparison && <div className="xe1-transform-grid">
         {comparison.comparisons.map((item) => <article key={item.transformId}>
           <span>{TRANSFORM_LABELS[item.transformId] ?? item.transformId}</span>
-          <strong className={stateTone(item.stateVector.state)}>{item.stateVector.state.replaceAll('_', ' ')}</strong>
+          <strong className={stateTone(item.stateVector.state)}>{stateLabel(item.stateVector.state)}</strong>
           <small>D norm {asNumber(item.stateVector.directionalNormalized)}</small>
           <small>M {asNumber(item.modifier.value)}</small>
         </article>)}
@@ -213,7 +221,7 @@ export function ExperimentalLabWorkspace() {
       </header>
       {error && <div className="xe1-error"><CircleAlert size={16} /><strong>Experimental lab unavailable</strong><span>{error}</span></div>}
       {snapshot && <>
-        <section className="xe1-context-strip" aria-label="Experimental profile context"><span><BookOpenCheck size={13} /> {profile?.profile.profileId}</span><span>Profile hash {snapshot.profile.profileHash.slice(0, 16)}...</span><span>Code {snapshot.codeCommit.slice(0, 12)}</span><span>{snapshot.datasetLabel}</span><span><ShieldCheck size={13} /> execution locked</span></section>
+        <section className="xe1-context-strip" aria-label="Experimental profile context"><span><BookOpenCheck size={13} /> {profile?.profile.profileId}</span><span>Profile hash {snapshot.profile.profileHash.slice(0, 16)}...</span><span>Code {snapshot.codeCommit.slice(0, 12)}</span><span>{snapshot.datasetLabel}</span><span className="xe1-market-input">MARKET INPUT: NONE</span><span><ShieldCheck size={13} /> execution locked</span></section>
         <ExperimentalStateLane snapshot={snapshot} />
         <div className="xe1-content-grid"><RawEvidenceTable snapshot={snapshot} /><Contributions snapshot={snapshot} /></div>
         <ModifierComparison comparison={comparison} />

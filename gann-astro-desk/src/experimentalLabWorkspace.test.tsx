@@ -70,6 +70,33 @@ const snapshot: ExperimentalSnapshot = {
   guardrails,
 }
 
+const emptySnapshot: ExperimentalSnapshot = {
+  ...snapshot,
+  dataMode: 'TOUCHED_DEV',
+  datasetStatus: 'TOUCHED_DEV',
+  datasetLabel: 'EXPLORATORY_TOUCHED',
+  rawObservations: [],
+  manualInputStatus: 'TOUCHED_DEV_INPUT_NOT_CONFIGURED',
+  causalContributions: [],
+  stateVector: {
+    state: 'UNKNOWN_NO_ACTIVE_EVIDENCE',
+    positive: 0,
+    negative: 0,
+    directionalRaw: null,
+    activity: 0,
+    directionalNormalized: null,
+    conflictLinear: null,
+    conflictQuad: null,
+    conflictEntropy: null,
+    unknownGroupCount: 0,
+  },
+  experimentalOscillator: {
+    ...snapshot.experimentalOscillator,
+    state: 'UNKNOWN_NO_ACTIVE_EVIDENCE',
+    displayValue: null,
+  },
+}
+
 const comparison: ExperimentalComparisonResponse = {
   contract: 'XE1_TRANSFORM_COMPARISON_V1', codeCommit: profile.profile.codeCommit, profileId: profile.profile.profileId, profileHash: profile.profile.profileHash, dataMode: 'SYNTHETIC', guardrails,
   comparisons: ['XE1_BASE_DIRECTIONAL_V1', 'XE1_BOUNDED_EXP_MULTIPLIER_V1'].map((transformId) => ({ transformId, stateVector: snapshot.stateVector, modifier: snapshot.modifier, quality: snapshot.quality })),
@@ -90,8 +117,14 @@ describe('ExperimentalLabWorkspace', () => {
     api.compareExperimentalEvidenceTransforms.mockResolvedValue(comparison)
     api.fetchExperimentalEvidenceTrialLedger.mockResolvedValue(ledger)
     render(<ExperimentalLabWorkspace />)
-    expect(await screen.findByText('EXPERIMENTAL - NOT CLASSICAL - NOT VALIDATED - NO EXECUTION')).toBeInTheDocument()
+    const safetyText = await screen.findByText('EXPERIMENTAL - NOT CLASSICAL - NOT VALIDATED - NO EXECUTION')
+    expect(safetyText).toBeInTheDocument()
+    expect(safetyText.closest('.experimental-safety-banner')).toHaveClass('experimental-safety-banner')
     expect(screen.getByText('Immutable raw observations')).toBeInTheDocument()
+    expect(screen.getByText('Raw fixture sealed')).toBeInTheDocument()
+    expect(screen.queryByText('NEGATIVE EVIDENCE', { exact: true })).not.toBeInTheDocument()
+    expect(screen.getAllByText('POSITIVE EVIDENCE', { exact: true }).length).toBeGreaterThan(0)
+    expect(screen.getByText('positive evidence', { exact: true })).toBeInTheDocument()
     expect(screen.getByText('Code 9c988395e9db')).toBeInTheDocument()
     expect(screen.getByText('positive', { exact: true, selector: 'strong' })).toBeInTheDocument()
     expect(screen.getByText('One directional vote per causal group')).toBeInTheDocument()
@@ -111,5 +144,21 @@ describe('ExperimentalLabWorkspace', () => {
     await user.selectOptions(screen.getByLabelText('Experimental transform'), 'XE1_BASE_DIRECTIONAL_V1')
     await waitFor(() => expect(api.fetchExperimentalEvidenceSnapshot).toHaveBeenLastCalledWith({ dataMode: 'SYNTHETIC', transformId: 'XE1_BASE_DIRECTIONAL_V1' }))
     expect(api.fetchExperimentalEvidenceSnapshot.mock.calls.flat().some((value: unknown) => value === 'rawObservations')).toBe(false)
+  })
+
+  it('keeps empty touched development explicitly unknown without zero-like directional UI', async () => {
+    api.fetchExperimentalEvidenceProfile.mockResolvedValue(profile)
+    api.fetchExperimentalEvidenceSnapshot.mockResolvedValue(emptySnapshot)
+    api.compareExperimentalEvidenceTransforms.mockResolvedValue({ ...comparison, dataMode: 'TOUCHED_DEV' })
+    api.fetchExperimentalEvidenceTrialLedger.mockResolvedValue(ledger)
+    render(<ExperimentalLabWorkspace />)
+    expect(await screen.findByText('No observations admitted')).toBeInTheDocument()
+    expect(screen.getByText('TOUCHED DEV INPUT NOT CONFIGURED. This version deliberately accepts no frontend-invented evidence.')).toBeInTheDocument()
+    expect(screen.getAllByText('UNKNOWN / NO ACTIVE EVIDENCE').length).toBeGreaterThan(0)
+    expect(screen.getByText('D raw').parentElement).toHaveTextContent('Unknown')
+    expect(screen.getByText('D norm').parentElement).toHaveTextContent('Unknown')
+    expect(screen.getByText('Conflict').parentElement).toHaveTextContent('Unknown')
+    expect(screen.getByText('MARKET INPUT: NONE')).toBeInTheDocument()
+    expect(screen.queryByText('Raw fixture sealed')).not.toBeInTheDocument()
   })
 })

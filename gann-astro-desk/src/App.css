@@ -9061,6 +9061,9 @@ html.android-runtime .loading-state {
   scrollbar-color: #485660 #11171d;
 }
 .experimental-safety-banner {
+  position: sticky;
+  top: 0;
+  z-index: 5;
   display: grid;
   grid-template-columns: auto minmax(190px, auto) minmax(0, 1fr);
   align-items: center;
@@ -9070,6 +9073,7 @@ html.android-runtime .loading-state {
   border-bottom: 1px solid #754d52;
   background: #2a1a20;
   color: #f1bdc3;
+  box-shadow: 0 2px 9px rgb(0 0 0 / 28%);
 }
 .experimental-safety-banner strong { color: #ffd6d9; font-size: 10px; }
 .experimental-safety-banner span { color: #dba3aa; font-size: 8px; line-height: 1.35; }
@@ -9094,6 +9098,7 @@ html.android-runtime .loading-state {
 .xe1-error { display: flex; align-items: center; gap: 8px; margin: 12px 14px; padding: 10px; border: 1px solid #884a52; background: #29191e; color: #eea6af; font-size: 9px; }
 .xe1-context-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px 14px; border-bottom: 1px solid #2e3b45; background: #111920; color: #93a7b1; font: 8px/1.35 Consolas, monospace; }
 .xe1-context-strip span { display: inline-flex; min-width: 0; align-items: center; gap: 5px; overflow-wrap: anywhere; }
+.xe1-market-input { color: #d8c78a; }
 .xe1-panel { min-width: 0; padding: 12px 14px; border-bottom: 1px solid #33414a; background: #10171d; }
 .xe1-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 9px; margin-bottom: 10px; }
 .xe1-panel-heading > div { display: grid; gap: 3px; min-width: 0; }
