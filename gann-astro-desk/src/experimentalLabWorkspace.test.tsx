@@ -38,9 +38,9 @@ const guardrails = {
 } as const
 
 const profile: ExperimentalProfileResponse = {
-  contract: 'XE1_EXPERIMENTAL_EVIDENCE_LAB_V1', codeCommit: '36bea0ba321503d809c3f88a22d06dc517809a2c',
+  contract: 'XE1_EXPERIMENTAL_EVIDENCE_LAB_V1', codeCommit: '9c988395e9dbff09a4c3f60912fa1edac48ae375',
   profile: {
-    contract: 'XE1_EXPERIMENTAL_PROFILE_V1', schemaVersion: 1, profileId: 'XE1_EVIDENCE_ROLE_MODIFIER_ABLATION_V1', codeCommit: '36bea0ba321503d809c3f88a22d06dc517809a2c', profileHash: 'abc123',
+    contract: 'XE1_EXPERIMENTAL_PROFILE_V1', schemaVersion: 1, profileId: 'XE1_EVIDENCE_ROLE_MODIFIER_ABLATION_V1', codeCommit: '9c988395e9dbff09a4c3f60912fa1edac48ae375', profileHash: 'abc123',
     bindings: [
       { featureKey: 'positive', role: 'SIGN', transformId: 'XE1_BASE_DIRECTIONAL_V1', parameters: {}, assignmentOrigin: 'fixture', marketDomain: 'NONE', experimentalStatus: 'synthetic' },
       { featureKey: 'negative', role: 'SIGN', transformId: 'XE1_BASE_DIRECTIONAL_V1', parameters: {}, assignmentOrigin: 'fixture', marketDomain: 'NONE', experimentalStatus: 'synthetic' },
@@ -92,7 +92,7 @@ describe('ExperimentalLabWorkspace', () => {
     render(<ExperimentalLabWorkspace />)
     expect(await screen.findByText('EXPERIMENTAL - NOT CLASSICAL - NOT VALIDATED - NO EXECUTION')).toBeInTheDocument()
     expect(screen.getByText('Immutable raw observations')).toBeInTheDocument()
-    expect(screen.getByText('Code 36bea0ba3215')).toBeInTheDocument()
+    expect(screen.getByText('Code 9c988395e9db')).toBeInTheDocument()
     expect(screen.getByText('positive', { exact: true, selector: 'strong' })).toBeInTheDocument()
     expect(screen.getByText('One directional vote per causal group')).toBeInTheDocument()
     expect(screen.getByText('Categorical state vector, not a market forecast')).toBeInTheDocument()

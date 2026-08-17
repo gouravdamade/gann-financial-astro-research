@@ -19,7 +19,7 @@ EXPERIMENT_CONTRACT = "XE1_EXPERIMENTAL_EVIDENCE_LAB_V1"
 PROFILE_CONTRACT = "XE1_EXPERIMENTAL_PROFILE_V1"
 TRIAL_LEDGER_CONTRACT = "XE1_EXPERIMENTAL_TRIAL_LEDGER_V1"
 PROFILE_ID = "XE1_EVIDENCE_ROLE_MODIFIER_ABLATION_V1"
-XE1_SOURCE_BASELINE_COMMIT = "36bea0ba321503d809c3f88a22d06dc517809a2c"
+XE1_SOURCE_IMPLEMENTATION_COMMIT = "9c988395e9dbff09a4c3f60912fa1edac48ae375"
 OBSERVATION_FIXTURE = (
     Path("research_labs") / "experimental_evidence" / "fixtures" / "xe1_evidence_observations_v1.json"
 )
@@ -178,7 +178,7 @@ def _profile() -> dict[str, Any]:
         "contract": PROFILE_CONTRACT,
         "schemaVersion": 1,
         "profileId": PROFILE_ID,
-        "codeCommit": XE1_SOURCE_BASELINE_COMMIT,
+        "codeCommit": XE1_SOURCE_IMPLEMENTATION_COMMIT,
         "bindings": _bindings(),
         "causalAggregationPolicy": "XE1_ONE_DIRECTIONAL_VOTE_PER_CAUSAL_GROUP_V1",
         "oscillatorProjectionId": "XE1_CATEGORICAL_STATE_VECTOR_V1",

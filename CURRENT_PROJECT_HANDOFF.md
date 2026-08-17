@@ -25,7 +25,7 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   MT5, or any execution route. All responses carry `executionAllowed=false`.
   Classical source fixtures, Trailokya source semantics, Arghya runtime
   promotion, BPHS, and the Fields formula are unchanged.
-- Source implementation is preparing immutable founder-inspection candidate
+- Source implementation is pushed at `9c988395e9dbff09a4c3f60912fa1edac48ae375` and preparing immutable founder-inspection candidate
   `0.10.51-pfr-v2b-r7-xe1`; packaging and physical review remain founder-only.
 
 ## Latest Update - 2026-08-17 (PFR-V2B-R6-SBC-TD3R Argha source reconstruction)

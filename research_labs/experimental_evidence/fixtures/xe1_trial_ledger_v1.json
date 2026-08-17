@@ -12,7 +12,7 @@
       "datasetStatus": "SYNTHETIC",
       "result": "NULL",
       "notes": "Fixture demonstration only. No price, forecast, validation, or execution meaning.",
-      "codeCommit": "36bea0ba321503d809c3f88a22d06dc517809a2c",
+      "codeCommit": "9c988395e9dbff09a4c3f60912fa1edac48ae375",
       "createdAtUtc": "2026-08-17T00:00:00Z",
       "immutableAfterEvaluation": true
     },
@@ -25,7 +25,7 @@
       "datasetStatus": "TOUCHED_DEV",
       "result": "INCONCLUSIVE",
       "notes": "Reserved governance record. April 2025 is touched development data and cannot be called a pristine holdout.",
-      "codeCommit": "36bea0ba321503d809c3f88a22d06dc517809a2c",
+      "codeCommit": "9c988395e9dbff09a4c3f60912fa1edac48ae375",
       "createdAtUtc": "2026-08-17T00:00:00Z",
       "immutableAfterEvaluation": true
     }
