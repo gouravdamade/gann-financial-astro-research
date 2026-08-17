@@ -25,8 +25,16 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   MT5, or any execution route. All responses carry `executionAllowed=false`.
   Classical source fixtures, Trailokya source semantics, Arghya runtime
   promotion, BPHS, and the Fields formula are unchanged.
-- Source implementation is pushed at `9c988395e9dbff09a4c3f60912fa1edac48ae375` and preparing immutable founder-inspection candidate
-  `0.10.51-pfr-v2b-r7-xe1`; packaging and physical review remain founder-only.
+- XE1 source is pushed through `bb8337f50ee6fbc36c378f442d5f6ba82e267a5a`.
+  Candidate `0.10.51-pfr-v2b-r7-xe1` is built at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.51-pfr-v2b-r7-xe1-tauri`.
+  Portable SHA-256 is `3A3645F940B73FD74D2B282EA322875DFE522CE991C2945D0956978EE89D8F69`;
+  installer SHA-256 is `96DA7835AEAAB3371953C2B3EDDC31BF96B70EBBC408CBD1AC75181406A9772E`.
+  Full verification: backend `228/228`; frontend `81` files / `166` tests;
+  focused XE1 backend `13/13`; focused XE1 frontend `2/2`; lint/build and Rust
+  fmt/check/tests (`19`) passed. Two isolated portable smokes passed; the
+  packaged XE1 endpoint check returned no price/SBC/Fields/execution access.
+  Founder visual acceptance remains pending.
 
 ## Latest Update - 2026-08-17 (PFR-V2B-R6-SBC-TD3R Argha source reconstruction)
 
