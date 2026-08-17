@@ -56,6 +56,12 @@ from chart_conditioned_transit_event_service import (
 )
 from bphs_classical_timing_service import build_bphs_classical_calendar_range
 from agarwal_source_inspector import build_agarwal_source_profile
+from experimental_evidence_service import (
+    build_experimental_profile,
+    build_experimental_snapshot,
+    build_trial_ledger,
+    compare_experimental_transforms,
+)
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -283,6 +289,56 @@ def get_agarwal_source_profile() -> Any:
                 "profile": build_agarwal_source_profile(repository.paths.project_root),
             }
         )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/evidence/profile")
+def get_experimental_evidence_profile() -> Any:
+    try:
+        profile = build_experimental_profile(repository.paths.project_root)
+        if profile["guardrails"]["executionAllowed"]:
+            raise ValueError("XE1 profile violated the execution lock")
+        return jsonify({"ok": True, "profile": profile})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.post("/api/experiments/evidence/snapshot")
+def create_experimental_evidence_snapshot() -> Any:
+    try:
+        snapshot = build_experimental_snapshot(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if snapshot["guardrails"]["executionAllowed"]:
+            raise ValueError("XE1 snapshot violated the execution lock")
+        return jsonify({"ok": True, "snapshot": snapshot})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/experiments/evidence/compare-transforms")
+def compare_experimental_evidence_transforms() -> Any:
+    try:
+        comparison = compare_experimental_transforms(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if comparison["guardrails"]["executionAllowed"]:
+            raise ValueError("XE1 comparison violated the execution lock")
+        return jsonify({"ok": True, "comparison": comparison})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/experiments/evidence/trial-ledger")
+def get_experimental_evidence_trial_ledger() -> Any:
+    try:
+        ledger = build_trial_ledger(repository.paths.project_root)
+        if ledger["guardrails"]["executionAllowed"]:
+            raise ValueError("XE1 trial ledger violated the execution lock")
+        return jsonify({"ok": True, "ledger": ledger})
     except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
 

@@ -68,6 +68,13 @@ import type {
   SynchronizedIndependentRange,
   SynchronizedIndependentRangeRequest,
 } from './types'
+import type {
+  ExperimentalComparisonResponse,
+  ExperimentalDatasetStatus,
+  ExperimentalProfileResponse,
+  ExperimentalSnapshot,
+  ExperimentalTrialLedger,
+} from './experimentalEvidenceTypes'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -678,6 +685,51 @@ export async function fetchChakraLabSnapshot(
     },
   )
   return payload.snapshot
+}
+
+/** XE1 stays on the ordinary private backend path; it has no native source or execution bridge. */
+export async function fetchExperimentalEvidenceProfile(): Promise<ExperimentalProfileResponse> {
+  const payload = await request<{ profile: ExperimentalProfileResponse }>('/api/experiments/evidence/profile')
+  if (payload.profile.guardrails.executionAllowed !== false) {
+    throw new Error('Experimental evidence profile violated the execution lock')
+  }
+  return payload.profile
+}
+
+export async function fetchExperimentalEvidenceSnapshot(input: {
+  profileId?: string
+  dataMode: ExperimentalDatasetStatus
+  transformId: string
+}): Promise<ExperimentalSnapshot> {
+  const payload = await request<{ snapshot: ExperimentalSnapshot }>('/api/experiments/evidence/snapshot', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  if (payload.snapshot.guardrails.executionAllowed !== false || payload.snapshot.rawEvidenceImmutable !== true) {
+    throw new Error('Experimental evidence snapshot violated its immutable read-only contract')
+  }
+  return payload.snapshot
+}
+
+export async function compareExperimentalEvidenceTransforms(input: {
+  dataMode: ExperimentalDatasetStatus
+}): Promise<ExperimentalComparisonResponse> {
+  const payload = await request<{ comparison: ExperimentalComparisonResponse }>('/api/experiments/evidence/compare-transforms', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  if (payload.comparison.guardrails.executionAllowed !== false) {
+    throw new Error('Experimental transform comparison violated the execution lock')
+  }
+  return payload.comparison
+}
+
+export async function fetchExperimentalEvidenceTrialLedger(): Promise<ExperimentalTrialLedger> {
+  const payload = await request<{ ledger: ExperimentalTrialLedger }>('/api/experiments/evidence/trial-ledger')
+  if (payload.ledger.guardrails.executionAllowed !== false) {
+    throw new Error('Experimental trial ledger violated the execution lock')
+  }
+  return payload.ledger
 }
 
 export async function fetchAgarwalSourceProfile(): Promise<AgarwalSourceProfile> {

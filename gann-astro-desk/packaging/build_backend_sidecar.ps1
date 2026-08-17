@@ -74,6 +74,16 @@ $requiredBphsFixture = Join-Path $resourceRoot "_internal\research_labs\bphs_189
 if (-not (Test-Path -LiteralPath $requiredBphsFixture -PathType Leaf)) {
     throw "Backend sidecar is missing the BPHS Packet 1W Muhurta fixture: $requiredBphsFixture"
 }
+$requiredXe1Fixtures = @(
+    (Join-Path $resourceRoot "_internal\research_labs\experimental_evidence\fixtures\xe1_evidence_observations_v1.json"),
+    (Join-Path $resourceRoot "_internal\research_labs\experimental_evidence\fixtures\xe1_trial_ledger_v1.json")
+)
+$missingXe1Fixtures = @(
+    $requiredXe1Fixtures | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }
+)
+if ($missingXe1Fixtures.Count -gt 0) {
+    throw "Backend sidecar is missing XE1 experimental evidence fixtures:`n$($missingXe1Fixtures -join "`n")"
+}
 $gitkeep = Join-Path $resourceRoot ".gitkeep"
 if (-not (Test-Path -LiteralPath $gitkeep -PathType Leaf)) {
     Set-Content -LiteralPath $gitkeep `

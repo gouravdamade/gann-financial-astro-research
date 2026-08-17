@@ -1,8 +1,32 @@
 # Current Project Handoff
 
-Last updated: 2026-08-16 IST
+Last updated: 2026-08-17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-17 (PFR-V2B-R7-XE1 Experimental Evidence & Modifier Lab)
+
+- XE1 adds a separate top-level **Experiments** workspace. It is a read-only,
+  synthetic-first evidence-role and modifier ablation laboratory, not a
+  classical source profile, a market forecast, or an execution feature. The
+  persistent banner states: `EXPERIMENTAL - NOT CLASSICAL - NOT VALIDATED - NO
+  EXECUTION`.
+- `XE1_EXPERIMENTAL_EVIDENCE_LAB_V1` carries immutable raw observations,
+  versioned role bindings, one-vote-per-causal-group aggregation, derived-child
+  suppression, ambiguous-cause fail-closed behavior, a bounded positive
+  multiplier comparison, a separate confidence field, categorical state-vector
+  output, and an immutable trial ledger. The optional XE1 pair adapter is
+  separate from the existing Fields formula and does not read SBC.
+- Synthetic data is the only populated mode. `TOUCHED_DEV` deliberately shows
+  `TOUCHED_DEV_INPUT_NOT_CONFIGURED` until an explicit future evidence-admission
+  milestone supplies observations; it never rebrands synthetic data. April
+  2025 is recorded only as `TOUCHED_DEV`, never as a pristine holdout.
+- XE1 does not read price or market outcomes, SBC, Fields, Auto Suggest, ML,
+  MT5, or any execution route. All responses carry `executionAllowed=false`.
+  Classical source fixtures, Trailokya source semantics, Arghya runtime
+  promotion, BPHS, and the Fields formula are unchanged.
+- Source implementation is preparing immutable founder-inspection candidate
+  `0.10.51-pfr-v2b-r7-xe1`; packaging and physical review remain founder-only.
 
 ## Latest Update - 2026-08-17 (PFR-V2B-R6-SBC-TD3R Argha source reconstruction)
 

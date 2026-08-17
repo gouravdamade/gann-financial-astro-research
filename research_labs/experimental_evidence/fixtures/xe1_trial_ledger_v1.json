@@ -1,0 +1,33 @@
+{
+  "contract": "XE1_EXPERIMENTAL_TRIAL_LEDGER_V1",
+  "schemaVersion": 1,
+  "ledgerId": "XE1_TRIAL_LEDGER_SEED_V1",
+  "entries": [
+    {
+      "trialId": "XE1_SYNTHETIC_BASELINE_DEMONSTRATION_V1",
+      "experimentProfileId": "XE1_EVIDENCE_ROLE_MODIFIER_ABLATION_V1",
+      "transformVersion": "XE1_BOUNDED_EXP_MULTIPLIER_V1",
+      "parameterSet": { "beta": 0.65, "mMin": 0.5, "mMax": 1.5 },
+      "datasetId": "XE1_SYNTHETIC_EVIDENCE_ROLE_MODIFIER_ABLATION_V1",
+      "datasetStatus": "SYNTHETIC",
+      "result": "NULL",
+      "notes": "Fixture demonstration only. No price, forecast, validation, or execution meaning.",
+      "codeCommit": "36bea0ba321503d809c3f88a22d06dc517809a2c",
+      "createdAtUtc": "2026-08-17T00:00:00Z",
+      "immutableAfterEvaluation": true
+    },
+    {
+      "trialId": "XE1_APRIL_2025_TOUCH_DEV_RESERVED_V1",
+      "experimentProfileId": "XE1_EVIDENCE_ROLE_MODIFIER_ABLATION_V1",
+      "transformVersion": "XE1_BOUNDED_EXP_MULTIPLIER_V1",
+      "parameterSet": { "beta": 0.0, "mMin": 0.5, "mMax": 1.5 },
+      "datasetId": "APRIL_2025_REVIEW_WINDOW",
+      "datasetStatus": "TOUCHED_DEV",
+      "result": "INCONCLUSIVE",
+      "notes": "Reserved governance record. April 2025 is touched development data and cannot be called a pristine holdout.",
+      "codeCommit": "36bea0ba321503d809c3f88a22d06dc517809a2c",
+      "createdAtUtc": "2026-08-17T00:00:00Z",
+      "immutableAfterEvaluation": true
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import {
   CircleDot,
   Eye,
   EyeOff,
+  FlaskConical,
   Grid3X3,
   LockKeyhole,
   Maximize2,
@@ -124,6 +125,9 @@ const ChakraLabWorkspace = lazy(() => import('./ChakraLabWorkspace').then((modul
 const FieldsWorkspace = lazy(() => import('./FieldsWorkspace').then((module) => ({
   default: module.FieldsWorkspace,
 })))
+const ExperimentalLabWorkspace = lazy(() => import('./ExperimentalLabWorkspace').then((module) => ({
+  default: module.ExperimentalLabWorkspace,
+})))
 
 function dateRangeLabel(parameters: ChartParameters | null): string {
   if (!parameters) return 'Date range'
@@ -194,7 +198,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [aspectDetailsRequestNonce, setAspectDetailsRequestNonce] = useState(0)
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
-  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra' | 'fields'>('chart')
+  const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra' | 'fields' | 'experiments'>('chart')
   const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
   const [chakraSourceProfileId, setChakraSourceProfileId] = useState<SbcSourceProfileId>('phaladeepika_editor_vedha_guidance_v1')
   const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
@@ -881,7 +885,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   )
 
   return (
-    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${activeSurface === 'chakra' ? 'chakra-mode' : ''} ${activeSurface === 'fields' ? 'fields-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
+    <main className={`desk-shell ${activeSurface === 'square9' ? 'square9-mode' : ''} ${activeSurface === 'chakra' ? 'chakra-mode' : ''} ${activeSurface === 'fields' ? 'fields-mode' : ''} ${activeSurface === 'experiments' ? 'experiments-mode' : ''} ${inspectorVisible ? '' : 'inspector-collapsed'} ${bottomVisible ? '' : 'bottom-collapsed'} ${focusMode ? 'focus-mode' : ''}`}>
       <header className="top-command-bar">
         <div className="product-mark">
           <span className="product-glyph">GA</span>
@@ -892,6 +896,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
           <button className={activeSurface === 'square9' ? 'is-active' : ''} onClick={() => { setActiveSurface('square9'); setFocusMode(false); setObjectsOpen(false) }}><Grid3X3 size={13} /> Square of Nine</button>
           <button className={activeSurface === 'chakra' ? 'is-active' : ''} onClick={() => { setActiveSurface('chakra'); setFocusMode(false); setObjectsOpen(false) }}><CircleDot size={13} /> Chakra</button>
           <button className={activeSurface === 'fields' ? 'is-active' : ''} onClick={() => { setActiveSurface('fields'); setFocusMode(false); setObjectsOpen(false) }}><Waves size={13} /> Fields</button>
+          <button className={activeSurface === 'experiments' ? 'is-active' : ''} onClick={() => { setActiveSurface('experiments'); setFocusMode(false); setObjectsOpen(false) }}><FlaskConical size={13} /> Experiments</button>
         </div>
         <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
         {activeSurface === 'chart' && <>
@@ -1221,6 +1226,11 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
             onSelectFieldInterval={selectResearchFieldInterval}
           />
+        </Suspense>
+      )}
+      {activeSurface === 'experiments' && (
+        <Suspense fallback={<div className="loading-state"><strong>Opening Experimental Lab</strong></div>}>
+          <ExperimentalLabWorkspace />
         </Suspense>
       )}
       {activeSurface === 'chart' && <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>

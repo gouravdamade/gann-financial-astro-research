@@ -273,6 +273,18 @@ $manifest = [ordered]@{
     chakra_instrument_key_converter_contract = "SBC_ENGLISH_INITIAL_ADVISORY_V1"
     chakra_lab_execution_allowed = $false
     chakra_lab_financially_validated = $false
+    experimental_evidence_contract = "XE1_EXPERIMENTAL_EVIDENCE_LAB_V1"
+    experimental_evidence_profile = "XE1_EVIDENCE_ROLE_MODIFIER_ABLATION_V1"
+    experimental_evidence_dataset_default = "SYNTHETIC"
+    experimental_evidence_trial_ledger = "XE1_EXPERIMENTAL_TRIAL_LEDGER_V1"
+    experimental_evidence_price_data_read = $false
+    experimental_evidence_price_outcome_read = $false
+    experimental_evidence_sbc_fusion = $false
+    experimental_evidence_fields_formula_changed = $false
+    experimental_evidence_auto_suggest_added = $false
+    experimental_evidence_ml_added = $false
+    experimental_evidence_mt5_added = $false
+    experimental_evidence_execution_allowed = $false
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
@@ -292,6 +304,7 @@ This is a read-only experimental research candidate, not a validated or executab
 - Execution allowed: false
 - Automatic order placement: false
 - Market direction: ABSTAIN
+- XE1 Experimental Lab: synthetic/default, no price reads, no SBC fusion, no execution
 
 Run `GannAstroDesk.exe` from this folder and keep the adjacent `backend` folder in place.
 "@

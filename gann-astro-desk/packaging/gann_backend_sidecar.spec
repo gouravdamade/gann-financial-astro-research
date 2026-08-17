@@ -12,6 +12,7 @@ chart_conditioned_profile_root = (
 )
 bphs_classical_timing_root = project_root / "research_labs" / "bphs_1899_classical_timing"
 bphs_muhurta_fixture = bphs_classical_timing_root / "bphs_1899_packet_1w_muhurta_fixture.json"
+xe1_experimental_evidence_root = project_root / "research_labs" / "experimental_evidence"
 
 required_files = [
     project_root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
@@ -30,6 +31,8 @@ required_files = [
     chart_conditioned_profile_root / "target_aware_polarity_evidence_packets_v1.json",
     chart_conditioned_profile_root / "founder_chart_hypotheses_v1.json",
     bphs_muhurta_fixture,
+    xe1_experimental_evidence_root / "fixtures" / "xe1_evidence_observations_v1.json",
+    xe1_experimental_evidence_root / "fixtures" / "xe1_trial_ledger_v1.json",
 ]
 missing = [str(path) for path in required_files if not path.exists()]
 if missing:
@@ -53,6 +56,9 @@ datas = [
     # The BPHS inspector resolves this explicit source fixture beneath
     # sys._MEIPASS when running in the collected Python sidecar.
     (str(bphs_muhurta_fixture), "research_labs/bphs_1899_classical_timing"),
+    # XE1 reads a compact, price-free fixture and immutable ledger from the
+    # collected package. It never bundles source doctrine or market data here.
+    (str(xe1_experimental_evidence_root), "research_labs/experimental_evidence"),
     (r"D:\node.exe", "codex"),
     (str(node_root / "codex-sdk"), "codex/node_modules/@openai/codex-sdk"),
     (str(node_root / "codex"), "codex/node_modules/@openai/codex"),
@@ -74,6 +80,7 @@ hiddenimports = [
     "candlestick_analysis",
     "chakra_lab_service",
     "agarwal_source_inspector",
+    "experimental_evidence_service",
     "decision_engine",
     "build_trade_candidates_from_touches",
     "doctrine_config",
