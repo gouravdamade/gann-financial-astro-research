@@ -16,6 +16,10 @@ const api = vi.hoisted(() => ({
   fetchExperimentalEvidenceProfile: vi.fn(),
   fetchExperimentalEvidenceSnapshot: vi.fn(),
   fetchExperimentalEvidenceTrialLedger: vi.fn(),
+  compareXe2ScopedEvidenceTransforms: vi.fn(),
+  fetchXe2ScopedEvidenceProfile: vi.fn(),
+  fetchXe2ScopedEvidenceSnapshot: vi.fn(),
+  fetchXe2ScopedEvidenceTrialLedger: vi.fn(),
 }))
 
 vi.mock('./api', () => api)
@@ -108,6 +112,50 @@ const ledger: ExperimentalTrialLedger = {
   entries: [{ trialId: 'APRIL', experimentProfileId: profile.profile.profileId, experimentProfileHash: 'abc123', transformVersion: 'v1', parameterSet: { beta: 0 }, datasetId: 'APRIL_2025', datasetStatus: 'TOUCHED_DEV', result: 'INCONCLUSIVE', notes: 'not a holdout', codeCommit: 'test', createdAtUtc: '2026-08-17T00:00:00Z', immutableAfterEvaluation: true, entryHash: 'a'.repeat(64) }],
 }
 
+const xe2Profile = {
+  contract: 'XE2_CAUSAL_SCOPED_EVIDENCE_LAB_V1' as const,
+  profile: {
+    contract: 'XE2_CAUSAL_SCOPED_PROFILE_V1' as const, schemaVersion: 1 as const, profileId: 'XE2_CAUSAL_SCOPED_SPEED_MODIFIER_TOURNAMENT_V1' as const,
+    acceptanceBaselineCommit: 'ccb4ee5c17dc1cce3f989832ac22196bf07b8806', datasetStatus: 'TOUCHED_DEV' as const,
+    profilePurpose: 'REAL_ASTRONOMICAL_INPUT_PLUS_SYNTHETIC_SIGN_TEST_ONLY', realSignedEvidenceStatus: 'NOT_ADMITTED_NO_REVIEWED_SIGNED_EVIDENCE',
+    causalAggregationPolicy: 'one sign per event', globalModifierDefaultAllowed: false as const, modifierScopeRequired: 'CAUSAL_EVENT_ID' as const,
+    stackingAllowed: false as const, executionAllowed: false as const, profileHash: 'xe2hash', transforms: [
+      { transformId: 'XE2_M0_BASE_SYNTHETIC_SIGN_TEST_V1', label: 'M0', family: 'BASE', parameters: {} },
+      { transformId: 'XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1', label: 'M1', family: 'POSITIVE_SCOPED_MULTIPLIER', parameters: { beta: 0.8 } },
+      { transformId: 'XE2_M2_SPEED_SEPARATE_CHANNEL_V1', label: 'M2', family: 'SEPARATE_CHANNEL', parameters: {} },
+      { transformId: 'XE2_M3_SPEED_INTERACTION_V1', label: 'M3', family: 'INTERACTION', parameters: { gamma: 0.5 } },
+      { transformId: 'XE2_M4_MOTION_CONTEXT_GATE_V1', label: 'M4', family: 'CONTEXT_GATE', parameters: {} },
+    ],
+  },
+  availableTransforms: ['XE2_M0_BASE_SYNTHETIC_SIGN_TEST_V1', 'XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1'],
+  realEvidenceAdmission: { astronomicalIdentity: 'ADMITTED_HASH_LINKED', rawAstronomicalSpeed: 'ADMITTED_RAW_UNITS', reviewedSignedEvidence: 'NOT_ADMITTED_NONE_EXISTS', syntheticSignChannel: 'SYNTHETIC_SIGN_TEST_ONLY', marketDirection: 'BLOCKED_NO_REAL_SIGNED_EVIDENCE' },
+  guardrails: { ...guardrails, marketForecast: false as const },
+}
+
+const xe2Snapshot = {
+  contract: 'XE2_CAUSAL_SCOPED_EVIDENCE_LAB_V1' as const, schemaVersion: 1 as const, snapshotId: 'xe2snapshot', profile: xe2Profile.profile,
+  datasetStatus: 'TOUCHED_DEV' as const, datasetLabel: 'TOUCHED DEV - REAL ASTRONOMY + SYNTHETIC SIGN TEST ONLY',
+  astronomySource: { reviewedPacketFile: 'reviewed.json', directionPolicy: 'ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF' },
+  normalization: { contract: 'MOON_RELATIVE_MEAN_SPEED_V1', body: 'MOON', rawUnit: 'deg/day', referenceSpeedDegPerDay: 13.176358, formula: '(raw-reference)/reference', referenceOrigin: 'astronomy only' },
+  transformId: 'XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1', transform: xe2Profile.profile.transforms[1], rawEvidenceImmutable: true as const,
+  rawObservations: [], scopeBindings: [], marketDirectionStatus: 'BLOCKED_NO_REAL_SIGNED_EVIDENCE' as const,
+  marketOutcome: { datasetStatus: 'TOUCHED_DEV', outcomeEvaluationStatus: 'BLOCKED_NO_GOVERNED_OFFLINE_OUTCOME_DATASET' },
+  causalContributions: [{ causalEventId: 'CAUSE', eventId: 'TN_HASH', eventHash: 'a'.repeat(64), sourceObservationIds: [], syntheticSignObservationId: 'synthetic', rawSyntheticSignTestValue: 1, rawSpeedDegPerDay: 14.1, speedNormalizationContract: 'MOON_RELATIVE_MEAN_SPEED_V1', zSpeed: 0.07, motionPhaseAtExact: 'DIRECT', scope: { modifierObservationId: 'speed', targetCausalEventId: 'CAUSE', scopeType: 'CAUSAL_EVENT_ID' as const, scopeStatus: 'BOUND' as const, globalDefaultApplied: false as const }, multiplierOrInteraction: 1.05, separateChannelValue: null, contextGate: null, value: 1.05, status: 'ACTIVE' as const, reason: null, signEvidenceStatus: 'SYNTHETIC_SIGN_TEST_ONLY_NOT_MARKET_EVIDENCE' as const }],
+  syntheticStateVector: { state: 'SYNTHETIC_SIGN_TEST_ONLY' as const, positive: 1.05, negative: 0, syntheticRaw: 1.05, syntheticNormalized: 1, activity: 1.05, conflict: 0, unknownCauseCount: 0 },
+  guardrails: xe2Profile.guardrails,
+}
+
+const xe2Comparison = {
+  contract: 'XE2_CAUSAL_SCOPED_TRANSFORM_COMPARISON_V1' as const, profileId: xe2Profile.profile.profileId, profileHash: xe2Profile.profile.profileHash, datasetStatus: 'TOUCHED_DEV' as const,
+  comparisons: xe2Profile.profile.transforms.map((transform) => ({ transformId: transform.transformId, transform, syntheticStateVector: xe2Snapshot.syntheticStateVector, marketDirectionStatus: 'BLOCKED_NO_REAL_SIGNED_EVIDENCE' as const })), guardrails: xe2Profile.guardrails,
+}
+
+const xe2Ledger = {
+  contract: 'XE2_CAUSAL_SCOPED_MODIFIER_TRIAL_LEDGER_V1' as const, ledgerId: 'xe2ledger', profileHash: xe2Profile.profile.profileHash,
+  datasetGovernance: { datasetStatus: 'TOUCHED_DEV', outcomeEvaluationStatus: 'BLOCKED_NO_GOVERNED_OFFLINE_OUTCOME_DATASET', pristineHoldoutUsed: false },
+  entries: [{ trialId: 'XE2_M0', transformId: 'XE2_M0_BASE_SYNTHETIC_SIGN_TEST_V1', result: 'NOT_EVALUATED' as const, notes: 'No outcome.', profileId: xe2Profile.profile.profileId, profileHash: xe2Profile.profile.profileHash, datasetStatus: 'TOUCHED_DEV' as const, marketOutcomeRead: false as const, immutableAfterEvaluation: true as const, entryHash: 'b'.repeat(64) }], ledgerHash: 'c'.repeat(64), guardrails: xe2Profile.guardrails,
+}
+
 afterEach(() => { cleanup(); vi.clearAllMocks() })
 
 describe('ExperimentalLabWorkspace', () => {
@@ -160,5 +208,25 @@ describe('ExperimentalLabWorkspace', () => {
     expect(screen.getByText('Conflict').parentElement).toHaveTextContent('Unknown')
     expect(screen.getByText('MARKET INPUT: NONE')).toBeInTheDocument()
     expect(screen.queryByText('Raw fixture sealed')).not.toBeInTheDocument()
+  })
+
+  it('switches to XE2 without inventing a market sign or reading an outcome', async () => {
+    api.fetchExperimentalEvidenceProfile.mockResolvedValue(profile)
+    api.fetchExperimentalEvidenceSnapshot.mockResolvedValue(snapshot)
+    api.compareExperimentalEvidenceTransforms.mockResolvedValue(comparison)
+    api.fetchExperimentalEvidenceTrialLedger.mockResolvedValue(ledger)
+    api.fetchXe2ScopedEvidenceProfile.mockResolvedValue(xe2Profile)
+    api.fetchXe2ScopedEvidenceSnapshot.mockResolvedValue(xe2Snapshot)
+    api.compareXe2ScopedEvidenceTransforms.mockResolvedValue(xe2Comparison)
+    api.fetchXe2ScopedEvidenceTrialLedger.mockResolvedValue(xe2Ledger)
+    const user = userEvent.setup()
+    render(<ExperimentalLabWorkspace />)
+    await screen.findByText('Experimental Lab')
+    await user.selectOptions(screen.getByLabelText('Experimental research profile'), 'XE2')
+    expect(await screen.findByText('REAL ASTRONOMY: HASH-LINKED')).toBeInTheDocument()
+    expect(screen.getByText('SIGNED MARKET EVIDENCE: NONE')).toBeInTheDocument()
+    expect(screen.getAllByText('SYNTHETIC SIGN TEST ONLY').length).toBeGreaterThan(0)
+    expect(screen.getByText('Outcome evaluation').parentElement).toHaveTextContent('BLOCKED')
+    expect(api.fetchXe2ScopedEvidenceSnapshot).toHaveBeenCalledWith({ transformId: 'XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1' })
   })
 })

@@ -4,6 +4,29 @@ Last updated: 2026-08-17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-18 (PFR-V2B-R7-XE2 Causal-Scoped Real Evidence)
+
+- XE2 is a new, isolated Experiments profile. It accepts four hash-linked,
+  `SINGLE_PASS_VERIFIED` USD April 2025 astronomical event identities and raw
+  Moon speed values, but it admits **no real signed market evidence**: the
+  reviewed USD/JPY packets have zero founder polarity decisions. Aspect
+  geometry, speed and motion never supply a market sign.
+- The only signed channel is visibly labelled `SYNTHETIC_SIGN_TEST_ONLY`. It
+  supports a transparent M0-M4 causal-scoped modifier tournament, not a market
+  forecast. Every speed modifier binds to one `CAUSAL_EVENT_ID`; there is no
+  global default, stacking, or unscoped fallback.
+- April 2025 remains `TOUCHED_DEV`; no price, return, SBC, Fields, live MT5 or
+  outcome dataset is read. The product visibly reports
+  `BLOCKED_NO_REAL_SIGNED_EVIDENCE` and blocked outcome evaluation. XE2 leaves
+  Mode 1, Trailokya, Argha, Fields, Auto Suggest, ML and execution unchanged.
+- XE1R1 founder acceptance remains recorded at `ccb4ee5c17dc1cce3f989832ac22196bf07b8806`.
+  Its 0.10.52 package remains immutable. XE2 source verification passed:
+  focused XE2 backend `8/8`, XE1 backend `13/13`, full backend `236/236`,
+  frontend `39 files / 168 tests`, broad Python `780 passed, 1 skipped, 16
+  subtests`, lint/build, and Rust `19/19`. The one broad skip is the optional
+  external JHora witness requiring `JHORA_WITNESS_CSV`. XE2 candidate packaging
+  and founder inspection are the remaining bounded steps.
+
 ## Latest Update - 2026-08-18 (PFR-V2B-R7-XE1R1 Founder Acceptance)
 
 - The founder physically accepted immutable founder-inspection candidate

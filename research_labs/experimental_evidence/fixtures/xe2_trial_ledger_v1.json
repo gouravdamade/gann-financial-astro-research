@@ -1,0 +1,43 @@
+{
+  "contract": "XE2_CAUSAL_SCOPED_MODIFIER_TRIAL_LEDGER_V1",
+  "schemaVersion": 1,
+  "ledgerId": "XE2_APRIL_2025_CAUSAL_SCOPED_TOURNAMENT_V1",
+  "datasetGovernance": {
+    "datasetStatus": "TOUCHED_DEV",
+    "marketOutcomeRead": false,
+    "outcomeEvaluationStatus": "BLOCKED_NO_GOVERNED_OFFLINE_OUTCOME_DATASET",
+    "pristineHoldoutUsed": false
+  },
+  "entries": [
+    {
+      "trialId": "XE2_M0_BASE_SIGN_TEST_V1",
+      "transformId": "XE2_M0_BASE_SYNTHETIC_SIGN_TEST_V1",
+      "result": "NOT_EVALUATED",
+      "notes": "Real astronomical identities are present; signs are synthetic test inputs only. No market outcome was read."
+    },
+    {
+      "trialId": "XE2_M1_SCOPED_SPEED_MULTIPLIER_V1",
+      "transformId": "XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1",
+      "result": "NOT_EVALUATED",
+      "notes": "Per-cause Moon speed modifier only. No global scope, no outcome evaluation, no forecast."
+    },
+    {
+      "trialId": "XE2_M2_SPEED_CHANNEL_V1",
+      "transformId": "XE2_M2_SPEED_SEPARATE_CHANNEL_V1",
+      "result": "NOT_EVALUATED",
+      "notes": "Speed is displayed in a separate unsigned channel. The synthetic sign channel is unchanged."
+    },
+    {
+      "trialId": "XE2_M3_SPEED_INTERACTION_V1",
+      "transformId": "XE2_M3_SPEED_INTERACTION_V1",
+      "result": "NOT_EVALUATED",
+      "notes": "Engineering interaction test only; not doctrine, market evidence, or a validation result."
+    },
+    {
+      "trialId": "XE2_M4_DIRECT_CONTEXT_GATE_V1",
+      "transformId": "XE2_M4_MOTION_CONTEXT_GATE_V1",
+      "result": "NOT_EVALUATED",
+      "notes": "Verified direct motion is a per-cause context gate. It supplies no direction and no global default."
+    }
+  ]
+}

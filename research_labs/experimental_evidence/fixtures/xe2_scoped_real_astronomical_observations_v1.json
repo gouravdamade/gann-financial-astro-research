@@ -1,0 +1,119 @@
+{
+  "contract": "XE2_SCOPED_REAL_ASTRONOMICAL_OBSERVATION_FIXTURE_V1",
+  "schemaVersion": 1,
+  "fixtureId": "XE2_APRIL_2025_REAL_ASTRONOMY_SYNTHETIC_SIGN_TOURNAMENT_V1",
+  "datasetGovernance": {
+    "datasetStatus": "TOUCHED_DEV",
+    "datasetWindowUtc": {
+      "startUtc": "2025-04-01T00:00:00Z",
+      "endUtc": "2025-05-01T00:00:00Z"
+    },
+    "marketOutcomeRead": false,
+    "marketOutcomeStatus": "MARKET_OUTCOME_NOT_ADMITTED",
+    "marketOutcomeReason": "No governed frozen offline outcome dataset is attached to XE2.",
+    "pristineHoldoutUsed": false,
+    "liveMt5Read": false
+  },
+  "astronomySource": {
+    "reviewedPacketFile": "research_labs/chart_conditioned_aspects/founder_review/USD_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.json",
+    "reviewedPacketSha256": "483C6D377AD6D6007F19BB49B7F594864867C841180676D430013D5109B511C7",
+    "blankPacketSha256": "08DB3837B89866519B7E0B24388537A2064F9EFE059D4FD5E6BCB77F82CA3D76",
+    "identityIntegrityManifestSha256": "BB0B952B3CC30A91C41D48729139CF2985542C1A64DB1D940D74FFFDBDB2E26E",
+    "astronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+    "directionPolicy": "ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF"
+  },
+  "normalization": {
+    "contract": "MOON_RELATIVE_MEAN_SPEED_V1",
+    "body": "MOON",
+    "rawUnit": "deg/day",
+    "referenceSpeedDegPerDay": 13.176358,
+    "formula": "(rawSpeedDegPerDay - referenceSpeedDegPerDay) / referenceSpeedDegPerDay",
+    "referenceOrigin": "fixed astronomical mean-motion reference; independent of price, return, polarity, or outcome"
+  },
+  "events": [
+    {
+      "causalEventId": "XE2_CAUSE_TN_CE5F70C72FD13CC479740159",
+      "syntheticSignTestValue": 1.0,
+      "eventIdentity": {
+        "eventId": "TN_CE5F70C72FD13CC479740159",
+        "eventHash": "CE5F70C72FD13CC479740159E37436FA5ABA8F16926093FCBF589F2FDBD72BEA",
+        "sideIdentity": "USD",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "transitBody": "MOON",
+        "natalTarget": "MOON",
+        "aspectType": "square",
+        "applyingStartUtc": "2025-04-01T11:27:17Z",
+        "exactUtc": "2025-04-01T16:19:44Z",
+        "separatingEndUtc": "2025-04-01T21:13:29Z",
+        "identityStatus": "SINGLE_PASS_VERIFIED",
+        "motionPhaseAtExact": "DIRECT",
+        "speedDegPerDay": 14.74005797
+      }
+    },
+    {
+      "causalEventId": "XE2_CAUSE_TN_397A2B053BC76D9D788E5E5E",
+      "syntheticSignTestValue": -0.8,
+      "eventIdentity": {
+        "eventId": "TN_397A2B053BC76D9D788E5E5E",
+        "eventHash": "397A2B053BC76D9D788E5E5E041850A13658495D1E2F4557B24845F493DEDDD4",
+        "sideIdentity": "USD",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "transitBody": "MOON",
+        "natalTarget": "MERCURY",
+        "aspectType": "sextile",
+        "applyingStartUtc": "2025-04-01T11:55:00Z",
+        "exactUtc": "2025-04-01T16:47:34Z",
+        "separatingEndUtc": "2025-04-01T21:41:26Z",
+        "identityStatus": "SINGLE_PASS_VERIFIED",
+        "motionPhaseAtExact": "DIRECT",
+        "speedDegPerDay": 14.73383495
+      }
+    },
+    {
+      "causalEventId": "XE2_CAUSE_TN_A32A6104A917D4918B269910",
+      "syntheticSignTestValue": 0.6,
+      "eventIdentity": {
+        "eventId": "TN_A32A6104A917D4918B269910",
+        "eventHash": "A32A6104A917D4918B269910B5A0421135BBC034C7D6CDDE43C7FE1050E26FAB",
+        "sideIdentity": "USD",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "transitBody": "MOON",
+        "natalTarget": "JUPITER",
+        "aspectType": "conjunction",
+        "applyingStartUtc": "2025-04-04T09:55:52Z",
+        "exactUtc": "2025-04-04T15:13:11Z",
+        "separatingEndUtc": "2025-04-04T20:32:38Z",
+        "identityStatus": "SINGLE_PASS_VERIFIED",
+        "motionPhaseAtExact": "DIRECT",
+        "speedDegPerDay": 13.56881018
+      }
+    },
+    {
+      "causalEventId": "XE2_CAUSE_TN_BD340A6100B173B5F254EDC1",
+      "syntheticSignTestValue": -0.5,
+      "eventIdentity": {
+        "eventId": "TN_BD340A6100B173B5F254EDC1",
+        "eventHash": "BD340A6100B173B5F254EDC150F2418A72DB177FF52D2367C3EF7454C7C7475C",
+        "sideIdentity": "USD",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "transitBody": "MOON",
+        "natalTarget": "SATURN",
+        "aspectType": "square",
+        "applyingStartUtc": "2025-04-05T01:45:04Z",
+        "exactUtc": "2025-04-05T07:08:45Z",
+        "separatingEndUtc": "2025-04-05T12:34:35Z",
+        "identityStatus": "SINGLE_PASS_VERIFIED",
+        "motionPhaseAtExact": "DIRECT",
+        "speedDegPerDay": 13.30215282
+      }
+    }
+  ]
+}

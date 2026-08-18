@@ -75,6 +75,12 @@ import type {
   ExperimentalSnapshot,
   ExperimentalTrialLedger,
 } from './experimentalEvidenceTypes'
+import type {
+  Xe2ComparisonResponse,
+  Xe2ProfileResponse,
+  Xe2Snapshot,
+  Xe2TrialLedger,
+} from './xe2EvidenceTypes'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -728,6 +734,49 @@ export async function fetchExperimentalEvidenceTrialLedger(): Promise<Experiment
   const payload = await request<{ ledger: ExperimentalTrialLedger }>('/api/experiments/evidence/trial-ledger')
   if (payload.ledger.guardrails.executionAllowed !== false) {
     throw new Error('Experimental trial ledger violated the execution lock')
+  }
+  return payload.ledger
+}
+
+/** XE2 loads only server-compiled, immutable real astronomy and synthetic test signs. */
+export async function fetchXe2ScopedEvidenceProfile(): Promise<Xe2ProfileResponse> {
+  const payload = await request<{ profile: Xe2ProfileResponse }>('/api/experiments/xe2/profile')
+  if (payload.profile.guardrails.executionAllowed !== false || payload.profile.realEvidenceAdmission.reviewedSignedEvidence !== 'NOT_ADMITTED_NONE_EXISTS') {
+    throw new Error('XE2 profile violated its signed-evidence or execution lock')
+  }
+  return payload.profile
+}
+
+export async function fetchXe2ScopedEvidenceSnapshot(input: { profileId?: string; transformId: string }): Promise<Xe2Snapshot> {
+  const payload = await request<{ snapshot: Xe2Snapshot }>('/api/experiments/xe2/snapshot', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  if (
+    payload.snapshot.guardrails.executionAllowed !== false
+    || payload.snapshot.rawEvidenceImmutable !== true
+    || payload.snapshot.marketDirectionStatus !== 'BLOCKED_NO_REAL_SIGNED_EVIDENCE'
+  ) {
+    throw new Error('XE2 snapshot violated its immutable signed-evidence or execution lock')
+  }
+  return payload.snapshot
+}
+
+export async function compareXe2ScopedEvidenceTransforms(): Promise<Xe2ComparisonResponse> {
+  const payload = await request<{ comparison: Xe2ComparisonResponse }>('/api/experiments/xe2/compare-transforms', {
+    method: 'POST',
+    body: JSON.stringify({}),
+  })
+  if (payload.comparison.guardrails.executionAllowed !== false) {
+    throw new Error('XE2 transform comparison violated the execution lock')
+  }
+  return payload.comparison
+}
+
+export async function fetchXe2ScopedEvidenceTrialLedger(): Promise<Xe2TrialLedger> {
+  const payload = await request<{ ledger: Xe2TrialLedger }>('/api/experiments/xe2/trial-ledger')
+  if (payload.ledger.guardrails.executionAllowed !== false) {
+    throw new Error('XE2 trial ledger violated the execution lock')
   }
   return payload.ledger
 }

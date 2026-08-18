@@ -62,6 +62,12 @@ from experimental_evidence_service import (
     build_trial_ledger,
     compare_experimental_transforms,
 )
+from xe2_scoped_evidence_service import (
+    build_xe2_profile,
+    build_xe2_snapshot,
+    build_xe2_trial_ledger,
+    compare_xe2_transforms,
+)
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -338,6 +344,56 @@ def get_experimental_evidence_trial_ledger() -> Any:
         ledger = build_trial_ledger(repository.paths.project_root)
         if ledger["guardrails"]["executionAllowed"]:
             raise ValueError("XE1 trial ledger violated the execution lock")
+        return jsonify({"ok": True, "ledger": ledger})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/xe2/profile")
+def get_xe2_scoped_evidence_profile() -> Any:
+    try:
+        profile = build_xe2_profile(repository.paths.project_root)
+        if profile["guardrails"]["executionAllowed"]:
+            raise ValueError("XE2 profile violated the execution lock")
+        return jsonify({"ok": True, "profile": profile})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.post("/api/experiments/xe2/snapshot")
+def create_xe2_scoped_evidence_snapshot() -> Any:
+    try:
+        snapshot = build_xe2_snapshot(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if snapshot["guardrails"]["executionAllowed"] or not snapshot["rawEvidenceImmutable"]:
+            raise ValueError("XE2 snapshot violated its immutable execution lock")
+        return jsonify({"ok": True, "snapshot": snapshot})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/experiments/xe2/compare-transforms")
+def compare_xe2_scoped_evidence_transforms() -> Any:
+    try:
+        comparison = compare_xe2_transforms(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if comparison["guardrails"]["executionAllowed"]:
+            raise ValueError("XE2 comparison violated the execution lock")
+        return jsonify({"ok": True, "comparison": comparison})
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/experiments/xe2/trial-ledger")
+def get_xe2_scoped_evidence_trial_ledger() -> Any:
+    try:
+        ledger = build_xe2_trial_ledger(repository.paths.project_root)
+        if ledger["guardrails"]["executionAllowed"]:
+            raise ValueError("XE2 trial ledger violated the execution lock")
         return jsonify({"ok": True, "ledger": ledger})
     except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500

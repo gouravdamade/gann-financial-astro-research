@@ -13,6 +13,7 @@ import type {
   ExperimentalSnapshot,
   ExperimentalTrialLedger,
 } from '../experimentalEvidenceTypes'
+import { Xe2ScopedEvidencePanel } from './Xe2ScopedEvidencePanel'
 
 const DATA_MODE_LABELS: Record<ExperimentalDatasetStatus, string> = {
   SYNTHETIC: 'Synthetic fixture',
@@ -172,6 +173,7 @@ function TrialLedgerPanel({ ledger }: { ledger: ExperimentalTrialLedger | null }
 }
 
 export function ExperimentalLabWorkspace() {
+  const [researchProfile, setResearchProfile] = useState<'XE1' | 'XE2'>('XE1')
   const [profile, setProfile] = useState<ExperimentalProfileResponse | null>(null)
   const [snapshot, setSnapshot] = useState<ExperimentalSnapshot | null>(null)
   const [comparison, setComparison] = useState<ExperimentalComparisonResponse | null>(null)
@@ -206,7 +208,9 @@ export function ExperimentalLabWorkspace() {
     }
   }, [dataMode, ledger, profile, transformId])
 
-  useEffect(() => { void load() }, [load])
+  useEffect(() => {
+    if (researchProfile === 'XE1') void load()
+  }, [load, researchProfile])
 
   return (
     <section className="experimental-lab" aria-label="Experimental Evidence and Modifier Lab">
@@ -214,13 +218,15 @@ export function ExperimentalLabWorkspace() {
       <header className="experimental-lab-header">
         <div><div className="experimental-kicker"><Activity size={14} /> Evidence research workspace</div><h1>Experimental Lab</h1><p>Raw observations are immutable. Roles, causal grouping, and bounded transforms are versioned research objects.</p></div>
         <div className="experimental-controls">
-          <label>Dataset<select aria-label="Experimental dataset mode" value={dataMode} onChange={(event) => { const value = event.target.value as ExperimentalDatasetStatus; setDataMode(value); void load(value, transformId) }} disabled={busy}>{(['SYNTHETIC', 'TOUCHED_DEV', 'MANUAL'] as const).map((mode) => <option key={mode} value={mode}>{DATA_MODE_LABELS[mode]}</option>)}</select></label>
+          <label>Research profile<select aria-label="Experimental research profile" value={researchProfile} onChange={(event) => setResearchProfile(event.target.value as 'XE1' | 'XE2')}><option value="XE1">XE1 synthetic baseline</option><option value="XE2">XE2 scoped evidence</option></select></label>
+          {researchProfile === 'XE1' && <><label>Dataset<select aria-label="Experimental dataset mode" value={dataMode} onChange={(event) => { const value = event.target.value as ExperimentalDatasetStatus; setDataMode(value); void load(value, transformId) }} disabled={busy}>{(['SYNTHETIC', 'TOUCHED_DEV', 'MANUAL'] as const).map((mode) => <option key={mode} value={mode}>{DATA_MODE_LABELS[mode]}</option>)}</select></label>
           <label>Transform<select aria-label="Experimental transform" value={transformId} onChange={(event) => { const value = event.target.value; setTransformId(value); void load(dataMode, value) }} disabled={busy}>{Object.entries(TRANSFORM_LABELS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-          <button type="button" className="secondary-command" onClick={() => void load()} disabled={busy} title="Refresh the immutable experimental snapshot"><RefreshCw size={14} className={busy ? 'xe1-spin' : ''} /> Refresh</button>
+          <button type="button" className="secondary-command" onClick={() => void load()} disabled={busy} title="Refresh the immutable experimental snapshot"><RefreshCw size={14} className={busy ? 'xe1-spin' : ''} /> Refresh</button></>}
         </div>
       </header>
-      {error && <div className="xe1-error"><CircleAlert size={16} /><strong>Experimental lab unavailable</strong><span>{error}</span></div>}
-      {snapshot && <>
+      {researchProfile === 'XE2' && <Xe2ScopedEvidencePanel />}
+      {researchProfile === 'XE1' && error && <div className="xe1-error"><CircleAlert size={16} /><strong>Experimental lab unavailable</strong><span>{error}</span></div>}
+      {researchProfile === 'XE1' && snapshot && <>
         <section className="xe1-context-strip" aria-label="Experimental profile context"><span><BookOpenCheck size={13} /> {profile?.profile.profileId}</span><span>Profile hash {snapshot.profile.profileHash.slice(0, 16)}...</span><span>Code {snapshot.codeCommit.slice(0, 12)}</span><span>{snapshot.datasetLabel}</span><span className="xe1-market-input">MARKET INPUT: NONE</span><span><ShieldCheck size={13} /> execution locked</span></section>
         <ExperimentalStateLane snapshot={snapshot} />
         <div className="xe1-content-grid"><RawEvidenceTable snapshot={snapshot} /><Contributions snapshot={snapshot} /></div>

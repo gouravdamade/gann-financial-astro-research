@@ -285,6 +285,18 @@ $manifest = [ordered]@{
     experimental_evidence_ml_added = $false
     experimental_evidence_mt5_added = $false
     experimental_evidence_execution_allowed = $false
+    xe2_experimental_evidence_contract = "XE2_CAUSAL_SCOPED_EVIDENCE_LAB_V1"
+    xe2_experimental_evidence_profile = "XE2_CAUSAL_SCOPED_SPEED_MODIFIER_TOURNAMENT_V1"
+    xe2_experimental_evidence_dataset = "TOUCHED_DEV"
+    xe2_real_astronomical_input = "hash_linked_event_identity_and_raw_speed"
+    xe2_real_signed_evidence = "not_admitted_none_exists"
+    xe2_synthetic_sign_channel = "test_only_not_market_evidence"
+    xe2_market_outcome_read = $false
+    xe2_live_mt5_read = $false
+    xe2_global_modifier_default_allowed = $false
+    xe2_modifier_stacking_allowed = $false
+    xe2_market_direction = "blocked_no_real_signed_evidence"
+    xe2_execution_allowed = $false
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
@@ -305,6 +317,7 @@ This is a read-only experimental research candidate, not a validated or executab
 - Automatic order placement: false
 - Market direction: ABSTAIN
 - XE1 Experimental Lab: synthetic/default, no price reads, no SBC fusion, no execution
+- XE2 Scoped Evidence: hash-linked astronomy plus synthetic sign tests only; no signed market evidence, no outcome read, no execution
 
 Run `GannAstroDesk.exe` from this folder and keep the adjacent `backend` folder in place.
 "@
