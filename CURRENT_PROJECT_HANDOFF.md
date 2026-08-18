@@ -1,8 +1,38 @@
 # Current Project Handoff
 
-Last updated: 2026-08-17 IST
+Last updated: 2026-08-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-19 (PFR-V2B-R7-XE2 Founder Inspection Candidate)
+
+- XE2 source commit `fc72f58531c079181d2a1281e9e5b48e5fa16b2e` is packaged as
+  founder-inspection candidate `0.10.53-pfr-v2b-r7-xe2`. The package is at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.53-pfr-v2b-r7-xe2-tauri`.
+  Portable SHA-256 is
+  `0A8275A76BF2EAC624DD182A9ECB6F91EDAA72D5A021E6D21A0A9D7162152536`; installer
+  SHA-256 is
+  `DF1751905DD6316FB1C31C5742D28023F2B5F672FB1043351F858F7D743B8C7A`.
+- XE2 reads four hash-linked `SINGLE_PASS_VERIFIED` USD April 2025 astronomical
+  event identities and raw Moon speed only. The reviewed USD/JPY packets still
+  contain zero founder polarity decisions, so there is no admitted real signed
+  market evidence. Its M0-M4 causal-scoped math runs only against a visibly
+  synthetic sign test and product output remains
+  `BLOCKED_NO_REAL_SIGNED_EVIDENCE`.
+- Verification passed: focused XE2 backend `8/8`, XE1 regression `13/13`, full
+  backend `236/236`, focused frontend `4/4`, full frontend `39 files / 168
+  tests`, broad Python `780 passed, 1 skipped, 16 subtests`, lint/build and Rust
+  `19/19`. The broad skip remains the optional external JHora witness requiring
+  `JHORA_WITNESS_CSV`.
+- Two isolated portable smokes passed with zero failed checks. Each verified
+  backend health, execution locks, source-profile contracts, same-port sidecar
+  recovery, layout survival and no surviving descendants. The only deferred
+  check is the optional unconfigured candlestick specialist.
+- Founder inspection remains pending. Use
+  `docs/research/PFR_V2B_R7_XE2_FOUNDER_INSPECTION_CANDIDATE_0.10.53-pfr-v2b-r7-xe2.md`.
+  XE2 keeps no price/outcome read, no SBC or Fields fusion, no live MT5,
+  Auto Suggest, ML or execution. The accepted XE1R1 `0.10.52` candidate remains
+  immutable.
 
 ## Latest Update - 2026-08-18 (PFR-V2B-R7-XE2 Causal-Scoped Real Evidence)
 
