@@ -4,6 +4,23 @@ Last updated: 2026-08-17 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-18 (PFR-V2B-R7-XE1R1 Founder Acceptance)
+
+- The founder physically accepted immutable founder-inspection candidate
+  `0.10.52-pfr-v2b-r7-xe1r1` on 2026-08-18 IST. The accepted portable hash is
+  `AFA1FDDA171DE02FD3342274AC8682AAC722E5BE05ED8522352F6FA49E7ED116` and the
+  accepted installer hash is
+  `F84676FAAA5C3C40C973EBD0EB169EFA5CFB4E307A932E4CD0F62F8B9814DE16`.
+- Acceptance covers the sticky Experiments safety banner, evidence-domain
+  wording, `MARKET INPUT: NONE`, empty Touched/Manual Unknown states,
+  `No observations admitted`, no observed clipping, and no source/runtime/
+  execution leakage. The 0.10.52 portable and installer remain immutable
+  accepted artifacts and are not rebuilt by this bookkeeping record.
+- `XE1_FOUNDER_ACCEPTED=true`, `XE1R1_FOUNDER_ACCEPTED=true`,
+  `ACCEPTED_CANDIDATE_IMMUTABLE=true`, and `executionAllowed=false`.
+  Mode 1, Fields, SBC, Trailokya/Argha, Auto Suggest, ML, MT5 and execution
+  locks remain unchanged. XE2 is the next bounded research milestone.
+
 ## Latest Update - 2026-08-17 (PFR-V2B-R7-XE1R1 Founder Inspection Candidate)
 
 - XE1R1 is a bounded presentation and empty-state correction over the existing
