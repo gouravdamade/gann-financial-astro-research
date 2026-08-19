@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Gann Astro Desk",
-  "version": "0.10.53-pfr-v2b-r7-xe2",
+  "version": "0.10.54-pfr-v2b-r7-xe2r1",
   "identifier": "com.gouravdamade.gannastrodesk",
   "build": {
     "beforeDevCommand": "npm run dev:mobile:ui",
@@ -14,7 +14,7 @@
       {
         "label": "main",
         "title": "Gann Astro Desk",
-        "url": "index.html?v=0.10.53-pfr-v2b-r7-xe2",
+        "url": "index.html?v=0.10.54-pfr-v2b-r7-xe2r1",
         "center": true,
         "width": 1280,
         "height": 800,
