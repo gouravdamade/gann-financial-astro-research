@@ -1,0 +1,20 @@
+{
+  "contract": "PFR_V2B_R7_XE2R1_FOUNDER_ACCEPTANCE_V1",
+  "milestone": "PFR-V2B-R7-XE2R1",
+  "candidateVersion": "0.10.54-pfr-v2b-r7-xe2r1",
+  "founderPhysicalStatus": "ACCEPTED",
+  "founderAcceptedAtIst": "2026-08-19",
+  "implementationCommit": "d333634684764111e2238e4cb59c7ec2ded50c7f",
+  "candidateVersionCommit": "0aaa788e6a9553b4902f1221dccfce049eb278d2",
+  "inspectionHandoffCommit": "1c7f038de8290fbddb2a8e0ebafa0012e182d0fe",
+  "portableSha256": "60FCA629C8DFE17E4EDA65CDF3E5F3AE574A1427BDE73CCC8338B763471A937B",
+  "installerSha256": "E48F9DFBD964CB364AFE0D9744D51BBC8955C835AD0CAEB108841B22C9B8EE5A",
+  "acceptedChecks": [
+    "AUTO_REFRESH_HISTORY_FAILURE_INSPECTABLE",
+    "LATER_CLOSED_BAR_ADVANCES_INDEPENDENTLY",
+    "XE2_M0_TO_M4_PRESENTATION",
+    "FULL_EVENT_PROVENANCE_INSPECTABLE",
+    "NO_EXECUTION_LEAKAGE"
+  ],
+  "executionAllowed": false
+}

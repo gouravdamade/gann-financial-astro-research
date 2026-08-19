@@ -4,6 +4,20 @@ Last updated: 2026-08-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-19 (PFR-V2B-R7-XE2R1 Founder Acceptance)
+
+- The founder physically accepted the immutable `0.10.54-pfr-v2b-r7-xe2r1`
+  candidate. Acceptance covers the repaired Auto Refresh observability state,
+  preservation of the historical 08:30 IST failed run, later-bar progression,
+  M0-M4 display, full XE2 event provenance, layout behavior, and the absence
+  of execution leakage.
+- The exact accepted hashes and commit lineage are recorded in
+  `docs/research/PFR_V2B_R7_XE2R1_FOUNDER_ACCEPTANCE.md` and
+  `status/acceptance/pfr_v2b_r7_xe2r1_founder_acceptance.json`.
+- `XE2R1_FOUNDER_ACCEPTED=true`, `XE2_FOUNDER_ACCEPTED=true`, and
+  `executionAllowed=false`. This bookkeeping record changes no XE2 mathematics
+  or market/outcome boundary.
+
 ## Latest Update - 2026-08-19 (PFR-V2B-R7-XE2R1 Refresh Diagnosis and Founder Candidate)
 
 - The 08:30 IST prospective-refresh warning was diagnosed from the preserved
