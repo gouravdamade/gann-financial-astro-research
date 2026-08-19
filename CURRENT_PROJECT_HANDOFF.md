@@ -4,7 +4,29 @@ Last updated: 2026-08-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-08-19 (PFR-V2B-R8-XE3 Outcome-Blind Sign Admission)
+## Latest Update - 2026-08-19 (PFR-V2B-R8-XE3 Founder-Inspection Candidate)
+
+- Immutable founder-inspection candidate `0.10.55-pfr-v2b-r8-xe3` was built
+  from clean source commit `680f023c7132de8744b04189ddf35bcc93f166b0` and is
+  stored under `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.55-pfr-v2b-r8-xe3-tauri`.
+  Portable SHA-256:
+  `F603F114212FD13E153B16B65D3DD521F9E24FCAFE36DDF32C41FFE0B8756FBC`.
+  Installer SHA-256:
+  `0FE1765819470AA46B560FEB0D2B83D8D41C541F11DC4351A329DDF733C4CECA`.
+- Candidate verification passed: frontend `41/41` files and `172/172` tests,
+  backend `245/245`, Rust `19/19`, Oxlint, production frontend build, and two
+  isolated portable smoke runs. Both smokes validated sidecar health, controlled
+  same-port restart/recovery, layout persistence, clean shutdown, and
+  `executionAllowed=false`. The optional candlestick specialist was safely
+  absent in both smoke runs, so each is a conditional pass only on that
+  explicitly optional feature.
+- Candidate report and founder checklist:
+  `docs/research/PFR_V2B_R8_XE3_FOUNDER_INSPECTION_CANDIDATE_0.10.55-pfr-v2b-r8-xe3.md`.
+  This candidate is not founder accepted. Founder review decisions, evidence
+  admission, trial freeze, outcome evaluation, and all execution remain
+  pending/locked.
+
+## Implementation Detail - 2026-08-19 (PFR-V2B-R8-XE3 Outcome-Blind Sign Admission)
 
 - XE3 adds a separate **Experiments** profile for founder-only, outcome-blind
   sign review of the existing USD and JPY April 2025
