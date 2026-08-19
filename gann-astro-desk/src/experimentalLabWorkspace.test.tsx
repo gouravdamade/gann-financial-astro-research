@@ -135,12 +135,23 @@ const xe2Profile = {
 const xe2Snapshot = {
   contract: 'XE2_CAUSAL_SCOPED_EVIDENCE_LAB_V1' as const, schemaVersion: 1 as const, snapshotId: 'xe2snapshot', profile: xe2Profile.profile,
   datasetStatus: 'TOUCHED_DEV' as const, datasetLabel: 'TOUCHED DEV - REAL ASTRONOMY + SYNTHETIC SIGN TEST ONLY',
-  astronomySource: { reviewedPacketFile: 'reviewed.json', directionPolicy: 'ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF' },
+  astronomySource: {
+    reviewedPacketFile: 'reviewed.json',
+    reviewedPacketSha256: 'reviewed'.repeat(16),
+    identityIntegrityManifestSha256: 'integrity'.repeat(8),
+    directionPolicy: 'ASPECT_GEOMETRY_NEVER_SUPPLIES_DIRECTION_BY_ITSELF',
+  },
   normalization: { contract: 'MOON_RELATIVE_MEAN_SPEED_V1', body: 'MOON', rawUnit: 'deg/day', referenceSpeedDegPerDay: 13.176358, formula: '(raw-reference)/reference', referenceOrigin: 'astronomy only' },
   transformId: 'XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1', transform: xe2Profile.profile.transforms[1], rawEvidenceImmutable: true as const,
   rawObservations: [], scopeBindings: [], marketDirectionStatus: 'BLOCKED_NO_REAL_SIGNED_EVIDENCE' as const,
   marketOutcome: { datasetStatus: 'TOUCHED_DEV', outcomeEvaluationStatus: 'BLOCKED_NO_GOVERNED_OFFLINE_OUTCOME_DATASET' },
-  causalContributions: [{ causalEventId: 'CAUSE', eventId: 'TN_HASH', eventHash: 'a'.repeat(64), sourceObservationIds: [], syntheticSignObservationId: 'synthetic', rawSyntheticSignTestValue: 1, rawSpeedDegPerDay: 14.1, speedNormalizationContract: 'MOON_RELATIVE_MEAN_SPEED_V1', zSpeed: 0.07, motionPhaseAtExact: 'DIRECT', scope: { modifierObservationId: 'speed', targetCausalEventId: 'CAUSE', scopeType: 'CAUSAL_EVENT_ID' as const, scopeStatus: 'BOUND' as const, globalDefaultApplied: false as const }, multiplierOrInteraction: 1.05, separateChannelValue: null, contextGate: null, value: 1.05, status: 'ACTIVE' as const, reason: null, signEvidenceStatus: 'SYNTHETIC_SIGN_TEST_ONLY_NOT_MARKET_EVIDENCE' as const }],
+  causalContributions: [{
+    causalEventId: 'CAUSE', eventId: 'TN_HASH', eventHash: 'a'.repeat(64),
+    timestampUtc: '2025-04-01T16:19:44Z', transitBody: 'MOON', natalTarget: 'MOON', aspectType: 'square',
+    applyingStartUtc: '2025-04-01T11:27:17Z', separatingEndUtc: '2025-04-01T21:13:29Z', identityStatus: 'SINGLE_PASS_VERIFIED' as const,
+    sourceObservationIds: [], syntheticSignObservationId: 'synthetic', rawSyntheticSignTestValue: 1, rawSpeedDegPerDay: 14.1, speedNormalizationContract: 'MOON_RELATIVE_MEAN_SPEED_V1', zSpeed: 0.07, motionPhaseAtExact: 'DIRECT',
+    scope: { modifierObservationId: 'speed', targetCausalEventId: 'CAUSE', scopeType: 'CAUSAL_EVENT_ID' as const, scopeStatus: 'BOUND' as const, globalDefaultApplied: false as const }, multiplierOrInteraction: 1.05, separateChannelValue: null, contextGate: null, value: 1.05, status: 'ACTIVE' as const, reason: null, signEvidenceStatus: 'SYNTHETIC_SIGN_TEST_ONLY_NOT_MARKET_EVIDENCE' as const,
+  }],
   syntheticStateVector: { state: 'SYNTHETIC_SIGN_TEST_ONLY' as const, positive: 1.05, negative: 0, syntheticRaw: 1.05, syntheticNormalized: 1, activity: 1.05, conflict: 0, unknownCauseCount: 0 },
   guardrails: xe2Profile.guardrails,
 }

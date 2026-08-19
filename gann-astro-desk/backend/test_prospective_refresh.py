@@ -214,6 +214,36 @@ class ProspectiveRefreshTests(unittest.TestCase):
             self.assertEqual(gateway.snapshot_calls, 0)
             self.assertEqual(generation.created, [])
 
+    def test_failed_bar_is_preserved_while_later_closed_bar_starts_new_run(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            manager, repository, _gateway, generation, _shadow = self.make_manager(Path(temporary))
+            failed = manager._insert_run(
+                pd.Timestamp("2026-07-13T09:00:00Z"),
+                pd.Timestamp("2026-07-13T10:00:00Z"),
+            )
+            manager._update_run(
+                failed["runId"],
+                status="failed",
+                stage="failed",
+                message="Prospective refresh failed before activation.",
+                error="MT5 server-time normalization failed",
+                finished_at_utc="2026-07-13T10:02:00+00:00",
+            )
+
+            same_bar_status = manager.run_once("2026-07-13T10:02:00Z")
+            self.assertEqual(same_bar_status["state"], "error")
+            self.assertEqual(same_bar_status["activeRun"]["runId"], failed["runId"])
+            same_bar_runs = [run for run in same_bar_status["recentRuns"] if run["sourceBarCloseUtc"] == "2026-07-13T10:00:00+00:00"]
+            self.assertEqual(len(same_bar_runs), 1)
+
+            status = manager.run_once("2026-07-13T11:02:00Z")
+            runs = {run["sourceBarCloseUtc"]: run for run in status["recentRuns"]}
+
+            self.assertEqual(runs["2026-07-13T10:00:00+00:00"]["status"], "failed")
+            self.assertEqual(runs["2026-07-13T11:00:00+00:00"]["status"], "running")
+            self.assertEqual(len(generation.created), 1)
+            self.assertEqual(repository.promotions, ["USDJPY_H1_fresh"])
+
     def test_startup_repairs_completed_audit_parameters_from_verified_artifact(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

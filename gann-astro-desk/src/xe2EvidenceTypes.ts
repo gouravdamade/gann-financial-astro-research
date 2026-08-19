@@ -64,6 +64,13 @@ export type Xe2CausalContribution = {
   causalEventId: string
   eventId: string
   eventHash: string
+  timestampUtc: string
+  transitBody: string
+  natalTarget: string
+  aspectType: string
+  applyingStartUtc: string
+  separatingEndUtc: string
+  identityStatus: 'SINGLE_PASS_VERIFIED'
   sourceObservationIds: string[]
   syntheticSignObservationId: string
   rawSyntheticSignTestValue: number

@@ -345,6 +345,13 @@ def _compile_snapshot(fixture: Mapping[str, Any], profile: Mapping[str, Any], tr
             "causalEventId": cause,
             "eventId": identity["eventId"],
             "eventHash": identity["eventHash"],
+            "timestampUtc": identity["exactUtc"],
+            "transitBody": identity["transitBody"],
+            "natalTarget": identity["natalTarget"],
+            "aspectType": identity["aspectType"],
+            "applyingStartUtc": identity["applyingStartUtc"],
+            "separatingEndUtc": identity["separatingEndUtc"],
+            "identityStatus": identity["identityStatus"],
             "sourceObservationIds": [
                 f"XE2_OBS_{identity['eventId']}_REAL_EVENT_V1",
                 speed_observation_id,

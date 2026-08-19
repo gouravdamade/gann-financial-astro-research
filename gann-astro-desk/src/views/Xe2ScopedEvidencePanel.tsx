@@ -42,7 +42,27 @@ function Xe2RawEvidence({ snapshot }: { snapshot: Xe2Snapshot }) {
               <td>{formatNumber(item.rawSpeedDegPerDay, 8)} deg/day<small>{item.speedNormalizationContract}; z {formatNumber(item.zSpeed)}</small></td>
               <td>{item.scope.scopeType}<small>{item.scope.scopeStatus}; global default: no</small></td>
               <td>SYNTHETIC {formatNumber(item.rawSyntheticSignTestValue, 2)}<small>not market evidence</small></td>
-              <td><code>{item.eventHash.slice(0, 18)}...</code><small>single pass verified</small></td>
+              <td>
+                <code>{item.eventHash.slice(0, 18)}...</code>
+                <small>{item.identityStatus.replaceAll('_', ' ')}</small>
+                <details className="xe2-event-details">
+                  <summary>Inspect full event</summary>
+                  <dl>
+                    <div><dt>Event hash</dt><dd><code>{item.eventHash}</code></dd></div>
+                    <div><dt>Exact UTC</dt><dd>{item.timestampUtc}</dd></div>
+                    <div><dt>Transit body</dt><dd>{item.transitBody}</dd></div>
+                    <div><dt>Natal body</dt><dd>{item.natalTarget}</dd></div>
+                    <div><dt>Aspect</dt><dd>{item.aspectType}</dd></div>
+                    <div><dt>Applying start</dt><dd>{item.applyingStartUtc}</dd></div>
+                    <div><dt>Separating end</dt><dd>{item.separatingEndUtc}</dd></div>
+                    <div><dt>Raw Moon speed</dt><dd>{formatNumber(item.rawSpeedDegPerDay, 8)} deg/day</dd></div>
+                    <div><dt>Identity status</dt><dd>{item.identityStatus}</dd></div>
+                    <div><dt>Source packet</dt><dd>{snapshot.astronomySource.reviewedPacketFile}</dd></div>
+                    <div><dt>Packet SHA-256</dt><dd><code>{snapshot.astronomySource.reviewedPacketSha256}</code></dd></div>
+                    <div><dt>Integrity manifest</dt><dd><code>{snapshot.astronomySource.identityIntegrityManifestSha256}</code></dd></div>
+                  </dl>
+                </details>
+              </td>
             </tr>
           ))}</tbody>
         </table>
