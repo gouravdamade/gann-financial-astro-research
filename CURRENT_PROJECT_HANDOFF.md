@@ -4,6 +4,53 @@ Last updated: 2026-08-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-19 (PFR-V2B-R7-XE2R1 Refresh Diagnosis and Founder Candidate)
+
+- The 08:30 IST prospective-refresh warning was diagnosed from the preserved
+  run record, not guessed from the UI. Run
+  `b0a0b423a70148349472469386bc457c` for close
+  `2026-08-19T03:00:00Z` failed at the initial MT5 server-time normalization
+  gate. Its exact error was: `MT5 server-time normalization failed: MT5 terminal
+  is not connected; Python and MQL5 raw tick times disagree; normalized market
+  tick is not close to observed UTC`. Source snapshot, price source,
+  generation job, and artifact IDs are all absent, so the failure occurred
+  before capture/promotion/generation/activation. The failed row remains
+  preserved.
+- The A/B/C progression is verified: checking the same close returns the same
+  failed run with no duplicate; the later close at
+  `2026-08-19T04:00:00Z` completed independently as run
+  `8a16a3a0906e444a9344a2aa1d67a2a9`, with completed generation job
+  `e2f5bc33847d42dba0f09aaca94e44ea` and artifact
+  `tn_e2f5bc33847d42dba0f09aaca94e44ea`. Backend retry semantics were therefore
+  left unchanged.
+- The bounded shell-observability repair is pushed at
+  `d333634684764111e2238e4cb59c7ec2ded50c7f`. The Auto refresh chip now labels
+  this condition **Historical failure**, explains that its action checks a
+  later eligible close rather than retrying the preserved bar, and exposes
+  **Inspect failed run** lineage/error details. XE2 real-event rows now have
+  expandable full identity/provenance details: hash, exact UTC, transit/natal
+  bodies, aspect, raw Moon speed, `SINGLE_PASS_VERIFIED`, packet and integrity
+  manifest hashes. No XE2 or execution mathematics changed.
+- Candidate-version commit `0aaa788e6a9553b4902f1221dccfce049eb278d2` is
+  packaged as founder-inspection candidate
+  `0.10.54-pfr-v2b-r7-xe2r1` at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.54-pfr-v2b-r7-xe2r1-tauri`.
+  Portable SHA-256 is
+  `60FCA629C8DFE17E4EDA65CDF3E5F3AE574A1427BDE73CCC8338B763471A937B`;
+  installer SHA-256 is
+  `E48F9DFBD964CB364AFE0D9744D51BBC8955C835AD0CAEB108841B22C9B8EE5A`.
+  The release manifest records source clean and `executionAllowed=false`.
+- Verification: refresh `6/6`, XE2 backend `8/8`, full backend `237/237`,
+  refresh-chip frontend `1/1`, XE2 frontend `4/4`, full frontend `40 files /
+  169 tests`, lint/build passed, Rust fmt/check passed and Rust tests `19/19`.
+  Two isolated portable smokes passed with zero errors/failed checks; the only
+  deferred check is the existing optional unconfigured candlestick specialist.
+- Founder inspection is pending. Use
+  `docs/research/PFR_V2B_R7_XE2R1_SHELL_OBSERVABILITY_CANDIDATE_0.10.54-pfr-v2b-r7-xe2r1.md`.
+  Prior candidate `0.10.53-pfr-v2b-r7-xe2` remains immutable. Fields, SBC,
+  source profiles, Auto Suggest, ML, MT5 orders, XE1/XE2 mathematics, and
+  execution remain locked.
+
 ## Latest Update - 2026-08-19 (PFR-V2B-R7-XE2 Founder Inspection Candidate)
 
 - XE2 source commit `fc72f58531c079181d2a1281e9e5b48e5fa16b2e` is packaged as
