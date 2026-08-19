@@ -20,6 +20,12 @@ const api = vi.hoisted(() => ({
   fetchXe2ScopedEvidenceProfile: vi.fn(),
   fetchXe2ScopedEvidenceSnapshot: vi.fn(),
   fetchXe2ScopedEvidenceTrialLedger: vi.fn(),
+  fetchXe3OutcomeBlindWorkbench: vi.fn(),
+  fetchXe3SignedLedger: vi.fn(),
+  fetchXe3TransformPreview: vi.fn(),
+  fetchXe3Preregistration: vi.fn(),
+  saveXe3OutcomeBlindReviewRevision: vi.fn(),
+  freezeXe3Preregistration: vi.fn(),
 }))
 
 vi.mock('./api', () => api)
@@ -239,5 +245,24 @@ describe('ExperimentalLabWorkspace', () => {
     expect(screen.getAllByText('SYNTHETIC SIGN TEST ONLY').length).toBeGreaterThan(0)
     expect(screen.getByText('Outcome evaluation').parentElement).toHaveTextContent('BLOCKED')
     expect(api.fetchXe2ScopedEvidenceSnapshot).toHaveBeenCalledWith({ transformId: 'XE2_M1_SCOPED_POSITIVE_SPEED_MULTIPLIER_V1' })
+  })
+
+  it('exposes XE3 as an explicit outcome-blind surface and informs the application shell', async () => {
+    api.fetchExperimentalEvidenceProfile.mockResolvedValue(profile)
+    api.fetchExperimentalEvidenceSnapshot.mockResolvedValue(snapshot)
+    api.compareExperimentalEvidenceTransforms.mockResolvedValue(comparison)
+    api.fetchExperimentalEvidenceTrialLedger.mockResolvedValue(ledger)
+    api.fetchXe3OutcomeBlindWorkbench.mockRejectedValue(new Error('packet test only'))
+    api.fetchXe3SignedLedger.mockRejectedValue(new Error('packet test only'))
+    api.fetchXe3TransformPreview.mockRejectedValue(new Error('packet test only'))
+    api.fetchXe3Preregistration.mockRejectedValue(new Error('packet test only'))
+    const onOutcomeBlindReviewChange = vi.fn()
+    const user = userEvent.setup()
+    render(<ExperimentalLabWorkspace onOutcomeBlindReviewChange={onOutcomeBlindReviewChange} />)
+    await screen.findByText('Experimental Lab')
+    await user.selectOptions(screen.getByLabelText('Experimental research profile'), 'XE3')
+    expect(await screen.findByText('OUTCOME-BLIND REVIEW - PRICE HIDDEN')).toBeInTheDocument()
+    expect(onOutcomeBlindReviewChange).toHaveBeenLastCalledWith(true)
+    expect(screen.queryByText('MARKET INPUT: NONE')).not.toBeInTheDocument()
   })
 })

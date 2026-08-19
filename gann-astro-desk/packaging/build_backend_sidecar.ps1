@@ -84,6 +84,20 @@ $missingXe1Fixtures = @(
 if ($missingXe1Fixtures.Count -gt 0) {
     throw "Backend sidecar is missing XE1 experimental evidence fixtures:`n$($missingXe1Fixtures -join "`n")"
 }
+$requiredXe3Fixtures = @(
+    (Join-Path $resourceRoot "_internal\research_labs\chart_conditioned_aspects\founder_review\USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json"),
+    (Join-Path $resourceRoot "_internal\research_labs\chart_conditioned_aspects\founder_review\USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json"),
+    (Join-Path $resourceRoot "_internal\research_labs\chart_conditioned_aspects\founder_review\JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json"),
+    (Join-Path $resourceRoot "_internal\research_labs\chart_conditioned_aspects\founder_review\JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json"),
+    (Join-Path $resourceRoot "_internal\status\audits\pfr_v2b_r5_f2a_r1_event_identity_integrity.json"),
+    (Join-Path $resourceRoot "_internal\research_labs\experimental_evidence\fixtures\xe3_preregistration_contract_v1.json")
+)
+$missingXe3Fixtures = @(
+    $requiredXe3Fixtures | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }
+)
+if ($missingXe3Fixtures.Count -gt 0) {
+    throw "Backend sidecar is missing XE3 immutable review resources:`n$($missingXe3Fixtures -join "`n")"
+}
 $gitkeep = Join-Path $resourceRoot ".gitkeep"
 if (-not (Test-Path -LiteralPath $gitkeep -PathType Leaf)) {
     Set-Content -LiteralPath $gitkeep `

@@ -199,6 +199,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [detail, setDetail] = useState<EventDetail | null>(null)
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra' | 'fields' | 'experiments'>('chart')
+  const [outcomeBlindReviewActive, setOutcomeBlindReviewActive] = useState(false)
   const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
   const [chakraSourceProfileId, setChakraSourceProfileId] = useState<SbcSourceProfileId>('phaladeepika_editor_vedha_guidance_v1')
   const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
@@ -251,6 +252,9 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   useEffect(() => {
     localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
   }, [visualizationMode])
+  useEffect(() => {
+    if (activeSurface !== 'experiments') setOutcomeBlindReviewActive(false)
+  }, [activeSurface])
   const restoreLayoutState = useCallback((state: { showAspects: boolean; showSrLines: boolean }) => {
     setWorkspace((current) => ({
       ...current,
@@ -574,6 +578,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     }
   }, [])
   useVisibilityPolling(refreshShadowLedger, {
+    enabled: !outcomeBlindReviewActive,
     intervalMs: bottomVisible && bottomTab === 'shadow' ? 10000 : 30000,
   })
 
@@ -672,7 +677,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     }
   }, [chart, handleArtifactActivated, parameters])
   useVisibilityPolling(refreshActiveArtifact, {
-    enabled: Boolean(parameters && chart && parameters.dataSource === 'research' && !chart.replay?.active && !parametersOpen),
+    enabled: Boolean(!outcomeBlindReviewActive && parameters && chart && parameters.dataSource === 'research' && !chart.replay?.active && !parametersOpen),
     intervalMs: 10000,
   })
 
@@ -688,7 +693,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     }
   }, [parameters])
   useVisibilityPolling(refreshLiveChart, {
-    enabled: parameters?.dataSource === 'live' && !chart?.replay?.active,
+    enabled: !outcomeBlindReviewActive && parameters?.dataSource === 'live' && !chart?.replay?.active,
     intervalMs: 5000,
   })
 
@@ -768,7 +773,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
       // The last known state remains visible until the reconnect supervisor responds.
     }
   }, [])
-  useVisibilityPolling(refreshMt5Status, { intervalMs: 5000 })
+  useVisibilityPolling(refreshMt5Status, { enabled: !outcomeBlindReviewActive, intervalMs: 5000 })
 
   const refreshRuntimeDiagnostics = useCallback(async () => {
     try {
@@ -908,8 +913,9 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
           <button className="secondary-command astro-command" onClick={() => setParametersOpen(true)} title="Configure planets, aspects, harmonics, reference chart, and data source"><Activity size={15} /> Astro layers</button>
         </>}
         <div className="topbar-spacer" />
-        <RefreshStatusChip status={shadow?.refresh} busy={refreshBusy} onRefresh={runProspectiveRefresh} />
-        <ConnectionBadge status={status} />
+        {outcomeBlindReviewActive
+          ? <div className="outcome-blind-shell-badge" role="status"><EyeOff size={14} /><span><strong>OUTCOME-BLIND REVIEW</strong><small>PRICE AND LIVE REFRESH HIDDEN</small></span></div>
+          : <><RefreshStatusChip status={shadow?.refresh} busy={refreshBusy} onRefresh={runProspectiveRefresh} /><ConnectionBadge status={status} /></>}
         {showCompanionGateway && (
           <button
             className={`icon-button ${companionOpen ? 'is-active' : ''}`}
@@ -1230,7 +1236,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
       )}
       {activeSurface === 'experiments' && (
         <Suspense fallback={<div className="loading-state"><strong>Opening Experimental Lab</strong></div>}>
-          <ExperimentalLabWorkspace />
+          <ExperimentalLabWorkspace onOutcomeBlindReviewChange={setOutcomeBlindReviewActive} />
         </Suspense>
       )}
       {activeSurface === 'chart' && <section className={`bottom-dock ${bottomVisible ? '' : 'is-collapsed'}`}>
@@ -1287,11 +1293,18 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
         )}
       </section>}
       <footer className="workstation-status-bar">
-        <span className={status?.connected ? 'is-live' : 'is-waiting'}><i /> {status?.connected ? 'Market data live' : 'Market data waiting'}</span>
-        <span>{chart.candles.length} bars</span>
-        <span>{chart.artifact.label}</span>
-        <span className="status-spacer" />
-        <span>{shadow?.refresh?.state === 'up_to_date' ? 'Artifact current' : shadow?.refresh?.state?.replaceAll('_', ' ') ?? 'Refresh checking'}</span>
+        {outcomeBlindReviewActive ? <>
+          <span className="is-waiting"><i /> Outcome-blind review active</span>
+          <span>Price, market status, and live refresh hidden</span>
+          <span className="status-spacer" />
+          <span>Founder-entered signs only</span>
+        </> : <>
+          <span className={status?.connected ? 'is-live' : 'is-waiting'}><i /> {status?.connected ? 'Market data live' : 'Market data waiting'}</span>
+          <span>{chart.candles.length} bars</span>
+          <span>{chart.artifact.label}</span>
+          <span className="status-spacer" />
+          <span>{shadow?.refresh?.state === 'up_to_date' ? 'Artifact current' : shadow?.refresh?.state?.replaceAll('_', ' ') ?? 'Refresh checking'}</span>
+        </>}
         <span className="execution-locked"><LockKeyhole size={12} /> Read-only</span>
         <StatusClock />
       </footer>

@@ -11,6 +11,14 @@ $ErrorActionPreference = "Stop"
 $appRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $appRoot ".."))
 $safeRoot = [IO.Path]::GetFullPath("D:\GannFinancialAstro")
+$checkoutGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
+& git.exe -C $projectRoot diff --quiet HEAD --
+$preflightTrackedDirty = $LASTEXITCODE -ne 0
+$preflightUntracked = @(& git.exe -C $projectRoot ls-files --others --exclude-standard).Count -gt 0
+if ($preflightTrackedDirty -or $preflightUntracked) {
+    throw "Windows candidate packaging requires a clean Git worktree"
+}
+$env:VITE_GANN_ASTRO_SOURCE_COMMIT = $checkoutGitCommit
 $tauriConfig = Get-Content -LiteralPath (Join-Path $appRoot "src-tauri\tauri.conf.json") -Raw |
     ConvertFrom-Json
 $appVersion = [string]$tauriConfig.version
@@ -124,7 +132,6 @@ $installerTarget = Join-Path $candidate $installer.Name
 Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
 
 $releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
-$checkoutGitCommit = (& git.exe -C $projectRoot rev-parse HEAD).Trim()
 $sourceGitCommit = if ($SourceCommitOverride) {
     $override = $SourceCommitOverride.Trim()
     if ($override -notmatch '^[0-9a-fA-F]{40}$') {
@@ -297,6 +304,19 @@ $manifest = [ordered]@{
     xe2_modifier_stacking_allowed = $false
     xe2_market_direction = "blocked_no_real_signed_evidence"
     xe2_execution_allowed = $false
+    xe3_sign_admission_contract = "XE3_OUTCOME_BLIND_SIGN_ADMISSION_WORKBENCH_V1"
+    xe3_sign_admission_profile = "XE3_OUTCOME_BLIND_CHART_CONDITIONED_SIGN_ADMISSION_V1"
+    xe3_dataset_status = "TOUCHED_DEV"
+    xe3_sign_source = "founder_entered_outcome_blind_only"
+    xe3_price_data_read = $false
+    xe3_price_outcome_read = $false
+    xe3_live_mt5_read = $false
+    xe3_fields_read = $false
+    xe3_sbc_read = $false
+    xe3_auto_suggest_read = $false
+    xe3_llm_polarity_inference = $false
+    xe3_market_direction_inferred = $false
+    xe3_execution_allowed = $false
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
@@ -318,6 +338,7 @@ This is a read-only experimental research candidate, not a validated or executab
 - Market direction: ABSTAIN
 - XE1 Experimental Lab: synthetic/default, no price reads, no SBC fusion, no execution
 - XE2 Scoped Evidence: hash-linked astronomy plus synthetic sign tests only; no signed market evidence, no outcome read, no execution
+- XE3 Outcome-Blind Sign Admission: founder-entered signs only; no price, live MT5, Fields, SBC, Auto Suggest, ML polarity inference, or execution
 
 Run `GannAstroDesk.exe` from this folder and keep the adjacent `backend` folder in place.
 "@

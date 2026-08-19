@@ -159,6 +159,44 @@ class DesktopPackagingTests(unittest.TestCase):
                 sidecar_build,
             )
 
+    def test_xe3_outcome_blind_packets_are_packaged_without_writable_ledgers(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        sidecar_spec = (app_root / "packaging" / "gann_backend_sidecar.spec").read_text(encoding="utf-8")
+        sidecar_build = (app_root / "packaging" / "build_backend_sidecar.ps1").read_text(encoding="utf-8")
+        windows_build = (app_root / "packaging" / "build_tauri_windows.ps1").read_text(encoding="utf-8")
+
+        self.assertIn('founder_review_root = (', sidecar_spec)
+        self.assertIn('"founder_review_workbench"', sidecar_spec)
+        self.assertIn('"xe2_scoped_evidence_service"', sidecar_spec)
+        self.assertIn('"xe3_sign_admission_service"', sidecar_spec)
+        self.assertIn('"research_labs/chart_conditioned_aspects/founder_review"', sidecar_spec)
+        self.assertIn('"status/audits"', sidecar_spec)
+        for filename in (
+            "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+            "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
+            "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+            "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
+            "pfr_v2b_r5_f2a_r1_event_identity_integrity.json",
+        ):
+            self.assertIn(filename, sidecar_spec)
+            self.assertIn(filename, sidecar_build)
+        self.assertIn('xe1_experimental_evidence_root), "research_labs/experimental_evidence")', sidecar_spec)
+        self.assertIn("xe3_preregistration_contract_v1.json", sidecar_build)
+        self.assertNotIn("e3_outcome_blind_sign_admission", sidecar_spec)
+        for lock in (
+            'xe3_sign_admission_contract = "XE3_OUTCOME_BLIND_SIGN_ADMISSION_WORKBENCH_V1"',
+            'xe3_sign_source = "founder_entered_outcome_blind_only"',
+            "xe3_price_data_read = $false",
+            "xe3_price_outcome_read = $false",
+            "xe3_live_mt5_read = $false",
+            "xe3_fields_read = $false",
+            "xe3_sbc_read = $false",
+            "xe3_auto_suggest_read = $false",
+            "xe3_llm_polarity_inference = $false",
+            "xe3_execution_allowed = $false",
+        ):
+            self.assertIn(lock, windows_build)
+
 
 if __name__ == "__main__":
     unittest.main()

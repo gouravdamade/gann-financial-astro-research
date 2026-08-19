@@ -81,6 +81,14 @@ import type {
   Xe2Snapshot,
   Xe2TrialLedger,
 } from './xe2EvidenceTypes'
+import type {
+  Xe3Ledger,
+  Xe3Preregistration,
+  Xe3ReviewRevisionRequest,
+  Xe3ReviewRevisionResult,
+  Xe3TransformComparison,
+  Xe3Workbench,
+} from './xe3EvidenceTypes'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -779,6 +787,57 @@ export async function fetchXe2ScopedEvidenceTrialLedger(): Promise<Xe2TrialLedge
     throw new Error('XE2 trial ledger violated the execution lock')
   }
   return payload.ledger
+}
+
+/** XE3 reads only packet-verified astronomy and founder-entered outcome-blind reviews. */
+export async function fetchXe3OutcomeBlindWorkbench(side?: 'USD' | 'JPY'): Promise<Xe3Workbench> {
+  const suffix = side ? `?side=${encodeURIComponent(side)}` : ''
+  const payload = await request<{ workbench: Xe3Workbench }>(`/api/experiments/xe3/workbench${suffix}`)
+  if (payload.workbench.guardrails.executionAllowed !== false || payload.workbench.guardrails.priceDataRead !== false) {
+    throw new Error('XE3 workbench violated its outcome-blind or execution lock')
+  }
+  return payload.workbench
+}
+
+export async function saveXe3OutcomeBlindReviewRevision(input: Xe3ReviewRevisionRequest): Promise<Xe3ReviewRevisionResult> {
+  const payload = await request<{ revision: Xe3ReviewRevisionResult }>('/api/experiments/xe3/review-revisions', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+  if (payload.revision.executionAllowed !== false) throw new Error('XE3 review revision violated the execution lock')
+  return payload.revision
+}
+
+export async function fetchXe3SignedLedger(): Promise<Xe3Ledger> {
+  const payload = await request<{ ledger: Xe3Ledger }>('/api/experiments/xe3/signed-ledger')
+  if (payload.ledger.guardrails.executionAllowed !== false || payload.ledger.guardrails.priceOutcomeRead !== false) {
+    throw new Error('XE3 signed ledger violated its outcome or execution lock')
+  }
+  return payload.ledger
+}
+
+export async function fetchXe3TransformPreview(): Promise<Xe3TransformComparison> {
+  const payload = await request<{ comparison: Xe3TransformComparison }>('/api/experiments/xe3/transform-preview', {
+    method: 'POST',
+    body: JSON.stringify({}),
+  })
+  if (payload.comparison.guardrails.executionAllowed !== false) throw new Error('XE3 transform preview violated the execution lock')
+  return payload.comparison
+}
+
+export async function fetchXe3Preregistration(): Promise<Xe3Preregistration> {
+  const payload = await request<{ preregistration: Xe3Preregistration }>('/api/experiments/xe3/preregistration')
+  if (payload.preregistration.guardrails.executionAllowed !== false) throw new Error('XE3 preregistration violated the execution lock')
+  return payload.preregistration
+}
+
+export async function freezeXe3Preregistration(ledgerHash: string, sourceCommit: string): Promise<Xe3Preregistration> {
+  const payload = await request<{ preregistration: Xe3Preregistration }>('/api/experiments/xe3/preregistration/freeze', {
+    method: 'POST',
+    body: JSON.stringify({ ledgerHash, sourceCommit, outcomeBlindAttestation: true }),
+  })
+  if (payload.preregistration.guardrails.executionAllowed !== false) throw new Error('XE3 preregistration violated the execution lock')
+  return payload.preregistration
 }
 
 export async function fetchAgarwalSourceProfile(): Promise<AgarwalSourceProfile> {

@@ -1,0 +1,34 @@
+{
+  "contract": "XE3_PREREGISTERED_CAUSAL_MODIFIER_TRIAL_V1",
+  "datasetStatus": "TOUCHED_DEV",
+  "initialStatus": "NOT_FROZEN",
+  "initialFreezeReady": false,
+  "outcomeContractStatus": "NOT_YET_FOUNDER_APPROVED",
+  "sourceCommitRequired": true,
+  "frozenXe2Profile": {
+    "profileId": "XE2_CAUSAL_SCOPED_SPEED_MODIFIER_TOURNAMENT_V1",
+    "m1": { "beta": 0.8, "mMin": 0.5, "mMax": 1.5 },
+    "m3": { "gamma": 0.5 },
+    "m4": { "acceptedMotionPhase": "DIRECT" },
+    "globalModifierDefaultAllowed": false,
+    "modifierStackingAllowed": false
+  },
+  "projection": {
+    "SUPPORTIVE": 1.0,
+    "ADVERSE": -1.0,
+    "NEUTRAL": 0.0,
+    "MIXED": null,
+    "UNKNOWN_MORE_EVIDENCE_REQUIRED": null,
+    "REJECT_EVENT_IDENTITY": null
+  },
+  "guardrails": {
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "liveMt5Read": false,
+    "fieldsRead": false,
+    "sbcRead": false,
+    "autoSuggestRead": false,
+    "llmPolarityInference": false,
+    "executionAllowed": false
+  }
+}

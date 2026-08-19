@@ -229,6 +229,77 @@ def _speed_z(raw_speed: float | None, normalization: Mapping[str, Any]) -> float
     return (raw_speed - reference) / reference
 
 
+def apply_xe2_causal_transform(
+    *,
+    sign_value: float | None,
+    raw_speed: float | None,
+    motion_phase: str | None,
+    transform_id: str,
+    normalization: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Apply the frozen XE2 M0-M4 contract to one already-signed event.
+
+    This helper intentionally knows nothing about the source of ``sign_value``.
+    XE2 supplies its labelled synthetic fixture; XE3 can supply only a verified,
+    outcome-blind reviewed scalar.  The formulas, parameters, causal scope, and
+    no-stacking policy remain owned by the XE2 profile.
+    """
+
+    if transform_id not in TRANSFORMS:
+        raise ValueError("XE2 transformId is not supported")
+    if sign_value is None or not math.isfinite(float(sign_value)):
+        return {
+            "value": None,
+            "zSpeed": _speed_z(raw_speed, normalization),
+            "multiplierOrInteraction": None,
+            "separateChannelValue": None,
+            "contextGate": None,
+            "reason": "SIGN_NOT_PROJECTABLE",
+        }
+
+    sign = float(sign_value)
+    z_speed = _speed_z(raw_speed, normalization)
+    factor: float | None = None
+    separate_channel: float | None = None
+    gate: float | None = None
+    value: float | None = sign
+    reason: str | None = None
+    if transform_id == TRANSFORMS[1]:
+        if z_speed is None:
+            value = None
+            reason = "MODIFIER_INPUT_UNKNOWN_TARGET_ONLY"
+        else:
+            factor = min(1.5, max(0.5, math.exp(0.8 * z_speed)))
+            value = sign * factor
+    elif transform_id == TRANSFORMS[2]:
+        separate_channel = z_speed
+    elif transform_id == TRANSFORMS[3]:
+        if z_speed is None:
+            value = None
+            reason = "INTERACTION_INPUT_UNKNOWN_TARGET_ONLY"
+        else:
+            factor = 1 + 0.5 * z_speed
+            if factor <= 0:
+                value = None
+                reason = "INTERACTION_FACTOR_NON_POSITIVE_FAIL_CLOSED"
+            else:
+                value = sign * factor
+    elif transform_id == TRANSFORMS[4]:
+        if motion_phase == "DIRECT":
+            gate = 1.0
+        else:
+            value = None
+            reason = "MOTION_CONTEXT_NOT_DIRECT_TARGET_ONLY"
+    return {
+        "value": value,
+        "zSpeed": z_speed,
+        "multiplierOrInteraction": factor,
+        "separateChannelValue": separate_channel,
+        "contextGate": gate,
+        "reason": reason,
+    }
+
+
 def resolve_modifier_scope(modifier: Mapping[str, Any], causal_event_id: str) -> dict[str, Any]:
     """Fail closed: a modifier without an exact causal-event target never applies."""
     target = modifier.get("targetScope")
@@ -298,7 +369,6 @@ def _compile_snapshot(fixture: Mapping[str, Any], profile: Mapping[str, Any], tr
         cause = event["causalEventId"]
         raw_speed_value = identity.get("speedDegPerDay")
         raw_speed = float(raw_speed_value) if isinstance(raw_speed_value, (int, float)) else None
-        z_speed = _speed_z(raw_speed, normalization)
         sign = float(event["syntheticSignTestValue"])
         speed_observation_id = f"XE2_OBS_{identity['eventId']}_REAL_SPEED_V1"
         motion_observation_id = f"XE2_OBS_{identity['eventId']}_REAL_MOTION_V1"
@@ -310,37 +380,13 @@ def _compile_snapshot(fixture: Mapping[str, Any], profile: Mapping[str, Any], tr
             cause,
         )
         scope_bindings.append(scope)
-        factor: float | None = None
-        separate_channel: float | None = None
-        gate: float | None = None
-        value: float | None = sign
-        reason: str | None = None
-        if transform_id == TRANSFORMS[1]:
-            if z_speed is None:
-                value = None
-                reason = "MODIFIER_INPUT_UNKNOWN_TARGET_ONLY"
-            else:
-                factor = min(1.5, max(0.5, math.exp(0.8 * z_speed)))
-                value = sign * factor
-        elif transform_id == TRANSFORMS[2]:
-            separate_channel = z_speed
-        elif transform_id == TRANSFORMS[3]:
-            if z_speed is None:
-                value = None
-                reason = "INTERACTION_INPUT_UNKNOWN_TARGET_ONLY"
-            else:
-                factor = 1 + 0.5 * z_speed
-                if factor <= 0:
-                    value = None
-                    reason = "INTERACTION_FACTOR_NON_POSITIVE_FAIL_CLOSED"
-                else:
-                    value = sign * factor
-        elif transform_id == TRANSFORMS[4]:
-            if identity["motionPhaseAtExact"] == "DIRECT":
-                gate = 1.0
-            else:
-                value = None
-                reason = "MOTION_CONTEXT_NOT_DIRECT_TARGET_ONLY"
+        applied = apply_xe2_causal_transform(
+            sign_value=sign,
+            raw_speed=raw_speed,
+            motion_phase=identity["motionPhaseAtExact"],
+            transform_id=transform_id,
+            normalization=normalization,
+        )
         contributions.append({
             "causalEventId": cause,
             "eventId": identity["eventId"],
@@ -362,15 +408,15 @@ def _compile_snapshot(fixture: Mapping[str, Any], profile: Mapping[str, Any], tr
             "rawSyntheticSignTestValue": sign,
             "rawSpeedDegPerDay": raw_speed,
             "speedNormalizationContract": normalization["contract"],
-            "zSpeed": z_speed,
+            "zSpeed": applied["zSpeed"],
             "motionPhaseAtExact": identity["motionPhaseAtExact"],
             "scope": scope,
-            "multiplierOrInteraction": factor,
-            "separateChannelValue": separate_channel,
-            "contextGate": gate,
-            "value": value,
-            "status": "ACTIVE" if value is not None else "UNKNOWN_TARGET_ONLY",
-            "reason": reason,
+            "multiplierOrInteraction": applied["multiplierOrInteraction"],
+            "separateChannelValue": applied["separateChannelValue"],
+            "contextGate": applied["contextGate"],
+            "value": applied["value"],
+            "status": "ACTIVE" if applied["value"] is not None else "UNKNOWN_TARGET_ONLY",
+            "reason": applied["reason"],
             "signEvidenceStatus": "SYNTHETIC_SIGN_TEST_ONLY_NOT_MARKET_EVIDENCE",
         })
     vector = _synthetic_state_vector(contributions)

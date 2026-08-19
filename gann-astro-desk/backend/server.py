@@ -68,6 +68,15 @@ from xe2_scoped_evidence_service import (
     build_xe2_trial_ledger,
     compare_xe2_transforms,
 )
+from xe3_sign_admission_service import (
+    Xe3SignAdmissionIntegrityError,
+    build_xe3_preregistration_status,
+    build_xe3_signed_ledger,
+    build_xe3_transform_comparison,
+    build_xe3_workbench,
+    freeze_xe3_preregistration,
+    save_xe3_review_revision,
+)
 from companion_capabilities import build_companion_capabilities
 from generation import GenerationJobManager
 from local_candlestick import LocalCandlestickService
@@ -397,6 +406,84 @@ def get_xe2_scoped_evidence_trial_ledger() -> Any:
         return jsonify({"ok": True, "ledger": ledger})
     except (TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/xe3/workbench")
+def get_xe3_outcome_blind_workbench() -> Any:
+    try:
+        workbench = build_xe3_workbench(
+            repository.paths.project_root,
+            requested_side=request.args.get("side") or None,
+        )
+        if workbench["guardrails"]["executionAllowed"]:
+            raise ValueError("XE3 workbench violated the execution lock")
+        return jsonify({"ok": True, "workbench": workbench})
+    except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/experiments/xe3/review-revisions")
+def create_xe3_outcome_blind_review_revision() -> Any:
+    try:
+        revision = save_xe3_review_revision(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if revision["executionAllowed"]:
+            raise ValueError("XE3 review revision violated the execution lock")
+        return jsonify({"ok": True, "revision": revision})
+    except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/experiments/xe3/signed-ledger")
+def get_xe3_signed_ledger() -> Any:
+    try:
+        ledger = build_xe3_signed_ledger(repository.paths.project_root)
+        if ledger["guardrails"]["executionAllowed"]:
+            raise ValueError("XE3 signed ledger violated the execution lock")
+        return jsonify({"ok": True, "ledger": ledger})
+    except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/experiments/xe3/transform-preview")
+def create_xe3_transform_preview() -> Any:
+    try:
+        comparison = build_xe3_transform_comparison(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if comparison["guardrails"]["executionAllowed"]:
+            raise ValueError("XE3 transform preview violated the execution lock")
+        return jsonify({"ok": True, "comparison": comparison})
+    except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/experiments/xe3/preregistration")
+def get_xe3_preregistration_status() -> Any:
+    try:
+        preregistration = build_xe3_preregistration_status(repository.paths.project_root)
+        if preregistration["guardrails"]["executionAllowed"]:
+            raise ValueError("XE3 preregistration violated the execution lock")
+        return jsonify({"ok": True, "preregistration": preregistration})
+    except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/experiments/xe3/preregistration/freeze")
+def freeze_xe3_preregistration_record() -> Any:
+    try:
+        preregistration = freeze_xe3_preregistration(
+            repository.paths.project_root,
+            request.get_json(force=True, silent=False),
+        )
+        if preregistration["guardrails"]["executionAllowed"]:
+            raise ValueError("XE3 preregistration violated the execution lock")
+        return jsonify({"ok": True, "preregistration": preregistration})
+    except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
 
 
 @app.post("/api/chakra-lab/snapshot")

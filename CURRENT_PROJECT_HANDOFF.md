@@ -4,6 +4,33 @@ Last updated: 2026-08-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-19 (PFR-V2B-R8-XE3 Outcome-Blind Sign Admission)
+
+- XE3 adds a separate **Experiments** profile for founder-only, outcome-blind
+  sign review of the existing USD and JPY April 2025
+  `SINGLE_PASS_VERIFIED` packets. It reads packet and integrity-manifest
+  identities only; it does not read price, price outcomes, live MT5, Fields,
+  SBC, Auto Suggest, ML, or execution state. The shell masks the refresh/live
+  quote status and pauses market-facing pollers while XE3 is selected.
+- Canonical blank review packets remain untouched. Founder changes are stored
+  as append-only revision records outside Git, then compiled into an immutable
+  hash-linked signed-evidence ledger. Explicit `SUPPORTIVE`, `ADVERSE`, and
+  `NEUTRAL` project to `+1`, `-1`, and exact `0`; `MIXED`, unknown, and rejected
+  entries never become a synthetic zero or directional vote.
+- The frozen XE2 M0-M4 code path is reused with its existing beta `0.8`,
+  bounds `0.5` to `1.5`, gamma `0.5`, causal binding, and direct-motion gate.
+  It is labelled **REAL SIGNED EVIDENCE - OUTCOME NOT EVALUATED** and has no
+  transform winner, price result, or forecast.
+- A preregistration freeze is available only after terminal review of both
+  sides. It requires the reviewed packet/ledger hashes and an exact source
+  commit bound into a reproducible desktop candidate. With the current zero
+  founder decisions it remains `NOT_FROZEN`, `freezeReady=false`, and outcome
+  evaluation is blocked.
+- Implementation record:
+  `docs/research/PFR_V2B_R8_XE3_OUTCOME_BLIND_SIGN_ADMISSION_AND_PREREGISTRATION.md`.
+  Current source work is ready for a clean candidate build; founder inspection
+  and any decisions remain pending. `executionAllowed=false`.
+
 ## Latest Update - 2026-08-19 (PFR-V2B-R7-XE2R1 Founder Acceptance)
 
 - The founder physically accepted the immutable `0.10.54-pfr-v2b-r7-xe2r1`

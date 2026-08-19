@@ -10,6 +10,12 @@ sweph_root = Path(r"D:\Trading_Algo\Desktop_Trading_Algo_root_legacy_20260530\sw
 chart_conditioned_profile_root = (
     project_root / "research_labs" / "chart_conditioned_aspects" / "profiles"
 )
+founder_review_root = (
+    project_root / "research_labs" / "chart_conditioned_aspects" / "founder_review"
+)
+founder_review_identity_audit = (
+    project_root / "status" / "audits" / "pfr_v2b_r5_f2a_r1_event_identity_integrity.json"
+)
 bphs_classical_timing_root = project_root / "research_labs" / "bphs_1899_classical_timing"
 bphs_muhurta_fixture = bphs_classical_timing_root / "bphs_1899_packet_1w_muhurta_fixture.json"
 xe1_experimental_evidence_root = project_root / "research_labs" / "experimental_evidence"
@@ -30,6 +36,11 @@ required_files = [
     chart_conditioned_profile_root / "target_aware_polarity_catalogue_v1.json",
     chart_conditioned_profile_root / "target_aware_polarity_evidence_packets_v1.json",
     chart_conditioned_profile_root / "founder_chart_hypotheses_v1.json",
+    founder_review_root / "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+    founder_review_root / "USD_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
+    founder_review_root / "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json",
+    founder_review_root / "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
+    founder_review_identity_audit,
     bphs_muhurta_fixture,
     xe1_experimental_evidence_root / "fixtures" / "xe1_evidence_observations_v1.json",
     xe1_experimental_evidence_root / "fixtures" / "xe1_trial_ledger_v1.json",
@@ -53,6 +64,11 @@ datas = [
     # The chart-conditioned modules resolve their immutable JSON profiles
     # relative to the collected package root at runtime.
     (str(chart_conditioned_profile_root), "profiles"),
+    # XE3 admits only the existing, hash-verified founder-review packets and
+    # their independent identity audit. The writable review ledger remains in
+    # the D: application-data store and is never bundled.
+    (str(founder_review_root), "research_labs/chart_conditioned_aspects/founder_review"),
+    (str(founder_review_identity_audit), "status/audits"),
     # The BPHS inspector resolves this explicit source fixture beneath
     # sys._MEIPASS when running in the collected Python sidecar.
     (str(bphs_muhurta_fixture), "research_labs/bphs_1899_classical_timing"),
@@ -81,6 +97,9 @@ hiddenimports = [
     "chakra_lab_service",
     "agarwal_source_inspector",
     "experimental_evidence_service",
+    "founder_review_workbench",
+    "xe2_scoped_evidence_service",
+    "xe3_sign_admission_service",
     "decision_engine",
     "build_trade_candidates_from_touches",
     "doctrine_config",
