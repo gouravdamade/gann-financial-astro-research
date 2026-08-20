@@ -197,6 +197,22 @@ class DesktopPackagingTests(unittest.TestCase):
         ):
             self.assertIn(lock, windows_build)
 
+    def test_cgvo_source_ledgers_are_packaged_as_read_only_fixtures(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        sidecar_spec = (app_root / "packaging" / "gann_backend_sidecar.spec").read_text(encoding="utf-8")
+        sidecar_build = (app_root / "packaging" / "build_backend_sidecar.ps1").read_text(encoding="utf-8")
+        self.assertIn('cgvo_root = project_root / "configs" / "research" / "cgvo"', sidecar_spec)
+        self.assertIn('(str(cgvo_root), "configs/research/cgvo")', sidecar_spec)
+        self.assertIn('"cgvo_service"', sidecar_spec)
+        for filename in (
+            "varahamihira_eclipse_source_profile_v1.json",
+            "trailokya_geography_argha_context_v1.json",
+            "kurma_gazetteer_seed_v1.json",
+        ):
+            self.assertIn(filename, sidecar_spec)
+            self.assertIn(filename, sidecar_build)
+        self.assertIn("CGVO source fixtures", sidecar_build)
+
 
 if __name__ == "__main__":
     unittest.main()

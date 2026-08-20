@@ -19,6 +19,7 @@ founder_review_identity_audit = (
 bphs_classical_timing_root = project_root / "research_labs" / "bphs_1899_classical_timing"
 bphs_muhurta_fixture = bphs_classical_timing_root / "bphs_1899_packet_1w_muhurta_fixture.json"
 xe1_experimental_evidence_root = project_root / "research_labs" / "experimental_evidence"
+cgvo_root = project_root / "configs" / "research" / "cgvo"
 
 required_files = [
     project_root / "astro_events_usdjpy_tn_raman_v2_20250301_20260310.parquet",
@@ -42,6 +43,9 @@ required_files = [
     founder_review_root / "JPY_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json",
     founder_review_identity_audit,
     bphs_muhurta_fixture,
+    cgvo_root / "varahamihira_eclipse_source_profile_v1.json",
+    cgvo_root / "trailokya_geography_argha_context_v1.json",
+    cgvo_root / "kurma_gazetteer_seed_v1.json",
     xe1_experimental_evidence_root / "fixtures" / "xe1_evidence_observations_v1.json",
     xe1_experimental_evidence_root / "fixtures" / "xe1_trial_ledger_v1.json",
 ]
@@ -72,6 +76,9 @@ datas = [
     # The BPHS inspector resolves this explicit source fixture beneath
     # sys._MEIPASS when running in the collected Python sidecar.
     (str(bphs_muhurta_fixture), "research_labs/bphs_1899_classical_timing"),
+    # CGVO keeps modern astronomy output separate from its source-ledger and
+    # raw Kurma seed fixtures. They are read-only research inputs.
+    (str(cgvo_root), "configs/research/cgvo"),
     # XE1 reads a compact, price-free fixture and immutable ledger from the
     # collected package. It never bundles source doctrine or market data here.
     (str(xe1_experimental_evidence_root), "research_labs/experimental_evidence"),
@@ -100,6 +107,7 @@ hiddenimports = [
     "founder_review_workbench",
     "xe2_scoped_evidence_service",
     "xe3_sign_admission_service",
+    "cgvo_service",
     "decision_engine",
     "build_trade_candidates_from_touches",
     "doctrine_config",

@@ -10908,3 +10908,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   Fields/SBC path, Auto Suggest, ML, MT5, or execution path was enabled.
 - Report:
   `docs/research/PFR_V2B_R8_XE3R1_FOUNDER_INSPECTION_CANDIDATE_0.10.56-pfr-v2b-r8-xe3r1.md`.
+
+## CGVO-P1 Classical Geography & Visibility Inspector (2026-08-21)
+
+- Added the bounded `PFR-V2B-CGVO-P1` read-only research inspector. It is
+  available from `Experiments` as `CGVO classical geography & visibility`.
+- Modern solar/lunar eclipse facts use Swiss Ephemeris under
+  `MODERN_ASTRONOMY_VISIBILITY_V1`. Global event identity is one causal event
+  per physical eclipse; locality changes only local circumstances. UT is the
+  identity time scale and timezone is display-only.
+- Varahamihira is exposed as the separate
+  `VARAHAMIHIRA_BS_ECLIPSE_V1` source ledger. Its held witness remains marked
+  `WORKING_WITNESS_METADATA_PENDING`; unresolved rasi, nakshatra frame, lunar
+  month, morphology, colour, and other mappings remain explicit unknowns.
+- Trailokya is exposed separately as
+  `TRAILOKYA_1972_GEOGRAPHY_ARGHA_V1` with the exact source-silent eclipse
+  visibility banner. No cross-source composition or live Trailokya eclipse
+  calculation is performed. Kurma groups remain raw source groups with modern
+  mapping unknown.
+- CGVO fixtures are packaged read-only under `configs/research/cgvo` and are
+  covered by the desktop packaging tests.
+- Guardrails remain closed: no price/outcome read, market direction, score,
+  Fields, SBC, Auto Suggest, ML, MT5, or execution. `executionAllowed=false`.
+- Candidate status is founder inspection only; physical founder review is
+  pending. The CGVO report is
+  `docs/research/PFR_V2B_CGVO_P1_CLASSICAL_GEOGRAPHY_VISIBILITY_INSPECTOR.md`.

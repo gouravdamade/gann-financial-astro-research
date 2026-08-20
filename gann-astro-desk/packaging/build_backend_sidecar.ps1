@@ -74,6 +74,17 @@ $requiredBphsFixture = Join-Path $resourceRoot "_internal\research_labs\bphs_189
 if (-not (Test-Path -LiteralPath $requiredBphsFixture -PathType Leaf)) {
     throw "Backend sidecar is missing the BPHS Packet 1W Muhurta fixture: $requiredBphsFixture"
 }
+$requiredCgvoFixtures = @(
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\varahamihira_eclipse_source_profile_v1.json"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\trailokya_geography_argha_context_v1.json"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\kurma_gazetteer_seed_v1.json")
+)
+$missingCgvoFixtures = @(
+    $requiredCgvoFixtures | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }
+)
+if ($missingCgvoFixtures.Count -gt 0) {
+    throw "Backend sidecar is missing CGVO source fixtures:`n$($missingCgvoFixtures -join "`n")"
+}
 $requiredXe1Fixtures = @(
     (Join-Path $resourceRoot "_internal\research_labs\experimental_evidence\fixtures\xe1_evidence_observations_v1.json"),
     (Join-Path $resourceRoot "_internal\research_labs\experimental_evidence\fixtures\xe1_trial_ledger_v1.json")

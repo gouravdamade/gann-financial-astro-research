@@ -1,0 +1,24 @@
+{
+  "profileId": "TRAILOKYA_1972_GEOGRAPHY_ARGHA_V1",
+  "contract": "TRAILOKYA_1972_GEOGRAPHY_ARGHA_CONTEXT_V1",
+  "sourceId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+  "edition": "Trailokya Dipika 1972 source profile",
+  "authority": "SOURCE_ONLY_CONTEXT",
+  "sourceStatus": "SOURCE_SILENT_FOR_ECLIPSE_VISIBILITY_IN_HELD_WITNESS",
+  "banner": [
+    "TRAILOKYA 1972",
+    "GEOGRAPHY/ARGHA CONTEXT AVAILABLE",
+    "ECLIPSE VISIBILITY DOCTRINE: SOURCE SILENT IN HELD WITNESS",
+    "CROSS-SOURCE COMPOSITION: LOCKED",
+    "MARKET MAPPING: LOCKED"
+  ],
+  "dimensions": [
+    {"id": "PLACE", "labels": ["DESA", "MANDALA", "STHANA"], "status": "SOURCE_CONTEXT_ONLY"},
+    {"id": "TIME", "labels": ["YEAR", "MONTH", "DAY"], "status": "SOURCE_CONTEXT_ONLY"},
+    {"id": "COMMODITY", "labels": ["DHATU", "MULA", "JIVA"], "status": "SOURCE_CONTEXT_ONLY"},
+    {"id": "RULER_SELECTION", "labels": ["kshetra", "vakra", "udaya", "uccha"], "status": "SOURCE_CONTEXT_ONLY"},
+    {"id": "ARGHA", "labels": ["Vedha", "relationship", "relevant aspect"], "status": "SOURCE_CONTEXT_ONLY"},
+    {"id": "MAGNITUDE", "labels": ["Viswa", "Vimsopaka"], "status": "SOURCE_CONTEXT_ONLY"}
+  ],
+  "guardrails": {"eclipseCalculation": false, "crossSourceComposition": false, "marketMapping": false, "executionAllowed": false}
+}

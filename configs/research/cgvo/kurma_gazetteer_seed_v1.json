@@ -1,0 +1,16 @@
+{
+  "contract": "VARAHAMIHIRA_KURMA_REGION_SEED_V1",
+  "status": "RAW_SOURCE_GROUPS_MODERN_MAPPING_NOT_BUILT",
+  "groups": [
+    {"direction": "CENTER", "nakshatras": ["Krittika", "Rohini", "Mrigashirsha"], "mappingStatus": "UNKNOWN"},
+    {"direction": "EAST", "nakshatras": ["Ardra", "Punarvasu", "Pushya"], "mappingStatus": "UNKNOWN"},
+    {"direction": "SOUTHEAST", "nakshatras": ["Ashlesha", "Magha", "Purva Phalguni"], "mappingStatus": "UNKNOWN"},
+    {"direction": "SOUTH", "nakshatras": ["Uttara Phalguni", "Hasta", "Chitra"], "mappingStatus": "UNKNOWN"},
+    {"direction": "SOUTHWEST", "nakshatras": ["Swati", "Vishakha", "Anuradha"], "mappingStatus": "UNKNOWN"},
+    {"direction": "WEST", "nakshatras": ["Jyeshtha", "Mula", "Purva Ashadha"], "mappingStatus": "UNKNOWN"},
+    {"direction": "NORTHWEST", "nakshatras": ["Uttara Ashadha", "Shravana", "Dhanishtha"], "mappingStatus": "UNKNOWN"},
+    {"direction": "NORTH", "nakshatras": ["Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada"], "mappingStatus": "UNKNOWN"},
+    {"direction": "NORTHEAST", "nakshatras": ["Revati", "Ashwini", "Bharani"], "mappingStatus": "UNKNOWN"}
+  ],
+  "guardrails": {"modernGeographyMapping": false, "aggregation": "NOT_SOURCE_DEFINED", "executionAllowed": false}
+}

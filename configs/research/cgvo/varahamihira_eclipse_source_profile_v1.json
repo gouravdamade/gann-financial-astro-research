@@ -1,0 +1,38 @@
+{
+  "profileId": "VARAHAMIHIRA_BS_ECLIPSE_V1",
+  "contract": "VARAHAMIHIRA_BS_ECLIPSE_SOURCE_LEDGER_V1",
+  "sourceId": "BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS",
+  "edition": "Brihat Samhita, Sastri/Bhat 1946 working witness",
+  "authority": "SOURCE_INTERPRETATION_LEDGER",
+  "sourceStatus": "WORKING_WITNESS_METADATA_PENDING",
+  "controllingPdfSha256": null,
+  "interpretationPolicy": "Typed source claims only; unresolved mappings remain UNKNOWN.",
+  "claims": [
+    {"id": "BS_V8_V11_LOCAL_VISIBILITY", "locator": "Brihat Samhita V.8-11", "topic": "physical eclipse/local-country visibility", "status": "SOURCE_EXPLICIT", "modernEligibility": "LOCAL_SOLAR_VISIBILITY_ONLY"},
+    {"id": "BS_V14_V18_NODES_MAGNITUDE", "locator": "Brihat Samhita V.14-18", "topic": "nodes, magnitude, contact direction and exact time delegated to Pancasiddhantika", "status": "SOURCE_RECORDED", "modernEligibility": "UNKNOWN_MAPPING"},
+    {"id": "BS_XIV_KURMAVIBHAGA", "locator": "Brihat Samhita Chapter XIV", "topic": "nine nakshatra triads and directions", "status": "SOURCE_RECORDED", "modernEligibility": "MAPPING_UNRESOLVED"},
+    {"id": "BS_XCVII_FRUITION", "locator": "Brihat Samhita XCVII", "topic": "solar fruition horizon", "status": "SOURCE_EXPLICIT", "value": "1 YEAR"},
+    {"id": "BS_XCVII_LUNAR_FRUITION", "locator": "Brihat Samhita XCVII", "topic": "lunar fruition", "status": "SOURCE_SILENT", "value": null}
+  ],
+  "displayStatuses": {
+    "solarVisibilityEligibility": "SOURCE_EXPLICIT",
+    "lunarVisibilityEligibility": "PARTIAL_SOURCE_SUPPORT",
+    "rasi": "UNKNOWN_ZODIAC_FRAME_NOT_AUTHORIZED",
+    "nakshatra": "UNKNOWN_AYANAMSHA_FRAME_NOT_AUTHORIZED",
+    "lunarMonth": "UNKNOWN_CONVENTION_NOT_CLOSED",
+    "ayana": "UNKNOWN_ADAPTER_NOT_CONFIGURED",
+    "firmament": "SOURCE_INTERPRETATION_UNRESOLVED",
+    "commencementQuarter": "MAPPING_UNRESOLVED",
+    "liberationClass": "MAPPING_UNRESOLVED",
+    "morphology": "MAPPING_UNRESOLVED",
+    "colour": "OBSERVATION_REQUIRED",
+    "planetaryAspects": "SOURCE_EFFECT_RECORDED / ASPECT_GEOMETRY_UNCLOSED",
+    "sevenDayOmens": "UNKNOWN_HISTORICAL_EVIDENCE_NOT_LOADED",
+    "solarFruition": "SOURCE_BACKED_1_YEAR",
+    "lunarFruition": "SOURCE_SILENT"
+  },
+  "lexicalLocks": [
+    {"literal": "SHOBHANA DHANYARGHA", "normalizedPriceDirection": null, "status": "LEXICAL_INTERPRETATION_UNRESOLVED"}
+  ],
+  "guardrails": {"marketDirection": false, "score": false, "executionAllowed": false}
+}

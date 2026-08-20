@@ -89,6 +89,7 @@ import type {
   Xe3TransformComparison,
   Xe3Workbench,
 } from './xe3EvidenceTypes'
+import type { CgvoSearch, CgvoSourceProfile, CgvoStatus, CgvoWorkbench, CgvoKurmaSeed } from './cgvoTypes'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
@@ -859,6 +860,42 @@ export async function freezeXe3Preregistration(ledgerHash: string, sourceCommit:
   })
   if (payload.preregistration.guardrails.executionAllowed !== false) throw new Error('XE3 preregistration violated the execution lock')
   return payload.preregistration
+}
+
+export async function fetchCgvoStatus(): Promise<CgvoStatus> {
+  const payload = await request<{ status: CgvoStatus }>('/api/experiments/cgvo/status')
+  if (payload.status.guardrails.executionAllowed) throw new Error('CGVO violated the execution lock')
+  return payload.status
+}
+
+export async function fetchCgvoWorkbench(input: { eventType: 'SOLAR' | 'LUNAR'; globalMaxUtc?: string; localityId?: string; label?: string; latitude?: number; longitude?: number; elevationM?: number; timezone?: string; startUtc?: string; endUtc?: string }): Promise<CgvoWorkbench> {
+  const query = new URLSearchParams({ eventType: input.eventType })
+  for (const [key, value] of Object.entries(input)) {
+    if (key !== 'eventType' && value != null) query.set(key, String(value))
+  }
+  const payload = await request<{ workbench: CgvoWorkbench }>(`/api/experiments/cgvo/workbench?${query.toString()}`)
+  if (payload.workbench.guardrails.executionAllowed) throw new Error('CGVO workbench violated the execution lock')
+  return payload.workbench
+}
+
+export async function fetchCgvoEventSearch(input: { eventType: 'SOLAR' | 'LUNAR'; startUtc: string; endUtc: string; limit?: number }): Promise<CgvoSearch> {
+  const query = new URLSearchParams({ eventType: input.eventType, startUtc: input.startUtc, endUtc: input.endUtc })
+  if (input.limit != null) query.set('limit', String(input.limit))
+  const payload = await request<{ search: CgvoSearch }>(`/api/experiments/cgvo/eclipse-search?${query.toString()}`)
+  if (payload.search.guardrails.executionAllowed) throw new Error('CGVO search violated the execution lock')
+  return payload.search
+}
+
+export async function fetchCgvoSourceProfiles(): Promise<CgvoSourceProfile[]> {
+  const payload = await request<{ profiles: { profiles: CgvoSourceProfile[]; guardrails: { executionAllowed: boolean } } }>('/api/experiments/cgvo/source-profiles')
+  if (payload.profiles.guardrails.executionAllowed) throw new Error('CGVO source profiles violated the execution lock')
+  return payload.profiles.profiles
+}
+
+export async function fetchCgvoKurmaSeed(): Promise<CgvoKurmaSeed> {
+  const payload = await request<{ kurma: CgvoKurmaSeed }>('/api/experiments/cgvo/kurma-gazetteer-seed')
+  if (payload.kurma.guardrails.executionAllowed) throw new Error('CGVO Kurma seed violated the execution lock')
+  return payload.kurma
 }
 
 export async function fetchAgarwalSourceProfile(): Promise<AgarwalSourceProfile> {

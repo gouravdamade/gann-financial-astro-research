@@ -91,6 +91,15 @@ from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
 from synchronized_range_service import build_synchronized_independent_range
 from fx_side_pilot_service import build_fx_side_pilot_status
+from cgvo_service import (
+    CgvoRequestError,
+    build_cgvo_event_search,
+    build_cgvo_kurma_seed,
+    build_cgvo_local_circumstances,
+    build_cgvo_source_profiles,
+    build_cgvo_status,
+    build_cgvo_workbench,
+)
 from founder_review_workbench import (
     FounderReviewIntegrityError,
     build_founder_review_workbench,
@@ -496,6 +505,62 @@ def get_xe3_preregistration_status() -> Any:
         return jsonify({"ok": True, "preregistration": preregistration})
     except (Xe3SignAdmissionIntegrityError, TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.get("/api/experiments/cgvo/status")
+def get_cgvo_status() -> Any:
+    try:
+        return jsonify({"ok": True, "status": build_cgvo_status(repository.paths.project_root)})
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/source-profiles")
+def get_cgvo_source_profiles() -> Any:
+    try:
+        return jsonify({"ok": True, "profiles": build_cgvo_source_profiles(repository.paths.project_root)})
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/kurma-gazetteer-seed")
+def get_cgvo_kurma_seed() -> Any:
+    try:
+        return jsonify({"ok": True, "kurma": build_cgvo_kurma_seed(repository.paths.project_root)})
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/eclipse-search")
+def search_cgvo_eclipses() -> Any:
+    try:
+        return jsonify({"ok": True, "search": build_cgvo_event_search(repository.paths.project_root, request.args.to_dict())})
+    except CgvoRequestError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/event/<event_id>/local-circumstances")
+def get_cgvo_local_circumstances(event_id: str) -> Any:
+    try:
+        payload = request.args.to_dict()
+        payload["causalEventId"] = event_id
+        return jsonify({"ok": True, "circumstances": build_cgvo_local_circumstances(repository.paths.project_root, payload)})
+    except CgvoRequestError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/workbench")
+def get_cgvo_workbench() -> Any:
+    try:
+        return jsonify({"ok": True, "workbench": build_cgvo_workbench(repository.paths.project_root, request.args.to_dict())})
+    except CgvoRequestError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
 
 
 @app.post("/api/experiments/xe3/preregistration/freeze")
