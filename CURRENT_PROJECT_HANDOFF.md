@@ -10933,3 +10933,29 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Candidate status is founder inspection only; physical founder review is
   pending. The CGVO report is
   `docs/research/PFR_V2B_CGVO_P1_CLASSICAL_GEOGRAPHY_VISIBILITY_INSPECTOR.md`.
+
+## CGVO-P1 Founder-Inspection Candidate (2026-08-21)
+
+- Built immutable candidate `0.10.57-pfr-v2b-cgvo-p1` from source/package commit
+  `7ce501704cefc6be5201ab98d08505964417b8fb`; clean-state declaration is
+  `source_git_dirty=false`.
+- Portable artifact:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.57-pfr-v2b-cgvo-p1-tauri\GannAstroDesk.exe`
+  SHA-256 `3F98069850C58A8B45AAA06C754FCD765FB59C21D33B77FF2153C26CFFFD89E8`.
+- Installer:
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.57-pfr-v2b-cgvo-p1-tauri\Gann Astro Desk_0.10.57-pfr-v2b-cgvo-p1_x64-setup.exe`
+  SHA-256 `7F0EA5B729677E73E259977AA4455438C8123594A99D388C5E0777A4F40F89F9`.
+- Focused CGVO verification passed: 7 backend tests, 2 frontend tests and 6
+  packaging tests. Full regressions passed: backend 258/258 and frontend 42
+  files/176 tests. Lint, Vite build, Rust fmt/check/tests and Tauri packaging
+  passed.
+- Two portable smoke runs passed startup, sidecar recovery, clean shutdown and
+  execution-lock checks. The exact packaged CGVO API probe returned JSON 200s
+  for status, source profiles, Kurma seed and workbench routes; the workbench
+  contract is `CLASSICAL_GEOGRAPHY_VISIBILITY_OBSERVATORY_V1` and its
+  `executionAllowed` state is false.
+- CGVO remains a read-only, source-separated research inspector. No price,
+  market direction, score, Fields/SBC, Auto Suggest, ML, MT5 or execution path
+  was added. Physical founder inspection of the candidate remains pending.
+- Candidate report:
+  `docs/research/PFR_V2B_CGVO_P1_FOUNDER_INSPECTION_CANDIDATE_0.10.57-pfr-v2b-cgvo-p1.md`.
