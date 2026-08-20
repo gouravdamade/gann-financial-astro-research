@@ -10870,3 +10870,41 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `read_only_market_data` and `tradeAllowed=false`.
 - Recovery backup:
   `D:\PycharmProjects\chat_session_backups\session_20260712_165050_snapshot_promotion`.
+
+## XE3R1 Packaged API Repair (2026-08-21)
+
+- Diagnosed the 0.10.55 founder-inspection failure in the exact packaged
+  sidecar. Concurrent XE3 startup reads raced on the shared
+  `D:\GannFinancialAstro\app_data\xe3_outcome_blind_sign_admission\index.tmp`,
+  causing `PermissionError [WinError 32]` while replacing `index.json`.
+  Flask returned its HTML 500 page, which the frontend reported as
+  `Unexpected token '<'`. The routes, sidecar module, packet resources, and
+  packaged API base were present and reached correctly.
+- Source repair commit: `1970f86` serializes the index/ledger transaction,
+  uses unique temporary files, returns structured JSON for API errors, and
+  provides body-aware frontend JSON diagnostics. XE3 scientific semantics and
+  safety locks are unchanged.
+- Corrected founder candidate source/package commit:
+  `6a4230a65921a60769caab09e9f259e9e039fd54`.
+- Candidate:
+  `0.10.56-pfr-v2b-r8-xe3r1` at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.56-pfr-v2b-r8-xe3r1-tauri`.
+  Portable SHA-256:
+  `30E2508909C06BEE663ECF431035D2E2D196C67C8E080D95F84AEC2D4FE5184B`.
+  Installer SHA-256:
+  `844DE85B0DF3F74111AE2C452F04B1D158D73E1A374E409132C7B3A8543235BD`.
+- Exact packaged endpoint probe passed: all three XE3 startup requests returned
+  `200 application/json`; the workbench contained 24 rows, 12 USD and 12 JPY,
+  all `SINGLE_PASS_VERIFIED`. Two native portable smoke runs passed, including
+  sidecar recovery and clean shutdown. Physical UI smoke also passed: USD and
+  JPY event details rendered with full hashes, UTC/IST, transit/natal/aspect,
+  raw motion speed, and `SINGLE PASS VERIFIED`; outcome blindness remained
+  visible and execution remained locked.
+- Verification: focused XE3 8 + 4 backend tests and 16 frontend tests passed;
+  full backend 250 passed; full frontend 41 files/174 tests passed; lint,
+  production build, cargo fmt, cargo check, and 19 Rust tests passed.
+- Founder acceptance is still pending physical inspection of the corrected
+  candidate. 0.10.55 remains immutable; no XE3 decision, price/outcome read,
+  Fields/SBC path, Auto Suggest, ML, MT5, or execution path was enabled.
+- Report:
+  `docs/research/PFR_V2B_R8_XE3R1_FOUNDER_INSPECTION_CANDIDATE_0.10.56-pfr-v2b-r8-xe3r1.md`.
