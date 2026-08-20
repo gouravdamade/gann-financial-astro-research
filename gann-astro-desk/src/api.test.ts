@@ -58,6 +58,86 @@ describe('Tauri backend transport', () => {
     )
   })
 
+  it('uses the managed packaged base for every XE3 startup request', async () => {
+    invokeMock.mockResolvedValue({
+      contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
+      baseUrl: 'http://127.0.0.1:55214',
+      apiToken: 'private-test-token',
+      port: 55214,
+      pid: 44,
+      status: 'ready',
+      executionAllowed: false,
+    })
+    const guardrails = {
+      executionAllowed: false,
+      priceDataRead: false,
+      priceOutcomeRead: false,
+    }
+    const fetchMock = vi.fn().mockImplementation(async (url: string) => {
+      const payload = url.endsWith('/workbench')
+        ? { ok: true, workbench: { guardrails } }
+        : url.endsWith('/signed-ledger')
+          ? { ok: true, ledger: { guardrails } }
+          : url.endsWith('/transform-preview')
+            ? { ok: true, comparison: { guardrails } }
+            : { ok: true, preregistration: { guardrails } }
+      return {
+        ok: true,
+        status: 200,
+        headers: { get: () => 'application/json' },
+        text: async () => JSON.stringify(payload),
+      }
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const {
+      fetchXe3OutcomeBlindWorkbench,
+      fetchXe3Preregistration,
+      fetchXe3SignedLedger,
+      fetchXe3TransformPreview,
+    } = await import('./api')
+    await Promise.all([
+      fetchXe3OutcomeBlindWorkbench(),
+      fetchXe3SignedLedger(),
+      fetchXe3TransformPreview(),
+      fetchXe3Preregistration(),
+    ])
+
+    const urls = fetchMock.mock.calls.map(([url]) => url)
+    expect(urls).toEqual(expect.arrayContaining([
+      'http://127.0.0.1:55214/api/experiments/xe3/workbench',
+      'http://127.0.0.1:55214/api/experiments/xe3/signed-ledger',
+      'http://127.0.0.1:55214/api/experiments/xe3/transform-preview',
+      'http://127.0.0.1:55214/api/experiments/xe3/preregistration',
+    ]))
+    for (const [, init] of fetchMock.mock.calls) {
+      expect(init.headers).toEqual(expect.objectContaining({ 'X-Gann-Astro-Token': 'private-test-token' }))
+    }
+  })
+
+  it('reports response metadata when an API returns HTML instead of JSON', async () => {
+    invokeMock.mockResolvedValue({
+      contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
+      baseUrl: 'http://127.0.0.1:55214',
+      apiToken: 'private-test-token',
+      port: 55214,
+      pid: 44,
+      status: 'ready',
+      executionAllowed: false,
+    })
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      headers: { get: () => 'text/html; charset=utf-8' },
+      text: async () => '<!doctype html><html><title>500 Internal Server Error</title></html>',
+    }))
+
+    const { fetchXe3SignedLedger } = await import('./api')
+    await expect(fetchXe3SignedLedger()).rejects.toThrow(
+      'API returned non-JSON response: HTTP 500, text/html; charset=utf-8',
+    )
+  })
+
   it('refuses a runtime that claims execution permission', async () => {
     invokeMock.mockResolvedValue({
       contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import tempfile
@@ -84,6 +85,28 @@ class Xe3SignAdmissionServiceTests(unittest.TestCase):
         self.assertFalse(workbench["guardrails"]["sbcRead"])
         self.assertFalse(workbench["guardrails"]["executionAllowed"])
         self.assertEqual(self.usd_packet_hash_before, hashlib.sha256(self.usd_packet.read_bytes()).hexdigest().upper())
+
+    def test_concurrent_startup_reads_serialize_the_shared_ledger_index(self) -> None:
+        # The packaged panel loads the workbench, ledger, transform preview and
+        # preregistration together. These reads must remain independently safe
+        # when they refresh the same append-only index on Windows.
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            results = list(
+                executor.map(
+                    lambda builder: builder(PROJECT_ROOT, storage_root=self.storage_root),
+                    (
+                        build_xe3_workbench,
+                        build_xe3_signed_ledger,
+                        build_xe3_preregistration_status,
+                        build_xe3_signed_ledger,
+                    ),
+                )
+            )
+        self.assertEqual(len(results[0]["sides"]), 2)
+        self.assertEqual(len(results[1]["entries"]), 0)
+        self.assertEqual(results[2]["status"], "NOT_FROZEN")
+        self.assertEqual(results[3]["ledgerHash"], results[1]["ledgerHash"])
+        self.assertFalse((self.storage_root / "index.tmp").exists())
 
     def test_identity_mutation_and_price_claimed_sign_fail_closed(self) -> None:
         usd = self.side(self.workbench(), "USD")

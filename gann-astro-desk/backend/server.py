@@ -272,6 +272,32 @@ def options_route(_path: str) -> Any:
     return ("", 204)
 
 
+@app.errorhandler(404)
+def api_not_found(error: Any) -> Any:
+    if request.path.startswith("/api/"):
+        return jsonify(
+            {
+                "ok": False,
+                "error": f"API route not found: {request.method} {request.path}",
+            }
+        ), 404
+    return error
+
+
+@app.errorhandler(500)
+def api_internal_error(error: Any) -> Any:
+    if request.path.startswith("/api/"):
+        original = getattr(error, "original_exception", None)
+        detail = original if original is not None else error
+        return jsonify(
+            {
+                "ok": False,
+                "error": f"API request failed: {type(detail).__name__}: {detail}",
+            }
+        ), 500
+    return error
+
+
 @app.get("/api/health")
 def health() -> Any:
     return jsonify(
@@ -1565,6 +1591,13 @@ def desktop_index() -> Any:
 
 @app.get("/<path:asset_path>")
 def desktop_asset(asset_path: str) -> Any:
+    if asset_path == "api" or asset_path.startswith("api/"):
+        return jsonify(
+            {
+                "ok": False,
+                "error": f"API route not found: {request.method} /{asset_path}",
+            }
+        ), 404
     root = frontend_dist()
     if root is None:
         abort(404)

@@ -94,6 +94,27 @@ import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from
 type ApiEnvelope<T> = { ok: boolean; error?: string } & T
 let backendRuntimePromise: Promise<BackendRuntimeInfo> | null = null
 
+function responsePreview(body: string): string {
+  return body.replace(/\s+/g, ' ').trim().slice(0, 200)
+}
+
+async function decodeApiResponse<T>(response: Response): Promise<ApiEnvelope<T>> {
+  if (typeof response.text !== 'function') {
+    return (await response.json()) as ApiEnvelope<T>
+  }
+  const body = await response.text()
+  let payload: ApiEnvelope<T>
+  try {
+    payload = JSON.parse(body) as ApiEnvelope<T>
+  } catch {
+    const contentType = response.headers?.get?.('content-type') || 'unknown content type'
+    throw new Error(
+      `API returned non-JSON response: HTTP ${response.status}, ${contentType}; body starts ${JSON.stringify(responsePreview(body))}`,
+    )
+  }
+  return payload
+}
+
 function isTauriRuntime(): boolean {
   return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 }
@@ -183,7 +204,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
     }
   }
   if (!response) throw networkError instanceof Error ? networkError : new Error('Backend is unavailable')
-  const payload = (await response.json()) as ApiEnvelope<T>
+  const payload = await decodeApiResponse<T>(response)
   if (!response.ok || !payload.ok) {
     throw new Error(payload.error || `Request failed: ${response.status}`)
   }

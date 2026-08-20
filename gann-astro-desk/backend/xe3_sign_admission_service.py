@@ -14,6 +14,8 @@ import json
 import math
 import os
 import re
+import tempfile
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
@@ -65,6 +67,12 @@ GUARDRAILS = {
 }
 
 
+# GET requests build the same immutable ledger and refresh its small index. The
+# sidecar serves Flask requests on worker threads, so the index transaction must
+# be serialized even though the underlying records remain append-only.
+_INDEX_WRITE_LOCK = threading.RLock()
+
+
 class Xe3SignAdmissionIntegrityError(ValueError):
     """Raised when XE3 evidence cannot be proven outcome-blind and immutable."""
 
@@ -105,9 +113,26 @@ def _write_json_once(path: Path, value: dict[str, Any]) -> None:
 
 def _write_index(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(".tmp")
-    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    with _INDEX_WRITE_LOCK:
+        temporary: Path | None = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="w",
+                encoding="utf-8",
+                newline="\n",
+                dir=path.parent,
+                prefix=f".{path.name}.",
+                suffix=".tmp",
+                delete=False,
+            ) as stream:
+                temporary = Path(stream.name)
+                json.dump(value, stream, ensure_ascii=False, indent=2, sort_keys=True)
+                stream.write("\n")
+            os.replace(temporary, path)
+            temporary = None
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
 
 
 def _store_root(project_root: Path, storage_root: Path | None = None) -> Path:
@@ -428,11 +453,12 @@ def _persist_ledger(store_root: Path, ledger: dict[str, Any]) -> dict[str, Any]:
 
 
 def _latest_ledger(project_root: Path, store_root: Path) -> dict[str, Any]:
-    ledger = _persist_ledger(store_root, _ledger_from_revisions(project_root, store_root))
-    index = _load_index(store_root)
-    index["latestLedgerHash"] = ledger["ledgerHash"]
-    _write_index(_index_path(store_root), index)
-    return ledger
+    with _INDEX_WRITE_LOCK:
+        ledger = _persist_ledger(store_root, _ledger_from_revisions(project_root, store_root))
+        index = _load_index(store_root)
+        index["latestLedgerHash"] = ledger["ledgerHash"]
+        _write_index(_index_path(store_root), index)
+        return ledger
 
 
 def build_xe3_workbench(project_root: Path, *, storage_root: Path | None = None, requested_side: str | None = None) -> dict[str, Any]:
@@ -522,11 +548,12 @@ def save_xe3_review_revision(project_root: Path, payload: Mapping[str, Any], *, 
     }
     revision["reviewRevisionHash"] = _sha256(revision)
     _write_json_once(_revision_path(store, side, revision["reviewRevisionHash"]), revision)
-    index = _load_index(store)
-    latest_by_side = dict(index.get("latestRevisionBySide") or {})
-    latest_by_side[side] = revision["reviewRevisionHash"]
-    index["latestRevisionBySide"] = latest_by_side
-    _write_index(_index_path(store), index)
+    with _INDEX_WRITE_LOCK:
+        index = _load_index(store)
+        latest_by_side = dict(index.get("latestRevisionBySide") or {})
+        latest_by_side[side] = revision["reviewRevisionHash"]
+        index["latestRevisionBySide"] = latest_by_side
+        _write_index(_index_path(store), index)
     ledger = _latest_ledger(project_root, store)
     return {
         "sideIdentity": side,
@@ -705,7 +732,8 @@ def freeze_xe3_preregistration(project_root: Path, payload: Mapping[str, Any], *
     }
     record["preregistrationHash"] = _sha256(record)
     _write_json_once(_freeze_path(store, record["preregistrationHash"]), record)
-    index = _load_index(store)
-    index["latestPrerecordHash"] = record["preregistrationHash"]
-    _write_index(_index_path(store), index)
+    with _INDEX_WRITE_LOCK:
+        index = _load_index(store)
+        index["latestPrerecordHash"] = record["preregistrationHash"]
+        _write_index(_index_path(store), index)
     return build_xe3_preregistration_status(project_root, storage_root=store)
