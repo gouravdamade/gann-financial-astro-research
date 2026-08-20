@@ -1,16 +1,92 @@
 {
   "contract": "VARAHAMIHIRA_KURMA_REGION_SEED_V1",
-  "status": "RAW_SOURCE_GROUPS_MODERN_MAPPING_NOT_BUILT",
+  "status": "RAW_CHAPTER_XIV_NAMES_MODERN_MAPPING_NOT_BUILT",
+  "historicalSource": {
+    "work": "Bṛhat Saṃhitā",
+    "chapter": "XIV / Kūrma Vibhāga",
+    "locatorPolicy": "Verse ranges locate raw historical name lists; no modern place mapping is inferred.",
+    "sourceStatus": "WORKING_WITNESS_METADATA_PENDING",
+    "historicalNamesStatus": "RAW_SOURCE_NAMES_ONLY",
+    "modernGeographicInference": false,
+    "mappingStatus": "UNKNOWN"
+  },
   "groups": [
-    {"direction": "CENTER", "nakshatras": ["Krittika", "Rohini", "Mrigashirsha"], "mappingStatus": "UNKNOWN"},
-    {"direction": "EAST", "nakshatras": ["Ardra", "Punarvasu", "Pushya"], "mappingStatus": "UNKNOWN"},
-    {"direction": "SOUTHEAST", "nakshatras": ["Ashlesha", "Magha", "Purva Phalguni"], "mappingStatus": "UNKNOWN"},
-    {"direction": "SOUTH", "nakshatras": ["Uttara Phalguni", "Hasta", "Chitra"], "mappingStatus": "UNKNOWN"},
-    {"direction": "SOUTHWEST", "nakshatras": ["Swati", "Vishakha", "Anuradha"], "mappingStatus": "UNKNOWN"},
-    {"direction": "WEST", "nakshatras": ["Jyeshtha", "Mula", "Purva Ashadha"], "mappingStatus": "UNKNOWN"},
-    {"direction": "NORTHWEST", "nakshatras": ["Uttara Ashadha", "Shravana", "Dhanishtha"], "mappingStatus": "UNKNOWN"},
-    {"direction": "NORTH", "nakshatras": ["Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada"], "mappingStatus": "UNKNOWN"},
-    {"direction": "NORTHEAST", "nakshatras": ["Revati", "Ashwini", "Bharani"], "mappingStatus": "UNKNOWN"}
+    {
+      "direction": "CENTER",
+      "nakshatras": ["Krittika", "Rohini", "Mrigashirsha"],
+      "sourceVerses": "14.2-14.4",
+      "historicalNames": ["Bhadrā", "Arimeda", "Māṇḍavya", "Sālva", "Nīpa", "Ujjihāna", "Maru", "Vatsa", "Ghoṣa", "Yamunā", "Sarasvatī", "Matsya", "Mādhyamika", "Māthuraka", "Upajyotiṣaka", "Dharmaraṇi", "Śūrasena", "Gauragrīva", "Uddehika", "Pāṇḍu", "Guḍā", "Aśvattha", "Pāñcāla", "Sāketa", "Kaṅka", "Kura", "Kālakoṭi", "Kukura", "Pāriyātra", "Audumbara", "Kapiṣṭhala", "Gajāhvaya"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "EAST",
+      "nakshatras": ["Ardra", "Punarvasu", "Pushya"],
+      "sourceVerses": "14.5-14.7",
+      "historicalNames": ["Añjana", "Vṛṣabha", "Dhvaja", "Padma", "Mālyavān", "Vyāghramukha", "Suhma", "Karvaṭa", "Cāndrapura", "Śūrpakarṇa", "Khasa", "Magadha", "Śibiragiri", "Mithilā", "Samataṭa", "Uḍra", "Aśvavadana", "Danturaka", "Jyotiṣa", "Lauhitya", "Kṣīrasamudra", "Puruṣāda", "Udayagiri", "Bhadragauḍaka", "Pauṇḍra", "Utkala", "Kāśī", "Mekalā", "Ambaṣṭha", "Ekapada", "Tāmralipta", "Kosalaka", "Vardhamān"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "SOUTHEAST",
+      "nakshatras": ["Ashlesha", "Magha", "Purva Phalguni"],
+      "sourceVerses": "14.8-14.10",
+      "historicalNames": ["Kosala", "Kaliṅga", "Vaṅga", "Upavaṅga", "Jaṭharāṅga", "Śaulika", "Vidarbha", "Vatsa", "Āṇḍhra", "Cedika", "Ūrdhvakaṇṭha", "Vṛśa", "Nālikera", "Carma", "Vindhya", "Tripuri", "Śmaśrudhara", "Hemakuṭa", "Vyālagrīva", "Mahāgrīva", "Kiṣkindha", "Kaṇṭakasthala", "Niṣāda", "Purika", "Dāśārṇa", "Nagna", "Parṇa", "Śabara"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "SOUTH",
+      "nakshatras": ["Uttara Phalguni", "Hasta", "Chitra"],
+      "sourceVerses": "14.11-14.16",
+      "historicalNames": ["Laṅkā", "Kālājina", "Saurikīrṇa", "Tālikaṭā", "Giri", "Nagara", "Malaya", "Dardura", "Mahendra", "Mālindya", "Bharukacchā", "Kaṅkaṭa", "Ṭakaṅkaṇa", "Vanavāsi", "Śibi", "Phaṇikara", "Koṅkaṇa", "Abhīra", "Ākara", "Veṇa", "Avantī", "Daśapura", "Gonarda", "Kerala", "Karṇāṭa", "Mahāṭavi", "Citrakūṭa", "Nāsikya", "Kolla", "Giri", "Colā", "Krauñcadvīpa", "Jaṭādhara", "Kāverī", "Ṛṣyamūka", "Vaidūryadvīpa", "Śaṅkhadvīpa", "Muktādvīpa", "Trivāricaradvīpa", "Dharmapaṭṭanadvīpa", "Gaṇarājya", "Kṛṣṇa", "Vellara", "Śika", "Śūrpa", "Kusumanāga", "Tumbavana", "Kārmaṇeyaka", "Yāmyodadhi", "Tāpasāśramā", "Ṛṣikā", "Kāñcī", "Marucī", "Paṭṭa", "Ceryā", "Āryaka", "Siṃhala", "Ṛṣabha", "Baladeva", "Daṇḍaka", "Timiṅgilāśana", "Bhadra", "Kaccha", "Kuñjaradarī", "Tāmraparṇī"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "SOUTHWEST",
+      "nakshatras": ["Swati", "Vishakha", "Anuradha"],
+      "sourceVerses": "14.17-14.19",
+      "historicalNames": ["Pahlava", "Kāmboja", "Sindhu", "Sauvīra", "Vaḍavāmukha", "Ārava", "Ambaṣṭha", "Kapila", "Nārīmukha", "Anarta", "Pheṇagiri", "Yavana", "Mārgara", "Karṇaprāveya", "Pāraśava", "Śūdra", "Barbara", "Kirāta", "Khaṇḍa", "Kravya", "Ābhīra", "Cañcūka", "Hemagiri", "Sindhukālaka", "Raivataka", "Saurāṣṭra", "Bādara", "Draviḍa", "Mahārṇava"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "WEST",
+      "nakshatras": ["Jyeshtha", "Mula", "Purva Ashadha"],
+      "sourceVerses": "14.20-14.21",
+      "historicalNames": ["Maṇimān", "Meghavān", "Vanaugha", "Kṣurārpaṇa", "Astagiri", "Aparāntaka", "Śāntika", "Haihaya", "Praśastādri", "Vokkāṇa", "Pañcanada", "Ramaṭha", "Pārata", "Tārakṣiti", "Jṛṅga", "Vaiśya", "Kanaka", "Śaka", "Mleccha"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "NORTHWEST",
+      "nakshatras": ["Uttara Ashadha", "Shravana", "Dhanishtha"],
+      "sourceVerses": "14.22-14.23",
+      "historicalNames": ["Māṇḍavya", "Tuṣāra", "Tālahala", "Madra", "Aśmaka", "Kulūta", "Halaḍā", "Strīrājya", "Nṛsiṃha", "Vanakha", "Veṇumatī", "Phalgu", "Guluhā", "Marukuccha", "Carmaraṅga"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "NORTH",
+      "nakshatras": ["Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada"],
+      "sourceVerses": "14.24-14.28",
+      "historicalNames": ["Kailāsa", "Himālaya", "Vasumān", "Dhanuṣmān", "Krauñca", "Meru", "Uttara", "Kuru", "Kṣudramīna", "Kaikaya", "Vasāti", "Yāmuna", "Bhogaprastha", "Arjunāyana", "Agnīdhra", "Ādarśa", "Antardvīpi", "Trigarta", "Turagānana", "Aśvamukha", "Keśadhara", "Cipiṭa", "Nāsika", "Dāseraka", "Vāṭadhāna", "Śaradhāna", "Takṣaśilā", "Puṣkalāvata", "Kailāvata", "Kaṇṭhadhāna", "Ambara", "Madraka", "Mālava", "Paurava", "Kacchāra", "Daṇḍapiṅgala", "Māṇahala", "Hūṇa", "Kohala", "Śītaka", "Māṇḍavya", "Bhūtapura", "Gāndhāra", "Yaśovati", "Hematāla", "Rājanya", "Khacara", "Gavya", "Yaudheya", "Dāsameya", "Śyāmākā", "Kṣemadhūrta"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    },
+    {
+      "direction": "NORTHEAST",
+      "nakshatras": ["Revati", "Ashwini", "Bharani"],
+      "sourceVerses": "14.29-14.31",
+      "historicalNames": ["Meruka", "Naṣṭarājya", "Paśupāla", "Kīra", "Kāśmīra", "Abhisāra", "Darada", "Taṅgaṇa", "Kulūta", "Sairindha", "Vanarāṣṭra", "Brahmapura", "Dārvaḍa", "Amara", "Vanarājya", "Kirāta", "Cīna", "Kauṇinda", "Bhallā", "Paṭola", "Jaṭāsura", "Kunaṭa", "Khasa", "Ghoṣa", "Kucikā", "Ekacaraṇa", "Anuviddha", "Suvarṇabhū", "Vasudhana", "Diviṣṭhā", "Paurava", "Cīranivāsana", "Trinetra", "Muñjādri", "Gāndharva"],
+      "mappingStatus": "UNKNOWN",
+      "historicalNameStatus": "RAW_CHAPTER_XIV_SOURCE_LIST_NO_MODERN_MAPPING"
+    }
   ],
-  "guardrails": {"modernGeographyMapping": false, "aggregation": "NOT_SOURCE_DEFINED", "executionAllowed": false}
+  "guardrails": {
+    "modernGeographyMapping": false,
+    "aggregation": "NOT_SOURCE_DEFINED",
+    "executionAllowed": false
+  }
 }

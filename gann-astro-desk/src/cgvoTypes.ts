@@ -34,14 +34,51 @@ export type CgvoSourceProfile = {
 export type CgvoKurmaSeed = {
   contract: string
   status: string
-  groups: Array<{ direction: string; nakshatras: string[]; mappingStatus: string }>
+  historicalSource?: {
+    work?: string
+    chapter?: string
+    locatorPolicy?: string
+    sourceStatus?: string
+    historicalNamesStatus?: string
+    modernGeographicInference?: boolean
+    mappingStatus?: string
+  }
+  groups: Array<{
+    direction: string
+    nakshatras: string[]
+    sourceVerses?: string
+    historicalNames?: string[]
+    historicalNameStatus?: string
+    mappingStatus: string
+  }>
   guardrails: Record<string, unknown>
+}
+
+export type CgvoHorizontalCoordinates = {
+  altitudeTrueDeg?: number | null
+  altitudeApparentDeg?: number | null
+  azimuthDeg?: number | null
+  sourceAzimuthDeg?: number | null
+  azimuthConvention?: string
+  sourceAzimuthConvention?: string
+  topocentric?: boolean
+}
+
+export type CgvoVisibilityDetails = {
+  status: 'VISIBLE' | 'NOT_VISIBLE' | 'RISE_SET_CLIPPED'
+  maximumVisibility: 'VISIBLE' | 'NOT_VISIBLE_AT_MAXIMUM'
+  visibleWindowStartUtc: string | null
+  visibleWindowEndUtc: string | null
+  clipBoundaries: string[]
+  horizonEvents: { riseUtc: string | null; setUtc: string | null }
+  swissVisibilityFlags: number
 }
 
 export type CgvoModernAstronomy = {
   globalType: string
   localEclipseType: string
   visibility: 'VISIBLE' | 'NOT_VISIBLE' | 'RISE_SET_CLIPPED'
+  visibilityDetails?: CgvoVisibilityDetails
   contacts: Record<string, string | null>
   localMaxUtc: string | null
   sunriseDuring?: string | null
@@ -56,24 +93,40 @@ export type CgvoModernAstronomy = {
   umbralMagnitude?: number | null
   penumbralMagnitude?: number | null
   distanceFromOppositionDeg?: number | null
-  sunAltitudeAzimuth?: Record<string, number | null>
-  moonAltitudeAzimuth?: Record<string, number | null>
+  sunAltitudeAzimuth?: CgvoHorizontalCoordinates
+  moonAltitudeAzimuth?: CgvoHorizontalCoordinates
+  magnitudeReference?: string
   saros?: Record<string, number | null> | null
   rawAttributes?: Array<number | null>
 }
 
 export type CgvoEvent = {
   causalEventId: string
-  eventIdentity: { eventType: string; globalMaxUtc: string; globalType: string }
+  eventIdentity: {
+    eventType: string
+    globalMaxUtc: string
+    globalMaxSwissUt?: string
+    globalMaxUtcDisplay?: string
+    globalType: string
+    identityTimeScale?: string
+    displayTimeScale?: string
+    displayTimezone?: string
+  }
   astronomyEventIdentity: {
     eventType: string
     globalType: string
     globalMaxUtc: string
+    globalMaxSwissUt?: string
+    globalMaxUtcDisplay?: string
     globalContacts: Record<string, string | null>
+    globalContactsSwissUt?: Record<string, string | null>
+    globalContactsUtcDisplay?: Record<string, string | null>
     astronomyContract: string
     ephemeris: string
     ephemerisVersion: string
     timeScale: string
+    displayTimeScale?: string
+    displayTimezone?: string
     deltaTModel: string
   }
   locality: Record<string, unknown> | null

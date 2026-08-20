@@ -209,20 +209,84 @@ def _lunar_contacts(times: tuple[float, ...]) -> dict[str, str | None]:
 
 def _observer_position(project_root: Path, event_type: str, event_max: datetime, locality: Mapping[str, Any]) -> dict[str, Any]:
     del project_root
-    coordinates = (float(locality["longitude"]), float(locality["latitude"]), float(locality["elevationM"]))
-    flags = swe.FLG_SWIEPH | swe.FLG_EQUATORIAL
+    longitude = float(locality["longitude"])
+    latitude = float(locality["latitude"])
+    elevation = float(locality["elevationM"])
+    coordinates = (longitude, latitude, elevation)
+    # Swiss Ephemeris returns azalt() azimuths from South toward West.  Keep
+    # the raw value for audit, and expose the normalized compass convention
+    # used by the UI: 0 North, 90 East, 180 South, 270 West.
+    swe.set_topo(longitude, latitude, elevation)
+    flags = swe.FLG_SWIEPH | swe.FLG_EQUATORIAL | swe.FLG_TOPOCTR
     result: dict[str, Any] = {}
     for body, body_id in (("SUN", swe.SUN), ("MOON", swe.MOON)):
         values, _ = swe.calc_ut(_jd(event_max), body_id, flags)
-        azimuth, true_altitude, apparent_altitude = swe.azalt(_jd(event_max), swe.EQU2HOR, coordinates, 0.0, 15.0, values)
+        source_azimuth, true_altitude, apparent_altitude = swe.azalt(_jd(event_max), swe.EQU2HOR, coordinates, 0.0, 15.0, values)
+        normalized_azimuth = (float(source_azimuth) + 180.0) % 360.0
         result[body.lower()] = {
             "altitudeTrueDeg": _finite(true_altitude),
             "altitudeApparentDeg": _finite(apparent_altitude),
-            "azimuthDeg": _finite(azimuth),
+            "azimuthDeg": _finite(normalized_azimuth),
+            "sourceAzimuthDeg": _finite(source_azimuth),
+            "azimuthConvention": "NORTH_CLOCKWISE_0N_90E_180S_270W",
+            "sourceAzimuthConvention": "SWISSEPH_SOUTH_CLOCKWISE_TO_WEST",
+            "topocentric": True,
         }
     result["calculation"] = "TOPOCENTRIC_HORIZONTAL_COORDINATES_AT_LOCAL_MAX"
     result["eventType"] = event_type
     return result
+
+
+def _visibility_summary(
+    event_type: str,
+    flags: int,
+    times: tuple[float, ...] | None,
+    contacts: Mapping[str, str | None],
+) -> dict[str, Any]:
+    visible = bool(flags & swe.ECL_VISIBLE)
+    maximum_visible = bool(flags & swe.ECL_MAX_VISIBLE)
+    if not visible:
+        status = "NOT_VISIBLE"
+    elif maximum_visible:
+        status = "VISIBLE"
+    else:
+        status = "RISE_SET_CLIPPED"
+
+    if event_type == "SOLAR":
+        phase_start_key, phase_end_key = "C1", "C4"
+        rise_label, set_label = "sunrise", "sunset"
+        rise_index, set_index = 5, 6
+    else:
+        phase_start_key, phase_end_key = "P1", "P4"
+        rise_label, set_label = "moonrise", "moonset"
+        rise_index, set_index = 8, 9
+
+    rise = _from_jd(times[rise_index]) if times is not None else None
+    set_time = _from_jd(times[set_index]) if times is not None else None
+
+    phase_start = _parse_utc(contacts[phase_start_key], phase_start_key) if contacts.get(phase_start_key) else None
+    phase_end = _parse_utc(contacts[phase_end_key], phase_end_key) if contacts.get(phase_end_key) else None
+    visible_start = rise if rise and (phase_start is None or rise > phase_start) else phase_start
+    visible_end = set_time if set_time and (phase_end is None or set_time < phase_end) else phase_end
+    clipping: list[str] = []
+    if rise is not None:
+        clipping.append(rise_label.upper())
+    if set_time is not None:
+        clipping.append(set_label.upper())
+    if status == "RISE_SET_CLIPPED" and not clipping:
+        clipping.append("MAXIMUM_NOT_VISIBLE")
+    return {
+        "status": status,
+        "maximumVisibility": "VISIBLE" if maximum_visible else "NOT_VISIBLE_AT_MAXIMUM",
+        "visibleWindowStartUtc": _iso(visible_start),
+        "visibleWindowEndUtc": _iso(visible_end),
+        "clipBoundaries": clipping,
+        "horizonEvents": {
+            "riseUtc": _iso(rise),
+            "setUtc": _iso(set_time),
+        },
+        "swissVisibilityFlags": int(flags),
+    }
 
 
 def _local_circumstances(project_root: Path, event_type: str, global_max: datetime, locality: Mapping[str, Any]) -> dict[str, Any]:
@@ -239,11 +303,13 @@ def _local_circumstances(project_root: Path, event_type: str, global_max: dateti
             contact_map = {name: None for name in ("C1", "C2", "MAX", "C3", "C4")}
             local_max = None
             attrs = (None,) * 20
+        visibility_details = _visibility_summary(event_type, int(next_flags), times if local_max is not None else None, contact_map)
         local_attrs = attrs if local_max is not None else swe.sol_eclipse_how(event_max_jd, coordinates, flags)[1]
         observer = _observer_position(project_root, event_type, local_max or global_max, locality)
         return {
-            "localEclipseType": _local_type(int(next_flags), event_type, local_max),
-            "visibility": "VISIBLE" if local_max is not None else "NOT_VISIBLE",
+            "localEclipseType": _local_type(int(next_flags), event_type, local_max if visibility_details["status"] != "NOT_VISIBLE" else None),
+            "visibility": visibility_details["status"],
+            "visibilityDetails": visibility_details,
             "contacts": contact_map,
             "localMaxUtc": _iso(local_max),
             "sunriseDuring": _iso(_from_jd(times[5])) if local_max is not None else None,
@@ -251,7 +317,7 @@ def _local_circumstances(project_root: Path, event_type: str, global_max: dateti
             "magnitude": _finite(local_attrs[0]),
             "obscuration": _finite(local_attrs[2]),
             "apparentDiameterRatio": _finite(local_attrs[1]),
-            "sunAltitudeAzimuth": {"azimuthDeg": _finite(local_attrs[4]), "altitudeTrueDeg": _finite(local_attrs[5]), "altitudeApparentDeg": _finite(local_attrs[6])},
+            "sunAltitudeAzimuth": observer["sun"],
             "moonAltitudeAzimuth": observer["moon"],
             "apparentMoonSunDiameterRatio": _finite(local_attrs[1]),
             "coreShadowDiameterKm": _finite(local_attrs[3]) if local_max is not None else None,
@@ -265,27 +331,43 @@ def _local_circumstances(project_root: Path, event_type: str, global_max: dateti
         next_flags = 0
         contact_map = {name: None for name in ("P1", "U1", "U2", "MAX", "U3", "U4", "P4")}
         local_max = None
+        attrs = (None,) * 20
+    visibility_details = _visibility_summary(event_type, int(next_flags), times if local_max is not None else None, contact_map)
+    observer = _observer_position(project_root, event_type, local_max or global_max, locality)
+    _, magnitude_attrs = swe.lun_eclipse_how(_jd(local_max or global_max), coordinates, flags)
     return {
-        "localEclipseType": _local_type(int(next_flags), event_type, local_max),
-        "visibility": "VISIBLE" if local_max is not None else "NOT_VISIBLE",
+        "localEclipseType": _local_type(int(next_flags), event_type, local_max if visibility_details["status"] != "NOT_VISIBLE" else None),
+        "visibility": visibility_details["status"],
+        "visibilityDetails": visibility_details,
         "contacts": contact_map,
         "localMaxUtc": _iso(local_max),
-        "moonAltitudeAzimuth": _observer_position(project_root, event_type, local_max or global_max, locality)["moon"],
-        "sunAltitudeAzimuth": _observer_position(project_root, event_type, local_max or global_max, locality)["sun"],
-        "umbralMagnitude": _finite(attrs[0]) if attrs and local_max is not None else None,
-        "penumbralMagnitude": _finite(attrs[1]) if attrs and local_max is not None else None,
-        "distanceFromOppositionDeg": _finite(attrs[7]) if attrs and local_max is not None else None,
+        "moonAltitudeAzimuth": observer["moon"],
+        "sunAltitudeAzimuth": observer["sun"],
+        "umbralMagnitude": _finite(magnitude_attrs[0]),
+        "penumbralMagnitude": _finite(magnitude_attrs[1]),
+        "magnitudeReference": "SWISSEPH_LUNAR_ECLIPSE_HOW_AT_EVENT_MAX_SWISSEPH_UT",
+        "distanceFromOppositionDeg": _finite(magnitude_attrs[7]),
         "moonriseDuring": _iso(_from_jd(times[8])) if local_max is not None else None,
         "moonsetDuring": _iso(_from_jd(times[9])) if local_max is not None else None,
-        "rawAttributes": [_finite(value) for value in attrs],
+        "rawAttributes": [_finite(value) for value in magnitude_attrs],
     }
 
 
 def _event_identity(event_type: str, global_max: datetime, global_type: str) -> dict[str, Any]:
-    identity = {"eventType": event_type, "globalMaxUtc": _iso(global_max), "globalType": global_type}
+    swiss_ut = _iso(global_max)
+    identity = {"eventType": event_type, "globalMaxSwissUt": swiss_ut, "globalType": global_type}
     return {
         "causalEventId": f"CGVO-{event_type}-{_hash(identity)[:20]}",
-        "eventIdentity": identity,
+        "eventIdentity": {
+            **identity,
+            # Backward-compatible display alias.  It is never used to derive
+            # the causal hash; the identity hash uses globalMaxSwissUt above.
+            "globalMaxUtc": swiss_ut,
+            "globalMaxUtcDisplay": swiss_ut,
+            "identityTimeScale": "SWISSEPH_UT",
+            "displayTimeScale": "UTC",
+            "displayTimezone": "UTC",
+        },
     }
 
 
@@ -304,12 +386,18 @@ def _build_event(project_root: Path, event_type: str, flags: int, times: tuple[f
         "astronomyEventIdentity": {
             "eventType": event_type,
             "globalType": global_type,
+            "globalMaxSwissUt": _iso(global_max),
             "globalMaxUtc": _iso(global_max),
+            "globalMaxUtcDisplay": _iso(global_max),
             "globalContacts": global_contacts,
+            "globalContactsSwissUt": global_contacts,
+            "globalContactsUtcDisplay": global_contacts,
             "astronomyContract": MODERN_ASTRONOMY_CONTRACT,
             "ephemeris": "Swiss Ephemeris",
             "ephemerisVersion": str(getattr(swe, "version", "unknown")),
-            "timeScale": "UT1_PRIMARY_SWISSEPH_UT",
+            "timeScale": "SWISSEPH_UT",
+            "displayTimeScale": "UTC",
+            "displayTimezone": "UTC",
             "deltaTModel": "SWISS_EPHEMERIS_INTERNAL",
         },
         "locality": None,
@@ -321,7 +409,13 @@ def _build_event(project_root: Path, event_type: str, flags: int, times: tuple[f
         "sourceUnknowns": list(SOURCE_UNKNOWN_REASONS),
         "provenance": [
             {"kind": "MODERN_ASTRONOMY", "contract": MODERN_ASTRONOMY_CONTRACT, "status": "FACTUAL_ENGINE_OUTPUT"},
-            {"kind": "TIME", "primaryTimeScale": "UT1", "timezoneRole": "DISPLAY_ONLY"},
+            {
+                "kind": "TIME",
+                "identityTimeScale": "SWISSEPH_UT",
+                "displayTimeScale": "UTC",
+                "displayTimezone": "UTC",
+                "timezoneRole": "DISPLAY_ONLY",
+            },
         ],
         "guardrails": _guardrails(),
     }
@@ -417,21 +511,22 @@ def build_cgvo_local_circumstances(project_root: Path, payload: Mapping[str, Any
     event_type = str(payload.get("eventType") or "").upper()
     if event_type not in {"SOLAR", "LUNAR"}:
         raise CgvoRequestError("eventType must be SOLAR or LUNAR")
-    global_max = _parse_utc(payload.get("globalMaxUtc"), "globalMaxUtc")
+    identity_value = payload.get("globalMaxSwissUt") or payload.get("globalMaxUtc")
+    identity_field = "globalMaxSwissUt" if payload.get("globalMaxSwissUt") else "globalMaxUtc"
+    global_max = _parse_utc(identity_value, identity_field)
     locality = _validate_locality(payload)
-    flags = int(payload.get("globalFlags") or 0)
-    if not flags:
-        # The identity is still caller-independent: global facts are resolved
-        # from the timestamp rather than trusting a frontend-created flag.
-        flags, times = _next_global_event(event_type, global_max - timedelta(minutes=1))
-        resolved_max = _from_jd(times[0])
-        if resolved_max is None or abs((resolved_max - global_max).total_seconds()) > 3600:
-            raise CgvoRequestError("globalMaxUtc does not resolve to the requested eclipse identity")
-    else:
-        _, times = _next_global_event(event_type, global_max - timedelta(minutes=1))
+    # Reconstruct both the flags and the event time from Swiss Ephemeris.  A
+    # frontend-supplied global flag is never trusted as an event identity.
+    flags, times = _next_global_event(event_type, global_max - timedelta(minutes=1))
+    resolved_max = _from_jd(times[0])
+    if resolved_max is None or abs((resolved_max - global_max).total_seconds()) > 3600:
+        raise CgvoRequestError("globalMaxUtc does not resolve to the requested eclipse identity")
     event = _build_event(project_root, event_type, int(flags), times, locality)
     if event["astronomyEventIdentity"]["globalMaxUtc"] != _iso(global_max):
         raise CgvoRequestError("globalMaxUtc does not match the immutable Swiss Ephemeris event identity")
+    requested_causal_id = str(payload.get("causalEventId") or "").strip()
+    if requested_causal_id and requested_causal_id != event["causalEventId"]:
+        raise CgvoRequestError("causalEventId does not match the reconstructed Swiss Ephemeris event")
     return {
         "contract": "CGVO_LOCAL_CIRCUMSTANCES_V1",
         "event": event,
@@ -443,7 +538,7 @@ def build_cgvo_local_circumstances(project_root: Path, payload: Mapping[str, Any
 
 def build_cgvo_workbench(project_root: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
     event_type = str(payload.get("eventType") or "SOLAR").upper()
-    if payload.get("globalMaxUtc"):
+    if payload.get("globalMaxSwissUt") or payload.get("globalMaxUtc"):
         local_payload = dict(payload)
         local_payload["eventType"] = event_type
         local = build_cgvo_local_circumstances(project_root, local_payload)
@@ -453,6 +548,9 @@ def build_cgvo_workbench(project_root: Path, payload: Mapping[str, Any]) -> dict
         end = _parse_utc(payload.get("endUtc") or "2028-01-01T00:00:00Z", "endUtc")
         search = build_cgvo_event_search(project_root, {"startUtc": _iso(start), "endUtc": _iso(end), "eventType": event_type, "limit": 12})
         event = search["events"][0] if search["events"] else None
+        requested_causal_id = str(payload.get("causalEventId") or "").strip()
+        if requested_causal_id and (event is None or requested_causal_id != event["causalEventId"]):
+            raise CgvoRequestError("causalEventId does not match the reconstructed Swiss Ephemeris event")
     return {
         "contract": CGVO_CONTRACT,
         "schemaVersion": 1,

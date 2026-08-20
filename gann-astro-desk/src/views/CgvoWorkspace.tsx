@@ -35,7 +35,7 @@ function numberLabel(value: number | null | undefined, suffix = ''): string {
 }
 
 function EventOption({ event }: { event: CgvoEvent }) {
-  return <option value={event.causalEventId}>{dateLabel(event.astronomyEventIdentity.globalMaxUtc)} · {event.astronomyEventIdentity.globalType}</option>
+  return <option value={event.causalEventId}>{dateLabel(event.astronomyEventIdentity.globalMaxUtcDisplay ?? event.astronomyEventIdentity.globalMaxUtc)} · {event.astronomyEventIdentity.globalType}</option>
 }
 
 function StatusChip({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -50,13 +50,21 @@ function ModernFacts({ event }: { event: CgvoEvent }) {
       <div className="cgvo-panel-heading"><div><span>Modern astronomy</span><strong>Topocentric local circumstances</strong></div><StatusChip>FACTUAL ENGINE OUTPUT</StatusChip></div>
       <div className="cgvo-fact-grid">
         <div><span>Global identity</span><strong>{identity.eventType} · {identity.globalType}</strong></div>
-        <div><span>Global maximum</span><strong>{dateLabel(identity.globalMaxUtc)}</strong></div>
+        <div><span>Global maximum (UTC display)</span><strong>{dateLabel(identity.globalMaxUtcDisplay ?? identity.globalMaxUtc)}</strong></div>
+        <div><span>Swiss UT identity</span><strong>{dateLabel(identity.globalMaxSwissUt ?? identity.globalMaxUtc)}</strong><small>Identity time scale: {event.eventIdentity.identityTimeScale ?? 'SWISSEPH_UT'} · display timezone is not used for hashing</small></div>
         <div><span>Local type</span><strong>{modern?.localEclipseType ?? 'Not calculated'}</strong></div>
         <div><span>Local visibility</span><strong>{modern?.visibility ?? 'Not calculated'}</strong></div>
-        <div><span>Magnitude</span><strong>{numberLabel(modern?.magnitude)}</strong><small>Solar diameter coverage; not area obscuration</small></div>
-        <div><span>Area obscuration</span><strong>{numberLabel(modern?.obscuration)}</strong><small>Fraction of solar disc covered</small></div>
+        {identity.eventType === 'LUNAR' ? <>
+          <div><span>Umbral magnitude</span><strong>{numberLabel(modern?.umbralMagnitude)}</strong><small>Swiss Ephemeris lunar umbral magnitude</small></div>
+          <div><span>Penumbral magnitude</span><strong>{numberLabel(modern?.penumbralMagnitude)}</strong><small>Swiss Ephemeris lunar penumbral magnitude</small></div>
+        </> : <>
+          <div><span>Magnitude</span><strong>{numberLabel(modern?.magnitude)}</strong><small>Solar diameter coverage; not area obscuration</small></div>
+          <div><span>Area obscuration</span><strong>{numberLabel(modern?.obscuration)}</strong><small>Fraction of solar disc covered</small></div>
+        </>}
         <div><span>Sun altitude / azimuth</span><strong>{numberLabel(modern?.sunAltitudeAzimuth?.altitudeApparentDeg, ' deg')} / {numberLabel(modern?.sunAltitudeAzimuth?.azimuthDeg, ' deg')}</strong></div>
         <div><span>Moon altitude / azimuth</span><strong>{numberLabel(modern?.moonAltitudeAzimuth?.altitudeApparentDeg, ' deg')} / {numberLabel(modern?.moonAltitudeAzimuth?.azimuthDeg, ' deg')}</strong></div>
+        <div><span>Azimuth convention</span><strong>0° North · clockwise</strong><small>Normalized from Swiss Ephemeris South-to-West; horizontal coordinates are topocentric.</small></div>
+        <div><span>Visibility window</span><strong>{modern?.visibilityDetails?.visibleWindowStartUtc ? `${dateLabel(modern.visibilityDetails.visibleWindowStartUtc)} → ${dateLabel(modern.visibilityDetails.visibleWindowEndUtc)}` : 'No local visible window'}</strong><small>{modern?.visibilityDetails?.clipBoundaries.length ? `Rise/set clip: ${modern.visibilityDetails.clipBoundaries.join(', ')}` : 'Maximum and horizon status are reported separately.'}</small></div>
       </div>
       <div className="cgvo-location-line"><MapPinned size={13} /> {event.locality ? `${event.locality.label} · ${event.locality.latitude}, ${event.locality.longitude} · ${event.locality.timezone}` : 'Select a locality to calculate local circumstances.'}</div>
     </section>
@@ -87,7 +95,7 @@ function GeographyCards({ workbench }: { workbench: CgvoWorkbench }) {
       <article><span>Kurma nakshatra region</span><strong>RAW GROUPS ONLY</strong><small>Modern geography mapping is not built.</small></article>
       <article><span>Lunar month region</span><strong>UNKNOWN</strong><small>Lunar-month convention remains open.</small></article>
     </div>
-    <div className="cgvo-kurma-grid">{kurma.groups.map((group) => <div key={group.direction}><span>{group.direction}</span><strong>{group.nakshatras.join(' / ')}</strong><small>{group.mappingStatus}</small></div>)}</div>
+    <div className="cgvo-kurma-grid">{kurma.groups.map((group) => <div key={group.direction}><span>{group.direction}</span><strong>{group.nakshatras.join(' / ')}</strong><small>{group.sourceVerses ?? 'Chapter XIV'} · {group.mappingStatus}</small>{group.historicalNames?.length ? <details><summary>{group.historicalNames.length} raw Chapter XIV names</summary><small>{group.historicalNames.join(' · ')}</small></details> : null}</div>)}</div>
   </section>
 }
 
@@ -106,7 +114,7 @@ function AuditPanel({ event, status }: { event: CgvoEvent; status: CgvoStatus | 
       <div><span>Causal event</span><code>{event.causalEventId}</code></div>
       <div><span>Astronomy contract</span><code>{event.astronomyEventIdentity.astronomyContract}</code></div>
       <div><span>Ephemeris</span><code>{event.astronomyEventIdentity.ephemeris} {event.astronomyEventIdentity.ephemerisVersion}</code></div>
-      <div><span>Time policy</span><code>{event.astronomyEventIdentity.timeScale} · timezone display only</code></div>
+      <div><span>Time policy</span><code>{event.astronomyEventIdentity.timeScale} identity · {event.astronomyEventIdentity.displayTimeScale ?? 'UTC'} display only</code></div>
       <div><span>Milestone</span><code>{status?.milestone ?? 'PFR-V2B-CGVO-P1'}</code></div>
       <div><span>Execution</span><code>false · read-only research</code></div>
     </div>
@@ -134,7 +142,7 @@ export function CgvoWorkspace() {
       const nextEvent = nextSearch.events[0] ?? null
       setEvent(nextEvent)
       if (nextEvent) {
-        setWorkbench(await fetchCgvoWorkbench({ eventType: nextType, globalMaxUtc: nextEvent.astronomyEventIdentity.globalMaxUtc, ...locality }))
+        setWorkbench(await fetchCgvoWorkbench({ eventType: nextType, globalMaxSwissUt: nextEvent.astronomyEventIdentity.globalMaxSwissUt ?? nextEvent.astronomyEventIdentity.globalMaxUtc, causalEventId: nextEvent.causalEventId, ...locality }))
       } else setWorkbench(null)
     } catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)) } finally { setBusy(false) }
   }, [endUtc, eventType, locality, startUtc])
@@ -143,7 +151,7 @@ export function CgvoWorkspace() {
     if (!nextEvent) return
     setBusy(true); setError('')
     try {
-      setWorkbench(await fetchCgvoWorkbench({ eventType, globalMaxUtc: nextEvent.astronomyEventIdentity.globalMaxUtc, ...nextLocality }))
+      setWorkbench(await fetchCgvoWorkbench({ eventType, globalMaxSwissUt: nextEvent.astronomyEventIdentity.globalMaxSwissUt ?? nextEvent.astronomyEventIdentity.globalMaxUtc, causalEventId: nextEvent.causalEventId, ...nextLocality }))
     } catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)) } finally { setBusy(false) }
   }, [eventType, locality])
 
@@ -159,7 +167,7 @@ export function CgvoWorkspace() {
     <section className="cgvo-event-selector" aria-label="CGVO event selector"><label>Search start UTC<input value={startUtc} onChange={(e) => setStartUtc(e.target.value)} /></label><label>Search end UTC<input value={endUtc} onChange={(e) => setEndUtc(e.target.value)} /></label><button type="button" className="secondary-command" onClick={() => void loadSearch()} disabled={busy}>Search events</button><label className="cgvo-event-select">Selected event<select aria-label="CGVO event" value={selectedEventId} onChange={(e) => { const next = search?.events.find((item) => item.causalEventId === e.target.value) ?? null; setEvent(next); void loadLocality(next) }} disabled={busy || !search?.events.length}>{search?.events.map((item) => <EventOption key={item.causalEventId} event={item} />)}</select></label></section>
     {error && <div className="cgvo-error"><CircleAlert size={16} /><strong>CGVO unavailable</strong><span>{error}</span></div>}
     {!workbench?.event && !error && <div className="cgvo-empty">{busy ? 'Calculating deterministic eclipse facts...' : 'No eclipse exists in the selected UTC range.'}</div>}
-    {workbench?.event && <><section className="cgvo-context-strip" aria-label="Selected CGVO event"><span><strong>{workbench.event.astronomyEventIdentity.eventType}</strong> · {workbench.event.astronomyEventIdentity.globalType}</span><span>Global max {dateLabel(workbench.event.astronomyEventIdentity.globalMaxUtc)}</span><span>{workbench.event.causalEventId}</span><StatusChip>EXECUTION LOCKED</StatusChip></section><ModernFacts event={workbench.event} /><div className="cgvo-source-grid">{varahamihira && <VarahamihiraCard profile={varahamihira} />}{trailokya && <TrailokyaCard profile={trailokya} />}</div><GeographyCards workbench={workbench} /><AuditPanel event={workbench.event} status={status} /></>}
+    {workbench?.event && <><section className="cgvo-context-strip" aria-label="Selected CGVO event"><span><strong>{workbench.event.astronomyEventIdentity.eventType}</strong> · {workbench.event.astronomyEventIdentity.globalType}</span><span>Global max {dateLabel(workbench.event.astronomyEventIdentity.globalMaxUtcDisplay ?? workbench.event.astronomyEventIdentity.globalMaxUtc)}</span><span>{workbench.event.causalEventId}</span><StatusChip>EXECUTION LOCKED</StatusChip></section><ModernFacts event={workbench.event} /><div className="cgvo-source-grid">{varahamihira && <VarahamihiraCard profile={varahamihira} />}{trailokya && <TrailokyaCard profile={trailokya} />}</div><GeographyCards workbench={workbench} /><AuditPanel event={workbench.event} status={status} /></>}
     <footer className="cgvo-footer"><span>MODERN ASTRONOMY: factual only</span><span>VARAHAMIHIRA: source-separated</span><span>TRAILOKYA: source silent for eclipse visibility</span><span>executionAllowed = false</span></footer>
   </section>
 }

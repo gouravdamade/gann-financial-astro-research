@@ -10959,3 +10959,29 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   was added. Physical founder inspection of the candidate remains pending.
 - Candidate report:
   `docs/research/PFR_V2B_CGVO_P1_FOUNDER_INSPECTION_CANDIDATE_0.10.57-pfr-v2b-cgvo-p1.md`.
+
+## CGVO-P1R1 Founder-Inspection Correction (2026-08-21)
+
+- Preserved `0.10.57-pfr-v2b-cgvo-p1` and its portable/installer artifacts as
+  the historical candidate; no files in that release folder were modified.
+- Corrected the CGVO research inspector so Sun and Moon horizontal
+  coordinates are topocentric, with the Swiss Ephemeris source azimuth retained
+  and an explicit north-clockwise display normalization.
+- Added `VISIBLE`, `NOT_VISIBLE`, and `RISE_SET_CLIPPED` visibility states with
+  horizon/clip details. A locality without a matching local eclipse now returns
+  null horizon fields instead of leaking timestamps from another event.
+- Added separate lunar umbral and penumbral magnitude fields and an explicit
+  Swiss-Ephemeris magnitude reference.
+- Split Swiss UT identity fields from UTC display aliases and require the
+  frontend causal event ID to match the backend's reconstructed immutable event.
+- Extended the Kurma seed with raw Chapter XIV historical names and verse
+  ranges only; modern geographic inference remains disabled.
+- Source implementation record:
+  `docs/research/PFR_V2B_CGVO_P1R1_INSPECTION_CORRECTIONS.md`.
+- Focused CGVO/API tests: 13 passed. Full supported backend regression:
+  264/264. Full frontend regression: 42 files, 177 tests. Oxlint and the
+  production build pass. Rust fmt/check pass and 19 native Rust tests pass.
+- New immutable candidate packaging and its physical founder-inspection state
+  are pending completion in a separate packaging/report update. All locks
+  remain closed: no price/outcome read, direction, score, Fields, SBC, Auto
+  Suggest, ML, MT5 or execution; `executionAllowed=false`.

@@ -868,7 +868,7 @@ export async function fetchCgvoStatus(): Promise<CgvoStatus> {
   return payload.status
 }
 
-export async function fetchCgvoWorkbench(input: { eventType: 'SOLAR' | 'LUNAR'; globalMaxUtc?: string; localityId?: string; label?: string; latitude?: number; longitude?: number; elevationM?: number; timezone?: string; startUtc?: string; endUtc?: string }): Promise<CgvoWorkbench> {
+export async function fetchCgvoWorkbench(input: { eventType: 'SOLAR' | 'LUNAR'; globalMaxSwissUt?: string; globalMaxUtc?: string; causalEventId?: string; localityId?: string; label?: string; latitude?: number; longitude?: number; elevationM?: number; timezone?: string; startUtc?: string; endUtc?: string }): Promise<CgvoWorkbench> {
   const query = new URLSearchParams({ eventType: input.eventType })
   for (const [key, value] of Object.entries(input)) {
     if (key !== 'eventType' && value != null) query.set(key, String(value))

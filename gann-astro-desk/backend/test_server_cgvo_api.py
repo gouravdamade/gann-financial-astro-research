@@ -52,6 +52,23 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertNotIn("<!doctype", bad.get_data(as_text=True).lower())
         self.assertIn("latitude", bad.get_json()["error"])
 
+    def test_causal_event_url_is_checked_against_reconstructed_event(self) -> None:
+        search = self.client.get(
+            "/api/experiments/cgvo/eclipse-search?eventType=SOLAR&startUtc=2027-01-01T00:00:00Z&endUtc=2028-01-01T00:00:00Z&limit=24",
+            headers=self.headers,
+        ).get_json()["search"]
+        event = next(item for item in search["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        query = "eventType=SOLAR&globalMaxSwissUt={}&localityId=UJJAIN&label=Ujjain&latitude=23.1765&longitude=75.7885&elevationM=0&timezone=Asia%2FKolkata".format(event["astronomyEventIdentity"]["globalMaxSwissUt"])
+        valid = self.client.get(f"/api/experiments/cgvo/event/{event['causalEventId']}/local-circumstances?{query}", headers=self.headers)
+        self.assertEqual(valid.status_code, 200)
+        self.assertTrue(valid.content_type.startswith("application/json"))
+        self.assertEqual(valid.get_json()["circumstances"]["event"]["causalEventId"], event["causalEventId"])
+        wrong = self.client.get(f"/api/experiments/cgvo/event/CGVO-SOLAR-WRONG/local-circumstances?{query}", headers=self.headers)
+        self.assertEqual(wrong.status_code, 400)
+        self.assertTrue(wrong.content_type.startswith("application/json"))
+        self.assertNotIn("<!doctype", wrong.get_data(as_text=True).lower())
+        self.assertIn("causalEventId", wrong.get_json()["error"])
+
 
 if __name__ == "__main__":
     unittest.main()

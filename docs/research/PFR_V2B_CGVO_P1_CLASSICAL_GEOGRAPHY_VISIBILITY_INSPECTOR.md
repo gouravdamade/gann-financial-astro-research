@@ -79,3 +79,31 @@ direction, and execution. `executionAllowed` is always `false`.
 
 This is a founder-inspection candidate only. Physical founder review of the
 packaged candidate remains pending.
+
+## P1R1 Corrections
+
+The immutable `0.10.57-pfr-v2b-cgvo-p1` candidate remains preserved as the
+historical CGVO candidate. The P1R1 correction keeps its event and source
+contracts unchanged while closing inspection gaps:
+
+- Sun and Moon horizontal coordinates now use Swiss Ephemeris topocentric
+  calculation with `FLG_TOPOCTR` and `set_topo`.
+- Swiss Ephemeris' source azimuth (South-origin, clockwise toward West) is
+  retained for audit and normalized to `0° North, clockwise` for display.
+- Visibility reports `VISIBLE`, `NOT_VISIBLE`, or `RISE_SET_CLIPPED`, with
+  horizon events, clipped boundaries, and the visible window. A locality with
+  no matching local event cannot leak horizon times from a later event.
+- Lunar umbral and penumbral magnitudes are calculated through
+  `lun_eclipse_how` at the reconstructed event maximum and are rendered as
+  separate fields.
+- `globalMaxSwissUt` and Swiss-UT contact records are the identity fields;
+  `globalMaxUtcDisplay` and UTC contact records are display aliases. The
+  causal event hash uses Swiss UT identity, never a localized display value.
+- Workbench/local-circumstance requests carry `causalEventId`; the backend
+  reconstructs the event and rejects a mismatched URL or query identity.
+- The Kurma seed now carries raw Chapter XIV historical names and verse ranges
+  only. Modern geographic inference remains explicitly disabled and mapping
+  status remains `UNKNOWN`.
+
+No price, outcome, market direction, score, Fields, SBC, Auto Suggest, ML,
+MT5, or execution path was added. `executionAllowed` remains `false`.
