@@ -1,0 +1,55 @@
+schemaVersion: PANCHASIDDHANTIKA_FIXED_STAR_SOURCE_LEDGER_V1
+contract: PANCHASIDDHANTIKA_FIXED_STAR_SOURCE_LEDGER_V1
+milestone: CGVO-S1B-R1
+source:
+  sourceId: PANCHASIDDHANTIKA_THIBAUT_DVIVEDI_1889_WILBOURHALL
+  title: "The Panchasiddhantika: The Astronomical Work of Varaha Mihira"
+  editors: ["G. Thibaut", "Mahamohopadhyaya Sudhakara Dvivedi"]
+  editionYear: 1889
+  imprint: "E. J. Lazarus and Co., Medical Hall Press, Benares"
+  acquisitionUrl: https://www.wilbourhall.org/pdfs/pancha_dli.pdf
+  acquisitionDate: "2026-08-22"
+  privateArtifact: PANCHASIDDHANTIKA_THIBAUT_DVIVEDI_1889_WILBOURHALL.pdf
+  artifactSha256: 626E14CA14F16D6A2ECE0D51E0F7063052C376715D63CA64737C734F2EB0EF8A
+  pdfPageCount: 330
+  sourceBytePolicy: PRIVATE_NOT_TRACKED
+editorialCaveat:
+  printedPage: XLI
+  pdfImageIndex: 39
+  literalSummary: "The editors state that the text does not define how the table longitude and latitude are measured, and treat their interpretation as a presumption."
+  implication: NO_SOURCE_CLOSED_TRANSFORMATION_TO_MODERN_ECLIPTIC_COORDINATES
+fixedStarTable:
+  printedPage: XL
+  pdfImageIndex: 38
+  sourceLocator: "Introduction discussion of XV.33-38; Panchasiddhantika comparison table"
+  coordinateLabels: ["Position of star in its nakshatra", "Polar Longitude", "Polar Latitude"]
+  records:
+    - name: MAGHA
+      positionInNakshatraDeg: 6.0
+      polarLongitudeDeg: 126.0
+      polarLatitudeLiteral: O
+      sourceStatus: SOURCE_CLOSED_TABLE_LITERAL
+      modernStarIdentity: NOT_ASSIGNED_BY_HELD_SOURCE
+    - name: CHITRA
+      positionInNakshatraDeg: 7.5
+      polarLongitudeDeg: 180.83333333333334
+      polarLatitudeLiteral: "2 degrees 43 minutes S"
+      sourceStatus: SOURCE_CLOSED_TABLE_LITERAL
+      modernStarIdentity: NOT_ASSIGNED_BY_HELD_SOURCE
+rawSourceComparisonOnly:
+  chitraMinusMaghaPolarLongitudeArcMinutes: 3290
+  chitraMinusMaghaPolarLongitudeDeg: 54.833333333333336
+  status: RAW_SOURCE_TABLE_DIFFERENCE_ONLY
+  forbidden: [CURRENT_EPOCH_COMPARISON, SOURCE_ANCHOR_AVERAGING, DERIVED_ZERO_MESHA, RUNTIME_FRAME_SELECTION]
+sourceResearch:
+  starLongitudesInspected: true
+  epochStatementInspected: true
+  coordinateConventionInspected: true
+  eclipseChaptersInspected: true
+  eclipseConclusion: "The held witness documents eclipse-calculation chapters but did not source-close a mapping from CGVO C1/C4 or P1/U4 labels to an activation phase."
+guardrails:
+  sourceCertifiedAyanamsha: false
+  runtimeSelectable: false
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false

@@ -1,5 +1,10 @@
 # CGVO-S1B Source Audit Report
 
+> Historical note, 2026-08-22: this V1 report is preserved as the then-current
+> no-witness state. `CGVO_S1B_R1_SOURCE_ACQUISITION_REPORT.md` supersedes only
+> its Panchasiddhantika acquisition and Swiss-flag conclusions; it does not
+> rewrite the historical V1 finding.
+
 Status: `READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS`
 
 ## Scope and Boundary

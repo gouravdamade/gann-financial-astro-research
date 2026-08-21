@@ -1,0 +1,129 @@
+schemaVersion: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V2
+contract: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V2
+milestone: CGVO-S1B-R1
+supersedes: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1
+historicalCorrection:
+  v1Status: SUPERSEDED_FOR_SOURCE_ACQUISITION_AND_FLAG_SEMANTICS
+  reason:
+    - PANCHASIDDHANTIKA_WITNESS_WAS_NOT_ACQUIRED_RATHER_THAN_SOURCE_SILENT
+    - TRUEPOS_NUTATION_SEMANTICS_WERE_OVERCLAIMED_IN_V1
+currentActiveCandidate:
+  profileId: VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1
+  auditProfileId: CHITRA_180_APPARENT_TRUE_EQUINOX
+  sourceStatus: SOURCE_RECONSTRUCTION_CANDIDATE
+  defaultAuthorized: false
+  unchangedRuntimeBehavior: true
+candidateProfiles:
+  - profileId: CHITRA_180_APPARENT_TRUE_EQUINOX
+    anchorStar: CHITRA
+    modernStarIdentity: SPICA
+    requestedFlagNames: [SEFLG_SWIEPH]
+    coordinateConvention: GEOCENTRIC_APPARENT_ECLIPTIC_TRUE_EQUINOX_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    nutationHandling: INCLUDED
+    aberrationHandling: INCLUDED
+    gravitationalDeflectionHandling: INCLUDED
+    lightTimeHandling: INCLUDED_FOR_APPARENT_POSITION
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts: [ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180, CURRENT_RUNTIME_RECONSTRUCTION_ONLY, NOT_DEFAULT_AUTHORIZED]
+  - profileId: CHITRA_180_APPARENT_MEAN_EQUINOX
+    anchorStar: CHITRA
+    modernStarIdentity: SPICA
+    requestedFlagNames: [SEFLG_SWIEPH, SEFLG_NONUT]
+    coordinateConvention: GEOCENTRIC_APPARENT_ECLIPTIC_MEAN_EQUINOX_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    nutationHandling: EXCLUDED_BY_SEFLG_NONUT
+    aberrationHandling: INCLUDED
+    gravitationalDeflectionHandling: INCLUDED
+    lightTimeHandling: INCLUDED_FOR_APPARENT_POSITION
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts: [ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180, NOT_A_RUNTIME_SELECTABLE_FRAME]
+  - profileId: CHITRA_180_TRUE_GEOMETRIC_TRUE_EQUINOX
+    anchorStar: CHITRA
+    modernStarIdentity: SPICA
+    requestedFlagNames: [SEFLG_SWIEPH, SEFLG_TRUEPOS]
+    coordinateConvention: GEOCENTRIC_TRUE_GEOMETRIC_ECLIPTIC_TRUE_EQUINOX_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    nutationHandling: INCLUDED
+    aberrationHandling: EXCLUDED_BY_RETURNED_FLAG
+    gravitationalDeflectionHandling: EXCLUDED_BY_RETURNED_FLAG
+    lightTimeHandling: EXCLUDED_BY_SEFLG_TRUEPOS
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts: [ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180, NOT_A_RUNTIME_SELECTABLE_FRAME]
+  - profileId: CHITRA_180_TRUE_NOABERR_NODEFL
+    anchorStar: CHITRA
+    modernStarIdentity: SPICA
+    requestedFlagNames: [SEFLG_SWIEPH, SEFLG_TRUEPOS, SEFLG_NOABERR, SEFLG_NOGDEFL]
+    coordinateConvention: GEOCENTRIC_TRUE_GEOMETRIC_ECLIPTIC_TRUE_EQUINOX_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    nutationHandling: INCLUDED
+    aberrationHandling: EXCLUDED_BY_SEFLG_NOABERR
+    gravitationalDeflectionHandling: EXCLUDED_BY_SEFLG_NOGDEFL
+    lightTimeHandling: EXCLUDED_BY_SEFLG_TRUEPOS
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts: [ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180, NOT_A_RUNTIME_SELECTABLE_FRAME]
+  - profileId: CHITRA_180_TRUE_NOABERR_NODEFL_MEAN_EQUINOX
+    anchorStar: CHITRA
+    modernStarIdentity: SPICA
+    requestedFlagNames: [SEFLG_SWIEPH, SEFLG_TRUEPOS, SEFLG_NOABERR, SEFLG_NOGDEFL, SEFLG_NONUT]
+    coordinateConvention: GEOCENTRIC_TRUE_GEOMETRIC_ECLIPTIC_MEAN_EQUINOX_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    nutationHandling: EXCLUDED_BY_SEFLG_NONUT
+    aberrationHandling: EXCLUDED_BY_SEFLG_NOABERR
+    gravitationalDeflectionHandling: EXCLUDED_BY_SEFLG_NOGDEFL
+    lightTimeHandling: EXCLUDED_BY_SEFLG_TRUEPOS
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts: [ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180, NOT_A_RUNTIME_SELECTABLE_FRAME]
+  - profileId: PANCHASIDDHANTIKA_MAGHA_ANCHOR
+    anchorStar: MAGHA
+    modernStarIdentity: NOT_ASSIGNED_BY_HELD_SOURCE
+    sourceLedgerId: PANCHASIDDHANTIKA_FIXED_STAR_SOURCE_LEDGER_V1
+    sourceTableValue:
+      polarLongitudeDeg: 126.0
+      polarLatitude: ZERO
+      printedPage: XL
+      pdfImageIndex: 38
+    coordinateConvention: SOURCE_POLAR_LONGITUDE_WITH_UNDEFINED_MEASUREMENT_CONVENTION
+    epochConvention: NOT_STATED_IN_TABLE
+    precessionHandling: NOT_STATED_IN_TABLE
+    nutationHandling: NOT_STATED_IN_TABLE
+    aberrationHandling: NOT_STATED_IN_TABLE
+    gravitationalDeflectionHandling: NOT_STATED_IN_TABLE
+    properMotionHandling: NOT_STATED_IN_TABLE
+    derivedZeroMesha: null
+    sourceConfidence: SOURCE_TABLE_ACQUIRED
+    reconstructionConfidence: SOURCE_TABLE_INTERPRETATION_UNRESOLVED
+    knownConflicts: [NO_MODERN_MAGHA_STAR_IDENTITY_ASSIGNED, NO_SOURCE_CLOSED_TRANSFORMATION_TO_CURRENT_ECLIPTIC, NO_CHITRA_MAGHA_AVERAGE_PERMITTED]
+epochsUtc:
+  - "0500-01-01T00:00:00Z"
+  - "0550-01-01T00:00:00Z"
+  - "0600-01-01T00:00:00Z"
+  - "1000-01-01T00:00:00Z"
+  - "1500-01-01T00:00:00Z"
+  - "1900-01-01T00:00:00Z"
+  - "2000-01-01T00:00:00Z"
+  - "2025-01-01T00:00:00Z"
+guardrails:
+  sourceCertifiedAyanamsha: false
+  profileSubstitutionAllowed: false
+  crossAnchorAverageAllowed: false
+  priceDataRead: false
+  priceOutcomeRead: false
+  marketDirectionInferred: false
+  scoreAggregationUsed: false
+  executionAllowed: false

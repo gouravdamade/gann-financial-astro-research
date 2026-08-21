@@ -1,0 +1,34 @@
+schemaVersion: CGVO_S1B_R1_READINESS_MATRIX_V1
+milestone: CGVO-S1B-R1
+supersedes: CGVO_S1B_READINESS_MATRIX_V1
+status: READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS
+sourceAudit:
+  absoluteFrame:
+    status: SOURCE_RECONSTRUCTION_CANDIDATES_EXPLICIT
+    activeRuntimeCandidateUnchanged: VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1
+    panchasiddhantikaWitnessStatus: SOURCE_WITNESS_ACQUIRED
+    maghaAnchorStatus: SOURCE_TABLE_ACQUIRED_MODERN_TRANSFORMATION_UNRESOLVED
+    rawChitraMaghaTableDifferenceOnly: true
+    crossAnchorAverageAllowed: false
+    swissFlagSemanticsAudited: true
+  solarPhaseMapping:
+    status: UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED
+    panchasiddhantikaSourceInspected: true
+    maxTimeRole: GEOMETRY_SNAPSHOT_ONLY
+  lunarPhaseMapping:
+    status: UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED
+    panchasiddhantikaSourceInspected: true
+    maxTimeRole: GEOMETRY_SNAPSHOT_ONLY
+  firmament:
+    status: COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED
+    classicalSection: UNKNOWN
+    sourceCertifiedClassifier: false
+guardrails:
+  priceDataRead: false
+  priceOutcomeRead: false
+  fieldsPath: false
+  sbcPath: false
+  autoSuggestPath: false
+  mlPath: false
+  mt5Path: false
+  executionAllowed: false

@@ -41,11 +41,12 @@ VARAHAMIHIRA_LUNAR_MONTH_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_LUNAR_MONTH_PROFILE
 VARAHAMIHIRA_ASPECT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1.yaml"
 VARAHAMIHIRA_FIRMAMENT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1.yaml"
 CGVO_S1_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1_READINESS_MATRIX_V1.yaml"
-VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1.yaml"
+VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V2.yaml"
+PANCHASIDDHANTIKA_FIXED_STAR_LEDGER_FIXTURE = CGVO_ROOT / "PANCHASIDDHANTIKA_FIXED_STAR_SOURCE_LEDGER_V1.yaml"
 VARAHAMIHIRA_SOLAR_PHASE_MAPPING_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_SOLAR_ECLIPSE_PHASE_MAPPING_V1.yaml"
 VARAHAMIHIRA_LUNAR_PHASE_MAPPING_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_LUNAR_ECLIPSE_PHASE_MAPPING_V1.yaml"
 VARAHAMIHIRA_FIRMAMENT_ADJUDICATION_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_FIRMAMENT_SOURCE_ADJUDICATION_V2.yaml"
-CGVO_S1B_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1B_READINESS_MATRIX_V1.yaml"
+CGVO_S1B_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1B_R1_READINESS_MATRIX.yaml"
 VARAHAMIHIRA_CHITRA_FRAME_ID = "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1"
 SOURCE_UNKNOWN_REASONS = [
     "VARAHAMIHIRA_ABSOLUTE_FRAME_RECONSTRUCTION_NOT_DEFAULT",
@@ -176,6 +177,7 @@ def _s1a_fixtures(project_root: Path) -> dict[str, dict[str, Any]]:
 def _s1b_fixtures(project_root: Path) -> dict[str, dict[str, Any]]:
     return {
         "absoluteFrameAudit": _load_yaml(project_root, VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_FIXTURE),
+        "panchasiddhantikaFixedStarLedger": _load_yaml(project_root, PANCHASIDDHANTIKA_FIXED_STAR_LEDGER_FIXTURE),
         "solarPhaseMapping": _load_yaml(project_root, VARAHAMIHIRA_SOLAR_PHASE_MAPPING_FIXTURE),
         "lunarPhaseMapping": _load_yaml(project_root, VARAHAMIHIRA_LUNAR_PHASE_MAPPING_FIXTURE),
         "firmamentAdjudication": _load_yaml(project_root, VARAHAMIHIRA_FIRMAMENT_ADJUDICATION_FIXTURE),
@@ -206,23 +208,25 @@ def _chitra_180_offset(at_utc: datetime) -> float:
 
 
 _CHITRA_AUDIT_FLAGS = {
-    "CHITRA_180_APPARENT_STAR": swe.FLG_SWIEPH,
-    "CHITRA_180_TRUE_STAR": swe.FLG_SWIEPH | swe.FLG_TRUEPOS,
-    "CHITRA_180_MEAN_ECLIPTIC": swe.FLG_SWIEPH | swe.FLG_NONUT,
+    "CHITRA_180_APPARENT_TRUE_EQUINOX": swe.FLG_SWIEPH,
+    "CHITRA_180_APPARENT_MEAN_EQUINOX": swe.FLG_SWIEPH | swe.FLG_NONUT,
+    "CHITRA_180_TRUE_GEOMETRIC_TRUE_EQUINOX": swe.FLG_SWIEPH | swe.FLG_TRUEPOS,
+    "CHITRA_180_TRUE_NOABERR_NODEFL": swe.FLG_SWIEPH | swe.FLG_TRUEPOS | swe.FLG_NOABERR | swe.FLG_NOGDEFL,
+    "CHITRA_180_TRUE_NOABERR_NODEFL_MEAN_EQUINOX": swe.FLG_SWIEPH | swe.FLG_TRUEPOS | swe.FLG_NOABERR | swe.FLG_NOGDEFL | swe.FLG_NONUT,
 }
 
 
-def _chitra_audit_offset(at_utc: datetime, audit_profile_id: str) -> tuple[float, float]:
-    """Return Spica's modern coordinate and derived offset for a read-only audit variant."""
+def _chitra_audit_offset(at_utc: datetime, audit_profile_id: str) -> tuple[float, float, int]:
+    """Return Spica's modern coordinate, offset, and Swiss returned flags for audit only."""
     try:
         flags = _CHITRA_AUDIT_FLAGS[audit_profile_id]
     except KeyError as exc:
         raise RuntimeError(f"Unsupported Chitra audit profile: {audit_profile_id}") from exc
     with _EPHEMERIS_LOCK:
         configure_ephemeris(None)
-        values, _, _ = swe.fixstar2_ut("Spica", _jd(at_utc), flags)
+        values, _, returned_flags = swe.fixstar2_ut("Spica", _jd(at_utc), flags)
     longitude = float(values[0]) % 360.0
-    return longitude, (longitude - 180.0) % 360.0
+    return longitude, (longitude - 180.0) % 360.0, int(returned_flags)
 
 
 def _rasi_nakshatra(at_utc: datetime, body: str, frame_profile_id: str | None) -> dict[str, Any]:
@@ -974,16 +978,19 @@ def build_cgvo_s1b_source_audit(project_root: Path) -> dict[str, Any]:
                 "profileId": profile_id,
                 "sourceConfidence": candidate["sourceConfidence"],
                 "reconstructionConfidence": candidate["reconstructionConfidence"],
-                "calculationStatus": "NOT_CALCULATED" if profile_id not in _CHITRA_AUDIT_FLAGS else "MODERN_AUDIT_CALCULATED",
+                "calculationStatus": "SOURCE_TABLE_NOT_TRANSFORMED" if profile_id not in _CHITRA_AUDIT_FLAGS else "MODERN_AUDIT_CALCULATED",
+                "requestedFlags": _CHITRA_AUDIT_FLAGS.get(profile_id),
+                "returnedFlags": None,
                 "spicaTropicalLongitudeDeg": None,
                 "derivedZeroMeshaDeg": None,
-                "maghaAnchorOffsetDeg": None,
-                "chitraMaghaDifferenceArcMinutes": None,
+                "sourceTablePolarLongitudeDeg": candidate.get("sourceTableValue", {}).get("polarLongitudeDeg"),
+                "rawHistoricalChitraMaghaDifferenceArcMinutes": None,
             }
             if profile_id in _CHITRA_AUDIT_FLAGS:
-                longitude, offset = _chitra_audit_offset(at_utc, profile_id)
+                longitude, offset, returned_flags = _chitra_audit_offset(at_utc, profile_id)
                 record["spicaTropicalLongitudeDeg"] = _finite(longitude, 8)
                 record["derivedZeroMeshaDeg"] = _finite(offset, 8)
+                record["returnedFlags"] = returned_flags
             profile_records.append(record)
         epochs.append({"atUtc": _iso(at_utc), "profiles": profile_records, "role": "MODERN_FRAME_AUDIT_ONLY"})
     return {
@@ -992,8 +999,11 @@ def build_cgvo_s1b_source_audit(project_root: Path) -> dict[str, Any]:
         "candidates": candidate_profiles,
         "epochs": epochs,
         "maghaComparison": {
-            "status": "SOURCE_SILENT_NOT_CALCULATED",
-            "reason": "PANCHASIDDHANTIKA_MAGHA_VALUE_NOT_AVAILABLE",
+            "status": "SOURCE_TABLE_ACQUIRED_MODERN_TRANSFORMATION_UNRESOLVED",
+            "sourceLedgerId": fixtures["panchasiddhantikaFixedStarLedger"]["contract"],
+            "maghaPolarLongitudeDeg": 126.0,
+            "chitraMinusMaghaPolarLongitudeArcMinutes": 3290,
+            "reason": "SOURCE_TABLE_HAS_NO_CLOSED_TRANSFORMATION_TO_CURRENT_ECLIPTIC_COORDINATES",
             "crossAnchorAverageAllowed": False,
         },
         "guardrails": absolute["guardrails"],
@@ -1009,7 +1019,7 @@ def _s1b_source_status(project_root: Path) -> dict[str, Any]:
             "currentActiveCandidate": absolute["currentActiveCandidate"]["profileId"],
             "availableAuditProfiles": [candidate["profileId"] for candidate in absolute["candidateProfiles"]],
             "auditProfilesRuntimeSelectable": False,
-            "maghaComparisonStatus": "SOURCE_SILENT_NOT_CALCULATED",
+            "maghaComparisonStatus": "SOURCE_TABLE_ACQUIRED_MODERN_TRANSFORMATION_UNRESOLVED",
             "crossAnchorAverageAllowed": False,
         },
         "solarPhaseMapping": {

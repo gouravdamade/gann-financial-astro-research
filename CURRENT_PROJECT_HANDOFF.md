@@ -1,10 +1,29 @@
 # Current Project Handoff
 
-Last updated: 2026-08-19 IST
+Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-08-22 (CGVO-S1B Varahamihira Source Audit)
+## Latest Update - 2026-08-22 (CGVO-S1B-R1 Source Acquisition and Absolute-Frame Correction)
+
+- Acquired and checksummed the full 330-image 1889 Thibaut-Dvivedi
+  *Panchasiddhantika* witness privately. The earlier S1B claim that Magha was
+  source-silent is superseded: its table records Magha polar longitude at 126
+  degrees and Chitra at 180 degrees 50 minutes. The editors also state that
+  their coordinate interpretation is presumptive, so the Magha record remains
+  `SOURCE_TABLE_ACQUIRED_MODERN_TRANSFORMATION_UNRESOLVED`; it cannot be used
+  as a current ecliptic anchor or averaged with Chitra.
+- Replaced the S1B V1 audit ledger with a V2 audit-only five-profile Swiss
+  Ephemeris matrix. `TRUEPOS` is now recorded correctly as retaining nutation
+  unless `NONUT` is requested, while returned flags document the automatic
+  no-aberration/no-deflection behavior. The active apparent-Spica runtime
+  reconstruction remains unchanged and non-default.
+- Solar/lunar phase mappings and firmament remain fail-closed. No package was
+  built. Price/outcome data, polarity, score, Fields, SBC, Auto Suggest, ML,
+  MT5, and execution remain disconnected; `executionAllowed=false`.
+- Source report: `docs/research/CGVO_S1B_R1_SOURCE_ACQUISITION_REPORT.md`.
+
+## Historical Update - 2026-08-22 (CGVO-S1B Varahamihira Source Audit)
 
 - Added a bounded, read-only CGVO-S1B source audit. The active
   `VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1` calculation is unchanged and
