@@ -10985,3 +10985,27 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   are pending completion in a separate packaging/report update. All locks
   remain closed: no price/outcome read, direction, score, Fields, SBC, Auto
   Suggest, ML, MT5 or execution; `executionAllowed=false`.
+
+## CGVO-P1R1 Immutable Founder-Inspection Candidate (2026-08-21)
+
+- Preserved historical candidate `0.10.57-pfr-v2b-cgvo-p1` unchanged.
+- Built corrected immutable candidate `0.10.58-pfr-v2b-cgvo-p1r1` from source
+  commit `86b10f0266e67efa25fcbd1a5b1f1f08a88bb6a5`; release manifest declares
+  `source_git_dirty=false`.
+- Portable SHA-256:
+  `ACA866A885FF6C4E63B3D288BB93558647A3AE7D90A6A84E3A1298F7656158FD`.
+- Installer SHA-256:
+  `E2B9F61A72DE70F8A7371195614FC5643A58E6BC7CF15EB26C31E702A6AEC322`.
+- The exact packaged JSON probe passed: JSON responses, topocentric and
+  explicit azimuth facts, rise/set clipping, lunar umbral/penumbral magnitudes,
+  Swiss UT versus UTC display fields, causal-ID validation, and raw Kurma names
+  without modern geographic inference.
+- Focused CGVO/API tests: `13/13`; backend: `264/264`; frontend: `42 files,
+  177/177`; Oxlint, production build, Rust fmt/check, and `19/19` Rust tests
+  passed. Two portable smoke runs passed with zero errors and clean sidecar
+  recovery/shutdown.
+- Report:
+  `docs/research/PFR_V2B_CGVO_P1R1_FOUNDER_INSPECTION_CANDIDATE_0.10.58-pfr-v2b-cgvo-p1r1.md`.
+- Founder physical inspection remains pending. All CGVO safety boundaries stay
+  closed: no price/outcome read, market direction, score, Fields, SBC, Auto
+  Suggest, ML, MT5, or execution; `executionAllowed=false`.
