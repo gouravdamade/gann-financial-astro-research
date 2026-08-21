@@ -39,8 +39,8 @@ const event: CgvoEvent = {
   observationalContext: {}, varahamihiraClaims: [], trailokyaClaims: [], historicalRegionCandidates: [], sourceUnknowns: [], provenance: [], guardrails,
   sourceAdapters: {
     varahamihiraFrame: { partitionStatus: 'CLOSED_ROOT_SOURCE', absoluteFrameStatus: 'NULL', selectedProfileId: null, luminary: { availability: 'ABSOLUTE_FRAME_NOT_SELECTED', rasi: null, nakshatra: null, pada: null } },
-    varahamihiraLunarMonth: { baseSystem: 'PURNIMANTA', evidenceStatus: 'HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE', result: 'UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED' },
-    varahamihiraAspect: { geometryStatus: 'CLOSED_SAME_AUTHOR_DELEGATED_SOURCE', aspectRecords: [], effectMagnitudeMultiplier: null, jupiterMitigationCoefficient: null },
+    varahamihiraLunarMonth: { baseSystem: 'PURNIMANTA', evidenceStatus: 'HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE', result: 'UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED', intercalationGuard: { status: 'AMBIGUOUS_OR_INTERCALARY', reason: 'ADHIKA_OR_KSHAYA_GUARD_TRIGGERED', synodicIntervals: [] } },
+    varahamihiraAspect: { geometryStatus: 'CLOSED_SAME_AUTHOR_DELEGATED_SOURCE', auditGeometryAtMaximum: { timeSwissUt: '2027-08-02T10:06:41Z', role: 'GEOMETRY_SNAPSHOT_ONLY', records: [] }, sourcePhaseActivation: { status: 'UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED', effectActivated: null, jupiterMitigationActivated: null }, effectMagnitudeMultiplier: null, jupiterMitigationCoefficient: null },
     varahamihiraFirmament: { status: 'COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED', classicalSection: 'UNKNOWN', sourceCertifiedClassifier: false, rawGeometry: {} },
   },
 }
@@ -83,9 +83,12 @@ describe('CgvoWorkspace', () => {
     expect(await screen.findByText('Classical Geography & Visibility')).toBeInTheDocument()
     expect(await screen.findByText('PARTIAL', { selector: 'strong' })).toBeInTheDocument()
     expect(screen.getByText(/ECLIPSE VISIBILITY DOCTRINE: SOURCE SILENT/)).toBeInTheDocument()
-    expect(screen.getByText(/Rasi: UNKNOWN/)).toBeInTheDocument()
+    expect(screen.getByText(/Rasi partition: ROOT SOURCE CLOSED/)).toBeInTheDocument()
     expect(screen.getByLabelText('Varahamihira absolute frame')).toBeInTheDocument()
     expect(screen.getByText('Purnimanta source profile')).toBeInTheDocument()
+    expect(screen.getByText('AMBIGUOUS_OR_INTERCALARY')).toBeInTheDocument()
+    expect(screen.getByText('GEOMETRY_SNAPSHOT_ONLY')).toBeInTheDocument()
+    expect(screen.getByText(/UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED/)).toBeInTheDocument()
     expect(screen.getByText(/Effect magnitude multiplier: null/)).toBeInTheDocument()
     expect(screen.getByText('COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED')).toBeInTheDocument()
     expect(screen.queryByText(/BULLISH|BEARISH/)).not.toBeInTheDocument()

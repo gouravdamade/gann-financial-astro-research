@@ -24,6 +24,8 @@ effectTokens:
   JUPITER: "MITIGATES_ADVERSE_RESULTS_AUSPICIOUS_WHEN_ASPECTING_SAME_CONDITION"
 effectMagnitudeMultiplier: null
 jupiterMitigationCoefficient: null
+maximumGeometryRole: GEOMETRY_SNAPSHOT_ONLY
+sourcePhaseActivationStatus: UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED
 guardrails:
   angularOrbCalculation: false
   continuousInterpolation: false

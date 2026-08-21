@@ -1,5 +1,6 @@
 schemaVersion: CGVO_S1_READINESS_MATRIX_V1
-milestone: CGVO-S1A
+milestone: CGVO-S1A-R1
+status: READY_FOR_CENTRAL_REVIEW
 sourceAdapters:
   varahamihiraFrame:
     partitionStatus: CLOSED_ROOT_SOURCE
@@ -7,8 +8,12 @@ sourceAdapters:
   varahamihiraLunarMonth:
     baseSystem: PURNIMANTA
     evidenceStatus: HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE
+    intercalationGuard: SANKRANTI_COUNT_FAIL_CLOSED_V1
+    unresolvedResult: UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED
   varahamihiraAspect:
     geometryStatus: CLOSED_SAME_AUTHOR_DELEGATED_SOURCE
+    maximumGeometryRole: GEOMETRY_SNAPSHOT_ONLY
+    sourcePhaseActivationStatus: UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED
     effectMagnitudeMultiplier: null
     jupiterMitigationCoefficient: null
   varahamihiraFirmament:

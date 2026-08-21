@@ -51,6 +51,8 @@ class CgvoApiRouteTests(unittest.TestCase):
         adapters = selected.get_json()["workbench"]["event"]["sourceAdapters"]
         self.assertEqual(adapters["varahamihiraFrame"]["selectedProfileId"], "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1")
         self.assertEqual(adapters["varahamihiraAspect"]["effectMagnitudeMultiplier"], None)
+        self.assertEqual(adapters["varahamihiraAspect"]["auditGeometryAtMaximum"]["role"], "GEOMETRY_SNAPSHOT_ONLY")
+        self.assertIsNone(adapters["varahamihiraAspect"]["sourcePhaseActivation"]["effectActivated"])
         rejected = self.client.get(
             "/api/experiments/cgvo/workbench?" + query + "&absoluteFrameProfileId=RAMAN",
             headers=self.headers,

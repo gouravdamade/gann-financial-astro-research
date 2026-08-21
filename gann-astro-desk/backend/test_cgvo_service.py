@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 import swisseph as swe
 import cgvo_service
@@ -87,13 +89,13 @@ class CgvoServiceTests(unittest.TestCase):
         unselected = build_cgvo_workbench(PROJECT_ROOT, common)["event"]["sourceAdapters"]
         self.assertEqual(unselected["varahamihiraFrame"]["absoluteFrameStatus"], "NULL")
         self.assertIsNone(unselected["varahamihiraFrame"]["luminary"]["rasi"])
-        self.assertEqual(unselected["varahamihiraAspect"]["aspectRecords"], [])
+        self.assertEqual(unselected["varahamihiraAspect"]["auditGeometryAtMaximum"]["records"], [])
         selected = build_cgvo_workbench(PROJECT_ROOT, {
             **common, "absoluteFrameProfileId": "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1",
         })["event"]["sourceAdapters"]
         self.assertEqual(selected["varahamihiraFrame"]["selectedProfileId"], "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1")
         self.assertEqual(selected["varahamihiraFrame"]["luminary"]["availability"], "SOURCE_RECONSTRUCTION_CANDIDATE_CALCULATED")
-        self.assertEqual(len(selected["varahamihiraAspect"]["aspectRecords"]), 5)
+        self.assertEqual(len(selected["varahamihiraAspect"]["auditGeometryAtMaximum"]["records"]), 5)
         with self.assertRaisesRegex(CgvoRequestError, "absoluteFrameProfileId"):
             build_cgvo_workbench(PROJECT_ROOT, {**common, "absoluteFrameProfileId": "RAMAN"})
 
@@ -108,13 +110,16 @@ class CgvoServiceTests(unittest.TestCase):
         )
         self.assertEqual(ordinary["baseSystem"], "PURNIMANTA")
         self.assertEqual(ordinary["result"], "VAISHAKHA")
-        unknown = cgvo_service._lunar_month_adapter(
-            cgvo_service._parse_utc("2025-01-15T00:00:00Z", "timestamp"),
+        intercalary = cgvo_service._lunar_month_adapter(
+            cgvo_service._parse_utc("2023-07-29T00:00:00Z", "timestamp"),
             locality,
             cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
             fixture,
         )
-        self.assertEqual(unknown["result"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        self.assertEqual(intercalary["result"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        self.assertEqual(intercalary["unknownReason"], "ADHIKA_OR_KSHAYA_GUARD_TRIGGERED")
+        self.assertEqual(intercalary["intercalationGuard"]["status"], "AMBIGUOUS_OR_INTERCALARY")
+        self.assertTrue(any(item["sankrantiCount"] != 1 for item in intercalary["intercalationGuard"]["synodicIntervals"]))
         aspect = cgvo_service._eclipse_aspect_adapter(
             cgvo_service._parse_utc("2027-08-02T10:06:41Z", "timestamp"), "SOLAR",
             cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
@@ -122,8 +127,60 @@ class CgvoServiceTests(unittest.TestCase):
         )
         self.assertIsNone(aspect["effectMagnitudeMultiplier"])
         self.assertIsNone(aspect["jupiterMitigationCoefficient"])
-        self.assertTrue(all(record["fraction"] in {0.0, 0.25, 0.5, 0.75, 1.0} for record in aspect["aspectRecords"]))
+        self.assertEqual(aspect["auditGeometryAtMaximum"]["role"], "GEOMETRY_SNAPSHOT_ONLY")
+        self.assertTrue(all(record["fraction"] in {0.0, 0.25, 0.5, 0.75, 1.0} for record in aspect["auditGeometryAtMaximum"]["records"]))
+        self.assertEqual(aspect["sourcePhaseActivation"]["status"], "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED")
+        self.assertIsNone(aspect["sourcePhaseActivation"]["effectActivated"])
+        self.assertIsNone(aspect["sourcePhaseActivation"]["jupiterMitigationActivated"])
         self.assertFalse(build_cgvo_status(PROJECT_ROOT)["guardrails"]["executionAllowed"])
+
+    def test_s1a_r1_lunar_guard_fails_closed_when_ingresses_cannot_be_resolved(self) -> None:
+        fixture = cgvo_service._s1a_fixtures(PROJECT_ROOT)["lunarMonth"]
+        locality = {"localityId": "UJJAIN", "timezone": "Asia/Kolkata"}
+        with patch.object(cgvo_service, "_solar_rasi_ingresses", side_effect=RuntimeError("fixture failure")):
+            result = cgvo_service._lunar_month_adapter(
+                cgvo_service._parse_utc("2025-04-15T00:00:00Z", "timestamp"),
+                locality,
+                cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
+                fixture,
+            )
+        self.assertEqual(result["result"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        self.assertEqual(result["unknownReason"], "SANKRANTI_BOUNDARY_NOT_RESOLVED")
+
+    def test_s1a_r1_lunar_guard_rejects_zero_or_two_ingresses(self) -> None:
+        fixture = cgvo_service._s1a_fixtures(PROJECT_ROOT)["lunarMonth"]
+        locality = {"localityId": "UJJAIN", "timezone": "Asia/Kolkata"}
+        for ingresses in ([], [{"atUtc": "2025-04-14T00:00:00Z"}, {"atUtc": "2025-04-15T00:00:00Z"}]):
+            with self.subTest(ingress_count=len(ingresses)), patch.object(cgvo_service, "_solar_rasi_ingresses", return_value=ingresses):
+                result = cgvo_service._lunar_month_adapter(
+                    cgvo_service._parse_utc("2025-04-15T00:00:00Z", "timestamp"),
+                    locality,
+                    cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
+                    fixture,
+                )
+            self.assertEqual(result["result"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+            self.assertEqual(result["unknownReason"], "ADHIKA_OR_KSHAYA_GUARD_TRIGGERED")
+
+    def test_s1a_r1_topocentric_geometry_is_locality_safe_under_concurrency(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        common = {
+            "eventType": "SOLAR", "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "causalEventId": event["causalEventId"],
+        }
+        localities = {
+            "UJJAIN": {"localityId": "UJJAIN", "label": "Ujjain", "latitude": 23.1765, "longitude": 75.7885, "elevationM": 0, "timezone": "Asia/Kolkata"},
+            "NEW_YORK": {"localityId": "NEW_YORK", "label": "New York", "latitude": 40.7128, "longitude": -74.006, "elevationM": 10, "timezone": "America/New_York"},
+        }
+        def calculate(locality: dict) -> tuple[dict, dict]:
+            result = build_cgvo_workbench(PROJECT_ROOT, {**common, **locality})["event"]
+            return result["modernAstronomy"]["sunAltitudeAzimuth"], result["sourceAdapters"]["varahamihiraFirmament"]["rawGeometry"]
+        baseline = {name: calculate(locality) for name, locality in localities.items()}
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [executor.submit(calculate, localities[name]) for name in ("UJJAIN", "NEW_YORK") * 8]
+            results = [future.result() for future in futures]
+        for index, result in enumerate(results):
+            self.assertEqual(result, baseline["UJJAIN" if index % 2 == 0 else "NEW_YORK"])
+        self.assertNotEqual(baseline["UJJAIN"], baseline["NEW_YORK"])
 
     def test_s1a_firmament_remains_raw_geometry_not_a_certified_classifier(self) -> None:
         event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))

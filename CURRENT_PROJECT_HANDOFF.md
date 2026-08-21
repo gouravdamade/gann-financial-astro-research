@@ -11039,3 +11039,29 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   S1A; central review is the next gate. See
   `docs/research/CGVO_S1_SOURCE_CLOSURE_REPORT_V1.md` and
   `docs/research/CGVO_S1A_TERRA_HIGH_DIRECTIVE_V1.md`.
+
+## CGVO-S1A-R1 Central-Review Correction Pass (2026-08-21)
+
+- Corrected four bounded central-review defects on top of CGVO-S1A without
+  changing P1R1 event identity, local visibility, source separation, or the
+  no-market/no-execution boundaries.
+- The lunar adapter now uses physical new-moon-to-new-moon intervals and counts
+  selected-frame solar rasi ingress boundaries. Every relevant interval must
+  contain exactly one ingress; otherwise it returns
+  `UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED` with a typed reason and the full
+  ingress audit. The 2023-07-29 regression now fails closed; 2025-04-15 stays
+  an ordinary `VAISHAKHA` case only after the guard is clear.
+- Eclipse aspect records now distinguish maximum-time
+  `GEOMETRY_SNAPSHOT_ONLY` from source-phase activation. The latter remains
+  `UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED`; effect and Jupiter mitigation
+  activation are `null`, and no multiplier, angular orb, or interpolation was
+  introduced.
+- All Swiss `set_topo`, topocentric RA, altitude, azimuth, and local hour-angle
+  work runs through one existing `RLock`-protected locality helper. Repeated
+  Ujjain/New York concurrent workbench calls are regression-tested against
+  their individual baselines.
+- Updated stale rasi/nakshatra, purnimanta, firmament, and geography wording to
+  match S1A's actual source states. Chitra/Spica remains explicit and never
+  defaults; firmament `classicalSection` remains `UNKNOWN`.
+- No Windows package is produced in this correction pass. Central review is the
+  next gate; see `docs/research/CGVO_S1A_R1_CENTRAL_REVIEW_CORRECTION.md`.

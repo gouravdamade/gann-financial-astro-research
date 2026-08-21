@@ -47,12 +47,17 @@ class CgvoS1aSourceFixtureTests(unittest.TestCase):
         self.assertEqual(aspect["ordinarySignFractions"]["3"], 0.25)
         self.assertEqual(aspect["ordinarySignFractions"]["7"], 1.0)
         self.assertEqual(aspect["specialFullAspects"]["SATURN"], [3, 10])
+        self.assertEqual(aspect["maximumGeometryRole"], "GEOMETRY_SNAPSHOT_ONLY")
+        self.assertEqual(aspect["sourcePhaseActivationStatus"], "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED")
         self.assertIsNone(aspect["effectMagnitudeMultiplier"])
         self.assertIsNone(aspect["jupiterMitigationCoefficient"])
         firmament = fixtures["firmament"]
         self.assertEqual(firmament["sourceStatus"], "COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED")
         self.assertEqual(firmament["classicalSection"], "UNKNOWN")
         self.assertFalse(firmament["sourceCertifiedClassifier"])
+        lunar = fixtures["lunarMonth"]
+        self.assertEqual(lunar["intercalationGuard"]["contract"], "SANKRANTI_COUNT_FAIL_CLOSED_V1")
+        self.assertEqual(lunar["intercalationGuard"]["unresolvedResult"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
 
 
 if __name__ == "__main__":

@@ -13,11 +13,11 @@ const LOCALITIES: Locality[] = [
 ]
 
 const UNKNOWN_LABELS: Record<string, string> = {
-  rasi: 'Rasi: UNKNOWN - source zodiac frame not authorized',
-  nakshatra: 'Nakshatra: UNKNOWN - source frame/ayanamsha adapter not authorized',
-  lunarMonth: 'Lunar month: UNKNOWN - convention not closed',
+  rasi: 'Rasi partition: ROOT SOURCE CLOSED; absolute frame requires explicit selection',
+  nakshatra: 'Nakshatra partition: ROOT SOURCE CLOSED; absolute frame requires explicit selection',
+  lunarMonth: 'Lunar month base: PURNIMANTA - high-confidence source-internal inference; intercalation may remain UNKNOWN',
   ayana: 'Ayana: UNKNOWN - adapter not configured',
-  firmament: 'Firmament interpretation: SOURCE_INTERPRETATION_UNRESOLVED',
+  firmament: 'Firmament: COMMENTARY CONFLICT - raw geometry available; classical section UNKNOWN',
   commencementQuarter: 'Commencement quarter: MAPPING_UNRESOLVED',
   liberationClass: 'Liberation class: MAPPING_UNRESOLVED',
   morphology: 'Morphology: MAPPING_UNRESOLVED',
@@ -93,7 +93,10 @@ function SourceArchitecturePanel({ event }: { event: CgvoEvent }) {
   const aspect = adapters.varahamihiraAspect ?? {}
   const firmament = adapters.varahamihiraFirmament ?? {}
   const luminary = (frame.luminary ?? {}) as Record<string, unknown>
-  const records = (aspect.aspectRecords ?? []) as Array<Record<string, unknown>>
+  const auditGeometry = (aspect.auditGeometryAtMaximum ?? {}) as Record<string, unknown>
+  const records = (auditGeometry.records ?? []) as Array<Record<string, unknown>>
+  const sourcePhase = (aspect.sourcePhaseActivation ?? {}) as Record<string, unknown>
+  const intercalationGuard = (lunarMonth.intercalationGuard ?? {}) as Record<string, unknown>
   const rawGeometry = (firmament.rawGeometry ?? {}) as Record<string, unknown>
   return <>
     <section className="cgvo-panel" aria-label="Varahamihira astronomical frame">
@@ -109,18 +112,19 @@ function SourceArchitecturePanel({ event }: { event: CgvoEvent }) {
     <section className="cgvo-panel" aria-label="Varahamihira lunar month">
       <div className="cgvo-panel-heading"><div><span>Lunar month</span><strong>Purnimanta source profile</strong><small>Only ordinary, unambiguous cases are labelled.</small></div><StatusChip>{String(lunarMonth.evidenceStatus ?? 'UNKNOWN')}</StatusChip></div>
       <div className="cgvo-fact-grid">
-        <div><span>Base system</span><strong>{String(lunarMonth.baseSystem ?? 'UNKNOWN')}</strong></div>
+        <div><span>Base convention</span><strong>{String(lunarMonth.baseSystem ?? 'UNKNOWN')}</strong><small>High-confidence source-internal inference</small></div>
         <div><span>Result</span><strong>{String(lunarMonth.result ?? 'UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED')}</strong></div>
+        <div><span>Intercalation guard</span><strong>{String(intercalationGuard.status ?? 'NOT_EVALUATED')}</strong><small>{String(intercalationGuard.reason ?? '')}</small></div>
         <div><span>Local source day</span><strong>{String(lunarMonth.sourceDayLocal ?? 'UNKNOWN')}</strong><small>{String(lunarMonth.timezone ?? lunarMonth.unknownReason ?? '')}</small></div>
         <div><span>Full-moon anchor</span><strong>{String(lunarMonth.monthAnchorNakshatra ?? 'UNKNOWN')}</strong><small>{dateLabel(lunarMonth.nextFullMoonUtc as string | null | undefined)}</small></div>
       </div>
     </section>
     <section className="cgvo-panel" aria-label="Varahamihira eclipse aspects">
-      <div className="cgvo-panel-heading"><div><span>Eclipse aspects</span><strong>Sign-relative categorical geometry</strong><small>Fractions are source geometry; no continuous scaling is configured.</small></div><StatusChip>{String(aspect.geometryStatus ?? 'UNKNOWN')}</StatusChip></div>
+      <div className="cgvo-panel-heading"><div><span>Eclipse aspects</span><strong>Maximum-time audit geometry</strong><small>Fractions are categorical geometry only; source-phase activation remains unclosed.</small></div><StatusChip>{String(auditGeometry.role ?? 'UNKNOWN')}</StatusChip></div>
       <div className="cgvo-aspect-list">
-        {records.length ? records.map((record) => <article key={String(record.planet)}><strong>{String(record.planet)} → {String(record.eclipsedLuminary)}</strong><span>{String(record.aspectingRasi)} to {String(record.eclipsedRasi)} · sign {String(record.signDistance)} · fraction {String(record.fraction)} · {record.aspectExists ? 'ASPECT EXISTS' : 'NO ASPECT'}</span><small>{String(record.effectToken ?? 'No effect token because no aspect exists')}</small></article>) : <div className="cgvo-source-note">ABSOLUTE_FRAME_NOT_SELECTED. Aspect records remain unavailable until an explicit source reconstruction candidate is selected.</div>}
+        {records.length ? records.map((record) => <article key={String(record.planet)}><strong>{String(record.planet)} → {String(record.eclipsedLuminary)}</strong><span>{String(record.aspectingRasi)} to {String(record.eclipsedRasi)} · sign {String(record.signDistance)} · fraction {String(record.fraction)} · {record.aspectExists ? 'ASPECT EXISTS' : 'NO ASPECT'}</span><small>Source claim: {String(record.sourceEffectToken ?? 'None for this maximum-time geometry')}</small></article>) : <div className="cgvo-source-note">ABSOLUTE_FRAME_NOT_SELECTED. Aspect records remain unavailable until an explicit source reconstruction candidate is selected.</div>}
       </div>
-      <div className="cgvo-source-note">Effect magnitude multiplier: null. Jupiter mitigation coefficient: null. These source tokens are not converted into a numerical value.</div>
+      <div className="cgvo-source-note">Source phase activation: {String(sourcePhase.status ?? 'UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED')}. Effect activation: {String(sourcePhase.effectActivated ?? 'null')}. Jupiter mitigation activation: {String(sourcePhase.jupiterMitigationActivated ?? 'null')}. Effect magnitude multiplier: null. Jupiter mitigation coefficient: null.</div>
     </section>
     <section className="cgvo-panel" aria-label="Varahamihira firmament geometry">
       <div className="cgvo-panel-heading"><div><span>Firmament geometry</span><strong>Raw modern geometry with unresolved classical section</strong><small>Commentary candidates remain non-voting comparisons.</small></div><StatusChip>{String(firmament.status ?? 'UNKNOWN')}</StatusChip></div>
@@ -139,9 +143,9 @@ function GeographyCards({ workbench }: { workbench: CgvoWorkbench }) {
   return <section className="cgvo-panel" aria-label="Geography claims">
     <div className="cgvo-panel-heading"><div><span>Geography claims</span><strong>Parallel source dimensions</strong></div><StatusChip>NO AGGREGATION</StatusChip></div>
     <div className="cgvo-geography-grid">
-      <article><span>Rasi region</span><strong>UNKNOWN</strong><small>Source zodiac frame and modern region mapping are not authorized.</small></article>
+      <article><span>Rasi region</span><strong>UNKNOWN</strong><small>Partition is source-closed; modern historical-region mapping is not authorized. The absolute frame remains an explicit candidate.</small></article>
       <article><span>Kurma nakshatra region</span><strong>RAW GROUPS ONLY</strong><small>Modern geography mapping is not built.</small></article>
-      <article><span>Lunar month region</span><strong>UNKNOWN</strong><small>Lunar-month convention remains open.</small></article>
+      <article><span>Lunar month region</span><strong>UNKNOWN</strong><small>Base convention is purnimanta; intercalation and month-to-region application remain unresolved.</small></article>
     </div>
     <div className="cgvo-kurma-grid">{kurma.groups.map((group) => <div key={group.direction}><span>{group.direction}</span><strong>{group.nakshatras.join(' / ')}</strong><small>{group.sourceVerses ?? 'Chapter XIV'} · {group.mappingStatus}</small>{group.historicalNames?.length ? <details><summary>{group.historicalNames.length} raw Chapter XIV names</summary><small>{group.historicalNames.join(' · ')}</small></details> : null}</div>)}</div>
   </section>
@@ -211,7 +215,7 @@ export function CgvoWorkspace() {
   const trailokya = sourceProfiles.find((profile) => profile.profileId === 'TRAILOKYA_1972_GEOGRAPHY_ARGHA_V1')
 
   return <section className="cgvo-workspace" aria-label="Classical Geography and Visibility Observatory">
-    <div className="cgvo-safety-banner"><Globe2 size={16} /><strong>CGVO-S1A · READ-ONLY RESEARCH INSPECTOR</strong><span>Modern eclipse facts, source-separated Varahamihira adapters, and explicit unknowns. No market-linked, automated, or execution behavior.</span><LockKeyhole size={14} /></div>
+    <div className="cgvo-safety-banner"><Globe2 size={16} /><strong>CGVO-S1A-R1 · READ-ONLY RESEARCH INSPECTOR</strong><span>Modern eclipse facts, source-separated Varahamihira adapters, and explicit unknowns. No market-linked, automated, or execution behavior.</span><LockKeyhole size={14} /></div>
     <header className="cgvo-header"><div><div className="experimental-kicker"><MapPinned size={14} /> Classical geography and visibility</div><h1>Classical Geography &amp; Visibility</h1><p>One physical eclipse remains one causal event. Locality changes local circumstances, not global identity.</p></div><div className="cgvo-controls"><label>Event type<select aria-label="CGVO event type" value={eventType} onChange={(e) => { const next = e.target.value as EventType; setEventType(next); void loadSearch(next) }} disabled={busy}><option value="SOLAR">Solar eclipse</option><option value="LUNAR">Lunar eclipse</option></select></label><label>Locality<select aria-label="CGVO locality" value={locality.localityId} onChange={(e) => { const next = LOCALITIES.find((item) => item.localityId === e.target.value) ?? LOCALITIES[0]; setLocality(next); void loadLocality(event, next) }} disabled={busy}>{LOCALITIES.map((item) => <option key={item.localityId} value={item.localityId}>{item.label}</option>)}</select></label><label>Varahamihira absolute frame<select aria-label="Varahamihira absolute frame" value={absoluteFrameProfileId} onChange={(e) => { const next = e.target.value; setAbsoluteFrameProfileId(next); void loadLocality(event, locality, next) }} disabled={busy}><option value="">No absolute frame selected</option><option value="VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1">Chitra / Spica 180 reconstruction (candidate)</option></select></label><button type="button" className="secondary-command" onClick={() => void loadSearch()} disabled={busy}><RefreshCw size={14} className={busy ? 'xe1-spin' : ''} /> Refresh</button></div></header>
     <section className="cgvo-event-selector" aria-label="CGVO event selector"><label>Search start UTC<input value={startUtc} onChange={(e) => setStartUtc(e.target.value)} /></label><label>Search end UTC<input value={endUtc} onChange={(e) => setEndUtc(e.target.value)} /></label><button type="button" className="secondary-command" onClick={() => void loadSearch()} disabled={busy}>Search events</button><label className="cgvo-event-select">Selected event<select aria-label="CGVO event" value={selectedEventId} onChange={(e) => { const next = search?.events.find((item) => item.causalEventId === e.target.value) ?? null; setEvent(next); void loadLocality(next) }} disabled={busy || !search?.events.length}>{search?.events.map((item) => <EventOption key={item.causalEventId} event={item} />)}</select></label></section>
     {error && <div className="cgvo-error"><CircleAlert size={16} /><strong>CGVO unavailable</strong><span>{error}</span></div>}

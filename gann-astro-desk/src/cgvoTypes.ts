@@ -61,6 +61,9 @@ export type CgvoHorizontalCoordinates = {
   sourceAzimuthDeg?: number | null
   azimuthConvention?: string
   sourceAzimuthConvention?: string
+  rightAscensionDeg?: number | null
+  localHourAngleDeg?: number | null
+  meridianRelation?: string
   topocentric?: boolean
 }
 

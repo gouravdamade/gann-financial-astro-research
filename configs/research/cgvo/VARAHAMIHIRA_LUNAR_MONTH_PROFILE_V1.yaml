@@ -8,6 +8,11 @@ ordinaryCaseOnly: true
 resultWhenNotClosed: UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED
 unclosedCases: [ADHIKA, KSHAYA, DOUBLE_MONTH, BOUNDARY_CASE, UNIMPLEMENTED]
 localTimeAndSourceDayRequired: true
+intercalationGuard:
+  contract: SANKRANTI_COUNT_FAIL_CLOSED_V1
+  evidenceClass: CALENDAR_MECHANICS_ENGINEERING_GUARD
+  ordinaryIngressCount: 1
+  unresolvedResult: UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED
 guardrails:
   priceDataRead: false
   marketDirectionInferred: false

@@ -249,6 +249,126 @@ def _full_moons_around(at_utc: datetime) -> list[datetime]:
     return points
 
 
+def _new_moons_around(at_utc: datetime) -> list[datetime]:
+    """Find physical conjunction boundaries for a conservative calendar guard."""
+    start = at_utc - timedelta(days=50)
+    end = at_utc + timedelta(days=50)
+    step = timedelta(hours=3)
+    points: list[datetime] = []
+    left = start
+    left_phase = _phase_angle(left)
+    while left < end:
+        right = min(left + step, end)
+        right_phase = _phase_angle(right)
+        if left_phase > right_phase:
+            lo, hi = left, right
+            for _ in range(32):
+                mid = lo + ((hi - lo) / 2)
+                if _phase_angle(mid) > 180.0:
+                    lo = mid
+                else:
+                    hi = mid
+            points.append(hi.replace(microsecond=0))
+        left, left_phase = right, right_phase
+    return points
+
+
+def _solar_rasi_ingresses(
+    start_utc: datetime,
+    end_utc: datetime,
+    frame_profile_id: str,
+) -> list[dict[str, Any]]:
+    """Find actual selected-frame solar rasi boundaries inside one synodic interval."""
+    step = timedelta(hours=6)
+    events: list[dict[str, Any]] = []
+    left = start_utc
+    left_rasi = _rasi_nakshatra(left, "SUN", frame_profile_id)
+    while left < end_utc:
+        right = min(left + step, end_utc)
+        right_rasi = _rasi_nakshatra(right, "SUN", frame_profile_id)
+        if left_rasi["rasiIndex"] != right_rasi["rasiIndex"]:
+            lo, hi = left, right
+            prior_index = int(left_rasi["rasiIndex"])
+            for _ in range(40):
+                mid = lo + ((hi - lo) / 2)
+                if int(_rasi_nakshatra(mid, "SUN", frame_profile_id)["rasiIndex"]) == prior_index:
+                    lo = mid
+                else:
+                    hi = mid
+            ingress = _rasi_nakshatra(hi, "SUN", frame_profile_id)
+            if int(ingress["rasiIndex"]) == prior_index:
+                raise RuntimeError("SANKRANTI_BOUNDARY_NOT_RESOLVED")
+            events.append({
+                "atUtc": _iso(hi.replace(microsecond=0)),
+                "fromRasi": left_rasi["rasi"],
+                "toRasi": ingress["rasi"],
+                "frameProfileId": frame_profile_id,
+            })
+        left, left_rasi = right, right_rasi
+    return events
+
+
+def _purnimanta_intercalation_guard(
+    at_utc: datetime,
+    previous_full: datetime,
+    next_full: datetime,
+    frame_profile_id: str,
+) -> dict[str, Any]:
+    new_moons = _new_moons_around(at_utc)
+    intervals = [
+        (start, end)
+        for start, end in zip(new_moons, new_moons[1:])
+        if end > previous_full and start < next_full
+    ]
+    if not intervals:
+        return {
+            "status": "AMBIGUOUS_OR_INTERCALARY",
+            "reason": "NEW_MOON_BOUNDARIES_NOT_RESOLVED",
+            "synodicIntervals": [],
+        }
+    records: list[dict[str, Any]] = []
+    try:
+        for start, end in intervals:
+            ingresses = _solar_rasi_ingresses(start, end, frame_profile_id)
+            records.append({
+                "startNewMoonUtc": _iso(start),
+                "endNewMoonUtc": _iso(end),
+                "sankrantiCount": len(ingresses),
+                "ingressEvents": ingresses,
+            })
+    except Exception:
+        return {
+            "status": "AMBIGUOUS_OR_INTERCALARY",
+            "reason": "SANKRANTI_BOUNDARY_NOT_RESOLVED",
+            "synodicIntervals": records,
+        }
+    if any(record["sankrantiCount"] != 1 for record in records):
+        return {
+            "status": "AMBIGUOUS_OR_INTERCALARY",
+            "reason": "ADHIKA_OR_KSHAYA_GUARD_TRIGGERED",
+            "synodicIntervals": records,
+        }
+    return {
+        "status": "CLEAR_ORDINARY",
+        "reason": None,
+        "synodicIntervals": records,
+    }
+
+
+def _lunar_month_unknown(
+    fixture: Mapping[str, Any],
+    reason: str,
+    **details: Any,
+) -> dict[str, Any]:
+    return {
+        "baseSystem": "PURNIMANTA",
+        "evidenceStatus": fixture["sourceStatus"],
+        "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+        "unknownReason": reason,
+        **details,
+    }
+
+
 def _lunar_month_adapter(
     at_utc: datetime,
     locality: Mapping[str, Any] | None,
@@ -256,55 +376,45 @@ def _lunar_month_adapter(
     fixture: Mapping[str, Any],
 ) -> dict[str, Any]:
     if locality is None:
-        return {
-            "baseSystem": "PURNIMANTA",
-            "evidenceStatus": fixture["sourceStatus"],
-            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
-            "unknownReason": "LOCALITY_REQUIRED_FOR_SOURCE_DAY_PROVENANCE",
-        }
+        return _lunar_month_unknown(
+            fixture,
+            "LOCALITY_REQUIRED_FOR_SOURCE_DAY_PROVENANCE",
+            intercalationGuard={"status": "NOT_EVALUATED", "synodicIntervals": []},
+        )
     if frame_profile_id is None:
-        return {
-            "baseSystem": "PURNIMANTA",
-            "evidenceStatus": fixture["sourceStatus"],
-            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
-            "unknownReason": "ABSOLUTE_FRAME_PROFILE_NOT_SELECTED",
-        }
+        return _lunar_month_unknown(
+            fixture,
+            "ABSOLUTE_FRAME_PROFILE_NOT_SELECTED",
+            intercalationGuard={"status": "NOT_EVALUATED", "synodicIntervals": []},
+        )
     full_moons = _full_moons_around(at_utc)
     before = [moment for moment in full_moons if moment <= at_utc]
     after = [moment for moment in full_moons if moment >= at_utc]
     if not before or not after:
-        return {
-            "baseSystem": "PURNIMANTA",
-            "evidenceStatus": fixture["sourceStatus"],
-            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
-            "unknownReason": "FULL_MOON_BOUNDARY_NOT_RESOLVED",
-        }
+        return _lunar_month_unknown(fixture, "FULL_MOON_BOUNDARY_NOT_RESOLVED")
     previous_full, next_full = before[-1], after[0]
     if next_full - previous_full < timedelta(hours=12):
         next_candidates = [moment for moment in full_moons if moment > previous_full + timedelta(days=20)]
         if not next_candidates:
-            return {
-                "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
-                "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED", "unknownReason": "NEXT_FULL_MOON_NOT_RESOLVED",
-            }
+            return _lunar_month_unknown(fixture, "NEXT_FULL_MOON_NOT_RESOLVED")
         next_full = next_candidates[0]
-    previous_sun = _rasi_nakshatra(previous_full, "SUN", frame_profile_id)
-    next_sun = _rasi_nakshatra(next_full, "SUN", frame_profile_id)
-    sign_delta = ((int(next_sun["rasiIndex"]) - int(previous_sun["rasiIndex"])) % 12)
-    if sign_delta != 1:
-        return {
-            "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
-            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
-            "unknownReason": "ADHIKA_OR_KSHAYA_MONTH_DETECTION", "previousFullMoonUtc": _iso(previous_full),
-            "nextFullMoonUtc": _iso(next_full), "solarRasiAdvance": sign_delta,
-        }
+    guard = _purnimanta_intercalation_guard(at_utc, previous_full, next_full, frame_profile_id)
+    if guard["status"] != "CLEAR_ORDINARY":
+        return _lunar_month_unknown(
+            fixture,
+            str(guard["reason"]),
+            previousFullMoonUtc=_iso(previous_full),
+            nextFullMoonUtc=_iso(next_full),
+            intercalationGuard=guard,
+        )
     month_star = _rasi_nakshatra(next_full, "MOON", frame_profile_id)
     month_name = _LUNAR_MONTH_BY_FULL_MOON_NAKSHATRA.get(str(month_star["nakshatra"]))
     if month_name is None:
-        return {
-            "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
-            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED", "unknownReason": "MONTH_NAME_NOT_MAPPED",
-        }
+        return _lunar_month_unknown(
+            fixture,
+            "MONTH_NAME_NOT_MAPPED",
+            intercalationGuard=guard,
+        )
     local = at_utc.astimezone(ZoneInfo(str(locality["timezone"])))
     return {
         "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
@@ -312,6 +422,7 @@ def _lunar_month_adapter(
         "previousFullMoonUtc": _iso(previous_full), "nextFullMoonUtc": _iso(next_full),
         "sourceDayLocal": local.date().isoformat(), "timezone": locality["timezone"],
         "localityId": locality["localityId"], "calculationStatus": "ORDINARY_UNAMBIGUOUS_PURNIMANTA_CASE",
+        "intercalationGuard": guard,
     }
 
 
@@ -321,7 +432,16 @@ def _eclipse_aspect_adapter(
     if frame_profile_id is None:
         return {
             "geometryStatus": fixture["sourceStatus"], "frameStatus": "ABSOLUTE_FRAME_NOT_SELECTED",
-            "aspectRecords": [], "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
+            "auditGeometryAtMaximum": {
+                "timeSwissUt": _iso(at_utc), "records": [], "role": "GEOMETRY_SNAPSHOT_ONLY",
+            },
+            "sourcePhaseActivation": {
+                "requiredBySource": "COMMENCEMENT_OR_CONCLUSION",
+                "status": "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED",
+                "commencement": None, "conclusion": None,
+                "effectActivated": None, "jupiterMitigationActivated": None,
+            },
+            "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
         }
     eclipsed_body = "SUN" if event_type == "SOLAR" else "MOON"
     target = _rasi_nakshatra(at_utc, eclipsed_body, frame_profile_id)
@@ -336,12 +456,21 @@ def _eclipse_aspect_adapter(
             "planet": planet, "eclipsedLuminary": eclipsed_body,
             "aspectingRasi": source["rasi"], "eclipsedRasi": target["rasi"],
             "signDistance": distance, "fraction": fraction, "aspectExists": fraction > 0.0,
-            "effectToken": fixture["effectTokens"].get(planet) if fraction > 0.0 else None,
+            "sourceEffectToken": fixture["effectTokens"].get(planet) if fraction > 0.0 else None,
             "calculation": "SIGN_RELATIVE_JYOTISHA_COUNTING", "sourceStatus": fixture["sourceStatus"],
         })
     return {
         "geometryStatus": fixture["sourceStatus"], "frameStatus": "SOURCE_RECONSTRUCTION_CANDIDATE_CALCULATED",
-        "eclipsedLuminary": eclipsed_body, "aspectRecords": records,
+        "eclipsedLuminary": eclipsed_body,
+        "auditGeometryAtMaximum": {
+            "timeSwissUt": _iso(at_utc), "records": records, "role": "GEOMETRY_SNAPSHOT_ONLY",
+        },
+        "sourcePhaseActivation": {
+            "requiredBySource": "COMMENCEMENT_OR_CONCLUSION",
+            "status": "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED",
+            "commencement": None, "conclusion": None,
+            "effectActivated": None, "jupiterMitigationActivated": None,
+        },
         "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
     }
 
@@ -354,15 +483,13 @@ def _firmament_adapter(
     if locality is None or not isinstance(coordinates, Mapping):
         raw_geometry: dict[str, Any] = {"availability": "LOCALITY_OR_HORIZONTAL_COORDINATES_NOT_AVAILABLE"}
     else:
-        values, _ = swe.calc_ut(_jd(at_utc), _PLANET_IDS[body_key.upper()], swe.FLG_SWIEPH | swe.FLG_EQUATORIAL | swe.FLG_TOPOCTR)
-        right_ascension = float(values[0])
-        local_sidereal = (float(swe.sidtime(_jd(at_utc))) * 15.0 + float(locality["longitude"])) % 360.0
-        hour_angle = ((local_sidereal - right_ascension + 180.0) % 360.0) - 180.0
         raw_geometry = {
             "availability": "RAW_MODERN_GEOMETRY_AVAILABLE", "apparentAltitudeDeg": coordinates.get("altitudeApparentDeg"),
             "normalizedAzimuthDeg": coordinates.get("azimuthDeg"), "rawSwissAzimuthDeg": coordinates.get("sourceAzimuthDeg"),
-            "localHourAngleDeg": _finite(hour_angle, 6), "riseSetState": (modern or {}).get("visibility"),
-            "meridianRelation": "ON_MERIDIAN" if abs(hour_angle) < 0.25 else ("EAST_OF_MERIDIAN" if hour_angle < 0 else "WEST_OF_MERIDIAN"),
+            "rightAscensionDeg": coordinates.get("rightAscensionDeg"),
+            "localHourAngleDeg": coordinates.get("localHourAngleDeg"), "riseSetState": (modern or {}).get("visibility"),
+            "meridianRelation": coordinates.get("meridianRelation"),
+            "calculation": "LOCALITY_SCOPED_TOPOCENTRIC_OBSERVER_STATE",
         }
     return {
         "status": fixture["sourceStatus"], "rawGeometry": raw_geometry,
@@ -497,8 +624,8 @@ def _lunar_contacts(times: tuple[float, ...]) -> dict[str, str | None]:
     return {name: _iso(_from_jd(times[index])) for name, index in (("P1", 6), ("U1", 2), ("U2", 4), ("MAX", 0), ("U3", 5), ("U4", 3), ("P4", 7))}
 
 
-def _observer_position(project_root: Path, event_type: str, event_max: datetime, locality: Mapping[str, Any]) -> dict[str, Any]:
-    del project_root
+def _topocentric_body_states(event_max: datetime, locality: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+    """Calculate all locality-dependent Swiss values in one process-global critical section."""
     longitude = float(locality["longitude"])
     latitude = float(locality["latitude"])
     elevation = float(locality["elevationM"])
@@ -506,22 +633,39 @@ def _observer_position(project_root: Path, event_type: str, event_max: datetime,
     # Swiss Ephemeris returns azalt() azimuths from South toward West.  Keep
     # the raw value for audit, and expose the normalized compass convention
     # used by the UI: 0 North, 90 East, 180 South, 270 West.
-    swe.set_topo(longitude, latitude, elevation)
-    flags = swe.FLG_SWIEPH | swe.FLG_EQUATORIAL | swe.FLG_TOPOCTR
-    result: dict[str, Any] = {}
-    for body, body_id in (("SUN", swe.SUN), ("MOON", swe.MOON)):
-        values, _ = swe.calc_ut(_jd(event_max), body_id, flags)
-        source_azimuth, true_altitude, apparent_altitude = swe.azalt(_jd(event_max), swe.EQU2HOR, coordinates, 0.0, 15.0, values)
-        normalized_azimuth = (float(source_azimuth) + 180.0) % 360.0
-        result[body.lower()] = {
-            "altitudeTrueDeg": _finite(true_altitude),
-            "altitudeApparentDeg": _finite(apparent_altitude),
-            "azimuthDeg": _finite(normalized_azimuth),
-            "sourceAzimuthDeg": _finite(source_azimuth),
-            "azimuthConvention": "NORTH_CLOCKWISE_0N_90E_180S_270W",
-            "sourceAzimuthConvention": "SWISSEPH_SOUTH_CLOCKWISE_TO_WEST",
-            "topocentric": True,
-        }
+    with _EPHEMERIS_LOCK:
+        configure_ephemeris(None)
+        swe.set_topo(longitude, latitude, elevation)
+        event_jd = _jd(event_max)
+        flags = swe.FLG_SWIEPH | swe.FLG_EQUATORIAL | swe.FLG_TOPOCTR
+        local_sidereal = (float(swe.sidtime(event_jd)) * 15.0 + longitude) % 360.0
+        result: dict[str, dict[str, Any]] = {}
+        for body, body_id in (("SUN", swe.SUN), ("MOON", swe.MOON)):
+            values, _ = swe.calc_ut(event_jd, body_id, flags)
+            source_azimuth, true_altitude, apparent_altitude = swe.azalt(event_jd, swe.EQU2HOR, coordinates, 0.0, 15.0, values)
+            right_ascension = float(values[0])
+            hour_angle = ((local_sidereal - right_ascension + 180.0) % 360.0) - 180.0
+            normalized_azimuth = (float(source_azimuth) + 180.0) % 360.0
+            result[body.lower()] = {
+                "altitudeTrueDeg": _finite(true_altitude),
+                "altitudeApparentDeg": _finite(apparent_altitude),
+                "azimuthDeg": _finite(normalized_azimuth),
+                "sourceAzimuthDeg": _finite(source_azimuth),
+                "azimuthConvention": "NORTH_CLOCKWISE_0N_90E_180S_270W",
+                "sourceAzimuthConvention": "SWISSEPH_SOUTH_CLOCKWISE_TO_WEST",
+                "rightAscensionDeg": _finite(right_ascension, 6),
+                "localHourAngleDeg": _finite(hour_angle, 6),
+                "meridianRelation": "ON_MERIDIAN" if abs(hour_angle) < 0.25 else (
+                    "EAST_OF_MERIDIAN" if hour_angle < 0 else "WEST_OF_MERIDIAN"
+                ),
+                "topocentric": True,
+            }
+    return result
+
+
+def _observer_position(project_root: Path, event_type: str, event_max: datetime, locality: Mapping[str, Any]) -> dict[str, Any]:
+    del project_root
+    result = _topocentric_body_states(event_max, locality)
     result["calculation"] = "TOPOCENTRIC_HORIZONTAL_COORDINATES_AT_LOCAL_MAX"
     result["eventType"] = event_type
     return result
@@ -743,6 +887,8 @@ def _s1a_source_status(project_root: Path) -> dict[str, Any]:
         },
         "varahamihiraAspect": {
             "geometryStatus": fixtures["aspect"]["sourceStatus"],
+            "maximumGeometryRole": fixtures["aspect"]["maximumGeometryRole"],
+            "sourcePhaseActivationStatus": fixtures["aspect"]["sourcePhaseActivationStatus"],
             "effectMagnitudeMultiplier": None,
             "jupiterMitigationCoefficient": None,
         },
@@ -758,8 +904,8 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
         "schemaVersion": 2,
-        "milestone": "CGVO-S1A",
-        "status": "SOURCE_ARCHITECTURE_RESEARCH_INSPECTOR_READY_FOR_CENTRAL_REVIEW",
+        "milestone": "CGVO-S1A-R1",
+        "status": "READY_FOR_CENTRAL_REVIEW",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
         "availableEventTypes": ["SOLAR", "LUNAR"],
         "guardrails": _guardrails(),
