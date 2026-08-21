@@ -15,6 +15,7 @@ from pathlib import Path
 import sys
 from threading import RLock
 from typing import Any, Mapping
+import unicodedata
 from zoneinfo import ZoneInfo
 
 import swisseph as swe
@@ -34,6 +35,8 @@ VARAHAMIHIRA_PROFILE_ID = "VARAHAMIHIRA_BS_ECLIPSE_V1"
 TRAILOKYA_PROFILE_ID = "TRAILOKYA_1972_GEOGRAPHY_ARGHA_V1"
 CGVO_ROOT = Path("configs") / "research" / "cgvo"
 KURMA_FIXTURE = CGVO_ROOT / "kurma_gazetteer_seed_v1.json"
+KURMA_G1_GAZETTEER_FIXTURE = CGVO_ROOT / "kurma_historical_geography_g1_v1.json"
+GEOGRAPHY_SOURCE_LAYERS_FIXTURE = CGVO_ROOT / "cgvo_geography_source_layers_g1_v1.json"
 VARAHAMIHIRA_FIXTURE = CGVO_ROOT / "varahamihira_eclipse_source_profile_v1.json"
 TRAILOKYA_FIXTURE = CGVO_ROOT / "trailokya_geography_argha_context_v1.json"
 VARAHAMIHIRA_FRAME_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml"
@@ -1074,6 +1077,101 @@ def build_cgvo_source_profiles(project_root: Path) -> dict[str, Any]:
 
 def build_cgvo_kurma_seed(project_root: Path) -> dict[str, Any]:
     return _load_json(project_root, KURMA_FIXTURE)
+
+
+def _region_key(value: str) -> str:
+    """Make a deterministic lookup key without changing the source literal."""
+    normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+    return "".join(character for character in normalized.upper() if character.isalnum())
+
+
+def _validate_gazetteer_overlay(overlay: Mapping[str, Any]) -> None:
+    allowed_categories = set(overlay.get("allowedSourceCategories", []))
+    allowed_statuses = set(overlay.get("allowedMappingStatuses", []))
+    candidates = overlay.get("candidateOverlays")
+    if not isinstance(candidates, dict) or not allowed_categories or not allowed_statuses:
+        raise RuntimeError("CGVO G1 gazetteer overlay has no controlled candidate contract")
+    for key, record in candidates.items():
+        if not isinstance(key, str) or not isinstance(record, dict):
+            raise RuntimeError("CGVO G1 gazetteer overlay has an invalid candidate record")
+        if record.get("sourceCategory") not in allowed_categories:
+            raise RuntimeError(f"CGVO G1 gazetteer candidate {key} has an invalid source category")
+        if record.get("mappingStatus") not in allowed_statuses:
+            raise RuntimeError(f"CGVO G1 gazetteer candidate {key} has an invalid mapping status")
+        mappings = record.get("candidateMappings", [])
+        if record["mappingStatus"] in {"HIGH_CONFIDENCE_CANDIDATE", "MEDIUM_CONFIDENCE_CANDIDATE", "LOW_CONFIDENCE_CANDIDATE", "CONTESTED_CANDIDATES"} and not mappings:
+            raise RuntimeError(f"CGVO G1 gazetteer candidate {key} lacks mapping evidence")
+        if record["mappingStatus"] == "CONTESTED_CANDIDATES" and len(mappings) < 2:
+            raise RuntimeError(f"CGVO G1 gazetteer candidate {key} must preserve competing candidates")
+        for mapping in mappings:
+            if not mapping.get("temporalApplicability") or not mapping.get("evidenceItems"):
+                raise RuntimeError(f"CGVO G1 gazetteer candidate {key} lacks temporal or evidence provenance")
+            if mapping.get("geometryStatus") == "EVIDENCE_BACKED":
+                raise RuntimeError("CGVO G1 does not authorize downstream geometry")
+            if mapping.get("geometryType") == "POLYGON" or mapping.get("geometry") is not None:
+                raise RuntimeError("CGVO G1 does not store active modern polygons")
+
+
+def build_cgvo_historical_gazetteer(project_root: Path) -> dict[str, Any]:
+    """Compile Chapter XIV raw names into read-only evidence records.
+
+    The input seed remains the sole raw-name source.  G1 overlays only attach
+    reviewed candidate evidence and never create an automatic modern region.
+    """
+    seed = build_cgvo_kurma_seed(project_root)
+    overlay = _load_json(project_root, KURMA_G1_GAZETTEER_FIXTURE)
+    layers = _load_json(project_root, GEOGRAPHY_SOURCE_LAYERS_FIXTURE)
+    _validate_gazetteer_overlay(overlay)
+    candidate_overlays = overlay["candidateOverlays"]
+    default_forbidden = list(overlay["defaultForbiddenUses"])
+    records: list[dict[str, Any]] = []
+    direction_counts: dict[str, int] = {}
+    for group in seed.get("groups", []):
+        direction = str(group["direction"])
+        direction_counts[direction] = 0
+        for ordinal, literal in enumerate(group.get("historicalNames", []), start=1):
+            key = _region_key(str(literal))
+            candidate = candidate_overlays.get(key, {})
+            mapping_status = candidate.get("mappingStatus", "SOURCE_NAME_ONLY")
+            category = candidate.get("sourceCategory", "UNKNOWN")
+            direction_counts[direction] += 1
+            records.append({
+                "regionId": f"VARAHA_XIV_{direction}_{key}_{ordinal:02d}",
+                "sourceProfileId": overlay["sourceProfileId"],
+                "sourceWork": overlay["sourceWork"],
+                "sourceLocator": f"Brihat Samhita XIV.{group['sourceVerses']}",
+                "sourceNameOriginal": None,
+                "sourceNameTransliteration": literal,
+                "normalizedName": key,
+                "variantSpellings": candidate.get("variantSpellings", []),
+                "sourceDirectionGroup": direction,
+                "nakshatraTriad": group["nakshatras"],
+                "sourceContext": "KURMAVIBHAGA_DIRECTIONAL_NAME_LIST",
+                "rawSourceCategory": category,
+                "mappingStatus": mapping_status,
+                "candidateMappings": candidate.get("candidateMappings", []),
+                "unresolvedFlags": ["NOT_MODERN_GEOMETRY_AUTHORIZED", "MARKET_USE_PROHIBITED"],
+                "prohibitedUses": default_forbidden,
+            })
+    summary = {
+        "totalSourceNames": len(records),
+        "sourceNameOnly": sum(record["mappingStatus"] == "SOURCE_NAME_ONLY" for record in records),
+        "mappedHighConfidence": sum(record["mappingStatus"] == "HIGH_CONFIDENCE_CANDIDATE" for record in records),
+        "mappedMediumConfidence": sum(record["mappingStatus"] == "MEDIUM_CONFIDENCE_CANDIDATE" for record in records),
+        "contested": sum(record["mappingStatus"] == "CONTESTED_CANDIDATES" for record in records),
+        "approximateRegionOnly": sum(record["mappingStatus"] == "APPROXIMATE_REGION_ONLY" for record in records),
+        "unmapped": sum(record["mappingStatus"] == "UNMAPPED" for record in records),
+        "byDirection": direction_counts,
+    }
+    return {
+        "contract": overlay["contract"],
+        "milestone": overlay["milestone"],
+        "sourceProfiles": layers["sourceProfiles"],
+        "records": records,
+        "summary": summary,
+        "guardrails": layers["guardrails"],
+        "aggregationPolicy": layers["aggregationPolicy"],
+    }
 
 
 def build_cgvo_event_search(project_root: Path, payload: Mapping[str, Any]) -> dict[str, Any]:

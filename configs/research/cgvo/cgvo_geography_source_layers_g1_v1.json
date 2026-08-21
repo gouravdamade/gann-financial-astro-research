@@ -1,0 +1,12 @@
+{
+  "contract": "CGVO_GEOGRAPHY_SOURCE_LAYER_SEPARATION_V1",
+  "milestone": "CGVO-G1",
+  "sourceProfiles": [
+    {"profileId": "VARAHAMIHIRA_KURMAVIBHAGA_XIV", "role": "nakshatra-direction historical region mapping", "status": "SOURCE_LEDGER_ACTIVE"},
+    {"profileId": "VARAHAMIHIRA_ECLIPSE_RASI_V", "role": "rasi-specific people, regions, materials and livelihood effects", "status": "PLACE_LEDGER_NOT_BUILT"},
+    {"profileId": "VARAHAMIHIRA_NAKSHATRA_DEPENDENCIES_XV", "role": "dependency targets; not place mapping by itself", "status": "PLACE_LEDGER_NOT_BUILT"},
+    {"profileId": "TRAILOKYA_GEOGRAPHY_PLACEHOLDER_G1", "role": "separate desa/mandala/sthana Argha geography framework", "status": "PROFILE_SEPARATE_PLACEHOLDER", "levels": ["DESA", "MANDALA", "STHANA"], "kurmaReference": "SOURCE_RECORDED", "modernMapping": "NOT_BUILT", "varahamihiraInheritance": "PROHIBITED", "arghaComputation": "NOT_AUTHORIZED"}
+  ],
+  "aggregationPolicy": {"automaticUnion": false, "automaticIntersection": false, "automaticMajorityVote": false, "crossSourceComposition": false},
+  "guardrails": {"priceDataRead": false, "priceOutcomeRead": false, "marketDirectionInferred": false, "scoreAggregationUsed": false, "automaticRegionUnion": false, "automaticRegionIntersection": false, "fieldsPath": false, "sbcPath": false, "autoSuggestPath": false, "mlPath": false, "mt5Path": false, "executionAllowed": false}
+}

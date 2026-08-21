@@ -97,6 +97,19 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertNotIn("<!doctype", wrong.get_data(as_text=True).lower())
         self.assertIn("causalEventId", wrong.get_json()["error"])
 
+    def test_g1_historical_gazetteer_route_is_read_only_json(self) -> None:
+        response = self.client.get("/api/experiments/cgvo/historical-gazetteer", headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.content_type.startswith("application/json"))
+        payload = response.get_json()
+        self.assertTrue(payload["ok"])
+        gazetteer = payload["gazetteer"]
+        self.assertEqual(gazetteer["contract"], "CGVO_HISTORICAL_GEOGRAPHY_GAZETTEER_V1")
+        self.assertGreater(gazetteer["summary"]["totalSourceNames"], 200)
+        self.assertFalse(gazetteer["guardrails"]["marketDirectionInferred"])
+        self.assertFalse(gazetteer["guardrails"]["executionAllowed"])
+        self.assertNotIn("<html", response.get_data(as_text=True).lower())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,223 @@
+{
+  "contract": "CGVO_HISTORICAL_GEOGRAPHY_GAZETTEER_V1",
+  "milestone": "CGVO-G1",
+  "sourceProfileId": "VARAHAMIHIRA_KURMAVIBHAGA_XIV",
+  "sourceWork": "Brihat Samhita, Chapter XIV / Kurmavibhaga",
+  "seedContract": "VARAHAMIHIRA_KURMA_REGION_SEED_V1",
+  "recordConstruction": "Each raw historical name in the immutable Chapter XIV seed becomes one source record at read time. Candidate overlays add evidence only; they never replace source transliterations.",
+  "allowedSourceCategories": ["REGION", "PEOPLE", "RIVER", "MOUNTAIN", "CITY", "ISLAND", "FOREST", "UNKNOWN"],
+  "allowedMappingStatuses": ["SOURCE_NAME_ONLY", "CANDIDATE_IDENTIFIED", "HIGH_CONFIDENCE_CANDIDATE", "MEDIUM_CONFIDENCE_CANDIDATE", "LOW_CONFIDENCE_CANDIDATE", "CONTESTED_CANDIDATES", "APPROXIMATE_REGION_ONLY", "UNMAPPED", "SOURCE_AMBIGUOUS"],
+  "defaultForbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT", "PRICE_OR_OUTCOME_READ", "FIELDS_SBC_ROUTING", "AUTO_SUGGEST", "ML", "MT5", "EXECUTION"],
+  "candidateOverlays": {
+    "MAGADHA": {
+      "variantSpellings": ["Magadha"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "MAGADHA_SOUTH_BIHAR_CANDIDATE_01",
+        "proposedModernIdentity": "historical Magadha centred on Rajgir and later Pataliputra, within present-day Bihar context",
+        "modernAdminLabels": ["Bihar, India"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "early historic northern India; extent varied by period", "uncertainty": "MEDIUM"},
+        "evidenceItems": [{"evidenceId": "G1_MAGADHA_CAMBRIDGE_01", "sourceType": "ACADEMIC_REFERENCE", "title": "The Indus Lands", "authorOrEditor": "The Cambridge Ancient History", "year": 2008, "locator": "abstract", "quoteOrParaphrase": "Places Magadha around Rajgir and later Pataliputra.", "supports": "broad historical centre only", "limitations": "Does not authorize a fixed ancient boundary or a modern market proxy.", "urlOrCitation": "https://www.cambridge.org/core/books/abs/cambridge-ancient-history/indus-lands/D108DCF1A58E67E6F3D61A8D9824A269", "confidenceContribution": "HIGH"}],
+        "confidence": "HIGH",
+        "confidenceRationale": "The historical centres are consistently identified; territorial extent remains period-dependent.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "MITHILA": {
+      "variantSpellings": ["Mithila", "Videha/Mithila context"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "MEDIUM_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "MITHILA_NORTH_BIHAR_TERAI_CANDIDATE_01",
+        "proposedModernIdentity": "Mithila cultural-historical region spanning north Bihar and the adjoining Terai context",
+        "modernAdminLabels": ["Bihar, India", "Madhesh, Nepal"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "ancient and medieval usage; boundaries changed", "uncertainty": "HIGH"},
+        "evidenceItems": [{"evidenceId": "G1_MITHILA_CUNNINGHAM_01", "sourceType": "HISTORICAL_ATLAS", "title": "The Ancient Geography of India", "authorOrEditor": "Alexander Cunningham", "year": 1871, "locator": "Eastern India chapter", "quoteOrParaphrase": "Historical-geography reference used as a candidate locator for Mithila/Videha context.", "supports": "broad candidate only", "limitations": "This G1 pass does not resolve period-specific extent.", "urlOrCitation": "https://doi.org/10.1017/CBO9781139519984", "confidenceContribution": "MEDIUM"}],
+        "confidence": "MEDIUM",
+        "confidenceRationale": "The name has a stable broad cultural association, but the relevant historical boundary is not fixed.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "KALINGA": {
+      "variantSpellings": ["Kalinga", "Kaliṅga"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "MEDIUM_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "KALINGA_EAST_COAST_CANDIDATE_01",
+        "proposedModernIdentity": "eastern coastal historical region in Odisha and northern Andhra context",
+        "modernAdminLabels": ["Odisha, India", "Andhra Pradesh, India"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "ancient Kalinga; extent changed across dynasties", "uncertainty": "HIGH"},
+        "evidenceItems": [{"evidenceId": "G1_KALINGA_UTKAL_01", "sourceType": "ACADEMIC_REFERENCE", "title": "Monuments of Odisha", "authorOrEditor": "Utkal University", "year": 2022, "locator": "historical overview", "quoteOrParaphrase": "Places the Kalinga war in the historical context of Odisha.", "supports": "Odisha-centred candidate context", "limitations": "Does not support substituting modern Odisha borders for ancient Kalinga.", "urlOrCitation": "https://utkaluniversity.ac.in/wp-content/uploads/2022/07/Monuments-of-Odhisha-compressed.pdf", "confidenceContribution": "MEDIUM"}],
+        "confidence": "MEDIUM",
+        "confidenceRationale": "The Odisha association is well supported; the wider coastal and inland extent is period-dependent.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "SAURASTRA": {
+      "variantSpellings": ["Saurashtra", "Saurāṣṭra", "Kathiawar context"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "SAURASHTRA_KATHIAWAR_CANDIDATE_01",
+        "proposedModernIdentity": "Saurashtra/Kathiawar peninsula context in western Gujarat",
+        "modernAdminLabels": ["Gujarat, India"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "ancient to medieval regional usage", "uncertainty": "MEDIUM"},
+        "evidenceItems": [{"evidenceId": "G1_SAURASHTRA_ASI_01", "sourceType": "HISTORICAL_ATLAS", "title": "Somanatha and Other Mediaeval Temples", "authorOrEditor": "Archaeological Survey of India", "year": 1926, "locator": "introduction", "quoteOrParaphrase": "Identifies Kathiawad as Saurashtra in the historical discussion.", "supports": "peninsular regional candidate", "limitations": "Historical boundaries and naming changed; no polygon is supplied.", "urlOrCitation": "https://ignca.gov.in/Asi_data/24284.pdf", "confidenceContribution": "HIGH"}],
+        "confidence": "HIGH",
+        "confidenceRationale": "The Saurashtra/Kathiawar regional association is stable, while extent remains approximate.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "GANDHARA": {
+      "variantSpellings": ["Gandhara", "Gāndhāra"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "GANDHARA_NORTHWEST_CANDIDATE_01",
+        "proposedModernIdentity": "historical northwest region around the Peshawar plain, Kabul valley, Taxila and Charsadda context",
+        "modernAdminLabels": ["Khyber Pakhtunkhwa, Pakistan", "Punjab, Pakistan", "eastern Afghanistan"],
+        "geometryType": "MULTI_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "Achaemenid through early medieval; extent varied", "uncertainty": "MEDIUM"},
+        "evidenceItems": [{"evidenceId": "G1_GANDHARA_IRANICA_01", "sourceType": "ACADEMIC_REFERENCE", "title": "GANDHARA", "authorOrEditor": "Willem J. Vogelsang, Encyclopaedia Iranica", "year": 2000, "locator": "geography discussion", "quoteOrParaphrase": "Places Gandhara in the extreme northwest around Taxila and Pushkalavati/Charsadda, with changing historical extent.", "supports": "broad multi-region candidate", "limitations": "Explicitly historical and variable; no modern-country equivalence is claimed.", "urlOrCitation": "https://www.iranicaonline.org/articles/gandhara/", "confidenceContribution": "HIGH"}],
+        "confidence": "HIGH",
+        "confidenceRationale": "Core centres are strongly identified, but the extent must remain a historical multi-region candidate.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "KAMBOJA": {
+      "variantSpellings": ["Kamboja", "Kāmboja"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "CONTESTED_CANDIDATES",
+      "candidateMappings": [{
+        "candidateId": "KAMBOJA_NORTHWEST_FRONTIER_CANDIDATE_01",
+        "proposedModernIdentity": "northwest frontier context adjoining Gandhara",
+        "modernAdminLabels": [],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "NOT_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "early historic; disputed", "uncertainty": "HIGH"},
+        "evidenceItems": [{"evidenceId": "G1_KAMBOJA_OXFORD_01", "sourceType": "ACADEMIC_REFERENCE", "title": "Territorial States and the Rise of Magadha", "authorOrEditor": "R. S. Sharma", "year": 2007, "locator": "chapter abstract", "quoteOrParaphrase": "Records Kamboja as an important janapada/mahajanapada without fixing a modern boundary.", "supports": "historical-region status", "limitations": "Does not close a modern location or extent.", "urlOrCitation": "https://academic.oup.com/book/27690/chapter-abstract/197828256", "confidenceContribution": "LOW"}],
+        "confidence": "CONTESTED",
+        "confidenceRationale": "A northwest association is plausible but insufficiently precise for a preferred modern mapping.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }, {
+        "candidateId": "KAMBOJA_CENTRAL_ASIA_CANDIDATE_02",
+        "proposedModernIdentity": "wider trans-Hindu-Kush or Central Asian association in some historical reconstructions",
+        "modernAdminLabels": [],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "NOT_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "early historic; disputed", "uncertainty": "HIGH"},
+        "evidenceItems": [{"evidenceId": "G1_KAMBOJA_CONFLICT_NOTE_01", "sourceType": "OTHER", "title": "CGVO-G1 bounded conflict note", "authorOrEditor": "Project evidence review", "year": 2026, "locator": "candidate comparison", "quoteOrParaphrase": "The first-pass evidence does not resolve a single preferred modern extent.", "supports": "explicit unresolved state", "limitations": "Not an external geography authority and cannot create a mapping.", "urlOrCitation": null, "confidenceContribution": "LOW"}],
+        "confidence": "CONTESTED",
+        "confidenceRationale": "Retained only to prevent a false single-place identification.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "KASMIRA": {
+      "variantSpellings": ["Kashmira", "Kāśmīra", "Kashmir"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "MEDIUM_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "KASHMIRA_VALLEY_CANDIDATE_01",
+        "proposedModernIdentity": "Kashmir valley and adjoining historical highland context",
+        "modernAdminLabels": ["Kashmir region"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "ancient to medieval; political extent changed", "uncertainty": "HIGH"},
+        "evidenceItems": [{"evidenceId": "G1_KASHMIRA_CAMBRIDGE_01", "sourceType": "HISTORICAL_ATLAS", "title": "The Ancient Geography of India: Kashmir", "authorOrEditor": "Alexander Cunningham", "year": 1871, "locator": "Kashmir chapter", "quoteOrParaphrase": "Historical-geography chapter for Kashmir.", "supports": "broad historical-region candidate", "limitations": "No fixed historical boundary is imported into the product.", "urlOrCitation": "https://doi.org/10.1017/CBO9781139519984.003", "confidenceContribution": "MEDIUM"}],
+        "confidence": "MEDIUM",
+        "confidenceRationale": "The broad valley association is stable; exact historical extent and political labels are not resolved here.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "KURU": {
+      "variantSpellings": ["Kuru", "Kurū"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "KURU_UPPER_YAMUNA_CANDIDATE_01",
+        "proposedModernIdentity": "upper Yamuna/Indraprastha historical context",
+        "modernAdminLabels": ["Delhi region, India", "Haryana region, India"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "early historic northern India", "uncertainty": "MEDIUM"},
+        "evidenceItems": [{"evidenceId": "G1_KURU_CAMBRIDGE_01", "sourceType": "ACADEMIC_REFERENCE", "title": "The Indus Lands", "authorOrEditor": "The Cambridge Ancient History", "year": 2008, "locator": "abstract", "quoteOrParaphrase": "Places the Kurus on the upper Yamuna around Indraprastha.", "supports": "broad historical centre", "limitations": "No modern boundary or polygon is supplied.", "urlOrCitation": "https://www.cambridge.org/core/books/abs/cambridge-ancient-history/indus-lands/D108DCF1A58E67E6F3D61A8D9824A269", "confidenceContribution": "HIGH"}],
+        "confidence": "HIGH",
+        "confidenceRationale": "The upper Yamuna/Indraprastha association is direct, while extent stays broad.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "PANCALA": {
+      "variantSpellings": ["Panchala", "Pāñcāla"],
+      "sourceCategory": "REGION",
+      "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "PANCALA_UPPER_GANGES_CANDIDATE_01",
+        "proposedModernIdentity": "upper Ganges historical context",
+        "modernAdminLabels": ["Uttar Pradesh, India"],
+        "geometryType": "BROAD_REGION",
+        "geometry": null,
+        "geometryStatus": "APPROXIMATE_NOT_DOWNSTREAM_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "early historic northern India", "uncertainty": "MEDIUM"},
+        "evidenceItems": [{"evidenceId": "G1_PANCALA_CAMBRIDGE_01", "sourceType": "ACADEMIC_REFERENCE", "title": "The Indus Lands", "authorOrEditor": "The Cambridge Ancient History", "year": 2008, "locator": "abstract", "quoteOrParaphrase": "Places Panchala on the upper Ganges.", "supports": "broad historical-region candidate", "limitations": "No exact extent is established.", "urlOrCitation": "https://www.cambridge.org/core/books/abs/cambridge-ancient-history/indus-lands/D108DCF1A58E67E6F3D61A8D9824A269", "confidenceContribution": "HIGH"}],
+        "confidence": "HIGH",
+        "confidenceRationale": "The upper Ganges association is direct; boundaries remain approximate.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "MATHURAKA": {
+      "variantSpellings": ["Mathuraka", "Māthuraka", "Mathura"],
+      "sourceCategory": "CITY",
+      "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
+      "candidateMappings": [{
+        "candidateId": "MATHURAKA_MATHURA_CANDIDATE_01",
+        "proposedModernIdentity": "Mathura historical urban centre",
+        "modernAdminLabels": ["Uttar Pradesh, India"],
+        "geometryType": "POINT",
+        "geometry": null,
+        "geometryStatus": "NOT_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "early historic; urban site continuity discussed in historical scholarship", "uncertainty": "MEDIUM"},
+        "evidenceItems": [{"evidenceId": "G1_MATHURA_CAMBRIDGE_01", "sourceType": "ACADEMIC_REFERENCE", "title": "The Indus Lands", "authorOrEditor": "The Cambridge Ancient History", "year": 2008, "locator": "abstract", "quoteOrParaphrase": "Identifies Surasena as centred around Mathura.", "supports": "historical urban-centre candidate", "limitations": "No coordinate is needed or authorized for G1.", "urlOrCitation": "https://www.cambridge.org/core/books/abs/cambridge-ancient-history/indus-lands/D108DCF1A58E67E6F3D61A8D9824A269", "confidenceContribution": "HIGH"}],
+        "confidence": "HIGH",
+        "confidenceRationale": "The historical Mathura centre is well identified; no geometry is activated.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    },
+    "SINDHU": {
+      "variantSpellings": ["Sindhu", "Indus"],
+      "sourceCategory": "RIVER",
+      "mappingStatus": "APPROXIMATE_REGION_ONLY",
+      "candidateMappings": [{
+        "candidateId": "SINDHU_INDUS_SYSTEM_CANDIDATE_01",
+        "proposedModernIdentity": "Indus river system and adjoining historical lands",
+        "modernAdminLabels": ["Pakistan", "India"],
+        "geometryType": "LINE",
+        "geometry": null,
+        "geometryStatus": "NOT_AUTHORIZED",
+        "temporalApplicability": {"historicalPeriod": "long-duration river name; adjacent land reference varies", "uncertainty": "HIGH"},
+        "evidenceItems": [{"evidenceId": "G1_SINDHU_IRANICA_01", "sourceType": "ACADEMIC_REFERENCE", "title": "India ii. Historical Geography: the ancient frontier with Iran", "authorOrEditor": "Encyclopaedia Iranica", "year": 2004, "locator": "Hindus/Indus discussion", "quoteOrParaphrase": "Discusses identification of the middle and lower Indus valley in ancient geographical evidence.", "supports": "river-system context", "limitations": "Does not equate a source term with a fixed national or administrative region.", "urlOrCitation": "https://www.iranicaonline.org/articles/india-ii-historical-geography/", "confidenceContribution": "MEDIUM"}],
+        "confidence": "MEDIUM",
+        "confidenceRationale": "The river reference is stable but associated territories vary by period and source.",
+        "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
+      }]
+    }
+  }
+}

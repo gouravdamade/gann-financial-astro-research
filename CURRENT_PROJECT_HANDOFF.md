@@ -11106,3 +11106,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   defaults; firmament `classicalSection` remains `UNKNOWN`.
 - No Windows package is produced in this correction pass. Central review is the
   next gate; see `docs/research/CGVO_S1A_R1_CENTRAL_REVIEW_CORRECTION.md`.
+## CGVO-G1 Historical Geography Gazetteer (2026-08-22)
+
+- Added `CGVO_HISTORICAL_GEOGRAPHY_GAZETTEER_V1`, a read-only compiler over
+  the existing Chapter XIV Kurmavibhaga seed. It returns 308 raw source-name
+  records over the nine directional nakshatra triads without altering the
+  source transliterations.
+- Added a bounded candidate-evidence overlay: six high-confidence records,
+  three medium-confidence records, one approximate-region-only record, and one
+  contested Kamboja record. The remaining 297 raw records remain
+  `SOURCE_NAME_ONLY`; no difficult term was silently mapped to a modern state
+  or country.
+- Added separate Varahamihira XIV, V, XV, and Trailokya geography profile
+  contracts. Automatic union/intersection/majority vote is false, and every
+  candidate has `geometry: null` with no downstream geometry authorization.
+- Added read-only endpoint `GET /api/experiments/cgvo/historical-gazetteer`.
+  It uses only checked source fixtures and cannot read price/outcomes or call
+  Fields, SBC, Auto Suggest, ML, MT5, or execution. `executionAllowed=false`.
+- No Windows candidate was built. Central review is required before any UI,
+  geometry enrichment, or experiment milestone.
+- Detailed design, source caveats, candidate subset and next blockers:
+  `docs/research/CGVO_G1_HISTORICAL_GEOGRAPHY_GAZETTEER.md`.
+- Verification: focused CGVO service/API suite `24/24`; full backend `285/285`;
+  frontend Oxlint passed, stable thread-pool frontend suite `178/178`, and
+  production build passed; `cargo fmt --check`, `cargo check`, and Rust tests
+  (`19/19`) passed. No packaging was authorized or performed.

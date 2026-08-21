@@ -11,6 +11,7 @@ import cgvo_service
 from cgvo_service import (
     CgvoRequestError,
     build_cgvo_event_search,
+    build_cgvo_historical_gazetteer,
     build_cgvo_kurma_seed,
     build_cgvo_local_circumstances,
     build_cgvo_source_profiles,
@@ -280,6 +281,72 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertEqual(len(seed["groups"]), 9)
         self.assertTrue(all(group["historicalNames"] for group in seed["groups"]))
         self.assertTrue(all(group["mappingStatus"] == "UNKNOWN" for group in seed["groups"]))
+
+    def test_g1_gazetteer_preserves_all_nine_source_triads_as_read_only_records(self) -> None:
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+        expected_triads = {
+            "CENTER": ["Krittika", "Rohini", "Mrigashirsha"],
+            "EAST": ["Ardra", "Punarvasu", "Pushya"],
+            "SOUTHEAST": ["Ashlesha", "Magha", "Purva Phalguni"],
+            "SOUTH": ["Uttara Phalguni", "Hasta", "Chitra"],
+            "SOUTHWEST": ["Swati", "Vishakha", "Anuradha"],
+            "WEST": ["Jyeshtha", "Mula", "Purva Ashadha"],
+            "NORTHWEST": ["Uttara Ashadha", "Shravana", "Dhanishtha"],
+            "NORTH": ["Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada"],
+            "NORTHEAST": ["Revati", "Ashwini", "Bharani"],
+        }
+        self.assertEqual(set(gazetteer["summary"]["byDirection"]), set(expected_triads))
+        self.assertGreater(gazetteer["summary"]["totalSourceNames"], 200)
+        self.assertFalse(gazetteer["guardrails"]["automaticRegionUnion"])
+        self.assertFalse(gazetteer["guardrails"]["automaticRegionIntersection"])
+        self.assertFalse(gazetteer["guardrails"]["executionAllowed"])
+        for direction, triad in expected_triads.items():
+            first = next(record for record in gazetteer["records"] if record["sourceDirectionGroup"] == direction)
+            self.assertEqual(first["nakshatraTriad"], triad)
+
+    def test_g1_gazetteer_candidate_records_require_evidence_and_remain_non_geometric(self) -> None:
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+        records = gazetteer["records"]
+        magadha = next(record for record in records if record["normalizedName"] == "MAGADHA")
+        gandhara = next(record for record in records if record["normalizedName"] == "GANDHARA")
+        kamboja = next(record for record in records if record["normalizedName"] == "KAMBOJA")
+        self.assertEqual(magadha["mappingStatus"], "HIGH_CONFIDENCE_CANDIDATE")
+        self.assertEqual(gandhara["mappingStatus"], "HIGH_CONFIDENCE_CANDIDATE")
+        self.assertEqual(kamboja["mappingStatus"], "CONTESTED_CANDIDATES")
+        self.assertGreaterEqual(len(kamboja["candidateMappings"]), 2)
+        self.assertEqual(kamboja["sourceNameTransliteration"], "Kāmboja")
+        for record in records:
+            self.assertTrue(record["sourceLocator"])
+            self.assertTrue(record["sourceDirectionGroup"])
+            self.assertIn(record["mappingStatus"], {
+                "SOURCE_NAME_ONLY", "HIGH_CONFIDENCE_CANDIDATE", "MEDIUM_CONFIDENCE_CANDIDATE",
+                "CONTESTED_CANDIDATES", "APPROXIMATE_REGION_ONLY",
+            })
+            self.assertIn("MARKET_PROXY_SELECTION", record["prohibitedUses"])
+            for mapping in record["candidateMappings"]:
+                self.assertTrue(mapping["evidenceItems"])
+                self.assertTrue(mapping["temporalApplicability"])
+                self.assertNotEqual(mapping["geometryType"], "POLYGON")
+                self.assertNotEqual(mapping["geometryStatus"], "EVIDENCE_BACKED")
+                self.assertIsNone(mapping["geometry"])
+
+    def test_g1_keeps_geography_claim_layers_separate(self) -> None:
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+        profiles = {profile["profileId"] for profile in gazetteer["sourceProfiles"]}
+        self.assertEqual(profiles, {
+            "VARAHAMIHIRA_KURMAVIBHAGA_XIV",
+            "VARAHAMIHIRA_ECLIPSE_RASI_V",
+            "VARAHAMIHIRA_NAKSHATRA_DEPENDENCIES_XV",
+            "TRAILOKYA_GEOGRAPHY_PLACEHOLDER_G1",
+        })
+        self.assertFalse(gazetteer["aggregationPolicy"]["automaticUnion"])
+        self.assertFalse(gazetteer["aggregationPolicy"]["automaticIntersection"])
+        self.assertFalse(gazetteer["guardrails"]["priceDataRead"])
+        self.assertFalse(gazetteer["guardrails"]["fieldsPath"])
+        self.assertFalse(gazetteer["guardrails"]["sbcPath"])
+        self.assertFalse(gazetteer["guardrails"]["autoSuggestPath"])
+        self.assertFalse(gazetteer["guardrails"]["mlPath"])
+        self.assertFalse(gazetteer["guardrails"]["mt5Path"])
 
 
 if __name__ == "__main__":

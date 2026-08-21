@@ -95,6 +95,7 @@ from cgvo_service import (
     CgvoRequestError,
     build_cgvo_event_search,
     build_cgvo_kurma_seed,
+    build_cgvo_historical_gazetteer,
     build_cgvo_local_circumstances,
     build_cgvo_source_profiles,
     build_cgvo_status,
@@ -527,6 +528,14 @@ def get_cgvo_source_profiles() -> Any:
 def get_cgvo_kurma_seed() -> Any:
     try:
         return jsonify({"ok": True, "kurma": build_cgvo_kurma_seed(repository.paths.project_root)})
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/historical-gazetteer")
+def get_cgvo_historical_gazetteer() -> Any:
+    try:
+        return jsonify({"ok": True, "gazetteer": build_cgvo_historical_gazetteer(repository.paths.project_root)})
     except (TypeError, ValueError, RuntimeError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
 
