@@ -77,7 +77,12 @@ if (-not (Test-Path -LiteralPath $requiredBphsFixture -PathType Leaf)) {
 $requiredCgvoFixtures = @(
     (Join-Path $resourceRoot "_internal\configs\research\cgvo\varahamihira_eclipse_source_profile_v1.json"),
     (Join-Path $resourceRoot "_internal\configs\research\cgvo\trailokya_geography_argha_context_v1.json"),
-    (Join-Path $resourceRoot "_internal\configs\research\cgvo\kurma_gazetteer_seed_v1.json")
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\kurma_gazetteer_seed_v1.json"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1.yaml"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1.yaml"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1.yaml"),
+    (Join-Path $resourceRoot "_internal\configs\research\cgvo\CGVO_S1_READINESS_MATRIX_V1.yaml")
 )
 $missingCgvoFixtures = @(
     $requiredCgvoFixtures | Where-Object { -not (Test-Path -LiteralPath $_ -PathType Leaf) }

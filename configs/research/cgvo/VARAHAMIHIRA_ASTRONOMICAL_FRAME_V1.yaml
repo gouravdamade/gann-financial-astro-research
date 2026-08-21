@@ -1,0 +1,49 @@
+schemaVersion: VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1
+sourceId: BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS
+sourceAuthority: CLOSED_ROOT_SOURCE
+rootLocator: "Brihat Samhita CII.1-7; III.1-3"
+contract: VARAHAMIHIRA_RASI_NAKSHATRA_PARTITION_V1
+fixedStellarRasiNakshatraFramework: true
+tropicalSeasonFrameAuthorizedForRasi: false
+precessionalDistinction:
+  contract: VARAHAMIHIRA_PRECESSIONAL_DISTINCTION_V1
+  sourceStatus: CLOSED_ROOT_SOURCE
+  locator: "Brihat Samhita III.1-3"
+  observedSolarTurningPointsDistinct: true
+  numericPrecessionConstant: null
+absoluteFrameCandidates:
+  - profileId: VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1
+    sourceStatus: SOURCE_RECONSTRUCTION_CANDIDATE
+    anchor: "Chitra/Spica at 180 degrees; zero Mesha opposite"
+    sourceCertifiedAyanamsha: null
+    prohibitedAliases: [LAHIRI, RAMAN, TROPICAL]
+    defaultAuthorized: false
+partition:
+  - rasi: MESHA
+    segments: ["ASHWINI 1-4", "BHARANI 1-4", "KRITTIKA 1"]
+  - rasi: VRISHABHA
+    segments: ["KRITTIKA 2-4", "ROHINI 1-4", "MRIGASHIRSHA 1-2"]
+  - rasi: MITHUNA
+    segments: ["MRIGASHIRSHA 3-4", "ARDRA 1-4", "PUNARVASU 1-3"]
+  - rasi: KARKATAKA
+    segments: ["PUNARVASU 4", "PUSHYA 1-4", "ASHLESHA 1-4"]
+  - rasi: SIMHA
+    segments: ["MAGHA 1-4", "PURVA_PHALGUNI 1-4", "UTTARA_PHALGUNI 1"]
+  - rasi: KANYA
+    segments: ["UTTARA_PHALGUNI 2-4", "HASTA 1-4", "CHITRA 1-2"]
+  - rasi: TULA
+    segments: ["CHITRA 3-4", "SWATI 1-4", "VISHAKHA 1-3"]
+  - rasi: VRISCHIKA
+    segments: ["VISHAKHA 4", "ANURADHA 1-4", "JYESHTHA 1-4"]
+  - rasi: DHANUS
+    segments: ["MULA 1-4", "PURVA_ASHADHA 1-4", "UTTARA_ASHADHA 1"]
+  - rasi: MAKARA
+    segments: ["UTTARA_ASHADHA 2-4", "SHRAVANA 1-4", "DHANISHTHA 1-2"]
+  - rasi: KUMBHA
+    segments: ["DHANISHTHA 3-4", "SHATABHISHA 1-4", "PURVA_BHADRAPADA 1-3"]
+  - rasi: MEENA
+    segments: ["PURVA_BHADRAPADA 4", "UTTARA_BHADRAPADA 1-4", "REVATI 1-4"]
+guardrails:
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false

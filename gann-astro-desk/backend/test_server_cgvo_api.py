@@ -34,7 +34,31 @@ class CgvoApiRouteTests(unittest.TestCase):
         payload = workbench.get_json()
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["workbench"]["event"]["modernAstronomy"]["localEclipseType"], "PARTIAL")
+        self.assertEqual(payload["workbench"]["event"]["sourceAdapters"]["varahamihiraFrame"]["absoluteFrameStatus"], "NULL")
         self.assertFalse(payload["workbench"]["guardrails"]["marketDirectionInferred"])
+
+    def test_s1a_workbench_profile_selection_and_invalid_profile_are_json(self) -> None:
+        query = (
+            "eventType=SOLAR&globalMaxUtc=2027-08-02T10:06:41Z&localityId=UJJAIN&label=Ujjain"
+            "&latitude=23.1765&longitude=75.7885&elevationM=0&timezone=Asia%2FKolkata"
+        )
+        selected = self.client.get(
+            "/api/experiments/cgvo/workbench?" + query + "&absoluteFrameProfileId=VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1",
+            headers=self.headers,
+        )
+        self.assertEqual(selected.status_code, 200)
+        self.assertTrue(selected.content_type.startswith("application/json"))
+        adapters = selected.get_json()["workbench"]["event"]["sourceAdapters"]
+        self.assertEqual(adapters["varahamihiraFrame"]["selectedProfileId"], "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1")
+        self.assertEqual(adapters["varahamihiraAspect"]["effectMagnitudeMultiplier"], None)
+        rejected = self.client.get(
+            "/api/experiments/cgvo/workbench?" + query + "&absoluteFrameProfileId=RAMAN",
+            headers=self.headers,
+        )
+        self.assertEqual(rejected.status_code, 400)
+        self.assertTrue(rejected.content_type.startswith("application/json"))
+        self.assertNotIn("<!doctype", rejected.get_data(as_text=True).lower())
+        self.assertIn("absoluteFrameProfileId", rejected.get_json()["error"])
 
     def test_invalid_locality_is_typed_json_error(self) -> None:
         response = self.client.get(

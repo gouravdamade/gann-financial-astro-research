@@ -1,0 +1,22 @@
+schemaVersion: VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1
+contract: VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1
+sourceId: BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS
+sourceStatus: COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED
+rootLocator: "Brihat Samhita V.28-31"
+allowedRawGeometry:
+  - apparentAltitudeDeg
+  - normalizedAzimuthDeg
+  - rawSwissAzimuthDeg
+  - localHourAngleDeg
+  - riseSetState
+  - meridianRelation
+classicalSection: UNKNOWN
+sourceCertifiedClassifier: false
+nonVotingComparisonCandidates:
+  - IYER_6_SECTION_CANDIDATE
+  - SASTRI_BHAT_7_DIVISION_CANDIDATE
+guardrails:
+  classifierAuthorized: false
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false

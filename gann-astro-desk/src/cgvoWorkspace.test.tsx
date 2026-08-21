@@ -37,6 +37,12 @@ const event: CgvoEvent = {
     magnitude: 0.29, obscuration: 0.18, visibilityDetails: { status: 'VISIBLE', maximumVisibility: 'VISIBLE', visibleWindowStartUtc: '2027-08-02T10:21:13Z', visibleWindowEndUtc: '2027-08-02T11:49:57Z', clipBoundaries: [], horizonEvents: { riseUtc: null, setUtc: null }, swissVisibilityFlags: 5008 }, sunAltitudeAzimuth: { altitudeApparentDeg: 33, azimuthDeg: 96, sourceAzimuthDeg: 276, azimuthConvention: 'NORTH_CLOCKWISE_0N_90E_180S_270W', sourceAzimuthConvention: 'SWISSEPH_SOUTH_CLOCKWISE_TO_WEST', topocentric: true }, moonAltitudeAzimuth: { altitudeApparentDeg: 33, azimuthDeg: 96, sourceAzimuthDeg: 276, azimuthConvention: 'NORTH_CLOCKWISE_0N_90E_180S_270W', sourceAzimuthConvention: 'SWISSEPH_SOUTH_CLOCKWISE_TO_WEST', topocentric: true },
   },
   observationalContext: {}, varahamihiraClaims: [], trailokyaClaims: [], historicalRegionCandidates: [], sourceUnknowns: [], provenance: [], guardrails,
+  sourceAdapters: {
+    varahamihiraFrame: { partitionStatus: 'CLOSED_ROOT_SOURCE', absoluteFrameStatus: 'NULL', selectedProfileId: null, luminary: { availability: 'ABSOLUTE_FRAME_NOT_SELECTED', rasi: null, nakshatra: null, pada: null } },
+    varahamihiraLunarMonth: { baseSystem: 'PURNIMANTA', evidenceStatus: 'HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE', result: 'UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED' },
+    varahamihiraAspect: { geometryStatus: 'CLOSED_SAME_AUTHOR_DELEGATED_SOURCE', aspectRecords: [], effectMagnitudeMultiplier: null, jupiterMitigationCoefficient: null },
+    varahamihiraFirmament: { status: 'COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED', classicalSection: 'UNKNOWN', sourceCertifiedClassifier: false, rawGeometry: {} },
+  },
 }
 
 const status: CgvoStatus = { contract: 'CLASSICAL_GEOGRAPHY_VISIBILITY_OBSERVATORY_V1', schemaVersion: 1, milestone: 'PFR-V2B-CGVO-P1', status: 'READY', availableProfiles: ['MODERN_ASTRONOMY_VISIBILITY_V1'], availableEventTypes: ['SOLAR', 'LUNAR'], guardrails, sourceProfiles: { varahamihira: 'WORKING_WITNESS_METADATA_PENDING', trailokya: 'SOURCE_SILENT_FOR_ECLIPSE_VISIBILITY_IN_HELD_WITNESS' } }
@@ -78,7 +84,26 @@ describe('CgvoWorkspace', () => {
     expect(await screen.findByText('PARTIAL', { selector: 'strong' })).toBeInTheDocument()
     expect(screen.getByText(/ECLIPSE VISIBILITY DOCTRINE: SOURCE SILENT/)).toBeInTheDocument()
     expect(screen.getByText(/Rasi: UNKNOWN/)).toBeInTheDocument()
+    expect(screen.getByLabelText('Varahamihira absolute frame')).toBeInTheDocument()
+    expect(screen.getByText('Purnimanta source profile')).toBeInTheDocument()
+    expect(screen.getByText(/Effect magnitude multiplier: null/)).toBeInTheDocument()
+    expect(screen.getByText('COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED')).toBeInTheDocument()
     expect(screen.queryByText(/BULLISH|BEARISH/)).not.toBeInTheDocument()
+  })
+
+  it('passes an explicitly selected source reconstruction candidate without selecting a default', async () => {
+    api.fetchCgvoStatus.mockResolvedValue(status)
+    api.fetchCgvoEventSearch.mockResolvedValue({ contract: 'SEARCH', range: { startUtc: '', endUtc: '' }, eventType: 'SOLAR', events: [event], count: 1, selection: 'chronological', guardrails })
+    api.fetchCgvoWorkbench.mockResolvedValue(workbench)
+    const user = userEvent.setup()
+    render(<CgvoWorkspace />)
+    await screen.findByText('Classical Geography & Visibility')
+    const selector = screen.getByLabelText('Varahamihira absolute frame')
+    expect(selector).toHaveValue('')
+    await user.selectOptions(selector, 'VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1')
+    await waitFor(() => expect(api.fetchCgvoWorkbench).toHaveBeenLastCalledWith(expect.objectContaining({
+      absoluteFrameProfileId: 'VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1',
+    })))
   })
 
   it('recomputes only local circumstances when locality changes', async () => {

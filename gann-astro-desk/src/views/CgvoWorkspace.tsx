@@ -86,6 +86,54 @@ function VarahamihiraCard({ profile }: { profile: Record<string, unknown> }) {
   </section>
 }
 
+function SourceArchitecturePanel({ event }: { event: CgvoEvent }) {
+  const adapters = (event.sourceAdapters ?? {}) as Record<string, Record<string, unknown>>
+  const frame = adapters.varahamihiraFrame ?? {}
+  const lunarMonth = adapters.varahamihiraLunarMonth ?? {}
+  const aspect = adapters.varahamihiraAspect ?? {}
+  const firmament = adapters.varahamihiraFirmament ?? {}
+  const luminary = (frame.luminary ?? {}) as Record<string, unknown>
+  const records = (aspect.aspectRecords ?? []) as Array<Record<string, unknown>>
+  const rawGeometry = (firmament.rawGeometry ?? {}) as Record<string, unknown>
+  return <>
+    <section className="cgvo-panel" aria-label="Varahamihira astronomical frame">
+      <div className="cgvo-panel-heading"><div><span>Varahamihira astronomical frame</span><strong>Rasi / nakshatra partition</strong><small>Root source partition; absolute frame stays an explicit candidate selection.</small></div><StatusChip>{String(frame.partitionStatus ?? 'UNKNOWN')}</StatusChip></div>
+      <div className="cgvo-fact-grid">
+        <div><span>Absolute frame</span><strong>{String(frame.absoluteFrameStatus ?? 'NULL')}</strong><small>{String(frame.selectedProfileId ?? 'No reconstruction selected')}</small></div>
+        <div><span>Eclipsed luminary rasi</span><strong>{String(luminary.rasi ?? 'UNKNOWN')}</strong><small>{String(luminary.availability ?? 'UNKNOWN')}</small></div>
+        <div><span>Nakshatra / pada</span><strong>{luminary.nakshatra ? `${String(luminary.nakshatra)} / ${String(luminary.pada)}` : 'UNKNOWN'}</strong><small>Candidate offset {numberLabel(luminary.candidateOffsetDeg as number | null | undefined, ' deg')}</small></div>
+        <div><span>Precessional distinction</span><strong>{String(((frame.precessionalDistinction ?? {}) as Record<string, unknown>).sourceStatus ?? 'UNKNOWN')}</strong><small>No numeric precession constant is claimed.</small></div>
+      </div>
+      <div className="cgvo-source-note">Chitra/Spica at 180 degrees is a source reconstruction candidate, never a default ayanamsha and never an alias for Lahiri, Raman, or tropical coordinates.</div>
+    </section>
+    <section className="cgvo-panel" aria-label="Varahamihira lunar month">
+      <div className="cgvo-panel-heading"><div><span>Lunar month</span><strong>Purnimanta source profile</strong><small>Only ordinary, unambiguous cases are labelled.</small></div><StatusChip>{String(lunarMonth.evidenceStatus ?? 'UNKNOWN')}</StatusChip></div>
+      <div className="cgvo-fact-grid">
+        <div><span>Base system</span><strong>{String(lunarMonth.baseSystem ?? 'UNKNOWN')}</strong></div>
+        <div><span>Result</span><strong>{String(lunarMonth.result ?? 'UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED')}</strong></div>
+        <div><span>Local source day</span><strong>{String(lunarMonth.sourceDayLocal ?? 'UNKNOWN')}</strong><small>{String(lunarMonth.timezone ?? lunarMonth.unknownReason ?? '')}</small></div>
+        <div><span>Full-moon anchor</span><strong>{String(lunarMonth.monthAnchorNakshatra ?? 'UNKNOWN')}</strong><small>{dateLabel(lunarMonth.nextFullMoonUtc as string | null | undefined)}</small></div>
+      </div>
+    </section>
+    <section className="cgvo-panel" aria-label="Varahamihira eclipse aspects">
+      <div className="cgvo-panel-heading"><div><span>Eclipse aspects</span><strong>Sign-relative categorical geometry</strong><small>Fractions are source geometry; no continuous scaling is configured.</small></div><StatusChip>{String(aspect.geometryStatus ?? 'UNKNOWN')}</StatusChip></div>
+      <div className="cgvo-aspect-list">
+        {records.length ? records.map((record) => <article key={String(record.planet)}><strong>{String(record.planet)} → {String(record.eclipsedLuminary)}</strong><span>{String(record.aspectingRasi)} to {String(record.eclipsedRasi)} · sign {String(record.signDistance)} · fraction {String(record.fraction)} · {record.aspectExists ? 'ASPECT EXISTS' : 'NO ASPECT'}</span><small>{String(record.effectToken ?? 'No effect token because no aspect exists')}</small></article>) : <div className="cgvo-source-note">ABSOLUTE_FRAME_NOT_SELECTED. Aspect records remain unavailable until an explicit source reconstruction candidate is selected.</div>}
+      </div>
+      <div className="cgvo-source-note">Effect magnitude multiplier: null. Jupiter mitigation coefficient: null. These source tokens are not converted into a numerical value.</div>
+    </section>
+    <section className="cgvo-panel" aria-label="Varahamihira firmament geometry">
+      <div className="cgvo-panel-heading"><div><span>Firmament geometry</span><strong>Raw modern geometry with unresolved classical section</strong><small>Commentary candidates remain non-voting comparisons.</small></div><StatusChip>{String(firmament.status ?? 'UNKNOWN')}</StatusChip></div>
+      <div className="cgvo-fact-grid">
+        <div><span>Apparent altitude</span><strong>{numberLabel(rawGeometry.apparentAltitudeDeg as number | null | undefined, ' deg')}</strong></div>
+        <div><span>Normalized / raw azimuth</span><strong>{numberLabel(rawGeometry.normalizedAzimuthDeg as number | null | undefined, ' deg')} / {numberLabel(rawGeometry.rawSwissAzimuthDeg as number | null | undefined, ' deg')}</strong></div>
+        <div><span>Local hour angle</span><strong>{numberLabel(rawGeometry.localHourAngleDeg as number | null | undefined, ' deg')}</strong><small>{String(rawGeometry.meridianRelation ?? 'UNKNOWN')}</small></div>
+        <div><span>Classical section</span><strong>{String(firmament.classicalSection ?? 'UNKNOWN')}</strong><small>source-certified classifier: {String(firmament.sourceCertifiedClassifier ?? false)}</small></div>
+      </div>
+    </section>
+  </>
+}
+
 function GeographyCards({ workbench }: { workbench: CgvoWorkbench }) {
   const kurma = workbench.kurma
   return <section className="cgvo-panel" aria-label="Geography claims">
@@ -131,6 +179,7 @@ export function CgvoWorkspace() {
   const [locality, setLocality] = useState(LOCALITIES[0])
   const [startUtc, setStartUtc] = useState('2027-01-01T00:00:00Z')
   const [endUtc, setEndUtc] = useState('2028-01-01T00:00:00Z')
+  const [absoluteFrameProfileId, setAbsoluteFrameProfileId] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
@@ -142,18 +191,18 @@ export function CgvoWorkspace() {
       const nextEvent = nextSearch.events[0] ?? null
       setEvent(nextEvent)
       if (nextEvent) {
-        setWorkbench(await fetchCgvoWorkbench({ eventType: nextType, globalMaxSwissUt: nextEvent.astronomyEventIdentity.globalMaxSwissUt ?? nextEvent.astronomyEventIdentity.globalMaxUtc, causalEventId: nextEvent.causalEventId, ...locality }))
+        setWorkbench(await fetchCgvoWorkbench({ eventType: nextType, globalMaxSwissUt: nextEvent.astronomyEventIdentity.globalMaxSwissUt ?? nextEvent.astronomyEventIdentity.globalMaxUtc, causalEventId: nextEvent.causalEventId, ...locality, absoluteFrameProfileId: absoluteFrameProfileId || undefined }))
       } else setWorkbench(null)
     } catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)) } finally { setBusy(false) }
-  }, [endUtc, eventType, locality, startUtc])
+  }, [absoluteFrameProfileId, endUtc, eventType, locality, startUtc])
 
-  const loadLocality = useCallback(async (nextEvent: CgvoEvent | null, nextLocality = locality) => {
+  const loadLocality = useCallback(async (nextEvent: CgvoEvent | null, nextLocality = locality, nextFrameProfileId = absoluteFrameProfileId) => {
     if (!nextEvent) return
     setBusy(true); setError('')
     try {
-      setWorkbench(await fetchCgvoWorkbench({ eventType, globalMaxSwissUt: nextEvent.astronomyEventIdentity.globalMaxSwissUt ?? nextEvent.astronomyEventIdentity.globalMaxUtc, causalEventId: nextEvent.causalEventId, ...nextLocality }))
+      setWorkbench(await fetchCgvoWorkbench({ eventType, globalMaxSwissUt: nextEvent.astronomyEventIdentity.globalMaxSwissUt ?? nextEvent.astronomyEventIdentity.globalMaxUtc, causalEventId: nextEvent.causalEventId, ...nextLocality, absoluteFrameProfileId: nextFrameProfileId || undefined }))
     } catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)) } finally { setBusy(false) }
-  }, [eventType, locality])
+  }, [absoluteFrameProfileId, eventType, locality])
 
   useEffect(() => { void fetchCgvoStatus().then(setStatus).catch((caught) => setError(caught instanceof Error ? caught.message : String(caught))); void loadSearch() }, [loadSearch])
   const selectedEventId = event?.causalEventId ?? ''
@@ -162,12 +211,12 @@ export function CgvoWorkspace() {
   const trailokya = sourceProfiles.find((profile) => profile.profileId === 'TRAILOKYA_1972_GEOGRAPHY_ARGHA_V1')
 
   return <section className="cgvo-workspace" aria-label="Classical Geography and Visibility Observatory">
-    <div className="cgvo-safety-banner"><Globe2 size={16} /><strong>CGVO-P1 · READ-ONLY RESEARCH INSPECTOR</strong><span>Modern eclipse facts, source-separated classical ledgers, explicit unknowns. No forecast, score, market direction, Fields, SBC, Auto Suggest, ML, MT5, or execution.</span><LockKeyhole size={14} /></div>
-    <header className="cgvo-header"><div><div className="experimental-kicker"><MapPinned size={14} /> Classical geography and visibility</div><h1>Classical Geography &amp; Visibility</h1><p>One physical eclipse remains one causal event. Locality changes local circumstances, not global identity.</p></div><div className="cgvo-controls"><label>Event type<select aria-label="CGVO event type" value={eventType} onChange={(e) => { const next = e.target.value as EventType; setEventType(next); void loadSearch(next) }} disabled={busy}><option value="SOLAR">Solar eclipse</option><option value="LUNAR">Lunar eclipse</option></select></label><label>Locality<select aria-label="CGVO locality" value={locality.localityId} onChange={(e) => { const next = LOCALITIES.find((item) => item.localityId === e.target.value) ?? LOCALITIES[0]; setLocality(next); void loadLocality(event, next) }} disabled={busy}>{LOCALITIES.map((item) => <option key={item.localityId} value={item.localityId}>{item.label}</option>)}</select></label><button type="button" className="secondary-command" onClick={() => void loadSearch()} disabled={busy}><RefreshCw size={14} className={busy ? 'xe1-spin' : ''} /> Refresh</button></div></header>
+    <div className="cgvo-safety-banner"><Globe2 size={16} /><strong>CGVO-S1A · READ-ONLY RESEARCH INSPECTOR</strong><span>Modern eclipse facts, source-separated Varahamihira adapters, and explicit unknowns. No market-linked, automated, or execution behavior.</span><LockKeyhole size={14} /></div>
+    <header className="cgvo-header"><div><div className="experimental-kicker"><MapPinned size={14} /> Classical geography and visibility</div><h1>Classical Geography &amp; Visibility</h1><p>One physical eclipse remains one causal event. Locality changes local circumstances, not global identity.</p></div><div className="cgvo-controls"><label>Event type<select aria-label="CGVO event type" value={eventType} onChange={(e) => { const next = e.target.value as EventType; setEventType(next); void loadSearch(next) }} disabled={busy}><option value="SOLAR">Solar eclipse</option><option value="LUNAR">Lunar eclipse</option></select></label><label>Locality<select aria-label="CGVO locality" value={locality.localityId} onChange={(e) => { const next = LOCALITIES.find((item) => item.localityId === e.target.value) ?? LOCALITIES[0]; setLocality(next); void loadLocality(event, next) }} disabled={busy}>{LOCALITIES.map((item) => <option key={item.localityId} value={item.localityId}>{item.label}</option>)}</select></label><label>Varahamihira absolute frame<select aria-label="Varahamihira absolute frame" value={absoluteFrameProfileId} onChange={(e) => { const next = e.target.value; setAbsoluteFrameProfileId(next); void loadLocality(event, locality, next) }} disabled={busy}><option value="">No absolute frame selected</option><option value="VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1">Chitra / Spica 180 reconstruction (candidate)</option></select></label><button type="button" className="secondary-command" onClick={() => void loadSearch()} disabled={busy}><RefreshCw size={14} className={busy ? 'xe1-spin' : ''} /> Refresh</button></div></header>
     <section className="cgvo-event-selector" aria-label="CGVO event selector"><label>Search start UTC<input value={startUtc} onChange={(e) => setStartUtc(e.target.value)} /></label><label>Search end UTC<input value={endUtc} onChange={(e) => setEndUtc(e.target.value)} /></label><button type="button" className="secondary-command" onClick={() => void loadSearch()} disabled={busy}>Search events</button><label className="cgvo-event-select">Selected event<select aria-label="CGVO event" value={selectedEventId} onChange={(e) => { const next = search?.events.find((item) => item.causalEventId === e.target.value) ?? null; setEvent(next); void loadLocality(next) }} disabled={busy || !search?.events.length}>{search?.events.map((item) => <EventOption key={item.causalEventId} event={item} />)}</select></label></section>
     {error && <div className="cgvo-error"><CircleAlert size={16} /><strong>CGVO unavailable</strong><span>{error}</span></div>}
     {!workbench?.event && !error && <div className="cgvo-empty">{busy ? 'Calculating deterministic eclipse facts...' : 'No eclipse exists in the selected UTC range.'}</div>}
-    {workbench?.event && <><section className="cgvo-context-strip" aria-label="Selected CGVO event"><span><strong>{workbench.event.astronomyEventIdentity.eventType}</strong> · {workbench.event.astronomyEventIdentity.globalType}</span><span>Global max {dateLabel(workbench.event.astronomyEventIdentity.globalMaxUtcDisplay ?? workbench.event.astronomyEventIdentity.globalMaxUtc)}</span><span>{workbench.event.causalEventId}</span><StatusChip>EXECUTION LOCKED</StatusChip></section><ModernFacts event={workbench.event} /><div className="cgvo-source-grid">{varahamihira && <VarahamihiraCard profile={varahamihira} />}{trailokya && <TrailokyaCard profile={trailokya} />}</div><GeographyCards workbench={workbench} /><AuditPanel event={workbench.event} status={status} /></>}
+    {workbench?.event && <><section className="cgvo-context-strip" aria-label="Selected CGVO event"><span><strong>{workbench.event.astronomyEventIdentity.eventType}</strong> · {workbench.event.astronomyEventIdentity.globalType}</span><span>Global max {dateLabel(workbench.event.astronomyEventIdentity.globalMaxUtcDisplay ?? workbench.event.astronomyEventIdentity.globalMaxUtc)}</span><span>{workbench.event.causalEventId}</span><StatusChip>EXECUTION LOCKED</StatusChip></section><ModernFacts event={workbench.event} /><SourceArchitecturePanel event={workbench.event} /><div className="cgvo-source-grid">{varahamihira && <VarahamihiraCard profile={varahamihira} />}{trailokya && <TrailokyaCard profile={trailokya} />}</div><GeographyCards workbench={workbench} /><AuditPanel event={workbench.event} status={status} /></>}
     <footer className="cgvo-footer"><span>MODERN ASTRONOMY: factual only</span><span>VARAHAMIHIRA: source-separated</span><span>TRAILOKYA: source silent for eclipse visibility</span><span>executionAllowed = false</span></footer>
   </section>
 }

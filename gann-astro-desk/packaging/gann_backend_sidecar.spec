@@ -46,6 +46,11 @@ required_files = [
     cgvo_root / "varahamihira_eclipse_source_profile_v1.json",
     cgvo_root / "trailokya_geography_argha_context_v1.json",
     cgvo_root / "kurma_gazetteer_seed_v1.json",
+    cgvo_root / "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml",
+    cgvo_root / "VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1.yaml",
+    cgvo_root / "VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1.yaml",
+    cgvo_root / "VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1.yaml",
+    cgvo_root / "CGVO_S1_READINESS_MATRIX_V1.yaml",
     xe1_experimental_evidence_root / "fixtures" / "xe1_evidence_observations_v1.json",
     xe1_experimental_evidence_root / "fixtures" / "xe1_trial_ledger_v1.json",
 ]

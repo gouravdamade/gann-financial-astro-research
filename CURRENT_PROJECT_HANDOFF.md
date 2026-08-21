@@ -11009,3 +11009,33 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Founder physical inspection remains pending. All CGVO safety boundaries stay
   closed: no price/outcome read, market direction, score, Fields, SBC, Auto
   Suggest, ML, MT5, or execution; `executionAllowed=false`.
+
+## CGVO-S1A Varahamihira Source-Architecture Integration (2026-08-21)
+
+- Implemented the bounded, read-only `CGVO-S1A` source architecture on top of
+  the accepted CGVO-P1R1 modern eclipse workbench. No new eclipse engine was
+  introduced.
+- Added immutable source fixtures for the fixed rasi/nakshatra partition,
+  precessional distinction, explicit Chitra/Spica-at-180 reconstruction
+  candidate, ordinary purnimanta lunar-month profile, categorical eclipse
+  aspect profile, firmament geometry limits, and the S1 readiness matrix.
+- The Chitra reconstruction is an explicit selector only. With no selection,
+  rasi/nakshatra and sign-relative aspects remain unavailable rather than
+  silently using Raman, Lahiri, tropical, or another frame.
+- Lunar month display is limited to ordinary unambiguous purnimanta cases;
+  intercalation and unresolved cases remain
+  `UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED`.
+- Eclipse aspects expose sign-relative categorical fractions and literal source
+  effect tokens only. `effectMagnitudeMultiplier=null` and
+  `jupiterMitigationCoefficient=null` remain explicit.
+- The firmament panel exposes raw apparent altitude, normalized/raw azimuth,
+  local hour angle, rise/set state, and meridian relation. Its classical
+  section stays `UNKNOWN` under `COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED`.
+- The raw Chapter XIV Kurma names, Trailokya isolation, and all P1R1 modern
+  visibility behavior remain intact. No price/outcome read, market direction,
+  score, Fields, SBC, Auto Suggest, ML, MT5, or execution path was added;
+  `executionAllowed=false` is invariant.
+- This is source and UI implementation only. No Windows candidate is built in
+  S1A; central review is the next gate. See
+  `docs/research/CGVO_S1_SOURCE_CLOSURE_REPORT_V1.md` and
+  `docs/research/CGVO_S1A_TERRA_HIGH_DIRECTIVE_V1.md`.

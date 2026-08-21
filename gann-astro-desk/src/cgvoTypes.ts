@@ -137,6 +137,7 @@ export type CgvoEvent = {
   historicalRegionCandidates: Array<Record<string, unknown>>
   sourceUnknowns: string[]
   provenance: Array<Record<string, unknown>>
+  sourceAdapters?: Record<string, unknown>
   guardrails: CgvoGuardrails
 }
 
@@ -149,6 +150,7 @@ export type CgvoStatus = {
   availableEventTypes: string[]
   guardrails: CgvoGuardrails
   sourceProfiles: Record<string, string>
+  sourceAdapters?: Record<string, unknown>
 }
 
 export type CgvoSearch = {
@@ -166,6 +168,7 @@ export type CgvoWorkbench = {
   schemaVersion: number
   event: CgvoEvent | null
   sourceProfiles: CgvoSourceProfile[]
+  sourceAdapters?: Record<string, unknown>
   kurma: CgvoKurmaSeed
   guardrails: CgvoGuardrails
 }

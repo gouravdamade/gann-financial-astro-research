@@ -13,10 +13,12 @@ import json
 import math
 from pathlib import Path
 import sys
+from threading import RLock
 from typing import Any, Mapping
 from zoneinfo import ZoneInfo
 
 import swisseph as swe
+import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -34,11 +36,16 @@ CGVO_ROOT = Path("configs") / "research" / "cgvo"
 KURMA_FIXTURE = CGVO_ROOT / "kurma_gazetteer_seed_v1.json"
 VARAHAMIHIRA_FIXTURE = CGVO_ROOT / "varahamihira_eclipse_source_profile_v1.json"
 TRAILOKYA_FIXTURE = CGVO_ROOT / "trailokya_geography_argha_context_v1.json"
+VARAHAMIHIRA_FRAME_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml"
+VARAHAMIHIRA_LUNAR_MONTH_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1.yaml"
+VARAHAMIHIRA_ASPECT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1.yaml"
+VARAHAMIHIRA_FIRMAMENT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1.yaml"
+CGVO_S1_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1_READINESS_MATRIX_V1.yaml"
+VARAHAMIHIRA_CHITRA_FRAME_ID = "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1"
 SOURCE_UNKNOWN_REASONS = [
-    "VARAHAMIHIRA_RASI_MAPPING_UNRESOLVED",
-    "VARAHAMIHIRA_NAKSHATRA_FRAME_UNRESOLVED",
-    "VARAHAMIHIRA_LUNAR_MONTH_UNRESOLVED",
-    "VARAHAMIHIRA_FIRMAMENT_INTERPRETATION_UNRESOLVED",
+    "VARAHAMIHIRA_ABSOLUTE_FRAME_RECONSTRUCTION_NOT_DEFAULT",
+    "VARAHAMIHIRA_FIRMAMENT_CLASSIFIER_NOT_SOURCE_CLOSED",
+    "VARAHAMIHIRA_LUNAR_MONTH_INTERCALATION_PROFILE_NOT_CLOSED",
     "VARAHAMIHIRA_MORPHOLOGY_MAPPING_UNRESOLVED",
     "VARAHAMIHIRA_COLOUR_OBSERVATION_REQUIRED",
     "TRAILOKYA_ECLIPSE_VISIBILITY_SOURCE_SILENT",
@@ -46,6 +53,35 @@ SOURCE_UNKNOWN_REASONS = [
 MAX_SEARCH_DAYS = 3700
 SEARCH_LIMIT = 24
 _JD_UNIX_EPOCH = 2440587.5
+_EPHEMERIS_LOCK = RLock()
+
+_RASI_NAMES = (
+    "MESHA", "VRISHABHA", "MITHUNA", "KARKATAKA", "SIMHA", "KANYA",
+    "TULA", "VRISCHIKA", "DHANUS", "MAKARA", "KUMBHA", "MEENA",
+)
+_NAKSHATRA_NAMES = (
+    "ASHWINI", "BHARANI", "KRITTIKA", "ROHINI", "MRIGASHIRSHA", "ARDRA",
+    "PUNARVASU", "PUSHYA", "ASHLESHA", "MAGHA", "PURVA_PHALGUNI",
+    "UTTARA_PHALGUNI", "HASTA", "CHITRA", "SWATI", "VISHAKHA", "ANURADHA",
+    "JYESHTHA", "MULA", "PURVA_ASHADHA", "UTTARA_ASHADHA", "SHRAVANA",
+    "DHANISHTHA", "SHATABHISHA", "PURVA_BHADRAPADA", "UTTARA_BHADRAPADA", "REVATI",
+)
+_PLANET_IDS = {
+    "MERCURY": swe.MERCURY,
+    "MARS": swe.MARS,
+    "JUPITER": swe.JUPITER,
+    "VENUS": swe.VENUS,
+    "SATURN": swe.SATURN,
+    "SUN": swe.SUN,
+    "MOON": swe.MOON,
+}
+_LUNAR_MONTH_BY_FULL_MOON_NAKSHATRA = {
+    "CHITRA": "CHAITRA", "VISHAKHA": "VAISHAKHA", "JYESHTHA": "JYESHTHA",
+    "PURVA_ASHADHA": "ASHADHA", "UTTARA_ASHADHA": "ASHADHA", "SHRAVANA": "SHRAVANA",
+    "PURVA_BHADRAPADA": "BHADRAPADA", "UTTARA_BHADRAPADA": "BHADRAPADA",
+    "ASHWINI": "ASHVINA", "KRITTIKA": "KARTIKA", "MRIGASHIRSHA": "MARGASHIRSHA",
+    "PUSHYA": "PAUSHA", "MAGHA": "MAGHA", "PURVA_PHALGUNI": "PHALGUNA", "UTTARA_PHALGUNI": "PHALGUNA",
+}
 
 
 class CgvoRequestError(ValueError):
@@ -107,6 +143,260 @@ def _load_json(project_root: Path, relative_path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise RuntimeError(f"CGVO source fixture must be a JSON object: {relative_path.as_posix()}")
     return payload
+
+
+def _load_yaml(project_root: Path, relative_path: Path) -> dict[str, Any]:
+    path = project_root / relative_path
+    try:
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"CGVO source fixture is missing: {relative_path.as_posix()}") from exc
+    except yaml.YAMLError as exc:
+        raise RuntimeError(f"CGVO source fixture is invalid YAML: {relative_path.as_posix()}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise RuntimeError(f"CGVO source fixture must be a YAML object: {relative_path.as_posix()}")
+    return payload
+
+
+def _s1a_fixtures(project_root: Path) -> dict[str, dict[str, Any]]:
+    return {
+        "frame": _load_yaml(project_root, VARAHAMIHIRA_FRAME_FIXTURE),
+        "lunarMonth": _load_yaml(project_root, VARAHAMIHIRA_LUNAR_MONTH_FIXTURE),
+        "aspect": _load_yaml(project_root, VARAHAMIHIRA_ASPECT_FIXTURE),
+        "firmament": _load_yaml(project_root, VARAHAMIHIRA_FIRMAMENT_FIXTURE),
+        "readiness": _load_yaml(project_root, CGVO_S1_READINESS_FIXTURE),
+    }
+
+
+def _frame_profile_id(payload: Mapping[str, Any]) -> str | None:
+    value = payload.get("absoluteFrameProfileId")
+    if value in (None, ""):
+        return None
+    if not isinstance(value, str) or value != VARAHAMIHIRA_CHITRA_FRAME_ID:
+        raise CgvoRequestError(
+            "absoluteFrameProfileId must be omitted or " + VARAHAMIHIRA_CHITRA_FRAME_ID
+        )
+    return value
+
+
+def _tropical_longitude(at_utc: datetime, body: str) -> float:
+    body_id = _PLANET_IDS[body]
+    values, _ = swe.calc_ut(_jd(at_utc), body_id, swe.FLG_SWIEPH | swe.FLG_SPEED)
+    return float(values[0]) % 360.0
+
+
+def _chitra_180_offset(at_utc: datetime) -> float:
+    values, _, _ = swe.fixstar2_ut("Spica", _jd(at_utc), swe.FLG_SWIEPH)
+    return (float(values[0]) - 180.0) % 360.0
+
+
+def _rasi_nakshatra(at_utc: datetime, body: str, frame_profile_id: str | None) -> dict[str, Any]:
+    if frame_profile_id is None:
+        return {
+            "availability": "ABSOLUTE_FRAME_NOT_SELECTED",
+            "profileId": None,
+            "rasi": None,
+            "nakshatra": None,
+            "pada": None,
+            "siderealLongitudeDeg": None,
+            "candidateOffsetDeg": None,
+        }
+    tropical = _tropical_longitude(at_utc, body)
+    offset = _chitra_180_offset(at_utc)
+    sidereal = (tropical - offset) % 360.0
+    nakshatra_index = min(26, int(sidereal / (360.0 / 27.0)))
+    pada = min(4, int((sidereal % (360.0 / 27.0)) / (360.0 / 108.0)) + 1)
+    return {
+        "availability": "SOURCE_RECONSTRUCTION_CANDIDATE_CALCULATED",
+        "profileId": frame_profile_id,
+        "rasi": _RASI_NAMES[int(sidereal // 30.0)],
+        "rasiIndex": int(sidereal // 30.0) + 1,
+        "nakshatra": _NAKSHATRA_NAMES[nakshatra_index],
+        "nakshatraIndex": nakshatra_index + 1,
+        "pada": pada,
+        "siderealLongitudeDeg": _finite(sidereal, 6),
+        "tropicalLongitudeDeg": _finite(tropical, 6),
+        "candidateOffsetDeg": _finite(offset, 6),
+        "anchor": "SPICA_CHITRA_AT_180_DEGREES",
+    }
+
+
+def _phase_angle(at_utc: datetime) -> float:
+    return (_tropical_longitude(at_utc, "MOON") - _tropical_longitude(at_utc, "SUN")) % 360.0
+
+
+def _full_moons_around(at_utc: datetime) -> list[datetime]:
+    """Find physical full-moon crossings without importing a calendar convention."""
+    start = at_utc - timedelta(days=38)
+    end = at_utc + timedelta(days=38)
+    step = timedelta(hours=3)
+    points: list[datetime] = []
+    left = start
+    left_phase = _phase_angle(left)
+    while left < end:
+        right = min(left + step, end)
+        right_phase = _phase_angle(right)
+        if left_phase < 180.0 <= right_phase:
+            lo, hi = left, right
+            for _ in range(32):
+                mid = lo + ((hi - lo) / 2)
+                if _phase_angle(mid) < 180.0:
+                    lo = mid
+                else:
+                    hi = mid
+            points.append(hi.replace(microsecond=0))
+        left, left_phase = right, right_phase
+    return points
+
+
+def _lunar_month_adapter(
+    at_utc: datetime,
+    locality: Mapping[str, Any] | None,
+    frame_profile_id: str | None,
+    fixture: Mapping[str, Any],
+) -> dict[str, Any]:
+    if locality is None:
+        return {
+            "baseSystem": "PURNIMANTA",
+            "evidenceStatus": fixture["sourceStatus"],
+            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+            "unknownReason": "LOCALITY_REQUIRED_FOR_SOURCE_DAY_PROVENANCE",
+        }
+    if frame_profile_id is None:
+        return {
+            "baseSystem": "PURNIMANTA",
+            "evidenceStatus": fixture["sourceStatus"],
+            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+            "unknownReason": "ABSOLUTE_FRAME_PROFILE_NOT_SELECTED",
+        }
+    full_moons = _full_moons_around(at_utc)
+    before = [moment for moment in full_moons if moment <= at_utc]
+    after = [moment for moment in full_moons if moment >= at_utc]
+    if not before or not after:
+        return {
+            "baseSystem": "PURNIMANTA",
+            "evidenceStatus": fixture["sourceStatus"],
+            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+            "unknownReason": "FULL_MOON_BOUNDARY_NOT_RESOLVED",
+        }
+    previous_full, next_full = before[-1], after[0]
+    if next_full - previous_full < timedelta(hours=12):
+        next_candidates = [moment for moment in full_moons if moment > previous_full + timedelta(days=20)]
+        if not next_candidates:
+            return {
+                "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
+                "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED", "unknownReason": "NEXT_FULL_MOON_NOT_RESOLVED",
+            }
+        next_full = next_candidates[0]
+    previous_sun = _rasi_nakshatra(previous_full, "SUN", frame_profile_id)
+    next_sun = _rasi_nakshatra(next_full, "SUN", frame_profile_id)
+    sign_delta = ((int(next_sun["rasiIndex"]) - int(previous_sun["rasiIndex"])) % 12)
+    if sign_delta != 1:
+        return {
+            "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
+            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+            "unknownReason": "ADHIKA_OR_KSHAYA_MONTH_DETECTION", "previousFullMoonUtc": _iso(previous_full),
+            "nextFullMoonUtc": _iso(next_full), "solarRasiAdvance": sign_delta,
+        }
+    month_star = _rasi_nakshatra(next_full, "MOON", frame_profile_id)
+    month_name = _LUNAR_MONTH_BY_FULL_MOON_NAKSHATRA.get(str(month_star["nakshatra"]))
+    if month_name is None:
+        return {
+            "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
+            "result": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED", "unknownReason": "MONTH_NAME_NOT_MAPPED",
+        }
+    local = at_utc.astimezone(ZoneInfo(str(locality["timezone"])))
+    return {
+        "baseSystem": "PURNIMANTA", "evidenceStatus": fixture["sourceStatus"],
+        "result": month_name, "monthAnchorNakshatra": month_star["nakshatra"],
+        "previousFullMoonUtc": _iso(previous_full), "nextFullMoonUtc": _iso(next_full),
+        "sourceDayLocal": local.date().isoformat(), "timezone": locality["timezone"],
+        "localityId": locality["localityId"], "calculationStatus": "ORDINARY_UNAMBIGUOUS_PURNIMANTA_CASE",
+    }
+
+
+def _eclipse_aspect_adapter(
+    at_utc: datetime, event_type: str, frame_profile_id: str | None, fixture: Mapping[str, Any]
+) -> dict[str, Any]:
+    if frame_profile_id is None:
+        return {
+            "geometryStatus": fixture["sourceStatus"], "frameStatus": "ABSOLUTE_FRAME_NOT_SELECTED",
+            "aspectRecords": [], "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
+        }
+    eclipsed_body = "SUN" if event_type == "SOLAR" else "MOON"
+    target = _rasi_nakshatra(at_utc, eclipsed_body, frame_profile_id)
+    fractions = {int(key): float(value) for key, value in fixture["ordinarySignFractions"].items()}
+    special = {str(key): {int(item) for item in values} for key, values in fixture["specialFullAspects"].items()}
+    records: list[dict[str, Any]] = []
+    for planet in ("MERCURY", "MARS", "JUPITER", "VENUS", "SATURN"):
+        source = _rasi_nakshatra(at_utc, planet, frame_profile_id)
+        distance = ((int(target["rasiIndex"]) - int(source["rasiIndex"])) % 12) + 1
+        fraction = 1.0 if distance in special.get(planet, set()) else fractions.get(distance, 0.0)
+        records.append({
+            "planet": planet, "eclipsedLuminary": eclipsed_body,
+            "aspectingRasi": source["rasi"], "eclipsedRasi": target["rasi"],
+            "signDistance": distance, "fraction": fraction, "aspectExists": fraction > 0.0,
+            "effectToken": fixture["effectTokens"].get(planet) if fraction > 0.0 else None,
+            "calculation": "SIGN_RELATIVE_JYOTISHA_COUNTING", "sourceStatus": fixture["sourceStatus"],
+        })
+    return {
+        "geometryStatus": fixture["sourceStatus"], "frameStatus": "SOURCE_RECONSTRUCTION_CANDIDATE_CALCULATED",
+        "eclipsedLuminary": eclipsed_body, "aspectRecords": records,
+        "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
+    }
+
+
+def _firmament_adapter(
+    at_utc: datetime, event_type: str, locality: Mapping[str, Any] | None, fixture: Mapping[str, Any], modern: Mapping[str, Any] | None
+) -> dict[str, Any]:
+    body_key = "sun" if event_type == "SOLAR" else "moon"
+    coordinates = (modern or {}).get(f"{body_key}AltitudeAzimuth")
+    if locality is None or not isinstance(coordinates, Mapping):
+        raw_geometry: dict[str, Any] = {"availability": "LOCALITY_OR_HORIZONTAL_COORDINATES_NOT_AVAILABLE"}
+    else:
+        values, _ = swe.calc_ut(_jd(at_utc), _PLANET_IDS[body_key.upper()], swe.FLG_SWIEPH | swe.FLG_EQUATORIAL | swe.FLG_TOPOCTR)
+        right_ascension = float(values[0])
+        local_sidereal = (float(swe.sidtime(_jd(at_utc))) * 15.0 + float(locality["longitude"])) % 360.0
+        hour_angle = ((local_sidereal - right_ascension + 180.0) % 360.0) - 180.0
+        raw_geometry = {
+            "availability": "RAW_MODERN_GEOMETRY_AVAILABLE", "apparentAltitudeDeg": coordinates.get("altitudeApparentDeg"),
+            "normalizedAzimuthDeg": coordinates.get("azimuthDeg"), "rawSwissAzimuthDeg": coordinates.get("sourceAzimuthDeg"),
+            "localHourAngleDeg": _finite(hour_angle, 6), "riseSetState": (modern or {}).get("visibility"),
+            "meridianRelation": "ON_MERIDIAN" if abs(hour_angle) < 0.25 else ("EAST_OF_MERIDIAN" if hour_angle < 0 else "WEST_OF_MERIDIAN"),
+        }
+    return {
+        "status": fixture["sourceStatus"], "rawGeometry": raw_geometry,
+        "classicalSection": "UNKNOWN", "sourceCertifiedClassifier": False,
+        "nonVotingComparisonCandidates": fixture["nonVotingComparisonCandidates"],
+    }
+
+
+def _attach_s1a_source_adapters(project_root: Path, event: dict[str, Any], payload: Mapping[str, Any]) -> None:
+    fixtures = _s1a_fixtures(project_root)
+    frame_profile_id = _frame_profile_id(payload)
+    identity = event["astronomyEventIdentity"]
+    at_utc = _parse_utc(identity["globalMaxSwissUt"], "globalMaxSwissUt")
+    event_type = str(identity["eventType"])
+    locality = event.get("locality") if isinstance(event.get("locality"), Mapping) else None
+    modern = event.get("modernAstronomy") if isinstance(event.get("modernAstronomy"), Mapping) else None
+    luminary = "SUN" if event_type == "SOLAR" else "MOON"
+    event["sourceAdapters"] = {
+        "varahamihiraFrame": {
+            "partitionStatus": fixtures["frame"]["sourceAuthority"],
+            "absoluteFrameStatus": "NULL" if frame_profile_id is None else "SOURCE_RECONSTRUCTION_CANDIDATE",
+            "selectedProfileId": frame_profile_id,
+            "luminary": _rasi_nakshatra(at_utc, luminary, frame_profile_id),
+            "partition": fixtures["frame"]["partition"],
+            "precessionalDistinction": fixtures["frame"]["precessionalDistinction"],
+        },
+        "varahamihiraLunarMonth": _lunar_month_adapter(at_utc, locality, frame_profile_id, fixtures["lunarMonth"]),
+        "varahamihiraAspect": _eclipse_aspect_adapter(at_utc, event_type, frame_profile_id, fixtures["aspect"]),
+        "varahamihiraFirmament": _firmament_adapter(at_utc, event_type, locality, fixtures["firmament"], modern),
+    }
+    event["sourceUnknowns"] = list(dict.fromkeys(event["sourceUnknowns"] + [
+        "VARAHAMIHIRA_ABSOLUTE_FRAME_NOT_SELECTED" if frame_profile_id is None else "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_CANDIDATE",
+        "VARAHAMIHIRA_FIRMAMENT_CLASSIFIER_NOT_SOURCE_CLOSED",
+    ]))
 
 
 def _guardrails() -> dict[str, bool]:
@@ -437,19 +727,47 @@ def _source_profile(project_root: Path, path: Path) -> dict[str, Any]:
     return _load_json(project_root, path)
 
 
+def _s1a_source_status(project_root: Path) -> dict[str, Any]:
+    fixtures = _s1a_fixtures(project_root)
+    return {
+        "varahamihiraFrame": {
+            "partitionStatus": fixtures["frame"]["sourceAuthority"],
+            "absoluteFrameStatus": "SOURCE_RECONSTRUCTION_CANDIDATE | NULL",
+            "availableAbsoluteFrameProfiles": [VARAHAMIHIRA_CHITRA_FRAME_ID],
+            "defaultAuthorized": False,
+        },
+        "varahamihiraLunarMonth": {
+            "baseSystem": fixtures["lunarMonth"]["baseSystem"],
+            "evidenceStatus": fixtures["lunarMonth"]["sourceStatus"],
+            "result": "MONTH | UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+        },
+        "varahamihiraAspect": {
+            "geometryStatus": fixtures["aspect"]["sourceStatus"],
+            "effectMagnitudeMultiplier": None,
+            "jupiterMitigationCoefficient": None,
+        },
+        "varahamihiraFirmament": {
+            "status": fixtures["firmament"]["sourceStatus"],
+            "classicalSection": "UNKNOWN",
+            "sourceCertifiedClassifier": False,
+        },
+    }
+
+
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
-        "schemaVersion": 1,
-        "milestone": "PFR-V2B-CGVO-P1",
-        "status": "RESEARCH_INSPECTOR_READY_FOR_FOUNDER_REVIEW",
-        "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID],
+        "schemaVersion": 2,
+        "milestone": "CGVO-S1A",
+        "status": "SOURCE_ARCHITECTURE_RESEARCH_INSPECTOR_READY_FOR_CENTRAL_REVIEW",
+        "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
         "availableEventTypes": ["SOLAR", "LUNAR"],
         "guardrails": _guardrails(),
         "sourceProfiles": {
-            "varahamihira": _source_profile(project_root, VARAHAMIHIRA_FIXTURE)["sourceStatus"],
+            "varahamihira": "SOURCE_ARCHITECTURE_AVAILABLE_READ_ONLY",
             "trailokya": _source_profile(project_root, TRAILOKYA_FIXTURE)["sourceStatus"],
         },
+        "sourceAdapters": _s1a_source_status(project_root),
     }
 
 
@@ -459,6 +777,7 @@ def build_cgvo_source_profiles(project_root: Path) -> dict[str, Any]:
     return {
         "contract": "CGVO_SOURCE_PROFILE_BUNDLE_V1",
         "profiles": [varahamihira, trailokya],
+        "sourceAdapters": _s1a_source_status(project_root),
         "guardrails": _guardrails(),
         "crossSourceComposition": "NOT_AUTHORIZED",
     }
@@ -527,6 +846,8 @@ def build_cgvo_local_circumstances(project_root: Path, payload: Mapping[str, Any
     requested_causal_id = str(payload.get("causalEventId") or "").strip()
     if requested_causal_id and requested_causal_id != event["causalEventId"]:
         raise CgvoRequestError("causalEventId does not match the reconstructed Swiss Ephemeris event")
+    with _EPHEMERIS_LOCK:
+        _attach_s1a_source_adapters(project_root, event, payload)
     return {
         "contract": "CGVO_LOCAL_CIRCUMSTANCES_V1",
         "event": event,
@@ -551,11 +872,15 @@ def build_cgvo_workbench(project_root: Path, payload: Mapping[str, Any]) -> dict
         requested_causal_id = str(payload.get("causalEventId") or "").strip()
         if requested_causal_id and (event is None or requested_causal_id != event["causalEventId"]):
             raise CgvoRequestError("causalEventId does not match the reconstructed Swiss Ephemeris event")
+        if event is not None:
+            with _EPHEMERIS_LOCK:
+                _attach_s1a_source_adapters(project_root, event, payload)
     return {
         "contract": CGVO_CONTRACT,
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "event": event,
         "sourceProfiles": build_cgvo_source_profiles(project_root)["profiles"],
+        "sourceAdapters": _s1a_source_status(project_root),
         "kurma": build_cgvo_kurma_seed(project_root),
         "guardrails": _guardrails(),
     }

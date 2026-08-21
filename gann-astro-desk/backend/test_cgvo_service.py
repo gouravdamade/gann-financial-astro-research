@@ -13,6 +13,7 @@ from cgvo_service import (
     build_cgvo_local_circumstances,
     build_cgvo_source_profiles,
     build_cgvo_status,
+    build_cgvo_workbench,
 )
 
 
@@ -64,15 +65,77 @@ class CgvoServiceTests(unittest.TestCase):
 
     def test_unknown_and_source_profiles_are_explicit(self) -> None:
         status = build_cgvo_status(PROJECT_ROOT)
-        self.assertEqual(status["sourceProfiles"]["varahamihira"], "WORKING_WITNESS_METADATA_PENDING")
+        self.assertEqual(status["sourceProfiles"]["varahamihira"], "SOURCE_ARCHITECTURE_AVAILABLE_READ_ONLY")
         self.assertEqual(status["sourceProfiles"]["trailokya"], "SOURCE_SILENT_FOR_ECLIPSE_VISIBILITY_IN_HELD_WITNESS")
+        self.assertEqual(status["sourceAdapters"]["varahamihiraFrame"]["partitionStatus"], "CLOSED_ROOT_SOURCE")
+        self.assertFalse(status["sourceAdapters"]["varahamihiraFrame"]["defaultAuthorized"])
         profiles = build_cgvo_source_profiles(PROJECT_ROOT)["profiles"]
         trailokya = next(item for item in profiles if item["profileId"].startswith("TRAILOKYA"))
         self.assertIn("ECLIPSE VISIBILITY DOCTRINE: SOURCE SILENT IN HELD WITNESS", trailokya["banner"])
         self.assertFalse(build_cgvo_source_profiles(PROJECT_ROOT)["guardrails"]["crossSourceComposition"])
         event = self.solar_search()["events"][0]
-        self.assertIn("VARAHAMIHIRA_RASI_MAPPING_UNRESOLVED", event["sourceUnknowns"])
+        self.assertIn("VARAHAMIHIRA_ABSOLUTE_FRAME_RECONSTRUCTION_NOT_DEFAULT", event["sourceUnknowns"])
         self.assertIn("TRAILOKYA_ECLIPSE_VISIBILITY_SOURCE_SILENT", event["sourceUnknowns"])
+
+    def test_s1a_requires_explicit_absolute_frame_and_never_defaults_to_raman_or_tropical(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        common = {
+            "eventType": "SOLAR", "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "causalEventId": event["causalEventId"], "localityId": "UJJAIN", "label": "Ujjain",
+            "latitude": 23.1765, "longitude": 75.7885, "elevationM": 0, "timezone": "Asia/Kolkata",
+        }
+        unselected = build_cgvo_workbench(PROJECT_ROOT, common)["event"]["sourceAdapters"]
+        self.assertEqual(unselected["varahamihiraFrame"]["absoluteFrameStatus"], "NULL")
+        self.assertIsNone(unselected["varahamihiraFrame"]["luminary"]["rasi"])
+        self.assertEqual(unselected["varahamihiraAspect"]["aspectRecords"], [])
+        selected = build_cgvo_workbench(PROJECT_ROOT, {
+            **common, "absoluteFrameProfileId": "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1",
+        })["event"]["sourceAdapters"]
+        self.assertEqual(selected["varahamihiraFrame"]["selectedProfileId"], "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1")
+        self.assertEqual(selected["varahamihiraFrame"]["luminary"]["availability"], "SOURCE_RECONSTRUCTION_CANDIDATE_CALCULATED")
+        self.assertEqual(len(selected["varahamihiraAspect"]["aspectRecords"]), 5)
+        with self.assertRaisesRegex(CgvoRequestError, "absoluteFrameProfileId"):
+            build_cgvo_workbench(PROJECT_ROOT, {**common, "absoluteFrameProfileId": "RAMAN"})
+
+    def test_s1a_lunar_month_and_aspect_geometry_stay_categorical_and_fail_closed(self) -> None:
+        fixture = cgvo_service._s1a_fixtures(PROJECT_ROOT)["lunarMonth"]
+        locality = {"localityId": "UJJAIN", "timezone": "Asia/Kolkata"}
+        ordinary = cgvo_service._lunar_month_adapter(
+            cgvo_service._parse_utc("2025-04-15T00:00:00Z", "timestamp"),
+            locality,
+            cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
+            fixture,
+        )
+        self.assertEqual(ordinary["baseSystem"], "PURNIMANTA")
+        self.assertEqual(ordinary["result"], "VAISHAKHA")
+        unknown = cgvo_service._lunar_month_adapter(
+            cgvo_service._parse_utc("2025-01-15T00:00:00Z", "timestamp"),
+            locality,
+            cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
+            fixture,
+        )
+        self.assertEqual(unknown["result"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        aspect = cgvo_service._eclipse_aspect_adapter(
+            cgvo_service._parse_utc("2027-08-02T10:06:41Z", "timestamp"), "SOLAR",
+            cgvo_service.VARAHAMIHIRA_CHITRA_FRAME_ID,
+            cgvo_service._s1a_fixtures(PROJECT_ROOT)["aspect"],
+        )
+        self.assertIsNone(aspect["effectMagnitudeMultiplier"])
+        self.assertIsNone(aspect["jupiterMitigationCoefficient"])
+        self.assertTrue(all(record["fraction"] in {0.0, 0.25, 0.5, 0.75, 1.0} for record in aspect["aspectRecords"]))
+        self.assertFalse(build_cgvo_status(PROJECT_ROOT)["guardrails"]["executionAllowed"])
+
+    def test_s1a_firmament_remains_raw_geometry_not_a_certified_classifier(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        result = build_cgvo_workbench(PROJECT_ROOT, {
+            "eventType": "SOLAR", "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "causalEventId": event["causalEventId"], "localityId": "UJJAIN", "label": "Ujjain",
+            "latitude": 23.1765, "longitude": 75.7885, "elevationM": 0, "timezone": "Asia/Kolkata",
+        })["event"]["sourceAdapters"]["varahamihiraFirmament"]
+        self.assertEqual(result["status"], "COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED")
+        self.assertEqual(result["classicalSection"], "UNKNOWN")
+        self.assertFalse(result["sourceCertifiedClassifier"])
+        self.assertIn("localHourAngleDeg", result["rawGeometry"])
 
     def test_invalid_locality_fails_closed(self) -> None:
         with self.assertRaisesRegex(CgvoRequestError, "latitude"):

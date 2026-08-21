@@ -1,0 +1,32 @@
+schemaVersion: VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1
+contract: VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1
+sourceId: BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS
+sourceStatus: CLOSED_SAME_AUTHOR_DELEGATED_SOURCE
+effectLocator: "Brihat Samhita V.60-62"
+geometryLocator: "Brihat Jataka II.13"
+ordinarySignFractions:
+  "3": 0.25
+  "10": 0.25
+  "5": 0.5
+  "9": 0.5
+  "4": 0.75
+  "8": 0.75
+  "7": 1.0
+specialFullAspects:
+  SATURN: [3, 10]
+  JUPITER: [5, 9]
+  MARS: [4, 8]
+effectTokens:
+  MERCURY: "GHEE_HONEY_OIL_DEAR_AND_RARE__KING_SUFFERS"
+  MARS: "WAR_FIRE_THIEVES"
+  VENUS: "CROP_DESTRUCTION_GENERAL_MISERY"
+  SATURN: "RAIN_FAILURE_FAMINE_THIEVES"
+  JUPITER: "MITIGATES_ADVERSE_RESULTS_AUSPICIOUS_WHEN_ASPECTING_SAME_CONDITION"
+effectMagnitudeMultiplier: null
+jupiterMitigationCoefficient: null
+guardrails:
+  angularOrbCalculation: false
+  continuousInterpolation: false
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false

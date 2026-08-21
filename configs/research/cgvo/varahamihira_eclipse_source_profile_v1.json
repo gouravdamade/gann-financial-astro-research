@@ -4,7 +4,7 @@
   "sourceId": "BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS",
   "edition": "Brihat Samhita, Sastri/Bhat 1946 working witness",
   "authority": "SOURCE_INTERPRETATION_LEDGER",
-  "sourceStatus": "WORKING_WITNESS_METADATA_PENDING",
+  "sourceStatus": "SOURCE_ARCHITECTURE_AVAILABLE_READ_ONLY",
   "controllingPdfSha256": null,
   "interpretationPolicy": "Typed source claims only; unresolved mappings remain UNKNOWN.",
   "claims": [
@@ -17,22 +17,30 @@
   "displayStatuses": {
     "solarVisibilityEligibility": "SOURCE_EXPLICIT",
     "lunarVisibilityEligibility": "PARTIAL_SOURCE_SUPPORT",
-    "rasi": "UNKNOWN_ZODIAC_FRAME_NOT_AUTHORIZED",
-    "nakshatra": "UNKNOWN_AYANAMSHA_FRAME_NOT_AUTHORIZED",
-    "lunarMonth": "UNKNOWN_CONVENTION_NOT_CLOSED",
+    "rasi": "CLOSED_ROOT_SOURCE_PARTITION / EXPLICIT_ABSOLUTE_FRAME_REQUIRED",
+    "nakshatra": "CLOSED_ROOT_SOURCE_PARTITION / EXPLICIT_ABSOLUTE_FRAME_REQUIRED",
+    "lunarMonth": "HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE / INTERCALATION_UNKNOWN",
     "ayana": "UNKNOWN_ADAPTER_NOT_CONFIGURED",
-    "firmament": "SOURCE_INTERPRETATION_UNRESOLVED",
+    "firmament": "COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED / RAW_GEOMETRY_ONLY",
     "commencementQuarter": "MAPPING_UNRESOLVED",
     "liberationClass": "MAPPING_UNRESOLVED",
     "morphology": "MAPPING_UNRESOLVED",
     "colour": "OBSERVATION_REQUIRED",
-    "planetaryAspects": "SOURCE_EFFECT_RECORDED / ASPECT_GEOMETRY_UNCLOSED",
+    "planetaryAspects": "CLOSED_SAME_AUTHOR_DELEGATED_SOURCE / CATEGORICAL_ONLY",
     "sevenDayOmens": "UNKNOWN_HISTORICAL_EVIDENCE_NOT_LOADED",
     "solarFruition": "SOURCE_BACKED_1_YEAR",
     "lunarFruition": "SOURCE_SILENT"
   },
   "lexicalLocks": [
     {"literal": "SHOBHANA DHANYARGHA", "normalizedPriceDirection": null, "status": "LEXICAL_INTERPRETATION_UNRESOLVED"}
+  ],
+  "sourceAdapters": [
+    "VARAHAMIHIRA_RASI_NAKSHATRA_PARTITION_V1",
+    "VARAHAMIHIRA_PRECESSIONAL_DISTINCTION_V1",
+    "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1",
+    "VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1",
+    "VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1",
+    "VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1"
   ],
   "guardrails": {"marketDirection": false, "score": false, "executionAllowed": false}
 }

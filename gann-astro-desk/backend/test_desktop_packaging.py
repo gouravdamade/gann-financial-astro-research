@@ -208,6 +208,11 @@ class DesktopPackagingTests(unittest.TestCase):
             "varahamihira_eclipse_source_profile_v1.json",
             "trailokya_geography_argha_context_v1.json",
             "kurma_gazetteer_seed_v1.json",
+            "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml",
+            "VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1.yaml",
+            "VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1.yaml",
+            "VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1.yaml",
+            "CGVO_S1_READINESS_MATRIX_V1.yaml",
         ):
             self.assertIn(filename, sidecar_spec)
             self.assertIn(filename, sidecar_build)

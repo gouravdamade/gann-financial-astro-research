@@ -1,0 +1,25 @@
+schemaVersion: CGVO_S1_READINESS_MATRIX_V1
+milestone: CGVO-S1A
+sourceAdapters:
+  varahamihiraFrame:
+    partitionStatus: CLOSED_ROOT_SOURCE
+    absoluteFrameStatus: SOURCE_RECONSTRUCTION_CANDIDATE
+  varahamihiraLunarMonth:
+    baseSystem: PURNIMANTA
+    evidenceStatus: HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE
+  varahamihiraAspect:
+    geometryStatus: CLOSED_SAME_AUTHOR_DELEGATED_SOURCE
+    effectMagnitudeMultiplier: null
+    jupiterMitigationCoefficient: null
+  varahamihiraFirmament:
+    status: COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED
+    classicalSection: UNKNOWN
+guardrails:
+  priceDataRead: false
+  priceOutcomeRead: false
+  fieldsPath: false
+  sbcPath: false
+  autoSuggestPath: false
+  mlPath: false
+  mt5Path: false
+  executionAllowed: false

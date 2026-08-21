@@ -1,0 +1,14 @@
+schemaVersion: VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1
+sourceId: BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS
+sourceStatus: HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE
+locators: ["Brihat Samhita XXV.5", "Brihat Samhita XXVI introduction/1"]
+baseSystem: PURNIMANTA
+contract: VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1
+ordinaryCaseOnly: true
+resultWhenNotClosed: UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED
+unclosedCases: [ADHIKA, KSHAYA, DOUBLE_MONTH, BOUNDARY_CASE, UNIMPLEMENTED]
+localTimeAndSourceDayRequired: true
+guardrails:
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false
