@@ -41,6 +41,11 @@ VARAHAMIHIRA_LUNAR_MONTH_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_LUNAR_MONTH_PROFILE
 VARAHAMIHIRA_ASPECT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ECLIPSE_ASPECT_PROFILE_V1.yaml"
 VARAHAMIHIRA_FIRMAMENT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_FIRMAMENT_GEOMETRY_V1.yaml"
 CGVO_S1_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1_READINESS_MATRIX_V1.yaml"
+VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1.yaml"
+VARAHAMIHIRA_SOLAR_PHASE_MAPPING_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_SOLAR_ECLIPSE_PHASE_MAPPING_V1.yaml"
+VARAHAMIHIRA_LUNAR_PHASE_MAPPING_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_LUNAR_ECLIPSE_PHASE_MAPPING_V1.yaml"
+VARAHAMIHIRA_FIRMAMENT_ADJUDICATION_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_FIRMAMENT_SOURCE_ADJUDICATION_V2.yaml"
+CGVO_S1B_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1B_READINESS_MATRIX_V1.yaml"
 VARAHAMIHIRA_CHITRA_FRAME_ID = "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1"
 SOURCE_UNKNOWN_REASONS = [
     "VARAHAMIHIRA_ABSOLUTE_FRAME_RECONSTRUCTION_NOT_DEFAULT",
@@ -168,6 +173,16 @@ def _s1a_fixtures(project_root: Path) -> dict[str, dict[str, Any]]:
     }
 
 
+def _s1b_fixtures(project_root: Path) -> dict[str, dict[str, Any]]:
+    return {
+        "absoluteFrameAudit": _load_yaml(project_root, VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_FIXTURE),
+        "solarPhaseMapping": _load_yaml(project_root, VARAHAMIHIRA_SOLAR_PHASE_MAPPING_FIXTURE),
+        "lunarPhaseMapping": _load_yaml(project_root, VARAHAMIHIRA_LUNAR_PHASE_MAPPING_FIXTURE),
+        "firmamentAdjudication": _load_yaml(project_root, VARAHAMIHIRA_FIRMAMENT_ADJUDICATION_FIXTURE),
+        "readiness": _load_yaml(project_root, CGVO_S1B_READINESS_FIXTURE),
+    }
+
+
 def _frame_profile_id(payload: Mapping[str, Any]) -> str | None:
     value = payload.get("absoluteFrameProfileId")
     if value in (None, ""):
@@ -188,6 +203,26 @@ def _tropical_longitude(at_utc: datetime, body: str) -> float:
 def _chitra_180_offset(at_utc: datetime) -> float:
     values, _, _ = swe.fixstar2_ut("Spica", _jd(at_utc), swe.FLG_SWIEPH)
     return (float(values[0]) - 180.0) % 360.0
+
+
+_CHITRA_AUDIT_FLAGS = {
+    "CHITRA_180_APPARENT_STAR": swe.FLG_SWIEPH,
+    "CHITRA_180_TRUE_STAR": swe.FLG_SWIEPH | swe.FLG_TRUEPOS,
+    "CHITRA_180_MEAN_ECLIPTIC": swe.FLG_SWIEPH | swe.FLG_NONUT,
+}
+
+
+def _chitra_audit_offset(at_utc: datetime, audit_profile_id: str) -> tuple[float, float]:
+    """Return Spica's modern coordinate and derived offset for a read-only audit variant."""
+    try:
+        flags = _CHITRA_AUDIT_FLAGS[audit_profile_id]
+    except KeyError as exc:
+        raise RuntimeError(f"Unsupported Chitra audit profile: {audit_profile_id}") from exc
+    with _EPHEMERIS_LOCK:
+        configure_ephemeris(None)
+        values, _, _ = swe.fixstar2_ut("Spica", _jd(at_utc), flags)
+    longitude = float(values[0]) % 360.0
+    return longitude, (longitude - 180.0) % 360.0
 
 
 def _rasi_nakshatra(at_utc: datetime, body: str, frame_profile_id: str | None) -> dict[str, Any]:
@@ -426,8 +461,35 @@ def _lunar_month_adapter(
     }
 
 
+def _source_phase_activation(phase_fixture: Mapping[str, Any] | None) -> dict[str, Any]:
+    if phase_fixture is None:
+        return {
+            "requiredBySource": "COMMENCEMENT_OR_CONCLUSION",
+            "status": "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED",
+            "commencement": None,
+            "conclusion": None,
+            "effectActivated": None,
+            "jupiterMitigationActivated": None,
+        }
+    phase = phase_fixture["phaseActivation"]
+    return {
+        "requiredBySource": "COMMENCEMENT_OR_CONCLUSION",
+        "status": phase["status"],
+        "commencement": phase["commencement"],
+        "conclusion": phase["conclusion"],
+        "effectActivated": phase["effectActivated"],
+        "jupiterMitigationActivated": phase["jupiterMitigationActivated"],
+        "mappingContract": phase_fixture["contract"],
+        "modernCandidateLabels": phase_fixture["modernCandidateLabels"],
+    }
+
+
 def _eclipse_aspect_adapter(
-    at_utc: datetime, event_type: str, frame_profile_id: str | None, fixture: Mapping[str, Any]
+    at_utc: datetime,
+    event_type: str,
+    frame_profile_id: str | None,
+    fixture: Mapping[str, Any],
+    phase_fixture: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if frame_profile_id is None:
         return {
@@ -435,12 +497,7 @@ def _eclipse_aspect_adapter(
             "auditGeometryAtMaximum": {
                 "timeSwissUt": _iso(at_utc), "records": [], "role": "GEOMETRY_SNAPSHOT_ONLY",
             },
-            "sourcePhaseActivation": {
-                "requiredBySource": "COMMENCEMENT_OR_CONCLUSION",
-                "status": "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED",
-                "commencement": None, "conclusion": None,
-                "effectActivated": None, "jupiterMitigationActivated": None,
-            },
+            "sourcePhaseActivation": _source_phase_activation(phase_fixture),
             "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
         }
     eclipsed_body = "SUN" if event_type == "SOLAR" else "MOON"
@@ -465,12 +522,7 @@ def _eclipse_aspect_adapter(
         "auditGeometryAtMaximum": {
             "timeSwissUt": _iso(at_utc), "records": records, "role": "GEOMETRY_SNAPSHOT_ONLY",
         },
-        "sourcePhaseActivation": {
-            "requiredBySource": "COMMENCEMENT_OR_CONCLUSION",
-            "status": "UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED",
-            "commencement": None, "conclusion": None,
-            "effectActivated": None, "jupiterMitigationActivated": None,
-        },
+        "sourcePhaseActivation": _source_phase_activation(phase_fixture),
         "effectMagnitudeMultiplier": None, "jupiterMitigationCoefficient": None,
     }
 
@@ -500,6 +552,7 @@ def _firmament_adapter(
 
 def _attach_s1a_source_adapters(project_root: Path, event: dict[str, Any], payload: Mapping[str, Any]) -> None:
     fixtures = _s1a_fixtures(project_root)
+    s1b = _s1b_fixtures(project_root)
     frame_profile_id = _frame_profile_id(payload)
     identity = event["astronomyEventIdentity"]
     at_utc = _parse_utc(identity["globalMaxSwissUt"], "globalMaxSwissUt")
@@ -517,7 +570,13 @@ def _attach_s1a_source_adapters(project_root: Path, event: dict[str, Any], paylo
             "precessionalDistinction": fixtures["frame"]["precessionalDistinction"],
         },
         "varahamihiraLunarMonth": _lunar_month_adapter(at_utc, locality, frame_profile_id, fixtures["lunarMonth"]),
-        "varahamihiraAspect": _eclipse_aspect_adapter(at_utc, event_type, frame_profile_id, fixtures["aspect"]),
+        "varahamihiraAspect": _eclipse_aspect_adapter(
+            at_utc,
+            event_type,
+            frame_profile_id,
+            fixtures["aspect"],
+            s1b["solarPhaseMapping"] if event_type == "SOLAR" else s1b["lunarPhaseMapping"],
+        ),
         "varahamihiraFirmament": _firmament_adapter(at_utc, event_type, locality, fixtures["firmament"], modern),
     }
     event["sourceUnknowns"] = list(dict.fromkeys(event["sourceUnknowns"] + [
@@ -900,12 +959,85 @@ def _s1a_source_status(project_root: Path) -> dict[str, Any]:
     }
 
 
+def build_cgvo_s1b_source_audit(project_root: Path) -> dict[str, Any]:
+    """Compile an inspectable, non-selectable modern-coordinate audit ledger."""
+    fixtures = _s1b_fixtures(project_root)
+    absolute = fixtures["absoluteFrameAudit"]
+    epochs: list[dict[str, Any]] = []
+    candidate_profiles = absolute["candidateProfiles"]
+    for value in absolute["epochsUtc"]:
+        at_utc = _parse_utc(value, "epochsUtc")
+        profile_records: list[dict[str, Any]] = []
+        for candidate in candidate_profiles:
+            profile_id = candidate["profileId"]
+            record: dict[str, Any] = {
+                "profileId": profile_id,
+                "sourceConfidence": candidate["sourceConfidence"],
+                "reconstructionConfidence": candidate["reconstructionConfidence"],
+                "calculationStatus": "NOT_CALCULATED" if profile_id not in _CHITRA_AUDIT_FLAGS else "MODERN_AUDIT_CALCULATED",
+                "spicaTropicalLongitudeDeg": None,
+                "derivedZeroMeshaDeg": None,
+                "maghaAnchorOffsetDeg": None,
+                "chitraMaghaDifferenceArcMinutes": None,
+            }
+            if profile_id in _CHITRA_AUDIT_FLAGS:
+                longitude, offset = _chitra_audit_offset(at_utc, profile_id)
+                record["spicaTropicalLongitudeDeg"] = _finite(longitude, 8)
+                record["derivedZeroMeshaDeg"] = _finite(offset, 8)
+            profile_records.append(record)
+        epochs.append({"atUtc": _iso(at_utc), "profiles": profile_records, "role": "MODERN_FRAME_AUDIT_ONLY"})
+    return {
+        "contract": absolute["contract"],
+        "currentActiveCandidate": absolute["currentActiveCandidate"],
+        "candidates": candidate_profiles,
+        "epochs": epochs,
+        "maghaComparison": {
+            "status": "SOURCE_SILENT_NOT_CALCULATED",
+            "reason": "PANCHASIDDHANTIKA_MAGHA_VALUE_NOT_AVAILABLE",
+            "crossAnchorAverageAllowed": False,
+        },
+        "guardrails": absolute["guardrails"],
+    }
+
+
+def _s1b_source_status(project_root: Path) -> dict[str, Any]:
+    fixtures = _s1b_fixtures(project_root)
+    absolute = fixtures["absoluteFrameAudit"]
+    return {
+        "absoluteFrameAudit": {
+            "contract": absolute["contract"],
+            "currentActiveCandidate": absolute["currentActiveCandidate"]["profileId"],
+            "availableAuditProfiles": [candidate["profileId"] for candidate in absolute["candidateProfiles"]],
+            "auditProfilesRuntimeSelectable": False,
+            "maghaComparisonStatus": "SOURCE_SILENT_NOT_CALCULATED",
+            "crossAnchorAverageAllowed": False,
+        },
+        "solarPhaseMapping": {
+            "contract": fixtures["solarPhaseMapping"]["contract"],
+            "status": fixtures["solarPhaseMapping"]["phaseActivation"]["status"],
+            "modernCandidateLabels": fixtures["solarPhaseMapping"]["modernCandidateLabels"],
+        },
+        "lunarPhaseMapping": {
+            "contract": fixtures["lunarPhaseMapping"]["contract"],
+            "status": fixtures["lunarPhaseMapping"]["phaseActivation"]["status"],
+            "modernCandidateLabels": fixtures["lunarPhaseMapping"]["modernCandidateLabels"],
+        },
+        "firmamentAdjudication": {
+            "contract": fixtures["firmamentAdjudication"]["contract"],
+            "status": fixtures["firmamentAdjudication"]["adjudication"]["status"],
+            "classicalSection": fixtures["firmamentAdjudication"]["adjudication"]["classicalSection"],
+            "sourceCertifiedClassifier": fixtures["firmamentAdjudication"]["adjudication"]["sourceCertifiedClassifier"],
+        },
+        "readiness": fixtures["readiness"],
+    }
+
+
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
-        "schemaVersion": 2,
-        "milestone": "CGVO-S1A-R1",
-        "status": "READY_FOR_CENTRAL_REVIEW",
+        "schemaVersion": 3,
+        "milestone": "CGVO-S1B",
+        "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
         "availableEventTypes": ["SOLAR", "LUNAR"],
         "guardrails": _guardrails(),
@@ -914,6 +1046,7 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
             "trailokya": _source_profile(project_root, TRAILOKYA_FIXTURE)["sourceStatus"],
         },
         "sourceAdapters": _s1a_source_status(project_root),
+        "s1bSourceAudit": _s1b_source_status(project_root),
     }
 
 

@@ -4,6 +4,28 @@ Last updated: 2026-08-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-22 (CGVO-S1B Varahamihira Source Audit)
+
+- Added a bounded, read-only CGVO-S1B source audit. The active
+  `VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1` calculation is unchanged and
+  remains an explicit non-default reconstruction. The source ledger now makes
+  its apparent-Spica method, true-star variant, and mean-ecliptic variant
+  inspectable across eight historical epochs without making any audit profile
+  runtime-selectable.
+- No usable checksum-identified Pancasiddhantika witness with a Magha numerical
+  anchor is held. `PANCHASIDDHANTIKA_MAGHA_ANCHOR` therefore remains
+  `SOURCE_SILENT_NOT_CALCULATED`; no Chitra/Magha comparison or average is
+  produced.
+- The held Iyer 1884 working witness confirms only that the source speaks of
+  eclipse commencement and termination. It does not close a solar C1/C4 or a
+  lunar P1/U1 mapping, so both phase ledgers remain unknown and all effect and
+  Jupiter activation fields remain `null`. The V.28-31 firmament conflict also
+  remains `COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED`; raw modern geometry is still
+  not a historical classifier.
+- Source audit record: `docs/research/CGVO_S1B_SOURCE_AUDIT_REPORT_V1.md`.
+  No package was built. Price/outcome data, polarity, score, Fields, SBC, Auto
+  Suggest, ML, MT5, and execution remain disconnected; `executionAllowed=false`.
+
 ## Latest Update - 2026-08-19 (PFR-V2B-R8-XE3 Founder-Inspection Candidate)
 
 - Immutable founder-inspection candidate `0.10.55-pfr-v2b-r8-xe3` was built

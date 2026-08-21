@@ -25,6 +25,8 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-S1B")
+        self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(
             "/api/experiments/cgvo/workbench?eventType=SOLAR&globalMaxUtc=2027-08-02T10:06:41Z&localityId=UJJAIN&label=Ujjain&latitude=23.1765&longitude=75.7885&elevationM=0&timezone=Asia%2FKolkata",
             headers=self.headers,

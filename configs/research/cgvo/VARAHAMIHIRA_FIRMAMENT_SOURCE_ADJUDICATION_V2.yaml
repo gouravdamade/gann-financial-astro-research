@@ -1,0 +1,44 @@
+schemaVersion: VARAHAMIHIRA_FIRMAMENT_SOURCE_ADJUDICATION_V2
+contract: VARAHAMIHIRA_FIRMAMENT_SOURCE_ADJUDICATION_V2
+milestone: CGVO-S1B
+rootSource:
+  sourceId: BRIHAT_SAMHITA_N_CHIDAMBARAM_IYER_1884_WORKING_WITNESS
+  locator: "Brihat Samhita V.28-31; printed pp.26-27; PDF images 46-47"
+  sourceFinding: "The translated root sequence names first, second, third, mid-heaven, fifth, sixth, rising and setting, but does not close numerical angular boundaries or a coordinate system."
+commentaryCandidates:
+  - candidateId: IYER_6_SECTION_CANDIDATE
+    evidenceLayer: TRANSLATOR_COMMENTARY_FOOTNOTE
+    locator: "Brihat Samhita V.28 footnote; printed p.26; PDF image 46"
+    finding: "Footnote says six sections of the visible hemispherical vault."
+    status: PARTIAL_OVERLAP
+    coordinateConvention: UNKNOWN
+    boundaryRule: UNKNOWN
+    classifierAuthorized: false
+  - candidateId: SASTRI_BHAT_7_DIVISION_CANDIDATE
+    evidenceLayer: EXISTING_REPOSITORY_COMMENTARY_REFERENCE_NOT_REINSPECTED_IN_S1B
+    locator: "Existing S1A fixture only; page-level working witness not materialized for this audit"
+    finding: "Legacy seven-division candidate remains unverified at page level in the held source set."
+    status: NOT_COMPARABLE
+    coordinateConvention: UNKNOWN
+    boundaryRule: UNKNOWN
+    classifierAuthorized: false
+  - candidateId: NON_ALTITUDE_COORDINATE_CANDIDATE
+    evidenceLayer: ROOT_TEXT_INTERPRETIVE_ALTERNATIVE
+    locator: "Brihat Samhita V.28-31"
+    finding: "The root sequence does not identify altitude, azimuth, hour angle, or another modern coordinate mapping."
+    status: UNKNOWN
+    coordinateConvention: UNKNOWN
+    boundaryRule: UNKNOWN
+    classifierAuthorized: false
+adjudication:
+  status: COMMENTARY_CONFLICT_NOT_SOURCE_CLOSED
+  classicalSection: UNKNOWN
+  sourceCertifiedClassifier: false
+  allowedRawGeometryOnly: true
+  downstreamUseAllowed: false
+guardrails:
+  classifierAuthorized: false
+  priceDataRead: false
+  priceOutcomeRead: false
+  marketDirectionInferred: false
+  executionAllowed: false

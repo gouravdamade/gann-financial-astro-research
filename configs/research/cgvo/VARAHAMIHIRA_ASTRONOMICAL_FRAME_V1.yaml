@@ -18,6 +18,10 @@ absoluteFrameCandidates:
     sourceCertifiedAyanamsha: null
     prohibitedAliases: [LAHIRI, RAMAN, TROPICAL]
     defaultAuthorized: false
+s1bAbsoluteFrameAudit:
+  contract: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1
+  fixture: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1.yaml
+  activeRuntimeCandidateUnchanged: true
 partition:
   - rasi: MESHA
     segments: ["ASHWINI 1-4", "BHARANI 1-4", "KRITTIKA 1"]

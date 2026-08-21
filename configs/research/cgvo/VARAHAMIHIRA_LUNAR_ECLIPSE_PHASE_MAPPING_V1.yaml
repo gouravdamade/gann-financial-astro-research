@@ -1,0 +1,29 @@
+schemaVersion: VARAHAMIHIRA_LUNAR_ECLIPSE_PHASE_MAPPING_V1
+contract: VARAHAMIHIRA_LUNAR_ECLIPSE_PHASE_MAPPING_V1
+milestone: CGVO-S1B
+sourceId: BRIHAT_SAMHITA_N_CHIDAMBARAM_IYER_1884_WORKING_WITNESS
+sourceAuthority: TRANSLATION_WORKING_WITNESS
+rootLocator: "Brihat Samhita V.18; printed p.24; PDF image 44"
+sourceFinding: "The held witness names commencement and termination calculation, but does not map them to penumbral or umbral modern contact families."
+modernCandidateLabels: [P1, P4, U1, U4, HISTORICAL_SHADOW]
+commencement:
+  modernCandidate: UNKNOWN
+  sourceStatus: AMBIGUOUS
+  reason: SOURCE_DOES_NOT_IDENTIFY_PENUMBRAL_UMBRA_OR_HISTORICAL_SHADOW_BOUNDARY
+conclusion:
+  modernCandidate: UNKNOWN
+  sourceStatus: AMBIGUOUS
+  reason: SOURCE_DOES_NOT_IDENTIFY_PENUMBRAL_UMBRA_OR_HISTORICAL_SHADOW_BOUNDARY
+phaseActivation:
+  status: UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED
+  commencement: null
+  conclusion: null
+  effectActivated: null
+  jupiterMitigationActivated: null
+guardrails:
+  maximumTimeRole: GEOMETRY_SNAPSHOT_ONLY
+  numericalEffectMultiplier: null
+  jupiterMitigationCoefficient: null
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false

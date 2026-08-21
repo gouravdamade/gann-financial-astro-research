@@ -1,0 +1,97 @@
+schemaVersion: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1
+contract: VARAHAMIHIRA_ABSOLUTE_FRAME_AUDIT_V1
+milestone: CGVO-S1B
+currentActiveCandidate:
+  profileId: VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1
+  auditProfileId: CHITRA_180_APPARENT_STAR
+  sourceStatus: SOURCE_RECONSTRUCTION_CANDIDATE
+  defaultAuthorized: false
+  unchangedRuntimeBehavior: true
+candidateProfiles:
+  - profileId: CHITRA_180_TRUE_STAR
+    anchorStar: CHITRA
+    historicalSource: "Brihat Samhita CII.1-7 / III.1-3 supports a stellar rasi-nakshatra framework and precessional distinction; no direct Chitra=180 rule was located."
+    sourceLocator: "Brihat Samhita CII.1-7; III.1-3; reconstruction only"
+    modernStarIdentity: SPICA
+    coordinateConvention: GEOCENTRIC_TRUE_ECLIPTIC_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    precessionHandling: SWISSEPH_DATE_OF_EVENT
+    nutationHandling: EXCLUDED_BY_TRUE_POSITION
+    aberrationHandling: EXCLUDED_BY_TRUE_POSITION
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: "SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES"
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts:
+      - ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180
+      - NOT_A_RUNTIME_SELECTABLE_FRAME
+  - profileId: CHITRA_180_APPARENT_STAR
+    anchorStar: CHITRA
+    historicalSource: "Brihat Samhita CII.1-7 / III.1-3 supports a stellar rasi-nakshatra framework and precessional distinction; no direct Chitra=180 rule was located."
+    sourceLocator: "Brihat Samhita CII.1-7; III.1-3; reconstruction only"
+    modernStarIdentity: SPICA
+    coordinateConvention: GEOCENTRIC_APPARENT_ECLIPTIC_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    precessionHandling: SWISSEPH_DATE_OF_EVENT
+    nutationHandling: INCLUDED_BY_APPARENT_POSITION
+    aberrationHandling: INCLUDED_BY_APPARENT_POSITION
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: "SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES"
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts:
+      - ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180
+      - CURRENT_RUNTIME_RECONSTRUCTION_ONLY
+      - NOT_DEFAULT_AUTHORIZED
+  - profileId: CHITRA_180_MEAN_ECLIPTIC
+    anchorStar: CHITRA
+    historicalSource: "Brihat Samhita CII.1-7 / III.1-3 supports a stellar rasi-nakshatra framework and precessional distinction; no direct Chitra=180 rule was located."
+    sourceLocator: "Brihat Samhita CII.1-7; III.1-3; reconstruction only"
+    modernStarIdentity: SPICA
+    coordinateConvention: GEOCENTRIC_APPARENT_POSITION_REFERRED_TO_MEAN_ECLIPTIC_OF_DATE
+    epochConvention: DATE_OF_EVENT
+    precessionHandling: SWISSEPH_DATE_OF_EVENT
+    nutationHandling: SUPPRESSED_FOR_MEAN_ECLIPTIC
+    aberrationHandling: INCLUDED_BY_APPARENT_POSITION
+    properMotionHandling: SWISSEPH_FIXED_STAR_CATALOGUE
+    derivedZeroMesha: "SPICA_ECLIPTIC_LONGITUDE_MINUS_180_DEGREES"
+    sourceConfidence: SOURCE_RECONSTRUCTION_CANDIDATE
+    reconstructionConfidence: MODERN_COMPUTATION_DEFINED_NOT_HISTORICALLY_CERTIFIED
+    knownConflicts:
+      - ROOT_SOURCE_DOES_NOT_CERTIFY_CHITRA_180
+      - NOT_A_RUNTIME_SELECTABLE_FRAME
+  - profileId: PANCHASIDDHANTIKA_MAGHA_ANCHOR
+    anchorStar: MAGHA
+    historicalSource: "Panchasiddhantika comparison requested, but no checksum-identified held witness with a usable Magha numerical anchor was located during CGVO-S1B."
+    sourceLocator: "HELD_WITNESS_NOT_LOCATED"
+    modernStarIdentity: null
+    coordinateConvention: null
+    epochConvention: null
+    precessionHandling: null
+    nutationHandling: null
+    aberrationHandling: null
+    properMotionHandling: null
+    derivedZeroMesha: null
+    sourceConfidence: SOURCE_SILENT
+    reconstructionConfidence: NOT_CALCULATED
+    knownConflicts:
+      - PANCHASIDDHANTIKA_MAGHA_VALUE_NOT_AVAILABLE
+      - NO_CHITRA_MAGHA_COMPARISON_OR_AVERAGE_PERMITTED
+epochsUtc:
+  - "0500-01-01T00:00:00Z"
+  - "0550-01-01T00:00:00Z"
+  - "0600-01-01T00:00:00Z"
+  - "1000-01-01T00:00:00Z"
+  - "1500-01-01T00:00:00Z"
+  - "1900-01-01T00:00:00Z"
+  - "2000-01-01T00:00:00Z"
+  - "2025-01-01T00:00:00Z"
+guardrails:
+  sourceCertifiedAyanamsha: false
+  profileSubstitutionAllowed: false
+  crossAnchorAverageAllowed: false
+  priceDataRead: false
+  priceOutcomeRead: false
+  marketDirectionInferred: false
+  scoreAggregationUsed: false
+  executionAllowed: false

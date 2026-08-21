@@ -1,0 +1,29 @@
+schemaVersion: VARAHAMIHIRA_SOLAR_ECLIPSE_PHASE_MAPPING_V1
+contract: VARAHAMIHIRA_SOLAR_ECLIPSE_PHASE_MAPPING_V1
+milestone: CGVO-S1B
+sourceId: BRIHAT_SAMHITA_N_CHIDAMBARAM_IYER_1884_WORKING_WITNESS
+sourceAuthority: TRANSLATION_WORKING_WITNESS
+rootLocator: "Brihat Samhita V.18; printed p.24; PDF image 44"
+sourceFinding: "The held witness names commencement and termination calculation, but does not equate either term to a modern external or internal contact label."
+modernCandidateLabels: [C1, C2, MAX, C3, C4]
+commencement:
+  modernCandidate: UNKNOWN
+  sourceStatus: AMBIGUOUS
+  reason: SOURCE_DOES_NOT_IDENTIFY_MODERN_CONTACT_CONVENTION
+conclusion:
+  modernCandidate: UNKNOWN
+  sourceStatus: AMBIGUOUS
+  reason: SOURCE_DOES_NOT_IDENTIFY_MODERN_CONTACT_CONVENTION
+phaseActivation:
+  status: UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED
+  commencement: null
+  conclusion: null
+  effectActivated: null
+  jupiterMitigationActivated: null
+guardrails:
+  maximumTimeRole: GEOMETRY_SNAPSHOT_ONLY
+  numericalEffectMultiplier: null
+  jupiterMitigationCoefficient: null
+  priceDataRead: false
+  marketDirectionInferred: false
+  executionAllowed: false
