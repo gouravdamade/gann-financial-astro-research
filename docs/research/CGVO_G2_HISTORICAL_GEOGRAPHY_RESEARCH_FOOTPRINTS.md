@@ -14,7 +14,7 @@ identity remains an overlay, and no geometry is active in that response.
 ## Contract and Guardrails
 
 `GET /api/experiments/cgvo/historical-gazetteer/research-footprints` returns
-`CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V1`. Every output row has
+`CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V2`. Every output row has
 `geometryRole: RESEARCH_GEOMETRY_ONLY`, copied evidence from an already
 accepted G1 candidate mapping, temporal applicability, uncertainty, and
 limitations.
@@ -39,24 +39,24 @@ zone, an eclipse-visibility match, or a market input.
 
 ## Current Footprint Ledger
 
-No coordinates or polygons are admitted in this first pass. This is intentional:
-the existing G1 evidence identifies candidate historical contexts, but does not
-yet source-close coordinate-specific historical centres or an uncertainty method
-for regional envelopes.
+CGVO-G2-R1 adds a strict historical-site coordinate audit. One Taxila site
+reference is admitted as a limited Gandhara-context anchor; it is not a
+Gandhara boundary or proxy. The full evidence and unresolved candidate record
+is in `CGVO_G2_R1_HISTORICAL_SITE_COORDINATE_EVIDENCE_REPORT.md`.
 
 | G1 candidate term | G2 status | Primitive | Evidence and uncertainty conclusion |
 | --- | --- | --- | --- |
-| Magadha | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Rajgir/Pataliputra context is retained; no independently audited anchor coordinates. |
+| Magadha | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Rajgir/Pataliputra contexts are audited, but their coordinate CRS/reference loci remain unclosed. |
 | Mithila | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Changing north-Bihar/Terai cultural context; no envelope. |
 | Kalinga | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | East-coast association is not a source-authorized extent. |
 | Saurashtra | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Peninsula association does not justify a Gujarat polygon or an envelope. |
-| Gandhara | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Multi-region context needs distinct site evidence. |
+| Gandhara | `RESEARCH_ANCHOR_POINT` | `POINT_ANCHOR` | Taxila WGS84 archaeological-site reference only; `PARTIAL_HISTORICAL_CONTEXT`, never a regional proxy. |
 | Kamboja, northwest alternative | `CONTESTED_RESEARCH_GEOMETRIES` | `MULTI_CANDIDATE` | Explicitly separate, no footprint and no preferred alternative. |
 | Kamboja, Central Asian alternative | `CONTESTED_RESEARCH_GEOMETRIES` | `MULTI_CANDIDATE` | Explicitly separate, no footprint and no merged geometry. |
 | Kashmira | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Valley/highland extent is period-dependent. |
 | Kuru | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Upper-Yamuna/Indraprastha context requires an independent centre audit. |
 | Pancala | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Upper-Ganges context is not a boundary. |
-| Mathuraka | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Mathura association remains `PEOPLE_OR_URBAN_ASSOCIATION`; no point is admitted. |
+| Mathuraka | `GEOMETRY_PENDING_EVIDENCE` | `NONE` | Mathura association remains `PEOPLE_OR_URBAN_ASSOCIATION`; audited raw coordinate lacks closed CRS/reference semantics. |
 | Sindhu | `RESEARCH_CORRIDOR_OR_RIVER_SYSTEM` | `RIVER_SYSTEM_CONTEXT` | Indus context only; no digitised corridor, adjacent land extent, or land polygon. |
 
 There are 12 ledger rows for 11 reviewed terms because the two Kamboja
@@ -69,8 +69,10 @@ Suvarnabhumi.
 The backend rejects a footprint when it has missing evidence, uncertainty,
 temporal applicability, or limitations; when it references a source-name-only
 record; when a pending record contains geometry data; when a contested
-alternative is merged; or when Sindhu implies adjacent land. A coordinate-bearing
-record would additionally require an explicit coordinate source.
+alternative is merged; or when Sindhu implies adjacent land. A point additionally
+requires a WGS84 coordinate, axis order, source/precision/normalization metadata,
+separate historical identity evidence, a limited site-reference role, and an
+explicit prohibition on regional representation.
 
 ## Deferred Work
 

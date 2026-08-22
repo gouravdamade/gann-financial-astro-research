@@ -4,6 +4,29 @@ Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-22 (CGVO-G2-R1 Historical-Site Coordinate Evidence)
+
+- Added a strict, read-only historical-site and coordinate evidence audit on
+  top of the immutable 308-occurrence CGVO-G1-R1 gazetteer. The audit admits
+  exactly one coordinate-bearing footprint: a Getty TGN WGS84 Taxila
+  archaeological-site reference (`33.7597222222, 72.8375`) as partial
+  historical context for Gandhara. It is explicitly not a Gandhara boundary,
+  centroid, envelope, or market input.
+- Mathuraka/Mathura, Rajagriha/Rajgir, Pataliputra, and
+  Pushkalavati/Charsadda remain fail-closed. The first three have unresolved
+  coordinate CRS/reference-locus semantics in the held sources; the two
+  Pushkalavati gazetteer points conflict by about 9.6 km and are not selected
+  or averaged. The two Kamboja alternatives remain separate; Sindhu remains a
+  river-system context without adjacent land geometry.
+- The endpoint remains read-only and now returns
+  `CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V2`. Strict validation rejects
+  incomplete coordinate provenance, source-name-only records, out-of-range
+  values, inferred regional geometry, and missing identity evidence. G3
+  spatial use remains blocked pending central review.
+- Evidence report: `docs/research/CGVO_G2_R1_HISTORICAL_SITE_COORDINATE_EVIDENCE_REPORT.md`.
+  No package was built. Price/outcome data, polarity, score, Fields, SBC, Auto
+  Suggest, ML, MT5, and execution remain disconnected; `executionAllowed=false`.
+
 ## Latest Update - 2026-08-22 (CGVO-S1B-R1 Source Acquisition and Absolute-Frame Correction)
 
 - Acquired and checksummed the full 330-image 1889 Thibaut-Dvivedi

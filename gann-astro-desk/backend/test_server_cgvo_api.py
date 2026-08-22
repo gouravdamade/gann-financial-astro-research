@@ -25,9 +25,9 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
-        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G2")
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G2-R1")
         self.assertEqual(status.get_json()["status"]["milestones"], {
-            "current": "CGVO-G2", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2",
+            "current": "CGVO-G2-R1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1",
         })
         self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(
@@ -123,8 +123,10 @@ class CgvoApiRouteTests(unittest.TestCase):
         payload = response.get_json()
         self.assertTrue(payload["ok"])
         footprints = payload["footprints"]
-        self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V1")
+        self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V2")
         self.assertEqual(footprints["summary"]["footprintCount"], 12)
+        self.assertEqual(footprints["summary"]["coordinateBearingFootprintCount"], 1)
+        self.assertEqual(footprints["siteEvidence"]["contract"], "CGVO_G2_R1_HISTORICAL_SITE_COORDINATE_EVIDENCE_V1")
         self.assertFalse(footprints["guardrails"]["downstreamIntersectionAuthorized"])
         self.assertFalse(footprints["guardrails"]["marketUseAllowed"])
         self.assertFalse(footprints["guardrails"]["executionAllowed"])

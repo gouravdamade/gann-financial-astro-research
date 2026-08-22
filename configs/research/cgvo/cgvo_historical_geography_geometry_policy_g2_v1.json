@@ -1,7 +1,7 @@
 {
-  "contract": "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_GEOMETRY_POLICY_V1",
-  "schemaVersion": 1,
-  "milestone": "CGVO-G2",
+  "contract": "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_GEOMETRY_POLICY_V2",
+  "schemaVersion": 2,
+  "milestone": "CGVO-G2-R1",
   "sourceGazetteerBaseline": "CGVO-G1-R1",
   "startingMaster": "dc7f6eeaec5882bf5216e1031f6914144dd8389f",
   "geometryRole": "RESEARCH_GEOMETRY_ONLY",
@@ -32,6 +32,12 @@
     "missingEvidenceFailsClosed": true,
     "missingUncertaintyFailsClosed": true,
     "missingTemporalApplicabilityFailsClosed": true
+    ,"pointAnchorRequiresCoordinateProvenance": true
+    ,"pointAnchorRequiresHistoricalIdentityEvidence": true
+    ,"pointAnchorMustNotRepresentRegion": true
+    ,"coordinateReferenceSystemRequiredForActivation": true
+    ,"coordinatePrecisionRequiredForActivation": true
+    ,"coordinateEvidenceSeparateFromHistoricalIdentity": true
   },
   "guardrails": {
     "automaticRegionUnion": false,

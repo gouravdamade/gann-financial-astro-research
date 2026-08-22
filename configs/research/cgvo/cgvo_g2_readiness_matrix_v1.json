@@ -1,15 +1,20 @@
 {
-  "contract": "CGVO_G2_READINESS_MATRIX_V1",
-  "schemaVersion": 1,
-  "milestone": "CGVO-G2",
+  "contract": "CGVO_G2_R1_READINESS_MATRIX_V1",
+  "schemaVersion": 2,
+  "milestone": "CGVO-G2-R1",
   "sourceGazetteerBaseline": "CGVO-G1-R1",
   "geometryPolicyReady": true,
   "researchFootprintLedgerReady": true,
-  "coordinateBearingFootprints": 0,
+  "historicalSiteEvidenceAuditComplete": true,
+  "coordinateSchemaHardened": true,
+  "mathurakaAnchorStatus": "GEOMETRY_PENDING_EVIDENCE",
+  "magadhaAnchorStatus": "GEOMETRY_PENDING_EVIDENCE",
+  "gandharaAnchorStatus": "RESEARCH_ANCHOR_POINT_PARTIAL_HISTORICAL_CONTEXT",
+  "coordinateBearingFootprints": 1,
   "downstreamSpatialMatchingReady": false,
   "eclipseVisibilityFootprintComparisonReady": false,
   "marketExperimentReady": false,
   "executionAllowed": false,
   "centralReviewRequired": true,
-  "nextRecommendedMilestone": "G2_R1_TARGETED_HISTORICAL_SITE_EVIDENCE_OR_G3_DESIGN_REVIEW"
+  "nextRecommendedMilestone": "CENTRAL_REVIEW_REQUIRED_BEFORE_ANY_G3_SPATIAL_USE"
 }

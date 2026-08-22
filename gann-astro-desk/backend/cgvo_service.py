@@ -39,6 +39,7 @@ KURMA_G1_GAZETTEER_FIXTURE = CGVO_ROOT / "kurma_historical_geography_g1_v1.json"
 GEOGRAPHY_SOURCE_LAYERS_FIXTURE = CGVO_ROOT / "cgvo_geography_source_layers_g1_v1.json"
 GEOGRAPHY_G2_POLICY_FIXTURE = CGVO_ROOT / "cgvo_historical_geography_geometry_policy_g2_v1.json"
 KURMA_G2_FOOTPRINTS_FIXTURE = CGVO_ROOT / "kurma_research_footprints_g2_v1.json"
+CGVO_G2_R1_SITE_EVIDENCE_FIXTURE = CGVO_ROOT / "cgvo_g2_r1_historical_site_coordinate_evidence_v1.json"
 CGVO_G2_READINESS_FIXTURE = CGVO_ROOT / "cgvo_g2_readiness_matrix_v1.json"
 VARAHAMIHIRA_FIXTURE = CGVO_ROOT / "varahamihira_eclipse_source_profile_v1.json"
 TRAILOKYA_FIXTURE = CGVO_ROOT / "trailokya_geography_argha_context_v1.json"
@@ -1051,12 +1052,12 @@ def _s1b_source_status(project_root: Path) -> dict[str, Any]:
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
-        "schemaVersion": 5,
-        "milestone": "CGVO-G2",
+        "schemaVersion": 6,
+        "milestone": "CGVO-G2-R1",
         "milestones": {
-            "current": "CGVO-G2",
+            "current": "CGVO-G2-R1",
             "astronomy": "CGVO-S1B-R1",
-            "geography": "CGVO-G2",
+            "geography": "CGVO-G2-R1",
         },
         "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
@@ -1192,14 +1193,20 @@ def _validate_g2_research_footprints(
     policy: Mapping[str, Any],
     ledger: Mapping[str, Any],
     gazetteer: Mapping[str, Any],
+    site_evidence: Mapping[str, Any],
 ) -> None:
     if ledger.get("sourceGazetteerBaseline") != "CGVO-G1-R1":
         raise RuntimeError("CGVO G2 footprint ledger must declare the accepted G1-R1 baseline")
     if policy.get("geometryRole") != "RESEARCH_GEOMETRY_ONLY" or ledger.get("geometryRole") != "RESEARCH_GEOMETRY_ONLY":
         raise RuntimeError("CGVO G2 research geometry must remain research-only")
-    if any(policy["guardrails"].get(key) for key in ("downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed")):
+    locked_paths = (
+        "downstreamIntersectionAuthorized", "eclipseVisibilityMatching", "priceDataRead", "priceOutcomeRead",
+        "marketDirectionInferred", "scoreAggregationUsed", "fieldsPath", "sbcPath", "autoSuggestPath",
+        "mlPath", "mt5Path", "marketUseAllowed", "executionAllowed",
+    )
+    if any(policy["guardrails"].get(key) for key in locked_paths):
         raise RuntimeError("CGVO G2 geometry policy has an active downstream guardrail")
-    if any(ledger["guardrails"].get(key) for key in ("downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed")):
+    if any(ledger["guardrails"].get(key) for key in locked_paths):
         raise RuntimeError("CGVO G2 footprint ledger has an active downstream guardrail")
 
     base_records = list(gazetteer["records"])
@@ -1214,6 +1221,36 @@ def _validate_g2_research_footprints(
             if candidate_id in mapping_index:
                 raise RuntimeError(f"CGVO G1 candidate ID is not unique: {candidate_id}")
             mapping_index[candidate_id] = (record, candidate)
+
+    if site_evidence.get("sourceGazetteerBaseline") != "CGVO-G1-R1":
+        raise RuntimeError("CGVO G2-R1 site evidence must declare the accepted G1-R1 baseline")
+    if site_evidence.get("geometryRole") != "RESEARCH_GEOMETRY_ONLY":
+        raise RuntimeError("CGVO G2-R1 site evidence must remain research-only")
+    if any(site_evidence.get("guardrails", {}).get(key) for key in locked_paths):
+        raise RuntimeError("CGVO G2-R1 site evidence has an active downstream guardrail")
+
+    target_site_names = {"MATHURAKA_MATHURA", "RAJAGRIHA_RAJGIR", "PATALIPUTRA", "TAKSASILA_TAXILA", "PUSKALAVATI_CHARSADDA"}
+    site_evidence_index: dict[str, Mapping[str, Any]] = {}
+    for evidence in site_evidence.get("siteEvidence", []):
+        evidence_id = evidence.get("siteEvidenceId")
+        if not isinstance(evidence_id, str) or evidence_id in site_evidence_index:
+            raise RuntimeError("CGVO G2-R1 site evidence IDs must be unique")
+        site_evidence_index[evidence_id] = evidence
+        if evidence.get("siteKey") not in target_site_names:
+            raise RuntimeError("CGVO G2-R1 site evidence is outside the authorized target list")
+        if not isinstance(evidence.get("historicalIdentityEvidence"), list) or not evidence["historicalIdentityEvidence"]:
+            raise RuntimeError(f"CGVO G2-R1 site evidence lacks historical identity evidence: {evidence_id}")
+        if not isinstance(evidence.get("coordinateEvidence"), list) or not evidence["coordinateEvidence"]:
+            raise RuntimeError(f"CGVO G2-R1 site evidence lacks coordinate evidence: {evidence_id}")
+        if not evidence.get("uncertainty") or not evidence.get("temporalApplicability") or not evidence.get("limitations"):
+            raise RuntimeError(f"CGVO G2-R1 site evidence lacks uncertainty, temporal validity, or limitations: {evidence_id}")
+        if evidence.get("researchAnchorEligible"):
+            coordinate = evidence.get("normalizedCoordinate")
+            if not isinstance(coordinate, Mapping):
+                raise RuntimeError(f"CGVO G2-R1 eligible site lacks normalized coordinate: {evidence_id}")
+            _validate_g2_point_coordinate(coordinate, evidence_id)
+        elif evidence.get("normalizedCoordinate") is not None and evidence.get("coordinateStatus") == "COORDINATE_SOURCE_CLOSED":
+            raise RuntimeError(f"CGVO G2-R1 closed coordinate must be anchor-eligible: {evidence_id}")
 
     seen_footprint_ids: set[str] = set()
     seen_candidate_ids: set[str] = set()
@@ -1242,8 +1279,19 @@ def _validate_g2_research_footprints(
         if not footprint.get("uncertainty") or not footprint.get("temporalApplicability") or not footprint.get("limitations"):
             raise RuntimeError(f"CGVO G2 footprint lacks uncertainty, temporal validity, or limitations: {footprint_id}")
         geometry_data = footprint.get("geometryData")
-        if footprint["geometryStatus"] == "GEOMETRY_PENDING_EVIDENCE" and geometry_data is not None:
-            raise RuntimeError(f"CGVO G2 pending footprint must not contain geometry data: {footprint_id}")
+        geometry_status = footprint["geometryStatus"]
+        geometry_primitive = footprint["geometryPrimitive"]
+        if geometry_status == "GEOMETRY_PENDING_EVIDENCE":
+            if geometry_primitive != "NONE" or geometry_data is not None:
+                raise RuntimeError(f"CGVO G2 pending footprint must not contain geometry data: {footprint_id}")
+        elif geometry_status == "RESEARCH_ANCHOR_POINT":
+            if geometry_primitive != "POINT_ANCHOR":
+                raise RuntimeError(f"CGVO G2 point anchor must use POINT_ANCHOR: {footprint_id}")
+            _validate_g2_point_anchor(footprint, site_evidence_index)
+        elif geometry_status == "RESEARCH_MULTI_ANCHOR":
+            if geometry_primitive != "MULTI_POINT_ANCHORS":
+                raise RuntimeError(f"CGVO G2 multi-anchor must use MULTI_POINT_ANCHORS: {footprint_id}")
+            _validate_g2_multi_point_anchors(footprint, site_evidence_index)
         if footprint["geometryStatus"] == "CONTESTED_RESEARCH_GEOMETRIES":
             if not footprint.get("contestedGroupId") or not isinstance(geometry_data, dict) or not geometry_data.get("separateAlternative"):
                 raise RuntimeError(f"CGVO G2 contested footprint must remain an explicit separate alternative: {footprint_id}")
@@ -1254,18 +1302,81 @@ def _validate_g2_research_footprints(
                 raise RuntimeError("CGVO G2 Sindhu must remain a river-system context")
             if geometry_data.get("landPolygon") is not None or geometry_data.get("adjacentLandExtent") is not None:
                 raise RuntimeError("CGVO G2 Sindhu may not imply an adjacent land polygon")
-        if isinstance(geometry_data, dict) and any(key in geometry_data for key in ("point", "anchors", "coordinates")):
-            if not geometry_data.get("coordinateSource"):
-                raise RuntimeError(f"CGVO G2 coordinate-bearing footprint lacks a coordinate source: {footprint_id}")
+        if geometry_primitive == "NONE" and geometry_data is not None:
+            raise RuntimeError(f"CGVO G2 NONE primitive may not carry geometry data: {footprint_id}")
+
+
+def _validate_g2_point_coordinate(coordinate: Mapping[str, Any], evidence_id: str) -> None:
+    required = {
+        "latitude", "longitude", "coordinateReferenceSystem", "axisOrder", "sourceCoordinateRaw",
+        "coordinatePrecision", "coordinateSourceId", "coordinateSourceLocator", "coordinateSourceType",
+        "coordinateInterpretation", "normalizationMethod",
+    }
+    missing = sorted(key for key in required if coordinate.get(key) in (None, "", []))
+    if missing:
+        raise RuntimeError(f"CGVO G2-R1 coordinate is missing required evidence fields ({', '.join(missing)}): {evidence_id}")
+    latitude = coordinate.get("latitude")
+    longitude = coordinate.get("longitude")
+    if not isinstance(latitude, (int, float)) or isinstance(latitude, bool) or not math.isfinite(latitude) or not -90 <= latitude <= 90:
+        raise RuntimeError(f"CGVO G2-R1 coordinate latitude must be finite and within -90..90: {evidence_id}")
+    if not isinstance(longitude, (int, float)) or isinstance(longitude, bool) or not math.isfinite(longitude) or not -180 <= longitude <= 180:
+        raise RuntimeError(f"CGVO G2-R1 coordinate longitude must be finite and within -180..180: {evidence_id}")
+    if coordinate.get("coordinateReferenceSystem") != "WGS84" or coordinate.get("axisOrder") != "LATITUDE_LONGITUDE":
+        raise RuntimeError(f"CGVO G2-R1 active coordinate must explicitly declare WGS84 latitude/longitude: {evidence_id}")
+    if coordinate.get("normalizationMethod") not in {"DMS_TO_DECIMAL_DEGREES", "SOURCE_DECIMAL_DEGREES_VERBATIM"}:
+        raise RuntimeError(f"CGVO G2-R1 coordinate must declare a supported normalization method: {evidence_id}")
+    if coordinate.get("coordinatePrecision") == "UNSPECIFIED":
+        raise RuntimeError(f"CGVO G2-R1 coordinate precision may not be unspecified: {evidence_id}")
+
+
+def _validate_g2_point_anchor(footprint: Mapping[str, Any], site_evidence_index: Mapping[str, Mapping[str, Any]]) -> None:
+    geometry = footprint.get("geometryData")
+    if not isinstance(geometry, Mapping):
+        raise RuntimeError(f"CGVO G2 point anchor requires geometry data: {footprint.get('footprintId')}")
+    forbidden = {"anchors", "centroid", "midpoint", "polygon", "boundingBox", "envelope", "mergedGeometry"}
+    if forbidden.intersection(geometry):
+        raise RuntimeError(f"CGVO G2 point anchor may not contain multi-point or regional geometry: {footprint.get('footprintId')}")
+    if geometry.get("anchorRole") not in {"HISTORICAL_SITE_REFERENCE_ONLY", "ASSOCIATED_HISTORICAL_SITE_REFERENCE"}:
+        raise RuntimeError(f"CGVO G2 point anchor must declare a limited historical site role: {footprint.get('footprintId')}")
+    if geometry.get("regionRepresentationAllowed") is not False:
+        raise RuntimeError(f"CGVO G2 point anchor may not represent a historical region: {footprint.get('footprintId')}")
+    site_evidence_id = geometry.get("siteEvidenceId")
+    evidence = site_evidence_index.get(site_evidence_id)
+    if evidence is None or not evidence.get("researchAnchorEligible"):
+        raise RuntimeError(f"CGVO G2 point anchor needs an eligible site evidence record: {footprint.get('footprintId')}")
+    _validate_g2_point_coordinate(geometry, str(site_evidence_id))
+    if footprint.get("candidateCoverageStatus") not in {"FULL_SITE_IDENTITY_ONLY", "PARTIAL_HISTORICAL_CONTEXT"}:
+        raise RuntimeError(f"CGVO G2 point anchor must state candidate coverage honestly: {footprint.get('footprintId')}")
+    if not footprint.get("siteIdentityEvidence") or not footprint.get("coordinateEvidence"):
+        raise RuntimeError(f"CGVO G2 point anchor requires separate identity and coordinate evidence: {footprint.get('footprintId')}")
+
+
+def _validate_g2_multi_point_anchors(footprint: Mapping[str, Any], site_evidence_index: Mapping[str, Mapping[str, Any]]) -> None:
+    geometry = footprint.get("geometryData")
+    if not isinstance(geometry, Mapping) or not isinstance(geometry.get("anchors"), list) or len(geometry["anchors"]) < 2:
+        raise RuntimeError(f"CGVO G2 multi-anchor requires at least two independently evidenced anchors: {footprint.get('footprintId')}")
+    if any(key in geometry for key in ("centroid", "midpoint", "polygon", "boundingBox", "envelope", "mergedGeometry")):
+        raise RuntimeError(f"CGVO G2 multi-anchor may not contain merged regional geometry: {footprint.get('footprintId')}")
+    for anchor in geometry["anchors"]:
+        _validate_g2_point_anchor({
+            "footprintId": footprint.get("footprintId"),
+            "geometryData": anchor,
+            "candidateCoverageStatus": "PARTIAL_HISTORICAL_CONTEXT",
+            "siteIdentityEvidence": anchor.get("siteIdentityEvidence"),
+            "coordinateEvidence": anchor.get("coordinateEvidence"),
+        }, site_evidence_index)
+    if footprint.get("candidateCoverageStatus") != "MULTI_CENTRE_CONTEXT":
+        raise RuntimeError(f"CGVO G2 multi-anchor must state multi-centre context: {footprint.get('footprintId')}")
 
 
 def build_cgvo_historical_research_footprints(project_root: Path) -> dict[str, Any]:
     """Compile G2's separate, non-downstream historical-footprint ledger."""
     policy = _load_json(project_root, GEOGRAPHY_G2_POLICY_FIXTURE)
     ledger = _load_json(project_root, KURMA_G2_FOOTPRINTS_FIXTURE)
+    site_evidence = _load_json(project_root, CGVO_G2_R1_SITE_EVIDENCE_FIXTURE)
     readiness = _load_json(project_root, CGVO_G2_READINESS_FIXTURE)
     gazetteer = build_cgvo_historical_gazetteer(project_root)
-    _validate_g2_research_footprints(policy, ledger, gazetteer)
+    _validate_g2_research_footprints(policy, ledger, gazetteer, site_evidence)
 
     base_by_candidate: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
     for record in gazetteer["records"]:
@@ -1303,12 +1414,16 @@ def build_cgvo_historical_research_footprints(project_root: Path) -> dict[str, A
         "sourceGazetteerBaseline": ledger["sourceGazetteerBaseline"],
         "geometryRole": policy["geometryRole"],
         "policy": policy,
+        "siteEvidence": site_evidence,
         "readiness": readiness,
         "footprints": footprints,
         "summary": {
             "footprintCount": len(footprints),
             "reviewedCandidateTermCount": len({footprint["normalizedName"] for footprint in footprints}),
-            "coordinateBearingFootprintCount": sum(footprint["geometryData"] is not None and any(key in footprint["geometryData"] for key in ("point", "anchors", "coordinates")) for footprint in footprints),
+            "coordinateBearingFootprintCount": sum(
+                footprint["geometryPrimitive"] in {"POINT_ANCHOR", "MULTI_POINT_ANCHORS"}
+                for footprint in footprints
+            ),
             "byGeometryStatus": status_counts,
             "byGeometryPrimitive": primitive_counts,
         },

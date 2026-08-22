@@ -1,0 +1,335 @@
+{
+  "contract": "CGVO_G2_R1_HISTORICAL_SITE_COORDINATE_EVIDENCE_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G2-R1",
+  "sourceGazetteerBaseline": "CGVO-G1-R1",
+  "geometryRole": "RESEARCH_GEOMETRY_ONLY",
+  "method": "HISTORICAL_SITE_IDENTITY_AND_COORDINATE_PROVENANCE_ARE_INDEPENDENT",
+  "siteEvidence": [
+    {
+      "siteEvidenceId": "G2R1_MATHURAKA_MATHURA_SITE_01",
+      "siteKey": "MATHURAKA_MATHURA",
+      "linkedG1CandidateId": "MATHURAKA_MATHURA_CANDIDATE_01",
+      "linkedG2FootprintId": "G2_MATHURAKA_PENDING_01",
+      "normalizedCandidateName": "MATHURAKA",
+      "historicalSiteName": "Ancient site at Mathura",
+      "variantNames": ["Mathura", "Māthuraka"],
+      "modernSiteLabel": "Ancient site at Mathura, Uttar Pradesh",
+      "historicalIdentityStatus": "SUPPORTED_ASSOCIATED_HISTORICAL_SITE",
+      "historicalIdentityEvidence": [
+        {
+          "sourceId": "G2R1_MATHURA_OXFORD_01",
+          "sourceType": "ACADEMIC_HISTORICAL_GEOGRAPHY",
+          "title": "Before Krishna: Religious Diversity in Ancient Mathura",
+          "locator": "Foreword, ancient mounds and Kankali Tila discussion",
+          "url": "https://academic.oup.com/book/39117/chapter-abstract/338514477",
+          "supports": "Mathura has a complex, multi-layered archaeological landscape rather than one recoverable ancient-city point.",
+          "limitations": "Does not identify the Chapter XIV root term Māthuraka as an exact city coordinate."
+        },
+        {
+          "sourceId": "G2R1_MATHURAKA_G1_01",
+          "sourceType": "G1_CANDIDATE_EVIDENCE",
+          "title": "CGVO G1 Mathuraka overlay",
+          "locator": "MATHURAKA_MATHURA_CANDIDATE_01",
+          "url": "configs/research/cgvo/kurma_historical_geography_g1_v1.json",
+          "supports": "The G1 source overlay retains Māthuraka as a people-or-urban association connected to Mathura.",
+          "limitations": "The root source does not reduce the term to a city point."
+        }
+      ],
+      "coordinateStatus": "COORDINATE_SOURCE_PARTIAL_CRS_NOT_DECLARED",
+      "coordinateEvidence": [
+        {
+          "sourceId": "G2R1_MATHURA_UNESCO_01",
+          "sourceType": "AUTHORITATIVE_HERITAGE_TENTATIVE_LIST",
+          "title": "Sites along the Uttarapath, Badshahi Sadak, Sadak-e-Azam, Grand Trunk Road",
+          "locator": "component 48, Ancient site at Mathura",
+          "url": "https://whc.unesco.org/en/tentativelists/6056",
+          "sourceCoordinateRaw": "27° 29' 33'' N 77° 40' 25'' E",
+          "reportedCoordinateReferenceSystem": "NOT_DECLARED_IN_HELD_LISTING",
+          "supports": "A named ancient-site reference with a published latitude/longitude pair.",
+          "limitations": "The held listing does not identify a coordinate reference system or specify whether the point is an excavation locus, property reference, or another site reference."
+        }
+      ],
+      "rawCoordinate": "27° 29' 33'' N 77° 40' 25'' E",
+      "normalizedCoordinate": null,
+      "coordinateReferenceSystem": null,
+      "coordinatePrecision": "DMS_TO_NEAREST_SECOND_SOURCE_CRS_NOT_DECLARED",
+      "temporalApplicability": {"periodLabel": "ancient and early medieval Mathura archaeological landscape", "earliestSupported": null, "latestSupported": null, "chronologyType": "BROAD_SITE_CONTINUITY", "uncertainty": "HIGH", "sourceIds": ["G2R1_MATHURA_OXFORD_01"]},
+      "identityConfidence": "MEDIUM",
+      "coordinateConfidence": "PARTIAL",
+      "candidateRelevanceConfidence": "MEDIUM",
+      "uncertainty": "Māthuraka remains an association term; the published heritage coordinate has an unresolved CRS and reference-point meaning.",
+      "limitations": ["Root term is not reduced to a city point.", "No Mathura urban extent or region boundary.", "No astronomy locality activation."],
+      "researchAnchorEligible": false,
+      "rejectionReasons": ["COORDINATE_CRS_NOT_DECLARED", "COORDINATE_REFERENCE_POINT_INTERPRETATION_NOT_CLOSED"]
+    },
+    {
+      "siteEvidenceId": "G2R1_RAJAGRIHA_RAJGIR_SITE_01",
+      "siteKey": "RAJAGRIHA_RAJGIR",
+      "linkedG1CandidateId": "MAGADHA_SOUTH_BIHAR_CANDIDATE_01",
+      "linkedG2FootprintId": "G2_MAGADHA_PENDING_01",
+      "normalizedCandidateName": "MAGADHA",
+      "historicalSiteName": "Ancient Rajagriha / Rajgir",
+      "variantNames": ["Rajagriha", "Rajgir", "Old Rajgir", "New Rajgir"],
+      "modernSiteLabel": "Ancient site at Rajgir, Bihar",
+      "historicalIdentityStatus": "SOURCE_CLOSED_HISTORICAL_SITE",
+      "historicalIdentityEvidence": [
+        {
+          "sourceId": "G2R1_RAJGIR_ASI_01",
+          "sourceType": "AUTHORITATIVE_ARCHAEOLOGY",
+          "title": "Archaeological Survey of India Patna Circle: Monuments Details",
+          "locator": "items 40-42, old and new Rajgriha walls and enclosed remains",
+          "url": "https://asipatnacircle.gov.in/monuments-details",
+          "supports": "Old and new Rajgriha are protected archaeological contexts; the cycleopean walls are dated to the 6th-5th century BCE.",
+          "limitations": "The protected complex includes many structures and does not select one coordinate reference point."
+        },
+        {
+          "sourceId": "G2R1_RAJGIR_ACADEMIC_01",
+          "sourceType": "ACADEMIC_HISTORICAL_GEOGRAPHY",
+          "title": "Rajagirha: An early historic site in East India",
+          "locator": "abstract",
+          "url": "https://architexturez.net/doc/10-1080/00438243-1976-9979639",
+          "supports": "Identifies ancient Rajagriha with modern Rajgir as an early historic archaeological site.",
+          "limitations": "Does not publish an authoritative coordinate datum for an anchor."
+        }
+      ],
+      "coordinateStatus": "COORDINATE_SOURCE_PARTIAL_CRS_NOT_DECLARED",
+      "coordinateEvidence": [
+        {
+          "sourceId": "G2R1_RAJGIR_UNESCO_01",
+          "sourceType": "AUTHORITATIVE_HERITAGE_TENTATIVE_LIST",
+          "title": "Sites along the Uttarapath, Badshahi Sadak, Sadak-e-Azam, Grand Trunk Road",
+          "locator": "component 82, Ancient site at Rajgir",
+          "url": "https://whc.unesco.org/en/tentativelists/6056",
+          "sourceCoordinateRaw": "25° 01' 02'' N 85° 24' 58'' E",
+          "reportedCoordinateReferenceSystem": "NOT_DECLARED_IN_HELD_LISTING",
+          "supports": "A named ancient-site coordinate reference.",
+          "limitations": "The listing does not declare a CRS or identify which old/new Rajgriha locus the coordinate denotes."
+        }
+      ],
+      "rawCoordinate": "25° 01' 02'' N 85° 24' 58'' E",
+      "normalizedCoordinate": null,
+      "coordinateReferenceSystem": null,
+      "coordinatePrecision": "DMS_TO_NEAREST_SECOND_SOURCE_CRS_NOT_DECLARED",
+      "temporalApplicability": {"periodLabel": "early historic Rajagriha, one Magadhan capital phase", "earliestSupported": null, "latestSupported": null, "chronologyType": "BROAD_HISTORICAL_PHASE", "uncertainty": "MEDIUM", "sourceIds": ["G2R1_RAJGIR_ASI_01", "G2R1_RAJGIR_ACADEMIC_01"]},
+      "identityConfidence": "HIGH",
+      "coordinateConfidence": "PARTIAL",
+      "candidateRelevanceConfidence": "HIGH",
+      "uncertainty": "The site identity is strong, but the coordinate datum and specific locus are not source-closed.",
+      "limitations": ["Not a coordinate of all Magadha.", "No Magadha boundary or centroid.", "No astronomy locality activation."],
+      "researchAnchorEligible": false,
+      "rejectionReasons": ["COORDINATE_CRS_NOT_DECLARED", "COMPLEX_REFERENCE_POINT_NOT_IDENTIFIED"]
+    },
+    {
+      "siteEvidenceId": "G2R1_PATALIPUTRA_SITE_01",
+      "siteKey": "PATALIPUTRA",
+      "linkedG1CandidateId": "MAGADHA_SOUTH_BIHAR_CANDIDATE_01",
+      "linkedG2FootprintId": "G2_MAGADHA_PENDING_01",
+      "normalizedCandidateName": "MAGADHA",
+      "historicalSiteName": "Ancient Pataliputra / Patna archaeological context",
+      "variantNames": ["Pataliputra", "Patliputra", "Patna", "Kumrahar"],
+      "modernSiteLabel": "Ancient site at (Patliputra) Patna, Bihar",
+      "historicalIdentityStatus": "SOURCE_CLOSED_HISTORICAL_SITE_CONTEXT",
+      "historicalIdentityEvidence": [
+        {
+          "sourceId": "G2R1_PATALIPUTRA_ASI_01",
+          "sourceType": "AUTHORITATIVE_ARCHAEOLOGY",
+          "title": "Archaeological Survey of India Patna Circle: Monuments Details",
+          "locator": "items 47-48, Kumrahar and Bulandibagh",
+          "url": "https://asipatnacircle.gov.in/monuments-details",
+          "supports": "Kumrahar and Bulandibagh preserve archaeological remains described in relation to Pataliputra.",
+          "limitations": "The evidence identifies multiple loci; it does not make one point equivalent to the whole ancient city."
+        },
+        {
+          "sourceId": "G2R1_PATALIPUTRA_PATNA_GOV_01",
+          "sourceType": "OFFICIAL_HERITAGE_REFERENCE",
+          "title": "Kumhrar Park, District Patna",
+          "locator": "archaeological remains description",
+          "url": "https://patna.nic.in/tourist-place/kumhrar-park/",
+          "supports": "Excavations at Kumhrar uncovered remains of ancient Pataliputra.",
+          "limitations": "Does not publish an auditable coordinate for the archaeological locus in the held page."
+        }
+      ],
+      "coordinateStatus": "COORDINATE_SOURCE_PARTIAL_CRS_NOT_DECLARED",
+      "coordinateEvidence": [
+        {
+          "sourceId": "G2R1_PATALIPUTRA_UNESCO_01",
+          "sourceType": "AUTHORITATIVE_HERITAGE_TENTATIVE_LIST",
+          "title": "Sites along the Uttarapath, Badshahi Sadak, Sadak-e-Azam, Grand Trunk Road",
+          "locator": "component 83, Ancient site at (Patliputra) Patna",
+          "url": "https://whc.unesco.org/en/tentativelists/6056",
+          "sourceCoordinateRaw": "25° 36' 40'' N 85° 08' 38'' E",
+          "reportedCoordinateReferenceSystem": "NOT_DECLARED_IN_HELD_LISTING",
+          "supports": "A named ancient-site coordinate reference.",
+          "limitations": "The held listing does not declare its CRS or select a specific Pataliputra archaeological locus such as Kumrahar or Bulandibagh."
+        }
+      ],
+      "rawCoordinate": "25° 36' 40'' N 85° 08' 38'' E",
+      "normalizedCoordinate": null,
+      "coordinateReferenceSystem": null,
+      "coordinatePrecision": "DMS_TO_NEAREST_SECOND_SOURCE_CRS_NOT_DECLARED",
+      "temporalApplicability": {"periodLabel": "later major Magadhan and Mauryan Pataliputra context", "earliestSupported": null, "latestSupported": null, "chronologyType": "BROAD_HISTORICAL_PHASE", "uncertainty": "MEDIUM", "sourceIds": ["G2R1_PATALIPUTRA_ASI_01", "G2R1_PATALIPUTRA_PATNA_GOV_01"]},
+      "identityConfidence": "HIGH",
+      "coordinateConfidence": "PARTIAL",
+      "candidateRelevanceConfidence": "HIGH",
+      "uncertainty": "The city has multiple archaeological loci and the source coordinate's CRS/reference meaning remains unresolved.",
+      "limitations": ["Not a coordinate of all Magadha.", "No Pataliputra urban extent or centroid.", "No astronomy locality activation."],
+      "researchAnchorEligible": false,
+      "rejectionReasons": ["COORDINATE_CRS_NOT_DECLARED", "MULTIPLE_ARCHAEOLOGICAL_LOCI_NOT_REDUCED_TO_ONE_POINT"]
+    },
+    {
+      "siteEvidenceId": "G2R1_TAKSASILA_TAXILA_SITE_01",
+      "siteKey": "TAKSASILA_TAXILA",
+      "linkedG1CandidateId": "GANDHARA_NORTHWEST_CANDIDATE_01",
+      "linkedG2FootprintId": "G2_GANDHARA_PENDING_01",
+      "normalizedCandidateName": "GANDHARA",
+      "historicalSiteName": "Taxila / Takshasila archaeological site",
+      "variantNames": ["Taxila", "Takshasila", "Takshaśilā"],
+      "modernSiteLabel": "Taxila archaeological site, Punjab, Pakistan",
+      "historicalIdentityStatus": "SOURCE_CLOSED_HISTORICAL_SITE",
+      "historicalIdentityEvidence": [
+        {
+          "sourceId": "G2R1_TAXILA_UNESCO_01",
+          "sourceType": "AUTHORITATIVE_HERITAGE",
+          "title": "Taxila World Heritage property",
+          "locator": "Outstanding Universal Value and serial archaeological-site description",
+          "url": "https://whc.unesco.org/en/list/139",
+          "supports": "Taxila is an authenticated serial archaeological property including Bhir, Sirkap and Sirsukh settlement sites.",
+          "limitations": "The World Heritage property is serial; this record remains a reference point, not the entire complex or Gandhara."
+        },
+        {
+          "sourceId": "G2R1_TAXILA_IRANICA_01",
+          "sourceType": "ACADEMIC_HISTORICAL_GEOGRAPHY",
+          "title": "GANDHARA, Encyclopaedia Iranica",
+          "locator": "geography discussion",
+          "url": "https://www.iranicaonline.org/articles/gandhara/",
+          "supports": "Places Taxila among the historically central Gandharan cities.",
+          "limitations": "Does not authorize a coordinate for the full historical region."
+        }
+      ],
+      "coordinateStatus": "COORDINATE_SOURCE_CLOSED",
+      "coordinateEvidence": [
+        {
+          "sourceId": "G2R1_TAXILA_GETTY_TGN_01",
+          "sourceType": "RECOGNIZED_HISTORICAL_GAZETTEER",
+          "title": "Getty Thesaurus of Geographic Names: Taxila (deserted settlement)",
+          "locator": "TGN 6005850",
+          "url": "https://www.getty.edu/vow/TGNFullDisplay?english=Y&find=&nation=&place=&subjectid=6005850",
+          "sourceCoordinateRaw": "33° 45' 35'' N 72° 50' 15'' E",
+          "coordinateReferenceSystem": "WGS84",
+          "axisOrder": "LATITUDE_LONGITUDE",
+          "supports": "A WGS84 coordinate for a record typed as deserted settlement, archaeological site, ancient site, historic site and World Heritage Site.",
+          "limitations": "A gazetteer point is a site reference only; it is not an ancient-city footprint or a Gandhara boundary."
+        }
+      ],
+      "rawCoordinate": "33° 45' 35'' N 72° 50' 15'' E",
+      "normalizedCoordinate": {
+        "latitude": 33.7597222222,
+        "longitude": 72.8375,
+        "coordinateReferenceSystem": "WGS84",
+        "axisOrder": "LATITUDE_LONGITUDE",
+        "sourceCoordinateRaw": "33° 45' 35'' N 72° 50' 15'' E",
+        "coordinatePrecision": "DMS_TO_NEAREST_SECOND",
+        "coordinateSourceId": "G2R1_TAXILA_GETTY_TGN_01",
+        "coordinateSourceLocator": "TGN 6005850",
+        "coordinateSourceType": "RECOGNIZED_HISTORICAL_GAZETTEER",
+        "coordinateInterpretation": "ARCHAEOLOGICAL_SITE_REFERENCE_POINT",
+        "normalizationMethod": "DMS_TO_DECIMAL_DEGREES"
+      },
+      "coordinateReferenceSystem": "WGS84",
+      "coordinatePrecision": "DMS_TO_NEAREST_SECOND",
+      "temporalApplicability": {"periodLabel": "Taxila settlement sequence, fifth century BCE through second century CE", "earliestSupported": null, "latestSupported": null, "chronologyType": "SOURCE_STATED_BROAD_RANGE", "uncertainty": "MEDIUM", "sourceIds": ["G2R1_TAXILA_UNESCO_01"]},
+      "identityConfidence": "HIGH",
+      "coordinateConfidence": "HIGH",
+      "candidateRelevanceConfidence": "HIGH",
+      "uncertainty": "The point represents an archaeological-site reference, not the full serial property, historic Taxila urban extent, or Gandhara.",
+      "limitations": ["No Gandhara boundary.", "No Taxila complex polygon.", "No eclipse-locality activation.", "No market use."],
+      "researchAnchorEligible": true,
+      "rejectionReasons": []
+    },
+    {
+      "siteEvidenceId": "G2R1_PUSKALAVATI_CHARSADDA_SITE_01",
+      "siteKey": "PUSKALAVATI_CHARSADDA",
+      "linkedG1CandidateId": "GANDHARA_NORTHWEST_CANDIDATE_01",
+      "linkedG2FootprintId": "G2_GANDHARA_PENDING_01",
+      "normalizedCandidateName": "GANDHARA",
+      "historicalSiteName": "Pushkalavati / Charsadda archaeological context",
+      "variantNames": ["Pushkalavati", "Puṣkalāvatī", "Charsadda", "Bala Hisar"],
+      "modernSiteLabel": "Pushkalavati archaeological context, Charsadda, Pakistan",
+      "historicalIdentityStatus": "SOURCE_CLOSED_HISTORICAL_SITE_CONTEXT",
+      "historicalIdentityEvidence": [
+        {
+          "sourceId": "G2R1_PUSKALAVATI_IRANICA_01",
+          "sourceType": "ACADEMIC_HISTORICAL_GEOGRAPHY",
+          "title": "GANDHARA, Encyclopaedia Iranica",
+          "locator": "geography discussion",
+          "url": "https://www.iranicaonline.org/articles/gandhara/",
+          "supports": "Identifies Pushkalavati with modern Charsadda in the Gandharan context.",
+          "limitations": "Does not choose one archaeological locus or coordinate reference point."
+        },
+        {
+          "sourceId": "G2R1_PUSKALAVATI_CAMBRIDGE_01",
+          "sourceType": "ACADEMIC_ARCHAEOLOGY",
+          "title": "Investigating ancient Pushkalavati: Excavations at Balar Hisar",
+          "locator": "project citation as preserved by Getty TGN",
+          "url": "https://www.arch.cam.ac.uk/research/projects/balar-hisar",
+          "supports": "Balar Hisar is an archaeological research context for ancient Pushkalavati.",
+          "limitations": "Does not by itself reconcile all Charsadda-area archaeological loci."
+        }
+      ],
+      "coordinateStatus": "COORDINATE_REFERENCE_CONFLICT",
+      "coordinateEvidence": [
+        {
+          "sourceId": "G2R1_PUSKALAVATI_GETTY_TGN_01",
+          "sourceType": "RECOGNIZED_HISTORICAL_GAZETTEER",
+          "title": "Getty Thesaurus of Geographic Names: Pushkalavati (ancient site)",
+          "locator": "TGN 8060349",
+          "url": "https://www.getty.edu/vow/TGNFullDisplay?english=Y&find=lee&nation=&place=&subjectid=8060349",
+          "sourceCoordinateRaw": "34° 06' 18'' N 71° 42' 36'' E",
+          "coordinateReferenceSystem": "WGS84",
+          "axisOrder": "LATITUDE_LONGITUDE",
+          "coordinateInterpretation": "ANCIENT_SITE_REFERENCE_POINT"
+        },
+        {
+          "sourceId": "G2R1_PUSKALAVATI_PLEIADES_01",
+          "sourceType": "ACADEMIC_HISTORICAL_GAZETTEER",
+          "title": "Pleiades place 59993",
+          "locator": "DARMC location 24172, 5M scale point location",
+          "url": "https://pleiades.stoa.org/places/59993/json",
+          "sourceCoordinateRaw": "[71.616854, 34.143959]",
+          "coordinateReferenceSystem": "WGS84",
+          "axisOrder": "LONGITUDE_LATITUDE_SOURCE_JSON",
+          "coordinateInterpretation": "SMALL_SCALE_HISTORICAL_GAZETTEER_POINT"
+        }
+      ],
+      "rawCoordinate": null,
+      "normalizedCoordinate": null,
+      "coordinateReferenceSystem": null,
+      "coordinatePrecision": "CONFLICTING_REFERENCE_POINTS",
+      "coordinateCrossCheck": {"differenceMeters": 9606.3, "status": "COORDINATE_REFERENCE_CONFLICT", "method": "HAVERSINE_AUDIT_METRIC_ONLY_NO_SELECTION_OR_AVERAGING"},
+      "temporalApplicability": {"periodLabel": "ancient Gandharan Pushkalavati / Charsadda context", "earliestSupported": null, "latestSupported": null, "chronologyType": "BROAD_HISTORICAL_SITE_CONTEXT", "uncertainty": "HIGH", "sourceIds": ["G2R1_PUSKALAVATI_IRANICA_01", "G2R1_PUSKALAVATI_CAMBRIDGE_01"]},
+      "identityConfidence": "HIGH",
+      "coordinateConfidence": "CONFLICT",
+      "candidateRelevanceConfidence": "HIGH",
+      "uncertainty": "The records are both useful but their reference points differ by 9,606.3 m; this audit does not choose, average or infer an archaeological locus.",
+      "limitations": ["No arbitrary Charsadda town point.", "No selection between conflicting reference points.", "No Gandhara boundary.", "No astronomy locality activation."],
+      "researchAnchorEligible": false,
+      "rejectionReasons": ["COORDINATE_REFERENCE_CONFLICT", "ARCHAEOLOGICAL_LOCUS_NOT_RECONCILED"]
+    }
+  ],
+  "guardrails": {
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketDirectionInferred": false,
+    "scoreAggregationUsed": false,
+    "fieldsPath": false,
+    "sbcPath": false,
+    "autoSuggestPath": false,
+    "mlPath": false,
+    "mt5Path": false,
+    "marketUseAllowed": false,
+    "executionAllowed": false
+  }
+}

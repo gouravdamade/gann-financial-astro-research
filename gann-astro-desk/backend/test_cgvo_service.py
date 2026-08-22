@@ -408,15 +408,16 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertEqual(gazetteer["summary"]["totalSourceNames"], 308)
         self.assertTrue(all("geometry" in record and record["geometry"] is None for record in gazetteer["records"]))
         self.assertTrue(all(mapping["geometry"] is None for record in gazetteer["records"] for mapping in record["candidateMappings"]))
-        self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V1")
-        self.assertEqual(footprints["milestone"], "CGVO-G2")
+        self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V2")
+        self.assertEqual(footprints["milestone"], "CGVO-G2-R1")
         self.assertEqual(footprints["sourceGazetteerBaseline"], "CGVO-G1-R1")
         self.assertEqual(footprints["geometryRole"], "RESEARCH_GEOMETRY_ONLY")
         self.assertEqual(footprints["summary"]["footprintCount"], 12)
         self.assertEqual(footprints["summary"]["reviewedCandidateTermCount"], 11)
-        self.assertEqual(footprints["summary"]["coordinateBearingFootprintCount"], 0)
+        self.assertEqual(footprints["summary"]["coordinateBearingFootprintCount"], 1)
         self.assertEqual(footprints["summary"]["byGeometryStatus"], {
-            "GEOMETRY_PENDING_EVIDENCE": 9,
+            "GEOMETRY_PENDING_EVIDENCE": 8,
+            "RESEARCH_ANCHOR_POINT": 1,
             "CONTESTED_RESEARCH_GEOMETRIES": 2,
             "RESEARCH_CORRIDOR_OR_RIVER_SYSTEM": 1,
         })
@@ -438,6 +439,14 @@ class CgvoServiceTests(unittest.TestCase):
         mathuraka = next(item for item in footprints["footprints"] if item["normalizedName"] == "MATHURAKA")
         self.assertEqual(mathuraka["candidateEntityType"], "PEOPLE_OR_URBAN_ASSOCIATION")
         self.assertEqual(mathuraka["geometryStatus"], "GEOMETRY_PENDING_EVIDENCE")
+        gandhara = next(item for item in footprints["footprints"] if item["normalizedName"] == "GANDHARA")
+        self.assertEqual(gandhara["geometryStatus"], "RESEARCH_ANCHOR_POINT")
+        self.assertEqual(gandhara["candidateCoverageStatus"], "PARTIAL_HISTORICAL_CONTEXT")
+        self.assertEqual(gandhara["geometryData"]["coordinateReferenceSystem"], "WGS84")
+        self.assertEqual(gandhara["geometryData"]["axisOrder"], "LATITUDE_LONGITUDE")
+        self.assertFalse(gandhara["geometryData"]["regionRepresentationAllowed"])
+        self.assertEqual(gandhara["geometryData"]["siteEvidenceId"], "G2R1_TAKSASILA_TAXILA_SITE_01")
+        self.assertEqual(len(footprints["siteEvidence"]["siteEvidence"]), 5)
         sindhu = next(item for item in footprints["footprints"] if item["normalizedName"] == "SINDHU")
         self.assertEqual(sindhu["geometryPrimitive"], "RIVER_SYSTEM_CONTEXT")
         self.assertIsNone(sindhu["geometryData"]["landPolygon"])
@@ -451,15 +460,44 @@ class CgvoServiceTests(unittest.TestCase):
     def test_g2_validator_fails_closed_for_missing_footprint_evidence_or_merged_contested_geometry(self) -> None:
         policy = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.GEOGRAPHY_G2_POLICY_FIXTURE)
         ledger = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.KURMA_G2_FOOTPRINTS_FIXTURE)
+        site_evidence = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.CGVO_G2_R1_SITE_EVIDENCE_FIXTURE)
         gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
         missing_uncertainty = deepcopy(ledger)
         missing_uncertainty["footprints"][0]["uncertainty"] = {}
         with self.assertRaisesRegex(RuntimeError, "lacks uncertainty"):
-            cgvo_service._validate_g2_research_footprints(policy, missing_uncertainty, gazetteer)
+            cgvo_service._validate_g2_research_footprints(policy, missing_uncertainty, gazetteer, site_evidence)
         merged_kamboja = deepcopy(ledger)
         merged_kamboja["footprints"][5]["geometryData"]["mergedGeometry"] = {"forbidden": True}
         with self.assertRaisesRegex(RuntimeError, "may not merge alternatives"):
-            cgvo_service._validate_g2_research_footprints(policy, merged_kamboja, gazetteer)
+            cgvo_service._validate_g2_research_footprints(policy, merged_kamboja, gazetteer, site_evidence)
+
+    def test_g2_r1_point_coordinate_contract_rejects_unsafe_or_inferred_geometry(self) -> None:
+        policy = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.GEOGRAPHY_G2_POLICY_FIXTURE)
+        ledger = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.KURMA_G2_FOOTPRINTS_FIXTURE)
+        site_evidence = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.CGVO_G2_R1_SITE_EVIDENCE_FIXTURE)
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+
+        def assert_rejected(mutator, message: str) -> None:
+            broken_ledger = deepcopy(ledger)
+            broken_evidence = deepcopy(site_evidence)
+            mutator(broken_ledger, broken_evidence, gazetteer)
+            with self.assertRaisesRegex(RuntimeError, message):
+                cgvo_service._validate_g2_research_footprints(policy, broken_ledger, gazetteer, broken_evidence)
+
+        def gandhara_geometry(broken_ledger: dict) -> dict:
+            return next(item for item in broken_ledger["footprints"] if item["normalizedName"] == "GANDHARA")["geometryData"]
+
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).pop("coordinateSourceId"), "missing required")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("latitude", 91), "latitude")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("longitude", float("inf")), "longitude")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).pop("coordinateReferenceSystem"), "missing required")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("coordinatePrecision", "UNSPECIFIED"), "precision")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("centroid", {"forbidden": True}), "regional geometry")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("anchors", []), "regional geometry")
+        assert_rejected(lambda broken, evidence, _gazetteer: next(item for item in broken["footprints"] if item["normalizedName"] == "GANDHARA").__setitem__("siteIdentityEvidence", []), "separate identity")
+        assert_rejected(lambda broken, evidence, _gazetteer: next(item for item in evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA").__setitem__("historicalIdentityEvidence", []), "lacks historical identity")
+        assert_rejected(lambda broken, evidence, _gazetteer: next(item for item in _gazetteer["records"] if item["normalizedName"] == "GANDHARA").__setitem__("mappingStatus", "SOURCE_NAME_ONLY"), "SOURCE_NAME_ONLY")
+        assert_rejected(lambda broken, evidence, _gazetteer: evidence["guardrails"].__setitem__("priceDataRead", True), "active downstream guardrail")
 
 
 if __name__ == "__main__":
