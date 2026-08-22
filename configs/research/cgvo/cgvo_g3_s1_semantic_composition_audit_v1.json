@@ -1,8 +1,8 @@
 {
   "contract": "CGVO_G3_S1_SEMANTIC_COMPOSITION_AUDIT_V1",
   "schemaVersion": 1,
-  "milestone": "CGVO-G3-S1",
-  "startingBaseline": "751561a96f0edc0121ce42f74bf48df0571854c7",
+  "milestone": "CGVO-G3-S1-R1",
+  "startingBaseline": "a6808d085751871eec303aa61805dc3ff61be0ad",
   "rootWitnessLedger": "configs/research/cgvo/cgvo_g3_s1_root_witness_ledger_v1.json",
   "terminalVerdict": "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY",
   "relations": {
@@ -12,9 +12,9 @@
       "reason": "V.11 expressly uses pratidesam and drishtivashat for solar-eclipse appearance; it specifies neither an historical-region boundary nor an observation-transfer rule."
     },
     "chapterVtoXivReferenceStatus": {
-      "status": "COMMENTARY_ONLY_REFERENCE",
+      "status": "SOURCE_CLOSED_ROOT_KURMA_REFERENCE",
       "sourcePacketId": "CGVO_G3_S1_BS_V42_XIV_REFERENCE",
-      "reason": "The Chapter XIV locator is visible in the printed English editorial/translation continuation, not in the inspected root Sanskrit V.42."
+      "reason": "The root V.42 visibly contains 'भफलं कूर्मोपदेशाद्वदेत्': the Kūrma reference is root textual. It provides textual relevance only and does not state a site-to-region, visibility-transfer, or runtime composition operator."
     },
     "chapterXivGeographyStatus": {
       "status": "SOURCE_CLOSED_CONTEXTUAL_MAPPING",

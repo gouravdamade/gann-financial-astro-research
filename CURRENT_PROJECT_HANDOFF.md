@@ -4,7 +4,31 @@ Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-08-22 (CGVO-G3-S1 Root Sanskrit Witness and Semantic Composition Audit)
+## Latest Update - 2026-08-22 (CGVO-G3-S1-R1 V.42 Root Kūrma Reference Correction)
+
+- Starting from `a6808d085751871eec303aa61805dc3ff61be0ad`, re-verified the
+  same private 1,116-page root witness against SHA-256
+  `D7425625010C621FF6651BF6BF916506791E3D4381078251AC7DC8EFBBA6577A` and
+  re-inspected V.42 on PDF images 83--84 / printed pp.58--59. The root Sanskrit
+  visibly contains `भफलं कूर्मोपदेशाद्वदेत्`:
+  `SOURCE_CLOSED_ROOT_KURMA_REFERENCE`, not
+  `COMMENTARY_ONLY_REFERENCE`.
+- This closes only textual relevance between V.42 and Kūrma teaching. It does
+  not authorize a spatial or effect operator: site-to-region remains
+  `SOURCE_SILENT_SITE_TO_REGION_OPERATOR`, `regionVisibility=null`,
+  `sourceEffectActivation=null`, and S1B remains
+  `UNCHANGED_UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED`.
+- The private witness test is now portable: static ledger checks always run;
+  the byte-level check passes only when `GANN_ASTRO_PRIVATE_SOURCE_ROOT`
+  supplies the verified file, explicitly skips with
+  `PRIVATE_G3_S1_SOURCE_WITNESS_NOT_AVAILABLE` when absent, and fails on a
+  present hash mismatch. No source bytes or absolute private path are tracked.
+- Status is `READY_FOR_CENTRAL_REVIEW`. No UI/package, price, market, Fields,
+  SBC, Auto Suggest, ML, MT5, or execution work was added;
+  `executionAllowed=false`. After central acceptance, freeze CGVO-G3 and
+  return priority to the Multi Oscillator / wave visualizer.
+
+## Previous Update - 2026-08-22 (CGVO-G3-S1 Root Sanskrit Witness and Semantic Composition Audit)
 
 - Acquired and independently SHA-256-verified the private 1,116-page
   `BRIHAT_SAMHITA_SASTRI_V_SUBRAHMANYA_DLI_2015_102832` witness:

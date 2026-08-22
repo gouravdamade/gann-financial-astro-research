@@ -1,8 +1,8 @@
 {
   "contract": "CGVO_G3_S1_ROOT_SANSKRIT_WITNESS_LEDGER_V1",
   "schemaVersion": 1,
-  "milestone": "CGVO-G3-S1",
-  "startingBaseline": "751561a96f0edc0121ce42f74bf48df0571854c7",
+  "milestone": "CGVO-G3-S1-R1",
+  "startingBaseline": "a6808d085751871eec303aa61805dc3ff61be0ad",
   "witness": {
     "sourceWitnessId": "BRIHAT_SAMHITA_SASTRI_V_SUBRAHMANYA_DLI_2015_102832",
     "filename": "2015.102832.Varahamihiras-Brihat-Samhitavoli-ii_text(2)(1).pdf",
@@ -54,14 +54,19 @@
       "pdfPages": [83, 84],
       "printedPages": [58, 59],
       "controllingAuthority": "ORIGINAL_PAGE_IMAGE_IN_CHECKSUM_IDENTIFIED_SCAN",
-      "rootVerseInspection": "The Sanskrit V.42 gives Kumbha/Meena eclipse-result language. No Kurma or Chapter XIV reference was visually present in the root Sanskrit on these pages.",
-      "rootReferenceTerm": null,
+      "rootVerseInspection": "The V.42 root Sanskrit visibly ends with the operative clause below; its kūrmopadeśāt term is root text, while the printed '(Ch. XIV, infra)' locator remains translation/editorial prose.",
+      "rootReferenceTerm": "कूर्मोपदेशाद्",
+      "rootReferenceIast": "kūrmopadeśād",
+      "operativeClause": "भफलं कूर्मोपदेशाद्वदेत्",
+      "operativeClauseIast": "bhaphalaṃ kūrmopadeśād vadet",
+      "rootReferenceStatus": "SOURCE_CLOSED_ROOT_KURMA_REFERENCE",
+      "literalGrammaticalRelation": "V.42 instructs that the star result (bhaphalam) is to be stated from the Kūrma instruction/teaching (kūrmopadeśāt).",
       "editorialReference": "The printed English translation continues with '(Ch. XIV, infra)'.",
-      "editorialReferenceStatus": "TRANSLATOR_OR_EDITORIAL_PROSE_NOT_ROOT_SANSKRIT",
-      "transcriptionConfidence": "HIGH_FOR_REFERENCE_DISTINCTION",
-      "variantReadings": ["The page notes a separate reading for a Sanskrit word; it does not add a Kurma/Chapter XIV reference."],
-      "semanticScope": "ROOT_V42_EFFECT_LANGUAGE_AND_EDITORIAL_XIV_READING_AID",
-      "doesNotEstablish": ["ROOT_TEXT_CHAPTER_V_TO_XIV_OPERATOR", "SITE_VISIBILITY_SELECTOR", "SITE_TO_REGION_TRANSFER"]
+      "editorialReferenceStatus": "TRANSLATION_EDITORIAL_LOCATOR_NOT_CONTROLLING_ROOT_TRANSCRIPTION",
+      "transcriptionConfidence": "HIGH_FOR_ROOT_REFERENCE_AND_TRANSLATION_DISTINCTION",
+      "variantReadings": ["The page notes a separate reading for a Sanskrit word; it does not alter the visible kūrmopadeśāt clause."],
+      "semanticScope": "ROOT_TEXTUAL_CHAPTER_V_KURMA_REFERENCE_ONLY",
+      "doesNotEstablish": ["SITE_VISIBILITY_SELECTOR", "SITE_TO_REGION_TRANSFER", "SITE_VISIBILITY_TO_REGION_VISIBILITY", "CHAPTER_V_EFFECT_ACTIVATION", "CHAPTER_V_XIV_RUNTIME_COMPOSITION_OPERATOR"]
     },
     {
       "packetId": "CGVO_G3_S1_BS_XIV_1_KURMA_GEOGRAPHY",

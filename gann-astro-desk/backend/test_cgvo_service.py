@@ -311,6 +311,7 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertEqual(adjudication["siteVisibilityInferenceStatus"], "SITE_ONLY")
         self.assertEqual(adjudication["chapterV_XIV_compositionStatus"], "COMPOSITION_NOT_AUTHORIZED")
         self.assertEqual(adjudication["semanticVerdict"], "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY")
+        self.assertEqual(adjudication["chapterVtoXivReferenceStatus"], "SOURCE_CLOSED_ROOT_KURMA_REFERENCE")
         self.assertEqual(adjudication["siteToRegionRuleStatus"], "SOURCE_SILENT_SITE_TO_REGION_OPERATOR")
         self.assertEqual(adjudication["rootWitness"]["sourceBytePolicy"], "PRIVATE_NOT_TRACKED")
         self.assertIsNone(adjudication["regionVisibility"])

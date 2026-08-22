@@ -1094,15 +1094,15 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
         "schemaVersion": 6,
-        "milestone": "CGVO-G3-S1",
+        "milestone": "CGVO-G3-S1-R1",
         "milestones": {
-            "current": "CGVO-G3-S1",
+            "current": "CGVO-G3-S1-R1",
             "astronomy": "CGVO-S1B-R1",
             "geography": "CGVO-G2-R1A",
             "siteVisibility": "CGVO-G3-D1",
-            "sourceComposition": "CGVO-G3-S1",
+            "sourceComposition": "CGVO-G3-S1-R1",
         },
-        "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
+        "status": g3_s1_readiness["centralReviewStatus"],
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
         "availableEventTypes": ["SOLAR", "LUNAR"],
         "guardrails": _guardrails(),
@@ -1126,6 +1126,7 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
             "regionVisibility": None,
             "sourceEffectActivation": None,
             "rootWitnessStatus": g3_s1_readiness["rootSanskritWitness"],
+            "chapterVtoXivReferenceStatus": g3_s1_readiness["v42ToXivReference"],
             "semanticVerdict": "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY",
         },
     }
@@ -1618,7 +1619,7 @@ def _g3_d1_policy(project_root: Path) -> dict[str, Any]:
 
 
 def _g3_r1_source_composition_adjudication(project_root: Path) -> dict[str, Any]:
-    """Return the static, non-operational CGVO-G3-R1 composition verdict."""
+    """Return the static, non-operational CGVO-G3 source-composition verdict."""
     policy = _load_json(project_root, CGVO_G3_R1_COMPOSITION_POLICY_FIXTURE)
     adjudication = _load_json(project_root, CGVO_G3_R1_ADJUDICATION_FIXTURE)
     root_witness = _load_json(project_root, CGVO_G3_S1_ROOT_WITNESS_FIXTURE)
@@ -1650,6 +1651,8 @@ def _g3_r1_source_composition_adjudication(project_root: Path) -> dict[str, Any]
         raise RuntimeError("CGVO G3-R1 may not mark Chapter V/XIV composition as active")
     if semantic_audit.get("terminalVerdict") != "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY":
         raise RuntimeError("CGVO G3-S1 must retain contextual-only source composition")
+    if semantic_audit.get("relations", {}).get("chapterVtoXivReferenceStatus", {}).get("status") != "SOURCE_CLOSED_ROOT_KURMA_REFERENCE":
+        raise RuntimeError("CGVO G3-S1-R1 must retain the root-textual Kurma reference without activating composition")
     if semantic_audit.get("regionVisibility") is not None or semantic_audit.get("sourceEffectActivation") is not None:
         raise RuntimeError("CGVO G3-S1 must retain null region and source-effect outputs")
     if root_witness.get("witness", {}).get("acquisitionStatus") != "ACQUIRED_CHECKSUM_VERIFIED":
@@ -1674,6 +1677,7 @@ def _g3_r1_source_composition_adjudication(project_root: Path) -> dict[str, Any]
             "sourceBytePolicy": root_witness["witness"]["sourceBytePolicy"],
         },
         "semanticVerdict": semantic_audit["terminalVerdict"],
+        "chapterVtoXivReferenceStatus": semantic_audit["relations"]["chapterVtoXivReferenceStatus"]["status"],
         "siteToRegionRuleStatus": semantic_audit["relations"]["siteToRegionRuleStatus"]["status"],
     }
 

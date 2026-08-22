@@ -1,12 +1,12 @@
-# CGVO-G3-S1 Root Sanskrit Witness and Composition Audit
+# CGVO-G3-S1-R1 V.42 Root Kūrma Reference and Witness-Portability Correction
 
 ## Scope and outcome
 
-This source-only milestone begins at `751561a96f0edc0121ce42f74bf48df0571854c7`.
-It acquires a checksum-identified Sanskrit-bearing witness and adjudicates the
-semantic links that had previously been only translation-led. It does not add
-a geographic operator, an eclipse-effect operator, spatial matching, market
-logic, or execution.
+This source-only correction begins at
+`a6808d085751871eec303aa61805dc3ff61be0ad`. It corrects one V.42 reading in
+the earlier G3-S1 ledger and makes its private-witness byte check portable for
+the public backend suite. It does not add a geographic operator, an
+eclipse-effect operator, spatial matching, market logic, or execution.
 
 The terminal result is **`SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY`**. The
 new witness strengthens the evidence record while leaving Taxila as one
@@ -48,17 +48,24 @@ local-differential-visibility statement. It supplies neither a boundary for a
 historical region nor a rule that transfers one site's observation to another
 place.
 
-### V.42: Chapter XIV reference distinction
+### V.42: root-text Kūrma reference
 
-PDF images 83--84, printed pp.58--59, were inspected as a unit. V.42's root
-Sanskrit gives Kumbha/Meena eclipse-result language. The visibly printed
-`(Ch. XIV, infra)` is part of the English translation/editorial continuation;
-no Kurma/Chapter-XIV reference appears in the inspected root Sanskrit of V.42.
+PDF images 83--84, printed pp.58--59, were re-inspected as a unit. The end of
+the root V.42 visibly reads:
 
-Accordingly, the Chapter-XIV reference remains
-`COMMENTARY_ONLY_REFERENCE`, rather than a root-text composition instruction.
-That distinction prevents a translation parenthesis from becoming a runtime
-operator.
+`भफलं कूर्मोपदेशाद्वदेत्`
+
+IAST: `bhaphalaṃ kūrmopadeśād vadet`.
+
+This corrects the prior G3-S1 finding. The Kūrma reference is present in the
+root Sanskrit and is therefore
+`SOURCE_CLOSED_ROOT_KURMA_REFERENCE`. The printed `(Ch. XIV, infra)` remains a
+translation/editorial locator and does not control the root transcription.
+
+The correction establishes textual relevance between V.42 and Kūrma teaching.
+It does **not** supply a transformation operator. In particular, root-textual
+relevance is not site-to-region equivalence, regional visibility, Chapter V
+effect activation, or a market signal.
 
 ### XIV.1: directional-nakshatra organization
 
@@ -86,7 +93,7 @@ Co-listing therefore supports source provenance only.
 | Relation | Status | Reason |
 | --- | --- | --- |
 | V.11 local differential visibility | `SOURCE_CLOSED_SOLAR_LOCAL_DIFFERENTIAL_VISIBILITY` | Root Sanskrit speaks of solar-disc appearance varying `प्रतिदेशम्` by visibility. |
-| V.42 to XIV reference | `COMMENTARY_ONLY_REFERENCE` | The Chapter XIV label is editorial/translation prose, not the inspected root verse. |
+| V.42 to Kūrma reference | `SOURCE_CLOSED_ROOT_KURMA_REFERENCE` | The root V.42 visibly says `कूर्मोपदेशाद्`; it does not define a site-to-region or effect-composition operator. |
 | XIV geography | `SOURCE_CLOSED_CONTEXTUAL_MAPPING` | Root text supplies directional/triad and historical-name list context. |
 | Taxila site to Gandhara | `SOURCE_SILENT_SITE_TO_REGION_OPERATOR` | No containment, equivalence, or transfer rule appears. |
 | Site visibility to region visibility | `NOT_AUTHORIZED` | A transfer rule and authorized region representation are both absent. |
@@ -94,7 +101,17 @@ Co-listing therefore supports source provenance only.
 
 The channels remain separate: modern local observation, Chapter XIV source
 geography, Taxila research-site identity, and any Chapter V effect condition.
-They are not fused merely because they appear in the same book.
+They are not fused merely because V.42 itself refers to Kūrma teaching.
+
+## Private-witness test portability
+
+Static ledger tests always validate the witness identity, page count, expected
+SHA-256, source-byte policy, packet IDs, semantic statuses, and guardrails.
+They never require private bytes. The optional byte-level integration check is
+strict when `GANN_ASTRO_PRIVATE_SOURCE_ROOT` supplies the witness: a matching
+file passes and a mismatching file fails. When the file is absent, that one
+check records the explicit skip
+`PRIVATE_G3_S1_SOURCE_WITNESS_NOT_AVAILABLE`; it is not silently weakened.
 
 ## Runtime and safety
 
@@ -104,4 +121,7 @@ now exposes only static root-witness/adjudication metadata. It still rejects
 `regionVisibility=null` and `sourceEffectActivation=null`.
 
 No UI or package was built. No price, outcome, Fields, SBC, Auto Suggest, ML,
-MT5, or execution path was read or changed. `executionAllowed=false`.
+MT5, or execution path was read or changed. `executionAllowed=false`. This
+artifact is `READY_FOR_CENTRAL_REVIEW`; after central acceptance, freeze the
+CGVO-G3 branch and return product priority to the Multi Oscillator / wave
+visualizer.
