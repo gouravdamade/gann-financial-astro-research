@@ -25,9 +25,10 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
-        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G3-D1")
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G3-R1")
         self.assertEqual(status.get_json()["status"]["milestones"], {
-            "current": "CGVO-G3-D1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1A", "siteVisibility": "CGVO-G3-D1",
+            "current": "CGVO-G3-R1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1A",
+            "siteVisibility": "CGVO-G3-D1", "sourceComposition": "CGVO-G3-R1",
         })
         self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(
@@ -156,11 +157,16 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(audit["siteAnchor"]["label"], "Taxila research site anchor")
         self.assertIsNone(audit["sourceEffectActivation"])
         self.assertIsNone(audit["regionVisibility"])
+        self.assertEqual(audit["sourceCompositionAdjudication"]["siteVisibilityInferenceStatus"], "SITE_ONLY")
+        self.assertIsNone(audit["sourceCompositionAdjudication"]["regionVisibility"])
+        self.assertIsNone(audit["sourceCompositionAdjudication"]["sourceEffectActivation"])
         self.assertFalse(audit["guardrails"]["executionAllowed"])
         for rejected_payload, code in (
             ({**payload, "siteEvidenceId": "G2R1_MATHURAKA_MATHURA_SITE_01"}, "SITE_ANCHOR_NOT_COORDINATE_BEARING"),
             ({**payload, "eventId": "CGVO-SOLAR-WRONG"}, "EVENT_CAUSAL_ID_MISMATCH"),
             ({**payload, "resultScope": "REGION"}, "REGION_EXTRAPOLATION_PROHIBITED"),
+            ({**payload, "includeChapterVEffect": True}, "SOURCE_EFFECT_NOT_AUTHORIZED"),
+            ({**payload, "includeGandharaRegion": True}, "REGION_EXTRAPOLATION_PROHIBITED"),
         ):
             with self.subTest(code=code):
                 rejected = self.client.post(

@@ -1,0 +1,87 @@
+{
+  "contract": "CGVO_G3_R1_VISIBILITY_GEOGRAPHY_ADJUDICATION_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G3-R1",
+  "adjudicationId": "CGVO_G3_R1_VARAHAMIHIRA_VISIBILITY_GEOGRAPHY_ADJUDICATION_01",
+  "centralVerdict": "CONTEXTUAL_PROVENANCE_ONLY",
+  "sourcesInspected": [
+    {
+      "sourceId": "BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS",
+      "role": "HELD_TRANSLATION_WORKING_WITNESS",
+      "checksum": null,
+      "status": "SOURCE_WITNESS_NOT_ACQUIRED",
+      "relevantLocators": ["V.11", "V.42", "XIV.2-XIV.31"],
+      "limitation": "The repository holds prior translation-ledger claims, not a checksum-identified root Sanskrit page witness for this composition decision."
+    },
+    {
+      "sourceId": "SIVA_SH_BRIHAT_SAMHITA_TRANSLATION_READING_WITNESS",
+      "role": "SCHOLARLY_TRANSLATION_READING_WITNESS_NOT_CONTROLLING",
+      "url": "https://www.siva.sh/brihat-samhita/5/11-15",
+      "relevantLocators": ["V.11", "V.42"],
+      "status": "COMMENTARY_SUPPORTED_INTERPRETATION",
+      "limitation": "Translation and Sanskrit display support a source-reading lead but do not replace an acquired, checksum-identified root witness."
+    },
+    {
+      "sourceId": "G1_CHAPTER_XIV_RAW_KURMA_SEED",
+      "role": "REPOSITORY_SOURCE_LIST_LEDGER",
+      "relevantLocators": ["XIV.2-XIV.31"],
+      "status": "SOURCE_RECORDED",
+      "limitation": "The raw lists preserve direction/nakshatra/name occurrences but do not establish modern region geometry or a local-site-to-region rule."
+    }
+  ],
+  "candidatePaths": [
+    {
+      "id": "CHAPTER_V_LOCAL_DIFFERENTIAL_VISIBILITY",
+      "claim": "Chapter V V.11 describes solar-eclipse visibility as differing by country according to visible-disc conditions.",
+      "status": "COMMENTARY_SUPPORTED_INTERPRETATION",
+      "result": "Supports recording a modern local visibility fact at one stated locality only.",
+      "notAuthorized": ["HISTORICAL_REGION_VISIBILITY", "SOURCE_EFFECT_ACTIVATION"]
+    },
+    {
+      "id": "CHAPTER_V_XIV_EXPLICIT_REFERENCE",
+      "claim": "Chapter V V.42 refers eclipse-affected provinces by lunar mansions to Chapter XIV explanation.",
+      "status": "COMMENTARY_SUPPORTED_INTERPRETATION",
+      "result": "Supports Chapter XIV as an eclipse-geography reading context, not an executable local-visibility-to-region operator.",
+      "notAuthorized": ["AUTOMATIC_CHAPTER_V_XIV_COMPOSITION", "SITE_TO_REGION_INFERENCE"]
+    },
+    {
+      "id": "CHAPTER_XIV_KURMAVIBHAGA_TAXONOMY",
+      "claim": "Chapter XIV supplies directional nakshatra triads and historical-name lists.",
+      "status": "SOURCE_RECORDED",
+      "result": "May remain provenance for the linked Gandhara candidate and Taxila anchor.",
+      "notAuthorized": ["REGION_BOUNDARY", "REGION_CENTROID", "SITE_EQUIVALENT_TO_REGION"]
+    },
+    {
+      "id": "TAXILA_SITE_TO_GANDHARA_REGION",
+      "claim": "A visibility result at the G2-R1A Taxila archaeological-site reference establishes Gandhara visibility.",
+      "status": "COMPOSITION_NOT_AUTHORIZED",
+      "result": "Taxila remains an evidence-bound site-only research anchor with partial Gandhara context.",
+      "blockers": ["NO_SOURCE_CLOSED_SITE_TO_REGION_RULE", "NO_ADMITTED_GANDHARA_SPATIAL_REPRESENTATION"]
+    },
+    {
+      "id": "LOCAL_VISIBILITY_TO_CHAPTER_V_EFFECT",
+      "claim": "Taxila local visibility activates a Chapter V historical effect.",
+      "status": "COMPOSITION_NOT_AUTHORIZED",
+      "result": "sourceEffectActivation remains null.",
+      "blockers": ["NO_SOURCE_CLOSED_COMPOSITION_RULE", "SOLAR_LUNAR_PHASE_MAPPING_UNRESOLVED_IN_S1B_R1"]
+    }
+  ],
+  "currentAllowedOutput": {
+    "resultType": "SITE_VISIBILITY_AT_RESEARCH_ANCHOR",
+    "classificationRole": "MODERN_ASTRONOMY_AT_EVIDENCE_BOUND_SITE",
+    "chapterXivContext": "CONTEXTUAL_PROVENANCE_ONLY",
+    "regionVisibility": null,
+    "sourceEffectActivation": null
+  },
+  "guardrails": {
+    "regionExtrapolationAuthorized": false,
+    "chapterVEffectActivationAuthorized": false,
+    "chapterXivChapterVCompositionAuthorized": false,
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketUseAllowed": false,
+    "executionAllowed": false
+  }
+}

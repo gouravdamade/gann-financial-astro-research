@@ -305,8 +305,34 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertIsNone(audit["sourceEffectActivation"])
         self.assertIsNone(audit["regionVisibility"])
         self.assertFalse(audit["compositionPolicy"]["chapterXivChapterVCompositionAuthorized"])
+        adjudication = audit["sourceCompositionAdjudication"]
+        self.assertEqual(adjudication["contract"], "CGVO_G3_R1_SOURCE_COMPOSITION_POLICY_V1")
+        self.assertEqual(adjudication["chapterXIVGeographyRole"], "CONTEXTUAL_PROVENANCE_ONLY")
+        self.assertEqual(adjudication["siteVisibilityInferenceStatus"], "SITE_ONLY")
+        self.assertEqual(adjudication["chapterV_XIV_compositionStatus"], "COMPOSITION_NOT_AUTHORIZED")
+        self.assertIsNone(adjudication["regionVisibility"])
+        self.assertIsNone(adjudication["sourceEffectActivation"])
         for key in ("downstreamIntersectionAuthorized", "eclipseVisibilityMatching", "marketUseAllowed", "executionAllowed"):
             self.assertFalse(audit["guardrails"][key])
+
+    def test_g3_r1_source_composition_policy_is_read_only_and_keeps_all_g2_g3_invariants(self) -> None:
+        policy = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.CGVO_G3_R1_COMPOSITION_POLICY_FIXTURE)
+        adjudication = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.CGVO_G3_R1_ADJUDICATION_FIXTURE)
+        readiness = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.CGVO_G3_R1_READINESS_FIXTURE)
+        self.assertEqual(policy["decision"], "CONTEXTUAL_PROVENANCE_ONLY")
+        self.assertEqual(adjudication["currentAllowedOutput"]["resultType"], "SITE_VISIBILITY_AT_RESEARCH_ANCHOR")
+        self.assertEqual(adjudication["currentAllowedOutput"]["chapterXivContext"], "CONTEXTUAL_PROVENANCE_ONLY")
+        self.assertIsNone(adjudication["currentAllowedOutput"]["regionVisibility"])
+        self.assertIsNone(adjudication["currentAllowedOutput"]["sourceEffectActivation"])
+        self.assertEqual(readiness["g1SourceOccurrences"], 308)
+        self.assertEqual(readiness["g2ResearchFootprints"], 12)
+        self.assertEqual(readiness["g2R1aCoordinateBearingFootprints"], 1)
+        for fixture in (policy, adjudication, readiness):
+            for key, value in fixture["guardrails"].items():
+                if key == "readOnly":
+                    self.assertTrue(value)
+                    continue
+                self.assertFalse(value, key)
 
     def test_g3_d1_rejects_pending_contested_river_and_source_name_identifiers(self) -> None:
         event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
@@ -342,6 +368,7 @@ class CgvoServiceTests(unittest.TestCase):
         cases = (
             ({"eventId": "CGVO-SOLAR-WRONG"}, "EVENT_CAUSAL_ID_MISMATCH"),
             ({"globalMaxSwissUt": "2027-08-03T10:06:41Z"}, "EVENT_IDENTITY_NOT_CANONICAL"),
+            ({"includeChapterVEffect": True}, "SOURCE_EFFECT_NOT_AUTHORIZED"),
             ({"resultScope": "REGION"}, "REGION_EXTRAPOLATION_PROHIBITED"),
             ({"downstreamIntersectionAuthorized": True}, "DOWNSTREAM_GUARDRAIL_PROHIBITED"),
             ({"marketUseAllowed": True}, "DOWNSTREAM_GUARDRAIL_PROHIBITED"),

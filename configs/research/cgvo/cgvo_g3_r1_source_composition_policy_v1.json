@@ -1,0 +1,47 @@
+{
+  "contract": "CGVO_G3_R1_SOURCE_COMPOSITION_POLICY_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G3-R1",
+  "startingBaseline": "1a7bc5b43167aef0cff568a268e1e8d9722e7b62",
+  "decision": "CONTEXTUAL_PROVENANCE_ONLY",
+  "inputs": [
+    "BRIHAT_SAMHITA_CHAPTER_V_ECLIPSE_VISIBILITY_LANGUAGE",
+    "BRIHAT_SAMHITA_CHAPTER_XIV_KURMAVIBHAGA_SOURCE_LIST",
+    "G2_R1A_EVIDENCE_BOUND_TAXILA_SITE_ANCHOR",
+    "CGVO_G3_D1_SITE_VISIBILITY_AUDIT"
+  ],
+  "chapterVVisibilityLanguageStatus": "COMMENTARY_SUPPORTED_INTERPRETATION",
+  "chapterXivGeographyRole": "CONTEXTUAL_PROVENANCE_ONLY",
+  "chapterV_XIV_compositionStatus": "COMPOSITION_NOT_AUTHORIZED",
+  "siteVisibilityInferenceStatus": "SITE_ONLY",
+  "regionVisibility": null,
+  "sourceEffectActivation": null,
+  "futurePromotionRequirements": [
+    "CHECKSUM_IDENTIFIED_ROOT_SANSKRIT_WITNESS_FOR_CHAPTER_V_RELEVANT_VERSES",
+    "CHECKSUM_IDENTIFIED_ROOT_SANSKRIT_WITNESS_FOR_CHAPTER_XIV_RELEVANT_VERSES",
+    "SOURCE_CLOSED_SEMANTIC_RULE_LINKING_LOCAL_VISIBILITY_TO_A_DEFINED_HISTORICAL_GEOGRAPHIC_UNIT",
+    "G2_AUTHORIZED_HISTORICAL_REGION_SPATIAL_REPRESENTATION",
+    "S1B_SOURCE_CLOSED_SOLAR_AND_LUNAR_PHASE_ACTIVATION_MAPPING",
+    "SEPARATE_CENTRAL_AUTHORIZATION_FOR_ANY_NON_MARKET_SOURCE_EXPERIMENT"
+  ],
+  "guardrails": {
+    "readOnly": true,
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "spatialIntersectionAuthorized": false,
+    "regionExtrapolationAuthorized": false,
+    "chapterVEffectActivationAuthorized": false,
+    "chapterXivChapterVCompositionAuthorized": false,
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketUseAllowed": false,
+    "marketDirectionInferred": false,
+    "scoreAggregationUsed": false,
+    "fieldsPath": false,
+    "sbcPath": false,
+    "autoSuggestPath": false,
+    "mlPath": false,
+    "mt5Path": false,
+    "executionAllowed": false
+  }
+}

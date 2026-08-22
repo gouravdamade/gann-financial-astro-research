@@ -4,6 +4,29 @@ Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-22 (CGVO-G3-R1 Source-Composition Adjudication)
+
+- Starting from centrally accepted `CGVO-G3-D1` commit
+  `1a7bc5b43167aef0cff568a268e1e8d9722e7b62`, added the static
+  `CGVO_G3_R1_SOURCE_COMPOSITION_ADJUDICATION_V1` ledger and a read-only
+  response block to the existing Taxila site-visibility audit. The current
+  verdict is `CONTEXTUAL_PROVENANCE_ONLY`: Chapter XIV may be displayed as
+  provenance, but Taxila remains site-only and is never Gandhara visibility.
+- The held translation-ledger claims identify Chapter V V.11 local visibility
+  wording and V.42's Chapter XIV reference, but the exact composition decision
+  lacks an acquired checksum-identified root Sanskrit page witness. The ledger
+  therefore records `COMMENTARY_SUPPORTED_INTERPRETATION` and keeps
+  `chapterV_XIV_compositionStatus=COMPOSITION_NOT_AUTHORIZED`.
+- `regionVisibility=null` and `sourceEffectActivation=null` remain explicit.
+  Chapter V effect activation is also independently blocked by the unchanged
+  S1B-R1 solar/lunar phase-mapping gaps. Region/effect, Gandhara inclusion,
+  downstream, market, and execution requests fail closed as typed JSON.
+- G1 remains 308 raw source occurrences; G2 remains 12 research footprints;
+  G2-R1A still admits one coordinate-bearing Taxila point. No coordinate,
+  geometry, UI, package, price/outcome, Fields, SBC, Auto Suggest, ML, MT5,
+  or execution work was added. `executionAllowed=false`.
+- Report: `docs/research/CGVO_G3_R1_SOURCE_COMPOSITION_ADJUDICATION.md`.
+
 ## Latest Update - 2026-08-22 (CGVO-G3-D1 Taxila Local-Visibility Audit)
 
 - Starting from accepted `CGVO-G2-R1A` commit
