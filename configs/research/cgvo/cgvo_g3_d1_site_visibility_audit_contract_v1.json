@@ -1,0 +1,44 @@
+{
+  "contract": "CGVO_HISTORICAL_SITE_LOCAL_VISIBILITY_AUDIT_D1_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G3-D1",
+  "endpoint": {
+    "method": "POST",
+    "path": "/api/experiments/cgvo/historical-gazetteer/site-visibility-audit",
+    "contentType": "application/json"
+  },
+  "request": {
+    "requiredFields": ["eventId", "eventType", "globalMaxSwissUt", "siteEvidenceId"],
+    "forbiddenResultScopes": ["REGION", "REGION_VISIBILITY", "SOURCE_EFFECT", "MARKET"],
+    "nearestEventFallbackAllowed": false
+  },
+  "visibilityStatuses": [
+    "VISIBLE_AT_RESEARCH_SITE",
+    "NOT_VISIBLE_AT_RESEARCH_SITE",
+    "RISE_SET_CLIPPED_AT_RESEARCH_SITE",
+    "UNKNOWN_LOCAL_CIRCUMSTANCES_ERROR"
+  ],
+  "typedErrors": [
+    "SITE_ANCHOR_NOT_COORDINATE_BEARING",
+    "SITE_ANCHOR_CONTESTED",
+    "SITE_ANCHOR_RIVER_CONTEXT_NOT_POINT",
+    "SOURCE_NAME_ONLY_NOT_ANCHOR",
+    "SITE_ANCHOR_NOT_FOUND",
+    "SITE_ANCHOR_NOT_AUTHORIZED",
+    "SITE_ANCHOR_COORDINATE_VALIDATION_FAILED",
+    "EVENT_IDENTITY_FIELDS_REQUIRED",
+    "EVENT_IDENTITY_NOT_CANONICAL",
+    "EVENT_CAUSAL_ID_MISMATCH",
+    "REGION_EXTRAPOLATION_PROHIBITED",
+    "DOWNSTREAM_GUARDRAIL_PROHIBITED"
+  ],
+  "guardrails": {
+    "regionExtrapolationAuthorized": false,
+    "chapterVEffectActivationAuthorized": false,
+    "chapterXivChapterVCompositionAuthorized": false,
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "marketUseAllowed": false,
+    "executionAllowed": false
+  }
+}

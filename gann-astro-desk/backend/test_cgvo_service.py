@@ -11,11 +11,13 @@ import cgvo_service
 
 from cgvo_service import (
     CgvoRequestError,
+    CgvoSiteVisibilityAuditError,
     build_cgvo_event_search,
     build_cgvo_historical_gazetteer,
     build_cgvo_historical_research_footprints,
     build_cgvo_kurma_seed,
     build_cgvo_local_circumstances,
+    build_cgvo_site_visibility_audit,
     build_cgvo_source_profiles,
     build_cgvo_status,
     build_cgvo_workbench,
@@ -275,6 +277,88 @@ class CgvoServiceTests(unittest.TestCase):
                 "causalEventId": "CGVO-SOLAR-NOT-THE-EVENT", "localityId": "UJJAIN", "label": "Ujjain",
                 "latitude": 23.1765, "longitude": 75.7885, "elevationM": 0, "timezone": "Asia/Kolkata",
             })
+
+    def test_g3_d1_taxila_site_visibility_audit_is_local_only_and_reuses_existing_circumstances(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        payload = {
+            "eventId": event["causalEventId"],
+            "eventType": event["astronomyEventIdentity"]["eventType"],
+            "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "siteEvidenceId": "G2R1_TAKSASILA_TAXILA_SITE_01",
+        }
+        with patch.object(cgvo_service, "_local_circumstances", wraps=cgvo_service._local_circumstances) as local_circumstances:
+            audit = build_cgvo_site_visibility_audit(PROJECT_ROOT, payload)
+        local_circumstances.assert_called_once()
+        self.assertEqual(audit["contract"], "CGVO_HISTORICAL_SITE_LOCAL_VISIBILITY_AUDIT_D1_V1")
+        self.assertEqual(audit["event"]["causalEventId"], event["causalEventId"])
+        self.assertEqual(audit["resultType"], "SITE_VISIBILITY_AT_RESEARCH_ANCHOR")
+        self.assertIn(audit["visibilityStatus"], {
+            "VISIBLE_AT_RESEARCH_SITE", "NOT_VISIBLE_AT_RESEARCH_SITE", "RISE_SET_CLIPPED_AT_RESEARCH_SITE",
+        })
+        self.assertEqual(audit["classificationRole"], "MODERN_ASTRONOMY_AT_EVIDENCE_BOUND_SITE")
+        self.assertEqual(audit["siteAnchor"]["label"], "Taxila research site anchor")
+        self.assertEqual(audit["siteAnchor"]["candidateCoverageStatus"], "PARTIAL_HISTORICAL_CONTEXT")
+        self.assertFalse(audit["siteAnchor"]["regionRepresentationAllowed"])
+        self.assertEqual(audit["locality"]["elevationM"], None)
+        self.assertEqual(audit["locality"]["elevationStatus"], "UNKNOWN_NOT_EVIDENCED")
+        self.assertEqual(audit["locality"]["calculationElevationM"], 0.0)
+        self.assertIsNone(audit["sourceEffectActivation"])
+        self.assertIsNone(audit["regionVisibility"])
+        self.assertFalse(audit["compositionPolicy"]["chapterXivChapterVCompositionAuthorized"])
+        for key in ("downstreamIntersectionAuthorized", "eclipseVisibilityMatching", "marketUseAllowed", "executionAllowed"):
+            self.assertFalse(audit["guardrails"][key])
+
+    def test_g3_d1_rejects_pending_contested_river_and_source_name_identifiers(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        common = {
+            "eventId": event["causalEventId"],
+            "eventType": event["astronomyEventIdentity"]["eventType"],
+            "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+        }
+        rejected = (
+            ("G2R1_MATHURAKA_MATHURA_SITE_01", "SITE_ANCHOR_NOT_COORDINATE_BEARING"),
+            ("G2R1_RAJAGRIHA_RAJGIR_SITE_01", "SITE_ANCHOR_NOT_COORDINATE_BEARING"),
+            ("G2R1_PATALIPUTRA_SITE_01", "SITE_ANCHOR_NOT_COORDINATE_BEARING"),
+            ("G2R1_PUSKALAVATI_CHARSADDA_SITE_01", "SITE_ANCHOR_NOT_COORDINATE_BEARING"),
+            ("G2_KAMBOJA_NORTHWEST_ALTERNATIVE_01", "SITE_ANCHOR_CONTESTED"),
+            ("G2_SINDHU_RIVER_SYSTEM_01", "SITE_ANCHOR_RIVER_CONTEXT_NOT_POINT"),
+            ("VARAHA_XIV_CENTER_BHADRA_01", "SOURCE_NAME_ONLY_NOT_ANCHOR"),
+            ("G2R1_UNKNOWN_SITE", "SITE_ANCHOR_NOT_FOUND"),
+        )
+        for identifier, code in rejected:
+            with self.subTest(identifier=identifier):
+                with self.assertRaises(CgvoSiteVisibilityAuditError) as context:
+                    build_cgvo_site_visibility_audit(PROJECT_ROOT, {**common, "siteEvidenceId": identifier})
+                self.assertEqual(context.exception.code, code)
+
+    def test_g3_d1_event_scope_and_coordinate_failures_are_typed_and_fail_closed(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        payload = {
+            "eventId": event["causalEventId"],
+            "eventType": event["astronomyEventIdentity"]["eventType"],
+            "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "siteEvidenceId": "G2R1_TAKSASILA_TAXILA_SITE_01",
+        }
+        cases = (
+            ({"eventId": "CGVO-SOLAR-WRONG"}, "EVENT_CAUSAL_ID_MISMATCH"),
+            ({"globalMaxSwissUt": "2027-08-03T10:06:41Z"}, "EVENT_IDENTITY_NOT_CANONICAL"),
+            ({"resultScope": "REGION"}, "REGION_EXTRAPOLATION_PROHIBITED"),
+            ({"downstreamIntersectionAuthorized": True}, "DOWNSTREAM_GUARDRAIL_PROHIBITED"),
+            ({"marketUseAllowed": True}, "DOWNSTREAM_GUARDRAIL_PROHIBITED"),
+            ({"executionAllowed": True}, "DOWNSTREAM_GUARDRAIL_PROHIBITED"),
+        )
+        for mutation, code in cases:
+            with self.subTest(code=code):
+                with self.assertRaises(CgvoSiteVisibilityAuditError) as context:
+                    build_cgvo_site_visibility_audit(PROJECT_ROOT, {**payload, **mutation})
+                self.assertEqual(context.exception.code, code)
+        with self.assertRaises(CgvoSiteVisibilityAuditError) as missing_context:
+            build_cgvo_site_visibility_audit(PROJECT_ROOT, {"siteEvidenceId": payload["siteEvidenceId"]})
+        self.assertEqual(missing_context.exception.code, "EVENT_IDENTITY_FIELDS_REQUIRED")
+        with patch.object(cgvo_service, "build_cgvo_historical_research_footprints", side_effect=RuntimeError("coordinate mismatch")):
+            with self.assertRaises(CgvoSiteVisibilityAuditError) as coordinate_context:
+                build_cgvo_site_visibility_audit(PROJECT_ROOT, payload)
+        self.assertEqual(coordinate_context.exception.code, "SITE_ANCHOR_COORDINATE_VALIDATION_FAILED")
 
     def test_kurma_seed_keeps_raw_chapter_xiv_names_without_modern_mapping(self) -> None:
         seed = build_cgvo_kurma_seed(PROJECT_ROOT)

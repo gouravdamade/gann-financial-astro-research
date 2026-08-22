@@ -93,11 +93,13 @@ from synchronized_range_service import build_synchronized_independent_range
 from fx_side_pilot_service import build_fx_side_pilot_status
 from cgvo_service import (
     CgvoRequestError,
+    CgvoSiteVisibilityAuditError,
     build_cgvo_event_search,
     build_cgvo_historical_research_footprints,
     build_cgvo_kurma_seed,
     build_cgvo_historical_gazetteer,
     build_cgvo_local_circumstances,
+    build_cgvo_site_visibility_audit,
     build_cgvo_source_profiles,
     build_cgvo_status,
     build_cgvo_workbench,
@@ -550,6 +552,21 @@ def get_cgvo_historical_research_footprints() -> Any:
         return jsonify({"ok": True, "footprints": footprints})
     except (TypeError, ValueError, RuntimeError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.post("/api/experiments/cgvo/historical-gazetteer/site-visibility-audit")
+def post_cgvo_site_visibility_audit() -> Any:
+    try:
+        payload = request.get_json(silent=True)
+        if not isinstance(payload, dict):
+            payload = {}
+        return jsonify({"ok": True, "audit": build_cgvo_site_visibility_audit(repository.paths.project_root, payload)})
+    except CgvoSiteVisibilityAuditError as exc:
+        return jsonify({"ok": False, "error": {"code": exc.code, "message": str(exc)}}), 400
+    except CgvoRequestError as exc:
+        return jsonify({"ok": False, "error": {"code": "INVALID_CGVO_REQUEST", "message": str(exc)}}), 400
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": {"code": "SITE_VISIBILITY_AUDIT_INTERNAL_ERROR", "message": str(exc)}}), 500
 
 
 @app.get("/api/experiments/cgvo/eclipse-search")

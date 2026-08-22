@@ -1,0 +1,60 @@
+{
+  "contract": "CGVO_G3_D1_SITE_VISIBILITY_COMPOSITION_POLICY_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G3-D1",
+  "startingBaseline": "03a8c1c8562c8c17c89cff55ecb36ac4bad78b04",
+  "implementationDecision": "READ_ONLY_TAXILA_ONLY_AUDIT_ROUTE",
+  "terminology": {
+    "approvedResult": "SITE_VISIBILITY_AT_RESEARCH_ANCHOR",
+    "approvedClassificationRole": "MODERN_ASTRONOMY_AT_EVIDENCE_BOUND_SITE",
+    "forbiddenTerms": [
+      "REGION_VISIBILITY",
+      "SOURCE_EFFECT",
+      "GEOGRAPHIC_IMPACT",
+      "MARKET_SIGNAL",
+      "VISIBLE_IN_GANDHARA",
+      "AFFECTED_AREA"
+    ]
+  },
+  "eventInput": {
+    "policy": "EXPLICIT_EVENT_ID_AND_RECONSTRUCTIBLE_SWISS_UT_IDENTITY_ONLY",
+    "requiredFields": ["eventId", "eventType", "globalMaxSwissUt"],
+    "nearestEventFallbackAllowed": false,
+    "rangeSearchAllowed": false,
+    "marketDateSelectionAllowed": false
+  },
+  "siteAnchorEligibility": {
+    "loadThrough": "build_cgvo_historical_research_footprints",
+    "allowedSiteEvidenceIds": ["G2R1_TAKSASILA_TAXILA_SITE_01"],
+    "requiredGeometryStatuses": ["RESEARCH_ANCHOR_POINT", "RESEARCH_MULTI_ANCHOR"],
+    "requiredGeometryRole": "RESEARCH_GEOMETRY_ONLY",
+    "requiredCoverageStatuses": ["PARTIAL_HISTORICAL_CONTEXT", "FULL_SITE_IDENTITY_ONLY"],
+    "coordinateBindingRevalidationRequired": true,
+    "elevationPolicy": "UNKNOWN_NOT_EVIDENCED_ENGINEERING_ZERO_METRE_CALCULATION_ONLY"
+  },
+  "sourceComposition": {
+    "chapterXivGeographyRole": "SOURCE_LAYER_CONTEXT_ONLY",
+    "chapterVEffectActivation": null,
+    "chapterXivChapterVCompositionAuthorized": false,
+    "regionExtrapolationAuthorized": false,
+    "regionVisibility": null,
+    "sourceEffectActivation": null
+  },
+  "guardrails": {
+    "readOnly": true,
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "spatialIntersectionAuthorized": false,
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketUseAllowed": false,
+    "marketDirectionInferred": false,
+    "scoreAggregationUsed": false,
+    "fieldsPath": false,
+    "sbcPath": false,
+    "autoSuggestPath": false,
+    "mlPath": false,
+    "mt5Path": false,
+    "executionAllowed": false
+  }
+}

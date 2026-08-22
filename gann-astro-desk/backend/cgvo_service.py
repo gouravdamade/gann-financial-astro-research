@@ -43,6 +43,9 @@ GEOGRAPHY_G2_POLICY_FIXTURE = CGVO_ROOT / "cgvo_historical_geography_geometry_po
 KURMA_G2_FOOTPRINTS_FIXTURE = CGVO_ROOT / "kurma_research_footprints_g2_v1.json"
 CGVO_G2_R1_SITE_EVIDENCE_FIXTURE = CGVO_ROOT / "cgvo_g2_r1_historical_site_coordinate_evidence_v1.json"
 CGVO_G2_READINESS_FIXTURE = CGVO_ROOT / "cgvo_g2_readiness_matrix_v1.json"
+CGVO_G3_D1_COMPOSITION_POLICY_FIXTURE = CGVO_ROOT / "cgvo_g3_d1_site_visibility_composition_policy_v1.json"
+CGVO_G3_D1_READINESS_FIXTURE = CGVO_ROOT / "cgvo_g3_d1_readiness_matrix_v1.json"
+CGVO_G3_D1_AUDIT_CONTRACT_FIXTURE = CGVO_ROOT / "cgvo_g3_d1_site_visibility_audit_contract_v1.json"
 VARAHAMIHIRA_FIXTURE = CGVO_ROOT / "varahamihira_eclipse_source_profile_v1.json"
 TRAILOKYA_FIXTURE = CGVO_ROOT / "trailokya_geography_argha_context_v1.json"
 VARAHAMIHIRA_FRAME_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml"
@@ -120,6 +123,14 @@ _LUNAR_MONTH_BY_FULL_MOON_NAKSHATRA = {
 
 class CgvoRequestError(ValueError):
     """An invalid read-only CGVO request."""
+
+
+class CgvoSiteVisibilityAuditError(CgvoRequestError):
+    """A typed, expected policy failure for the G3-D1 audit endpoint."""
+
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
 
 
 def _parse_utc(value: Any, field: str) -> datetime:
@@ -1071,14 +1082,16 @@ def _s1b_source_status(project_root: Path) -> dict[str, Any]:
 
 
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
+    g3_readiness = _load_json(project_root, CGVO_G3_D1_READINESS_FIXTURE)
     return {
         "contract": CGVO_CONTRACT,
         "schemaVersion": 6,
-        "milestone": "CGVO-G2-R1A",
+        "milestone": "CGVO-G3-D1",
         "milestones": {
-            "current": "CGVO-G2-R1A",
+            "current": "CGVO-G3-D1",
             "astronomy": "CGVO-S1B-R1",
             "geography": "CGVO-G2-R1A",
+            "siteVisibility": "CGVO-G3-D1",
         },
         "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
@@ -1090,6 +1103,13 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
         },
         "sourceAdapters": _s1a_source_status(project_root),
         "s1bSourceAudit": _s1b_source_status(project_root),
+        "siteVisibilityAdapter": {
+            "status": "READ_ONLY_TAXILA_AUDIT_ONLY",
+            "readOnlyPrototypeImplemented": g3_readiness["readOnlyPrototypeImplemented"],
+            "eligibleAnchorIds": g3_readiness["eligibleAnchorIds"],
+            "regionExtrapolationAuthorized": g3_readiness["regionExtrapolationAuthorized"],
+            "chapterVEffectActivationAuthorized": g3_readiness["chapterVEffectActivationAuthorized"],
+        },
     }
 
 
@@ -1556,6 +1576,274 @@ def build_cgvo_historical_research_footprints(project_root: Path) -> dict[str, A
             **policy["guardrails"],
             "researchGeometryOnly": True,
         },
+    }
+
+
+def _g3_d1_policy(project_root: Path) -> dict[str, Any]:
+    policy = _load_json(project_root, CGVO_G3_D1_COMPOSITION_POLICY_FIXTURE)
+    if policy.get("contract") != "CGVO_G3_D1_SITE_VISIBILITY_COMPOSITION_POLICY_V1":
+        raise RuntimeError("CGVO G3-D1 composition policy has an invalid contract")
+    if policy.get("implementationDecision") != "READ_ONLY_TAXILA_ONLY_AUDIT_ROUTE":
+        raise RuntimeError("CGVO G3-D1 may only expose the approved read-only Taxila audit route")
+    required_false = (
+        "downstreamIntersectionAuthorized", "eclipseVisibilityMatching", "spatialIntersectionAuthorized",
+        "priceDataRead", "priceOutcomeRead", "marketUseAllowed", "marketDirectionInferred",
+        "scoreAggregationUsed", "fieldsPath", "sbcPath", "autoSuggestPath", "mlPath", "mt5Path",
+        "executionAllowed",
+    )
+    if any(policy.get("guardrails", {}).get(key) for key in required_false):
+        raise RuntimeError("CGVO G3-D1 composition policy has an active downstream guardrail")
+    composition = policy.get("sourceComposition", {})
+    if any(composition.get(key) for key in ("chapterXivChapterVCompositionAuthorized", "regionExtrapolationAuthorized")):
+        raise RuntimeError("CGVO G3-D1 source composition may not activate a region or Chapter V effect")
+    return policy
+
+
+def _g3_d1_reject_requested_scope(payload: Mapping[str, Any]) -> None:
+    forbidden_scope_values = {"REGION", "REGION_VISIBILITY", "SOURCE_EFFECT", "MARKET"}
+    requested_scope = str(payload.get("resultScope") or "").strip().upper()
+    if requested_scope in forbidden_scope_values or any(
+        bool(payload.get(key))
+        for key in ("regionVisibility", "includeRegion", "sourceEffectActivation", "spatialIntersection")
+    ):
+        raise CgvoSiteVisibilityAuditError(
+            "REGION_EXTRAPOLATION_PROHIBITED",
+            "CGVO G3-D1 only supports visibility at an evidence-bound research site, never a region or source effect",
+        )
+    if any(bool(payload.get(key)) for key in ("downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed")):
+        raise CgvoSiteVisibilityAuditError(
+            "DOWNSTREAM_GUARDRAIL_PROHIBITED",
+            "CGVO G3-D1 does not permit downstream intersection, market use, or execution",
+        )
+
+
+def _g3_d1_reject_non_anchor_identifier(
+    project_root: Path,
+    requested_identifier: str,
+    footprints: Mapping[str, Any],
+) -> None:
+    for footprint in footprints["footprints"]:
+        if requested_identifier != footprint.get("footprintId"):
+            continue
+        if footprint.get("geometryPrimitive") == "RIVER_SYSTEM_CONTEXT":
+            raise CgvoSiteVisibilityAuditError(
+                "SITE_ANCHOR_RIVER_CONTEXT_NOT_POINT",
+                "The requested Sindhu context is a river system, not a coordinate-bearing research site anchor",
+            )
+        if footprint.get("geometryStatus") == "CONTESTED_RESEARCH_GEOMETRIES":
+            raise CgvoSiteVisibilityAuditError(
+                "SITE_ANCHOR_CONTESTED",
+                "The requested Kamboja candidate is contested and has no coordinate-bearing research site anchor",
+            )
+        raise CgvoSiteVisibilityAuditError(
+            "SITE_ANCHOR_NOT_COORDINATE_BEARING",
+            "The requested historical footprint is not an eligible coordinate-bearing research site anchor",
+        )
+    gazetteer = build_cgvo_historical_gazetteer(project_root)
+    if any(requested_identifier == record.get("regionId") for record in gazetteer["records"]):
+        raise CgvoSiteVisibilityAuditError(
+            "SOURCE_NAME_ONLY_NOT_ANCHOR",
+            "A Chapter XIV source occurrence is not itself a coordinate-bearing research site anchor",
+        )
+    raise CgvoSiteVisibilityAuditError(
+        "SITE_ANCHOR_NOT_FOUND",
+        "siteEvidenceId does not identify a known CGVO G2 research site anchor",
+    )
+
+
+def _g3_d1_resolve_site_anchor(project_root: Path, site_evidence_id: str, policy: Mapping[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+    try:
+        footprints = build_cgvo_historical_research_footprints(project_root)
+    except RuntimeError as exc:
+        raise CgvoSiteVisibilityAuditError(
+            "SITE_ANCHOR_COORDINATE_VALIDATION_FAILED",
+            "The G2-R1A research-anchor coordinate contract did not validate",
+        ) from exc
+    evidence_index = {
+        item.get("siteEvidenceId"): item
+        for item in footprints["siteEvidence"].get("siteEvidence", [])
+        if isinstance(item, Mapping)
+    }
+    evidence = evidence_index.get(site_evidence_id)
+    if evidence is None:
+        _g3_d1_reject_non_anchor_identifier(project_root, site_evidence_id, footprints)
+    geometry_anchor = next(
+        (
+            footprint for footprint in footprints["footprints"]
+            if isinstance(footprint.get("geometryData"), Mapping)
+            and footprint["geometryData"].get("siteEvidenceId") == site_evidence_id
+        ),
+        None,
+    )
+    if geometry_anchor is None:
+        raise CgvoSiteVisibilityAuditError(
+            "SITE_ANCHOR_NOT_COORDINATE_BEARING",
+            "This historical-site evidence remains pending, conflicted, or otherwise non-coordinate-bearing",
+        )
+    allowed_ids = set(policy["siteAnchorEligibility"]["allowedSiteEvidenceIds"])
+    if site_evidence_id not in allowed_ids:
+        raise CgvoSiteVisibilityAuditError(
+            "SITE_ANCHOR_NOT_AUTHORIZED",
+            "This coordinate-bearing site is not authorized for the CGVO G3-D1 audit allowlist",
+        )
+    if geometry_anchor.get("geometryStatus") not in set(policy["siteAnchorEligibility"]["requiredGeometryStatuses"]):
+        raise CgvoSiteVisibilityAuditError("SITE_ANCHOR_NOT_COORDINATE_BEARING", "The requested footprint is not an authorized point anchor")
+    if geometry_anchor.get("geometryRole") != policy["siteAnchorEligibility"]["requiredGeometryRole"]:
+        raise CgvoSiteVisibilityAuditError("SITE_ANCHOR_NOT_AUTHORIZED", "The requested footprint does not retain the required research-only role")
+    if geometry_anchor.get("candidateCoverageStatus") not in set(policy["siteAnchorEligibility"]["requiredCoverageStatuses"]):
+        raise CgvoSiteVisibilityAuditError("SITE_ANCHOR_NOT_AUTHORIZED", "The requested footprint does not declare an allowed historical-context coverage state")
+    if any(geometry_anchor.get(key) for key in ("downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed")):
+        raise CgvoSiteVisibilityAuditError("SITE_ANCHOR_NOT_AUTHORIZED", "The requested footprint has an active downstream guardrail")
+    geometry = geometry_anchor["geometryData"]
+    if not evidence.get("researchAnchorEligible") or geometry.get("regionRepresentationAllowed") is not False:
+        raise CgvoSiteVisibilityAuditError("SITE_ANCHOR_NOT_AUTHORIZED", "The requested site does not satisfy the G2-R1A research-anchor limits")
+    _validate_point_anchor_matches_site_evidence(geometry_anchor, evidence)
+    _validate_g2_point_coordinate(geometry, site_evidence_id)
+    return dict(geometry_anchor), dict(evidence)
+
+
+def _g3_d1_resolve_canonical_event(
+    project_root: Path,
+    payload: Mapping[str, Any],
+) -> tuple[str, datetime, int, tuple[float, ...], dict[str, Any]]:
+    event_id = str(payload.get("eventId") or payload.get("causalEventId") or "").strip()
+    event_type = str(payload.get("eventType") or "").upper()
+    identity_value = payload.get("globalMaxSwissUt") or payload.get("globalMaxUtc")
+    if not event_id or event_type not in {"SOLAR", "LUNAR"} or not identity_value:
+        raise CgvoSiteVisibilityAuditError(
+            "EVENT_IDENTITY_FIELDS_REQUIRED",
+            "eventId, eventType, and globalMaxSwissUt are required for the G3-D1 site-visibility audit",
+        )
+    try:
+        global_max = _parse_utc(identity_value, "globalMaxSwissUt")
+    except CgvoRequestError as exc:
+        raise CgvoSiteVisibilityAuditError("EVENT_IDENTITY_NOT_CANONICAL", str(exc)) from exc
+    flags, times = _next_global_event(event_type, global_max - timedelta(minutes=1))
+    resolved_max = _from_jd(times[0])
+    if resolved_max is None or abs((resolved_max - global_max).total_seconds()) > 3600:
+        raise CgvoSiteVisibilityAuditError(
+            "EVENT_IDENTITY_NOT_CANONICAL",
+            "globalMaxSwissUt does not resolve to the requested canonical CGVO eclipse event",
+        )
+    event = _build_event(project_root, event_type, int(flags), times)
+    if event["astronomyEventIdentity"]["globalMaxSwissUt"] != _iso(global_max):
+        raise CgvoSiteVisibilityAuditError(
+            "EVENT_IDENTITY_NOT_CANONICAL",
+            "globalMaxSwissUt does not exactly match the reconstructed Swiss Ephemeris event identity",
+        )
+    if event_id != event["causalEventId"]:
+        raise CgvoSiteVisibilityAuditError(
+            "EVENT_CAUSAL_ID_MISMATCH",
+            "eventId does not match the reconstructed Swiss Ephemeris causal event identity",
+        )
+    return event_type, global_max, int(flags), times, event
+
+
+def _g3_d1_visibility_status(local_circumstances: Mapping[str, Any] | None) -> str:
+    if local_circumstances is None:
+        return "UNKNOWN_LOCAL_CIRCUMSTANCES_ERROR"
+    return {
+        "VISIBLE": "VISIBLE_AT_RESEARCH_SITE",
+        "NOT_VISIBLE": "NOT_VISIBLE_AT_RESEARCH_SITE",
+        "RISE_SET_CLIPPED": "RISE_SET_CLIPPED_AT_RESEARCH_SITE",
+    }.get(str(local_circumstances.get("visibility")), "UNKNOWN_LOCAL_CIRCUMSTANCES_ERROR")
+
+
+def build_cgvo_site_visibility_audit(project_root: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Calculate one modern local eclipse audit at the Taxila research point.
+
+    This is deliberately not a region, source-effect, spatial, market, or
+    execution service. The existing P1R1 local-circumstances engine remains
+    the single astronomical calculator.
+    """
+    policy = _g3_d1_policy(project_root)
+    _g3_d1_reject_requested_scope(payload)
+    site_evidence_id = str(payload.get("siteEvidenceId") or "").strip()
+    if not site_evidence_id:
+        raise CgvoSiteVisibilityAuditError("SITE_ANCHOR_NOT_FOUND", "siteEvidenceId is required for the G3-D1 audit")
+    anchor, evidence = _g3_d1_resolve_site_anchor(project_root, site_evidence_id, policy)
+    event_type, global_max, _flags, _times, event = _g3_d1_resolve_canonical_event(project_root, payload)
+    geometry = anchor["geometryData"]
+    calculation_locality = {
+        "localityId": str(geometry["anchorId"]),
+        "label": "Taxila research site anchor",
+        "latitude": geometry["latitude"],
+        "longitude": geometry["longitude"],
+        # Swiss Ephemeris requires a numerical height. Zero is an explicit
+        # engineering calculation default, not a claimed Taxila elevation.
+        "elevationM": 0.0,
+        "timezone": "UTC",
+        "elevationProvenance": "ENGINEERING_ZERO_METRES_NOT_SOURCE_EVIDENCE",
+    }
+    local_circumstances: dict[str, Any] | None
+    local_error: str | None = None
+    try:
+        local_circumstances = _local_circumstances(project_root, event_type, global_max, calculation_locality)
+    except (RuntimeError, ValueError) as exc:
+        local_circumstances = None
+        local_error = str(exc)
+    audit_contract = _load_json(project_root, CGVO_G3_D1_AUDIT_CONTRACT_FIXTURE)
+    return {
+        "contract": audit_contract["contract"],
+        "schemaVersion": audit_contract["schemaVersion"],
+        "milestone": "CGVO-G3-D1",
+        "event": {
+            "causalEventId": event["causalEventId"],
+            "eventType": event["astronomyEventIdentity"]["eventType"],
+            "globalType": event["astronomyEventIdentity"]["globalType"],
+            "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "globalMaxUtcDisplay": event["astronomyEventIdentity"]["globalMaxUtcDisplay"],
+            "astronomyContract": event["astronomyEventIdentity"]["astronomyContract"],
+            "sourceIdentity": "CANONICAL_CGVO_SWISS_EPHEMERIS_EVENT",
+        },
+        "siteAnchor": {
+            "siteEvidenceId": site_evidence_id,
+            "footprintId": anchor["footprintId"],
+            "candidateName": anchor["normalizedName"],
+            "label": "Taxila research site anchor",
+            "historicalSiteName": evidence["historicalSiteName"],
+            "candidateCoverageStatus": anchor["candidateCoverageStatus"],
+            "regionRepresentationAllowed": False,
+            "coordinateProvenance": {field: geometry[field] for field in COORDINATE_EVIDENCE_BOUND_FIELDS},
+            "partialContextWarning": "Taxila is a research site anchor with partial historical context; it does not represent Gandhara.",
+        },
+        "locality": {
+            "label": "Taxila research site anchor",
+            "latitude": geometry["latitude"],
+            "longitude": geometry["longitude"],
+            "coordinateReferenceSystem": geometry["coordinateReferenceSystem"],
+            "axisOrder": geometry["axisOrder"],
+            "elevationM": None,
+            "elevationStatus": "UNKNOWN_NOT_EVIDENCED",
+            "calculationElevationM": 0.0,
+            "calculationElevationRole": "ENGINEERING_ZERO_METRE_DEFAULT_NOT_SOURCE_EVIDENCE",
+            "timezone": "UTC",
+            "timezoneRole": "UTC_OUTPUT_ONLY",
+        },
+        "resultType": policy["terminology"]["approvedResult"],
+        "visibilityStatus": _g3_d1_visibility_status(local_circumstances),
+        "classificationRole": "MODERN_ASTRONOMY_AT_EVIDENCE_BOUND_SITE",
+        "localCircumstances": local_circumstances,
+        "localCircumstancesError": local_error,
+        "sourceEffectActivation": None,
+        "regionVisibility": None,
+        "compositionPolicy": {
+            "chapterXivGeographyRole": policy["sourceComposition"]["chapterXivGeographyRole"],
+            "chapterVEffectActivation": None,
+            "chapterXivChapterVCompositionAuthorized": False,
+            "regionExtrapolationAuthorized": False,
+        },
+        "guardrails": {
+            **policy["guardrails"],
+            "regionExtrapolationAuthorized": False,
+            "chapterVEffectActivationAuthorized": False,
+            "chapterXivChapterVCompositionAuthorized": False,
+        },
+        "limitations": [
+            "Taxila is an evidence-bound research point, not a Gandhara boundary, centroid, or footprint.",
+            "A local visibility result does not activate a Varahamihira Chapter V eclipse effect.",
+            "No spatial intersection, market path, score, polarity, or execution path is authorized.",
+        ],
     }
 
 

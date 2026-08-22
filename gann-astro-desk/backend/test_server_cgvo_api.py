@@ -25,9 +25,9 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
-        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G2-R1A")
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G3-D1")
         self.assertEqual(status.get_json()["status"]["milestones"], {
-            "current": "CGVO-G2-R1A", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1A",
+            "current": "CGVO-G3-D1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1A", "siteVisibility": "CGVO-G3-D1",
         })
         self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(
@@ -130,6 +130,48 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertFalse(footprints["guardrails"]["downstreamIntersectionAuthorized"])
         self.assertFalse(footprints["guardrails"]["marketUseAllowed"])
         self.assertFalse(footprints["guardrails"]["executionAllowed"])
+
+    def test_g3_d1_site_visibility_audit_is_json_only_and_fail_closed(self) -> None:
+        search = self.client.get(
+            "/api/experiments/cgvo/eclipse-search?eventType=SOLAR&startUtc=2027-01-01T00:00:00Z&endUtc=2028-01-01T00:00:00Z&limit=24",
+            headers=self.headers,
+        ).get_json()["search"]
+        event = next(item for item in search["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        payload = {
+            "eventId": event["causalEventId"],
+            "eventType": event["astronomyEventIdentity"]["eventType"],
+            "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "siteEvidenceId": "G2R1_TAKSASILA_TAXILA_SITE_01",
+        }
+        response = self.client.post(
+            "/api/experiments/cgvo/historical-gazetteer/site-visibility-audit",
+            json=payload,
+            headers=self.headers,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.content_type.startswith("application/json"))
+        self.assertNotIn("<!doctype", response.get_data(as_text=True).lower())
+        audit = response.get_json()["audit"]
+        self.assertEqual(audit["event"]["causalEventId"], event["causalEventId"])
+        self.assertEqual(audit["siteAnchor"]["label"], "Taxila research site anchor")
+        self.assertIsNone(audit["sourceEffectActivation"])
+        self.assertIsNone(audit["regionVisibility"])
+        self.assertFalse(audit["guardrails"]["executionAllowed"])
+        for rejected_payload, code in (
+            ({**payload, "siteEvidenceId": "G2R1_MATHURAKA_MATHURA_SITE_01"}, "SITE_ANCHOR_NOT_COORDINATE_BEARING"),
+            ({**payload, "eventId": "CGVO-SOLAR-WRONG"}, "EVENT_CAUSAL_ID_MISMATCH"),
+            ({**payload, "resultScope": "REGION"}, "REGION_EXTRAPOLATION_PROHIBITED"),
+        ):
+            with self.subTest(code=code):
+                rejected = self.client.post(
+                    "/api/experiments/cgvo/historical-gazetteer/site-visibility-audit",
+                    json=rejected_payload,
+                    headers=self.headers,
+                )
+                self.assertEqual(rejected.status_code, 400)
+                self.assertTrue(rejected.content_type.startswith("application/json"))
+                self.assertNotIn("<!doctype", rejected.get_data(as_text=True).lower())
+                self.assertEqual(rejected.get_json()["error"]["code"], code)
 
 
 if __name__ == "__main__":

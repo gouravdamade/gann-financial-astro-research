@@ -137,9 +137,10 @@ class CgvoS1bSourceAuditTests(unittest.TestCase):
         self.assertFalse(adjudication["adjudication"]["sourceCertifiedClassifier"])
         self.assertFalse(adjudication["adjudication"]["downstreamUseAllowed"])
         status = build_cgvo_status(PROJECT_ROOT)
-        self.assertEqual(status["milestone"], "CGVO-G2-R1A")
+        self.assertEqual(status["milestone"], "CGVO-G3-D1")
         self.assertEqual(status["milestones"]["astronomy"], "CGVO-S1B-R1")
         self.assertEqual(status["milestones"]["geography"], "CGVO-G2-R1A")
+        self.assertEqual(status["milestones"]["siteVisibility"], "CGVO-G3-D1")
         self.assertFalse(status["guardrails"]["executionAllowed"])
         self.assertFalse(status["s1bSourceAudit"]["firmamentAdjudication"]["sourceCertifiedClassifier"])
 

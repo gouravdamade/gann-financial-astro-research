@@ -1,0 +1,21 @@
+{
+  "contract": "CGVO_G3_D1_READINESS_MATRIX_V1",
+  "schemaVersion": 1,
+  "currentMilestone": "CGVO-G3-D1",
+  "startingBaseline": "03a8c1c8562c8c17c89cff55ecb36ac4bad78b04",
+  "siteAnchorEligibilityPolicyReady": true,
+  "sourceCompositionPolicyReady": true,
+  "localVisibilityAdapterDesigned": true,
+  "readOnlyPrototypeImplemented": true,
+  "eligibleCoordinateBearingAnchors": 1,
+  "eligibleAnchorIds": ["G2R1_TAKSASILA_TAXILA_SITE_01"],
+  "regionExtrapolationAuthorized": false,
+  "chapterVEffectActivationAuthorized": false,
+  "chapterXivChapterVCompositionAuthorized": false,
+  "spatialIntersectionAuthorized": false,
+  "eclipseVisibilityFootprintComparisonReady": false,
+  "marketExperimentReady": false,
+  "executionAllowed": false,
+  "centralReviewRequired": true,
+  "nextRecommendedMilestone": "CGVO-G3-R1_OR_CGVO-G3-D1-R1_AFTER_CENTRAL_REVIEW"
+}

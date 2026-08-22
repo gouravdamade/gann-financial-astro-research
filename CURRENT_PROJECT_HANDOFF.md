@@ -4,6 +4,27 @@ Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-22 (CGVO-G3-D1 Taxila Local-Visibility Audit)
+
+- Starting from accepted `CGVO-G2-R1A` commit
+  `03a8c1c8562c8c17c89cff55ecb36ac4bad78b04`, added a narrow, read-only,
+  JSON-only historical-site local-visibility audit endpoint. It accepts only a
+  reconstructed canonical CGVO event identity plus the G2-R1A Taxila evidence
+  ID, then reuses the existing topocentric local-circumstances engine.
+- The result is explicitly `SITE_VISIBILITY_AT_RESEARCH_ANCHOR` for the
+  **Taxila research site anchor**. Taxila remains partial historical context
+  only, not Gandhara, a regional visibility result, an eclipse-effect
+  activation, or a spatial match. Chapter XIV geography and Chapter V eclipse
+  effects remain uncomposed and `null`.
+- Pending/contested/non-point candidates, source-name-only records, unknown
+  site IDs, invalid canonical events, region requests, and any downstream
+  request fail closed as typed JSON errors. G2-R1A coordinate binding and raw
+  DMS normalization are revalidated before each audit.
+- No source acquisition, UI, Windows package, geometry, GIS, price/outcome,
+  market, Fields, SBC, Auto Suggest, ML, MT5, or execution change was made;
+  `executionAllowed=false`. Design report:
+  `docs/research/CGVO_G3_D1_HISTORICAL_SITE_LOCAL_VISIBILITY_ADAPTER_DESIGN.md`.
+
 ## Latest Update - 2026-08-22 (CGVO-G2-R1A Coordinate Integrity Hardening)
 
 - Hardened the accepted G2-R1 Taxila anchor without changing the historical
