@@ -1,17 +1,20 @@
 {
   "contract": "CGVO_HISTORICAL_GEOGRAPHY_GAZETTEER_V1",
+  "schemaVersion": 2,
   "milestone": "CGVO-G1",
+  "startingMaster": "34659956d1de1ed44e307d0788938e67ac23f7bf",
   "sourceProfileId": "VARAHAMIHIRA_KURMAVIBHAGA_XIV",
   "sourceWork": "Brihat Samhita, Chapter XIV / Kurmavibhaga",
   "seedContract": "VARAHAMIHIRA_KURMA_REGION_SEED_V1",
   "recordConstruction": "Each raw historical name in the immutable Chapter XIV seed becomes one source record at read time. Candidate overlays add evidence only; they never replace source transliterations.",
-  "allowedSourceCategories": ["REGION", "PEOPLE", "RIVER", "MOUNTAIN", "CITY", "ISLAND", "FOREST", "UNKNOWN"],
+  "rawSourceCategoryPolicy": "Root-source category is UNKNOWN unless the controlling Chapter XIV witness itself explicitly establishes it. Candidate overlays cannot populate rawSourceCategory.",
+  "allowedCandidateEntityTypes": ["HISTORICAL_REGION", "PEOPLE_OR_URBAN_ASSOCIATION", "RIVER_SYSTEM_CONTEXT", "UNKNOWN"],
   "allowedMappingStatuses": ["SOURCE_NAME_ONLY", "CANDIDATE_IDENTIFIED", "HIGH_CONFIDENCE_CANDIDATE", "MEDIUM_CONFIDENCE_CANDIDATE", "LOW_CONFIDENCE_CANDIDATE", "CONTESTED_CANDIDATES", "APPROXIMATE_REGION_ONLY", "UNMAPPED", "SOURCE_AMBIGUOUS"],
   "defaultForbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT", "PRICE_OR_OUTCOME_READ", "FIELDS_SBC_ROUTING", "AUTO_SUGGEST", "ML", "MT5", "EXECUTION"],
   "candidateOverlays": {
     "MAGADHA": {
       "variantSpellings": ["Magadha"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "MAGADHA_SOUTH_BIHAR_CANDIDATE_01",
@@ -29,7 +32,7 @@
     },
     "MITHILA": {
       "variantSpellings": ["Mithila", "Videha/Mithila context"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "MEDIUM_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "MITHILA_NORTH_BIHAR_TERAI_CANDIDATE_01",
@@ -47,7 +50,7 @@
     },
     "KALINGA": {
       "variantSpellings": ["Kalinga", "Kaliṅga"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "MEDIUM_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "KALINGA_EAST_COAST_CANDIDATE_01",
@@ -65,7 +68,7 @@
     },
     "SAURASTRA": {
       "variantSpellings": ["Saurashtra", "Saurāṣṭra", "Kathiawar context"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "SAURASHTRA_KATHIAWAR_CANDIDATE_01",
@@ -83,7 +86,7 @@
     },
     "GANDHARA": {
       "variantSpellings": ["Gandhara", "Gāndhāra"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "GANDHARA_NORTHWEST_CANDIDATE_01",
@@ -101,7 +104,7 @@
     },
     "KAMBOJA": {
       "variantSpellings": ["Kamboja", "Kāmboja"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "CONTESTED_CANDIDATES",
       "candidateMappings": [{
         "candidateId": "KAMBOJA_NORTHWEST_FRONTIER_CANDIDATE_01",
@@ -131,7 +134,7 @@
     },
     "KASMIRA": {
       "variantSpellings": ["Kashmira", "Kāśmīra", "Kashmir"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "MEDIUM_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "KASHMIRA_VALLEY_CANDIDATE_01",
@@ -149,7 +152,7 @@
     },
     "KURU": {
       "variantSpellings": ["Kuru", "Kurū"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "KURU_UPPER_YAMUNA_CANDIDATE_01",
@@ -167,7 +170,7 @@
     },
     "PANCALA": {
       "variantSpellings": ["Panchala", "Pāñcāla"],
-      "sourceCategory": "REGION",
+      "candidateEntityType": "HISTORICAL_REGION",
       "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "PANCALA_UPPER_GANGES_CANDIDATE_01",
@@ -185,25 +188,25 @@
     },
     "MATHURAKA": {
       "variantSpellings": ["Mathuraka", "Māthuraka", "Mathura"],
-      "sourceCategory": "CITY",
+      "candidateEntityType": "PEOPLE_OR_URBAN_ASSOCIATION",
       "mappingStatus": "HIGH_CONFIDENCE_CANDIDATE",
       "candidateMappings": [{
         "candidateId": "MATHURAKA_MATHURA_CANDIDATE_01",
-        "proposedModernIdentity": "Mathura historical urban centre",
+        "proposedModernIdentity": "Mathura-associated historical entity",
         "modernAdminLabels": ["Uttar Pradesh, India"],
         "geometryType": "POINT",
         "geometry": null,
         "geometryStatus": "NOT_AUTHORIZED",
         "temporalApplicability": {"historicalPeriod": "early historic; urban site continuity discussed in historical scholarship", "uncertainty": "MEDIUM"},
-        "evidenceItems": [{"evidenceId": "G1_MATHURA_CAMBRIDGE_01", "sourceType": "ACADEMIC_REFERENCE", "title": "The Indus Lands", "authorOrEditor": "The Cambridge Ancient History", "year": 2008, "locator": "abstract", "quoteOrParaphrase": "Identifies Surasena as centred around Mathura.", "supports": "historical urban-centre candidate", "limitations": "No coordinate is needed or authorized for G1.", "urlOrCitation": "https://www.cambridge.org/core/books/abs/cambridge-ancient-history/indus-lands/D108DCF1A58E67E6F3D61A8D9824A269", "confidenceContribution": "HIGH"}],
+        "evidenceItems": [{"evidenceId": "G1_MATHURAKA_CH14_TRANSLATION_01", "sourceType": "PRIMARY_TEXT", "title": "Brihat Samhita Chapter 14 working translation", "authorOrEditor": "Varahamihira; online working translation", "year": null, "locator": "14.2-14.4, central division list", "quoteOrParaphrase": "The Chapter XIV list gives Māthuraka with the parenthetical gloss Mathura.", "supports": "direct source-list / translation-gloss connection between Māthuraka and Mathura", "limitations": "The root Sanskrit list does not itself close whether the item denotes city, country, people, or another Mathura-associated entity.", "urlOrCitation": "https://www.siva.sh/brihat-samhita/14/2", "confidenceContribution": "HIGH"}, {"evidenceId": "G1_MATHURAKA_LEXICAL_01", "sourceType": "GAZETTEER", "title": "Digital Sanskrit-Italian Dictionary", "authorOrEditor": "Istituto per l'Asia e il Mediterraneo", "year": null, "locator": "māthuraka entry", "quoteOrParaphrase": "The lexical entry glosses māthuraka as inhabitants of Mathurā.", "supports": "people/urban-association candidate type", "limitations": "A lexical gloss supports association, not a complete classification of the Chapter XIV occurrence.", "urlOrCitation": "https://www.asiainstitutetorino.it/DSI/7_Labiali/m_DSI.pdf", "confidenceContribution": "HIGH"}, {"evidenceId": "G1_MATHURA_CAMBRIDGE_CONTEXT_01", "sourceType": "ACADEMIC_REFERENCE", "title": "The Indus Lands", "authorOrEditor": "The Cambridge Ancient History", "year": 2008, "locator": "abstract", "quoteOrParaphrase": "Identifies Surasena as centred around Mathura.", "supports": "secondary historical context only", "limitations": "It is not the identity proof for Māthuraka and cannot by itself classify the Chapter XIV term as a city.", "urlOrCitation": "https://www.cambridge.org/core/books/abs/cambridge-ancient-history/indus-lands/D108DCF1A58E67E6F3D61A8D9824A269", "confidenceContribution": "CONTEXT_ONLY"}],
         "confidence": "HIGH",
-        "confidenceRationale": "The historical Mathura centre is well identified; no geometry is activated.",
+        "confidenceRationale": "The Chapter XIV translation gloss and lexical witness support a high-confidence Mathura association; the root source does not settle city versus people, so the candidate entity remains explicitly mixed.",
         "forbiddenUses": ["MARKET_PROXY_SELECTION", "AUTOMATIC_POLYGON_INTERSECTION", "OSCILLATOR_WEIGHT"]
       }]
     },
     "SINDHU": {
       "variantSpellings": ["Sindhu", "Indus"],
-      "sourceCategory": "RIVER",
+      "candidateEntityType": "RIVER_SYSTEM_CONTEXT",
       "mappingStatus": "APPROXIMATE_REGION_ONLY",
       "candidateMappings": [{
         "candidateId": "SINDHU_INDUS_SYSTEM_CANDIDATE_01",

@@ -11131,3 +11131,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   frontend Oxlint passed, stable thread-pool frontend suite `178/178`, and
   production build passed; `cargo fmt --check`, `cargo check`, and Rust tests
   (`19/19`) passed. No packaging was authorized or performed.
+
+## CGVO-G1-R1 Historical Geography Evidence Integrity Correction (2026-08-22)
+
+- Corrected the G1 source locator format to `Brihat Samhita 14.2-14.4` and
+  explicitly locked all 308 raw root records to
+  `rawSourceCategory=UNKNOWN` / `NOT_CLASSIFIED_FROM_ROOT_SOURCE`. Candidate
+  overlay meaning now lives only in `candidateEntityType`; it cannot rewrite a
+  Chapter XIV source literal.
+- Re-grounded Māthuraka in a direct Chapter-XIV working translation/gloss and a
+  lexical `māthuraka` witness. Its candidate type is now
+  `PEOPLE_OR_URBAN_ASSOCIATION`; the root source category remains unresolved.
+  The prior Surasena-centred Cambridge wording remains secondary context only,
+  not identity proof.
+- Locked the read-only audit contract to exactly 308 contextual occurrences:
+  297 source-name-only, 6 high-confidence, 3 medium-confidence,
+  1 approximate-region-only, 1 contested, and 0 unmapped. Directional counts
+  are fixed in tests and repeated names remain distinct source occurrences.
+- CGVO status metadata now reports `CGVO-G1-R1` as current geography work while
+  preserving `CGVO-S1B-R1` as the astronomy milestone. No UI, geometric
+  activation, astronomy computation, price/outcome read, polarity, score,
+  Auto Suggest, ML, MT5, or execution path was added; `executionAllowed=false`.
+- Verification: focused CGVO/S1B/API suite `32/32`; full backend `286/286`;
+  Oxlint, stable serial frontend suite `178/178`, and production build passed;
+  `cargo fmt --check`, `cargo check`, and Rust tests (`19/19`) passed. No
+  Windows candidate was authorized or created.

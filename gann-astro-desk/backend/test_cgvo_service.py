@@ -295,8 +295,15 @@ class CgvoServiceTests(unittest.TestCase):
             "NORTH": ["Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada"],
             "NORTHEAST": ["Revati", "Ashwini", "Bharani"],
         }
+        self.assertEqual(gazetteer["summary"]["totalSourceNames"], 308)
+        self.assertEqual(gazetteer["schemaVersion"], 2)
+        self.assertEqual(gazetteer["startingMaster"], "34659956d1de1ed44e307d0788938e67ac23f7bf")
+        self.assertEqual(gazetteer["summary"]["byDirection"], {
+            "CENTER": 32, "EAST": 33, "SOUTHEAST": 28, "SOUTH": 65,
+            "SOUTHWEST": 29, "WEST": 19, "NORTHWEST": 15, "NORTH": 52,
+            "NORTHEAST": 35,
+        })
         self.assertEqual(set(gazetteer["summary"]["byDirection"]), set(expected_triads))
-        self.assertGreater(gazetteer["summary"]["totalSourceNames"], 200)
         self.assertFalse(gazetteer["guardrails"]["automaticRegionUnion"])
         self.assertFalse(gazetteer["guardrails"]["automaticRegionIntersection"])
         self.assertFalse(gazetteer["guardrails"]["executionAllowed"])
@@ -310,13 +317,48 @@ class CgvoServiceTests(unittest.TestCase):
         magadha = next(record for record in records if record["normalizedName"] == "MAGADHA")
         gandhara = next(record for record in records if record["normalizedName"] == "GANDHARA")
         kamboja = next(record for record in records if record["normalizedName"] == "KAMBOJA")
+        mathuraka = next(record for record in records if record["normalizedName"] == "MATHURAKA")
         self.assertEqual(magadha["mappingStatus"], "HIGH_CONFIDENCE_CANDIDATE")
         self.assertEqual(gandhara["mappingStatus"], "HIGH_CONFIDENCE_CANDIDATE")
         self.assertEqual(kamboja["mappingStatus"], "CONTESTED_CANDIDATES")
         self.assertGreaterEqual(len(kamboja["candidateMappings"]), 2)
         self.assertEqual(kamboja["sourceNameTransliteration"], "Kāmboja")
+        self.assertEqual(magadha["rawSourceCategory"], "UNKNOWN")
+        self.assertEqual(magadha["rawSourceCategoryStatus"], "NOT_CLASSIFIED_FROM_ROOT_SOURCE")
+        self.assertEqual(magadha["candidateEntityType"], "HISTORICAL_REGION")
+        self.assertEqual(magadha["candidateEntityTypeStatus"], "RESEARCH_OVERLAY")
+        self.assertEqual(mathuraka["sourceNameTransliteration"], "Māthuraka")
+        self.assertEqual(mathuraka["sourceLiteralStatus"], "ROOT_SOURCE_NAME")
+        self.assertEqual(mathuraka["rawSourceCategory"], "UNKNOWN")
+        self.assertEqual(mathuraka["candidateEntityType"], "PEOPLE_OR_URBAN_ASSOCIATION")
+        self.assertTrue(any(item["evidenceId"] == "G1_MATHURAKA_CH14_TRANSLATION_01" for item in mathuraka["candidateMappings"][0]["evidenceItems"]))
+        self.assertTrue(any(item["evidenceId"] == "G1_MATHURAKA_LEXICAL_01" for item in mathuraka["candidateMappings"][0]["evidenceItems"]))
+        self.assertTrue(all("Surasena centred" not in item["supports"] for item in mathuraka["candidateMappings"][0]["evidenceItems"]))
+        self.assertEqual({
+            "SOURCE_NAME_ONLY": gazetteer["summary"]["sourceNameOnly"],
+            "HIGH_CONFIDENCE_CANDIDATE": gazetteer["summary"]["mappedHighConfidence"],
+            "MEDIUM_CONFIDENCE_CANDIDATE": gazetteer["summary"]["mappedMediumConfidence"],
+            "APPROXIMATE_REGION_ONLY": gazetteer["summary"]["approximateRegionOnly"],
+            "CONTESTED_CANDIDATES": gazetteer["summary"]["contested"],
+            "UNMAPPED": gazetteer["summary"]["unmapped"],
+        }, {
+            "SOURCE_NAME_ONLY": 297,
+            "HIGH_CONFIDENCE_CANDIDATE": 6,
+            "MEDIUM_CONFIDENCE_CANDIDATE": 3,
+            "APPROXIMATE_REGION_ONLY": 1,
+            "CONTESTED_CANDIDATES": 1,
+            "UNMAPPED": 0,
+        })
+        mapped_names = [record["normalizedName"] for record in records if record["candidateMappings"]]
+        self.assertEqual(len(mapped_names), 11)
+        self.assertEqual(len(set(mapped_names)), 11)
         for record in records:
             self.assertTrue(record["sourceLocator"])
+            self.assertNotIn("XIV.14.", record["sourceLocator"])
+            self.assertNotIn("14.14.", record["sourceLocator"])
+            self.assertEqual(record["rawSourceCategory"], "UNKNOWN")
+            self.assertEqual(record["rawSourceCategoryStatus"], "NOT_CLASSIFIED_FROM_ROOT_SOURCE")
+            self.assertIn(record["candidateEntityTypeStatus"], {"RESEARCH_OVERLAY", "NOT_ASSIGNED"})
             self.assertTrue(record["sourceDirectionGroup"])
             self.assertIn(record["mappingStatus"], {
                 "SOURCE_NAME_ONLY", "HIGH_CONFIDENCE_CANDIDATE", "MEDIUM_CONFIDENCE_CANDIDATE",
@@ -329,6 +371,16 @@ class CgvoServiceTests(unittest.TestCase):
                 self.assertNotEqual(mapping["geometryType"], "POLYGON")
                 self.assertNotEqual(mapping["geometryStatus"], "EVIDENCE_BACKED")
                 self.assertIsNone(mapping["geometry"])
+
+    def test_g1_repeated_source_names_remain_distinct_contextual_occurrences(self) -> None:
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+        mandavyas = [record for record in gazetteer["records"] if record["normalizedName"] == "MANDAVYA"]
+        self.assertEqual(len(mandavyas), 3)
+        self.assertEqual({record["sourceDirectionGroup"] for record in mandavyas}, {"CENTER", "NORTHWEST", "NORTH"})
+        self.assertEqual(len({record["regionId"] for record in mandavyas}), 3)
+        self.assertEqual(len({record["sourceLocator"] for record in mandavyas}), 3)
+        center_mathuraka = next(record for record in gazetteer["records"] if record["regionId"] == "VARAHA_XIV_CENTER_MATHURAKA_14")
+        self.assertEqual(center_mathuraka["sourceLocator"], "Brihat Samhita 14.2-14.4")
 
     def test_g1_keeps_geography_claim_layers_separate(self) -> None:
         gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)

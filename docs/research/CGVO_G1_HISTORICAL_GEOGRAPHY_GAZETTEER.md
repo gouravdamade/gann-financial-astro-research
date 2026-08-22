@@ -44,22 +44,28 @@ full Chapter XIV list.
 | Kashmira | Medium-confidence candidate | Kashmir valley and adjoining highland context | Political extent changed. |
 | Kuru | High-confidence candidate | upper Yamuna/Indraprastha context | No modern border is used. |
 | Panchala | High-confidence candidate | upper Ganges context | No exact historical boundary is claimed. |
-| Mathuraka | High-confidence candidate | Mathura urban-centre context | No coordinate is activated. |
+| Mathuraka | High-confidence candidate | Mathura-associated people/urban context | The root list does not close city/country/people identity; no coordinate is activated. |
 | Sindhu | Approximate-region-only | Indus river-system and adjoining historical lands | River identity does not fix an adjacent land extent. |
 
 Evidence records retain URLs/citations and limitations in
 `configs/research/cgvo/kurma_historical_geography_g1_v1.json`. They use a
-small set of scholarly or institutional reference points: the Cambridge
-Ancient History for Magadha/Kuru/Panchala/Mathura, Encyclopaedia Iranica for
+small set of scholarly or institutional reference points: a direct
+Chapter-XIV translation/gloss and lexical witness for Mathuraka's
+Mathura association, the Cambridge
+Ancient History for Magadha/Kuru/Panchala context, Encyclopaedia Iranica for
 Gandhara and Indus context, the Archaeological Survey of India for the
 Saurashtra/Kathiawar association, Utkal University for Kalinga/Odisha context,
 and the historical-geography work of Cunningham for the bounded Mithila and
 Kashmira candidates. None authorizes a contemporary administrative boundary as
 an ancient polygon.
 
-Terms such as Cīna, Yavana, Kirāta, Hūṇa, and the remaining difficult or
-ambiguous Chapter XIV entries intentionally remain `SOURCE_NAME_ONLY` with an
-`UNKNOWN` category until an evidence review can support a narrower claim.
+All root names, including mapped overlays, retain
+`rawSourceCategory: UNKNOWN` unless the controlling Chapter-XIV witness itself
+closes that category. An overlay's `candidateEntityType` is a separate research
+interpretation, never a rewrite of the source literal. Terms such as Cīna,
+Yavana, Kirāta, Hūṇa, and the remaining difficult or ambiguous Chapter XIV
+entries intentionally remain `SOURCE_NAME_ONLY` until an evidence review can
+support a narrower claim.
 
 ## Product contract
 
@@ -76,17 +82,19 @@ requires central review before packaging.
 
 ## Current counts
 
-The compiler creates 308 Chapter XIV source-name records: 297 source-name-only,
-6 high-confidence candidates, 3 medium/approximate candidates, 1 contested
-candidate, and no `UNMAPPED` record fabricated merely to fill a category.
+The compiler creates exactly 308 Chapter XIV source-name occurrences:
+297 `SOURCE_NAME_ONLY`, 6 `HIGH_CONFIDENCE_CANDIDATE`,
+3 `MEDIUM_CONFIDENCE_CANDIDATE`, 1 `APPROXIMATE_REGION_ONLY`,
+1 `CONTESTED_CANDIDATES`, and 0 `UNMAPPED`. Repeated source names remain
+separate directional/list occurrences and are never deduplicated into one
+modern entity.
 
 Every candidate uses `geometry: null` and a non-authorizing geometry status.
 No polygon, point coordinate, or downstream geographic intersection exists.
 
 ## Next blocker
 
-CGVO-G1 is an evidence ledger only. A later G1R1 review may correct individual
-candidate evidence/statuses. CGVO-G2 would require a separately approved,
+CGVO-G1-R1 is an evidence-integrity correction only. CGVO-G2 would require a separately approved,
 source-specific geometry policy before any approximate geometry could be
 enriched, and CGVO-X1 would require a separately preregistered native-domain
 experiment. Neither is authorized here.

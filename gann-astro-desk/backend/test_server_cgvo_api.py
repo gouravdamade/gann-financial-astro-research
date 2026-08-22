@@ -25,7 +25,10 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
-        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-S1B")
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G1-R1")
+        self.assertEqual(status.get_json()["status"]["milestones"], {
+            "current": "CGVO-G1-R1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G1-R1",
+        })
         self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(
             "/api/experiments/cgvo/workbench?eventType=SOLAR&globalMaxUtc=2027-08-02T10:06:41Z&localityId=UJJAIN&label=Ujjain&latitude=23.1765&longitude=75.7885&elevationM=0&timezone=Asia%2FKolkata",
@@ -105,7 +108,9 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertTrue(payload["ok"])
         gazetteer = payload["gazetteer"]
         self.assertEqual(gazetteer["contract"], "CGVO_HISTORICAL_GEOGRAPHY_GAZETTEER_V1")
-        self.assertGreater(gazetteer["summary"]["totalSourceNames"], 200)
+        self.assertEqual(gazetteer["schemaVersion"], 2)
+        self.assertEqual(gazetteer["startingMaster"], "34659956d1de1ed44e307d0788938e67ac23f7bf")
+        self.assertEqual(gazetteer["summary"]["totalSourceNames"], 308)
         self.assertFalse(gazetteer["guardrails"]["marketDirectionInferred"])
         self.assertFalse(gazetteer["guardrails"]["executionAllowed"])
         self.assertNotIn("<html", response.get_data(as_text=True).lower())

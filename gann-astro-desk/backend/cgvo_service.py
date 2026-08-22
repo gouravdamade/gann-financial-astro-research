@@ -1048,8 +1048,13 @@ def _s1b_source_status(project_root: Path) -> dict[str, Any]:
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
-        "schemaVersion": 3,
-        "milestone": "CGVO-S1B",
+        "schemaVersion": 4,
+        "milestone": "CGVO-G1-R1",
+        "milestones": {
+            "current": "CGVO-G1-R1",
+            "astronomy": "CGVO-S1B-R1",
+            "geography": "CGVO-G1-R1",
+        },
         "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
         "availableEventTypes": ["SOLAR", "LUNAR"],
@@ -1086,16 +1091,16 @@ def _region_key(value: str) -> str:
 
 
 def _validate_gazetteer_overlay(overlay: Mapping[str, Any]) -> None:
-    allowed_categories = set(overlay.get("allowedSourceCategories", []))
+    allowed_entity_types = set(overlay.get("allowedCandidateEntityTypes", []))
     allowed_statuses = set(overlay.get("allowedMappingStatuses", []))
     candidates = overlay.get("candidateOverlays")
-    if not isinstance(candidates, dict) or not allowed_categories or not allowed_statuses:
+    if not isinstance(candidates, dict) or not allowed_entity_types or not allowed_statuses:
         raise RuntimeError("CGVO G1 gazetteer overlay has no controlled candidate contract")
     for key, record in candidates.items():
         if not isinstance(key, str) or not isinstance(record, dict):
             raise RuntimeError("CGVO G1 gazetteer overlay has an invalid candidate record")
-        if record.get("sourceCategory") not in allowed_categories:
-            raise RuntimeError(f"CGVO G1 gazetteer candidate {key} has an invalid source category")
+        if record.get("candidateEntityType") not in allowed_entity_types:
+            raise RuntimeError(f"CGVO G1 gazetteer candidate {key} has an invalid candidate entity type")
         if record.get("mappingStatus") not in allowed_statuses:
             raise RuntimeError(f"CGVO G1 gazetteer candidate {key} has an invalid mapping status")
         mappings = record.get("candidateMappings", [])
@@ -1133,21 +1138,24 @@ def build_cgvo_historical_gazetteer(project_root: Path) -> dict[str, Any]:
             key = _region_key(str(literal))
             candidate = candidate_overlays.get(key, {})
             mapping_status = candidate.get("mappingStatus", "SOURCE_NAME_ONLY")
-            category = candidate.get("sourceCategory", "UNKNOWN")
             direction_counts[direction] += 1
             records.append({
                 "regionId": f"VARAHA_XIV_{direction}_{key}_{ordinal:02d}",
                 "sourceProfileId": overlay["sourceProfileId"],
                 "sourceWork": overlay["sourceWork"],
-                "sourceLocator": f"Brihat Samhita XIV.{group['sourceVerses']}",
+                "sourceLocator": f"Brihat Samhita {group['sourceVerses']}",
                 "sourceNameOriginal": None,
                 "sourceNameTransliteration": literal,
+                "sourceLiteralStatus": "ROOT_SOURCE_NAME",
                 "normalizedName": key,
                 "variantSpellings": candidate.get("variantSpellings", []),
                 "sourceDirectionGroup": direction,
                 "nakshatraTriad": group["nakshatras"],
                 "sourceContext": "KURMAVIBHAGA_DIRECTIONAL_NAME_LIST",
-                "rawSourceCategory": category,
+                "rawSourceCategory": "UNKNOWN",
+                "rawSourceCategoryStatus": "NOT_CLASSIFIED_FROM_ROOT_SOURCE",
+                "candidateEntityType": candidate.get("candidateEntityType", "UNKNOWN"),
+                "candidateEntityTypeStatus": "RESEARCH_OVERLAY" if candidate else "NOT_ASSIGNED",
                 "mappingStatus": mapping_status,
                 "candidateMappings": candidate.get("candidateMappings", []),
                 "unresolvedFlags": ["NOT_MODERN_GEOMETRY_AUTHORIZED", "MARKET_USE_PROHIBITED"],
@@ -1165,7 +1173,9 @@ def build_cgvo_historical_gazetteer(project_root: Path) -> dict[str, Any]:
     }
     return {
         "contract": overlay["contract"],
+        "schemaVersion": overlay["schemaVersion"],
         "milestone": overlay["milestone"],
+        "startingMaster": overlay["startingMaster"],
         "sourceProfiles": layers["sourceProfiles"],
         "records": records,
         "summary": summary,
