@@ -1,0 +1,55 @@
+{
+  "contract": "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_GEOMETRY_POLICY_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G2",
+  "sourceGazetteerBaseline": "CGVO-G1-R1",
+  "startingMaster": "dc7f6eeaec5882bf5216e1031f6914144dd8389f",
+  "geometryRole": "RESEARCH_GEOMETRY_ONLY",
+  "principle": "SOURCE_OCCURRENCE != CANDIDATE_IDENTITY != RESEARCH_GEOMETRY != DOWNSTREAM_SPATIAL_MATCH != MARKET_USE",
+  "geometryStatuses": {
+    "NO_GEOMETRY_SOURCE_NAME_ONLY": "No reviewed candidate identity or research footprint.",
+    "RESEARCH_ANCHOR_POINT": "Historical centre or site anchor for research audit only.",
+    "RESEARCH_MULTI_ANCHOR": "Several evidence-backed centres; none is an authoritative region proxy.",
+    "RESEARCH_CORRIDOR_OR_RIVER_SYSTEM": "River/system context without an inferred land polygon.",
+    "RESEARCH_BROAD_UNCERTAINTY_ENVELOPE": "Coarse historical-region envelope, never a modern administrative boundary.",
+    "CONTESTED_RESEARCH_GEOMETRIES": "Separate alternatives; no merged or preferred geometry.",
+    "GEOMETRY_PENDING_EVIDENCE": "Candidate identity exists but footprint evidence is insufficient.",
+    "GEOMETRY_PROHIBITED": "Source-name-only or too ambiguous for a footprint."
+  },
+  "geometryPrimitives": ["POINT_ANCHOR", "MULTI_POINT_ANCHORS", "RIVER_SYSTEM_CONTEXT", "BROAD_ENVELOPE", "MULTI_CANDIDATE", "NONE"],
+  "coordinatePrecisionPolicy": {
+    "modernCoordinateRole": "RESEARCH_ANCHOR_ONLY_FOR_HISTORICALLY_IDENTIFIED_CENTRE",
+    "modernAdministrativeBoundaryRole": "DESCRIPTIVE_CONTEXT_ONLY_NOT_GEOMETRY",
+    "coordinateEvidenceRequired": true,
+    "uncertaintyRequired": true,
+    "temporalApplicabilityRequired": true
+  },
+  "validatorRules": {
+    "baseGazetteerGeometryMustRemainNull": true,
+    "researchGeometryOnly": true,
+    "sourceNameOnlyFootprintsProhibited": true,
+    "contestedGeometryMergeProhibited": true,
+    "missingEvidenceFailsClosed": true,
+    "missingUncertaintyFailsClosed": true,
+    "missingTemporalApplicabilityFailsClosed": true
+  },
+  "guardrails": {
+    "automaticRegionUnion": false,
+    "automaticRegionIntersection": false,
+    "automaticMajorityVote": false,
+    "crossSourceComposition": false,
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketDirectionInferred": false,
+    "scoreAggregationUsed": false,
+    "fieldsPath": false,
+    "sbcPath": false,
+    "autoSuggestPath": false,
+    "mlPath": false,
+    "mt5Path": false,
+    "marketUseAllowed": false,
+    "executionAllowed": false
+  }
+}

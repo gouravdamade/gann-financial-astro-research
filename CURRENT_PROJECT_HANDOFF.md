@@ -11156,3 +11156,29 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   Oxlint, stable serial frontend suite `178/178`, and production build passed;
   `cargo fmt --check`, `cargo check`, and Rust tests (`19/19`) passed. No
   Windows candidate was authorized or created.
+
+## CGVO-G2 Historical Geography Research Footprint Layer (2026-08-22)
+
+- Added a separate read-only `CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V1`
+  contract and endpoint at
+  `GET /api/experiments/cgvo/historical-gazetteer/research-footprints`.
+  The G1-R1 gazetteer remains unchanged in meaning and now explicitly returns
+  `geometry: null` for every one of its 308 source occurrences.
+- Added an uncertainty-first G2 geometry policy, a 12-row footprint ledger for
+  the existing 11 reviewed G1 candidate terms, and a readiness matrix. Nine
+  records are `GEOMETRY_PENDING_EVIDENCE`; Sindhu is a non-land
+  `RESEARCH_CORRIDOR_OR_RIVER_SYSTEM`; and the two Kamboja alternatives remain
+  `CONTESTED_RESEARCH_GEOMETRIES` with no merge or preferred geometry.
+- No coordinate-bearing point, multi-anchor, broad envelope, modern state/country
+  polygon, map UI, eclipse-visibility comparison, or downstream spatial
+  intersection was admitted. All footprints use `RESEARCH_GEOMETRY_ONLY` and
+  copy evidence from existing G1 candidates while requiring uncertainty,
+  temporal applicability, and limitations.
+- The policy keeps source-layer composition, price/outcome reads, market routing,
+  polarity, scoring, Fields/SBC, Auto Suggest, ML, MT5, and execution false.
+  `executionAllowed=false`, `downstreamIntersectionAuthorized=false`, and
+  `marketUseAllowed=false` are validator-tested. No Windows candidate was
+  authorized or created; central review is the next gate.
+- Verification: focused CGVO/G2/S1B/API suite `35/35`; full backend `289/289`;
+  Oxlint, stable serial frontend suite `178/178`, and production build passed;
+  `cargo fmt --check`, `cargo check`, and Rust tests (`19/19`) passed.

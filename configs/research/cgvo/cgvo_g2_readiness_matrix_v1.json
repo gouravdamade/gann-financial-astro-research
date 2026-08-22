@@ -1,0 +1,15 @@
+{
+  "contract": "CGVO_G2_READINESS_MATRIX_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G2",
+  "sourceGazetteerBaseline": "CGVO-G1-R1",
+  "geometryPolicyReady": true,
+  "researchFootprintLedgerReady": true,
+  "coordinateBearingFootprints": 0,
+  "downstreamSpatialMatchingReady": false,
+  "eclipseVisibilityFootprintComparisonReady": false,
+  "marketExperimentReady": false,
+  "executionAllowed": false,
+  "centralReviewRequired": true,
+  "nextRecommendedMilestone": "G2_R1_TARGETED_HISTORICAL_SITE_EVIDENCE_OR_G3_DESIGN_REVIEW"
+}

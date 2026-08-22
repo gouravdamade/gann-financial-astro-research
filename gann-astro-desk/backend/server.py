@@ -94,6 +94,7 @@ from fx_side_pilot_service import build_fx_side_pilot_status
 from cgvo_service import (
     CgvoRequestError,
     build_cgvo_event_search,
+    build_cgvo_historical_research_footprints,
     build_cgvo_kurma_seed,
     build_cgvo_historical_gazetteer,
     build_cgvo_local_circumstances,
@@ -536,6 +537,17 @@ def get_cgvo_kurma_seed() -> Any:
 def get_cgvo_historical_gazetteer() -> Any:
     try:
         return jsonify({"ok": True, "gazetteer": build_cgvo_historical_gazetteer(repository.paths.project_root)})
+    except (TypeError, ValueError, RuntimeError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
+
+
+@app.get("/api/experiments/cgvo/historical-gazetteer/research-footprints")
+def get_cgvo_historical_research_footprints() -> Any:
+    try:
+        footprints = build_cgvo_historical_research_footprints(repository.paths.project_root)
+        if footprints["guardrails"]["executionAllowed"] or footprints["guardrails"]["downstreamIntersectionAuthorized"]:
+            raise ValueError("CGVO G2 footprint ledger violated its downstream lock")
+        return jsonify({"ok": True, "footprints": footprints})
     except (TypeError, ValueError, RuntimeError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 500
 

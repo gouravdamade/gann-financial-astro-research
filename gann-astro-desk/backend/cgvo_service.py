@@ -37,6 +37,9 @@ CGVO_ROOT = Path("configs") / "research" / "cgvo"
 KURMA_FIXTURE = CGVO_ROOT / "kurma_gazetteer_seed_v1.json"
 KURMA_G1_GAZETTEER_FIXTURE = CGVO_ROOT / "kurma_historical_geography_g1_v1.json"
 GEOGRAPHY_SOURCE_LAYERS_FIXTURE = CGVO_ROOT / "cgvo_geography_source_layers_g1_v1.json"
+GEOGRAPHY_G2_POLICY_FIXTURE = CGVO_ROOT / "cgvo_historical_geography_geometry_policy_g2_v1.json"
+KURMA_G2_FOOTPRINTS_FIXTURE = CGVO_ROOT / "kurma_research_footprints_g2_v1.json"
+CGVO_G2_READINESS_FIXTURE = CGVO_ROOT / "cgvo_g2_readiness_matrix_v1.json"
 VARAHAMIHIRA_FIXTURE = CGVO_ROOT / "varahamihira_eclipse_source_profile_v1.json"
 TRAILOKYA_FIXTURE = CGVO_ROOT / "trailokya_geography_argha_context_v1.json"
 VARAHAMIHIRA_FRAME_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml"
@@ -1048,12 +1051,12 @@ def _s1b_source_status(project_root: Path) -> dict[str, Any]:
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
-        "schemaVersion": 4,
-        "milestone": "CGVO-G1-R1",
+        "schemaVersion": 5,
+        "milestone": "CGVO-G2",
         "milestones": {
-            "current": "CGVO-G1-R1",
+            "current": "CGVO-G2",
             "astronomy": "CGVO-S1B-R1",
-            "geography": "CGVO-G1-R1",
+            "geography": "CGVO-G2",
         },
         "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
@@ -1152,6 +1155,7 @@ def build_cgvo_historical_gazetteer(project_root: Path) -> dict[str, Any]:
                 "sourceDirectionGroup": direction,
                 "nakshatraTriad": group["nakshatras"],
                 "sourceContext": "KURMAVIBHAGA_DIRECTIONAL_NAME_LIST",
+                "geometry": None,
                 "rawSourceCategory": "UNKNOWN",
                 "rawSourceCategoryStatus": "NOT_CLASSIFIED_FROM_ROOT_SOURCE",
                 "candidateEntityType": candidate.get("candidateEntityType", "UNKNOWN"),
@@ -1181,6 +1185,137 @@ def build_cgvo_historical_gazetteer(project_root: Path) -> dict[str, Any]:
         "summary": summary,
         "guardrails": layers["guardrails"],
         "aggregationPolicy": layers["aggregationPolicy"],
+    }
+
+
+def _validate_g2_research_footprints(
+    policy: Mapping[str, Any],
+    ledger: Mapping[str, Any],
+    gazetteer: Mapping[str, Any],
+) -> None:
+    if ledger.get("sourceGazetteerBaseline") != "CGVO-G1-R1":
+        raise RuntimeError("CGVO G2 footprint ledger must declare the accepted G1-R1 baseline")
+    if policy.get("geometryRole") != "RESEARCH_GEOMETRY_ONLY" or ledger.get("geometryRole") != "RESEARCH_GEOMETRY_ONLY":
+        raise RuntimeError("CGVO G2 research geometry must remain research-only")
+    if any(policy["guardrails"].get(key) for key in ("downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed")):
+        raise RuntimeError("CGVO G2 geometry policy has an active downstream guardrail")
+    if any(ledger["guardrails"].get(key) for key in ("downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed")):
+        raise RuntimeError("CGVO G2 footprint ledger has an active downstream guardrail")
+
+    base_records = list(gazetteer["records"])
+    mapping_index: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+    for record in base_records:
+        if record.get("geometry") is not None:
+            raise RuntimeError("CGVO G1 base records must remain geometry-null")
+        for candidate in record["candidateMappings"]:
+            if candidate.get("geometry") is not None:
+                raise RuntimeError("CGVO G1 candidate overlays must remain geometry-null")
+            candidate_id = candidate.get("candidateId")
+            if candidate_id in mapping_index:
+                raise RuntimeError(f"CGVO G1 candidate ID is not unique: {candidate_id}")
+            mapping_index[candidate_id] = (record, candidate)
+
+    seen_footprint_ids: set[str] = set()
+    seen_candidate_ids: set[str] = set()
+    allowed_statuses = set(policy["geometryStatuses"])
+    allowed_primitives = set(policy["geometryPrimitives"])
+    for footprint in ledger.get("footprints", []):
+        footprint_id = footprint.get("footprintId")
+        candidate_id = footprint.get("linkedGazetteerCandidateId")
+        if not isinstance(footprint_id, str) or footprint_id in seen_footprint_ids:
+            raise RuntimeError("CGVO G2 footprint IDs must be unique")
+        if not isinstance(candidate_id, str) or candidate_id in seen_candidate_ids:
+            raise RuntimeError("CGVO G2 candidate mappings must not receive duplicate footprints")
+        seen_footprint_ids.add(footprint_id)
+        seen_candidate_ids.add(candidate_id)
+        if candidate_id not in mapping_index:
+            raise RuntimeError(f"CGVO G2 footprint references unknown G1 candidate: {candidate_id}")
+        record, _candidate = mapping_index[candidate_id]
+        if record["mappingStatus"] == "SOURCE_NAME_ONLY":
+            raise RuntimeError("CGVO G2 SOURCE_NAME_ONLY records cannot receive footprints")
+        if footprint.get("normalizedName") != record["normalizedName"]:
+            raise RuntimeError(f"CGVO G2 footprint normalized name mismatch: {footprint_id}")
+        if footprint.get("geometryStatus") not in allowed_statuses:
+            raise RuntimeError(f"CGVO G2 footprint has invalid geometry status: {footprint_id}")
+        if footprint.get("geometryPrimitive") not in allowed_primitives:
+            raise RuntimeError(f"CGVO G2 footprint has invalid geometry primitive: {footprint_id}")
+        if not footprint.get("uncertainty") or not footprint.get("temporalApplicability") or not footprint.get("limitations"):
+            raise RuntimeError(f"CGVO G2 footprint lacks uncertainty, temporal validity, or limitations: {footprint_id}")
+        geometry_data = footprint.get("geometryData")
+        if footprint["geometryStatus"] == "GEOMETRY_PENDING_EVIDENCE" and geometry_data is not None:
+            raise RuntimeError(f"CGVO G2 pending footprint must not contain geometry data: {footprint_id}")
+        if footprint["geometryStatus"] == "CONTESTED_RESEARCH_GEOMETRIES":
+            if not footprint.get("contestedGroupId") or not isinstance(geometry_data, dict) or not geometry_data.get("separateAlternative"):
+                raise RuntimeError(f"CGVO G2 contested footprint must remain an explicit separate alternative: {footprint_id}")
+            if geometry_data.get("mergedGeometry") is not None:
+                raise RuntimeError(f"CGVO G2 contested footprint may not merge alternatives: {footprint_id}")
+        if footprint["normalizedName"] == "SINDHU":
+            if footprint["geometryPrimitive"] != "RIVER_SYSTEM_CONTEXT" or not isinstance(geometry_data, dict):
+                raise RuntimeError("CGVO G2 Sindhu must remain a river-system context")
+            if geometry_data.get("landPolygon") is not None or geometry_data.get("adjacentLandExtent") is not None:
+                raise RuntimeError("CGVO G2 Sindhu may not imply an adjacent land polygon")
+        if isinstance(geometry_data, dict) and any(key in geometry_data for key in ("point", "anchors", "coordinates")):
+            if not geometry_data.get("coordinateSource"):
+                raise RuntimeError(f"CGVO G2 coordinate-bearing footprint lacks a coordinate source: {footprint_id}")
+
+
+def build_cgvo_historical_research_footprints(project_root: Path) -> dict[str, Any]:
+    """Compile G2's separate, non-downstream historical-footprint ledger."""
+    policy = _load_json(project_root, GEOGRAPHY_G2_POLICY_FIXTURE)
+    ledger = _load_json(project_root, KURMA_G2_FOOTPRINTS_FIXTURE)
+    readiness = _load_json(project_root, CGVO_G2_READINESS_FIXTURE)
+    gazetteer = build_cgvo_historical_gazetteer(project_root)
+    _validate_g2_research_footprints(policy, ledger, gazetteer)
+
+    base_by_candidate: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+    for record in gazetteer["records"]:
+        for candidate in record["candidateMappings"]:
+            base_by_candidate[candidate["candidateId"]] = (record, candidate)
+
+    footprints: list[dict[str, Any]] = []
+    for fixture in ledger["footprints"]:
+        record, candidate = base_by_candidate[fixture["linkedGazetteerCandidateId"]]
+        source_occurrences = [
+            source["regionId"] for source in gazetteer["records"]
+            if source["normalizedName"] == fixture["normalizedName"]
+        ]
+        footprints.append({
+            **fixture,
+            "geometryRole": policy["geometryRole"],
+            "sourceOccurrenceIds": source_occurrences,
+            "sourceMappingStatus": record["mappingStatus"],
+            "candidateEntityType": record["candidateEntityType"],
+            "evidenceItems": candidate["evidenceItems"],
+            "downstreamIntersectionAuthorized": False,
+            "marketUseAllowed": False,
+            "executionAllowed": False,
+        })
+
+    status_counts: dict[str, int] = {}
+    primitive_counts: dict[str, int] = {}
+    for footprint in footprints:
+        status_counts[footprint["geometryStatus"]] = status_counts.get(footprint["geometryStatus"], 0) + 1
+        primitive_counts[footprint["geometryPrimitive"]] = primitive_counts.get(footprint["geometryPrimitive"], 0) + 1
+    return {
+        "contract": ledger["contract"],
+        "schemaVersion": ledger["schemaVersion"],
+        "milestone": ledger["milestone"],
+        "sourceGazetteerBaseline": ledger["sourceGazetteerBaseline"],
+        "geometryRole": policy["geometryRole"],
+        "policy": policy,
+        "readiness": readiness,
+        "footprints": footprints,
+        "summary": {
+            "footprintCount": len(footprints),
+            "reviewedCandidateTermCount": len({footprint["normalizedName"] for footprint in footprints}),
+            "coordinateBearingFootprintCount": sum(footprint["geometryData"] is not None and any(key in footprint["geometryData"] for key in ("point", "anchors", "coordinates")) for footprint in footprints),
+            "byGeometryStatus": status_counts,
+            "byGeometryPrimitive": primitive_counts,
+        },
+        "guardrails": {
+            **policy["guardrails"],
+            "researchGeometryOnly": True,
+        },
     }
 
 

@@ -25,9 +25,9 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
-        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G1-R1")
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G2")
         self.assertEqual(status.get_json()["status"]["milestones"], {
-            "current": "CGVO-G1-R1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G1-R1",
+            "current": "CGVO-G2", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2",
         })
         self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(
@@ -114,6 +114,20 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertFalse(gazetteer["guardrails"]["marketDirectionInferred"])
         self.assertFalse(gazetteer["guardrails"]["executionAllowed"])
         self.assertNotIn("<html", response.get_data(as_text=True).lower())
+
+    def test_g2_research_footprints_route_is_read_only_json(self) -> None:
+        response = self.client.get("/api/experiments/cgvo/historical-gazetteer/research-footprints", headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.content_type.startswith("application/json"))
+        self.assertNotIn("<!doctype", response.get_data(as_text=True).lower())
+        payload = response.get_json()
+        self.assertTrue(payload["ok"])
+        footprints = payload["footprints"]
+        self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V1")
+        self.assertEqual(footprints["summary"]["footprintCount"], 12)
+        self.assertFalse(footprints["guardrails"]["downstreamIntersectionAuthorized"])
+        self.assertFalse(footprints["guardrails"]["marketUseAllowed"])
+        self.assertFalse(footprints["guardrails"]["executionAllowed"])
 
 
 if __name__ == "__main__":

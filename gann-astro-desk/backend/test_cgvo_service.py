@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -12,6 +13,7 @@ from cgvo_service import (
     CgvoRequestError,
     build_cgvo_event_search,
     build_cgvo_historical_gazetteer,
+    build_cgvo_historical_research_footprints,
     build_cgvo_kurma_seed,
     build_cgvo_local_circumstances,
     build_cgvo_source_profiles,
@@ -399,6 +401,65 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertFalse(gazetteer["guardrails"]["autoSuggestPath"])
         self.assertFalse(gazetteer["guardrails"]["mlPath"])
         self.assertFalse(gazetteer["guardrails"]["mt5Path"])
+
+    def test_g2_research_footprints_are_separate_from_g1_and_remain_downstream_locked(self) -> None:
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+        footprints = build_cgvo_historical_research_footprints(PROJECT_ROOT)
+        self.assertEqual(gazetteer["summary"]["totalSourceNames"], 308)
+        self.assertTrue(all("geometry" in record and record["geometry"] is None for record in gazetteer["records"]))
+        self.assertTrue(all(mapping["geometry"] is None for record in gazetteer["records"] for mapping in record["candidateMappings"]))
+        self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V1")
+        self.assertEqual(footprints["milestone"], "CGVO-G2")
+        self.assertEqual(footprints["sourceGazetteerBaseline"], "CGVO-G1-R1")
+        self.assertEqual(footprints["geometryRole"], "RESEARCH_GEOMETRY_ONLY")
+        self.assertEqual(footprints["summary"]["footprintCount"], 12)
+        self.assertEqual(footprints["summary"]["reviewedCandidateTermCount"], 11)
+        self.assertEqual(footprints["summary"]["coordinateBearingFootprintCount"], 0)
+        self.assertEqual(footprints["summary"]["byGeometryStatus"], {
+            "GEOMETRY_PENDING_EVIDENCE": 9,
+            "CONTESTED_RESEARCH_GEOMETRIES": 2,
+            "RESEARCH_CORRIDOR_OR_RIVER_SYSTEM": 1,
+        })
+        for key in ("automaticRegionUnion", "automaticRegionIntersection", "downstreamIntersectionAuthorized", "marketUseAllowed", "executionAllowed"):
+            self.assertFalse(footprints["guardrails"][key])
+        self.assertTrue(footprints["guardrails"]["researchGeometryOnly"])
+        for footprint in footprints["footprints"]:
+            self.assertEqual(footprint["geometryRole"], "RESEARCH_GEOMETRY_ONLY")
+            self.assertFalse(footprint["downstreamIntersectionAuthorized"])
+            self.assertFalse(footprint["marketUseAllowed"])
+            self.assertFalse(footprint["executionAllowed"])
+            self.assertTrue(footprint["sourceOccurrenceIds"])
+            self.assertTrue(footprint["evidenceItems"])
+            self.assertTrue(footprint["uncertainty"])
+            self.assertTrue(footprint["temporalApplicability"])
+            self.assertTrue(footprint["limitations"])
+        self.assertNotIn("CINA", {footprint["normalizedName"] for footprint in footprints["footprints"]})
+        self.assertNotIn("YAVANA", {footprint["normalizedName"] for footprint in footprints["footprints"]})
+        mathuraka = next(item for item in footprints["footprints"] if item["normalizedName"] == "MATHURAKA")
+        self.assertEqual(mathuraka["candidateEntityType"], "PEOPLE_OR_URBAN_ASSOCIATION")
+        self.assertEqual(mathuraka["geometryStatus"], "GEOMETRY_PENDING_EVIDENCE")
+        sindhu = next(item for item in footprints["footprints"] if item["normalizedName"] == "SINDHU")
+        self.assertEqual(sindhu["geometryPrimitive"], "RIVER_SYSTEM_CONTEXT")
+        self.assertIsNone(sindhu["geometryData"]["landPolygon"])
+        self.assertIsNone(sindhu["geometryData"]["adjacentLandExtent"])
+        kamboja = [item for item in footprints["footprints"] if item["normalizedName"] == "KAMBOJA"]
+        self.assertEqual(len(kamboja), 2)
+        self.assertEqual({item["contestedGroupId"] for item in kamboja}, {"G2_KAMBOJA_UNMERGED_ALTERNATIVES"})
+        self.assertTrue(all(item["geometryData"]["separateAlternative"] for item in kamboja))
+        self.assertTrue(all(item["geometryData"]["mergedGeometry"] is None for item in kamboja))
+
+    def test_g2_validator_fails_closed_for_missing_footprint_evidence_or_merged_contested_geometry(self) -> None:
+        policy = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.GEOGRAPHY_G2_POLICY_FIXTURE)
+        ledger = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.KURMA_G2_FOOTPRINTS_FIXTURE)
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+        missing_uncertainty = deepcopy(ledger)
+        missing_uncertainty["footprints"][0]["uncertainty"] = {}
+        with self.assertRaisesRegex(RuntimeError, "lacks uncertainty"):
+            cgvo_service._validate_g2_research_footprints(policy, missing_uncertainty, gazetteer)
+        merged_kamboja = deepcopy(ledger)
+        merged_kamboja["footprints"][5]["geometryData"]["mergedGeometry"] = {"forbidden": True}
+        with self.assertRaisesRegex(RuntimeError, "may not merge alternatives"):
+            cgvo_service._validate_g2_research_footprints(policy, merged_kamboja, gazetteer)
 
 
 if __name__ == "__main__":
