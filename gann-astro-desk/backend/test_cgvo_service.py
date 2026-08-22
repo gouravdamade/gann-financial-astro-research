@@ -409,7 +409,7 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertTrue(all("geometry" in record and record["geometry"] is None for record in gazetteer["records"]))
         self.assertTrue(all(mapping["geometry"] is None for record in gazetteer["records"] for mapping in record["candidateMappings"]))
         self.assertEqual(footprints["contract"], "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V2")
-        self.assertEqual(footprints["milestone"], "CGVO-G2-R1")
+        self.assertEqual(footprints["milestone"], "CGVO-G2-R1A")
         self.assertEqual(footprints["sourceGazetteerBaseline"], "CGVO-G1-R1")
         self.assertEqual(footprints["geometryRole"], "RESEARCH_GEOMETRY_ONLY")
         self.assertEqual(footprints["summary"]["footprintCount"], 12)
@@ -487,17 +487,72 @@ class CgvoServiceTests(unittest.TestCase):
         def gandhara_geometry(broken_ledger: dict) -> dict:
             return next(item for item in broken_ledger["footprints"] if item["normalizedName"] == "GANDHARA")["geometryData"]
 
-        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).pop("coordinateSourceId"), "missing required")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).pop("coordinateSourceId"), "mismatch")
         assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("latitude", 91), "latitude")
         assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("longitude", float("inf")), "longitude")
-        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).pop("coordinateReferenceSystem"), "missing required")
-        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("coordinatePrecision", "UNSPECIFIED"), "precision")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).pop("coordinateReferenceSystem"), "mismatch")
+        assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("coordinatePrecision", "UNSPECIFIED"), "mismatch")
         assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("centroid", {"forbidden": True}), "regional geometry")
         assert_rejected(lambda broken, evidence, _gazetteer: gandhara_geometry(broken).__setitem__("anchors", []), "regional geometry")
         assert_rejected(lambda broken, evidence, _gazetteer: next(item for item in broken["footprints"] if item["normalizedName"] == "GANDHARA").__setitem__("siteIdentityEvidence", []), "separate identity")
         assert_rejected(lambda broken, evidence, _gazetteer: next(item for item in evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA").__setitem__("historicalIdentityEvidence", []), "lacks historical identity")
         assert_rejected(lambda broken, evidence, _gazetteer: next(item for item in _gazetteer["records"] if item["normalizedName"] == "GANDHARA").__setitem__("mappingStatus", "SOURCE_NAME_ONLY"), "SOURCE_NAME_ONLY")
         assert_rejected(lambda broken, evidence, _gazetteer: evidence["guardrails"].__setitem__("priceDataRead", True), "active downstream guardrail")
+
+    def test_g2_r1_coordinate_binding_and_raw_normalization_fail_closed(self) -> None:
+        policy = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.GEOGRAPHY_G2_POLICY_FIXTURE)
+        ledger = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.KURMA_G2_FOOTPRINTS_FIXTURE)
+        site_evidence = cgvo_service._load_json(PROJECT_ROOT, cgvo_service.CGVO_G2_R1_SITE_EVIDENCE_FIXTURE)
+        gazetteer = build_cgvo_historical_gazetteer(PROJECT_ROOT)
+
+        def taxila(working_ledger: dict) -> dict:
+            return next(item for item in working_ledger["footprints"] if item["normalizedName"] == "GANDHARA")["geometryData"]
+
+        def assert_rejected(mutator, message: str) -> None:
+            working_ledger = deepcopy(ledger)
+            working_evidence = deepcopy(site_evidence)
+            mutator(working_ledger, working_evidence)
+            with self.assertRaisesRegex(RuntimeError, message):
+                cgvo_service._validate_g2_research_footprints(policy, working_ledger, gazetteer, working_evidence)
+
+        for field, value in (("latitude", 33.0), ("longitude", 72.0), ("sourceCoordinateRaw", "33° 45' 36'' N 72° 50' 15'' E"), ("coordinateSourceId", "OTHER_SOURCE"), ("coordinateReferenceSystem", "EPSG:4326"), ("coordinateInterpretation", "OTHER_INTERPRETATION"), ("normalizationMethod", "SOURCE_DECIMAL_DEGREES_VERBATIM")):
+            assert_rejected(lambda working, _evidence, field=field, value=value: taxila(working).__setitem__(field, value), "mismatch")
+
+        assert_rejected(lambda _working, evidence: next(item for item in evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA")["normalizedCoordinate"].__setitem__("latitude", 33.76), "raw coordinate normalization mismatch")
+        assert_rejected(lambda _working, evidence: next(item for item in evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA")["normalizedCoordinate"].__setitem__("sourceCoordinateRaw", "33° 45' 36'' N 72° 50' 15'' E"), "raw coordinate normalization mismatch")
+
+        raw_errors = (
+            ("33° 60' 35'' N 72° 50' 15'' E", "minutes"),
+            ("33° 45' 60'' N 72° 50' 15'' E", "seconds"),
+            ("33° 45' 35'' Q 72° 50' 15'' E", "malformed"),
+            ("33° 45' 35'' E 72° 50' 15'' E", "malformed"),
+            ("33° 45' 35'' N 72° 50' 15'' N", "malformed"),
+            ("91° 00' 00'' N 72° 50' 15'' E", "out of range"),
+            ("33° 45' 35'' N 181° 00' 00'' E", "out of range"),
+        )
+        for raw, message in raw_errors:
+            with self.subTest(raw=raw):
+                coordinate = deepcopy(next(item for item in site_evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA")["normalizedCoordinate"])
+                coordinate["sourceCoordinateRaw"] = raw
+                with self.assertRaisesRegex(RuntimeError, message):
+                    cgvo_service._validate_g2_point_coordinate(coordinate, "raw-negative")
+
+        for field, value, message in (("latitude", float("nan"), "latitude"), ("longitude", float("inf"), "longitude"), ("latitude", 91, "latitude"), ("longitude", 181, "longitude")):
+            with self.subTest(field=field, value=value):
+                coordinate = deepcopy(next(item for item in site_evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA")["normalizedCoordinate"])
+                coordinate[field] = value
+                with self.assertRaisesRegex(RuntimeError, message):
+                    cgvo_service._validate_g2_point_coordinate(coordinate, "numeric-negative")
+
+        valid_coordinate = next(item for item in site_evidence["siteEvidence"] if item["siteKey"] == "TAKSASILA_TAXILA")["normalizedCoordinate"]
+        self.assertEqual(cgvo_service._parse_g2_dms_pair(valid_coordinate["sourceCoordinateRaw"], "positive"), (cgvo_service.Fraction(24307, 720), cgvo_service.Fraction(5827, 80)))
+        self.assertEqual(cgvo_service._canonical_g2_decimal(cgvo_service.Fraction(24307, 720)), "33.7597222222")
+        self.assertEqual(cgvo_service._canonical_g2_decimal(cgvo_service.Fraction(5827, 80)), "72.8375000000")
+        footprints = build_cgvo_historical_research_footprints(PROJECT_ROOT)
+        taxila_footprint = next(item for item in footprints["footprints"] if item["normalizedName"] == "GANDHARA")
+        self.assertEqual(taxila_footprint["geometryData"]["siteEvidenceId"], "G2R1_TAKSASILA_TAXILA_SITE_01")
+        for field in cgvo_service.COORDINATE_EVIDENCE_BOUND_FIELDS:
+            self.assertEqual(taxila_footprint["geometryData"][field], valid_coordinate[field])
 
 
 if __name__ == "__main__":

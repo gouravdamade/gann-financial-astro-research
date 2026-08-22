@@ -1,7 +1,7 @@
 {
   "contract": "CGVO_G2_R1_HISTORICAL_SITE_COORDINATE_EVIDENCE_V1",
   "schemaVersion": 1,
-  "milestone": "CGVO-G2-R1",
+  "milestone": "CGVO-G2-R1A",
   "sourceGazetteerBaseline": "CGVO-G1-R1",
   "geometryRole": "RESEARCH_GEOMETRY_ONLY",
   "method": "HISTORICAL_SITE_IDENTITY_AND_COORDINATE_PROVENANCE_ARE_INDEPENDENT",

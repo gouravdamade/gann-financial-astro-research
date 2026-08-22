@@ -4,6 +4,25 @@ Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-22 (CGVO-G2-R1A Coordinate Integrity Hardening)
+
+- Hardened the accepted G2-R1 Taxila anchor without changing the historical
+  research result. The V2 footprint schema is retained for compatibility, and
+  the backend now strictly binds all eleven evidence-derived coordinate and
+  provenance fields to `G2R1_TAKSASILA_TAXILA_SITE_01` before returning the
+  read-only footprint response.
+- Added deterministic DMS parsing with `fractions.Fraction`. The accepted raw
+  Taxila value `33° 45' 35'' N 72° 50' 15'' E` verifies to
+  `33.7597222222, 72.8375`. Invalid DMS, axis/hemisphere, range, NaN/Infinity,
+  raw/normalized, and footprint/evidence mutations fail closed.
+- Top-level CGVO status and readiness now report `CGVO-G2-R1A`; astronomy
+  remains `CGVO-S1B-R1`. Taxila remains the only coordinate-bearing footprint;
+  Mathuraka, Magadha, and Pushkalavati remain unresolved as previously
+  recorded. No source acquisition, G3, UI, package, price, market, Fields,
+  SBC, Auto Suggest, ML, MT5, or execution change was made;
+  `executionAllowed=false`.
+- Integrity report: `docs/research/CGVO_G2_R1A_COORDINATE_INTEGRITY_HARDENING.md`.
+
 ## Latest Update - 2026-08-22 (CGVO-G2-R1 Historical-Site Coordinate Evidence)
 
 - Added a strict, read-only historical-site and coordinate evidence audit on

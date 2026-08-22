@@ -1,7 +1,7 @@
 {
   "contract": "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_FOOTPRINTS_V2",
   "schemaVersion": 2,
-  "milestone": "CGVO-G2-R1",
+  "milestone": "CGVO-G2-R1A",
   "sourceGazetteerBaseline": "CGVO-G1-R1",
   "geometryRole": "RESEARCH_GEOMETRY_ONLY",
   "siteEvidenceFixture": "cgvo_g2_r1_historical_site_coordinate_evidence_v1.json",
@@ -20,7 +20,7 @@
       "siteIdentityEvidence": ["G2R1_TAKSASILA_TAXILA_SITE_01", "G2R1_TAXILA_UNESCO_01", "G2R1_TAXILA_IRANICA_01"],
       "coordinateEvidence": ["G2R1_TAXILA_GETTY_TGN_01"],
       "geometryData": {
-        "anchorId": "G2R1_TAXILA_SITE_REFERENCE_ANCHOR_01", "siteEvidenceId": "G2R1_TAKSASILA_TAXILA_SITE_01", "historicalSiteName": "Taxila / Takshasila archaeological site", "modernSiteLabel": "Taxila archaeological site, Punjab, Pakistan", "latitude": 33.7597222222, "longitude": 72.8375, "coordinateReferenceSystem": "WGS84", "axisOrder": "LATITUDE_LONGITUDE", "sourceCoordinateRaw": "33 degrees 45 minutes 35 seconds N 72 degrees 50 minutes 15 seconds E", "coordinatePrecision": "DMS_TO_NEAREST_SECOND", "coordinateSourceId": "G2R1_TAXILA_GETTY_TGN_01", "coordinateSourceLocator": "TGN 6005850", "coordinateSourceType": "RECOGNIZED_HISTORICAL_GAZETTEER", "coordinateInterpretation": "ARCHAEOLOGICAL_SITE_REFERENCE_POINT", "normalizationMethod": "DMS_TO_DECIMAL_DEGREES", "anchorRole": "HISTORICAL_SITE_REFERENCE_ONLY", "regionRepresentationAllowed": false,
+        "anchorId": "G2R1_TAXILA_SITE_REFERENCE_ANCHOR_01", "siteEvidenceId": "G2R1_TAKSASILA_TAXILA_SITE_01", "historicalSiteName": "Taxila / Takshasila archaeological site", "modernSiteLabel": "Taxila archaeological site, Punjab, Pakistan", "latitude": 33.7597222222, "longitude": 72.8375, "coordinateReferenceSystem": "WGS84", "axisOrder": "LATITUDE_LONGITUDE", "sourceCoordinateRaw": "33° 45' 35'' N 72° 50' 15'' E", "coordinatePrecision": "DMS_TO_NEAREST_SECOND", "coordinateSourceId": "G2R1_TAXILA_GETTY_TGN_01", "coordinateSourceLocator": "TGN 6005850", "coordinateSourceType": "RECOGNIZED_HISTORICAL_GAZETTEER", "coordinateInterpretation": "ARCHAEOLOGICAL_SITE_REFERENCE_POINT", "normalizationMethod": "DMS_TO_DECIMAL_DEGREES", "anchorRole": "HISTORICAL_SITE_REFERENCE_ONLY", "regionRepresentationAllowed": false,
         "siteIdentityEvidence": ["G2R1_TAKSASILA_TAXILA_SITE_01", "G2R1_TAXILA_UNESCO_01", "G2R1_TAXILA_IRANICA_01"], "coordinateEvidence": ["G2R1_TAXILA_GETTY_TGN_01"]
       },
       "uncertainty": {"precisionClass": "SITE_REFERENCE_DMS_TO_NEAREST_SECOND", "qualitativeUncertainty": "HIGH", "reason": "The point is an archaeological-site reference only; it does not delimit Taxila, the serial World Heritage property, or Gandhara."},

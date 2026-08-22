@@ -1,7 +1,7 @@
 {
   "contract": "CGVO_HISTORICAL_GEOGRAPHY_RESEARCH_GEOMETRY_POLICY_V2",
   "schemaVersion": 2,
-  "milestone": "CGVO-G2-R1",
+  "milestone": "CGVO-G2-R1A",
   "sourceGazetteerBaseline": "CGVO-G1-R1",
   "startingMaster": "dc7f6eeaec5882bf5216e1031f6914144dd8389f",
   "geometryRole": "RESEARCH_GEOMETRY_ONLY",

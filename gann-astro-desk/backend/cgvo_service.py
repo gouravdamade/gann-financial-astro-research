@@ -8,10 +8,12 @@ unknowns.  No layer produces a market direction, score, or execution input.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from fractions import Fraction
 import hashlib
 import json
 import math
 from pathlib import Path
+import re
 import sys
 from threading import RLock
 from typing import Any, Mapping
@@ -54,6 +56,25 @@ VARAHAMIHIRA_SOLAR_PHASE_MAPPING_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_SOLAR_ECLIP
 VARAHAMIHIRA_LUNAR_PHASE_MAPPING_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_LUNAR_ECLIPSE_PHASE_MAPPING_V1.yaml"
 VARAHAMIHIRA_FIRMAMENT_ADJUDICATION_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_FIRMAMENT_SOURCE_ADJUDICATION_V2.yaml"
 CGVO_S1B_READINESS_FIXTURE = CGVO_ROOT / "CGVO_S1B_R1_READINESS_MATRIX.yaml"
+COORDINATE_EVIDENCE_BOUND_FIELDS = (
+    "latitude", "longitude", "coordinateReferenceSystem", "axisOrder", "sourceCoordinateRaw",
+    "coordinatePrecision", "coordinateSourceId", "coordinateSourceLocator", "coordinateSourceType",
+    "coordinateInterpretation", "normalizationMethod",
+)
+_DMS_COMPONENT_RE = re.compile(
+    r"^\s*(?P<lat_deg>\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?)\s*"
+    r"(?P<lat_min>\d+(?:\.\d+)?)\s*(?:['′]|min(?:ute)?s?)\s*"
+    r"(?P<lat_sec>\d+(?:\.\d+)?)\s*(?:['\"″]{1,2}|sec(?:ond)?s?)\s*(?P<lat_hemi>[NS])\s*[,;]?\s*"
+    r"(?P<lon_deg>\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?)\s*"
+    r"(?P<lon_min>\d+(?:\.\d+)?)\s*(?:['′]|min(?:ute)?s?)\s*"
+    r"(?P<lon_sec>\d+(?:\.\d+)?)\s*(?:['\"″]{1,2}|sec(?:ond)?s?)\s*(?P<lon_hemi>[EW])\s*$",
+    re.IGNORECASE,
+)
+_DECIMAL_COMPONENT_RE = re.compile(
+    r"^\s*(?P<lat>[+-]?\d+(?:\.\d+)?)\s*(?P<lat_hemi>[NS])?\s*[,;/ ]\s*"
+    r"(?P<lon>[+-]?\d+(?:\.\d+)?)\s*(?P<lon_hemi>[EW])?\s*$",
+    re.IGNORECASE,
+)
 VARAHAMIHIRA_CHITRA_FRAME_ID = "VARAHAMIHIRA_CHITRA_180_RECONSTRUCTION_V1"
 SOURCE_UNKNOWN_REASONS = [
     "VARAHAMIHIRA_ABSOLUTE_FRAME_RECONSTRUCTION_NOT_DEFAULT",
@@ -1053,11 +1074,11 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     return {
         "contract": CGVO_CONTRACT,
         "schemaVersion": 6,
-        "milestone": "CGVO-G2-R1",
+        "milestone": "CGVO-G2-R1A",
         "milestones": {
-            "current": "CGVO-G2-R1",
+            "current": "CGVO-G2-R1A",
             "astronomy": "CGVO-S1B-R1",
-            "geography": "CGVO-G2-R1",
+            "geography": "CGVO-G2-R1A",
         },
         "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
@@ -1327,6 +1348,109 @@ def _validate_g2_point_coordinate(coordinate: Mapping[str, Any], evidence_id: st
         raise RuntimeError(f"CGVO G2-R1 coordinate must declare a supported normalization method: {evidence_id}")
     if coordinate.get("coordinatePrecision") == "UNSPECIFIED":
         raise RuntimeError(f"CGVO G2-R1 coordinate precision may not be unspecified: {evidence_id}")
+    _validate_g2_raw_coordinate_normalization(coordinate, evidence_id)
+
+
+def _dms_to_fraction(degrees_text: str, minutes_text: str, seconds_text: str, hemisphere: str, axis: str, evidence_id: str) -> Fraction:
+    degrees = Fraction(degrees_text)
+    minutes = Fraction(minutes_text)
+    seconds = Fraction(seconds_text)
+    if minutes < 0 or minutes >= 60:
+        raise RuntimeError(f"CGVO G2-R1 DMS minutes must be in [0, 60): {evidence_id}")
+    if seconds < 0 or seconds >= 60:
+        raise RuntimeError(f"CGVO G2-R1 DMS seconds must be in [0, 60): {evidence_id}")
+    limit = Fraction(90 if axis == "latitude" else 180, 1)
+    if degrees < 0 or degrees > limit or (degrees == limit and (minutes != 0 or seconds != 0)):
+        raise RuntimeError(f"CGVO G2-R1 DMS {axis} is out of range: {evidence_id}")
+    valid_hemispheres = {"latitude": {"N", "S"}, "longitude": {"E", "W"}}[axis]
+    hemisphere = hemisphere.upper()
+    if hemisphere not in valid_hemispheres:
+        raise RuntimeError(f"CGVO G2-R1 invalid {axis} hemisphere: {evidence_id}")
+    value = degrees + minutes / 60 + seconds / 3600
+    return -value if hemisphere in {"S", "W"} else value
+
+
+def _parse_g2_dms_pair(raw: str, evidence_id: str) -> tuple[Fraction, Fraction]:
+    match = _DMS_COMPONENT_RE.fullmatch(raw)
+    if not match:
+        raise RuntimeError(f"CGVO G2-R1 malformed DMS coordinate: {evidence_id}")
+    groups = match.groupdict()
+    latitude = _dms_to_fraction(groups["lat_deg"], groups["lat_min"], groups["lat_sec"], groups["lat_hemi"], "latitude", evidence_id)
+    longitude = _dms_to_fraction(groups["lon_deg"], groups["lon_min"], groups["lon_sec"], groups["lon_hemi"], "longitude", evidence_id)
+    return latitude, longitude
+
+
+def _parse_g2_decimal_pair(raw: str, evidence_id: str) -> tuple[Fraction, Fraction]:
+    match = _DECIMAL_COMPONENT_RE.fullmatch(raw)
+    if not match:
+        raise RuntimeError(f"CGVO G2-R1 malformed decimal coordinate: {evidence_id}")
+    groups = match.groupdict()
+    latitude = Fraction(groups["lat"])
+    longitude = Fraction(groups["lon"])
+    for value, axis, hemisphere, limit in (
+        (latitude, "latitude", groups["lat_hemi"], Fraction(90)),
+        (longitude, "longitude", groups["lon_hemi"], Fraction(180)),
+    ):
+        if value < -limit or value > limit:
+            raise RuntimeError(f"CGVO G2-R1 decimal {axis} is out of range: {evidence_id}")
+        if hemisphere:
+            hemisphere = hemisphere.upper()
+            expected = {"latitude": {"N": value >= 0, "S": value <= 0}, "longitude": {"E": value >= 0, "W": value <= 0}}[axis]
+            if hemisphere not in expected or not expected[hemisphere]:
+                raise RuntimeError(f"CGVO G2-R1 decimal {axis} hemisphere conflicts with sign: {evidence_id}")
+    return latitude, longitude
+
+
+def _canonical_g2_decimal(value: Fraction | int | float) -> str:
+    """Use the repository's fixed ten-place decimal representation, not a geographic tolerance."""
+    decimal_value = value if isinstance(value, Fraction) else Fraction(str(value))
+    scale = 10 ** 10
+    numerator = decimal_value.numerator * scale
+    rounded = (numerator + decimal_value.denominator // 2) // decimal_value.denominator if numerator >= 0 else -((-numerator + decimal_value.denominator // 2) // decimal_value.denominator)
+    sign = "-" if rounded < 0 else ""
+    absolute = abs(rounded)
+    return f"{sign}{absolute // scale}.{absolute % scale:010d}"
+
+
+def _validate_g2_raw_coordinate_normalization(coordinate: Mapping[str, Any], evidence_id: str) -> None:
+    raw = coordinate.get("sourceCoordinateRaw")
+    method = coordinate.get("normalizationMethod")
+    if not isinstance(raw, str):
+        raise RuntimeError(f"CGVO G2-R1 coordinate raw source must be text: {evidence_id}")
+    if method == "DMS_TO_DECIMAL_DEGREES":
+        computed_latitude, computed_longitude = _parse_g2_dms_pair(raw, evidence_id)
+    elif method == "SOURCE_DECIMAL_DEGREES_VERBATIM":
+        computed_latitude, computed_longitude = _parse_g2_decimal_pair(raw, evidence_id)
+    else:
+        raise RuntimeError(f"CGVO G2-R1 unsupported coordinate normalization method: {evidence_id}")
+    for field, computed in (("latitude", computed_latitude), ("longitude", computed_longitude)):
+        stored = coordinate.get(field)
+        if _canonical_g2_decimal(computed) != _canonical_g2_decimal(stored):
+            raise RuntimeError(f"CGVO G2-R1 raw coordinate normalization mismatch for {field}: {evidence_id}")
+
+
+def _validate_point_anchor_matches_site_evidence(
+    footprint: Mapping[str, Any],
+    site_evidence: Mapping[str, Any],
+) -> None:
+    geometry = footprint.get("geometryData")
+    evidence_coordinate = site_evidence.get("normalizedCoordinate")
+    if not isinstance(geometry, Mapping) or not isinstance(evidence_coordinate, Mapping):
+        raise RuntimeError(f"CGVO G2-R1 point anchor/evidence binding requires coordinate mappings: {footprint.get('footprintId')}")
+    for field in COORDINATE_EVIDENCE_BOUND_FIELDS:
+        actual = geometry.get(field)
+        expected = evidence_coordinate.get(field)
+        if field in {"latitude", "longitude"}:
+            try:
+                matches = Fraction(str(actual)) == Fraction(str(expected))
+            except (ValueError, ZeroDivisionError):
+                matches = False
+        else:
+            matches = actual == expected
+        if not matches:
+            raise RuntimeError(
+                f"CGVO G2-R1 footprint/evidence coordinate mismatch for {field}: {footprint.get('footprintId')}"
+            )
 
 
 def _validate_g2_point_anchor(footprint: Mapping[str, Any], site_evidence_index: Mapping[str, Mapping[str, Any]]) -> None:
@@ -1344,6 +1468,7 @@ def _validate_g2_point_anchor(footprint: Mapping[str, Any], site_evidence_index:
     evidence = site_evidence_index.get(site_evidence_id)
     if evidence is None or not evidence.get("researchAnchorEligible"):
         raise RuntimeError(f"CGVO G2 point anchor needs an eligible site evidence record: {footprint.get('footprintId')}")
+    _validate_point_anchor_matches_site_evidence(footprint, evidence)
     _validate_g2_point_coordinate(geometry, str(site_evidence_id))
     if footprint.get("candidateCoverageStatus") not in {"FULL_SITE_IDENTITY_ONLY", "PARTIAL_HISTORICAL_CONTEXT"}:
         raise RuntimeError(f"CGVO G2 point anchor must state candidate coverage honestly: {footprint.get('footprintId')}")
