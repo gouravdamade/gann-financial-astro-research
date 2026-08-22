@@ -1,0 +1,71 @@
+{
+  "contract": "CGVO_G3_S1_SEMANTIC_COMPOSITION_AUDIT_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G3-S1",
+  "startingBaseline": "751561a96f0edc0121ce42f74bf48df0571854c7",
+  "rootWitnessLedger": "configs/research/cgvo/cgvo_g3_s1_root_witness_ledger_v1.json",
+  "terminalVerdict": "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY",
+  "relations": {
+    "localDifferentialVisibilityStatus": {
+      "status": "SOURCE_CLOSED_SOLAR_LOCAL_DIFFERENTIAL_VISIBILITY",
+      "sourcePacketId": "CGVO_G3_S1_BS_V11_LOCAL_VISIBILITY",
+      "reason": "V.11 expressly uses pratidesam and drishtivashat for solar-eclipse appearance; it specifies neither an historical-region boundary nor an observation-transfer rule."
+    },
+    "chapterVtoXivReferenceStatus": {
+      "status": "COMMENTARY_ONLY_REFERENCE",
+      "sourcePacketId": "CGVO_G3_S1_BS_V42_XIV_REFERENCE",
+      "reason": "The Chapter XIV locator is visible in the printed English editorial/translation continuation, not in the inspected root Sanskrit V.42."
+    },
+    "chapterXivGeographyStatus": {
+      "status": "SOURCE_CLOSED_CONTEXTUAL_MAPPING",
+      "sourcePacketIds": ["CGVO_G3_S1_BS_XIV_1_KURMA_GEOGRAPHY", "CGVO_G3_S1_BS_XIV_NORTH_TAKSASILA_PUSKALAVATA_GANDHARA"],
+      "reason": "XIV provides directional nakshatra organization and a northern peer list containing the three target names; it does not provide modern spatial geometry."
+    },
+    "siteToRegionRuleStatus": {
+      "status": "SOURCE_SILENT_SITE_TO_REGION_OPERATOR",
+      "reason": "No inspected root passage makes Taxila identical with Gandhara or transfers a property from a site to a named historical unit."
+    },
+    "siteVisibilityToRegionVisibilityStatus": {
+      "status": "NOT_AUTHORIZED",
+      "reason": "Requires both a source-defined transfer rule and an admitted historical-region representation; neither exists."
+    },
+    "localVisibilityToSourceEffectStatus": {
+      "status": "NOT_AUTHORIZED",
+      "reason": "V.11 supplies a solar local-appearance statement, not an effect activation rule. S1B source phase mappings remain independently unresolved."
+    }
+  },
+  "separateChannels": [
+    {"id": "A", "name": "local solar observation", "sourcePacketId": "CGVO_G3_S1_BS_V11_LOCAL_VISIBILITY", "status": "SOURCE_CLOSED"},
+    {"id": "B", "name": "Chapter XIV source geography", "sourcePacketId": "CGVO_G3_S1_BS_XIV_1_KURMA_GEOGRAPHY", "status": "SOURCE_CLOSED_CONTEXTUAL"},
+    {"id": "C", "name": "Taxila research site identity", "sourceId": "G2R1_TAKSASILA_TAXILA_SITE_01", "status": "SITE_ONLY"},
+    {"id": "D", "name": "Chapter V effect activation", "status": "UNRESOLVED"}
+  ],
+  "regionVisibility": null,
+  "sourceEffectActivation": null,
+  "futurePromotionRequirements": [
+    "ROOT_SOURCE_RULE_EXPLICITLY_TRANSFERRING_SITE_OBSERVATION_TO_A_DEFINED_HISTORICAL_UNIT",
+    "AUTHORIZED_HISTORICAL_REGION_SPATIAL_REPRESENTATION",
+    "SOURCE_CLOSED_SOLAR_AND_LUNAR_PHASE_ACTIVATION_MAPPING",
+    "SEPARATE_CENTRAL_AUTHORIZATION_FOR_NON_MARKET_SOURCE_EXPERIMENT"
+  ],
+  "guardrails": {
+    "readOnly": true,
+    "downstreamIntersectionAuthorized": false,
+    "eclipseVisibilityMatching": false,
+    "spatialIntersectionAuthorized": false,
+    "regionExtrapolationAuthorized": false,
+    "chapterVEffectActivationAuthorized": false,
+    "chapterXivChapterVCompositionAuthorized": false,
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketUseAllowed": false,
+    "marketDirectionInferred": false,
+    "scoreAggregationUsed": false,
+    "fieldsPath": false,
+    "sbcPath": false,
+    "autoSuggestPath": false,
+    "mlPath": false,
+    "mt5Path": false,
+    "executionAllowed": false
+  }
+}

@@ -49,6 +49,9 @@ CGVO_G3_D1_AUDIT_CONTRACT_FIXTURE = CGVO_ROOT / "cgvo_g3_d1_site_visibility_audi
 CGVO_G3_R1_COMPOSITION_POLICY_FIXTURE = CGVO_ROOT / "cgvo_g3_r1_source_composition_policy_v1.json"
 CGVO_G3_R1_ADJUDICATION_FIXTURE = CGVO_ROOT / "cgvo_g3_r1_visibility_geography_adjudication_v1.json"
 CGVO_G3_R1_READINESS_FIXTURE = CGVO_ROOT / "cgvo_g3_r1_readiness_matrix_v1.json"
+CGVO_G3_S1_ROOT_WITNESS_FIXTURE = CGVO_ROOT / "cgvo_g3_s1_root_witness_ledger_v1.json"
+CGVO_G3_S1_SEMANTIC_AUDIT_FIXTURE = CGVO_ROOT / "cgvo_g3_s1_semantic_composition_audit_v1.json"
+CGVO_G3_S1_READINESS_FIXTURE = CGVO_ROOT / "cgvo_g3_s1_readiness_matrix_v1.json"
 VARAHAMIHIRA_FIXTURE = CGVO_ROOT / "varahamihira_eclipse_source_profile_v1.json"
 TRAILOKYA_FIXTURE = CGVO_ROOT / "trailokya_geography_argha_context_v1.json"
 VARAHAMIHIRA_FRAME_FIXTURE = CGVO_ROOT / "VARAHAMIHIRA_ASTRONOMICAL_FRAME_V1.yaml"
@@ -1087,16 +1090,17 @@ def _s1b_source_status(project_root: Path) -> dict[str, Any]:
 def build_cgvo_status(project_root: Path) -> dict[str, Any]:
     g3_readiness = _load_json(project_root, CGVO_G3_D1_READINESS_FIXTURE)
     g3_r1_readiness = _load_json(project_root, CGVO_G3_R1_READINESS_FIXTURE)
+    g3_s1_readiness = _load_json(project_root, CGVO_G3_S1_READINESS_FIXTURE)
     return {
         "contract": CGVO_CONTRACT,
         "schemaVersion": 6,
-        "milestone": "CGVO-G3-R1",
+        "milestone": "CGVO-G3-S1",
         "milestones": {
-            "current": "CGVO-G3-R1",
+            "current": "CGVO-G3-S1",
             "astronomy": "CGVO-S1B-R1",
             "geography": "CGVO-G2-R1A",
             "siteVisibility": "CGVO-G3-D1",
-            "sourceComposition": "CGVO-G3-R1",
+            "sourceComposition": "CGVO-G3-S1",
         },
         "status": "READY_FOR_CENTRAL_REVIEW_WITH_SOURCE_GAPS",
         "availableProfiles": ["MODERN_ASTRONOMY_VISIBILITY_V1", VARAHAMIHIRA_PROFILE_ID, TRAILOKYA_PROFILE_ID, VARAHAMIHIRA_CHITRA_FRAME_ID],
@@ -1116,11 +1120,13 @@ def build_cgvo_status(project_root: Path) -> dict[str, Any]:
             "chapterVEffectActivationAuthorized": g3_readiness["chapterVEffectActivationAuthorized"],
         },
         "sourceCompositionAdjudication": {
-            "status": g3_r1_readiness["centralVerdict"],
+            "status": g3_s1_readiness["parentCentralVerdict"],
             "chapterXivGeographyRole": g3_r1_readiness["chapterXivGeographyRole"],
             "siteToRegionInference": g3_r1_readiness["siteToRegionInference"],
             "regionVisibility": None,
             "sourceEffectActivation": None,
+            "rootWitnessStatus": g3_s1_readiness["rootSanskritWitness"],
+            "semanticVerdict": "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY",
         },
     }
 
@@ -1615,10 +1621,19 @@ def _g3_r1_source_composition_adjudication(project_root: Path) -> dict[str, Any]
     """Return the static, non-operational CGVO-G3-R1 composition verdict."""
     policy = _load_json(project_root, CGVO_G3_R1_COMPOSITION_POLICY_FIXTURE)
     adjudication = _load_json(project_root, CGVO_G3_R1_ADJUDICATION_FIXTURE)
+    root_witness = _load_json(project_root, CGVO_G3_S1_ROOT_WITNESS_FIXTURE)
+    semantic_audit = _load_json(project_root, CGVO_G3_S1_SEMANTIC_AUDIT_FIXTURE)
+    readiness = _load_json(project_root, CGVO_G3_S1_READINESS_FIXTURE)
     if policy.get("contract") != "CGVO_G3_R1_SOURCE_COMPOSITION_POLICY_V1":
         raise RuntimeError("CGVO G3-R1 source-composition policy has an invalid contract")
     if adjudication.get("contract") != "CGVO_G3_R1_VISIBILITY_GEOGRAPHY_ADJUDICATION_V1":
         raise RuntimeError("CGVO G3-R1 visibility/geography adjudication has an invalid contract")
+    if root_witness.get("contract") != "CGVO_G3_S1_ROOT_SANSKRIT_WITNESS_LEDGER_V1":
+        raise RuntimeError("CGVO G3-S1 root-witness ledger has an invalid contract")
+    if semantic_audit.get("contract") != "CGVO_G3_S1_SEMANTIC_COMPOSITION_AUDIT_V1":
+        raise RuntimeError("CGVO G3-S1 semantic composition audit has an invalid contract")
+    if readiness.get("contract") != "CGVO_G3_S1_READINESS_MATRIX_V1":
+        raise RuntimeError("CGVO G3-S1 readiness matrix has an invalid contract")
     guardrails = policy.get("guardrails", {})
     required_false = (
         "downstreamIntersectionAuthorized", "eclipseVisibilityMatching", "spatialIntersectionAuthorized",
@@ -1633,6 +1648,12 @@ def _g3_r1_source_composition_adjudication(project_root: Path) -> dict[str, Any]
         raise RuntimeError("CGVO G3-R1 must keep Chapter XIV as contextual provenance only")
     if policy.get("chapterV_XIV_compositionStatus") not in {"COMPOSITION_NOT_AUTHORIZED", "AMBIGUOUS"}:
         raise RuntimeError("CGVO G3-R1 may not mark Chapter V/XIV composition as active")
+    if semantic_audit.get("terminalVerdict") != "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY":
+        raise RuntimeError("CGVO G3-S1 must retain contextual-only source composition")
+    if semantic_audit.get("regionVisibility") is not None or semantic_audit.get("sourceEffectActivation") is not None:
+        raise RuntimeError("CGVO G3-S1 must retain null region and source-effect outputs")
+    if root_witness.get("witness", {}).get("acquisitionStatus") != "ACQUIRED_CHECKSUM_VERIFIED":
+        raise RuntimeError("CGVO G3-S1 requires a checksum-verified root witness")
     return {
         "contract": policy["contract"],
         "chapterVVisibilityLanguageStatus": policy["chapterVVisibilityLanguageStatus"],
@@ -1645,7 +1666,15 @@ def _g3_r1_source_composition_adjudication(project_root: Path) -> dict[str, Any]
         "chapterV_XIV_compositionStatus": policy["chapterV_XIV_compositionStatus"],
         "futurePromotionRequirements": list(policy["futurePromotionRequirements"]),
         "adjudicationRecordId": adjudication["adjudicationId"],
-        "adjudicationStatus": adjudication["centralVerdict"],
+        "adjudicationStatus": readiness["parentCentralVerdict"],
+        "rootWitness": {
+            "sourceWitnessId": root_witness["witness"]["sourceWitnessId"],
+            "status": root_witness["witness"]["acquisitionStatus"],
+            "pdfSha256": root_witness["witness"]["pdfSha256"],
+            "sourceBytePolicy": root_witness["witness"]["sourceBytePolicy"],
+        },
+        "semanticVerdict": semantic_audit["terminalVerdict"],
+        "siteToRegionRuleStatus": semantic_audit["relations"]["siteToRegionRuleStatus"]["status"],
     }
 
 

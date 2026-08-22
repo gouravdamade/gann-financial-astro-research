@@ -310,6 +310,9 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertEqual(adjudication["chapterXIVGeographyRole"], "CONTEXTUAL_PROVENANCE_ONLY")
         self.assertEqual(adjudication["siteVisibilityInferenceStatus"], "SITE_ONLY")
         self.assertEqual(adjudication["chapterV_XIV_compositionStatus"], "COMPOSITION_NOT_AUTHORIZED")
+        self.assertEqual(adjudication["semanticVerdict"], "SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY")
+        self.assertEqual(adjudication["siteToRegionRuleStatus"], "SOURCE_SILENT_SITE_TO_REGION_OPERATOR")
+        self.assertEqual(adjudication["rootWitness"]["sourceBytePolicy"], "PRIVATE_NOT_TRACKED")
         self.assertIsNone(adjudication["regionVisibility"])
         self.assertIsNone(adjudication["sourceEffectActivation"])
         for key in ("downstreamIntersectionAuthorized", "eclipseVisibilityMatching", "marketUseAllowed", "executionAllowed"):
@@ -327,6 +330,7 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertEqual(readiness["g1SourceOccurrences"], 308)
         self.assertEqual(readiness["g2ResearchFootprints"], 12)
         self.assertEqual(readiness["g2R1aCoordinateBearingFootprints"], 1)
+        self.assertEqual(readiness["centralVerdict"], "CENTRAL_ACCEPTED_CONTEXTUAL_PROVENANCE_ONLY")
         for fixture in (policy, adjudication, readiness):
             for key, value in fixture["guardrails"].items():
                 if key == "readOnly":

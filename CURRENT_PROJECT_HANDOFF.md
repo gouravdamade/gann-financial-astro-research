@@ -4,7 +4,31 @@ Last updated: 2026-08-22 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-08-22 (CGVO-G3-R1 Source-Composition Adjudication)
+## Latest Update - 2026-08-22 (CGVO-G3-S1 Root Sanskrit Witness and Semantic Composition Audit)
+
+- Acquired and independently SHA-256-verified the private 1,116-page
+  `BRIHAT_SAMHITA_SASTRI_V_SUBRAHMANYA_DLI_2015_102832` witness:
+  `D7425625010C621FF6651BF6BF916506791E3D4381078251AC7DC8EFBBA6577A`.
+  The private PDF remains outside Git. Page images 72, 83--84, 184--185, and
+  189--190 were visually inspected; OCR was navigation only.
+- The source closes V.11 only as solar local-differential visibility. V.42's
+  Chapter XIV label is editorial/translation prose, not an inspected Sanskrit
+  reference. XIV.1 and XIV.24--28 source-close contextual directional and
+  historical-name records, including Taxila/Puskalavati/Gandhara as northern
+  list peers, but no containment or transfer rule.
+- The terminal verdict is `SOURCE_CLOSED_CONTEXTUAL_PROVENANCE_ONLY`.
+  `siteToRegionRuleStatus=SOURCE_SILENT_SITE_TO_REGION_OPERATOR`,
+  `regionVisibility=null`, and `sourceEffectActivation=null`. S1B phase gaps
+  are unchanged. The Taxila route remains site-only, with no geometry, region,
+  effect, price, market, Fields, SBC, Auto Suggest, ML, MT5, or execution path;
+  `executionAllowed=false`.
+- G3-R1's post-review central verdict is corrected to
+  `CENTRAL_ACCEPTED_CONTEXTUAL_PROVENANCE_ONLY`; G3-D1 now uses the canonical
+  `CONTEXTUAL_PROVENANCE_ONLY` vocabulary while retaining its legacy label for
+  compatibility. Report:
+  `docs/research/CGVO_G3_S1_ROOT_SANSKRIT_WITNESS_AND_COMPOSITION_AUDIT.md`.
+
+## Previous Update - 2026-08-22 (CGVO-G3-R1 Source-Composition Adjudication)
 
 - Starting from centrally accepted `CGVO-G3-D1` commit
   `1a7bc5b43167aef0cff568a268e1e8d9722e7b62`, added the static

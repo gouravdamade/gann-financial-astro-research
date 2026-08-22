@@ -25,10 +25,10 @@ class CgvoApiRouteTests(unittest.TestCase):
         self.assertEqual(status.status_code, 200)
         self.assertTrue(status.content_type.startswith("application/json"))
         self.assertFalse(status.get_json()["status"]["guardrails"]["executionAllowed"])
-        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G3-R1")
+        self.assertEqual(status.get_json()["status"]["milestone"], "CGVO-G3-S1")
         self.assertEqual(status.get_json()["status"]["milestones"], {
-            "current": "CGVO-G3-R1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1A",
-            "siteVisibility": "CGVO-G3-D1", "sourceComposition": "CGVO-G3-R1",
+            "current": "CGVO-G3-S1", "astronomy": "CGVO-S1B-R1", "geography": "CGVO-G2-R1A",
+            "siteVisibility": "CGVO-G3-D1", "sourceComposition": "CGVO-G3-S1",
         })
         self.assertFalse(status.get_json()["status"]["s1bSourceAudit"]["absoluteFrameAudit"]["auditProfilesRuntimeSelectable"])
         workbench = self.client.get(

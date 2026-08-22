@@ -33,7 +33,8 @@
     "elevationPolicy": "UNKNOWN_NOT_EVIDENCED_ENGINEERING_ZERO_METRE_CALCULATION_ONLY"
   },
   "sourceComposition": {
-    "chapterXivGeographyRole": "SOURCE_LAYER_CONTEXT_ONLY",
+    "chapterXivGeographyRole": "CONTEXTUAL_PROVENANCE_ONLY",
+    "legacyChapterXivGeographyRole": "SOURCE_LAYER_CONTEXT_ONLY",
     "chapterVEffectActivation": null,
     "chapterXivChapterVCompositionAuthorized": false,
     "regionExtrapolationAuthorized": false,

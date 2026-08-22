@@ -1,0 +1,114 @@
+{
+  "contract": "CGVO_G3_S1_ROOT_SANSKRIT_WITNESS_LEDGER_V1",
+  "schemaVersion": 1,
+  "milestone": "CGVO-G3-S1",
+  "startingBaseline": "751561a96f0edc0121ce42f74bf48df0571854c7",
+  "witness": {
+    "sourceWitnessId": "BRIHAT_SAMHITA_SASTRI_V_SUBRAHMANYA_DLI_2015_102832",
+    "filename": "2015.102832.Varahamihiras-Brihat-Samhitavoli-ii_text(2)(1).pdf",
+    "title": "Varahamihiras Brihat Samhita,vol.i-ii",
+    "author": "Tr.sastri,v.subrahmanya",
+    "archiveIdentifier": "2015.102832",
+    "pdfPageCount": 1116,
+    "pdfSha256": "D7425625010C621FF6651BF6BF916506791E3D4381078251AC7DC8EFBBA6577A",
+    "acquisitionStatus": "ACQUIRED_CHECKSUM_VERIFIED",
+    "durablePrivateSourceLocator": "GANN_ASTRO_PRIVATE_SOURCE_ROOT/2015.102832.Varahamihiras-Brihat-Samhitavoli-ii_text(2)(1).pdf",
+    "sourceBytePolicy": "PRIVATE_NOT_TRACKED",
+    "pageImageInspection": "REQUIRED_PAGES_RENDERED_AND_VISUALLY_INSPECTED",
+    "ocrRole": "NAVIGATION_ONLY"
+  },
+  "translationWitness": {
+    "sourceWitnessId": "BRIHAT_SAMHITA_SASTRI_V_SUBRAHMANYA_DLI_2015_102832",
+    "role": "PRINTED_TRANSLATION_ON_SAME_PAGE_NOT_CONTROLLING_ROOT_TRANSCRIPTION",
+    "editionLocator": "same checksum-identified scan; printed English translation beneath the Sanskrit",
+    "independentReadingWitness": {
+      "sourceId": "SIVA_SH_BRIHAT_SAMHITA_TRANSLATION_READING_WITNESS",
+      "role": "CROSS_CHECK_ONLY_NOT_CONTROLLING",
+      "url": "https://www.siva.sh/brihat-samhita/5/11-15"
+    }
+  },
+  "passagePackets": [
+    {
+      "packetId": "CGVO_G3_S1_BS_V11_LOCAL_VISIBILITY",
+      "chapterVerse": "V.11",
+      "pdfPage": 72,
+      "printedPage": 47,
+      "controllingAuthority": "ORIGINAL_PAGE_IMAGE_IN_CHECKSUM_IDENTIFIED_SCAN",
+      "devanagari": "चन्द्रोऽधःस्थः स्तगयति रविमम्बुदवत् समागतः पश्चात् । प्रतिदेशमतश्चित्रं दृष्टिवशाद्भास्करग्रहणम् ॥११॥",
+      "iast": "candro 'dhaḥsthaḥ sthagayati ravim ambudavat samāgataḥ paścāt | pratideśam ataś citraṃ dṛṣṭivaśād bhāskaragrahaṇam || 11 ||",
+      "tokenGloss": [
+        {"token": "प्रतिदेशम्", "gloss": "in or for each locality/country; no boundary is defined"},
+        {"token": "दृष्टिवशात्", "gloss": "according to visibility/appearance"},
+        {"token": "भास्करग्रहणम्", "gloss": "solar eclipse"}
+      ],
+      "literalRelation": "The solar-eclipse disc is various by locality according to visibility.",
+      "translationWitnessExcerpt": "different in various countries according to the visibility of the eclipsed disc",
+      "transcriptionConfidence": "HIGH",
+      "variantReadings": [],
+      "semanticScope": "SOLAR_ONLY_LOCAL_DIFFERENTIAL_VISIBILITY",
+      "doesNotEstablish": ["SITE_TO_REGION_TRANSFER", "REGION_BOUNDARY", "SOURCE_EFFECT_ACTIVATION"]
+    },
+    {
+      "packetId": "CGVO_G3_S1_BS_V42_XIV_REFERENCE",
+      "chapterVerse": "V.42",
+      "pdfPages": [83, 84],
+      "printedPages": [58, 59],
+      "controllingAuthority": "ORIGINAL_PAGE_IMAGE_IN_CHECKSUM_IDENTIFIED_SCAN",
+      "rootVerseInspection": "The Sanskrit V.42 gives Kumbha/Meena eclipse-result language. No Kurma or Chapter XIV reference was visually present in the root Sanskrit on these pages.",
+      "rootReferenceTerm": null,
+      "editorialReference": "The printed English translation continues with '(Ch. XIV, infra)'.",
+      "editorialReferenceStatus": "TRANSLATOR_OR_EDITORIAL_PROSE_NOT_ROOT_SANSKRIT",
+      "transcriptionConfidence": "HIGH_FOR_REFERENCE_DISTINCTION",
+      "variantReadings": ["The page notes a separate reading for a Sanskrit word; it does not add a Kurma/Chapter XIV reference."],
+      "semanticScope": "ROOT_V42_EFFECT_LANGUAGE_AND_EDITORIAL_XIV_READING_AID",
+      "doesNotEstablish": ["ROOT_TEXT_CHAPTER_V_TO_XIV_OPERATOR", "SITE_VISIBILITY_SELECTOR", "SITE_TO_REGION_TRANSFER"]
+    },
+    {
+      "packetId": "CGVO_G3_S1_BS_XIV_1_KURMA_GEOGRAPHY",
+      "chapterVerse": "XIV.1",
+      "pdfPages": [184, 185],
+      "printedPages": [159, 160],
+      "controllingAuthority": "ORIGINAL_PAGE_IMAGE_IN_CHECKSUM_IDENTIFIED_SCAN",
+      "devanagariOperativeClause": "नक्षत्रत्रयवर्गेण ... भारतवर्षे मध्ये प्रागादिभागेनता दिशः ॥१॥",
+      "iastOperativeClause": "nakṣatratrayavargeṇa ... bhāratavarṣe madhye prāgādibhāgena tā diśaḥ || 1 ||",
+      "tokenGloss": [
+        {"token": "नक्षत्रत्रय", "gloss": "triads of lunar mansions"},
+        {"token": "दिशः", "gloss": "directions"},
+        {"token": "भारतवर्ष", "gloss": "Bharatavarsha in the source's directional organization"}
+      ],
+      "translationWitnessExcerpt": "nine triads of stars ... nine regions ... proceeding thence to the East, South-east, etc.",
+      "transcriptionConfidence": "HIGH_FOR_OPERATIVE_TERMS_AND_DIRECTIONAL_MAPPING",
+      "rootTextVersusCommentary": "The preceding globe/tortoise discussion on printed p.159 is commentary and is not used as source geometry.",
+      "semanticScope": "SOURCE_CLOSED_CONTEXTUAL_DIRECTIONAL_NAKSHATRA_MAPPING",
+      "doesNotEstablish": ["MODERN_REGION_GEOMETRY", "SITE_EQUALS_REGION", "SITE_VISIBILITY_TO_REGION_VISIBILITY"]
+    },
+    {
+      "packetId": "CGVO_G3_S1_BS_XIV_NORTH_TAKSASILA_PUSKALAVATA_GANDHARA",
+      "chapterVerses": "XIV.24-XIV.28",
+      "pdfPages": [189, 190],
+      "printedPages": [164, 165],
+      "controllingAuthority": "ORIGINAL_PAGE_IMAGE_IN_CHECKSUM_IDENTIFIED_SCAN",
+      "sourceDirection": "NORTH",
+      "sourceNakshatraTriad": ["Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada"],
+      "verifiedTargetForms": [
+        {"devanagari": "तक्षशिला", "iast": "Takṣaśilā", "translationForm": "Taxila"},
+        {"devanagari": "पुष्कलावत", "iast": "Puṣkalāvata", "translationForm": "Pushkalavata"},
+        {"devanagari": "गान्धार", "iast": "Gāndhāra", "translationForm": "Gandhara"}
+      ],
+      "listSyntaxFinding": "The targets occur as grammatical peers within the Chapter XIV northern list; the inspected verses do not define containment, equivalence, or a transfer rule among them.",
+      "translationWitnessExcerpt": "Taxila, Pushkalavata ... Gandhara",
+      "transcriptionConfidence": "HIGH_FOR_TARGET_FORMS_AND_LIST_RELATION",
+      "variantReadings": [],
+      "semanticScope": "SOURCE_CLOSED_CONTEXTUAL_HISTORICAL_NAME_LIST",
+      "doesNotEstablish": ["TAXILA_EQUALS_GANDHARA", "GANDHARA_BOUNDARY", "SITE_TO_REGION_TRANSFER", "REGION_VISIBILITY"]
+    }
+  ],
+  "guardrails": {
+    "rootTextControlsSemanticClaims": true,
+    "ocrControlsClaims": false,
+    "regionExtrapolationAuthorized": false,
+    "chapterVEffectActivationAuthorized": false,
+    "marketUseAllowed": false,
+    "executionAllowed": false
+  }
+}

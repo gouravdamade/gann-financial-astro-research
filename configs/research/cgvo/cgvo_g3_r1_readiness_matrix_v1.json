@@ -14,8 +14,8 @@
   "regionVisibility": "NOT_AUTHORIZED",
   "sourceEffectActivation": "NOT_AUTHORIZED",
   "solarLunarPhaseMappings": "UNCHANGED_UNKNOWN_SOURCE_PHASE_MAPPING_NOT_CLOSED",
-  "centralVerdict": "HOLD_FOR_R1",
-  "nextRecommendedMilestone": "CGVO-G3-R2_OR_G4_AFTER_CENTRAL_REVIEW",
+  "centralVerdict": "CENTRAL_ACCEPTED_CONTEXTUAL_PROVENANCE_ONLY",
+  "nextRecommendedMilestone": "CGVO-G3-S1_ROOT_WITNESS_AUDIT_COMPLETED_CENTRAL_REVIEW_REQUIRED",
   "guardrails": {
     "downstreamIntersectionAuthorized": false,
     "eclipseVisibilityMatching": false,
