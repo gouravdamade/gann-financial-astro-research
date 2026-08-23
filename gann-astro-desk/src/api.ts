@@ -1069,7 +1069,9 @@ export async function fetchMultiOscillatorActivityRange(
 
 function assertMultiOscillatorActivityGuardrails(activity: MultiOscillatorActivityRange): void {
   if (
-    activity.evidenceMode !== 'EXPLORATORY_UNSIGNED'
+    activity.contract !== 'MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1'
+    || activity.schemaVersion !== 2
+    || activity.evidenceMode !== 'EXPLORATORY_UNSIGNED'
     || activity.contributionContract !== 'MO_ACTIVITY_CONTRIBUTION_V1'
     || activity.guardrails.readOnly !== true
     || activity.guardrails.unsigned !== true
@@ -1083,6 +1085,10 @@ function assertMultiOscillatorActivityGuardrails(activity: MultiOscillatorActivi
     || activity.guardrails.executionAllowed !== false
     || activity.guardrails.pairDifferenceComputed !== false
     || activity.guardrails.normalizationUsed !== false
+    || activity.guardrails.dataNormalizationUsed !== false
+    || activity.guardrails.displayAxisScaling.mode !== 'SHARED_RAW_COUNT_AXIS'
+    || activity.guardrails.displayAxisScaling.derivedFrom !== 'CURRENT_FILTERED_VISIBLE_COUNTS'
+    || activity.guardrails.displayAxisScaling.changesDataValues !== false
     || activity.guardrails.smoothingUsed !== false
   ) {
     throw new Error('Multi-oscillator activity response violated the unsigned research guardrails')

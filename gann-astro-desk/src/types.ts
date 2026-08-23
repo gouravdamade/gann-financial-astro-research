@@ -2796,8 +2796,8 @@ export type MultiOscillatorActivityInterval = {
 }
 
 export type MultiOscillatorActivitySide = {
-  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1'
-  schemaVersion: 1
+  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1_1'
+  schemaVersion: 2
   evidenceMode: 'EXPLORATORY_UNSIGNED'
   sideIdentity: 'USD' | 'JPY'
   instrumentIdentity: string
@@ -2806,7 +2806,7 @@ export type MultiOscillatorActivitySide = {
   rangeStartUtc: string
   rangeEndUtc: string
   eventUniverseProfileId: 'ASPECT_STRENGTH_V0'
-  eventUniverseProfileHash: string
+  eventUniverseHash: string
   bodyUniverse: string[]
   aspectProfile: {
     profileId: 'ASPECT_STRENGTH_V0'
@@ -2830,6 +2830,8 @@ export type MultiOscillatorActivitySide = {
   sourceEventCount: number
   eligibleEventCount: number
   rejectedEventCount: number
+  relevantRejectedEventCount: number
+  irrelevantRejectedEventCount: number
   groupedCounts: {
     byTransitBody: Record<string, number>
     byAspectType: Record<string, number>
@@ -2853,6 +2855,12 @@ export type MultiOscillatorActivityGuardrails = {
   automaticOrderPlacement: false
   pairDifferenceComputed: false
   normalizationUsed: false
+  dataNormalizationUsed: false
+  displayAxisScaling: {
+    mode: 'SHARED_RAW_COUNT_AXIS'
+    derivedFrom: 'CURRENT_FILTERED_VISIBLE_COUNTS'
+    changesDataValues: false
+  }
   smoothingUsed: false
 }
 
@@ -2864,8 +2872,8 @@ export type MultiOscillatorActivityRangeRequest = {
 }
 
 export type MultiOscillatorActivityRange = {
-  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1'
-  schemaVersion: 1
+  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1'
+  schemaVersion: 2
   evidenceMode: 'EXPLORATORY_UNSIGNED'
   contributionContract: 'MO_ACTIVITY_CONTRIBUTION_V1'
   rangeStartUtc: string
@@ -2873,7 +2881,7 @@ export type MultiOscillatorActivityRange = {
   sideIdentities: Array<'USD' | 'JPY'>
   eventUniverse: {
     profileId: 'ASPECT_STRENGTH_V0'
-    profileHash: string | string[]
+    eventUniverseHash: string | string[]
     bodyUniverse: string[]
     aspectTypes: string[]
     maxOrbDeg: number

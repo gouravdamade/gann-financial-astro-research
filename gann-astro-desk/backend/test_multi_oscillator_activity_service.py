@@ -25,7 +25,12 @@ def _event(event_id: str, side: str, start: str, exact: str, end: str, body: str
     }
 
 
-def _event_range(side: str, events: list[dict], unknown_reasons: list[str] | None = None) -> dict:
+def _event_range(
+    side: str,
+    events: list[dict],
+    unknown_reasons: list[str] | None = None,
+    rejected_events: list[dict] | None = None,
+) -> dict:
     return {
         "contract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
         "chartId": f"{side.lower()}-chart",
@@ -39,7 +44,7 @@ def _event_range(side: str, events: list[dict], unknown_reasons: list[str] | Non
         "nodePolicy": "TRUE_NODE",
         "generatorVersion": "test-generator",
         "events": events,
-        "rejectedEvents": [],
+        "rejectedEvents": rejected_events or [],
         "unknownReasons": unknown_reasons or [],
     }
 
@@ -108,6 +113,136 @@ class MultiOscillatorActivityServiceTests(unittest.TestCase):
         self.assertEqual(result["fields"]["USD"]["activityIntervals"][0]["rawActiveEventCount"], 0)
         self.assertEqual(result["fields"]["USD"]["unknownReason"], "EPHEMERIS_UNAVAILABLE")
 
+    def test_rejected_candidate_proven_outside_visible_range_does_not_poison_coverage(self) -> None:
+        rejected = {
+            "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+            "transitBody": "SATURN",
+            "natalTarget": "SUN",
+            "aspectType": "SQUARE",
+            "observedSearchStartUtc": "2025-03-01T00:00:00Z",
+            "observedSearchEndUtc": "2025-03-02T00:00:00Z",
+        }
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(
+                payload["sideIdentity"], [], rejected_events=[rejected] if payload["sideIdentity"] == "USD" else []
+            ),
+        ):
+            result = build_multi_oscillator_activity_range(self._request())
+
+        usd = result["fields"]["USD"]
+        self.assertEqual(usd["coverage"], "KNOWN")
+        self.assertEqual(usd["relevantRejectedEventCount"], 0)
+        self.assertEqual(usd["irrelevantRejectedEventCount"], 1)
+        self.assertIsNone(usd["unknownReason"])
+
+    def test_rejected_candidate_overlapping_visible_range_poison_coverage(self) -> None:
+        rejected = {
+            "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+            "transitBody": "SATURN",
+            "natalTarget": "SUN",
+            "aspectType": "SQUARE",
+            "observedSearchStartUtc": "2025-04-01T04:00:00Z",
+            "observedSearchEndUtc": "2025-04-01T06:00:00Z",
+        }
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(
+                payload["sideIdentity"], [], rejected_events=[rejected] if payload["sideIdentity"] == "USD" else []
+            ),
+        ):
+            result = build_multi_oscillator_activity_range(self._request())
+
+        usd = result["fields"]["USD"]
+        self.assertEqual(usd["coverage"], "UNKNOWN")
+        self.assertEqual(usd["relevantRejectedEventCount"], 1)
+        self.assertEqual(usd["irrelevantRejectedEventCount"], 0)
+        self.assertIn("OVERLAPPING_VISIBLE_RANGE", usd["unknownReason"])
+
+    def test_multiple_rejected_candidates_all_outside_visible_range_remain_known(self) -> None:
+        rejected = [
+            {
+                "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+                "observedSearchStartUtc": "2025-03-01T00:00:00Z",
+                "observedSearchEndUtc": "2025-03-02T00:00:00Z",
+            },
+            {
+                "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+                "observedSearchStartUtc": "2025-04-02T00:00:00Z",
+                "observedSearchEndUtc": "2025-04-03T00:00:00Z",
+            },
+        ]
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(
+                payload["sideIdentity"], [], rejected_events=rejected if payload["sideIdentity"] == "USD" else []
+            ),
+        ):
+            result = build_multi_oscillator_activity_range(self._request())
+
+        usd = result["fields"]["USD"]
+        self.assertEqual(usd["coverage"], "KNOWN")
+        self.assertEqual(usd["relevantRejectedEventCount"], 0)
+        self.assertEqual(usd["irrelevantRejectedEventCount"], 2)
+
+    def test_rejected_candidate_with_malformed_metadata_fails_closed(self) -> None:
+        rejected = {"reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON", "transitBody": "SATURN"}
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(
+                payload["sideIdentity"], [], rejected_events=[rejected] if payload["sideIdentity"] == "USD" else []
+            ),
+        ):
+            result = build_multi_oscillator_activity_range(self._request())
+
+        usd = result["fields"]["USD"]
+        self.assertEqual(usd["coverage"], "UNKNOWN")
+        self.assertEqual(usd["relevantRejectedEventCount"], 1)
+        self.assertEqual(usd["irrelevantRejectedEventCount"], 0)
+
+    def test_unknown_reason_remains_unknown_even_when_rejected_candidates_are_irrelevant(self) -> None:
+        rejected = {
+            "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+            "observedSearchStartUtc": "2025-03-01T00:00:00Z",
+            "observedSearchEndUtc": "2025-03-02T00:00:00Z",
+        }
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(
+                payload["sideIdentity"], [], ["EPHEMERIS_UNAVAILABLE"], [rejected]
+            ) if payload["sideIdentity"] == "USD" else _event_range(payload["sideIdentity"], []),
+        ):
+            result = build_multi_oscillator_activity_range(self._request())
+
+        usd = result["fields"]["USD"]
+        self.assertEqual(usd["coverage"], "UNKNOWN")
+        self.assertEqual(usd["relevantRejectedEventCount"], 0)
+        self.assertIn("EPHEMERIS_UNAVAILABLE", usd["unknownReason"])
+
+    def test_multiple_rejections_are_known_only_when_all_are_irrelevant(self) -> None:
+        irrelevant = {
+            "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+            "observedSearchStartUtc": "2025-03-01T00:00:00Z",
+            "observedSearchEndUtc": "2025-03-02T00:00:00Z",
+        }
+        relevant = {
+            "reason": "BOUNDARY_OUTSIDE_SEARCH_HORIZON",
+            "observedSearchStartUtc": "2025-04-01T04:00:00Z",
+            "observedSearchEndUtc": "2025-04-01T06:00:00Z",
+        }
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(
+                payload["sideIdentity"], [], rejected_events=[irrelevant, relevant]
+            ) if payload["sideIdentity"] == "USD" else _event_range(payload["sideIdentity"], []),
+        ):
+            result = build_multi_oscillator_activity_range(self._request())
+
+        usd = result["fields"]["USD"]
+        self.assertEqual(usd["coverage"], "UNKNOWN")
+        self.assertEqual(usd["relevantRejectedEventCount"], 1)
+        self.assertEqual(usd["irrelevantRejectedEventCount"], 1)
+
     def test_client_cannot_inject_event_universe_or_pair_field(self) -> None:
         for key, value in (("bodyUniverse", ["PLUTO"]), ("events", []), ("pairRelative", True)):
             with self.subTest(key=key):
@@ -134,6 +269,22 @@ class MultiOscillatorActivityServiceTests(unittest.TestCase):
         with patch(
             "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
             side_effect=lambda payload: _event_range(payload["sideIdentity"], [signed]),
+        ):
+            with self.assertRaisesRegex(ValueError, "signed or magnitude"):
+                build_multi_oscillator_activity_range(self._request())
+
+    def test_magnitude_compiler_output_fails_closed(self) -> None:
+        magnitude = _event(
+            "usd-magnitude",
+            "USD",
+            "2025-04-01T01:00:00Z",
+            "2025-04-01T01:30:00Z",
+            "2025-04-01T03:00:00Z",
+        )
+        magnitude["magnitude"] = 1.5
+        with patch(
+            "multi_oscillator_activity_service.build_chart_conditioned_transit_event_range",
+            side_effect=lambda payload: _event_range(payload["sideIdentity"], [magnitude]),
         ):
             with self.assertRaisesRegex(ValueError, "signed or magnitude"):
                 build_multi_oscillator_activity_range(self._request())

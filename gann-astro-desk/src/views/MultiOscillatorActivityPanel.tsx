@@ -6,6 +6,7 @@ import type {
   MultiOscillatorActivityRange,
   MultiOscillatorActivitySide,
 } from '../types'
+import { deriveSharedRawActivityAxisMax } from './MultiOscillatorActivityScale'
 
 type Props = {
   activity: MultiOscillatorActivityRange | null
@@ -69,19 +70,21 @@ function formatUtc(value: string): string {
 function ActivityCountLane({
   side,
   intervals,
+  sharedAxisMax,
   onSelectTimestamp,
 }: {
   side: MultiOscillatorActivitySide
   intervals: MultiOscillatorActivityInterval[]
+  sharedAxisMax: number
   onSelectTimestamp: (timestampUtc: string) => void
 }) {
-  const maximum = Math.max(1, ...intervals.map((interval) => interval.rawActiveEventCount))
+  const pixelAxisMax = Math.max(1, sharedAxisMax)
   return <div className="mo-count-lane" aria-label={`${side.sideIdentity} raw active event count`}>
     {intervals.map((interval) => <button
       key={interval.intervalId}
       type="button"
       className={`mo-count-segment ${interval.coverage === 'UNKNOWN' ? 'is-unknown' : ''}`}
-      style={{ ...intervalStyle(interval, side), height: `${Math.max(5, (interval.rawActiveEventCount / maximum) * 100)}%` }}
+      style={{ ...intervalStyle(interval, side), height: `${Math.max(5, (interval.rawActiveEventCount / pixelAxisMax) * 100)}%` }}
       title={`${side.sideIdentity} raw active event count ${interval.rawActiveEventCount} | ${formatUtc(interval.startUtc)} to ${formatUtc(interval.endUtc)}`}
       aria-label={`${side.sideIdentity} activity interval ${interval.rawActiveEventCount} active events`}
       onClick={() => onSelectTimestamp(interval.startUtc)}
@@ -150,6 +153,7 @@ function SideActivity({
   side,
   events,
   intervals,
+  sharedAxisMax,
   selectedEventId,
   onSelectEvent,
   onSelectTimestamp,
@@ -157,6 +161,7 @@ function SideActivity({
   side: MultiOscillatorActivitySide
   events: MultiOscillatorActivityEvent[]
   intervals: MultiOscillatorActivityInterval[]
+  sharedAxisMax: number
   selectedEventId: string | null
   onSelectEvent: (event: MultiOscillatorActivityEvent) => void
   onSelectTimestamp: (timestampUtc: string) => void
@@ -169,7 +174,7 @@ function SideActivity({
     <div className="mo-lane-label">Applying-to-separating spans and exact markers</div>
     <EventRaster side={side} events={events} selectedEventId={selectedEventId} onSelectEvent={onSelectEvent} />
     <div className="mo-lane-label">Raw active-event count (integer activity, not score)</div>
-    <ActivityCountLane side={side} intervals={intervals} onSelectTimestamp={onSelectTimestamp} />
+    <ActivityCountLane side={side} intervals={intervals} sharedAxisMax={sharedAxisMax} onSelectTimestamp={onSelectTimestamp} />
     <div className="mo-side-summary">
       <span>Range {formatUtc(side.rangeStartUtc)} to {formatUtc(side.rangeEndUtc)}</span>
       <span>{side.coverage === 'KNOWN' ? 'No active event is a known zero.' : side.unknownReason || 'Coverage unavailable.'}</span>
@@ -194,7 +199,7 @@ export function MultiOscillatorActivityPanel({
     setSelectedBodies(activity?.eventUniverse.bodyUniverse ?? null)
     setSelectedAspects(activity?.eventUniverse.aspectTypes ?? null)
     setSelectedEventId(null)
-  }, [activity?.rangeStartUtc, activity?.rangeEndUtc, activity?.eventUniverse.profileHash, activity?.eventUniverse.bodyUniverse, activity?.eventUniverse.aspectTypes])
+  }, [activity?.rangeStartUtc, activity?.rangeEndUtc, activity?.eventUniverse.eventUniverseHash, activity?.eventUniverse.bodyUniverse, activity?.eventUniverse.aspectTypes])
 
   const activeBodies = useMemo(
     () => selectedBodies ?? activity?.eventUniverse.bodyUniverse ?? [],
@@ -217,8 +222,8 @@ export function MultiOscillatorActivityPanel({
   const filteredIntervals = useMemo(() => {
     const result: Record<'USD' | 'JPY', MultiOscillatorActivityInterval[]> = { USD: [], JPY: [] }
     if (!activity) return result
-    const visibleIds = new Set([...selectedEventsBySide.USD, ...selectedEventsBySide.JPY].map((event) => event.eventId))
     for (const side of activity.sideIdentities) {
+      const visibleIds = new Set(selectedEventsBySide[side].map((event) => event.eventId))
       result[side] = activity.fields[side].activityIntervals.map((interval) => {
         const ids = interval.contributingEventIds.filter((eventId) => visibleIds.has(eventId))
         return { ...interval, contributingEventIds: ids, rawActiveEventCount: ids.length }
@@ -226,6 +231,11 @@ export function MultiOscillatorActivityPanel({
     }
     return result
   }, [activity, selectedEventsBySide])
+
+  const sharedRawAxisMax = useMemo(
+    () => deriveSharedRawActivityAxisMax(filteredIntervals),
+    [filteredIntervals],
+  )
 
   const selectedEvent = activity
     ? activity.fields.USD.events.find((event) => event.eventId === selectedEventId)
@@ -247,8 +257,9 @@ export function MultiOscillatorActivityPanel({
     {activity ? <>
       <div className="mo-range-row"><span>UTC range: {formatUtc(activity.rangeStartUtc)} to {formatUtc(activity.rangeEndUtc)}</span><span>Shared crosshair: {crosshairTimestampUtc ? formatUtc(crosshairTimestampUtc) : 'not selected'}</span></div>
       <div className="mo-filter-panel" aria-label="Event activity filters"><div className="mo-filter-title"><Filter size={13} /> Local event filters</div><div className="mo-filter-group"><span>Transit bodies</span>{activity.eventUniverse.bodyUniverse.map((body) => <label key={body}><input type="checkbox" checked={activeBodies.includes(body)} onChange={(event) => setSelectedBodies((current) => { const base = current ?? activity.eventUniverse.bodyUniverse; return event.target.checked ? [...base, body] : base.filter((item) => item !== body) })} />{body}</label>)}</div><div className="mo-filter-group"><span>Aspects</span>{activity.eventUniverse.aspectTypes.map((aspect) => <label key={aspect}><input type="checkbox" checked={activeAspects.includes(aspect)} onChange={(event) => setSelectedAspects((current) => { const base = current ?? activity.eventUniverse.aspectTypes; return event.target.checked ? [...base, aspect] : base.filter((item) => item !== aspect) })} />{aspect}</label>)}</div></div>
-      <SideActivity side={activity.fields.USD} events={selectedEventsBySide.USD} intervals={filteredIntervals.USD} selectedEventId={selectedEventId} onSelectEvent={(event) => { setSelectedEventId(event.eventId); onSelectEventTimestamp(event.exactUtc) }} onSelectTimestamp={onSelectEventTimestamp} />
-      <SideActivity side={activity.fields.JPY} events={selectedEventsBySide.JPY} intervals={filteredIntervals.JPY} selectedEventId={selectedEventId} onSelectEvent={(event) => { setSelectedEventId(event.eventId); onSelectEventTimestamp(event.exactUtc) }} onSelectTimestamp={onSelectEventTimestamp} />
+      <div className="mo-scale-note" role="note">Shared raw activity scale: 0-{sharedRawAxisMax} active events <span>Current filtered visible counts; data values are unchanged.</span></div>
+      <SideActivity side={activity.fields.USD} events={selectedEventsBySide.USD} intervals={filteredIntervals.USD} sharedAxisMax={sharedRawAxisMax} selectedEventId={selectedEventId} onSelectEvent={(event) => { setSelectedEventId(event.eventId); onSelectEventTimestamp(event.exactUtc) }} onSelectTimestamp={onSelectEventTimestamp} />
+      <SideActivity side={activity.fields.JPY} events={selectedEventsBySide.JPY} intervals={filteredIntervals.JPY} sharedAxisMax={sharedRawAxisMax} selectedEventId={selectedEventId} onSelectEvent={(event) => { setSelectedEventId(event.eventId); onSelectEventTimestamp(event.exactUtc) }} onSelectTimestamp={onSelectEventTimestamp} />
       <EventInspector event={selectedEvent} />
       <div className="mo-footer-locks"><span>Event IDs and hashes remain immutable.</span><span>Selected crosshair updates the shared research controller.</span><span>No pair-relative unsigned field is created.</span></div>
     </> : null}

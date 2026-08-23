@@ -4,6 +4,12 @@ Status: `IMPLEMENTED_FOR_CENTRAL_REVIEW`
 Milestone: `MO-P2`
 Evidence mode: `EXPLORATORY_UNSIGNED`
 
+> MO-P2-R1 hardening supersedes the response-shape and coverage wording below.
+> The current implementation uses `MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1` /
+> `MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1_1`, classifies rejected candidates by
+> visible-range relevance, and renders both sides on one filtered raw-count
+> display axis. The V0 record is retained as implementation history.
+
 ## Purpose
 
 This milestone adds a founder-inspectable event-activity surface to the existing

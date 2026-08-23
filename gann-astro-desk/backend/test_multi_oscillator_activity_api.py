@@ -24,7 +24,7 @@ class MultiOscillatorActivityApiTests(unittest.TestCase):
 
     def test_activity_route_returns_json_contract(self) -> None:
         response_body = {
-            "contract": "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1",
+            "contract": "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1",
             "evidenceMode": "EXPLORATORY_UNSIGNED",
             "fields": {"USD": {}, "JPY": {}},
             "guardrails": {"executionAllowed": False},
@@ -42,7 +42,7 @@ class MultiOscillatorActivityApiTests(unittest.TestCase):
             )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.content_type.startswith("application/json"))
-        self.assertEqual(response.get_json()["activity"]["contract"], "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1")
+        self.assertEqual(response.get_json()["activity"]["contract"], "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1")
         self.assertNotIn("<!doctype", response.get_data(as_text=True).lower())
 
     def test_activity_route_returns_structured_json_error(self) -> None:

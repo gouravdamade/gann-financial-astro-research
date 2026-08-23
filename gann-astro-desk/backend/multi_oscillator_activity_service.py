@@ -18,8 +18,9 @@ from chart_conditioned_transit_event_service import (
 
 
 MO_ACTIVITY_CONTRIBUTION_CONTRACT = "MO_ACTIVITY_CONTRIBUTION_V1"
-MO_ACTIVITY_RANGE_CONTRACT = "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1"
-MO_ACTIVITY_SIDE_CONTRACT = "MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1"
+MO_ACTIVITY_RANGE_CONTRACT = "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1"
+MO_ACTIVITY_SIDE_CONTRACT = "MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1_1"
+MO_ACTIVITY_SCHEMA_VERSION = 2
 MO_EVIDENCE_MODE = "EXPLORATORY_UNSIGNED"
 MO_EVENT_UNIVERSE_PROFILE_ID = APPROVED_ASPECT_PROFILE_ID
 MO_BODY_UNIVERSE = (
@@ -83,13 +84,92 @@ def _grouped_counts(events: list[Mapping[str, Any]]) -> dict[str, dict[str, int]
     }
 
 
+def _rejected_event_is_relevant(
+    rejected_event: Any,
+    range_start: datetime,
+    range_end: datetime,
+) -> bool:
+    """Return True unless the compiler metadata proves the reject is irrelevant.
+
+    The canonical compiler exposes the observed inside-orb search window for
+    boundary rejects.  A reject is safely irrelevant only when that complete
+    observed window is outside the requested half-open visible range.  Missing,
+    malformed, or reversed timestamps remain relevant so coverage fails closed.
+    """
+    if not isinstance(rejected_event, Mapping):
+        return True
+    observed_start = rejected_event.get("observedSearchStartUtc")
+    observed_end = rejected_event.get("observedSearchEndUtc")
+    if not isinstance(observed_start, str) or not isinstance(observed_end, str):
+        return True
+    try:
+        candidate_start = _parse_utc(observed_start, "rejected.observedSearchStartUtc")
+        candidate_end = _parse_utc(observed_end, "rejected.observedSearchEndUtc")
+    except ValueError:
+        return True
+    if candidate_start >= candidate_end:
+        return True
+    return not (candidate_end <= range_start or candidate_start >= range_end)
+
+
+def _rejected_event_items(rejected_events: Any) -> list[Any]:
+    if rejected_events is None:
+        return []
+    if isinstance(rejected_events, (list, tuple)):
+        return list(rejected_events)
+    return [rejected_events]
+
+
+def _classify_rejected_events(
+    rejected_events: Any,
+    range_start: datetime,
+    range_end: datetime,
+) -> tuple[list[Any], list[Any]]:
+    rejected_events = _rejected_event_items(rejected_events)
+    relevant: list[Any] = []
+    irrelevant: list[Any] = []
+    for rejected_event in rejected_events:
+        if _rejected_event_is_relevant(rejected_event, range_start, range_end):
+            relevant.append(rejected_event)
+        else:
+            irrelevant.append(rejected_event)
+    return relevant, irrelevant
+
+
+def _activity_guardrails() -> dict[str, Any]:
+    return {
+        "readOnly": True,
+        "unsigned": True,
+        "nonPredictive": True,
+        "polarityAssigned": False,
+        "magnitudeAssigned": False,
+        "priceDataRead": False,
+        "priceOutcomeRead": False,
+        "sbcRead": False,
+        "llmRead": False,
+        "executionAllowed": False,
+        "automaticOrderPlacement": False,
+        "pairDifferenceComputed": False,
+        # Kept for compatibility with the original MO-P2 response. This
+        # describes the data, not the CSS/pixel mapping used by the UI.
+        "normalizationUsed": False,
+        "dataNormalizationUsed": False,
+        "displayAxisScaling": {
+            "mode": "SHARED_RAW_COUNT_AXIS",
+            "derivedFrom": "CURRENT_FILTERED_VISIBLE_COUNTS",
+            "changesDataValues": False,
+        },
+        "smoothingUsed": False,
+    }
+
+
 def _compile_activity_intervals(
     *,
     side_identity: str,
     range_start: datetime,
     range_end: datetime,
     event_range: Mapping[str, Any],
-) -> tuple[list[dict[str, Any]], list[Mapping[str, Any]]]:
+) -> tuple[list[dict[str, Any]], list[Mapping[str, Any]], list[Any], list[Any]]:
     events = [event for event in event_range.get("events", []) if isinstance(event, Mapping)]
     overlapping: list[Mapping[str, Any]] = []
     boundaries = {range_start, range_end}
@@ -106,8 +186,11 @@ def _compile_activity_intervals(
     ordered_boundaries = sorted(boundaries)
     intervals: list[dict[str, Any]] = []
     unknown_reasons = [str(reason) for reason in event_range.get("unknownReasons", []) if reason]
-    if event_range.get("rejectedEvents"):
-        unknown_reasons.append("EVENT_COMPILER_REJECTED_EVENTS_PRESENT")
+    relevant_rejected, irrelevant_rejected = _classify_rejected_events(
+        event_range.get("rejectedEvents", []), range_start, range_end
+    )
+    if relevant_rejected:
+        unknown_reasons.append("EVENT_COMPILER_REJECTED_EVENTS_OVERLAPPING_VISIBLE_RANGE")
     coverage = "UNKNOWN" if unknown_reasons else "KNOWN"
     unknown_reason = " | ".join(unknown_reasons) if unknown_reasons else None
     for left, right in zip(ordered_boundaries, ordered_boundaries[1:]):
@@ -133,7 +216,7 @@ def _compile_activity_intervals(
                 "unknownReason": unknown_reason,
             }
         )
-    return intervals, overlapping
+    return intervals, overlapping, relevant_rejected, irrelevant_rejected
 
 
 def _compile_side(
@@ -155,19 +238,20 @@ def _compile_side(
             "aspectProfileId": aspect_profile_id,
         }
     )
-    intervals, overlapping_events = _compile_activity_intervals(
+    intervals, overlapping_events, relevant_rejected, irrelevant_rejected = _compile_activity_intervals(
         side_identity=side_identity,
         range_start=range_start,
         range_end=range_end,
         event_range=event_range,
     )
+    rejected_events = _rejected_event_items(event_range.get("rejectedEvents", []))
     event_universe_hash = str(event_range.get("generatorHash") or "")
     unknown_reasons = [str(reason) for reason in event_range.get("unknownReasons", []) if reason]
-    if event_range.get("rejectedEvents"):
-        unknown_reasons.append("EVENT_COMPILER_REJECTED_EVENTS_PRESENT")
+    if relevant_rejected:
+        unknown_reasons.append("EVENT_COMPILER_REJECTED_EVENTS_OVERLAPPING_VISIBLE_RANGE")
     return {
         "contract": MO_ACTIVITY_SIDE_CONTRACT,
-        "schemaVersion": 1,
+        "schemaVersion": MO_ACTIVITY_SCHEMA_VERSION,
         "evidenceMode": MO_EVIDENCE_MODE,
         "sideIdentity": side_identity,
         "instrumentIdentity": f"FX_CURRENCY:{side_identity}",
@@ -176,7 +260,7 @@ def _compile_side(
         "rangeStartUtc": _utc_iso(range_start),
         "rangeEndUtc": _utc_iso(range_end),
         "eventUniverseProfileId": MO_EVENT_UNIVERSE_PROFILE_ID,
-        "eventUniverseProfileHash": event_universe_hash,
+        "eventUniverseHash": event_universe_hash,
         "bodyUniverse": list(MO_BODY_UNIVERSE),
         "aspectProfile": {
             "profileId": aspect_profile_id,
@@ -199,26 +283,13 @@ def _compile_side(
         "activityIntervals": intervals,
         "sourceEventCount": len(event_range.get("events", [])),
         "eligibleEventCount": len(overlapping_events),
-        "rejectedEventCount": len(event_range.get("rejectedEvents", [])),
+        "rejectedEventCount": len(rejected_events),
+        "relevantRejectedEventCount": len(relevant_rejected),
+        "irrelevantRejectedEventCount": len(irrelevant_rejected),
         "groupedCounts": _grouped_counts(overlapping_events),
         "coverage": "UNKNOWN" if unknown_reasons else "KNOWN",
         "unknownReason": " | ".join(unknown_reasons) if unknown_reasons else None,
-        "guardrails": {
-            "readOnly": True,
-            "unsigned": True,
-            "nonPredictive": True,
-            "polarityAssigned": False,
-            "magnitudeAssigned": False,
-            "priceDataRead": False,
-            "priceOutcomeRead": False,
-            "sbcRead": False,
-            "llmRead": False,
-            "executionAllowed": False,
-            "automaticOrderPlacement": False,
-            "pairDifferenceComputed": False,
-            "normalizationUsed": False,
-            "smoothingUsed": False,
-        },
+        "guardrails": _activity_guardrails(),
     }
 
 
@@ -254,10 +325,10 @@ def build_multi_oscillator_activity_range(payload: Mapping[str, Any]) -> dict[st
         )
         for side in SUPPORTED_SIDES
     }
-    generator_hashes = sorted(str(fields[side]["eventUniverseProfileHash"]) for side in SUPPORTED_SIDES)
+    generator_hashes = sorted(str(fields[side]["eventUniverseHash"]) for side in SUPPORTED_SIDES)
     return {
         "contract": MO_ACTIVITY_RANGE_CONTRACT,
-        "schemaVersion": 1,
+        "schemaVersion": MO_ACTIVITY_SCHEMA_VERSION,
         "evidenceMode": MO_EVIDENCE_MODE,
         "contributionContract": MO_ACTIVITY_CONTRIBUTION_CONTRACT,
         "rangeStartUtc": _utc_iso(range_start),
@@ -265,7 +336,7 @@ def build_multi_oscillator_activity_range(payload: Mapping[str, Any]) -> dict[st
         "sideIdentities": list(SUPPORTED_SIDES),
         "eventUniverse": {
             "profileId": MO_EVENT_UNIVERSE_PROFILE_ID,
-            "profileHash": generator_hashes[0] if generator_hashes and len(set(generator_hashes)) == 1 else generator_hashes,
+            "eventUniverseHash": generator_hashes[0] if generator_hashes and len(set(generator_hashes)) == 1 else generator_hashes,
             "bodyUniverse": list(MO_BODY_UNIVERSE),
             "aspectTypes": list(MO_ASPECT_TYPES),
             "maxOrbDeg": 3.0,
@@ -273,22 +344,7 @@ def build_multi_oscillator_activity_range(payload: Mapping[str, Any]) -> dict[st
             "doctrineStatus": "EXPERIMENTAL_GEOMETRY_PROFILE",
         },
         "fields": fields,
-        "guardrails": {
-            "readOnly": True,
-            "unsigned": True,
-            "nonPredictive": True,
-            "polarityAssigned": False,
-            "magnitudeAssigned": False,
-            "priceDataRead": False,
-            "priceOutcomeRead": False,
-            "sbcRead": False,
-            "llmRead": False,
-            "executionAllowed": False,
-            "automaticOrderPlacement": False,
-            "pairDifferenceComputed": False,
-            "normalizationUsed": False,
-            "smoothingUsed": False,
-        },
+        "guardrails": _activity_guardrails(),
     }
 
 

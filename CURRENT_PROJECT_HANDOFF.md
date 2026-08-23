@@ -4,6 +4,43 @@ Last updated: 2026-08-23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-23 (MO-P2-R1 Activity Integrity Hardening)
+
+- Hardened unsigned activity coverage without changing the canonical astronomy
+  compiler. Rejected candidates are now classified from their supplied observed
+  interval: a valid interval wholly outside the requested visible range is
+  irrelevant; overlap, missing timestamps, malformed bounds, or insufficient
+  metadata remain relevant and keep coverage `UNKNOWN`. Canonical
+  `unknownReasons` always remain `UNKNOWN`.
+- The response now reports total, relevant, and irrelevant rejected-event
+  counts. The activity response is `MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1`
+  / `MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1_1` with `schemaVersion: 2`, and the
+  authoritative generator field is `eventUniverseHash` rather than the
+  misleading `eventUniverseProfileHash`.
+- Fields now derives one shared raw-count display axis from the currently
+  filtered USD and JPY interval counts. The UI shows `Shared raw activity
+  scale: 0-N active events`; CSS pixel scaling does not mutate data values.
+  Zero/zero uses a pixel denominator of one while displaying zero.
+- Guardrails retain `normalizationUsed=false` and add explicit
+  `dataNormalizationUsed=false` plus `displayAxisScaling=SHARED_RAW_COUNT_AXIS`.
+  No polarity, magnitude, pair difference, smoothing, price/outcome, SBC,
+  CGVO, LLM, Auto Suggest, ML, MT5, or execution path was added;
+  `executionAllowed=false`.
+- Source record: `docs/research/MULTI_OSCILLATOR_MO_P2_R1_ACTIVITY_INTEGRITY_HARDENING.md`.
+  Focused backend tests: `15/15`; focused frontend/API tests: `30/30`.
+  Full backend: `319 passed, 1 skipped`; full frontend: `182 passed` across
+  42 files; Oxlint, production build, `cargo fmt --check`, `cargo check`, and
+  Rust tests (`19 passed`) are green. The build retains the existing large
+  chunk-size warning. Packaging is intentionally deferred. The required next
+  action after the source verification is `CENTRAL REVIEW OF MO-P2-R1`; do
+  not start MO-P3.
+- Real 14-day smoke (`2025-04-01T00:00:00Z` through
+  `2025-04-15T00:00:00Z`): USD `57` source/eligible events, `32` rejects
+  (`3` relevant, `29` irrelevant), coverage `UNKNOWN`; JPY `59`
+  source/eligible events, `14` rejects (`0` relevant, `14` irrelevant),
+  coverage `KNOWN`. This is the intended visible-range distinction, not a
+  polarity or forecast result.
+
 ## Latest Update - 2026-08-23 (MO-P2 Unsigned Event Activity V0)
 
 - Added the backend-owned `MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1` contract and

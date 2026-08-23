@@ -280,6 +280,8 @@ describe('Tauri backend transport', () => {
     invokeMock.mockResolvedValue({
       ok: true,
       activity: {
+        contract: 'MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1',
+        schemaVersion: 2,
         evidenceMode: 'EXPLORATORY_UNSIGNED',
         contributionContract: 'MO_ACTIVITY_CONTRIBUTION_V1',
         guardrails: {
@@ -295,6 +297,12 @@ describe('Tauri backend transport', () => {
           executionAllowed: false,
           pairDifferenceComputed: false,
           normalizationUsed: false,
+          dataNormalizationUsed: false,
+          displayAxisScaling: {
+            mode: 'SHARED_RAW_COUNT_AXIS',
+            derivedFrom: 'CURRENT_FILTERED_VISIBLE_COUNTS',
+            changesDataValues: false,
+          },
           smoothingUsed: false,
         },
       },
