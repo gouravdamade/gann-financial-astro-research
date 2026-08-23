@@ -4,6 +4,23 @@ Last updated: 2026-08-23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-23 (MO-P2-R1A Exact Raw-Count Pixel Scaling)
+
+- Removed the five-percent visible-height floor from the unsigned activity
+  lanes. The pure `rawActivityHeightPercent` helper now maps raw counts to the
+  shared filtered USD/JPY axis exactly, including `0%` for known-zero activity
+  and `0%` when the shared axis is zero.
+- Count intervals remain full-lane accessible buttons for mouse and keyboard
+  selection, while a separate pseudo-element renders only the exact visible
+  fill. Tiny positive values are not enlarged; unknown intervals retain their
+  hatch state and are not converted to zero.
+- No backend coverage semantics, event identities/hashes, filtering records,
+  astronomy, provenance, or guardrails changed. `dataNormalizationUsed=false`,
+  `smoothingUsed=false`, and `executionAllowed=false` remain enforced.
+- Source record: `docs/research/MULTI_OSCILLATOR_MO_P2_R1A_EXACT_RAW_COUNT_PIXEL_SCALING.md`.
+  Required next action after local verification is `CENTRAL REVIEW OF MO-P2-R1A`.
+  Do not package Windows or start MO-P3 automatically.
+
 ## Latest Update - 2026-08-23 (MO-P2-R1 Activity Integrity Hardening)
 
 - Hardened unsigned activity coverage without changing the canonical astronomy

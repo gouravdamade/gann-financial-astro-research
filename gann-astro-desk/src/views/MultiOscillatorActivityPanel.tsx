@@ -6,7 +6,7 @@ import type {
   MultiOscillatorActivityRange,
   MultiOscillatorActivitySide,
 } from '../types'
-import { deriveSharedRawActivityAxisMax } from './MultiOscillatorActivityScale'
+import { deriveSharedRawActivityAxisMax, rawActivityHeightPercent } from './MultiOscillatorActivityScale'
 
 type Props = {
   activity: MultiOscillatorActivityRange | null
@@ -78,17 +78,19 @@ function ActivityCountLane({
   sharedAxisMax: number
   onSelectTimestamp: (timestampUtc: string) => void
 }) {
-  const pixelAxisMax = Math.max(1, sharedAxisMax)
   return <div className="mo-count-lane" aria-label={`${side.sideIdentity} raw active event count`}>
-    {intervals.map((interval) => <button
-      key={interval.intervalId}
-      type="button"
-      className={`mo-count-segment ${interval.coverage === 'UNKNOWN' ? 'is-unknown' : ''}`}
-      style={{ ...intervalStyle(interval, side), height: `${Math.max(5, (interval.rawActiveEventCount / pixelAxisMax) * 100)}%` }}
-      title={`${side.sideIdentity} raw active event count ${interval.rawActiveEventCount} | ${formatUtc(interval.startUtc)} to ${formatUtc(interval.endUtc)}`}
-      aria-label={`${side.sideIdentity} activity interval ${interval.rawActiveEventCount} active events`}
-      onClick={() => onSelectTimestamp(interval.startUtc)}
-    >{interval.rawActiveEventCount > 0 ? interval.rawActiveEventCount : ''}</button>)}
+    {intervals.map((interval) => {
+      const visibleHeight = rawActivityHeightPercent(interval.rawActiveEventCount, sharedAxisMax)
+      return <button
+        key={interval.intervalId}
+        type="button"
+        className={`mo-count-segment ${interval.coverage === 'UNKNOWN' ? 'is-unknown' : ''}`}
+        style={{ ...intervalStyle(interval, side), '--mo-activity-height': `${visibleHeight}%` } as CSSProperties}
+        title={`${side.sideIdentity} raw active event count ${interval.rawActiveEventCount} | ${formatUtc(interval.startUtc)} to ${formatUtc(interval.endUtc)}`}
+        aria-label={`${side.sideIdentity} activity interval ${interval.rawActiveEventCount} active events`}
+        onClick={() => onSelectTimestamp(interval.startUtc)}
+      ><span className="mo-count-segment-label">{interval.rawActiveEventCount > 0 ? interval.rawActiveEventCount : ''}</span></button>
+    })}
   </div>
 }
 

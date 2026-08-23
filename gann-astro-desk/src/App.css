@@ -7153,9 +7153,12 @@ html.android-runtime .loading-state {
   .mo-event-marker { position: absolute; top: 0; width: 2px; height: 100%; padding: 0; border: 0; border-left: 1px dotted #f0d487; background: transparent; cursor: pointer; }
   .mo-event-marker:hover, .mo-event-marker:focus-visible, .mo-event-marker.is-selected { z-index: 4; border-left-style: solid; border-left-width: 2px; box-shadow: 0 0 7px #f0d487; }
   .mo-count-lane { position: relative; display: flex; align-items: end; min-height: 72px; overflow: hidden; border: 1px solid #3a4b55; background: repeating-linear-gradient(90deg, #162128 0 1px, #111a20 1px 9%); }
-  .mo-count-segment { position: absolute; bottom: 0; min-width: 2px; overflow: hidden; padding: 0; border: 0; border-right: 1px solid #102027; background: #4f9e91; color: #d9f2e9; cursor: pointer; font: 8px/1 Consolas, monospace; }
+  .mo-count-segment { position: absolute; top: 0; height: 100%; min-width: 2px; overflow: hidden; padding: 0; border: 0; border-right: 1px solid #102027; background: transparent; color: #d9f2e9; cursor: pointer; font: 8px/1 Consolas, monospace; }
+  .mo-count-segment::before { position: absolute; right: 0; bottom: 0; left: 0; height: var(--mo-activity-height, 0%); background: #4f9e91; content: ''; pointer-events: none; }
+  .mo-count-segment-label { position: absolute; right: 2px; bottom: 2px; left: 2px; z-index: 1; overflow: hidden; color: inherit; pointer-events: none; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+  .mo-count-segment.is-unknown::before { height: 100%; background: repeating-linear-gradient(-45deg, #4a493b 0 4px, #35372f 4px 8px); }
   .mo-count-segment:hover, .mo-count-segment:focus-visible { z-index: 2; outline: 2px solid #f0d487; outline-offset: -1px; filter: brightness(1.2); }
-  .mo-count-segment.is-unknown { background: repeating-linear-gradient(-45deg, #4a493b 0 4px, #35372f 4px 8px); color: #e4cd94; }
+  .mo-count-segment.is-unknown { color: #e4cd94; }
   .mo-event-inspector { display: grid; gap: 7px; padding: 9px; border: 1px solid #45606a; background: #122129; }
   .mo-event-inspector.is-empty { display: flex; align-items: center; gap: 7px; color: #93a9b2; font: 8px/1.4 Consolas, monospace; }
   .mo-event-inspector > header { display: flex; justify-content: space-between; gap: 8px; }

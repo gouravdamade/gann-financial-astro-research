@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ChartPayload, MultiOscillatorActivityRange, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from './types'
 import { FieldsWorkspace } from './views/FieldsWorkspace'
-import { deriveSharedRawActivityAxisMax } from './views/MultiOscillatorActivityScale'
+import { deriveSharedRawActivityAxisMax, rawActivityHeightPercent } from './views/MultiOscillatorActivityScale'
 
 const apiMocks = vi.hoisted(() => ({
   fetchSynchronizedIndependentRange: vi.fn(),
@@ -148,12 +148,15 @@ const bphsFourteenDayCalendarRange = {
   }],
 } as unknown as typeof bphsCalendarRange
 
-function renderFields(overrides: Partial<React.ComponentProps<typeof FieldsWorkspace>> = {}) {
+function renderFields(
+  overrides: Partial<React.ComponentProps<typeof FieldsWorkspace>> = {},
+  activityRange: MultiOscillatorActivityRange = multiOscillatorActivityRange,
+) {
   const selected = vi.fn()
   const profile = vi.fn()
   const mode = vi.fn()
   const activitySelection = vi.fn()
-  apiMocks.fetchMultiOscillatorActivityRange.mockResolvedValue(multiOscillatorActivityRange)
+  apiMocks.fetchMultiOscillatorActivityRange.mockResolvedValue(activityRange)
   return {
     selected,
     profile,
@@ -206,6 +209,19 @@ afterEach(() => {
 })
 
 describe('FieldsWorkspace', () => {
+  it('maps raw activity counts to exact shared-axis percentages without a visible floor', () => {
+    expect(rawActivityHeightPercent(100, 100)).toBe(100)
+    expect(rawActivityHeightPercent(25, 100)).toBe(25)
+    expect(rawActivityHeightPercent(1, 100)).toBe(1)
+    expect(rawActivityHeightPercent(0, 100)).toBe(0)
+    expect(rawActivityHeightPercent(4, 4)).toBe(100)
+    expect(rawActivityHeightPercent(1, 4)).toBe(25)
+    expect(rawActivityHeightPercent(0, 0)).toBe(0)
+    expect(rawActivityHeightPercent(-1, 100)).toBe(0)
+    expect(rawActivityHeightPercent(Number.NaN, 100)).toBe(0)
+    expect(rawActivityHeightPercent(101, 100)).toBe(100)
+  })
+
   it('derives one shared raw-count axis instead of independently normalizing sides', () => {
     expect(deriveSharedRawActivityAxisMax({
       USD: [{ rawActiveEventCount: 12 } as MultiOscillatorActivityRange['fields']['USD']['activityIntervals'][number]],
@@ -238,6 +254,7 @@ describe('FieldsWorkspace', () => {
     expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
     expect(screen.getByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
     expect(screen.getAllByText('No active event is a known zero.').length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: /JPY activity interval 0 active events/i }).getAttribute('style')).toContain('--mo-activity-height: 0%')
   })
 
   it('recomputes the shared display axis from filtered visible events without changing backend coverage', async () => {
@@ -252,6 +269,35 @@ describe('FieldsWorkspace', () => {
     await user.click(screen.getByRole('checkbox', { name: 'MARS' }))
     expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-0 active events')
     expect(screen.getAllByText('KNOWN COVERAGE').length).toBeGreaterThan(0)
+  })
+
+  it('keeps unknown styling separate from known-zero amplitude', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const unknownActivityRange = {
+      ...multiOscillatorActivityRange,
+      fields: {
+        ...multiOscillatorActivityRange.fields,
+        USD: {
+          ...multiOscillatorActivityRange.fields.USD,
+          coverage: 'UNKNOWN',
+          unknownReason: 'EVENT_COMPILER_REJECTED_EVENTS_OVERLAPPING_VISIBLE_RANGE',
+          activityIntervals: [{
+            ...multiOscillatorActivityRange.fields.USD.activityIntervals[0],
+            coverage: 'UNKNOWN',
+            unknownReason: 'EVENT_COMPILER_REJECTED_EVENTS_OVERLAPPING_VISIBLE_RANGE',
+            rawActiveEventCount: 0,
+            contributingEventIds: [],
+          }],
+        },
+      },
+    } as MultiOscillatorActivityRange
+
+    renderFields({}, unknownActivityRange)
+
+    const unknownInterval = await screen.findByRole('button', { name: /USD activity interval 0 active events/i })
+    expect(unknownInterval).toHaveClass('is-unknown')
+    expect(unknownInterval.getAttribute('style')).toContain('--mo-activity-height: 0%')
   })
 
   it('selects a pair interval at its stored canonical start time', async () => {
