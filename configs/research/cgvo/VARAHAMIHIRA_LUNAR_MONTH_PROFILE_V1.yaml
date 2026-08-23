@@ -1,16 +1,59 @@
 schemaVersion: VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1
 sourceId: BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS
 sourceStatus: HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE
-locators: ["Brihat Samhita XXV.5", "Brihat Samhita XXVI introduction/1"]
+sourceWitness:
+  sourceLayer: ROOT_TEXT_WITH_TRANSLATION_AND_NOTES
+  artifactSha256: D7425625010C621FF6651BF6BF916506791E3D4381078251AC7DC8EFBBA6577A
+  privateArtifactIncludedInRepository: false
+  inspectedLocators:
+    - reference: Brihat Samhita II.5
+      printedPage: 8
+      pdfImage: 33
+      evidence: ROOT_TERMS_ADHIMASA_AND_AVAMA_RECORDED
+    - reference: Brihat Samhita XXV.5
+      printedPage: 238
+      pdfImage: 263
+      evidence: DARK_HALF_MAGHA_SOURCE_INTERNAL_PURNIMANTA_DISCRIMINATOR
+    - reference: Brihat Samhita XXVI introduction/1
+      printedPage: 239
+      pdfImage: 264
+      evidence: LUNAR_MONTH_NAME_USAGE_ONLY
+locators: ["Brihat Samhita II.5", "Brihat Samhita XXV.5", "Brihat Samhita XXVI introduction/1"]
 baseSystem: PURNIMANTA
 contract: VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1
 ordinaryCaseOnly: true
 resultWhenNotClosed: UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED
 unclosedCases: [ADHIKA, KSHAYA, DOUBLE_MONTH, BOUNDARY_CASE, UNIMPLEMENTED]
-localTimeAndSourceDayRequired: true
+monthNaming:
+  runtimeAlgorithm: NEXT_FULL_MOON_NAKSHATRA_LOOKUP_V1
+  sourceStatus: HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE
+  sourceClosed: false
+  note: Source month-name examples do not state a general naming operator.
+boundarySemantics:
+  sourceStatus: UNKNOWN_SOURCE_BOUNDARY_NOT_CLOSED
+  runtimeBoundary: UTC_EXACT_FULL_MOON_INSTANT
+  runtimeRole: MODERN_ASTRONOMY_HELPER
+  sourceClosed: false
+historicalTimeAndLocality:
+  sourceStatus: UNKNOWN_SOURCE_LOCAL_DAY_STANDARD_NOT_CLOSED
+  localityRole: SOURCE_DAY_PROVENANCE_ONLY
+  runtimeSourceDay: LOCAL_CIVIL_DATE_AFTER_UTC_CLASSIFICATION
+  changesMonthMembership: false
+intercalationTerms:
+  adhimasa:
+    sourceStatus: ROOT_TERM_RECORDED
+    detailDefinitionStatus: TRANSLATOR_NOTE_DELEGATES_TO_UNHELD_SURYA_SIDDHANTA
+    runtimeClassification: MODERN_ASTRONOMY_HELPER_FAIL_CLOSED
+  avama:
+    sourceStatus: ROOT_TERM_RECORDED
+    kshayaEquivalenceStatus: UNKNOWN_NOT_ASSERTED
+  kshaya:
+    sourceStatus: UNKNOWN_NOT_DIRECTLY_CLOSED_IN_HELD_WITNESS
+    runtimeClassification: NOT_ASSIGNED
 intercalationGuard:
   contract: SANKRANTI_COUNT_FAIL_CLOSED_V1
   evidenceClass: CALENDAR_MECHANICS_ENGINEERING_GUARD
+  sourceAuthority: NOT_A_COMPLETE_HISTORICAL_INTERCALATION_OPERATOR
   ordinaryIngressCount: 1
   unresolvedResult: UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED
 guardrails:

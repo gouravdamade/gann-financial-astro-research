@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "CGVO_CALENDAR_R1_LUNAR_MONTH_PROFILE_V1",
+  "milestone": "CGVO-CALENDAR-R1",
+  "status": "HISTORICAL_OPERATOR_PARTIAL_FAIL_CLOSED",
+  "profileId": "VARAHAMIHIRA_LUNAR_MONTH_PROFILE_V1",
+  "sourceWitness": {
+    "sourceId": "BRIHAT_SAMHITA_SASTRI_BHAT_1946_WORKING_WITNESS",
+    "artifactSha256": "D7425625010C621FF6651BF6BF916506791E3D4381078251AC7DC8EFBBA6577A",
+    "privateArtifactIncludedInRepository": false,
+    "controllingEvidence": [
+      {
+        "locator": "Brihat Samhita II.5",
+        "printedPage": 8,
+        "pdfImage": 33,
+        "layer": "ROOT_TEXT_WITH_TRANSLATION_AND_NOTES",
+        "supports": "TERMS_ADHIMASA_AND_AVAMA_PRESENT"
+      },
+      {
+        "locator": "Brihat Samhita XXV.5",
+        "printedPage": 238,
+        "pdfImage": 263,
+        "layer": "ROOT_TEXT_WITH_TRANSLATION",
+        "supports": "DARK_HALF_MAGHA_SOURCE_INTERNAL_PURNIMANTA_DISCRIMINATOR"
+      },
+      {
+        "locator": "Brihat Samhita XXVI introduction/1",
+        "printedPage": 239,
+        "pdfImage": 264,
+        "layer": "ROOT_TEXT_WITH_TRANSLATION",
+        "supports": "LUNAR_MONTH_NAME_USAGE_ONLY"
+      }
+    ]
+  },
+  "monthBasis": {
+    "value": "PURNIMANTA",
+    "status": "HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE",
+    "sourceClosed": false,
+    "reason": "The witnessed dark-half Magha usage is consistent with Purnimanta naming but does not define a complete boundary operator."
+  },
+  "monthNaming": {
+    "runtimeAlgorithm": "NEXT_FULL_MOON_NAKSHATRA_LOOKUP_V1",
+    "historicalAuthority": "HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE",
+    "sourceClosed": false,
+    "normalCase": "DISPLAYED_ONLY_WHEN_INTERCALATION_GUARD_IS_CLEAR",
+    "edgeCase": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED"
+  },
+  "intercalation": {
+    "adhika": {
+      "sourceTermStatus": "ROOT_TERM_RECORDED",
+      "definitionStatus": "TRANSLATOR_NOTE_DELEGATES_TO_UNHELD_SURYA_SIDDHANTA",
+      "runtimeHandling": "SANKRANTI_COUNT_FAIL_CLOSED_V1",
+      "historicalClassification": "NOT_SOURCE_CLOSED"
+    },
+    "avama": {
+      "sourceTermStatus": "ROOT_TERM_RECORDED",
+      "kshayaEquivalence": "UNKNOWN_NOT_ASSERTED"
+    },
+    "kshaya": {
+      "sourceTermStatus": "UNKNOWN_NOT_DIRECTLY_CLOSED_IN_HELD_WITNESS",
+      "runtimeHandling": "NOT_ASSIGNED"
+    }
+  },
+  "boundary": {
+    "historicalBoundary": "UNKNOWN_SOURCE_BOUNDARY_NOT_CLOSED",
+    "runtimeBoundary": "UTC_EXACT_FULL_MOON_INSTANT",
+    "runtimeRole": "MODERN_ASTRONOMY_HELPER",
+    "solarIngressRole": "INTERCALATION_GUARD_ONLY_NOT_MONTH_MEMBERSHIP_BOUNDARY"
+  },
+  "timeAndLocality": {
+    "historicalTimeStandard": "UNKNOWN_SOURCE_LOCAL_DAY_STANDARD_NOT_CLOSED",
+    "runtimePositionTime": "SWISS_EPHEMERIS_UTC",
+    "localityRole": "SOURCE_DAY_PROVENANCE_ONLY",
+    "sourceDayChangesMembership": false
+  },
+  "historicalAuditCases": [
+    {
+      "caseId": "ORDINARY_2025_04_15",
+      "timestampUtc": "2025-04-15T00:00:00Z",
+      "observedRuntimeResult": "VAISHAKHA",
+      "guardStatus": "CLEAR_ORDINARY",
+      "ingressCounts": [1, 1],
+      "historicalClassification": "ORDINARY_RUNTIME_CASE_NOT_SOURCE_CERTIFIED"
+    },
+    {
+      "caseId": "INTERCALATION_GUARD_2023_07_29",
+      "timestampUtc": "2023-07-29T00:00:00Z",
+      "observedRuntimeResult": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+      "guardStatus": "AMBIGUOUS_OR_INTERCALARY",
+      "ingressCounts": [1, 0],
+      "historicalClassification": "UNKNOWN_NOT_LABELLED_ADHIKA"
+    },
+    {
+      "caseId": "TWO_INGRESS_1822_12_20",
+      "timestampUtc": "1822-12-20T00:00:00Z",
+      "observedRuntimeResult": "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED",
+      "guardStatus": "AMBIGUOUS_OR_INTERCALARY",
+      "ingressCounts": [1, 2],
+      "historicalClassification": "UNKNOWN_NOT_LABELLED_KSHAYA"
+    },
+    {
+      "caseId": "HISTORICAL_ORDINARY_1719_03_01",
+      "timestampUtc": "1719-03-01T00:00:00Z",
+      "observedRuntimeResult": "PHALGUNA",
+      "guardStatus": "CLEAR_ORDINARY",
+      "ingressCounts": [1, 1],
+      "historicalClassification": "ENGINE_SAFE_RUNTIME_CASE_NOT_SOURCE_CERTIFIED"
+    }
+  ],
+  "mode1": {
+    "ordinaryCaseAdmission": "NOT_ELIGIBLE_CURRENTLY",
+    "reason": "Purnimanta and the name lookup are high-confidence source-internal inferences rather than a closed historical naming and boundary operator.",
+    "futurePolicy": "SOURCE_CERTIFIED_ORDINARY_CASES_MAY_BE_ADMITTED_ONLY_AFTER_SEPARATE_SOURCE_CLOSURE; unresolved edge cases remain UNKNOWN."
+  },
+  "sourceAcquisitionRequirement": {
+    "sourceId": "SURYA_SIDDHANTA_BURGESS_1858_INTERCALATION_WITNESS_REQUIRED",
+    "targetTitle": "Surya Siddhanta, Burgess translation with Whitney notes",
+    "requiredPassage": "Exact cited passage defining Adhimasa and Avama, any treatment of omitted or deficient lunations, month naming, lunation/Sankranti relationship, and time/local-day standard.",
+    "locatorStatus": "UNLOCATED_IN_UNHELD_SOURCE",
+    "purpose": "Resolve or preserve unknown the historical intercalation, boundary, and locality contracts delegated by the held Brihat Samhita translator note.",
+    "status": "NOT_HELD_PAGE_CERTIFICATION_REQUIRED"
+  },
+  "guardrails": {
+    "priceDataRead": false,
+    "priceOutcomeRead": false,
+    "marketDirectionInferred": false,
+    "fieldsPath": false,
+    "sbcPath": false,
+    "autoSuggestPath": false,
+    "mlPath": false,
+    "mt5Path": false,
+    "executionAllowed": false
+  }
+}

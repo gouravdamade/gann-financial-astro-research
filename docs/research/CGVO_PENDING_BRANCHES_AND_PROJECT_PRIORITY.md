@@ -59,7 +59,8 @@ Recommended model: **Terra High** for source/architecture research; **Luna Max**
 
 ### 2. CGVO-CALENDAR-R1 — Historical lunar-month/intercalation closure
 
-**Status:** mandatory core closure for reliable month-based historical rules.
+**Status:** source audit complete; historical operator remains partial and
+fail-closed.
 
 Current accepted basis:
 
@@ -69,6 +70,21 @@ Current accepted basis:
 Remaining gap:
 
 The complete historical treatment of `adhika` / `kshaya` months and edge cases is not source-closed.
+
+R1 result:
+
+- the held Brihat Samhita witness records `Adhimasa` and `Avama`, and its
+  Purnimanta evidence remains a high-confidence source-internal inference;
+- the runtime's full-moon naming table and Sankranti count are modern
+  engineering helpers, not a source-closed historical operator;
+- boundary, historical time/locality, Adhika naming, and any `Avama` to
+  `Kshaya` equivalence remain `UNKNOWN`;
+- `2023-07-29` and a two-ingress pre-modern test remain unknown rather than
+  receiving historical labels.
+
+See `CGVO_CALENDAR_R1_HISTORICAL_LUNAR_MONTH_SOURCE_CLOSURE.md` and the
+machine-readable R1 profile. The smallest source need is a page-certified
+Surya Siddhanta intercalation witness.
 
 Goal:
 

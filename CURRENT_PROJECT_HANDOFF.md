@@ -4,6 +4,29 @@ Last updated: 2026-08-23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-23 (CGVO-CALENDAR-R1 Historical Lunar-Month Source Closure)
+
+- Independently re-verified the private Varahamihira witness SHA-256
+  `D7425625010C621FF6651BF6BF916506791E3D4381078251AC7DC8EFBBA6577A`
+  and visually inspected II.5 (PDF image 33 / printed p.8), XXV.5 (263 / 238),
+  and XXVI introduction/1 (264 / 239). The source supports a
+  `PURNIMANTA` reading only as `HIGH_CONFIDENCE_SOURCE_INTERNAL_INFERENCE`;
+  it records `Adhimasa` and `Avama`, but does not close a complete historical
+  intercalation, naming, boundary, or local-day operator.
+- Corrected profile language to distinguish the modern `UTC_EXACT_FULL_MOON`
+  membership calculation and `SANKRANTI_COUNT_FAIL_CLOSED_V1` guard from
+  historical source authority. Locality now means source-day provenance after
+  classification; it does not change membership. Zero- and two-ingress cases
+  remain `UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED`, never named Adhika or
+  Kshaya by the application.
+- The new `CGVO_CALENDAR_R1_HISTORICAL_LUNAR_MONTH_SOURCE_CLOSURE.md` and
+  machine-readable R1 profile record ordinary, intercalary, pre-modern, and
+  boundary audit cases. Current Mode 1 eligibility is false because month
+  naming and boundary semantics are still not source-closed. The smallest next
+  evidence requirement is a page-certified Surya Siddhanta intercalation
+  witness. No Multi Oscillator, Fields, price, polarity, SBC, Auto Suggest,
+  ML, MT5, or execution behavior changed; `executionAllowed=false`.
+
 ## Latest Update - 2026-08-23 (Multi Oscillator Completion Ledger Audit)
 
 - Fast-forwarded the audit worktree to public origin/master

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import unittest
 
@@ -58,6 +59,34 @@ class CgvoS1aSourceFixtureTests(unittest.TestCase):
         lunar = fixtures["lunarMonth"]
         self.assertEqual(lunar["intercalationGuard"]["contract"], "SANKRANTI_COUNT_FAIL_CLOSED_V1")
         self.assertEqual(lunar["intercalationGuard"]["unresolvedResult"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        self.assertEqual(lunar["baseSystem"], "PURNIMANTA")
+        self.assertEqual(lunar["monthNaming"]["runtimeAlgorithm"], "NEXT_FULL_MOON_NAKSHATRA_LOOKUP_V1")
+        self.assertFalse(lunar["monthNaming"]["sourceClosed"])
+        self.assertEqual(lunar["boundarySemantics"]["sourceStatus"], "UNKNOWN_SOURCE_BOUNDARY_NOT_CLOSED")
+        self.assertEqual(lunar["historicalTimeAndLocality"]["localityRole"], "SOURCE_DAY_PROVENANCE_ONLY")
+        self.assertFalse(lunar["historicalTimeAndLocality"]["changesMonthMembership"])
+        self.assertEqual(lunar["intercalationTerms"]["adhimasa"]["sourceStatus"], "ROOT_TERM_RECORDED")
+        self.assertEqual(lunar["intercalationTerms"]["avama"]["kshayaEquivalenceStatus"], "UNKNOWN_NOT_ASSERTED")
+        self.assertEqual(lunar["intercalationTerms"]["kshaya"]["runtimeClassification"], "NOT_ASSIGNED")
+        self.assertEqual(lunar["intercalationGuard"]["sourceAuthority"], "NOT_A_COMPLETE_HISTORICAL_INTERCALATION_OPERATOR")
+
+    def test_calendar_r1_machine_profile_preserves_unknown_historical_edges(self) -> None:
+        path = PROJECT_ROOT / "configs" / "research" / "cgvo" / "cgvo_calendar_r1_lunar_month_profile_v1.json"
+        profile = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(profile["status"], "HISTORICAL_OPERATOR_PARTIAL_FAIL_CLOSED")
+        self.assertEqual(profile["monthBasis"]["value"], "PURNIMANTA")
+        self.assertFalse(profile["monthBasis"]["sourceClosed"])
+        self.assertFalse(profile["monthNaming"]["sourceClosed"])
+        self.assertEqual(profile["boundary"]["historicalBoundary"], "UNKNOWN_SOURCE_BOUNDARY_NOT_CLOSED")
+        self.assertEqual(profile["timeAndLocality"]["localityRole"], "SOURCE_DAY_PROVENANCE_ONLY")
+        self.assertEqual(profile["intercalation"]["adhika"]["historicalClassification"], "NOT_SOURCE_CLOSED")
+        self.assertEqual(profile["intercalation"]["avama"]["kshayaEquivalence"], "UNKNOWN_NOT_ASSERTED")
+        self.assertEqual(profile["intercalation"]["kshaya"]["runtimeHandling"], "NOT_ASSIGNED")
+        self.assertEqual(profile["mode1"]["ordinaryCaseAdmission"], "NOT_ELIGIBLE_CURRENTLY")
+        case_results = {item["caseId"]: item["observedRuntimeResult"] for item in profile["historicalAuditCases"]}
+        self.assertEqual(case_results["INTERCALATION_GUARD_2023_07_29"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        self.assertEqual(case_results["TWO_INGRESS_1822_12_20"], "UNKNOWN_INTERCALATION_PROFILE_NOT_CLOSED")
+        self.assertFalse(profile["guardrails"]["executionAllowed"])
 
 
 if __name__ == "__main__":

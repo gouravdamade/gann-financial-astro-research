@@ -22,6 +22,7 @@ content-layer classification, exact locator, and human review packet.
 | Trailokya Dipika 1972 | Extend the partial existing translation with independent review | SBC construction, Vedha, Arghya context |
 | Brihat Jataka 1905 | Independent page-level cross-check | dignity, strength, aspects, Vargas, Ashtakavarga, transit context |
 | Surya Siddhanta Burgess 1858 | Map exact passages to time and motion definitions | LMT/sunrise policy, mean and true motion, declination, conjunction |
+| Surya Siddhanta intercalation witness | Locate and certify the exact Adhimasa/Avama, omitted-lunation, naming, lunation/Sankranti, and local-day passages cited by the held Brihat Samhita translator note | CGVO Calendar R1 historical month, intercalation, boundary, and locality contract. Exact chapter/verse remains unlocated until a page-image witness is held. |
 | Brihat Samhita Iyer 1884-85 | Identify only relevant mundane doctrine | contextual display, never automatic USDJPY polarity |
 
 ## Priority C: comparators, never sole doctrine
