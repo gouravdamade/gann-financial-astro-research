@@ -25,7 +25,17 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
 - Source fix commit: `f7d6cc8fd9986f1e20c5106706a9a8abeeb26bb3`.
   Candidate packaging metadata is prepared as
   `0.10.60-pfr-v2b-mo-p2-f1-r1`; the prior `0.10.59` candidate remains
-  immutable. Packaging and the actual packaged UI gate are still pending.
+  immutable.
+- The immutable candidate is built at
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.60-pfr-v2b-mo-p2-f1-r1-tauri`.
+  Its manifest records `source_git_dirty=false`; portable and installer
+  hashes and the exact test totals are in
+  `docs/research/MULTI_OSCILLATOR_MO_P2_F1_R1_FOUNDER_VISUAL_REPAIR.md`.
+  Two native smoke runs passed, and the real packaged activity endpoint
+  returned HTTP 200 JSON for the exact 2026-08-07 through 2026-08-21 founder
+  window. Packaged UI implementer evidence shows visible USD/JPY spans,
+  markers, proportional raw-count bars and the thin UNKNOWN coverage hatch.
+  Founder physical inspection remains pending.
 - No MO-P3, signed behavior, magnitude, smoothing, price/outcome reads, SBC
   fusion, Auto Suggest, LLM, ML, MT5, order placement or execution was added;
   `executionAllowed=false`.
