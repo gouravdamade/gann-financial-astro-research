@@ -4,6 +4,32 @@ Last updated: 2026-08-23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-23 (MO-P2-F1-R1 Founder Visual Repair)
+
+- Corrected the Multi Oscillator display boundary without changing the backend
+  activity contract or immutable event records. Canonical compiler aspect names
+  remain lowercase; the frontend now compares a trimmed, uppercase filter key
+  only at the presentation boundary, so uppercase SQUARE/TRINE/CONJUNCTION
+  controls retain lowercase backend events.
+- Separated activity magnitude from coverage status. The proportional
+  `--mo-activity-height` bar remains the exact raw-count percentage. UNKNOWN
+  coverage now renders as a thin top hatch band and never replaces the bar with
+  a full-height hatch. The panel explains this distinction in its visible
+  legend.
+- Focused Fields/Multi Oscillator tests pass `22/22`; full frontend passes
+  `189/189` across 42 files; full backend passes `319` with `1` skipped;
+  Oxlint, production build, `cargo fmt --check`, `cargo check`, Rust tests
+  (`19/19`) and `git diff --check` pass. The initial full frontend attempt
+  stopped at `ENOSPC` on C: after 41/42 files; the authoritative rerun used
+  D: temporary space and passed.
+- Source fix commit: `f7d6cc8fd9986f1e20c5106706a9a8abeeb26bb3`.
+  Candidate packaging metadata is prepared as
+  `0.10.60-pfr-v2b-mo-p2-f1-r1`; the prior `0.10.59` candidate remains
+  immutable. Packaging and the actual packaged UI gate are still pending.
+- No MO-P3, signed behavior, magnitude, smoothing, price/outcome reads, SBC
+  fusion, Auto Suggest, LLM, ML, MT5, order placement or execution was added;
+  `executionAllowed=false`.
+
 ## Latest Update - 2026-08-23 (MO-P2-F1 Windows Founder-Inspection Candidate)
 
 - Built immutable candidate `0.10.59-pfr-v2b-mo-p2-f1` from accepted
