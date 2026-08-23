@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ChartPayload, MultiOscillatorActivityRange, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from './types'
 import { FieldsWorkspace } from './views/FieldsWorkspace'
+import { canonicalAspectFilterKey, eventMatchesActivityFilters } from './views/MultiOscillatorActivityFilter'
 import { deriveSharedRawActivityAxisMax, rawActivityHeightPercent } from './views/MultiOscillatorActivityScale'
 
 const apiMocks = vi.hoisted(() => ({
@@ -107,7 +108,7 @@ const multiOscillatorActivityRange = {
   fields: {
     USD: {
       contract: 'MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1_1', schemaVersion: 2, evidenceMode: 'EXPLORATORY_UNSIGNED', sideIdentity: 'USD', instrumentIdentity: 'FX_CURRENCY:USD', chartId: 'usd-chart', chartHypothesisId: 'usd-hypothesis', rangeStartUtc: startUtc, rangeEndUtc: endUtc, eventUniverseProfileId: 'ASPECT_STRENGTH_V0', eventUniverseHash: 'profile-hash', bodyUniverse: ['SUN', 'MARS'], aspectProfile: { profileId: 'ASPECT_STRENGTH_V0', aspectTypes: ['SQUARE', 'TRINE'], maxOrbDeg: 3, directionPolicy: 'GEOMETRY_ONLY', doctrineStatus: 'EXPERIMENTAL_GEOMETRY_PROFILE' }, astronomy: { astronomyContract: 'TEST', historicalCivilTimeConversionPolicy: 'TEST', ephemerisProvider: 'TEST', ephemerisVersion: 'TEST', ayanamsha: 'TEST', nodePolicy: 'TEST', generatorVersion: 'TEST', generatorHash: 'profile-hash' },
-      events: [{ eventId: 'usd-activity-event', eventHash: 'usd-hash', sideIdentity: 'USD', instrumentIdentity: 'FX_CURRENCY:USD', chartId: 'usd-chart', chartHypothesisId: 'usd-hypothesis', transitBody: 'MARS', natalTarget: 'SUN', aspectType: 'SQUARE', applyingStartUtc: startUtc, exactUtc: splitUtc, separatingEndUtc: endUtc, polarity: null, magnitude: null }],
+      events: [{ eventId: 'usd-activity-event', eventHash: 'usd-hash', sideIdentity: 'USD', instrumentIdentity: 'FX_CURRENCY:USD', chartId: 'usd-chart', chartHypothesisId: 'usd-hypothesis', transitBody: 'MARS', natalTarget: 'SUN', aspectType: 'square', applyingStartUtc: startUtc, exactUtc: splitUtc, separatingEndUtc: endUtc, polarity: null, magnitude: null }],
       activityIntervals: [{ intervalId: 'usd-activity-1', startUtc, endUtc, rawActiveEventCount: 1, contributingEventIds: ['usd-activity-event'], coverage: 'KNOWN', unknownReason: null }], sourceEventCount: 1, eligibleEventCount: 1, rejectedEventCount: 0, relevantRejectedEventCount: 0, irrelevantRejectedEventCount: 0, groupedCounts: { byTransitBody: { MARS: 1 }, byAspectType: { SQUARE: 1 } }, coverage: 'KNOWN', unknownReason: null,
       guardrails: { readOnly: true, unsigned: true, nonPredictive: true, polarityAssigned: false, magnitudeAssigned: false, priceDataRead: false, priceOutcomeRead: false, sbcRead: false, llmRead: false, executionAllowed: false, automaticOrderPlacement: false, pairDifferenceComputed: false, normalizationUsed: false, dataNormalizationUsed: false, displayAxisScaling: { mode: 'SHARED_RAW_COUNT_AXIS', derivedFrom: 'CURRENT_FILTERED_VISIBLE_COUNTS', changesDataValues: false }, smoothingUsed: false },
     },
@@ -222,6 +223,21 @@ describe('FieldsWorkspace', () => {
     expect(rawActivityHeightPercent(101, 100)).toBe(100)
   })
 
+  it('normalizes only the aspect filter boundary and preserves distinct canonical keys', () => {
+    expect(canonicalAspectFilterKey(' square ')).toBe('SQUARE')
+    expect(canonicalAspectFilterKey('trine')).toBe('TRINE')
+    expect(canonicalAspectFilterKey('conjunction')).toBe('CONJUNCTION')
+    expect(canonicalAspectFilterKey('square')).not.toBe(canonicalAspectFilterKey('trine'))
+  })
+
+  it('matches lowercase canonical compiler aspects against uppercase UI filters', () => {
+    const event = { aspectType: 'square', transitBody: 'MARS' } as MultiOscillatorActivityRange['fields']['USD']['events'][number]
+    expect(eventMatchesActivityFilters(event, ['MARS'], ['SQUARE'])).toBe(true)
+    expect(eventMatchesActivityFilters({ ...event, aspectType: 'trine' }, ['MARS'], ['TRINE'])).toBe(true)
+    expect(eventMatchesActivityFilters({ ...event, aspectType: 'conjunction' }, ['MARS'], ['CONJUNCTION'])).toBe(true)
+    expect(eventMatchesActivityFilters(event, ['MARS'], ['TRINE'])).toBe(false)
+  })
+
   it('derives one shared raw-count axis instead of independently normalizing sides', () => {
     expect(deriveSharedRawActivityAxisMax({
       USD: [{ rawActiveEventCount: 12 } as MultiOscillatorActivityRange['fields']['USD']['activityIntervals'][number]],
@@ -253,8 +269,23 @@ describe('FieldsWorkspace', () => {
     expect(screen.getByText('EXPLORATORY_UNSIGNED')).toBeInTheDocument()
     expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
     expect(screen.getByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
+    expect(document.querySelectorAll('.mo-event-span')).toHaveLength(1)
+    expect(document.querySelectorAll('.mo-event-marker')).toHaveLength(1)
     expect(screen.getAllByText('No active event is a known zero.').length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: /JPY activity interval 0 active events/i }).getAttribute('style')).toContain('--mo-activity-height: 0%')
+  })
+
+  it('shows every backend event with all filters selected despite canonical lowercase aspects', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields()
+
+    await screen.findByText('Multi Oscillator / Event Activity')
+    await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })
+    expect(document.querySelectorAll('.mo-event-span')).toHaveLength(multiOscillatorActivityRange.fields.USD.events.length)
+    expect(document.querySelectorAll('.mo-event-marker')).toHaveLength(multiOscillatorActivityRange.fields.USD.events.length)
+    expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
   })
 
   it('recomputes the shared display axis from filtered visible events without changing backend coverage', async () => {
@@ -266,9 +297,26 @@ describe('FieldsWorkspace', () => {
 
     await screen.findByText('Multi Oscillator / Event Activity')
     expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
+    expect(await screen.findByRole('note')).toHaveTextContent('Coverage hatch = incomplete event coverage; it does not represent activity magnitude.')
     await user.click(screen.getByRole('checkbox', { name: 'MARS' }))
     expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-0 active events')
     expect(screen.getAllByText('KNOWN COVERAGE').length).toBeGreaterThan(0)
+  })
+
+  it('hides and restores canonical lowercase square events through the uppercase aspect checkbox', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    renderFields()
+
+    await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })
+    await user.click(screen.getByRole('checkbox', { name: 'SQUARE' }))
+    expect(screen.queryByRole('button', { name: /Inspect USD MARS SQUARE event/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-0 active events')
+    await user.click(screen.getByRole('checkbox', { name: 'SQUARE' }))
+    expect(await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
+    expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
   })
 
   it('keeps unknown styling separate from known-zero amplitude', async () => {
@@ -298,6 +346,11 @@ describe('FieldsWorkspace', () => {
     const unknownInterval = await screen.findByRole('button', { name: /USD activity interval 0 active events/i })
     expect(unknownInterval).toHaveClass('is-unknown')
     expect(unknownInterval.getAttribute('style')).toContain('--mo-activity-height: 0%')
+  })
+
+  it('keeps UNKNOWN coverage decoration independent from nonzero activity height', () => {
+    expect(rawActivityHeightPercent(2, 8)).toBe(25)
+    expect(rawActivityHeightPercent(0, 8)).toBe(0)
   })
 
   it('selects a pair interval at its stored canonical start time', async () => {

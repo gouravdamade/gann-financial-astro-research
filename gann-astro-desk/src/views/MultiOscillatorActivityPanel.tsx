@@ -6,6 +6,7 @@ import type {
   MultiOscillatorActivityRange,
   MultiOscillatorActivitySide,
 } from '../types'
+import { eventMatchesActivityFilters } from './MultiOscillatorActivityFilter'
 import { deriveSharedRawActivityAxisMax, rawActivityHeightPercent } from './MultiOscillatorActivityScale'
 
 type Props = {
@@ -216,7 +217,7 @@ export function MultiOscillatorActivityPanel({
     const result: Record<'USD' | 'JPY', MultiOscillatorActivityEvent[]> = { USD: [], JPY: [] }
     if (!activity) return result
     for (const side of activity.sideIdentities) {
-      result[side] = activity.fields[side].events.filter((event) => activeBodies.includes(event.transitBody) && activeAspects.includes(event.aspectType))
+      result[side] = activity.fields[side].events.filter((event) => eventMatchesActivityFilters(event, activeBodies, activeAspects))
     }
     return result
   }, [activeAspects, activeBodies, activity])
@@ -259,7 +260,7 @@ export function MultiOscillatorActivityPanel({
     {activity ? <>
       <div className="mo-range-row"><span>UTC range: {formatUtc(activity.rangeStartUtc)} to {formatUtc(activity.rangeEndUtc)}</span><span>Shared crosshair: {crosshairTimestampUtc ? formatUtc(crosshairTimestampUtc) : 'not selected'}</span></div>
       <div className="mo-filter-panel" aria-label="Event activity filters"><div className="mo-filter-title"><Filter size={13} /> Local event filters</div><div className="mo-filter-group"><span>Transit bodies</span>{activity.eventUniverse.bodyUniverse.map((body) => <label key={body}><input type="checkbox" checked={activeBodies.includes(body)} onChange={(event) => setSelectedBodies((current) => { const base = current ?? activity.eventUniverse.bodyUniverse; return event.target.checked ? [...base, body] : base.filter((item) => item !== body) })} />{body}</label>)}</div><div className="mo-filter-group"><span>Aspects</span>{activity.eventUniverse.aspectTypes.map((aspect) => <label key={aspect}><input type="checkbox" checked={activeAspects.includes(aspect)} onChange={(event) => setSelectedAspects((current) => { const base = current ?? activity.eventUniverse.aspectTypes; return event.target.checked ? [...base, aspect] : base.filter((item) => item !== aspect) })} />{aspect}</label>)}</div></div>
-      <div className="mo-scale-note" role="note">Shared raw activity scale: 0-{sharedRawAxisMax} active events <span>Current filtered visible counts; data values are unchanged.</span></div>
+      <div className="mo-scale-note" role="note">Shared raw activity scale: 0-{sharedRawAxisMax} active events <span>Activity fill height = raw count. Coverage hatch = incomplete event coverage; it does not represent activity magnitude. Current filtered visible counts; data values are unchanged.</span></div>
       <SideActivity side={activity.fields.USD} events={selectedEventsBySide.USD} intervals={filteredIntervals.USD} sharedAxisMax={sharedRawAxisMax} selectedEventId={selectedEventId} onSelectEvent={(event) => { setSelectedEventId(event.eventId); onSelectEventTimestamp(event.exactUtc) }} onSelectTimestamp={onSelectEventTimestamp} />
       <SideActivity side={activity.fields.JPY} events={selectedEventsBySide.JPY} intervals={filteredIntervals.JPY} sharedAxisMax={sharedRawAxisMax} selectedEventId={selectedEventId} onSelectEvent={(event) => { setSelectedEventId(event.eventId); onSelectEventTimestamp(event.exactUtc) }} onSelectTimestamp={onSelectEventTimestamp} />
       <EventInspector event={selectedEvent} />
