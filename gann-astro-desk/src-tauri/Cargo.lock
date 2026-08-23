@@ -1282,7 +1282,7 @@ dependencies = [
 
 [[package]]
 name = "gann-astro-desk"
-version = "0.10.58-pfr-v2b-cgvo-p1r1"
+version = "0.10.59-pfr-v2b-mo-p2-f1"
 dependencies = [
  "android-native-keyring-store",
  "axum",
