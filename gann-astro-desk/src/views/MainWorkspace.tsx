@@ -1231,6 +1231,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             crosshairTimestampUtc={researchTimeController.crosshairTimestampUtc}
             selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
             onSelectFieldInterval={selectResearchFieldInterval}
+            onSelectActivityTimestampUtc={(timestampUtc) => selectResearchTimestampUtc(timestampUtc, 'COLLECTIVE_INSPECTOR')}
           />
         </Suspense>
       )}

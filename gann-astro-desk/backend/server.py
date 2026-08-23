@@ -91,6 +91,7 @@ from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
 from synchronized_range_service import build_synchronized_independent_range
 from fx_side_pilot_service import build_fx_side_pilot_status
+from multi_oscillator_activity_service import build_multi_oscillator_activity_range
 from cgvo_service import (
     CgvoRequestError,
     CgvoSiteVisibilityAuditError,
@@ -743,6 +744,21 @@ def create_chart_conditioned_transit_event_range() -> Any:
             {
                 "ok": True,
                 "range": build_chart_conditioned_transit_event_range(payload),
+            }
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/api/multi-oscillator/activity-range")
+def create_multi_oscillator_activity_range() -> Any:
+    """Return unsigned event activity built from the canonical TN compiler."""
+    try:
+        payload = request.get_json(force=True, silent=False)
+        return jsonify(
+            {
+                "ok": True,
+                "activity": build_multi_oscillator_activity_range(payload),
             }
         )
     except (TypeError, ValueError) as exc:

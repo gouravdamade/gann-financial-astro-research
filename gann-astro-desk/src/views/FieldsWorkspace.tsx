@@ -2,12 +2,14 @@ import { Activity, ClipboardCheck, Layers3, RefreshCw, ShieldCheck } from 'lucid
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   fetchFxSidePilotStatus,
+  fetchMultiOscillatorActivityRange,
   fetchSynchronizedIndependentRange,
 } from '../api'
 import type {
   ChakraLabRequest,
   ChartPayload,
   FxSidePilotStatus,
+  MultiOscillatorActivityRange,
   ResearchFieldIntervalSelection,
   SynchronizedIndependentRange,
 } from '../types'
@@ -20,6 +22,7 @@ import { sourceGapsForVisualizationMode } from '../visualizationSourceGaps'
 import { IndependentFieldStack } from './IndependentFieldStack'
 import { FounderReviewWorkbench } from './FounderReviewWorkbench'
 import { BphsClassicalTimingPane } from './BphsClassicalTimingPane'
+import { MultiOscillatorActivityPanel } from './MultiOscillatorActivityPanel'
 import {
   fieldsResearchWindowFor,
   isTimestampInsideResearchWindow,
@@ -43,6 +46,7 @@ type Props = {
   crosshairTimestampUtc: string | null
   selectedFieldInterval: ResearchFieldIntervalSelection | null
   onSelectFieldInterval: (selection: ResearchFieldIntervalSelection) => void
+  onSelectActivityTimestampUtc: (timestampUtc: string) => void
 }
 
 function istOffsetFromUtc(value: string): string {
@@ -74,6 +78,7 @@ export function FieldsWorkspace({
   crosshairTimestampUtc,
   selectedFieldInterval,
   onSelectFieldInterval,
+  onSelectActivityTimestampUtc,
 }: Props) {
   const [range, setRange] = useState<SynchronizedIndependentRange | null>(null)
   const [rangeBusy, setRangeBusy] = useState(false)
@@ -81,11 +86,16 @@ export function FieldsWorkspace({
   const [pilotStatus, setPilotStatus] = useState<FxSidePilotStatus | null>(null)
   const [pilotBusy, setPilotBusy] = useState(false)
   const [pilotError, setPilotError] = useState('')
+  const [activity, setActivity] = useState<MultiOscillatorActivityRange | null>(null)
+  const [activityBusy, setActivityBusy] = useState(false)
+  const [activityError, setActivityError] = useState('')
   const [founderReviewOpen, setFounderReviewOpen] = useState(false)
   const [classicalTimingEnabled, setClassicalTimingEnabled] = useState(initialClassicalTimingEnabled)
   const [researchPageIndex, setResearchPageIndex] = useState(0)
   const requestSequence = useRef(0)
   const rangeCache = useRef(new Map<string, SynchronizedIndependentRange>())
+  const activityCache = useRef(new Map<string, MultiOscillatorActivityRange>())
+  const activityRequestSequence = useRef(0)
   const isFxPair = isSupportedFxPair(chart.symbol)
   const datasetSignature = `${chart.symbol}:${chart.timeframe}:${chart.candles[0]?.time ?? ''}:${chart.candles.at(-1)?.time ?? ''}`
   const researchWindow = useMemo(
@@ -173,10 +183,60 @@ export function FieldsWorkspace({
     }
   }, [chart.symbol, defaultLatitude, defaultLongitude, isFxPair, researchWindow, vedhaProfileId])
 
+  const loadActivity = useCallback(async () => {
+    if (!researchWindow) {
+      setActivity(null)
+      setActivityError('Open Fields from a chart with at least two loaded timestamps.')
+      return
+    }
+    if (!isFxPair) {
+      setActivity(null)
+      setActivityBusy(false)
+      setActivityError('The unsigned activity inspector is bounded to the accepted USDJPY FX contract.')
+      return
+    }
+    const sequence = activityRequestSequence.current + 1
+    activityRequestSequence.current = sequence
+    const cacheKey = `${researchWindow.rangeStartUtc}:${researchWindow.rangeEndUtc}`
+    const cached = activityCache.current.get(cacheKey)
+    if (cached) {
+      setActivity(cached)
+      setActivityBusy(false)
+      setActivityError('')
+      return
+    }
+    setActivityBusy(true)
+    setActivityError('')
+    try {
+      const result = await fetchMultiOscillatorActivityRange({
+        rangeStartUtc: researchWindow.rangeStartUtc,
+        rangeEndUtc: researchWindow.rangeEndUtc,
+        sideIdentities: ['USD', 'JPY'],
+        aspectProfileId: 'ASPECT_STRENGTH_V0',
+      })
+      if (sequence === activityRequestSequence.current) {
+        activityCache.current.set(cacheKey, result)
+        setActivity(result)
+      }
+    } catch (caught) {
+      if (sequence === activityRequestSequence.current) {
+        setActivity(null)
+        setActivityError(caught instanceof Error ? caught.message : String(caught))
+      }
+    } finally {
+      if (sequence === activityRequestSequence.current) setActivityBusy(false)
+    }
+  }, [isFxPair, researchWindow])
+
   useEffect(() => {
     const timer = window.setTimeout(() => { void loadRange() }, 160)
     return () => window.clearTimeout(timer)
   }, [loadRange])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void loadActivity() }, 160)
+    return () => window.clearTimeout(timer)
+  }, [loadActivity])
 
   useEffect(() => {
     void loadPilotStatus()
@@ -268,6 +328,16 @@ export function FieldsWorkspace({
         isFxPair={isFxPair}
       />
     </section>
+
+    <MultiOscillatorActivityPanel
+      activity={activity}
+      busy={activityBusy}
+      error={activityError}
+      isFxPair={isFxPair}
+      crosshairTimestampUtc={crosshairTimestampUtc}
+      onLoad={() => void loadActivity()}
+      onSelectEventTimestamp={onSelectActivityTimestampUtc}
+    />
 
     {classicalTimingEnabled && researchWindow ? <BphsClassicalTimingPane
       rangeStartUtc={researchWindow.rangeStartUtc}

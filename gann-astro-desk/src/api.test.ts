@@ -5,6 +5,7 @@ import type {
   ChakraAuditPackageRequest,
   ChakraLabAuditRequest,
   ChakraLabRequest,
+  MultiOscillatorActivityRangeRequest,
   SynchronizedIndependentRangeRequest,
 } from './types'
 
@@ -272,6 +273,45 @@ describe('Tauri backend transport', () => {
       'synchronized_independent_range',
       { request },
     )
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('uses native IPC for unsigned multi-oscillator activity and preserves every lock', async () => {
+    invokeMock.mockResolvedValue({
+      ok: true,
+      activity: {
+        evidenceMode: 'EXPLORATORY_UNSIGNED',
+        contributionContract: 'MO_ACTIVITY_CONTRIBUTION_V1',
+        guardrails: {
+          readOnly: true,
+          unsigned: true,
+          nonPredictive: true,
+          polarityAssigned: false,
+          magnitudeAssigned: false,
+          priceDataRead: false,
+          priceOutcomeRead: false,
+          sbcRead: false,
+          llmRead: false,
+          executionAllowed: false,
+          pairDifferenceComputed: false,
+          normalizationUsed: false,
+          smoothingUsed: false,
+        },
+      },
+    })
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const request = {
+      rangeStartUtc: '2026-07-17T06:30:00Z',
+      rangeEndUtc: '2026-07-17T08:30:00Z',
+      sideIdentities: ['USD', 'JPY'],
+      aspectProfileId: 'ASPECT_STRENGTH_V0',
+    } as MultiOscillatorActivityRangeRequest
+
+    const { fetchMultiOscillatorActivityRange } = await import('./api')
+    await fetchMultiOscillatorActivityRange(request)
+
+    expect(invokeMock).toHaveBeenCalledWith('multi_oscillator_activity_range', { request })
     expect(fetchMock).not.toHaveBeenCalled()
   })
 

@@ -5,11 +5,12 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { ChartPayload, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from './types'
+import type { ChartPayload, MultiOscillatorActivityRange, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from './types'
 import { FieldsWorkspace } from './views/FieldsWorkspace'
 
 const apiMocks = vi.hoisted(() => ({
   fetchSynchronizedIndependentRange: vi.fn(),
+  fetchMultiOscillatorActivityRange: vi.fn(),
   fetchBphsClassicalCalendarRange: vi.fn(),
   fetchFxSidePilotStatus: vi.fn(),
   fetchFounderReviewWorkbench: vi.fn(),
@@ -18,6 +19,7 @@ const apiMocks = vi.hoisted(() => ({
 
 vi.mock('./api', () => ({
   fetchSynchronizedIndependentRange: apiMocks.fetchSynchronizedIndependentRange,
+  fetchMultiOscillatorActivityRange: apiMocks.fetchMultiOscillatorActivityRange,
   fetchBphsClassicalCalendarRange: apiMocks.fetchBphsClassicalCalendarRange,
   fetchFxSidePilotStatus: apiMocks.fetchFxSidePilotStatus,
   fetchFounderReviewWorkbench: apiMocks.fetchFounderReviewWorkbench,
@@ -97,6 +99,25 @@ const geometryOnlyRange = {
   },
 } as unknown as SynchronizedIndependentRange
 
+const multiOscillatorActivityRange = {
+  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1', schemaVersion: 1, evidenceMode: 'EXPLORATORY_UNSIGNED', contributionContract: 'MO_ACTIVITY_CONTRIBUTION_V1',
+  rangeStartUtc: startUtc, rangeEndUtc: endUtc, sideIdentities: ['USD', 'JPY'],
+  eventUniverse: { profileId: 'ASPECT_STRENGTH_V0', profileHash: 'profile-hash', bodyUniverse: ['SUN', 'MARS'], aspectTypes: ['SQUARE', 'TRINE'], maxOrbDeg: 3, directionPolicy: 'GEOMETRY_ONLY', doctrineStatus: 'EXPERIMENTAL_GEOMETRY_PROFILE' },
+  fields: {
+    USD: {
+      contract: 'MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1', schemaVersion: 1, evidenceMode: 'EXPLORATORY_UNSIGNED', sideIdentity: 'USD', instrumentIdentity: 'FX_CURRENCY:USD', chartId: 'usd-chart', chartHypothesisId: 'usd-hypothesis', rangeStartUtc: startUtc, rangeEndUtc: endUtc, eventUniverseProfileId: 'ASPECT_STRENGTH_V0', eventUniverseProfileHash: 'profile-hash', bodyUniverse: ['SUN', 'MARS'], aspectProfile: { profileId: 'ASPECT_STRENGTH_V0', aspectTypes: ['SQUARE', 'TRINE'], maxOrbDeg: 3, directionPolicy: 'GEOMETRY_ONLY', doctrineStatus: 'EXPERIMENTAL_GEOMETRY_PROFILE' }, astronomy: { astronomyContract: 'TEST', historicalCivilTimeConversionPolicy: 'TEST', ephemerisProvider: 'TEST', ephemerisVersion: 'TEST', ayanamsha: 'TEST', nodePolicy: 'TEST', generatorVersion: 'TEST', generatorHash: 'profile-hash' },
+      events: [{ eventId: 'usd-activity-event', eventHash: 'usd-hash', sideIdentity: 'USD', instrumentIdentity: 'FX_CURRENCY:USD', chartId: 'usd-chart', chartHypothesisId: 'usd-hypothesis', transitBody: 'MARS', natalTarget: 'SUN', aspectType: 'SQUARE', applyingStartUtc: startUtc, exactUtc: splitUtc, separatingEndUtc: endUtc, polarity: null, magnitude: null }],
+      activityIntervals: [{ intervalId: 'usd-activity-1', startUtc, endUtc, rawActiveEventCount: 1, contributingEventIds: ['usd-activity-event'], coverage: 'KNOWN', unknownReason: null }], sourceEventCount: 1, eligibleEventCount: 1, rejectedEventCount: 0, groupedCounts: { byTransitBody: { MARS: 1 }, byAspectType: { SQUARE: 1 } }, coverage: 'KNOWN', unknownReason: null,
+      guardrails: { readOnly: true, unsigned: true, nonPredictive: true, polarityAssigned: false, magnitudeAssigned: false, priceDataRead: false, priceOutcomeRead: false, sbcRead: false, llmRead: false, executionAllowed: false, automaticOrderPlacement: false, pairDifferenceComputed: false, normalizationUsed: false, smoothingUsed: false },
+    },
+    JPY: {
+      contract: 'MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1', schemaVersion: 1, evidenceMode: 'EXPLORATORY_UNSIGNED', sideIdentity: 'JPY', instrumentIdentity: 'FX_CURRENCY:JPY', chartId: 'jpy-chart', chartHypothesisId: 'jpy-hypothesis', rangeStartUtc: startUtc, rangeEndUtc: endUtc, eventUniverseProfileId: 'ASPECT_STRENGTH_V0', eventUniverseProfileHash: 'profile-hash', bodyUniverse: ['SUN', 'MARS'], aspectProfile: { profileId: 'ASPECT_STRENGTH_V0', aspectTypes: ['SQUARE', 'TRINE'], maxOrbDeg: 3, directionPolicy: 'GEOMETRY_ONLY', doctrineStatus: 'EXPERIMENTAL_GEOMETRY_PROFILE' }, astronomy: { astronomyContract: 'TEST', historicalCivilTimeConversionPolicy: 'TEST', ephemerisProvider: 'TEST', ephemerisVersion: 'TEST', ayanamsha: 'TEST', nodePolicy: 'TEST', generatorVersion: 'TEST', generatorHash: 'profile-hash' }, events: [], activityIntervals: [{ intervalId: 'jpy-activity-1', startUtc, endUtc, rawActiveEventCount: 0, contributingEventIds: [], coverage: 'KNOWN', unknownReason: null }], sourceEventCount: 0, eligibleEventCount: 0, rejectedEventCount: 0, groupedCounts: { byTransitBody: {}, byAspectType: {} }, coverage: 'KNOWN', unknownReason: null,
+      guardrails: { readOnly: true, unsigned: true, nonPredictive: true, polarityAssigned: false, magnitudeAssigned: false, priceDataRead: false, priceOutcomeRead: false, sbcRead: false, llmRead: false, executionAllowed: false, automaticOrderPlacement: false, pairDifferenceComputed: false, normalizationUsed: false, smoothingUsed: false },
+    },
+  },
+  guardrails: { readOnly: true, unsigned: true, nonPredictive: true, polarityAssigned: false, magnitudeAssigned: false, priceDataRead: false, priceOutcomeRead: false, sbcRead: false, llmRead: false, executionAllowed: false, automaticOrderPlacement: false, pairDifferenceComputed: false, normalizationUsed: false, smoothingUsed: false },
+} as unknown as MultiOscillatorActivityRange
+
 const bphsCalendarRange = {
   contract: 'BPHS_CLASSICAL_CALENDAR_RANGE_V1', schemaVersion: 1, rangeStartUtc: startUtc, rangeEndUtc: endUtc,
   timezone: 'Asia/Kolkata', location: { latitude: 18.5204, longitude: 73.8567 },
@@ -130,10 +151,13 @@ function renderFields(overrides: Partial<React.ComponentProps<typeof FieldsWorks
   const selected = vi.fn()
   const profile = vi.fn()
   const mode = vi.fn()
+  const activitySelection = vi.fn()
+  apiMocks.fetchMultiOscillatorActivityRange.mockResolvedValue(multiOscillatorActivityRange)
   return {
     selected,
     profile,
     mode,
+    activitySelection,
     ...render(<FieldsWorkspace
       chart={chart}
       priceChart={<div data-testid="fields-price-chart">shared chart</div>}
@@ -148,6 +172,7 @@ function renderFields(overrides: Partial<React.ComponentProps<typeof FieldsWorks
       crosshairTimestampUtc={startUtc}
       selectedFieldInterval={null}
       onSelectFieldInterval={selected}
+      onSelectActivityTimestampUtc={activitySelection}
       {...overrides}
     />),
   }
@@ -169,6 +194,7 @@ function ProfileSwitchHarness() {
     crosshairTimestampUtc={startUtc}
     selectedFieldInterval={null}
     onSelectFieldInterval={() => undefined}
+    onSelectActivityTimestampUtc={() => undefined}
   />
 }
 
@@ -198,6 +224,10 @@ describe('FieldsWorkspace', () => {
       aspectProfileId: 'ASPECT_STRENGTH_V0',
     }))
     expect(screen.getByText(/2\/2 known/)).toBeInTheDocument()
+    expect(await screen.findByText('Multi Oscillator / Event Activity')).toBeInTheDocument()
+    expect(screen.getByText('EXPLORATORY_UNSIGNED')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
+    expect(screen.getAllByText('No active event is a known zero.').length).toBeGreaterThan(0)
   })
 
   it('selects a pair interval at its stored canonical start time', async () => {
@@ -213,6 +243,20 @@ describe('FieldsWorkspace', () => {
       startUtc,
       endUtc: splitUtc,
     } as ResearchFieldIntervalSelection))
+  })
+
+  it('selects an exact activity event without creating a directional interpretation', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+    const { activitySelection } = renderFields()
+
+    await user.click(await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i }))
+    expect(activitySelection).toHaveBeenCalledWith(splitUtc)
+    expect(screen.getByText('Selected event provenance')).toBeInTheDocument()
+    expect(screen.getByText('NOT ASSIGNED')).toBeInTheDocument()
+    expect(screen.getByText('NOT CONFIGURED')).toBeInTheDocument()
+    expect(screen.queryByText(/USDJPY unsigned difference/i)).not.toBeInTheDocument()
   })
 
   it('keeps unknown side evidence as a pair gap instead of zero', async () => {

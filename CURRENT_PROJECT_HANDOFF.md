@@ -4,6 +4,39 @@ Last updated: 2026-08-23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-23 (MO-P2 Unsigned Event Activity V0)
+
+- Added the backend-owned `MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1` contract and
+  `MO_ACTIVITY_CONTRIBUTION_V1` half-open interval compiler. It delegates to
+  the existing canonical chart-conditioned transit event compiler for the
+  accepted USD and JPY chart identities; the frontend cannot inject chart IDs,
+  body universes, events, polarity, magnitude, or pair-relative values.
+- Fields now renders a separate `Multi Oscillator / Event Activity` panel below
+  the existing independent categorical fields. It shows USD and JPY event
+  spans, exact markers, integer raw active-event counts, local body/aspect
+  filters, and a provenance inspector labelled `CANONICAL_COMPILER_EVENT`.
+  It does not overclaim the separately audited `SINGLE_PASS_VERIFIED` status.
+  The existing categorical USD/JPY/pair/SBC and BPHS surfaces remain unchanged.
+- Activity is descriptive only: `EXPLORATORY_UNSIGNED`, `UNSIGNED`,
+  `NON-PREDICTIVE`, and `MAGNITUDE_NOT_CONFIGURED`. Applying-to-separating
+  intervals are exact half-open ranges. Successful no-event compilation is a
+  known zero; compiler unknown/rejected coverage remains UNKNOWN. No sampling,
+  smoothing, normalization, curve fitting, signed wave, or USD-minus-JPY
+  activity was introduced.
+- Guardrails remain explicit: no polarity, price, outcome, SBC, LLM, Auto
+  Suggest, ML, pair difference, MT5, order placement, or execution;
+  `executionAllowed=false`.
+- Real backend smoke over 2025-04-01 through 2025-04-15 produced 57 USD and
+  59 JPY event records with 79 and 78 exact boundary intervals respectively.
+  The compiler reported rejected boundary coverage, so both side lanes remain
+  explicitly `UNKNOWN` rather than presenting an unjustified complete-range
+  zero; event spans and raw counts remain inspectable.
+- Source record:
+  `docs/research/MULTI_OSCILLATOR_MO_P2_UNSIGNED_EVENT_ACTIVITY_V0.md`.
+  Focused backend/API and Fields tests pass, Oxlint passes, and the production
+  frontend build passes. No Windows or Android package was built; central
+  review is the next gate before any later signed/magnitude oscillator work.
+
 ## Latest Update - 2026-08-23 (CGVO-CALENDAR-R1 Historical Lunar-Month Source Closure)
 
 - Independently re-verified the private Varahamihira witness SHA-256

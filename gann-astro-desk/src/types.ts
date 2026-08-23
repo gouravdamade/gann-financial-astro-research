@@ -2758,6 +2758,132 @@ export type SynchronizedIndependentRangeRequest = {
   }
 }
 
+export type MultiOscillatorActivityEvent = {
+  eventId: string
+  eventHash: string
+  eventContract?: string
+  sideIdentity: 'USD' | 'JPY'
+  instrumentIdentity: string
+  chartId: string
+  chartHypothesisId: string
+  transitBody: string
+  natalTarget: string
+  aspectType: string
+  astronomyContract?: string
+  ayanamsha?: string
+  nodePolicy?: string
+  generatorVersion?: string
+  applyingStartUtc: string
+  exactUtc: string
+  separatingEndUtc: string
+  startUtc?: string
+  endUtc?: string
+  exactOrbDeg?: number
+  observedSeparationDeg?: number
+  aspectProfileId?: string
+  polarity: null
+  magnitude: null
+}
+
+export type MultiOscillatorActivityInterval = {
+  intervalId: string
+  startUtc: string
+  endUtc: string
+  rawActiveEventCount: number
+  contributingEventIds: string[]
+  coverage: 'KNOWN' | 'UNKNOWN'
+  unknownReason: string | null
+}
+
+export type MultiOscillatorActivitySide = {
+  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_SIDE_V1'
+  schemaVersion: 1
+  evidenceMode: 'EXPLORATORY_UNSIGNED'
+  sideIdentity: 'USD' | 'JPY'
+  instrumentIdentity: string
+  chartId: string
+  chartHypothesisId: string
+  rangeStartUtc: string
+  rangeEndUtc: string
+  eventUniverseProfileId: 'ASPECT_STRENGTH_V0'
+  eventUniverseProfileHash: string
+  bodyUniverse: string[]
+  aspectProfile: {
+    profileId: 'ASPECT_STRENGTH_V0'
+    aspectTypes: string[]
+    maxOrbDeg: number
+    directionPolicy: 'GEOMETRY_ONLY'
+    doctrineStatus: 'EXPERIMENTAL_GEOMETRY_PROFILE'
+  }
+  astronomy: {
+    astronomyContract: string
+    historicalCivilTimeConversionPolicy: string
+    ephemerisProvider: string
+    ephemerisVersion: string
+    ayanamsha: string
+    nodePolicy: string
+    generatorVersion: string
+    generatorHash: string
+  }
+  events: MultiOscillatorActivityEvent[]
+  activityIntervals: MultiOscillatorActivityInterval[]
+  sourceEventCount: number
+  eligibleEventCount: number
+  rejectedEventCount: number
+  groupedCounts: {
+    byTransitBody: Record<string, number>
+    byAspectType: Record<string, number>
+  }
+  coverage: 'KNOWN' | 'UNKNOWN'
+  unknownReason: string | null
+  guardrails: MultiOscillatorActivityGuardrails
+}
+
+export type MultiOscillatorActivityGuardrails = {
+  readOnly: true
+  unsigned: true
+  nonPredictive: true
+  polarityAssigned: false
+  magnitudeAssigned: false
+  priceDataRead: false
+  priceOutcomeRead: false
+  sbcRead: false
+  llmRead: false
+  executionAllowed: false
+  automaticOrderPlacement: false
+  pairDifferenceComputed: false
+  normalizationUsed: false
+  smoothingUsed: false
+}
+
+export type MultiOscillatorActivityRangeRequest = {
+  rangeStartUtc: string
+  rangeEndUtc: string
+  sideIdentities: Array<'USD' | 'JPY'>
+  aspectProfileId: 'ASPECT_STRENGTH_V0'
+}
+
+export type MultiOscillatorActivityRange = {
+  contract: 'MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1'
+  schemaVersion: 1
+  evidenceMode: 'EXPLORATORY_UNSIGNED'
+  contributionContract: 'MO_ACTIVITY_CONTRIBUTION_V1'
+  rangeStartUtc: string
+  rangeEndUtc: string
+  sideIdentities: Array<'USD' | 'JPY'>
+  eventUniverse: {
+    profileId: 'ASPECT_STRENGTH_V0'
+    profileHash: string | string[]
+    bodyUniverse: string[]
+    aspectTypes: string[]
+    maxOrbDeg: number
+    directionPolicy: 'GEOMETRY_ONLY'
+    doctrineStatus: 'EXPERIMENTAL_GEOMETRY_PROFILE'
+  }
+  fields: Record<'USD' | 'JPY', MultiOscillatorActivitySide>
+  guardrails: MultiOscillatorActivityGuardrails
+}
+
 export type FxSidePilotSideStatus = {
   sideIdentity: 'USD' | 'JPY'
   instrumentId: 'FX_CURRENCY:USD' | 'FX_CURRENCY:JPY'

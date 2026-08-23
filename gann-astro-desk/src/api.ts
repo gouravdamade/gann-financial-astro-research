@@ -67,6 +67,8 @@ import type {
   FxSidePilotStatus,
   SynchronizedIndependentRange,
   SynchronizedIndependentRangeRequest,
+  MultiOscillatorActivityRange,
+  MultiOscillatorActivityRangeRequest,
 } from './types'
 import type {
   ExperimentalComparisonResponse,
@@ -1037,6 +1039,54 @@ export async function fetchSynchronizedIndependentRange(
     throw new Error('Synchronized field response violated the research-only guardrails')
   }
   return payload.range
+}
+
+export async function fetchMultiOscillatorActivityRange(
+  input: MultiOscillatorActivityRangeRequest,
+): Promise<MultiOscillatorActivityRange> {
+  if (isTauriRuntime() && !getCompanionSession()) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const payload = await invoke<ApiEnvelope<{ activity: MultiOscillatorActivityRange }>>(
+      'multi_oscillator_activity_range',
+      { request: input },
+    )
+    if (!payload.ok) {
+      throw new Error(payload.error || 'Multi-oscillator activity request failed')
+    }
+    assertMultiOscillatorActivityGuardrails(payload.activity)
+    return payload.activity
+  }
+  const payload = await request<{ activity: MultiOscillatorActivityRange }>(
+    '/api/multi-oscillator/activity-range',
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+  assertMultiOscillatorActivityGuardrails(payload.activity)
+  return payload.activity
+}
+
+function assertMultiOscillatorActivityGuardrails(activity: MultiOscillatorActivityRange): void {
+  if (
+    activity.evidenceMode !== 'EXPLORATORY_UNSIGNED'
+    || activity.contributionContract !== 'MO_ACTIVITY_CONTRIBUTION_V1'
+    || activity.guardrails.readOnly !== true
+    || activity.guardrails.unsigned !== true
+    || activity.guardrails.nonPredictive !== true
+    || activity.guardrails.polarityAssigned !== false
+    || activity.guardrails.magnitudeAssigned !== false
+    || activity.guardrails.priceDataRead !== false
+    || activity.guardrails.priceOutcomeRead !== false
+    || activity.guardrails.sbcRead !== false
+    || activity.guardrails.llmRead !== false
+    || activity.guardrails.executionAllowed !== false
+    || activity.guardrails.pairDifferenceComputed !== false
+    || activity.guardrails.normalizationUsed !== false
+    || activity.guardrails.smoothingUsed !== false
+  ) {
+    throw new Error('Multi-oscillator activity response violated the unsigned research guardrails')
+  }
 }
 
 export async function fetchBphsClassicalCalendarRange(
