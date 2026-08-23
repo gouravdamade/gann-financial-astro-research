@@ -4,6 +4,31 @@ Last updated: 2026-08-23 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-23 (MO-P2-F1 Windows Founder-Inspection Candidate)
+
+- Built immutable candidate `0.10.59-pfr-v2b-mo-p2-f1` from accepted
+  implementation source `b1b0f86f3fef49fd7690798d5d77340af01a6695`.
+- Packaging metadata commit used by the clean build is
+  `2b273b077d9dcf910d3198986da8c16f62d3d3d3`; `origin/master` was still the
+  accepted source baseline at package time and the source worktree was clean.
+- Portable and NSIS artifacts are under
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.59-pfr-v2b-mo-p2-f1-tauri`.
+  The exact hashes, manifest, probe evidence, smoke reports and founder
+  checklist are recorded in
+  `docs/research/MULTI_OSCILLATOR_MO_P2_F1_WINDOWS_FOUNDER_CANDIDATE.md`.
+- Two portable smoke runs passed, including sidecar recovery, same-port
+  recovery, layout survival and clean descendant shutdown. The exact 14-day
+  packaged activity probe returned HTTP 200 JSON with contract
+  `MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1`, schema 2, and the accepted smoke
+  counts: USD 57 eligible / 3 relevant rejects / UNKNOWN; JPY 59 eligible / 0
+  relevant rejects / KNOWN.
+- `executionAllowed=false`; activity remains unsigned, non-predictive and
+  integer raw-count only. No MO-P3, signed behavior, magnitude, smoothing,
+  price/outcome, SBC fusion, Auto Suggest, LLM, ML, MT5 or execution path was
+  added.
+- Status is `BUILT_FOR_FOUNDER_INSPECTION` only. Founder acceptance remains
+  `PENDING_FOUNDER_PHYSICAL_INSPECTION`. Do not start MO-P3 automatically.
+
 ## Latest Update - 2026-08-23 (MO-P2-R1A Exact Raw-Count Pixel Scaling)
 
 - Removed the five-percent visible-height floor from the unsigned activity
