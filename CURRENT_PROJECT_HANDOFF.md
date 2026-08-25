@@ -11511,3 +11511,11 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Verification: focused CGVO/G2/S1B/API suite `35/35`; full backend `289/289`;
   Oxlint, stable serial frontend suite `178/178`, and production build passed;
   `cargo fmt --check`, `cargo check`, and Rust tests (`19/19`) passed.
+# Latest Update - 2026-08-25 (MO-R1 Signed Side Wave and USDJPY Resultant Architecture Audit)
+
+- Completed the docs-only `MO-R1` audit from public baseline `f41bb454507c1e753618adfea4ca038fb4b02658`. The new source record is `docs/research/MULTI_OSCILLATOR_SIGNED_PAIR_WAVE_ARCHITECTURE_RND_V1.md`.
+- Confirmed the canonical target-aware polarity catalogue has `0` accepted production entries and its reviewed-evidence registry has `0` packets. Current MO-P2 activity is therefore correctly unsigned: it has real, immutable event identity and raw active-event counts, but no authorized signed USD/JPY contribution or pair resultant.
+- The report distinguishes repository facts, engineering facts, source-backed doctrine, experimental hypotheses and unresolved gaps. It finds no held source-backed operator that maps a particular transit-to-natal event to a supportive/adverse USD or JPY contribution. Geometry, natural planet character, isolated Trailokya fractions, Agarwal Chapter 20 hypotheses, CGVO material and BPHS timing must not be repurposed as a currency sign.
+- Recommended future first signed prototype only after founder-reviewed polarity admission: Mode 2 `SIGNED_ACTIVITY_COUNT_V0`, with `W_side(t)=sum(s_i * a_i(t))`, a rectangular applying-to-separating activity interval, no magnitude contract, no normalization, categorical companion components and pair gaps whenever either side is unknown. This remains a proposal only, not runtime work.
+- The first recommended follow-up is `MO-R2`: a bounded, outcome-blind review/admission readiness audit for the already existing identity-bound founder review packets. Do not begin CGVO work, add catalogue records, implement a signed wave, use price outcomes, or enable execution from this audit.
+- No Python, TypeScript, Rust, APIs, schemas, source profiles, polarity entries, product behavior, MT5, Auto Suggest, ML or execution paths changed. `executionAllowed=false` remains enforced.
