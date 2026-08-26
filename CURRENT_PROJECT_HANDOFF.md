@@ -25,6 +25,34 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   the accepted activity intervals. Central review remains required before any
   later signed-wave or pair-resultant work.
 
+## Latest Update - 2026-08-26 (MO-P3A Unsigned Step Waves)
+
+- Implemented the bounded MO-P3A presentation from the accepted MO-P2 activity
+  contract. The implementation commit follows acceptance commit
+  `95a624d7270bb0a6ac3d9f62423a0d2172ce584a`.
+- The existing Multi Oscillator panel now contains an `Unsigned Activity
+  Waves` surface with independent USD and JPY exact zero-order-hold step
+  traces, one shared UTC time axis and one shared filtered raw-count maximum.
+  It derives only from backend activity intervals and does not compile events
+  in React.
+- Half-open interval boundaries, contributing event IDs, raw counts and
+  coverage are preserved. Non-contiguous ranges are rendered as separate
+  paths; UNKNOWN coverage remains visibly distinct and never becomes zero or
+  magnitude. Filters recompute visible paths and the shared axis without
+  changing event identity or hashes. Event and interval selection continue to
+  update the shared research controller.
+- Verification: focused wave/Fields tests `28/28`; full frontend `195/195`
+  across 43 files; backend regression `319` passed with 1 skipped; Rust tests
+  `19/19`; Oxlint, production build, `cargo fmt --check`, `cargo check` and
+  `git diff --check` passed.
+- This is still unsigned, exploratory and non-predictive. No signed wave, pair
+  resultant, polarity, magnitude, smoothing, interpolation, price/outcome
+  read, SBC/CGVO/BPHS fusion, LLM/ML, Auto Suggest, MT5 or execution path was
+  added. `executionAllowed=false` remains unchanged.
+- Documentation: `docs/research/MULTI_OSCILLATOR_MO_P3A_UNSIGNED_STEP_WAVE.md`.
+  No Windows candidate was built; central review is required before any later
+  signed-wave or pair-resultant milestone.
+
 ## Latest Update - 2026-08-23 (MO-P2-F1-R1 Founder Visual Repair)
 
 - Corrected the Multi Oscillator display boundary without changing the backend

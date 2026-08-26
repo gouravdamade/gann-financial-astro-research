@@ -266,11 +266,16 @@ describe('FieldsWorkspace', () => {
     }))
     expect(screen.getByText(/2\/2 known/)).toBeInTheDocument()
     expect(await screen.findByText('Multi Oscillator / Event Activity')).toBeInTheDocument()
-    expect(screen.getByText('EXPLORATORY_UNSIGNED')).toBeInTheDocument()
-    expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
+    expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'USD exact unsigned activity step trace' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: 'JPY exact unsigned activity step trace' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Shared unsigned activity wave time axis')).toBeInTheDocument()
+    expect(screen.getAllByText('EXPLORATORY_UNSIGNED').length).toBeGreaterThan(0)
+    expect(await screen.findByText('Raw activity: 0-1 events')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
     expect(document.querySelectorAll('.mo-event-span')).toHaveLength(1)
     expect(document.querySelectorAll('.mo-event-marker')).toHaveLength(1)
+    expect(document.querySelectorAll('.mo-wave-crosshair')).toHaveLength(2)
     expect(screen.getAllByText('No active event is a known zero.').length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: /JPY activity interval 0 active events/i }).getAttribute('style')).toContain('--mo-activity-height: 0%')
   })
@@ -285,7 +290,8 @@ describe('FieldsWorkspace', () => {
     await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })
     expect(document.querySelectorAll('.mo-event-span')).toHaveLength(multiOscillatorActivityRange.fields.USD.events.length)
     expect(document.querySelectorAll('.mo-event-marker')).toHaveLength(multiOscillatorActivityRange.fields.USD.events.length)
-    expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
+    expect(await screen.findByText('Raw activity: 0-1 events')).toBeInTheDocument()
+    expect(document.querySelectorAll('.mo-wave-trace')).toHaveLength(2)
   })
 
   it('recomputes the shared display axis from filtered visible events without changing backend coverage', async () => {
@@ -296,10 +302,10 @@ describe('FieldsWorkspace', () => {
     renderFields()
 
     await screen.findByText('Multi Oscillator / Event Activity')
-    expect(await screen.findByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
-    expect(await screen.findByRole('note')).toHaveTextContent('Coverage hatch = incomplete event coverage; it does not represent activity magnitude.')
+    expect(await screen.findByText('Raw activity: 0-1 events')).toBeInTheDocument()
+    expect(screen.getByText('Hatch = incomplete coverage')).toBeInTheDocument()
     await user.click(screen.getByRole('checkbox', { name: 'MARS' }))
-    expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-0 active events')
+    expect(screen.getByText('Raw activity: 0-0 events')).toBeInTheDocument()
     expect(screen.getAllByText('KNOWN COVERAGE').length).toBeGreaterThan(0)
   })
 
@@ -313,10 +319,10 @@ describe('FieldsWorkspace', () => {
     await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })
     await user.click(screen.getByRole('checkbox', { name: 'SQUARE' }))
     expect(screen.queryByRole('button', { name: /Inspect USD MARS SQUARE event/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-0 active events')
+    expect(screen.getByText('Raw activity: 0-0 events')).toBeInTheDocument()
     await user.click(screen.getByRole('checkbox', { name: 'SQUARE' }))
     expect(await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
-    expect(screen.getByRole('note')).toHaveTextContent('Shared raw activity scale: 0-1 active events')
+    expect(screen.getByText('Raw activity: 0-1 events')).toBeInTheDocument()
   })
 
   it('keeps unknown styling separate from known-zero amplitude', async () => {
@@ -346,6 +352,7 @@ describe('FieldsWorkspace', () => {
     const unknownInterval = await screen.findByRole('button', { name: /USD activity interval 0 active events/i })
     expect(unknownInterval).toHaveClass('is-unknown')
     expect(unknownInterval.getAttribute('style')).toContain('--mo-activity-height: 0%')
+    expect(document.querySelector('.mo-wave-interval.is-unknown')).toBeInTheDocument()
   })
 
   it('keeps UNKNOWN coverage decoration independent from nonzero activity height', () => {
@@ -382,6 +389,16 @@ describe('FieldsWorkspace', () => {
     expect(screen.queryByText(/USDJPY unsigned difference/i)).not.toBeInTheDocument()
   })
 
+  it('selects a step-wave interval at its exact stored start time', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+    const { activitySelection } = renderFields()
+
+    await user.click(await screen.findByRole('button', { name: /USD step-wave interval 1 active events/i }))
+    expect(activitySelection).toHaveBeenCalledWith(startUtc)
+  })
+
   it('keeps unknown side evidence as a pair gap instead of zero', async () => {
     apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
@@ -402,6 +419,8 @@ describe('FieldsWorkspace', () => {
     await screen.findByText('USD categorical field')
     expect(screen.getAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(3)
     expect(document.querySelectorAll('.categorical-step-balance')).toHaveLength(0)
+    expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
+    expect(screen.queryByText(/signed pair resultant/i)).not.toBeInTheDocument()
   })
 
   it('shows Trailokya as geometry-only availability without a scored fallback', async () => {

@@ -7169,6 +7169,38 @@ html.android-runtime .loading-state {
   .mo-event-inspector dt { color: #79919c; font: 7px/1 Consolas, monospace; text-transform: uppercase; }
   .mo-event-inspector dd { margin: 0; overflow: hidden; color: #c9d9de; font: 8px/1.2 Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
   .mo-footer-locks { display: flex; flex-wrap: wrap; gap: 9px; color: #7c929c; font: 7px/1.3 Consolas, monospace; }
+   .mo-wave-surface { display: grid; gap: 7px; padding: 9px; border: 1px solid #40545e; background: #101b21; }
+   .mo-wave-surface-header { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
+   .mo-wave-surface-header > div { display: grid; gap: 3px; min-width: 0; }
+   .mo-wave-surface-header strong { color: #dce7eb; font-size: 10px; }
+   .mo-wave-surface-header span { color: #849ba5; font: 7px/1.3 Consolas, monospace; }
+   .mo-wave-semantic-badge { flex: 0 0 auto; padding: 4px 5px; border: 1px solid #596970; border-radius: 3px; color: #d3c28b !important; font: 7px/1 Consolas, monospace !important; }
+   .mo-wave-surface-note { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 6px 7px; border: 1px solid #35464f; background: #121e24; color: #a9bbc2; font: 7px/1.3 Consolas, monospace; }
+   .mo-wave-surface-note span:first-child { color: #d6e4e7; }
+   .mo-wave-lane { display: grid; gap: 4px; min-width: 0; }
+   .mo-wave-lane > header { display: flex; justify-content: space-between; gap: 8px; color: #8fa4ad; font: 7px/1.2 Consolas, monospace; }
+   .mo-wave-lane > header strong { color: #cfe0e3; font-size: 8px; }
+   .mo-wave-plot { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 5px; min-width: 0; }
+   .mo-wave-y-axis { display: flex; flex-direction: column; justify-content: space-between; padding: 4px 2px 8px 0; color: #82969f; font: 7px/1 Consolas, monospace; text-align: right; }
+   .mo-wave-canvas { position: relative; min-height: 108px; overflow: hidden; border: 1px solid #3b4f59; background: repeating-linear-gradient(90deg, #19272e 0 1px, #111b21 1px 12.5%); }
+   .mo-wave-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+   .mo-wave-grid-line { stroke: #40535c; stroke-width: .55; vector-effect: non-scaling-stroke; }
+   .mo-wave-trace { fill: none; stroke: #70c4a8; stroke-width: 1.7; vector-effect: non-scaling-stroke; stroke-linecap: square; stroke-linejoin: miter; }
+   .mo-wave-unknown-trace { fill: none; stroke: #dfbd70; stroke-width: 1.7; stroke-dasharray: 3 2; vector-effect: non-scaling-stroke; stroke-linecap: square; }
+   .mo-wave-unknown-band { fill: #ad8b4d; opacity: .65; }
+   .mo-wave-event-marker { stroke: #e3c77d; stroke-width: .65; stroke-dasharray: 2 2; opacity: .65; vector-effect: non-scaling-stroke; }
+   .mo-wave-event-marker.is-selected { stroke: #fff0af; stroke-width: 1.5; stroke-dasharray: none; opacity: 1; }
+   .mo-wave-crosshair { stroke: #8ad5e0; stroke-width: 1; stroke-dasharray: 3 2; opacity: .9; vector-effect: non-scaling-stroke; }
+   .mo-wave-interval-hitboxes { position: absolute; inset: 0; }
+   .mo-wave-interval { position: absolute; top: 0; height: 100%; min-width: 1px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+   .mo-wave-interval:hover, .mo-wave-interval:focus-visible { z-index: 2; outline: 2px solid #f0d487; outline-offset: -2px; background: #d6c47a0a; }
+   .mo-wave-interval.is-unknown { background: #c1a45a08; }
+   .mo-wave-marker-hitbox { position: absolute; top: 0; bottom: 0; width: 10px; padding: 0; border: 0; transform: translateX(-50%); background: transparent; cursor: pointer; z-index: 3; }
+   .mo-wave-marker-hitbox:hover, .mo-wave-marker-hitbox:focus-visible, .mo-wave-marker-hitbox.is-selected { outline: 2px solid #f0d487; outline-offset: -2px; }
+   .mo-wave-time-axis { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 5px; min-width: 0; }
+   .mo-wave-time-axis-title { grid-column: 2; color: #7e959f; font: 7px/1.2 Consolas, monospace; text-transform: uppercase; }
+   .mo-wave-time-axis-ticks { position: relative; grid-column: 2; height: 20px; border-top: 1px solid #40535c; }
+   .mo-wave-time-axis-ticks span { position: absolute; top: 4px; color: #8198a1; font: 6px/1 Consolas, monospace; transform: translateX(-50%); white-space: nowrap; }
   .bphs-calendar-pane { display: grid; gap: 9px; min-width: 0; padding: 12px 14px 14px; border-top: 1px solid #34414a; border-bottom: 1px solid #34414a; background: #10171d; }
   .bphs-calendar-pane > header, .bphs-calendar-current > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .bphs-calendar-pane > header > div, .bphs-calendar-current > header > div { display: flex; min-width: 0; align-items: center; gap: 7px; color: #aab8c0; }
