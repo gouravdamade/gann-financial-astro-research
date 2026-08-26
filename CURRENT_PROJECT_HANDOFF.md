@@ -1,8 +1,29 @@
 # Current Project Handoff
 
-Last updated: 2026-08-23 IST
+Last updated: 2026-08-26 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-26 (MO-P2 Founder Acceptance)
+
+- The founder physically accepted `MO-P2 = FOUNDER ACCEPTED - UNSIGNED EVENT
+  ACTIVITY V0` and `MO-P2-F1-R1 = FOUNDER ACCEPTED` on 2026-08-25 using
+  candidate `0.10.60-pfr-v2b-mo-p2-f1-r1`.
+- The accepted checks covered real USD and JPY event spans, exact markers,
+  shared raw-count scaling, filter remove/restore behavior, scale
+  recomputation, raw-count interval interaction, separation of UNKNOWN
+  coverage from observed activity, packaged Windows operation, and the locked
+  execution state.
+- This is acceptance of unsigned event activity only. It is not directional,
+  polarity, signal, forecast or financial validation. No signed wave, pair
+  resultant, magnitude, smoothing, price/outcome read, SBC/CGVO/BPHS fusion,
+  LLM/ML, Auto Suggest, MT5 or execution path is authorized; `executionAllowed`
+  remains `false`.
+- Durable acceptance record:
+  `docs/research/MULTI_OSCILLATOR_MO_P2_FOUNDER_ACCEPTANCE.md`.
+- MO-P3A is limited to an exact unsigned step-wave presentation derived from
+  the accepted activity intervals. Central review remains required before any
+  later signed-wave or pair-resultant work.
 
 ## Latest Update - 2026-08-23 (MO-P2-F1-R1 Founder Visual Repair)
 
