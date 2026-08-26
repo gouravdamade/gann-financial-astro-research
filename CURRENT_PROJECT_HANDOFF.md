@@ -4,6 +4,35 @@ Last updated: 2026-08-26 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-26 (MO-P3A-F1 Windows Founder-Inspection Candidate)
+
+- Packaged the centrally accepted MO-P3A unsigned activity step-wave source
+  `a2fead3847b69d8a873a68da30184822fc553430` as immutable candidate
+  `0.10.61-pfr-v2b-mo-p3a-f1`. The packaging checkout is
+  `97787219a5a5f7db4707e4d7fa23d8df914bd37f`; the version metadata commit is
+  `de436b2f302c949a558133d42739dd570ce4ed7a`.
+- Candidate status is `BUILT_FOR_FOUNDER_INSPECTION`. It does not replace the
+  accepted `0.10.60-pfr-v2b-mo-p2-f1-r1` package. Founder physical acceptance
+  remains pending.
+- The real portable candidate was launched for a packaged API probe. `GET
+  /api/health` and `POST /api/multi-oscillator/activity-range` both returned
+  HTTP 200 with `application/json`; the response did not contain an HTML or
+  doctype fallback. For `2026-08-07T00:00:00Z` through
+  `2026-08-21T00:00:00Z`, the activity contract returned 61 USD and 55 JPY
+  source/eligible events, with 88 and 89 intervals respectively.
+- Native portable smoke passed twice, including sidecar recovery, same-port
+  recovery, layout survival, execution locks and clean descendant shutdown.
+  The optional candlestick specialist remains deferred because it is not
+  configured.
+- Packaged visual implementer evidence shows the Fields activity panel, both
+  independent unsigned step waves, shared raw-count scaling, event rasters,
+  exact marker selection, provenance details, filter recomputation and visible
+  unknown gaps. The evidence is not founder acceptance.
+- `executionAllowed=false`; polarity, magnitude, normalization, smoothing,
+  pair-resultant, price/outcome reads and automatic order placement remain
+  false. No MO-R2, signed wave, pair resultant or execution work was started.
+- Candidate report: `docs/research/MULTI_OSCILLATOR_MO_P3A_F1_WINDOWS_FOUNDER_CANDIDATE.md`.
+
 ## Latest Update - 2026-08-26 (MO-P2 Founder Acceptance)
 
 - The founder physically accepted `MO-P2 = FOUNDER ACCEPTED - UNSIGNED EVENT
