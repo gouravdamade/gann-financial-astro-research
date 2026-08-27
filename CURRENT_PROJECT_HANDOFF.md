@@ -4,6 +4,34 @@ Last updated: 2026-08-27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-27 (MO-R2 Polarity Admission Readiness Audit)
+
+- Completed the documentation-only MO-R2 readiness audit. No runtime, API,
+  Python, TypeScript, Rust, catalogue, reviewed-evidence, package or execution
+  file changed.
+- The live target-aware polarity catalogue contains `0` accepted production
+  entries and the reviewed-evidence packet registry contains `0` reviewed
+  packets. Therefore `SOURCE_BACKED_SIGN_ADMISSIONS_READY=0`.
+- The existing founder-review inventory is nevertheless identity-ready: 12 USD
+  and 12 JPY April 2025 rows, all `SINGLE_PASS_VERIFIED`, with immutable blank
+  packet and integrity-manifest identities. Every current founder decision,
+  evidence class and reasoning field remains blank; admission is not connected
+  to the catalogue.
+- The packet selection is outcome-blind: the first 12 complete identities
+  ordered by `exactUtc` inside `2025-04-01T00:00:00Z` through
+  `2025-05-01T00:00:00Z`, from 99 valid USD and 104 valid JPY event identities.
+  Packet metadata and workbench guards show no price, return, SBC or LLM read.
+- The recommended next step is a founder decision: either conduct the bounded
+  outcome-blind founder polarity review pilot using these 24 identities as
+  `FOUNDER_RESEARCH_HYPOTHESIS` records, or hold all sign work and pursue
+  source-evidence closure for a possible Mode 1 route. No implementation is
+  authorized by this audit.
+- The full readiness report is
+  `docs/research/MULTI_OSCILLATOR_MO_R2_POLARITY_ADMISSION_READINESS.md`.
+  It documents the future-only signed activity equation, unknown/conflict and
+  pair gates, and confirms magnitude, smoothing, normalization, execution and
+  all financial interpretation remain unconfigured or locked.
+
 ## Latest Update - 2026-08-27 (MO-P3A Founder Acceptance)
 
 - The founder physically accepted `MO-P3A = FOUNDER ACCEPTED - UNSIGNED
