@@ -194,16 +194,27 @@ Future signed compilation must preserve these non-numeric states:
 
 An FX pair-relative signed field is blocked. It can be considered only after
 both independently compiled side fields are compatible and known for the same
-canonical interval. Its future-only form would be:
+canonical interval. Its future-only raw resultant is:
 
 ```text
-pairRaw = baseSignedActivity - quoteSignedActivity
-pairDisplay = clamp(pairRaw / 2, -1, +1)
+W_BASEQUOTE(t) = W_BASE(t) - W_QUOTE(t)
+W_USDJPY(t) = W_USD(t) - W_JPY(t)
 ```
 
-For USDJPY, USD is base and JPY is quote. If either side is unknown or in an
-unresolved conflict, `pairDisplay=null` with `UNKNOWN_SIDE_EVIDENCE`. SBC is
-not an input to that calculation and cannot confirm it.
+For USDJPY, USD is base and JPY is quote. The unit is
+`SIGNED_ACTIVE_EVENT_COUNT`. `NORMALIZATION_NOT_CONFIGURED`,
+`DISPLAY_CLAMP_NOT_CONFIGURED`, `MAGNITUDE_NOT_CONFIGURED` and
+`SMOOTHING_NOT_CONFIGURED`. The only future timing kernel is
+`RECTANGULAR_ACTIVITY_PRESENCE_ONLY` over the existing half-open event span.
+`PAIR_RESULTANT_NOT_IMPLEMENTED` remains true.
+
+The existing `FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1` remains unchanged. Its
+`sideBalance`, `pairRaw` and clamped `pairDisplay` are part of that distinct,
+already-versioned categorical engineering contract; they are not inherited by
+this future raw signed-activity resultant. If either raw signed side is unknown
+or in an unresolved conflict, the future resultant is null with
+`UNKNOWN_SIDE_EVIDENCE`. SBC is not an input to either calculation and cannot
+confirm it.
 
 ## Mode Boundaries
 

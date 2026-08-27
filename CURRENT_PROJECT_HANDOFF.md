@@ -4,6 +4,21 @@ Last updated: 2026-08-27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-27 (MO-R2-R1 Raw Signed-Pair Contract Correction)
+
+- Corrected the documentation-only future signed-pair contract. The initial
+  resultant is raw subtraction: `W_BASEQUOTE(t) = W_BASE(t) - W_QUOTE(t)`;
+  for USDJPY, `W_USDJPY(t) = W_USD(t) - W_JPY(t)`.
+- The unit is `SIGNED_ACTIVE_EVENT_COUNT`. Normalization, display clamp,
+  magnitude and smoothing are not configured; the future-only timing kernel is
+  `RECTANGULAR_ACTIVITY_PRESENCE_ONLY`; `PAIR_RESULTANT_NOT_IMPLEMENTED` is
+  still true.
+- The correction does not alter `FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1`. Its
+  balance/clamp transform remains valid in its own categorical engineering
+  contract and is not inherited by the future raw signed-activity contract.
+- No runtime, API, catalogue, reviewed-packet, package or execution file
+  changed.
+
 ## Latest Update - 2026-08-27 (MO-R2 Polarity Admission Readiness Audit)
 
 - Completed the documentation-only MO-R2 readiness audit. No runtime, API,
