@@ -4,6 +4,29 @@ Last updated: 2026-08-27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-27 (MO-R3 Founder Polarity Review Pilot Protocol)
+
+- Frozen the documentation-only outcome-blind protocol for the existing April
+  2025 founder review inventory. It defines the 24 fixed USD/JPY identities,
+  permitted decisions and evidence classes, no-generalization rule,
+  freeze-before-outcome procedure, future-only sign eligibility and raw pair
+  contract. It does not classify or admit any event.
+- The inventory remains 12 USD plus 12 JPY rows. All rows are
+  `SINGLE_PASS_VERIFIED`, all decisions remain blank, and the catalogue and
+  reviewed-evidence registry both remain at zero records.
+- `FOUNDER_REVIEW_UI_GAP`: the current Founder Review workbench exposes founder
+  reasoning but labels it optional and the export validator permits blank
+  reasoning for `SUPPORTIVE` and `ADVERSE`. The pilot protocol requires it.
+- `IDENTITY_PROVENANCE_GAP`: all 24 stored event identities lack the required
+  explicit `ephemerisVersion` field. It must be supplied through a separately
+  authorized, identity-safe metadata correction; it must not be invented or
+  inferred from a generator label.
+- Stop here. Do not begin the founder review until both gaps are repaired and
+  independently rechecked. The protocol report is
+  `docs/research/MULTI_OSCILLATOR_MO_R3_FOUNDER_POLARITY_REVIEW_PILOT_PROTOCOL.md`.
+  No signed wave, pair resultant, magnitude, outcome read, pricing, packaging
+  or execution work was started.
+
 ## Latest Update - 2026-08-27 (MO-R2-R1 Raw Signed-Pair Contract Correction)
 
 - Corrected the documentation-only future signed-pair contract. The initial
