@@ -1,8 +1,33 @@
 # Current Project Handoff
 
-Last updated: 2026-08-26 IST
+Last updated: 2026-08-27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-27 (MO-P3A Founder Acceptance)
+
+- The founder physically accepted `MO-P3A = FOUNDER ACCEPTED - UNSIGNED
+  STEP-WAVE V1` and `MO-P3A-F1 = FOUNDER ACCEPTED` after inspecting frozen
+  candidate `0.10.61-pfr-v2b-mo-p3a-f1`.
+- Founder-supplied local screenshots show both independent USD and JPY
+  zero-order-hold step waves, a shared raw scale of `0-16` events with all
+  filters, and `0-12` after removing Moon. Exact markers, shared crosshair,
+  dense marker readability, event rasters, selected-event tooltip and separate
+  UNKNOWN coverage hatch are visible.
+- The founder explicitly judged the step-wave surface more useful than raw
+  count bars and judged dense regions readable. JPY can remain nonzero under
+  UNKNOWN coverage; the hatch remains separate from observed count.
+- `KNOWN_ZERO_PHYSICAL_CHECK=NOT_OBSERVED_IN_FOUNDER_RANGE`. The inspected
+  range contains no distinct known-zero interval, so this was not claimed as a
+  physical pass. Existing source tests remain the zero-baseline evidence.
+- Acceptance is limited to the unsigned time-domain product. It does not
+  authorize polarity, direction, magnitude, normalization, smoothing, USDJPY
+  subtraction, pair resultant, price/outcome reads, SBC/CGVO/BPHS fusion, LLM,
+  ML, Auto Suggest, MT5 signals, order placement or execution.
+- `0.10.61-pfr-v2b-mo-p3a-f1` is the frozen accepted unsigned baseline. Do not
+  create an unsigned-wave repair or cleanup branch without a future observed
+  regression. The next bounded work is the documentation-only MO-R2 polarity
+  admission readiness audit.
 
 ## Latest Update - 2026-08-26 (MO-P3A-F1 Windows Founder-Inspection Candidate)
 
@@ -11,9 +36,10 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   `0.10.61-pfr-v2b-mo-p3a-f1`. The packaging checkout is
   `97787219a5a5f7db4707e4d7fa23d8df914bd37f`; the version metadata commit is
   `de436b2f302c949a558133d42739dd570ce4ed7a`.
-- Candidate status is `BUILT_FOR_FOUNDER_INSPECTION`. It does not replace the
-  accepted `0.10.60-pfr-v2b-mo-p2-f1-r1` package. Founder physical acceptance
-  remains pending.
+- At packaging time the candidate status was `BUILT_FOR_FOUNDER_INSPECTION`.
+  It does not replace the accepted `0.10.60-pfr-v2b-mo-p2-f1-r1` package. That
+  inspection state was superseded by the recorded founder acceptance on
+  2026-08-27.
 - The real portable candidate was launched for a packaged API probe. `GET
   /api/health` and `POST /api/multi-oscillator/activity-range` both returned
   HTTP 200 with `application/json`; the response did not contain an HTML or
@@ -24,10 +50,11 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   recovery, layout survival, execution locks and clean descendant shutdown.
   The optional candlestick specialist remains deferred because it is not
   configured.
-- Packaged visual implementer evidence shows the Fields activity panel, both
+- Packaged visual implementer evidence before founder inspection showed the Fields activity panel, both
   independent unsigned step waves, shared raw-count scaling, event rasters,
   exact marker selection, provenance details, filter recomputation and visible
-  unknown gaps. The evidence is not founder acceptance.
+  unknown gaps. Founder acceptance is now recorded in the 2026-08-27 update
+  above and in the dedicated acceptance record.
 - `executionAllowed=false`; polarity, magnitude, normalization, smoothing,
   pair-resultant, price/outcome reads and automatic order placement remain
   false. No MO-R2, signed wave, pair resultant or execution work was started.

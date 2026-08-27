@@ -1,12 +1,51 @@
 # MO-P3A-F1 Windows Founder-Inspection Candidate
 
-Status: `BUILT_FOR_FOUNDER_INSPECTION`
+Status: `FOUNDER ACCEPTED`
 
-Founder acceptance: `PENDING_FOUNDER_PHYSICAL_INSPECTION`
+Founder acceptance: `ACCEPTED 2026-08-27`
 
 This report records the Windows package for the centrally accepted MO-P3A
 unsigned activity step-wave implementation. It does not promote the candidate
 to stable and does not authorize the next research milestone.
+
+## Founder Physical Acceptance
+
+Acceptance date: `2026-08-27`
+
+The founder physically inspected the frozen candidate and accepted:
+
+```text
+MO-P3A = FOUNDER ACCEPTED - UNSIGNED STEP-WAVE V1
+MO-P3A-F1 = FOUNDER ACCEPTED
+```
+
+Founder-supplied local screenshot evidence, not committed to Git:
+
+- `Screenshot 2026-08-27 124521.png`
+- `Screenshot 2026-08-27 124557.png`
+- `Screenshot 2026-08-27 124620.png`
+- `Screenshot 2026-08-27 124812.png`
+
+The visible founder checks are: independent USD and JPY step-wave lanes;
+horizontal segments with vertical interval-boundary transitions; shared raw
+scale `0-16` with all filters; scale `0-12` after disabling Moon; visible exact
+markers and shared crosshair; readable dense event areas; and JPY UNKNOWN
+coverage rendered as a separate hatch while retaining observed nonzero counts.
+The visible JPY unknown reason is
+`EVENT_COMPILER_REJECTED_EVENTS_OVERLAPPING_VISIBLE_RANGE`.
+
+The founder explicitly judged the step-wave representation more useful than
+raw count bars and dense areas readable. No distinct known-zero interval was
+present in the inspected range. Therefore:
+
+```text
+KNOWN_ZERO_PHYSICAL_CHECK = NOT_OBSERVED_IN_FOUNDER_RANGE
+```
+
+That is not a blocker. The source tests remain the evidence for zero-baseline
+rendering. This acceptance is limited to the unsigned time-domain product and
+does not authorize a sign, forecast, magnitude, pair resultant, price/outcome
+read, execution or any financial claim.
 
 ## Source and Traceability
 
@@ -180,10 +219,9 @@ Observed visual results:
   at interval boundaries were visible
 - Real gap interpolation: `ABSENT`; non-contiguous activity is not bridged
 - Unknown coverage remains separate from observed count: `YES`
-- Known-zero baseline: the renderer exposes an explicit `Baseline = 0`; a
-  separate known-zero interval was not present in the captured diagnostic
-  range, so this remains a founder checklist item rather than a claimed
-  outcome.
+- Known-zero baseline: `NOT_OBSERVED_IN_FOUNDER_RANGE`; the renderer exposes
+  `Baseline = 0`, but no separate known-zero interval was present in the
+  founder inspection range.
 - Aspect/body filter smoke: `PASS`; Moon removal changed the visible axis from
   0-16 to 0-12, and event traces/markers recomputed without changing IDs
 - Event marker selection: `PASS`
@@ -197,32 +235,33 @@ Observed visual results:
 
 ## Founder Inspection Checklist
 
-The following must remain founder decisions. No item below has been marked as
-founder acceptance by Codex.
+The founder accepted the unsigned product on 2026-08-27. The following records
+the completed acceptance scope and preserves the one item not observable in the
+selected range.
 
-- [ ] USD step wave is visible
-- [ ] JPY step wave is visible
-- [ ] Shared raw-count axis is understandable
-- [ ] Zero-order-hold shape is visually correct
-- [ ] No false interpolation crosses a real gap
-- [ ] Exact event markers are visible
-- [ ] Dense markers remain usable
-- [ ] Aspect/body filter recomputes the wave
-- [ ] Re-enabling filters restores the original wave
-- [ ] UNKNOWN coverage is clearly separate from count
-- [ ] A known-zero interval sits exactly on the baseline, if found in the chosen range
-- [ ] Event provenance selection works
-- [ ] Shared research crosshair/time synchronization works
-- [ ] No directional, signed or predictive output is present
-- [ ] Step waves add useful inspection value beyond count bars
-- [ ] Overall founder result: `ACCEPT` / `HOLD`
+- [x] USD step wave is visible
+- [x] JPY step wave is visible
+- [x] Shared raw-count axis is understandable
+- [x] Zero-order-hold shape is visually correct
+- [x] No false interpolation crosses a real gap
+- [x] Exact event markers are visible
+- [x] Dense markers remain usable
+- [x] Aspect/body filter recomputes the wave
+- [x] Re-enabling filters restores the original wave
+- [x] UNKNOWN coverage is clearly separate from count
+- [ ] A known-zero interval sits exactly on the baseline: not observed in the founder range
+- [x] Event provenance selection works
+- [x] Shared research crosshair/time synchronization works
+- [x] No directional, signed or predictive output is present
+- [x] Step waves add useful inspection value beyond count bars
+- [x] Overall founder result: `ACCEPT`
 
 ## Final State
 
-- MO-P3A: `CENTRAL ACCEPTED - SOURCE IMPLEMENTATION`
-- MO-P3A-F1: `BUILT_FOR_FOUNDER_INSPECTION`
-- Founder acceptance: `PENDING_FOUNDER_PHYSICAL_INSPECTION`
+- MO-P3A: `FOUNDER ACCEPTED - UNSIGNED STEP-WAVE V1`
+- MO-P3A-F1: `FOUNDER ACCEPTED`
+- Frozen accepted unsigned baseline: `0.10.61-pfr-v2b-mo-p3a-f1`
 - Stable prior package `0.10.60-pfr-v2b-mo-p2-f1-r1`: unchanged
-- Next action: founder physically inspects this exact Windows candidate
-- Do not begin MO-R2, MO-P3B, MO-P4, signed-side research or pair-resultant
-  implementation from this packaging record.
+- Next action: documentation-only MO-R2 polarity admission readiness audit
+- Do not begin a signed-side wave, MO-P3B, MO-P4 or pair-resultant
+  implementation from this acceptance record.
