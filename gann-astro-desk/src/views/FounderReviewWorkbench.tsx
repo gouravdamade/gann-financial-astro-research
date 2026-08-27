@@ -114,6 +114,7 @@ function ReviewRow({
   const event = row.eventIdentity
   const review = row.founderReview
   const decision = review.reviewedPolarity
+  const reasoningRequired = decision === 'SUPPORTIVE' || decision === 'ADVERSE'
   const sourceReference = sourceReferenceFor(row)
   const changeReview = (update: (value: FounderReviewFields) => FounderReviewFields) => {
     setWorkbench((current) => current ? updateReview(current, side.sideIdentity, row, update) : current)
@@ -180,8 +181,9 @@ function ReviewRow({
       {decision === 'REJECT_EVENT_IDENTITY' && <label>Founder rejection reason
         <textarea value={review.rejectionReason} onChange={(eventChange) => changeReview((current) => ({ ...current, rejectionReason: eventChange.target.value }))} placeholder="Why is this event identity rejected?" />
       </label>}
-      {decision && decision !== 'REJECT_EVENT_IDENTITY' && <label>Founder reasoning
-        <textarea value={review.founderReasoning} onChange={(eventChange) => changeReview((current) => ({ ...current, founderReasoning: eventChange.target.value }))} placeholder="Optional founder reasoning" />
+      {decision && decision !== 'REJECT_EVENT_IDENTITY' && <label>Founder reasoning {reasoningRequired ? '(required)' : '(optional)'}
+        <textarea value={review.founderReasoning} onChange={(eventChange) => changeReview((current) => ({ ...current, founderReasoning: eventChange.target.value }))} placeholder={reasoningRequired ? 'Enter founder reasoning before exporting' : 'Optional founder reasoning'} required={reasoningRequired} aria-required={reasoningRequired} />
+        {reasoningRequired && !review.founderReasoning.trim() && <small>Required for SUPPORTIVE and ADVERSE decisions.</small>}
       </label>}
       {review.evidenceClassification === 'SOURCE_BACKED_CLASSICAL_CANDIDATE' && <div className="founder-review-source-fields">
         <strong>Exact source reference required</strong>
@@ -222,6 +224,14 @@ export function FounderReviewWorkbench({ onClose }: Props) {
     setError('')
     setNotice('')
     try {
+      for (const side of workbench.sides) {
+        for (const row of side.rows) {
+          const decision = row.founderReview.reviewedPolarity
+          if ((decision === 'SUPPORTIVE' || decision === 'ADVERSE') && !row.founderReview.founderReasoning.trim()) {
+            throw new Error(`${side.sideIdentity} ${row.eventIdentity.eventId}: ${decision} requires non-empty founder reasoning`)
+          }
+        }
+      }
       const results: string[] = []
       for (const side of workbench.sides) {
         const rows = side.rows.map((row) => row.founderReview.reviewedPolarity && !row.founderReview.reviewer
@@ -260,7 +270,7 @@ export function FounderReviewWorkbench({ onClose }: Props) {
       </label>
       <p className="founder-review-instruction">Choose a decision only when you are ready. A blank decision remains blank; UNKNOWN_MORE_EVIDENCE_REQUIRED remains an unknown gap and is never converted to NEUTRAL.</p>
       {workbench.sides.map((side) => <section key={side.sideIdentity} className="founder-review-side" aria-label={`${side.sideIdentity} founder review`}>
-        <header><div><strong>{side.sideIdentity}</strong><span>{side.chartId} | {side.chartHypothesisId}</span></div><span>{side.identityIntegrityManifestFile}</span></header>
+        <header><div><strong>{side.sideIdentity}</strong><span>{side.chartId} | {side.chartHypothesisId}</span><small>{side.eventCompiler.ephemerisProvider} {side.ephemerisVersion} | {side.ephemerisVersionProvenance.replaceAll('_', ' ')}</small></div><span>{side.identityIntegrityManifestFile}</span></header>
         {side.rows.map((row) => <ReviewRow key={row.eventIdentity.eventId} side={side} row={row} setWorkbench={setWorkbench} />)}
       </section>)}
       <footer className="founder-review-footer"><button type="button" onClick={() => void exportPackets()} disabled={busy}>Export founder-review packets</button><span>Exports remain disconnected from the polarity catalogue and all execution paths.</span></footer>

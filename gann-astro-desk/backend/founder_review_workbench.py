@@ -41,6 +41,8 @@ REVIEW_STATUSES = (
     "REVIEW_COMPLETE_WITH_UNKNOWNS",
 )
 REVIEWABLE_IDENTITY_STATUS = "SINGLE_PASS_VERIFIED"
+EPHEMERIS_VERSION_PROVENANCE = "PACKET_COMPILER_METADATA"
+EPHEMERIS_VERSION_SOURCE_FIELD = "eventCompiler.ephemerisVersion"
 
 
 class FounderReviewIntegrityError(ValueError):
@@ -158,6 +160,30 @@ def _audit_records(audit: dict[str, Any], side: str) -> dict[str, dict[str, Any]
     return result
 
 
+def _validate_event_compiler(packet: dict[str, Any], side: str) -> tuple[dict[str, Any], str]:
+    """Authenticate the compiler metadata from the immutable blank packet.
+
+    The reviewed record must bind to this packet-level field.  It must never
+    infer an ephemeris version from an event label, generator version, or
+    astronomy-contract string.
+    """
+
+    event_compiler = packet.get("eventCompiler")
+    if not isinstance(event_compiler, dict):
+        raise FounderReviewIntegrityError(f"{side} blank packet eventCompiler metadata is missing")
+    version = event_compiler.get("ephemerisVersion")
+    if not isinstance(version, str) or not version.strip():
+        raise FounderReviewIntegrityError(
+            f"{side} blank packet eventCompiler.ephemerisVersion is missing or blank"
+        )
+    provider = event_compiler.get("ephemerisProvider")
+    if not isinstance(provider, str) or not provider.strip():
+        raise FounderReviewIntegrityError(
+            f"{side} blank packet eventCompiler.ephemerisProvider is missing or blank"
+        )
+    return copy.deepcopy(event_compiler), version
+
+
 def _validate_side_inputs(project_root: Path, side: str) -> dict[str, Any]:
     paths = _side_paths(project_root, side)
     packet = _read_json(paths["blank"])
@@ -176,6 +202,7 @@ def _validate_side_inputs(project_root: Path, side: str) -> dict[str, Any]:
         raise FounderReviewIntegrityError(f"{side} identity manifest contract is not recognized")
     if manifest.get("sideIdentity") != side or not manifest.get("allRowsSinglePassVerified"):
         raise FounderReviewIntegrityError(f"{side} identity manifest is not fully verified")
+    event_compiler, ephemeris_version = _validate_event_compiler(packet, side)
     if packet.get("instrumentIdentity") != f"FX_CURRENCY:{side}":
         raise FounderReviewIntegrityError(f"{side} blank packet instrument identity mismatch")
     audit_report = audit.get("sideReports", {}).get(side)
@@ -210,6 +237,28 @@ def _validate_side_inputs(project_root: Path, side: str) -> dict[str, Any]:
         if not isinstance(event_id, str) or event_id in seen:
             raise FounderReviewIntegrityError(f"{side} blank packet has a missing or duplicate event ID")
         seen.add(event_id)
+        packet_identity = {
+            "sideIdentity": side,
+            "instrumentIdentity": packet.get("instrumentIdentity"),
+            "chartId": packet.get("chartId"),
+            "chartHypothesisId": packet.get("chartHypothesisId"),
+        }
+        if any(event.get(key) != value for key, value in packet_identity.items()):
+            raise FounderReviewIntegrityError(
+                f"{side} event {event_id} provenance does not match its blank packet identity"
+            )
+        if event.get("eventContract") != event_compiler.get("contract"):
+            raise FounderReviewIntegrityError(
+                f"{side} event {event_id} event contract conflicts with packet eventCompiler metadata"
+            )
+        if event.get("astronomyContract") != event_compiler.get("astronomyContract"):
+            raise FounderReviewIntegrityError(
+                f"{side} event {event_id} astronomy contract conflicts with packet eventCompiler metadata"
+            )
+        if event.get("generatorVersion") != event_compiler.get("generatorVersion"):
+            raise FounderReviewIntegrityError(
+                f"{side} event {event_id} generator provenance conflicts with packet eventCompiler metadata"
+            )
         audit_record = records.get(event_id)
         status = audit_record.get("status") if audit_record else "UNVERIFIED"
         checks = audit_record.get("checks", {}) if audit_record else {}
@@ -245,6 +294,8 @@ def _validate_side_inputs(project_root: Path, side: str) -> dict[str, Any]:
                     "integrityManifestHash": actual_manifest_hash,
                     "listedAsVerified": event_id in verified_set,
                     "auditChecksPass": all(value is True for value in checks.values()),
+                    "eventCompilerMetadataPresent": True,
+                    "eventCompilerProvenance": EPHEMERIS_VERSION_PROVENANCE,
                 },
                 "eventIdentity": _identity_fields(event),
                 "motionPhaseAtExact": copy.deepcopy(
@@ -266,6 +317,10 @@ def _validate_side_inputs(project_root: Path, side: str) -> dict[str, Any]:
         "identityIntegrityManifestId": f"{manifest.get('contract')}:{side}",
         "identityIntegrityManifestFile": paths["integrity_manifest"].name,
         "identityIntegrityManifestSha256": actual_manifest_hash,
+        "eventCompiler": event_compiler,
+        "ephemerisVersion": ephemeris_version,
+        "ephemerisVersionProvenance": EPHEMERIS_VERSION_PROVENANCE,
+        "ephemerisVersionSourcePacketSha256": actual_packet_hash,
         "rows": normalized_rows,
         "sourcePacketStatus": packet.get("packetStatus"),
         "guardrails": {
@@ -287,6 +342,10 @@ def _reviewed_base(side_data: dict[str, Any]) -> dict[str, Any]:
         "blankPacketId": side_data["blankPacketId"],
         "blankPacketFile": side_data["blankPacketFile"],
         "blankPacketSha256": side_data["blankPacketSha256"],
+        "eventCompiler": copy.deepcopy(side_data["eventCompiler"]),
+        "ephemerisVersion": side_data["ephemerisVersion"],
+        "ephemerisVersionProvenance": EPHEMERIS_VERSION_PROVENANCE,
+        "ephemerisVersionSourcePacketSha256": side_data["blankPacketSha256"],
         "chartHypothesisId": side_data["chartHypothesisId"],
         "chartId": side_data["chartId"],
         "contract": REVIEWED_PACKET_CONTRACT,
@@ -437,10 +496,15 @@ def _validate_submitted_rows(side_data: dict[str, Any], submitted: Any) -> list[
             reviewer = str(review.get("reviewer") or "").strip()
             if not reviewer:
                 raise FounderReviewIntegrityError(f"Every decided row requires a reviewer: {event_id}")
+            founder_reasoning = str(review.get("founderReasoning") or "").strip()
+            if decision in {"SUPPORTIVE", "ADVERSE"} and not founder_reasoning:
+                raise FounderReviewIntegrityError(
+                    f"{decision} requires non-empty founder reasoning: {event_id}"
+                )
             normalized_review = {
                 **_blank_review(),
                 "evidenceClassification": classification,
-                "founderReasoning": str(review.get("founderReasoning") or "").strip(),
+                "founderReasoning": founder_reasoning,
                 "reviewedPolarity": decision,
                 "reviewer": reviewer,
             }
@@ -505,6 +569,9 @@ def _write_review_artifacts(project_root: Path, side: str, side_data: dict[str, 
         "reviewedPacketSha256": reviewed_file_hash,
         "blankPacketFile": side_data["blankPacketFile"],
         "blankPacketSha256": side_data["blankPacketSha256"],
+        "ephemerisVersion": packet["ephemerisVersion"],
+        "ephemerisVersionProvenance": packet["ephemerisVersionProvenance"],
+        "ephemerisVersionSourcePacketSha256": packet["ephemerisVersionSourcePacketSha256"],
         "identityIntegrityManifestFile": side_data["identityIntegrityManifestFile"],
         "identityIntegrityManifestSha256": side_data["identityIntegrityManifestSha256"],
         "founderCompletionStatus": packet["founderCompletionStatus"],
@@ -517,6 +584,8 @@ def _write_review_artifacts(project_root: Path, side: str, side_data: dict[str, 
         "sideIdentity": side,
         "reviewedPacketFile": paths["reviewed"].name,
         "reviewedPacketHash": packet["reviewedPacketHash"],
+        "ephemerisVersion": packet["ephemerisVersion"],
+        "ephemerisVersionProvenance": packet["ephemerisVersionProvenance"],
         "founderCompletionStatus": packet["founderCompletionStatus"],
         "counts": packet["completeness"],
     })
@@ -526,6 +595,8 @@ def _write_review_artifacts(project_root: Path, side: str, side_data: dict[str, 
         "reviewedPacketFile": paths["reviewed"].name,
         "reviewedPacketManifestFile": paths["reviewed_manifest"].name,
         "reviewedPacketHash": packet["reviewedPacketHash"],
+        "ephemerisVersion": packet["ephemerisVersion"],
+        "ephemerisVersionProvenance": packet["ephemerisVersionProvenance"],
         "founderCompletionStatus": packet["founderCompletionStatus"],
         "counts": packet["completeness"],
         "admission": "NOT_CONNECTED_TO_CATALOGUE",
@@ -539,6 +610,8 @@ def _write_review_artifacts(project_root: Path, side: str, side_data: dict[str, 
         "reviewedPacketHash": packet["reviewedPacketHash"],
         "reviewedManifestFile": paths["reviewed_manifest"].name,
         "reviewedManifestSha256": _sha256_file(paths["reviewed_manifest"]),
+        "ephemerisVersion": packet["ephemerisVersion"],
+        "ephemerisVersionProvenance": packet["ephemerisVersionProvenance"],
         "completenessFile": paths["completeness"].name,
         "statusFile": str(paths["status"].relative_to(project_root)),
         "markdownFile": paths["reviewed_markdown"].name,
@@ -557,6 +630,7 @@ def _markdown_render(side: str, side_data: dict[str, Any], packet: dict[str, Any
         f"- Completion: `{packet['founderCompletionStatus']}`",
         f"- Blank packet SHA-256: `{side_data['blankPacketSha256']}`",
         f"- Identity manifest SHA-256: `{side_data['identityIntegrityManifestSha256']}`",
+        f"- Ephemeris version: `{packet['ephemerisVersion']}` (bound from `{EPHEMERIS_VERSION_SOURCE_FIELD}`; `{packet['ephemerisVersionProvenance']}`)",
         f"- Reviewed packet hash: `{packet['reviewedPacketHash']}`",
         "",
         "| # | Transit | Natal | Aspect | Applying start (UTC / IST) | Exact (UTC / IST) | Separating end (UTC / IST) | Identity | Founder decision | Evidence class |",
@@ -611,13 +685,44 @@ def _load_existing_review(project_root: Path, side: str, side_data: dict[str, An
         raise FounderReviewIntegrityError(f"{side} reviewed packet hash is invalid")
     if paths["reviewed_manifest"].exists():
         manifest = _read_json(paths["reviewed_manifest"])
-        if manifest.get("reviewedPacketSha256") != _sha256_file(paths["reviewed"]):
+        reviewed_hashes = {
+            _sha256_file(paths["reviewed"]),
+            _sha256_bytes(paths["reviewed"].read_bytes()),
+        }
+        if manifest.get("reviewedPacketSha256") not in reviewed_hashes:
             raise FounderReviewIntegrityError(f"{side} reviewed packet manifest hash is invalid")
         if manifest.get("identityIntegrityManifestSha256") != side_data["identityIntegrityManifestSha256"]:
             raise FounderReviewIntegrityError(f"{side} reviewed packet identity manifest reference changed")
     rows = packet.get("rows")
     if not isinstance(rows, list):
         raise FounderReviewIntegrityError(f"{side} reviewed packet rows are missing")
+    has_decided_rows = any(
+        isinstance(row, dict)
+        and isinstance(row.get("founderReview"), dict)
+        and row["founderReview"].get("reviewedPolarity") is not None
+        for row in rows
+    )
+    packet_ephemeris_version = packet.get("ephemerisVersion")
+    packet_ephemeris_provenance = packet.get("ephemerisVersionProvenance")
+    if packet_ephemeris_version is None and packet_ephemeris_provenance is None and not has_decided_rows:
+        # The repository's initial reviewed projections predate R3-R1 and are
+        # deliberately blank. They can be displayed, but the next export must
+        # use the packet-bound projection created by _reviewed_base().
+        return _validate_submitted_rows(side_data, rows)
+    if packet_ephemeris_version != side_data["ephemerisVersion"]:
+        raise FounderReviewIntegrityError(f"{side} reviewed packet ephemeris version is not packet-bound")
+    if packet_ephemeris_provenance != EPHEMERIS_VERSION_PROVENANCE:
+        raise FounderReviewIntegrityError(f"{side} reviewed packet ephemeris provenance is not packet metadata")
+    if packet.get("ephemerisVersionSourcePacketSha256") != side_data["blankPacketSha256"]:
+        raise FounderReviewIntegrityError(f"{side} reviewed packet ephemeris source packet binding changed")
+    if paths["reviewed_manifest"].exists():
+        manifest = _read_json(paths["reviewed_manifest"])
+        if manifest.get("ephemerisVersion") != side_data["ephemerisVersion"]:
+            raise FounderReviewIntegrityError(f"{side} reviewed manifest ephemeris version is not packet-bound")
+        if manifest.get("ephemerisVersionProvenance") != EPHEMERIS_VERSION_PROVENANCE:
+            raise FounderReviewIntegrityError(f"{side} reviewed manifest ephemeris provenance is not packet metadata")
+        if manifest.get("ephemerisVersionSourcePacketSha256") != side_data["blankPacketSha256"]:
+            raise FounderReviewIntegrityError(f"{side} reviewed manifest ephemeris source packet binding changed")
     return _validate_submitted_rows(side_data, rows)
 
 

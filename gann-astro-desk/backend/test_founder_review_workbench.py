@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import copy
 import shutil
 import tempfile
 import unittest
@@ -9,6 +10,7 @@ from pathlib import Path
 
 from founder_review_workbench import (
     FounderReviewIntegrityError,
+    _sha256_file,
     build_founder_review_workbench,
     export_founder_review_packet,
 )
@@ -39,6 +41,18 @@ class FounderReviewWorkbenchTests(unittest.TestCase):
     def load(self) -> dict:
         return build_founder_review_workbench(self.root)
 
+    def rewrite_packet(self, side: str, mutate) -> None:
+        packet_path = self.root / PACKET_RELATIVE / f"{side}_APRIL_2025_BLANK_POLARITY_REVIEW_V1.json"
+        manifest_path = self.root / PACKET_RELATIVE / f"{side}_APRIL_2025_BLANK_POLARITY_REVIEW_V1.identity_integrity.manifest.json"
+        packet = json.loads(packet_path.read_text(encoding="utf-8"))
+        mutate(packet)
+        packet_path.write_text(json.dumps(packet, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        packet_hash = _sha256_file(packet_path)
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["packetSha256"] = packet_hash
+        manifest["originalGenerationManifestOutputSha256"] = packet_hash
+        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
     def test_all_rows_are_eligible_and_start_blank(self) -> None:
         workbench = self.load()
         self.assertEqual(workbench["contract"], "FOUNDER_REVIEW_WORKBENCH_V1")
@@ -49,6 +63,11 @@ class FounderReviewWorkbenchTests(unittest.TestCase):
             self.assertTrue(all(row["identityStatus"] == "SINGLE_PASS_VERIFIED" for row in side["rows"]))
             self.assertTrue(all(row["founderReview"]["reviewedPolarity"] is None for row in side["rows"]))
             self.assertEqual(side["founderCompletionStatus"], "REVIEW_NOT_STARTED")
+            self.assertEqual(side["ephemerisVersion"], "2.10.03")
+            self.assertEqual(side["ephemerisVersionProvenance"], "PACKET_COMPILER_METADATA")
+            self.assertEqual(side["eventCompiler"]["ephemerisVersion"], "2.10.03")
+            self.assertTrue(all("ephemerisVersion" not in row["eventIdentity"] for row in side["rows"]))
+        self.assertEqual(sum(len(side["rows"]) for side in workbench["sides"]), 24)
         self.assertFalse(workbench["guardrails"]["priceDataRead"])
         self.assertFalse(workbench["guardrails"]["sbcRead"])
         self.assertFalse(workbench["guardrails"]["llmRead"])
@@ -95,6 +114,71 @@ class FounderReviewWorkbenchTests(unittest.TestCase):
         self.assertFalse(reviewed["guardrails"]["priceDataRead"])
         self.assertEqual(reviewed["rows"][0]["founderReview"]["reviewedPolarity"], "SUPPORTIVE")
         self.assertEqual(reviewed["rows"][1]["founderReview"]["reviewedPolarity"], None)
+        self.assertEqual(reviewed["ephemerisVersion"], "2.10.03")
+        self.assertEqual(reviewed["ephemerisVersionProvenance"], "PACKET_COMPILER_METADATA")
+        self.assertEqual(reviewed["ephemerisVersionSourcePacketSha256"], side["blankPacketSha256"])
+        self.assertEqual(reviewed["eventCompiler"]["ephemerisVersion"], "2.10.03")
+        manifest = json.loads(
+            (self.root / PACKET_RELATIVE / "USD_APRIL_2025_FOUNDER_REVIEWED_POLARITY_V1.manifest.json")
+            .read_text(encoding="utf-8")
+        )
+        self.assertEqual(manifest["ephemerisVersion"], "2.10.03")
+        self.assertEqual(manifest["ephemerisVersionProvenance"], "PACKET_COMPILER_METADATA")
+
+    def test_supportive_and_adverse_require_non_blank_founder_reasoning(self) -> None:
+        side = self.load()["sides"][0]
+        for decision in ("SUPPORTIVE", "ADVERSE"):
+            for reasoning in ("", "   \t"):
+                row = copy.deepcopy(side["rows"][0])
+                row["founderReview"] = {
+                    **row["founderReview"],
+                    "reviewedPolarity": decision,
+                    "evidenceClassification": "FOUNDER_RESEARCH_HYPOTHESIS",
+                    "founderReasoning": reasoning,
+                    "reviewer": "Founder",
+                    "reviewTimestampUtc": "2026-08-06T12:00:00Z",
+                }
+                with self.assertRaisesRegex(FounderReviewIntegrityError, f"{decision} requires non-empty founder reasoning"):
+                    export_founder_review_packet(self.root, {"side": "USD", "rows": [row]})
+
+            row = copy.deepcopy(side["rows"][0])
+            row["founderReview"] = {
+                **row["founderReview"],
+                "reviewedPolarity": decision,
+                "evidenceClassification": "FOUNDER_RESEARCH_HYPOTHESIS",
+                "founderReasoning": "Founder-entered directional research observation.",
+                "reviewer": "Founder",
+                "reviewTimestampUtc": "2026-08-06T12:00:00Z",
+            }
+            result = export_founder_review_packet(self.root, {"side": "USD", "rows": [row]})
+            self.assertEqual(result["counts"]["decidedRows"], 1)
+
+    def test_non_directional_decision_does_not_require_directional_reasoning(self) -> None:
+        side = self.load()["sides"][1]
+        row = copy.deepcopy(side["rows"][0])
+        row["founderReview"] = {
+            **row["founderReview"],
+            "reviewedPolarity": "MIXED",
+            "evidenceClassification": "FOUNDER_RESEARCH_HYPOTHESIS",
+            "founderReasoning": "",
+            "reviewer": "Founder",
+            "reviewTimestampUtc": "2026-08-06T12:00:00Z",
+        }
+        result = export_founder_review_packet(self.root, {"side": "JPY", "rows": [row]})
+        self.assertEqual(result["counts"]["decidedRows"], 1)
+
+    def test_missing_packet_ephemeris_version_fails_closed(self) -> None:
+        self.rewrite_packet("USD", lambda packet: packet["eventCompiler"].pop("ephemerisVersion"))
+        with self.assertRaisesRegex(FounderReviewIntegrityError, "eventCompiler.ephemerisVersion is missing or blank"):
+            build_founder_review_workbench(self.root, requested_side="USD")
+
+    def test_event_provenance_conflict_fails_closed(self) -> None:
+        def mutate(packet) -> None:
+            packet["rows"][0]["eventIdentity"]["generatorVersion"] = "untrusted-generator"
+
+        self.rewrite_packet("JPY", mutate)
+        with self.assertRaisesRegex(FounderReviewIntegrityError, "generator provenance conflicts"):
+            build_founder_review_workbench(self.root, requested_side="JPY")
 
     def test_source_backed_requires_complete_exact_reference(self) -> None:
         side = self.load()["sides"][0]
@@ -103,6 +187,7 @@ class FounderReviewWorkbenchTests(unittest.TestCase):
             **row["founderReview"],
             "reviewedPolarity": "ADVERSE",
             "evidenceClassification": "SOURCE_BACKED_CLASSICAL_CANDIDATE",
+            "founderReasoning": "Founder-entered source-backed research observation.",
             "reviewer": "Founder",
             "reviewTimestampUtc": "2026-08-06T12:00:00Z",
             "sourceReferences": [{"sourceId": "S1", "edition": "Edition", "locator": "p. 10", "connection": "Exact event rule."}],

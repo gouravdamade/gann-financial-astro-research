@@ -69,6 +69,7 @@ const workbench = {
       sideIdentity: 'USD', instrumentIdentity: 'FX_CURRENCY:USD', chartId: 'USD_CHART', chartHypothesisId: 'USD_HYPOTHESIS',
       blankPacketId: 'BLANK:USD', blankPacketFile: 'USD_BLANK.json', blankPacketSha256: 'BLANK_HASH',
       identityIntegrityManifestId: 'MANIFEST:USD', identityIntegrityManifestFile: 'USD_MANIFEST.json', identityIntegrityManifestSha256: 'MANIFEST_HASH',
+      eventCompiler: { ephemerisProvider: 'Swiss Ephemeris', ephemerisVersion: '2.10.03' }, ephemerisVersion: '2.10.03', ephemerisVersionProvenance: 'PACKET_COMPILER_METADATA', ephemerisVersionSourcePacketSha256: 'BLANK_HASH',
       sourcePacketStatus: 'BLANK_FOUNDER_REVIEW_REQUIRED', founderCompletionStatus: 'REVIEW_NOT_STARTED', reviewedPacketHash: 'REVIEW_HASH',
       completeness: { eligibleRows: 1, decidedRows: 0, unknownRows: 0, rejectedRows: 0, incompleteRows: 1, classicalCandidates: 0, founderResearchHypotheses: 0, nonReviewableRows: 0 },
       rows: [{ eligible: true, identityStatus: 'SINGLE_PASS_VERIFIED', identityChecks: { eventIdMatchesAudit: true, eventHashMatchesAudit: true, blankPacketHashMatchesManifest: true, integrityManifestHash: 'MANIFEST_HASH', listedAsVerified: true, auditChecksPass: true }, motionPhaseAtExact: null, eventIdentity, founderReview: blankReview }],
@@ -77,6 +78,7 @@ const workbench = {
       sideIdentity: 'JPY', instrumentIdentity: 'FX_CURRENCY:JPY', chartId: 'JPY_CHART', chartHypothesisId: 'JPY_HYPOTHESIS',
       blankPacketId: 'BLANK:JPY', blankPacketFile: 'JPY_BLANK.json', blankPacketSha256: 'BLANK_HASH',
       identityIntegrityManifestId: 'MANIFEST:JPY', identityIntegrityManifestFile: 'JPY_MANIFEST.json', identityIntegrityManifestSha256: 'MANIFEST_HASH',
+      eventCompiler: { ephemerisProvider: 'Swiss Ephemeris', ephemerisVersion: '2.10.03' }, ephemerisVersion: '2.10.03', ephemerisVersionProvenance: 'PACKET_COMPILER_METADATA', ephemerisVersionSourcePacketSha256: 'BLANK_HASH',
       sourcePacketStatus: 'BLANK_FOUNDER_REVIEW_REQUIRED', founderCompletionStatus: 'REVIEW_NOT_STARTED', reviewedPacketHash: 'REVIEW_HASH',
       completeness: { eligibleRows: 1, decidedRows: 0, unknownRows: 0, rejectedRows: 0, incompleteRows: 1, classicalCandidates: 0, founderResearchHypotheses: 0, nonReviewableRows: 0 },
       rows: [{ eligible: true, identityStatus: 'SINGLE_PASS_VERIFIED', identityChecks: { eventIdMatchesAudit: true, eventHashMatchesAudit: true, blankPacketHashMatchesManifest: true, integrityManifestHash: 'MANIFEST_HASH', listedAsVerified: true, auditChecksPass: true }, motionPhaseAtExact: null, eventIdentity: { ...eventIdentity, sideIdentity: 'JPY', instrumentIdentity: 'FX_CURRENCY:JPY', chartId: 'JPY_CHART', chartHypothesisId: 'JPY_HYPOTHESIS', eventId: 'TN_EVENT_2' }, founderReview: { ...blankReview, sourceReferences: [] } }],
@@ -100,6 +102,23 @@ describe('FounderReviewWorkbench', () => {
     expect(screen.getAllByLabelText('Decision')[0]).toHaveValue('')
     expect(screen.queryByText(/bullish|bearish/i)).not.toBeInTheDocument()
     expect(screen.getAllByText('SINGLE PASS VERIFIED')).toHaveLength(2)
+    expect(screen.getAllByText(/Swiss Ephemeris 2\.10\.03/)).toHaveLength(2)
+  })
+
+  it('marks directional reasoning as required and blocks a blank export', async () => {
+    apiMocks.fetchFounderReviewWorkbench.mockResolvedValue(workbench)
+    const user = userEvent.setup()
+    render(<FounderReviewSurface onClose={() => undefined} />)
+
+    await screen.findByText('Founder Review')
+    await user.selectOptions(screen.getAllByLabelText('Decision')[0], 'SUPPORTIVE')
+    expect(screen.getByText('Founder reasoning (required)')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Enter founder reasoning before exporting')).toBeRequired()
+    expect(screen.queryByText('Founder reasoning (optional)')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Export founder-review packets/i }))
+
+    expect(await screen.findByText(/SUPPORTIVE requires non-empty founder reasoning/)).toBeInTheDocument()
+    expect(apiMocks.exportFounderReviewPacket).not.toHaveBeenCalled()
   })
 
   it('exports only the founder-entered decision and preserves blank rows', async () => {
@@ -116,6 +135,7 @@ describe('FounderReviewWorkbench', () => {
     await screen.findByText('Founder Review')
     await user.selectOptions(screen.getAllByLabelText('Decision')[0], 'SUPPORTIVE')
     await user.selectOptions(screen.getAllByLabelText('Evidence classification')[0], 'FOUNDER_RESEARCH_HYPOTHESIS')
+    await user.type(screen.getByPlaceholderText(/Enter founder reasoning/i), 'Founder-entered research observation.')
     await user.type(screen.getByPlaceholderText(/Enter your name/i), 'Founder')
     await user.click(screen.getByRole('button', { name: /Export founder-review packets/i }))
 

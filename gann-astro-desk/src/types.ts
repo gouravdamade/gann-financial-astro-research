@@ -2631,6 +2631,20 @@ export type FounderReviewEventIdentity = {
   transitBody: string
 }
 
+export type FounderReviewEventCompiler = {
+  aspectProfileId: string
+  astronomyContract: string
+  ayanamsha: string
+  contract: string
+  ephemerisProvider: string
+  ephemerisVersion: string
+  generatorHash: string
+  generatorVersion: string
+  historicalCivilTimeConversionPolicy: string
+  nodePolicy: string
+  schemaVersion: number
+}
+
 export type FounderReviewSourceReference = {
   sourceId: string
   edition: string
@@ -2678,6 +2692,10 @@ export type FounderReviewSide = {
   identityIntegrityManifestId: string
   identityIntegrityManifestFile: string
   identityIntegrityManifestSha256: string
+  eventCompiler: FounderReviewEventCompiler
+  ephemerisVersion: string
+  ephemerisVersionProvenance: 'PACKET_COMPILER_METADATA'
+  ephemerisVersionSourcePacketSha256: string
   sourcePacketStatus: string
   rows: FounderReviewWorkbenchRow[]
   founderCompletionStatus: 'REVIEW_NOT_STARTED' | 'REVIEW_IN_PROGRESS' | 'REVIEW_COMPLETE' | 'REVIEW_COMPLETE_WITH_UNKNOWNS'
@@ -2724,6 +2742,8 @@ export type FounderReviewExportResult = {
   reviewedPacketHash: string
   reviewedManifestFile: string
   reviewedManifestSha256: string
+  ephemerisVersion: string
+  ephemerisVersionProvenance: 'PACKET_COMPILER_METADATA'
   completenessFile: string
   statusFile: string
   markdownFile: string

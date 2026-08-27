@@ -4,6 +4,36 @@ Last updated: 2026-08-27 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-08-27 (MO-R3-R1 Founder Review Gate Repair)
+
+- Implemented the bounded founder-review readiness repair from the exact
+  `1610c7731fff620a7943b30c1b1c751d7979fbfb` baseline. `SUPPORTIVE` and
+  `ADVERSE` now require non-empty, non-whitespace founder reasoning in both the
+  UI and the export validator. No reasoning is generated or prefilled, and
+  non-directional decisions remain unchanged.
+- Bound the derived reviewed/export representation to the authenticated blank
+  packet's `eventCompiler.ephemerisVersion`, currently `2.10.03`, with explicit
+  `ephemerisVersionProvenance=PACKET_COMPILER_METADATA` and the source packet
+  SHA-256. The 24 immutable event identities and the blank packets/manifests
+  were not rewritten.
+- Reverified 12 USD plus 12 JPY rows: 24 total, all
+  `SINGLE_PASS_VERIFIED`; packet and identity-manifest linkage remains valid.
+  The repository's initial checked-in reviewed projections are legacy blank
+  state and remain readable; the next export writes the packet-bound fields.
+- Verification totals: focused backend `13/13`; relevant source-packet tests
+  `4/4`; focused frontend `3/3`; full backend `323 passed, 1 skipped`; full
+  frontend `196/196` across 43 files; lint and production build passed
+  (1,878 modules); `git diff --check` passed. Rust checks were not applicable
+  because no Rust/Tauri files changed.
+- Added `docs/research/MULTI_OSCILLATOR_MO_R3_R1_FOUNDER_REVIEW_GATE_REPAIR.md`.
+  Founder decisions remain zero; catalogue/reviewed-evidence admissions are
+  zero; signed wave/pair resultant, magnitude, normalization and smoothing are
+  absent or unconfigured; prices/outcomes, SBC, LLM/ML and execution remain
+  unused; `executionAllowed=false`.
+- No Windows package or release candidate was created. The remaining stop gate
+  is central verification before the founder begins the existing outcome-blind
+  24-row review.
+
 ## Latest Update - 2026-08-27 (MO-R3 Founder Polarity Review Pilot Protocol)
 
 - Frozen the documentation-only outcome-blind protocol for the existing April
