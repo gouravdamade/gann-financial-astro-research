@@ -39,10 +39,13 @@ Final artifact SHA-256 values:
 | `backend/GannAstroBackend.exe` | `7E21BE0CDEE523D7AB4E7DFE64E03137A71940FB079FECECBC521FFFC7C67ECC` |
 | `release.manifest.json` | `9FE17198963E5A9BF11BEA02C6A3B73F7D44A4C47CB135642AB05AC11D60D9F0` |
 
-The candidate contains no private source photographs, PDFs, OCR dumps,
-temporary renders, runtime logs, SQLite research databases, credentials, or
-other private source bytes. It renders the reviewed packets from the lawful
-derived resources packaged by the existing release procedure.
+The candidate does not bundle the private source photographs, PDFs, OCR dumps,
+temporary renders, runtime logs, credentials, or other private source bytes.
+It does include the existing packaged runtime resource
+`backend/_internal/gann_aspect_annotations_raman_v2.sqlite` and the existing
+CA bundle required by the application; neither is a private source capture or
+founder-review decision store. The reviewed packets are rendered from the
+lawful derived resources packaged by the existing release procedure.
 
 ## Founder-review integrity
 
