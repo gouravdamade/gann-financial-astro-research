@@ -1,8 +1,39 @@
 # Current Project Handoff
 
-Last updated: 2026-08-27 IST
+Last updated: 2026-08-29 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-08-29 (MO-R3-R1-F1 Founder Review Candidate)
+
+- Built the immutable `0.10.62-pfr-v2b-mo-r3-r1-f1` Windows candidate from
+  functional implementation commit `df0289a253ba2c078f73c34de0ce4de4ef181966`
+  using packaging checkout commit
+  `e38c64ca89aaedf554d64fc28c225f9da3761ac2`.
+- Targeted packaged API verification passed: health, chart, and
+  `/api/founder-review/workbench` returned JSON; the workbench contained 12
+  USD plus 12 JPY `SINGLE_PASS_VERIFIED` rows. The invalid whitespace-only
+  `SUPPORTIVE` export was rejected with structured `400 application/json` and
+  did not persist a decision.
+- Two isolated recovery-aware portable smoke runs passed. Each restarted the
+  sidecar on the same port, recovered the 24-row workbench with zero
+  decisions, preserved packet and identity-manifest hashes, and shut down with
+  no surviving descendants.
+- Interactive packaged Founder Review inspection passed the neutral guardrail,
+  source provenance, event identity, blank-decision, and supportive-reasoning
+  checks. The temporary UI selection was restored to blank; founder decision
+  count remains zero.
+- The two generic soak attempts remain
+  `GENERIC_SMOKE_HARNESS_TIMEOUT` after the optional candlestick-health step;
+  they are not counted as passes. Installer smoke was not run to protect the
+  existing installation.
+- Candidate status is `BUILT_FOR_FOUNDER_INSPECTION` and
+  `FOUNDER_REVIEW_UI_READY = PENDING_FOUNDER_PHYSICAL_INSPECTION`. The
+  detailed record is
+  `docs/research/MULTI_OSCILLATOR_MO_R3_R1_F1_WINDOWS_FOUNDER_REVIEW_CANDIDATE.md`.
+- No polarity, catalogue admission, signed wave, pair resultant, outcome
+  read, SBC, LLM, ML, Auto Suggest, MT5, or execution behavior was enabled;
+  `executionAllowed=false`.
 
 ## Latest Update - 2026-08-27 (MO-R3-R1 Founder Review Gate Repair)
 
