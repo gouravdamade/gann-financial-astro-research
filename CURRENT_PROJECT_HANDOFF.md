@@ -1,8 +1,42 @@
 # Current Project Handoff
 
-Last updated: 2026-08-29 IST
+Last updated: 2026-09-08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-09-08 (MO-R3-R1-F1 Founder Acceptance)
+
+- The founder physically inspected the exact frozen portable candidate
+  `0.10.62-pfr-v2b-mo-r3-r1-f1` and reports that the remaining Founder Review
+  checklist works correctly.
+- `MO-R3-R1 = CENTRAL ACCEPTED - FOUNDER REVIEW GATE REPAIR CLOSED`.
+- `MO-R3-R1-F1 = FOUNDER ACCEPTED`.
+- `FOUNDER_REVIEW_UI_READY = FOUNDER ACCEPTED`.
+- Founder polarity review is now `AUTHORIZED TO BEGIN`; this authorizes the
+  founder to manually review the existing 24-event outcome-blind universe. It
+  does not authorize Codex to classify events or inspect outcomes.
+- Acceptance date: `2026-09-08`. Founder decisions at acceptance remain `0`.
+- The screenshot evidence visibly shows the Fields Founder Review surface,
+  JPY `SINGLE_PASS_VERIFIED` event identity/provenance, temporary
+  `SUPPORTIVE`, required founder reasoning, and exact source-reference fields.
+  The founder separately reports successful USD/JPY count, blank-state,
+  provenance, decision, rejection, evidence-class, reviewer, export-blocking,
+  reload, and shutdown checks; those are not claimed to be visible in the one
+  screenshot.
+- The global shell contains an MT5/current market indicator, recorded as
+  `GLOBAL_SHELL_MARKET_STATUS_PRESENT`. It is outside the Founder Review
+  packet and is not a blocker, but the founder must not use price, outcomes,
+  candles, returns, SBC, signed outputs, or later market reaction during the
+  outcome-blind review.
+- The frozen candidate was not rebuilt or version-bumped. Founder decisions,
+  catalogue admissions, signed waves, pair resultants, price/outcome reads,
+  SBC, LLM/ML decisions, Auto Suggest, MT5 order logic, and execution remain
+  disabled; `executionAllowed=false`.
+- Acceptance details are recorded in
+  `docs/research/MULTI_OSCILLATOR_MO_R3_R1_F1_FOUNDER_ACCEPTANCE.md` and the
+  updated candidate report. After the founder completes the intended review,
+  stop and request the separate `MO-R4` Founder Polarity Review Freeze before
+  any outcome study.
 
 ## Latest Update - 2026-08-29 (MO-R3-R1-F1 Founder Review Candidate)
 

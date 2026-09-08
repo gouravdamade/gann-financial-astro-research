@@ -4,13 +4,24 @@
 
 Candidate status: `BUILT_FOR_FOUNDER_INSPECTION`
 
-Founder review UI state: `PENDING_FOUNDER_PHYSICAL_INSPECTION`
+Founder review UI state: `FOUNDER ACCEPTED`
+
+Founder physical acceptance date: `2026-09-08`
 
 Founder decisions: `0`
 
 This record covers the immutable Windows candidate for the MO-R3-R1-F1
 founder-review gate. It does not classify polarity, admit evidence, create a
 signed wave, or change the product contract.
+
+The candidate was physically inspected by the founder and accepted as the
+safe, usable outcome-blind Founder Review environment. Acceptance bookkeeping
+is recorded in
+`docs/research/MULTI_OSCILLATOR_MO_R3_R1_F1_FOUNDER_ACCEPTANCE.md`.
+
+This acceptance does not constitute polarity validation, financial
+validation, source certification, predictive validation, signed-wave
+validation, outcome validation, or execution authorization.
 
 ## Candidate
 
@@ -171,6 +182,20 @@ acceptance.
   counted as passes.
 - Installer smoke: `NOT_RUN_TO_PROTECT_EXISTING_INSTALLATION`.
 
+## Acceptance and next action
+
+The founder has completed the physical inspection and accepted this frozen
+candidate. The Founder Review workflow is now authorized for manual founder
+use. Founder decisions remain blank at acceptance; Codex must not make those
+decisions or inspect market outcomes. The review order remains USD rows 1-12,
+then JPY rows 1-12.
+
+The global application shell may show a market-data indicator outside the
+Founder Review packet. During the actual review, the founder must not inspect
+April 2025 prices, outcomes, candles, returns, SBC, signed outputs, or later
+market reaction. A dedicated acceptance record distinguishes visible
+screenshot evidence from the founder-reported physical checklist.
+
 ## Locks and next action
 
 The candidate keeps all of these disabled: polarity classification, evidence
@@ -201,4 +226,6 @@ surface. No later milestone is started automatically.
     Suggest, MT5, or execution content appears.
 11. Close the app and confirm it shuts down cleanly.
 
-Founder acceptance is not claimed by this report.
+Founder acceptance is recorded for the frozen candidate. The next human action
+is manual outcome-blind review; after the intended review, stop and request
+the separate MO-R4 Founder Polarity Review Freeze before any outcome study.
