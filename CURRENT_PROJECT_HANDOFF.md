@@ -11876,3 +11876,29 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Recommended future first signed prototype only after founder-reviewed polarity admission: Mode 2 `SIGNED_ACTIVITY_COUNT_V0`, with `W_side(t)=sum(s_i * a_i(t))`, a rectangular applying-to-separating activity interval, no magnitude contract, no normalization, categorical companion components and pair gaps whenever either side is unknown. This remains a proposal only, not runtime work.
 - The first recommended follow-up is `MO-R2`: a bounded, outcome-blind review/admission readiness audit for the already existing identity-bound founder review packets. Do not begin CGVO work, add catalogue records, implement a signed wave, use price outcomes, or enable execution from this audit.
 - No Python, TypeScript, Rust, APIs, schemas, source profiles, polarity entries, product behavior, MT5, Auto Suggest, ML or execution paths changed. `executionAllowed=false` remains enforced.
+
+## Latest Update - 2026-09-09 (MO-R4-P0 Outcome-Blind Freeze Architecture)
+
+- Recorded the founder acceptance bookkeeping for the already-accepted
+  `0.10.64-pfr-v2b-mo-r3-r2-f1-r1` candidate: `MO-R3-R2-F1-R1 = FOUNDER
+  ACCEPTED`, `FOUNDER_REVIEW_COLLECTION = GO`, and
+  `REAL_24_ROW_OUTCOME_BLIND_REVIEW = AUTHORIZED`. The candidate, its artifact
+  hashes, source commit, durability proof, and prior `0.10.63` history remain
+  unchanged. See `docs/research/MULTI_OSCILLATOR_MO_R4_P0_FOUNDER_ACCEPTANCE.md`
+  and `status/acceptance/mo_r4_p0_founder_acceptance.json`.
+- Added the standalone read-only outcome-blind freeze verifier
+  `gann-astro-desk/backend/founder_review_freeze.py`. It requires explicit
+  resource/review/output/candidate/attestation paths, validates exactly 12 USD
+  plus 12 JPY verified rows and their append-only revision chains, and emits a
+  new immutable JSON/Markdown/SHA256SUMS bundle only into a new output
+  directory. Its 26 tests use synthetic stores only; no real review data was
+  read and no real freeze was executed.
+- The verifier records a frozen-pending-central-review state while keeping
+  outcome analysis not started, analysis protocol not preregistered, signed
+  waves unauthorized, and `executionAllowed=false`. It does not write the
+  founder review store or immutable candidate resources.
+- MO-R4-P0 does not assign decisions, inspect outcomes, admit catalogue or
+  evidence records, or enable polarity, scoring, SBC, signed waves, Auto
+  Suggest, LLM/ML, price/returns, MT5, or execution. The next action is central
+  review after the founder completes the authorized manual review; no real
+  freeze is claimed here.

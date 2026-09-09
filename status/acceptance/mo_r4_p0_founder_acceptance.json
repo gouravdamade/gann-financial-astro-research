@@ -1,0 +1,61 @@
+{
+  "contract": "MO_R4_P0_FOUNDER_ACCEPTANCE_RECORD_V1",
+  "milestone": "MO-R4-P0",
+  "recordedAtIst": "2026-09-09",
+  "candidateVersion": "0.10.64-pfr-v2b-mo-r3-r2-f1-r1",
+  "candidateSourceCommit": "9208a552cbed5ec0228e7811c9189393a1581797",
+  "sourceGitDirty": false,
+  "executionAllowed": false,
+  "candidateHashes": {
+    "portableSha256": "A43ED1EF1CFD5CCFFDD7E7A14B5BCCB79538C5AF536638035B3C984D8D832545",
+    "installerSha256": "3DC5ED637DDEE4C0625BAA745C8CB06D19EF87700699228AFE1E8CE61883BADB",
+    "sidecarSha256": "B82F66D5A913232DB20BF081BF1328D18B77E9D872ED144A67DFC57A8A362852",
+    "buildReceiptSha256": "A570E42C5843CC70BDB5EE34F73F43D4DA9EA8C90F409511BEC23841C6454E13",
+    "releaseManifestSha256": "AC48605BFF0884D0F48F70719356D852C68EBBD12EC717977D353EAB49E19275",
+    "immutableResourceTreeSha256": "0BBCE6E888974C28A59FA62589AE4604C8360675DC5FE3FA36F26FA82729F266"
+  },
+  "milestoneState": {
+    "MO-R3-R2-F1-R1": "FOUNDER ACCEPTED",
+    "FOUNDER_REVIEW_COLLECTION": "GO",
+    "REAL_24_ROW_OUTCOME_BLIND_REVIEW": "AUTHORIZED"
+  },
+  "founderDecisionsAtRecord": 0,
+  "realReviewStateAtRecord": {
+    "rowCount": 24,
+    "reviewedPolarityNonNull": 0,
+    "evidenceClassificationNonNull": 0,
+    "sourceReferenceCount": 0,
+    "catalogueEntries": 0,
+    "evidenceAdmissions": 0
+  },
+  "realFreezeExecuted": false,
+  "realReviewDataReadByImplementation": false,
+  "preservedEvidence": [
+    "docs/research/MULTI_OSCILLATOR_MO_R3_R2_F1_R1_PACKAGED_DURABILITY.md",
+    "0.10.63 historical candidate record",
+    "0.10.64 packaged durability proof"
+  ],
+  "freezeVerifier": {
+    "implemented": true,
+    "module": "gann-astro-desk/backend/founder_review_freeze.py",
+    "syntheticTests": 26,
+    "writesReviewStore": false,
+    "writesImmutableResources": false,
+    "publishesOnlyNewBundleDirectory": true
+  },
+  "locks": {
+    "priceOrOutcomeRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWave": false,
+    "autoSuggest": false,
+    "llm": false,
+    "ml": false,
+    "marketDirection": false,
+    "smoothing": false,
+    "magnitude": false,
+    "mt5": false,
+    "execution": false
+  }
+}
