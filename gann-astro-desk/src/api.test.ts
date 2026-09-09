@@ -139,6 +139,41 @@ describe('Tauri backend transport', () => {
     )
   })
 
+  it('preserves structured founder-review revision conflicts for per-side reporting', async () => {
+    invokeMock.mockResolvedValue({
+      contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',
+      baseUrl: 'http://127.0.0.1:55214',
+      apiToken: 'private-test-token',
+      port: 55214,
+      pid: 44,
+      status: 'ready',
+      executionAllowed: false,
+    })
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 409,
+      headers: { get: () => 'application/json' },
+      text: async () => JSON.stringify({
+        ok: false,
+        error: 'Founder review revision conflict for USD: expected OLD, current NEW',
+        errorCode: 'FOUNDER_REVIEW_REVISION_CONFLICT',
+        conflict: {
+          side: 'USD',
+          expectedRevisionHash: 'OLD',
+          currentRevisionHash: 'NEW',
+          currentRevisionId: 'rev-usd-2',
+        },
+      }),
+    }))
+
+    const { exportFounderReviewPacket } = await import('./api')
+    await expect(exportFounderReviewPacket({ side: 'USD', baseRevisionHash: 'OLD', rows: [] })).rejects.toMatchObject({
+      status: 409,
+      errorCode: 'FOUNDER_REVIEW_REVISION_CONFLICT',
+      details: { conflict: { currentRevisionHash: 'NEW', currentRevisionId: 'rev-usd-2' } },
+    })
+  })
+
   it('refuses a runtime that claims execution permission', async () => {
     invokeMock.mockResolvedValue({
       contract: 'GANN_ASTRO_TAURI_PYTHON_SIDECAR_V1',

@@ -20,6 +20,14 @@ type Props = {
   onDirtyChange?: (dirty: boolean) => void
 }
 
+type ExportOutcome = {
+  side: FounderReviewSide['sideIdentity']
+  status: 'committed' | 'failed'
+  revisionId?: string
+  revisionHash?: string
+  error?: string
+}
+
 const EMPTY_SOURCE_REFERENCE: FounderReviewSourceReference = {
   sourceId: '',
   edition: '',
@@ -93,6 +101,67 @@ function updateReview(
     ...currentRow,
     founderReview: update(currentRow.founderReview),
   }))
+}
+
+function updateExportedSide(
+  current: FounderReviewWorkbench,
+  sideIdentity: FounderReviewSide['sideIdentity'],
+  result: {
+    founderCompletionStatus: FounderReviewSide['founderCompletionStatus']
+    counts: FounderReviewSide['completeness']
+    reviewedPacketHash: string
+    revisionId: string
+    revisionHash: string
+    previousRevisionHash: string | null
+    reviewStoreContract: string
+  },
+): FounderReviewWorkbench {
+  return updateSide(current, sideIdentity, (side) => ({
+    ...side,
+    founderCompletionStatus: result.founderCompletionStatus,
+    completeness: result.counts,
+    reviewedPacketHash: result.reviewedPacketHash,
+    currentRevisionId: result.revisionId,
+    currentRevisionHash: result.revisionHash,
+    previousRevisionHash: result.previousRevisionHash,
+    reviewStoreContract: result.reviewStoreContract,
+  }))
+}
+
+function formatExportError(caught: unknown): string {
+  const message = caught instanceof Error ? caught.message : String(caught)
+  if (typeof caught !== 'object' || caught === null) return message
+  const candidate = caught as {
+    status?: unknown
+    errorCode?: unknown
+    conflict?: {
+      currentRevisionId?: unknown
+      currentRevisionHash?: unknown
+    }
+    details?: {
+      errorCode?: unknown
+      conflict?: {
+        currentRevisionId?: unknown
+        currentRevisionHash?: unknown
+      }
+    }
+  }
+  const details = candidate.details ?? candidate
+  const errorCode = typeof candidate.errorCode === 'string'
+    ? candidate.errorCode
+    : typeof details.errorCode === 'string' ? details.errorCode : null
+  const status = typeof candidate.status === 'number' ? candidate.status : null
+  const prefix = errorCode && !message.includes(errorCode)
+    ? `${errorCode}: `
+    : !errorCode && status !== null && !message.includes(`HTTP ${status}`)
+      ? `HTTP ${status}: `
+      : ''
+  const conflict = details.conflict
+  const currentRevision = conflict
+    && (typeof conflict.currentRevisionId === 'string' || typeof conflict.currentRevisionHash === 'string')
+    ? ` Current revision ${typeof conflict.currentRevisionId === 'string' ? conflict.currentRevisionId : 'unknown'} (${typeof conflict.currentRevisionHash === 'string' ? conflict.currentRevisionHash : 'no hash'}) remains authoritative.`
+    : ''
+  return `${prefix}${message}${currentRevision}`
 }
 
 function Fact({ label, value }: { label: string; value: string }) {
@@ -206,12 +275,14 @@ export function FounderReviewWorkbench({ onClose, onDirtyChange }: Props) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [exportOutcomes, setExportOutcomes] = useState<ExportOutcome[]>([])
   const [dirty, setDirty] = useState(false)
   const [pendingAction, setPendingAction] = useState<'reload' | 'close' | null>(null)
 
   const load = useCallback(async () => {
     setBusy(true)
     setError('')
+    setExportOutcomes([])
     try {
       setWorkbench(await fetchFounderReviewWorkbench())
       setDirty(false)
@@ -250,6 +321,7 @@ export function FounderReviewWorkbench({ onClose, onDirtyChange }: Props) {
     setBusy(true)
     setError('')
     setNotice('')
+    setExportOutcomes([])
     try {
       for (const side of workbench.sides) {
         for (const row of side.rows) {
@@ -259,7 +331,8 @@ export function FounderReviewWorkbench({ onClose, onDirtyChange }: Props) {
           }
         }
       }
-      const results: string[] = []
+      const outcomes: ExportOutcome[] = []
+      let updatedWorkbench = workbench
       for (const side of workbench.sides) {
         const rows = side.rows.map((row) => row.founderReview.reviewedPolarity && !row.founderReview.reviewer
           ? { ...row, founderReview: { ...row.founderReview, reviewer } }
@@ -269,11 +342,35 @@ export function FounderReviewWorkbench({ onClose, onDirtyChange }: Props) {
           baseRevisionHash: side.currentRevisionHash,
           rows,
         }
-        const result = await exportFounderReviewPacket(request)
-        results.push(`${side.sideIdentity}: ${result.founderCompletionStatus.replaceAll('_', ' ')}`)
+        try {
+          const result = await exportFounderReviewPacket(request)
+          outcomes.push({
+            side: side.sideIdentity,
+            status: 'committed',
+            revisionId: result.revisionId,
+            revisionHash: result.revisionHash,
+          })
+          updatedWorkbench = updateExportedSide(updatedWorkbench, side.sideIdentity, result)
+          setWorkbench(updatedWorkbench)
+        } catch (caught) {
+          outcomes.push({
+            side: side.sideIdentity,
+            status: 'failed',
+            error: formatExportError(caught),
+          })
+        }
       }
-      setNotice(`Exported founder-review state. ${results.join(' | ')}`)
+      setExportOutcomes(outcomes)
+      const failures = outcomes.filter((outcome) => outcome.status === 'failed')
+      if (failures.length > 0) {
+        setDirty(true)
+        setNotice('Founder-review export incomplete. Only the sides marked committed were saved; failed-side edits remain unsaved and dirty.')
+        return false
+      }
+      setDirty(false)
+      setNotice('Founder-review export committed independently for every side.')
       await load()
+      setExportOutcomes(outcomes)
       return true
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
@@ -320,6 +417,17 @@ export function FounderReviewWorkbench({ onClose, onDirtyChange }: Props) {
     {busy && <p className="founder-review-message">Checking packet and identity-manifest hashes...</p>}
     {error && <p className="founder-review-error">{error}</p>}
     {notice && <p className="founder-review-notice">{notice}</p>}
+    {exportOutcomes.length > 0 && <section className="founder-review-export-results" aria-label="Founder review export result">
+      <strong>{exportOutcomes.some((outcome) => outcome.status === 'failed') ? 'Partial founder-review export' : 'Founder-review export committed'}</strong>
+      <ul>
+        {exportOutcomes.map((outcome) => <li key={outcome.side} className={outcome.status === 'committed' ? 'is-committed' : 'is-failed'}>
+          {outcome.status === 'committed'
+            ? <><strong>{outcome.side} committed</strong><span>Revision {outcome.revisionId} | hash {outcome.revisionHash}</span></>
+            : <><strong>{outcome.side} failed</strong><span>{outcome.error}</span></>}
+        </li>)}
+      </ul>
+      {exportOutcomes.some((outcome) => outcome.status === 'failed') && <p>The failed side remains dirty for retry or discard. This is not an all-sides save.</p>}
+    </section>}
     {workbench && <>
       <section className="founder-review-summary" aria-label="Founder review summary">
         {workbench.sides.map((side) => <div key={side.sideIdentity}><strong>{side.sideIdentity}</strong><span>{side.completeness.decidedRows}/{side.completeness.eligibleRows} decided</span><span>{side.founderCompletionStatus.replaceAll('_', ' ')}</span><small>{side.blankPacketSha256}</small></div>)}

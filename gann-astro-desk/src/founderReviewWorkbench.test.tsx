@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { FounderReviewWorkbench } from './types'
+import type { FounderReviewExportResult, FounderReviewWorkbench } from './types'
 import { FounderReviewWorkbench as FounderReviewSurface } from './views/FounderReviewWorkbench'
 
 const apiMocks = vi.hoisted(() => ({
@@ -88,6 +88,28 @@ const workbench = {
     },
   ],
 } as unknown as FounderReviewWorkbench
+
+function exportResult(side: 'USD' | 'JPY', revisionId = `rev-${side.toLowerCase()}-1`): FounderReviewExportResult {
+  return {
+    reviewedPacketFile: `revisions/${side}/${revisionId}/reviewed_packet.json`,
+    reviewedPacketSha256: `${side}-PACKET-FILE-HASH`,
+    reviewedPacketHash: `${side}-PACKET-HASH`,
+    reviewedManifestFile: `revisions/${side}/${revisionId}/manifest.json`,
+    reviewedManifestSha256: `${side}-MANIFEST-HASH`,
+    completenessFile: `revisions/${side}/${revisionId}/completeness.json`,
+    statusFile: `revisions/${side}/${revisionId}/status.json`,
+    markdownFile: `revisions/${side}/${revisionId}/reviewed.md`,
+    ephemerisVersion: '2.10.03',
+    ephemerisVersionProvenance: 'PACKET_COMPILER_METADATA',
+    founderCompletionStatus: 'REVIEW_NOT_STARTED',
+    counts: { eligibleRows: 1, decidedRows: 0, unknownRows: 0, rejectedRows: 0, incompleteRows: 1, classicalCandidates: 0, founderResearchHypotheses: 0, nonReviewableRows: 0 },
+    revisionId,
+    serverCreatedAtUtc: '2026-09-09T00:00:00Z',
+    previousRevisionHash: null,
+    revisionHash: `${side}-REVISION-HASH-${revisionId}`,
+    reviewStoreContract: 'FOUNDER_REVIEW_DURABLE_STORE_V1',
+  }
+}
 
 afterEach(() => {
   cleanup()
@@ -174,5 +196,84 @@ describe('FounderReviewWorkbench', () => {
     await user.click(screen.getByRole('button', { name: 'Back to Fields' }))
     await user.click(screen.getByRole('button', { name: 'Discard changes' }))
     expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('reports the committed USD side and failed JPY side independently', async () => {
+    apiMocks.fetchFounderReviewWorkbench.mockResolvedValue(workbench)
+    apiMocks.exportFounderReviewPacket.mockImplementation(async (input: { side: 'USD' | 'JPY' }) => {
+      if (input.side === 'USD') return exportResult('USD')
+      throw new Error('JPY review store unavailable')
+    })
+    const user = userEvent.setup()
+    render(<FounderReviewSurface onClose={() => undefined} />)
+
+    await screen.findByText('Founder Review')
+    await user.click(screen.getByRole('button', { name: /Export founder-review packets/i }))
+
+    expect(await screen.findByRole('region', { name: 'Founder review export result' })).toBeInTheDocument()
+    expect(screen.getByText('USD committed')).toBeInTheDocument()
+    expect(screen.getByText(/Revision rev-usd-1 \| hash USD-REVISION-HASH-rev-usd-1/)).toBeInTheDocument()
+    expect(screen.getByText('JPY failed')).toBeInTheDocument()
+    expect(screen.getByText('JPY review store unavailable')).toBeInTheDocument()
+    expect(screen.getByText(/failed-side edits remain unsaved and dirty/i)).toBeInTheDocument()
+    expect(screen.getByText(/This is not an all-sides save/i)).toBeInTheDocument()
+  })
+
+  it('reports JPY success after a retry without hiding the earlier partial result', async () => {
+    apiMocks.fetchFounderReviewWorkbench.mockResolvedValue(workbench)
+    let jpyAttempts = 0
+    apiMocks.exportFounderReviewPacket.mockImplementation(async (input: { side: 'USD' | 'JPY' }) => {
+      if (input.side === 'USD') return exportResult('USD')
+      jpyAttempts += 1
+      if (jpyAttempts === 1) throw new Error('temporary JPY write failure')
+      return exportResult('JPY')
+    })
+    const user = userEvent.setup()
+    render(<FounderReviewSurface onClose={() => undefined} />)
+
+    await screen.findByText('Founder Review')
+    const exportButton = screen.getByRole('button', { name: /Export founder-review packets/i })
+    await user.click(exportButton)
+    expect(await screen.findByText('JPY failed')).toBeInTheDocument()
+
+    await user.click(exportButton)
+    expect(await screen.findByText('JPY committed')).toBeInTheDocument()
+    expect(screen.getByText(/Revision rev-jpy-1 \| hash JPY-REVISION-HASH-rev-jpy-1/)).toBeInTheDocument()
+    expect(screen.queryByText(/temporary JPY write failure/)).not.toBeInTheDocument()
+    expect(jpyAttempts).toBe(2)
+  })
+
+  it('shows stale-revision conflict code and the authoritative current revision', async () => {
+    apiMocks.fetchFounderReviewWorkbench.mockResolvedValue(workbench)
+    const staleError = Object.assign(
+      new Error('Founder review revision conflict for USD: expected OLD-HASH, current NEW-HASH'),
+      {
+        status: 409,
+        errorCode: 'FOUNDER_REVIEW_REVISION_CONFLICT',
+        details: {
+          errorCode: 'FOUNDER_REVIEW_REVISION_CONFLICT',
+          conflict: {
+            side: 'USD',
+            expectedRevisionHash: 'OLD-HASH',
+            currentRevisionHash: 'NEW-HASH',
+            currentRevisionId: 'rev-usd-2',
+          },
+        },
+      },
+    )
+    apiMocks.exportFounderReviewPacket.mockImplementation(async (input: { side: 'USD' | 'JPY' }) => {
+      if (input.side === 'USD') throw staleError
+      return exportResult('JPY')
+    })
+    const user = userEvent.setup()
+    render(<FounderReviewSurface onClose={() => undefined} />)
+
+    await screen.findByText('Founder Review')
+    await user.click(screen.getByRole('button', { name: /Export founder-review packets/i }))
+
+    expect(await screen.findByText('USD failed')).toBeInTheDocument()
+    expect(screen.getByText(/FOUNDER_REVIEW_REVISION_CONFLICT/)).toBeInTheDocument()
+    expect(screen.getByText(/Current revision rev-usd-2 \(NEW-HASH\) remains authoritative/)).toBeInTheDocument()
+    expect(screen.getByText('JPY committed')).toBeInTheDocument()
   })
 })

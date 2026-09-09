@@ -7277,6 +7277,14 @@ html.android-runtime .loading-state {
 .founder-review-dirty { margin: 0; color: #e3c77d; font: 8px/1.45 Consolas, monospace; }
 .founder-review-error { color: #eea6ad; }
 .founder-review-notice { color: #9bd3bd; }
+.founder-review-export-results { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid #536574; background: #111d25; }
+.founder-review-export-results > strong { color: #e3edf0; font-size: 9px; }
+.founder-review-export-results ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.founder-review-export-results li { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; font: 8px/1.4 Consolas, monospace; }
+.founder-review-export-results li strong { color: #9bd3bd; }
+.founder-review-export-results li span { overflow-wrap: anywhere; color: #b9c8cf; }
+.founder-review-export-results li.is-failed strong { color: #eea6ad; }
+.founder-review-export-results p { margin: 0; color: #e3c77d; font: 8px/1.4 Consolas, monospace; }
 .founder-review-side { display: grid; gap: 8px; min-width: 0; }
 .founder-review-side > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; padding: 8px 0 2px; border-bottom: 1px solid #3b4852; }
 .founder-review-side > header > div { display: grid; gap: 3px; min-width: 0; }

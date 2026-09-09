@@ -94,7 +94,38 @@ import type {
 import type { CgvoSearch, CgvoSourceProfile, CgvoStatus, CgvoWorkbench, CgvoKurmaSeed } from './cgvoTypes'
 import { disconnectCompanion, getCompanionSession, nativeCompanionRequest } from './companion'
 
-type ApiEnvelope<T> = { ok: boolean; error?: string } & T
+type ApiEnvelope<T> = {
+  ok: boolean
+  error?: string
+  errorCode?: string
+  conflict?: ApiErrorDetails['conflict']
+} & T
+
+export type ApiErrorDetails = {
+  error?: string
+  errorCode?: string
+  conflict?: {
+    side?: string
+    expectedRevisionHash?: string | null
+    currentRevisionHash?: string | null
+    currentRevisionId?: string | null
+  }
+}
+
+export class ApiRequestError extends Error {
+  readonly status: number
+  readonly errorCode: string | null
+  readonly details: ApiErrorDetails
+
+  constructor(status: number, details: ApiErrorDetails) {
+    super(details.error || `Request failed: ${status}`)
+    this.name = 'ApiRequestError'
+    this.status = status
+    this.errorCode = details.errorCode || null
+    this.details = details
+  }
+}
+
 let backendRuntimePromise: Promise<BackendRuntimeInfo> | null = null
 
 function responsePreview(body: string): string {
@@ -180,7 +211,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
         await disconnectCompanion().catch(() => undefined)
         window.dispatchEvent(new Event('gann-astro-companion-invalid'))
       }
-      throw new Error(payload.error || `Request failed: ${response.status}`)
+      throw new ApiRequestError(response.status, payload)
     }
     return payload
   }
@@ -209,7 +240,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   if (!response) throw networkError instanceof Error ? networkError : new Error('Backend is unavailable')
   const payload = await decodeApiResponse<T>(response)
   if (!response.ok || !payload.ok) {
-    throw new Error(payload.error || `Request failed: ${response.status}`)
+    throw new ApiRequestError(response.status, payload)
   }
   return payload
 }
