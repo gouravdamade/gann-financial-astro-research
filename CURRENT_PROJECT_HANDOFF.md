@@ -4,6 +4,38 @@ Last updated: 2026-09-09 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-09 (MO-R3-R2-F1-R1 Packaged Durability Evidence Closure)
+
+- Implemented the bounded Founder Review export-result repair at
+  `9208a552cbed5ec0228e7811c9189393a1581797`. USD and JPY export outcomes are
+  now reported independently: a committed side shows its revision ID/hash, a
+  failed side remains dirty and unsaved, and partial success explicitly cannot
+  be mistaken for an all-sides save. Structured stale-revision conflicts remain
+  visible and authoritative.
+- Focused API and Founder Review coverage is **23/23**, including USD success
+  then JPY failure, JPY success after retry, and stale conflict visibility.
+- The immutable `0.10.63-pfr-v2b-mo-r3-r2-f1` candidate passed the required
+  actual packaged persistence sequence in an isolated application-data root:
+  24 verified rows initially; blank revision 1; clean shutdown; identical
+  revision 1 after relaunch; append-only blank revision 2; structured stale
+  `409 FOUNDER_REVIEW_REVISION_CONFLICT`; unchanged resource tree; zero
+  decisions/classifications/references; and no descendant survivors.
+- The new immutable candidate is
+  `0.10.64-pfr-v2b-mo-r3-r2-f1-r1`, built from `9208a552` with
+  `sourceGitDirty=false` and `executionAllowed=false`. It passed the same
+  packaged proof. Reports and exact revision/artifact hashes are recorded in
+  `docs/research/MULTI_OSCILLATOR_MO_R3_R2_F1_R1_PACKAGED_DURABILITY.md`.
+- Final verification is **201/201 frontend tests across 43 files**, **332
+  backend tests passed with 1 skipped**, Oxlint passed, production build
+  passed, Cargo fmt/check passed, and Rust tests **19/19** passed. The old
+  `0.10.63` candidate remains unchanged; the isolated test roots were deleted
+  after proof.
+- Founder Review has not begun. Real April rows remain identity-only with zero
+  decisions, zero classifications, zero source references, zero catalogue or
+  evidence admissions, and `executionAllowed=false`. No outcome, polarity, MO
+  mathematics, source registry, SBC, ML, Auto Suggest, MT5, or execution
+  behavior was changed.
+
 ## Latest Update - 2026-09-09 (MO-R3-R2 Founder Review Integrity Hardening)
 
 - Implemented the bounded record-integrity repair for the accepted Fields
