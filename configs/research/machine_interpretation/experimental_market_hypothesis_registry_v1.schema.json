@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gann-astro-desk.local/schemas/machine-assisted-experimental-market-hypothesis-registry-v1.json",
+  "title": "Machine-Assisted Experimental Market Hypothesis Registry V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "registryId",
+    "registryStatus",
+    "purpose",
+    "entryPolicy",
+    "entries",
+    "guardrails"
+  ],
+  "properties": {
+    "contract": {
+      "const": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "registryId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "registryStatus": {
+      "enum": [
+        "EMPTY_NO_AUTHORIZED_MARKET_BRIDGES",
+        "SYNTHETIC_TEST_ONLY",
+        "FUTURE_BLINDED_HYPOTHESES_REQUIRING_SEPARATE_AUTHORIZATION"
+      ]
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entryPolicy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hypothesis"
+      }
+    },
+    "guardrails": {
+      "$ref": "#/$defs/guardrails"
+    }
+  },
+  "$defs": {
+    "hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hypothesisId",
+        "version",
+        "author",
+        "createdAtUtc",
+        "inputOperatorContractIds",
+        "astrologicalStateCondition",
+        "targetSide",
+        "currencyPressureState",
+        "reasoning",
+        "sourceDependencies",
+        "experimentalAssumptions",
+        "prohibitedGeneralizations",
+        "validationStatus",
+        "outcomeDataSeenAtCreation",
+        "approvalStatus",
+        "signedUnitIfConfigured",
+        "magnitudeConfigured",
+        "mode",
+        "hypothesisHash"
+      ],
+      "properties": {
+        "hypothesisId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAtUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "inputOperatorContractIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "astrologicalStateCondition": {
+          "enum": [
+            "SUPPORTIVE_ASTRO_STATE",
+            "ADVERSE_ASTRO_STATE",
+            "NEUTRAL_ASTRO_STATE"
+          ]
+        },
+        "targetSide": {
+          "enum": [
+            "USD",
+            "JPY"
+          ]
+        },
+        "currencyPressureState": {
+          "enum": [
+            "SUPPORTIVE",
+            "ADVERSE",
+            "MIXED",
+            "NEUTRAL"
+          ]
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceDependencies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "experimentalAssumptions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "prohibitedGeneralizations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "validationStatus": {
+          "const": "NOT_FINANCIALLY_VALIDATED"
+        },
+        "outcomeDataSeenAtCreation": {
+          "const": false
+        },
+        "approvalStatus": {
+          "enum": [
+            "SYNTHETIC_TEST_ONLY",
+            "AUTHORIZED_FOR_BLINDED_TEST",
+            "NOT_AUTHORIZED"
+          ]
+        },
+        "signedUnitIfConfigured": {
+          "const": null
+        },
+        "magnitudeConfigured": {
+          "const": false
+        },
+        "mode": {
+          "const": "EXPERIMENTAL_PROFILED"
+        },
+        "hypothesisHash": {
+          "type": "string",
+          "pattern": "^[A-F0-9]{64}$"
+        }
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "priceDataRead",
+        "outcomeDataRead",
+        "founderDecisionRead",
+        "catalogueAdmission",
+        "evidenceAdmission",
+        "signedWaveRendered",
+        "pairResultantCreated",
+        "magnitudeConfigured",
+        "autoSuggestEnabled",
+        "mlEnabled",
+        "mt5Enabled",
+        "executionAllowed"
+      ],
+      "properties": {
+        "priceDataRead": { "const": false },
+        "outcomeDataRead": { "const": false },
+        "founderDecisionRead": { "const": false },
+        "catalogueAdmission": { "const": false },
+        "evidenceAdmission": { "const": false },
+        "signedWaveRendered": { "const": false },
+        "pairResultantCreated": { "const": false },
+        "magnitudeConfigured": { "const": false },
+        "autoSuggestEnabled": { "const": false },
+        "mlEnabled": { "const": false },
+        "mt5Enabled": { "const": false },
+        "executionAllowed": { "const": false }
+      }
+    }
+  }
+}

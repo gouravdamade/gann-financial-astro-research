@@ -1,0 +1,23 @@
+{
+  "contract": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1",
+  "schemaVersion": 1,
+  "registryId": "MO_R4A_P0_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1",
+  "registryStatus": "EMPTY_NO_AUTHORIZED_MARKET_BRIDGES",
+  "purpose": "Versioned, blinded-test market-bridge hypotheses only. This registry is not a classical doctrine source, production polarity catalogue, or executable market rule table.",
+  "entryPolicy": "EMPTY_UNTIL_A_FUTURE_EXPLICIT_BLINDED_HYPOTHESIS_APPROVAL",
+  "entries": [],
+  "guardrails": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderDecisionRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveRendered": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  }
+}

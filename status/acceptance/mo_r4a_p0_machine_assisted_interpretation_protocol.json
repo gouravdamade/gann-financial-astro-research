@@ -1,0 +1,71 @@
+{
+  "contract": "MO_R4A_P0_MACHINE_ASSISTED_INTERPRETATION_PROTOCOL_SUPERSESSION_V1",
+  "milestone": "MO-R4A-P0",
+  "startingMaster": "e1cfdbaafcb3244e502b825d46f3119f0704a1d3",
+  "recordedAtIst": "2026-09-09",
+  "protocolSupersession": {
+    "supersededRequirement": "FOUNDER_MANUAL_ASTROLOGY_POLARITY_AUTHORSHIP",
+    "status": "SUPERSEDED_BEFORE_FIRST_REAL_DECISION",
+    "reason": "FOUNDER_DOMAIN_EXPERTISE_INSUFFICIENT_FOR_REPRODUCIBLE_ASTROLOGICAL_EVENT_CLASSIFICATION",
+    "scope": "Only manual founder derivation of astrology signs is superseded. Founder Review integrity, append-only revision storage, source references, founder approval, and freeze architecture remain historically valid infrastructure."
+  },
+  "newPilot": {
+    "name": "BLINDED_MACHINE_ASSISTED_INTERPRETATION",
+    "status": "READY_FOR_SOURCE_HYPOTHESIS_POPULATION",
+    "realPilotUniverse": {
+      "canonicalEventCount": 24,
+      "usdEventCount": 12,
+      "jpyEventCount": 12,
+      "identityStatus": "SINGLE_PASS_VERIFIED",
+      "realFounderDecisionsAtSupersession": 0,
+      "realEvidenceClassificationsAtSupersession": 0,
+      "realSourceReferencesAtSupersession": 0
+    },
+    "outcomeAnalysis": "NOT_STARTED",
+    "outcomeDataRead": false,
+    "realFounderReviewDataReadByThisMilestone": false,
+    "realFounderReviewDataWrittenByThisMilestone": false,
+    "realPolarityGeneratedByThisMilestone": false
+  },
+  "preservedHistoricalInfrastructure": {
+    "founderReviewWorkbench": "PRESERVED",
+    "appendOnlyFounderReviewRevisions": "PRESERVED",
+    "sourceReferenceStructure": "PRESERVED",
+    "founderReviewFreezeVerifier": "PRESERVED_NOT_EXECUTED",
+    "acceptedCandidate": {
+      "version": "0.10.64-pfr-v2b-mo-r3-r2-f1-r1",
+      "sourceCommit": "9208a552cbed5ec0228e7811c9189393a1581797",
+      "acceptanceRecord": "status/acceptance/mo_r4_p0_founder_acceptance.json",
+      "modified": false
+    }
+  },
+  "futureFreezeDesign": {
+    "proposedContract": "MACHINE_ASSISTED_POLARITY_HYPOTHESIS_FREEZE_V1",
+    "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+    "doesNotRepurpose": "FOUNDER_POLARITY_REVIEW_FREEZE_V1"
+  },
+  "researchState": {
+    "marketHypothesisRegistry": "EMPTY_NO_AUTHORIZED_MARKET_BRIDGES",
+    "productionPolarityCatalogue": "NO_ACCEPTED_PRODUCTION_ENTRIES",
+    "reviewedEvidenceRegistry": "NO_REVIEWED_PACKETS",
+    "signedUsdRuntime": "NOT_AUTHORIZED",
+    "signedJpyRuntime": "NOT_AUTHORIZED",
+    "signedUsdJpyRuntime": "NOT_AUTHORIZED",
+    "magnitude": "NOT_CONFIGURED",
+    "executionAllowed": false
+  },
+  "locks": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWave": false,
+    "pairResultant": false,
+    "autoSuggest": false,
+    "llm": false,
+    "ml": false,
+    "mt5": false,
+    "execution": false
+  }
+}

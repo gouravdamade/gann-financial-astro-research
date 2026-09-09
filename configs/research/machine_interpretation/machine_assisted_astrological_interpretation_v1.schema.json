@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gann-astro-desk.local/schemas/machine-assisted-astrological-interpretation-v1.json",
+  "title": "Machine-Assisted Astrological Interpretation V1",
+  "description": "A provenance-first, outcome-blind interpretation packet. It carries no score, signed wave unit, pair resultant, or executable output.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "eventIdentity",
+    "sourceOperatorStates",
+    "astrologicalInterpretation",
+    "marketBridge",
+    "currencySideInterpretation",
+    "mode",
+    "explanation",
+    "provenance",
+    "prohibitedClaims",
+    "executionAllowed"
+  ],
+  "properties": {
+    "contract": {
+      "const": "MACHINE_ASSISTED_ASTROLOGICAL_INTERPRETATION_V1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "eventIdentity": {
+      "$ref": "#/$defs/eventIdentity"
+    },
+    "sourceOperatorStates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceOperatorEvidence"
+      }
+    },
+    "astrologicalInterpretation": {
+      "$ref": "#/$defs/astrologicalInterpretation"
+    },
+    "marketBridge": {
+      "$ref": "#/$defs/marketBridge"
+    },
+    "currencySideInterpretation": {
+      "$ref": "#/$defs/currencySideInterpretation"
+    },
+    "mode": {
+      "enum": [
+        "SOURCE_CERTIFIED",
+        "EXPERIMENTAL_PROFILED",
+        "EXPLORATORY_UNSIGNED"
+      ]
+    },
+    "explanation": {
+      "$ref": "#/$defs/explanation"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "prohibitedClaims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "executionAllowed": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "eventIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eventId",
+        "sideIdentity",
+        "synthetic"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "pattern": "^SYNTHETIC_"
+        },
+        "sideIdentity": {
+          "enum": [
+            "USD",
+            "JPY"
+          ]
+        },
+        "synthetic": {
+          "const": "true"
+        }
+      }
+    },
+    "sourceLocator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "edition",
+        "locator"
+      ],
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "edition": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "minLength": 1 }
+      }
+    },
+    "sourceOperatorEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operatorContractId",
+        "sourceStatus",
+        "astrologicalState",
+        "locators",
+        "rationale",
+        "unresolvedDependencies",
+        "sourceMeasurements"
+      ],
+      "properties": {
+        "operatorContractId": { "type": "string", "minLength": 1 },
+        "sourceStatus": {
+          "enum": ["SOURCE_CLOSED", "PARTIAL", "UNRESOLVED"]
+        },
+        "astrologicalState": {
+          "enum": [
+            "SUPPORTIVE_ASTRO_STATE",
+            "ADVERSE_ASTRO_STATE",
+            "MIXED_ASTRO_STATE",
+            "NEUTRAL_ASTRO_STATE",
+            "UNKNOWN_ASTRO_STATE"
+          ]
+        },
+        "locators": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sourceLocator" }
+        },
+        "rationale": { "type": "string", "minLength": 1 },
+        "unresolvedDependencies": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "sourceMeasurements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["componentId", "literalValue", "locator"],
+            "properties": {
+              "componentId": { "type": "string", "minLength": 1 },
+              "literalValue": { "type": "string", "minLength": 1 },
+              "locator": { "$ref": "#/$defs/sourceLocator" }
+            }
+          }
+        }
+      }
+    },
+    "astrologicalInterpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "sourceCoverage", "operatorContractIds", "unresolvedOperatorIds", "reason"],
+      "properties": {
+        "state": {
+          "enum": [
+            "SUPPORTIVE_ASTRO_STATE",
+            "ADVERSE_ASTRO_STATE",
+            "MIXED_ASTRO_STATE",
+            "NEUTRAL_ASTRO_STATE",
+            "UNKNOWN_ASTRO_STATE"
+          ]
+        },
+        "sourceCoverage": { "type": "string", "minLength": 1 },
+        "operatorContractIds": { "type": "array", "items": { "type": "string" } },
+        "unresolvedOperatorIds": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "marketBridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "hypothesisId", "hypothesisHash", "validationStatus", "reason"],
+      "properties": {
+        "status": {
+          "enum": [
+            "SOURCE_BACKED_MARKET_BRIDGE",
+            "EXPERIMENTAL_MARKET_HYPOTHESIS",
+            "NO_AUTHORIZED_MARKET_BRIDGE"
+          ]
+        },
+        "hypothesisId": { "type": ["string", "null"] },
+        "hypothesisHash": { "type": ["string", "null"] },
+        "validationStatus": { "type": ["string", "null"] },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "currencySideInterpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "signedUnit", "magnitudeState", "reason"],
+      "properties": {
+        "state": {
+          "enum": ["SUPPORTIVE", "ADVERSE", "MIXED", "NEUTRAL", "UNKNOWN_MORE_EVIDENCE_REQUIRED"]
+        },
+        "signedUnit": { "const": null },
+        "magnitudeState": { "const": "MAGNITUDE_NOT_CONFIGURED" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "explanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "why", "classicalEvidence", "experimentalStatus", "unknowns", "financialValidation"],
+      "properties": {
+        "headline": { "type": "string", "minLength": 1 },
+        "why": { "type": "string", "minLength": 1 },
+        "classicalEvidence": { "type": "string", "minLength": 1 },
+        "experimentalStatus": { "type": "string", "minLength": 1 },
+        "unknowns": { "type": "array", "items": { "type": "string" } },
+        "financialValidation": { "const": "NOT_FINANCIALLY_VALIDATED" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputScope",
+        "sourceOperatorContractIds",
+        "sourceEvidenceStatuses",
+        "hypothesisRegistryContract",
+        "marketHypothesisId",
+        "marketHypothesisHash",
+        "reviewStoreRead",
+        "priceOrOutcomeRead",
+        "executionAllowed"
+      ],
+      "properties": {
+        "inputScope": { "const": "SYNTHETIC_TEST_ONLY" },
+        "sourceOperatorContractIds": { "type": "array", "items": { "type": "string" } },
+        "sourceEvidenceStatuses": {
+          "type": "array",
+          "items": { "enum": ["SOURCE_CLOSED", "PARTIAL", "UNRESOLVED"] }
+        },
+        "hypothesisRegistryContract": {
+          "const": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1"
+        },
+        "marketHypothesisId": { "type": ["string", "null"] },
+        "marketHypothesisHash": { "type": ["string", "null"] },
+        "reviewStoreRead": { "const": false },
+        "priceOrOutcomeRead": { "const": false },
+        "executionAllowed": { "const": false }
+      }
+    }
+  }
+}

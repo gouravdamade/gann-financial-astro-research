@@ -4,6 +4,51 @@ Last updated: 2026-09-09 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-09 (MO-R4A-P0 Non-Expert Machine-Assisted Interpretation Architecture)
+
+- Formally superseded only the requirement that the founder personally derive
+  astrology polarity for the 24-row pilot:
+  FOUNDER_MANUAL_ASTROLOGY_POLARITY_AUTHORSHIP =
+  SUPERSEDED_BEFORE_FIRST_REAL_DECISION. Founder Review integrity,
+  append-only revisions, source references, human approval, and the MO-R4-P0
+  freeze verifier remain preserved historical infrastructure.
+- Added a typed, provenance-first machine interpretation contract with distinct
+  astronomy/source evidence, astrology state, market bridge, currency-side
+  state, explanation, provenance, and prohibited-claim layers. The callable
+  implementation accepts only explicit SYNTHETIC_ identities.
+- Added an empty versioned experimental market-hypothesis registry. It contains
+  no real astrology-to-FX rule, cannot create a signed unit, magnitude, pair
+  resultant, production catalogue entry, reviewed-evidence admission, Auto
+  Suggest, ML, MT5 path, or execution behavior.
+- Produced a read-only identity-only report for the 24 canonical April rows.
+  It verifies immutable packet/manifest/audit bindings without reading a review
+  store or founder-review fields. All 12 USD plus 12 JPY records remain
+  SINGLE_PASS_VERIFIED, OPERATOR_NOT_YET_AVAILABLE,
+  NO_AUTHORIZED_MARKET_BRIDGE, and UNKNOWN_MORE_EVIDENCE_REQUIRED; no real
+  polarity was generated.
+- The non-expert explanation contract makes unknown, experimental, mixed, and
+  missing-dependency states understandable without presenting a forecast. The
+  required source-supported/no-bridge, experimental adverse, and mixed/no
+  precedence phrases are covered with synthetic-only tests.
+- Verification: focused MO-R4A-P0 backend tests **20/20**; full desktop backend
+  **378 passed, 1 skipped**; broad repository regression **921 passed, 2
+  skipped, 66 subtests passed**; targeted Ruff, Python compilation, JSON parse,
+  and git diff --check passed. The first broad pytest invocation exposed only a
+  repository import-path setup issue; the passing invocation supplied both
+  gann-astro-desk and gann-astro-desk/backend to PYTHONPATH.
+- No candidate was rebuilt. The accepted 0.10.64-pfr-v2b-mo-r3-r2-f1-r1
+  record and hashes remain unchanged. Real founder decisions/review storage,
+  outcomes, price, returns, candles, PnL, SBC, production catalogue, reviewed
+  evidence registry, unsigned MO mathematics, Fields behavior, signed waves,
+  magnitude, Auto Suggest, LLM, ML, MT5, orders, and execution remain untouched;
+  executionAllowed=false.
+- Primary records:
+  docs/research/MULTI_OSCILLATOR_MO_R4A_P0_MACHINE_ASSISTED_INTERPRETATION_ARCHITECTURE.md,
+  docs/research/MULTI_OSCILLATOR_MO_R4A_P0_PRODUCT_EXPLANATION_CONTRACT.md,
+  status/acceptance/mo_r4a_p0_machine_assisted_interpretation_protocol.json,
+  and status/audits/mo_r4a_p0_real_24_identity_only_coverage.json.
+
+
 ## Latest Update - 2026-09-09 (MO-R3-R2-F1-R1 Packaged Durability Evidence Closure)
 
 - Implemented the bounded Founder Review export-result repair at
