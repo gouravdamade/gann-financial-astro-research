@@ -109,9 +109,9 @@ commit, packaging checkout commit, version, portable executable hash, sidecar
 hash, installer hash, and immutable sidecar resource-tree hash. The mutable
 application-data root is outside that resource-tree digest.
 
-The next candidate is `0.10.63-pfr-v2b-mo-r3-r2-f1`. It is not a founder
-acceptance claim; physical integrity inspection remains pending until the
-candidate is built and inspected.
+The candidate is `0.10.63-pfr-v2b-mo-r3-r2-f1`. It is not a founder
+acceptance claim; the build and automated checks are complete, while physical
+integrity inspection remains pending.
 
 ## Verification Before Packaging
 
@@ -128,6 +128,57 @@ candidate is built and inspected.
 The candidate report and handoff will record the final commit, artifact hashes,
 synthetic packaged durability proof, and the identity-only real-packet check
 after packaging.
+
+## Candidate And Packaged Proof
+
+The candidate was built from source and packaging checkout commit
+`882f3f4a07eef6824d3b21ffbec0be74964faf57`:
+
+```text
+D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.63-pfr-v2b-mo-r3-r2-f1-tauri\GannAstroDesk.exe
+D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.63-pfr-v2b-mo-r3-r2-f1-tauri\Gann Astro Desk_0.10.63-pfr-v2b-mo-r3-r2-f1_x64-setup.exe
+```
+
+Portable SHA-256: `ABFD532DA6EAF01BA644BCF12374EF492A26B32A88E0719269BEC8781CD96908`.
+Installer SHA-256: `82197273791FF26A986AF8C0E59224F4A871B2A8307D42D6F31DD48B90AD1B05`.
+Sidecar SHA-256: `B03F24012301787CB9FF676E5F02B147532802ECA403306FBA28F26F84690058`.
+Build receipt SHA-256: `7F4CEB9EF9EC3268FAC96D8E461835236B918805F68900D75101A8EA86187776`.
+Release manifest SHA-256: `D990242B051E7DFF9B094806510B9D0F02C23158C34144D7DE9A3B1D7404FFAA`.
+Immutable sidecar resource-tree SHA-256:
+`C025E380552E4CF326E474EA491521B15CFC5231C8EBF153971C24504F8F9D9D`.
+
+The receipt declares `sourceGitDirty=false`, `executionAllowed=false`,
+`immutableResourceTreeScope=candidate/backend`,
+`mutableDataRootExcluded=true`, and `mutableDataTreeHashed=false`. The
+candidate contains no private source PDF, PNG, JPG, OCR dump, render, or
+release artifact. The normal application seed SQLite file is not founder
+review state and is outside the review-store contract.
+
+The real packaged endpoint probe used the actual portable executable and
+returned `200 application/json` from `/api/founder-review/workbench`. It
+verified 12 USD and 12 JPY rows, all eligible and
+`SINGLE_PASS_VERIFIED`, blank decisions/classifications/reasoning/references,
+unchanged packet and manifest hashes, zero durable revision files, and
+`executionAllowed=false`. The probe did not export or classify any event.
+
+The two isolated native smoke reports are:
+
+```text
+D:\GannFinancialAstro\soak\tauri_0.10.63-pfr-v2b-mo-r3-r2-f1_20260909_035119\logs\native_soak_report.json
+D:\GannFinancialAstro\soak\tauri_0.10.63-pfr-v2b-mo-r3-r2-f1_20260909_040346\logs\native_soak_report.json
+```
+
+Both reports have `passed=true`, zero errors, zero failed checks, healthy
+initial and recovered sidecars on the same port, surviving layout state,
+`execution_allowed=false`, and zero surviving descendants. The optional
+candlestick specialist was reported as not configured and safely deferred.
+
+Synthetic decision-bearing tests are confined to synthetic identities. The
+19 workbench tests cover the first save, restart and application-version
+replacement, one edit and append-only revision chain, stale-write conflict,
+atomic publication failure, partial-row retention, reference preservation,
+strict validation, and fail-closed audit cases. No real April event was
+classified.
 
 ## Locks
 

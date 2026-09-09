@@ -1,6 +1,6 @@
 # Current Project Handoff
 
-Last updated: 2026-09-08 IST
+Last updated: 2026-09-09 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
@@ -32,8 +32,28 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   checks `28/28`, full backend `331 passed, 1 skipped`, full frontend
   `43 files / 197 passed`, lint/build passed, and Rust fmt/check/tests passed
   with `19` Rust tests. The new candidate target is
-  `0.10.63-pfr-v2b-mo-r3-r2-f1`; packaging and synthetic durability proof are
-  the remaining steps.
+  `0.10.63-pfr-v2b-mo-r3-r2-f1`.
+- The immutable candidate is built from implementation commit
+  `882f3f4a07eef6824d3b21ffbec0be74964faf57`. Its portable and installer
+  hashes are recorded in
+  `docs/research/MULTI_OSCILLATOR_MO_R3_R2_F1_WINDOWS_FOUNDER_INTEGRITY_CANDIDATE.md`;
+  the build receipt binds both source/packaging commits, artifact hashes, and
+  the immutable sidecar resource tree. The application-data founder-review
+  root is explicitly excluded from that digest.
+- The packaged founder-review API probe returned `200 application/json`,
+  exactly 12 USD plus 12 JPY eligible `SINGLE_PASS_VERIFIED` rows, blank
+  review fields, unchanged packet/manifest hashes, zero durable revisions,
+  and `executionAllowed=false`. Two isolated native smoke runs passed all
+  checks, including sidecar recovery, layout survival, and no descendant
+  survivors; the optional candlestick specialist was deferred as not
+  configured.
+- Synthetic-only persistence tests prove save/restart/version replacement,
+  append-only revisions, server chronology, stale-write rejection, atomic
+  publication, partial updates, and source-reference preservation. The
+  real April 2025 inventory remains identity-only with zero decisions.
+- Candidate status is `FOUNDER_REVIEW_COLLECTION_READY`, pending the founder's
+  physical integrity inspection. This is not a `GO` or founder-acceptance
+  record. See the candidate report named above.
 - All decision-bearing tests use synthetic event identities. The real April
   2025 inventory remains identity-only: 12 USD plus 12 JPY, all
   `SINGLE_PASS_VERIFIED`, zero founder decisions, zero classifications, zero
