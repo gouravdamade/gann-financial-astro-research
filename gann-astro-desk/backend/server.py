@@ -107,6 +107,7 @@ from cgvo_service import (
 )
 from founder_review_workbench import (
     FounderReviewIntegrityError,
+    FounderReviewRevisionConflictError,
     build_founder_review_workbench,
     export_founder_review_packet,
 )
@@ -811,6 +812,20 @@ def get_founder_review_workbench() -> Any:
                 ),
             }
         )
+    except FounderReviewRevisionConflictError as exc:
+        return jsonify(
+            {
+                "ok": False,
+                "error": str(exc),
+                "errorCode": "FOUNDER_REVIEW_REVISION_CONFLICT",
+                "conflict": {
+                    "side": exc.side,
+                    "expectedRevisionHash": exc.expected_revision_hash,
+                    "currentRevisionHash": exc.current_revision_hash,
+                    "currentRevisionId": exc.current_revision_id,
+                },
+            }
+        ), 409
     except (FounderReviewIntegrityError, TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 
@@ -828,6 +843,20 @@ def export_founder_review() -> Any:
                 ),
             }
         )
+    except FounderReviewRevisionConflictError as exc:
+        return jsonify(
+            {
+                "ok": False,
+                "error": str(exc),
+                "errorCode": "FOUNDER_REVIEW_REVISION_CONFLICT",
+                "conflict": {
+                    "side": exc.side,
+                    "expectedRevisionHash": exc.expected_revision_hash,
+                    "currentRevisionHash": exc.current_revision_hash,
+                    "currentRevisionId": exc.current_revision_id,
+                },
+            }
+        ), 409
     except (FounderReviewIntegrityError, TypeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 

@@ -47,6 +47,8 @@ type Props = {
   selectedFieldInterval: ResearchFieldIntervalSelection | null
   onSelectFieldInterval: (selection: ResearchFieldIntervalSelection) => void
   onSelectActivityTimestampUtc: (timestampUtc: string) => void
+  onFounderReviewActiveChange?: (active: boolean) => void
+  onFounderReviewDirtyChange?: (dirty: boolean) => void
 }
 
 function istOffsetFromUtc(value: string): string {
@@ -79,6 +81,8 @@ export function FieldsWorkspace({
   selectedFieldInterval,
   onSelectFieldInterval,
   onSelectActivityTimestampUtc,
+  onFounderReviewActiveChange,
+  onFounderReviewDirtyChange,
 }: Props) {
   const [range, setRange] = useState<SynchronizedIndependentRange | null>(null)
   const [rangeBusy, setRangeBusy] = useState(false)
@@ -107,6 +111,12 @@ export function FieldsWorkspace({
     && !isTimestampInsideResearchWindow(researchWindow, crosshairTimestampUtc)
   const visualizationPolicy = visualizationModePolicy(visualizationMode, vedhaProfileId)
   const sourceGaps = sourceGapsForVisualizationMode(visualizationMode, vedhaProfileId)
+
+  useEffect(() => {
+    onFounderReviewActiveChange?.(founderReviewOpen)
+    if (!founderReviewOpen) onFounderReviewDirtyChange?.(false)
+    return () => onFounderReviewActiveChange?.(false)
+  }, [founderReviewOpen, onFounderReviewActiveChange, onFounderReviewDirtyChange])
 
   const loadPilotStatus = useCallback(async () => {
     setPilotBusy(true)
@@ -297,7 +307,7 @@ export function FieldsWorkspace({
         </div>
       </div>
     </header>
-    {founderReviewOpen ? <FounderReviewWorkbench onClose={() => setFounderReviewOpen(false)} /> : <>
+    {founderReviewOpen ? <FounderReviewWorkbench onClose={() => setFounderReviewOpen(false)} onDirtyChange={onFounderReviewDirtyChange} /> : <>
     <section className="fields-context-card" aria-label="Field contract and context">
       <div><b>Instrument</b><span>{chart.symbol} {isFxPair ? 'FX base/quote' : 'single instrument'}</span></div>
       <div><b>Mode</b><span>{visualizationPolicy.label}</span></div>

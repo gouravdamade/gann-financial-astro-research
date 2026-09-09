@@ -4,6 +4,45 @@ Last updated: 2026-09-08 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-09 (MO-R3-R2 Founder Review Integrity Hardening)
+
+- Implemented the bounded record-integrity repair for the accepted Fields
+  Founder Review workflow. Immutable blank packets, identity manifests, and
+  the auxiliary audit remain resource-owned and read-only; mutable review state
+  now resolves under the configured application-data root at
+  `founder_review/`.
+- Review state is stored as append-only revision directories plus an atomic
+  current pointer. Server-owned UTC chronology, previous-revision hashes,
+  strict optimistic concurrency, partial-update merge, complete source
+  reference preservation, and structured stale-write conflicts are enforced.
+- The exact eight-key identity audit contract now requires every key to be
+  present, Boolean, and exactly `true`. Audit contract/version/digest, blank
+  packet hash, chart identity, and manifest bindings are checked before a row
+  becomes eligible. Unresolved or malformed identity evidence fails closed.
+- Founder Review dirty edits are visible and protected from refresh, Back to
+  Fields, parent navigation, and browser unload. The existing outcome-blind
+  shell flag pauses the review-irrelevant polling surfaces while the review is
+  open.
+- The Windows packager now refuses existing candidate paths, requires the
+  exact versioned installer filename, rejects dirty source state, and writes a
+  `GANN_ASTRO_WINDOWS_BUILD_RECEIPT_V1` binding the source/packaging commits,
+  application version, artifact hashes, and immutable sidecar resource-tree
+  hash. Mutable application data is excluded from that resource digest.
+- Source checks are green before packaging: focused integrity/packaging
+  checks `28/28`, full backend `331 passed, 1 skipped`, full frontend
+  `43 files / 197 passed`, lint/build passed, and Rust fmt/check/tests passed
+  with `19` Rust tests. The new candidate target is
+  `0.10.63-pfr-v2b-mo-r3-r2-f1`; packaging and synthetic durability proof are
+  the remaining steps.
+- All decision-bearing tests use synthetic event identities. The real April
+  2025 inventory remains identity-only: 12 USD plus 12 JPY, all
+  `SINGLE_PASS_VERIFIED`, zero founder decisions, zero classifications, zero
+  source references, no catalogue admission, and `executionAllowed=false`.
+- This supersedes only the current-state review persistence behavior. The
+  accepted 0.10.61/0.10.62 candidate records and their historical reports are
+  preserved unchanged. See
+  `docs/research/MULTI_OSCILLATOR_MO_R3_R2_RECORD_INTEGRITY_HARDENING.md`.
+
 ## Latest Update - 2026-09-08 (MO-R3-R1-F1 Founder Acceptance)
 
 - The founder physically inspected the exact frozen portable candidate

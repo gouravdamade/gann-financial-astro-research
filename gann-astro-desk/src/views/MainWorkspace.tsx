@@ -200,6 +200,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
   const [selectedAnnotation, setSelectedAnnotation] = useState<ChartAnnotation | null>(null)
   const [activeSurface, setActiveSurface] = useState<'chart' | 'square9' | 'chakra' | 'fields' | 'experiments'>('chart')
   const [outcomeBlindReviewActive, setOutcomeBlindReviewActive] = useState(false)
+  const [founderReviewDirty, setFounderReviewDirty] = useState(false)
   const [vedhaProfileId, setVedhaProfileId] = useState<ChakraLabRequest['vedhaProfileId']>('phaladeepika_editor_vedha_guidance_v1')
   const [chakraSourceProfileId, setChakraSourceProfileId] = useState<SbcSourceProfileId>('phaladeepika_editor_vedha_guidance_v1')
   const [visualizationMode, setVisualizationMode] = useState<VisualizationEngineMode>(() => {
@@ -253,8 +254,14 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     localStorage.setItem('gann-astro.visualization-mode', visualizationMode)
   }, [visualizationMode])
   useEffect(() => {
-    if (activeSurface !== 'experiments') setOutcomeBlindReviewActive(false)
+    if (activeSurface !== 'experiments' && activeSurface !== 'fields') setOutcomeBlindReviewActive(false)
   }, [activeSurface])
+  const navigateSurface = useCallback((surface: 'chart' | 'square9' | 'chakra' | 'fields' | 'experiments') => {
+    if (founderReviewDirty && activeSurface === 'fields') return
+    setActiveSurface(surface)
+    setFocusMode(false)
+    setObjectsOpen(false)
+  }, [activeSurface, founderReviewDirty])
   const restoreLayoutState = useCallback((state: { showAspects: boolean; showSrLines: boolean }) => {
     setWorkspace((current) => ({
       ...current,
@@ -897,11 +904,11 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
           <div><strong>Gann Astro Desk</strong><span>Market research terminal</span></div>
         </div>
         <div className="segmented-control workspace-surface-tabs" aria-label="Research workspace">
-          <button className={activeSurface === 'chart' ? 'is-active' : ''} onClick={() => setActiveSurface('chart')}><Activity size={13} /> Chart</button>
-          <button className={activeSurface === 'square9' ? 'is-active' : ''} onClick={() => { setActiveSurface('square9'); setFocusMode(false); setObjectsOpen(false) }}><Grid3X3 size={13} /> Square of Nine</button>
-          <button className={activeSurface === 'chakra' ? 'is-active' : ''} onClick={() => { setActiveSurface('chakra'); setFocusMode(false); setObjectsOpen(false) }}><CircleDot size={13} /> Chakra</button>
-          <button className={activeSurface === 'fields' ? 'is-active' : ''} onClick={() => { setActiveSurface('fields'); setFocusMode(false); setObjectsOpen(false) }}><Waves size={13} /> Fields</button>
-          <button className={activeSurface === 'experiments' ? 'is-active' : ''} onClick={() => { setActiveSurface('experiments'); setFocusMode(false); setObjectsOpen(false) }}><FlaskConical size={13} /> Experiments</button>
+          <button className={activeSurface === 'chart' ? 'is-active' : ''} onClick={() => navigateSurface('chart')} disabled={founderReviewDirty && activeSurface === 'fields'}><Activity size={13} /> Chart</button>
+          <button className={activeSurface === 'square9' ? 'is-active' : ''} onClick={() => navigateSurface('square9')} disabled={founderReviewDirty && activeSurface === 'fields'}><Grid3X3 size={13} /> Square of Nine</button>
+          <button className={activeSurface === 'chakra' ? 'is-active' : ''} onClick={() => navigateSurface('chakra')} disabled={founderReviewDirty && activeSurface === 'fields'}><CircleDot size={13} /> Chakra</button>
+          <button className={activeSurface === 'fields' ? 'is-active' : ''} onClick={() => navigateSurface('fields')} disabled={founderReviewDirty && activeSurface === 'fields'}><Waves size={13} /> Fields</button>
+          <button className={activeSurface === 'experiments' ? 'is-active' : ''} onClick={() => navigateSurface('experiments')} disabled={founderReviewDirty && activeSurface === 'fields'}><FlaskConical size={13} /> Experiments</button>
         </div>
         <button className="symbol-control" onClick={() => setParametersOpen(true)}><Search size={15} /><strong>{chart.symbol}</strong><ChevronDown size={14} /></button>
         {activeSurface === 'chart' && <>
@@ -1232,6 +1239,8 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
             onSelectFieldInterval={selectResearchFieldInterval}
             onSelectActivityTimestampUtc={(timestampUtc) => selectResearchTimestampUtc(timestampUtc, 'COLLECTIVE_INSPECTOR')}
+            onFounderReviewActiveChange={setOutcomeBlindReviewActive}
+            onFounderReviewDirtyChange={setFounderReviewDirty}
           />
         </Suspense>
       )}

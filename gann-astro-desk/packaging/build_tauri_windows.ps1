@@ -4,7 +4,10 @@ param(
     [switch]$FinalizeOnly,
     [string]$SourceCommitOverride = "",
     [string]$CandidateStatus = "founder_inspection_candidate",
-    [string]$CandidateLabel = "PFR-V2B-R4-T2P"
+    [string]$CandidateLabel = "MO-R3-R2-F1",
+    [string]$CandidateMilestone = "MO-R3-R2-F1",
+    [string]$InstallerPath = "",
+    [string]$BuildReceiptPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -78,11 +81,47 @@ function Get-Sha256([string]$Path) {
     return (($hashLine -replace '\s', '').ToUpperInvariant())
 }
 
+function Get-TreeSha256([string]$Root) {
+    $rootPath = [IO.Path]::GetFullPath($Root).TrimEnd("\") + "\"
+    $lines = @(
+        Get-ChildItem -LiteralPath $Root -Recurse -File |
+            Sort-Object FullName |
+            ForEach-Object {
+                $relative = $_.FullName.Substring($rootPath.Length).Replace("\", "/")
+                "{0}  {1}" -f $relative, (Get-Sha256 $_.FullName)
+            }
+    )
+    $payload = [Text.Encoding]::UTF8.GetBytes(($lines -join "`n") + "`n")
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        return ([BitConverter]::ToString($sha.ComputeHash($payload)) -replace "-", "").ToUpperInvariant()
+    } finally {
+        $sha.Dispose()
+    }
+}
+
 $candidate = Assert-UnderRoot $CandidateRoot $safeRoot
 if (Test-Path -LiteralPath $candidate) {
-    Remove-Item -LiteralPath $candidate -Recurse -Force
+    throw "Candidate path already exists; immutable candidates are never overwritten: $candidate"
 }
-New-Item -ItemType Directory -Path $candidate -Force | Out-Null
+New-Item -ItemType Directory -Path $candidate | Out-Null
+
+$expectedBuildReceipt = $null
+if ($FinalizeOnly) {
+    if (-not $BuildReceiptPath) {
+        throw "FinalizeOnly requires -BuildReceiptPath from the exact functional build"
+    }
+    if (-not (Test-Path -LiteralPath $BuildReceiptPath -PathType Leaf)) {
+        throw "Build receipt was not found: $BuildReceiptPath"
+    }
+    $expectedBuildReceipt = Get-Content -LiteralPath $BuildReceiptPath -Raw | ConvertFrom-Json
+    if ([string]$expectedBuildReceipt.candidateVersion -ne $appVersion) {
+        throw "Build receipt candidate version does not match the package: $($expectedBuildReceipt.candidateVersion)"
+    }
+    if ([string]$expectedBuildReceipt.packagingCheckoutCommit -ne $checkoutGitCommit) {
+        throw "Build receipt checkout commit does not match this package checkout"
+    }
+}
 
 if (-not $FinalizeOnly) {
     if (-not $SkipSidecarBuild) {
@@ -123,15 +162,26 @@ $portableExe = Join-Path $candidate "GannAstroDesk.exe"
 Copy-Item -LiteralPath $compiledExe -Destination $portableExe -Force
 Copy-Item -LiteralPath $sidecarRoot -Destination (Join-Path $candidate "backend") -Recurse -Force
 
-$installer = Get-ChildItem -LiteralPath (Join-Path $cargoTarget "release\bundle\nsis") `
-    -Filter "*.exe" -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if ($null -eq $installer) {
-    throw "Tauri NSIS installer was not created"
+$installerOutputRoot = Join-Path $cargoTarget "release\bundle\nsis"
+$expectedInstallerName = "Gann Astro Desk_${appVersion}_x64-setup.exe"
+$installerSource = if ($InstallerPath) {
+    [IO.Path]::GetFullPath($InstallerPath)
+} else {
+    Join-Path $installerOutputRoot $expectedInstallerName
 }
-$installerTarget = Join-Path $candidate $installer.Name
-Copy-Item -LiteralPath $installer.FullName -Destination $installerTarget -Force
+if (-not (Test-Path -LiteralPath $installerSource -PathType Leaf)) {
+    throw "The exact versioned Tauri NSIS installer was not found: $installerSource"
+}
+if ([IO.Path]::GetFileName($installerSource) -ne $expectedInstallerName) {
+    throw "Installer path must name the exact app-version artifact $expectedInstallerName"
+}
+$installerTarget = Join-Path $candidate $expectedInstallerName
+Copy-Item -LiteralPath $installerSource -Destination $installerTarget
 
-$releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
+$portableHash = Get-Sha256 $portableExe
+$installerHash = Get-Sha256 $installerTarget
+$sidecarHash = Get-Sha256 $sidecarExe
+$resourceTreeHash = Get-TreeSha256 $sidecarRoot
 $sourceGitCommit = if ($SourceCommitOverride) {
     $override = $SourceCommitOverride.Trim()
     if ($override -notmatch '^[0-9a-fA-F]{40}$') {
@@ -155,11 +205,44 @@ $sourceUntrackedDirty = [bool](
         Select-Object -First 1
 )
 $sourceGitDirty = $sourceTrackedDirty -or $sourceUntrackedDirty
+if ($sourceGitDirty) {
+    throw "Packaging checkout became dirty; refusing to publish an unbound candidate"
+}
 $nodeVersion = (& node.exe --version).Trim()
 $npmVersion = (& npm.cmd --version).Trim()
+$buildReceipt = [ordered]@{
+    contract = "GANN_ASTRO_WINDOWS_BUILD_RECEIPT_V1"
+    candidateVersion = $appVersion
+    milestone = $CandidateMilestone
+    sourceGitCommit = $sourceGitCommit
+    packagingCheckoutCommit = $checkoutGitCommit
+    sourceGitDirty = $sourceGitDirty
+    executionAllowed = $false
+    portableExeSha256 = $portableHash
+    installerSha256 = $installerHash
+    sidecarExeSha256 = $sidecarHash
+    immutableResourceTreeSha256 = $resourceTreeHash
+    immutableResourceTreeScope = "candidate/backend"
+    mutableDataRoot = "application-data/founder_review"
+    mutableDataRootExcluded = $true
+    mutableDataTreeHashed = $false
+    sourceCommitOverride = [bool]$SourceCommitOverride
+    finalizedFromReceipt = if ($expectedBuildReceipt) { [string]$BuildReceiptPath } else { $null }
+}
+if ($expectedBuildReceipt) {
+    foreach ($field in @("sourceGitCommit", "portableExeSha256", "installerSha256", "sidecarExeSha256", "immutableResourceTreeSha256")) {
+        if ([string]$expectedBuildReceipt.$field -ne [string]$buildReceipt.$field) {
+            throw "FinalizeOnly build receipt does not bind $field"
+        }
+    }
+}
+$buildReceiptPath = Join-Path $candidate "build.receipt.json"
+$buildReceipt | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $buildReceiptPath -Encoding utf8
+$buildReceiptHash = Get-Sha256 $buildReceiptPath
+$releaseFiles = Get-ChildItem -LiteralPath $candidate -File -Recurse
 $manifest = [ordered]@{
     candidateVersion = $appVersion
-    milestone = "MO-P3A-F1"
+    milestone = $CandidateMilestone
     product = "Gann Astro Desk"
     version = $appVersion
     status = $CandidateStatus
@@ -181,8 +264,8 @@ $manifest = [ordered]@{
     built_at_utc = [DateTime]::UtcNow.ToString("o")
     executable = "GannAstroDesk.exe"
     executable_sha256 = Get-Sha256 $portableExe
-    installer = $installer.Name
-    installer_sha256 = Get-Sha256 $installerTarget
+    installer = $expectedInstallerName
+    installer_sha256 = $installerHash
     file_count = $releaseFiles.Count
     total_bytes = ($releaseFiles | Measure-Object -Property Length -Sum).Sum
     shell = "Tauri 2 / Rust"
@@ -334,6 +417,13 @@ $manifest = [ordered]@{
     xe3_llm_polarity_inference = $false
     xe3_market_direction_inferred = $false
     xe3_execution_allowed = $false
+    buildReceiptFile = "build.receipt.json"
+    buildReceiptSha256 = $buildReceiptHash
+    immutableResourceTreeSha256 = $resourceTreeHash
+    immutableResourceTreeScope = "candidate/backend"
+    mutableDataRoot = "application-data/founder_review"
+    mutableDataRootExcluded = $true
+    mutableDataTreeHashed = $false
 }
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $candidate "release.manifest.json") -Encoding utf8
 
@@ -362,9 +452,10 @@ Run `GannAstroDesk.exe` from this folder and keep the adjacent `backend` folder 
 Set-Content -LiteralPath (Join-Path $candidate "BETA_README.md") -Value $releaseReadme -Encoding utf8
 
 $checksumLines = @(
-    "$(Get-Sha256 $portableExe)  GannAstroDesk.exe",
-    "$(Get-Sha256 $installerTarget)  $($installer.Name)",
-    "$(Get-Sha256 $sidecarExe)  backend/GannAstroBackend.exe",
+    "$portableHash  GannAstroDesk.exe",
+    "$installerHash  $expectedInstallerName",
+    "$sidecarHash  backend/GannAstroBackend.exe",
+    "$buildReceiptHash  build.receipt.json",
     "$(Get-Sha256 (Join-Path $candidate 'release.manifest.json'))  release.manifest.json",
     "SOURCE_GIT_COMMIT  $sourceGitCommit",
     "SOURCE_GIT_DIRTY  $sourceGitDirty"

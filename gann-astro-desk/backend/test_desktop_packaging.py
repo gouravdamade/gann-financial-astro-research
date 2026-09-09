@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from repository import DataPaths
+from runtime_support import RuntimePaths, prepare_environment
 
 
 class DesktopPackagingTests(unittest.TestCase):
@@ -217,6 +218,56 @@ class DesktopPackagingTests(unittest.TestCase):
             self.assertIn(filename, sidecar_spec)
             self.assertIn(filename, sidecar_build)
         self.assertIn("CGVO source fixtures", sidecar_build)
+
+    def test_windows_candidates_are_immutable_and_installer_selection_is_version_bound(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        windows_build = (app_root / "packaging" / "build_tauri_windows.ps1").read_text(encoding="utf-8")
+        self.assertIn("Candidate path already exists; immutable candidates are never overwritten", windows_build)
+        self.assertNotIn("Remove-Item -LiteralPath $candidate", windows_build)
+        self.assertNotIn("Sort-Object LastWriteTime", windows_build)
+        self.assertIn('$expectedInstallerName = "Gann Astro Desk_${appVersion}_x64-setup.exe"', windows_build)
+        self.assertIn("FinalizeOnly requires -BuildReceiptPath", windows_build)
+        self.assertIn('contract = "GANN_ASTRO_WINDOWS_BUILD_RECEIPT_V1"', windows_build)
+        self.assertIn('buildReceiptFile = "build.receipt.json"', windows_build)
+        self.assertIn("immutableResourceTreeSha256", windows_build)
+        self.assertIn('mutableDataRoot = "application-data/founder_review"', windows_build)
+        self.assertIn("mutableDataRootExcluded = $true", windows_build)
+        self.assertIn("mutableDataTreeHashed = $false", windows_build)
+
+    def test_founder_review_state_is_explicitly_separate_from_packaged_resources(self) -> None:
+        app_root = Path(__file__).resolve().parents[1]
+        runtime_support = (app_root / "runtime_support.py").read_text(encoding="utf-8")
+        workbench = (app_root / "backend" / "founder_review_workbench.py").read_text(encoding="utf-8")
+        self.assertIn('GANN_ASTRO_FOUNDER_REVIEW_ROOT', runtime_support)
+        self.assertIn('"founder_review"', runtime_support)
+        self.assertIn("FOUNDER_REVIEW_DURABLE_STORE_V1", workbench)
+        self.assertIn("FOUNDER_REVIEW_REVISION_MANIFEST_V1", workbench)
+        self.assertIn("previousRevisionHash", workbench)
+        self.assertIn("FounderReviewRevisionConflictError", workbench)
+
+    def test_runtime_prepares_founder_review_root_under_application_data(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            project = root / "bundle"
+            data = root / "application-data"
+            project.mkdir()
+            (project / "gann_aspect_annotations_raman_v2.sqlite").write_bytes(b"seed")
+            paths = RuntimePaths(
+                bundle_root=project,
+                project_root=project,
+                frontend_dist=project / "frontend",
+                data_root=data,
+                annotation_db=data / "gann_aspect_annotations_raman_v2.sqlite",
+                logs_dir=data / "logs",
+                codex_root=project / "codex",
+            )
+            with patch.dict(os.environ, {}, clear=False):
+                prepare_environment(paths, 18421)
+                self.assertEqual(
+                    os.environ["GANN_ASTRO_FOUNDER_REVIEW_ROOT"],
+                    str(data / "founder_review"),
+                )
+            self.assertTrue((data / "gann_aspect_annotations_raman_v2.sqlite").is_file())
 
 
 if __name__ == "__main__":

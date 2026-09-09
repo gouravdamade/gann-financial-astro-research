@@ -2655,6 +2655,8 @@ export type FounderReviewSourceReference = {
 export type FounderReviewFields = {
   evidenceClassification: FounderReviewEvidenceClassification | null
   founderReasoning: string
+  firstReviewedAtUtc: string | null
+  lastModifiedAtUtc: string | null
   rejectionReason: string
   reviewTimestampUtc: string | null
   reviewedPolarity: FounderReviewDecision | null
@@ -2672,6 +2674,10 @@ export type FounderReviewWorkbenchRow = {
     integrityManifestHash: string
     listedAsVerified: boolean
     auditChecksPass: boolean
+    identityAuditContractMatches?: boolean
+    identityAuditVersionMatches?: boolean
+    identityAuditHashMatches?: boolean
+    identityManifestBindsAudit?: boolean
   }
   motionPhaseAtExact: {
     phase: string
@@ -2709,19 +2715,25 @@ export type FounderReviewSide = {
     founderResearchHypotheses: number
     nonReviewableRows: number
   }
-  reviewedPacketHash: string
+  reviewedPacketHash: string | null
+  currentRevisionId: string | null
+  currentRevisionHash: string | null
+  previousRevisionHash: string | null
+  reviewStoreContract: string
 }
 
 export type FounderReviewWorkbench = {
   contract: 'FOUNDER_REVIEW_WORKBENCH_V1'
-  schemaVersion: 1
+  schemaVersion: 2
   toolVersion: string
+  reviewStoreContract: string
   sides: FounderReviewSide[]
   allowedFounderPolarityDecisions: FounderReviewDecision[]
   allowedEvidenceClassifications: FounderReviewEvidenceClassification[]
   reviewStatuses: Array<'REVIEW_NOT_STARTED' | 'REVIEW_IN_PROGRESS' | 'REVIEW_COMPLETE' | 'REVIEW_COMPLETE_WITH_UNKNOWNS'>
   guardrails: {
     blankPacketsReadOnly: true
+    durableReviewStore: true
     priceDataRead: false
     sbcRead: false
     llmRead: false
@@ -2733,6 +2745,7 @@ export type FounderReviewWorkbench = {
 
 export type FounderReviewExportRequest = {
   side: 'USD' | 'JPY'
+  baseRevisionHash: string | null
   rows: FounderReviewWorkbenchRow[]
 }
 
@@ -2749,6 +2762,11 @@ export type FounderReviewExportResult = {
   markdownFile: string
   founderCompletionStatus: FounderReviewSide['founderCompletionStatus']
   counts: FounderReviewSide['completeness']
+  revisionId: string
+  serverCreatedAtUtc: string
+  previousRevisionHash: string | null
+  revisionHash: string
+  reviewStoreContract: string
 }
 
 // R2 keeps all review surfaces on one explicit timestamp without inferring a trade signal.

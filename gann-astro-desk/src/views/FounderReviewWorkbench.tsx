@@ -17,6 +17,7 @@ import type {
 
 type Props = {
   onClose: () => void
+  onDirtyChange?: (dirty: boolean) => void
 }
 
 const EMPTY_SOURCE_REFERENCE: FounderReviewSourceReference = {
@@ -144,10 +145,13 @@ function ReviewRow({
     }))
   }
   const changeSourceReference = (key: keyof FounderReviewSourceReference, value: string) => {
-    changeReview((current) => ({
-      ...current,
-      sourceReferences: [{ ...sourceReferenceFor({ ...row, founderReview: current }), [key]: value }],
-    }))
+    changeReview((current) => {
+      const sourceReferences = current.sourceReferences.length
+        ? [...current.sourceReferences]
+        : [{ ...EMPTY_SOURCE_REFERENCE }]
+      sourceReferences[0] = { ...sourceReferences[0], [key]: value }
+      return { ...current, sourceReferences }
+    })
   }
   return <article className={`founder-review-row${row.eligible ? '' : ' is-locked'}`}>
     <header>
@@ -196,18 +200,22 @@ function ReviewRow({
   </article>
 }
 
-export function FounderReviewWorkbench({ onClose }: Props) {
+export function FounderReviewWorkbench({ onClose, onDirtyChange }: Props) {
   const [workbench, setWorkbench] = useState<FounderReviewWorkbench | null>(null)
   const [reviewer, setReviewer] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [dirty, setDirty] = useState(false)
+  const [pendingAction, setPendingAction] = useState<'reload' | 'close' | null>(null)
 
   const load = useCallback(async () => {
     setBusy(true)
     setError('')
     try {
       setWorkbench(await fetchFounderReviewWorkbench())
+      setDirty(false)
+      setPendingAction(null)
     } catch (caught) {
       setWorkbench(null)
       setError(caught instanceof Error ? caught.message : String(caught))
@@ -218,8 +226,27 @@ export function FounderReviewWorkbench({ onClose }: Props) {
 
   useEffect(() => { void load() }, [load])
 
-  const exportPackets = async () => {
-    if (!workbench) return
+  useEffect(() => {
+    onDirtyChange?.(dirty)
+  }, [dirty, onDirtyChange])
+
+  useEffect(() => {
+    const preventLoss = (event: BeforeUnloadEvent) => {
+      if (!dirty) return
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', preventLoss)
+    return () => window.removeEventListener('beforeunload', preventLoss)
+  }, [dirty])
+
+  const updateWorkbench = (update: React.SetStateAction<FounderReviewWorkbench | null>) => {
+    setDirty(true)
+    setWorkbench(update)
+  }
+
+  const persistPackets = async (): Promise<boolean> => {
+    if (!workbench) return false
     setBusy(true)
     setError('')
     setNotice('')
@@ -237,23 +264,55 @@ export function FounderReviewWorkbench({ onClose }: Props) {
         const rows = side.rows.map((row) => row.founderReview.reviewedPolarity && !row.founderReview.reviewer
           ? { ...row, founderReview: { ...row.founderReview, reviewer } }
           : row)
-        const request: FounderReviewExportRequest = { side: side.sideIdentity, rows }
+        const request: FounderReviewExportRequest = {
+          side: side.sideIdentity,
+          baseRevisionHash: side.currentRevisionHash,
+          rows,
+        }
         const result = await exportFounderReviewPacket(request)
         results.push(`${side.sideIdentity}: ${result.founderCompletionStatus.replaceAll('_', ' ')}`)
       }
       setNotice(`Exported founder-review state. ${results.join(' | ')}`)
       await load()
+      return true
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught))
+      return false
     } finally {
       setBusy(false)
+    }
+  }
+
+  const exportPackets = () => { void persistPackets() }
+  const requestReload = () => {
+    if (dirty) setPendingAction('reload')
+    else void load()
+  }
+  const requestClose = () => {
+    if (dirty) setPendingAction('close')
+    else onClose()
+  }
+  const discardPending = () => {
+    const action = pendingAction
+    setPendingAction(null)
+    setDirty(false)
+    if (action === 'close') onClose()
+    if (action === 'reload') void load()
+  }
+  const savePending = async () => {
+    const action = pendingAction
+    if (!action) return
+    const saved = await persistPackets()
+    if (saved && action === 'close') {
+      setPendingAction(null)
+      onClose()
     }
   }
 
   return <section className="founder-review-workbench" aria-label="Founder review workbench">
     <header className="founder-review-header">
       <div><ClipboardCheck size={18} /><div><strong>Founder Review</strong><span>Neutral astronomy packet review; every decision remains founder-entered.</span></div></div>
-      <div className="founder-review-actions"><button type="button" onClick={() => void load()} disabled={busy}><RefreshCw size={13} /> Refresh integrity</button><button type="button" onClick={onClose}>Back to Fields</button></div>
+      <div className="founder-review-actions"><button type="button" onClick={requestReload} disabled={busy}><RefreshCw size={13} /> Refresh integrity</button><button type="button" onClick={requestClose} disabled={busy}>Back to Fields</button></div>
     </header>
     <section className="founder-review-guardrails" aria-label="Founder review guardrails">
       <ShieldCheck size={15} /><span>Blank packets are read-only. No price, SBC, LLM, catalogue admission, wave, market interpretation, Auto Suggest, or execution path is used here.</span>
@@ -266,14 +325,20 @@ export function FounderReviewWorkbench({ onClose }: Props) {
         {workbench.sides.map((side) => <div key={side.sideIdentity}><strong>{side.sideIdentity}</strong><span>{side.completeness.decidedRows}/{side.completeness.eligibleRows} decided</span><span>{side.founderCompletionStatus.replaceAll('_', ' ')}</span><small>{side.blankPacketSha256}</small></div>)}
       </section>
       <label className="founder-review-reviewer">Reviewer for new decisions
-        <input value={reviewer} onChange={(event) => setReviewer(event.target.value)} placeholder="Enter your name before exporting decided rows" />
+        <input value={reviewer} onChange={(event) => { setDirty(true); setReviewer(event.target.value) }} placeholder="Enter your name before exporting decided rows" />
       </label>
+      {dirty && <p className="founder-review-dirty" role="status">Unsaved founder-review edits are present.</p>}
       <p className="founder-review-instruction">Choose a decision only when you are ready. A blank decision remains blank; UNKNOWN_MORE_EVIDENCE_REQUIRED remains an unknown gap and is never converted to NEUTRAL.</p>
       {workbench.sides.map((side) => <section key={side.sideIdentity} className="founder-review-side" aria-label={`${side.sideIdentity} founder review`}>
-        <header><div><strong>{side.sideIdentity}</strong><span>{side.chartId} | {side.chartHypothesisId}</span><small>{side.eventCompiler.ephemerisProvider} {side.ephemerisVersion} | {side.ephemerisVersionProvenance.replaceAll('_', ' ')}</small></div><span>{side.identityIntegrityManifestFile}</span></header>
-        {side.rows.map((row) => <ReviewRow key={row.eventIdentity.eventId} side={side} row={row} setWorkbench={setWorkbench} />)}
+        <header><div><strong>{side.sideIdentity}</strong><span>{side.chartId} | {side.chartHypothesisId}</span><small>{side.eventCompiler.ephemerisProvider} {side.ephemerisVersion} | {side.ephemerisVersionProvenance.replaceAll('_', ' ')}</small></div><span>{side.identityIntegrityManifestFile} {side.currentRevisionId ? `| ${side.currentRevisionId}` : '| no saved revision'}</span></header>
+        {side.rows.map((row) => <ReviewRow key={row.eventIdentity.eventId} side={side} row={row} setWorkbench={updateWorkbench} />)}
       </section>)}
       <footer className="founder-review-footer"><button type="button" onClick={() => void exportPackets()} disabled={busy}>Export founder-review packets</button><span>Exports remain disconnected from the polarity catalogue and all execution paths.</span></footer>
     </>}
+    {pendingAction && <section className="founder-review-unsaved-dialog" role="alertdialog" aria-label="Unsaved founder review edits">
+      <strong>Unsaved founder-review edits</strong>
+      <span>{pendingAction === 'reload' ? 'Refresh integrity would discard the current edits.' : 'Back to Fields would discard the current edits.'}</span>
+      <div><button type="button" onClick={() => void savePending()} disabled={busy}>Save changes</button><button type="button" onClick={discardPending} disabled={busy}>Discard changes</button><button type="button" onClick={() => setPendingAction(null)} disabled={busy}>Cancel</button></div>
+    </section>}
   </section>
 }

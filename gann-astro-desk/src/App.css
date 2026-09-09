@@ -7274,6 +7274,7 @@ html.android-runtime .loading-state {
 .founder-review-reviewer input, .founder-review-decision-fields select, .founder-review-decision-fields input, .founder-review-decision-fields textarea { box-sizing: border-box; width: 100%; min-height: 28px; padding: 5px 7px; border: 1px solid #3a4b57; border-radius: 3px; background: #111a21; color: #dce7eb; font: 8px/1.35 Consolas, monospace; }
 .founder-review-decision-fields textarea { min-height: 58px; resize: vertical; }
 .founder-review-instruction, .founder-review-message, .founder-review-error, .founder-review-notice { margin: 0; color: #8d9da7; font: 8px/1.45 Consolas, monospace; }
+.founder-review-dirty { margin: 0; color: #e3c77d; font: 8px/1.45 Consolas, monospace; }
 .founder-review-error { color: #eea6ad; }
 .founder-review-notice { color: #9bd3bd; }
 .founder-review-side { display: grid; gap: 8px; min-width: 0; }
@@ -7304,6 +7305,10 @@ html.android-runtime .loading-state {
 .founder-review-fail-closed { margin: 0; color: #e6aab0; font: 8px/1.4 Consolas, monospace; }
 .founder-review-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 8px; border-top: 1px solid #35414a; }
 .founder-review-footer span { color: #8797a1; font: 8px/1.4 Consolas, monospace; }
+.founder-review-unsaved-dialog { position: sticky; bottom: 12px; z-index: 3; display: grid; gap: 7px; max-width: 620px; margin: 12px auto 0; padding: 10px; border: 1px solid #8e7542; background: #172129; box-shadow: 0 8px 24px #0008; }
+.founder-review-unsaved-dialog strong { color: #f0d58e; font-size: 10px; }
+.founder-review-unsaved-dialog span { color: #c0ccd1; font: 8px/1.4 Consolas, monospace; }
+.founder-review-unsaved-dialog div { display: flex; flex-wrap: wrap; gap: 6px; }
 
 @media (max-width: 1180px) {
   .workspace-surface-tabs button:nth-child(4) { min-width: 36px; }

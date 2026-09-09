@@ -94,6 +94,9 @@ def prepare_environment(paths: RuntimePaths, codex_port: int) -> None:
             raise FileNotFoundError(f"Packaged annotation database is missing: {seed_db}")
         shutil.copy2(seed_db, paths.annotation_db)
     os.environ["GANN_ASTRO_PROJECT_ROOT"] = str(paths.project_root)
+    # Founder decisions/revisions are mutable application data. They must not
+    # be written into the read-only collected resource tree.
+    os.environ["GANN_ASTRO_FOUNDER_REVIEW_ROOT"] = str(paths.data_root / "founder_review")
     os.environ["GANN_ASTRO_ANNOTATION_DB"] = str(paths.annotation_db)
     os.environ["GANN_ASTRO_FRONTEND_DIST"] = str(paths.frontend_dist)
     os.environ["GANN_ASTRO_MARKET_SNAPSHOTS_DIR"] = str(paths.data_root / "market_snapshots")

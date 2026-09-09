@@ -229,3 +229,17 @@ surface. No later milestone is started automatically.
 Founder acceptance is recorded for the frozen candidate. The next human action
 is manual outcome-blind review; after the intended review, stop and request
 the separate MO-R4 Founder Polarity Review Freeze before any outcome study.
+
+## Post-publication Integrity Erratum - 2026-09-09
+
+The historical candidate record above is preserved. Its earlier USD identity
+manifest digest line was truncated to 63 characters. The verified normalized
+SHA-256 of the canonical USD identity-integrity manifest is
+`BB0B952B3CC30A91C41D48729139CF2985542C1A64DB1D940D74FFFDBDB2E26E`.
+The corresponding JPY manifest digest is
+`066BDAB7ECC0E8A6AA89E9A28B5A9EAE9B616E225759D3E022C27F185F6CFF8D`.
+
+The earlier `Founder inspection is pending` wording described the state before
+the 2026-09-08 physical inspection. The founder subsequently accepted the
+0.10.62 candidate; the current-state handoff supersedes that wording without
+altering the historical candidate or its artifacts.
