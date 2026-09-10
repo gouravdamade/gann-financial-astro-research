@@ -1,0 +1,157 @@
+{
+  "contract": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_S2_V1",
+  "schemaVersion": 1,
+  "registryId": "MO_R4A_S2_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1",
+  "registryStatus": "AUTHORIZED_FOR_BLINDED_TEST_FROZEN",
+  "purpose": "A two-record, outcome-blind, categorical currency-side bridge family. It does not assert classical financial doctrine, pair direction, price direction, magnitude, confidence, or execution.",
+  "entryPolicy": "EXACTLY_TWO_CENTRALLY_AUTHORIZED_DIRECT_COMPOUND_RELATIONSHIP_SIDE_HYPOTHESES; NO_INVERSE_OR_SECONDARY_REAL_EVENT_HYPOTHESES",
+  "startingMaster": "c4abc811d40ce2fbc6e3972e0f7d4ff59e61ce09",
+  "upstreamSourceLedgerContract": "MO_R4A_S1R1_R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+  "upstreamSourceLedgerHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+  "upstreamCoverageContract": "MO_R4A_S1R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1",
+  "upstreamCoverageHash": "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+  "hypothesisFamilyId": "MO_R4A_S2_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+  "entries": [
+    {
+      "hypothesisFamilyId": "MO_R4A_S2_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+      "hypothesisId": "H-MO-S2-COMPOUND-REL-DIRECT-USD-V1",
+      "version": "1",
+      "author": "CENTRAL_RESEARCH_AUTHORIZATION",
+      "createdAtUtc": "2026-09-10T00:00:00Z",
+      "hypothesisScope": "FROZEN_24_EVENT_OUTCOME_BLIND_CURRENCY_SIDE_PILOT",
+      "bridgeBasis": "SOURCE_OPERATOR_STATE_PREDICATE",
+      "inputOperatorIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "primaryInputOperatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "primaryInputOperatorVersion": "1",
+      "stateMap": {
+        "GREAT_FRIEND": "SUPPORTIVE",
+        "FRIEND": "SUPPORTIVE",
+        "NEUTRAL": "NEUTRAL",
+        "ENEMY": "ADVERSE",
+        "GREAT_ENEMY": "ADVERSE"
+      },
+      "targetSide": "USD",
+      "applicabilityPolicy": "SOURCE_CLOSED_MACHINE_EVALUATED_COMPOUND_RELATIONSHIP_ONLY",
+      "abstentionPolicy": {
+        "currencyPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+        "bridgeApplied": false,
+        "fallbackOperatorAllowed": false
+      },
+      "sourceClaim": "The frozen source/operator record supplies a categorical compound relationship state for an eligible transit-body to natal-target pair. It does not supply a currency or market conclusion.",
+      "experimentalClaim": "For this outcome-blind USD-side pilot only, FRIEND-family compound states are hypothesized as SUPPORTIVE USD pressure, ENEMY-family states as ADVERSE USD pressure, and NEUTRAL as categorical NEUTRAL.",
+      "reasoning": "The direct compound-relationship state is the sole centrally authorized S2 bridge predicate. No other source operator can override, reverse, weight, or complete it.",
+      "sourceDependencies": [
+        "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "MO_R4A_S1R1_R1_LEDGER_00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+        "MO_R4A_S1R1_R1_COVERAGE_359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD"
+      ],
+      "experimentalAssumptions": [
+        "The frozen transit-to-natal compound-relationship output is the authorized S2 input context.",
+        "Relational valence is hypothesized to transfer in the same semantic direction to the affected USD side.",
+        "GREAT_FRIEND and FRIEND collapse to the same categorical SUPPORTIVE state.",
+        "GREAT_ENEMY and ENEMY collapse to the same categorical ADVERSE state.",
+        "NEUTRAL is categorical and is not numeric zero.",
+        "Unavailable compound relationship data requires abstention without fallback."
+      ],
+      "prohibitedGeneralizations": [
+        "This does not claim that classical sources predict USD or any market.",
+        "This does not imply USDJPY pair direction.",
+        "This does not make benefic, malefic, aspect, dignity, bala, motion, or modifier states sign inputs.",
+        "This does not configure a signed unit, magnitude, confidence, weight, or amplitude.",
+        "This does not establish financial validation, accuracy, edge, expectancy, or profitability.",
+        "This does not create a production rule, Auto Suggest rule, ML label, MT5 path, or execution path."
+      ],
+      "validationStatus": "NOT_FINANCIALLY_VALIDATED",
+      "outcomeDataSeenAtCreation": false,
+      "approvalStatus": "AUTHORIZED_FOR_BLINDED_TEST",
+      "signedUnitIfConfigured": null,
+      "magnitudeConfigured": false,
+      "mode": "EXPERIMENTAL_PROFILED",
+      "productionAdmission": false,
+      "hypothesisHash": "FD4E4F3B125EB8254569F8EA6E70FB50ECD2D4B30E4CD9119F7E9CB5BE8A5BF6"
+    },
+    {
+      "hypothesisFamilyId": "MO_R4A_S2_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+      "hypothesisId": "H-MO-S2-COMPOUND-REL-DIRECT-JPY-V1",
+      "version": "1",
+      "author": "CENTRAL_RESEARCH_AUTHORIZATION",
+      "createdAtUtc": "2026-09-10T00:00:00Z",
+      "hypothesisScope": "FROZEN_24_EVENT_OUTCOME_BLIND_CURRENCY_SIDE_PILOT",
+      "bridgeBasis": "SOURCE_OPERATOR_STATE_PREDICATE",
+      "inputOperatorIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "primaryInputOperatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "primaryInputOperatorVersion": "1",
+      "stateMap": {
+        "GREAT_FRIEND": "SUPPORTIVE",
+        "FRIEND": "SUPPORTIVE",
+        "NEUTRAL": "NEUTRAL",
+        "ENEMY": "ADVERSE",
+        "GREAT_ENEMY": "ADVERSE"
+      },
+      "targetSide": "JPY",
+      "applicabilityPolicy": "SOURCE_CLOSED_MACHINE_EVALUATED_COMPOUND_RELATIONSHIP_ONLY",
+      "abstentionPolicy": {
+        "currencyPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+        "bridgeApplied": false,
+        "fallbackOperatorAllowed": false
+      },
+      "sourceClaim": "The frozen source/operator record supplies a categorical compound relationship state for an eligible transit-body to natal-target pair. It does not supply a currency or market conclusion.",
+      "experimentalClaim": "For this outcome-blind JPY-side pilot only, FRIEND-family compound states are hypothesized as SUPPORTIVE JPY pressure, ENEMY-family states as ADVERSE JPY pressure, and NEUTRAL as categorical NEUTRAL.",
+      "reasoning": "The direct compound-relationship state is the sole centrally authorized S2 bridge predicate. No other source operator can override, reverse, weight, or complete it.",
+      "sourceDependencies": [
+        "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "MO_R4A_S1R1_R1_LEDGER_00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+        "MO_R4A_S1R1_R1_COVERAGE_359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD"
+      ],
+      "experimentalAssumptions": [
+        "The frozen transit-to-natal compound-relationship output is the authorized S2 input context.",
+        "Relational valence is hypothesized to transfer in the same semantic direction to the affected JPY side.",
+        "GREAT_FRIEND and FRIEND collapse to the same categorical SUPPORTIVE state.",
+        "GREAT_ENEMY and ENEMY collapse to the same categorical ADVERSE state.",
+        "NEUTRAL is categorical and is not numeric zero.",
+        "Unavailable compound relationship data requires abstention without fallback."
+      ],
+      "prohibitedGeneralizations": [
+        "This does not claim that classical sources predict JPY or any market.",
+        "This does not imply USDJPY pair direction.",
+        "This does not make benefic, malefic, aspect, dignity, bala, motion, or modifier states sign inputs.",
+        "This does not configure a signed unit, magnitude, confidence, weight, or amplitude.",
+        "This does not establish financial validation, accuracy, edge, expectancy, or profitability.",
+        "This does not create a production rule, Auto Suggest rule, ML label, MT5 path, or execution path."
+      ],
+      "validationStatus": "NOT_FINANCIALLY_VALIDATED",
+      "outcomeDataSeenAtCreation": false,
+      "approvalStatus": "AUTHORIZED_FOR_BLINDED_TEST",
+      "signedUnitIfConfigured": null,
+      "magnitudeConfigured": false,
+      "mode": "EXPERIMENTAL_PROFILED",
+      "productionAdmission": false,
+      "hypothesisHash": "FC7A2CFD3930FBBAD41A4995C4697A8B31A50F409DDBE66ED4BE2902C4AE233A"
+    }
+  ],
+  "guardrails": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderDecisionRead": false,
+    "reviewStoreRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveRendered": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  },
+  "registryHash": "E2FD1EA6B570F35E07F06259A64A19E181B06610F0659B1B333800F7688EBA66"
+}

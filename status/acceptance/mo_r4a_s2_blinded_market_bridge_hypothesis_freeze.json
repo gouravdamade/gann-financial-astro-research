@@ -1,0 +1,62 @@
+{
+  "contract": "MO_R4A_S2_BLINDED_MARKET_BRIDGE_HYPOTHESIS_FREEZE_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S2",
+  "status": "BLINDED_HYPOTHESIS_FREEZE_COMPLETE_CENTRAL_REVIEW_REQUIRED",
+  "startingMaster": "c4abc811d40ce2fbc6e3972e0f7d4ff59e61ce09",
+  "upstreamSourceLedgerContract": "MO_R4A_S1R1_R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+  "upstreamSourceLedgerHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+  "upstreamCoverageContract": "MO_R4A_S1R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1",
+  "upstreamCoverageHash": "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+  "hypothesisRegistryContract": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_S2_V1",
+  "hypothesisRegistryHash": "E2FD1EA6B570F35E07F06259A64A19E181B06610F0659B1B333800F7688EBA66",
+  "hypotheses": [
+    {
+      "hypothesisId": "H-MO-S2-COMPOUND-REL-DIRECT-USD-V1",
+      "hypothesisHash": "FD4E4F3B125EB8254569F8EA6E70FB50ECD2D4B30E4CD9119F7E9CB5BE8A5BF6",
+      "targetSide": "USD"
+    },
+    {
+      "hypothesisId": "H-MO-S2-COMPOUND-REL-DIRECT-JPY-V1",
+      "hypothesisHash": "FC7A2CFD3930FBBAD41A4995C4697A8B31A50F409DDBE66ED4BE2902C4AE233A",
+      "targetSide": "JPY"
+    }
+  ],
+  "predictionFreezeHash": "5A7D318D22D27637F2A253D362258648F40CF12DB6016B6743D166A1C010C27A",
+  "invarianceAuditHash": "3928513A245F4A2F9B683C0E24C5945948E6C377E619176C4B628C6801AEBE28",
+  "summary": {
+    "eventCount": 24,
+    "usdEventCount": 12,
+    "jpyEventCount": 12,
+    "singlePassVerifiedCount": 24,
+    "bridgeEligibleCount": 17,
+    "abstentionCount": 7,
+    "supportiveCount": 9,
+    "adverseCount": 5,
+    "neutralCount": 3,
+    "unknownCount": 7,
+    "overallAstrologyUnknownCount": 24
+  },
+  "guardrails": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderDecisionRead": false,
+    "reviewStoreRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveRendered": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false,
+    "productionAdmission": false,
+    "eventUniverseRegenerated": false,
+    "signedUnitConfigured": false
+  },
+  "s3Prerequisite": "CENTRAL_REVIEW_REQUIRED_BEFORE_S3_PREREGISTRATION",
+  "executionAllowed": false,
+  "acceptanceManifestHash": "E57D2A550A5A8D37CE74C43D49B955D744FCC09F605B47F02684684F181C180D"
+}

@@ -4,6 +4,56 @@ Last updated: 2026-09-10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-10 (MO-R4A-S2 Blinded Market-Bridge Hypothesis Freeze)
+
+- Added the separately versioned, strictly two-record S2 registry
+  `MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_S2_V1`. Its
+  canonical registry hash is
+  `E2FD1EA6B570F35E07F06259A64A19E181B06610F0659B1B333800F7688EBA66`.
+  It contains only `H-MO-S2-COMPOUND-REL-DIRECT-USD-V1` and
+  `H-MO-S2-COMPOUND-REL-DIRECT-JPY-V1`; the historical P0 V1 registry remains
+  unmodified, empty, and `EMPTY_NO_AUTHORIZED_MARKET_BRIDGES`.
+- The only permitted bridge predicate is
+  `BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1` version `1`: GREAT_FRIEND/FRIEND to
+  SUPPORTIVE, NEUTRAL to categorical NEUTRAL, ENEMY/GREAT_ENEMY to ADVERSE.
+  An unavailable compound input abstains as
+  `UNKNOWN_MORE_EVIDENCE_REQUIRED` without fallback. No inverse or secondary
+  hypothesis exists.
+- The freeze is bound to the S1R1-R1 ledger hash
+  `00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379` and
+  coverage hash
+  `359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD`.
+  It retains 24 `SINGLE_PASS_VERIFIED` events (12 USD and 12 JPY): 17 bridge
+  eligible, 7 abstentions, 9 SUPPORTIVE, 5 ADVERSE, 3 NEUTRAL, and 7 UNKNOWN.
+- The prediction-freeze hash is
+  `5A7D318D22D27637F2A253D362258648F40CF12DB6016B6743D166A1C010C27A`;
+  the invariance-audit hash is
+  `3928513A245F4A2F9B683C0E24C5945948E6C377E619176C4B628C6801AEBE28`;
+  and the acceptance-manifest hash is
+  `E57D2A550A5A8D37CE74C43D49B955D744FCC09F605B47F02684684F181C180D`.
+  The audit proves all event IDs/hashes, astronomy snapshots, and overall
+  `NO_APPROVED_ASTROLOGICAL_COMPOSITION_CONTRACT` /
+  `UNKNOWN_ASTRO_STATE` values were retained; source astronomy was not
+  regenerated.
+- S2 reads only the frozen source coverage and the immutable blank-packet
+  `eventIdentity` records needed to preserve identity intervals. It reads no
+  Founder Review content or store, price, outcomes, SBC, catalogue, or
+  evidence. Each prediction retains `signedUnit=null` and
+  `magnitudeConfigured=false`; no signed wave or USDJPY pair resultant exists.
+- `priceDataRead`, `outcomeDataRead`, `founderDecisionRead`, `reviewStoreRead`,
+  `sbcRead`, catalogue/evidence admission, signed-wave/pair-resultant,
+  magnitude, Auto Suggest, ML, MT5, and execution remain false. The S2 bridge
+  family is `NOT_FINANCIALLY_VALIDATED` and is not a market claim.
+- Primary S2 records are
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S2_BLINDED_MARKET_BRIDGE_HYPOTHESIS_FREEZE.md`,
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S2_REAL_24_EVENT_PREDICTION_FREEZE.md`,
+  `status/audits/mo_r4a_s2_blinded_market_bridge_prediction_freeze.json`,
+  `status/audits/mo_r4a_s2_blinded_market_bridge_invariance_audit.json`, and
+  `status/acceptance/mo_r4a_s2_blinded_market_bridge_hypothesis_freeze.json`.
+- Stop at independent central review. S3 preregistration remains blocked by
+  `CENTRAL_REVIEW_REQUIRED_BEFORE_S3_PREREGISTRATION`. No frontend, Rust,
+  package, or candidate work is required for this source/freeze-only milestone.
+
 ## Latest Update - 2026-09-10 (MO-R4A-S1R1-R1 Bṛhat Jātaka II.13 Locator Correction)
 
 - Verified the exact held witness
