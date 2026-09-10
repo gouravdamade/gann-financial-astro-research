@@ -1,0 +1,48 @@
+{
+  "contract": "MO_R4A_S1R1_R1_LOCATOR_CORRECTION_ACCEPTANCE_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S1R1-R1",
+  "status": "LOCATOR_CORRECTION_COMPLETE_CENTRAL_REVIEW_REQUIRED",
+  "startingMaster": "cfd77724963c7d069690ce56e859ae2a7a9c5d88",
+  "sourceWitness": {
+    "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+    "artifactSha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+    "sourceBytePolicy": "HELD_SOURCE_BYTES_NOT_TRACKED"
+  },
+  "sourceVerification": {
+    "scan43Printed31": true,
+    "scan44Printed32": true,
+    "ii13SpanPrintedPage": "31-32",
+    "ii13SpanScanPage": "43-44",
+    "rootCommentarySeparated": false,
+    "dristiPropositionUnchanged": true
+  },
+  "preCorrectionLedgerHash": "9704821AB7A3777ABA6DB7671246B989ACBE0403FF511EED7CC38303BDBE2867",
+  "preCorrectionCoverageHash": "7ADF16D5A762F0DD50602F7DE4233A5A9AD965B5C6C68681C33B36A096A2C4C4",
+  "correctedLedgerHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+  "correctedCoverageHash": "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+  "eventCount": 24,
+  "usdEventCount": 12,
+  "jpyEventCount": 12,
+  "singlePassVerifiedCount": 24,
+  "coverageCounts": {
+    "sourceOperatorCoverageNone": 0,
+    "sourceOperatorCoveragePartial": 2,
+    "sourceOperatorCoverageSubstantial": 22,
+    "sourceOperatorCoverageComplete": 0
+  },
+  "affectedOperators": [
+    "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+    "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+  ],
+  "evaluatorMathematicsChanged": false,
+  "eventOutputSemanticsChanged": false,
+  "marketHypothesisRegistryEntries": 0,
+  "realPolarityCount": 0,
+  "marketMagnitude": "NOT_CONFIGURED",
+  "priceDataRead": false,
+  "outcomeDataRead": false,
+  "executionAllowed": false,
+  "historicalArtifactsPreserved": true,
+  "nextGate": "INDEPENDENT_CENTRAL_REVIEW_BEFORE_MO_R4A_S2"
+}

@@ -1,0 +1,130 @@
+{
+  "contract": "MO_R4A_S1R1_R1_BRIHAT_JATAKA_II13_LOCATOR_CORRECTION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S1R1-R1",
+  "purpose": "Correct the mixed printed-page/PDF-page pairing for the held Bṛhat Jātaka II.13 dṛṣṭi passage without changing source doctrine, evaluator mathematics, or immutable event identities.",
+  "baseS1R1LedgerCanonicalHash": "9704821AB7A3777ABA6DB7671246B989ACBE0403FF511EED7CC38303BDBE2867",
+  "sourceWitness": {
+    "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+    "identity": "Brhat Jataka with Srimad Bhatotpala Sanskrit commentary, Sri Harikrishna Nibandh Bhavan, Banaras City; title-page date intentionally not normalized",
+    "artifactSha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+    "sourceBytePolicy": "HELD_SOURCE_BYTES_NOT_TRACKED"
+  },
+  "sourceVerification": {
+    "pageFindings": [
+      {
+        "scanPage": "43",
+        "printedPage": "31"
+      },
+      {
+        "scanPage": "44",
+        "printedPage": "32"
+      }
+    ],
+    "pageImageFindings": [
+      {
+        "scanPage": "43",
+        "printedPage": "31",
+        "finding": "The II.13 root passage begins on the page-31 image."
+      },
+      {
+        "scanPage": "44",
+        "printedPage": "32",
+        "finding": "The associated II.13 dṛṣṭi passage continues into the page-32 image."
+      }
+    ],
+    "ii13SourceSpan": {
+      "sourceFamily": "BRIHAT_JATAKA",
+      "sourceLayer": "BRIHAT_JATAKA_ROOT",
+      "chapter": "II",
+      "verse": "13",
+      "printedPage": "31-32",
+      "scanPage": "43-44",
+      "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+    },
+    "rootCommentarySeparated": false,
+    "rootCommentaryDetermination": "The held page images support the page span, but do not provide a sufficiently unambiguous line-level layer delimiter to assign the page-32 continuation to Bhatotpala commentary for this operator. It remains one exact Bṛhat Jātaka root passage span rather than a guessed root/commentary split.",
+    "dristiPropositionUnchanged": true,
+    "dristiProposition": "Existing ordinary 3/10, 5/9, 4/8, 7 fractions and Saturn 3/10, Jupiter 5/9, Mars 4/8 special full aspects remain unchanged."
+  },
+  "corrections": [
+    {
+      "correctionId": "S1R1_R1_ORDINARY_DRSTI_BRIHAT_II13_LOCATOR",
+      "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+      "operatorVersion": "1",
+      "priorLocator": {
+        "sourceFamily": "BRIHAT_JATAKA",
+        "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+        "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+        "sourceLayer": "BRIHAT_JATAKA_ROOT",
+        "chapter": "II",
+        "verse": "13",
+        "printedPage": "32",
+        "scanPage": "43",
+        "repositoryReference": "S1R1 witness registry SHA-256 binding; source bytes are not tracked",
+        "propositionRole": "ORDINARY_DRSTI_CROSS_TEXT_ROOT",
+        "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+      },
+      "correctedLocator": {
+        "sourceFamily": "BRIHAT_JATAKA",
+        "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+        "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+        "sourceLayer": "BRIHAT_JATAKA_ROOT",
+        "chapter": "II",
+        "verse": "13",
+        "printedPage": "31-32",
+        "scanPage": "43-44",
+        "repositoryReference": "S1R1-R1 held-witness SHA-256 binding; PDF image 43 = printed p.31 and image 44 = printed p.32; source bytes are not tracked",
+        "propositionRole": "ORDINARY_DRSTI_CROSS_TEXT_ROOT",
+        "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+      },
+      "operatorVerseOrLocatorChanged": false
+    },
+    {
+      "correctionId": "S1R1_R1_SPECIAL_DRSTI_BRIHAT_II13_LOCATOR",
+      "operatorId": "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1",
+      "operatorVersion": "1",
+      "priorLocator": {
+        "sourceFamily": "BRIHAT_JATAKA",
+        "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+        "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+        "sourceLayer": "BRIHAT_JATAKA_ROOT",
+        "chapter": "II",
+        "verse": "13",
+        "printedPage": "32",
+        "scanPage": "43",
+        "repositoryReference": "S1R1 witness registry SHA-256 binding; source bytes are not tracked",
+        "propositionRole": "SPECIAL_DRSTI_ROOT",
+        "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+      },
+      "correctedLocator": {
+        "sourceFamily": "BRIHAT_JATAKA",
+        "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+        "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+        "sourceLayer": "BRIHAT_JATAKA_ROOT",
+        "chapter": "II",
+        "verse": "13",
+        "printedPage": "31-32",
+        "scanPage": "43-44",
+        "repositoryReference": "S1R1-R1 held-witness SHA-256 binding; PDF image 43 = printed p.31 and image 44 = printed p.32; source bytes are not tracked",
+        "propositionRole": "SPECIAL_DRSTI_ROOT",
+        "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+      },
+      "priorVerseOrLocator": "Brhat Jataka II.13, printed p.32 / scan p.43; Saravali 4.32-33, printed p.58 / scan p.62; Trailokya scan pp.98 and 100 / printed pp.82 and 84 / vv.365-371",
+      "correctedVerseOrLocator": "Brhat Jataka II.13, printed pp.31-32 / scan pp.43-44; Saravali 4.32-33, printed p.58 / scan p.62; Trailokya scan pp.98 and 100 / printed pp.82 and 84 / vv.365-371",
+      "operatorVerseOrLocatorChanged": true
+    }
+  ],
+  "guardrails": {
+    "mathematicsChanged": false,
+    "eventIdentityChanged": false,
+    "eventAstronomyChanged": false,
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderReviewStoreRead": false,
+    "marketHypothesisRegistryEntriesCreated": 0,
+    "realPolarityCount": 0,
+    "magnitudeConfigured": false,
+    "executionAllowed": false
+  }
+}

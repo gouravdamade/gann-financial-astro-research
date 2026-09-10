@@ -36,6 +36,7 @@ class ClassicalSourceOperatorTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.ledger = operators.load_source_operator_ledger()
         cls.hardened_ledger = operators.build_s1r1_provenance_hardened_ledger(PROJECT_ROOT)
+        cls.corrected_ledger = operators.build_s1r1_r1_corrected_ledger(PROJECT_ROOT)
         cls.dependencies = operators.load_unresolved_dependency_registry()
         cls.matrix = operators.load_cross_text_matrix()
 
@@ -79,6 +80,118 @@ class ClassicalSourceOperatorTests(unittest.TestCase):
         )
         self.assertEqual(checked_in, self.hardened_ledger)
         self.assertEqual(operators._canonical_hash(checked_in), "9704821AB7A3777ABA6DB7671246B989ACBE0403FF511EED7CC38303BDBE2867")
+
+    def test_s1r1_r1_correction_packet_is_bound_to_verified_witness_and_page_mapping(self) -> None:
+        correction = _load_json(
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "classical_source_operator_s1r1_r1_brihat_jataka_ii13_locator_correction_v1.json"
+        )
+        self.assertEqual(correction["baseS1R1LedgerCanonicalHash"], operators._canonical_hash(self.hardened_ledger))
+        self.assertEqual(
+            correction["sourceWitness"]["artifactSha256"],
+            "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+        )
+        self.assertEqual(
+            correction["sourceVerification"]["pageFindings"],
+            [{"scanPage": "43", "printedPage": "31"}, {"scanPage": "44", "printedPage": "32"}],
+        )
+        self.assertFalse(correction["sourceVerification"]["rootCommentarySeparated"])
+
+    def test_s1r1_r1_checked_in_successor_corrects_only_the_two_ii13_locators(self) -> None:
+        checked_in = _load_json(
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "classical_source_operator_ledger_s1r1_r1_v1.json"
+        )
+        self.assertEqual(checked_in, self.corrected_ledger)
+        self.assertEqual(operators._canonical_hash(checked_in), "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379")
+        self.assertEqual(
+            {(item["operatorId"], item["operatorVersion"]) for item in checked_in["operators"]},
+            {(item["operatorId"], item["operatorVersion"]) for item in self.hardened_ledger["operators"]},
+        )
+        for operator_id in ("SARAVALI_4_32_ORDINARY_DRSTI_V1", "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"):
+            operator = next(item for item in checked_in["operators"] if item["operatorId"] == operator_id)
+            locators = [
+                locator
+                for locator in operator["sourceLocators"]
+                if locator["sourceFamily"] == "BRIHAT_JATAKA" and locator["chapter"] == "II" and locator["verse"] == "13"
+            ]
+            self.assertEqual(len(locators), 1)
+            self.assertEqual((locators[0]["printedPage"], locators[0]["scanPage"]), ("31-32", "43-44"))
+            self.assertNotEqual((locators[0]["printedPage"], locators[0]["scanPage"]), ("32", "43"))
+
+    def test_s1r1_r1_dristi_values_and_translation_mismatch_remain_unchanged(self) -> None:
+        expected = {3: "1/4", 10: "1/4", 5: "1/2", 9: "1/2", 4: "3/4", 8: "3/4", 7: "FULL"}
+        for place, value in expected.items():
+            before = operators.evaluate_ordinary_dristi(place, ledger=self.hardened_ledger)
+            after = operators.evaluate_ordinary_dristi(place, ledger=self.corrected_ledger)
+            self.assertEqual(before["sourceMeasurement"]["value"], value)
+            self.assertEqual(after["sourceMeasurement"]["value"], value)
+        for body, places in {"SATURN": (3, 10), "JUPITER": (5, 9), "MARS": (4, 8)}.items():
+            for place in places:
+                before = operators.evaluate_special_dristi(body, place, ledger=self.hardened_ledger)
+                after = operators.evaluate_special_dristi(body, place, ledger=self.corrected_ledger)
+                self.assertEqual(before["outputState"], "SPECIAL_FULL_DRSTI")
+                self.assertEqual(after["outputState"], "SPECIAL_FULL_DRSTI")
+                self.assertEqual(before["sourceMeasurement"]["value"], after["sourceMeasurement"]["value"])
+        ordinary = next(item for item in self.corrected_ledger["operators"] if item["operatorId"] == "SARAVALI_4_32_ORDINARY_DRSTI_V1")
+        translation = next(locator for locator in ordinary["sourceLocators"] if locator["sourceLayer"] == "SANTHANAM_TRANSLATION")
+        self.assertEqual(translation["provenanceStatus"], "TRANSLATION_EDITORIAL_MISMATCH")
+
+    def test_s1r1_r1_checked_in_audit_and_comparison_match_and_preserve_24_events(self) -> None:
+        audit = operators.build_s1r1_r1_source_provenance_audit(PROJECT_ROOT)
+        checked_audit = _load_json(PROJECT_ROOT / "status" / "audits" / "mo_r4a_s1r1_r1_source_provenance_audit.json")
+        self.assertEqual(checked_audit, audit)
+        self.assertEqual((audit["operatorCount"], audit["affectedOperatorCount"]), (17, 2))
+        self.assertFalse(audit["summary"]["rootCommentarySeparated"])
+        comparison = operators.build_s1r1_r1_rebinding_identity_comparison(PROJECT_ROOT)
+        checked_comparison = _load_json(
+            PROJECT_ROOT / "status" / "audits" / "mo_r4a_s1r1_r1_immutable_event_rebinding_comparison.json"
+        )
+        self.assertEqual(checked_comparison, comparison)
+        self.assertEqual(
+            (comparison["eventCount"], comparison["usdEventCount"], comparison["jpyEventCount"], comparison["singlePassVerifiedCount"]),
+            (24, 12, 12, 24),
+        )
+        self.assertTrue(comparison["summary"]["reportChangesRestrictedToProvenanceOrHash"])
+        for item in comparison["comparisons"]:
+            self.assertTrue(item["identityUnchanged"], item["eventId"])
+            self.assertTrue(item["astronomySnapshotUnchanged"], item["eventId"])
+            self.assertTrue(item["evaluationSemanticsUnchanged"], item["eventId"])
+            self.assertTrue(item["eventFieldsOutsideOperatorOutputsUnchanged"], item["eventId"])
+            self.assertTrue(item["operatorOutputSemanticsUnchanged"], item["eventId"])
+
+    def test_s1r1_r1_coverage_keeps_expected_counts_and_market_firewall(self) -> None:
+        coverage = operators.build_real_source_operator_coverage_report(
+            PROJECT_ROOT,
+            source_ledger=self.corrected_ledger,
+            milestone="MO-R4A-S1R1-R1",
+            coverage_contract=operators.CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT,
+        )
+        checked_in = _load_json(PROJECT_ROOT / "status" / "audits" / "mo_r4a_s1r1_r1_real_24_source_operator_coverage.json")
+        self.assertEqual(checked_in, coverage)
+        self.assertEqual(coverage["sourceOperatorLedgerCanonicalHash"], "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379")
+        self.assertEqual(
+            (
+                coverage["summary"]["sourceOperatorNoneCount"],
+                coverage["summary"]["sourceOperatorPartialCount"],
+                coverage["summary"]["sourceOperatorSubstantialCount"],
+                coverage["summary"]["sourceOperatorCompleteForDeclaredScopeCount"],
+            ),
+            (0, 2, 22, 0),
+        )
+        self.assertFalse(coverage["guardrails"]["priceDataRead"])
+        self.assertFalse(coverage["guardrails"]["outcomeDataRead"])
+        self.assertFalse(coverage["guardrails"]["executionAllowed"])
+        self.assertEqual(coverage["summary"]["currencyDirectionUnknownCount"], 24)
+        self.assertEqual(coverage["summary"]["magnitudeConfiguredCount"], 0)
 
     def test_s1r1_closed_operators_have_exact_non_central_source_locators(self) -> None:
         for item in self.hardened_ledger["operators"]:

@@ -32,11 +32,26 @@ import machine_assisted_interpretation as machine_interpretation
 
 CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT = "MO_R4A_S1R1_R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
+CLASSICAL_SOURCE_OPERATOR_S1R1_R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_R1_BRIHAT_JATAKA_II13_LOCATOR_CORRECTION_V1"
 CLASSICAL_SOURCE_OPERATOR_OUTPUT_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_OUTPUT_V1"
 CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT = "MO_R4A_S1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
+CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION = 1
+_SOURCE_LAYER_LEDGER_CONTRACTS = frozenset(
+    {
+        CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT,
+    }
+)
+_SOURCE_LAYER_COVERAGE_CONTRACTS = frozenset(
+    {
+        CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT,
+    }
+)
 EXPLORATORY_UNSIGNED_MODE = "EXPLORATORY_UNSIGNED"
 UNKNOWN_CURRENCY_DIRECTION = "UNKNOWN_MORE_EVIDENCE_REQUIRED"
 NO_MARKET_BRIDGE = "NO_AUTHORIZED_MARKET_BRIDGE"
@@ -47,6 +62,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OPERATOR_ROOT = PROJECT_ROOT / "configs" / "research" / "machine_interpretation" / "source_operators"
 DEFAULT_LEDGER_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_ledger_v1.json"
 DEFAULT_S1R1_PROVENANCE_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_provenance_hardening_s1r1_v1.json"
+DEFAULT_S1R1_R1_CORRECTION_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_s1r1_r1_brihat_jataka_ii13_locator_correction_v1.json"
 DEFAULT_UNRESOLVED_PATH = SOURCE_OPERATOR_ROOT / "source_operator_unresolved_dependencies_v1.json"
 DEFAULT_CROSS_TEXT_PATH = SOURCE_OPERATOR_ROOT / "source_operator_cross_text_matrix_v1.json"
 
@@ -300,7 +316,7 @@ def _measurement(
 def validate_source_operator_ledger(ledger: Mapping[str, Any]) -> None:
     if ledger.get("contract") not in {
         CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT,
-        CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT,
+        *_SOURCE_LAYER_LEDGER_CONTRACTS,
     }:
         raise ClassicalSourceOperatorError("Unsupported classical source operator ledger contract")
     if ledger.get("schemaVersion") != CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION:
@@ -326,7 +342,7 @@ def validate_source_operator_ledger(ledger: Mapping[str, Any]) -> None:
             raise ClassicalSourceOperatorError(f"Unknown source status for {identity[0]}: {status}")
         if status.startswith("SOURCE_CLOSED") and not str(operator["verseOrLocator"]).strip():
             raise ClassicalSourceOperatorError(f"Source-closed operator lacks a source locator: {identity[0]}")
-        if ledger.get("contract") == CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT:
+        if ledger.get("contract") in _SOURCE_LAYER_LEDGER_CONTRACTS:
             _validate_s1r1_source_locators(operator, status)
         if bool(operator["marketDirectionAuthorized"]) or bool(operator["marketMagnitudeAuthorized"]):
             raise ClassicalSourceOperatorError(f"Market authorization is prohibited: {identity[0]}")
@@ -408,6 +424,49 @@ def _load_s1r1_provenance_hardening(path: Path) -> dict[str, Any]:
     return hardening
 
 
+def _load_s1r1_r1_locator_correction(path: Path) -> dict[str, Any]:
+    correction = _read_json(path, "S1R1-R1 Bṛhat Jātaka II.13 locator correction")
+    if correction.get("contract") != CLASSICAL_SOURCE_OPERATOR_S1R1_R1_PROVENANCE_CONTRACT:
+        raise ClassicalSourceOperatorError("Unsupported S1R1-R1 locator correction contract")
+    if correction.get("schemaVersion") != CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION:
+        raise ClassicalSourceOperatorError("Unsupported S1R1-R1 locator correction version")
+    if correction.get("milestone") != "MO-R4A-S1R1-R1":
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction has an unexpected milestone")
+    if not str(correction.get("baseS1R1LedgerCanonicalHash", "")):
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction lacks its S1R1 base ledger hash")
+    witness = correction.get("sourceWitness")
+    if not isinstance(witness, dict) or not witness.get("witnessId") or not witness.get("artifactSha256"):
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction lacks its verified source witness")
+    findings = correction.get("sourceVerification", {}).get("pageFindings")
+    if findings != [
+        {"scanPage": "43", "printedPage": "31"},
+        {"scanPage": "44", "printedPage": "32"},
+    ]:
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction has unexpected page verification findings")
+    corrections = correction.get("corrections")
+    expected_ids = {
+        "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1",
+    }
+    if not isinstance(corrections, list) or len(corrections) != len(expected_ids):
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction must contain exactly two corrections")
+    identities = {item.get("operatorId") for item in corrections if isinstance(item, dict)}
+    if identities != expected_ids:
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction IDs do not match the affected operators")
+    for item in corrections:
+        if item.get("operatorVersion") != "1":
+            raise ClassicalSourceOperatorError("S1R1-R1 locator correction only supports operator version 1")
+        if not isinstance(item.get("priorLocator"), dict) or not isinstance(item.get("correctedLocator"), dict):
+            raise ClassicalSourceOperatorError("S1R1-R1 locator correction requires prior and corrected locators")
+        if item["priorLocator"].get("sourceFamily") != "BRIHAT_JATAKA":
+            raise ClassicalSourceOperatorError("S1R1-R1 correction may only target the Bṛhat Jātaka locator")
+        if item["correctedLocator"].get("sourceFamily") != "BRIHAT_JATAKA":
+            raise ClassicalSourceOperatorError("S1R1-R1 correction must retain the Bṛhat Jātaka source family")
+        if item["correctedLocator"].get("printedPage") != "31-32" or item["correctedLocator"].get("scanPage") != "43-44":
+            raise ClassicalSourceOperatorError("S1R1-R1 correction must bind printed pp.31-32 to scan pp.43-44")
+    return correction
+
+
 def build_s1r1_provenance_hardened_ledger(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     """Bind the historical S1 ledger to S1R1 provenance without changing source rules."""
 
@@ -468,6 +527,74 @@ def build_s1r1_provenance_hardened_ledger(resource_root: Path = PROJECT_ROOT) ->
         raise ClassicalSourceOperatorError("S1R1 provenance does not cover every S1 operator")
     validate_source_operator_ledger(hardened)
     return hardened
+
+
+def build_s1r1_r1_corrected_ledger(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Apply only the verified II.13 page-pair correction to the S1R1 successor."""
+
+    root = Path(resource_root).resolve()
+    s1r1 = build_s1r1_provenance_hardened_ledger(root)
+    correction = _load_s1r1_r1_locator_correction(
+        root
+        / "configs"
+        / "research"
+        / "machine_interpretation"
+        / "source_operators"
+        / DEFAULT_S1R1_R1_CORRECTION_PATH.name
+    )
+    expected_base_hash = str(correction["baseS1R1LedgerCanonicalHash"])
+    actual_base_hash = _canonical_hash(s1r1)
+    if expected_base_hash != actual_base_hash:
+        raise ClassicalSourceOperatorError("S1R1-R1 locator correction is not bound to the pre-correction S1R1 ledger hash")
+
+    corrected = deepcopy(s1r1)
+    corrected.update(
+        {
+            "contract": CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT,
+            "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S1R1_R1_V1",
+            "milestone": "MO-R4A-S1R1-R1",
+            "sourceAuditStatus": "BRIHAT_JATAKA_II13_LOCATOR_CORRECTED_FOR_MO_R4A_S1R1_R1_INPUT",
+            "provenanceHardening": {
+                "contract": correction["contract"],
+                "baseS1R1LedgerCanonicalHash": expected_base_hash,
+                "historicalS1LedgerCanonicalHash": s1r1["provenanceHardening"]["baseLedgerCanonicalHash"],
+                "historicalS1LedgerPreserved": True,
+                "preCorrectionS1R1Preserved": True,
+                "correctionCount": len(correction["corrections"]),
+            },
+        }
+    )
+    by_identity = {
+        (str(operator["operatorId"]), str(operator["operatorVersion"])): operator
+        for operator in corrected["operators"]
+    }
+    for item in correction["corrections"]:
+        identity = (str(item["operatorId"]), str(item["operatorVersion"]))
+        target = by_identity.get(identity)
+        if target is None:
+            raise ClassicalSourceOperatorError(f"S1R1-R1 correction references unknown operator: {identity}")
+        locators = target.get("sourceLocators")
+        if not isinstance(locators, list):
+            raise ClassicalSourceOperatorError(f"S1R1-R1 target lacks structured locators: {identity[0]}")
+        matches = [index for index, locator in enumerate(locators) if locator == item["priorLocator"]]
+        if len(matches) != 1:
+            raise ClassicalSourceOperatorError(
+                f"S1R1-R1 correction expected one exact prior locator for {identity[0]}, found {len(matches)}"
+            )
+        locators[matches[0]] = deepcopy(item["correctedLocator"])
+        prior_text = item.get("priorVerseOrLocator")
+        corrected_text = item.get("correctedVerseOrLocator")
+        if prior_text is not None or corrected_text is not None:
+            if target["verseOrLocator"] != prior_text:
+                raise ClassicalSourceOperatorError(f"S1R1-R1 prose locator baseline mismatch: {identity[0]}")
+            target["verseOrLocator"] = corrected_text
+    if set(by_identity) != {
+        (str(operator["operatorId"]), str(operator["operatorVersion"]))
+        for operator in s1r1["operators"]
+    }:
+        raise ClassicalSourceOperatorError("S1R1-R1 correction changed the operator identity set")
+    validate_source_operator_ledger(corrected)
+    return corrected
 
 
 def build_s1r1_source_provenance_audit(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
@@ -542,6 +669,87 @@ def build_s1r1_source_provenance_audit(resource_root: Path = PROJECT_ROOT) -> di
                 for locator in row["newSourceLocators"]
                 if locator["provenanceStatus"] == "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND"
             ),
+        },
+    }
+
+
+def build_s1r1_r1_source_provenance_audit(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Audit the two source-locator changes from S1R1 to S1R1-R1."""
+
+    root = Path(resource_root).resolve()
+    correction = _load_s1r1_r1_locator_correction(
+        root
+        / "configs"
+        / "research"
+        / "machine_interpretation"
+        / "source_operators"
+        / DEFAULT_S1R1_R1_CORRECTION_PATH.name
+    )
+    before = build_s1r1_provenance_hardened_ledger(root)
+    after = build_s1r1_r1_corrected_ledger(root)
+    before_by_identity = {
+        (str(operator["operatorId"]), str(operator["operatorVersion"])): operator
+        for operator in before["operators"]
+    }
+    after_by_identity = {
+        (str(operator["operatorId"]), str(operator["operatorVersion"])): operator
+        for operator in after["operators"]
+    }
+    if set(before_by_identity) != set(after_by_identity) or len(after_by_identity) != 17:
+        raise ClassicalSourceOperatorError("S1R1-R1 provenance audit changed the 17-operator identity set")
+
+    rows: list[dict[str, Any]] = []
+    for item in correction["corrections"]:
+        identity = (str(item["operatorId"]), str(item["operatorVersion"]))
+        previous = before_by_identity[identity]
+        current = after_by_identity[identity]
+        previous_non_provenance = deepcopy(previous)
+        current_non_provenance = deepcopy(current)
+        previous_non_provenance.pop("sourceLocators", None)
+        current_non_provenance.pop("sourceLocators", None)
+        previous_non_provenance.pop("verseOrLocator", None)
+        current_non_provenance.pop("verseOrLocator", None)
+        if previous_non_provenance != current_non_provenance:
+            raise ClassicalSourceOperatorError(f"S1R1-R1 changed non-provenance operator data: {identity[0]}")
+        rows.append(
+            {
+                "operatorId": identity[0],
+                "operatorVersion": identity[1],
+                "sourceStatusBefore": previous["sourceStatus"],
+                "sourceStatusAfter": current["sourceStatus"],
+                "priorLocator": deepcopy(item["priorLocator"]),
+                "correctedLocator": deepcopy(item["correctedLocator"]),
+                "priorVerseOrLocator": previous["verseOrLocator"],
+                "correctedVerseOrLocator": current["verseOrLocator"],
+                "changedFields": [
+                    "sourceLocators",
+                    *( ["verseOrLocator"] if previous["verseOrLocator"] != current["verseOrLocator"] else [] ),
+                ],
+                "rootCommentarySeparated": bool(correction["sourceVerification"]["rootCommentarySeparated"]),
+                "evaluatorMathematicsChanged": False,
+                "eventOutputSemanticsChanged": False,
+            }
+        )
+    return {
+        "contract": "MO_R4A_S1R1_R1_SOURCE_PROVENANCE_AUDIT_V1",
+        "schemaVersion": 1,
+        "milestone": "MO-R4A-S1R1-R1",
+        "sourceWitness": deepcopy(correction["sourceWitness"]),
+        "sourceVerification": deepcopy(correction["sourceVerification"]),
+        "preCorrectionS1R1LedgerCanonicalHash": _canonical_hash(before),
+        "correctedS1R1R1LedgerCanonicalHash": _canonical_hash(after),
+        "operatorCount": len(after_by_identity),
+        "affectedOperatorCount": len(rows),
+        "historicalS1R1AuditPreserved": True,
+        "rows": rows,
+        "summary": {
+            "allOperatorIdentitiesUnchanged": True,
+            "allOtherOperatorFieldsUnchanged": True,
+            "changedFieldsRestrictedToSourceProvenance": True,
+            "evaluatorMathematicsChanged": False,
+            "eventOutputSemanticsChanged": False,
+            "rootCommentarySeparated": False,
+            "correctionStatus": "LOCATOR_CORRECTION_COMPLETE_CENTRAL_REVIEW_REQUIRED",
         },
     }
 
@@ -1480,7 +1688,7 @@ def build_real_source_operator_coverage_report(
 def render_real_source_operator_coverage_markdown(report: Mapping[str, Any]) -> str:
     if report.get("contract") not in {
         CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT,
-        CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
+        *_SOURCE_LAYER_COVERAGE_CONTRACTS,
     }:
         raise ClassicalSourceOperatorError("Cannot render an unsupported source-operator coverage report")
     summary = report["summary"]
@@ -1642,6 +1850,134 @@ def build_s1r1_rebinding_identity_comparison(resource_root: Path = PROJECT_ROOT)
         "usdEventCount": rebound["summary"]["usdEventCount"],
         "jpyEventCount": rebound["summary"]["jpyEventCount"],
         "singlePassVerifiedCount": rebound["summary"]["singlePassVerifiedCount"],
+        "identityFields": list(identity_fields),
+        "comparisons": comparisons,
+        "summary": {
+            "allIdentityBearingFieldsUnchanged": True,
+            "allAstronomySnapshotsUnchanged": True,
+            "allEvaluationSemanticsUnchanged": True,
+            "allEventFieldsOutsideOperatorOutputsUnchanged": True,
+            "allOperatorOutputSemanticsUnchanged": True,
+            "reportChangesRestrictedToProvenanceOrHash": True,
+            "marketHypothesisRegistryEntriesCreated": 0,
+            "realPolarityCount": 0,
+            "marketMagnitude": MAGNITUDE_NOT_CONFIGURED,
+            "outcomeDataRead": False,
+            "executionAllowed": False,
+        },
+    }
+
+
+def build_s1r1_r1_rebinding_identity_comparison(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Prove that the S1R1-R1 rebinding changes only provenance and hashes."""
+
+    def operator_outputs_without_provenance(outputs: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+        normalized: list[dict[str, Any]] = []
+        for output in outputs:
+            item = deepcopy(dict(output))
+            item.pop("sourceFamily", None)
+            item.pop("sourceLocators", None)
+            measurement = item.get("sourceMeasurement")
+            if isinstance(measurement, dict):
+                measurement.pop("sourceLocator", None)
+            normalized.append(item)
+        return normalized
+
+    root = Path(resource_root).resolve()
+    before_ledger = build_s1r1_provenance_hardened_ledger(root)
+    after_ledger = build_s1r1_r1_corrected_ledger(root)
+    before = build_real_source_operator_coverage_report(
+        root,
+        source_ledger=before_ledger,
+        milestone="MO-R4A-S1R1",
+        coverage_contract=CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
+    )
+    after = build_real_source_operator_coverage_report(
+        root,
+        source_ledger=after_ledger,
+        milestone="MO-R4A-S1R1-R1",
+        coverage_contract=CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT,
+    )
+    identity_fields = (
+        "eventId",
+        "eventHash",
+        "sideIdentity",
+        "transitBody",
+        "natalTarget",
+        "aspectType",
+        "exactUtc",
+        "identityStatus",
+        "inputPolicy",
+    )
+    semantic_fields = (
+        "applicableOperatorIds",
+        "evaluatedOperatorIds",
+        "unresolvedOperatorIds",
+        "sourceCoverageStatus",
+        "astrologicalCompositionStatus",
+        "astrologicalInterpretationState",
+        "marketBridgeStatus",
+        "currencyDirectionStatus",
+        "magnitudeStatus",
+        "mode",
+    )
+    before_events = [event for side in before["sides"] for event in side["events"]]
+    after_events = [event for side in after["sides"] for event in side["events"]]
+    if len(before_events) != 24 or len(after_events) != 24:
+        raise ClassicalSourceOperatorError("S1R1-R1 identity comparison requires exactly 24 events")
+    comparisons: list[dict[str, Any]] = []
+    for previous, current in zip(before_events, after_events, strict=True):
+        identity_before = {key: previous[key] for key in identity_fields}
+        identity_after = {key: current[key] for key in identity_fields}
+        semantic_before = {key: previous[key] for key in semantic_fields}
+        semantic_after = {key: current[key] for key in semantic_fields}
+        previous_without_outputs = deepcopy(previous)
+        current_without_outputs = deepcopy(current)
+        previous_without_outputs.pop("operatorOutputs", None)
+        current_without_outputs.pop("operatorOutputs", None)
+        operator_semantics_unchanged = operator_outputs_without_provenance(previous["operatorOutputs"]) == operator_outputs_without_provenance(
+            current["operatorOutputs"]
+        )
+        comparisons.append(
+            {
+                "eventId": previous["eventId"],
+                "identityBefore": identity_before,
+                "identityAfter": identity_after,
+                "identityUnchanged": identity_before == identity_after,
+                "astronomySnapshotUnchanged": previous["astronomySnapshot"] == current["astronomySnapshot"],
+                "evaluationSemanticsUnchanged": semantic_before == semantic_after,
+                "eventFieldsOutsideOperatorOutputsUnchanged": previous_without_outputs == current_without_outputs,
+                "operatorOutputSemanticsUnchanged": operator_semantics_unchanged,
+                "changedReportBytesRestrictedToProvenanceOrHash": (
+                    previous["operatorOutputs"] != current["operatorOutputs"]
+                    and previous["eventHash"] == current["eventHash"]
+                    and previous_without_outputs == current_without_outputs
+                    and operator_semantics_unchanged
+                ),
+            }
+        )
+    if not all(
+        item["identityUnchanged"]
+        and item["astronomySnapshotUnchanged"]
+        and item["evaluationSemanticsUnchanged"]
+        and item["eventFieldsOutsideOperatorOutputsUnchanged"]
+        and item["operatorOutputSemanticsUnchanged"]
+        and item["changedReportBytesRestrictedToProvenanceOrHash"]
+        for item in comparisons
+    ):
+        raise ClassicalSourceOperatorError("S1R1-R1 changed immutable event data or evaluation semantics")
+    return {
+        "contract": "MO_R4A_S1R1_R1_IMMUTABLE_EVENT_REBINDING_COMPARISON_V1",
+        "schemaVersion": 1,
+        "milestone": "MO-R4A-S1R1-R1",
+        "preCorrectionS1R1LedgerCanonicalHash": before["sourceOperatorLedgerCanonicalHash"],
+        "correctedS1R1R1LedgerCanonicalHash": after["sourceOperatorLedgerCanonicalHash"],
+        "preCorrectionS1R1CoverageHash": before["sourceOperatorCoverageHash"],
+        "correctedS1R1R1CoverageHash": after["sourceOperatorCoverageHash"],
+        "eventCount": len(comparisons),
+        "usdEventCount": after["summary"]["usdEventCount"],
+        "jpyEventCount": after["summary"]["jpyEventCount"],
+        "singlePassVerifiedCount": after["summary"]["singlePassVerifiedCount"],
         "identityFields": list(identity_fields),
         "comparisons": comparisons,
         "summary": {

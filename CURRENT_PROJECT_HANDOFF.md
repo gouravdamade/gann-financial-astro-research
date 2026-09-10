@@ -4,6 +4,38 @@ Last updated: 2026-09-10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-10 (MO-R4A-S1R1-R1 Bṛhat Jātaka II.13 Locator Correction)
+
+- Verified the exact held witness
+  `BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS` directly by page image
+  after confirming SHA-256
+  `D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A`.
+  PDF image 43 is printed p.31 and image 44 is printed p.32; the II.13 dṛṣṭi
+  passage spans that boundary.
+- Preserved the historical S1 and pre-correction S1R1 artifacts. Added the
+  explicit S1R1-R1 successor overlay and ledger, correcting both affected
+  Bṛhat Jātaka II.13 provenance entries to printed pp.31-32 / PDF images
+  43-44. Root/commentary were intentionally not split because the page images
+  do not establish an unambiguous extra layer delimiter for this proposition.
+- Corrected S1R1-R1 ledger hash is
+  `00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379` and
+  corrected 24-event coverage hash is
+  `359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD`.
+  The 24-event comparison retains 12 USD, 12 JPY, all 24
+  `SINGLE_PASS_VERIFIED`, and coverage 0 none / 2 partial / 22 substantial /
+  0 complete.
+- No dṛṣṭi doctrine, evaluator mathematics, event identity, astronomy,
+  market bridge, polarity, magnitude, outcome, Founder Review, or execution
+  behavior changed. The market-hypothesis registry remains empty and
+  `executionAllowed=false`.
+- Correction records:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S1R1_R1_BRIHAT_JATAKA_II13_LOCATOR_CORRECTION.md`,
+  `status/audits/mo_r4a_s1r1_r1_source_provenance_audit.json`,
+  `status/audits/mo_r4a_s1r1_r1_immutable_event_rebinding_comparison.json`,
+  and `status/acceptance/mo_r4a_s1r1_r1_locator_correction.json`.
+- S1R1-R1 is complete for independent central review before MO-R4A-S2. No
+  Windows candidate was rebuilt and no S2 work has begun.
+
 ## Latest Update - 2026-09-10 (MO-R4A-S1R1 Classical Source Provenance Hardening)
 
 - Preserved the historical MO-R4A-S1 ledger and coverage records, then added a
