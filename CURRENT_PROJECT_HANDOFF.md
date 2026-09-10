@@ -4,6 +4,57 @@ Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-11 (MO-R4A-S3 Outcome Analysis Preregistration)
+
+- Added the sealed, outcome-blind S3 preregistration bound to the accepted
+  S2R1-R1 Saravali ledger, coverage, two side-local hypothesis hashes, registry,
+  and prediction freeze. Its immutable plan uses the later-only
+  `DUKASCOPY_HISTORICAL_USDJPY_TICK_SERVICE` in UTC, midpoint bid/ask prices,
+  and no fallback provider. S3 includes no provider client, market-file reader,
+  Founder Review input, or outcome material.
+- The frozen population is independently re-derived from S2R1-R1: 24 event
+  identities (12 USD, 12 JPY), all `SINGLE_PASS_VERIFIED`; 14 directional;
+  13 primary market-scorable; one Saturday UTC structural weekend exclusion;
+  three categorical NEUTRAL rows; and seven abstentions. The exclusion remains
+  `TN_BD340A6100B173B5F254EDC1`, USD SUPPORTIVE,
+  `[2025-04-05T01:45:04Z, 2025-04-05T12:34:35Z)`; it is retained in the
+  24-event pilot but is neither substituted, extended, nor scored as zero.
+- Primary future evaluation is frozen to each half-open
+  `[applyingStartUtc, separatingEndUtc)` interval. It will select the first
+  valid in-range tick and last valid tick strictly before the end, use
+  `ln(P_end/P_start)`, and fail data completeness rather than rescue a missing
+  boundary with an outside tick. Exact UTC is provenance only, not a return
+  boundary.
+- The validation-only USDJPY mapping is fixed: USD SUPPORTIVE/ADVERSE maps to
+  UP/DOWN, and JPY SUPPORTIVE/ADVERSE maps to DOWN/UP. It creates no
+  `signedUnit`, pair resultant, display transform, oscillator polarity,
+  magnitude, score, or production signal. NEUTRAL remains non-numeric and
+  UNKNOWN remains abstention.
+- The exact primary null is frozen at `C(5,1) * C(8,7) = 40` side-local label
+  assignments. Event windows and later returns stay fixed, the observed
+  assignment is included, `p_exact = count(H_perm >= H_observed) / 40`, and all
+  40 hit counts plus their histogram are required at a later authorized phase.
+  There is no Monte Carlo, cross-side relabeling, timestamp permutation, or
+  secondary p-value. Four strict half-open connected overlap clusters C1-C4
+  are also frozen, alongside equally weighted cluster activity and only -7/+7
+  calendar-day timing diagnostics.
+- Source artifacts are
+  `configs/research/machine_interpretation/outcome_analysis_preregistration_s3_v1.json`,
+  `status/audits/mo_r4a_s3_primary_analysis_population.json`,
+  `status/audits/mo_r4a_s3_overlap_clusters.json`,
+  `status/audits/mo_r4a_s3_analysis_plan_invariance_audit.json`, and
+  `status/acceptance/mo_r4a_s3_outcome_analysis_preregistration.json`.
+  S3 status is
+  `OUTCOME_ANALYSIS_PREREGISTRATION_COMPLETE_CENTRAL_REVIEW_REQUIRED`; the only
+  next gate is `INDEPENDENT_CENTRAL_REVIEW_BEFORE_ASTRA_PRE_OUTCOME_AUDIT`.
+- The S3 module accepts only caller-supplied synthetic in-memory ticks for
+  boundary testing. It hard-rejects an outcome file, network source, or any
+  provider attachment during preregistration materialization. `PRICE_DATA_READ`,
+  `OUTCOME_DATA_READ`, `FOUNDER_DECISION_READ`, `REVIEW_STORE_READ`, `SBC_READ`,
+  catalogue/evidence admission, signed wave/pair resultant, magnitude, Auto
+  Suggest, ML, MT5, `EXECUTION_ALLOWED`, production admission, and
+  `OUTCOME_UNLOCKED` remain false.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S2R1-R1 Saravali Relationship Orientation And Pagination Adjudication)
 
 - Direct two-pass page-image inspection of the exact held Saravali witness

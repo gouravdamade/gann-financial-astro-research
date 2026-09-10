@@ -1,0 +1,210 @@
+{
+  "contract": "MO_R4A_S3_OUTCOME_ANALYSIS_PREREGISTRATION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3",
+  "startingMaster": "41d335be460f5f0b3f6ba522028ee14b44a94f25",
+  "createdAtUtc": "2026-09-11T00:00:00Z",
+  "status": "OUTCOME_ANALYSIS_PREREGISTRATION_COMPLETE_CENTRAL_REVIEW_REQUIRED",
+  "nextGate": "INDEPENDENT_CENTRAL_REVIEW_BEFORE_ASTRA_PRE_OUTCOME_AUDIT",
+  "upstreamHashes": {
+    "sourceOperatorLedgerHash": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+    "sourceCoverageHash": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+    "hypothesisRegistryHash": "D76E208F52511BD8B5380BB32049B0C47275261443E587E3E09184E439FF3110",
+    "usdHypothesisHash": "1C816B735FCCA52B84ED26C03D1755D251EADA7C2606B1D56533A06D71B713F9",
+    "jpyHypothesisHash": "EF2D18CEA75BCC1A137D8687F332B5586FB62D8803D44819204AFDD6472ED24F",
+    "predictionFreezeHash": "83F1456271B510468A0DF28C66AD705318CD06F5D5B5E0566F6DE05FA06CF71D"
+  },
+  "frozenPilot": {
+    "eventCount": 24,
+    "usdEventCount": 12,
+    "jpyEventCount": 12,
+    "singlePassVerifiedCount": 24,
+    "bridgeApplicableCount": 17,
+    "directionalCount": 14,
+    "supportiveCount": 9,
+    "adverseCount": 5,
+    "neutralCount": 3,
+    "unknownAbstainCount": 7,
+    "primaryMarketScorableCount": 13,
+    "structuralWeekendExclusionCount": 1
+  },
+  "marketDataSource": {
+    "provider": "DUKASCOPY_HISTORICAL_USDJPY_TICK_SERVICE",
+    "instrument": "USDJPY",
+    "quoteConvention": "JPY_PER_USD",
+    "timestampConvention": "UTC_ONLY",
+    "requiredFields": [
+      "timestampUtc",
+      "bid",
+      "ask"
+    ],
+    "midpointFormula": "m(t)=(bid(t)+ask(t))/2",
+    "validQuoteRules": [
+      "bid finite positive",
+      "ask finite positive",
+      "ask >= bid"
+    ],
+    "fallbackProviderAllowed": false,
+    "s3ProviderAccessAllowed": false,
+    "s4ProviderAccessRequiresIndependentCentralReview": true
+  },
+  "primaryInterval": {
+    "definition": "[applyingStartUtc_i, separatingEndUtc_i)",
+    "exactUtcRole": "PROVENANCE_ONLY_NEVER_RETURN_BOUNDARY",
+    "halfOpen": true,
+    "startTick": "earliest valid tick timestamp >= applyingStartUtc and < separatingEndUtc",
+    "endTick": "latest valid tick timestamp < separatingEndUtc and >= startTick timestamp",
+    "outsideIntervalRescueAllowed": false,
+    "minimumDistinctTickTimestamps": 2,
+    "sameTimestampStatus": "DATA_UNSCORABLE",
+    "insufficientTicksStatus": "DATA_UNSCORABLE",
+    "alignmentGapsRecordedOnly": true,
+    "returnFormula": "r_i=ln(P_end/P_start)"
+  },
+  "validationMapping": {
+    "scope": "VALIDATION_ONLY_NOT_PRODUCTION_SIGNED_WAVE_OR_PAIR_RESULTANT",
+    "USD_SUPPORTIVE": "UP",
+    "USD_ADVERSE": "DOWN",
+    "JPY_SUPPORTIVE": "DOWN",
+    "JPY_ADVERSE": "UP",
+    "NEUTRAL": "NO_DIRECTIONAL_PREDICTION",
+    "UNKNOWN": "ABSTAIN",
+    "signedUnitCreated": false,
+    "pairRawCreated": false,
+    "pairDisplayCreated": false
+  },
+  "zeroAndAbstentionPolicy": {
+    "returnPositive": "UP",
+    "returnNegative": "DOWN",
+    "returnZero": "ZERO_MOVE_DIRECTIONAL_MISS",
+    "neutral": "EXCLUDED_FROM_DIRECTIONAL_PRIMARY_SCORING_NOT_NUMERIC_ZERO",
+    "unknown": "ABSTAIN_EXCLUDED_FROM_DIRECTIONAL_PRIMARY_SCORING"
+  },
+  "weekendExclusion": {
+    "eventId": "TN_BD340A6100B173B5F254EDC1",
+    "sideIdentity": "USD",
+    "pressureState": "SUPPORTIVE",
+    "status": "PRIMARY_NONTRADING_WEEKEND_EXCLUSION",
+    "intervalUtc": [
+      "2025-04-05T01:45:04Z",
+      "2025-04-05T12:34:35Z"
+    ],
+    "reason": "COMPLETE_PRIMARY_INTERVAL_IS_SATURDAY_UTC",
+    "retainedInFrozenPilot": true,
+    "resampleOrExtendAllowed": false
+  },
+  "overlapClusters": {
+    "overlapRule": "a.start < b.end and b.start < a.end",
+    "touchingBoundaryIsOverlap": false,
+    "connectedComponents": "TRANSITIVE_HALF_OPEN_INTERVAL_GRAPH",
+    "primaryClusters": [
+      "C1",
+      "C2",
+      "C3",
+      "C4"
+    ]
+  },
+  "primaryStatistic": {
+    "expectedDirectionUnit": {
+      "UP": 1,
+      "DOWN": -1
+    },
+    "realizedDirectionUnit": {
+      "UP": 1,
+      "DOWN": -1
+    },
+    "hitDefinition": "hit_i=1 if q_i*r_i>0 else 0",
+    "primaryHitCount": "H=sum(hit_i) over all 13 primary market-scorable events",
+    "primaryHitRate": "H/13",
+    "oneSidedAlternative": "GREATER_THAN_CHANCE"
+  },
+  "exactPermutation": {
+    "usdLabelPositions": "choose 1 SUPPORTIVE position among 5 USD primary events",
+    "jpyLabelPositions": "choose 7 SUPPORTIVE positions among 8 JPY primary events",
+    "assignmentCountFormula": "C(5,1)*C(8,7)",
+    "assignmentCount": 40,
+    "sideLocalOnly": true,
+    "eventWindowsAndReturnsFixedAtS4": true,
+    "observedAssignmentIncluded": true,
+    "retainAll40PermutationHitCountsAndHistogramAtS4": true,
+    "pExact": "count(H_perm >= H_observed)/40",
+    "noMonteCarlo": true,
+    "noTimestampPermutation": true,
+    "noCrossSidePermutation": true,
+    "noNeutralOrUnknownInPrimary": true
+  },
+  "clusterSecondary": {
+    "clusterActivity": "A_c=mean(hit_i for i in cluster c)",
+    "clusterBalancedHitRate": "mean(A_c for C1,C2,C3,C4)",
+    "equalClusterWeighting": true,
+    "secondaryPValueAllowed": false
+  },
+  "secondaryDescriptive": [
+    "USD hit rate over 5 primary events",
+    "JPY hit rate over 8 primary events",
+    "mean and median q_i*r_i",
+    "cluster-balanced hit rate",
+    "coverage accounting 14/24 directional, 13/24 primary market-scorable, 17/24 applicable, 3 neutral, 7 abstain, 1 weekend exclusion",
+    "start/end alignment gaps as descriptive audit fields"
+  ],
+  "timeShiftDiagnostics": {
+    "shiftsCalendarDays": [
+      -7,
+      7
+    ],
+    "preserve": [
+      "duration",
+      "side",
+      "label",
+      "UTC clock"
+    ],
+    "sameBoundaryAndReturnRule": true,
+    "diagnosticOnly": true,
+    "secondaryPValueAllowed": false,
+    "timingSpecificityFlag": "TIMING_SPECIFICITY_NOT_DEMONSTRATED"
+  },
+  "multiplicity": {
+    "primaryInferentialTestCount": 1,
+    "secondaryPValues": false,
+    "multiplicityCorrectionRequired": false,
+    "newAnalysisRequiresAmendment": true
+  },
+  "survivalRule": {
+    "all13PrimaryValidlyScorable": true,
+    "primaryHitRateStrictlyGreaterThan": 0.5,
+    "pExactAtMost": 0.1,
+    "clusterBalancedHitRateStrictlyGreaterThan": 0.5,
+    "survivedStatus": "PILOT_ASSOCIATION_SURVIVED",
+    "notSurvivedStatus": "PILOT_ASSOCIATION_NOT_SURVIVED",
+    "invalidDataStatus": "PRIMARY_EVALUATION_INVALID_DATA_INCOMPLETE",
+    "denominatorShrinkAllowed": false,
+    "providerSubstitutionAllowed": false
+  },
+  "amendmentAndStopping": {
+    "outcomeAccessBeforeCentralReview": false,
+    "s4AstraBeforeCentralReview": false,
+    "alternativeHorizonAllowed": false,
+    "marketOutcomeInS3Artifacts": false,
+    "productionClaimAllowed": false,
+    "executionAllowed": false
+  },
+  "outcomeAccessFlags": {
+    "PRICE_DATA_READ": false,
+    "OUTCOME_DATA_READ": false,
+    "FOUNDER_DECISION_READ": false,
+    "REVIEW_STORE_READ": false,
+    "SBC_READ": false,
+    "CATALOGUE_ADMISSION": false,
+    "EVIDENCE_ADMISSION": false,
+    "SIGNED_WAVE_RENDERED": false,
+    "PAIR_RESULTANT_CREATED": false,
+    "MAGNITUDE_CONFIGURED": false,
+    "AUTO_SUGGEST": false,
+    "ML": false,
+    "MT5": false,
+    "EXECUTION_ALLOWED": false,
+    "PRODUCTION_ADMISSION": false,
+    "OUTCOME_UNLOCKED": false
+  },
+  "preregistrationHash": "C4F8B0AC31CE37662A533B9570364894CEC37DD01FE6B68D137FE2C65001A319"
+}

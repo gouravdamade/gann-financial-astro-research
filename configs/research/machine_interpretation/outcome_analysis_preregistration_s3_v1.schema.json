@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MO_R4A_S3_OUTCOME_ANALYSIS_PREREGISTRATION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "milestone",
+    "startingMaster",
+    "createdAtUtc",
+    "status",
+    "nextGate",
+    "upstreamHashes",
+    "frozenPilot",
+    "marketDataSource",
+    "primaryInterval",
+    "validationMapping",
+    "zeroAndAbstentionPolicy",
+    "weekendExclusion",
+    "overlapClusters",
+    "primaryStatistic",
+    "exactPermutation",
+    "clusterSecondary",
+    "secondaryDescriptive",
+    "timeShiftDiagnostics",
+    "multiplicity",
+    "survivalRule",
+    "amendmentAndStopping",
+    "outcomeAccessFlags",
+    "preregistrationHash"
+  ],
+  "properties": {
+    "contract": {},
+    "schemaVersion": {
+      "type": "integer"
+    },
+    "milestone": {},
+    "startingMaster": {},
+    "createdAtUtc": {},
+    "status": {},
+    "nextGate": {},
+    "upstreamHashes": {
+      "type": "object"
+    },
+    "frozenPilot": {
+      "type": "object"
+    },
+    "marketDataSource": {
+      "type": "object"
+    },
+    "primaryInterval": {
+      "type": "object"
+    },
+    "validationMapping": {
+      "type": "object"
+    },
+    "zeroAndAbstentionPolicy": {
+      "type": "object"
+    },
+    "weekendExclusion": {
+      "type": "object"
+    },
+    "overlapClusters": {
+      "type": "object"
+    },
+    "primaryStatistic": {
+      "type": "object"
+    },
+    "exactPermutation": {
+      "type": "object"
+    },
+    "clusterSecondary": {
+      "type": "object"
+    },
+    "secondaryDescriptive": {
+      "type": "array"
+    },
+    "timeShiftDiagnostics": {
+      "type": "object"
+    },
+    "multiplicity": {
+      "type": "object"
+    },
+    "survivalRule": {
+      "type": "object"
+    },
+    "amendmentAndStopping": {
+      "type": "object"
+    },
+    "outcomeAccessFlags": {
+      "type": "object"
+    },
+    "preregistrationHash": {}
+  }
+}
