@@ -1,0 +1,1217 @@
+{
+  "contract": "MO_R4A_S2R1_SARAVALI_RELATIONSHIP_LINEAGE_RECONCILIATION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S2R1",
+  "startingMaster": "8367908818c488fe92e4de8e0f86fb0b816c0462",
+  "saravaliWitnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+  "saravaliWitnessSha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+  "exactSourceLocator": "Saravali 4.28-29, printed p.56 / scan p.60",
+  "sourceLayer": "SARAVALI_ROOT",
+  "saravaliNaturalRelationshipOperatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+  "trailokyaNaturalRelationshipOperatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+  "comparisonRows": [
+    {
+      "sourceBody": "SUN",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "CONFLICT",
+      "reason": "The two source-specific directed cells differ and remain separately recorded."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    }
+  ],
+  "comparisonSummary": {
+    "rowCount": 49,
+    "comparableDirectedPairCount": 42,
+    "agreementCount": 41,
+    "conflictCount": 1,
+    "notComparableCount": 7,
+    "unresolvedCount": 0
+  },
+  "pilotRelevantConflicts": [],
+  "branchTaken": "B",
+  "historicalS1R1R1LedgerHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+  "historicalS1R1R1CoverageHash": "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+  "newSourceLedgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+  "newCoverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+  "historicalS2RegistryHash": "E2FD1EA6B570F35E07F06259A64A19E181B06610F0659B1B333800F7688EBA66",
+  "successorS2RegistryHash": "4655316D94188E9B4187E24D67DC9466124C977002F129508F62B518F4786CDE",
+  "historicalS2PredictionFreezeHash": "5A7D318D22D27637F2A253D362258648F40CF12DB6016B6743D166A1C010C27A",
+  "successorS2PredictionFreezeHash": "68E7FEDB23EBD3CF52367DF7DEAB241977C7EA8B1720BCF4F01C07F89CB34F7C",
+  "eventDiff": [
+    {
+      "eventId": "TN_CE5F70C72FD13CC479740159",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MOON",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_397A2B053BC76D9D788E5E5E",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MERCURY",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2CompoundState": "GREAT_FRIEND",
+      "correctedCompoundState": "GREAT_FRIEND",
+      "oldCompoundState": "GREAT_FRIEND",
+      "newCompoundState": "GREAT_FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_5F09789EC41603F5659F0310",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "RAHU",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_91CFE5711918203A037CE751",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "KETU",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_593EA6B234B87E0EDF2918F7",
+      "sideIdentity": "USD",
+      "transitBody": "SATURN",
+      "natalTarget": "MARS",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "ENEMY"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "ENEMY"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "ENEMY",
+      "newNaturalRelationshipState": "ENEMY",
+      "historicalS2CompoundState": "NEUTRAL",
+      "correctedCompoundState": "NEUTRAL",
+      "oldCompoundState": "NEUTRAL",
+      "newCompoundState": "NEUTRAL",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "NEUTRAL",
+      "correctedPressureState": "NEUTRAL",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_B8750233DA923D431E121862",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "ENEMY",
+      "correctedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "ADVERSE",
+      "correctedPressureState": "ADVERSE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_29BCE2386E5DB19625921587",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MARS",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "ENEMY",
+      "correctedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "ADVERSE",
+      "correctedPressureState": "ADVERSE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_F20AD1B4AC4094C8222AE7F9",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MOON",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_574C7A7407B855CD78DF8E0D",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "VENUS",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "ENEMY",
+      "correctedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "ADVERSE",
+      "correctedPressureState": "ADVERSE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_A32A6104A917D4918B269910",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "JUPITER",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "ENEMY",
+      "correctedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "ADVERSE",
+      "correctedPressureState": "ADVERSE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_A3AE3253EF31ACAFF08CD9AA",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "SUN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2CompoundState": "NEUTRAL",
+      "correctedCompoundState": "NEUTRAL",
+      "oldCompoundState": "NEUTRAL",
+      "newCompoundState": "NEUTRAL",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "NEUTRAL",
+      "correctedPressureState": "NEUTRAL",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_BD340A6100B173B5F254EDC1",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "FRIEND",
+      "correctedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_4A15CCC7D126313A14BCB562",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "FRIEND",
+      "correctedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_493252F9AB112FC2408987DD",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "RAHU",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_B70B60AB8E4057EAE10B62EE",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "KETU",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_6E2DD561FB40D45D406F808E",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SUN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2CompoundState": "GREAT_FRIEND",
+      "correctedCompoundState": "GREAT_FRIEND",
+      "oldCompoundState": "GREAT_FRIEND",
+      "newCompoundState": "GREAT_FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MARS",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "FRIEND",
+      "correctedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_B24B1690FD8612329198D379",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MERCURY",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2CompoundState": "GREAT_FRIEND",
+      "correctedCompoundState": "GREAT_FRIEND",
+      "oldCompoundState": "GREAT_FRIEND",
+      "newCompoundState": "GREAT_FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "VENUS",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "FRIEND",
+      "correctedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_529E2CBC72B405EAD0990350",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "FRIEND",
+      "correctedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_CA3C82509E5C1C1BCB64ABD0",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MOON",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2CompoundState": "UNKNOWN",
+      "correctedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "correctedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalBridgeApplied": false,
+      "correctedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_0B97DA4310F43CF2F3803720",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SUN",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2CompoundState": "NEUTRAL",
+      "correctedCompoundState": "NEUTRAL",
+      "oldCompoundState": "NEUTRAL",
+      "newCompoundState": "NEUTRAL",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "NEUTRAL",
+      "correctedPressureState": "NEUTRAL",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_6F48D71F91F1382FAA720581",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MARS",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "FRIEND",
+      "correctedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "SUPPORTIVE",
+      "correctedPressureState": "SUPPORTIVE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    },
+    {
+      "eventId": "TN_97C9294ED13CD6C36FB0840B",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "JUPITER",
+      "historicalS2NaturalSource": {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "correctedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2CompoundState": "ENEMY",
+      "correctedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2PressureState": "ADVERSE",
+      "correctedPressureState": "ADVERSE",
+      "historicalBridgeApplied": true,
+      "correctedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_REBOUND_ONLY; verified MERCURY_TO_MARS conflict is absent from this frozen event."
+    }
+  ],
+  "summary": {
+    "unchangedPredictionCount": 24,
+    "changedPredictionCount": 0,
+    "changedCompoundEventCount": 0,
+    "oldSupportiveCount": 9,
+    "newSupportiveCount": 9,
+    "oldAdverseCount": 5,
+    "newAdverseCount": 5,
+    "oldNeutralCount": 3,
+    "newNeutralCount": 3,
+    "oldUnknownCount": 7,
+    "newUnknownCount": 7,
+    "oldBridgeAppliedCount": 17,
+    "newBridgeAppliedCount": 17,
+    "oldDirectionalCount": 14,
+    "newDirectionalCount": 14
+  },
+  "priceDataRead": false,
+  "outcomeDataRead": false,
+  "founderDecisionRead": false,
+  "reviewStoreRead": false,
+  "executionAllowed": false,
+  "lineageReconciliationHash": "8C973561EC72B5FF00AA057C1353946B9792F85E13CFBA8EFF6972C356E39B01"
+}

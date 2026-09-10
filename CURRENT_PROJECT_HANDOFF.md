@@ -1,8 +1,48 @@
 # Current Project Handoff
 
-Last updated: 2026-09-10 IST
+Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-09-11 (MO-R4A-S2R1 Saravali Natural-Relationship Lineage Reconciliation)
+
+- Direct page-image inspection of the verified held witness
+  `SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL` (SHA-256
+  `3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58`)
+  closed Saravali Chapter 4 verses 28-29 at printed p.56 / PDF image 60. The
+  Sanskrit root and the separately-labelled Santhanam translation are retained
+  as distinct evidence layers; commentary was not substituted for either.
+- Added `SARAVALI_NATURAL_RELATIONSHIP_V1` to a new successor ledger. Its
+  complete seven-planet matrix differs from the historical Trailokya matrix in
+  exactly one directed non-self cell: `MERCURY -> MARS` is `ENEMY` in Saravali
+  and `NEUTRAL` in Trailokya. The seven self-pairs remain unstated and
+  `NOT_COMPARABLE`; nodes remain fail-closed `UNKNOWN`.
+- Took source branch B and preserved all historical hashes: final S1R1-R1
+  ledger `00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379`,
+  coverage `359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD`,
+  S2 registry `E2FD1EA6B570F35E07F06259A64A19E181B06610F0659B1B333800F7688EBA66`,
+  and S2 prediction freeze
+  `5A7D318D22D27637F2A253D362258648F40CF12DB6016B6743D166A1C010C27A`.
+- New Saravali successor ledger and coverage hashes are
+  `E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6` and
+  `B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A`.
+  They rebind the stored 24-event astronomy snapshot without ephemeris or event
+  regeneration and retain all 12 USD plus 12 JPY `SINGLE_PASS_VERIFIED` rows.
+- The only source conflict is not among the 24 frozen transit-to-natal pairs,
+  so S2R1 has 0 changed compound states and 0 changed side-pressure states.
+  It retains 17 bridge-applicable rows, 14 directional rows (9 SUPPORTIVE and
+  5 ADVERSE), 3 categorical NEUTRAL rows, and 7 abstentions. The successor is
+  separately hashed because its lineage dependencies differ.
+- S2R1 remains source-only and outcome-blind: no price/outcome, Founder Review
+  content/store, SBC, catalogue, reviewed evidence, signed wave, pair
+  resultant, magnitude, Auto Suggest, ML, MT5, or execution. Every prediction
+  has `signedUnit=null`, `magnitudeConfigured=false`, and
+  `executionAllowed=false`.
+- Primary records are
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S2R1_SARAVALI_NATURAL_RELATIONSHIP_LINEAGE_RECONCILIATION.md`,
+  `status/audits/mo_r4a_s2r1_saravali_relationship_lineage_reconciliation.json`,
+  and `status/acceptance/mo_r4a_s2r1_blinded_market_bridge_hypothesis_freeze.json`.
+  The next and only gate is `INDEPENDENT_CENTRAL_REVIEW_BEFORE_MO_R4A_S3`.
 
 ## Latest Update - 2026-09-10 (MO-R4A-S2 Blinded Market-Bridge Hypothesis Freeze)
 

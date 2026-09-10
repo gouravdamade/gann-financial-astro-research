@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import os
 import sys
 import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 
@@ -717,6 +719,140 @@ class ClassicalSourceOperatorTests(unittest.TestCase):
             PROJECT_ROOT / "docs" / "research" / "MULTI_OSCILLATOR_MO_R4A_S1R1_REAL_24_SOURCE_OPERATOR_COVERAGE.md"
         ).read_text(encoding="utf-8")
         self.assertEqual(checked_markdown, rendered)
+
+    def test_s2r1_saravali_held_witness_binding_and_source_layers_are_exact(self) -> None:
+        source = _load_json(
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "mo_r4a_s2r1_saravali_relationship_lineage_reconciliation_v1.json"
+        )
+        witness = source["saravaliWitness"]
+        self.assertEqual(witness["witnessId"], "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL")
+        self.assertEqual(witness["artifactSha256"], "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58")
+        self.assertFalse(witness["sourceBytesTracked"])
+        held_path = Path(r"C:\Users\ADMIN\Desktop\saravaliofkalyan01kalyuoft.pdf")
+        if held_path.exists():
+            self.assertEqual(hashlib.sha256(held_path.read_bytes()).hexdigest().upper(), witness["artifactSha256"])
+        operator = source["saravaliNaturalRelationshipOperator"]
+        locators = {locator["sourceLayer"]: locator for locator in operator["sourceLocators"]}
+        self.assertEqual(set(locators), {"SARAVALI_ROOT", "SANTHANAM_TRANSLATION"})
+        self.assertEqual(
+            (locators["SARAVALI_ROOT"]["chapter"], locators["SARAVALI_ROOT"]["verse"], locators["SARAVALI_ROOT"]["printedPage"], locators["SARAVALI_ROOT"]["scanPage"]),
+            ("4", "28-29", "56", "60"),
+        )
+        self.assertNotIn("ROOT", locators["SANTHANAM_TRANSLATION"]["propositionRole"])
+
+    def test_s2r1_source_loader_rejects_translation_or_commentary_as_root_substitutes(self) -> None:
+        source_path = (
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "mo_r4a_s2r1_saravali_relationship_lineage_reconciliation_v1.json"
+        )
+        for mutation in (
+            lambda item: item["saravaliNaturalRelationshipOperator"]["sourceLocators"].__setitem__(
+                0,
+                {**item["saravaliNaturalRelationshipOperator"]["sourceLocators"][0], "sourceLayer": "SANTHANAM_TRANSLATION"},
+            ),
+            lambda item: item["saravaliNaturalRelationshipOperator"]["sourceLocators"].__setitem__(
+                0,
+                {**item["saravaliNaturalRelationshipOperator"]["sourceLocators"][0], "sourceLayer": "SANTHANAM_COMMENTARY"},
+            ),
+        ):
+            invalid = _load_json(source_path)
+            mutation(invalid)
+            with TemporaryDirectory() as temporary:
+                path = Path(temporary) / "invalid.json"
+                path.write_text(json.dumps(invalid), encoding="utf-8")
+                with self.assertRaisesRegex(operators.ClassicalSourceOperatorError, "Saravali"):
+                    operators._load_s2r1_saravali_relationship_source(path)
+
+    def test_s2r1_saravali_matrix_is_complete_oriented_and_has_no_trailokya_fallback(self) -> None:
+        successor = operators.build_s2r1_saravali_lineage_ledger(PROJECT_ROOT)
+        matrix = next(item for item in successor["operators"] if item["operatorId"] == "SARAVALI_NATURAL_RELATIONSHIP_V1")["rule"]["friendshipMatrix"]
+        for source in operators.RELATIONSHIP_BODIES:
+            for target in operators.RELATIONSHIP_BODIES:
+                result = operators.evaluate_saravali_natural_relationship(source, target, ledger=successor)
+                if source == target:
+                    self.assertEqual(result["outputState"], "UNKNOWN")
+                    self.assertIn("SARAVALI_SELF_RELATIONSHIP_NOT_STATED", result["unresolvedDependencies"])
+                elif target in matrix[source]["friends"]:
+                    self.assertEqual(result["outputState"], "FRIEND")
+                elif target in matrix[source]["neutral"]:
+                    self.assertEqual(result["outputState"], "NEUTRAL")
+                else:
+                    self.assertIn(target, matrix[source]["enemies"])
+                    self.assertEqual(result["outputState"], "ENEMY")
+                self.assertFalse(result["marketDirectionAuthorized"])
+                self.assertFalse(result["marketMagnitudeAuthorized"])
+        self.assertEqual(operators.evaluate_saravali_natural_relationship("MERCURY", "MARS", ledger=successor)["outputState"], "ENEMY")
+        self.assertEqual(operators.evaluate_trailokya_natural_relationship("MERCURY", "MARS", ledger=self.corrected_ledger)["outputState"], "NEUTRAL")
+        node = operators.evaluate_saravali_natural_relationship("MOON", "RAHU", ledger=successor)
+        self.assertEqual(node["outputState"], "UNKNOWN")
+        self.assertIn("RELATIONSHIP_INPUT_BODY_NOT_CLOSED_FOR_SARAVALI", node["unresolvedDependencies"])
+
+    def test_s2r1_matrix_comparison_surfaces_the_single_conflict_and_all_self_pair_gaps(self) -> None:
+        comparison = operators.build_s2r1_relationship_matrix_comparison(PROJECT_ROOT)
+        self.assertEqual(
+            comparison["comparisonSummary"],
+            {
+                "rowCount": 49,
+                "comparableDirectedPairCount": 42,
+                "agreementCount": 41,
+                "conflictCount": 1,
+                "notComparableCount": 7,
+                "unresolvedCount": 0,
+            },
+        )
+        conflicts = [item for item in comparison["comparisonRows"] if item["relationshipStatus"] == "CONFLICT"]
+        self.assertEqual(len(conflicts), 1)
+        self.assertEqual(
+            (conflicts[0]["sourceBody"], conflicts[0]["targetBody"], conflicts[0]["historicalTrailokyaState"], conflicts[0]["saravaliState"]),
+            ("MERCURY", "MARS", "NEUTRAL", "ENEMY"),
+        )
+        self.assertEqual(sum(item["relationshipStatus"] == "NOT_COMPARABLE" for item in comparison["comparisonRows"]), 7)
+
+    def test_s2r1_checked_in_successor_rebinds_the_frozen_snapshot_without_astronomy_regeneration(self) -> None:
+        with patch.object(operators, "configure_ephemeris", side_effect=AssertionError("S2R1 must not regenerate astronomy")) as ephemeris:
+            dynamic = operators.build_s2r1_real_24_source_operator_coverage(PROJECT_ROOT)
+        ephemeris.assert_not_called()
+        checked_in_ledger = _load_json(
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "classical_source_operator_ledger_s2r1_saravali_lineage_v1.json"
+        )
+        checked_in_coverage = _load_json(PROJECT_ROOT / "status" / "audits" / "mo_r4a_s2r1_real_24_source_operator_coverage.json")
+        self.assertEqual(checked_in_ledger, operators.build_s2r1_saravali_lineage_ledger(PROJECT_ROOT))
+        self.assertEqual(checked_in_coverage, dynamic)
+        self.assertEqual(dynamic["sourceOperatorLedgerCanonicalHash"], "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6")
+        self.assertEqual(dynamic["sourceOperatorCoverageHash"], "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A")
+        historical = _load_json(PROJECT_ROOT / "status" / "audits" / "mo_r4a_s1r1_r1_real_24_source_operator_coverage.json")
+        old_events = [event for side in historical["sides"] for event in side["events"]]
+        new_events = [event for side in dynamic["sides"] for event in side["events"]]
+        self.assertEqual(len(new_events), 24)
+        for old, new in zip(old_events, new_events, strict=True):
+            self.assertEqual(old["eventId"], new["eventId"])
+            self.assertEqual(old["eventHash"], new["eventHash"])
+            self.assertEqual(old["exactUtc"], new["exactUtc"])
+            self.assertEqual(old["astronomySnapshot"], new["astronomySnapshot"])
+            self.assertEqual(new["astrologicalCompositionStatus"], operators.NO_COMPOSITION_CONTRACT)
+            self.assertEqual(new["astrologicalInterpretationState"], "UNKNOWN_ASTRO_STATE")
+            outputs = {item["operatorId"]: item for item in new["operatorOutputs"]}
+            self.assertIn("SARAVALI_NATURAL_RELATIONSHIP_V1", outputs)
+            self.assertNotIn("TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1", outputs)
+            compound = outputs["BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"]
+            self.assertEqual(
+                compound["inputSnapshot"]["naturalRelationship"],
+                outputs["SARAVALI_NATURAL_RELATIONSHIP_V1"]["outputState"],
+            )
 
     def test_p0_unsigned_contract_registry_and_accepted_candidate_remain_unchanged(self) -> None:
         registry = _load_json(

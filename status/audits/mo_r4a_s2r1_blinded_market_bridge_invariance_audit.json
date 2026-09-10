@@ -1,0 +1,225 @@
+{
+  "contract": "MO_R4A_S2R1_BLINDED_MARKET_BRIDGE_INVARIANCE_AUDIT_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S2R1",
+  "upstreamSourceLedgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+  "upstreamCoverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+  "hypothesisRegistryHash": "4655316D94188E9B4187E24D67DC9466124C977002F129508F62B518F4786CDE",
+  "predictionFreezeHash": "68E7FEDB23EBD3CF52367DF7DEAB241977C7EA8B1720BCF4F01C07F89CB34F7C",
+  "eventCount": 24,
+  "rows": [
+    {
+      "eventId": "TN_CE5F70C72FD13CC479740159",
+      "eventHash": "CE5F70C72FD13CC479740159E37436FA5ABA8F16926093FCBF589F2FDBD72BEA",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "C0C10C83B9CB50DFE28745A27BCE50F5D3015946FD3B0DB5E8F2978477AB7224"
+    },
+    {
+      "eventId": "TN_397A2B053BC76D9D788E5E5E",
+      "eventHash": "397A2B053BC76D9D788E5E5E041850A13658495D1E2F4557B24845F493DEDDD4",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "4FB7056B83DB5E94F98C224ABC87ED40523AB647FABEBA4BAB60C7F59B624087"
+    },
+    {
+      "eventId": "TN_5F09789EC41603F5659F0310",
+      "eventHash": "5F09789EC41603F5659F03108A6588A65ADA7562E6BDC0325543453EB9F83018",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "5433B06551CD672CD291148C8807B7AE5CFD19A698BF018FE7DC7CCDC6F46F48"
+    },
+    {
+      "eventId": "TN_91CFE5711918203A037CE751",
+      "eventHash": "91CFE5711918203A037CE751BDC5C81FDF14F816EC4884F0C941E9FD077CF52F",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "AEF73BEF82808F50CAA8F042837C2E602FA562113B185B5F3D3A0ABE55B4558F"
+    },
+    {
+      "eventId": "TN_593EA6B234B87E0EDF2918F7",
+      "eventHash": "593EA6B234B87E0EDF2918F7C54FDD83A8BA37A2256500384BBCB3E246B4C5BD",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "0A389C50BE35FA04C2BE718F044E0B1E5B59DE605045E5053603A58AAC107A02"
+    },
+    {
+      "eventId": "TN_B8750233DA923D431E121862",
+      "eventHash": "B8750233DA923D431E1218620667A6F5D6796EFC1DDCFDA4DE96B4CA3B6890F2",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "3C6D99CB65F14C8F5053F356204850E11979EA23A8C6E20BF2E09D112108BD69"
+    },
+    {
+      "eventId": "TN_29BCE2386E5DB19625921587",
+      "eventHash": "29BCE2386E5DB1962592158747E28F6EEC0BE53705C18C06F8BDC1F3BC08E051",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "A52FCC2FEB7FA6D2B1D74C70C4DACEA62086AE2EE851A5F4C6B92FD02828E136"
+    },
+    {
+      "eventId": "TN_F20AD1B4AC4094C8222AE7F9",
+      "eventHash": "F20AD1B4AC4094C8222AE7F9C5D8F2518F16C7DB08A2B0FE1564040F73B53CC0",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "DDA1A61E53BD9D451B0EFA10F6434041390446AAB9D6497924EC5F089A489734"
+    },
+    {
+      "eventId": "TN_574C7A7407B855CD78DF8E0D",
+      "eventHash": "574C7A7407B855CD78DF8E0D2962BAD61579A09A10411A8FDE84361FB72344C6",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "B75676B8F11DB9195F0AFA584A0545294053A464847A8B81C9B8C14BB9F8D2BD"
+    },
+    {
+      "eventId": "TN_A32A6104A917D4918B269910",
+      "eventHash": "A32A6104A917D4918B269910B5A0421135BBC034C7D6CDDE43C7FE1050E26FAB",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "683B7A590A373E13A8ACC34D80CE5144E8664FDC40D5C4B4C9F8302CE6FAFD67"
+    },
+    {
+      "eventId": "TN_A3AE3253EF31ACAFF08CD9AA",
+      "eventHash": "A3AE3253EF31ACAFF08CD9AAADBFEBD34297D025DD5E06E034C9BB63BCC2A607",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "0F594B4844F3F46AAC6F2C2041DA03B6BE2C8F06CF8AFD03EC4CB7E1266B2708"
+    },
+    {
+      "eventId": "TN_BD340A6100B173B5F254EDC1",
+      "eventHash": "BD340A6100B173B5F254EDC150F2418A72DB177FF52D2367C3EF7454C7C7475C",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "5D7213DE3F33467390C4FD9CBE25CC138C9E951CC8C1954B1C000E66301D9F91"
+    },
+    {
+      "eventId": "TN_4A15CCC7D126313A14BCB562",
+      "eventHash": "4A15CCC7D126313A14BCB562EB5B322024498878BAC35C437E3DF235CA9B0D52",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "C7C5EC977BE1261F3CBBF5EB69E8934711B6E58B791B7359B06F7306A3B3443B"
+    },
+    {
+      "eventId": "TN_493252F9AB112FC2408987DD",
+      "eventHash": "493252F9AB112FC2408987DDE436FE8E9D66AC22E7D27D6B0A30825BB920AE1A",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "0BD301B57670FFC4F9961B6DBEF999F435937FB0EDD8CB8D11956B9D844CF33D"
+    },
+    {
+      "eventId": "TN_B70B60AB8E4057EAE10B62EE",
+      "eventHash": "B70B60AB8E4057EAE10B62EE993D1675EC0CABFE265FE6120098F08C9FD0A21E",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "E2E8CF89BBB48BDF2F0977C8414B6C7192D37A4061BB9375E895CBEA674A7F63"
+    },
+    {
+      "eventId": "TN_6E2DD561FB40D45D406F808E",
+      "eventHash": "6E2DD561FB40D45D406F808E3C088E8DA765C6C67B1C6E9B485333D56395D6EA",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "8169C3D7930D22364DF88FD1F9AC09E38F0A6CA7E62BDB9BDE698878A2436EC0"
+    },
+    {
+      "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+      "eventHash": "7CCC78DA82BDAC13D3CF60B0D2C7331FF7706148FE7880C7FBBC5E0DECE36735",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "DBF1CB2AB608E6B4F609353560DCB87A3CDBB9BD7750E2EB126006364E6088CD"
+    },
+    {
+      "eventId": "TN_B24B1690FD8612329198D379",
+      "eventHash": "B24B1690FD8612329198D379374B19A29F9727C49E3039FDFB6BE22E6D35BCE7",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "D784735090C377E071305F9EA7A7410AF9B8BCDE173B4025AD1D17659546F31C"
+    },
+    {
+      "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+      "eventHash": "8C3582F7101F4F14BC4ECC4F17882EF7DBDA3B9E809B78FDDF998DF8724A9B2D",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "C581ACEBE09562D25A092362B0EB06E9574338AA7ECE0B04ADC7B7FB55BB9EB4"
+    },
+    {
+      "eventId": "TN_529E2CBC72B405EAD0990350",
+      "eventHash": "529E2CBC72B405EAD09903504422B4F4E2E4C31EC2CA90319F426DF96C14ABE3",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "46BA513F172C239D48AAEBC00276D63B5D8FD9C77088D9636348D787B1BFE079"
+    },
+    {
+      "eventId": "TN_CA3C82509E5C1C1BCB64ABD0",
+      "eventHash": "CA3C82509E5C1C1BCB64ABD0BD486BFEB3D2C2739C9A00F21701FA43D9C7DEBE",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "EC441B394D6DE016E633DF80D3DDA1F897F206C66D902BE965162A9D94F1C8CA"
+    },
+    {
+      "eventId": "TN_0B97DA4310F43CF2F3803720",
+      "eventHash": "0B97DA4310F43CF2F3803720A19634D04857192925E7BC4F67B15FDBC7F2D2B0",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "4AB7222DD6CDA265478FBCF2FBF72C08EECDF561F4B0D01DC2FB59F1A8492380"
+    },
+    {
+      "eventId": "TN_6F48D71F91F1382FAA720581",
+      "eventHash": "6F48D71F91F1382FAA720581E50F038C23D80CC092DD2E6BF841B18281C689C3",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "A5A6E1FABF51A45430CBAC9C2AE183F7173CD28494DA1D2670AB699E7E2D8B5F"
+    },
+    {
+      "eventId": "TN_97C9294ED13CD6C36FB0840B",
+      "eventHash": "97C9294ED13CD6C36FB0840B055EF3AC61337F2DF9900E4B00E5521611C60D93",
+      "identityUnchanged": true,
+      "astronomySnapshotUnchanged": true,
+      "overallSourceCompositionUnchanged": true,
+      "predictionHash": "0AC269682BCF9EAACEA4FD5D81C7300E1EFB8E80530398636FAEE3FFC27CAF46"
+    }
+  ],
+  "summary": {
+    "allEventIdentitiesUnchanged": true,
+    "allAstronomySnapshotsUnchanged": true,
+    "allOverallSourceCompositionUnchanged": true,
+    "sourceAstronomyRegenerated": false,
+    "reviewStoreRead": false,
+    "founderDecisionRead": false,
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveRendered": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  },
+  "invarianceAuditHash": "A282DC181591B1F7BA11457E3F86A3FBBDCF54290BF7A3C0E98CDB3140AD07BC"
+}

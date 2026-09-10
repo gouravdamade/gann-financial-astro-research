@@ -1,0 +1,1926 @@
+{
+  "contract": "MO_R4A_S2R1_SARAVALI_LINEAGE_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+  "schemaVersion": 1,
+  "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S2R1_SARAVALI_LINEAGE_V1",
+  "milestone": "MO-R4A-S2R1",
+  "purpose": "Versioned, provenance-preserving classical source operators for outcome-blind source evaluation. No record authorizes a market bridge, currency direction, magnitude, polarity, score, or execution.",
+  "sourceAuditStatus": "SARAVALI_NATURAL_RELATIONSHIP_ROOT_CLOSED_LINEAGE_RECONCILED",
+  "sourceMeasurementPolicy": {
+    "typedOnly": true,
+    "prohibitedTargets": [
+      "signedUnit",
+      "oscillatorMagnitude",
+      "forecastProbability",
+      "priceChangeEstimate",
+      "USDJPY_DIRECTION",
+      "BUY_SELL"
+    ]
+  },
+  "operators": [
+    {
+      "operatorId": "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Planet nature and motion conditions",
+      "verseOrLocator": "1972 scan pages 29-30; printed pages 13-14; verses 54-58",
+      "originalTerm": "KRURA / SAUMYA / MAHAKRURA / MAHASHUBHA",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml",
+      "translationOrLiteralSense": "Planet class is text-specific and can be conditional for Moon and Mercury; retrograde intensifies categorically, while swift retains natural character.",
+      "directSourceClaim": "Base krura/saumya classes, Moon and Mercury conditions, and categorical retrograde/swift effects are source-recorded.",
+      "conditions": [
+        "Moon requires a source-defined lunar condition",
+        "Mercury requires same-pada or same-navamsa krura association when the conditional override is evaluated"
+      ],
+      "exceptions": [
+        "Shukla Panchami overlap remains unknown",
+        "No numeric value follows from MAHAKRURA or MAHASHUBHA"
+      ],
+      "scope": "TRAILOKYA_PLANET_CLASS_CATEGORICAL_ONLY",
+      "inputFields": [
+        "body",
+        "moonCondition",
+        "mercuryKruraAssociation",
+        "motionState"
+      ],
+      "outputFields": [
+        "KRURA",
+        "SAUMYA",
+        "MAHAKRURA",
+        "MAHASHUBHA",
+        "CONDITIONAL",
+        "UNKNOWN"
+      ],
+      "operatorType": "CATEGORICAL_PLANET_NATURE",
+      "sourceStatus": "SOURCE_CLOSED_CATEGORICAL",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "MOON_CONDITION_INPUT_UNAVAILABLE",
+        "MERCURY_ASSOCIATION_INPUT_UNAVAILABLE",
+        "MOTION_EXACT_THRESHOLD_EXTERNAL_OR_UNRESOLVED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "BENEFIC_OR_MALEFIC_TO_CURRENCY_SIGN",
+        "CATEGORICAL_INTENSITY_TO_NUMERIC_FACTOR",
+        "OSCILLATOR_SIGN",
+        "PRICE_FORECAST"
+      ],
+      "rule": {
+        "kruraBodies": [
+          "SATURN",
+          "SUN",
+          "RAHU",
+          "KETU",
+          "MARS"
+        ],
+        "saumyaBodies": [
+          "MOON",
+          "MERCURY",
+          "JUPITER",
+          "VENUS"
+        ]
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Planet nature and motion conditions",
+          "verse": "54-58",
+          "printedPage": "13-14",
+          "scanPage": "29-30",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Vedha source relationship matrix",
+      "verseOrLocator": "1972 scan page 55; printed page 39; verses 168-171",
+      "originalTerm": "MITRA / SAMA / SHATRU",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+      "translationOrLiteralSense": "The recorded friendship matrix is source-specific to Trailokya.",
+      "directSourceClaim": "Seven-planet friend, neutral, and enemy rows are directly source-recorded.",
+      "conditions": [
+        "Both bodies must be in the admitted seven-planet source table"
+      ],
+      "exceptions": [
+        "Rahu and Ketu do not inherit a seven-planet matrix cell"
+      ],
+      "scope": "TRAILOKYA_VEDHA_SOURCE_RELATIONSHIP",
+      "inputFields": [
+        "sourceBody",
+        "targetBody"
+      ],
+      "outputFields": [
+        "FRIEND",
+        "NEUTRAL",
+        "ENEMY",
+        "UNKNOWN"
+      ],
+      "operatorType": "NATURAL_RELATIONSHIP_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "RELATIONSHIP_INPUT_BODY_NOT_CLOSED_FOR_TRAILOKYA"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "FRIEND_TO_BULLISH",
+        "ENEMY_TO_BEARISH",
+        "CURRENCY_POLARITY"
+      ],
+      "rule": {
+        "friendshipMatrix": {
+          "SUN": {
+            "friends": [
+              "MOON",
+              "MARS",
+              "JUPITER"
+            ],
+            "neutral": [
+              "MERCURY"
+            ],
+            "enemies": [
+              "VENUS",
+              "SATURN"
+            ]
+          },
+          "MOON": {
+            "friends": [
+              "SUN",
+              "MERCURY"
+            ],
+            "neutral": [
+              "MARS",
+              "JUPITER",
+              "VENUS",
+              "SATURN"
+            ],
+            "enemies": []
+          },
+          "MARS": {
+            "friends": [
+              "SUN",
+              "MOON",
+              "JUPITER"
+            ],
+            "neutral": [
+              "VENUS",
+              "SATURN"
+            ],
+            "enemies": [
+              "MERCURY"
+            ]
+          },
+          "MERCURY": {
+            "friends": [
+              "SUN",
+              "VENUS"
+            ],
+            "neutral": [
+              "MARS",
+              "JUPITER",
+              "SATURN"
+            ],
+            "enemies": [
+              "MOON"
+            ]
+          },
+          "JUPITER": {
+            "friends": [
+              "SUN",
+              "MOON",
+              "MARS"
+            ],
+            "neutral": [
+              "SATURN"
+            ],
+            "enemies": [
+              "MERCURY",
+              "VENUS"
+            ]
+          },
+          "VENUS": {
+            "friends": [
+              "MERCURY",
+              "SATURN"
+            ],
+            "neutral": [
+              "MARS",
+              "JUPITER"
+            ],
+            "enemies": [
+              "SUN",
+              "MOON"
+            ]
+          },
+          "SATURN": {
+            "friends": [
+              "MERCURY",
+              "VENUS"
+            ],
+            "neutral": [
+              "JUPITER"
+            ],
+            "enemies": [
+              "SUN",
+              "MOON",
+              "MARS"
+            ]
+          }
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Vedha source relationship matrix",
+          "verse": "168-171",
+          "printedPage": "39",
+          "scanPage": "55",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "BRIHAT_JATAKA_AND_SARAVALI_EXACT_ROOT_CROSS_TEXT",
+      "sourceWork": "Brhat Jataka and Saravali",
+      "author": "Varahamihira; Kalyana Varma",
+      "witnessId": "MULTIPLE_HELD_EXACT_SOURCE_WITNESSES",
+      "witnessRole": "MULTI_WITNESS_EXACT_ROOT_BINDING",
+      "edition": "Brhat Jataka Sanskrit with Bhatotpala commentary held witness; Saravali R. Santhanam First Edition 1983 held witness",
+      "rootOrCommentary": "CROSS_TEXT_CORROBORATION",
+      "chapter": "Brhat Jataka II; Saravali 4",
+      "verseOrLocator": "Brhat Jataka II.18, printed p.38 / scan p.50; Saravali 4.30, printed p.56 / scan p.60",
+      "originalTerm": "Tatkalika Maitri",
+      "originalTextOrBoundedExcerptReference": "II.18 gives the temporary-friendly position set; Saravali 4.30 independently records the same bounded friend/enemy partition.",
+      "translationOrLiteralSense": "Temporary relationship is oriented from planet A's sign to planet B's sign.",
+      "directSourceClaim": "The two-set positional rule is bound to separate exact root-text locators rather than a central-audit summary.",
+      "conditions": [
+        "Source and target sign must be known"
+      ],
+      "exceptions": [
+        "No financial meaning follows from either temporary state"
+      ],
+      "scope": "BJ_SARAVALI_RELATIONSHIP_DOCTRINE",
+      "inputFields": [
+        "sourceSign",
+        "targetSign",
+        "relativePlace"
+      ],
+      "outputFields": [
+        "TEMPORARY_FRIEND",
+        "TEMPORARY_ENEMY"
+      ],
+      "operatorType": "TEMPORARY_RELATIONSHIP_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [
+        "BRIHAT_JATAKA_ROOT",
+        "SARAVALI_ROOT"
+      ],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "TEMPORARY_RELATIONSHIP_TO_MARKET_SIGN",
+        "NUMERIC_POLARITY"
+      ],
+      "rule": {
+        "temporaryFriendPositions": [
+          2,
+          3,
+          4,
+          10,
+          11,
+          12
+        ],
+        "temporaryEnemyPositions": [
+          1,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA",
+          "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+          "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+          "sourceLayer": "BRIHAT_JATAKA_ROOT",
+          "chapter": "II",
+          "verse": "18",
+          "printedPage": "38",
+          "scanPage": "50",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; source bytes are not tracked",
+          "propositionRole": "TEMPORARY_RELATIONSHIP_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SARAVALI_ROOT",
+          "chapter": "4",
+          "verse": "30",
+          "printedPage": "56",
+          "scanPage": "60",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; Sanskrit root appears with the held translation",
+          "propositionRole": "INDEPENDENT_TEMPORARY_RELATIONSHIP_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_MULTI_WITNESS_ROOT_BINDING"
+    },
+    {
+      "operatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "BHATTOPALA_COMMENTARY_AND_SARAVALI_ROOT_CROSS_TEXT",
+      "sourceWork": "Bhatotpala commentary to Brhat Jataka and Saravali",
+      "author": "Bhatotpala; Kalyana Varma",
+      "witnessId": "MULTIPLE_HELD_EXACT_SOURCE_WITNESSES",
+      "witnessRole": "ROOT_AND_COMMENTARY_LAYERS_EXPLICITLY_SEPARATED",
+      "edition": "Brhat Jataka Sanskrit with Bhatotpala commentary held witness; Saravali R. Santhanam First Edition 1983 held witness",
+      "rootOrCommentary": "CROSS_TEXT_CORROBORATION",
+      "chapter": "Brhat Jataka II commentary; Saravali 4",
+      "verseOrLocator": "Bhatotpala commentary following Brhat Jataka II.18, printed p.38 / scan p.50; Saravali 4.31, printed p.57 / scan p.61",
+      "originalTerm": "Adhi-mitra / Mitra / Sama / Shatru / Adhi-shatru",
+      "originalTextOrBoundedExcerptReference": "The Brhat Jataka root supplies the temporary partition; its following commentary is retained as commentary-only evidence, while Saravali 4.31 directly supplies the five-state composition.",
+      "translationOrLiteralSense": "Natural and temporary relationship produce a categorical five-state result.",
+      "directSourceClaim": "The five-state categorical table is root-bound to Saravali 4.31 and does not misattribute Bhatotpala commentary to Varahamihira's root.",
+      "conditions": [
+        "Natural relationship is friend, neutral, or enemy",
+        "Temporary relationship is friend or enemy"
+      ],
+      "exceptions": [
+        "Unknown input fails closed",
+        "No numeric sign or weight is source-authorized"
+      ],
+      "scope": "BJ_SARAVALI_RELATIONSHIP_DOCTRINE",
+      "inputFields": [
+        "naturalRelationship",
+        "temporaryRelationship"
+      ],
+      "outputFields": [
+        "GREAT_FRIEND",
+        "FRIEND",
+        "NEUTRAL",
+        "ENEMY",
+        "GREAT_ENEMY",
+        "UNKNOWN"
+      ],
+      "operatorType": "COMPOUND_RELATIONSHIP_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "COMPOUND_RELATIONSHIP_INPUT_UNRESOLVED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [
+        "BHATTOPALA_COMMENTARY",
+        "SARAVALI_ROOT"
+      ],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "GREAT_FRIEND_TO_POSITIVE_SIGN",
+        "GREAT_ENEMY_TO_NEGATIVE_SIGN",
+        "CURRENCY_POLARITY"
+      ],
+      "rule": {
+        "compoundRelationshipMap": {
+          "FRIEND:TEMPORARY_FRIEND": "GREAT_FRIEND",
+          "FRIEND:TEMPORARY_ENEMY": "NEUTRAL",
+          "NEUTRAL:TEMPORARY_FRIEND": "FRIEND",
+          "NEUTRAL:TEMPORARY_ENEMY": "ENEMY",
+          "ENEMY:TEMPORARY_FRIEND": "NEUTRAL",
+          "ENEMY:TEMPORARY_ENEMY": "GREAT_ENEMY"
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_BHATTOPALA_COMMENTARY",
+          "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+          "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+          "sourceLayer": "BHATTOPALA_COMMENTARY",
+          "chapter": "II",
+          "verse": "commentary following 18",
+          "printedPage": "38",
+          "scanPage": "50",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; source bytes are not tracked",
+          "propositionRole": "COMPOUND_RELATIONSHIP_COMMENTARY_EXPLANATION",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SARAVALI_ROOT",
+          "chapter": "4",
+          "verse": "31",
+          "printedPage": "57",
+          "scanPage": "61",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; Sanskrit root appears with the held translation",
+          "propositionRole": "COMPOUND_RELATIONSHIP_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_ROOT_AND_COMMENTARY_BOUNDARY_EXPLICIT"
+    },
+    {
+      "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "SARAVALI_ROOT",
+      "sourceWork": "Saravali",
+      "author": "Kalyana Varma",
+      "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+      "witnessRole": "ROOT_TEXT_WITH_TRANSLATION_AND_COMMENTARY_SEPARATED",
+      "edition": "R. Santhanam, Ranjan Publications, First Edition 1983, Volume I",
+      "rootOrCommentary": "ROOT_TEXT",
+      "chapter": "Chapter 4",
+      "verseOrLocator": "Saravali 4.32-33 Sanskrit root, printed p.58 / scan p.62; English rendering on the same page remains a translation-editorial mismatch",
+      "originalTerm": "Drsti",
+      "originalTextOrBoundedExcerptReference": "The held p.58 root stanza is controlling for the ordinary 3/10, 5/9, 4/8, and 7 fraction sequence; the English rendering is separately retained as a mismatch.",
+      "translationOrLiteralSense": "Third/tenth quarter, fifth/ninth half, fourth/eighth three quarters, seventh full.",
+      "directSourceClaim": "The ordinary fraction sequence is exact-root bound; corroborating Brihat Jataka and Trailokya locators retain their own source scopes.",
+      "conditions": [
+        "Relative place must be 1 through 12"
+      ],
+      "exceptions": [
+        "Unlisted places have no stated ordinary fraction in this bounded table",
+        "Santhanam English swaps the 4/8 and 5/9 descriptions and does not control the root operator"
+      ],
+      "scope": "ORDINARY_DRSTI_SOURCE_GEOMETRY",
+      "inputFields": [
+        "relativePlace"
+      ],
+      "outputFields": [
+        "DRSTI_FRACTION",
+        "NO_STATED_ORDINARY_FRACTION"
+      ],
+      "operatorType": "ORDINARY_ASPECT_FRACTION_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [],
+      "knownTranslationIssues": [
+        "SANTHANAM_ENGLISH_4_32_TRANSLATION_EDITORIAL_MISMATCH"
+      ],
+      "crossTextSupport": [
+        "BRIHAT_JATAKA_ROOT",
+        "TRAILOKYA_1972_ARGHYA_SCOPE"
+      ],
+      "crossTextConflict": [
+        "SANTHANAM_ENGLISH_4_32_TRANSLATION_EDITORIAL_MISMATCH"
+      ],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "DRSTI_FRACTION_TO_MARKET_MAGNITUDE",
+        "PROBABILITY",
+        "CURRENCY_DIRECTION",
+        "OSCILLATOR_AMPLITUDE"
+      ],
+      "rule": {
+        "ordinaryAspectFractions": {
+          "3": "1/4",
+          "10": "1/4",
+          "5": "1/2",
+          "9": "1/2",
+          "4": "3/4",
+          "8": "3/4",
+          "7": "FULL"
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SARAVALI_ROOT",
+          "chapter": "4",
+          "verse": "32-33",
+          "printedPage": "58",
+          "scanPage": "62",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; Sanskrit root appears with the held translation",
+          "propositionRole": "ORDINARY_DRSTI_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SANTHANAM_TRANSLATION",
+          "chapter": "4",
+          "verse": "32-33",
+          "printedPage": "58",
+          "scanPage": "62",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; translation is not controlling over the Sanskrit root",
+          "propositionRole": "TRANSLATION_EDITORIAL_MISMATCH_RECORD",
+          "provenanceStatus": "TRANSLATION_EDITORIAL_MISMATCH"
+        },
+        {
+          "sourceFamily": "BRIHAT_JATAKA",
+          "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+          "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+          "sourceLayer": "BRIHAT_JATAKA_ROOT",
+          "chapter": "II",
+          "verse": "13",
+          "printedPage": "31-32",
+          "scanPage": "43-44",
+          "repositoryReference": "S1R1-R1 held-witness SHA-256 binding; PDF image 43 = printed p.31 and image 44 = printed p.32; source bytes are not tracked",
+          "propositionRole": "ORDINARY_DRSTI_CROSS_TEXT_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Arghya scope",
+          "verse": "365-371",
+          "printedPage": "82, 84",
+          "scanPage": "98, 100",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_target_map_v1.yaml",
+          "propositionRole": "ARGHYA_SCOPE_LIMITED_CROSS_TEXT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_ROOT_TRANSLATION_AND_CROSS_TEXT_BOUND"
+    },
+    {
+      "operatorId": "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "BRIHAT_JATAKA_SARAVALI_TRAILOKYA_EXACT_CROSS_TEXT",
+      "sourceWork": "Brihat Jataka, Saravali, and Trailokya Dipika",
+      "author": "Varahamihira; Kalyana Varma; Pt. Mithalal Vyas",
+      "witnessId": "MULTIPLE_HELD_EXACT_SOURCE_WITNESSES",
+      "witnessRole": "CROSS_TEXT_EXACT_SOURCE_BINDING_WITH_TRAILOKYA_SCOPE_LIMIT",
+      "edition": "Brhat Jataka Sanskrit with Bhatotpala commentary held witness; Saravali R. Santhanam First Edition 1983 held witness; Trailokya 1972 original scan",
+      "rootOrCommentary": "CROSS_TEXT_CORROBORATION",
+      "chapter": "Brhat Jataka II; Saravali 4; Trailokya Arghya scope",
+      "verseOrLocator": "Brhat Jataka II.13, printed pp.31-32 / scan pp.43-44; Saravali 4.32-33, printed p.58 / scan p.62; Trailokya scan pp.98 and 100 / printed pp.82 and 84 / vv.365-371",
+      "originalTerm": "Visesha Drsti",
+      "originalTextOrBoundedExcerptReference": "Each named source locator records the Saturn 3/10, Jupiter 5/9, and Mars 4/8 special full-aspect geometry in its own source context.",
+      "translationOrLiteralSense": "Saturn has third/tenth, Jupiter fifth/ninth, and Mars fourth/eighth special full aspects.",
+      "directSourceClaim": "The deterministic special geometry remains source-bound without claiming that Trailokya's Arghya context is a general market operator.",
+      "conditions": [
+        "Source body and relative place are known"
+      ],
+      "exceptions": [
+        "This does not regenerate or replace the frozen experimental five-aspect event compiler",
+        "Trailokya Arghya scope is not a generic market operator"
+      ],
+      "scope": "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_ONLY",
+      "inputFields": [
+        "sourceBody",
+        "relativePlace"
+      ],
+      "outputFields": [
+        "SPECIAL_FULL_DRSTI",
+        "NO_SPECIAL_FULL_OVERRIDE"
+      ],
+      "operatorType": "SPECIAL_ASPECT_OVERRIDE_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [
+        "BRIHAT_JATAKA_ROOT",
+        "SARAVALI_ROOT",
+        "TRAILOKYA_1972"
+      ],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "EVENT_UNIVERSE_REGENERATION",
+        "MARKET_MAGNITUDE",
+        "CURRENCY_DIRECTION"
+      ],
+      "rule": {
+        "specialFullAspectPlaces": {
+          "SATURN": [
+            3,
+            10
+          ],
+          "JUPITER": [
+            5,
+            9
+          ],
+          "MARS": [
+            4,
+            8
+          ]
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA",
+          "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+          "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+          "sourceLayer": "BRIHAT_JATAKA_ROOT",
+          "chapter": "II",
+          "verse": "13",
+          "printedPage": "31-32",
+          "scanPage": "43-44",
+          "repositoryReference": "S1R1-R1 held-witness SHA-256 binding; PDF image 43 = printed p.31 and image 44 = printed p.32; source bytes are not tracked",
+          "propositionRole": "SPECIAL_DRSTI_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SARAVALI_ROOT",
+          "chapter": "4",
+          "verse": "32-33",
+          "printedPage": "58",
+          "scanPage": "62",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; Sanskrit root appears with the held translation",
+          "propositionRole": "SPECIAL_DRSTI_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Arghya scope",
+          "verse": "365-371",
+          "printedPage": "82, 84",
+          "scanPage": "98, 100",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_target_map_v1.yaml",
+          "propositionRole": "SPECIAL_DRSTI_CONTEXT_LIMITED_CROSS_TEXT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_EXACT_CROSS_TEXT_BOUND"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_DIGNITY_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Dignity and node doctrine",
+      "verseOrLocator": "1972 scan pages 56-58; printed pages 40-42; verses 172-179",
+      "originalTerm": "Uccha / Nicha / Sva / Sama Sthana",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+      "translationOrLiteralSense": "Own, exalted, debilitated, and sama-sthana conditions are source-specific; exact paramocca degrees and sign-lord records are preserved as source variables; node rules are Trailokya-specific.",
+      "directSourceClaim": "Sign lords, dignity records, exact paramocca degrees, sama-sthana geometry, and Rahu/Ketu doctrine are source-locked.",
+      "conditions": [
+        "Body and sidereal sign must be known"
+      ],
+      "exceptions": [
+        "SAMA_STHANA is not SAMA_GRIHA",
+        "Other sign states remain partial rather than inheriting another school"
+      ],
+      "scope": "TRAILOKYA_DIGNITY_CATEGORICAL",
+      "inputFields": [
+        "body",
+        "sign"
+      ],
+      "outputFields": [
+        "OWN_SIGN",
+        "EXALTATION",
+        "DEBILITATION",
+        "SAMA_STHANA",
+        "PARAMOCCA_DEGREES",
+        "SIGN_LORD",
+        "OTHER_DIGNITY_NOT_COMPOSED"
+      ],
+      "operatorType": "DIGNITY_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_CATEGORICAL",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [
+        "TRAILOKYA_FULL_DIGNITY_COMPOSITION_NOT_SOURCE_CLOSED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "EXALTATION_TO_BULLISH",
+        "DEBILITATION_TO_BEARISH",
+        "NODE_DOCTRINE_SUBSTITUTION"
+      ],
+      "rule": {
+        "planets": {
+          "SUN": {
+            "ownSigns": [
+              "LEO"
+            ],
+            "exaltationSign": "ARIES",
+            "debilitationSign": "LIBRA",
+            "paramoccaDegrees": 10,
+            "samaSthanaSigns": [
+              "CANCER",
+              "CAPRICORN"
+            ]
+          },
+          "MOON": {
+            "ownSigns": [
+              "CANCER"
+            ],
+            "exaltationSign": "TAURUS",
+            "debilitationSign": "SCORPIO",
+            "paramoccaDegrees": 3,
+            "samaSthanaSigns": [
+              "LEO",
+              "AQUARIUS"
+            ]
+          },
+          "MARS": {
+            "ownSigns": [
+              "ARIES",
+              "SCORPIO"
+            ],
+            "exaltationSign": "CAPRICORN",
+            "debilitationSign": "CANCER",
+            "paramoccaDegrees": 28,
+            "samaSthanaSigns": [
+              "ARIES",
+              "LIBRA"
+            ]
+          },
+          "MERCURY": {
+            "ownSigns": [
+              "GEMINI",
+              "VIRGO"
+            ],
+            "exaltationSign": "VIRGO",
+            "debilitationSign": "PISCES",
+            "paramoccaDegrees": 15,
+            "samaSthanaSigns": [
+              "SAGITTARIUS",
+              "GEMINI"
+            ]
+          },
+          "JUPITER": {
+            "ownSigns": [
+              "SAGITTARIUS",
+              "PISCES"
+            ],
+            "exaltationSign": "CANCER",
+            "debilitationSign": "CAPRICORN",
+            "paramoccaDegrees": 5,
+            "samaSthanaSigns": [
+              "LIBRA",
+              "ARIES"
+            ]
+          },
+          "VENUS": {
+            "ownSigns": [
+              "TAURUS",
+              "LIBRA"
+            ],
+            "exaltationSign": "PISCES",
+            "debilitationSign": "VIRGO",
+            "paramoccaDegrees": 27,
+            "samaSthanaSigns": [
+              "GEMINI",
+              "SAGITTARIUS"
+            ]
+          },
+          "SATURN": {
+            "ownSigns": [
+              "CAPRICORN",
+              "AQUARIUS"
+            ],
+            "exaltationSign": "LIBRA",
+            "debilitationSign": "ARIES",
+            "paramoccaDegrees": 20,
+            "samaSthanaSigns": [
+              "CAPRICORN",
+              "CANCER"
+            ]
+          }
+        },
+        "signLords": {
+          "ARIES": "MARS",
+          "TAURUS": "VENUS",
+          "GEMINI": "MERCURY",
+          "CANCER": "MOON",
+          "LEO": "SUN",
+          "VIRGO": "MERCURY",
+          "LIBRA": "VENUS",
+          "SCORPIO": "MARS",
+          "SAGITTARIUS": "JUPITER",
+          "CAPRICORN": "SATURN",
+          "AQUARIUS": "SATURN",
+          "PISCES": "JUPITER"
+        },
+        "nodes": {
+          "RAHU": {
+            "ownSign": "VIRGO",
+            "exaltationSign": "GEMINI",
+            "debilitationSign": "SAGITTARIUS"
+          },
+          "KETU": {
+            "ownSign": "PISCES",
+            "exaltationSign": "SAGITTARIUS",
+            "debilitationSign": "GEMINI"
+          }
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Dignity and node doctrine",
+          "verse": "172-179",
+          "printedPage": "40-42",
+          "scanPage": "56-58",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_STHANA_BALA_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Vedha magnitude",
+      "verseOrLocator": "1972 scan page 53; printed page 37; verse 161",
+      "originalTerm": "Sthana Bala",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+      "translationOrLiteralSense": "Own 4/4, friend 3/4, neutral 2/4, enemy 1/4.",
+      "directSourceClaim": "The relationship-dependent positional bala table is source-closed within Trailokya Vedha.",
+      "conditions": [
+        "A Trailokya relationship state is available"
+      ],
+      "exceptions": [
+        "Sthana bala is not sthana phala",
+        "No market magnitude follows"
+      ],
+      "scope": "TRAILOKYA_VEDHA",
+      "inputFields": [
+        "relationshipState"
+      ],
+      "outputFields": [
+        "STHANA_BALA_FRACTION"
+      ],
+      "operatorType": "SOURCE_MEASUREMENT_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "STHANA_BALA_TO_OSCILLATOR_MAGNITUDE",
+        "STHANA_BALA_TO_PRICE_FORECAST"
+      ],
+      "rule": {
+        "sthanaBalaFractions": {
+          "OWN": "4/4",
+          "FRIEND": "3/4",
+          "NEUTRAL": "2/4",
+          "ENEMY": "1/4"
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Sthana bala",
+          "verse": "161",
+          "printedPage": "37",
+          "scanPage": "53",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_STHANA_PHALA_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Vedha magnitude",
+      "verseOrLocator": "1972 scan page 54; printed page 38; verses 162-165",
+      "originalTerm": "Sthana Phala",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+      "translationOrLiteralSense": "Saumya has own/friend/neutral/enemy 20/15/10/5; Krura has 5/10/15/20.",
+      "directSourceClaim": "Bala and phala are distinct; source phala values apply within Trailokya Vedha result context.",
+      "conditions": [
+        "Source class is SAUMYA or KRURA",
+        "Relationship is OWN, FRIEND, NEUTRAL, or ENEMY"
+      ],
+      "exceptions": [
+        "Not a percentage, probability, score, or market magnitude",
+        "No generic use outside Trailokya Vedha"
+      ],
+      "scope": "TRAILOKYA_VEDHA",
+      "inputFields": [
+        "natureState",
+        "relationshipState"
+      ],
+      "outputFields": [
+        "TRAILOKYA_STHANA_PHALA"
+      ],
+      "operatorType": "SOURCE_MEASUREMENT_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "CONTEXT_SPECIFIC_RESOLVER_REQUIRED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "TRAILOKYA_PHALA_TO_CURRENCY_DIRECTION",
+        "TRAILOKYA_PHALA_TO_OSCILLATOR_MAGNITUDE",
+        "PERCENT_FORECAST"
+      ],
+      "rule": {
+        "sthanaPhala": {
+          "SAUMYA": {
+            "OWN": 20,
+            "FRIEND": 15,
+            "NEUTRAL": 10,
+            "ENEMY": 5
+          },
+          "KRURA": {
+            "OWN": 5,
+            "FRIEND": 10,
+            "NEUTRAL": 15,
+            "ENEMY": 20
+          }
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Sthana phala",
+          "verse": "162-165",
+          "printedPage": "38",
+          "scanPage": "54",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Vedha magnitude modifiers",
+      "verseOrLocator": "1972 scan page 54; printed page 38; verse 166",
+      "originalTerm": "Vakra / Uccha / Shighra / Nicha",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+      "translationOrLiteralSense": "Isolated retrograde x2, exalted x3, swift retains base, and debilitated x1/2 modifiers for an obtained source result.",
+      "directSourceClaim": "Individual modifier targets are source-closed; multi-modifier stacking is not.",
+      "conditions": [
+        "Previously obtained Trailokya sthana/Vedha phala",
+        "Exactly one individually source-closed modifier"
+      ],
+      "exceptions": [
+        "Swift is not assigned a numerical factor of 1.0",
+        "Two or more modifiers fail closed"
+      ],
+      "scope": "TRAILOKYA_VEDHA",
+      "inputFields": [
+        "sourceMeasurement",
+        "modifiers"
+      ],
+      "outputFields": [
+        "TRAILOKYA_STHANA_PHALA",
+        "SOURCE_MODIFIER_FACTOR",
+        "UNRESOLVED_MODIFIER_COMBINATION"
+      ],
+      "operatorType": "ISOLATED_SOURCE_RESULT_MODIFIER",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "MULTI_MODIFIER_STACKING_UNRESOLVED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "MULTIPLY_ALL_MODIFIERS",
+        "MODIFIER_TO_MARKET_FACTOR",
+        "MODIFIER_TO_CURRENCY_DIRECTION"
+      ],
+      "rule": {
+        "individualModifiers": {
+          "RETROGRADE": {
+            "factor": "2"
+          },
+          "EXALTATION": {
+            "factor": "3"
+          },
+          "SWIFT": {
+            "baseResultRetained": true
+          },
+          "DEBILITATION": {
+            "factor": "1/2"
+          }
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Individual source-result modifiers",
+          "verse": "166",
+          "printedPage": "38",
+          "scanPage": "54",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Sthula motion classification",
+      "verseOrLocator": "1972 scan pages 32-36; printed pages 16-19; verses 65-77",
+      "originalTerm": "Vakra / Shighra / Sama",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_sthula_motion_classifier_v1.yaml",
+      "translationOrLiteralSense": "Bounded relative-Sun classes state coarse motion and source direction, while exact continuous thresholds are delegated to ganita/karana/panchanga.",
+      "directSourceClaim": "Specific enumerated relative-Sun cases are source-closed; stationary and continuous thresholds are not.",
+      "conditions": [
+        "Applicable body and relative-Sun place"
+      ],
+      "exceptions": [
+        "Outer-planet Asta does not establish a Vedha direction",
+        "Inner-planet unlisted positions remain unknown",
+        "No continuous speed threshold is inferred"
+      ],
+      "scope": "TRAILOKYA_STHULA_MOTION_AND_VEDHA_DIRECTION",
+      "inputFields": [
+        "body",
+        "relativeSunPlace"
+      ],
+      "outputFields": [
+        "VAKRA",
+        "ATIVAKRA",
+        "KUTILA",
+        "SHIGHRA",
+        "SAMA",
+        "MANDA",
+        "ASTA_DIRECTION_UNKNOWN",
+        "UNKNOWN"
+      ],
+      "operatorType": "BOUNDED_MOTION_CLASSIFICATION",
+      "sourceStatus": "SOURCE_CLOSED_CATEGORICAL",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [
+        "MOTION_EXACT_THRESHOLD_EXTERNAL_OR_UNRESOLVED",
+        "TRAILOKYA_STATIONARY_STATE_UNRESOLVED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "MODERN_SPEED_THRESHOLD_SUBSTITUTION",
+        "MOTION_TO_CURRENCY_DIRECTION",
+        "MOTION_TO_MARKET_MAGNITUDE"
+      ],
+      "rule": {
+        "outerPlanetBodies": [
+          "MARS",
+          "JUPITER",
+          "SATURN"
+        ],
+        "innerPlanetBodies": [
+          "MERCURY",
+          "VENUS"
+        ],
+        "outerPlanetRelativeSun": {
+          "2": "SHIGHRA",
+          "3": "SAMA",
+          "4": "MANDA",
+          "5": "VAKRA",
+          "6": "VAKRA",
+          "7": "ATIVAKRA",
+          "8": "ATIVAKRA",
+          "9": "KUTILA",
+          "10": "KUTILA",
+          "11": "SHIGHRA",
+          "12": "SHIGHRA"
+        },
+        "innerPlanetRelativeSun": {
+          "2": "VAKRA",
+          "12": "SHIGHRA",
+          "3": "SAMA",
+          "11": "SAMA"
+        },
+        "motionDirection": {
+          "VAKRA": "RIGHT",
+          "ATIVAKRA": "RIGHT",
+          "KUTILA": "RIGHT",
+          "SHIGHRA": "LEFT",
+          "SAMA": "FRONT",
+          "MANDA": "FRONT"
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Motion conditions",
+          "verse": "65-77",
+          "printedPage": "16-19",
+          "scanPage": "32-36",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "propositionRole": "DIRECT_SOURCE_RULE",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "BJ_SARAVALI_DIK_BALA_CONDITION_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "BRIHAT_JATAKA_AND_SARAVALI_EXACT_ROOT_CROSS_TEXT",
+      "sourceWork": "Brhat Jataka and Saravali",
+      "author": "Varahamihira; Kalyana Varma",
+      "witnessId": "MULTIPLE_HELD_EXACT_SOURCE_WITNESSES",
+      "witnessRole": "MULTI_WITNESS_EXACT_ROOT_BINDING",
+      "edition": "Brhat Jataka Sanskrit with Bhatotpala commentary held witness; Saravali R. Santhanam First Edition 1983 held witness",
+      "rootOrCommentary": "CROSS_TEXT_CORROBORATION",
+      "chapter": "Brhat Jataka II; Saravali 4",
+      "verseOrLocator": "Brhat Jataka II.19, printed p.38 / scan p.50; Saravali 4.35, printed p.58 / scan p.62",
+      "originalTerm": "Dik Bala",
+      "originalTextOrBoundedExcerptReference": "Both exact root-page locators preserve the categorical cardinal-direction assignments only.",
+      "translationOrLiteralSense": "Directional strength condition only.",
+      "directSourceClaim": "Dik Bala remains a categorical cardinal condition. No scalar, interpolation, currency direction, or magnitude follows.",
+      "conditions": [
+        "Body and source direction condition are known"
+      ],
+      "exceptions": [
+        "No quantitative 0-1 interpolation"
+      ],
+      "scope": "BJ_SARAVALI_DIK_BALA_CATEGORICAL",
+      "inputFields": [
+        "body",
+        "direction"
+      ],
+      "outputFields": [
+        "DIRECTIONAL_STRENGTH_CONDITION_PRESENT",
+        "DIRECTIONAL_STRENGTH_CONDITION_NOT_PRESENT"
+      ],
+      "operatorType": "CATEGORICAL_DIRECTIONAL_CONDITION",
+      "sourceStatus": "SOURCE_CLOSED_CATEGORICAL",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [
+        "DIK_BALA_QUANTITATIVE_INTERPOLATION_NOT_SOURCE_CLOSED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [
+        "BRIHAT_JATAKA_ROOT",
+        "SARAVALI_ROOT"
+      ],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "CONTINUOUS_DIK_BALA_SCALAR",
+        "DIRECTIONAL_STRENGTH_TO_CURRENCY_SIGN"
+      ],
+      "rule": {
+        "directionByBody": {
+          "JUPITER": "EAST",
+          "MERCURY": "EAST",
+          "SUN": "SOUTH",
+          "MARS": "SOUTH",
+          "SATURN": "WEST",
+          "MOON": "NORTH",
+          "VENUS": "NORTH"
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA",
+          "witnessId": "BRIHAT_JATAKA_BHATTOPALA_SANSKRIT_TIKA_HELD_WITNESS",
+          "witnessRole": "HELD_SANSKRIT_ROOT_AND_BHATTOPALA_COMMENTARY_PAGE_IMAGE",
+          "sourceLayer": "BRIHAT_JATAKA_ROOT",
+          "chapter": "II",
+          "verse": "19",
+          "printedPage": "38",
+          "scanPage": "50",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; source bytes are not tracked",
+          "propositionRole": "DIK_BALA_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SARAVALI_ROOT",
+          "chapter": "4",
+          "verse": "35",
+          "printedPage": "58",
+          "scanPage": "62",
+          "repositoryReference": "S1R1 witness registry SHA-256 binding; Sanskrit root appears with the held translation",
+          "propositionRole": "DIK_BALA_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_EXACT_CROSS_TEXT_BOUND"
+    },
+    {
+      "operatorId": "SARAVALI_POSITIONAL_STRENGTH_COMPONENTS_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "SARAVALI_ROOT_AND_COMMENTARY",
+      "sourceWork": "Saravali",
+      "author": "Kalyana Varma; R. Santhanam translation/commentary witness",
+      "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+      "witnessRole": "HELD_PARTIAL_TRANSLATION_COMMENTARY_WITNESS",
+      "edition": "R. Santhanam, Ranjan Publications, First Edition 1983, Volume I",
+      "rootOrCommentary": "ROOT_TEXT_AND_COMMENTARY_SEPARATED",
+      "chapter": "Positional strength",
+      "verseOrLocator": "Central audit source-component inventory; exact page-level source packet not promoted for an event evaluator",
+      "originalTerm": "Uccha Bala / Sapta-Vargaja Bala / Ojayugma-Rasyamsa Bala / Kendra Bala / Drekkana Bala",
+      "originalTextOrBoundedExcerptReference": "Central audit records distinct Saravali positional-strength components.",
+      "translationOrLiteralSense": "Classical strength is not a single scalar.",
+      "directSourceClaim": "The components are source-recorded as separate families; no unified event evaluator is closed here.",
+      "conditions": [],
+      "exceptions": [
+        "Do not attribute Saravali expansion to Brihat Jataka root",
+        "No scalar aggregation"
+      ],
+      "scope": "SARAVALI_POSITIONAL_STRENGTH_COMPONENT_INVENTORY",
+      "inputFields": [],
+      "outputFields": [
+        "SOURCE_COMPONENT_RECORD_ONLY"
+      ],
+      "operatorType": "SOURCE_COMPONENT_INVENTORY",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "machineEvaluable": false,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "SARAVALI_FULL_POSITIONAL_STRENGTH_AGGREGATION_NOT_SOURCE_CLOSED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": false,
+      "prohibitedInterpretations": [
+        "UNIFIED_CLASSICAL_STRENGTH_SCALAR",
+        "SHADBALA_SUBSTITUTION",
+        "MARKET_MAGNITUDE"
+      ],
+      "rule": {
+        "componentNames": [
+          "UCCHA_BALA",
+          "SAPTA_VARGAJA_BALA",
+          "OJAYUGMA_RASYAMSA_BALA",
+          "KENDRA_BALA",
+          "DREKKANA_BALA"
+        ]
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "MO_R4A_S1_CENTRAL_SOURCE_AUDIT",
+          "witnessRole": "HISTORICAL_AUDIT_NOT_PRIMARY_SOURCE",
+          "sourceLayer": "HISTORICAL_CENTRAL_AUDIT",
+          "chapter": "Unpromoted positional-strength component inventory",
+          "verse": "",
+          "printedPage": "",
+          "scanPage": "",
+          "repositoryReference": "docs/research/MULTI_OSCILLATOR_MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_CLOSURE.md",
+          "propositionRole": "HISTORICAL_UNBOUND_COMPONENT_INVENTORY",
+          "provenanceStatus": "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND"
+        }
+      ],
+      "provenanceStatus": "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND"
+    },
+    {
+      "operatorId": "SARAVALI_NAISARGIKA_STRENGTH_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "SARAVALI_HISTORICAL_AUDIT_UNBOUND",
+      "sourceWork": "Saravali",
+      "author": "Kalyana Varma",
+      "witnessId": "MO_R4A_S1_CENTRAL_SOURCE_AUDIT",
+      "witnessRole": "HISTORICAL_AUDIT_NOT_PRIMARY_SOURCE",
+      "edition": "Saravali R. Santhanam 1983 held partial witness",
+      "rootOrCommentary": "HISTORICAL_AUDIT_NOT_SOURCE_LAYER",
+      "chapter": "Natural strength",
+      "verseOrLocator": "Historical central audit preserves the literal rupa record, but no exact root or commentary locator is durably bound for S1R1",
+      "originalTerm": "Naisargika Bala",
+      "originalTextOrBoundedExcerptReference": "Cross-text hierarchy Saturn < Mars < Mercury < Jupiter < Venus < Moon < Sun; Saravali retains literal rupa values separately.",
+      "translationOrLiteralSense": "Natural source strength hierarchy and literal source measures.",
+      "directSourceClaim": "No executable or mode-one claim is made. The historical proposition remains visible only as unresolved source research.",
+      "conditions": [],
+      "exceptions": [
+        "Literal rupa values remain source measurements"
+      ],
+      "scope": "NAISARGIKA_SOURCE_RECORD_ONLY",
+      "inputFields": [],
+      "outputFields": [
+        "NAISARGIKA_RUPA",
+        "SOURCE_HIERARCHY"
+      ],
+      "operatorType": "SOURCE_MEASUREMENT_INVENTORY",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "machineEvaluable": false,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "SARAVALI_EXACT_RUPA_EVENT_USE_NOT_PROMOTED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": false,
+      "prohibitedInterpretations": [
+        "RUPA_TO_OSCILLATOR_WEIGHT",
+        "RUPA_TO_MARKET_MAGNITUDE"
+      ],
+      "rule": {
+        "hierarchyLowToHigh": [
+          "SATURN",
+          "MARS",
+          "MERCURY",
+          "JUPITER",
+          "VENUS",
+          "MOON",
+          "SUN"
+        ]
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "MO_R4A_S1_CENTRAL_SOURCE_AUDIT",
+          "witnessRole": "HISTORICAL_AUDIT_NOT_PRIMARY_SOURCE",
+          "sourceLayer": "HISTORICAL_CENTRAL_AUDIT",
+          "chapter": "Unpromoted naisargika-strength record",
+          "verse": "",
+          "printedPage": "",
+          "scanPage": "",
+          "repositoryReference": "docs/research/MULTI_OSCILLATOR_MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_CLOSURE.md",
+          "propositionRole": "HISTORICAL_UNBOUND_NAISARGIKA_RECORD",
+          "provenanceStatus": "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND"
+        }
+      ],
+      "provenanceStatus": "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_GRAHA_LATTA_BOUNDARY_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Graha Latta",
+      "verseOrLocator": "1972 scan pages 75-77; printed pages 59-61; verses 261-275",
+      "originalTerm": "Graha Latta",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_graha_latta_v1.yaml",
+      "translationOrLiteralSense": "Separate 27-nakshatra offset doctrine with Abhijit excluded.",
+      "directSourceClaim": "Offsets are source-recorded, but counting origin and general target construction remain unresolved.",
+      "conditions": [
+        "Latta-specific input context"
+      ],
+      "exceptions": [
+        "Not ordinary Vedha",
+        "Not TD1 semantic expansion",
+        "No runtime target construction"
+      ],
+      "scope": "TRAILOKYA_LATTA_ONLY",
+      "inputFields": [
+        "lattaSpecificOrigin",
+        "nakshatra"
+      ],
+      "outputFields": [
+        "NOT_EVALUATED"
+      ],
+      "operatorType": "SEPARATE_DOCTRINE_BOUNDARY",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "machineEvaluable": false,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [
+        "LATTA_NOT_ORDINARY_VEDHA",
+        "TRAILOKYA_LATTA_COUNTING_ORIGIN_UNRESOLVED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": false,
+      "prohibitedInterpretations": [
+        "ORDINARY_VEDHA_FALLBACK",
+        "CURRENCY_DIRECTION",
+        "MARKET_OPERATOR"
+      ],
+      "rule": {
+        "nakshatraCount": 27,
+        "abhijit": "EXCLUDED"
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Graha Latta",
+          "verse": "261-275",
+          "printedPage": "59-61",
+          "scanPage": "75-77",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_source_contract_v1.yaml",
+          "propositionRole": "PARTIAL_SOURCE_BOUNDARY",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "PARTIAL_OPERATOR_WITH_EXACT_SOURCE_BOUNDARY"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_ARGHYA_VISWA_BOUNDARY_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Arghya and Viswa",
+      "verseOrLocator": "1972 scan pages 92-103; printed pages 76-87; verses 345-378",
+      "originalTerm": "Arghya / Viswa",
+      "originalTextOrBoundedExcerptReference": "Existing contracts configs/sbc/trailokya/trailokya_1972_arghya_foundation_v1.yaml and trailokya_1972_arghya_viswa_v1.yaml",
+      "translationOrLiteralSense": "Historical commodity availability/value procedure with scoped Viswa netting.",
+      "directSourceClaim": "Arghya subtraction is scoped to its own commodity procedure and cannot become a universal reducer or FX operator.",
+      "conditions": [
+        "Arghya-specific historical commodity context"
+      ],
+      "exceptions": [
+        "No complete worked calculation promoted",
+        "No price equation",
+        "No FX mapping"
+      ],
+      "scope": "TRAILOKYA_ARGHYA_VISWA_ONLY",
+      "inputFields": [
+        "arghyaSpecificContext"
+      ],
+      "outputFields": [
+        "NOT_EVALUATED",
+        "ARGHYA_VISVA"
+      ],
+      "operatorType": "SEPARATE_DOCTRINE_BOUNDARY",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "machineEvaluable": false,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [
+        "ARGHYA_NOT_GENERIC_MARKET_OPERATOR",
+        "TRAILOKYA_ARTHA_CONTEXT_NOT_GENERALIZABLE"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": false,
+      "prohibitedInterpretations": [
+        "UNIVERSAL_ASTROLOGY_REDUCER",
+        "FX_RETURN",
+        "BUY_SELL",
+        "CURRENCY_DIRECTION"
+      ],
+      "rule": {
+        "measurementType": "ARGHYA_VISVA",
+        "sourceScope": "HISTORICAL_COMMODITY_ARGHYA"
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Arghya Viswa",
+          "verse": "345-378",
+          "printedPage": "76-87",
+          "scanPage": "92-103",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_source_contract_v1.yaml",
+          "propositionRole": "PARTIAL_SOURCE_BOUNDARY",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "PARTIAL_OPERATOR_WITH_EXACT_SOURCE_BOUNDARY"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_CONTEXT_RESOLUTION_BOUNDARY_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "sourceWork": "Trailokya Dipika",
+      "author": "Pt. Mithalal Vyas",
+      "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+      "edition": "Pt. Mithalal Vyas, 1972 original scan",
+      "rootOrCommentary": "ROOT_TEXT_AND_HINDI_COMMENTARY",
+      "chapter": "Context-specific resolution",
+      "verseOrLocator": "1972 scan pages 46-102; printed pages 30-86; selected verses 125, 146, 148-152, 209, 213, 220-223, 246, 357-376",
+      "originalTerm": "Vedha / Ubhayato / Prashna / Yuddha / Arghya",
+      "originalTextOrBoundedExcerptReference": "Existing contract configs/sbc/trailokya/trailokya_1972_context_resolution_v1.yaml",
+      "translationOrLiteralSense": "Named source contexts retain their own conditions and are not merged into a universal resolver.",
+      "directSourceClaim": "Context-specific results are closed only within their named scopes.",
+      "conditions": [
+        "Named source context and every stated precondition"
+      ],
+      "exceptions": [
+        "No universal multi-planet precedence",
+        "No generic cancellation rule"
+      ],
+      "scope": "TRAILOKYA_NAMED_CONTEXTS_ONLY",
+      "inputFields": [
+        "contextSpecificInputs"
+      ],
+      "outputFields": [
+        "CONTEXT_SPECIFIC_SOURCE_RESULT"
+      ],
+      "operatorType": "CONTEXT_BOUNDARY",
+      "sourceStatus": "SOURCE_CLOSED_CATEGORICAL",
+      "machineEvaluable": false,
+      "requiresExternalAstronomy": true,
+      "unresolvedDependencies": [
+        "CONTEXT_SPECIFIC_RESOLVER_REQUIRED",
+        "UNIVERSAL_MULTI_PLANET_PRECEDENCE_NOT_SOURCE_CLOSED"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": false,
+      "prohibitedInterpretations": [
+        "RESOLVE_ALL_ASTROLOGY",
+        "GLOBAL_PRECEDENCE",
+        "CURRENCY_DIRECTION"
+      ],
+      "rule": {
+        "namedContexts": [
+          "ORDINARY_VEDHA",
+          "UBHAYATO_VEDHA",
+          "PRASHNA",
+          "PLANETARY_WAR",
+          "ARGHYA",
+          "GRAHA_LATTA"
+        ]
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "sourceLayer": "TRAILOKYA_1972_ROOT_TEXT_AND_HINDI_COMMENTARY",
+          "chapter": "Context resolution boundaries",
+          "verse": "125, 146, 148-152, 209, 213, 220-223, 246, 357-376",
+          "printedPage": "30-86",
+          "scanPage": "46-102",
+          "repositoryReference": "configs/sbc/trailokya/trailokya_1972_vedha_source_contract_v1.yaml",
+          "propositionRole": "CATEGORICAL_CONTEXT_BOUNDARY",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_WITH_EXISTING_TRAILOKYA_PAGE_LOCK"
+    },
+    {
+      "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "operatorVersion": "1",
+      "sourceFamily": "SARAVALI_ROOT_1983_HELD_WITNESS",
+      "sourceWork": "Saravali of Kalyana Varma",
+      "author": "Kalyana Varma",
+      "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+      "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+      "edition": "R. Santhanam, First Edition 1983 held witness",
+      "rootOrCommentary": "SARAVALI_ROOT_WITH_TRANSLATION_SEPARATED",
+      "chapter": "4",
+      "verseOrLocator": "Saravali 4.28-29, printed p.56 / scan p.60",
+      "originalTerm": "Naisargika Maitri",
+      "originalTextOrBoundedExcerptReference": "Saravali 4.28-29 Sanskrit root gives seven-planet natural friendship, enmity, and the neutrality rule.",
+      "translationOrLiteralSense": "The Santhanam English text on the same page is retained only as a separately-labelled lexical and row rendering cross-check.",
+      "directSourceClaim": "The Sanskrit root directly closes the oriented seven-planet natural relationship matrix. A body neither named friend nor enemy is neutral; self and node relationships are not stated.",
+      "conditions": [
+        "Both bodies must be distinct members of the source-closed seven-planet table"
+      ],
+      "exceptions": [
+        "Self relationships are not stated and remain UNKNOWN",
+        "Rahu and Ketu are not assigned cells and remain UNKNOWN",
+        "No Trailokya relationship cell may fill a Saravali gap"
+      ],
+      "scope": "SARAVALI_CHAPTER_4_NATURAL_RELATIONSHIP",
+      "inputFields": [
+        "sourceBody",
+        "targetBody"
+      ],
+      "outputFields": [
+        "FRIEND",
+        "NEUTRAL",
+        "ENEMY",
+        "UNKNOWN"
+      ],
+      "operatorType": "NATURAL_RELATIONSHIP_LOOKUP",
+      "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+      "machineEvaluable": true,
+      "requiresExternalAstronomy": false,
+      "unresolvedDependencies": [
+        "SARAVALI_SELF_RELATIONSHIP_NOT_STATED",
+        "RELATIONSHIP_INPUT_BODY_NOT_CLOSED_FOR_SARAVALI"
+      ],
+      "knownTranslationIssues": [],
+      "crossTextSupport": [],
+      "crossTextConflict": [
+        "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1:MERCURY_TO_MARS"
+      ],
+      "marketDirectionAuthorized": false,
+      "marketMagnitudeAuthorized": false,
+      "modeOneEligible": true,
+      "prohibitedInterpretations": [
+        "FRIEND_TO_BULLISH",
+        "ENEMY_TO_BEARISH",
+        "CURRENCY_POLARITY",
+        "NUMERIC_MAGNITUDE"
+      ],
+      "rule": {
+        "friendshipMatrix": {
+          "SUN": {
+            "friends": [
+              "MOON",
+              "MARS",
+              "JUPITER"
+            ],
+            "neutral": [
+              "MERCURY"
+            ],
+            "enemies": [
+              "VENUS",
+              "SATURN"
+            ]
+          },
+          "MOON": {
+            "friends": [
+              "SUN",
+              "MERCURY"
+            ],
+            "neutral": [
+              "MARS",
+              "JUPITER",
+              "VENUS",
+              "SATURN"
+            ],
+            "enemies": []
+          },
+          "MARS": {
+            "friends": [
+              "SUN",
+              "MOON",
+              "JUPITER"
+            ],
+            "neutral": [
+              "VENUS",
+              "SATURN"
+            ],
+            "enemies": [
+              "MERCURY"
+            ]
+          },
+          "MERCURY": {
+            "friends": [
+              "SUN",
+              "VENUS"
+            ],
+            "neutral": [
+              "JUPITER",
+              "SATURN"
+            ],
+            "enemies": [
+              "MARS",
+              "MOON"
+            ]
+          },
+          "JUPITER": {
+            "friends": [
+              "SUN",
+              "MOON",
+              "MARS"
+            ],
+            "neutral": [
+              "SATURN"
+            ],
+            "enemies": [
+              "MERCURY",
+              "VENUS"
+            ]
+          },
+          "VENUS": {
+            "friends": [
+              "MERCURY",
+              "SATURN"
+            ],
+            "neutral": [
+              "MARS",
+              "JUPITER"
+            ],
+            "enemies": [
+              "SUN",
+              "MOON"
+            ]
+          },
+          "SATURN": {
+            "friends": [
+              "MERCURY",
+              "VENUS"
+            ],
+            "neutral": [
+              "JUPITER"
+            ],
+            "enemies": [
+              "SUN",
+              "MOON",
+              "MARS"
+            ]
+          }
+        }
+      },
+      "sourceLocators": [
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SARAVALI_ROOT",
+          "chapter": "4",
+          "verse": "28-29",
+          "printedPage": "56",
+          "scanPage": "60",
+          "repositoryReference": "Private held witness SHA-256 binding; source bytes are not tracked",
+          "propositionRole": "NATURAL_RELATIONSHIP_ROOT",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        },
+        {
+          "sourceFamily": "SARAVALI",
+          "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+          "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+          "sourceLayer": "SANTHANAM_TRANSLATION",
+          "chapter": "4",
+          "verse": "28-29",
+          "printedPage": "56",
+          "scanPage": "60",
+          "repositoryReference": "Private held witness SHA-256 binding; source bytes are not tracked",
+          "propositionRole": "NATURAL_RELATIONSHIP_TRANSLATION",
+          "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        }
+      ],
+      "provenanceStatus": "SOURCE_CLOSED_ROOT_WITH_TRANSLATION_LAYER_SEPARATED"
+    }
+  ],
+  "guardrails": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderReviewStoreRead": false,
+    "founderDecisionRead": false,
+    "marketBridgeCreated": false,
+    "marketHypothesisRegistryEntriesCreated": 0,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveCreated": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "executionAllowed": false
+  },
+  "provenanceHardening": {
+    "contract": "MO_R4A_S1R1_R1_BRIHAT_JATAKA_II13_LOCATOR_CORRECTION_V1",
+    "baseS1R1LedgerCanonicalHash": "9704821AB7A3777ABA6DB7671246B989ACBE0403FF511EED7CC38303BDBE2867",
+    "historicalS1LedgerCanonicalHash": "E8C73059A0F85DCB9A9ACC6945A964FAD6EB0D4A47C0CBBE9F72000B5F5E10C4",
+    "historicalS1LedgerPreserved": true,
+    "preCorrectionS1R1Preserved": true,
+    "correctionCount": 2
+  },
+  "sourceLineageReconciliation": {
+    "contract": "MO_R4A_S2R1_SARAVALI_NATURAL_RELATIONSHIP_SOURCE_CLOSURE_V1",
+    "historicalS1R1R1LedgerCanonicalHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+    "saravaliWitnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+    "saravaliWitnessSha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+    "branchTaken": "B",
+    "historicalLedgerPreserved": true,
+    "saravaliNaturalRelationshipAdded": true
+  }
+}

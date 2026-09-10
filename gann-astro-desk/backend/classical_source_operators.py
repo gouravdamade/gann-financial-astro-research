@@ -33,23 +33,27 @@ import machine_assisted_interpretation as machine_interpretation
 CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT = "MO_R4A_S1R1_R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT = "MO_R4A_S2R1_SARAVALI_LINEAGE_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_R1_BRIHAT_JATAKA_II13_LOCATOR_CORRECTION_V1"
 CLASSICAL_SOURCE_OPERATOR_OUTPUT_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_OUTPUT_V1"
 CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT = "MO_R4A_S1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
+CLASSICAL_SOURCE_OPERATOR_S2R1_COVERAGE_CONTRACT = "MO_R4A_S2R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION = 1
 _SOURCE_LAYER_LEDGER_CONTRACTS = frozenset(
     {
         CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT,
         CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT,
     }
 )
 _SOURCE_LAYER_COVERAGE_CONTRACTS = frozenset(
     {
         CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
         CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S2R1_COVERAGE_CONTRACT,
     }
 )
 EXPLORATORY_UNSIGNED_MODE = "EXPLORATORY_UNSIGNED"
@@ -63,6 +67,12 @@ SOURCE_OPERATOR_ROOT = PROJECT_ROOT / "configs" / "research" / "machine_interpre
 DEFAULT_LEDGER_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_ledger_v1.json"
 DEFAULT_S1R1_PROVENANCE_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_provenance_hardening_s1r1_v1.json"
 DEFAULT_S1R1_R1_CORRECTION_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_s1r1_r1_brihat_jataka_ii13_locator_correction_v1.json"
+DEFAULT_S2R1_SARAVALI_RECONCILIATION_PATH = (
+    SOURCE_OPERATOR_ROOT / "mo_r4a_s2r1_saravali_relationship_lineage_reconciliation_v1.json"
+)
+DEFAULT_S2R1_LEDGER_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_ledger_s2r1_saravali_lineage_v1.json"
+DEFAULT_S1R1_R1_COVERAGE_PATH = PROJECT_ROOT / "status" / "audits" / "mo_r4a_s1r1_r1_real_24_source_operator_coverage.json"
+DEFAULT_S2R1_COVERAGE_PATH = PROJECT_ROOT / "status" / "audits" / "mo_r4a_s2r1_real_24_source_operator_coverage.json"
 DEFAULT_UNRESOLVED_PATH = SOURCE_OPERATOR_ROOT / "source_operator_unresolved_dependencies_v1.json"
 DEFAULT_CROSS_TEXT_PATH = SOURCE_OPERATOR_ROOT / "source_operator_cross_text_matrix_v1.json"
 
@@ -597,6 +607,101 @@ def build_s1r1_r1_corrected_ledger(resource_root: Path = PROJECT_ROOT) -> dict[s
     return corrected
 
 
+def _load_s2r1_saravali_relationship_source(path: Path) -> dict[str, Any]:
+    """Load the page-image-derived Saravali relationship closure, never a substitute text."""
+
+    source = _read_json(path, "S2R1 Saravali relationship source closure")
+    if source.get("contract") != "MO_R4A_S2R1_SARAVALI_NATURAL_RELATIONSHIP_SOURCE_CLOSURE_V1":
+        raise ClassicalSourceOperatorError("Unsupported S2R1 Saravali relationship source closure contract")
+    if source.get("schemaVersion") != CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION:
+        raise ClassicalSourceOperatorError("Unsupported S2R1 Saravali relationship source closure version")
+    witness = source.get("saravaliWitness")
+    if not isinstance(witness, dict) or (
+        witness.get("witnessId"),
+        witness.get("artifactSha256"),
+    ) != (
+        "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+        "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+    ):
+        raise ClassicalSourceOperatorError("S2R1 Saravali closure is not bound to the verified held witness")
+    if witness.get("sourceBytesTracked") is not False:
+        raise ClassicalSourceOperatorError("S2R1 Saravali source bytes must remain outside the repository")
+    operator = source.get("saravaliNaturalRelationshipOperator")
+    if not isinstance(operator, dict) or operator.get("operatorId") != "SARAVALI_NATURAL_RELATIONSHIP_V1":
+        raise ClassicalSourceOperatorError("S2R1 Saravali closure lacks its natural-relationship operator")
+    required_locator_layers = {"SARAVALI_ROOT", "SANTHANAM_TRANSLATION"}
+    locators = operator.get("sourceLocators")
+    if not isinstance(locators, list) or {item.get("sourceLayer") for item in locators if isinstance(item, dict)} != required_locator_layers:
+        raise ClassicalSourceOperatorError("S2R1 Saravali relationship must retain separate root and translation locators")
+    root_locators = [item for item in locators if item.get("sourceLayer") == "SARAVALI_ROOT"]
+    if len(root_locators) != 1 or (
+        root_locators[0].get("chapter"),
+        root_locators[0].get("verse"),
+        root_locators[0].get("printedPage"),
+        root_locators[0].get("scanPage"),
+        root_locators[0].get("provenanceStatus"),
+    ) != ("4", "28-29", "56", "60", "SOURCE_CLOSED_EXACT_PAGE_IMAGE"):
+        raise ClassicalSourceOperatorError("S2R1 Saravali root relationship locator is not the verified page-image binding")
+    translation = [item for item in locators if item.get("sourceLayer") == "SANTHANAM_TRANSLATION"]
+    if len(translation) != 1 or "ROOT" in str(translation[0].get("propositionRole", "")):
+        raise ClassicalSourceOperatorError("S2R1 Saravali translation cannot substitute for the Sanskrit root")
+    if any(item.get("sourceLayer") == "SANTHANAM_COMMENTARY" for item in locators):
+        raise ClassicalSourceOperatorError("S2R1 Saravali relationship closure cannot substitute commentary for the root")
+    matrix = operator.get("rule", {}).get("friendshipMatrix")
+    if not isinstance(matrix, dict) or set(matrix) != RELATIONSHIP_BODIES:
+        raise ClassicalSourceOperatorError("S2R1 Saravali relationship matrix must close exactly the seven source bodies")
+    for body, row in matrix.items():
+        if not isinstance(row, dict) or set(row) != {"friends", "neutral", "enemies"}:
+            raise ClassicalSourceOperatorError(f"S2R1 Saravali relationship row is invalid: {body}")
+        members = [member for category in ("friends", "neutral", "enemies") for member in row[category]]
+        if body in members or len(members) != 6 or set(members) != RELATIONSHIP_BODIES - {body}:
+            raise ClassicalSourceOperatorError(f"S2R1 Saravali relationship row is not a closed non-self partition: {body}")
+    return source
+
+
+def build_s2r1_saravali_lineage_ledger(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Append the verified Saravali root matrix without mutating prior ledgers."""
+
+    root = Path(resource_root).resolve()
+    historical = build_s1r1_r1_corrected_ledger(root)
+    source = _load_s2r1_saravali_relationship_source(
+        root
+        / "configs"
+        / "research"
+        / "machine_interpretation"
+        / "source_operators"
+        / DEFAULT_S2R1_SARAVALI_RECONCILIATION_PATH.name
+    )
+    expected_historical_hash = str(source.get("historicalS1R1R1LedgerCanonicalHash", ""))
+    actual_historical_hash = _canonical_hash(historical)
+    if expected_historical_hash != actual_historical_hash:
+        raise ClassicalSourceOperatorError("S2R1 Saravali closure is not bound to the final historical source ledger")
+
+    successor = deepcopy(historical)
+    successor.update(
+        {
+            "contract": CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT,
+            "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S2R1_SARAVALI_LINEAGE_V1",
+            "milestone": "MO-R4A-S2R1",
+            "sourceAuditStatus": "SARAVALI_NATURAL_RELATIONSHIP_ROOT_CLOSED_LINEAGE_RECONCILED",
+            "sourceLineageReconciliation": {
+                "contract": source["contract"],
+                "historicalS1R1R1LedgerCanonicalHash": actual_historical_hash,
+                "saravaliWitnessId": source["saravaliWitness"]["witnessId"],
+                "saravaliWitnessSha256": source["saravaliWitness"]["artifactSha256"],
+                "branchTaken": "B",
+                "historicalLedgerPreserved": True,
+                "saravaliNaturalRelationshipAdded": True,
+            },
+        }
+    )
+    if any(item.get("operatorId") == "SARAVALI_NATURAL_RELATIONSHIP_V1" for item in successor["operators"]):
+        raise ClassicalSourceOperatorError("S2R1 successor cannot overwrite an existing Saravali natural-relationship operator")
+    successor["operators"].append(deepcopy(source["saravaliNaturalRelationshipOperator"]))
+    validate_source_operator_ledger(successor)
+    return successor
+
+
 def build_s1r1_source_provenance_audit(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     """Render all 17 historical-to-hardened provenance changes as an audit record."""
 
@@ -851,6 +956,60 @@ def evaluate_trailokya_natural_relationship(
         output_state=state,
         explanation=f"Trailokya's source-specific natural relationship for {source} to {target} is {state}.",
         conditions_satisfied=("TRAILOKYA_1972_V168_TO_V171_MATRIX",),
+    )
+
+
+def evaluate_saravali_natural_relationship(
+    source_body: str,
+    target_body: str,
+    *,
+    ledger: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Evaluate only the root-bound Saravali 4.28-29 seven-planet matrix."""
+
+    source_ledger = ledger or build_s2r1_saravali_lineage_ledger()
+    operator = _operator(source_ledger, "SARAVALI_NATURAL_RELATIONSHIP_V1")
+    source = _body(source_body, "Saravali relationship source body")
+    target = _body(target_body, "Saravali relationship target body")
+    snapshot = {"sourceBody": source, "targetBody": target}
+    if source not in RELATIONSHIP_BODIES or target not in RELATIONSHIP_BODIES:
+        return _unresolved_output(
+            operator,
+            input_snapshot=snapshot,
+            output_state="UNKNOWN",
+            dependencies=("RELATIONSHIP_INPUT_BODY_NOT_CLOSED_FOR_SARAVALI",),
+            explanation="Saravali 4.28-29 closes no natural-relationship cell for nodes or other unsupported bodies.",
+            conditions_missing=("CLASSICAL_SEVEN_PLANET_RELATIONSHIP_INPUT",),
+        )
+    if source == target:
+        return _unresolved_output(
+            operator,
+            input_snapshot=snapshot,
+            output_state="UNKNOWN",
+            dependencies=("SARAVALI_SELF_RELATIONSHIP_NOT_STATED",),
+            explanation="Saravali 4.28-29 does not state a natural self-relationship; it is not normalized to neutrality.",
+        )
+    row = operator["rule"]["friendshipMatrix"][source]
+    if target in row["friends"]:
+        state = "FRIEND"
+    elif target in row["neutral"]:
+        state = "NEUTRAL"
+    elif target in row["enemies"]:
+        state = "ENEMY"
+    else:  # The source-closure validator above makes this branch fail-closed only.
+        return _unresolved_output(
+            operator,
+            input_snapshot=snapshot,
+            output_state="UNKNOWN",
+            dependencies=("SARAVALI_RELATIONSHIP_CELL_NOT_SOURCE_CLOSED",),
+            explanation="No admitted Saravali relationship cell covers this body pair.",
+        )
+    return _source_output(
+        operator,
+        input_snapshot=snapshot,
+        output_state=state,
+        explanation=f"Saravali 4.28-29 gives the source-specific natural relationship {source} to {target} as {state}.",
+        conditions_satisfied=("SARAVALI_4_28_TO_4_29_SEVEN_PLANET_MATRIX",),
     )
 
 
@@ -1466,7 +1625,12 @@ def _event_operator_outputs(snapshot: Mapping[str, Any], ledger: Mapping[str, An
     transit = str(snapshot["transitBody"])
     natal = str(snapshot["natalTarget"])
     relative_natal = int(snapshot["transitRelativeNatalPlace"])
-    relationship = evaluate_trailokya_natural_relationship(transit, natal, ledger=ledger)
+    uses_saravali_relationship_lineage = ledger.get("contract") == CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT
+    relationship = (
+        evaluate_saravali_natural_relationship(transit, natal, ledger=ledger)
+        if uses_saravali_relationship_lineage
+        else evaluate_trailokya_natural_relationship(transit, natal, ledger=ledger)
+    )
     temporary = evaluate_temporary_relationship(
         str(snapshot["transitSign"]),
         str(snapshot["natalSign"]),
@@ -1500,7 +1664,9 @@ def _event_operator_outputs(snapshot: Mapping[str, Any], ledger: Mapping[str, An
         evaluate_arghya_source_boundary(ledger=ledger),
     ]
     structurally_applicable = [
-        "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "SARAVALI_NATURAL_RELATIONSHIP_V1"
+        if uses_saravali_relationship_lineage
+        else "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
         "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
         "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
         "SARAVALI_4_32_ORDINARY_DRSTI_V1",
@@ -1683,6 +1849,166 @@ def build_real_source_operator_coverage_report(
         },
     }
     return {**body, "sourceOperatorCoverageHash": _canonical_hash(body)}
+
+
+def _coverage_events(coverage: Mapping[str, Any]) -> list[dict[str, Any]]:
+    sides = coverage.get("sides")
+    if not isinstance(sides, list):
+        raise ClassicalSourceOperatorError("Source coverage lacks sides")
+    events = [event for side in sides for event in side.get("events", [])]
+    if len(events) != 24:
+        raise ClassicalSourceOperatorError("Source coverage must contain exactly 24 frozen events")
+    return events
+
+
+def build_s2r1_relationship_matrix_comparison(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Compare full directed seven-planet matrices without collapsing self pairs."""
+
+    root = Path(resource_root).resolve()
+    historical = build_s1r1_r1_corrected_ledger(root)
+    successor = build_s2r1_saravali_lineage_ledger(root)
+    ordered_bodies = ("SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN")
+    rows: list[dict[str, Any]] = []
+    for source in ordered_bodies:
+        for target in ordered_bodies:
+            historical_output = evaluate_trailokya_natural_relationship(source, target, ledger=historical)
+            saravali_output = evaluate_saravali_natural_relationship(source, target, ledger=successor)
+            if source == target:
+                relationship_status = "NOT_COMPARABLE"
+                reason = "Neither source contract states a self-relationship; both remain UNKNOWN."
+            elif historical_output["outputState"] == saravali_output["outputState"]:
+                relationship_status = "AGREEMENT"
+                reason = "Both source-specific directed cells have the same categorical state."
+            else:
+                relationship_status = "CONFLICT"
+                reason = "The two source-specific directed cells differ and remain separately recorded."
+            rows.append(
+                {
+                    "sourceBody": source,
+                    "targetBody": target,
+                    "historicalTrailokyaState": historical_output["outputState"],
+                    "saravaliState": saravali_output["outputState"],
+                    "relationshipStatus": relationship_status,
+                    "reason": reason,
+                }
+            )
+    statuses = [row["relationshipStatus"] for row in rows]
+    if statuses.count("AGREEMENT") != 41 or statuses.count("CONFLICT") != 1 or statuses.count("NOT_COMPARABLE") != 7:
+        raise ClassicalSourceOperatorError("Saravali/Trailokya matrix comparison has unexpected lineage results")
+    conflict = next(row for row in rows if row["relationshipStatus"] == "CONFLICT")
+    if conflict != {
+        "sourceBody": "MERCURY",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "CONFLICT",
+        "reason": "The two source-specific directed cells differ and remain separately recorded.",
+    }:
+        raise ClassicalSourceOperatorError("Saravali/Trailokya comparison did not preserve the verified Mercury to Mars conflict")
+    return {
+        "contract": "MO_R4A_S2R1_SARAVALI_TRAILOKYA_NATURAL_RELATIONSHIP_MATRIX_COMPARISON_V1",
+        "schemaVersion": CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION,
+        "historicalTrailokyaOperatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "saravaliOperatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "historicalS1R1R1LedgerCanonicalHash": _canonical_hash(historical),
+        "successorS2R1LedgerCanonicalHash": _canonical_hash(successor),
+        "comparisonRows": rows,
+        "comparisonSummary": {
+            "rowCount": len(rows),
+            "comparableDirectedPairCount": 42,
+            "agreementCount": statuses.count("AGREEMENT"),
+            "conflictCount": statuses.count("CONFLICT"),
+            "notComparableCount": statuses.count("NOT_COMPARABLE"),
+            "unresolvedCount": 0,
+        },
+    }
+
+
+def build_s2r1_real_24_source_operator_coverage(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Rebind the frozen S1R1-R1 snapshot to Saravali without recomputing astronomy."""
+
+    root = Path(resource_root).resolve()
+    historical = _read_json(root / DEFAULT_S1R1_R1_COVERAGE_PATH.relative_to(PROJECT_ROOT), "historical S1R1-R1 source coverage")
+    historical_body = {key: deepcopy(value) for key, value in historical.items() if key != "sourceOperatorCoverageHash"}
+    if (
+        historical.get("contract"),
+        historical.get("sourceOperatorCoverageHash"),
+        _canonical_hash(historical_body),
+    ) != (
+        CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT,
+        "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+        "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+    ):
+        raise ClassicalSourceOperatorError("S2R1 requires the exact historical S1R1-R1 source coverage")
+    successor_ledger = build_s2r1_saravali_lineage_ledger(root)
+    report = deepcopy(historical)
+    report.update(
+        {
+            "contract": CLASSICAL_SOURCE_OPERATOR_S2R1_COVERAGE_CONTRACT,
+            "milestone": "MO-R4A-S2R1",
+            "sourceOperatorLedgerContract": successor_ledger["contract"],
+            "sourceOperatorLedgerCanonicalHash": _canonical_hash(successor_ledger),
+            "sourceLineageRebinding": {
+                "historicalCoverageHash": historical["sourceOperatorCoverageHash"],
+                "historicalLedgerHash": historical["sourceOperatorLedgerCanonicalHash"],
+                "astronomyRecomputed": False,
+                "eventUniverseRegenerated": False,
+                "relationshipSourceReboundFrom": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+                "relationshipSourceReboundTo": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+            },
+        }
+    )
+    report.pop("sourceOperatorCoverageHash", None)
+    for side in report["sides"]:
+        for event in side["events"]:
+            snapshot = event["astronomySnapshot"]
+            outputs, applicable = _event_operator_outputs(snapshot, successor_ledger)
+            composition = compose_source_operator_outputs(outputs)
+            event["operatorOutputs"] = outputs
+            event["applicableOperatorIds"] = applicable
+            event["evaluatedOperatorIds"] = composition["evaluatedOperatorIds"]
+            event["unresolvedOperatorIds"] = composition["unresolvedOperatorIds"]
+            event["sourceCoverageStatus"] = _coverage_status(outputs)
+            event["astrologicalCompositionStatus"] = composition["compositionStatus"]
+            event["astrologicalInterpretationState"] = composition["astrologicalInterpretationState"]
+    events = _coverage_events(report)
+    if not all(event["identityStatus"] == "SINGLE_PASS_VERIFIED" for event in events):
+        raise ClassicalSourceOperatorError("S2R1 source coverage requires 24 single-pass-verified identities")
+    report["summary"] = {
+        **report["summary"],
+        "sourceOperatorNoneCount": sum(event["sourceCoverageStatus"] == "SOURCE_OPERATOR_COVERAGE_NONE" for event in events),
+        "sourceOperatorPartialCount": sum(event["sourceCoverageStatus"] == "SOURCE_OPERATOR_COVERAGE_PARTIAL" for event in events),
+        "sourceOperatorSubstantialCount": sum(
+            event["sourceCoverageStatus"] == "SOURCE_OPERATOR_COVERAGE_SUBSTANTIAL" for event in events
+        ),
+        "astrologyUnknownCount": sum(event["astrologicalInterpretationState"] == "UNKNOWN_ASTRO_STATE" for event in events),
+        "astrologyMixedCount": sum(event["astrologicalInterpretationState"] == "MIXED_ASTRO_STATE" for event in events),
+        "astrologySourceStateCount": sum(
+            event["astrologicalInterpretationState"]
+            in {"SUPPORTIVE_ASTRO_STATE", "ADVERSE_ASTRO_STATE", "NEUTRAL_ASTRO_STATE"}
+            for event in events
+        ),
+    }
+    body = deepcopy(report)
+    return {**body, "sourceOperatorCoverageHash": _canonical_hash(body)}
+
+
+def write_s2r1_source_lineage_artifacts(resource_root: Path = PROJECT_ROOT) -> dict[str, Path]:
+    """Materialize the successor ledger and coverage from frozen source-only inputs."""
+
+    root = Path(resource_root).resolve()
+    artifacts = {
+        "ledger": root / "configs" / "research" / "machine_interpretation" / "source_operators" / DEFAULT_S2R1_LEDGER_PATH.name,
+        "coverage": root / "status" / "audits" / DEFAULT_S2R1_COVERAGE_PATH.name,
+    }
+    payloads = {
+        "ledger": build_s2r1_saravali_lineage_ledger(root),
+        "coverage": build_s2r1_real_24_source_operator_coverage(root),
+    }
+    for name, path in artifacts.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(payloads[name], ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
+    return artifacts
 
 
 def render_real_source_operator_coverage_markdown(report: Mapping[str, Any]) -> str:

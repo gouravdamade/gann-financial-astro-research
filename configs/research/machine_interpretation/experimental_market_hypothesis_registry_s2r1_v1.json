@@ -1,0 +1,170 @@
+{
+  "contract": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_S2R1_V1",
+  "schemaVersion": 1,
+  "registryId": "MO_R4A_S2R1_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1",
+  "registryStatus": "AUTHORIZED_FOR_BLINDED_SUCCESSOR_REFREEZE",
+  "purpose": "A two-record, outcome-blind successor of S2 after a source-specific Saravali natural-relationship lineage correction. It does not assert classical financial doctrine, pair direction, price direction, magnitude, confidence, or execution.",
+  "entryPolicy": "EXACTLY_TWO_CENTRALLY_AUTHORIZED_DIRECT_COMPOUND_RELATIONSHIP_SIDE_SUCCESSORS; NO_INVERSE_OR_SECONDARY_REAL_EVENT_HYPOTHESES",
+  "startingMaster": "8367908818c488fe92e4de8e0f86fb0b816c0462",
+  "historicalS2RegistryHash": "E2FD1EA6B570F35E07F06259A64A19E181B06610F0659B1B333800F7688EBA66",
+  "historicalS2PredictionFreezeHash": "5A7D318D22D27637F2A253D362258648F40CF12DB6016B6743D166A1C010C27A",
+  "sourceLineageCorrectionReason": "Saravali 4.28-29 root closes a same-family natural relationship matrix; it differs from Trailokya only at MERCURY to MARS, so the selected compound predicate must bind a source-specific natural input.",
+  "upstreamSourceLedgerContract": "MO_R4A_S2R1_SARAVALI_LINEAGE_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+  "upstreamSourceLedgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+  "upstreamCoverageContract": "MO_R4A_S2R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1",
+  "upstreamCoverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+  "hypothesisFamilyId": "MO_R4A_S2R1_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+  "entries": [
+    {
+      "hypothesisFamilyId": "MO_R4A_S2R1_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+      "hypothesisId": "H-MO-S2R1-COMPOUND-REL-DIRECT-USD-V1",
+      "version": "1",
+      "author": "CENTRAL_RESEARCH_AUTHORIZATION",
+      "createdAtUtc": "2026-09-11T00:00:00Z",
+      "hypothesisScope": "FROZEN_24_EVENT_OUTCOME_BLIND_CURRENCY_SIDE_PILOT",
+      "bridgeBasis": "SOURCE_OPERATOR_STATE_PREDICATE",
+      "inputOperatorIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "primaryInputOperatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "primaryInputOperatorVersion": "1",
+      "stateMap": {
+        "GREAT_FRIEND": "SUPPORTIVE",
+        "FRIEND": "SUPPORTIVE",
+        "NEUTRAL": "NEUTRAL",
+        "ENEMY": "ADVERSE",
+        "GREAT_ENEMY": "ADVERSE"
+      },
+      "targetSide": "USD",
+      "applicabilityPolicy": "SOURCE_CLOSED_MACHINE_EVALUATED_COMPOUND_RELATIONSHIP_ONLY",
+      "abstentionPolicy": {
+        "currencyPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+        "bridgeApplied": false,
+        "fallbackOperatorAllowed": false
+      },
+      "sourceClaim": "The frozen Saravali-lineage source/operator record supplies a categorical compound relationship state for an eligible transit-body to natal-target pair. It does not supply a currency or market conclusion.",
+      "experimentalClaim": "For this outcome-blind USD-side pilot only, FRIEND-family compound states are hypothesized as SUPPORTIVE USD pressure, ENEMY-family states as ADVERSE USD pressure, and NEUTRAL as categorical NEUTRAL.",
+      "reasoning": "The direct compound-relationship state is the sole centrally authorized S2R1 bridge predicate. Its natural input is Saravali 4.28-29; no other source operator can override, reverse, weight, or complete it.",
+      "sourceDependencies": [
+        "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "MO_R4A_S2R1_LEDGER_E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+        "MO_R4A_S2R1_COVERAGE_B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A"
+      ],
+      "experimentalAssumptions": [
+        "The frozen Saravali-lineage transit-to-natal compound-relationship output is the authorized S2R1 input context.",
+        "Relational valence is hypothesized to transfer in the same semantic direction to the affected USD side.",
+        "GREAT_FRIEND and FRIEND collapse to the same categorical SUPPORTIVE state.",
+        "GREAT_ENEMY and ENEMY collapse to the same categorical ADVERSE state.",
+        "NEUTRAL is categorical and is not numeric zero.",
+        "Unavailable compound relationship data requires abstention without fallback."
+      ],
+      "prohibitedGeneralizations": [
+        "This does not claim that classical sources predict USD or any market.",
+        "This does not imply USDJPY pair direction.",
+        "This does not make benefic, malefic, aspect, dignity, bala, motion, or modifier states sign inputs.",
+        "This does not configure a signed unit, magnitude, confidence, weight, or amplitude.",
+        "This does not establish financial validation, accuracy, edge, expectancy, or profitability.",
+        "This does not create a production rule, Auto Suggest rule, ML label, MT5 path, or execution path."
+      ],
+      "validationStatus": "NOT_FINANCIALLY_VALIDATED",
+      "outcomeDataSeenAtCreation": false,
+      "approvalStatus": "AUTHORIZED_FOR_BLINDED_TEST",
+      "signedUnitIfConfigured": null,
+      "magnitudeConfigured": false,
+      "mode": "EXPERIMENTAL_PROFILED",
+      "productionAdmission": false,
+      "hypothesisHash": "E9605930B63F89EED49A0CE0F25A11D7EC9AD7FE3B25BD8F2466D4BF2D6C89E1",
+      "supersedesHypothesisId": "H-MO-S2-COMPOUND-REL-DIRECT-USD-V1",
+      "supersedesHypothesisHash": "FD4E4F3B125EB8254569F8EA6E70FB50ECD2D4B30E4CD9119F7E9CB5BE8A5BF6",
+      "sourceLineageCorrectionReason": "Saravali 4.28-29 root closes a same-family natural relationship matrix; it differs from Trailokya only at MERCURY to MARS, so the selected compound predicate must bind a source-specific natural input.",
+      "newUpstreamSourceLedgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+      "newUpstreamCoverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A"
+    },
+    {
+      "hypothesisFamilyId": "MO_R4A_S2R1_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+      "hypothesisId": "H-MO-S2R1-COMPOUND-REL-DIRECT-JPY-V1",
+      "version": "1",
+      "author": "CENTRAL_RESEARCH_AUTHORIZATION",
+      "createdAtUtc": "2026-09-11T00:00:00Z",
+      "hypothesisScope": "FROZEN_24_EVENT_OUTCOME_BLIND_CURRENCY_SIDE_PILOT",
+      "bridgeBasis": "SOURCE_OPERATOR_STATE_PREDICATE",
+      "inputOperatorIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "primaryInputOperatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "primaryInputOperatorVersion": "1",
+      "stateMap": {
+        "GREAT_FRIEND": "SUPPORTIVE",
+        "FRIEND": "SUPPORTIVE",
+        "NEUTRAL": "NEUTRAL",
+        "ENEMY": "ADVERSE",
+        "GREAT_ENEMY": "ADVERSE"
+      },
+      "targetSide": "JPY",
+      "applicabilityPolicy": "SOURCE_CLOSED_MACHINE_EVALUATED_COMPOUND_RELATIONSHIP_ONLY",
+      "abstentionPolicy": {
+        "currencyPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+        "bridgeApplied": false,
+        "fallbackOperatorAllowed": false
+      },
+      "sourceClaim": "The frozen Saravali-lineage source/operator record supplies a categorical compound relationship state for an eligible transit-body to natal-target pair. It does not supply a currency or market conclusion.",
+      "experimentalClaim": "For this outcome-blind JPY-side pilot only, FRIEND-family compound states are hypothesized as SUPPORTIVE JPY pressure, ENEMY-family states as ADVERSE JPY pressure, and NEUTRAL as categorical NEUTRAL.",
+      "reasoning": "The direct compound-relationship state is the sole centrally authorized S2R1 bridge predicate. Its natural input is Saravali 4.28-29; no other source operator can override, reverse, weight, or complete it.",
+      "sourceDependencies": [
+        "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "MO_R4A_S2R1_LEDGER_E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+        "MO_R4A_S2R1_COVERAGE_B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A"
+      ],
+      "experimentalAssumptions": [
+        "The frozen Saravali-lineage transit-to-natal compound-relationship output is the authorized S2R1 input context.",
+        "Relational valence is hypothesized to transfer in the same semantic direction to the affected JPY side.",
+        "GREAT_FRIEND and FRIEND collapse to the same categorical SUPPORTIVE state.",
+        "GREAT_ENEMY and ENEMY collapse to the same categorical ADVERSE state.",
+        "NEUTRAL is categorical and is not numeric zero.",
+        "Unavailable compound relationship data requires abstention without fallback."
+      ],
+      "prohibitedGeneralizations": [
+        "This does not claim that classical sources predict JPY or any market.",
+        "This does not imply USDJPY pair direction.",
+        "This does not make benefic, malefic, aspect, dignity, bala, motion, or modifier states sign inputs.",
+        "This does not configure a signed unit, magnitude, confidence, weight, or amplitude.",
+        "This does not establish financial validation, accuracy, edge, expectancy, or profitability.",
+        "This does not create a production rule, Auto Suggest rule, ML label, MT5 path, or execution path."
+      ],
+      "validationStatus": "NOT_FINANCIALLY_VALIDATED",
+      "outcomeDataSeenAtCreation": false,
+      "approvalStatus": "AUTHORIZED_FOR_BLINDED_TEST",
+      "signedUnitIfConfigured": null,
+      "magnitudeConfigured": false,
+      "mode": "EXPERIMENTAL_PROFILED",
+      "productionAdmission": false,
+      "hypothesisHash": "040676DC1CF10E197427CF88ED96EDAAB8B7235D74B03BF8F45ECCAC2E5E0B3C",
+      "supersedesHypothesisId": "H-MO-S2-COMPOUND-REL-DIRECT-JPY-V1",
+      "supersedesHypothesisHash": "FC7A2CFD3930FBBAD41A4995C4697A8B31A50F409DDBE66ED4BE2902C4AE233A",
+      "sourceLineageCorrectionReason": "Saravali 4.28-29 root closes a same-family natural relationship matrix; it differs from Trailokya only at MERCURY to MARS, so the selected compound predicate must bind a source-specific natural input.",
+      "newUpstreamSourceLedgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+      "newUpstreamCoverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A"
+    }
+  ],
+  "guardrails": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderDecisionRead": false,
+    "reviewStoreRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveRendered": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  },
+  "registryHash": "4655316D94188E9B4187E24D67DC9466124C977002F129508F62B518F4786CDE"
+}

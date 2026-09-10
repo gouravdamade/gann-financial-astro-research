@@ -1,0 +1,163 @@
+{
+  "contract": "MO_R4A_S2R1_SARAVALI_NATURAL_RELATIONSHIP_SOURCE_CLOSURE_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S2R1",
+  "startingMaster": "8367908818c488fe92e4de8e0f86fb0b816c0462",
+  "historicalS1R1R1LedgerCanonicalHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+  "saravaliWitness": {
+    "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+    "artifactSha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+    "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+    "sourceBytesTracked": false,
+    "sourceBytesPolicy": "PRIVATE_HELD_WITNESS_NOT_COMMITTED"
+  },
+  "sourceVerification": {
+    "method": "DIRECT_PAGE_IMAGE_INSPECTION_TWO_PASS",
+    "rootLocator": {
+      "sourceLayer": "SARAVALI_ROOT",
+      "chapter": "4",
+      "verse": "28-29",
+      "printedPage": "56",
+      "scanPage": "60",
+      "propositionRole": "NATURAL_RELATIONSHIP_ROOT",
+      "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+    },
+    "translationLocator": {
+      "sourceLayer": "SANTHANAM_TRANSLATION",
+      "chapter": "4",
+      "verse": "28-29",
+      "printedPage": "56",
+      "scanPage": "60",
+      "propositionRole": "NATURAL_RELATIONSHIP_TRANSLATION",
+      "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+    },
+    "translationRole": "LEXICAL_AND_ROW_RENDERING_CROSS_CHECK_NOT_ROOT_SUBSTITUTE",
+    "commentaryRole": "NO_COMMENTARY_SUBSTITUTION_USED"
+  },
+  "saravaliNaturalRelationshipOperator": {
+    "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+    "operatorVersion": "1",
+    "sourceFamily": "SARAVALI_ROOT_1983_HELD_WITNESS",
+    "sourceWork": "Saravali of Kalyana Varma",
+    "author": "Kalyana Varma",
+    "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+    "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+    "edition": "R. Santhanam, First Edition 1983 held witness",
+    "rootOrCommentary": "SARAVALI_ROOT_WITH_TRANSLATION_SEPARATED",
+    "chapter": "4",
+    "verseOrLocator": "Saravali 4.28-29, printed p.56 / scan p.60",
+    "originalTerm": "Naisargika Maitri",
+    "originalTextOrBoundedExcerptReference": "Saravali 4.28-29 Sanskrit root gives seven-planet natural friendship, enmity, and the neutrality rule.",
+    "translationOrLiteralSense": "The Santhanam English text on the same page is retained only as a separately-labelled lexical and row rendering cross-check.",
+    "directSourceClaim": "The Sanskrit root directly closes the oriented seven-planet natural relationship matrix. A body neither named friend nor enemy is neutral; self and node relationships are not stated.",
+    "conditions": [
+      "Both bodies must be distinct members of the source-closed seven-planet table"
+    ],
+    "exceptions": [
+      "Self relationships are not stated and remain UNKNOWN",
+      "Rahu and Ketu are not assigned cells and remain UNKNOWN",
+      "No Trailokya relationship cell may fill a Saravali gap"
+    ],
+    "scope": "SARAVALI_CHAPTER_4_NATURAL_RELATIONSHIP",
+    "inputFields": [
+      "sourceBody",
+      "targetBody"
+    ],
+    "outputFields": [
+      "FRIEND",
+      "NEUTRAL",
+      "ENEMY",
+      "UNKNOWN"
+    ],
+    "operatorType": "NATURAL_RELATIONSHIP_LOOKUP",
+    "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+    "machineEvaluable": true,
+    "requiresExternalAstronomy": false,
+    "unresolvedDependencies": [
+      "SARAVALI_SELF_RELATIONSHIP_NOT_STATED",
+      "RELATIONSHIP_INPUT_BODY_NOT_CLOSED_FOR_SARAVALI"
+    ],
+    "knownTranslationIssues": [],
+    "crossTextSupport": [],
+    "crossTextConflict": [
+      "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1:MERCURY_TO_MARS"
+    ],
+    "marketDirectionAuthorized": false,
+    "marketMagnitudeAuthorized": false,
+    "modeOneEligible": true,
+    "prohibitedInterpretations": [
+      "FRIEND_TO_BULLISH",
+      "ENEMY_TO_BEARISH",
+      "CURRENCY_POLARITY",
+      "NUMERIC_MAGNITUDE"
+    ],
+    "rule": {
+      "friendshipMatrix": {
+        "SUN": {
+          "friends": ["MOON", "MARS", "JUPITER"],
+          "neutral": ["MERCURY"],
+          "enemies": ["VENUS", "SATURN"]
+        },
+        "MOON": {
+          "friends": ["SUN", "MERCURY"],
+          "neutral": ["MARS", "JUPITER", "VENUS", "SATURN"],
+          "enemies": []
+        },
+        "MARS": {
+          "friends": ["SUN", "MOON", "JUPITER"],
+          "neutral": ["VENUS", "SATURN"],
+          "enemies": ["MERCURY"]
+        },
+        "MERCURY": {
+          "friends": ["SUN", "VENUS"],
+          "neutral": ["JUPITER", "SATURN"],
+          "enemies": ["MARS", "MOON"]
+        },
+        "JUPITER": {
+          "friends": ["SUN", "MOON", "MARS"],
+          "neutral": ["SATURN"],
+          "enemies": ["MERCURY", "VENUS"]
+        },
+        "VENUS": {
+          "friends": ["MERCURY", "SATURN"],
+          "neutral": ["MARS", "JUPITER"],
+          "enemies": ["SUN", "MOON"]
+        },
+        "SATURN": {
+          "friends": ["MERCURY", "VENUS"],
+          "neutral": ["JUPITER"],
+          "enemies": ["SUN", "MOON", "MARS"]
+        }
+      }
+    },
+    "sourceLocators": [
+      {
+        "sourceFamily": "SARAVALI",
+        "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+        "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+        "sourceLayer": "SARAVALI_ROOT",
+        "chapter": "4",
+        "verse": "28-29",
+        "printedPage": "56",
+        "scanPage": "60",
+        "repositoryReference": "Private held witness SHA-256 binding; source bytes are not tracked",
+        "propositionRole": "NATURAL_RELATIONSHIP_ROOT",
+        "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+      },
+      {
+        "sourceFamily": "SARAVALI",
+        "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+        "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+        "sourceLayer": "SANTHANAM_TRANSLATION",
+        "chapter": "4",
+        "verse": "28-29",
+        "printedPage": "56",
+        "scanPage": "60",
+        "repositoryReference": "Private held witness SHA-256 binding; source bytes are not tracked",
+        "propositionRole": "NATURAL_RELATIONSHIP_TRANSLATION",
+        "provenanceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+      }
+    ],
+    "provenanceStatus": "SOURCE_CLOSED_ROOT_WITH_TRANSLATION_LAYER_SEPARATED"
+  }
+}
