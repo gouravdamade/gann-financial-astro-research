@@ -1,8 +1,47 @@
 # Current Project Handoff
 
-Last updated: 2026-09-09 IST
+Last updated: 2026-09-10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
+
+## Latest Update - 2026-09-10 (MO-R4A-S1 Classical Source Operator Ledger and Event Binding)
+
+- Added the versioned MO-R4A-S1 classical source-operator ledger, schema,
+  cross-text matrix, and unresolved-dependency registry under
+  configs/research/machine_interpretation/source_operators. The ledger keeps
+  Brihat Jataka/Saravali root-audit propositions, the Santhanam translation
+  mismatch, and Trailokya 1972 page-locked contracts distinct.
+- Added deterministic, source-only evaluators for relationship, temporary and
+  compound relationship, ordinary/special drsti, bounded Trailokya nature,
+  dignity, sthana-bala, sthana-phala, individual verse-166 modifiers, motion,
+  and categorical dik-bala conditions. Latta, Arghya, and source-context
+  boundaries deliberately fail closed and are never used as generic resolvers.
+- Bound those operators to the frozen 24 April 2025 identities using only
+  immutable eventIdentity fields, identity manifests/audit, approved founder
+  chart identities, and Raman sidereal Swiss Ephemeris source inputs. The
+  event universe was not regenerated; no hashes, times, charts, or hypotheses
+  changed.
+- Real binding result: 24 events (12 USD, 12 JPY), all
+  SINGLE_PASS_VERIFIED; source coverage 0 none, 2 partial, 22 substantial,
+  0 complete. Astrology remains UNKNOWN_ASTRO_STATE for all 24 because no
+  source-backed composition contract exists. All 24 have
+  NO_AUTHORIZED_MARKET_BRIDGE, UNKNOWN_MORE_EVIDENCE_REQUIRED currency
+  direction, and MAGNITUDE_NOT_CONFIGURED.
+- No Founder Review store/decisions, price, outcome, candle, return, PnL,
+  market-response, SBC, catalogue, reviewed evidence, MT5, or execution data
+  was read. The market-hypothesis registry remains empty; no real polarity,
+  signed wave, pair resultant, score, market magnitude, Auto Suggest, ML, or
+  execution path was created. executionAllowed=false remains enforced.
+- New primary records:
+  docs/research/MULTI_OSCILLATOR_MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_CLOSURE.md,
+  docs/research/MULTI_OSCILLATOR_MO_R4A_S1_REAL_24_SOURCE_OPERATOR_COVERAGE.md,
+  status/audits/mo_r4a_s1_real_24_source_operator_coverage.json, and
+  status/acceptance/mo_r4a_s1_classical_source_operator_closure.json.
+- No candidate was rebuilt. The accepted
+  0.10.64-pfr-v2b-mo-r3-r2-f1-r1 candidate and its immutable hashes remain
+  unchanged. The next action is central review of the source/operator output;
+  do not begin market-hypothesis generation, signed runtime, outcome work, or
+  financial validation without a separate directive.
 
 ## Latest Update - 2026-09-09 (MO-R4A-P0 Non-Expert Machine-Assisted Interpretation Architecture)
 

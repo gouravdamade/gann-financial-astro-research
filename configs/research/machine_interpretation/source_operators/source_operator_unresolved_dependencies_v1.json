@@ -1,0 +1,114 @@
+{
+  "contract": "MO_R4A_S1_SOURCE_OPERATOR_UNRESOLVED_DEPENDENCY_REGISTRY_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S1",
+  "dependencies": [
+    {
+      "dependencyId": "MULTI_MODIFIER_STACKING_UNRESOLVED",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Verse 166 closes individual result modifiers but does not specify a multi-condition stacking algorithm.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"
+      ],
+      "failClosedBehavior": "Return UNRESOLVED_MODIFIER_COMBINATION and do not multiply, add, rank, or otherwise combine modifiers.",
+      "whatWouldCloseIt": "An exact primary-source rule for the simultaneous modifier order or arithmetic.",
+      "prohibitedFallback": "Multiply all stated factors, choose the largest factor, or use a modern strength implementation."
+    },
+    {
+      "dependencyId": "UNIVERSAL_MULTI_PLANET_PRECEDENCE_NOT_SOURCE_CLOSED",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Named source contexts have local rules, but a universal multi-planet precedence/cancellation resolver is not source-closed.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_CONTEXT_RESOLUTION_BOUNDARY_V1"
+      ],
+      "failClosedBehavior": "Leave the composition unknown rather than aggregate multiple source outputs.",
+      "whatWouldCloseIt": "An exact source contract that covers the same multi-planet context and all relevant precedence cases.",
+      "prohibitedFallback": "Vote counting, sum of beneficial/adverse labels, or a generic resolver."
+    },
+    {
+      "dependencyId": "MOTION_EXACT_THRESHOLD_EXTERNAL_OR_UNRESOLVED",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Trailokya supplies bounded relative-Sun classes and delegates precise astronomy; it does not close a universal continuous speed threshold.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1",
+        "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1"
+      ],
+      "failClosedBehavior": "Use only enumerated source cases and leave unlisted/stationary states unknown.",
+      "whatWouldCloseIt": "A precise source-recognized calculation contract or explicitly accepted external astronomy adapter.",
+      "prohibitedFallback": "Modern ephemeris speed cutoffs treated as Trailokya doctrine."
+    },
+    {
+      "dependencyId": "CONTEXT_SPECIFIC_RESOLVER_REQUIRED",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Vedha, Ubhayato Vedha, Prashna, planetary war, Latta, and Arghya retain distinct source scopes.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_CONTEXT_RESOLUTION_BOUNDARY_V1",
+        "TRAILOKYA_1972_STHANA_PHALA_V1"
+      ],
+      "failClosedBehavior": "Do not apply an operator outside its named context.",
+      "whatWouldCloseIt": "A primary-source context bridge covering both source contexts.",
+      "prohibitedFallback": "A universal resolve_all_astrology function."
+    },
+    {
+      "dependencyId": "NO_APPROVED_ASTROLOGICAL_COMPOSITION_CONTRACT",
+      "sourceFamily": "CROSS_TEXT",
+      "description": "No admitted source contract composes the independently evaluated source facts into a single supportive/adverse/neutral astrology state.",
+      "affectedOperators": [
+        "ALL_MO_R4A_S1_EVENT_BOUND_OPERATORS"
+      ],
+      "failClosedBehavior": "Set astrological interpretation to UNKNOWN_ASTRO_STATE.",
+      "whatWouldCloseIt": "A bounded, source-backed composition contract with required precedence and cancellation rules.",
+      "prohibitedFallback": "Benefic plus friend plus aspect arithmetic or any model-memory reduction."
+    },
+    {
+      "dependencyId": "NO_AUTHORIZED_MARKET_BRIDGE",
+      "sourceFamily": "MARKET_HYPOTHESIS_BOUNDARY",
+      "description": "The experimental market hypothesis registry remains empty and no source operator authorizes USD/JPY direction.",
+      "affectedOperators": [
+        "ALL_MO_R4A_S1_EVENT_BOUND_OPERATORS"
+      ],
+      "failClosedBehavior": "Set currency direction to UNKNOWN_MORE_EVIDENCE_REQUIRED and create no signed contribution.",
+      "whatWouldCloseIt": "A separately authorized, outcome-blind market-hypothesis contract.",
+      "prohibitedFallback": "Currency sign inferred from a classical planet class, relationship, aspect, dignity, or source number."
+    },
+    {
+      "dependencyId": "TRAILOKYA_ARTHA_CONTEXT_NOT_GENERALIZABLE",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Arghya's historical commodity context cannot be generalized to a currency pair, price forecast, or generic oscillator.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_ARGHYA_VISWA_BOUNDARY_V1"
+      ],
+      "failClosedBehavior": "Do not evaluate Arghya against the 24 FX-chart events.",
+      "whatWouldCloseIt": "A separately sourced and authorized instrument/context mapping.",
+      "prohibitedFallback": "Commodity abundance/scarcity language converted to USDJPY."
+    },
+    {
+      "dependencyId": "LATTA_NOT_ORDINARY_VEDHA",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Graha Latta is a separate 27-nakshatra cycle and cannot become an ordinary Vedha event vote.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_GRAHA_LATTA_BOUNDARY_V1"
+      ],
+      "failClosedBehavior": "Do not invoke Latta as a fallback when ordinary Vedha inputs are absent.",
+      "whatWouldCloseIt": "A source-specific Latta target construction with closed counting origin and matching context.",
+      "prohibitedFallback": "Mapping Latta offsets onto the ordinary Vedha board or frozen event compiler."
+    },
+    {
+      "dependencyId": "ARGHYA_NOT_GENERIC_MARKET_OPERATOR",
+      "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+      "description": "Arghya Viswa subtraction is source-scoped and not a generic arithmetic reducer or FX signal.",
+      "affectedOperators": [
+        "TRAILOKYA_1972_ARGHYA_VISWA_BOUNDARY_V1"
+      ],
+      "failClosedBehavior": "Retain Arghya as source evidence only.",
+      "whatWouldCloseIt": "A separately reviewed source/operator and market bridge.",
+      "prohibitedFallback": "Subtract auspicious and adverse source quantities in a general MO reducer."
+    }
+  ],
+  "guardrails": {
+    "marketBridgeAuthorized": false,
+    "currencyDirectionAuthorized": false,
+    "magnitudeConfigured": false,
+    "executionAllowed": false
+  }
+}

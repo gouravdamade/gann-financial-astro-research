@@ -1,0 +1,73 @@
+{
+  "contract": "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_CLOSURE_STATE_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S1",
+  "startingMaster": "80f268e55b98ab00c89654e0c95474e2fd3d4a20",
+  "status": "SOURCE_CLOSED_FOR_IMPLEMENTED_CLASSICAL_OPERATORS_EVENT_BINDING_AUDIT_COMPLETE",
+  "sourceOperatorLedger": {
+    "contract": "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+    "schemaVersion": 1,
+    "canonicalContentHash": "E8C73059A0F85DCB9A9ACC6945A964FAD6EB0D4A47C0CBBE9F72000B5F5E10C4",
+    "operatorCount": 17,
+    "sourceFamiliesRepresented": [
+      "BRIHAT_JATAKA_AND_SARAVALI_ROOT_CROSS_TEXT_AUDIT",
+      "SARAVALI_ROOT",
+      "TRAILOKYA_DIPIKA_1972"
+    ],
+    "rootCommentaryBoundaryPreserved": true,
+    "santhanamEnglish432TranslationEditorialMismatchRecorded": true
+  },
+  "real24EventBinding": {
+    "contract": "MO_R4A_S1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1",
+    "report": "status/audits/mo_r4a_s1_real_24_source_operator_coverage.json",
+    "reportHash": "93ED109D2A5D5DCE68A4C9C89E51B92ABECCB8A819BA3D3679A8A24D1A431D29",
+    "eventCount": 24,
+    "usdEventCount": 12,
+    "jpyEventCount": 12,
+    "singlePassVerifiedCount": 24,
+    "eventUniverseRegenerated": false,
+    "identityHashesChanged": false,
+    "eventTimesChanged": false,
+    "sourceOperatorNoneCount": 0,
+    "sourceOperatorPartialCount": 2,
+    "sourceOperatorSubstantialCount": 22,
+    "sourceOperatorCompleteForDeclaredScopeCount": 0,
+    "astrologyUnknownCount": 24,
+    "astrologyMixedCount": 0,
+    "astrologySourceStateCount": 0
+  },
+  "marketBoundary": {
+    "marketBridgeAvailableCount": 0,
+    "currencyDirectionUnknownCount": 24,
+    "realUsdPolarityCount": 0,
+    "realJpyPolarityCount": 0,
+    "magnitudeConfiguredCount": 0,
+    "marketHypothesisRegistryEntries": 0,
+    "productionPolarityCatalogueEntriesAdded": 0,
+    "reviewedEvidenceAdmissionsAdded": 0,
+    "signedUsdWave": "NOT_AUTHORIZED",
+    "signedJpyWave": "NOT_AUTHORIZED",
+    "signedUsdJpyResultant": "NOT_AUTHORIZED"
+  },
+  "dataAccess": {
+    "immutableBlankPacketEventIdentityRead": true,
+    "identityAuditAndManifestRead": true,
+    "approvedFounderChartRegistryRead": true,
+    "externalAstronomyUsed": true,
+    "founderReviewStoreRead": false,
+    "founderDecisionRead": false,
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "sbcRead": false,
+    "mt5Read": false
+  },
+  "preserved": {
+    "acceptedCandidateVersion": "0.10.64-pfr-v2b-mo-r3-r2-f1-r1",
+    "acceptedCandidateModified": false,
+    "unsignedMoP2MathChanged": false,
+    "unsignedMoP3aVisualizerChanged": false,
+    "founderReviewInfrastructureChanged": false,
+    "executionAllowed": false
+  },
+  "nextGate": "CENTRAL_REVIEW_REQUIRED_BEFORE_ANY_MARKET_HYPOTHESIS_OR_SIGNED_RUNTIME_WORK"
+}

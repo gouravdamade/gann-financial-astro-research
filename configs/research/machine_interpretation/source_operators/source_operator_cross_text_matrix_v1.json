@@ -1,0 +1,168 @@
+{
+  "contract": "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S1",
+  "purpose": "Cross-text comparison retains each witness and provenance layer. Agreement is not an unattributed generic-astrology rule, and a translation mismatch is not a root-text conflict.",
+  "topics": [
+    {
+      "topicId": "ORDINARY_DRSTI_FRACTIONS",
+      "relationshipStatus": "CROSS_TEXT_AGREEMENT_WITH_TRANSLATION_EDITORIAL_MISMATCH",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit ordinary drsti proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "3/10 = 1/4; 5/9 = 1/2; 4/8 = 3/4; 7 = full"
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "SANSKRIT_ROOT_CONTROLLING_FOR_THIS_PROPOSITION",
+          "locator": "Saravali 4.32 Sanskrit root",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "3/10 = 1/4; 5/9 = 1/2; 4/8 = 3/4; 7 = full"
+        },
+        {
+          "sourceFamily": "SANTHANAM_TRANSLATION",
+          "witnessRole": "READING_TRANSLATION_NOT_CONTROLLING_OVER_SANSKRIT_ROOT",
+          "locator": "Santhanam English rendering of Saravali 4.32",
+          "status": "TRANSLATION_EDITORIAL_MISMATCH",
+          "claim": "The English descriptions swap the 4/8 and 5/9 fractions.",
+          "doesNotAlter": "SARAVALI_4_32_ORDINARY_DRSTI_V1"
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 98 and 100; printed pages 82 and 84; verses 365-371",
+          "status": "SOURCE_CLOSED_CATEGORICAL",
+          "claim": "The same padas are recorded inside the separate Arghya aspect gate.",
+          "scopeLimit": "ARGHYA_ONLY"
+        }
+      ],
+      "machineDisposition": "Use the Saravali Sanskrit root operator for ordinary drsti fractions; preserve the translation mismatch separately."
+    },
+    {
+      "topicId": "SPECIAL_DRSTI_GEOMETRY",
+      "relationshipStatus": "CROSS_TEXT_AGREEMENT",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit special drsti proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Saturn 3/10, Jupiter 5/9, Mars 4/8 special full aspects."
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_ROOT_WITNESS",
+          "locator": "Central source-audit special drsti proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Saturn 3/10, Jupiter 5/9, Mars 4/8 special full aspects."
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 98 and 100; printed pages 82 and 84; verses 365-371",
+          "status": "SOURCE_CLOSED_CATEGORICAL",
+          "claim": "Same special full-aspect geometry in the Arghya context.",
+          "scopeLimit": "ARGHYA_ONLY"
+        }
+      ],
+      "machineDisposition": "Evaluate special full geometry on frozen events only; do not change the five-aspect experimental event compiler."
+    },
+    {
+      "topicId": "TEMPORARY_AND_COMPOUND_RELATIONSHIP",
+      "relationshipStatus": "CROSS_TEXT_AGREEMENT",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit relationship proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Temporary positions and five-state compound relationship."
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_ROOT_WITNESS",
+          "locator": "Central source-audit relationship proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Temporary positions and five-state compound relationship."
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan page 55; printed page 39; verses 168-171",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Trailokya has its own seven-planet natural relationship table.",
+          "scopeLimit": "TRAILOKYA_VEDHA_SOURCE_RELATIONSHIP"
+        }
+      ],
+      "machineDisposition": "Keep Trailokya natural relationship distinct from the BJ/Saravali temporary and compound contracts."
+    },
+    {
+      "topicId": "POSITIONAL_STRENGTH",
+      "relationshipStatus": "PARTIAL_OVERLAP",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit positional-strength record",
+          "status": "SOURCE_PARTIAL",
+          "claim": "Do not attribute later expanded components to the root without exact provenance."
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "ROOT_TEXT_WITH_COMMENTARY_SEPARATED",
+          "locator": "Central source-audit Saravali component inventory",
+          "status": "SOURCE_PARTIAL",
+          "claim": "Uccha, Sapta-Vargaja, Ojayugma-Rasyamsa, Kendra, and Drekkana are distinct components."
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 53-54; printed pages 37-38; verses 161-165",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Sthana-bala and sthana-phala are distinct source measurements within Trailokya Vedha."
+        }
+      ],
+      "machineDisposition": "Do not merge strength families into a scalar or substitute modern Shadbala."
+    },
+    {
+      "topicId": "MOTION_AND_MODIFIERS",
+      "relationshipStatus": "SOURCE_ONLY_IN_TRAILOKYA_FOR_IMPLEMENTED_SCOPE",
+      "records": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 32-36 and 54; printed pages 16-19 and 38; verses 65-77 and 166",
+          "status": "SOURCE_CLOSED_CATEGORICAL",
+          "claim": "Bounded sthula motion classifications and isolated source-result modifiers.",
+          "unresolved": "Exact continuous thresholds, stationary state, and multi-modifier stacking."
+        }
+      ],
+      "machineDisposition": "No external modern speed threshold or universal modifier stack is permitted."
+    },
+    {
+      "topicId": "LATTA_AND_ARGHYA_BOUNDARIES",
+      "relationshipStatus": "SOURCE_ONLY_IN_TRAILOKYA_FOR_IMPLEMENTED_SCOPE",
+      "records": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 75-77 and 92-103; printed pages 59-61 and 76-87",
+          "status": "SOURCE_PARTIAL",
+          "claim": "Latta and Arghya are separately scoped doctrines.",
+          "unresolved": "Latta counting origin; Arghya generalization and FX mapping."
+        }
+      ],
+      "machineDisposition": "Neither doctrine becomes an ordinary Vedha vote, generic reducer, or market operator."
+    }
+  ],
+  "guardrails": {
+    "provenanceCollapsed": false,
+    "translationMismatchTreatedAsRootConflict": false,
+    "marketDirectionAuthorized": false,
+    "marketMagnitudeAuthorized": false,
+    "executionAllowed": false
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gann-astro-desk.local/schemas/classical-source-operator-ledger-v1.json",
+  "title": "MO-R4A-S1 Classical Source Operator Ledger",
+  "description": "Provenance-first classical source propositions. The schema prevents a source operator from directly authorizing market direction or market magnitude.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "ledgerId",
+    "milestone",
+    "purpose",
+    "sourceAuditStatus",
+    "sourceMeasurementPolicy",
+    "operators",
+    "guardrails"
+  ],
+  "properties": {
+    "contract": {
+      "const": "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "ledgerId": {
+      "const": "CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+    },
+    "milestone": {
+      "const": "MO-R4A-S1"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceAuditStatus": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceMeasurementPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "typedOnly",
+        "prohibitedTargets"
+      ],
+      "properties": {
+        "typedOnly": {
+          "const": true
+        },
+        "prohibitedTargets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "operators": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/operator"
+      }
+    },
+    "guardrails": {
+      "$ref": "#/$defs/guardrails"
+    }
+  },
+  "$defs": {
+    "sourceStatus": {
+      "enum": [
+        "SOURCE_CLOSED_EXECUTABLE",
+        "SOURCE_CLOSED_CATEGORICAL",
+        "SOURCE_CLOSED_DESCRIPTIVE_ONLY",
+        "SOURCE_PARTIAL",
+        "SOURCE_UNRESOLVED",
+        "SOURCE_SILENT",
+        "TRANSLATION_EDITORIAL_MISMATCH",
+        "COMMENTARY_ONLY",
+        "CROSS_TEXT_AGREEMENT",
+        "CROSS_TEXT_CONFLICT"
+      ]
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "operatorId",
+        "operatorVersion",
+        "sourceFamily",
+        "sourceWork",
+        "author",
+        "witnessId",
+        "witnessRole",
+        "edition",
+        "rootOrCommentary",
+        "chapter",
+        "verseOrLocator",
+        "originalTerm",
+        "originalTextOrBoundedExcerptReference",
+        "translationOrLiteralSense",
+        "directSourceClaim",
+        "conditions",
+        "exceptions",
+        "scope",
+        "inputFields",
+        "outputFields",
+        "operatorType",
+        "sourceStatus",
+        "machineEvaluable",
+        "requiresExternalAstronomy",
+        "unresolvedDependencies",
+        "knownTranslationIssues",
+        "crossTextSupport",
+        "crossTextConflict",
+        "marketDirectionAuthorized",
+        "marketMagnitudeAuthorized",
+        "modeOneEligible",
+        "prohibitedInterpretations"
+      ],
+      "properties": {
+        "operatorId": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_]+_V[0-9]+$"
+        },
+        "operatorVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceFamily": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceWork": {
+          "type": "string",
+          "minLength": 1
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "witnessId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "witnessRole": {
+          "enum": [
+            "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+            "ROOT_TEXT_WITH_TRANSLATION_AND_COMMENTARY_SEPARATED",
+            "CENTRAL_AUDIT_BINDING_TO_HELD_ROOT_WITNESSES",
+            "CROSS_TEXT_AUDIT_WITH_TRAILOKYA_PAGE_LOCKED_CORROBORATION",
+            "HELD_PARTIAL_TRANSLATION_COMMENTARY_WITNESS",
+            "CENTRAL_AUDIT_BINDING_TO_HELD_ROOT_WITNESS"
+          ]
+        },
+        "edition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rootOrCommentary": {
+          "enum": [
+            "ROOT_TEXT",
+            "COMMENTARY_ONLY",
+            "TRANSLATION",
+            "EDITORIAL_NOTE",
+            "LATER_REPRINT_READING",
+            "CROSS_TEXT_CORROBORATION",
+            "ROOT_TEXT_AND_HINDI_COMMENTARY",
+            "ROOT_TEXT_AND_COMMENTARY_SEPARATED"
+          ]
+        },
+        "chapter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verseOrLocator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "originalTerm": {
+          "type": "string",
+          "minLength": 1
+        },
+        "originalTextOrBoundedExcerptReference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "translationOrLiteralSense": {
+          "type": "string",
+          "minLength": 1
+        },
+        "directSourceClaim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exceptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "operatorType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceStatus": {
+          "$ref": "#/$defs/sourceStatus"
+        },
+        "machineEvaluable": {
+          "type": "boolean"
+        },
+        "requiresExternalAstronomy": {
+          "type": "boolean"
+        },
+        "unresolvedDependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "knownTranslationIssues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "crossTextSupport": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "crossTextConflict": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "marketDirectionAuthorized": {
+          "const": false
+        },
+        "marketMagnitudeAuthorized": {
+          "const": false
+        },
+        "modeOneEligible": {
+          "type": "boolean"
+        },
+        "prohibitedInterpretations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "rule": {
+          "type": "object"
+        }
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "priceDataRead",
+        "outcomeDataRead",
+        "founderReviewStoreRead",
+        "founderDecisionRead",
+        "marketBridgeCreated",
+        "marketHypothesisRegistryEntriesCreated",
+        "catalogueAdmission",
+        "evidenceAdmission",
+        "signedWaveCreated",
+        "pairResultantCreated",
+        "magnitudeConfigured",
+        "executionAllowed"
+      ],
+      "properties": {
+        "priceDataRead": {
+          "const": false
+        },
+        "outcomeDataRead": {
+          "const": false
+        },
+        "founderReviewStoreRead": {
+          "const": false
+        },
+        "founderDecisionRead": {
+          "const": false
+        },
+        "marketBridgeCreated": {
+          "const": false
+        },
+        "marketHypothesisRegistryEntriesCreated": {
+          "const": 0
+        },
+        "catalogueAdmission": {
+          "const": false
+        },
+        "evidenceAdmission": {
+          "const": false
+        },
+        "signedWaveCreated": {
+          "const": false
+        },
+        "pairResultantCreated": {
+          "const": false
+        },
+        "magnitudeConfigured": {
+          "const": false
+        },
+        "executionAllowed": {
+          "const": false
+        }
+      }
+    }
+  }
+}
