@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gann-astro-desk.local/schemas/classical-source-operator-provenance-hardening-s1r1-v1.json",
+  "title": "MO-R4A-S1R1 Classical Source Operator Provenance Hardening",
+  "description": "A metadata-only successor binding for the historical MO-R4A-S1 operator ledger. It requires source-layer locators or explicit unresolved provenance and cannot authorize market interpretation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "milestone",
+    "purpose",
+    "baseLedgerCanonicalHash",
+    "witnesses",
+    "operatorProvenance",
+    "guardrails"
+  ],
+  "properties": {
+    "contract": {
+      "const": "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "milestone": {
+      "const": "MO-R4A-S1R1"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseLedgerCanonicalHash": {
+      "type": "string",
+      "pattern": "^[A-F0-9]{64}$"
+    },
+    "witnesses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/witness"
+      }
+    },
+    "operatorProvenance": {
+      "type": "array",
+      "minItems": 17,
+      "maxItems": 17,
+      "items": {
+        "$ref": "#/$defs/operatorProvenance"
+      }
+    },
+    "guardrails": {
+      "$ref": "#/$defs/guardrails"
+    }
+  },
+  "$defs": {
+    "witness": {
+      "type": "object",
+      "required": [
+        "witnessId",
+        "identity",
+        "artifactSha256",
+        "witnessRole",
+        "sourceBytePolicy"
+      ],
+      "properties": {
+        "witnessId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifactSha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "witnessRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceBytePolicy": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "sourceLocator": {
+      "type": "object",
+      "required": [
+        "sourceFamily",
+        "witnessId",
+        "witnessRole",
+        "sourceLayer",
+        "chapter",
+        "verse",
+        "printedPage",
+        "scanPage",
+        "repositoryReference",
+        "propositionRole",
+        "provenanceStatus"
+      ],
+      "properties": {
+        "sourceFamily": {
+          "type": "string"
+        },
+        "witnessId": {
+          "type": "string"
+        },
+        "witnessRole": {
+          "type": "string"
+        },
+        "sourceLayer": {
+          "type": "string"
+        },
+        "chapter": {
+          "type": "string"
+        },
+        "verse": {
+          "type": "string"
+        },
+        "printedPage": {
+          "type": "string"
+        },
+        "scanPage": {
+          "type": "string"
+        },
+        "repositoryReference": {
+          "type": "string"
+        },
+        "propositionRole": {
+          "type": "string"
+        },
+        "provenanceStatus": {
+          "enum": [
+            "SOURCE_CLOSED_EXACT_PAGE_IMAGE",
+            "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND",
+            "TRANSLATION_EDITORIAL_MISMATCH"
+          ]
+        }
+      }
+    },
+    "operatorProvenance": {
+      "type": "object",
+      "required": [
+        "operatorId",
+        "operatorVersion",
+        "sourceStatusBefore",
+        "sourceStatusAfter",
+        "operatorPatch"
+      ],
+      "properties": {
+        "operatorId": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_]+_V[0-9]+$"
+        },
+        "operatorVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceStatusBefore": {
+          "type": "string"
+        },
+        "sourceStatusAfter": {
+          "type": "string"
+        },
+        "operatorPatch": {
+          "type": "object",
+          "required": [
+            "sourceLocators",
+            "provenanceStatus"
+          ],
+          "properties": {
+            "sourceLocators": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/sourceLocator"
+              }
+            },
+            "provenanceStatus": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "required": [
+        "mathematicsChanged",
+        "eventIdentityChanged",
+        "priceDataRead",
+        "outcomeDataRead",
+        "founderReviewStoreRead",
+        "marketHypothesisRegistryEntriesCreated",
+        "realPolarityCount",
+        "magnitudeConfigured",
+        "executionAllowed"
+      ],
+      "properties": {
+        "mathematicsChanged": {
+          "const": false
+        },
+        "eventIdentityChanged": {
+          "const": false
+        },
+        "priceDataRead": {
+          "const": false
+        },
+        "outcomeDataRead": {
+          "const": false
+        },
+        "founderReviewStoreRead": {
+          "const": false
+        },
+        "marketHypothesisRegistryEntriesCreated": {
+          "const": 0
+        },
+        "realPolarityCount": {
+          "const": 0
+        },
+        "magnitudeConfigured": {
+          "const": false
+        },
+        "executionAllowed": {
+          "const": false
+        }
+      }
+    }
+  }
+}

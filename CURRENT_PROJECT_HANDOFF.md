@@ -4,6 +4,58 @@ Last updated: 2026-09-10 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-10 (MO-R4A-S1R1 Classical Source Provenance Hardening)
+
+- Preserved the historical MO-R4A-S1 ledger and coverage records, then added a
+  separate S1R1 successor ledger whose canonical hash is
+  `9704821AB7A3777ABA6DB7671246B989ACBE0403FF511EED7CC38303BDBE2867`.
+  The historical S1 ledger hash remains
+  `E8C73059A0F85DCB9A9ACC6945A964FAD6EB0D4A47C0CBBE9F72000B5F5E10C4`.
+- Completed a 17-record source-provenance audit. The prior generic central
+  audit locators for temporary relationship, compound relationship, special
+  drsti, and Dik Bala are now represented as separate page-image locators with
+  root/commentary/translation layers. Existing Trailokya page locks are also
+  structured rather than only prose locators.
+- Held witness review directly bound Brihat Jataka II.13 to printed p.32 /
+  scan p.43, II.18 plus following Bhatotpala commentary and II.19 to p.38 /
+  scan p.50, and Saravali 4.30 p.56 / scan p.60, 4.31 p.57 / scan p.61, and
+  4.32-33 plus 4.35 p.58 / scan p.62. The directive-named 1934 Brihat Jataka
+  witness was not found locally, so the separately identified held Sanskrit
+  Bhatotpala witness is recorded under its actual identity rather than renamed.
+- Saravali 4.32 Sanskrit root remains controlling for the ordinary drsti
+  fraction sequence. Santhanam English is separately marked as the known
+  translation/editorial mismatch; commentary is never relabeled as root text.
+- Two Saravali strength records remain explicitly partial and non-executable
+  because no individual exact page locator is durably bound. No source gap was
+  filled from a central summary, translation inference, generic Jyotisha, or
+  model memory.
+- Rebound only the source provenance for the frozen 24 April 2025 rows. The
+  new coverage hash is
+  `7ADF16D5A762F0DD50602F7DE4233A5A9AD965B5C6C68681C33B36A096A2C4C4`;
+  the historical coverage hash remains
+  `93ED109D2A5D5DCE68A4C9C89E51B92ABECCB8A819BA3D3679A8A24D1A431D29`.
+  The comparison proves 12 USD plus 12 JPY, all 24
+  `SINGLE_PASS_VERIFIED`, identity-bearing fields, astronomy snapshots, and
+  evaluator semantics remain unchanged. Only provenance/hash report content
+  changed.
+- S1R1 does not read Founder Review state, price, candles, returns, PnL,
+  outcomes, SBC, catalogue, reviewed evidence, Auto Suggest, ML, MT5, or
+  execution. The market-hypothesis registry remains empty, real polarity
+  count is zero, magnitude remains unconfigured, and `executionAllowed=false`.
+  The accepted `0.10.64-pfr-v2b-mo-r3-r2-f1-r1` candidate is unchanged and no
+  package was built.
+- Primary S1R1 records:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S1R1_SOURCE_PROVENANCE_HARDENING.md`,
+  `status/audits/mo_r4a_s1r1_source_provenance_audit.json`,
+  `status/audits/mo_r4a_s1r1_immutable_event_rebinding_comparison.json`, and
+  `status/acceptance/mo_r4a_s1r1_source_provenance_hardening.json`.
+- Verification: focused source-operator tests `39/39`; targeted Ruff and
+  Python compilation passed; seven S1R1 JSON/schema files parsed; full backend
+  `416 passed, 1 skipped`; canonical repository regression `960 passed, 2
+  skipped`. No frontend, Rust, package, or candidate work was necessary.
+- Stop at independent central review. Do not begin MO-R4A-S2 or create a real
+  market-bridge hypothesis from these events.
+
 ## Latest Update - 2026-09-10 (MO-R4A-S1 Classical Source Operator Ledger and Event Binding)
 
 - Added the versioned MO-R4A-S1 classical source-operator ledger, schema,

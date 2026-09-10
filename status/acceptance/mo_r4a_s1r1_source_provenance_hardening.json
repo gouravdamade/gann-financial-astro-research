@@ -1,0 +1,77 @@
+{
+  "contract": "MO_R4A_S1R1_SOURCE_PROVENANCE_HARDENING_STATE_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S1R1",
+  "startingMaster": "ed8ba3eb0e6541a64ac464f4bdc5324337904dd2",
+  "status": "PROVENANCE_HARDENING_COMPLETE_CENTRAL_REVIEW_REQUIRED",
+  "historicalS1Preserved": {
+    "ledgerPath": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_v1.json",
+    "ledgerCanonicalHash": "E8C73059A0F85DCB9A9ACC6945A964FAD6EB0D4A47C0CBBE9F72000B5F5E10C4",
+    "coveragePath": "status/audits/mo_r4a_s1_real_24_source_operator_coverage.json",
+    "coverageHash": "93ED109D2A5D5DCE68A4C9C89E51B92ABECCB8A819BA3D3679A8A24D1A431D29"
+  },
+  "provenanceHardenedS1R1": {
+    "ledgerPath": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s1r1_v1.json",
+    "ledgerCanonicalHash": "9704821AB7A3777ABA6DB7671246B989ACBE0403FF511EED7CC38303BDBE2867",
+    "provenanceOverlayPath": "configs/research/machine_interpretation/source_operators/classical_source_operator_provenance_hardening_s1r1_v1.json",
+    "provenanceAuditPath": "status/audits/mo_r4a_s1r1_source_provenance_audit.json",
+    "operatorCount": 17,
+    "exactPageImageLocatorCount": 22,
+    "explicitlyUnboundLocatorCount": 2
+  },
+  "real24Rebinding": {
+    "coveragePath": "status/audits/mo_r4a_s1r1_real_24_source_operator_coverage.json",
+    "coverageHash": "7ADF16D5A762F0DD50602F7DE4233A5A9AD965B5C6C68681C33B36A096A2C4C4",
+    "identityComparisonPath": "status/audits/mo_r4a_s1r1_immutable_event_rebinding_comparison.json",
+    "eventCount": 24,
+    "usdEventCount": 12,
+    "jpyEventCount": 12,
+    "singlePassVerifiedCount": 24,
+    "eventUniverseRegenerated": false,
+    "allIdentityBearingFieldsUnchanged": true,
+    "allAstronomySnapshotsUnchanged": true,
+    "allEvaluationSemanticsUnchanged": true,
+    "allOperatorOutputSemanticsUnchanged": true,
+    "reportChangesRestrictedToProvenanceOrHash": true,
+    "sourceOperatorNoneCount": 0,
+    "sourceOperatorPartialCount": 2,
+    "sourceOperatorSubstantialCount": 22,
+    "sourceOperatorCompleteForDeclaredScopeCount": 0
+  },
+  "remainingProvenanceGaps": [
+    "DIRECTIVE_NAMED_1934_BRIHAT_JATAKA_WITNESS_NOT_FOUND_SEPARATE_HELD_BHATTOPALA_WITNESS_NOT_RENAMED",
+    "SARAVALI_POSITIONAL_STRENGTH_COMPONENTS_EXACT_PAGE_LOCATOR_NOT_DURABLY_BOUND",
+    "SARAVALI_NAISARGIKA_STRENGTH_EXACT_PAGE_LOCATOR_NOT_DURABLY_BOUND"
+  ],
+  "marketBoundary": {
+    "marketHypothesisRegistryEntries": 0,
+    "realPolarityCount": 0,
+    "marketMagnitude": "MAGNITUDE_NOT_CONFIGURED",
+    "outcomeDataRead": false,
+    "priceDataRead": false,
+    "founderReviewStoreRead": false,
+    "founderDecisionRead": false,
+    "sbcRead": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Read": false,
+    "executionAllowed": false
+  },
+  "preserved": {
+    "acceptedCandidateVersion": "0.10.64-pfr-v2b-mo-r3-r2-f1-r1",
+    "acceptedCandidateModified": false,
+    "unsignedMoP2MathChanged": false,
+    "unsignedMoP3aVisualizerChanged": false,
+    "founderReviewInfrastructureChanged": false,
+    "productUiChanged": false
+  },
+  "validation": {
+    "focusedSourceOperatorTests": "39 passed",
+    "targetedRuff": "passed",
+    "pythonCompilation": "passed",
+    "jsonRecordAndSchemaParse": "7 files passed",
+    "fullBackendRegression": "416 passed, 1 skipped",
+    "canonicalRepositoryRegression": "960 passed, 2 skipped"
+  },
+  "nextGate": "INDEPENDENT_CENTRAL_REVIEW_REQUIRED_BEFORE_MO_R4A_S2_MARKET_BRIDGE_HYPOTHESIS_FREEZE"
+}

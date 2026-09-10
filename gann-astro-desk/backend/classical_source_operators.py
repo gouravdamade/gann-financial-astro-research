@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from copy import deepcopy
 from datetime import datetime, timezone
 from fractions import Fraction
 from pathlib import Path
@@ -30,8 +31,11 @@ import machine_assisted_interpretation as machine_interpretation
 
 
 CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+CLASSICAL_SOURCE_OPERATOR_S1R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
 CLASSICAL_SOURCE_OPERATOR_OUTPUT_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_OUTPUT_V1"
 CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT = "MO_R4A_S1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
+CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION = 1
 EXPLORATORY_UNSIGNED_MODE = "EXPLORATORY_UNSIGNED"
 UNKNOWN_CURRENCY_DIRECTION = "UNKNOWN_MORE_EVIDENCE_REQUIRED"
@@ -42,8 +46,29 @@ NO_COMPOSITION_CONTRACT = "NO_APPROVED_ASTROLOGICAL_COMPOSITION_CONTRACT"
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OPERATOR_ROOT = PROJECT_ROOT / "configs" / "research" / "machine_interpretation" / "source_operators"
 DEFAULT_LEDGER_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_ledger_v1.json"
+DEFAULT_S1R1_PROVENANCE_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_provenance_hardening_s1r1_v1.json"
 DEFAULT_UNRESOLVED_PATH = SOURCE_OPERATOR_ROOT / "source_operator_unresolved_dependencies_v1.json"
 DEFAULT_CROSS_TEXT_PATH = SOURCE_OPERATOR_ROOT / "source_operator_cross_text_matrix_v1.json"
+
+_S1R1_PROVENANCE_CHANGE_REASONS = {
+    "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1": "Replaces the generic central-audit cross-text claim with separate Brihat Jataka II.18 and Saravali 4.30 root locators.",
+    "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1": "Separates Bhatotpala commentary following Brihat Jataka II.18 from Saravali 4.31 root evidence for the five-state table.",
+    "SARAVALI_4_32_ORDINARY_DRSTI_V1": "Binds the Sanskrit root and the known Santhanam translation mismatch separately, while retaining distinct Brihat Jataka and Trailokya corroboration.",
+    "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1": "Replaces the cross-text audit summary with distinct Brihat Jataka, Saravali, and retained Trailokya page locators.",
+    "TRAILOKYA_1972_DIGNITY_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "TRAILOKYA_1972_STHANA_BALA_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "TRAILOKYA_1972_STHANA_PHALA_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+    "BJ_SARAVALI_DIK_BALA_CONDITION_V1": "Replaces the generic central-audit cardinal-strength claim with Brihat Jataka II.19 and Saravali 4.35 root locators.",
+    "SARAVALI_POSITIONAL_STRENGTH_COMPONENTS_V1": "Makes the missing individual source locator explicit and retains the record as partial and non-executable.",
+    "SARAVALI_NAISARGIKA_STRENGTH_V1": "Removes unsupported cross-text precision and retains the historical source-audit record as partial and non-executable.",
+    "TRAILOKYA_1972_GRAHA_LATTA_BOUNDARY_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator without promoting Latta.",
+    "TRAILOKYA_1972_ARGHYA_VISWA_BOUNDARY_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator without promoting Arghya.",
+    "TRAILOKYA_1972_CONTEXT_RESOLUTION_BOUNDARY_V1": "Converts the existing Trailokya page lock from a prose locator into a structured root/commentary locator.",
+}
 
 SIGNS = (
     "ARIES",
@@ -169,6 +194,11 @@ def _parse_utc(value: str, label: str) -> datetime:
 
 
 def _source_locator(operator: Mapping[str, Any]) -> list[dict[str, str]]:
+    source_locators = operator.get("sourceLocators")
+    if isinstance(source_locators, list) and source_locators:
+        if not all(isinstance(locator, dict) for locator in source_locators):
+            raise ClassicalSourceOperatorError(f"Invalid structured source locators: {operator['operatorId']}")
+        return [dict(locator) for locator in source_locators]
     return [
         {
             "sourceId": str(operator["witnessId"]),
@@ -268,7 +298,10 @@ def _measurement(
 
 
 def validate_source_operator_ledger(ledger: Mapping[str, Any]) -> None:
-    if ledger.get("contract") != CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT:
+    if ledger.get("contract") not in {
+        CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT,
+    }:
         raise ClassicalSourceOperatorError("Unsupported classical source operator ledger contract")
     if ledger.get("schemaVersion") != CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION:
         raise ClassicalSourceOperatorError("Unsupported classical source operator ledger version")
@@ -293,6 +326,8 @@ def validate_source_operator_ledger(ledger: Mapping[str, Any]) -> None:
             raise ClassicalSourceOperatorError(f"Unknown source status for {identity[0]}: {status}")
         if status.startswith("SOURCE_CLOSED") and not str(operator["verseOrLocator"]).strip():
             raise ClassicalSourceOperatorError(f"Source-closed operator lacks a source locator: {identity[0]}")
+        if ledger.get("contract") == CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT:
+            _validate_s1r1_source_locators(operator, status)
         if bool(operator["marketDirectionAuthorized"]) or bool(operator["marketMagnitudeAuthorized"]):
             raise ClassicalSourceOperatorError(f"Market authorization is prohibited: {identity[0]}")
         if operator["rootOrCommentary"] == "COMMENTARY_ONLY" and "ROOT" in str(operator["sourceFamily"]):
@@ -303,10 +338,212 @@ def validate_source_operator_ledger(ledger: Mapping[str, Any]) -> None:
             raise ClassicalSourceOperatorError(f"Unresolved operator cannot claim executable source closure: {identity[0]}")
 
 
+def _validate_s1r1_source_locators(operator: Mapping[str, Any], status: str) -> None:
+    """Require S1R1's source-layer boundary without inventing missing locators."""
+
+    required_fields = {
+        "sourceFamily",
+        "witnessId",
+        "witnessRole",
+        "sourceLayer",
+        "chapter",
+        "verse",
+        "printedPage",
+        "scanPage",
+        "repositoryReference",
+        "propositionRole",
+        "provenanceStatus",
+    }
+    locators = operator.get("sourceLocators")
+    if not isinstance(locators, list) or not locators:
+        raise ClassicalSourceOperatorError(f"S1R1 operator lacks structured source locators: {operator['operatorId']}")
+    for locator in locators:
+        if not isinstance(locator, dict):
+            raise ClassicalSourceOperatorError(f"S1R1 locator is not an object: {operator['operatorId']}")
+        missing = required_fields - set(locator)
+        if missing:
+            raise ClassicalSourceOperatorError(
+                f"S1R1 locator lacks fields for {operator['operatorId']}: {sorted(missing)}"
+            )
+        exact = locator["provenanceStatus"] == "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+        layer = str(locator["sourceLayer"])
+        witness = str(locator["witnessId"])
+        role = str(locator["propositionRole"])
+        if exact and (not str(locator["printedPage"]).strip() or not str(locator["scanPage"]).strip()):
+            raise ClassicalSourceOperatorError(f"Exact S1R1 locator lacks page binding: {operator['operatorId']}")
+        if exact and (("CENTRAL" in witness and "AUDIT" in witness) or layer == "HISTORICAL_CENTRAL_AUDIT"):
+            raise ClassicalSourceOperatorError(
+                f"Central-audit history cannot satisfy exact source provenance: {operator['operatorId']}"
+            )
+        if layer in {"SANTHANAM_TRANSLATION", "SANTHANAM_COMMENTARY"} and "ROOT" in role:
+            raise ClassicalSourceOperatorError(
+                f"Santhanam layer cannot be relabeled as Saravali root: {operator['operatorId']}"
+            )
+        if layer == "BHATTOPALA_COMMENTARY" and "BRIHAT_JATAKA_ROOT" in role:
+            raise ClassicalSourceOperatorError(
+                f"Bhatotpala commentary cannot be relabeled as Brihat Jataka root: {operator['operatorId']}"
+            )
+    if status.startswith("SOURCE_CLOSED") and not any(
+        locator["provenanceStatus"] == "SOURCE_CLOSED_EXACT_PAGE_IMAGE" for locator in locators
+    ):
+        raise ClassicalSourceOperatorError(f"Source-closed S1R1 operator lacks exact source provenance: {operator['operatorId']}")
+
+
 def load_source_operator_ledger(path: Path = DEFAULT_LEDGER_PATH) -> dict[str, Any]:
     ledger = _read_json(path, "classical source operator ledger")
     validate_source_operator_ledger(ledger)
     return ledger
+
+
+def _load_s1r1_provenance_hardening(path: Path) -> dict[str, Any]:
+    hardening = _read_json(path, "S1R1 source provenance hardening")
+    if hardening.get("contract") != CLASSICAL_SOURCE_OPERATOR_S1R1_PROVENANCE_CONTRACT:
+        raise ClassicalSourceOperatorError("Unsupported S1R1 source provenance hardening contract")
+    records = hardening.get("operatorProvenance")
+    if not isinstance(records, list) or len(records) != 17:
+        raise ClassicalSourceOperatorError("S1R1 provenance hardening requires exactly 17 operator records")
+    identities = [(record.get("operatorId"), record.get("operatorVersion")) for record in records]
+    if len(set(identities)) != len(identities):
+        raise ClassicalSourceOperatorError("S1R1 provenance hardening contains duplicate operator identities")
+    return hardening
+
+
+def build_s1r1_provenance_hardened_ledger(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Bind the historical S1 ledger to S1R1 provenance without changing source rules."""
+
+    root = Path(resource_root).resolve()
+    base = load_source_operator_ledger(
+        root
+        / "configs"
+        / "research"
+        / "machine_interpretation"
+        / "source_operators"
+        / DEFAULT_LEDGER_PATH.name
+    )
+    hardening = _load_s1r1_provenance_hardening(
+        root
+        / "configs"
+        / "research"
+        / "machine_interpretation"
+        / "source_operators"
+        / DEFAULT_S1R1_PROVENANCE_PATH.name
+    )
+    expected_base_hash = str(hardening.get("baseLedgerCanonicalHash", ""))
+    actual_base_hash = _canonical_hash(base)
+    if expected_base_hash != actual_base_hash:
+        raise ClassicalSourceOperatorError("S1R1 provenance hardening is not bound to the historical S1 ledger hash")
+
+    hardened = deepcopy(base)
+    hardened.update(
+        {
+            "contract": CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT,
+            "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S1R1_V1",
+            "milestone": "MO-R4A-S1R1",
+            "sourceAuditStatus": "PROVENANCE_HARDENED_FOR_MO_R4A_S1R1_INPUT",
+            "provenanceHardening": {
+                "contract": hardening["contract"],
+                "baseLedgerCanonicalHash": expected_base_hash,
+                "historicalS1LedgerPreserved": True,
+            },
+        }
+    )
+    by_identity = {
+        (str(operator["operatorId"]), str(operator["operatorVersion"])): operator
+        for operator in hardened["operators"]
+    }
+    for record in hardening["operatorProvenance"]:
+        identity = (str(record["operatorId"]), str(record["operatorVersion"]))
+        target = by_identity.get(identity)
+        if target is None:
+            raise ClassicalSourceOperatorError(f"S1R1 provenance references unknown operator: {identity}")
+        if target["sourceStatus"] != record["sourceStatusBefore"]:
+            raise ClassicalSourceOperatorError(f"S1R1 provenance source-status baseline mismatch: {identity[0]}")
+        target.update(record["operatorPatch"])
+        if target["sourceStatus"] != record["sourceStatusAfter"]:
+            raise ClassicalSourceOperatorError(f"S1R1 provenance source-status patch mismatch: {identity[0]}")
+    if set(by_identity) != {
+        (str(record["operatorId"]), str(record["operatorVersion"]))
+        for record in hardening["operatorProvenance"]
+    }:
+        raise ClassicalSourceOperatorError("S1R1 provenance does not cover every S1 operator")
+    validate_source_operator_ledger(hardened)
+    return hardened
+
+
+def build_s1r1_source_provenance_audit(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Render all 17 historical-to-hardened provenance changes as an audit record."""
+
+    root = Path(resource_root).resolve()
+    baseline = load_source_operator_ledger(
+        root / "configs" / "research" / "machine_interpretation" / "source_operators" / DEFAULT_LEDGER_PATH.name
+    )
+    hardening = _load_s1r1_provenance_hardening(
+        root
+        / "configs"
+        / "research"
+        / "machine_interpretation"
+        / "source_operators"
+        / DEFAULT_S1R1_PROVENANCE_PATH.name
+    )
+    hardened = build_s1r1_provenance_hardened_ledger(root)
+    baseline_by_identity = {
+        (str(operator["operatorId"]), str(operator["operatorVersion"])): operator
+        for operator in baseline["operators"]
+    }
+    hardened_by_identity = {
+        (str(operator["operatorId"]), str(operator["operatorVersion"])): operator
+        for operator in hardened["operators"]
+    }
+    rows: list[dict[str, Any]] = []
+    for record in hardening["operatorProvenance"]:
+        identity = (str(record["operatorId"]), str(record["operatorVersion"]))
+        previous = baseline_by_identity[identity]
+        current = hardened_by_identity[identity]
+        locators = deepcopy(current["sourceLocators"])
+        rows.append(
+            {
+                "operatorId": identity[0],
+                "operatorVersion": identity[1],
+                "previousSourceLocator": previous["verseOrLocator"],
+                "previousSourceLayer": previous["rootOrCommentary"],
+                "newSourceLocators": locators,
+                "sourceLayers": sorted({str(locator["sourceLayer"]) for locator in locators}),
+                "witnessIds": sorted({str(locator["witnessId"]) for locator in locators}),
+                "sourceStatusBefore": record["sourceStatusBefore"],
+                "sourceStatusAfter": record["sourceStatusAfter"],
+                "reasonForChange": _S1R1_PROVENANCE_CHANGE_REASONS[identity[0]],
+                "evaluatorMathematicsChanged": False,
+                "eventOutputSemanticsChanged": False,
+            }
+        )
+    if set(_S1R1_PROVENANCE_CHANGE_REASONS) != set(item["operatorId"] for item in rows):
+        raise ClassicalSourceOperatorError("S1R1 provenance audit reasons do not cover every operator")
+    return {
+        "contract": "MO_R4A_S1R1_SOURCE_PROVENANCE_AUDIT_V1",
+        "schemaVersion": 1,
+        "milestone": "MO-R4A-S1R1",
+        "historicalS1LedgerCanonicalHash": _canonical_hash(baseline),
+        "provenanceHardenedLedgerCanonicalHash": _canonical_hash(hardened),
+        "operatorCount": len(rows),
+        "historicalS1LedgerPreserved": True,
+        "rows": rows,
+        "summary": {
+            "evaluatorMathematicsChanged": False,
+            "eventOutputSemanticsChanged": False,
+            "sourceClosedExactLocatorCount": sum(
+                1
+                for row in rows
+                for locator in row["newSourceLocators"]
+                if locator["provenanceStatus"] == "SOURCE_CLOSED_EXACT_PAGE_IMAGE"
+            ),
+            "explicitlyUnboundLocatorCount": sum(
+                1
+                for row in rows
+                for locator in row["newSourceLocators"]
+                if locator["provenanceStatus"] == "EXACT_SOURCE_LOCATOR_NOT_DURABLY_BOUND"
+            ),
+        },
+    }
 
 
 def load_unresolved_dependency_registry(path: Path = DEFAULT_UNRESOLVED_PATH) -> dict[str, Any]:
@@ -1081,11 +1318,17 @@ def _coverage_status(outputs: Sequence[Mapping[str, Any]]) -> str:
     return "SOURCE_OPERATOR_COVERAGE_SUBSTANTIAL"
 
 
-def build_real_source_operator_coverage_report(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+def build_real_source_operator_coverage_report(
+    resource_root: Path = PROJECT_ROOT,
+    *,
+    source_ledger: Mapping[str, Any] | None = None,
+    milestone: str = "MO-R4A-S1",
+    coverage_contract: str = CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT,
+) -> dict[str, Any]:
     """Bind source operators to frozen identities without reading review or market data."""
 
     root = Path(resource_root).resolve()
-    ledger = load_source_operator_ledger(
+    ledger = source_ledger or load_source_operator_ledger(
         root
         / "configs"
         / "research"
@@ -1093,6 +1336,7 @@ def build_real_source_operator_coverage_report(resource_root: Path = PROJECT_ROO
         / "source_operators"
         / DEFAULT_LEDGER_PATH.name
     )
+    validate_source_operator_ledger(ledger)
     load_unresolved_dependency_registry(
         root
         / "configs"
@@ -1195,9 +1439,9 @@ def build_real_source_operator_coverage_report(resource_root: Path = PROJECT_ROO
         "magnitudeConfiguredCount": sum(event["magnitudeStatus"] != MAGNITUDE_NOT_CONFIGURED for event in all_events),
     }
     body = {
-        "contract": CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT,
+        "contract": coverage_contract,
         "schemaVersion": CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION,
-        "milestone": "MO-R4A-S1",
+        "milestone": milestone,
         "inputPolicy": "IMMUTABLE_EVENT_IDENTITY_PLUS_APPROVED_CHART_ASTRONOMY_ONLY",
         "reviewStoreRead": False,
         "founderDecisionRead": False,
@@ -1234,11 +1478,14 @@ def build_real_source_operator_coverage_report(resource_root: Path = PROJECT_ROO
 
 
 def render_real_source_operator_coverage_markdown(report: Mapping[str, Any]) -> str:
-    if report.get("contract") != CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT:
+    if report.get("contract") not in {
+        CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
+    }:
         raise ClassicalSourceOperatorError("Cannot render an unsupported source-operator coverage report")
     summary = report["summary"]
     lines = [
-        "# MO-R4A-S1 Real 24 Event Source-Operator Coverage",
+        f"# {report['milestone']} Real 24 Event Source-Operator Coverage",
         "",
         "This report binds only frozen event identities to approved chart astronomy and source-operator contracts.",
         "It does not read Founder Review decisions, a durable review store, price, outcomes, SBC, or market data.",
@@ -1289,15 +1536,147 @@ def render_real_source_operator_coverage_markdown(report: Mapping[str, Any]) -> 
     return "\n".join(lines)
 
 
+def build_s1r1_rebinding_identity_comparison(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Compare S1 and S1R1 without treating provenance changes as event changes."""
+
+    def operator_outputs_without_provenance(outputs: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+        """Keep every evaluator result field while removing locator-only presentation metadata."""
+
+        normalized: list[dict[str, Any]] = []
+        for output in outputs:
+            item = deepcopy(dict(output))
+            item.pop("sourceFamily", None)
+            item.pop("sourceLocators", None)
+            measurement = item.get("sourceMeasurement")
+            if isinstance(measurement, dict):
+                measurement.pop("sourceLocator", None)
+            normalized.append(item)
+        return normalized
+
+    root = Path(resource_root).resolve()
+    baseline = build_real_source_operator_coverage_report(root)
+    hardened_ledger = build_s1r1_provenance_hardened_ledger(root)
+    rebound = build_real_source_operator_coverage_report(
+        root,
+        source_ledger=hardened_ledger,
+        milestone="MO-R4A-S1R1",
+        coverage_contract=CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
+    )
+    identity_fields = (
+        "eventId",
+        "eventHash",
+        "sideIdentity",
+        "transitBody",
+        "natalTarget",
+        "aspectType",
+        "exactUtc",
+        "identityStatus",
+        "inputPolicy",
+    )
+    semantic_fields = (
+        "applicableOperatorIds",
+        "evaluatedOperatorIds",
+        "unresolvedOperatorIds",
+        "sourceCoverageStatus",
+        "astrologicalCompositionStatus",
+        "astrologicalInterpretationState",
+        "marketBridgeStatus",
+        "currencyDirectionStatus",
+        "magnitudeStatus",
+        "mode",
+    )
+    before_events = [event for side in baseline["sides"] for event in side["events"]]
+    after_events = [event for side in rebound["sides"] for event in side["events"]]
+    if len(before_events) != 24 or len(after_events) != 24:
+        raise ClassicalSourceOperatorError("S1R1 identity comparison requires exactly 24 events per side-by-side report")
+    comparisons: list[dict[str, Any]] = []
+    for before, after in zip(before_events, after_events, strict=True):
+        identity_before = {key: before[key] for key in identity_fields}
+        identity_after = {key: after[key] for key in identity_fields}
+        semantic_before = {key: before[key] for key in semantic_fields}
+        semantic_after = {key: after[key] for key in semantic_fields}
+        event_without_outputs_before = deepcopy(before)
+        event_without_outputs_after = deepcopy(after)
+        event_without_outputs_before.pop("operatorOutputs", None)
+        event_without_outputs_after.pop("operatorOutputs", None)
+        operator_semantics_unchanged = operator_outputs_without_provenance(before["operatorOutputs"]) == operator_outputs_without_provenance(
+            after["operatorOutputs"]
+        )
+        comparisons.append(
+            {
+                "eventId": before["eventId"],
+                "identityBefore": identity_before,
+                "identityAfter": identity_after,
+                "identityUnchanged": identity_before == identity_after,
+                "astronomySnapshotUnchanged": before["astronomySnapshot"] == after["astronomySnapshot"],
+                "evaluationSemanticsUnchanged": semantic_before == semantic_after,
+                "eventFieldsOutsideOperatorOutputsUnchanged": event_without_outputs_before == event_without_outputs_after,
+                "operatorOutputSemanticsUnchanged": operator_semantics_unchanged,
+                "changedReportBytesRestrictedToProvenanceOrHash": (
+                    before["operatorOutputs"] != after["operatorOutputs"]
+                    and before["eventHash"] == after["eventHash"]
+                    and event_without_outputs_before == event_without_outputs_after
+                    and operator_semantics_unchanged
+                ),
+            }
+        )
+    if not all(
+        item["identityUnchanged"]
+        and item["astronomySnapshotUnchanged"]
+        and item["evaluationSemanticsUnchanged"]
+        and item["eventFieldsOutsideOperatorOutputsUnchanged"]
+        and item["operatorOutputSemanticsUnchanged"]
+        and item["changedReportBytesRestrictedToProvenanceOrHash"]
+        for item in comparisons
+    ):
+        raise ClassicalSourceOperatorError("S1R1 provenance rebinding changed immutable event data or evaluation semantics")
+    return {
+        "contract": "MO_R4A_S1R1_IMMUTABLE_EVENT_REBINDING_COMPARISON_V1",
+        "schemaVersion": 1,
+        "milestone": "MO-R4A-S1R1",
+        "historicalS1LedgerCanonicalHash": baseline["sourceOperatorLedgerCanonicalHash"],
+        "provenanceHardenedLedgerCanonicalHash": rebound["sourceOperatorLedgerCanonicalHash"],
+        "historicalS1CoverageHash": baseline["sourceOperatorCoverageHash"],
+        "provenanceHardenedCoverageHash": rebound["sourceOperatorCoverageHash"],
+        "eventCount": len(comparisons),
+        "usdEventCount": rebound["summary"]["usdEventCount"],
+        "jpyEventCount": rebound["summary"]["jpyEventCount"],
+        "singlePassVerifiedCount": rebound["summary"]["singlePassVerifiedCount"],
+        "identityFields": list(identity_fields),
+        "comparisons": comparisons,
+        "summary": {
+            "allIdentityBearingFieldsUnchanged": True,
+            "allAstronomySnapshotsUnchanged": True,
+            "allEvaluationSemanticsUnchanged": True,
+            "allEventFieldsOutsideOperatorOutputsUnchanged": True,
+            "allOperatorOutputSemanticsUnchanged": True,
+            "reportChangesRestrictedToProvenanceOrHash": True,
+            "marketHypothesisRegistryEntriesCreated": 0,
+            "realPolarityCount": 0,
+            "marketMagnitude": MAGNITUDE_NOT_CONFIGURED,
+            "outcomeDataRead": False,
+            "executionAllowed": False,
+        },
+    }
+
+
 def write_real_source_operator_coverage_artifacts(
     *,
     resource_root: Path = PROJECT_ROOT,
     json_path: Path,
     markdown_path: Path,
+    source_ledger: Mapping[str, Any] | None = None,
+    milestone: str = "MO-R4A-S1",
+    coverage_contract: str = CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT,
 ) -> dict[str, Any]:
     """Write deterministic audit artifacts only to explicit caller-owned paths."""
 
-    report = build_real_source_operator_coverage_report(resource_root)
+    report = build_real_source_operator_coverage_report(
+        resource_root,
+        source_ledger=source_ledger,
+        milestone=milestone,
+        coverage_contract=coverage_contract,
+    )
     json_path.parent.mkdir(parents=True, exist_ok=True)
     markdown_path.parent.mkdir(parents=True, exist_ok=True)
     json_path.write_text(json.dumps(report, ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
