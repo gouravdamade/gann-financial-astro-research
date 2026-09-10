@@ -4,6 +4,50 @@ Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-11 (MO-R4A-S2R1-R1 Saravali Relationship Orientation And Pagination Adjudication)
+
+- Direct two-pass page-image inspection of the exact held Saravali witness
+  `SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL` re-verified SHA-256
+  `3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58`.
+  It confirms visible printed p.56 at PDF image 60, p.57 at image 61, and p.58
+  at image 62. Root, Santhanam translation, and commentary remain separate;
+  commentary was not used for the relationship grammar.
+- The direct root resolves Branch B. The current Saravali directed matrix is
+  affirmed, including `MARS -> MERCURY = ENEMY`, `MERCURY -> MARS = ENEMY`,
+  `MERCURY -> MOON = ENEMY`, and `MOON -> MERCURY = FRIEND`. The 42 non-self
+  source cells were rebuilt with per-cell derivation/orientation evidence;
+  all seven self pairs and Rahu/Ketu remain fail-closed. Saravali versus
+  Trailokya remains 41 agreements, one conflict (`MERCURY -> MARS`), and seven
+  self-pair `NOT_COMPARABLE` rows.
+- Only root pagination changed: the Sanskrit root for 4.32-33 is printed p.57
+  / PDF image 61 for both ordinary and special dṛṣṭi records. The separate
+  English translation remains p.58 / image 62 and is still marked as a
+  translation/editorial mismatch. 4.28-29 is p.56 / 60, 4.30 spans pp.56-57 /
+  60-61, 4.31 is p.57 / 61, and 4.35 is p.58 / 62.
+- Historical S2R1 records are unchanged. New S2R1-R1 successor hashes are
+  ledger `2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366`,
+  coverage `A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0`,
+  registry `D76E208F52511BD8B5380BB32049B0C47275261443E587E3E09184E439FF3110`,
+  and freeze `83F1456271B510468A0DF28C66AD705318CD06F5D5B5E0566F6DE05FA06CF71D`.
+- The full 24-event comparison proves 12 USD plus 12 JPY `SINGLE_PASS_VERIFIED`
+  identities, astronomy snapshots, natural states, compound states, and
+  predictions unchanged: 0 changed natural states, 0 changed compound states,
+  and 0 changed pressure predictions. No price/outcome, Founder Review, SBC,
+  catalogue, signed-wave/pair-resultant, Auto Suggest, ML, MT5, or execution
+  resource was read or enabled. `executionAllowed=false`.
+- Verification: focused source-operator/S2/S2R1/S2R1-R1 tests `67 passed`;
+  JSON parsing covered nine new artifacts and the strict registry-schema
+  contract passed; Python compilation and Ruff passed. Full backend regression
+  `444 passed, 1 skipped, 66 subtests`; canonical repository regression `988
+  passed, 2 skipped, 66 subtests`. The two optional skipped external/private
+  witness checks are unrelated to this source successor.
+- Primary records are
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S2R1_R1_SARAVALI_RELATIONSHIP_ORIENTATION_AND_PAGINATION_ADJUDICATION.md`,
+  `status/audits/mo_r4a_s2r1_r1_saravali_relationship_lineage_reconciliation.json`,
+  and `status/acceptance/mo_r4a_s2r1_r1_blinded_market_bridge_hypothesis_freeze.json`.
+  The sole next gate is `INDEPENDENT_CENTRAL_REVIEW_BEFORE_MO_R4A_S3`; do not
+  begin S3 or inspect outcomes.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S2R1 Saravali Natural-Relationship Lineage Reconciliation)
 
 - Direct page-image inspection of the verified held witness

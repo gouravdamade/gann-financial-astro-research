@@ -854,6 +854,106 @@ class ClassicalSourceOperatorTests(unittest.TestCase):
                 outputs["SARAVALI_NATURAL_RELATIONSHIP_V1"]["outputState"],
             )
 
+    def test_s2r1_r1_adjudication_keeps_relationship_states_and_corrects_only_root_pagination(self) -> None:
+        fixture_path = (
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "mo_r4a_s2r1_r1_saravali_relationship_orientation_pagination_adjudication_v1.json"
+        )
+        fixture = _load_json(fixture_path)
+        witness = fixture["saravaliWitness"]
+        self.assertEqual(witness["artifactSha256"], "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58")
+        self.assertFalse(witness["sourceBytesTracked"])
+        self.assertEqual(
+            {(row["pdfImage"], row["visiblePrintedPage"]): set(row["versesPresent"])
+            for row in fixture["pageRecords"]
+        },
+            {
+                ("60", "56"): {"28", "29", "30"},
+                ("61", "57"): {"30", "31", "32", "33"},
+                ("62", "58"): {"32", "33", "34", "35"},
+            },
+        )
+        self.assertEqual(
+            {
+                (row["operatorId"], row["sourceLayer"], row["verse"], row["adjudicated"]["printedPage"], row["adjudicated"]["scanPage"])
+                for row in fixture["paginationCorrections"]
+            },
+            {
+                ("SARAVALI_4_32_ORDINARY_DRSTI_V1", "SARAVALI_ROOT", "32-33", "57", "61"),
+                ("CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1", "SARAVALI_ROOT", "32-33", "57", "61"),
+            },
+        )
+        successor = operators.build_s2r1_r1_saravali_adjudicated_ledger(PROJECT_ROOT)
+        expected_states = {
+            ("MARS", "MERCURY"): "ENEMY",
+            ("MERCURY", "MARS"): "ENEMY",
+            ("MERCURY", "MOON"): "ENEMY",
+            ("MOON", "MERCURY"): "FRIEND",
+        }
+        for pair, expected in expected_states.items():
+            self.assertEqual(operators.evaluate_saravali_natural_relationship(*pair, ledger=successor)["outputState"], expected)
+        evidence_rows = fixture["relationshipEvidence"]["rows"]
+        self.assertEqual(len(evidence_rows), 42)
+        self.assertEqual(
+            {(row["sourceBody"], row["targetBody"]) for row in evidence_rows},
+            {(source, target) for source in operators.RELATIONSHIP_BODIES for target in operators.RELATIONSHIP_BODIES if source != target},
+        )
+        for row in evidence_rows:
+            self.assertIn(row["derivationType"], {"EXPLICIT_FRIEND", "EXPLICIT_ENEMY", "NEUTRAL_BY_SOURCE_RULE"})
+            self.assertEqual(row["sourceLayer"], "SANSKRIT_ROOT")
+            self.assertEqual(row["sourceStatus"], "SOURCE_CLOSED")
+            self.assertIn("SOURCE_BODY -> TARGET_BODY", row["grammaticalOrientationExplanation"])
+        self.assertEqual(
+            {
+                (row["operatorId"], row["sourceLayer"], row["verse"], row["printedPage"], row["scanPage"])
+                for row in fixture["auditedAffectedOperatorLocators"]
+            },
+            {
+                ("SARAVALI_NATURAL_RELATIONSHIP_V1", "SARAVALI_ROOT", "28-29", "56", "60"),
+                ("BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1", "SARAVALI_ROOT", "30", "56", "60"),
+                ("BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1", "SARAVALI_ROOT", "31", "57", "61"),
+                ("SARAVALI_4_32_ORDINARY_DRSTI_V1", "SARAVALI_ROOT", "32-33", "57", "61"),
+                ("SARAVALI_4_32_ORDINARY_DRSTI_V1", "SANTHANAM_TRANSLATION", "32-33", "58", "62"),
+                ("CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1", "SARAVALI_ROOT", "32-33", "57", "61"),
+                ("BJ_SARAVALI_DIK_BALA_CONDITION_V1", "SARAVALI_ROOT", "35", "58", "62"),
+            },
+        )
+        self.assertEqual(fixture["historicalS2R1FixtureDiff"]["rowCount"], 49)
+        self.assertEqual(fixture["historicalS2R1FixtureDiff"]["unchangedCount"], 49)
+        self.assertEqual(fixture["historicalS2R1FixtureDiff"]["changedCount"], 0)
+        self.assertEqual(fixture["trailokyaComparison"]["summary"]["conflictCount"], 1)
+
+    def test_s2r1_r1_successor_is_deterministic_and_does_not_regenerate_astronomy(self) -> None:
+        with patch.object(operators, "configure_ephemeris", side_effect=AssertionError("S2R1-R1 must not regenerate astronomy")) as ephemeris:
+            ledger = operators.build_s2r1_r1_saravali_adjudicated_ledger(PROJECT_ROOT)
+            dynamic = operators.build_s2r1_r1_real_24_source_operator_coverage(PROJECT_ROOT)
+        ephemeris.assert_not_called()
+        checked_in_ledger = _load_json(
+            PROJECT_ROOT
+            / "configs"
+            / "research"
+            / "machine_interpretation"
+            / "source_operators"
+            / "classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json"
+        )
+        checked_in_coverage = _load_json(PROJECT_ROOT / "status" / "audits" / "mo_r4a_s2r1_r1_real_24_source_operator_coverage.json")
+        self.assertEqual(checked_in_ledger, ledger)
+        self.assertEqual(checked_in_coverage, dynamic)
+        self.assertEqual(operators._canonical_hash(ledger), "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366")
+        self.assertEqual(dynamic["sourceOperatorCoverageHash"], "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0")
+        source_operator_ids = {
+            output["operatorId"]
+            for side in dynamic["sides"]
+            for event in side["events"]
+            for output in event["operatorOutputs"]
+        }
+        self.assertIn("SARAVALI_NATURAL_RELATIONSHIP_V1", source_operator_ids)
+        self.assertNotIn("TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1", source_operator_ids)
+
     def test_p0_unsigned_contract_registry_and_accepted_candidate_remain_unchanged(self) -> None:
         registry = _load_json(
             PROJECT_ROOT

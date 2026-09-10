@@ -1,0 +1,1655 @@
+{
+  "contract": "MO_R4A_S2R1_R1_SARAVALI_RELATIONSHIP_ORIENTATION_PAGINATION_ADJUDICATION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S2R1-R1",
+  "startingMaster": "a620ae4a33b7455087aee7a4ded296d60b7ae450",
+  "saravaliWitness": {
+    "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+    "artifactSha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+    "witnessRole": "HELD_TRANSLATION_VOLUME_WITH_ORIGINAL_SANSKRIT_ROOT",
+    "sourceBytesTracked": false,
+    "verificationMethod": "DIRECT_PAGE_IMAGE_INSPECTION_TWO_PASS"
+  },
+  "pageRecords": [
+    {
+      "pdfImage": "60",
+      "visiblePrintedPage": "56",
+      "chapter": "4",
+      "versesPresent": [
+        "28",
+        "29",
+        "30"
+      ],
+      "verseBoundaries": {
+        "28": "SARAVALI_ROOT_BEGINS_AND_ENDS_ON_THIS_PAGE",
+        "29": "SARAVALI_ROOT_BEGINS_AND_ENDS_ON_THIS_PAGE",
+        "30": "SARAVALI_ROOT_BEGINS_ON_THIS_PAGE"
+      },
+      "layersObserved": [
+        "SARAVALI_ROOT",
+        "SANTHANAM_TRANSLATION"
+      ]
+    },
+    {
+      "pdfImage": "61",
+      "visiblePrintedPage": "57",
+      "chapter": "4",
+      "versesPresent": [
+        "30",
+        "31",
+        "32",
+        "33"
+      ],
+      "verseBoundaries": {
+        "30": "SARAVALI_ROOT_CONTINUES_AND_ENDS_ON_THIS_PAGE",
+        "31": "SARAVALI_ROOT_BEGINS_AND_ENDS_ON_THIS_PAGE",
+        "32": "SARAVALI_ROOT_BEGINS_AND_ENDS_ON_THIS_PAGE; TRANSLATION_CONTINUES_ON_PDF_IMAGE_62",
+        "33": "SARAVALI_ROOT_BEGINS_AND_ENDS_ON_THIS_PAGE; TRANSLATION_CONTINUES_ON_PDF_IMAGE_62"
+      },
+      "layersObserved": [
+        "SARAVALI_ROOT",
+        "SANTHANAM_TRANSLATION"
+      ]
+    },
+    {
+      "pdfImage": "62",
+      "visiblePrintedPage": "58",
+      "chapter": "4",
+      "versesPresent": [
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "verseBoundaries": {
+        "32": "SANTHANAM_TRANSLATION_ON_THIS_PAGE_ONLY",
+        "33": "SANTHANAM_TRANSLATION_ON_THIS_PAGE_ONLY",
+        "34": "SARAVALI_ROOT_AND_SANTHANAM_TRANSLATION_ON_THIS_PAGE",
+        "35": "SARAVALI_ROOT_AND_SANTHANAM_TRANSLATION_ON_THIS_PAGE"
+      },
+      "layersObserved": [
+        "SARAVALI_ROOT",
+        "SANTHANAM_TRANSLATION"
+      ]
+    }
+  ],
+  "rootTranslationCommentarySeparation": {
+    "rootControlsNaturalRelationship": true,
+    "translationRole": "SEPARATE_LEXICAL_CROSS_CHECK_NOT_GRAMMATICAL_SUBSTITUTE",
+    "commentaryUsedToResolveRelationshipOrientation": false,
+    "translationEditorialMismatchIn432Remains": true
+  },
+  "orientationEvidence": {
+    "boundedSanskritTokens": [
+      {
+        "literal": "मित्राणि",
+        "transliteration": "mitrani",
+        "function": "friends plural nominal"
+      },
+      {
+        "literal": "भौमस्य",
+        "transliteration": "bhaumasya",
+        "function": "Mars genitive relationship-holder marker"
+      },
+      {
+        "literal": "अमित्राः",
+        "transliteration": "amitrah",
+        "function": "enemies plural nominal"
+      },
+      {
+        "literal": "सौम्यः",
+        "transliteration": "saumyah",
+        "function": "Mercury epithet in the relationship listing"
+      },
+      {
+        "literal": "बुधेन",
+        "transliteration": "budhena",
+        "function": "Mercury form retained as a distinct source token"
+      }
+    ],
+    "method": "SOURCE_BODY_IS_THE_GRAMMATICAL_RELATIONSHIP_HOLDER; ITS_LISTED_TARGETS_ARE_EVALUATED_AS_SOURCE_BODY_TO_TARGET_BODY. NO_SYMMETRY_COMPLETION_WAS_USED.",
+    "mandatoryCells": [
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MERCURY",
+        "state": "ENEMY",
+        "sourceVerse": "28-29",
+        "sourceLayer": "SARAVALI_ROOT",
+        "minimumRootEvidence": "bhaumasya / amitrah relationship listing",
+        "grammaticalOrientationExplanation": "The Mars-held relationship list identifies Mercury as an enemy target. The program therefore records MARS -> MERCURY, not the inverse.",
+        "derivationType": "EXPLICIT_ENEMY"
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MARS",
+        "state": "ENEMY",
+        "sourceVerse": "28-29",
+        "sourceLayer": "SARAVALI_ROOT",
+        "minimumRootEvidence": "saumyah / budhena relationship listing",
+        "grammaticalOrientationExplanation": "The Mercury-held enemy statement separately names Mars as its target. It is not a restatement of the Mars-held clause, so the program records MERCURY -> MARS independently.",
+        "derivationType": "EXPLICIT_ENEMY"
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MOON",
+        "state": "ENEMY",
+        "sourceVerse": "28-29",
+        "sourceLayer": "SARAVALI_ROOT",
+        "minimumRootEvidence": "saumyah / budhena relationship listing",
+        "grammaticalOrientationExplanation": "The same Mercury-held enemy statement separately names Moon. The program records MERCURY -> MOON without deriving it from Moon's row.",
+        "derivationType": "EXPLICIT_ENEMY"
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MERCURY",
+        "state": "FRIEND",
+        "sourceVerse": "28",
+        "sourceLayer": "SARAVALI_ROOT",
+        "minimumRootEvidence": "mitrani relationship listing",
+        "grammaticalOrientationExplanation": "The Moon-held friend listing identifies Mercury as a friend target. The program records MOON -> MERCURY, independently of Mercury's enemy relation to Moon.",
+        "derivationType": "EXPLICIT_FRIEND"
+      }
+    ]
+  },
+  "neutralityRule": {
+    "sourceLayer": "SARAVALI_ROOT",
+    "verse": "29",
+    "exactLocator": {
+      "printedPage": "56",
+      "pdfImage": "60"
+    },
+    "directOrInferred": "EXPLICIT_ROOT_RULE",
+    "machineExecutable": true,
+    "confidenceStatus": "SOURCE_CLOSED_EXACT_PAGE_IMAGE",
+    "explanation": "Verse 4.29 supplies the residual neutral rule after the named friend and enemy lists. It is not inferred from Trailokya, a modern table, or symmetry."
+  },
+  "adjudicatedMatrix": {
+    "SUN": {
+      "friends": [
+        "MOON",
+        "MARS",
+        "JUPITER"
+      ],
+      "neutral": [
+        "MERCURY"
+      ],
+      "enemies": [
+        "VENUS",
+        "SATURN"
+      ]
+    },
+    "MOON": {
+      "friends": [
+        "SUN",
+        "MERCURY"
+      ],
+      "neutral": [
+        "MARS",
+        "JUPITER",
+        "VENUS",
+        "SATURN"
+      ],
+      "enemies": []
+    },
+    "MARS": {
+      "friends": [
+        "SUN",
+        "MOON",
+        "JUPITER"
+      ],
+      "neutral": [
+        "VENUS",
+        "SATURN"
+      ],
+      "enemies": [
+        "MERCURY"
+      ]
+    },
+    "MERCURY": {
+      "friends": [
+        "SUN",
+        "VENUS"
+      ],
+      "neutral": [
+        "JUPITER",
+        "SATURN"
+      ],
+      "enemies": [
+        "MARS",
+        "MOON"
+      ]
+    },
+    "JUPITER": {
+      "friends": [
+        "SUN",
+        "MOON",
+        "MARS"
+      ],
+      "neutral": [
+        "SATURN"
+      ],
+      "enemies": [
+        "MERCURY",
+        "VENUS"
+      ]
+    },
+    "VENUS": {
+      "friends": [
+        "MERCURY",
+        "SATURN"
+      ],
+      "neutral": [
+        "MARS",
+        "JUPITER"
+      ],
+      "enemies": [
+        "SUN",
+        "MOON"
+      ]
+    },
+    "SATURN": {
+      "friends": [
+        "MERCURY",
+        "VENUS"
+      ],
+      "neutral": [
+        "JUPITER"
+      ],
+      "enemies": [
+        "SUN",
+        "MOON",
+        "MARS"
+      ]
+    }
+  },
+  "paginationCorrections": [
+    {
+      "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "32-33",
+      "prior": {
+        "printedPage": "58",
+        "scanPage": "62"
+      },
+      "adjudicated": {
+        "printedPage": "57",
+        "scanPage": "61"
+      },
+      "reason": "The Sanskrit roots physically end at the bottom of printed p.57/PDF image 61; p.58/PDF image 62 contains the separate English rendering."
+    },
+    {
+      "operatorId": "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "32-33",
+      "prior": {
+        "printedPage": "58",
+        "scanPage": "62"
+      },
+      "adjudicated": {
+        "printedPage": "57",
+        "scanPage": "61"
+      },
+      "reason": "The Saravali root locator is corrected without changing the retained Brihat Jataka or Trailokya locators."
+    }
+  ],
+  "historicalS2R1": {
+    "ledgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+    "coverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+    "registryHash": "4655316D94188E9B4187E24D67DC9466124C977002F129508F62B518F4786CDE",
+    "usdHypothesisHash": "E9605930B63F89EED49A0CE0F25A11D7EC9AD7FE3B25BD8F2466D4BF2D6C89E1",
+    "jpyHypothesisHash": "040676DC1CF10E197427CF88ED96EDAAB8B7235D74B03BF8F45ECCAC2E5E0B3C",
+    "predictionFreezeHash": "68E7FEDB23EBD3CF52367DF7DEAB241977C7EA8B1720BCF4F01C07F89CB34F7C",
+    "invarianceAuditHash": "A282DC181591B1F7BA11457E3F86A3FBBDCF54290BF7A3C0E98CDB3140AD07BC",
+    "lineageReconciliationHash": "8C973561EC72B5FF00AA057C1353946B9792F85E13CFBA8EFF6972C356E39B01",
+    "acceptanceManifestHash": "72404E54ECC169107AD5C5CDB3932D5827D3319D19D29EF252F2C60C64416C75"
+  },
+  "branchTaken": "B",
+  "sourceDoctrineChanged": false,
+  "evaluatorMathematicsChanged": false,
+  "priceDataRead": false,
+  "outcomeDataRead": false,
+  "founderDecisionRead": false,
+  "reviewStoreRead": false,
+  "executionAllowed": false,
+  "relationshipEvidence": {
+    "rowCount": 42,
+    "directedNonSelfRowCount": 42,
+    "rows": [
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MARS",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "JUPITER is the relationship holder in the Sanskrit possessive/predicate construction; the named target MARS receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MOON",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "JUPITER is the relationship holder in the Sanskrit possessive/predicate construction; the named target MOON receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "SUN",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "JUPITER is the relationship holder in the Sanskrit possessive/predicate construction; the named target SUN receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "SATURN",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "JUPITER is the relationship holder. SATURN is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MERCURY",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "JUPITER is the relationship holder in the Sanskrit possessive/predicate construction; the named target MERCURY receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "VENUS",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "JUPITER is the relationship holder in the Sanskrit possessive/predicate construction; the named target VENUS receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "JUPITER",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "MARS is the relationship holder in the Sanskrit possessive/predicate construction; the named target JUPITER receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MOON",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "MARS is the relationship holder in the Sanskrit possessive/predicate construction; the named target MOON receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "SUN",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "MARS is the relationship holder in the Sanskrit possessive/predicate construction; the named target SUN receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "SATURN",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MARS is the relationship holder. SATURN is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "VENUS",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MARS is the relationship holder. VENUS is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MERCURY",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "Mars relation enumerated in the Mars predicate; Mercury is listed as enemy. MARS is the relationship holder in the Sanskrit possessive/predicate construction; the named target MERCURY receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "SUN",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "MERCURY is the relationship holder in the Sanskrit possessive/predicate construction; the named target SUN receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "VENUS",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "MERCURY is the relationship holder in the Sanskrit possessive/predicate construction; the named target VENUS receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "JUPITER",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MERCURY is the relationship holder. JUPITER is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "SATURN",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MERCURY is the relationship holder. SATURN is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MARS",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "Mercury relation enumerated in the Mercury predicate; Mars is listed as enemy. MERCURY is the relationship holder in the Sanskrit possessive/predicate construction; the named target MARS receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MOON",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "Mercury relation enumerated in the Mercury predicate; Moon is listed as enemy. MERCURY is the relationship holder in the Sanskrit possessive/predicate construction; the named target MOON receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MERCURY",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "Moon relation enumerated in the Moon predicate; Mercury is listed as friend. MOON is the relationship holder in the Sanskrit possessive/predicate construction; the named target MERCURY receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "SUN",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "MOON is the relationship holder in the Sanskrit possessive/predicate construction; the named target SUN receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "JUPITER",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MOON is the relationship holder. JUPITER is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MARS",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MOON is the relationship holder. MARS is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "SATURN",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MOON is the relationship holder. SATURN is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "VENUS",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "MOON is the relationship holder. VENUS is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MERCURY",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "SATURN is the relationship holder in the Sanskrit possessive/predicate construction; the named target MERCURY receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "VENUS",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "SATURN is the relationship holder in the Sanskrit possessive/predicate construction; the named target VENUS receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "JUPITER",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "SATURN is the relationship holder. JUPITER is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MARS",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "SATURN is the relationship holder in the Sanskrit possessive/predicate construction; the named target MARS receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MOON",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "SATURN is the relationship holder in the Sanskrit possessive/predicate construction; the named target MOON receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "SUN",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "SATURN is the relationship holder in the Sanskrit possessive/predicate construction; the named target SUN receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "JUPITER",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "SUN is the relationship holder in the Sanskrit possessive/predicate construction; the named target JUPITER receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MARS",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "SUN is the relationship holder in the Sanskrit possessive/predicate construction; the named target MARS receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MOON",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "SUN is the relationship holder in the Sanskrit possessive/predicate construction; the named target MOON receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MERCURY",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "SUN is the relationship holder. MERCURY is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "SATURN",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "SUN is the relationship holder in the Sanskrit possessive/predicate construction; the named target SATURN receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "VENUS",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "SUN is the relationship holder in the Sanskrit possessive/predicate construction; the named target VENUS receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MERCURY",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "VENUS is the relationship holder in the Sanskrit possessive/predicate construction; the named target MERCURY receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "SATURN",
+        "state": "FRIEND",
+        "evidenceClassification": "EXPLICIT_FRIEND",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_FRIEND",
+        "grammaticalOrientationExplanation": "VENUS is the relationship holder in the Sanskrit possessive/predicate construction; the named target SATURN receives the listed FRIEND state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "JUPITER",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "VENUS is the relationship holder. JUPITER is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MARS",
+        "state": "NEUTRAL",
+        "evidenceClassification": "NEUTRAL_BY_SOURCE_RULE",
+        "sourceVerse": "4.29",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "NEUTRAL_BY_SOURCE_RULE",
+        "grammaticalOrientationExplanation": "VENUS is the relationship holder. MARS is not named in its explicit friend or enemy lists, so verse 4.29's root neutrality rule supplies NEUTRAL without symmetry. The direction is SOURCE_BODY -> TARGET_BODY."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MOON",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "VENUS is the relationship holder in the Sanskrit possessive/predicate construction; the named target MOON receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "SUN",
+        "state": "ENEMY",
+        "evidenceClassification": "EXPLICIT_ENEMY",
+        "sourceVerse": "4.28",
+        "sourceLayer": "SANSKRIT_ROOT",
+        "sourceStatus": "SOURCE_CLOSED",
+        "derivationType": "EXPLICIT_ENEMY",
+        "grammaticalOrientationExplanation": "VENUS is the relationship holder in the Sanskrit possessive/predicate construction; the named target SUN receives the listed ENEMY state. The direction is SOURCE_BODY -> TARGET_BODY and is not inferred from the reciprocal cell."
+      }
+    ]
+  },
+  "historicalS2R1FixtureDiff": {
+    "rowCount": 49,
+    "unchangedCount": 49,
+    "changedCount": 0,
+    "selfPairCount": 7,
+    "rows": [
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MARS",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MOON",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "SUN",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MARS",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MOON",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "SUN",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MARS",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MOON",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "SUN",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MARS",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MOON",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "SUN",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MARS",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MOON",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "SUN",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MARS",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MOON",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "SUN",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "JUPITER",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MARS",
+        "historicalS2R1State": "NEUTRAL",
+        "successorS2R1R1State": "NEUTRAL",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MERCURY",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MOON",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "SATURN",
+        "historicalS2R1State": "FRIEND",
+        "successorS2R1R1State": "FRIEND",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "SUN",
+        "historicalS2R1State": "ENEMY",
+        "successorS2R1R1State": "ENEMY",
+        "status": "UNCHANGED",
+        "selfPair": false
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "VENUS",
+        "historicalS2R1State": "UNKNOWN",
+        "successorS2R1R1State": "UNKNOWN",
+        "status": "UNCHANGED",
+        "selfPair": true
+      }
+    ],
+    "friendToNeutralCount": 0,
+    "neutralToFriendCount": 0,
+    "enemyToNeutralCount": 0,
+    "neutralToEnemyCount": 0,
+    "otherChangeCount": 0
+  },
+  "trailokyaComparison": {
+    "relationship": "SEPARATE_SOURCE_COMPARISON_ONLY",
+    "summary": {
+      "rowCount": 49,
+      "comparableDirectedPairCount": 42,
+      "agreementCount": 41,
+      "conflictCount": 1,
+      "notComparableCount": 7,
+      "unresolvedCount": 0
+    },
+    "rows": [
+      {
+        "sourceBody": "SUN",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SUN",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MOON",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MARS",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "CONFLICT",
+        "reason": "The two source-specific directed cells differ and remain separately recorded."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "MERCURY",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "JUPITER",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      },
+      {
+        "sourceBody": "VENUS",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "SUN",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MOON",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MARS",
+        "historicalTrailokyaState": "ENEMY",
+        "saravaliState": "ENEMY",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "MERCURY",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "JUPITER",
+        "historicalTrailokyaState": "NEUTRAL",
+        "saravaliState": "NEUTRAL",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "VENUS",
+        "historicalTrailokyaState": "FRIEND",
+        "saravaliState": "FRIEND",
+        "relationshipStatus": "AGREEMENT",
+        "reason": "Both source-specific directed cells have the same categorical state."
+      },
+      {
+        "sourceBody": "SATURN",
+        "targetBody": "SATURN",
+        "historicalTrailokyaState": "UNKNOWN",
+        "saravaliState": "UNKNOWN",
+        "relationshipStatus": "NOT_COMPARABLE",
+        "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+      }
+    ]
+  },
+  "successorArtifactHashes": {
+    "ledgerCanonicalHash": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+    "coverageCanonicalHash": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+    "registryCanonicalHash": "D76E208F52511BD8B5380BB32049B0C47275261443E587E3E09184E439FF3110",
+    "usdHypothesisHash": "1C816B735FCCA52B84ED26C03D1755D251EADA7C2606B1D56533A06D71B713F9",
+    "jpyHypothesisHash": "EF2D18CEA75BCC1A137D8687F332B5586FB62D8803D44819204AFDD6472ED24F",
+    "predictionFreezeCanonicalHash": "83F1456271B510468A0DF28C66AD705318CD06F5D5B5E0566F6DE05FA06CF71D",
+    "invarianceAuditCanonicalHash": "9275312E183B631ED28F568509883328ACBEC4D6775B8AF3066E0DF515FA3BE3",
+    "lineageReconciliationCanonicalHash": "E76A90B6187F83F053AB676EB0BF5FEE5411DAA3AEBF1D64B654FEFE1613557C",
+    "acceptanceManifestCanonicalHash": "DFE2837578DB17AE6E286EA7585A2E17E3B39DBF78D63984A48EFBFD72EDA4C6"
+  },
+  "auditedAffectedOperatorLocators": [
+    {
+      "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "28-29",
+      "printedPage": "56",
+      "scanPage": "60"
+    },
+    {
+      "operatorId": "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "30",
+      "printedPage": "56",
+      "scanPage": "60"
+    },
+    {
+      "operatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "31",
+      "printedPage": "57",
+      "scanPage": "61"
+    },
+    {
+      "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "32-33",
+      "printedPage": "57",
+      "scanPage": "61"
+    },
+    {
+      "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+      "sourceLayer": "SANTHANAM_TRANSLATION",
+      "verse": "32-33",
+      "printedPage": "58",
+      "scanPage": "62",
+      "sourceStatus": "TRANSLATION_EDITORIAL_MISMATCH"
+    },
+    {
+      "operatorId": "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "32-33",
+      "printedPage": "57",
+      "scanPage": "61"
+    },
+    {
+      "operatorId": "BJ_SARAVALI_DIK_BALA_CONDITION_V1",
+      "sourceLayer": "SARAVALI_ROOT",
+      "verse": "35",
+      "printedPage": "58",
+      "scanPage": "62"
+    }
+  ]
+}

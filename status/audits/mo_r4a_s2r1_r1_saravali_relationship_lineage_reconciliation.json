@@ -1,0 +1,1223 @@
+{
+  "contract": "MO_R4A_S2R1_R1_SARAVALI_RELATIONSHIP_LINEAGE_RECONCILIATION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S2R1-R1",
+  "startingMaster": "a620ae4a33b7455087aee7a4ded296d60b7ae450",
+  "saravaliWitnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+  "saravaliWitnessSha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+  "exactSourceLocator": "Saravali 4.28-29, printed p.56 / scan p.60",
+  "sourceLayer": "SARAVALI_ROOT",
+  "saravaliNaturalRelationshipOperatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+  "trailokyaNaturalRelationshipOperatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+  "comparisonRows": [
+    {
+      "sourceBody": "SUN",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SUN",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MOON",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MARS",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "CONFLICT",
+      "reason": "The two source-specific directed cells differ and remain separately recorded."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "MERCURY",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "JUPITER",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    },
+    {
+      "sourceBody": "VENUS",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "SUN",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "MOON",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "MARS",
+      "historicalTrailokyaState": "ENEMY",
+      "saravaliState": "ENEMY",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "MERCURY",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "JUPITER",
+      "historicalTrailokyaState": "NEUTRAL",
+      "saravaliState": "NEUTRAL",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "VENUS",
+      "historicalTrailokyaState": "FRIEND",
+      "saravaliState": "FRIEND",
+      "relationshipStatus": "AGREEMENT",
+      "reason": "Both source-specific directed cells have the same categorical state."
+    },
+    {
+      "sourceBody": "SATURN",
+      "targetBody": "SATURN",
+      "historicalTrailokyaState": "UNKNOWN",
+      "saravaliState": "UNKNOWN",
+      "relationshipStatus": "NOT_COMPARABLE",
+      "reason": "Neither source contract states a self-relationship; both remain UNKNOWN."
+    }
+  ],
+  "comparisonSummary": {
+    "rowCount": 49,
+    "comparableDirectedPairCount": 42,
+    "agreementCount": 41,
+    "conflictCount": 1,
+    "notComparableCount": 7,
+    "unresolvedCount": 0
+  },
+  "pilotRelevantConflicts": [],
+  "branchTaken": "B",
+  "historicalS1R1R1LedgerHash": "00A63DFA1ED2154D9935D9502191D5574C5D1BF38E924ABD8BDA95FD9E6C1379",
+  "historicalS1R1R1CoverageHash": "359C905C6CF7792F6782E53552CEBCC9D43A63E93EC375E8314ABE795445A2AD",
+  "newSourceLedgerHash": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+  "newCoverageHash": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+  "historicalS2R1LedgerHash": "E9DB0C92B449045FB2ED35D482E3F7063C547CD2562305EEF778064C2F5558E6",
+  "historicalS2R1CoverageHash": "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+  "historicalS2R1RegistryHash": "4655316D94188E9B4187E24D67DC9466124C977002F129508F62B518F4786CDE",
+  "successorS2R1R1RegistryHash": "D76E208F52511BD8B5380BB32049B0C47275261443E587E3E09184E439FF3110",
+  "historicalS2R1PredictionFreezeHash": "68E7FEDB23EBD3CF52367DF7DEAB241977C7EA8B1720BCF4F01C07F89CB34F7C",
+  "successorS2R1R1PredictionFreezeHash": "83F1456271B510468A0DF28C66AD705318CD06F5D5B5E0566F6DE05FA06CF71D",
+  "historicalS2R1InvarianceAuditHash": "A282DC181591B1F7BA11457E3F86A3FBBDCF54290BF7A3C0E98CDB3140AD07BC",
+  "historicalS2R1ReconciliationHash": "8C973561EC72B5FF00AA057C1353946B9792F85E13CFBA8EFF6972C356E39B01",
+  "historicalS2R1AcceptanceManifestHash": "72404E54ECC169107AD5C5CDB3932D5827D3319D19D29EF252F2C60C64416C75",
+  "eventDiff": [
+    {
+      "eventId": "TN_CE5F70C72FD13CC479740159",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MOON",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_397A2B053BC76D9D788E5E5E",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MERCURY",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2R1CompoundState": "GREAT_FRIEND",
+      "adjudicatedCompoundState": "GREAT_FRIEND",
+      "oldCompoundState": "GREAT_FRIEND",
+      "newCompoundState": "GREAT_FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_5F09789EC41603F5659F0310",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "RAHU",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_91CFE5711918203A037CE751",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "KETU",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_593EA6B234B87E0EDF2918F7",
+      "sideIdentity": "USD",
+      "transitBody": "SATURN",
+      "natalTarget": "MARS",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "ENEMY"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "ENEMY"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "ENEMY",
+      "newNaturalRelationshipState": "ENEMY",
+      "historicalS2R1CompoundState": "NEUTRAL",
+      "adjudicatedCompoundState": "NEUTRAL",
+      "oldCompoundState": "NEUTRAL",
+      "newCompoundState": "NEUTRAL",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "NEUTRAL",
+      "adjudicatedPressureState": "NEUTRAL",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_B8750233DA923D431E121862",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "ENEMY",
+      "adjudicatedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "ADVERSE",
+      "adjudicatedPressureState": "ADVERSE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_29BCE2386E5DB19625921587",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MARS",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "ENEMY",
+      "adjudicatedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "ADVERSE",
+      "adjudicatedPressureState": "ADVERSE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_F20AD1B4AC4094C8222AE7F9",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "MOON",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_574C7A7407B855CD78DF8E0D",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "VENUS",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "ENEMY",
+      "adjudicatedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "ADVERSE",
+      "adjudicatedPressureState": "ADVERSE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_A32A6104A917D4918B269910",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "JUPITER",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "ENEMY",
+      "adjudicatedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "ADVERSE",
+      "adjudicatedPressureState": "ADVERSE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_A3AE3253EF31ACAFF08CD9AA",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "SUN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2R1CompoundState": "NEUTRAL",
+      "adjudicatedCompoundState": "NEUTRAL",
+      "oldCompoundState": "NEUTRAL",
+      "newCompoundState": "NEUTRAL",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "NEUTRAL",
+      "adjudicatedPressureState": "NEUTRAL",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_BD340A6100B173B5F254EDC1",
+      "sideIdentity": "USD",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "FRIEND",
+      "adjudicatedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_4A15CCC7D126313A14BCB562",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "FRIEND",
+      "adjudicatedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_493252F9AB112FC2408987DD",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "RAHU",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_B70B60AB8E4057EAE10B62EE",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "KETU",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_6E2DD561FB40D45D406F808E",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SUN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2R1CompoundState": "GREAT_FRIEND",
+      "adjudicatedCompoundState": "GREAT_FRIEND",
+      "oldCompoundState": "GREAT_FRIEND",
+      "newCompoundState": "GREAT_FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MARS",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "FRIEND",
+      "adjudicatedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_B24B1690FD8612329198D379",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MERCURY",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2R1CompoundState": "GREAT_FRIEND",
+      "adjudicatedCompoundState": "GREAT_FRIEND",
+      "oldCompoundState": "GREAT_FRIEND",
+      "newCompoundState": "GREAT_FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "VENUS",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "FRIEND",
+      "adjudicatedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_529E2CBC72B405EAD0990350",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SATURN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "FRIEND",
+      "adjudicatedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_CA3C82509E5C1C1BCB64ABD0",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MOON",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "UNKNOWN"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "UNKNOWN",
+      "newNaturalRelationshipState": "UNKNOWN",
+      "historicalS2R1CompoundState": "UNKNOWN",
+      "adjudicatedCompoundState": "UNKNOWN",
+      "oldCompoundState": "UNKNOWN",
+      "newCompoundState": "UNKNOWN",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "adjudicatedPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+      "historicalS2R1BridgeApplied": false,
+      "adjudicatedBridgeApplied": false,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_0B97DA4310F43CF2F3803720",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "SUN",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "FRIEND"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "FRIEND",
+      "newNaturalRelationshipState": "FRIEND",
+      "historicalS2R1CompoundState": "NEUTRAL",
+      "adjudicatedCompoundState": "NEUTRAL",
+      "oldCompoundState": "NEUTRAL",
+      "newCompoundState": "NEUTRAL",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "NEUTRAL",
+      "adjudicatedPressureState": "NEUTRAL",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_6F48D71F91F1382FAA720581",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "MARS",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "FRIEND",
+      "adjudicatedCompoundState": "FRIEND",
+      "oldCompoundState": "FRIEND",
+      "newCompoundState": "FRIEND",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "SUPPORTIVE",
+      "adjudicatedPressureState": "SUPPORTIVE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    },
+    {
+      "eventId": "TN_97C9294ED13CD6C36FB0840B",
+      "sideIdentity": "JPY",
+      "transitBody": "MOON",
+      "natalTarget": "JUPITER",
+      "historicalS2R1NaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "adjudicatedNaturalSource": {
+        "operatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "outputState": "NEUTRAL"
+      },
+      "oldNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "newNaturalRelationshipOperator": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+      "oldNaturalRelationshipState": "NEUTRAL",
+      "newNaturalRelationshipState": "NEUTRAL",
+      "historicalS2R1CompoundState": "ENEMY",
+      "adjudicatedCompoundState": "ENEMY",
+      "oldCompoundState": "ENEMY",
+      "newCompoundState": "ENEMY",
+      "compoundStateChanged": false,
+      "sourceLineageChanged": true,
+      "eventIdentityChanged": false,
+      "astronomyChanged": false,
+      "historicalS2R1PressureState": "ADVERSE",
+      "adjudicatedPressureState": "ADVERSE",
+      "historicalS2R1BridgeApplied": true,
+      "adjudicatedBridgeApplied": true,
+      "predictionChanged": false,
+      "reason": "SOURCE_LINEAGE_ADJUDICATION_ONLY; relationship doctrine and frozen event output remain unchanged."
+    }
+  ],
+  "summary": {
+    "unchangedPredictionCount": 24,
+    "changedPredictionCount": 0,
+    "changedNaturalStateCount": 0,
+    "changedCompoundEventCount": 0,
+    "oldSupportiveCount": 9,
+    "newSupportiveCount": 9,
+    "oldAdverseCount": 5,
+    "newAdverseCount": 5,
+    "oldNeutralCount": 3,
+    "newNeutralCount": 3,
+    "oldUnknownCount": 7,
+    "newUnknownCount": 7,
+    "oldBridgeAppliedCount": 17,
+    "newBridgeAppliedCount": 17,
+    "oldDirectionalCount": 14,
+    "newDirectionalCount": 14
+  },
+  "priceDataRead": false,
+  "outcomeDataRead": false,
+  "founderDecisionRead": false,
+  "reviewStoreRead": false,
+  "executionAllowed": false,
+  "lineageReconciliationHash": "E76A90B6187F83F053AB676EB0BF5FEE5411DAA3AEBF1D64B654FEFE1613557C"
+}

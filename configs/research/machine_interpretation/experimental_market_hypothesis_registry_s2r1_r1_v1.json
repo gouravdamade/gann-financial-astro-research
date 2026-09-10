@@ -1,0 +1,170 @@
+{
+  "contract": "MACHINE_ASSISTED_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_S2R1_R1_V1",
+  "schemaVersion": 1,
+  "registryId": "MO_R4A_S2R1_R1_EXPERIMENTAL_MARKET_HYPOTHESIS_REGISTRY_V1",
+  "registryStatus": "AUTHORIZED_FOR_BLINDED_SUCCESSOR_REFREEZE",
+  "purpose": "A two-record, outcome-blind successor of immutable S2R1 after direct Saravali relationship-orientation and printed-pagination adjudication. It preserves the experimental bridge semantics and does not assert classical financial doctrine, pair direction, price direction, magnitude, confidence, or execution.",
+  "entryPolicy": "EXACTLY_TWO_CENTRALLY_AUTHORIZED_DIRECT_COMPOUND_RELATIONSHIP_SIDE_SUCCESSORS; NO_INVERSE_OR_SECONDARY_REAL_EVENT_HYPOTHESES",
+  "startingMaster": "a620ae4a33b7455087aee7a4ded296d60b7ae450",
+  "upstreamSourceLedgerContract": "MO_R4A_S2R1_R1_SARAVALI_ADJUDICATED_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+  "upstreamSourceLedgerHash": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+  "upstreamCoverageContract": "MO_R4A_S2R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1",
+  "upstreamCoverageHash": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+  "hypothesisFamilyId": "MO_R4A_S2R1_R1_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+  "entries": [
+    {
+      "hypothesisFamilyId": "MO_R4A_S2R1_R1_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+      "hypothesisId": "H-MO-S2R1-R1-COMPOUND-REL-DIRECT-USD-V1",
+      "version": "1",
+      "author": "CENTRAL_RESEARCH_AUTHORIZATION",
+      "createdAtUtc": "2026-09-11T00:00:00Z",
+      "hypothesisScope": "FROZEN_24_EVENT_OUTCOME_BLIND_CURRENCY_SIDE_PILOT",
+      "bridgeBasis": "SOURCE_OPERATOR_STATE_PREDICATE",
+      "inputOperatorIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "primaryInputOperatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "primaryInputOperatorVersion": "1",
+      "stateMap": {
+        "GREAT_FRIEND": "SUPPORTIVE",
+        "FRIEND": "SUPPORTIVE",
+        "NEUTRAL": "NEUTRAL",
+        "ENEMY": "ADVERSE",
+        "GREAT_ENEMY": "ADVERSE"
+      },
+      "targetSide": "USD",
+      "applicabilityPolicy": "SOURCE_CLOSED_MACHINE_EVALUATED_COMPOUND_RELATIONSHIP_ONLY",
+      "abstentionPolicy": {
+        "currencyPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+        "bridgeApplied": false,
+        "fallbackOperatorAllowed": false
+      },
+      "sourceClaim": "The frozen Saravali-lineage source/operator record supplies a categorical compound relationship state for an eligible transit-body to natal-target pair. It does not supply a currency or market conclusion.",
+      "experimentalClaim": "For this outcome-blind USD-side pilot only, FRIEND-family compound states are hypothesized as SUPPORTIVE USD pressure, ENEMY-family states as ADVERSE USD pressure, and NEUTRAL as categorical NEUTRAL.",
+      "reasoning": "The direct compound-relationship state is the sole centrally authorized S2R1-R1 bridge predicate. Its natural input remains Saravali 4.28-29 under the direct orientation adjudication; no other source operator can override, reverse, weight, or complete it.",
+      "sourceDependencies": [
+        "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "MO_R4A_S2R1_R1_LEDGER_2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+        "MO_R4A_S2R1_R1_COVERAGE_A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0"
+      ],
+      "experimentalAssumptions": [
+        "The frozen Saravali-lineage transit-to-natal compound-relationship output is the authorized S2R1 input context.",
+        "Relational valence is hypothesized to transfer in the same semantic direction to the affected USD side.",
+        "GREAT_FRIEND and FRIEND collapse to the same categorical SUPPORTIVE state.",
+        "GREAT_ENEMY and ENEMY collapse to the same categorical ADVERSE state.",
+        "NEUTRAL is categorical and is not numeric zero.",
+        "Unavailable compound relationship data requires abstention without fallback."
+      ],
+      "prohibitedGeneralizations": [
+        "This does not claim that classical sources predict USD or any market.",
+        "This does not imply USDJPY pair direction.",
+        "This does not make benefic, malefic, aspect, dignity, bala, motion, or modifier states sign inputs.",
+        "This does not configure a signed unit, magnitude, confidence, weight, or amplitude.",
+        "This does not establish financial validation, accuracy, edge, expectancy, or profitability.",
+        "This does not create a production rule, Auto Suggest rule, ML label, MT5 path, or execution path."
+      ],
+      "validationStatus": "NOT_FINANCIALLY_VALIDATED",
+      "outcomeDataSeenAtCreation": false,
+      "approvalStatus": "AUTHORIZED_FOR_BLINDED_TEST",
+      "signedUnitIfConfigured": null,
+      "magnitudeConfigured": false,
+      "mode": "EXPERIMENTAL_PROFILED",
+      "productionAdmission": false,
+      "hypothesisHash": "1C816B735FCCA52B84ED26C03D1755D251EADA7C2606B1D56533A06D71B713F9",
+      "supersedesHypothesisId": "H-MO-S2R1-COMPOUND-REL-DIRECT-USD-V1",
+      "supersedesHypothesisHash": "E9605930B63F89EED49A0CE0F25A11D7EC9AD7FE3B25BD8F2466D4BF2D6C89E1",
+      "newUpstreamSourceLedgerHash": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+      "newUpstreamCoverageHash": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+      "sourceAdjudicationReason": "Direct page-image inspection confirms the Saravali 4.28-29 matrix orientation and corrects only the Saravali 4.32-33 Sanskrit-root pagination to printed p.57 / PDF image 61. The experimental compound-state bridge is unchanged."
+    },
+    {
+      "hypothesisFamilyId": "MO_R4A_S2R1_R1_COMPOUND_RELATIONSHIP_DIRECT_VALENCE_V1",
+      "hypothesisId": "H-MO-S2R1-R1-COMPOUND-REL-DIRECT-JPY-V1",
+      "version": "1",
+      "author": "CENTRAL_RESEARCH_AUTHORIZATION",
+      "createdAtUtc": "2026-09-11T00:00:00Z",
+      "hypothesisScope": "FROZEN_24_EVENT_OUTCOME_BLIND_CURRENCY_SIDE_PILOT",
+      "bridgeBasis": "SOURCE_OPERATOR_STATE_PREDICATE",
+      "inputOperatorIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "primaryInputOperatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "primaryInputOperatorVersion": "1",
+      "stateMap": {
+        "GREAT_FRIEND": "SUPPORTIVE",
+        "FRIEND": "SUPPORTIVE",
+        "NEUTRAL": "NEUTRAL",
+        "ENEMY": "ADVERSE",
+        "GREAT_ENEMY": "ADVERSE"
+      },
+      "targetSide": "JPY",
+      "applicabilityPolicy": "SOURCE_CLOSED_MACHINE_EVALUATED_COMPOUND_RELATIONSHIP_ONLY",
+      "abstentionPolicy": {
+        "currencyPressureState": "UNKNOWN_MORE_EVIDENCE_REQUIRED",
+        "bridgeApplied": false,
+        "fallbackOperatorAllowed": false
+      },
+      "sourceClaim": "The frozen Saravali-lineage source/operator record supplies a categorical compound relationship state for an eligible transit-body to natal-target pair. It does not supply a currency or market conclusion.",
+      "experimentalClaim": "For this outcome-blind JPY-side pilot only, FRIEND-family compound states are hypothesized as SUPPORTIVE JPY pressure, ENEMY-family states as ADVERSE JPY pressure, and NEUTRAL as categorical NEUTRAL.",
+      "reasoning": "The direct compound-relationship state is the sole centrally authorized S2R1-R1 bridge predicate. Its natural input remains Saravali 4.28-29 under the direct orientation adjudication; no other source operator can override, reverse, weight, or complete it.",
+      "sourceDependencies": [
+        "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "MO_R4A_S2R1_R1_LEDGER_2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+        "MO_R4A_S2R1_R1_COVERAGE_A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0"
+      ],
+      "experimentalAssumptions": [
+        "The frozen Saravali-lineage transit-to-natal compound-relationship output is the authorized S2R1 input context.",
+        "Relational valence is hypothesized to transfer in the same semantic direction to the affected JPY side.",
+        "GREAT_FRIEND and FRIEND collapse to the same categorical SUPPORTIVE state.",
+        "GREAT_ENEMY and ENEMY collapse to the same categorical ADVERSE state.",
+        "NEUTRAL is categorical and is not numeric zero.",
+        "Unavailable compound relationship data requires abstention without fallback."
+      ],
+      "prohibitedGeneralizations": [
+        "This does not claim that classical sources predict JPY or any market.",
+        "This does not imply USDJPY pair direction.",
+        "This does not make benefic, malefic, aspect, dignity, bala, motion, or modifier states sign inputs.",
+        "This does not configure a signed unit, magnitude, confidence, weight, or amplitude.",
+        "This does not establish financial validation, accuracy, edge, expectancy, or profitability.",
+        "This does not create a production rule, Auto Suggest rule, ML label, MT5 path, or execution path."
+      ],
+      "validationStatus": "NOT_FINANCIALLY_VALIDATED",
+      "outcomeDataSeenAtCreation": false,
+      "approvalStatus": "AUTHORIZED_FOR_BLINDED_TEST",
+      "signedUnitIfConfigured": null,
+      "magnitudeConfigured": false,
+      "mode": "EXPERIMENTAL_PROFILED",
+      "productionAdmission": false,
+      "hypothesisHash": "EF2D18CEA75BCC1A137D8687F332B5586FB62D8803D44819204AFDD6472ED24F",
+      "supersedesHypothesisId": "H-MO-S2R1-COMPOUND-REL-DIRECT-JPY-V1",
+      "supersedesHypothesisHash": "040676DC1CF10E197427CF88ED96EDAAB8B7235D74B03BF8F45ECCAC2E5E0B3C",
+      "newUpstreamSourceLedgerHash": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+      "newUpstreamCoverageHash": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+      "sourceAdjudicationReason": "Direct page-image inspection confirms the Saravali 4.28-29 matrix orientation and corrects only the Saravali 4.32-33 Sanskrit-root pagination to printed p.57 / PDF image 61. The experimental compound-state bridge is unchanged."
+    }
+  ],
+  "guardrails": {
+    "priceDataRead": false,
+    "outcomeDataRead": false,
+    "founderDecisionRead": false,
+    "reviewStoreRead": false,
+    "sbcRead": false,
+    "catalogueAdmission": false,
+    "evidenceAdmission": false,
+    "signedWaveRendered": false,
+    "pairResultantCreated": false,
+    "magnitudeConfigured": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  },
+  "registryHash": "D76E208F52511BD8B5380BB32049B0C47275261443E587E3E09184E439FF3110",
+  "sourceAdjudicationReason": "Direct page-image inspection confirms the Saravali 4.28-29 matrix orientation and corrects only the Saravali 4.32-33 Sanskrit-root pagination to printed p.57 / PDF image 61. The experimental compound-state bridge is unchanged.",
+  "historicalS2R1RegistryHash": "4655316D94188E9B4187E24D67DC9466124C977002F129508F62B518F4786CDE",
+  "historicalS2R1PredictionFreezeHash": "68E7FEDB23EBD3CF52367DF7DEAB241977C7EA8B1720BCF4F01C07F89CB34F7C"
+}

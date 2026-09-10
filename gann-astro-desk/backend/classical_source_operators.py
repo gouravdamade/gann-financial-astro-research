@@ -34,6 +34,7 @@ CLASSICAL_SOURCE_OPERATOR_LEDGER_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR
 CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT = "MO_R4A_S1R1_R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT = "MO_R4A_S2R1_SARAVALI_LINEAGE_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+CLASSICAL_SOURCE_OPERATOR_S2R1_R1_LEDGER_CONTRACT = "MO_R4A_S2R1_R1_SARAVALI_ADJUDICATED_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_R1_PROVENANCE_CONTRACT = "MO_R4A_S1R1_R1_BRIHAT_JATAKA_II13_LOCATOR_CORRECTION_V1"
 CLASSICAL_SOURCE_OPERATOR_OUTPUT_CONTRACT = "MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_OUTPUT_V1"
@@ -41,12 +42,14 @@ CLASSICAL_SOURCE_OPERATOR_COVERAGE_CONTRACT = "MO_R4A_S1_REAL_24_SOURCE_OPERATOR
 CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT = "MO_R4A_S1R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_S2R1_COVERAGE_CONTRACT = "MO_R4A_S2R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
+CLASSICAL_SOURCE_OPERATOR_S2R1_R1_COVERAGE_CONTRACT = "MO_R4A_S2R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE_V1"
 CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION = 1
 _SOURCE_LAYER_LEDGER_CONTRACTS = frozenset(
     {
         CLASSICAL_SOURCE_OPERATOR_S1R1_LEDGER_CONTRACT,
         CLASSICAL_SOURCE_OPERATOR_S1R1_R1_LEDGER_CONTRACT,
         CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S2R1_R1_LEDGER_CONTRACT,
     }
 )
 _SOURCE_LAYER_COVERAGE_CONTRACTS = frozenset(
@@ -54,6 +57,7 @@ _SOURCE_LAYER_COVERAGE_CONTRACTS = frozenset(
         CLASSICAL_SOURCE_OPERATOR_S1R1_COVERAGE_CONTRACT,
         CLASSICAL_SOURCE_OPERATOR_S1R1_R1_COVERAGE_CONTRACT,
         CLASSICAL_SOURCE_OPERATOR_S2R1_COVERAGE_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S2R1_R1_COVERAGE_CONTRACT,
     }
 )
 EXPLORATORY_UNSIGNED_MODE = "EXPLORATORY_UNSIGNED"
@@ -71,8 +75,13 @@ DEFAULT_S2R1_SARAVALI_RECONCILIATION_PATH = (
     SOURCE_OPERATOR_ROOT / "mo_r4a_s2r1_saravali_relationship_lineage_reconciliation_v1.json"
 )
 DEFAULT_S2R1_LEDGER_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_ledger_s2r1_saravali_lineage_v1.json"
+DEFAULT_S2R1_R1_ADJUDICATION_PATH = (
+    SOURCE_OPERATOR_ROOT / "mo_r4a_s2r1_r1_saravali_relationship_orientation_pagination_adjudication_v1.json"
+)
+DEFAULT_S2R1_R1_LEDGER_PATH = SOURCE_OPERATOR_ROOT / "classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json"
 DEFAULT_S1R1_R1_COVERAGE_PATH = PROJECT_ROOT / "status" / "audits" / "mo_r4a_s1r1_r1_real_24_source_operator_coverage.json"
 DEFAULT_S2R1_COVERAGE_PATH = PROJECT_ROOT / "status" / "audits" / "mo_r4a_s2r1_real_24_source_operator_coverage.json"
+DEFAULT_S2R1_R1_COVERAGE_PATH = PROJECT_ROOT / "status" / "audits" / "mo_r4a_s2r1_r1_real_24_source_operator_coverage.json"
 DEFAULT_UNRESOLVED_PATH = SOURCE_OPERATOR_ROOT / "source_operator_unresolved_dependencies_v1.json"
 DEFAULT_CROSS_TEXT_PATH = SOURCE_OPERATOR_ROOT / "source_operator_cross_text_matrix_v1.json"
 
@@ -698,6 +707,192 @@ def build_s2r1_saravali_lineage_ledger(resource_root: Path = PROJECT_ROOT) -> di
     if any(item.get("operatorId") == "SARAVALI_NATURAL_RELATIONSHIP_V1" for item in successor["operators"]):
         raise ClassicalSourceOperatorError("S2R1 successor cannot overwrite an existing Saravali natural-relationship operator")
     successor["operators"].append(deepcopy(source["saravaliNaturalRelationshipOperator"]))
+    validate_source_operator_ledger(successor)
+    return successor
+
+
+def _load_s2r1_r1_saravali_adjudication(path: Path) -> dict[str, Any]:
+    """Load the direct-page-image Saravali orientation and pagination adjudication."""
+
+    source = _read_json(path, "S2R1-R1 Saravali orientation adjudication")
+    if source.get("contract") != "MO_R4A_S2R1_R1_SARAVALI_RELATIONSHIP_ORIENTATION_PAGINATION_ADJUDICATION_V1":
+        raise ClassicalSourceOperatorError("Unsupported S2R1-R1 Saravali adjudication contract")
+    if source.get("schemaVersion") != CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION:
+        raise ClassicalSourceOperatorError("Unsupported S2R1-R1 Saravali adjudication version")
+    if source.get("branchTaken") != "B" or source.get("sourceDoctrineChanged") is not False:
+        raise ClassicalSourceOperatorError("S2R1-R1 Saravali adjudication has an unsupported source branch")
+    witness = source.get("saravaliWitness")
+    if not isinstance(witness, Mapping) or (
+        witness.get("witnessId"),
+        witness.get("artifactSha256"),
+        witness.get("sourceBytesTracked"),
+        witness.get("verificationMethod"),
+    ) != (
+        "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+        "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+        False,
+        "DIRECT_PAGE_IMAGE_INSPECTION_TWO_PASS",
+    ):
+        raise ClassicalSourceOperatorError("S2R1-R1 adjudication is not bound to the verified held witness")
+    page_records = source.get("pageRecords")
+    expected_pages = {
+        ("60", "56"): {"28", "29", "30"},
+        ("61", "57"): {"30", "31", "32", "33"},
+        ("62", "58"): {"32", "33", "34", "35"},
+    }
+    actual_pages = {
+        (str(record.get("pdfImage")), str(record.get("visiblePrintedPage"))): set(record.get("versesPresent", []))
+        for record in page_records if isinstance(record, Mapping)
+    } if isinstance(page_records, list) else {}
+    if actual_pages != expected_pages:
+        raise ClassicalSourceOperatorError("S2R1-R1 Saravali page-image pagination is not exact")
+    separation = source.get("rootTranslationCommentarySeparation")
+    if not isinstance(separation, Mapping) or (
+        separation.get("rootControlsNaturalRelationship"),
+        separation.get("translationRole"),
+        separation.get("commentaryUsedToResolveRelationshipOrientation"),
+    ) != (
+        True,
+        "SEPARATE_LEXICAL_CROSS_CHECK_NOT_GRAMMATICAL_SUBSTITUTE",
+        False,
+    ):
+        raise ClassicalSourceOperatorError("S2R1-R1 adjudication collapses root, translation, or commentary")
+    neutrality = source.get("neutralityRule")
+    if not isinstance(neutrality, Mapping) or (
+        neutrality.get("sourceLayer"),
+        neutrality.get("verse"),
+        neutrality.get("directOrInferred"),
+        neutrality.get("machineExecutable"),
+    ) != ("SARAVALI_ROOT", "29", "EXPLICIT_ROOT_RULE", True):
+        raise ClassicalSourceOperatorError("S2R1-R1 neutrality rule is not source-closed in the root")
+    matrix = source.get("adjudicatedMatrix")
+    if not isinstance(matrix, Mapping) or set(matrix) != RELATIONSHIP_BODIES:
+        raise ClassicalSourceOperatorError("S2R1-R1 Saravali matrix does not close the seven source bodies")
+    for body, row in matrix.items():
+        if not isinstance(row, Mapping) or set(row) != {"friends", "neutral", "enemies"}:
+            raise ClassicalSourceOperatorError(f"S2R1-R1 Saravali matrix row is invalid: {body}")
+        members = [member for category in ("friends", "neutral", "enemies") for member in row[category]]
+        if body in members or len(members) != 6 or set(members) != RELATIONSHIP_BODIES - {body}:
+            raise ClassicalSourceOperatorError(f"S2R1-R1 Saravali matrix row is not a closed non-self partition: {body}")
+    mandatory = source.get("orientationEvidence", {}).get("mandatoryCells")
+    expected_mandatory = {
+        ("MARS", "MERCURY", "ENEMY"),
+        ("MERCURY", "MARS", "ENEMY"),
+        ("MERCURY", "MOON", "ENEMY"),
+        ("MOON", "MERCURY", "FRIEND"),
+    }
+    actual_mandatory = {
+        (str(row.get("sourceBody")), str(row.get("targetBody")), str(row.get("state")))
+        for row in mandatory if isinstance(row, Mapping)
+    } if isinstance(mandatory, list) else set()
+    if actual_mandatory != expected_mandatory:
+        raise ClassicalSourceOperatorError("S2R1-R1 mandatory Mercury/Mars/Moon cells are not independently recorded")
+    corrections = source.get("paginationCorrections")
+    expected_corrections = {
+        ("SARAVALI_4_32_ORDINARY_DRSTI_V1", "SARAVALI_ROOT", "32-33", "57", "61"),
+        ("CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1", "SARAVALI_ROOT", "32-33", "57", "61"),
+    }
+    actual_corrections = {
+        (
+            str(row.get("operatorId")),
+            str(row.get("sourceLayer")),
+            str(row.get("verse")),
+            str(row.get("adjudicated", {}).get("printedPage")),
+            str(row.get("adjudicated", {}).get("scanPage")),
+        )
+        for row in corrections if isinstance(row, Mapping)
+    } if isinstance(corrections, list) else set()
+    if actual_corrections != expected_corrections:
+        raise ClassicalSourceOperatorError("S2R1-R1 Saravali pagination corrections are incomplete")
+    return source
+
+
+def _relationship_matrix_state(matrix: Mapping[str, Any], source: str, target: str) -> str:
+    if source == target:
+        return "UNKNOWN"
+    row = matrix[source]
+    for state, category in (("FRIEND", "friends"), ("NEUTRAL", "neutral"), ("ENEMY", "enemies")):
+        if target in row[category]:
+            return state
+    raise ClassicalSourceOperatorError(f"Saravali adjudication lacks a state for {source} -> {target}")
+
+
+def _replace_saravali_root_locator(
+    operator: dict[str, Any],
+    *,
+    verse: str,
+    printed_page: str,
+    scan_page: str,
+) -> None:
+    root_locators = [
+        locator for locator in operator["sourceLocators"]
+        if locator.get("sourceLayer") == "SARAVALI_ROOT" and locator.get("verse") == verse
+    ]
+    if len(root_locators) != 1:
+        raise ClassicalSourceOperatorError(f"S2R1-R1 cannot identify one Saravali root locator for {operator['operatorId']}")
+    locator = root_locators[0]
+    if (locator.get("printedPage"), locator.get("scanPage")) != ("58", "62"):
+        raise ClassicalSourceOperatorError(f"S2R1-R1 pagination baseline mismatch for {operator['operatorId']}")
+    locator["printedPage"] = printed_page
+    locator["scanPage"] = scan_page
+    locator["repositoryReference"] = (
+        "MO-R4A-S2R1-R1 direct page-image adjudication; Sanskrit root is printed p.57 / PDF image 61; "
+        "source bytes are not tracked"
+    )
+
+
+def build_s2r1_r1_saravali_adjudicated_ledger(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Create the S2R1-R1 successor without mutating the historical S2R1 ledger."""
+
+    root = Path(resource_root).resolve()
+    historical = build_s2r1_saravali_lineage_ledger(root)
+    source = _load_s2r1_r1_saravali_adjudication(
+        root / "configs" / "research" / "machine_interpretation" / "source_operators" / DEFAULT_S2R1_R1_ADJUDICATION_PATH.name
+    )
+    expected_historical_hash = str(source.get("historicalS2R1", {}).get("ledgerHash", ""))
+    if expected_historical_hash != _canonical_hash(historical):
+        raise ClassicalSourceOperatorError("S2R1-R1 adjudication is not bound to immutable historical S2R1")
+    successor = deepcopy(historical)
+    successor.update(
+        {
+            "contract": CLASSICAL_SOURCE_OPERATOR_S2R1_R1_LEDGER_CONTRACT,
+            "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S2R1_R1_SARAVALI_ADJUDICATED_V1",
+            "milestone": "MO-R4A-S2R1-R1",
+            "sourceAuditStatus": "SARAVALI_RELATIONSHIP_ORIENTATION_AND_PAGINATION_ADJUDICATED",
+            "sourceLineageReconciliation": {
+                **deepcopy(historical["sourceLineageReconciliation"]),
+                "adjudicationContract": source["contract"],
+                "historicalS2R1LedgerCanonicalHash": _canonical_hash(historical),
+                "branchTaken": source["branchTaken"],
+                "relationshipOrientationDurablyClosed": True,
+                "printedPaginationDurablyClosed": True,
+                "sourceDoctrineChanged": False,
+                "evaluatorMathematicsChanged": False,
+            },
+        }
+    )
+    by_id = {operator["operatorId"]: operator for operator in successor["operators"]}
+    natural = by_id.get("SARAVALI_NATURAL_RELATIONSHIP_V1")
+    if natural is None:
+        raise ClassicalSourceOperatorError("S2R1-R1 successor lacks Saravali natural relationship")
+    natural["rule"]["friendshipMatrix"] = deepcopy(source["adjudicatedMatrix"])
+    natural["directSourceClaim"] = (
+        "The Sanskrit root directly closes the directed seven-planet natural relationship matrix under the "
+        "source-body-to-target orientation adjudicated in MO-R4A-S2R1-R1. A body neither named friend nor "
+        "enemy is neutral; self and node relationships are not stated."
+    )
+    natural["sourceLocators"][0]["repositoryReference"] = (
+        "MO-R4A-S2R1-R1 direct page-image orientation adjudication; source bytes are not tracked"
+    )
+    for operator_id in ("SARAVALI_4_32_ORDINARY_DRSTI_V1", "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"):
+        _replace_saravali_root_locator(by_id[operator_id], verse="32-33", printed_page="57", scan_page="61")
+        by_id[operator_id]["verseOrLocator"] = by_id[operator_id]["verseOrLocator"].replace(
+            "Saravali 4.32-33 Sanskrit root, printed p.58 / scan p.62",
+            "Saravali 4.32-33 Sanskrit root, printed p.57 / scan p.61",
+        ).replace(
+            "Saravali 4.32-33, printed p.58 / scan p.62",
+            "Saravali 4.32-33, printed p.57 / scan p.61",
+        )
     validate_source_operator_ledger(successor)
     return successor
 
@@ -1625,7 +1820,10 @@ def _event_operator_outputs(snapshot: Mapping[str, Any], ledger: Mapping[str, An
     transit = str(snapshot["transitBody"])
     natal = str(snapshot["natalTarget"])
     relative_natal = int(snapshot["transitRelativeNatalPlace"])
-    uses_saravali_relationship_lineage = ledger.get("contract") == CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT
+    uses_saravali_relationship_lineage = ledger.get("contract") in {
+        CLASSICAL_SOURCE_OPERATOR_S2R1_LEDGER_CONTRACT,
+        CLASSICAL_SOURCE_OPERATOR_S2R1_R1_LEDGER_CONTRACT,
+    }
     relationship = (
         evaluate_saravali_natural_relationship(transit, natal, ledger=ledger)
         if uses_saravali_relationship_lineage
@@ -1924,6 +2122,62 @@ def build_s2r1_relationship_matrix_comparison(resource_root: Path = PROJECT_ROOT
     }
 
 
+def build_s2r1_r1_relationship_matrix_comparison(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Compare the adjudicated Saravali matrix with Trailokya without assuming the outcome."""
+
+    root = Path(resource_root).resolve()
+    historical = build_s1r1_r1_corrected_ledger(root)
+    successor = build_s2r1_r1_saravali_adjudicated_ledger(root)
+    ordered_bodies = ("SUN", "MOON", "MARS", "MERCURY", "JUPITER", "VENUS", "SATURN")
+    rows: list[dict[str, Any]] = []
+    for source in ordered_bodies:
+        for target in ordered_bodies:
+            trailokya = evaluate_trailokya_natural_relationship(source, target, ledger=historical)
+            saravali = evaluate_saravali_natural_relationship(source, target, ledger=successor)
+            if source == target:
+                relationship_status = "NOT_COMPARABLE"
+                reason = "Neither source contract states a self-relationship; both remain UNKNOWN."
+            elif trailokya["outputState"] == "UNKNOWN" or saravali["outputState"] == "UNKNOWN":
+                relationship_status = "UNRESOLVED"
+                reason = "At least one directed source cell is not closed."
+            elif trailokya["outputState"] == saravali["outputState"]:
+                relationship_status = "AGREEMENT"
+                reason = "Both source-specific directed cells have the same categorical state."
+            else:
+                relationship_status = "CONFLICT"
+                reason = "The two source-specific directed cells differ and remain separately recorded."
+            rows.append(
+                {
+                    "sourceBody": source,
+                    "targetBody": target,
+                    "historicalTrailokyaState": trailokya["outputState"],
+                    "saravaliState": saravali["outputState"],
+                    "relationshipStatus": relationship_status,
+                    "reason": reason,
+                }
+            )
+    statuses = [row["relationshipStatus"] for row in rows]
+    if len(rows) != 49 or statuses.count("NOT_COMPARABLE") != 7 or statuses.count("UNRESOLVED") != 0:
+        raise ClassicalSourceOperatorError("S2R1-R1 Saravali/Trailokya comparison is not a complete directed matrix")
+    return {
+        "contract": "MO_R4A_S2R1_R1_SARAVALI_TRAILOKYA_NATURAL_RELATIONSHIP_MATRIX_COMPARISON_V1",
+        "schemaVersion": CLASSICAL_SOURCE_OPERATOR_SCHEMA_VERSION,
+        "historicalTrailokyaOperatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "saravaliOperatorId": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+        "historicalS1R1R1LedgerCanonicalHash": _canonical_hash(historical),
+        "successorS2R1R1LedgerCanonicalHash": _canonical_hash(successor),
+        "comparisonRows": rows,
+        "comparisonSummary": {
+            "rowCount": len(rows),
+            "comparableDirectedPairCount": sum(row["relationshipStatus"] in {"AGREEMENT", "CONFLICT"} for row in rows),
+            "agreementCount": statuses.count("AGREEMENT"),
+            "conflictCount": statuses.count("CONFLICT"),
+            "notComparableCount": statuses.count("NOT_COMPARABLE"),
+            "unresolvedCount": statuses.count("UNRESOLVED"),
+        },
+    }
+
+
 def build_s2r1_real_24_source_operator_coverage(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
     """Rebind the frozen S1R1-R1 snapshot to Saravali without recomputing astronomy."""
 
@@ -1993,6 +2247,74 @@ def build_s2r1_real_24_source_operator_coverage(resource_root: Path = PROJECT_RO
     return {**body, "sourceOperatorCoverageHash": _canonical_hash(body)}
 
 
+def build_s2r1_r1_real_24_source_operator_coverage(resource_root: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Rebind immutable S2R1 coverage to the adjudicated source lineage only."""
+
+    root = Path(resource_root).resolve()
+    historical = _read_json(root / DEFAULT_S2R1_COVERAGE_PATH.relative_to(PROJECT_ROOT), "historical S2R1 source coverage")
+    historical_body = {key: deepcopy(value) for key, value in historical.items() if key != "sourceOperatorCoverageHash"}
+    if (
+        historical.get("contract"),
+        historical.get("sourceOperatorCoverageHash"),
+        _canonical_hash(historical_body),
+    ) != (
+        CLASSICAL_SOURCE_OPERATOR_S2R1_COVERAGE_CONTRACT,
+        "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+        "B22F42E78D20858045AE98F0010355E1E8895C60F1DD49570230ECC5B2C7F62A",
+    ):
+        raise ClassicalSourceOperatorError("S2R1-R1 requires the exact immutable S2R1 source coverage")
+    successor_ledger = build_s2r1_r1_saravali_adjudicated_ledger(root)
+    report = deepcopy(historical)
+    report.update(
+        {
+            "contract": CLASSICAL_SOURCE_OPERATOR_S2R1_R1_COVERAGE_CONTRACT,
+            "milestone": "MO-R4A-S2R1-R1",
+            "sourceOperatorLedgerContract": successor_ledger["contract"],
+            "sourceOperatorLedgerCanonicalHash": _canonical_hash(successor_ledger),
+            "sourceLineageRebinding": {
+                "historicalCoverageHash": historical["sourceOperatorCoverageHash"],
+                "historicalLedgerHash": historical["sourceOperatorLedgerCanonicalHash"],
+                "astronomyRecomputed": False,
+                "eventUniverseRegenerated": False,
+                "relationshipSourceReboundFrom": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+                "relationshipSourceReboundTo": "SARAVALI_NATURAL_RELATIONSHIP_V1",
+                "sourceAdjudication": "MO_R4A_S2R1_R1_SARAVALI_RELATIONSHIP_ORIENTATION_PAGINATION_ADJUDICATION_V1",
+                "sourceDoctrineChanged": False,
+                "evaluatorMathematicsChanged": False,
+            },
+        }
+    )
+    report.pop("sourceOperatorCoverageHash", None)
+    for side in report["sides"]:
+        for event in side["events"]:
+            outputs, applicable = _event_operator_outputs(event["astronomySnapshot"], successor_ledger)
+            composition = compose_source_operator_outputs(outputs)
+            event["operatorOutputs"] = outputs
+            event["applicableOperatorIds"] = applicable
+            event["evaluatedOperatorIds"] = composition["evaluatedOperatorIds"]
+            event["unresolvedOperatorIds"] = composition["unresolvedOperatorIds"]
+            event["sourceCoverageStatus"] = _coverage_status(outputs)
+            event["astrologicalCompositionStatus"] = composition["compositionStatus"]
+            event["astrologicalInterpretationState"] = composition["astrologicalInterpretationState"]
+    events = _coverage_events(report)
+    if len(events) != 24 or not all(event["identityStatus"] == "SINGLE_PASS_VERIFIED" for event in events):
+        raise ClassicalSourceOperatorError("S2R1-R1 source coverage requires all 24 frozen verified identities")
+    report["summary"] = {
+        **report["summary"],
+        "sourceOperatorNoneCount": sum(event["sourceCoverageStatus"] == "SOURCE_OPERATOR_COVERAGE_NONE" for event in events),
+        "sourceOperatorPartialCount": sum(event["sourceCoverageStatus"] == "SOURCE_OPERATOR_COVERAGE_PARTIAL" for event in events),
+        "sourceOperatorSubstantialCount": sum(event["sourceCoverageStatus"] == "SOURCE_OPERATOR_COVERAGE_SUBSTANTIAL" for event in events),
+        "astrologyUnknownCount": sum(event["astrologicalInterpretationState"] == "UNKNOWN_ASTRO_STATE" for event in events),
+        "astrologyMixedCount": sum(event["astrologicalInterpretationState"] == "MIXED_ASTRO_STATE" for event in events),
+        "astrologySourceStateCount": sum(
+            event["astrologicalInterpretationState"] in {"SUPPORTIVE_ASTRO_STATE", "ADVERSE_ASTRO_STATE", "NEUTRAL_ASTRO_STATE"}
+            for event in events
+        ),
+    }
+    body = deepcopy(report)
+    return {**body, "sourceOperatorCoverageHash": _canonical_hash(body)}
+
+
 def write_s2r1_source_lineage_artifacts(resource_root: Path = PROJECT_ROOT) -> dict[str, Path]:
     """Materialize the successor ledger and coverage from frozen source-only inputs."""
 
@@ -2004,6 +2326,24 @@ def write_s2r1_source_lineage_artifacts(resource_root: Path = PROJECT_ROOT) -> d
     payloads = {
         "ledger": build_s2r1_saravali_lineage_ledger(root),
         "coverage": build_s2r1_real_24_source_operator_coverage(root),
+    }
+    for name, path in artifacts.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(payloads[name], ensure_ascii=True, indent=2) + "\n", encoding="utf-8")
+    return artifacts
+
+
+def write_s2r1_r1_source_lineage_artifacts(resource_root: Path = PROJECT_ROOT) -> dict[str, Path]:
+    """Materialize the post-adjudication source ledger and coverage without touching S2R1."""
+
+    root = Path(resource_root).resolve()
+    artifacts = {
+        "ledger": root / DEFAULT_S2R1_R1_LEDGER_PATH.relative_to(PROJECT_ROOT),
+        "coverage": root / DEFAULT_S2R1_R1_COVERAGE_PATH.relative_to(PROJECT_ROOT),
+    }
+    payloads = {
+        "ledger": build_s2r1_r1_saravali_adjudicated_ledger(root),
+        "coverage": build_s2r1_r1_real_24_source_operator_coverage(root),
     }
     for name, path in artifacts.items():
         path.parent.mkdir(parents=True, exist_ok=True)
