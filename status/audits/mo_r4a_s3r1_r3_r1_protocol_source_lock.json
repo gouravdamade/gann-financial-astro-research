@@ -1,0 +1,147 @@
+{
+  "contract": "MO_R4A_S3R1_R3_R1_DUKASCOPY_PROTOCOL_SOURCE_LOCK_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3-R1",
+  "supersedesProtocolSourceLockContract": "MO_R4A_S3R1_R3_DUKASCOPY_PROTOCOL_SOURCE_LOCK_V1",
+  "supersedesProtocolSourceLockHash": "B36E946F45607B8900FA2A451DC8262C1ADB6A592850A0DAAEF04A5BD18D0314",
+  "lzmaFramingAdjudicationHash": "EB8F0D67FB2EA1AF478E37EA523796ED9F0D9D4813AFDED34A419800816E2398",
+  "sources": [
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "url": "https://www.dukascopy.com/wiki/es/development/data-export/",
+      "title": "Datos historicos de precios",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "current page lines 577-650; compression at 582; Python decoder at 613-646",
+      "factsSupported": [
+        "DUKASCOPY_EXCLUDES_XZ",
+        "DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS"
+      ],
+      "role": "CONTROLLING_PROVIDER_DOCUMENTATION"
+    },
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_FR",
+      "url": "https://www.dukascopy.com/wiki/fr/development/data-export/",
+      "title": "Donnees historiques de prix",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "current page corresponding daily BI5 decoding section and Python sample",
+      "factsSupported": [
+        "CROSS_LANGUAGE_CORROBORATION_OF_DAILY_BI5_DECODER"
+      ],
+      "role": "SAME_PUBLISHER_CORROBORATION_NOT_INDEPENDENT_AUTHORITY"
+    },
+    {
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "url": "https://docs.python.org/3/library/lzma.html",
+      "title": "Python 3.14.7 documentation lzma",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "L109-118, L159-165, L226-245",
+      "factsSupported": [
+        "PYTHON_DEFAULT_EQUALS_FORMAT_AUTO",
+        "PYTHON_FORMAT_AUTO_ACCEPTS_XZ",
+        "PYTHON_FORMAT_AUTO_ACCEPTS_FORMAT_ALONE",
+        "PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+        "PYTHON_FORMAT_RAW_REQUIRES_EXPLICIT_FILTER_CHAIN",
+        "PYTHON_FORMAT_ALONE_IS_LEGACY_LZMA_CONTAINER"
+      ],
+      "role": "CONTROLLING_RUNTIME_SEMANTICS"
+    },
+    {
+      "sourceId": "LIBLZMA_XZ_CONTAINER_REFERENCE",
+      "url": "https://tukaani.org/xz/liblzma-api/container_8h.html",
+      "title": "liblzma container.h File Reference",
+      "sourceAuthority": "OFFICIAL_LIBLZMA_PROJECT_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "container format API reference; consulted as terminology corroboration",
+      "factsSupported": [
+        "CONTAINER_TERMINOLOGY_CORROBORATION"
+      ],
+      "role": "CORROBORATIVE_ONLY"
+    }
+  ],
+  "factsSupported": [
+    "DUKASCOPY_EXCLUDES_XZ",
+    "DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS",
+    "PYTHON_DEFAULT_EQUALS_FORMAT_AUTO",
+    "PYTHON_FORMAT_AUTO_ACCEPTS_XZ",
+    "PYTHON_FORMAT_AUTO_ACCEPTS_FORMAT_ALONE",
+    "PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+    "PYTHON_FORMAT_RAW_REQUIRES_EXPLICIT_FILTER_CHAIN",
+    "PYTHON_FORMAT_ALONE_IS_LEGACY_LZMA_CONTAINER"
+  ],
+  "adjudicationStatus": "FORMAT_ALONE_PLAUSIBLE_CROSS_SOURCE_RECONCILIATION_AWAITING_INDEPENDENT_ASTRA_DISPOSITION",
+  "evidenceClassification": "PLAUSIBLE_CROSS_SOURCE_RECONCILIATION_NOT_DIRECT_PROVIDER_SPECIFICATION",
+  "sourceClaimMatrix": [
+    {
+      "claim": "Dukascopy excludes XZ",
+      "evidenceClass": "DIRECT_PROVIDER_FACT",
+      "source": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "supported": true,
+      "interpretiveStep": "None; provider prose excludes the .xz container.",
+      "residualUncertainty": "The natural-language raw-LZMA wording does not name a Python framing constant."
+    },
+    {
+      "claim": "Official sample uses default lzma.decompress",
+      "evidenceClass": "DIRECT_PROVIDER_FACT",
+      "source": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "supported": true,
+      "interpretiveStep": "The sample supplies no format or filter chain.",
+      "residualUncertainty": "The sample does not explicitly identify FORMAT_ALONE."
+    },
+    {
+      "claim": "Python default equals FORMAT_AUTO",
+      "evidenceClass": "DIRECT_RUNTIME_FACT",
+      "source": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "supported": true,
+      "interpretiveStep": "None; this is the documented function default.",
+      "residualUncertainty": "Runtime semantics do not establish provider intent."
+    },
+    {
+      "claim": "FORMAT_AUTO accepts XZ and legacy LZMA",
+      "evidenceClass": "DIRECT_RUNTIME_FACT",
+      "source": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "supported": true,
+      "interpretiveStep": "None; this is the documented format detection behavior.",
+      "residualUncertainty": "XZ is independently excluded by the provider wording."
+    },
+    {
+      "claim": "FORMAT_AUTO rejects RAW",
+      "evidenceClass": "DIRECT_RUNTIME_FACT",
+      "source": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "supported": true,
+      "interpretiveStep": "None; raw mode needs an explicit filter chain.",
+      "residualUncertainty": "Provider natural-language raw does not necessarily mean Python FORMAT_RAW."
+    },
+    {
+      "claim": "FORMAT_ALONE is the legacy .lzma container",
+      "evidenceClass": "DIRECT_RUNTIME_FACT",
+      "source": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "supported": true,
+      "interpretiveStep": "None; this is the documented runtime meaning.",
+      "residualUncertainty": "No provider-owned source directly maps BI5 to FORMAT_ALONE."
+    },
+    {
+      "claim": "Dukascopy directly names FORMAT_ALONE",
+      "evidenceClass": "DIRECT_PROVIDER_FACT",
+      "source": "OFFICIAL_DUKASCOPY_DOCUMENTATION_SEARCH",
+      "supported": false,
+      "interpretiveStep": "No direct provider statement was found in the searched official material.",
+      "residualUncertainty": "Provider framing identity remains unclosed pending Astra or stronger source evidence."
+    },
+    {
+      "claim": "FORMAT_ALONE remains the operational candidate",
+      "evidenceClass": "CROSS_SOURCE_TECHNICAL_RECONCILIATION",
+      "source": "DUKASCOPY_AND_PYTHON_DOCUMENTATION",
+      "supported": true,
+      "interpretiveStep": "Retain the only candidate compatible with the current exclusion/default reasoning.",
+      "residualUncertainty": "This is not unique provider-source closure."
+    }
+  ],
+  "providerFramingUniquelySourceClosed": false,
+  "providerProtocolFullyClosed": false,
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "protocolSourceLockHash": "3554E19DFEEEB0BA7DB323F4D418A60BFD1FF5D6D4836413FC3814BEC2FD29CD"
+}

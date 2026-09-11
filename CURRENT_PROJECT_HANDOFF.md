@@ -4,6 +4,48 @@ Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-11 (MO-R4A-S3R1-R3-R1 LZMA Qualification And Canonical Parsed Schema Reconciliation)
+
+- Preserved the accepted R3 package unchanged, including adjudication
+  `0F8F61572764E898F1D3F0E8676412A3770A45920FCFCB6A0AEDD9126C88855B`,
+  source lock `B36E946F45607B8900FA2A451DC8262C1ADB6A592850A0DAAEF04A5BD18D0314`,
+  parser contract `C91A76165893BCA308FE2DB9B3F83A2E9B0233CF2023E1AC573504C68EC3D316`,
+  acquisition `87D0716EFE9C0D655BB9F3C3D5DE5DBB8E6BED6B164F757F67665DB16D1E09E3`,
+  preregistration `DA05644AD7321F7EB5AEFC348B3672A0241C39AEC6DAEDCD46B12E275BCC8A04`,
+  population `D2F60D5592DD4E5904079538D2938218037567626976211F794F710A87E83294`,
+  clusters `BFE18D06940DA0B39C1D49739F97D8446412F61FC34B512C3DFC471D8AEAE6C7`,
+  invariance `00B70974E5FA1F0A95DA5FDBED92C31A0576E33FACF64E9A7EDE839989EA27F1`,
+  core `C98FCE359846C7BAE786F8AA99E60925CA26178B533C035126CFC7BC07339A99`,
+  and acceptance `38903C4C086AEF928D490AF5F67EAC3C16E101812221E13D4BED036F1AF46C90`.
+- R3-R1 records a Branch-B qualification after rechecking official Dukascopy
+  and Python/liblzma documentation. No searched provider-owned source directly
+  names `FORMAT_ALONE`; the operational `PYTHON_LZMA_FORMAT_ALONE` candidate is
+  retained as a qualified cross-source reconciliation, not unique provider
+  closure. The offline parser and parser source remain unchanged.
+- Replaced the R3 acquisition successor's inconsistent future canonical tick
+  fields with the parser-aligned record: `partitionId`, `recordIndex`,
+  `timestampUtc`, `askNative`, `bidNative`, `askVolumeBitsHex`, and
+  `bidVolumeBitsHex`. It uses sorted-key UTF-8 JSON Lines with one record per
+  line and a trailing LF; decoded float volumes are explicitly inspection-only
+  and excluded from the parsed hash.
+- Added the immutable R3-R1 successor records and report. Successor hashes are
+  adjudication `EB8F0D67FB2EA1AF478E37EA523796ED9F0D9D4813AFDED34A419800816E2398`,
+  source lock `3554E19DFEEEB0BA7DB323F4D418A60BFD1FF5D6D4836413FC3814BEC2FD29CD`,
+  acquisition `FACB0D59A584CBC45560788F1CB1C21AD5E0994215B5B71DA841D255BA76E502`,
+  preregistration `5781D2104807FA384BC257EF8FE7A48B5DC3F20DCE59C5360D7C4A1DAA283224`,
+  population `20CEFBDAC6433026073F9771ACDCEFF220E6317F2D193DFB1C5DFD6786131F05`,
+  clusters `ACF3A6DBD1E602951B54C9E844804BB6A439EC8D4B00E2EDCCAF9AC2B9C276E7`,
+  invariance `BE8CCF0C8A65323320911816DF22980F88F134C307577C8ABF0A218246103D4A`,
+  core `1CF3D566A9810CEDA708AFF4D6505BC0906970C2888B7161F5607432037EE792`,
+  and acceptance `27A39E5B63350B05728E86DACDE8335ED6CCD2A7FBDFD4399EF55472A466C2D4`.
+- R3-R1 remains offline and outcome-blind: 24 frozen identities, 14
+  directional / 13 primary rows, 39 intervals, 15 native partitions, C1-C4,
+  and the 40-state null are unchanged. Provider bytes, credentials, market or
+  outcome data, Astra, S4, UI, package, Auto Suggest, ML, MT5, and execution
+  were not used or authorized. All outcome flags and `executionAllowed` remain
+  false. The next gate is
+  `TARGETED_ASTRA_PRE_OUTCOME_REAUDIT_WITH_COMPRESSION_UNCERTAINTY_EXPLICIT`.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S3R1-R3 Dukascopy LZMA Framing And Offline Parser Freeze)
 
 - Preserved the accepted MO-R4A-S3R1-R2 Branch-B source record unchanged,
