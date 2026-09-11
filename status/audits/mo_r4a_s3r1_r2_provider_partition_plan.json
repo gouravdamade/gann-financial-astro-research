@@ -1,0 +1,325 @@
+{
+  "contract": "MO_R4A_S3R1_R2_PROVIDER_PARTITION_PLAN_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R2",
+  "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+  "providerNativePartitionType": "UTC_DAILY_BI5_OBJECT",
+  "partitionBoundarySemantics": "[nativeStartUtc, nativeEndUtc)",
+  "analysisIntervalSetHash": "3A76939D2597AAE4742587738846987E82EBC73F1A47730F6809303634122465",
+  "analysisIntervalCount": 39,
+  "uniqueProviderPartitionCount": 15,
+  "partitions": [
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-03-24",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-03-24T00:00:00Z",
+      "nativeEndUtc": "2025-03-25T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_4A15CCC7D126313A14BCB562::MINUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/02/24_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-03-25",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-03-25T00:00:00Z",
+      "nativeEndUtc": "2025-03-26T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_397A2B053BC76D9D788E5E5E::MINUS_7",
+        "TN_4A15CCC7D126313A14BCB562::MINUS_7",
+        "TN_6E2DD561FB40D45D406F808E::MINUS_7",
+        "TN_7CCC78DA82BDAC13D3CF60B0::MINUS_7",
+        "TN_B24B1690FD8612329198D379::MINUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/02/25_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-03-26",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-03-26T00:00:00Z",
+      "nativeEndUtc": "2025-03-27T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_529E2CBC72B405EAD0990350::MINUS_7",
+        "TN_8C3582F7101F4F14BC4ECC4F::MINUS_7",
+        "TN_B24B1690FD8612329198D379::MINUS_7",
+        "TN_B8750233DA923D431E121862::MINUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/02/26_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-03-27",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-03-27T00:00:00Z",
+      "nativeEndUtc": "2025-03-28T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_29BCE2386E5DB19625921587::MINUS_7",
+        "TN_529E2CBC72B405EAD0990350::MINUS_7",
+        "TN_6F48D71F91F1382FAA720581::MINUS_7",
+        "TN_97C9294ED13CD6C36FB0840B::MINUS_7",
+        "TN_B8750233DA923D431E121862::MINUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/02/27_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-03-28",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-03-28T00:00:00Z",
+      "nativeEndUtc": "2025-03-29T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_574C7A7407B855CD78DF8E0D::MINUS_7",
+        "TN_97C9294ED13CD6C36FB0840B::MINUS_7",
+        "TN_A32A6104A917D4918B269910::MINUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/02/28_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-03-31",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-03-31T00:00:00Z",
+      "nativeEndUtc": "2025-04-01T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_4A15CCC7D126313A14BCB562::ACTUAL"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/02/31_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-01",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-01T00:00:00Z",
+      "nativeEndUtc": "2025-04-02T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_397A2B053BC76D9D788E5E5E::ACTUAL",
+        "TN_4A15CCC7D126313A14BCB562::ACTUAL",
+        "TN_6E2DD561FB40D45D406F808E::ACTUAL",
+        "TN_7CCC78DA82BDAC13D3CF60B0::ACTUAL",
+        "TN_B24B1690FD8612329198D379::ACTUAL"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/01_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-02",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-02T00:00:00Z",
+      "nativeEndUtc": "2025-04-03T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_529E2CBC72B405EAD0990350::ACTUAL",
+        "TN_8C3582F7101F4F14BC4ECC4F::ACTUAL",
+        "TN_B24B1690FD8612329198D379::ACTUAL",
+        "TN_B8750233DA923D431E121862::ACTUAL"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/02_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-03",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-03T00:00:00Z",
+      "nativeEndUtc": "2025-04-04T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_29BCE2386E5DB19625921587::ACTUAL",
+        "TN_529E2CBC72B405EAD0990350::ACTUAL",
+        "TN_6F48D71F91F1382FAA720581::ACTUAL",
+        "TN_97C9294ED13CD6C36FB0840B::ACTUAL",
+        "TN_B8750233DA923D431E121862::ACTUAL"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/03_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-04",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-04T00:00:00Z",
+      "nativeEndUtc": "2025-04-05T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_574C7A7407B855CD78DF8E0D::ACTUAL",
+        "TN_97C9294ED13CD6C36FB0840B::ACTUAL",
+        "TN_A32A6104A917D4918B269910::ACTUAL"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/04_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-07",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-07T00:00:00Z",
+      "nativeEndUtc": "2025-04-08T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_4A15CCC7D126313A14BCB562::PLUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/07_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-08",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-08T00:00:00Z",
+      "nativeEndUtc": "2025-04-09T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_397A2B053BC76D9D788E5E5E::PLUS_7",
+        "TN_4A15CCC7D126313A14BCB562::PLUS_7",
+        "TN_6E2DD561FB40D45D406F808E::PLUS_7",
+        "TN_7CCC78DA82BDAC13D3CF60B0::PLUS_7",
+        "TN_B24B1690FD8612329198D379::PLUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/08_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-09",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-09T00:00:00Z",
+      "nativeEndUtc": "2025-04-10T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_529E2CBC72B405EAD0990350::PLUS_7",
+        "TN_8C3582F7101F4F14BC4ECC4F::PLUS_7",
+        "TN_B24B1690FD8612329198D379::PLUS_7",
+        "TN_B8750233DA923D431E121862::PLUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/09_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-10",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-10T00:00:00Z",
+      "nativeEndUtc": "2025-04-11T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_29BCE2386E5DB19625921587::PLUS_7",
+        "TN_529E2CBC72B405EAD0990350::PLUS_7",
+        "TN_6F48D71F91F1382FAA720581::PLUS_7",
+        "TN_97C9294ED13CD6C36FB0840B::PLUS_7",
+        "TN_B8750233DA923D431E121862::PLUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/10_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    },
+    {
+      "providerPartitionId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE::USDJPY::2025-04-11",
+      "providerProduct": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "instrument": "USDJPY",
+      "nativeStartUtc": "2025-04-11T00:00:00Z",
+      "nativeEndUtc": "2025-04-12T00:00:00Z",
+      "analysisIntervalIdsCovered": [
+        "TN_574C7A7407B855CD78DF8E0D::PLUS_7",
+        "TN_97C9294ED13CD6C36FB0840B::PLUS_7",
+        "TN_A32A6104A917D4918B269910::PLUS_7"
+      ],
+      "reasonRequired": "UTC_DAILY_PARTITION_INTERSECTS_ONE_OR_MORE_FROZEN_HALF_OPEN_ANALYSIS_INTERVALS",
+      "requestIdentity": {
+        "transport": "AWS_S3_GET_OBJECT_REQUESTER_PAYS",
+        "bucket": "cfg-public-proper-wallaby",
+        "region": "eu-west-1",
+        "key": "USDJPY/2025/03/11_ticks.bi5",
+        "requestPayer": "requester"
+      }
+    }
+  ],
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "providerPartitionPlanHash": "5C39D983DD11288B24ABCF0E17F38C862A6B3B283CC68ABC3377C3324BBD738D"
+}

@@ -1,0 +1,47 @@
+{
+  "contract": "MO_R4A_S3R1_R2_DUKASCOPY_PROTOCOL_SOURCE_LOCK_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R2",
+  "protocolEvidenceHash": "4D5322F005B97EFCAB31F3F2E0AACDE2C0167B8BCF04ECD632626D1F0610CBD1",
+  "sources": [
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_EXPORT",
+      "url": "https://www.dukascopy.com/wiki/es/development/data-export/",
+      "publisher": "Dukascopy",
+      "title": "Datos historicos de precios",
+      "sourceTier": "TIER_1",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "criticalFactIds": [
+        "PRODUCT_IDENTITY",
+        "TRANSPORT_AND_REQUESTER_PAYS",
+        "DAILY_PARTITION_KEY",
+        "MISSING_PARTITION",
+        "COMPRESSION_WRAPPER",
+        "RECORD_LAYOUT",
+        "TIMESTAMP_RECONSTRUCTION",
+        "USDJPY_SCALE",
+        "EMPTY_OBJECT"
+      ]
+    },
+    {
+      "sourceId": "DUKASCOPY_JFOREX_HISTORY_TICKS",
+      "url": "https://www.dukascopy.com/wiki/en/development/strategy-api/historical-data/history-ticks/",
+      "publisher": "Dukascopy",
+      "title": "History ticks",
+      "sourceTier": "TIER_2",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "criticalFactIds": [
+        "JFOREX_ALTERNATIVE_REJECTED"
+      ]
+    }
+  ],
+  "sourceConflict": {
+    "status": "PROTOCOL_SOURCE_CONFLICT",
+    "factId": "COMPRESSION_WRAPPER",
+    "outcomeAccessBlocked": true,
+    "requiredResolution": "OFFICIAL_DUKASCOPY_CLARIFICATION_OF_EXACT_LZMA_WRAPPER_AND_RAW_FILTER_PARAMETERS"
+  },
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "protocolSourceLockHash": "394AE5B524C6090199040BA8201C384DD4AF000FDE72ED9880753DBB7736B3C3"
+}

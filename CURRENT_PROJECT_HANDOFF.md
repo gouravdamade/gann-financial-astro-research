@@ -4,6 +4,41 @@ Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-11 (MO-R4A-S3R1-R2 Dukascopy Provider Protocol Source Closure)
+
+- Preserved the complete historical S3R1-R1 package, including its accepted
+  acquisition hash `D2E78CECD9743A176E417ACD7A7EAD57EC21167B8708AF2043C9D016E0C2CD70`,
+  preregistration `0C9EF14A7216C9BB62E834B865315D67B2603F076FF2BA28AFC32E92CDFC93E2`,
+  population `462436AA5F2E57998EE7EA334195FE86D14396169806D8F08064C7BF1CFE567C`,
+  clusters `18E34DEABBFA2D99620789347D02FD002C23F36B39D21ED1D9B44702020A308F`,
+  invariance `EC40B7D5552A79CE5F8B8A2763686159F0232804A0D75991DDE27B8FB59310DA`,
+  core `DCE54CE6FACCEFCF773E3F900691ED2BBB705A1D085CD6B5852B41F1A4CEE7F2`,
+  and acceptance `9FF8B14F1A6D48D65BC73069BA3D7EF341A4AC9EEE0783639AE87860CF04D2D7`.
+- R2 chooses the documented Dukascopy daily S3 requester-pays `.bi5` object
+  product only: `USDJPY/YYYY/MM/DD_ticks.bi5`, bucket
+  `cfg-public-proper-wallaby`, region `eu-west-1`, and zero-based month
+  directories. The 39 frozen analytical half-open windows deduplicate to 15
+  UTC daily provider-native partitions; no provider request or market-data
+  access occurred.
+- The official documentation source-closes daily partitioning, the 20-byte
+  big-endian `uint32,uint32,uint32,float32,float32` layout, UTC-day millisecond
+  offset, USDJPY divisor `1000`, and missing-key/no-tick semantics. It conflicts
+  on parser-critical LZMA framing: prose calls it raw LZMA requiring raw mode,
+  while the official example uses `lzma.decompress` without raw filters. R2
+  records `PROTOCOL_SOURCE_CONFLICT`, does not add a parser, and remains
+  Branch B with `S3R1_R2_PROVIDER_PROTOCOL_INCOMPLETE_OUTCOME_UNLOCK_BLOCKED`.
+- The successor freezes a one-attempt/no-automatic-retry policy, fail-closed
+  raw-hash revision conflict policy, future raw/parsed provenance-manifest
+  fields, and canonical parsed JSON-lines hash policy. It does not authorize
+  provider access, a targeted Astra re-audit, outcome access, S4, a signed wave,
+  a pair resultant, magnitude, score, product/UI work, Auto Suggest, ML, MT5,
+  execution, or production admission.
+- Focused R2 verification includes 9 tests, all green: 39/39 interval coverage,
+  15 unique native partitions, historical hash preservation, strict source-lock
+  blocker, deterministic two-pass artifacts, 8192/8192 exact binary-vector
+  comparisons with zero mismatches, and 2744/2744 timing comparisons with zero
+  mismatches. The next gate is `CENTRAL_REVIEW_PROVIDER_PROTOCOL_GAP`.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S3R1-R1 Astra Pre-Outcome Corrections)
 
 - Added the immutable S3R1-R1 successor beside the historical S3R1 package.
