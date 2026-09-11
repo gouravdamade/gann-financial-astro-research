@@ -1,0 +1,1385 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "MO_R4A_S3R1_R2_OUTCOME_ANALYSIS_PREREGISTRATION_V1",
+  "title": "MO-R4A-S3R1-R3 frozen pre-request acquisition preregistration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "milestone",
+    "startingMaster",
+    "status",
+    "nextGate",
+    "upstreamHashes",
+    "frozenPilot",
+    "marketDataSource",
+    "primaryInterval",
+    "validationMapping",
+    "zeroAndAbstentionPolicy",
+    "weekendExclusion",
+    "overlapClusters",
+    "primaryStatistic",
+    "exactPermutation",
+    "clusterSecondary",
+    "secondaryDescriptive",
+    "timeShiftDiagnostics",
+    "multiplicity",
+    "survivalRule",
+    "amendmentAndStopping",
+    "outcomeAccessFlags",
+    "preregistrationAuthoredAtUtc",
+    "timestampSemantics",
+    "supersedesPreregistrationContract",
+    "supersedesPreregistrationHash",
+    "supersedesAcceptanceManifestHash",
+    "correctionReason",
+    "permutationNullAssumption",
+    "marketDataAcquisitionContractHash",
+    "numericInvalidityPolicy",
+    "intervalScopedConflictPolicy",
+    "astraCorrectionLineage",
+    "providerProtocolClosureReason",
+    "protocolSourceLockHash",
+    "providerPartitionPlanHash",
+    "scientificDesignChanged",
+    "lzmaFramingAdjudicationHash",
+    "parserContractHash",
+    "parserSourceSha256",
+    "preregistrationHash"
+  ],
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "MO_R4A_S3R1_R3_OUTCOME_ANALYSIS_PREREGISTRATION_V1"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "milestone": {
+      "type": "string",
+      "const": "MO-R4A-S3R1-R3"
+    },
+    "startingMaster": {
+      "type": "string",
+      "const": "9880979058e51d9fe15bd9c31b3044df35386dac"
+    },
+    "status": {
+      "type": "string",
+      "const": "S3R1_R3_DUKASCOPY_LZMA_AND_PARSER_FREEZE_COMPLETE_TARGETED_ASTRA_REAUDIT_REQUIRED"
+    },
+    "nextGate": {
+      "type": "string",
+      "const": "INDEPENDENT_CENTRAL_REVIEW_BEFORE_TARGETED_ASTRA_PRE_OUTCOME_REAUDIT"
+    },
+    "upstreamHashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceOperatorLedgerHash",
+        "sourceCoverageHash",
+        "hypothesisRegistryHash",
+        "usdHypothesisHash",
+        "jpyHypothesisHash",
+        "predictionFreezeHash"
+      ],
+      "properties": {
+        "sourceOperatorLedgerHash": {
+          "type": "string",
+          "const": "2D4AD6E151602FBF2FC3E0ADDFDCDE7C7211CC52ED44D801AD3925AD9D5F3366",
+          "pattern": "^[0-9A-F]{64}$"
+        },
+        "sourceCoverageHash": {
+          "type": "string",
+          "const": "A4437C2A116EBD5D465339BCB0C9D81F8149CE65FAF37CF81C0F29D75B44F8B0",
+          "pattern": "^[0-9A-F]{64}$"
+        },
+        "hypothesisRegistryHash": {
+          "type": "string",
+          "const": "D76E208F52511BD8B5380BB32049B0C47275261443E587E3E09184E439FF3110",
+          "pattern": "^[0-9A-F]{64}$"
+        },
+        "usdHypothesisHash": {
+          "type": "string",
+          "const": "1C816B735FCCA52B84ED26C03D1755D251EADA7C2606B1D56533A06D71B713F9",
+          "pattern": "^[0-9A-F]{64}$"
+        },
+        "jpyHypothesisHash": {
+          "type": "string",
+          "const": "EF2D18CEA75BCC1A137D8687F332B5586FB62D8803D44819204AFDD6472ED24F",
+          "pattern": "^[0-9A-F]{64}$"
+        },
+        "predictionFreezeHash": {
+          "type": "string",
+          "const": "83F1456271B510468A0DF28C66AD705318CD06F5D5B5E0566F6DE05FA06CF71D",
+          "pattern": "^[0-9A-F]{64}$"
+        }
+      }
+    },
+    "frozenPilot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eventCount",
+        "usdEventCount",
+        "jpyEventCount",
+        "singlePassVerifiedCount",
+        "bridgeApplicableCount",
+        "directionalCount",
+        "supportiveCount",
+        "adverseCount",
+        "neutralCount",
+        "unknownAbstainCount",
+        "primaryMarketScorableCount",
+        "structuralWeekendExclusionCount"
+      ],
+      "properties": {
+        "eventCount": {
+          "type": "integer",
+          "const": 24
+        },
+        "usdEventCount": {
+          "type": "integer",
+          "const": 12
+        },
+        "jpyEventCount": {
+          "type": "integer",
+          "const": 12
+        },
+        "singlePassVerifiedCount": {
+          "type": "integer",
+          "const": 24
+        },
+        "bridgeApplicableCount": {
+          "type": "integer",
+          "const": 17
+        },
+        "directionalCount": {
+          "type": "integer",
+          "const": 14
+        },
+        "supportiveCount": {
+          "type": "integer",
+          "const": 9
+        },
+        "adverseCount": {
+          "type": "integer",
+          "const": 5
+        },
+        "neutralCount": {
+          "type": "integer",
+          "const": 3
+        },
+        "unknownAbstainCount": {
+          "type": "integer",
+          "const": 7
+        },
+        "primaryMarketScorableCount": {
+          "type": "integer",
+          "const": 13
+        },
+        "structuralWeekendExclusionCount": {
+          "type": "integer",
+          "const": 1
+        }
+      }
+    },
+    "marketDataSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "instrument",
+        "quoteConvention",
+        "timestampConvention",
+        "requiredFields",
+        "midpointFormula",
+        "validQuoteRules",
+        "fallbackProviderAllowed",
+        "s3ProviderAccessAllowed",
+        "s4ProviderAccessRequiresIndependentCentralReview"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "const": "DUKASCOPY_HISTORICAL_USDJPY_TICK_SERVICE"
+        },
+        "instrument": {
+          "type": "string",
+          "const": "USDJPY"
+        },
+        "quoteConvention": {
+          "type": "string",
+          "const": "JPY_PER_USD"
+        },
+        "timestampConvention": {
+          "type": "string",
+          "const": "UTC_ONLY"
+        },
+        "requiredFields": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "timestampUtc"
+            },
+            {
+              "type": "string",
+              "const": "bid"
+            },
+            {
+              "type": "string",
+              "const": "ask"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "midpointFormula": {
+          "type": "string",
+          "const": "m(t)=(bid(t)+ask(t))/2"
+        },
+        "validQuoteRules": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "bid finite positive"
+            },
+            {
+              "type": "string",
+              "const": "ask finite positive"
+            },
+            {
+              "type": "string",
+              "const": "ask >= bid"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "fallbackProviderAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "s3ProviderAccessAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "s4ProviderAccessRequiresIndependentCentralReview": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "primaryInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition",
+        "exactUtcRole",
+        "halfOpen",
+        "startTick",
+        "endTick",
+        "outsideIntervalRescueAllowed",
+        "minimumDistinctTickTimestamps",
+        "sameTimestampStatus",
+        "insufficientTicksStatus",
+        "alignmentGapsRecordedOnly",
+        "returnFormula"
+      ],
+      "properties": {
+        "definition": {
+          "type": "string",
+          "const": "[applyingStartUtc_i, separatingEndUtc_i)"
+        },
+        "exactUtcRole": {
+          "type": "string",
+          "const": "PROVENANCE_ONLY_NEVER_RETURN_BOUNDARY"
+        },
+        "halfOpen": {
+          "type": "boolean",
+          "const": true
+        },
+        "startTick": {
+          "type": "string",
+          "const": "earliest valid tick timestamp >= applyingStartUtc and < separatingEndUtc"
+        },
+        "endTick": {
+          "type": "string",
+          "const": "latest valid tick timestamp < separatingEndUtc and >= startTick timestamp"
+        },
+        "outsideIntervalRescueAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "minimumDistinctTickTimestamps": {
+          "type": "integer",
+          "const": 2
+        },
+        "sameTimestampStatus": {
+          "type": "string",
+          "const": "DATA_UNSCORABLE"
+        },
+        "insufficientTicksStatus": {
+          "type": "string",
+          "const": "DATA_UNSCORABLE"
+        },
+        "alignmentGapsRecordedOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "returnFormula": {
+          "type": "string",
+          "const": "r_i=ln(P_end/P_start)"
+        }
+      }
+    },
+    "validationMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "USD_SUPPORTIVE",
+        "USD_ADVERSE",
+        "JPY_SUPPORTIVE",
+        "JPY_ADVERSE",
+        "NEUTRAL",
+        "UNKNOWN",
+        "signedUnitCreated",
+        "pairRawCreated",
+        "pairDisplayCreated"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "const": "VALIDATION_ONLY_NOT_PRODUCTION_SIGNED_WAVE_OR_PAIR_RESULTANT"
+        },
+        "USD_SUPPORTIVE": {
+          "type": "string",
+          "const": "UP"
+        },
+        "USD_ADVERSE": {
+          "type": "string",
+          "const": "DOWN"
+        },
+        "JPY_SUPPORTIVE": {
+          "type": "string",
+          "const": "DOWN"
+        },
+        "JPY_ADVERSE": {
+          "type": "string",
+          "const": "UP"
+        },
+        "NEUTRAL": {
+          "type": "string",
+          "const": "NO_DIRECTIONAL_PREDICTION"
+        },
+        "UNKNOWN": {
+          "type": "string",
+          "const": "ABSTAIN"
+        },
+        "signedUnitCreated": {
+          "type": "boolean",
+          "const": false
+        },
+        "pairRawCreated": {
+          "type": "boolean",
+          "const": false
+        },
+        "pairDisplayCreated": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "zeroAndAbstentionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "returnPositive",
+        "returnNegative",
+        "returnZero",
+        "neutral",
+        "unknown"
+      ],
+      "properties": {
+        "returnPositive": {
+          "type": "string",
+          "const": "UP"
+        },
+        "returnNegative": {
+          "type": "string",
+          "const": "DOWN"
+        },
+        "returnZero": {
+          "type": "string",
+          "const": "ZERO_MOVE_DIRECTIONAL_MISS"
+        },
+        "neutral": {
+          "type": "string",
+          "const": "EXCLUDED_FROM_DIRECTIONAL_PRIMARY_SCORING_NOT_NUMERIC_ZERO"
+        },
+        "unknown": {
+          "type": "string",
+          "const": "ABSTAIN_EXCLUDED_FROM_DIRECTIONAL_PRIMARY_SCORING"
+        }
+      }
+    },
+    "weekendExclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eventId",
+        "sideIdentity",
+        "pressureState",
+        "status",
+        "intervalUtc",
+        "reason",
+        "retainedInFrozenPilot",
+        "resampleOrExtendAllowed"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "const": "TN_BD340A6100B173B5F254EDC1"
+        },
+        "sideIdentity": {
+          "type": "string",
+          "const": "USD"
+        },
+        "pressureState": {
+          "type": "string",
+          "const": "SUPPORTIVE"
+        },
+        "status": {
+          "type": "string",
+          "const": "PRIMARY_NONTRADING_WEEKEND_EXCLUSION"
+        },
+        "intervalUtc": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "2025-04-05T01:45:04Z"
+            },
+            {
+              "type": "string",
+              "const": "2025-04-05T12:34:35Z"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "reason": {
+          "type": "string",
+          "const": "COMPLETE_PRIMARY_INTERVAL_IS_SATURDAY_UTC"
+        },
+        "retainedInFrozenPilot": {
+          "type": "boolean",
+          "const": true
+        },
+        "resampleOrExtendAllowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "overlapClusters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overlapRule",
+        "touchingBoundaryIsOverlap",
+        "connectedComponents",
+        "primaryClusters"
+      ],
+      "properties": {
+        "overlapRule": {
+          "type": "string",
+          "const": "a.start < b.end and b.start < a.end"
+        },
+        "touchingBoundaryIsOverlap": {
+          "type": "boolean",
+          "const": false
+        },
+        "connectedComponents": {
+          "type": "string",
+          "const": "TRANSITIVE_HALF_OPEN_INTERVAL_GRAPH"
+        },
+        "primaryClusters": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "C1"
+            },
+            {
+              "type": "string",
+              "const": "C2"
+            },
+            {
+              "type": "string",
+              "const": "C3"
+            },
+            {
+              "type": "string",
+              "const": "C4"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        }
+      }
+    },
+    "primaryStatistic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expectedDirectionUnit",
+        "realizedDirectionUnit",
+        "hitDefinition",
+        "primaryHitCount",
+        "primaryHitRate",
+        "oneSidedAlternative"
+      ],
+      "properties": {
+        "expectedDirectionUnit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "UP",
+            "DOWN"
+          ],
+          "properties": {
+            "UP": {
+              "type": "integer",
+              "const": 1
+            },
+            "DOWN": {
+              "type": "integer",
+              "const": -1
+            }
+          }
+        },
+        "realizedDirectionUnit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "UP",
+            "DOWN"
+          ],
+          "properties": {
+            "UP": {
+              "type": "integer",
+              "const": 1
+            },
+            "DOWN": {
+              "type": "integer",
+              "const": -1
+            }
+          }
+        },
+        "hitDefinition": {
+          "type": "string",
+          "const": "hit_i=1 if q_i*r_i>0 else 0"
+        },
+        "primaryHitCount": {
+          "type": "string",
+          "const": "H=sum(hit_i) over all 13 primary market-scorable events"
+        },
+        "primaryHitRate": {
+          "type": "string",
+          "const": "H/13"
+        },
+        "oneSidedAlternative": {
+          "type": "string",
+          "const": "GREATER_THAN_CHANCE"
+        }
+      }
+    },
+    "exactPermutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "usdLabelPositions",
+        "jpyLabelPositions",
+        "assignmentCountFormula",
+        "assignmentCount",
+        "sideLocalOnly",
+        "eventWindowsAndReturnsFixedAtS4",
+        "observedAssignmentIncluded",
+        "retainAll40PermutationHitCountsAndHistogramAtS4",
+        "pExact",
+        "noMonteCarlo",
+        "noTimestampPermutation",
+        "noCrossSidePermutation",
+        "noNeutralOrUnknownInPrimary"
+      ],
+      "properties": {
+        "usdLabelPositions": {
+          "type": "string",
+          "const": "choose 1 SUPPORTIVE position among 5 USD primary events"
+        },
+        "jpyLabelPositions": {
+          "type": "string",
+          "const": "choose 7 SUPPORTIVE positions among 8 JPY primary events"
+        },
+        "assignmentCountFormula": {
+          "type": "string",
+          "const": "C(5,1)*C(8,7)"
+        },
+        "assignmentCount": {
+          "type": "integer",
+          "const": 40
+        },
+        "sideLocalOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "eventWindowsAndReturnsFixedAtS4": {
+          "type": "boolean",
+          "const": true
+        },
+        "observedAssignmentIncluded": {
+          "type": "boolean",
+          "const": true
+        },
+        "retainAll40PermutationHitCountsAndHistogramAtS4": {
+          "type": "boolean",
+          "const": true
+        },
+        "pExact": {
+          "type": "string",
+          "const": "count(H_perm >= H_observed)/40"
+        },
+        "noMonteCarlo": {
+          "type": "boolean",
+          "const": true
+        },
+        "noTimestampPermutation": {
+          "type": "boolean",
+          "const": true
+        },
+        "noCrossSidePermutation": {
+          "type": "boolean",
+          "const": true
+        },
+        "noNeutralOrUnknownInPrimary": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "clusterSecondary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clusterActivity",
+        "clusterBalancedHitRate",
+        "equalClusterWeighting",
+        "secondaryPValueAllowed"
+      ],
+      "properties": {
+        "clusterActivity": {
+          "type": "string",
+          "const": "A_c=mean(hit_i for i in cluster c)"
+        },
+        "clusterBalancedHitRate": {
+          "type": "string",
+          "const": "mean(A_c for C1,C2,C3,C4)"
+        },
+        "equalClusterWeighting": {
+          "type": "boolean",
+          "const": true
+        },
+        "secondaryPValueAllowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "secondaryDescriptive": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "USD hit rate over 5 primary events"
+        },
+        {
+          "type": "string",
+          "const": "JPY hit rate over 8 primary events"
+        },
+        {
+          "type": "string",
+          "const": "mean and median q_i*r_i"
+        },
+        {
+          "type": "string",
+          "const": "cluster-balanced hit rate"
+        },
+        {
+          "type": "string",
+          "const": "coverage accounting 14/24 directional, 13/24 primary market-scorable, 17/24 applicable, 3 neutral, 7 abstain, 1 weekend exclusion"
+        },
+        {
+          "type": "string",
+          "const": "start/end alignment gaps as descriptive audit fields"
+        }
+      ],
+      "items": false,
+      "uniqueItems": true
+    },
+    "timeShiftDiagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shiftsCalendarDays",
+        "preserve",
+        "sameBoundaryAndReturnRule",
+        "diagnosticOnly",
+        "secondaryPValueAllowed",
+        "timingSpecificityFlag",
+        "comparisonStatistic",
+        "actualHitCount",
+        "minus7HitCount",
+        "plus7HitCount",
+        "completenessRule",
+        "incompleteStatus",
+        "demonstratedStatus",
+        "notDemonstratedStatus",
+        "strictComparison",
+        "tieIsNotDemonstrated",
+        "doesNotAffectPrimarySurvival"
+      ],
+      "properties": {
+        "shiftsCalendarDays": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer",
+              "const": -7
+            },
+            {
+              "type": "integer",
+              "const": 7
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "preserve": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "duration"
+            },
+            {
+              "type": "string",
+              "const": "side"
+            },
+            {
+              "type": "string",
+              "const": "label"
+            },
+            {
+              "type": "string",
+              "const": "UTC clock"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "sameBoundaryAndReturnRule": {
+          "type": "boolean",
+          "const": true
+        },
+        "diagnosticOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "secondaryPValueAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "timingSpecificityFlag": {
+          "type": "string",
+          "const": "TIMING_SPECIFICITY_NOT_DEMONSTRATED"
+        },
+        "comparisonStatistic": {
+          "type": "string",
+          "const": "H_actual compared strictly greater than both H_minus7 and H_plus7"
+        },
+        "actualHitCount": {
+          "type": "string",
+          "const": "H_actual = primary hit count over the 13 actual intervals"
+        },
+        "minus7HitCount": {
+          "type": "string",
+          "const": "H_minus7 = hit count from the same 13 labels on exactly -7 calendar-day intervals"
+        },
+        "plus7HitCount": {
+          "type": "string",
+          "const": "H_plus7 = hit count from the same 13 labels on exactly +7 calendar-day intervals"
+        },
+        "completenessRule": {
+          "type": "string",
+          "const": "All 13 actual and both 13-event shifted sets must be validly scorable; no denominator shrink, replacement, rescue, or alternate horizon"
+        },
+        "incompleteStatus": {
+          "type": "string",
+          "const": "TIMING_DIAGNOSTIC_INCOMPLETE"
+        },
+        "demonstratedStatus": {
+          "type": "string",
+          "const": "TIMING_SPECIFICITY_DEMONSTRATED_WITHIN_PREREGISTERED_DIAGNOSTIC"
+        },
+        "notDemonstratedStatus": {
+          "type": "string",
+          "const": "TIMING_SPECIFICITY_NOT_DEMONSTRATED"
+        },
+        "strictComparison": {
+          "type": "boolean",
+          "const": true
+        },
+        "tieIsNotDemonstrated": {
+          "type": "boolean",
+          "const": true
+        },
+        "doesNotAffectPrimarySurvival": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "multiplicity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primaryInferentialTestCount",
+        "secondaryPValues",
+        "multiplicityCorrectionRequired",
+        "newAnalysisRequiresAmendment"
+      ],
+      "properties": {
+        "primaryInferentialTestCount": {
+          "type": "integer",
+          "const": 1
+        },
+        "secondaryPValues": {
+          "type": "boolean",
+          "const": false
+        },
+        "multiplicityCorrectionRequired": {
+          "type": "boolean",
+          "const": false
+        },
+        "newAnalysisRequiresAmendment": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "survivalRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "all13PrimaryValidlyScorable",
+        "primaryHitRateStrictlyGreaterThan",
+        "pExactAtMost",
+        "clusterBalancedHitRateStrictlyGreaterThan",
+        "survivedStatus",
+        "notSurvivedStatus",
+        "invalidDataStatus",
+        "denominatorShrinkAllowed",
+        "providerSubstitutionAllowed"
+      ],
+      "properties": {
+        "all13PrimaryValidlyScorable": {
+          "type": "boolean",
+          "const": true
+        },
+        "primaryHitRateStrictlyGreaterThan": {
+          "type": "number",
+          "const": 0.5
+        },
+        "pExactAtMost": {
+          "type": "number",
+          "const": 0.1
+        },
+        "clusterBalancedHitRateStrictlyGreaterThan": {
+          "type": "number",
+          "const": 0.5
+        },
+        "survivedStatus": {
+          "type": "string",
+          "const": "PILOT_ASSOCIATION_SURVIVED"
+        },
+        "notSurvivedStatus": {
+          "type": "string",
+          "const": "PILOT_ASSOCIATION_NOT_SURVIVED"
+        },
+        "invalidDataStatus": {
+          "type": "string",
+          "const": "PRIMARY_EVALUATION_INVALID_DATA_INCOMPLETE"
+        },
+        "denominatorShrinkAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "providerSubstitutionAllowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "amendmentAndStopping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcomeAccessBeforeCentralReview",
+        "s4AstraBeforeCentralReview",
+        "alternativeHorizonAllowed",
+        "marketOutcomeInS3Artifacts",
+        "productionClaimAllowed",
+        "executionAllowed"
+      ],
+      "properties": {
+        "outcomeAccessBeforeCentralReview": {
+          "type": "boolean",
+          "const": false
+        },
+        "s4AstraBeforeCentralReview": {
+          "type": "boolean",
+          "const": false
+        },
+        "alternativeHorizonAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "marketOutcomeInS3Artifacts": {
+          "type": "boolean",
+          "const": false
+        },
+        "productionClaimAllowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "executionAllowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "outcomeAccessFlags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "PRICE_DATA_READ",
+        "OUTCOME_DATA_READ",
+        "FOUNDER_DECISION_READ",
+        "REVIEW_STORE_READ",
+        "SBC_READ",
+        "CATALOGUE_ADMISSION",
+        "EVIDENCE_ADMISSION",
+        "SIGNED_WAVE_RENDERED",
+        "PAIR_RESULTANT_CREATED",
+        "MAGNITUDE_CONFIGURED",
+        "AUTO_SUGGEST",
+        "ML",
+        "MT5",
+        "EXECUTION_ALLOWED",
+        "PRODUCTION_ADMISSION",
+        "OUTCOME_UNLOCKED"
+      ],
+      "properties": {
+        "PRICE_DATA_READ": {
+          "type": "boolean",
+          "const": false
+        },
+        "OUTCOME_DATA_READ": {
+          "type": "boolean",
+          "const": false
+        },
+        "FOUNDER_DECISION_READ": {
+          "type": "boolean",
+          "const": false
+        },
+        "REVIEW_STORE_READ": {
+          "type": "boolean",
+          "const": false
+        },
+        "SBC_READ": {
+          "type": "boolean",
+          "const": false
+        },
+        "CATALOGUE_ADMISSION": {
+          "type": "boolean",
+          "const": false
+        },
+        "EVIDENCE_ADMISSION": {
+          "type": "boolean",
+          "const": false
+        },
+        "SIGNED_WAVE_RENDERED": {
+          "type": "boolean",
+          "const": false
+        },
+        "PAIR_RESULTANT_CREATED": {
+          "type": "boolean",
+          "const": false
+        },
+        "MAGNITUDE_CONFIGURED": {
+          "type": "boolean",
+          "const": false
+        },
+        "AUTO_SUGGEST": {
+          "type": "boolean",
+          "const": false
+        },
+        "ML": {
+          "type": "boolean",
+          "const": false
+        },
+        "MT5": {
+          "type": "boolean",
+          "const": false
+        },
+        "EXECUTION_ALLOWED": {
+          "type": "boolean",
+          "const": false
+        },
+        "PRODUCTION_ADMISSION": {
+          "type": "boolean",
+          "const": false
+        },
+        "OUTCOME_UNLOCKED": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "preregistrationAuthoredAtUtc": {
+      "type": "string",
+      "const": "2026-09-11T00:00:00Z"
+    },
+    "timestampSemantics": {
+      "type": "string",
+      "const": "DECLARATIVE_FROZEN_METADATA_NOT_GIT_COMMIT_CHRONOLOGY"
+    },
+    "supersedesPreregistrationContract": {
+      "type": "string",
+      "const": "MO_R4A_S3R1_R2_OUTCOME_ANALYSIS_PREREGISTRATION_V1"
+    },
+    "supersedesPreregistrationHash": {
+      "type": "string",
+      "const": "BAF10DF4B71D53361B07F417752864EF26F7BEC5572EA4DAB71F5287C1959DF5"
+    },
+    "supersedesAcceptanceManifestHash": {
+      "type": "string",
+      "const": "79ED3C79B4F913C4B23500CF18EEFDF4EED6B53B37A7ACE5548B34074FDA4F7A"
+    },
+    "correctionReason": {
+      "type": "string",
+      "const": "ASTRA_PRE_OUTCOME_CORRECTIONS_WITHOUT_SCIENTIFIC_DESIGN_CHANGE"
+    },
+    "permutationNullAssumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "statement",
+        "usdPositions",
+        "usdSupportiveLabels",
+        "jpyPositions",
+        "jpySupportiveLabels",
+        "crossSideExchangeability",
+        "randomizedExperimentClaim",
+        "allowedInference",
+        "prohibitedInference"
+      ],
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "const": "CONDITIONAL_WITHIN_SIDE_LABEL_EXCHANGEABILITY_NULL"
+        },
+        "statement": {
+          "type": "string",
+          "const": "The primary exact test conditions on the observed number of SUPPORTIVE and ADVERSE labels within each currency side. Under the preregistered null, SUPPORTIVE/ADVERSE labels are treated as exchangeable across the frozen primary event positions within USD and independently within JPY. The 40-state universe is therefore an exact enumeration of this conditional permutation null; it is not a claim that the original labels arose from a randomized experiment."
+        },
+        "usdPositions": {
+          "type": "integer",
+          "const": 5
+        },
+        "usdSupportiveLabels": {
+          "type": "integer",
+          "const": 1
+        },
+        "jpyPositions": {
+          "type": "integer",
+          "const": 8
+        },
+        "jpySupportiveLabels": {
+          "type": "integer",
+          "const": 7
+        },
+        "crossSideExchangeability": {
+          "type": "boolean",
+          "const": false
+        },
+        "randomizedExperimentClaim": {
+          "type": "boolean",
+          "const": false
+        },
+        "allowedInference": {
+          "type": "string",
+          "const": "ASSOCIATION_UNDER_PREREGISTERED_CONDITIONAL_WITHIN_SIDE_PERMUTATION_NULL_IN_THIS_FIXED_PILOT"
+        },
+        "prohibitedInference": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "CAUSATION"
+            },
+            {
+              "type": "string",
+              "const": "GENERAL_ASTROLOGY_TRUTH"
+            },
+            {
+              "type": "string",
+              "const": "UNIVERSAL_FINANCIAL_VALIDITY"
+            },
+            {
+              "type": "string",
+              "const": "INDEPENDENT_REPLICATION"
+            },
+            {
+              "type": "string",
+              "const": "PRODUCTION_PROFITABILITY"
+            },
+            {
+              "type": "string",
+              "const": "OUT_OF_SAMPLE_FORECASTING"
+            },
+            {
+              "type": "string",
+              "const": "CALIBRATED_PROBABILITY"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        }
+      }
+    },
+    "marketDataAcquisitionContractHash": {
+      "type": "string",
+      "const": "87D0716EFE9C0D655BB9F3C3D5DE5DBB8E6BED6B164F757F67665DB16D1E09E3"
+    },
+    "numericInvalidityPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stableMidpointFormula",
+        "stableLogReturnFormula",
+        "finiteChecks",
+        "invalidStatus",
+        "zeroMoveRequiresFiniteExactZero",
+        "denominatorShrinkAllowed"
+      ],
+      "properties": {
+        "stableMidpointFormula": {
+          "type": "string",
+          "const": "bid + (ask - bid) / 2"
+        },
+        "stableLogReturnFormula": {
+          "type": "string",
+          "const": "log(endMidpoint) - log(startMidpoint)"
+        },
+        "finiteChecks": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "bid"
+            },
+            {
+              "type": "string",
+              "const": "ask"
+            },
+            {
+              "type": "string",
+              "const": "midpoint"
+            },
+            {
+              "type": "string",
+              "const": "startLog"
+            },
+            {
+              "type": "string",
+              "const": "endLog"
+            },
+            {
+              "type": "string",
+              "const": "logReturn"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "invalidStatus": {
+          "type": "string",
+          "const": "DATA_NUMERIC_INVALID_UNSCORABLE"
+        },
+        "zeroMoveRequiresFiniteExactZero": {
+          "type": "boolean",
+          "const": true
+        },
+        "denominatorShrinkAllowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "intervalScopedConflictPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection",
+        "timestampValidation",
+        "outsideInvalidPrice",
+        "outsideConflict",
+        "insideConflict",
+        "outsideIntervalRescueAllowed"
+      ],
+      "properties": {
+        "selection": {
+          "type": "string",
+          "const": "[applyingStartUtc, separatingEndUtc)"
+        },
+        "timestampValidation": {
+          "type": "string",
+          "const": "PARSE_ALL_TIMESTAMPS_AND_FAIL_TYPED_ON_MALFORMED"
+        },
+        "outsideInvalidPrice": {
+          "type": "string",
+          "const": "IGNORED_FOR_THIS_INTERVAL"
+        },
+        "outsideConflict": {
+          "type": "string",
+          "const": "IGNORED_FOR_THIS_INTERVAL"
+        },
+        "insideConflict": {
+          "type": "string",
+          "const": "DATA_CONFLICT_UNSCORABLE"
+        },
+        "outsideIntervalRescueAllowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "astraCorrectionLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "auditVerdict",
+        "highFinding",
+        "mediumFindings",
+        "scientificDesignChanged",
+        "marketOutcomeRead"
+      ],
+      "properties": {
+        "auditVerdict": {
+          "type": "string",
+          "const": "PRE_OUTCOME_CORRECTION_REQUIRED"
+        },
+        "highFinding": {
+          "type": "string",
+          "const": "ACCEPTANCE_BUILDER_SUPPLIED_COMPONENT_BYPASS"
+        },
+        "mediumFindings": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "NUMERIC_INVALIDITY"
+            },
+            {
+              "type": "string",
+              "const": "INTERVAL_SCOPED_DATA_QUALITY"
+            },
+            {
+              "type": "string",
+              "const": "ACQUISITION_CONTRACT_CLOSURE"
+            }
+          ],
+          "items": false,
+          "uniqueItems": true
+        },
+        "scientificDesignChanged": {
+          "type": "boolean",
+          "const": false
+        },
+        "marketOutcomeRead": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "providerProtocolClosureReason": {
+      "type": "string",
+      "const": "LZMA_FORMAT_ALONE_UNIQUELY_ADJUDICATED_BY_DUKASCOPY_AND_PYTHON_DOCUMENTATION"
+    },
+    "protocolSourceLockHash": {
+      "type": "string",
+      "const": "B36E946F45607B8900FA2A451DC8262C1ADB6A592850A0DAAEF04A5BD18D0314"
+    },
+    "providerPartitionPlanHash": {
+      "type": "string",
+      "const": "5C39D983DD11288B24ABCF0E17F38C862A6B3B283CC68ABC3377C3324BBD738D"
+    },
+    "scientificDesignChanged": {
+      "type": "boolean",
+      "const": false
+    },
+    "lzmaFramingAdjudicationHash": {
+      "type": "string",
+      "const": "0F8F61572764E898F1D3F0E8676412A3770A45920FCFCB6A0AEDD9126C88855B"
+    },
+    "parserContractHash": {
+      "type": "string",
+      "const": "C91A76165893BCA308FE2DB9B3F83A2E9B0233CF2023E1AC573504C68EC3D316"
+    },
+    "parserSourceSha256": {
+      "type": "string",
+      "const": "47BEF7B1A13D8EE4EC2DDED2BDD965A27D41FCB548EC0D4D940A5535669D733E"
+    },
+    "preregistrationHash": {
+      "type": "string",
+      "const": "DA05644AD7321F7EB5AEFC348B3672A0241C39AEC6DAEDCD46B12E275BCC8A04"
+    }
+  }
+}

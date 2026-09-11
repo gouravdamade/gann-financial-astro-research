@@ -1,0 +1,77 @@
+{
+  "contract": "MO_R4A_S3R1_R3_DUKASCOPY_PROTOCOL_SOURCE_LOCK_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3",
+  "supersedesProtocolSourceLockHash": "394AE5B524C6090199040BA8201C384DD4AF000FDE72ED9880753DBB7736B3C3",
+  "lzmaFramingAdjudicationHash": "0F8F61572764E898F1D3F0E8676412A3770A45920FCFCB6A0AEDD9126C88855B",
+  "sources": [
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "url": "https://www.dukascopy.com/wiki/es/development/data-export/",
+      "title": "Datos historicos de precios",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "current page lines 577-650; compression at 582; Python decoder at 613-646",
+      "factsSupported": [
+        "DUKASCOPY_EXCLUDES_XZ",
+        "DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS"
+      ],
+      "role": "CONTROLLING_PROVIDER_DOCUMENTATION"
+    },
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_FR",
+      "url": "https://www.dukascopy.com/wiki/fr/development/data-export/",
+      "title": "Donnees historiques de prix",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "current page corresponding daily BI5 decoding section and Python sample",
+      "factsSupported": [
+        "CROSS_LANGUAGE_CORROBORATION_OF_DAILY_BI5_DECODER"
+      ],
+      "role": "SAME_PUBLISHER_CORROBORATION_NOT_INDEPENDENT_AUTHORITY"
+    },
+    {
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "url": "https://docs.python.org/3/library/lzma.html",
+      "title": "Python 3.14.7 documentation lzma",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "L109-118, L159-165, L226-245",
+      "factsSupported": [
+        "PYTHON_DEFAULT_EQUALS_FORMAT_AUTO",
+        "PYTHON_FORMAT_AUTO_ACCEPTS_XZ",
+        "PYTHON_FORMAT_AUTO_ACCEPTS_FORMAT_ALONE",
+        "PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+        "PYTHON_FORMAT_RAW_REQUIRES_EXPLICIT_FILTER_CHAIN",
+        "PYTHON_FORMAT_ALONE_IS_LEGACY_LZMA_CONTAINER"
+      ],
+      "role": "CONTROLLING_RUNTIME_SEMANTICS"
+    },
+    {
+      "sourceId": "LIBLZMA_XZ_CONTAINER_REFERENCE",
+      "url": "https://tukaani.org/xz/liblzma-api/container_8h.html",
+      "title": "liblzma container.h File Reference",
+      "sourceAuthority": "OFFICIAL_LIBLZMA_PROJECT_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "container format API reference; consulted as terminology corroboration",
+      "factsSupported": [
+        "CONTAINER_TERMINOLOGY_CORROBORATION"
+      ],
+      "role": "CORROBORATIVE_ONLY"
+    }
+  ],
+  "factsSupported": [
+    "DUKASCOPY_EXCLUDES_XZ",
+    "DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS",
+    "PYTHON_DEFAULT_EQUALS_FORMAT_AUTO",
+    "PYTHON_FORMAT_AUTO_ACCEPTS_XZ",
+    "PYTHON_FORMAT_AUTO_ACCEPTS_FORMAT_ALONE",
+    "PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+    "PYTHON_FORMAT_RAW_REQUIRES_EXPLICIT_FILTER_CHAIN",
+    "PYTHON_FORMAT_ALONE_IS_LEGACY_LZMA_CONTAINER"
+  ],
+  "adjudicationStatus": "COMPRESSION_FRAMING_SOURCE_ADJUDICATED",
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "protocolSourceLockHash": "B36E946F45607B8900FA2A451DC8262C1ADB6A592850A0DAAEF04A5BD18D0314"
+}

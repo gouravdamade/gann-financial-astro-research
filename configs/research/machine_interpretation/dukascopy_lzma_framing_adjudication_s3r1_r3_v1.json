@@ -1,0 +1,185 @@
+{
+  "contract": "MO_R4A_S3R1_R3_DUKASCOPY_LZMA_FRAMING_ADJUDICATION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3",
+  "supersedesProtocolEvidenceHash": "4D5322F005B97EFCAB31F3F2E0AACDE2C0167B8BCF04ECD632626D1F0610CBD1",
+  "question": "Which exact Python LZMA framing must decode the selected daily BI5 product without fallback or provider-byte probing?",
+  "sourceRecords": [
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "url": "https://www.dukascopy.com/wiki/es/development/data-export/",
+      "title": "Datos historicos de precios",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "current page lines 577-650; compression at 582; Python decoder at 613-646",
+      "factsSupported": [
+        "DUKASCOPY_EXCLUDES_XZ",
+        "DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS"
+      ],
+      "role": "CONTROLLING_PROVIDER_DOCUMENTATION"
+    },
+    {
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_FR",
+      "url": "https://www.dukascopy.com/wiki/fr/development/data-export/",
+      "title": "Donnees historiques de prix",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "current page corresponding daily BI5 decoding section and Python sample",
+      "factsSupported": [
+        "CROSS_LANGUAGE_CORROBORATION_OF_DAILY_BI5_DECODER"
+      ],
+      "role": "SAME_PUBLISHER_CORROBORATION_NOT_INDEPENDENT_AUTHORITY"
+    },
+    {
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "url": "https://docs.python.org/3/library/lzma.html",
+      "title": "Python 3.14.7 documentation lzma",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "L109-118, L159-165, L226-245",
+      "factsSupported": [
+        "PYTHON_DEFAULT_EQUALS_FORMAT_AUTO",
+        "PYTHON_FORMAT_AUTO_ACCEPTS_XZ",
+        "PYTHON_FORMAT_AUTO_ACCEPTS_FORMAT_ALONE",
+        "PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+        "PYTHON_FORMAT_RAW_REQUIRES_EXPLICIT_FILTER_CHAIN",
+        "PYTHON_FORMAT_ALONE_IS_LEGACY_LZMA_CONTAINER"
+      ],
+      "role": "CONTROLLING_RUNTIME_SEMANTICS"
+    },
+    {
+      "sourceId": "LIBLZMA_XZ_CONTAINER_REFERENCE",
+      "url": "https://tukaani.org/xz/liblzma-api/container_8h.html",
+      "title": "liblzma container.h File Reference",
+      "sourceAuthority": "OFFICIAL_LIBLZMA_PROJECT_DOCUMENTATION",
+      "retrievedAtUtc": "2026-09-11T00:00:00Z",
+      "locator": "container format API reference; consulted as terminology corroboration",
+      "factsSupported": [
+        "CONTAINER_TERMINOLOGY_CORROBORATION"
+      ],
+      "role": "CORROBORATIVE_ONLY"
+    }
+  ],
+  "premiseMatrix": [
+    {
+      "factId": "DUKASCOPY_EXCLUDES_XZ",
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "locator": "L582",
+      "evidence": "Direct provider prose calls the payload an LZMA stream and explicitly says it is not the .xz container format.",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS",
+      "sourceId": "DUKASCOPY_CURRENT_HISTORICAL_PRICE_DATA_ES",
+      "sourceAuthority": "OFFICIAL_DUKASCOPY_CURRENT_TECHNICAL_DOCUMENTATION",
+      "locator": "L613-646, especially L629",
+      "evidence": "The documented daily BI5 Python decoder reads compressed bytes and calls lzma.decompress(compressed) without format or filters.",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "PYTHON_DEFAULT_EQUALS_FORMAT_AUTO",
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "locator": "L159-165",
+      "evidence": "The official function signature gives lzma.decompress(data, format=FORMAT_AUTO, memlimit=None, filters=None).",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "PYTHON_FORMAT_AUTO_ACCEPTS_XZ",
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "locator": "L241-245",
+      "evidence": "FORMAT_AUTO detects the container and decompresses .xz and .lzma files.",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "PYTHON_FORMAT_AUTO_ACCEPTS_FORMAT_ALONE",
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "locator": "L233-245",
+      "evidence": "Python defines FORMAT_ALONE as the legacy .lzma container and says FORMAT_AUTO decompresses .lzma files.",
+      "evidenceKind": "CROSS_REFERENCE_WITHIN_OFFICIAL_RUNTIME_DOCUMENTATION",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "locator": "L238-245",
+      "evidence": "Python states data in FORMAT_RAW cannot be decompressed using FORMAT_AUTO.",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "PYTHON_FORMAT_RAW_REQUIRES_EXPLICIT_FILTER_CHAIN",
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "locator": "L117-118 and L238-239",
+      "evidence": "Python requires a custom filter chain when the raw format is used for decompression.",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    },
+    {
+      "factId": "PYTHON_FORMAT_ALONE_IS_LEGACY_LZMA_CONTAINER",
+      "sourceId": "PYTHON_3_14_7_LZMA_LIBRARY_REFERENCE",
+      "sourceAuthority": "OFFICIAL_PYTHON_RUNTIME_DOCUMENTATION",
+      "locator": "L233-236",
+      "evidence": "Python names FORMAT_ALONE as the legacy .lzma container format.",
+      "evidenceKind": "DIRECT_SOURCE_FACT",
+      "status": "SUPPORTED"
+    }
+  ],
+  "terminologyDistinction": {
+    "naturalLanguage": "Dukascopy's natural-language raw LZMA wording means LZMA bytes outside the XZ container in this adjudication record.",
+    "pythonApi": "Python FORMAT_RAW is a separate API format requiring an explicit filter chain and is not inferred from the natural-language phrase.",
+    "status": "DISTINGUISHED_NOT_EQUIVALENT"
+  },
+  "candidateFormats": [
+    {
+      "format": "FORMAT_XZ",
+      "compatibleWithDukascopyProse": false,
+      "compatibleWithOfficialPythonSample": true,
+      "compatibleWithPythonRuntimeSpecification": true,
+      "requiresUnknownParameters": false,
+      "finalDisposition": "ELIMINATED",
+      "reason": "Direct Dukascopy wording excludes the .xz container."
+    },
+    {
+      "format": "FORMAT_ALONE",
+      "compatibleWithDukascopyProse": true,
+      "compatibleWithOfficialPythonSample": true,
+      "compatibleWithPythonRuntimeSpecification": true,
+      "requiresUnknownParameters": false,
+      "finalDisposition": "SELECTED_BY_CROSS_SOURCE_TECHNICAL_DEDUCTION",
+      "reason": "After direct exclusion of XZ and documented incompatibility of RAW with the sample's default call, legacy .lzma is the only FORMAT_AUTO-compatible format remaining."
+    },
+    {
+      "format": "FORMAT_RAW",
+      "compatibleWithDukascopyProse": "NATURAL_LANGUAGE_RAW_IS_NOT_A_PYTHON_API_ASSERTION",
+      "compatibleWithOfficialPythonSample": false,
+      "compatibleWithPythonRuntimeSpecification": false,
+      "requiresUnknownParameters": true,
+      "finalDisposition": "ELIMINATED",
+      "reason": "FORMAT_RAW requires a filter chain and cannot be decoded by the documented default FORMAT_AUTO call; no source supplies a filter chain."
+    }
+  ],
+  "eliminatedFormats": [
+    "FORMAT_XZ",
+    "FORMAT_RAW"
+  ],
+  "selectedFormat": "PYTHON_LZMA_FORMAT_ALONE",
+  "selectedPythonConstant": "lzma.FORMAT_ALONE",
+  "filterChainRequired": false,
+  "filterChain": [],
+  "adjudicationStatus": "COMPRESSION_FRAMING_SOURCE_ADJUDICATED",
+  "decisionKind": "CROSS_SOURCE_TECHNICAL_DEDUCTION",
+  "uniqueConclusionReason": "The provider excludes XZ; Python excludes RAW from the documented default call; the remaining default-compatible legacy .lzma container is FORMAT_ALONE.",
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "lzmaFramingAdjudicationHash": "0F8F61572764E898F1D3F0E8676412A3770A45920FCFCB6A0AEDD9126C88855B"
+}

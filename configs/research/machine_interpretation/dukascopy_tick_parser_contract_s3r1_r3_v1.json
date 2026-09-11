@@ -1,0 +1,106 @@
+{
+  "contract": "MO_R4A_S3R1_R3_DUKASCOPY_DAILY_BI5_OFFLINE_PARSER_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3",
+  "product": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+  "instrument": "USDJPY",
+  "compression": {
+    "framing": "PYTHON_LZMA_FORMAT_ALONE",
+    "pythonConstant": "lzma.FORMAT_ALONE",
+    "productionCall": "lzma.decompress(raw_bytes, format=lzma.FORMAT_ALONE)",
+    "fallbackFormatsAllowed": false,
+    "sourceHash": "0F8F61572764E898F1D3F0E8676412A3770A45920FCFCB6A0AEDD9126C88855B"
+  },
+  "recordLayout": {
+    "recordSizeBytes": 20,
+    "structFormat": ">IIIff",
+    "byteOrder": "BIG_ENDIAN",
+    "fields": [
+      "millisecondsFromUtcDayStart",
+      "askNative",
+      "bidNative",
+      "askVolumeFloat32",
+      "bidVolumeFloat32"
+    ],
+    "alignmentPolicy": "RAW_RECORD_ALIGNMENT_INVALID"
+  },
+  "timestampRule": {
+    "nativeType": "uint32",
+    "unit": "milliseconds",
+    "base": "UTC_NATIVE_PARTITION_DAY_START",
+    "formula": "timestampUtc = nativeStartUtc + timedelta(milliseconds=millisecondsFromUtcDayStart)",
+    "validRange": "0 <= millisecondsFromUtcDayStart < 86400000",
+    "invalidStatus": "NATIVE_TIMESTAMP_OUT_OF_PARTITION"
+  },
+  "priceRule": {
+    "symbol": "USDJPY",
+    "scaleDenominator": 1000,
+    "formula": "bid = bidNative / 1000; ask = askNative / 1000",
+    "validity": "bidNative > 0 and askNative > 0 and askNative >= bidNative",
+    "invalidStatus": "NATIVE_QUOTE_INVALID"
+  },
+  "volumeHandling": {
+    "decoded": "IEEE_754_FLOAT32",
+    "rawBitPreservation": "UPPERCASE_HEX_OF_THE_FOUR_NATIVE_VOLUME_BYTES",
+    "useForFurtherAnalysis": "NOT_USED_BY_THIS_PARSER"
+  },
+  "recordOrder": "PRESERVE_NATIVE_RECORD_INDEX_AND_ORDER_NO_DEDUPLICATION",
+  "canonicalSerialization": {
+    "representation": "UTF8_JSON_LINES_SORTED_KEYS_NO_INSIGNIFICANT_WHITESPACE_ONE_RECORD_PER_LINE_TRAILING_LF",
+    "fields": [
+      "partitionId",
+      "recordIndex",
+      "timestampUtc",
+      "askNative",
+      "bidNative",
+      "askVolumeBitsHex",
+      "bidVolumeBitsHex"
+    ],
+    "timestampFormat": "YYYY-MM-DDTHH:MM:SS.mmmZ",
+    "parsedTicksSha256": "SHA256_OF_CANONICAL_UTF8_JSON_LINES"
+  },
+  "syntheticFixtureMethodology": {
+    "designation": "SYNTHETIC_NOT_PROVIDER_DATA",
+    "storage": "IN_MEMORY_TEST_GENERATION_ONLY",
+    "partitionDate": "2030-01-01",
+    "scenarioIds": [
+      "VALID_SINGLE_RECORD",
+      "VALID_MULTI_RECORD_BOUNDARY_OFFSETS",
+      "WRONG_ALTERNATE_CONTAINER",
+      "CORRUPTED_COMPRESSED_STREAM",
+      "ZERO_RAW_PAYLOAD",
+      "ZERO_DECODED_RECORDS",
+      "NINETEEN_BYTE_DECODED_PAYLOAD",
+      "TRAILING_BYTE_DECODED_PAYLOAD",
+      "OUT_OF_PARTITION_MILLISECOND_OFFSET",
+      "ASK_BELOW_BID",
+      "ZERO_BID",
+      "EQUAL_ASK_BID",
+      "UNSUPPORTED_SYMBOL",
+      "INVALID_PARTITION_DATE"
+    ]
+  },
+  "errorStatuses": [
+    "UNSUPPORTED_SYMBOL",
+    "INVALID_PARTITION_DATE",
+    "INVALID_RAW_BYTES",
+    "ZERO_BYTE_PAYLOAD_ACQUISITION_INCOMPLETE",
+    "COMPRESSION_FORMAT_MISMATCH",
+    "COMPRESSION_DECODE_FAILED",
+    "ZERO_DECODED_RECORDS_ACQUISITION_INCOMPLETE",
+    "RAW_RECORD_ALIGNMENT_INVALID",
+    "NATIVE_TIMESTAMP_OUT_OF_PARTITION",
+    "NATIVE_QUOTE_INVALID"
+  ],
+  "networkAccess": false,
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "sourceFactCoverage": {
+    "compressionFraming": "DUKASCOPY_EXCLUDES_XZ + DUKASCOPY_SAMPLE_USES_DEFAULT_LZMA_DECOMPRESS + PYTHON_FORMAT_AUTO_REJECTS_FORMAT_RAW",
+    "recordSizeAndEndian": "R2_RECORD_LAYOUT",
+    "timestampBaseAndUnit": "R2_TIMESTAMP_RECONSTRUCTION",
+    "usdJpyDivisor": "R2_USDJPY_SCALE"
+  },
+  "parserSourceSha256": "47BEF7B1A13D8EE4EC2DDED2BDD965A27D41FCB548EC0D4D940A5535669D733E",
+  "parserContractHash": "C91A76165893BCA308FE2DB9B3F83A2E9B0233CF2023E1AC573504C68EC3D316"
+}

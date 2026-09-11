@@ -4,6 +4,37 @@ Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-11 (MO-R4A-S3R1-R3 Dukascopy LZMA Framing And Offline Parser Freeze)
+
+- Preserved the accepted MO-R4A-S3R1-R2 Branch-B source record unchanged,
+  including its unresolved `COMPRESSION_WRAPPER_PROTOCOL_SOURCE_CONFLICT` and
+  acquisition hash `A1C2129E9395C9850A66A595F3529563AFBDA14E10C8F0B7DBB3A78897ECF500`.
+- R3 re-adjudicated that one issue from public technical documentation only.
+  Dukascopy's daily BI5 prose excludes the `.xz` container while its official
+  Python decoder calls `lzma.decompress(compressed)` without a format or
+  filters. Python 3.14.7 documents the default as `FORMAT_AUTO`, which handles
+  `.xz` and legacy `.lzma` but cannot decode `FORMAT_RAW`; raw mode additionally
+  requires an explicit filter chain. The only compatible framing is therefore
+  `PYTHON_LZMA_FORMAT_ALONE`. This is recorded as a cross-source technical
+  deduction, not as a direct Dukascopy assertion of a Python constant.
+- Added the source-bound, offline-only `dukascopy_tick_parser_s3r1_r3.py`.
+  It accepts caller-supplied USDJPY daily bytes only, decodes exactly
+  `lzma.decompress(raw_bytes, format=lzma.FORMAT_ALONE)`, validates `>IIIff`
+  20-byte records and UTC-day millisecond offsets, preserves native record order
+  and volume bits, and hashes canonical millisecond-UTC JSON Lines. It has no
+  network client, credentials, request functions, outcome reader, or scoring
+  behavior. All parser fixtures are in-memory invented 2030 values marked
+  `SYNTHETIC_NOT_PROVIDER_DATA`.
+- The successor keeps the 24 frozen identities, 14 directional / 13 primary
+  rows, 39 analytical intervals, 15 native UTC days, C1-C4 memberships, and
+  40-state null unchanged. `providerAccessPerformed=false`,
+  `marketOutcomeRead=false`, all 16 outcome-access flags remain false, and
+  `executionAllowed=false`.
+- R3 completes only the pre-request parser/protocol closure. Its next gate is
+  `INDEPENDENT_CENTRAL_REVIEW_BEFORE_TARGETED_ASTRA_PRE_OUTCOME_REAUDIT`; it
+  does not authorize provider access, Astra re-audit, outcome unlock, S4,
+  product work, Auto Suggest, ML, MT5, or execution.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S3R1-R2 Dukascopy Provider Protocol Source Closure)
 
 - Preserved the complete historical S3R1-R1 package, including its accepted
