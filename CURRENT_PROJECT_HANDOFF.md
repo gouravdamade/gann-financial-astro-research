@@ -55,6 +55,50 @@ Use this file to recover context in a new chat if PyCharm/Codex chat history is 
   Suggest, ML, MT5, `EXECUTION_ALLOWED`, production admission, and
   `OUTCOME_UNLOCKED` remain false.
 
+## Latest Update - 2026-09-11 (MO-R4A-S3R1 Preregistration Integrity Hardening)
+
+- Preserved every accepted S3 artifact and added an immutable S3R1 successor
+  package. The historical S3 hashes remain preregistration
+  `C4F8B0AC31CE37662A533B9570364894CEC37DD01FE6B68D137FE2C65001A319`,
+  population `8C985371B43E4285664C48D3579B9AD793EC30D56BBED2C7B15067822AFDF970`,
+  clusters `AF6F55E47015C9AB5FBDD61FE90505425F5AD8D506415CD7A511662B0FDAFF1A`,
+  invariance `5F5504B042CA3C69526291C570337C951C41267C6577A3B7EB8BAD22B8F74807`,
+  and acceptance `155B814F64B9B3C9BB4E0BF57FEC94EDD0423A513D5CB04DAA63D1AB7CBCE1F8`.
+- S3R1 adds a closed nested Draft 2020-12 preregistration schema, fixed
+  declarative authored metadata `2026-09-11T00:00:00Z`, the explicit
+  `CONDITIONAL_WITHIN_SIDE_LABEL_EXCHANGEABILITY_NULL`, deterministic -7/+7
+  timing statuses, and an acyclic core hash. Successor hashes are preregistration
+  `CBE8E351C1F57E5717343E92D71C1CFDBFB49C0829FF2430BD5CDA3CECD7F444`,
+  population `DAFA64956255F7AD2F91108DD08E488ED4026CC2CE488F3F37861EA82A49C73E`,
+  clusters `4FE7315F4C30E61A4E40158A3D41E8B36A89957A44BAD8C3E4D7FBFFA3580057`,
+  invariance `8062FF0C752D35C5D2D9A144BCD35686DAD5E4F88CA64FB4E66BE356B0409974`,
+  core `7AC7DE6EA59278B89E76B80E1EC0A46A8707AB4EAE4E95DFE7E627C56420D7BE`,
+  and acceptance `79ED3C79B4F913C4B23500CF18EEFDF4EED6B53B37A7ACE5548B34074FDA4F7A`.
+- The 24-event population, four half-open clusters, 40-state side-local null,
+  exact intervals, labels, and S2R1-R1 upstream hashes are unchanged. S3R1
+  records exact UTC and event-prediction invariance explicitly. Conflicting
+  same-timestamp synthetic quotes are `DATA_CONFLICT_UNSCORABLE`; no quote is
+  averaged and no outside-interval rescue is allowed.
+- The new records are
+  `configs/research/machine_interpretation/outcome_analysis_preregistration_s3r1_v1.json`,
+  its `.schema.json`, the three `status/audits/mo_r4a_s3r1_*.json` successors,
+  `status/acceptance/mo_r4a_s3r1_frozen_analysis_package.json`, and
+  `status/acceptance/mo_r4a_s3r1_outcome_analysis_preregistration.json`.
+  The implementation/test pair is
+  `gann-astro-desk/backend/outcome_analysis_s3r1.py` and
+  `gann-astro-desk/backend/test_outcome_analysis_s3r1.py`.
+- Verification: S3R1 focused tests `13/13`; the strict schema mutation suite
+  covers 36 schema mutations plus 7 runtime semantic mutations; full backend
+  regression `473 passed, 1 skipped`; Python compilation and targeted Ruff pass.
+  No provider, price/outcome, Founder Review, Astra, S4, frontend, Rust,
+  package, signed-wave, pair, magnitude, score, Auto Suggest, ML, MT5, or
+  execution path was added. `executionAllowed=false` remains enforced.
+- S3R1 status is
+  `S3R1_PREREGISTRATION_INTEGRITY_HARDENED_AND_COMPOSITE_FREEZE_COMPLETE_CENTRAL_REVIEW_REQUIRED`.
+  The only next gate is
+  `INDEPENDENT_CENTRAL_REVIEW_BEFORE_ASTRA_PRE_OUTCOME_AUDIT`; do not inspect
+  outcomes or begin Astra/S4 without a separate authorization.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S2R1-R1 Saravali Relationship Orientation And Pagination Adjudication)
 
 - Direct two-pass page-image inspection of the exact held Saravali witness
