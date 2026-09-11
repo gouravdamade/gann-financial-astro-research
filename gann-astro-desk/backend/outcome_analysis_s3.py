@@ -83,6 +83,22 @@ class OutcomeAccessBlockedError(OutcomeAnalysisS3Error):
     """Raised when an attempted materialization tries to attach outcome access."""
 
 
+class SyntheticTickInputError(OutcomeAnalysisS3Error):
+    """Raised when a synthetic tick cannot be identified as a UTC observation."""
+
+
+class SyntheticTickQuoteError(OutcomeAnalysisS3Error):
+    """Raised when an in-scope synthetic quote is not a valid bid/ask pair."""
+
+
+class SyntheticTickConflictError(OutcomeAnalysisS3Error):
+    """Raised when in-scope quotes disagree at one UTC timestamp."""
+
+    def __init__(self, timestamp_utc: str) -> None:
+        self.timestamp_utc = timestamp_utc
+        super().__init__(f"Conflicting synthetic quotes at {timestamp_utc}")
+
+
 @dataclass(frozen=True)
 class CanonicalTick:
     """One validated in-memory bid/ask observation used only by synthetic tests."""
@@ -94,7 +110,9 @@ class CanonicalTick:
 
     @property
     def midpoint(self) -> float:
-        return (self.bid + self.ask) / 2.0
+        # Avoid overflowing before division when a synthetic edge case uses
+        # very large finite quote values.
+        return self.bid + (self.ask - self.bid) / 2.0
 
 
 def _canonical_hash(value: Any) -> str:
@@ -782,15 +800,15 @@ def build_acceptance_manifest(
 
 def _tick_from_mapping(raw: Mapping[str, Any], source_index: int) -> CanonicalTick:
     if not isinstance(raw, Mapping):
-        raise OutcomeAnalysisS3Error("Synthetic tick must be a mapping")
+        raise SyntheticTickInputError("Synthetic tick must be a mapping")
     timestamp = _parse_utc(raw.get("timestampUtc"), "tick timestampUtc")
     try:
         bid = float(raw.get("bid"))
         ask = float(raw.get("ask"))
     except (TypeError, ValueError) as exc:
-        raise OutcomeAnalysisS3Error("Synthetic tick bid/ask must be numeric") from exc
+        raise SyntheticTickQuoteError("Synthetic tick bid/ask must be numeric") from exc
     if not math.isfinite(bid) or not math.isfinite(ask) or bid <= 0.0 or ask <= 0.0 or ask < bid:
-        raise OutcomeAnalysisS3Error("Synthetic tick bid/ask must be finite positive and ask >= bid")
+        raise SyntheticTickQuoteError("Synthetic tick bid/ask must be finite positive and ask >= bid")
     return CanonicalTick(timestamp, bid, ask, source_index)
 
 
@@ -812,6 +830,74 @@ def canonicalize_synthetic_ticks(ticks: Iterable[Mapping[str, Any]]) -> list[Can
     return canonical
 
 
+def canonicalize_synthetic_ticks_in_interval(
+    ticks: Iterable[Mapping[str, Any]],
+    *,
+    applying_start_utc: datetime,
+    separating_end_utc: datetime,
+    reject_conflicts: bool = True,
+) -> list[CanonicalTick]:
+    """Validate only quotes in a half-open interval while parsing every timestamp.
+
+    A malformed timestamp is an input error even when it would fall outside the
+    interval.  Invalid prices and same-time quote conflicts outside the interval
+    are irrelevant to this interval and therefore do not poison it.
+    """
+
+    materialized = list(ticks)
+    parsed: list[CanonicalTick] = []
+    for index, raw in enumerate(materialized):
+        if not isinstance(raw, Mapping):
+            raise SyntheticTickInputError("Synthetic tick must be a mapping")
+        try:
+            timestamp = _parse_utc(raw.get("timestampUtc"), "tick timestampUtc")
+        except OutcomeAnalysisS3Error as exc:
+            raise SyntheticTickInputError("tick timestampUtc must be an ISO-8601 UTC timestamp") from exc
+        if not applying_start_utc <= timestamp < separating_end_utc:
+            continue
+        parsed.append(_tick_from_mapping(raw, index))
+
+    parsed.sort(key=lambda tick: (tick.timestamp_utc, tick.source_index))
+    canonical: list[CanonicalTick] = []
+    seen_identical: set[tuple[datetime, float, float]] = set()
+    for tick in parsed:
+        identity = (tick.timestamp_utc, tick.bid, tick.ask)
+        if identity in seen_identical:
+            continue
+        seen_identical.add(identity)
+        canonical.append(tick)
+    if reject_conflicts:
+        quotes_by_timestamp: dict[datetime, set[tuple[float, float]]] = {}
+        for tick in canonical:
+            quotes_by_timestamp.setdefault(tick.timestamp_utc, set()).add((tick.bid, tick.ask))
+        conflicts = [timestamp for timestamp, quotes in quotes_by_timestamp.items() if len(quotes) > 1]
+        if conflicts:
+            raise SyntheticTickConflictError(_utc_text(min(conflicts)))
+    return canonical
+
+
+def _numeric_return_or_invalid(start_tick: CanonicalTick, end_tick: CanonicalTick) -> tuple[float, str | None]:
+    """Return a stable log return or a fail-closed numeric reason."""
+
+    start_midpoint = start_tick.midpoint
+    end_midpoint = end_tick.midpoint
+    if not math.isfinite(start_midpoint) or not math.isfinite(end_midpoint):
+        return 0.0, "NONFINITE_DERIVED_MIDPOINT"
+    if start_midpoint <= 0.0 or end_midpoint <= 0.0:
+        return 0.0, "NONPOSITIVE_DERIVED_MIDPOINT"
+    try:
+        start_log = math.log(start_midpoint)
+        end_log = math.log(end_midpoint)
+    except (ValueError, OverflowError) as exc:
+        return 0.0, f"LOG_RETURN_DOMAIN_ERROR:{type(exc).__name__}"
+    if not math.isfinite(start_log) or not math.isfinite(end_log):
+        return 0.0, "NONFINITE_LOG_MIDPOINT"
+    log_return = end_log - start_log
+    if not math.isfinite(log_return):
+        return 0.0, "NONFINITE_LOG_RETURN"
+    return log_return, None
+
+
 def score_synthetic_interval(
     ticks: Iterable[Mapping[str, Any]],
     *,
@@ -826,7 +912,27 @@ def score_synthetic_interval(
     if start >= end:
         raise OutcomeAnalysisS3Error("Synthetic interval must be a nonempty half-open UTC range")
     q = _expected_direction_unit(validation_expected_pair_direction)
-    selected = [tick for tick in canonicalize_synthetic_ticks(ticks) if start <= tick.timestamp_utc < end]
+    try:
+        selected = canonicalize_synthetic_ticks_in_interval(
+            ticks,
+            applying_start_utc=start,
+            separating_end_utc=end,
+            reject_conflicts=False,
+        )
+    except SyntheticTickConflictError as exc:
+        return {
+            "dataStatus": "DATA_CONFLICT_UNSCORABLE",
+            "reason": "CONFLICTING_QUOTES_AT_SAME_TIMESTAMP",
+            "conflictingTimestampUtc": exc.timestamp_utc,
+            "outsideIntervalRescueUsed": False,
+        }
+    except SyntheticTickQuoteError:
+        return {
+            "dataStatus": "DATA_NUMERIC_INVALID_UNSCORABLE",
+            "reason": "INVALID_IN_INTERVAL_QUOTE",
+            "selectedTickCount": 0,
+            "outsideIntervalRescueUsed": False,
+        }
     if len(selected) < 2:
         return {
             "dataStatus": "DATA_UNSCORABLE",
@@ -842,10 +948,18 @@ def score_synthetic_interval(
             "selectedTickCount": len(selected),
             "outsideIntervalRescueUsed": False,
         }
-    log_return = math.log(end_tick.midpoint / start_tick.midpoint)
+    log_return, numeric_reason = _numeric_return_or_invalid(start_tick, end_tick)
+    if numeric_reason is not None:
+        return {
+            "dataStatus": "DATA_NUMERIC_INVALID_UNSCORABLE",
+            "reason": numeric_reason,
+            "selectedTickCount": len(selected),
+            "outsideIntervalRescueUsed": False,
+        }
     realized = "UP" if log_return > 0 else "DOWN" if log_return < 0 else "ZERO_MOVE"
     return {
         "dataStatus": "SCORABLE_SYNTHETIC_ONLY",
+        "selectedTickCount": len(selected),
         "startTickUtc": _utc_text(start_tick.timestamp_utc),
         "endTickUtc": _utc_text(end_tick.timestamp_utc),
         "startMidpoint": start_tick.midpoint,

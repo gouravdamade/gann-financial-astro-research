@@ -1,0 +1,77 @@
+{
+  "contract": "MO_R4A_S3R1_R1_OVERLAP_CLUSTERS_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R1",
+  "supersedesOverlapClustersContract": "MO_R4A_S3R1_OVERLAP_CLUSTERS_V1",
+  "supersedesOverlapClustersHash": "4FE7315F4C30E61A4E40158A3D41E8B36A89957A44BAD8C3E4D7FBFFA3580057",
+  "primaryPopulationHash": "462436AA5F2E57998EE7EA334195FE86D14396169806D8F08064C7BF1CFE567C",
+  "overlapRule": "a.start < b.end and b.start < a.end",
+  "touchingBoundaryIsOverlap": false,
+  "clusterConstruction": "TRANSITIVE_CONNECTED_COMPONENTS",
+  "clusters": [
+    {
+      "clusterId": "C1",
+      "memberEventIds": [
+        "TN_4A15CCC7D126313A14BCB562",
+        "TN_6E2DD561FB40D45D406F808E",
+        "TN_7CCC78DA82BDAC13D3CF60B0",
+        "TN_397A2B053BC76D9D788E5E5E",
+        "TN_B24B1690FD8612329198D379"
+      ],
+      "memberCount": 5,
+      "earliestStartUtc": "2025-03-31T20:48:24Z",
+      "latestEndUtc": "2025-04-02T06:09:08Z"
+    },
+    {
+      "clusterId": "C2",
+      "memberEventIds": [
+        "TN_8C3582F7101F4F14BC4ECC4F"
+      ],
+      "memberCount": 1,
+      "earliestStartUtc": "2025-04-02T08:39:52Z",
+      "latestEndUtc": "2025-04-02T18:38:57Z"
+    },
+    {
+      "clusterId": "C3",
+      "memberEventIds": [
+        "TN_B8750233DA923D431E121862",
+        "TN_529E2CBC72B405EAD0990350"
+      ],
+      "memberCount": 2,
+      "earliestStartUtc": "2025-04-02T21:43:26Z",
+      "latestEndUtc": "2025-04-03T08:04:32Z"
+    },
+    {
+      "clusterId": "C4",
+      "memberEventIds": [
+        "TN_29BCE2386E5DB19625921587",
+        "TN_6F48D71F91F1382FAA720581",
+        "TN_97C9294ED13CD6C36FB0840B",
+        "TN_574C7A7407B855CD78DF8E0D",
+        "TN_A32A6104A917D4918B269910"
+      ],
+      "memberCount": 5,
+      "earliestStartUtc": "2025-04-03T08:35:23Z",
+      "latestEndUtc": "2025-04-04T20:32:38Z"
+    }
+  ],
+  "outcomeAccessFlags": {
+    "PRICE_DATA_READ": false,
+    "OUTCOME_DATA_READ": false,
+    "FOUNDER_DECISION_READ": false,
+    "REVIEW_STORE_READ": false,
+    "SBC_READ": false,
+    "CATALOGUE_ADMISSION": false,
+    "EVIDENCE_ADMISSION": false,
+    "SIGNED_WAVE_RENDERED": false,
+    "PAIR_RESULTANT_CREATED": false,
+    "MAGNITUDE_CONFIGURED": false,
+    "AUTO_SUGGEST": false,
+    "ML": false,
+    "MT5": false,
+    "EXECUTION_ALLOWED": false,
+    "PRODUCTION_ADMISSION": false,
+    "OUTCOME_UNLOCKED": false
+  },
+  "overlapClustersHash": "18E34DEABBFA2D99620789347D02FD002C23F36B39D21ED1D9B44702020A308F"
+}

@@ -1,0 +1,67 @@
+{
+  "contract": "MO_R4A_S3R1_R1_ASTRA_FINDINGS_DISPOSITION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R1",
+  "verdict": "PRE_OUTCOME_CORRECTION_REQUIRED",
+  "branch": "BRANCH_B",
+  "findings": [
+    {
+      "findingId": "ASTRA_S3R1_ACCEPTANCE_BUILDER_SUPPLIED_CORE_BYPASS",
+      "findingType": "HIGH_ACCEPTANCE_VALIDATION_BYPASS",
+      "severity": "HIGH",
+      "status": "CORRECTED",
+      "affectedCode": "outcome_analysis_s3r1.build_s3r1_acceptance_manifest",
+      "correction": "Freshly rebuild and compare every supplied component before acceptance accounting.",
+      "regression": "Astra mutation matrix A-F",
+      "scientificDesignChanged": false,
+      "marketOutcomeRead": false
+    },
+    {
+      "findingId": "ASTRA_S3R1_NUMERIC_INVALIDITY",
+      "findingType": "MEDIUM_NUMERICAL_INVALIDITY",
+      "severity": "MEDIUM",
+      "status": "CORRECTED",
+      "affectedCode": "outcome_analysis_s3 and outcome_analysis_s3r1 synthetic evaluator",
+      "correction": "Stable midpoint and log subtraction with finite checks and DATA_NUMERIC_INVALID_UNSCORABLE.",
+      "regression": "Numeric invalidity matrix",
+      "scientificDesignChanged": false,
+      "marketOutcomeRead": false
+    },
+    {
+      "findingId": "ASTRA_S3R1_ACQUISITION_CONTRACT_REQUIREMENTS",
+      "findingType": "MEDIUM_PRE_REQUEST_ACQUISITION_REQUIREMENTS",
+      "severity": "MEDIUM",
+      "status": "PARTIALLY_RESOLVED_OUTCOME_UNLOCK_BLOCKED",
+      "affectedCode": "S3R1-R1 pre-request acquisition contract",
+      "correction": "Declare exact frozen intervals and all required capture fields; leave provider-specific protocol unresolved.",
+      "regression": "Acquisition contract matrix",
+      "scientificDesignChanged": false,
+      "marketOutcomeRead": false
+    }
+  ],
+  "acquisitionContractHash": "D2E78CECD9743A176E417ACD7A7EAD57EC21167B8708AF2043C9D016E0C2CD70",
+  "acquisitionNextGate": "CENTRAL_REVIEW_PROVIDER_CONTRACT_CLOSURE_REQUIRED",
+  "scientificDesignChanged": false,
+  "marketOutcomeRead": false,
+  "outcomeAccessFlags": {
+    "PRICE_DATA_READ": false,
+    "OUTCOME_DATA_READ": false,
+    "FOUNDER_DECISION_READ": false,
+    "REVIEW_STORE_READ": false,
+    "SBC_READ": false,
+    "CATALOGUE_ADMISSION": false,
+    "EVIDENCE_ADMISSION": false,
+    "SIGNED_WAVE_RENDERED": false,
+    "PAIR_RESULTANT_CREATED": false,
+    "MAGNITUDE_CONFIGURED": false,
+    "AUTO_SUGGEST": false,
+    "ML": false,
+    "MT5": false,
+    "EXECUTION_ALLOWED": false,
+    "PRODUCTION_ADMISSION": false,
+    "OUTCOME_UNLOCKED": false
+  },
+  "executionAllowed": false,
+  "preregistrationHash": "0C9EF14A7216C9BB62E834B865315D67B2603F076FF2BA28AFC32E92CDFC93E2",
+  "dispositionHash": "531A8CBBA646BA906E8259D4296F3076EACF27C18A932305A2AD8B632EA950B9"
+}

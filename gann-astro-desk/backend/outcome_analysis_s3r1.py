@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import copy
 import json
-import math
 import re
 from datetime import datetime
 from pathlib import Path
@@ -559,11 +558,35 @@ def build_s3r1_acceptance_manifest(
 ) -> dict[str, Any]:
     root = Path(resource_root).resolve()
     inputs = _historical_s3_inputs(root)
-    prereg = copy.deepcopy(preregistration) if preregistration is not None else build_s3r1_preregistration(root)
-    primary_population = copy.deepcopy(population) if population is not None else build_s3r1_primary_population(root)
-    overlap_clusters = copy.deepcopy(clusters) if clusters is not None else build_s3r1_overlap_clusters(root, population=primary_population)
-    audit = copy.deepcopy(invariance) if invariance is not None else build_s3r1_invariance_audit(root, preregistration=prereg, population=primary_population, clusters=overlap_clusters)
-    core_manifest = copy.deepcopy(core) if core is not None else build_analysis_core_manifest(prereg, primary_population, overlap_clusters, audit)
+    # Rebuild every component from the immutable predecessor before accepting
+    # caller-supplied values.  A self-consistent but maliciously rehashed
+    # component must not become the acceptance package merely because its hash
+    # field is internally correct.
+    expected_prereg = build_s3r1_preregistration(root)
+    expected_population = build_s3r1_primary_population(root)
+    expected_clusters = build_s3r1_overlap_clusters(root, population=expected_population)
+    expected_audit = build_s3r1_invariance_audit(
+        root,
+        preregistration=expected_prereg,
+        population=expected_population,
+        clusters=expected_clusters,
+    )
+    expected_core = build_analysis_core_manifest(expected_prereg, expected_population, expected_clusters, expected_audit)
+    supplied_components = (
+        (preregistration, expected_prereg, "preregistration"),
+        (population, expected_population, "population"),
+        (clusters, expected_clusters, "clusters"),
+        (invariance, expected_audit, "invariance"),
+        (core, expected_core, "core"),
+    )
+    for supplied, expected, label in supplied_components:
+        if supplied is not None and dict(supplied) != expected:
+            raise OutcomeAnalysisS3R1Error(f"Supplied S3R1 {label} does not match a fresh immutable rebuild")
+    prereg = expected_prereg
+    primary_population = expected_population
+    overlap_clusters = expected_clusters
+    audit = expected_audit
+    core_manifest = expected_core
     historical_acceptance = inputs["s3"]["acceptance"]
     body = {
         "contract": S3R1_ACCEPTANCE_CONTRACT,
@@ -638,12 +661,23 @@ def score_synthetic_interval_s3r1(
         raise OutcomeAnalysisS3R1Error("Synthetic interval must be a nonempty half-open UTC range")
     q = s3._expected_direction_unit(validation_expected_pair_direction)
     try:
-        canonical = canonicalize_synthetic_ticks_s3r1(ticks)
-    except ConflictingSyntheticTickError as exc:
+        canonical = s3.canonicalize_synthetic_ticks_in_interval(
+            ticks,
+            applying_start_utc=start,
+            separating_end_utc=end,
+        )
+    except s3.SyntheticTickConflictError as exc:
         return {
             "dataStatus": "DATA_CONFLICT_UNSCORABLE",
             "reason": "CONFLICTING_QUOTES_AT_SAME_TIMESTAMP",
             "conflictingTimestampUtc": exc.timestamp_utc,
+            "outsideIntervalRescueUsed": False,
+        }
+    except s3.SyntheticTickQuoteError:
+        return {
+            "dataStatus": "DATA_NUMERIC_INVALID_UNSCORABLE",
+            "reason": "INVALID_IN_INTERVAL_QUOTE",
+            "selectedTickCount": 0,
             "outsideIntervalRescueUsed": False,
         }
     selected = [tick for tick in canonical if start <= tick.timestamp_utc < end]
@@ -662,12 +696,20 @@ def score_synthetic_interval_s3r1(
             "selectedTickCount": len(selected),
             "outsideIntervalRescueUsed": False,
         }
+    log_return, numeric_reason = s3._numeric_return_or_invalid(first, last)
+    if numeric_reason is not None:
+        return {
+            "dataStatus": "DATA_NUMERIC_INVALID_UNSCORABLE",
+            "reason": numeric_reason,
+            "selectedTickCount": len(selected),
+            "outsideIntervalRescueUsed": False,
+        }
     start_midpoint = first.midpoint
     end_midpoint = last.midpoint
-    log_return = math.log(end_midpoint / start_midpoint)
     realized = "UP" if log_return > 0 else "DOWN" if log_return < 0 else "ZERO_MOVE"
     return {
         "dataStatus": "SCORABLE_SYNTHETIC_ONLY",
+        "selectedTickCount": len(selected),
         "startTickUtc": s3._utc_text(first.timestamp_utc),
         "endTickUtc": s3._utc_text(last.timestamp_utc),
         "startMidpoint": start_midpoint,

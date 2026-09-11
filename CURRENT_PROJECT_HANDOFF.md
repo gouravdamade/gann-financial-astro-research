@@ -4,6 +4,53 @@ Last updated: 2026-09-11 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
+## Latest Update - 2026-09-11 (MO-R4A-S3R1-R1 Astra Pre-Outcome Corrections)
+
+- Added the immutable S3R1-R1 successor beside the historical S3R1 package.
+  The predecessor remains unchanged at preregistration
+  `CBE8E351C1F57E5717343E92D71C1CFDBFB49C0829FF2430BD5CDA3CECD7F444`,
+  population `DAFA64956255F7AD2F91108DD08E488ED4026CC2CE488F3F37861EA82A49C73E`,
+  clusters `4FE7315F4C30E61A4E40158A3D41E8B36A89957A44BAD8C3E4D7FBFFA3580057`,
+  invariance `8062FF0C752D35C5D2D9A144BCD35686DAD5E4F88CA64FB4E66BE356B0409974`,
+  core `7AC7DE6EA59278B89E76B80E1EC0A46A8707AB4EAE4E95DFE7E627C56420D7BE`,
+  and acceptance `79ED3C79B4F913C4B23500CF18EEFDF4EED6B53B37A7ACE5548B34074FDA4F7A`.
+- The R1 correction layer strictly rebuilds and compares supplied
+  preregistration, population, clusters, invariance, acquisition contract,
+  and core inputs before acceptance accounting. Self-rehashed stale or
+  malicious components are rejected; the historical acceptance builder is
+  hardened without changing its valid output.
+- Synthetic diagnostics now use the stable midpoint
+  `bid + (ask - bid) / 2` and `log(endMidpoint) - log(startMidpoint)` with
+  finite checks. Invalid numeric inputs are
+  `DATA_NUMERIC_INVALID_UNSCORABLE`; only a finite exact zero remains
+  `ZERO_MOVE`. Same-time conflicts and invalid prices are scoped to the
+  half-open interval, while malformed timestamps remain typed fail-closed
+  input errors and outside ticks never rescue an interval.
+- The machine-readable acquisition contract is
+  `configs/research/machine_interpretation/market_data_acquisition_contract_s3r1_r1_v1.json`.
+  It declares 13 actual, 13 minus-7, and 13 plus-7 frozen intervals, with no
+  provider access. Provider-specific transport, pagination, encoding,
+  precision, parser identity, and revision protocol remain unresolved.
+- R1 status is Branch B:
+  `S3R1_R1_CODE_CORRECTIONS_COMPLETE_ACQUISITION_CONTRACT_INCOMPLETE`;
+  acceptance is `PRE_OUTCOME_ACQUISITION_CONTRACT_INCOMPLETE`, with the next
+  gate `CENTRAL_REVIEW_PROVIDER_CONTRACT_CLOSURE_REQUIRED`. The Astra
+  disposition is `PRE_OUTCOME_CORRECTION_REQUIRED` with disposition hash
+  `531A8CBBA646BA906E8259D4296F3076EACF27C18A932305A2AD8B632EA950B9` and
+  finding types `HIGH_ACCEPTANCE_VALIDATION_BYPASS`,
+  `MEDIUM_NUMERICAL_INVALIDITY`, and
+  `MEDIUM_PRE_REQUEST_ACQUISITION_REQUIREMENTS`. No market outcome,
+  price data, S4 evaluation, UI, score, polarity, Auto Suggest, ML, MT5, or
+  execution path was added; all outcome-access flags and `executionAllowed`
+  remain false.
+- R1 verification is 13/13 focused tests, 41/41 combined S3/S3R1/R1 tests,
+  486 backend tests passed with 1 existing skip, targeted Python compilation
+  and Ruff passed, and `git diff --check` passed. The new acquisition,
+  preregistration, population, clusters, invariance, core, acceptance, and
+  Astra-disposition artifacts regenerate deterministically. No frontend,
+  Rust, package, provider, price, or outcome run was performed because this
+  milestone is source-contract correction only.
+
 ## Latest Update - 2026-09-11 (MO-R4A-S3 Outcome Analysis Preregistration)
 
 - Added the sealed, outcome-blind S3 preregistration bound to the accepted
