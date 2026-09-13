@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import copy
+from contextvars import ContextVar
 import hashlib
 import json
 from pathlib import Path
@@ -79,6 +80,11 @@ class OutcomeAnalysisS3R1R3Error(ValueError):
     """Raised when R3 would depart from immutable science or parser provenance."""
 
 
+_R2_VALIDATION_CONTEXT: ContextVar[tuple[Path, dict[str, dict[str, Any]]] | None] = ContextVar(
+    "outcome_analysis_s3r1_r3_r2_validation_context", default=None
+)
+
+
 def _canonical_hash(value: Any) -> str:
     return s3._canonical_hash(value)
 
@@ -148,12 +154,35 @@ def _historical_r2_components(root: Path) -> dict[str, dict[str, Any]]:
     return components
 
 
-def _require_r2_predecessor(root: Path) -> dict[str, dict[str, Any]]:
+def _load_r2_predecessor(root: Path) -> dict[str, dict[str, Any]]:
     r2.validate_s3r1_r2_artifacts(root)
     historical = _historical_r2_components(root)
     if historical["core"].get("upstreamHashes") != EXPECTED_UPSTREAM_HASHES:
         raise OutcomeAnalysisS3R1R3Error("S2R1-R1 upstream hashes changed")
     return historical
+
+
+def _require_r2_predecessor(root: Path) -> dict[str, dict[str, Any]]:
+    root = Path(root).resolve()
+    context = _R2_VALIDATION_CONTEXT.get()
+    if context is not None and context[0] == root:
+        return copy.deepcopy(context[1])
+    return _load_r2_predecessor(root)
+
+
+def _run_with_r2_snapshot(root: Path, callback: Any) -> Any:
+    root = Path(root).resolve()
+    token = _R2_VALIDATION_CONTEXT.set(None)
+    r2_predecessor_token = None
+    try:
+        snapshot = _load_r2_predecessor(root)
+        _R2_VALIDATION_CONTEXT.set((root, snapshot))
+        r2_predecessor_token = r2._R1_VALIDATION_CONTEXT.set((root, snapshot))
+        return callback()
+    finally:
+        if r2_predecessor_token is not None:
+            r2._R1_VALIDATION_CONTEXT.reset(r2_predecessor_token)
+        _R2_VALIDATION_CONTEXT.reset(token)
 
 
 def _source_record(
@@ -823,7 +852,7 @@ def _validate_parser_source() -> None:
         raise OutcomeAnalysisS3R1R3Error("Parser must not contain alternate production format paths")
 
 
-def validate_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
+def _validate_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
     root = Path(resource_root).resolve()
     _validate_parser_source()
     adjudication = build_lzma_framing_adjudication()
@@ -864,7 +893,12 @@ def validate_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
         raise OutcomeAnalysisS3R1R3Error("R3 must retain every outcome-access lock")
 
 
-def write_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
+def validate_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
+    root = Path(resource_root).resolve()
+    _run_with_r2_snapshot(root, lambda: _validate_s3r1_r3_artifacts(root))
+
+
+def _write_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
     if outcome_source is not None:
         raise OutcomeAnalysisS3R1R3Error("R3 cannot accept a provider, market file, tick source, or outcome")
     root = Path(resource_root).resolve()
@@ -931,6 +965,13 @@ def write_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_sourc
         encoding="utf-8",
     )
     return artifacts
+
+
+def write_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
+    if outcome_source is not None:
+        raise OutcomeAnalysisS3R1R3Error("R3 cannot accept a provider, market file, tick source, or outcome")
+    root = Path(resource_root).resolve()
+    return _run_with_r2_snapshot(root, lambda: _write_s3r1_r3_artifacts(root, outcome_source=outcome_source))
 
 
 def render_report(

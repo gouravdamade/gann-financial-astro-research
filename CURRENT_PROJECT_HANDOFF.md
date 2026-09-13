@@ -12454,3 +12454,27 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   Suggest, LLM/ML, price/returns, MT5, or execution. The next action is central
   review after the founder completes the authorized manual review; no real
   freeze is claimed here.
+
+## MO-R4A-S3R1-R3-R2 Cache-Free Validation and Exact-Single-Stream Correction (2026-09-13)
+
+- Started from `e1c7291cce81fcc8c595baab62e338fe5a7ee8ff` and added the bounded
+  R3-R2 successor. The R2/R3-R1 validation chain no longer retains persistent
+  integrity trust caches; each public validation/materialization call rebuilds
+  from current filesystem bytes. Ephemeral call-scoped snapshots only prevent
+  duplicate nested work within one call and are discarded on return.
+- Added `dukascopy_tick_parser_s3r1_r3_r2.py` and a successor parser contract
+  requiring one complete LZMA `FORMAT_ALONE` stream, `eof=true`, and empty
+  `unused_data`. Trailing bytes, concatenated streams, truncation, corruption,
+  XZ input, and zero-byte payloads remain explicit diagnostics. The historical
+  parser and its source hash remain unchanged.
+- Successor artifacts preserve 24 frozen identities, 14 directional rows, 13
+  primary rows, 39 intervals, 15 provider partitions, the 40-state null, and
+  all provider/market/outcome/execution locks. No provider bytes, outcomes,
+  S4, UI, package, or scientific rule changes were introduced.
+- Verification: R3-R2 `10 passed, 12 subtests`; historical S3R1/R1/R2/R3/R3-R1
+  chain `57 passed, 124 subtests`, including `8192` vector and `2744` timing
+  checks with zero mismatches; full backend `526 passed, 1 skipped, 202
+  subtests`; canonical repository pytest `1070 passed, 2 skipped, 202 subtests`;
+  Ruff, compileall, JSON validation, and diff check passed. The successor remains
+  pending targeted Astra re-audit; no Astra PASS, outcome unlock, provider access,
+  or execution is claimed.

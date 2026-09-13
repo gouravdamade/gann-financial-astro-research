@@ -9,7 +9,7 @@ provider, market bytes, or outcomes.
 from __future__ import annotations
 
 import copy
-from functools import lru_cache
+from contextvars import ContextVar
 import hashlib
 import json
 from pathlib import Path
@@ -76,6 +76,11 @@ DEFAULT_REPORT_PATH = DOCS_ROOT / "MULTI_OSCILLATOR_MO_R4A_S3R1_R3_R1_ADJUDICATI
 
 class OutcomeAnalysisS3R1R3R1Error(ValueError):
     """Raised when a successor would depart from the frozen lineage."""
+
+
+_R3_VALIDATION_CONTEXT: ContextVar[tuple[Path, dict[str, dict[str, Any]]] | None] = ContextVar(
+    "outcome_analysis_s3r1_r3_r1_r3_validation_context", default=None
+)
 
 
 def _canonical_hash(value: Any) -> str:
@@ -152,14 +157,9 @@ def _historical_r3_components(root: Path = PROJECT_ROOT) -> dict[str, dict[str, 
     }
 
 
-def _historical_r3_fingerprint(root: Path) -> tuple[str, ...]:
-    paths = (*_historical_r3_paths(root).values(), _relocate(r3.PARSER_SOURCE_PATH, root))
-    return tuple(hashlib.sha256(path.read_bytes()).hexdigest().upper() for path in paths)
-
-
-@lru_cache(maxsize=4)
-def _validated_historical_r3(root_string: str, fingerprint: tuple[str, ...]) -> dict[str, dict[str, Any]]:
-    root = Path(root_string)
+def _load_historical_r3(root: Path = PROJECT_ROOT) -> dict[str, dict[str, Any]]:
+    # SECURITY / SCIENTIFIC INTEGRITY BOUNDARY: CURRENT BYTES MUST BE REVALIDATED ON EVERY CALL.
+    root = Path(root).resolve()
     r3.validate_s3r1_r3_artifacts(root)
     components = _historical_r3_components(root)
     parser_path = _relocate(r3.PARSER_SOURCE_PATH, root)
@@ -168,13 +168,35 @@ def _validated_historical_r3(root_string: str, fingerprint: tuple[str, ...]) -> 
         raise OutcomeAnalysisS3R1R3R1Error("R3 parser source changed")
     if components["parserContract"]["parserSourceSha256"] != HISTORICAL_R3_PARSER_SOURCE_SHA256:
         raise OutcomeAnalysisS3R1R3R1Error("R3 parser contract source hash changed")
-    return components
+    return copy.deepcopy(components)
 
 
 def _require_historical_r3(root: Path = PROJECT_ROOT) -> dict[str, dict[str, Any]]:
     root = Path(root).resolve()
-    fingerprint = _historical_r3_fingerprint(root)
-    return copy.deepcopy(_validated_historical_r3(str(root), fingerprint))
+    context = _R3_VALIDATION_CONTEXT.get()
+    if context is not None and context[0] == root:
+        return copy.deepcopy(context[1])
+    return _load_historical_r3(root)
+
+
+def _run_with_r3_snapshot(root: Path, callback: Any) -> Any:
+    root = Path(root).resolve()
+    token = _R3_VALIDATION_CONTEXT.set(None)
+    r2_token = None
+    r1_token = None
+    try:
+        snapshot = _load_historical_r3(root)
+        _R3_VALIDATION_CONTEXT.set((root, snapshot))
+        r2_snapshot = r3._load_r2_predecessor(root)
+        r2_token = r3._R2_VALIDATION_CONTEXT.set((root, r2_snapshot))
+        r1_token = r3.r2._R1_VALIDATION_CONTEXT.set((root, r2_snapshot))
+        return callback()
+    finally:
+        if r1_token is not None:
+            r3.r2._R1_VALIDATION_CONTEXT.reset(r1_token)
+        if r2_token is not None:
+            r3._R2_VALIDATION_CONTEXT.reset(r2_token)
+        _R3_VALIDATION_CONTEXT.reset(token)
 
 
 def _source_claim_matrix() -> list[dict[str, Any]]:
@@ -830,7 +852,7 @@ def render_report(
     )
 
 
-def write_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
+def _write_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
     if outcome_source is not None:
         raise OutcomeAnalysisS3R1R3R1Error("R3-R1 cannot accept provider, market, tick, or outcome input")
     root = Path(resource_root).resolve()
@@ -886,6 +908,13 @@ def write_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: objec
     return artifacts
 
 
+def write_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
+    if outcome_source is not None:
+        raise OutcomeAnalysisS3R1R3R1Error("R3-R1 cannot accept provider, market, tick, or outcome input")
+    root = Path(resource_root).resolve()
+    return _run_with_r3_snapshot(root, lambda: _write_artifacts(root, outcome_source=outcome_source))
+
+
 def _validate_canonical_schema(parser_contract: Mapping[str, Any], acquisition: Mapping[str, Any]) -> None:
     expected = _canonical_hash_record_definition(parser_contract)
     if acquisition.get("canonicalTickSchema") is not None:
@@ -902,7 +931,7 @@ def _validate_canonical_schema(parser_contract: Mapping[str, Any], acquisition: 
         raise OutcomeAnalysisS3R1R3R1Error("Decoded volume exclusion is not explicit")
 
 
-def validate_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
+def _validate_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
     root = Path(resource_root).resolve()
     historical = _require_historical_r3(root)
     parser_contract = historical["parserContract"]
@@ -968,3 +997,8 @@ def validate_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
         raise OutcomeAnalysisS3R1R3R1Error("Parser source changed")
     if list(root.rglob("*.bi5")):
         raise OutcomeAnalysisS3R1R3R1Error("Provider BI5 bytes must not be present")
+
+
+def validate_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
+    root = Path(resource_root).resolve()
+    _run_with_r3_snapshot(root, lambda: _validate_artifacts(root))

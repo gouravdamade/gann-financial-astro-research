@@ -8,9 +8,9 @@ evidence, daily native-partition geometry, and the remaining parser blocker.
 from __future__ import annotations
 
 import copy
+from contextvars import ContextVar
 import json
 from datetime import datetime, timedelta, timezone
-from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -73,6 +73,11 @@ EXPECTED_UPSTREAM_HASHES = copy.deepcopy(r1.EXPECTED_UPSTREAM_HASHES)
 
 class OutcomeAnalysisS3R1R2Error(ValueError):
     """Raised when R2 would depart from its frozen predecessor or protocol lock."""
+
+
+_R1_VALIDATION_CONTEXT: ContextVar[tuple[Path, dict[str, dict[str, Any]]] | None] = ContextVar(
+    "outcome_analysis_s3r1_r2_r1_validation_context", default=None
+)
 
 
 def _canonical_hash(value: Any) -> str:
@@ -138,9 +143,9 @@ def _historical_r1_components(root: Path) -> dict[str, dict[str, Any]]:
     return components
 
 
-@lru_cache(maxsize=None)
-def _assert_r1_predecessor_cached(root_text: str) -> dict[str, dict[str, Any]]:
-    root = Path(root_text)
+def _load_r1_predecessor(root: Path) -> dict[str, dict[str, Any]]:
+    # SECURITY / SCIENTIFIC INTEGRITY BOUNDARY: CURRENT BYTES MUST BE REVALIDATED ON EVERY CALL.
+    root = Path(root).resolve()
     historical = _historical_r1_components(root)
     rebuilt_acquisition = r1.build_market_data_acquisition_contract(root)
     rebuilt_prereg = r1.build_s3r1_r1_preregistration(root)
@@ -178,13 +183,26 @@ def _assert_r1_predecessor_cached(root_text: str) -> dict[str, dict[str, Any]]:
             raise OutcomeAnalysisS3R1R2Error(f"Historical S3R1-R1 {name} differs from its immutable builder")
     if historical["core"].get("upstreamHashes") != EXPECTED_UPSTREAM_HASHES:
         raise OutcomeAnalysisS3R1R2Error("S2R1-R1 upstream hashes changed")
-    return historical
+    return copy.deepcopy(historical)
 
 
 def _assert_r1_predecessor(root: Path) -> dict[str, dict[str, Any]]:
-    """Verify R1 once per resource root, then return an isolated copy."""
+    root = Path(root).resolve()
+    context = _R1_VALIDATION_CONTEXT.get()
+    if context is not None and context[0] == root:
+        return copy.deepcopy(context[1])
+    return _load_r1_predecessor(root)
 
-    return copy.deepcopy(_assert_r1_predecessor_cached(str(root.resolve())))
+
+def _run_with_r1_snapshot(root: Path, callback: Any) -> Any:
+    root = Path(root).resolve()
+    token = _R1_VALIDATION_CONTEXT.set(None)
+    try:
+        snapshot = _load_r1_predecessor(root)
+        _R1_VALIDATION_CONTEXT.set((root, snapshot))
+        return callback()
+    finally:
+        _R1_VALIDATION_CONTEXT.reset(token)
 
 
 def _protocol_fact(
@@ -952,7 +970,7 @@ def build_s3r1_r2_acceptance_manifest(
     return {**body, "acceptanceManifestHash": _canonical_hash(body)}
 
 
-def validate_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
+def _validate_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
     root = Path(resource_root).resolve()
     evidence = build_protocol_evidence()
     lock = build_source_lock(evidence)
@@ -982,7 +1000,12 @@ def validate_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
         raise OutcomeAnalysisS3R1R2Error("R2 must not imply an authorized parser")
 
 
-def write_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
+def validate_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
+    root = Path(resource_root).resolve()
+    _run_with_r1_snapshot(root, lambda: _validate_s3r1_r2_artifacts(root))
+
+
+def _write_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
     if outcome_source is not None:
         raise OutcomeAnalysisS3R1R2Error("S3R1-R2 cannot accept a provider, market file, tick source, or outcome")
     root = Path(resource_root).resolve()
@@ -1038,6 +1061,11 @@ def write_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_sourc
     artifacts["report"].parent.mkdir(parents=True, exist_ok=True)
     artifacts["report"].write_text(render_report(evidence, lock, plan, acquisition, prereg, population, core, acceptance), encoding="utf-8")
     return artifacts
+
+
+def write_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: object | None = None) -> dict[str, Path]:
+    root = Path(resource_root).resolve()
+    return _run_with_r1_snapshot(root, lambda: _write_s3r1_r2_artifacts(root, outcome_source=outcome_source))
 
 
 def render_report(

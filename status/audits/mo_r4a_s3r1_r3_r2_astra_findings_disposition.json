@@ -1,0 +1,47 @@
+{
+  "contract": "MO_R4A_S3R1_R3_R2_ASTRA_FINDINGS_DISPOSITION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3-R2",
+  "auditVerdict": "PRE_OUTCOME_CORRECTION_REQUIRED",
+  "branch": "BRANCH_B_PLAUSIBLE_CROSS_SOURCE_RECONCILIATION",
+  "findings": [
+    {
+      "findingId": "VALIDATION_CACHE_ACCEPTS_CHANGED_UPSTREAM",
+      "severity": "BLOCKER",
+      "status": "CORRECTED_PENDING_ASTRA_REAUDIT",
+      "correction": "Removed integrity-validation memoization and rebuilt the transitive predecessor chain from current bytes on every call.",
+      "regression": "warm -> mutate -> validate without cache_clear, reload, or process restart"
+    },
+    {
+      "findingId": "PARSER_ACCEPTS_TRAILING_COMPRESSED_BYTES",
+      "severity": "MAJOR",
+      "status": "CORRECTED_PENDING_ASTRA_REAUDIT",
+      "correction": "Successor parser requires FORMAT_ALONE eof and empty unused_data.",
+      "regression": "valid single stream + suffix rejects as COMPRESSION_TRAILING_DATA"
+    }
+  ],
+  "scientificDesignChanged": false,
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "executionAllowed": false,
+  "outcomeUnlocked": false,
+  "outcomeAccessFlags": {
+    "PRICE_DATA_READ": false,
+    "OUTCOME_DATA_READ": false,
+    "FOUNDER_DECISION_READ": false,
+    "REVIEW_STORE_READ": false,
+    "SBC_READ": false,
+    "CATALOGUE_ADMISSION": false,
+    "EVIDENCE_ADMISSION": false,
+    "SIGNED_WAVE_RENDERED": false,
+    "PAIR_RESULTANT_CREATED": false,
+    "MAGNITUDE_CONFIGURED": false,
+    "AUTO_SUGGEST": false,
+    "ML": false,
+    "MT5": false,
+    "EXECUTION_ALLOWED": false,
+    "PRODUCTION_ADMISSION": false,
+    "OUTCOME_UNLOCKED": false
+  },
+  "dispositionHash": "8EB965E2097277F0D53919002B7493A0158E91A164AB436616D15449604FE4B9"
+}
