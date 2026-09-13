@@ -1,0 +1,127 @@
+{
+  "contract": "MO_R4A_S3R1_R3_R3_RESOURCE_ROOT_PURITY_AUDIT_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3-R3",
+  "startingCommit": "12fba8c981fdb9cf7cbf1819ae4c7ec1154d1e2e",
+  "auditMethod": "Targeted static audit plus isolated filesystem A/B validation and materialization copies",
+  "modulesAudited": [
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r1.py",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r2.py",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r3.py",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r3_r1.py",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r3_r2.py"
+  ],
+  "unsafeCustomRootDependenciesFound": [
+    "R2 build_s3r1_r2_schema(None) rebuilt its payload from module PROJECT_ROOT.",
+    "R3 parser_source_sha256 and _validate_parser_source read the module parser path rather than the supplied root.",
+    "R3 build_parser_contract and build_s3r1_r3_schema omitted the caller root on parser and R2 schema reconstruction.",
+    "R3-R1 build_market_data_acquisition_contract, build_schema, write and validate paths omitted the caller root on R3 calls.",
+    "R3-R2 nested schema construction omitted the caller root on the R3 schema call."
+  ],
+  "unsafeCustomRootDependenciesCorrected": [
+    "R2 build_s3r1_r2_schema now accepts keyword-only resource_root and uses it for implicit payload construction.",
+    "R3 parser_source_sha256, build_parser_contract, _validate_parser_source and build_s3r1_r3_schema now resolve from resource_root.",
+    "R3-R1 build_market_data_acquisition_contract, build_schema, write and validate propagation now retain resource_root.",
+    "R3-R2 build_schema now passes resource_root into R3 schema reconstruction."
+  ],
+  "allowedProjectRootUses": [
+    "Default arguments preserve the established repository-root API behavior.",
+    "Default path constants remain templates relocated beneath an explicitly supplied root.",
+    "No custom-root operation is permitted to read a file-backed parser or contract from module PROJECT_ROOT."
+  ],
+  "publicApiCompatibility": {
+    "r2SchemaOldPositionalCallPreserved": true,
+    "r3SchemaOldPositionalCallPreserved": true,
+    "r3ParserSourceHashOldPositionalPathPreserved": true,
+    "r3ParserContractOldPositionalAdjudicationPreserved": true,
+    "r3r1SchemaOldPositionalPayloadPreserved": true,
+    "r3r2SchemaSignatureUnchanged": true
+  },
+  "adversarialEvidence": [
+    {
+      "case": "twoRootPredictionFreezeIsolation",
+      "result": "PASS",
+      "detail": "Invalid self-rehashed freeze in A rejects A; unchanged B validates before and after A mutation; reverse direction also passes."
+    },
+    {
+      "case": "historicalParserSourceIsolation",
+      "result": "PASS",
+      "detail": "A-only historical parser mutation rejects A while B remains valid and restoration returns A to valid."
+    },
+    {
+      "case": "historicalR3R1AcceptanceIsolation",
+      "result": "PASS",
+      "detail": "A-only acceptance mutation rejects A while B remains valid and restoration returns A to valid."
+    },
+    {
+      "case": "schemaExplicitAndImplicitRootIsolation",
+      "result": "PASS",
+      "detail": "R2, R3, R3-R1 and R3-R2 schemas remain stable when an unrelated root is mutated."
+    },
+    {
+      "case": "crossRootMaterializationIsolation",
+      "result": "PASS",
+      "detail": "B writes byte-identically despite A corruption; B corruption is rejected."
+    },
+    {
+      "case": "sameRootMutationAndContextCleanup",
+      "result": "PASS",
+      "detail": "Same-root mutation rejects and all validation ContextVars are empty after success and failure."
+    },
+    {
+      "case": "canonicalRegeneration",
+      "result": "PASS",
+      "detail": "Two R3-R2 writes are byte-identical and preserve the accepted successor hashes."
+    }
+  ],
+  "focusedRootPurityTests": {
+    "module": "gann-astro-desk/backend/test_outcome_analysis_s3r1_r3_r3.py",
+    "testsPassed": 10,
+    "subtestsPassed": 0,
+    "result": "10 passed"
+  },
+  "canonicalRepositoryRegression": {
+    "testsPassed": 1080,
+    "skipped": 2,
+    "subtestsPassed": 202,
+    "result": "1080 passed, 2 skipped, 202 subtests passed"
+  },
+  "successorContractHashes": {
+    "parserContract": "18259325D9C8B245C05F4ECF596AD86395406A485E58DF3DF18C6B638C86BABE",
+    "parserSourceSha256": "F3D49AFBC055D9C1CF2E513194C9A98C8D55769FF974343B99A4D00EE4A35BC8",
+    "acquisition": "BE4C378E368956F46F69D004D0C7522B32EA784C15894106B98DA8AA9A983CAC",
+    "preregistration": "23564E1F41C441EC1FB98B3FBD025F43643AEF75C27AD080550F7DCB7D64F272",
+    "population": "7F3CB6DE622A71FDA7F66E89BDAE2D0B7E3228E94BCAC403220DB17CF2686317",
+    "clusters": "6D4968B9C7DB7B912FFF2567088AECFEE7AC00C5329BD0245E6BDE3A6613CC0E",
+    "invariance": "C53F5EB8C6ADAB19D090A834FBCFABA6D9207ADC9640C6E08CD8534D137748F9",
+    "core": "9B7D06C3F3BD7470478C75F9313EFBF9EB6C29E8BE766A74693FF77DA60A5C64",
+    "acceptance": "632D2B0C10D2F44287D8493495EC06E5CEDF6D7AD9DBC7374F2F2968327F9D8B"
+  },
+  "validatorSourceSha256": {
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r1.py": "E102501F57FA755284A48C4108A25F21C3C7D41EE17FFBF3DF3913BE511EECB1",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r2.py": "A9AE470D8ED4F3AE9271E08113E541124B50494D38BBAABFBF5AA3554B6C650E",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r3.py": "55F1A56838BF9854FC0B4F13807AD6CB6A9C1355C7CBEE5AC5595B57D3A26251",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r3_r1.py": "4BC8B6F769516A2864836982548740A14368BD7B17E99AC5D2E7BC8AD583E315",
+    "gann-astro-desk/backend/outcome_analysis_s3r1_r3_r2.py": "34B99839733499F3E9D013C59E509906DA6B078A990059DCC8BA7FC4775856A2"
+  },
+  "testSourceSha256": {
+    "gann-astro-desk/backend/test_outcome_analysis_s3r1_r3_r3.py": "DED1274D6429EDE4719291576C260CBD014616494583C90876E701D558D847C7"
+  },
+  "eventUniverse": {
+    "frozenEventCount": 24,
+    "directionalCount": 14,
+    "primaryCount": 13,
+    "intervalCount": 39,
+    "providerPartitionCount": 15,
+    "clusterIds": ["C1", "C2", "C3", "C4"]
+  },
+  "integrityResults": {
+    "crossRootLeakageDetected": false,
+    "persistentValidationCachePresent": false,
+    "providerAccessPerformed": false,
+    "marketOutcomeRead": false,
+    "outcomeUnlocked": false,
+    "executionAllowed": false
+  },
+  "rootPurityAuditHash": "D1895250E16FFFBA988E18F3AD29836D7E9B132908D5743C883409938519C979"
+}

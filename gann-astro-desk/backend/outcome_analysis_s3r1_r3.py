@@ -65,6 +65,7 @@ DEFAULT_INVARIANCE_PATH = AUDIT_ROOT / "mo_r4a_s3r1_r3_analysis_plan_invariance_
 DEFAULT_CORE_PATH = ACCEPTANCE_ROOT / "mo_r4a_s3r1_r3_frozen_analysis_package.json"
 DEFAULT_ACCEPTANCE_PATH = ACCEPTANCE_ROOT / "mo_r4a_s3r1_r3_outcome_analysis_preregistration.json"
 DEFAULT_REPORT_PATH = DOCS_ROOT / "MULTI_OSCILLATOR_MO_R4A_S3R1_R3_LZMA_FRAMING_ADJUDICATION.md"
+PARSER_SOURCE_RELATIVE = Path("gann-astro-desk/backend/dukascopy_tick_parser_s3r1_r3.py")
 PARSER_SOURCE_PATH = Path(parser.__file__).resolve()
 
 DUKASCOPY_ES_EXPORT_URL = "https://www.dukascopy.com/wiki/es/development/data-export/"
@@ -386,15 +387,29 @@ def build_lzma_framing_adjudication() -> dict[str, Any]:
     return {**body, "lzmaFramingAdjudicationHash": _canonical_hash(body)}
 
 
-def parser_source_sha256(parser_source_path: Path = PARSER_SOURCE_PATH) -> str:
-    return hashlib.sha256(Path(parser_source_path).read_bytes()).hexdigest().upper()
+def _parser_source_path(resource_root: Path = PROJECT_ROOT) -> Path:
+    return Path(resource_root).resolve() / PARSER_SOURCE_RELATIVE
 
 
-def build_parser_contract(adjudication: Mapping[str, Any] | None = None) -> dict[str, Any]:
+def parser_source_sha256(
+    parser_source_path: Path | None = None,
+    *,
+    resource_root: Path = PROJECT_ROOT,
+) -> str:
+    source_path = Path(parser_source_path) if parser_source_path is not None else _parser_source_path(resource_root)
+    return hashlib.sha256(source_path.read_bytes()).hexdigest().upper()
+
+
+def build_parser_contract(
+    adjudication: Mapping[str, Any] | None = None,
+    *,
+    resource_root: Path = PROJECT_ROOT,
+) -> dict[str, Any]:
+    root = Path(resource_root).resolve()
     expected_adjudication = build_lzma_framing_adjudication()
     if adjudication is not None:
         _require_exact(adjudication, expected_adjudication, "lzma framing adjudication")
-    source_hash = parser_source_sha256()
+    source_hash = parser_source_sha256(resource_root=root)
     body = {
         "contract": S3R1_R3_PARSER_CONTRACT,
         "schemaVersion": S3R1_R3_SCHEMA_VERSION,
@@ -519,7 +534,7 @@ def build_market_data_acquisition_contract(
     _require_r2_predecessor(root)
     expected_adjudication = build_lzma_framing_adjudication()
     expected_lock = build_source_lock(expected_adjudication)
-    expected_parser = build_parser_contract(expected_adjudication)
+    expected_parser = build_parser_contract(expected_adjudication, resource_root=root)
     if adjudication is not None:
         _require_exact(adjudication, expected_adjudication, "lzma framing adjudication")
     if source_lock is not None:
@@ -570,7 +585,7 @@ def build_s3r1_r3_preregistration(resource_root: Path = PROJECT_ROOT) -> dict[st
     root = Path(resource_root).resolve()
     _require_r2_predecessor(root)
     adjudication = build_lzma_framing_adjudication()
-    parser_contract = build_parser_contract(adjudication)
+    parser_contract = build_parser_contract(adjudication, resource_root=root)
     source_lock = build_source_lock(adjudication)
     acquisition = build_market_data_acquisition_contract(
         root, adjudication=adjudication, source_lock=source_lock, parser_contract=parser_contract
@@ -601,9 +616,14 @@ def build_s3r1_r3_preregistration(resource_root: Path = PROJECT_ROOT) -> dict[st
     return {**body, "preregistrationHash": _canonical_hash(body)}
 
 
-def build_s3r1_r3_schema(preregistration: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    payload = copy.deepcopy(preregistration) if preregistration is not None else build_s3r1_r3_preregistration(PROJECT_ROOT)
-    schema = r2.build_s3r1_r2_schema(payload)
+def build_s3r1_r3_schema(
+    preregistration: Mapping[str, Any] | None = None,
+    *,
+    resource_root: Path = PROJECT_ROOT,
+) -> dict[str, Any]:
+    root = Path(resource_root).resolve()
+    payload = copy.deepcopy(preregistration) if preregistration is not None else build_s3r1_r3_preregistration(root)
+    schema = r2.build_s3r1_r2_schema(payload, resource_root=root)
     schema["title"] = "MO-R4A-S3R1-R3 frozen pre-request acquisition preregistration"
     return schema
 
@@ -765,7 +785,7 @@ def build_s3r1_r3_acceptance_manifest(
     root = Path(resource_root).resolve()
     expected_adjudication = build_lzma_framing_adjudication()
     expected_lock = build_source_lock(expected_adjudication)
-    expected_parser = build_parser_contract(expected_adjudication)
+    expected_parser = build_parser_contract(expected_adjudication, resource_root=root)
     expected_acquisition = build_market_data_acquisition_contract(
         root, adjudication=expected_adjudication, source_lock=expected_lock, parser_contract=expected_parser
     )
@@ -834,8 +854,8 @@ def build_s3r1_r3_acceptance_manifest(
     return {**body, "acceptanceManifestHash": _canonical_hash(body)}
 
 
-def _validate_parser_source() -> None:
-    source = PARSER_SOURCE_PATH.read_text(encoding="utf-8")
+def _validate_parser_source(resource_root: Path = PROJECT_ROOT) -> None:
+    source = _parser_source_path(resource_root).read_text(encoding="utf-8")
     tree = ast.parse(source)
     blocked = {"boto3", "botocore", "requests", "urllib", "httpx", "aiohttp", "socket", "ccxt", "yfinance"}
     imported: set[str] = set()
@@ -854,10 +874,10 @@ def _validate_parser_source() -> None:
 
 def _validate_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
     root = Path(resource_root).resolve()
-    _validate_parser_source()
+    _validate_parser_source(root)
     adjudication = build_lzma_framing_adjudication()
     source_lock = build_source_lock(adjudication)
-    parser_contract = build_parser_contract(adjudication)
+    parser_contract = build_parser_contract(adjudication, resource_root=root)
     acquisition = build_market_data_acquisition_contract(
         root, adjudication=adjudication, source_lock=source_lock, parser_contract=parser_contract
     )
@@ -882,10 +902,13 @@ def _validate_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
         invariance=invariance,
         core=core,
     )
-    r1.validate_json_schema_instance(preregistration, build_s3r1_r3_schema(preregistration))
+    r1.validate_json_schema_instance(
+        preregistration,
+        build_s3r1_r3_schema(preregistration, resource_root=root),
+    )
     if adjudication["adjudicationStatus"] != "COMPRESSION_FRAMING_SOURCE_ADJUDICATED":
         raise OutcomeAnalysisS3R1R3Error("R3 requires a unique supported compression conclusion")
-    if parser_contract["parserSourceSha256"] != parser_source_sha256():
+    if parser_contract["parserSourceSha256"] != parser_source_sha256(resource_root=root):
         raise OutcomeAnalysisS3R1R3Error("Parser source hash no longer matches the parser contract")
     if acquisition["parser"]["parserContractHash"] != parser_contract["parserContractHash"]:
         raise OutcomeAnalysisS3R1R3Error("Acquisition parser binding changed")
@@ -904,12 +927,12 @@ def _write_s3r1_r3_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_sour
     root = Path(resource_root).resolve()
     adjudication = build_lzma_framing_adjudication()
     source_lock = build_source_lock(adjudication)
-    parser_contract = build_parser_contract(adjudication)
+    parser_contract = build_parser_contract(adjudication, resource_root=root)
     acquisition = build_market_data_acquisition_contract(
         root, adjudication=adjudication, source_lock=source_lock, parser_contract=parser_contract
     )
     preregistration = build_s3r1_r3_preregistration(root)
-    schema = build_s3r1_r3_schema(preregistration)
+    schema = build_s3r1_r3_schema(preregistration, resource_root=root)
     population = build_s3r1_r3_primary_population(root, preregistration=preregistration)
     clusters = build_s3r1_r3_overlap_clusters(root, population=population)
     invariance = build_s3r1_r3_invariance_audit(

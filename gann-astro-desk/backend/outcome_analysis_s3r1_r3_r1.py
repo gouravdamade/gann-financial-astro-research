@@ -375,7 +375,7 @@ def build_market_data_acquisition_contract(
     historical = _require_historical_r3(root)
     expected_adjudication = build_lzma_framing_adjudication()
     expected_lock = build_source_lock(expected_adjudication)
-    expected_parser = r3.build_parser_contract()
+    expected_parser = r3.build_parser_contract(resource_root=root)
     if expected_parser["parserContractHash"] != HISTORICAL_R3_PARSER_CONTRACT_HASH:
         raise OutcomeAnalysisS3R1R3R1Error("Parser contract changed during R3-R1")
     if adjudication is not None:
@@ -506,9 +506,17 @@ def build_preregistration(
     return {**body, "preregistrationHash": _canonical_hash(body)}
 
 
-def build_schema(preregistration: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    payload = copy.deepcopy(preregistration) if preregistration is not None else build_preregistration(PROJECT_ROOT)
-    schema = r3.build_s3r1_r3_schema(r3.build_s3r1_r3_preregistration(PROJECT_ROOT))
+def build_schema(
+    preregistration: Mapping[str, Any] | None = None,
+    *,
+    resource_root: Path = PROJECT_ROOT,
+) -> dict[str, Any]:
+    root = Path(resource_root).resolve()
+    payload = copy.deepcopy(preregistration) if preregistration is not None else build_preregistration(root)
+    schema = r3.build_s3r1_r3_schema(
+        r3.build_s3r1_r3_preregistration(root),
+        resource_root=root,
+    )
     schema["$id"] = PREREGISTRATION_CONTRACT
     schema["title"] = "MO-R4A-S3R1-R3-R1 qualified pre-outcome acquisition preregistration"
     properties = schema["properties"]
@@ -865,7 +873,7 @@ def _write_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_source: obje
     preregistration = build_preregistration(
         root, adjudication=adjudication, source_lock=source_lock, acquisition=acquisition
     )
-    schema = build_schema(preregistration)
+    schema = build_schema(preregistration, resource_root=root)
     population = build_primary_population(root, preregistration=preregistration)
     clusters = build_overlap_clusters(root, population=population)
     invariance = build_invariance_audit(
@@ -945,7 +953,7 @@ def _validate_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
     preregistration = build_preregistration(
         root, adjudication=adjudication, source_lock=source_lock, acquisition=acquisition
     )
-    schema = build_schema(preregistration)
+    schema = build_schema(preregistration, resource_root=root)
     population = build_primary_population(root, preregistration=preregistration)
     clusters = build_overlap_clusters(root, population=population)
     invariance = build_invariance_audit(

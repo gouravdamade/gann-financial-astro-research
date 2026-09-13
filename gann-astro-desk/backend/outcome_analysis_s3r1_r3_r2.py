@@ -362,7 +362,10 @@ def build_preregistration(
 def build_schema(resource_root: Path = PROJECT_ROOT, preregistration: Mapping[str, Any] | None = None) -> dict[str, Any]:
     root = Path(resource_root).resolve()
     payload = copy.deepcopy(preregistration) if preregistration is not None else build_preregistration(root)
-    schema = r3.build_s3r1_r3_schema(r3.build_s3r1_r3_preregistration(root))
+    schema = r3.build_s3r1_r3_schema(
+        r3.build_s3r1_r3_preregistration(root),
+        resource_root=root,
+    )
     schema["$id"] = PREREGISTRATION_CONTRACT
     schema["title"] = "MO-R4A-S3R1-R3-R2 cache-free exact-single-stream pre-outcome preregistration"
     properties = schema["properties"]

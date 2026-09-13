@@ -12478,3 +12478,33 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   Ruff, compileall, JSON validation, and diff check passed. The successor remains
   pending targeted Astra re-audit; no Astra PASS, outcome unlock, provider access,
   or execution is claimed.
+
+## MO-R4A-S3R1-R3-R3 Resource-Root Purity and Validator Hardening (2026-09-14)
+
+- Rechecked the required baseline: local HEAD, tracking ref, and live
+  `origin/master` were all `12fba8c981fdb9cf7cbf1819ae4c7ec1154d1e2e`.
+- Corrected the residual `RESOURCE_ROOT_CROSS_CONTAMINATION` finding from the
+  read-only R3-R2 Astra audit. R2/R3/R3-R1/R3-R2 schema, parser-source, and
+  materialization call paths now propagate an explicit custom resource root;
+  default positional APIs remain compatible.
+- Added filesystem A/B adversarial coverage proving that mutation of root A
+  cannot reject or alter an otherwise unchanged root B, including implicit and
+  explicit schema construction, parser-source validation, materialization, and
+  same-root failure cleanup. The prior cache and trailing-compressed-data
+  findings remain closed and unchanged.
+- Added self-hashed records:
+  `status/audits/mo_r4a_s3r1_r3_r3_astra_findings_disposition.json`,
+  `status/audits/mo_r4a_s3r1_r3_r3_resource_root_purity_audit.json`, and
+  `status/acceptance/mo_r4a_s3r1_r3_r3_root_purity_gate.json`. Detailed record:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S3R1_R3_R3_RESOURCE_ROOT_PURITY.md`.
+- Verification: focused root-purity `10 passed`; historical chain `67 passed,
+  136 subtests passed`; broad backend `536 passed, 1 skipped, 202 subtests
+  passed`; canonical repository pytest `1080 passed, 2 skipped, 202 subtests
+  passed`; Ruff, compileall, JSON/self-hash, diff check, and no-`.bi5` scan
+  passed. The accepted R3-R2 identities and 24/14/13, 39-interval,
+  15-partition invariants remain unchanged.
+- This is still `RESOURCE_ROOT_MAJOR_CORRECTED_PENDING_ASTRA_REAUDIT`, not an
+  Astra pass. No provider access, outcome read, S4 work, UI, Rust, packaging,
+  or execution path was used; all outcome-access flags and
+  `executionAllowed=false` remain locked. Next gate:
+  `TARGETED_ASTRA_R3_R3_ROOT_ISOLATION_REAUDIT`.

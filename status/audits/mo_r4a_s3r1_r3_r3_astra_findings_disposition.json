@@ -1,0 +1,62 @@
+{
+  "contract": "MO_R4A_S3R1_R3_R3_ASTRA_FINDINGS_DISPOSITION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3-R3",
+  "startingCommit": "12fba8c981fdb9cf7cbf1819ae4c7ec1154d1e2e",
+  "auditVerdict": "RESOURCE_ROOT_MAJOR_CORRECTED_PENDING_ASTRA_REAUDIT",
+  "priorAuditVerdict": "PRE_OUTCOME_CORRECTION_REQUIRED",
+  "branch": "BRANCH_B_PLAUSIBLE_CROSS_SOURCE_RECONCILIATION",
+  "findings": [
+    {
+      "findingId": "VALIDATION_CACHE_ACCEPTS_CHANGED_UPSTREAM",
+      "severity": "BLOCKER",
+      "priorStatus": "CLOSED_BY_ASTRA_R3_R2_REAUDIT",
+      "currentStatus": "UNCHANGED_CLOSED",
+      "correction": "No persistent validation trust cache was reintroduced; current bytes remain rebuilt per public call.",
+      "regression": "warm -> mutate -> validate without cache_clear, reload, or process restart"
+    },
+    {
+      "findingId": "PARSER_ACCEPTS_TRAILING_COMPRESSED_BYTES",
+      "severity": "MAJOR",
+      "priorStatus": "CLOSED_BY_ASTRA_R3_R2_REAUDIT",
+      "currentStatus": "UNCHANGED_CLOSED",
+      "correction": "The successor exact-single-stream parser and its source identity were not changed.",
+      "regression": "valid single stream + suffix remains rejected as COMPRESSION_TRAILING_DATA"
+    },
+    {
+      "findingId": "RESOURCE_ROOT_CROSS_CONTAMINATION",
+      "severity": "MAJOR",
+      "priorStatus": "OPEN_FROM_ASTRA_R3_R2_REAUDIT",
+      "currentStatus": "CORRECTED_PENDING_ASTRA_REAUDIT",
+      "rootCause": "Nested R2/R3/R3-R1 schema and parser-source fallbacks used module PROJECT_ROOT instead of the caller-supplied resource root.",
+      "correction": "Resource-root propagation is now explicit through R2, R3, R3-R1 and R3-R2 schema/parser call paths.",
+      "regression": "Mutating only root A cannot reject validation, schema construction, or materialization for otherwise unchanged root B."
+    }
+  ],
+  "scientificDesignChanged": false,
+  "parserChanged": false,
+  "acquisitionProtocolChanged": false,
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "outcomeUnlocked": false,
+  "executionAllowed": false,
+  "outcomeAccessFlags": {
+    "PRICE_DATA_READ": false,
+    "OUTCOME_DATA_READ": false,
+    "FOUNDER_DECISION_READ": false,
+    "REVIEW_STORE_READ": false,
+    "SBC_READ": false,
+    "CATALOGUE_ADMISSION": false,
+    "EVIDENCE_ADMISSION": false,
+    "SIGNED_WAVE_RENDERED": false,
+    "PAIR_RESULTANT_CREATED": false,
+    "MAGNITUDE_CONFIGURED": false,
+    "AUTO_SUGGEST": false,
+    "ML": false,
+    "MT5": false,
+    "EXECUTION_ALLOWED": false,
+    "PRODUCTION_ADMISSION": false,
+    "OUTCOME_UNLOCKED": false
+  },
+  "dispositionHash": "8A32D3491C65801F392B5F6AB5453DA7B5115F34301851C089F5EB50F8437FD9"
+}

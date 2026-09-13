@@ -742,8 +742,13 @@ def build_s3r1_r2_preregistration(resource_root: Path = PROJECT_ROOT) -> dict[st
     return {**body, "preregistrationHash": _canonical_hash(body)}
 
 
-def build_s3r1_r2_schema(preregistration: Mapping[str, Any] | None = None) -> dict[str, Any]:
-    payload = copy.deepcopy(preregistration) if preregistration is not None else build_s3r1_r2_preregistration(PROJECT_ROOT)
+def build_s3r1_r2_schema(
+    preregistration: Mapping[str, Any] | None = None,
+    *,
+    resource_root: Path = PROJECT_ROOT,
+) -> dict[str, Any]:
+    root = Path(resource_root).resolve()
+    payload = copy.deepcopy(preregistration) if preregistration is not None else build_s3r1_r2_preregistration(root)
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": S3R1_R2_PREREGISTRATION_CONTRACT,
@@ -992,7 +997,7 @@ def _validate_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT) -> None:
         partition_plan=plan,
         core=core,
     )
-    schema = build_s3r1_r2_schema(prereg)
+    schema = build_s3r1_r2_schema(prereg, resource_root=root)
     r1.validate_json_schema_instance(prereg, schema)
     if acceptance["status"] != "S3R1_R2_PROVIDER_PROTOCOL_INCOMPLETE_OUTCOME_UNLOCK_BLOCKED":
         raise OutcomeAnalysisS3R1R2Error("R2 must remain Branch B while the compression conflict is open")
@@ -1049,7 +1054,7 @@ def _write_s3r1_r2_artifacts(resource_root: Path = PROJECT_ROOT, *, outcome_sour
         "partitionPlan": plan,
         "acquisition": acquisition,
         "preregistration": prereg,
-        "schema": build_s3r1_r2_schema(prereg),
+        "schema": build_s3r1_r2_schema(prereg, resource_root=root),
         "population": population,
         "clusters": clusters,
         "invariance": invariance,

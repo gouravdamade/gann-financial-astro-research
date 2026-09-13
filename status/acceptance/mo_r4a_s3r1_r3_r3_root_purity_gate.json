@@ -1,0 +1,75 @@
+{
+  "contract": "MO_R4A_S3R1_R3_R3_ROOT_PURITY_GATE_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S3R1-R3-R3",
+  "startingCommit": "12fba8c981fdb9cf7cbf1819ae4c7ec1154d1e2e",
+  "status": "ROOT_PURITY_CORRECTED_PENDING_TARGETED_ASTRA_REAUDIT",
+  "branch": "BRANCH_B_PLAUSIBLE_CROSS_SOURCE_RECONCILIATION",
+  "rootPurityAuditHash": "D1895250E16FFFBA988E18F3AD29836D7E9B132908D5743C883409938519C979",
+  "astraFindingsDispositionHash": "8A32D3491C65801F392B5F6AB5453DA7B5115F34301851C089F5EB50F8437FD9",
+  "r3r2Contracts": {
+    "parserContractHash": "18259325D9C8B245C05F4ECF596AD86395406A485E58DF3DF18C6B638C86BABE",
+    "parserSourceSha256": "F3D49AFBC055D9C1CF2E513194C9A98C8D55769FF974343B99A4D00EE4A35BC8",
+    "acquisitionHash": "BE4C378E368956F46F69D004D0C7522B32EA784C15894106B98DA8AA9A983CAC",
+    "preregistrationHash": "23564E1F41C441EC1FB98B3FBD025F43643AEF75C27AD080550F7DCB7D64F272",
+    "populationHash": "7F3CB6DE622A71FDA7F66E89BDAE2D0B7E3228E94BCAC403220DB17CF2686317",
+    "clustersHash": "6D4968B9C7DB7B912FFF2567088AECFEE7AC00C5329BD0245E6BDE3A6613CC0E",
+    "invarianceHash": "C53F5EB8C6ADAB19D090A834FBCFABA6D9207ADC9640C6E08CD8534D137748F9",
+    "coreHash": "9B7D06C3F3BD7470478C75F9313EFBF9EB6C29E8BE766A74693FF77DA60A5C64",
+    "acceptanceHash": "632D2B0C10D2F44287D8493495EC06E5CEDF6D7AD9DBC7374F2F2968327F9D8B"
+  },
+  "scientificInvariants": {
+    "frozenEventCount": 24,
+    "directionalCount": 14,
+    "primaryCount": 13,
+    "intervalCount": 39,
+    "providerPartitionCount": 15,
+    "clusterIds": ["C1", "C2", "C3", "C4"],
+    "binaryVectorChecks": 8192,
+    "timingCombinationChecks": 2744,
+    "binaryVectorMismatches": 0,
+    "timingMismatches": 0
+  },
+  "focusedRootPurityTests": {
+    "testsPassed": 10,
+    "result": "10 passed"
+  },
+  "canonicalRepositoryRegression": {
+    "testsPassed": 1080,
+    "skipped": 2,
+    "subtestsPassed": 202,
+    "result": "1080 passed, 2 skipped, 202 subtests passed"
+  },
+  "historicalChain": {
+    "testsPassed": 67,
+    "subtestsPassed": 136,
+    "result": "67 passed, 136 subtests passed"
+  },
+  "scientificDesignChanged": false,
+  "parserChanged": false,
+  "acquisitionProtocolChanged": false,
+  "providerAccessPerformed": false,
+  "marketOutcomeRead": false,
+  "outcomeUnlocked": false,
+  "executionAllowed": false,
+  "outcomeAccessFlags": {
+    "PRICE_DATA_READ": false,
+    "OUTCOME_DATA_READ": false,
+    "FOUNDER_DECISION_READ": false,
+    "REVIEW_STORE_READ": false,
+    "SBC_READ": false,
+    "CATALOGUE_ADMISSION": false,
+    "EVIDENCE_ADMISSION": false,
+    "SIGNED_WAVE_RENDERED": false,
+    "PAIR_RESULTANT_CREATED": false,
+    "MAGNITUDE_CONFIGURED": false,
+    "AUTO_SUGGEST": false,
+    "ML": false,
+    "MT5": false,
+    "EXECUTION_ALLOWED": false,
+    "PRODUCTION_ADMISSION": false,
+    "OUTCOME_UNLOCKED": false
+  },
+  "nextGate": "TARGETED_ASTRA_R3_R3_ROOT_ISOLATION_REAUDIT",
+  "rootPurityGateHash": "128F4E3F03CB7E5C190484CFB04796088FED15165B3AC81A867DA2B64F5606F2"
+}
