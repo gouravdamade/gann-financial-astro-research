@@ -1,8 +1,9 @@
 {
   "contract": "MO_R4A_S4_A1_ACQUISITION_AUTHORIZATION_V1",
   "schemaVersion": 1,
-  "milestone": "MO-R4A-S4-A1",
-  "startingCommit": "47e557b1e573e661d6b3c0f2855d0044895bb12b",
+  "milestone": "MO-R4A-S4-A1-P1-R1",
+  "authorizedPreOutcomeBaseCommit": "47e557b1e573e661d6b3c0f2855d0044895bb12b",
+  "preAccessImplementationPredecessorCommit": "3cbb175db05ba66714611cc451faf72358b3759f",
   "astraVerdict": "PRE_OUTCOME_REAUDIT_PASS",
   "centralDecision": "ACQUISITION_UNLOCKED_ANALYSIS_LOCKED",
   "r3r3RootPurityGateHash": "128F4E3F03CB7E5C190484CFB04796088FED15165B3AC81A867DA2B64F5606F2",
@@ -42,7 +43,7 @@
   "exactPartitionCount": 15,
   "maxAttempts": 1,
   "automaticRetry": false,
-  "acquisitionModuleSha256": "A1F68004A9A94B38EAFDA6432259B0852D4A730B443067B0F17F6D6D738B2BA1",
+  "acquisitionModuleSha256": "2448FD3B63FB85645F966609B377AB2C3DDF22CC240BDEBFDCFAB5257832B90A",
   "sdkVersions": {
     "boto3": "1.43.93",
     "botocore": "1.43.93"
@@ -76,5 +77,5 @@
     "PRODUCTION_ADMISSION": false,
     "OUTCOME_UNLOCKED": false
   },
-  "acquisitionAuthorizationHash": "DD7608376ED2677CE2ED2654200F906841AB6C43FB96DB1E458ED40C973FF2DE"
+  "acquisitionAuthorizationHash": "9E8D2FF8547876918EFB5F362B0FC969BA608B75428CB0A2A2D584D34768D4C5"
 }

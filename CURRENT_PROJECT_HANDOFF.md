@@ -12537,3 +12537,48 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `PRICE_DATA_READ=false`, `outcomeUnlocked=false`, and
   `executionAllowed=false`. Next gate:
   `CENTRAL_REVIEW_PRE_ACCESS_IMPLEMENTATION_BEFORE_FIRST_PROVIDER_REQUEST`.
+
+## MO-R4A-S4-A1-P1-R1 Execution-Lineage and Stream-Failure Hardening (2026-09-14)
+
+- Corrected the P1 self-invalidating exact-commit check. The accepted
+  pre-outcome base remains `47e557b1e573e661d6b3c0f2855d0044895bb12b`, while
+  the P1 implementation predecessor is separately recorded as
+  `3cbb175db05ba66714611cc451faf72358b3759f`. Future execution requires
+  `HEAD == origin/master` and the accepted base to be an ancestor; it no
+  longer requires either ref to equal the old base.
+- Regenerated the authorization and added the successor freeze
+  `status/acceptance/mo_r4a_s4_a1_p1_r1_pre_access_implementation_freeze.json`.
+  The corrected module SHA is
+  `2448FD3B63FB85645F966609B377AB2C3DDF22CC240BDEBFDCFAB5257832B90A`;
+  authorization hash is
+  `9E8D2FF8547876918EFB5F362B0FC969BA608B75428CB0A2A2D584D34768D4C5`;
+  successor freeze hash is
+  `971E6BE30B4F1FEFBA3C11846C2CAB87987A9F5E390FFF31F1A6A639AB7D4739`.
+  The old P1 freeze remains preserved and bound by predecessor hash.
+- Protected acquisition/scientific paths are checked with Git normalized
+  object identity plus worktree and index diff checks, so clean Windows text
+  line endings do not create a false dirty state. Unrelated SQLite/log files
+  remain outside the gate.
+- Per-partition manifests now distinguish `requestStartedAtUtc` from
+  post-capture `retrievedAtUtc`; future manifests separately record
+  `executionCommit`, `authorizedPreOutcomeBaseCommit`, and
+  `preAccessImplementationPredecessorCommit`, plus overall acquisition start
+  and completion timestamps.
+- Ordinary response-body read exceptions are normalized to
+  `PROVIDER_BODY_STREAM_READ_FAILED`; pending partial raw bytes are removed,
+  no parser or retry occurs, the journal is terminal, and later partitions are
+  not requested.
+- No provider request, credential resolution, price-data read, outcome read,
+  parser change, scientific change, or execution path was used in P1-R1.
+  `providerAccessPerformed=false`, `PRICE_DATA_READ=false`,
+  `OUTCOME_DATA_READ=false`, `outcomeUnlocked=false`, and
+  `executionAllowed=false` remain locked. Detailed record:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S4_A1_P1_R1_EXECUTION_LINEAGE_HARDENING.md`.
+- Verification: focused P1-R1 acquisition suite `18/18`; the frozen historical
+  regression remains `103 tests` and `148 subtests`; full backend discovery
+  `555 passed, 1 skipped`. Ruff, targeted Python compilation, JSON validation,
+  committed-head pre-access validation, credential/private-artifact scans, and
+  `git diff --check` passed. The validator resolved 15 frozen partitions with
+  `PROVIDER_CALLS=0`; no provider request or credential resolution occurred.
+  Next gate:
+  `CENTRAL_REVIEW_FINAL_PRE_PROVIDER_EXECUTION_AUTHORIZATION`.

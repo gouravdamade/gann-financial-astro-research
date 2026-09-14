@@ -22,12 +22,14 @@ from typing import Any, BinaryIO, Iterable, Mapping, Protocol
 import dukascopy_tick_parser_s3r1_r3_r2 as frozen_parser
 
 
-MILESTONE = "MO-R4A-S4-A1"
+MILESTONE = "MO-R4A-S4-A1-P1-R1"
 AUTHORIZATION_CONTRACT = "MO_R4A_S4_A1_ACQUISITION_AUTHORIZATION_V1"
 RAW_MANIFEST_CONTRACT = "MO_R4A_S4_MARKET_DATA_RAW_ACQUISITION_MANIFEST_V1"
 FREEZE_GATE_CONTRACT = "MO_R4A_S4_A1_ACQUISITION_FREEZE_GATE_V1"
 OUTCOME_FIREWALL_CONTRACT = "MO_R4A_S4_A1_OUTCOME_FIREWALL_AUDIT_V1"
-EXPECTED_STARTING_MASTER = "47e557b1e573e661d6b3c0f2855d0044895bb12b"
+AUTHORIZED_PREOUTCOME_BASE_COMMIT = "47e557b1e573e661d6b3c0f2855d0044895bb12b"
+PREACCESS_IMPLEMENTATION_PREDECESSOR_COMMIT = "3cbb175db05ba66714611cc451faf72358b3759f"
+PREDECESSOR_IMPLEMENTATION_FREEZE_HASH = "42BF3BB9BB9A10A340DEFDC5FD29825B130DC4487D746537084604639486F170"
 
 PROVIDER_IDENTITY = "DUKASCOPY_HISTORICAL_USDJPY_TICK_SERVICE"
 PROVIDER_PRODUCT = "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE"
@@ -50,6 +52,9 @@ RAW_MANIFEST_RELATIVE = Path("status/audits/mo_r4a_s4_a1_market_data_raw_acquisi
 FIREWALL_AUDIT_RELATIVE = Path("status/audits/mo_r4a_s4_a1_outcome_firewall_audit.json")
 FREEZE_GATE_RELATIVE = Path("status/acceptance/mo_r4a_s4_a1_acquisition_freeze_gate.json")
 EXCEPTION_GATE_RELATIVE = Path("status/acceptance/mo_r4a_s4_a1_acquisition_exception_gate.json")
+PREDECESSOR_IMPLEMENTATION_FREEZE_RELATIVE = Path("status/acceptance/mo_r4a_s4_a1_p1_pre_access_implementation_freeze.json")
+IMPLEMENTATION_FREEZE_RELATIVE = Path("status/acceptance/mo_r4a_s4_a1_p1_r1_pre_access_implementation_freeze.json")
+TEST_MODULE_RELATIVE = Path("gann-astro-desk/backend/test_market_data_acquisition_s4_a1.py")
 
 PARSER_RELATIVE = Path("gann-astro-desk/backend/dukascopy_tick_parser_s3r1_r3_r2.py")
 PARSER_CONTRACT_RELATIVE = Path("configs/research/machine_interpretation/dukascopy_tick_parser_contract_s3r1_r3_r2_v1.json")
@@ -148,6 +153,9 @@ class AcquisitionRun:
     terminal_error_detail: str | None
     requested_key_count: int
     get_object_call_count: int
+    acquisition_started_at_utc: str | None = None
+    acquisition_completed_at_utc: str | None = None
+    execution_commit: str | None = None
 
 
 def _utc_now() -> str:
@@ -265,7 +273,8 @@ def build_acquisition_authorization(project_root: Path = PROJECT_ROOT) -> dict[s
         "contract": AUTHORIZATION_CONTRACT,
         "schemaVersion": 1,
         "milestone": MILESTONE,
-        "startingCommit": EXPECTED_STARTING_MASTER,
+        "authorizedPreOutcomeBaseCommit": AUTHORIZED_PREOUTCOME_BASE_COMMIT,
+        "preAccessImplementationPredecessorCommit": PREACCESS_IMPLEMENTATION_PREDECESSOR_COMMIT,
         "astraVerdict": "PRE_OUTCOME_REAUDIT_PASS",
         "centralDecision": "ACQUISITION_UNLOCKED_ANALYSIS_LOCKED",
         "r3r3RootPurityGateHash": EXPECTED_HASHES["rootPurityGateHash"],
@@ -379,31 +388,162 @@ def _verify_authorization(project_root: Path, authorization: Mapping[str, Any]) 
         raise AcquisitionError("AUTHORIZATION_MISMATCH", "authorization does not exactly match the central frozen authorization")
 
 
-def _verify_git_starting_lineage(project_root: Path) -> None:
-    """Require the central-authorized repository lineage before any provider call."""
+PROTECTED_PREACCESS_PATHS = (
+    PARSER_RELATIVE,
+    PARSER_CONTRACT_RELATIVE,
+    ACQUISITION_CONTRACT_RELATIVE,
+    PARTITION_PLAN_RELATIVE,
+    ROOT_GATE_RELATIVE,
+    AUTHORIZATION_RELATIVE,
+    PREDECESSOR_IMPLEMENTATION_FREEZE_RELATIVE,
+    IMPLEMENTATION_FREEZE_RELATIVE,
+    TEST_MODULE_RELATIVE,
+)
 
+
+def _git_revision(project_root: Path, revision: str) -> str:
     try:
-        head = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
+        result = subprocess.run(
+            ["git", "rev-parse", revision],
             cwd=project_root,
             check=True,
             capture_output=True,
             text=True,
-        ).stdout.strip()
-        remote = subprocess.run(
-            ["git", "rev-parse", "origin/master"],
-            cwd=project_root,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
+        )
     except (OSError, subprocess.CalledProcessError) as exc:
-        raise AcquisitionError("PREACCESS_GIT_LINEAGE_UNVERIFIABLE", "cannot verify authorized Git lineage") from exc
-    if head != EXPECTED_STARTING_MASTER or remote != EXPECTED_STARTING_MASTER:
+        raise AcquisitionError("PREACCESS_GIT_LINEAGE_UNVERIFIABLE", "cannot resolve Git revision") from exc
+    return result.stdout.strip()
+
+
+def _verify_git_starting_lineage(project_root: Path) -> str:
+    """Require the current synchronized branch to descend from the accepted base."""
+
+    head = _git_revision(project_root, "HEAD")
+    remote = _git_revision(project_root, "origin/master")
+    if head != remote:
         raise AcquisitionError(
             "PREACCESS_GIT_LINEAGE_MISMATCH",
-            "HEAD and origin/master must both equal the central-authorized starting commit",
+            "HEAD and origin/master must identify the same execution commit",
         )
+    try:
+        ancestry = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", AUTHORIZED_PREOUTCOME_BASE_COMMIT, head],
+            cwd=project_root,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except OSError as exc:
+        raise AcquisitionError("PREACCESS_GIT_LINEAGE_UNVERIFIABLE", "cannot verify accepted Git ancestry") from exc
+    if ancestry.returncode != 0:
+        if ancestry.returncode == 1:
+            raise AcquisitionError(
+                "PREACCESS_GIT_LINEAGE_MISMATCH",
+                "accepted pre-outcome base is not an ancestor of the synchronized execution commit",
+            )
+        raise AcquisitionError("PREACCESS_GIT_LINEAGE_UNVERIFIABLE", "Git ancestry verification failed")
+    return head
+
+
+def _verify_protected_paths_clean(project_root: Path) -> None:
+    """Require protected bytes and both Git trees to agree with the current HEAD."""
+
+    root = Path(project_root).resolve()
+    for relative in PROTECTED_PREACCESS_PATHS:
+        path = _artifact_path(root, relative)
+        if not path.is_file():
+            raise AcquisitionError("PREACCESS_PROTECTED_PATH_MISSING", f"missing protected path {relative.as_posix()}")
+        git_path = relative.as_posix()
+        try:
+            worktree_object = subprocess.run(
+                ["git", "hash-object", f"--path={git_path}", "--", git_path],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            committed_object = subprocess.run(
+                ["git", "rev-parse", f"HEAD:{git_path}"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            worktree_diff = subprocess.run(
+                ["git", "diff", "--quiet", "HEAD", "--", git_path],
+                cwd=root,
+                check=False,
+                capture_output=True,
+            )
+            index_diff = subprocess.run(
+                ["git", "diff", "--quiet", "--cached", "--", git_path],
+                cwd=root,
+                check=False,
+                capture_output=True,
+            )
+        except (OSError, subprocess.CalledProcessError) as exc:
+            raise AcquisitionError("PREACCESS_PROTECTED_PATH_UNVERIFIABLE", f"cannot verify protected path {git_path}") from exc
+        if worktree_diff.returncode not in (0, 1) or index_diff.returncode not in (0, 1):
+            raise AcquisitionError("PREACCESS_PROTECTED_PATH_UNVERIFIABLE", f"Git diff failed for protected path {git_path}")
+        if worktree_diff.returncode == 1 or index_diff.returncode == 1:
+            raise AcquisitionError("PREACCESS_PROTECTED_PATH_DIRTY", f"protected path differs from committed HEAD: {git_path}")
+        if worktree_object.stdout.strip() != committed_object.stdout.strip():
+            raise AcquisitionError("PREACCESS_PROTECTED_PATH_DIRTY", f"protected path content differs from committed HEAD: {git_path}")
+
+
+def _verify_implementation_freeze(project_root: Path, authorization: Mapping[str, Any]) -> None:
+    root = Path(project_root).resolve()
+    predecessor = _read_json(
+        _artifact_path(root, PREDECESSOR_IMPLEMENTATION_FREEZE_RELATIVE),
+        "predecessor implementation freeze",
+    )
+    _assert_self_hash(
+        predecessor,
+        "preAccessFreezeArtifactHash",
+        PREDECESSOR_IMPLEMENTATION_FREEZE_HASH,
+        "predecessor implementation freeze",
+    )
+    successor = _read_json(
+        _artifact_path(root, IMPLEMENTATION_FREEZE_RELATIVE),
+        "successor implementation freeze",
+    )
+    successor_hash = successor.get("preAccessImplementationFreezeArtifactHash")
+    if not isinstance(successor_hash, str):
+        raise AcquisitionError("PREACCESS_HASH_MISMATCH", "successor implementation freeze has no self-hash")
+    _assert_self_hash(successor, "preAccessImplementationFreezeArtifactHash", successor_hash, "successor implementation freeze")
+
+    expected = {
+        "contract": "MO_R4A_S4_A1_P1_R1_PRE_ACCESS_IMPLEMENTATION_FREEZE_V1",
+        "schemaVersion": 1,
+        "milestone": MILESTONE,
+        "predecessorFreezeHash": PREDECESSOR_IMPLEMENTATION_FREEZE_HASH,
+        "predecessorCommit": PREACCESS_IMPLEMENTATION_PREDECESSOR_COMMIT,
+        "acceptedPreOutcomeBaseCommit": AUTHORIZED_PREOUTCOME_BASE_COMMIT,
+        "acquisitionModulePath": "gann-astro-desk/backend/market_data_acquisition_s4_a1.py",
+        "acquisitionModuleSha256": acquisition_module_sha256(),
+        "testModulePath": "gann-astro-desk/backend/test_market_data_acquisition_s4_a1.py",
+        "testModuleSha256": _sha256_file(_artifact_path(root, TEST_MODULE_RELATIVE)),
+        "authorizationArtifactPath": AUTHORIZATION_RELATIVE.as_posix(),
+        "authorizationHash": authorization["acquisitionAuthorizationHash"],
+        "parserSourceSha256": EXPECTED_HASHES["parserSourceSha256"],
+        "parserContractHash": EXPECTED_HASHES["parserContractHash"],
+        "acquisitionContractHash": EXPECTED_HASHES["acquisitionContractHash"],
+        "partitionPlanHash": EXPECTED_HASHES["partitionPlanHash"],
+        "analysisIntervalSetHash": EXPECTED_HASHES["analysisIntervalSetHash"],
+        "providerAccessPerformed": False,
+        "priceDataRead": False,
+        "marketOutcomeRead": False,
+        "outcomeUnlocked": False,
+        "executionAllowed": False,
+        "scientificDesignChanged": False,
+        "parserChanged": False,
+        "acquisitionProtocolChanged": False,
+        "status": "PRE_ACCESS_IMPLEMENTATION_HARDENED_PROVIDER_NOT_ACCESSED",
+        "nextGate": "CENTRAL_REVIEW_FINAL_PRE_PROVIDER_EXECUTION_AUTHORIZATION",
+    }
+    for field, value in expected.items():
+        if successor.get(field) != value:
+            raise AcquisitionError("PREACCESS_IMPLEMENTATION_FREEZE_MISMATCH", f"successor freeze field {field} differs")
 
 
 def validate_preaccess(project_root: Path = PROJECT_ROOT, authorization: Mapping[str, Any] | None = None) -> tuple[dict[str, Any], tuple[dict[str, Any], ...]]:
@@ -414,6 +554,8 @@ def validate_preaccess(project_root: Path = PROJECT_ROOT, authorization: Mapping
     if authorization is None:
         authorization = _read_json(_artifact_path(root, AUTHORIZATION_RELATIVE), "S4-A1 acquisition authorization")
     _verify_authorization(root, authorization)
+    _verify_implementation_freeze(root, authorization)
+    _verify_protected_paths_clean(root)
     acquisition, partitions = _verify_frozen_predecessors(root)
     return acquisition, partitions
 
@@ -516,7 +658,10 @@ def _capture_raw(body: BinaryIO, raw_path: Path, expected_length: int | None) ->
             raise AcquisitionError("EXTERNAL_STORAGE_TEMPORARY_CONFLICT", "pending raw capture file already exists")
         with temporary.open("xb") as handle:
             while True:
-                chunk = body.read(CHUNK_SIZE_BYTES)
+                try:
+                    chunk = body.read(CHUNK_SIZE_BYTES)
+                except Exception as exc:
+                    raise AcquisitionError("PROVIDER_BODY_STREAM_READ_FAILED", type(exc).__name__) from exc
                 if not chunk:
                     break
                 if not isinstance(chunk, bytes):
@@ -555,7 +700,6 @@ def _partition_record_base(partition: Mapping[str, Any], authorization_hash: str
         "nativeStartUtc": partition["nativeStartUtc"],
         "nativeEndUtc": partition["nativeEndUtc"],
         "requestParameters": {"bucket": BUCKET, "key": request["key"], "requestPayer": REQUEST_PAYER, "region": REGION},
-        "retrievedAtUtc": _utc_now(),
         "parserContractHash": EXPECTED_HASHES["parserContractHash"],
         "parserSourceSha256": EXPECTED_HASHES["parserSourceSha256"],
         "authorizationHash": authorization_hash,
@@ -563,9 +707,33 @@ def _partition_record_base(partition: Mapping[str, Any], authorization_hash: str
     }
 
 
-def _missing_record(partition: Mapping[str, Any], authorization_hash: str, failure: TransportFailure) -> dict[str, object]:
+def _with_retrieval_timestamps(
+    record: Mapping[str, object],
+    *,
+    request_started_at_utc: str,
+    retrieved_at_utc: str,
+) -> dict[str, object]:
     return {
-        **_partition_record_base(partition, authorization_hash),
+        **record,
+        "requestStartedAtUtc": request_started_at_utc,
+        "retrievedAtUtc": retrieved_at_utc,
+    }
+
+
+def _missing_record(
+    partition: Mapping[str, Any],
+    authorization_hash: str,
+    failure: TransportFailure,
+    *,
+    request_started_at_utc: str,
+    retrieved_at_utc: str,
+) -> dict[str, object]:
+    return {
+        **_with_retrieval_timestamps(
+            _partition_record_base(partition, authorization_hash),
+            request_started_at_utc=request_started_at_utc,
+            retrieved_at_utc=retrieved_at_utc,
+        ),
         "transportStatus": "MISSING_DOCUMENTED_DAILY_KEY",
         "providerMetadata": {"HTTPStatusCode": failure.status_code} if failure.status_code else {},
         "byteLength": None,
@@ -580,9 +748,20 @@ def _missing_record(partition: Mapping[str, Any], authorization_hash: str, failu
     }
 
 
-def _failed_record(partition: Mapping[str, Any], authorization_hash: str, error: AcquisitionError) -> dict[str, object]:
+def _failed_record(
+    partition: Mapping[str, Any],
+    authorization_hash: str,
+    error: AcquisitionError,
+    *,
+    request_started_at_utc: str,
+    retrieved_at_utc: str,
+) -> dict[str, object]:
     return {
-        **_partition_record_base(partition, authorization_hash),
+        **_with_retrieval_timestamps(
+            _partition_record_base(partition, authorization_hash),
+            request_started_at_utc=request_started_at_utc,
+            retrieved_at_utc=retrieved_at_utc,
+        ),
         "transportStatus": error.code,
         "providerMetadata": {},
         "byteLength": None,
@@ -634,8 +813,10 @@ def acquire_authorized_partitions(
 
     if not execute_authorized_acquisition:
         raise AcquisitionError("EXECUTION_FLAG_REQUIRED", "provider calls require --execute-authorized-acquisition")
+    acquisition_started_at_utc = _utc_now()
     root = Path(project_root).resolve()
     _, partitions = validate_preaccess(root, authorization)
+    execution_commit = _git_revision(root, "HEAD")
     if tuple(partition["requestIdentity"]["key"] for partition in partitions) != EXPECTED_KEYS:
         raise AcquisitionError("UNEXPECTED_PARTITION_KEY", "execution request set is not the exact frozen ordered key set")
     private = _require_private_root(root, private_root)
@@ -646,6 +827,21 @@ def acquire_authorized_partitions(
     records: list[dict[str, object]] = []
     calls = 0
     parsed_any = False
+
+    def completed_run(status: str, error_code: str | None = None, error_detail: str | None = None) -> AcquisitionRun:
+        return AcquisitionRun(
+            tuple(records),
+            True,
+            parsed_any,
+            status,
+            error_code,
+            error_detail,
+            len(partitions),
+            calls,
+            acquisition_started_at_utc,
+            _utc_now(),
+            execution_commit,
+        )
 
     for partition in partitions:
         raw_name = _logical_capture_name(partition, "bi5")
@@ -658,36 +854,59 @@ def acquire_authorized_partitions(
                 "a final raw or parsed capture already exists for the exact frozen partition",
             )
         journal = _journal_start(private, partition, authorization_hash)
-        record = _partition_record_base(partition, authorization_hash)
+        request_started_at_utc = _utc_now()
+        record = {
+            **_partition_record_base(partition, authorization_hash),
+            "requestStartedAtUtc": request_started_at_utc,
+        }
         key = str(partition["requestIdentity"]["key"])
         try:
             calls += 1
             response = transport.get_exact_partition(bucket=BUCKET, key=key, request_payer=REQUEST_PAYER)
         except TransportFailure as exc:
             if exc.missing:
-                completed = _missing_record(partition, authorization_hash, exc)
+                completed = _missing_record(
+                    partition,
+                    authorization_hash,
+                    exc,
+                    request_started_at_utc=request_started_at_utc,
+                    retrieved_at_utc=_utc_now(),
+                )
                 _journal_finish(journal, status="ATTEMPT_COMPLETED_MISSING_KEY", record=completed)
                 records.append(completed)
                 continue
-            completed = _failed_record(partition, authorization_hash, exc)
+            completed = _failed_record(
+                partition,
+                authorization_hash,
+                exc,
+                request_started_at_utc=request_started_at_utc,
+                retrieved_at_utc=_utc_now(),
+            )
             _journal_finish(journal, status="ATTEMPT_FAILED_TERMINAL", record=completed, error=exc)
             records.append(completed)
-            return AcquisitionRun(tuple(records), True, parsed_any, "ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", exc.code, exc.detail, len(partitions), calls)
+            return completed_run("ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", exc.code, exc.detail)
         except Exception as exc:  # Transport implementations may expose a non-provider failure.
             error = AcquisitionError("UNEXPECTED_TRANSPORT_EXCEPTION", type(exc).__name__)
-            completed = _failed_record(partition, authorization_hash, error)
+            completed = _failed_record(
+                partition,
+                authorization_hash,
+                error,
+                request_started_at_utc=request_started_at_utc,
+                retrieved_at_utc=_utc_now(),
+            )
             _journal_finish(journal, status="ATTEMPT_FAILED_TERMINAL", record=completed, error=error)
             records.append(completed)
-            return AcquisitionRun(tuple(records), True, parsed_any, "ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", error.code, error.detail, len(partitions), calls)
+            return completed_run("ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", error.code, error.detail)
 
         try:
+            record["providerMetadata"] = _safe_metadata(response.provider_metadata)
             length, raw_sha = _capture_raw(response.body, raw_path, response.content_length)
             record.update({
                 "transportStatus": "GET_OBJECT_SUCCESS",
-                "providerMetadata": _safe_metadata(response.provider_metadata),
                 "byteLength": length,
                 "rawSha256": raw_sha,
                 "logicalRawCaptureName": raw_name,
+                "retrievedAtUtc": _utc_now(),
             })
             _journal_finish(journal, status="RAW_CAPTURE_FROZEN", record=record)
             if length == 0:
@@ -699,7 +918,7 @@ def acquire_authorized_partitions(
                 error = AcquisitionError("SUCCESSFUL_ZERO_BYTE_RESPONSE_ACQUISITION_INCOMPLETE", "successful object has zero exact bytes")
                 _journal_finish(journal, status="ATTEMPT_FAILED_TERMINAL", record=record, error=error)
                 records.append(record)
-                return AcquisitionRun(tuple(records), True, parsed_any, "ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", error.code, error.detail, len(partitions), calls)
+                return completed_run("ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", error.code, error.detail)
             count, parsed_sha, first, last = _parse_frozen_raw(partition, raw_path, parsed_path)
             record.update({
                 "parsedRecordCount": count,
@@ -717,14 +936,15 @@ def acquire_authorized_partitions(
             failed.update({
                 "parsedRecordCount": 0, "parsedTicksSha256": None, "logicalParsedCaptureName": None,
                 "firstTimestampUtc": None, "lastTimestampUtc": None,
+                "retrievedAtUtc": _utc_now(),
                 "acquisitionDisposition": "ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED",
                 "error": {"code": exc.code, "detail": exc.detail},
             })
             _journal_finish(journal, status="ATTEMPT_FAILED_TERMINAL", record=failed, error=exc)
             records.append(failed)
-            return AcquisitionRun(tuple(records), True, parsed_any, "ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", exc.code, exc.detail, len(partitions), calls)
+            return completed_run("ACQUISITION_ATTEMPT_INCOMPLETE_CENTRAL_REVIEW_REQUIRED", exc.code, exc.detail)
 
-    return AcquisitionRun(tuple(records), True, parsed_any, "ACQUISITION_CAPTURED_AND_PROVENANCE_FROZEN_ANALYSIS_LOCKED", None, None, len(partitions), calls)
+    return completed_run("ACQUISITION_CAPTURED_AND_PROVENANCE_FROZEN_ANALYSIS_LOCKED")
 
 
 def _sdk_versions() -> dict[str, str | None]:
@@ -742,7 +962,11 @@ def build_raw_manifest(run: AcquisitionRun, authorization: Mapping[str, Any]) ->
         "contract": RAW_MANIFEST_CONTRACT,
         "schemaVersion": 1,
         "milestone": MILESTONE,
-        "startingCommit": EXPECTED_STARTING_MASTER,
+        "authorizedPreOutcomeBaseCommit": AUTHORIZED_PREOUTCOME_BASE_COMMIT,
+        "preAccessImplementationPredecessorCommit": PREACCESS_IMPLEMENTATION_PREDECESSOR_COMMIT,
+        "executionCommit": run.execution_commit,
+        "acquisitionStartedAtUtc": run.acquisition_started_at_utc,
+        "acquisitionCompletedAtUtc": run.acquisition_completed_at_utc,
         "status": run.status,
         "authorizationHash": authorization["acquisitionAuthorizationHash"],
         "r3r2AcquisitionContractHash": EXPECTED_HASHES["acquisitionContractHash"],

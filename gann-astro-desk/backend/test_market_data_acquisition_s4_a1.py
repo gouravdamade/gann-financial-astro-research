@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import ast
 import io
+import itertools
 import json
 import lzma
 import struct
+import subprocess
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -69,10 +71,78 @@ class MarketDataAcquisitionS4A1Tests(unittest.TestCase):
         self.assertEqual(len(partitions), 15)
         self.assertEqual(self.authorization["acquisitionAuthorizationHash"], acquisition._canonical_hash({key: value for key, value in self.authorization.items() if key != "acquisitionAuthorizationHash"}))
         self.assertEqual(self.authorization["acquisitionModuleSha256"], acquisition.acquisition_module_sha256())
+        self.assertEqual(self.authorization["authorizedPreOutcomeBaseCommit"], acquisition.AUTHORIZED_PREOUTCOME_BASE_COMMIT)
+        self.assertEqual(self.authorization["preAccessImplementationPredecessorCommit"], acquisition.PREACCESS_IMPLEMENTATION_PREDECESSOR_COMMIT)
         self.assertTrue(self.authorization["sdkVersions"]["boto3"])
         self.assertTrue(self.authorization["sdkVersions"]["botocore"])
         self.assertFalse(self.authorization["outcomeUnlocked"])
         self.assertFalse(self.authorization["executionAllowed"])
+
+    def test_final_execution_lineage_accepts_descendant_and_rejects_divergence(self) -> None:
+        descendant = "c" * 40
+        completed = [
+            subprocess.CompletedProcess([], 0, stdout=f"{descendant}\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=f"{descendant}\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout="", stderr=""),
+        ]
+        with mock.patch.object(acquisition.subprocess, "run", side_effect=completed) as git_run:
+            self.assertEqual(acquisition._verify_git_starting_lineage(PROJECT_ROOT), descendant)
+        self.assertEqual(git_run.call_count, 3)
+        self.assertEqual(git_run.call_args_list[2].args[0][:4], ["git", "merge-base", "--is-ancestor", acquisition.AUTHORIZED_PREOUTCOME_BASE_COMMIT])
+
+        mismatch = [
+            subprocess.CompletedProcess([], 0, stdout=f"{descendant}\n", stderr=""),
+            subprocess.CompletedProcess([], 0, stdout=f"{'d' * 40}\n", stderr=""),
+        ]
+        with mock.patch.object(acquisition.subprocess, "run", side_effect=mismatch):
+            with self.assertRaisesRegex(acquisition.AcquisitionError, "PREACCESS_GIT_LINEAGE_MISMATCH"):
+                acquisition._verify_git_starting_lineage(PROJECT_ROOT)
+
+    def test_protected_path_dirty_rejects_module_authorization_and_freeze(self) -> None:
+        for relative in (
+            Path("gann-astro-desk/backend/market_data_acquisition_s4_a1.py"),
+            acquisition.AUTHORIZATION_RELATIVE,
+            acquisition.IMPLEMENTATION_FREEZE_RELATIVE,
+        ):
+            with self.subTest(relative=relative):
+                with mock.patch.object(acquisition, "PROTECTED_PREACCESS_PATHS", (relative,)):
+                    responses = [
+                        subprocess.CompletedProcess([], 0, stdout="committed\n", stderr=""),
+                        subprocess.CompletedProcess([], 0, stdout="head\n", stderr=""),
+                        subprocess.CompletedProcess([], 1, stdout="", stderr="dirty"),
+                        subprocess.CompletedProcess([], 0, stdout=b"", stderr=b""),
+                    ]
+                    with mock.patch.object(acquisition.subprocess, "run", side_effect=responses):
+                        with self.assertRaisesRegex(acquisition.AcquisitionError, "PREACCESS_PROTECTED_PATH_DIRTY"):
+                            acquisition._verify_protected_paths_clean(PROJECT_ROOT)
+
+    def test_unrelated_dirty_path_does_not_change_protected_path_check(self) -> None:
+        relative = acquisition.PARSER_RELATIVE
+        with mock.patch.object(acquisition, "PROTECTED_PREACCESS_PATHS", (relative,)):
+            responses = [
+                subprocess.CompletedProcess([], 0, stdout="parser-object\n", stderr=""),
+                subprocess.CompletedProcess([], 0, stdout="parser-object\n", stderr=""),
+                subprocess.CompletedProcess([], 0, stdout="", stderr=""),
+                subprocess.CompletedProcess([], 0, stdout="", stderr=""),
+            ]
+            with mock.patch.object(acquisition.subprocess, "run", side_effect=responses):
+                acquisition._verify_protected_paths_clean(PROJECT_ROOT)
+
+    def test_successor_freeze_is_self_hashed_and_does_not_create_a_module_hash_cycle(self) -> None:
+        freeze_path = PROJECT_ROOT / acquisition.IMPLEMENTATION_FREEZE_RELATIVE
+        freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            freeze["preAccessImplementationFreezeArtifactHash"],
+            acquisition._canonical_hash({key: value for key, value in freeze.items() if key != "preAccessImplementationFreezeArtifactHash"}),
+        )
+        self.assertEqual(freeze["acquisitionModuleSha256"], acquisition.acquisition_module_sha256())
+        self.assertEqual(freeze["authorizationHash"], self.authorization["acquisitionAuthorizationHash"])
+        self.assertNotIn(freeze["preAccessImplementationFreezeArtifactHash"], Path(acquisition.__file__).read_text(encoding="utf-8"))
+
+    def test_freeze_module_binding_mismatch_rejects_before_any_provider_call(self) -> None:
+        with mock.patch.object(acquisition, "acquisition_module_sha256", return_value="B" * 64):
+            with self.assertRaisesRegex(acquisition.AcquisitionError, "PREACCESS_IMPLEMENTATION_FREEZE_MISMATCH"):
+                acquisition._verify_implementation_freeze(PROJECT_ROOT, self.authorization)
 
     def test_successful_mock_run_requests_only_the_frozen_keys_and_freezes_before_parse(self) -> None:
         transport = FakeTransport(self.payload)
@@ -148,6 +218,71 @@ class MarketDataAcquisitionS4A1Tests(unittest.TestCase):
             self.assertEqual(run.terminal_error_code, "PROVIDER_CONTENT_LENGTH_MISMATCH")
             self.assertEqual(run.get_object_call_count, 1)
 
+    def test_stream_body_failure_is_terminal_without_partial_promotion_or_retry(self) -> None:
+        class FailingBody:
+            def __init__(self) -> None:
+                self.read_count = 0
+                self.closed = False
+
+            def read(self, _size: int) -> bytes:
+                self.read_count += 1
+                if self.read_count == 1:
+                    return b"partial-provider-bytes"
+                raise RuntimeError("synthetic stream failure")
+
+            def close(self) -> None:
+                self.closed = True
+
+        class StreamingFailureTransport:
+            def __init__(self) -> None:
+                self.calls: list[str] = []
+                self.body = FailingBody()
+
+            def get_exact_partition(self, *, bucket: str, key: str, request_payer: str) -> acquisition.TransportObject:
+                self.calls.append(key)
+                return acquisition.TransportObject(
+                    body=self.body,
+                    content_length=None,
+                    provider_metadata={"HTTPStatusCode": 200},
+                )
+
+        transport = StreamingFailureTransport()
+        with tempfile.TemporaryDirectory(prefix="mo-r4a-s4-a1-") as temporary:
+            private_root = Path(temporary)
+            with mock.patch.object(acquisition, "_parse_frozen_raw") as parser_mock:
+                run = self._run(transport, private_root)
+            parser_mock.assert_not_called()
+            self.assertEqual(run.terminal_error_code, "PROVIDER_BODY_STREAM_READ_FAILED")
+            self.assertEqual(run.get_object_call_count, 1)
+            self.assertEqual(transport.calls, [acquisition.EXPECTED_KEYS[0]])
+            self.assertTrue(transport.body.closed)
+            self.assertFalse(list((private_root / "mo_r4a_s4_a1" / "raw").glob("*")))
+            self.assertFalse(list((private_root / "mo_r4a_s4_a1" / "parsed").glob("*")))
+            journal = next((private_root / "mo_r4a_s4_a1" / "journal").glob("*.json"))
+            journal_value = json.loads(journal.read_text(encoding="utf-8"))
+            self.assertEqual(journal_value["status"], "ATTEMPT_FAILED_TERMINAL")
+            self.assertEqual(journal_value["error"]["code"], "PROVIDER_BODY_STREAM_READ_FAILED")
+
+    def test_request_and_retrieval_timestamps_are_ordered_at_capture_boundaries(self) -> None:
+        counter = itertools.count()
+
+        def deterministic_now() -> str:
+            instant = datetime(2025, 3, 24, tzinfo=timezone.utc) + timedelta(seconds=next(counter))
+            return instant.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        with tempfile.TemporaryDirectory(prefix="mo-r4a-s4-a1-") as temporary:
+            with mock.patch.object(acquisition, "_utc_now", side_effect=deterministic_now):
+                run = self._run(FakeTransport(self.payload), Path(temporary))
+            first = run.records[0]
+            self.assertLessEqual(first["requestStartedAtUtc"], first["retrievedAtUtc"])
+            self.assertLessEqual(run.acquisition_started_at_utc, run.acquisition_completed_at_utc)
+            manifest = acquisition.build_raw_manifest(run, self.authorization)
+            self.assertEqual(manifest["executionCommit"], run.execution_commit)
+            self.assertEqual(manifest["authorizedPreOutcomeBaseCommit"], acquisition.AUTHORIZED_PREOUTCOME_BASE_COMMIT)
+            self.assertEqual(manifest["preAccessImplementationPredecessorCommit"], acquisition.PREACCESS_IMPLEMENTATION_PREDECESSOR_COMMIT)
+            self.assertEqual(manifest["acquisitionStartedAtUtc"], run.acquisition_started_at_utc)
+            self.assertEqual(manifest["acquisitionCompletedAtUtc"], run.acquisition_completed_at_utc)
+
     def test_frozen_parser_rejects_every_invalid_compressed_variant_without_fallback(self) -> None:
         alternate = lzma.compress(struct.pack(">IIIff", 0, 158_123, 158_120, 1.0, 1.0), format=lzma.FORMAT_XZ)
         variants = {
@@ -220,8 +355,9 @@ class MarketDataAcquisitionS4A1Tests(unittest.TestCase):
 
             with mock.patch.object(acquisition, "_verify_plan", side_effect=altered_verify_plan):
                 altered_authorization = acquisition.build_acquisition_authorization(PROJECT_ROOT)
-                with self.assertRaisesRegex(acquisition.AcquisitionError, "UNEXPECTED_PARTITION_KEY"):
-                    self._run(transport, Path(temporary), authorization=altered_authorization)
+                with mock.patch.object(acquisition, "_verify_implementation_freeze"):
+                    with self.assertRaisesRegex(acquisition.AcquisitionError, "UNEXPECTED_PARTITION_KEY"):
+                        self._run(transport, Path(temporary), authorization=altered_authorization)
             self.assertEqual(transport.calls, [])
 
     def test_sdk_retry_policy_and_static_outcome_firewall(self) -> None:
@@ -275,6 +411,9 @@ class MarketDataAcquisitionS4A1Tests(unittest.TestCase):
             terminal_error_detail=None,
             requested_key_count=15,
             get_object_call_count=15,
+            acquisition_started_at_utc="2025-03-24T00:00:00Z",
+            acquisition_completed_at_utc="2025-03-24T00:01:00Z",
+            execution_commit="c" * 40,
         )
         manifest = acquisition.build_raw_manifest(run, self.authorization)
         firewall = acquisition.build_outcome_firewall_audit(run, manifest["rawAcquisitionManifestHash"])
@@ -285,6 +424,9 @@ class MarketDataAcquisitionS4A1Tests(unittest.TestCase):
         self.assertFalse(firewall["executionAllowed"])
         self.assertFalse(gate["outcomeUnlocked"])
         self.assertFalse(gate["executionAllowed"])
+        self.assertEqual(manifest["executionCommit"], "c" * 40)
+        self.assertEqual(manifest["acquisitionStartedAtUtc"], "2025-03-24T00:00:00Z")
+        self.assertEqual(manifest["acquisitionCompletedAtUtc"], "2025-03-24T00:01:00Z")
 
 
 if __name__ == "__main__":
