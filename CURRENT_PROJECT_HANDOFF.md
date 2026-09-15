@@ -12582,3 +12582,37 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `PROVIDER_CALLS=0`; no provider request or credential resolution occurred.
   Next gate:
   `CENTRAL_REVIEW_FINAL_PRE_PROVIDER_EXECUTION_AUTHORIZATION`.
+
+## MO-R4A-S4-A1-A2 First Authorized Dukascopy Capture (2026-09-15)
+
+- Executed only the committed acquisition program from execution commit
+  `ade2d4f8208eddd0f90168b76c92565f369ce7ac`, after the zero-network
+  pre-access validator passed and the standard Boto3 chain resolved profile
+  `gann-acquisition` with credential source type `login`. Credential values
+  were not printed or persisted in the repository.
+- Exactly 15 authorized `GetObject` calls completed in frozen order; all 15
+  partitions were successful, with 0 missing keys, 0 terminal failures, and
+  no retry. No `ListObjects` or `HeadObject` call occurred. Dukascopy's key
+  month folders are zero-based: the requested key folders map to native UTC
+  dates 2025-03-24 through 2025-04-11.
+- Independent verification passed for all 15 external raw and parsed files:
+  byte lengths and SHA-256 values match the manifest, parsed counts and hashes
+  match, and every parsed timestamp is within its frozen native UTC day. The
+  capture contains 3,947,368 parsed records. Raw `.bi5` and real parsed JSONL
+  remain outside Git.
+- Metadata-only provenance:
+  `status/audits/mo_r4a_s4_a1_market_data_raw_acquisition_manifest.json`
+  (`FA336FA0577EB2EC5917E8811BF1918326E130091D56CF7948C401F5405AA71E`),
+  `status/audits/mo_r4a_s4_a1_outcome_firewall_audit.json`
+  (`8D55B5E3AE9B63F9F1B36B100D893C8554149ED4239F3E158FBCCDDC6C4DC8E0`), and
+  `status/acceptance/mo_r4a_s4_a1_acquisition_freeze_gate.json`
+  (`8F800EC0222ECE728E3D78D4F96E65F7FE7DCF7B7C85E1EF72EEEDAB7461804F`).
+  Aggregate capture hash:
+  `F1488479ED7F963F517A0C6BD1FEF393882628A5BFE35B3795A31E8CC119044D`.
+- Price data was mechanically parsed (`PRICE_DATA_READ=true`) solely for
+  capture integrity. No interval tick selection, return calculation, expected
+  direction application, hit/miss, statistics, timing control, or outcome
+  analysis was performed. `OUTCOME_DATA_READ=false`, `outcomeUnlocked=false`,
+  and `executionAllowed=false` remain locked. No code changed.
+- Next gate:
+  `CENTRAL_REVIEW_ACQUISITION_PROVENANCE_BEFORE_S4_OUTCOME_EVALUATION`.
