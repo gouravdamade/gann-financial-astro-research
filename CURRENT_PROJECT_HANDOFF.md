@@ -12657,3 +12657,18 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `outcomeUnlocked=false`, `O2ExecutionAllowed=false`, and
   `executionAllowed=false`. Next gate:
   `CENTRAL_REVIEW_FOR_S4_O2_OUTCOME_EXECUTION`.
+
+## MO-R4A-S4-O2 Outcome Execution Authorization
+
+- Central review accepted O1 and authorized one execution of the frozen O1
+  evaluator for the preregistered S4 research evaluation only.
+- Authorization record:
+  `status/acceptance/mo_r4a_s4_o2_outcome_execution_authorization.json`.
+  It binds O1 commit `0cf1ebf32dfe7b239d500e25b12c3037fcfa8e3c`, the frozen
+  evaluator/test identities, all scientific/acquisition hashes, and the
+  explicit no-network/no-provider/code-freeze controls.
+- `outcomeUnlocked=true` and `S4OutcomeAnalysisAllowed=true` apply only to
+  the one frozen research execution. Production execution remains disabled:
+  `O2ExecutionAllowed=true`, `executionAllowed=false`.
+- No parsed capture has been opened at this authorization stage. Next gate:
+  `FIRST_EMPIRICAL_OUTCOME_EXECUTION`.
