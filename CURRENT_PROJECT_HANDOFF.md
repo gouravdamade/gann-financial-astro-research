@@ -12604,7 +12604,7 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `status/audits/mo_r4a_s4_a1_market_data_raw_acquisition_manifest.json`
   (`FA336FA0577EB2EC5917E8811BF1918326E130091D56CF7948C401F5405AA71E`),
   `status/audits/mo_r4a_s4_a1_outcome_firewall_audit.json`
-  (`8D55B5E3AE9B63F9F1B36B100D893C8554149ED4239F3E158FBCCDDC6C4DC8E0`), and
+  (`8D55B5E3AE9B63F9B1B36B100D893C8554149ED4239F3E158FBCCDDC6C4DC8E0`), and
   `status/acceptance/mo_r4a_s4_a1_acquisition_freeze_gate.json`
   (`8F800EC0222ECE728E3D78D4F96E65F7FE7DCF7B7C85E1EF72EEEDAB7461804F`).
   Aggregate capture hash:
@@ -12616,3 +12616,21 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   and `executionAllowed=false` remain locked. No code changed.
 - Next gate:
   `CENTRAL_REVIEW_ACQUISITION_PROVENANCE_BEFORE_S4_OUTCOME_EVALUATION`.
+
+## MO-R4A-S4-A1-A2 Astra Acquisition Audit Freeze
+
+- Independent Astra acquisition provenance audit: `ACQUISITION_PROVENANCE_AUDIT_PASS`
+  against target commit `22558398ee323285a12b3f4f18a5db66092a8ea4`.
+- Audit verified 15/15 raw captures, 15/15 parsed captures, and 15/15
+  deterministic raw-to-frozen-parser reproductions. Parsed total:
+  `3,947,368`. Provider calls during Astra audit: `0`.
+- Aggregate capture hash:
+  `F1488479ED7F963F517A0C6BD1FEF393882628A5BFE35B3795A31E8CC119044D`.
+  Astra disposition hash:
+  `BD7A31104BD339DE032C124A85D1A868021523EFD764789827BFD93371D04D78`.
+- `providerProtocolFullyClosed=false`. No outcome analysis was performed;
+  outcome access remains locked. The audit NOTE about final-state journals,
+  code ordering, and the absence of append-only transition history is retained
+  in the disposition.
+- Next gate:
+  `CENTRAL_REVIEW_FOR_S4_OUTCOME_EXECUTION_UNLOCK`.
