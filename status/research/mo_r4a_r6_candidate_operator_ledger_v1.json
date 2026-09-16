@@ -1,0 +1,520 @@
+{
+  "contract": "MO_R4A_R6_CANDIDATE_OPERATOR_LEDGER_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-R6",
+  "startingCommit": "142ce10c9c5fd3950f2068ea323096b976c3061a",
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude r6CandidateOperatorLedgerHash.",
+  "purpose": "Source-first, non-runtime classical-operator and temporal-scale research. This ledger records what the named witnesses establish, what remains unknown, and one bounded next experiment. It does not create a market model.",
+  "runtimeStatus": "NON_RUNTIME_SOURCE_RESEARCH_ONLY",
+  "researchBoundary": {
+    "s4PilotRepairedOrRetuned": false,
+    "s4OutcomeRowsRead": false,
+    "marketOutcomeDataRead": false,
+    "providerAccessed": false,
+    "runtimeBehaviorChanged": false,
+    "executionAllowed": false
+  },
+  "controllingWitnesses": [
+    {
+      "sourceId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+      "citationAuthority": "ORIGINAL_1972_PAGE_IMAGE_ONLY",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "inspectedScanPages": [29, 30, 31, 32, 33, 34, 35, 36, 53, 54, 55],
+      "inspectedPrintedPages": [13, 14, 15, 16, 17, 18, 19, 20, 37, 38, 39],
+      "r6Inspection": "These PDF pages were inspected as page images during R6; the ledger does not treat OCR as controlling evidence."
+    },
+    {
+      "sourceId": "SARAVALI_ROOT_AND_BRIHAT_JATAKA_ROOT_BOUND_OPERATORS",
+      "citationAuthority": "EXISTING_SOURCE_CLOSED_OPERATOR_CONTRACTS",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": [
+        "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+      ],
+      "r6Use": "Existing exact source contracts and cross-text matrix only; no witness is collapsed into Trailokya."
+    }
+  ],
+  "r6r1CorrectionNote": {
+    "substantiveResearchConclusionChanged": false,
+    "candidateDispositionsChanged": false,
+    "candidateCUnchanged": true,
+    "provenanceBasisMadeExplicit": true,
+    "hashConventionMadeExplicit": true,
+    "deterministicEvaluatorIndependenceHardened": true,
+    "newSourceDoctrineIntroduced": false,
+    "runtimeChanged": false
+  },
+  "evidenceClassificationVocabulary": {
+    "SOURCE_EXPLICIT": "The named source directly states the bounded rule or category at the recorded locator.",
+    "SOURCE_IMPLIED": "A limited consequence follows from an explicit source statement, but is not a separately stated formula or universal rule.",
+    "COMMENTARY": "A commentary reading is retained as commentary and does not override a named root or controlling witness.",
+    "LATER_INTERPRETATION": "A later interpretation is retained as a distinct witness layer, never promoted to source-root authority.",
+    "ENGINEERING_MAPPING": "A deterministic research or display mapping with no claim of classical authority.",
+    "SOURCE_SILENT": "The inspected and admitted sources do not establish the requested rule. This is a valid fail-closed finding.",
+    "UNRESOLVED": "Evidence exists but does not close the dependency because a definition, composition order, scope, or worked reproduction is absent."
+  },
+  "sourceCoverageMatrix": [
+    {
+      "id": "R6_NATURAL_PLANET_CLASS",
+      "topic": "Natural planet class, including bounded Moon and Mercury conditions",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1"],
+      "locator": "Trailokya 1972 scan pages 29-30; printed pages 13-14; verses 54-58",
+      "established": "The named planet classes and the source-specific conditional Moon and Mercury qualifications are separately recorded.",
+      "notEstablished": "A currency, market, bullish/bearish, or numerical polarity translation.",
+      "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+    },
+    {
+      "id": "R6_NATURAL_RELATIONSHIP",
+      "topic": "Trailokya natural relationship table",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1"],
+      "locator": "Trailokya 1972 scan page 55; printed page 39; verses 168-171",
+      "established": "A source-profiled natural relationship category.",
+      "notEstablished": "A merger with Brihat Jataka or Saravali, a signed market contribution, or a scalar score.",
+      "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+    },
+    {
+      "id": "R6_TEMPORARY_AND_COMPOUND_RELATIONSHIP",
+      "topic": "Temporary and five-state compound relationship",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": [
+        "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "locator": "Brihat Jataka II.18; Saravali 4.30-4.31; source-operator cross-text matrix",
+      "established": "The named cross-text contracts, with their witness provenance preserved.",
+      "notEstablished": "Inheritance into Trailokya, a replacement for unresolved event context, or a market sign.",
+      "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+    },
+    {
+      "id": "R6_DRSTI_GEOMETRY",
+      "topic": "Ordinary fractions and special full-aspect geometry",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": [
+        "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+        "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+      ],
+      "locator": "Saravali 4.32-4.33; Brihat Jataka II.13; cross-text matrix retains the separate Trailokya Arghya scope",
+      "established": "The stated geometry and fractions within their named source contracts.",
+      "notEstablished": "A replacement event universe, a market magnitude curve, or a license to pool Arghya with ordinary Drsti.",
+      "admission": "SOURCE_CERTIFIED_GEOMETRY_ONLY"
+    },
+    {
+      "id": "R6_STHULA_MOTION",
+      "topic": "Sthula motion classes and descriptive residence material",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_STHULA_MOTION_CLASS_V1"],
+      "locator": "Trailokya 1972 scan pages 32-36; printed pages 16-20; verses 65-79",
+      "established": "Bounded Vakra, Shighra, Sama and related source classes, plus descriptive residence material and a requirement for local/time-appropriate astronomical calculation.",
+      "notEstablished": "A continuous modern speed threshold, stationary handling, a universal transit effect duration, or a market effect size.",
+      "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+    },
+    {
+      "id": "R6_STHANA_BALA_AND_PHALA",
+      "topic": "Sthana Bala and Sthana Phala",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": [
+        "TRAILOKYA_1972_STHANA_BALA_V1",
+        "TRAILOKYA_1972_STHANA_PHALA_V1"
+      ],
+      "locator": "Trailokya 1972 scan pages 53-54; printed pages 37-38; verses 161-165",
+      "established": "Separate source measurements and categorical states; Bala and Phala are not interchangeable.",
+      "notEstablished": "A total strength engine, a financial magnitude, or a generic composition rule.",
+      "admission": "SOURCE_CERTIFIED_COMPONENT_RECORDS_ONLY"
+    },
+    {
+      "id": "R6_DIGNITY",
+      "topic": "Dignity records",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": ["TRAILOKYA_1972_DIGNITY_V1"],
+      "locator": "Trailokya 1972 scan pages 56-58; printed pages 40-42; verses 172-179",
+      "established": "The existing source-closed dignity categories are retained under their named contract.",
+      "notEstablished": "A total strength engine, a financial magnitude, or a generic composition rule.",
+      "admission": "SOURCE_CERTIFIED_COMPONENT_RECORDS_ONLY"
+    },
+    {
+      "id": "R6_V166_INDIVIDUAL_MODIFIERS",
+      "topic": "Retrograde, swift, exalted and debilitated individual source-result modifiers",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"],
+      "locator": "Trailokya 1972 scan page 54; printed page 38; verse 166",
+      "established": "Each stated modifier in its individual source-result context.",
+      "notEstablished": "A universal multiplier stack, a combined financial multiplier, or a polarity map.",
+      "admission": "SOURCE_CERTIFIED_ISOLATED_RECORDS_ONLY"
+    },
+    {
+      "id": "R6_CONTEXT_AND_PRECEDENCE",
+      "topic": "Named context-specific conflict and precedence rules",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": ["TRAILOKYA_1972_CONTEXT_RESOLUTION_SOURCE_V1"],
+      "locator": "Trailokya verses 125, 146, 148-149, 152, 209, 213, 220-223, 246, and Arghya verses 357-376; context-resolution contract",
+      "established": "The listed contexts only, each with its source scope preserved.",
+      "notEstablished": "A universal multi-planet precedence resolver, generic cancellation rule, or FX operator.",
+      "admission": "SOURCE_CERTIFIED_NAMED_CONTEXTS_ONLY"
+    },
+    {
+      "id": "R6_APPLICATION_EXACT_SEPARATION",
+      "topic": "Applying, exact and separating efficacy",
+      "classification": "SOURCE_SILENT",
+      "verificationBasis": "SOURCE_GAP_AUDIT",
+      "sourceContracts": ["classical_oscillator_coverage_matrix_v1.yaml:ASPECT_PHASE_KERNEL", "classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"],
+      "locator": "No admitted page-bound timing rule or worked timing example closes this operator; existing coverage matrix ASPECT_PHASE_KERNEL.",
+      "established": "Nothing beyond geometric event-state boundaries supplied by a separately identified engineering contract.",
+      "notEstablished": "A source duration, onset, cessation, persistence, decay, or amplitude rule.",
+      "admission": "BLOCKED_BY_SOURCE"
+    },
+    {
+      "id": "R6_DURATION_TO_SCALE",
+      "topic": "Event duration mapped to a temporal scale",
+      "classification": "ENGINEERING_MAPPING",
+      "verificationBasis": "ENGINEERING_MAPPING",
+      "locator": "R6 proposed hypothesis only; no classical locator asserts the mapping.",
+      "established": "For a separately frozen geometric event, D_i = separatingEndUtc - applyingStartUtc can be calculated reproducibly.",
+      "notEstablished": "That D_i means strength, magnitude, persistence, profitability, or a classical effect duration.",
+      "admission": "MODE3_EXPERIMENTAL_ONLY"
+    },
+    {
+      "id": "R6_WAVES_WITHIN_WAVES",
+      "topic": "Nested, repeated, or multi-scale wave hierarchy",
+      "classification": "SOURCE_SILENT",
+      "verificationBasis": "SOURCE_GAP_AUDIT",
+      "sourceContracts": ["classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"],
+      "locator": "No admitted source packet closes a hierarchy connecting nested geometric events to a common causal wave.",
+      "established": "Only separately enumerated exact events and their atomic half-open intervals.",
+      "notEstablished": "Nested causal inheritance, repeated-hit amplification, a multi-scale aggregation, or smoothing.",
+      "admission": "BLOCKED_BY_SOURCE"
+    }
+  ],
+  "temporalOperatorLedger": [
+    {
+      "operatorId": "TD1972_STHULA_MOTION_STATE_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_STHULA_MOTION_CLASS_V1"],
+      "role": "CATEGORICAL_STATE",
+      "sourceLocator": "Trailokya 1972 scan pages 32-36; printed pages 16-20; verses 65-79",
+      "closedContent": "Source-named motion classes and descriptive residence material.",
+      "failClosedBoundary": "No automatic continuous threshold, stationary state, transit-influence onset/cessation, or effect persistence is admitted."
+    },
+    {
+      "operatorId": "GEOMETRIC_EVENT_INTERVAL_V1",
+      "classification": "ENGINEERING_MAPPING",
+      "verificationBasis": "ENGINEERING_MAPPING",
+      "role": "HALF_OPEN_EVENT_GEOMETRY",
+      "formula": "[applyingStartUtc, separatingEndUtc)",
+      "closedContent": "A deterministic event-compiler interval when its independent geometry contract provides the endpoints.",
+      "failClosedBoundary": "The interval is not claimed to be a source-defined Vedha or Drsti efficacy period."
+    },
+    {
+      "operatorId": "DURATION_TO_TEMPORAL_SCALE_HYPOTHESIS_V1",
+      "classification": "ENGINEERING_MAPPING",
+      "verificationBasis": "ENGINEERING_MAPPING",
+      "role": "EXPERIMENTAL_TEMPORAL_SCALE",
+      "formula": "D_i = separatingEndUtc - applyingStartUtc",
+      "proposedUse": "A future, separately preregistered scale label or ablation covariate only.",
+      "prohibitions": [
+        "NOT_A_CLASSICAL_MAGNITUDE",
+        "NOT_A_STRENGTH_INFERENCE",
+        "NOT_A_MODE1_OPERATOR",
+        "NOT_A_MARKET_DIRECTION_RULE",
+        "NOT_A_SMOOTHING_OR_DECAY_KERNEL"
+      ]
+    },
+    {
+      "operatorId": "APPLICATION_EXACT_SEPARATION_EFFICACY_V1",
+      "classification": "SOURCE_SILENT",
+      "verificationBasis": "SOURCE_GAP_AUDIT",
+      "sourceContracts": ["classical_oscillator_coverage_matrix_v1.yaml:ASPECT_PHASE_KERNEL", "classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"],
+      "role": "TEMPORAL_EFFECT_PROFILE",
+      "closedContent": "None.",
+      "requiredBeforeAdmission": [
+        "page-bound timing rule",
+        "source-defined boundary semantics",
+        "worked timing reproduction",
+        "scope and precedence evidence"
+      ]
+    },
+    {
+      "operatorId": "WAVES_WITHIN_WAVES_HIERARCHY_V1",
+      "classification": "SOURCE_SILENT",
+      "verificationBasis": "SOURCE_GAP_AUDIT",
+      "sourceContracts": ["classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"],
+      "role": "NESTED_EVENT_COMPOSITION",
+      "closedContent": "None.",
+      "prohibitions": [
+        "NO_REPEATED_HIT_AMPLIFICATION",
+        "NO_PARENT_CHILD_EFFECT_INHERITANCE",
+        "NO_MULTI_SCALE_WAVE_SCORE",
+        "NO_SMOOTHING"
+      ]
+    }
+  ],
+  "polarityQualificationLedger": [
+    {
+      "operatorId": "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1"],
+      "output": "SOURCE_PROFILED_CATEGORICAL_CLASS",
+      "marketDirectionAuthorized": false,
+      "notes": "Moon and Mercury remain conditional exactly as source-bounded; unresolved inputs remain UNKNOWN."
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1"],
+      "output": "DIRECTED_SOURCE_RELATIONSHIP_CATEGORY",
+      "marketDirectionAuthorized": false,
+      "notes": "Do not merge with the Brihat Jataka/Saravali relationship profile."
+    },
+    {
+      "operatorId": "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": ["BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1", "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1"],
+      "output": "TEMPORARY_RELATIONSHIP_CATEGORY",
+      "marketDirectionAuthorized": false,
+      "notes": "Retained under its own cross-text contract."
+    },
+    {
+      "operatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+      "sourceContracts": ["BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1", "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1"],
+      "output": "FIVE_STATE_COMPOUND_CATEGORY",
+      "marketDirectionAuthorized": false,
+      "notes": "Inputs, witness layer, and unresolved context must remain visible."
+    },
+    {
+      "operatorId": "CURRENCY_OR_MARKET_POLARITY_BRIDGE_V1",
+      "classification": "SOURCE_SILENT",
+      "verificationBasis": "SOURCE_GAP_AUDIT",
+      "output": "NONE",
+      "marketDirectionAuthorized": false,
+      "notes": "No admitted source translates any source class to currency or market polarity."
+    }
+  ],
+  "magnitudeGateModifierLedger": [
+    {
+      "operatorId": "TRAILOKYA_1972_STHANA_BALA_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_STHANA_BALA_V1"],
+      "role": "SOURCE_MEASUREMENT_RECORD",
+      "marketMagnitudeAuthorized": false,
+      "compositionStatus": "UNRESOLVED"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_STHANA_PHALA_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_STHANA_PHALA_V1"],
+      "role": "SOURCE_RESULT_MEASUREMENT_RECORD",
+      "marketMagnitudeAuthorized": false,
+      "compositionStatus": "UNRESOLVED"
+    },
+    {
+      "operatorId": "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1",
+      "classification": "SOURCE_EXPLICIT",
+      "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+      "sourceContracts": ["TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"],
+      "role": "ISOLATED_MODIFIER_RECORD",
+      "marketMagnitudeAuthorized": false,
+      "compositionStatus": "UNRESOLVED_NO_STACKING_RULE"
+    },
+    {
+      "operatorId": "MULTI_PLANET_PRECEDENCE_AND_CANCELLATION_V1",
+      "classification": "UNRESOLVED",
+      "verificationBasis": "SOURCE_GAP_AUDIT",
+      "role": "GATE_AND_CONFLICT_RESOLUTION",
+      "marketMagnitudeAuthorized": false,
+      "compositionStatus": "UNIVERSAL_RULE_NOT_SOURCE_CLOSED"
+    }
+  ],
+  "unresolvedSourceGaps": [
+    "SOURCE_DEFINED_APPLICATION_EXACT_SEPARATION_EFFICACY",
+    "SOURCE_DEFINED_EFFECT_ONSET_CESSATION_AND_PERSISTENCE",
+    "SOURCE_DEFINED_DURATION_OR_DECAY_KERNEL",
+    "CONTINUOUS_SWIFT_MEAN_THRESHOLD",
+    "STATIONARY_AND_DIRECT_SLOW_TREATMENT",
+    "UNIVERSAL_MULTI_PLANET_PRECEDENCE",
+    "UNIVERSAL_CANCELLATION_OR_OBSTRUCTION_ORDER",
+    "MULTI_MODIFIER_STACKING",
+    "REPEATED_OR_NESTED_EVENT_COMPOSITION",
+    "CLASSICAL_CURRENCY_OR_MARKET_POLARITY_BRIDGE",
+    "CLASSICAL_MARKET_MAGNITUDE_BRIDGE"
+  ],
+  "modeAdmissionMatrix": [
+    {
+      "mode": "MODE_1_SOURCE_CERTIFIED",
+      "admitted": "Profile-isolated categorical source annotations, source geometry, named context records, and individual source measurements with their locators and unknowns.",
+      "notAdmitted": "Market sign, score, currency mapping, duration effect, decay, composite strength, or execution."
+    },
+    {
+      "mode": "MODE_2_PROVISIONAL_RESEARCH",
+      "admitted": "Only a separately authorized, preregistered research bridge that keeps source profile, inputs, unknown policy, and outcome analysis distinct.",
+      "notAdmitted": "A result-fitted classical claim or promotion of an unresolved source dependency."
+    },
+    {
+      "mode": "MODE_3_EXPERIMENTAL_ENGINEERING",
+      "admitted": "The separately labelled D_i temporal-scale hypothesis and any future ablation that preserves raw event data and never calls D_i a classical strength or magnitude.",
+      "notAdmitted": "Mode 1 provenance, smoothing, nested-wave aggregation, or a production signal."
+    }
+  ],
+  "candidateExperiments": [
+    {
+      "id": "R6_CANDIDATE_A_CONTEXT_TO_MARKET_POLARITY_BRIDGE",
+      "kind": "FUTURE_MODE2_MARKET_RESEARCH_ONLY",
+      "question": "Can one isolated source-profiled categorical context be connected to a preregistered market-polarity bridge?",
+      "sourceClarity": "COMPONENTS_HIGH_BRIDGE_ABSENT",
+      "reasonNotRecommended": "The source does not supply the currency/market polarity bridge; choosing one now would be a new hypothesis rather than source closure."
+    },
+    {
+      "id": "R6_CANDIDATE_B_DURATION_TO_SCALE_ABLATION",
+      "kind": "FUTURE_MODE3_ENGINEERING_RESEARCH_ONLY",
+      "question": "Does the independently computed geometric duration D_i improve a separately preregistered temporal-scale partition?",
+      "sourceClarity": "SOURCE_SILENT_FOR_EFFECT_MEANING",
+      "reasonNotRecommended": "D_i is computable but its causal or magnitude meaning is not classical; it should not be the first post-S4 market-facing experiment."
+    },
+    {
+      "id": "R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION",
+      "kind": "PREREGISTERED_SOURCE_OPERATOR_REPRODUCTION_EXPERIMENT",
+      "question": "Can two isolated implementations reproduce source-closed categorical annotations for a fresh frozen event population while preserving UNKNOWN for every unclosed dependency?",
+      "sourceClarity": "HIGH_FOR_BOUNDED_COMPONENTS_AND_UNKNOWN_POLICY",
+      "reasonRecommended": "It is independent of S4 results, computable, falsifiable, high-information for the next market-design gate, and avoids both source-profile pooling and double counting."
+    }
+  ],
+  "recommendedExperimentId": "R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION",
+  "futurePreregistrationSkeleton": {
+    "experimentId": "R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION",
+    "researchQuestion": "Do independently implemented source-closed components and abstention rules reproduce exactly on a fresh, frozen event population?",
+    "evaluatorIndependence": {
+      "evaluatorA": "A separate implementation with an independently frozen source hash; it must not import Evaluator B code, business logic, helpers, or expected-output fixtures.",
+      "evaluatorB": "A separate implementation with an independently frozen source hash; it must not import Evaluator A code, business logic, helpers, or expected-output fixtures.",
+      "sharedOnly": [
+        "frozen input population",
+        "exact astronomy inputs",
+        "immutable source packet and contract identities",
+        "schemas",
+        "declared semantic rules"
+      ],
+      "notShared": [
+        "evaluator business logic",
+        "source-category helper functions",
+        "expected outputs generated by either evaluator",
+        "post-execution discrepancy repairs"
+      ],
+      "freezeBeforeExecution": [
+        "Evaluator A implementation identity and source hash",
+        "Evaluator B implementation identity and source hash",
+        "both implementation identities must be frozen before either output is inspected"
+      ],
+      "mismatchPolicy": "Any mismatch fails the frozen run. Do not patch either evaluator after a discrepancy and continue the same run; source adjudication or implementation correction requires a new preregistered run.",
+      "interpretationBoundary": "Agreement tests deterministic implementation reproducibility of already source-certified contracts. It does not independently prove the historical truth of the underlying interpretation beyond the accepted source packets and does not validate market prediction."
+    },
+    "populationFreezeRequirements": [
+      "exact UTC start",
+      "exact UTC end",
+      "event compiler commit",
+      "event compiler source hash",
+      "astronomy configuration",
+      "source-profile set",
+      "event inclusion and exclusion rule",
+      "exact population hash"
+    ],
+    "populationFreezeTiming": "All population fields must be frozen before either evaluator is written or executed.",
+    "populationSelectionBoundary": "Population selection must not use S4 success or failure rows, market outcomes, or any result-derived criterion.",
+    "candidateCScope": {
+      "mayReproduce": [
+        "source-certified categorical fields",
+        "literal individual source records and their stated conditions",
+        "mandatory UNKNOWN decisions"
+      ],
+      "mustNot": [
+        "stack modifiers",
+        "combine unresolved strengths",
+        "infer precedence",
+        "produce market magnitude",
+        "produce USD/JPY sign",
+        "use D_i as strength",
+        "create a wave",
+        "create a score"
+      ],
+      "verse166Policy": "If included, verse-166 records remain individual source-certified conditions only; no multi-condition composition is allowed."
+    },
+    "population": "All distinct event identities emitted by a separately frozen event-compiler version within a future fixed UTC interval; no S4 identities are reused for selection or tuning.",
+    "sourceProfiles": [
+      "TRAILOKYA_DIPIKA_1972",
+      "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES"
+    ],
+    "admittedComponents": [
+      "natural planet class with source-bounded Moon and Mercury conditions",
+      "profile-isolated natural relationship",
+      "temporary and compound relationship under their own cross-text contract",
+      "ordinary and special Drsti geometry under their own source contract",
+      "Sthula motion category when a source-defined category is determinable",
+      "individual source records without stacking"
+    ],
+    "unknownAndExclusionPolicy": "Any missing input, unsupported context, stationary/direct-slow condition, unclosed precedence, or unclosed timing rule is UNKNOWN and is reported rather than imputed, neutralized, or removed after inspection.",
+    "eventBoundaryRule": "Use exact UTC identities and half-open geometric intervals supplied by the independently frozen event compiler. These boundaries are engineering geometry, not source-defined efficacy windows.",
+    "signRule": "NOT_ASSIGNED",
+    "signRuleBoundary": "No market direction, currency polarity, or classical-to-FX bridge is tested.",
+    "magnitudeRule": "NOT_ASSIGNED",
+    "magnitudeRuleBoundary": "No source measurements are summed, stacked, normalized, or translated to market magnitude.",
+    "requiredData": "Frozen astronomical inputs, source packet identifiers, implementation outputs, unknown reasons, and reproducibility hashes only. No price, return, trade, execution, or outcome field is permitted.",
+    "primaryEndpoint": "Exact per-field agreement between the two independently built evaluators, plus exact agreement on required UNKNOWN outcomes.",
+    "statisticalNull": "NOT_APPLICABLE_DETERMINISTIC_REPRODUCTION",
+    "failureCondition": "Any disagreement on a declared source-closed field, any unlicensed fallback, or any mandatory UNKNOWN converted into a value fails the frozen run.",
+    "passCriterion": "Zero discrepancies across all preregistered source-closed output fields and mandatory UNKNOWN decisions.",
+    "noPValue": true,
+    "noToleranceBasedCategoricalPass": true,
+    "falsificationRule": "Any disagreement on a declared source-closed field, any unlicensed fallback, or any UNKNOWN silently converted to a value fails the experiment; no post hoc adjudication may change the frozen run.",
+    "statistics": "Report all-record exact agreement and the complete discrepancy ledger. There is no p-value and no averaging of discrepancies.",
+    "multipleTesting": "No pooled score or omnibus market test. Report each profile and component family separately; discrepancies are not averaged away.",
+    "stoppingRule": "Fixed population and fixed evaluator versions. A failed run is closed; expansion, source adjudication, or a new population requires a new preregistration.",
+    "successDoesNotAuthorize": [
+      "market outcome evaluation",
+      "currency polarity",
+      "duration efficacy",
+      "magnitude scoring",
+      "runtime promotion",
+      "execution"
+    ]
+  },
+  "productImplications": {
+    "IMPLEMENTABLE_SOURCE_CERTIFIED": "Read-only, source-profiled provenance and categorical annotation display with literal locator and UNKNOWN state.",
+    "IMPLEMENTABLE_EXPERIMENTAL": "A separately versioned research-only D_i temporal-scale label, never a strength, amplitude, or predictive signal.",
+    "RESEARCH_ONLY": "The recommended independent source-operator reproduction experiment and any future source-to-market bridge hypothesis.",
+    "BLOCKED_BY_SOURCE": "Application/separation efficacy, duration/persistence/decay, nested-wave composition, universal precedence, universal cancellation, and any market bridge.",
+    "BLOCKED_BY_EMPIRICAL_VALIDATION": "Any market-facing claim even if a future bridge is explicitly preregistered."
+  },
+  "locks": {
+    "noPolarity": true,
+    "noScore": true,
+    "noPriceForecast": true,
+    "noFieldsPolarity": true,
+    "noAutoSuggest": true,
+    "noML": true,
+    "noMT5": true,
+    "noExecution": true
+  },
+  "nextGate": "CENTRAL_REVIEW_R6_BEFORE_NEXT_EXPERIMENT_IMPLEMENTATION",
+  "r6CandidateOperatorLedgerHash": "309AB8C708EFDB31E57D5E746EA93C747DBDE7A0164F3A61062815BB0CDF9812"
+}

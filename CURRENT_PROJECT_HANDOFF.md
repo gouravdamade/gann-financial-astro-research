@@ -12722,3 +12722,44 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Production controls remain locked: `executionAllowed=false`.
 - Next gate:
   `CENTRAL_REVIEW_S4_EXPERIMENT_CLOSE_AND_NEXT_RESEARCH_DESIGN`.
+
+## MO-R4A-R6 Source-Operator Research Freeze
+
+- R6 source-first research was completed from starting commit
+  `142ce10c9c5fd3950f2068ea323096b976c3061a`. No S4 outcome row, price,
+  return, provider, or runtime code was accessed or changed.
+- The controlling Trailokya 1972 scan was independently hash-verified as
+  `1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194`.
+  Fresh R6 page-image reinspection is limited to scan pages `29-36` and
+  `53-55` (printed pages `13-20` and `37-39`). Later-page claims and
+  Brihat Jataka/Saravali claims are explicitly inherited from named existing
+  source-closed contracts; source profiles remain isolated.
+- R6 confirms the substantive conclusion: categorical source operators may be
+  preserved with provenance, but market/currency polarity is `SOURCE_SILENT`,
+  sign and magnitude are `NOT_ASSIGNED`, applying/exact/separating efficacy and
+  persistence/decay remain unsupported, universal precedence/cancellation and
+  modifier stacking remain unresolved, and waves-within-waves remain
+  `SOURCE_SILENT`.
+- `D_i = separatingEndUtc - applyingStartUtc` remains an
+  `ENGINEERING_MAPPING` only. It is not duration-to-strength, not a classical
+  magnitude, and not a Mode 1 operator.
+- Candidate count remains exactly `3`; the only recommendation remains
+  `R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION`.
+  Candidate C requires separate Evaluator A and Evaluator B implementations,
+  independently frozen source hashes, no shared business logic or expected
+  outputs, and a new preregistration after any mismatch or source adjudication.
+- Candidate C uses `statisticalNull=NOT_APPLICABLE_DETERMINISTIC_REPRODUCTION`.
+  Its pass criterion is zero discrepancies across source-closed fields and
+  mandatory `UNKNOWN` decisions; there is no p-value, averaging, or categorical
+  tolerance.
+- Machine ledger:
+  `status/research/mo_r4a_r6_candidate_operator_ledger_v1.json`.
+  Research record:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_R6_CLASSICAL_OPERATOR_TEMPORAL_SCALE_RESEARCH.md`.
+  Ledger hash convention is uppercase SHA-256 of sorted-key UTF-8 canonical
+  JSON with `ensure_ascii=true`, compact separators, and the self-hash field
+  excluded.
+- All product and execution locks remain true: no polarity, score, price
+  forecast, Fields polarity, Auto Suggest, ML, MT5, or execution.
+- Next gate:
+  `CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION`.
