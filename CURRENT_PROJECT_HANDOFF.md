@@ -12697,3 +12697,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `ml=false`, and `mt5=false` remain locked.
 - Next gate:
   `CENTRAL_REVIEW_BEFORE_ASTRA_POST_OUTCOME_AUDIT`.
+
+## MO-R4A-S4-O2 Astra Post-Outcome Scientific Audit Freeze
+
+- Astra completed the post-outcome scientific audit with verdict
+  `POST_OUTCOME_SCIENTIFIC_AUDIT_PASS`.
+- The O2 result was independently reproduced from the frozen parsed witnesses;
+  all `39/39` endpoint, hit, permutation, cluster, side-descriptive, timing,
+  survival, and result-hash identities matched. The frozen evaluator also
+  reproduced the committed result exactly.
+- The pilot result remains unchanged: `primaryScorableCount=13`, `H=8`,
+  `pExact=0.30`, `clusterBalanced=11/20`,
+  `TIMING_SPECIFICITY_NOT_DEMONSTRATED`, and
+  `PILOT_ASSOCIATION_NOT_SURVIVED`. The sole failed survival criterion was
+  `pExact <= 0.10`; timing remains a separate diagnostic.
+- No tuning, repair, source change, or new outcome analysis occurred during
+  the audit. The current pilot is `CLOSED`; the permitted interpretation
+  remains association under the preregistered conditional within-side
+  permutation null in this fixed feasibility pilot.
+- Astra disposition:
+  `status/audits/mo_r4a_s4_o2_astra_post_outcome_scientific_audit_disposition.json`.
+  Canonical self-hash:
+  `083F440880C5CC935C6A65F0846CD25228F20C2DE6C733BD0E3BA22C1AE39FD0`.
+- Production controls remain locked: `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_S4_EXPERIMENT_CLOSE_AND_NEXT_RESEARCH_DESIGN`.

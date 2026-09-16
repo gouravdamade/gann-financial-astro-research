@@ -1,0 +1,1086 @@
+{
+  "contract": "MO_R4A_S4_O2_ASTRA_POST_OUTCOME_SCIENTIFIC_AUDIT_DISPOSITION_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-S4-O2",
+  "auditor": "ASTRA",
+  "auditDate": "2026-09-16",
+  "targetO2ResultCommit": "25e858357375c478ff6b0f2620d918e3d30a0a99",
+  "repositoryIdentity": {
+    "head": "25e858357375c478ff6b0f2620d918e3d30a0a99",
+    "originMasterLocalTrackingRef": "25e858357375c478ff6b0f2620d918e3d30a0a99",
+    "remoteContacted": false,
+    "note": "HEAD and the existing origin/master tracking ref were checked locally; no network refresh was performed."
+  },
+  "O1EvaluatorFreezeCommit": "0cf1ebf32dfe7b239d500e25b12c3037fcfa8e3c",
+  "O2AuthorizationCommit": "955f3fa004f11616d6aa8c31775447a57ed25b98",
+  "evaluatorSourceSha256": "702049C05930C470BE069C6ADB95BBF2067FCA35C9C9BCB309E720226111100A",
+  "testSourceSha256": "8FC8E888AC370F0DA686702D6ADBFEA1E4BA238EC9CB3429D6E5F690C6C50D5B",
+  "O1FreezeHash": "3153A83919207E1866339DFEB7CD4755EDFC0AD31AD8ED2DB190F11BEA88F8A6",
+  "O2AuthorizationHash": "3AA3B483F976E7E60DF996F62A0BCFA3059D815151179E7D2AAD7015DBCAB13E",
+  "O2ResultHash": "53010A50F7C6EBFA09AD5855FE70204126AD40959AE643A8AE91564021B9FD2B",
+  "identityVerification": {
+    "configs/research/machine_interpretation/market_data_acquisition_contract_s3r1_r3_r2_v1.json": {
+      "field": "marketDataAcquisitionContractHash",
+      "sha256": "BE4C378E368956F46F69D004D0C7522B32EA784C15894106B98DA8AA9A983CAC",
+      "verified": true
+    },
+    "configs/research/machine_interpretation/outcome_analysis_preregistration_s3r1_r3_r2_v1.json": {
+      "field": "preregistrationHash",
+      "sha256": "23564E1F41C441EC1FB98B3FBD025F43643AEF75C27AD080550F7DCB7D64F272",
+      "verified": true
+    },
+    "status/acceptance/mo_r4a_s3r1_r3_r2_frozen_analysis_package.json": {
+      "field": "analysisCoreManifestHash",
+      "sha256": "9B7D06C3F3BD7470478C75F9313EFBF9EB6C29E8BE766A74693FF77DA60A5C64",
+      "verified": true
+    },
+    "status/acceptance/mo_r4a_s3r1_r3_r2_outcome_analysis_preregistration.json": {
+      "field": "acceptanceManifestHash",
+      "sha256": "632D2B0C10D2F44287D8493495EC06E5CEDF6D7AD9DBC7374F2F2968327F9D8B",
+      "verified": true
+    },
+    "status/acceptance/mo_r4a_s3r1_r3_r3_root_purity_gate.json": {
+      "field": "rootPurityGateHash",
+      "sha256": "128F4E3F03CB7E5C190484CFB04796088FED15165B3AC81A867DA2B64F5606F2",
+      "verified": true
+    },
+    "status/acceptance/mo_r4a_s4_a1_acquisition_freeze_gate.json": {
+      "field": "acquisitionFreezeGateHash",
+      "sha256": "8F800EC0222ECE728E3D78D4F96E65F7FE7DCF7B7C85E1EF72EEEDAB7461804F",
+      "verified": true
+    },
+    "status/acceptance/mo_r4a_s4_o1_outcome_evaluator_implementation_freeze.json": {
+      "field": "selfHash",
+      "sha256": "3153A83919207E1866339DFEB7CD4755EDFC0AD31AD8ED2DB190F11BEA88F8A6",
+      "verified": true
+    },
+    "status/acceptance/mo_r4a_s4_o2_outcome_execution_authorization.json": {
+      "field": "selfHash",
+      "sha256": "3AA3B483F976E7E60DF996F62A0BCFA3059D815151179E7D2AAD7015DBCAB13E",
+      "verified": true
+    },
+    "status/audits/mo_r4a_s3r1_r3_r2_analysis_plan_invariance_audit.json": {
+      "field": "analysisPlanInvarianceAuditHash",
+      "sha256": "C53F5EB8C6ADAB19D090A834FBCFABA6D9207ADC9640C6E08CD8534D137748F9",
+      "verified": true
+    },
+    "status/audits/mo_r4a_s3r1_r3_r2_overlap_clusters.json": {
+      "field": "overlapClustersHash",
+      "sha256": "6D4968B9C7DB7B912FFF2567088AECFEE7AC00C5329BD0245E6BDE3A6613CC0E",
+      "verified": true
+    },
+    "status/audits/mo_r4a_s3r1_r3_r2_primary_analysis_population.json": {
+      "field": "primaryPopulationHash",
+      "sha256": "7F3CB6DE622A71FDA7F66E89BDAE2D0B7E3228E94BCAC403220DB17CF2686317",
+      "verified": true
+    },
+    "status/audits/mo_r4a_s4_a1_a2_astra_acquisition_provenance_audit_disposition.json": {
+      "field": "astraAcquisitionAuditDispositionHash",
+      "sha256": "BD7A31104BD339DE032C124A85D1A868021523EFD764789827BFD93371D04D78",
+      "verified": true
+    },
+    "status/audits/mo_r4a_s4_a1_market_data_raw_acquisition_manifest.json": {
+      "field": "rawAcquisitionManifestHash",
+      "sha256": "FA336FA0577EB2EC5917E8811BF1918326E130091D56CF7948C401F5405AA71E",
+      "verified": true
+    }
+  },
+  "additionalCanonicalIdentities": {
+    "analysisIntervalSetHash": "3A76939D2597AAE4742587738846987E82EBC73F1A47730F6809303634122465",
+    "aggregateCaptureHash": "F1488479ED7F963F517A0C6BD1FEF393882628A5BFE35B3795A31E8CC119044D",
+    "independentlyRecomputed": true
+  },
+  "parsedWitnessVerification": {
+    "expected": 15,
+    "verified": 15,
+    "hashGateBeforeAnalyticalParsing": true,
+    "totalParsedRecords": 3947368,
+    "witnesses": [
+      {
+        "expectedSha256": "A92718F67571E0A0A9BC122C098A65371BA827E3996665D9AAD1353FBF5111C1",
+        "logicalParsedCaptureName": "USDJPY_20250324_15DE91F9CA23EF51.jsonl",
+        "observedSha256": "A92718F67571E0A0A9BC122C098A65371BA827E3996665D9AAD1353FBF5111C1",
+        "verified": true
+      },
+      {
+        "expectedSha256": "404E6F9A13FEFEE3D0C723A02ECB1CDFDF6AB1125C3A804B58489FC17630C12C",
+        "logicalParsedCaptureName": "USDJPY_20250325_F0603D0A35596CA7.jsonl",
+        "observedSha256": "404E6F9A13FEFEE3D0C723A02ECB1CDFDF6AB1125C3A804B58489FC17630C12C",
+        "verified": true
+      },
+      {
+        "expectedSha256": "0B42C6236317BC16C0D902F5EC47FD201EE83329AF656C886C61AB6139C2D9AB",
+        "logicalParsedCaptureName": "USDJPY_20250326_17C1250CD80BEE85.jsonl",
+        "observedSha256": "0B42C6236317BC16C0D902F5EC47FD201EE83329AF656C886C61AB6139C2D9AB",
+        "verified": true
+      },
+      {
+        "expectedSha256": "0F97D494E3A9E359FD74823C809CA92D16DF69EFAF1FD612231FEAD422CEC357",
+        "logicalParsedCaptureName": "USDJPY_20250327_30E1BB0795B51FE6.jsonl",
+        "observedSha256": "0F97D494E3A9E359FD74823C809CA92D16DF69EFAF1FD612231FEAD422CEC357",
+        "verified": true
+      },
+      {
+        "expectedSha256": "01EB0D46A7694E09EBDDEDA5E5672FF9D6E8076FAAAA907354FEA7230CCE59AE",
+        "logicalParsedCaptureName": "USDJPY_20250328_4580D82CFEB6CFFC.jsonl",
+        "observedSha256": "01EB0D46A7694E09EBDDEDA5E5672FF9D6E8076FAAAA907354FEA7230CCE59AE",
+        "verified": true
+      },
+      {
+        "expectedSha256": "DEC89BF24BFC0023CE899390468ADE4410551B818172A925F230A4FECBD22F17",
+        "logicalParsedCaptureName": "USDJPY_20250331_EDFA1A554CED400C.jsonl",
+        "observedSha256": "DEC89BF24BFC0023CE899390468ADE4410551B818172A925F230A4FECBD22F17",
+        "verified": true
+      },
+      {
+        "expectedSha256": "4D9DB9EBACA3C4CE7357035CE1C8571E5F15722569C10B7941C68337044D8962",
+        "logicalParsedCaptureName": "USDJPY_20250401_25A1BFB9EA540C4A.jsonl",
+        "observedSha256": "4D9DB9EBACA3C4CE7357035CE1C8571E5F15722569C10B7941C68337044D8962",
+        "verified": true
+      },
+      {
+        "expectedSha256": "29D5E413953FA5EDF4ADCA205D7724F88A395017C1D7FF4639A373CC57DB67DC",
+        "logicalParsedCaptureName": "USDJPY_20250402_4E90DB7CE949A329.jsonl",
+        "observedSha256": "29D5E413953FA5EDF4ADCA205D7724F88A395017C1D7FF4639A373CC57DB67DC",
+        "verified": true
+      },
+      {
+        "expectedSha256": "9C7925A6E4FE664EC3E4D6E5E506A1EC46440A993DF1B7740B1BE1611B316722",
+        "logicalParsedCaptureName": "USDJPY_20250403_49180A5F960F5B4B.jsonl",
+        "observedSha256": "9C7925A6E4FE664EC3E4D6E5E506A1EC46440A993DF1B7740B1BE1611B316722",
+        "verified": true
+      },
+      {
+        "expectedSha256": "17D2C5316B5BBADA3FAA6CE02D347A8D99664B9543721D4C36954D5D0E4BE536",
+        "logicalParsedCaptureName": "USDJPY_20250404_D247B6FBD9375E6F.jsonl",
+        "observedSha256": "17D2C5316B5BBADA3FAA6CE02D347A8D99664B9543721D4C36954D5D0E4BE536",
+        "verified": true
+      },
+      {
+        "expectedSha256": "ADD734A561A32197A73962D4C1B62CE11FDE931252A350D015C98F137A0E4519",
+        "logicalParsedCaptureName": "USDJPY_20250407_BE0E8B0A0698AB5A.jsonl",
+        "observedSha256": "ADD734A561A32197A73962D4C1B62CE11FDE931252A350D015C98F137A0E4519",
+        "verified": true
+      },
+      {
+        "expectedSha256": "1DC2518C1E3BE2EC66CD30518EF8A885214E6A876012F47B0ABC2E1A36D9B7DB",
+        "logicalParsedCaptureName": "USDJPY_20250408_51D09564A0CE2AB9.jsonl",
+        "observedSha256": "1DC2518C1E3BE2EC66CD30518EF8A885214E6A876012F47B0ABC2E1A36D9B7DB",
+        "verified": true
+      },
+      {
+        "expectedSha256": "0B5DC32285774BE0EE4AE0341729DFEBDBC03828A1DCDB80C4AF119259E22999",
+        "logicalParsedCaptureName": "USDJPY_20250409_4147369A33DABD5C.jsonl",
+        "observedSha256": "0B5DC32285774BE0EE4AE0341729DFEBDBC03828A1DCDB80C4AF119259E22999",
+        "verified": true
+      },
+      {
+        "expectedSha256": "4A320CE7C8B9E8663793B8309A137DAF4892A84906739A969D193F6D7798221E",
+        "logicalParsedCaptureName": "USDJPY_20250410_1F25E025A36E69E7.jsonl",
+        "observedSha256": "4A320CE7C8B9E8663793B8309A137DAF4892A84906739A969D193F6D7798221E",
+        "verified": true
+      },
+      {
+        "expectedSha256": "003FB802202E6820E86906D65B4388019B06AFF01420A7BE9C6E2559B90C26E6",
+        "logicalParsedCaptureName": "USDJPY_20250411_5269E6BBE590DEB8.jsonl",
+        "observedSha256": "003FB802202E6820E86906D65B4388019B06AFF01420A7BE9C6E2559B90C26E6",
+        "verified": true
+      }
+    ],
+    "rawBi5Read": false,
+    "replacementDataUsed": false
+  },
+  "reproduction": {
+    "independentMethod": "Separate stdlib JSON parsing, per-day timestamp grouping and bisection, independent Decimal arithmetic, USD single-index and JPY combinations enumeration; no O1 import or committed result access before calculation complete.",
+    "independentNumericalContract": {
+      "decimalPrecision": 50,
+      "rounding": "ROUND_HALF_EVEN",
+      "midpoint": "(bidNative + askNative) / 2000",
+      "logReturn": "ln(endMidpoint / startMidpoint)"
+    },
+    "frozenEvaluatorUnmodified": true,
+    "frozenEvaluatorCanonicalObjectEqualsCommitted": true,
+    "independentlyRecomputedResultHash": "53010A50F7C6EBFA09AD5855FE70204126AD40959AE643A8AE91564021B9FD2B",
+    "frozenEvaluatorResultHash": "53010A50F7C6EBFA09AD5855FE70204126AD40959AE643A8AE91564021B9FD2B",
+    "comparisons": {
+      "clusterBalanced": true,
+      "intervalResults": true,
+      "permutation": true,
+      "primary": true,
+      "sideDescriptives": true,
+      "survivalStatus": true,
+      "timing": true
+    },
+    "endpointReproduction": {
+      "expected": 39,
+      "matched": 39,
+      "intervalConvention": "[startUtc,endUtc)",
+      "startRule": "First valid timestamp >= startUtc and < endUtc",
+      "endRule": "Last valid timestamp < endUtc and >= startUtc",
+      "minimumDistinctTimestamps": 2,
+      "interpolationUsed": false,
+      "outsideRescueUsed": false,
+      "candlesUsed": false,
+      "alternativeHorizonUsed": false
+    },
+    "directionMapping": {
+      "USD SUPPORTIVE": "UP",
+      "USD ADVERSE": "DOWN",
+      "JPY SUPPORTIVE": "DOWN",
+      "JPY ADVERSE": "UP"
+    },
+    "hitReproduction": {
+      "expected": 39,
+      "matched": 39,
+      "rule": "1 iff q * logReturn > 0; zero is a miss"
+    },
+    "intervalChecks": [
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 45089,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_4A15CCC7D126313A14BCB562::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_4A15CCC7D126313A14BCB562",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 93159,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_6E2DD561FB40D45D406F808E::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_6E2DD561FB40D45D406F808E",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 99231,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_7CCC78DA82BDAC13D3CF60B0::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 86559,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_397A2B053BC76D9D788E5E5E::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_397A2B053BC76D9D788E5E5E",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 35699,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_B24B1690FD8612329198D379::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_B24B1690FD8612329198D379",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 91788,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_8C3582F7101F4F14BC4ECC4F::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 128848,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_B8750233DA923D431E121862::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_B8750233DA923D431E121862",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 130851,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_529E2CBC72B405EAD0990350::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_529E2CBC72B405EAD0990350",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 171500,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_29BCE2386E5DB19625921587::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_29BCE2386E5DB19625921587",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 150960,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_6F48D71F91F1382FAA720581::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_6F48D71F91F1382FAA720581",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 124635,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_97C9294ED13CD6C36FB0840B::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_97C9294ED13CD6C36FB0840B",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 226381,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_574C7A7407B855CD78DF8E0D::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_574C7A7407B855CD78DF8E0D",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 271151,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_A32A6104A917D4918B269910::ACTUAL",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_A32A6104A917D4918B269910",
+        "horizon": "ACTUAL",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 31518,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_4A15CCC7D126313A14BCB562::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_4A15CCC7D126313A14BCB562",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 60894,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_6E2DD561FB40D45D406F808E::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_6E2DD561FB40D45D406F808E",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 55758,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_7CCC78DA82BDAC13D3CF60B0::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 48230,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_397A2B053BC76D9D788E5E5E::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_397A2B053BC76D9D788E5E5E",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 34122,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_B24B1690FD8612329198D379::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_B24B1690FD8612329198D379",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 69956,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_8C3582F7101F4F14BC4ECC4F::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 46040,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_B8750233DA923D431E121862::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_B8750233DA923D431E121862",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 48008,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_529E2CBC72B405EAD0990350::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_529E2CBC72B405EAD0990350",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 76288,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_29BCE2386E5DB19625921587::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_29BCE2386E5DB19625921587",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 65300,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_6F48D71F91F1382FAA720581::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_6F48D71F91F1382FAA720581",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 50745,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_97C9294ED13CD6C36FB0840B::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_97C9294ED13CD6C36FB0840B",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 77540,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_574C7A7407B855CD78DF8E0D::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_574C7A7407B855CD78DF8E0D",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 82496,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_A32A6104A917D4918B269910::MINUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_A32A6104A917D4918B269910",
+        "horizon": "MINUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 102708,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_4A15CCC7D126313A14BCB562::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_4A15CCC7D126313A14BCB562",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 176053,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_6E2DD561FB40D45D406F808E::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_6E2DD561FB40D45D406F808E",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 218190,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_7CCC78DA82BDAC13D3CF60B0::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 203025,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_397A2B053BC76D9D788E5E5E::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_397A2B053BC76D9D788E5E5E",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 157173,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_B24B1690FD8612329198D379::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_B24B1690FD8612329198D379",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 211401,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_8C3582F7101F4F14BC4ECC4F::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 129055,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_B8750233DA923D431E121862::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_B8750233DA923D431E121862",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 132924,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_529E2CBC72B405EAD0990350::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_529E2CBC72B405EAD0990350",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 206738,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_29BCE2386E5DB19625921587::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_29BCE2386E5DB19625921587",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 186983,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_6F48D71F91F1382FAA720581::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_6F48D71F91F1382FAA720581",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 169130,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_97C9294ED13CD6C36FB0840B::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_97C9294ED13CD6C36FB0840B",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 204774,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_574C7A7407B855CD78DF8E0D::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_574C7A7407B855CD78DF8E0D",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      },
+      {
+        "conflictTimestampCount": 0,
+        "distinctValidTimestamps": 172394,
+        "duplicateRecordCount": 0,
+        "intervalId": "TN_A32A6104A917D4918B269910::PLUS_7",
+        "invalidQuoteCount": 0,
+        "eventId": "TN_A32A6104A917D4918B269910",
+        "horizon": "PLUS_7",
+        "eventAndHorizonExact": true,
+        "startAndEndTimestampExact": true,
+        "scorableAndStatusExact": true,
+        "logReturnExact": true,
+        "expectedDirectionAndHitExact": true
+      }
+    ],
+    "duplicateConflictAudit": {
+      "observedDuplicateRecords": 0,
+      "observedQuoteConflictTimestamps": 0,
+      "observedVolumeOnlyDifferenceTimestamps": 0,
+      "invalidQuotesInSelectedIntervals": 0,
+      "sourceRule": "Identical timestamp and quote deduplicate; differing bid/ask at one timestamp makes the affected interval unscorable; conflicts outside the interval do not poison it.",
+      "syntheticTestsPassed": true
+    },
+    "scientificResults": {
+      "clusterBalanced": {
+        "clusterCount": 4,
+        "clusters": [
+          {
+            "clusterId": "C1",
+            "eventCount": 5,
+            "hitCount": 3,
+            "hitRate": "0.6",
+            "hitRateFraction": "3/5"
+          },
+          {
+            "clusterId": "C2",
+            "eventCount": 1,
+            "hitCount": 0,
+            "hitRate": "0",
+            "hitRateFraction": "0/1"
+          },
+          {
+            "clusterId": "C3",
+            "eventCount": 2,
+            "hitCount": 2,
+            "hitRate": "1",
+            "hitRateFraction": "1/1"
+          },
+          {
+            "clusterId": "C4",
+            "eventCount": 5,
+            "hitCount": 3,
+            "hitRate": "0.6",
+            "hitRateFraction": "3/5"
+          }
+        ],
+        "equalWeightedHitRate": "0.55",
+        "equalWeightedHitRateFraction": "11/20",
+        "secondaryPValue": null
+      },
+      "permutation": {
+        "assignmentCount": 40,
+        "histogram": [
+          {
+            "assignmentCount": 0,
+            "hitCount": 0
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 1
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 2
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 3
+          },
+          {
+            "assignmentCount": 8,
+            "hitCount": 4
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 5
+          },
+          {
+            "assignmentCount": 20,
+            "hitCount": 6
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 7
+          },
+          {
+            "assignmentCount": 12,
+            "hitCount": 8
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 9
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 10
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 11
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 12
+          },
+          {
+            "assignmentCount": 0,
+            "hitCount": 13
+          }
+        ],
+        "inclusiveTailCount": 12,
+        "observedAssignmentIndex": 0,
+        "observedHitCount": 8,
+        "pExact": "0.3"
+      },
+      "primary": {
+        "denominator": 13,
+        "observedHitCount": 8,
+        "primaryHitRate": "0.61538461538461538461538461538461538461538461538462",
+        "scorableEventCount": 13,
+        "status": "COMPLETE"
+      },
+      "sideDescriptives": {
+        "JPY": {
+          "classification": "DESCRIPTIVE_ONLY",
+          "eventCount": 8,
+          "hitCount": 5,
+          "hitRate": "0.625",
+          "meanExpectedSignedLogReturn": "0.0021190679135268557501818958542400011336123671837178",
+          "medianExpectedSignedLogReturn": "0.0019546479001834211031770802531702204499791127833385"
+        },
+        "USD": {
+          "classification": "DESCRIPTIVE_ONLY",
+          "eventCount": 5,
+          "hitCount": 3,
+          "hitRate": "0.6",
+          "meanExpectedSignedLogReturn": "0.0032353618189090312612238896095233709174925002565434",
+          "medianExpectedSignedLogReturn": "0.0032664892896149530286589577390103028388527284219653"
+        }
+      },
+      "survivalStatus": "PILOT_ASSOCIATION_NOT_SURVIVED",
+      "timing": {
+        "hitCounts": {
+          "ACTUAL": 8,
+          "MINUS_7": 6,
+          "PLUS_7": 8
+        },
+        "secondaryPValue": null,
+        "status": "TIMING_SPECIFICITY_NOT_DEMONSTRATED"
+      }
+    },
+    "permutationVerification": {
+      "usdAssignments": 5,
+      "jpyAssignments": 8,
+      "jointAssignments": 40,
+      "all40AssignmentsAndHitCountsExact": true,
+      "observedAssignmentIncluded": true,
+      "windowsAndReturnsHeldFixed": true,
+      "inclusiveTailRule": "H_perm >= H_observed",
+      "secondaryPValueAdded": false
+    },
+    "clusterMembershipMatchesFrozenArtifact": true,
+    "survivalCriteria": {
+      "all13PrimaryValid": true,
+      "clusterBalancedAboveHalf": true,
+      "exactPermutationThreshold": false,
+      "primaryHitRateAboveHalf": true
+    },
+    "soleFailingSurvivalCriterion": "pExact <= 0.10: 0.3 exceeds 0.10",
+    "timingDiagnosticSeparateFromSurvival": true
+  },
+  "codeFreeze": {
+    "authorizationCommitChanges": [
+      "CURRENT_PROJECT_HANDOFF.md",
+      "status/acceptance/mo_r4a_s4_o2_outcome_execution_authorization.json"
+    ],
+    "noSourceChangesAfterO1": true,
+    "resultCommitChanges": [
+      "CURRENT_PROJECT_HANDOFF.md",
+      "docs/research/MULTI_OSCILLATOR_MO_R4A_S4_O2_FIRST_EMPIRICAL_OUTCOME_EVALUATION.md",
+      "status/audits/mo_r4a_s4_o2_outcome_evaluation_result.json"
+    ],
+    "result": "PASS",
+    "experimentAndSourceUnmodifiedByAudit": true
+  },
+  "antiTuning": {
+    "result": "NO_TUNING_FOUND_IN_AVAILABLE_EXECUTION_AND_GIT_EVIDENCE",
+    "evidenceScope": "Original O2 user turn through the next audit request, plus the O1 -> O2 authorization -> O2 result commit chain.",
+    "sessionId": "019e2d0e-1b07-7bb3-a5fc-4e1f4cd92b63",
+    "windowStartUtc": "2026-09-16T06:23:03.910Z",
+    "windowEndUtc": "2026-09-16T08:26:22.548Z",
+    "toolCallsInspected": 42,
+    "realEvaluatorInvocationsObserved": 1,
+    "invocation": {
+      "utc": "2026-09-16T06:29:41.085Z",
+      "callId": "call_63yhsLQEzCjamUSVILMxKf5N"
+    },
+    "completion": {
+      "utc": "2026-09-16T06:32:08.656Z",
+      "callId": "call_fPowN6qSebRjRMkWSSGzuLo4",
+      "exitCode": 0,
+      "resultHash": "53010A50F7C6EBFA09AD5855FE70204126AD40959AE643A8AE91564021B9FD2B"
+    },
+    "pollsOfSameProcess": 4,
+    "reportOnlyMedianTypoCorrection": {
+      "utc": "2026-09-16T06:33:52.874Z",
+      "callId": "call_mVUAUj3ns0gaaQqrLsxc9Hz2",
+      "scientificResultOrSourceChanged": false
+    },
+    "prohibitedActionsObserved": [],
+    "searchedFor": [
+      "rerun after inspecting result",
+      "code edit after data reveal",
+      "alternative horizon",
+      "event removal",
+      "label change",
+      "data rescue",
+      "parameter tuning",
+      "new statistical test",
+      "secondary p-value",
+      "provider reacquisition",
+      "source/doctrine alteration"
+    ],
+    "historicalO2GitPushesObserved": [
+      {
+        "utc": "2026-09-16T06:25:44.428Z",
+        "callId": "call_stVxobxK2w8tEQqT3vRmriLy",
+        "commit": "955f3fa004f11616d6aa8c31775447a57ed25b98"
+      },
+      {
+        "utc": "2026-09-16T06:35:12.725Z",
+        "callId": "call_Unb4Nhehm5kM7qXTLxtvvV51",
+        "commit": "25e858357375c478ff6b0f2620d918e3d30a0a99"
+      }
+    ],
+    "limitation": "Available local execution records and Git do not establish absence of unlogged external actions."
+  },
+  "interpretationAudit": {
+    "result": "PASS",
+    "scope": "Association under the preregistered conditional within-side permutation null in this fixed feasibility pilot.",
+    "eightOfThirteenIsNotPredictivenessProof": true,
+    "pExactDoesNotMeetPreregisteredThreshold": true,
+    "causationOrProfitabilityClaimed": false,
+    "generalAstrologyValidityClaimed": false,
+    "productionOrOutOfSampleValidityClaimed": false,
+    "independentReplicationClaimed": false,
+    "note": "Independent computational reproduction on the same fixed captures is not an independent empirical replication."
+  },
+  "tests": {
+    "suite": "gann-astro-desk/backend/test_outcome_evaluation_s4.py",
+    "passed": 49,
+    "failed": 0,
+    "synthetic": true,
+    "command": "python -B -m pytest -p no:cacheprovider gann-astro-desk/backend/test_outcome_evaluation_s4.py -q"
+  },
+  "localSupportingEvidence": {
+    "directory": "D:/GannFinancialAstro/audit_work/mo_r4a_s4_o2_astra",
+    "fileSha256": {
+      "independent_audit.py": "DC5A21AD5636802A43962591310EF5116D1534196EBCC1ACFE3DF884964DF47B",
+      "reproduction_evidence.json": "1C6E2C99ACB893C4299D7FDF53692D1DA89F324DEF428C1F56E20017EF295F78",
+      "o2_execution_calls.json": "B9FF0B28B960F60746D97397B444F21C5827D2CD325A23F836309EC170D806AD"
+    },
+    "scope": "Audit harness and generated local evidence only; no raw BI5 or parsed JSONL copies are included."
+  },
+  "findings": [
+    {
+      "id": "O2_AUDIT_MINOR_001",
+      "severity": "MINOR",
+      "title": "Network-zero wording needs an explicit evaluation scope",
+      "locator": "docs/research/MULTI_OSCILLATOR_MO_R4A_S4_O2_FIRST_EMPIRICAL_OUTCOME_EVALUATION.md:23",
+      "finding": "The blanket statement 'No provider or network call occurred' can be read as covering the entire O2 workflow. Original tool outputs show the required authorization and result pushes to GitHub. No provider/data-network access or reacquisition was observed in the scientific evaluation.",
+      "impact": "Documentation scope only; does not alter endpoints, calculations, code freeze or the scientific verdict.",
+      "recommendation": "On a separately authorized documentation freeze, distinguish zero evaluator/provider calls from the required Git transport. The audited O2 report remains unchanged."
+    },
+    {
+      "id": "O2_AUDIT_NOTE_001",
+      "severity": "NOTE",
+      "title": "Execution-history and acquisition-protocol limits retained",
+      "finding": "Anti-tuning findings are bounded to the available local tool record and Git evidence, not a tamper-evident system-wide execution journal. The inherited acquisition state providerProtocolFullyClosed=false remains unchanged.",
+      "impact": "No scientific reproduction disagreement; this audit does not upgrade provider-protocol closure or certify unlogged activity."
+    }
+  ],
+  "findingCounts": {
+    "BLOCKER": 0,
+    "MAJOR": 0,
+    "MINOR": 1,
+    "NOTE": 1
+  },
+  "auditSafety": {
+    "providerCalls": 0,
+    "networkCalls": 0,
+    "rawBi5Read": false,
+    "privateWitnessesModified": false,
+    "sourceCodeModified": false,
+    "O2ResultModified": false,
+    "scientificDesignModified": false,
+    "newExperimentStarted": false,
+    "executionAllowed": false,
+    "autoSuggest": false,
+    "ml": false,
+    "mt5": false
+  },
+  "verdict": "POST_OUTCOME_SCIENTIFIC_AUDIT_PASS",
+  "nextGate": "CENTRAL_REVIEW_POST_OUTCOME_SCIENTIFIC_AUDIT",
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude astraPostOutcomeAuditDispositionHash.",
+  "astraPostOutcomeAuditDispositionHash": "083F440880C5CC935C6A65F0846CD25228F20C2DE6C733BD0E3BA22C1AE39FD0"
+}
