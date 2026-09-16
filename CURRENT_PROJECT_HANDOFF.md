@@ -12672,3 +12672,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `O2ExecutionAllowed=true`, `executionAllowed=false`.
 - No parsed capture has been opened at this authorization stage. Next gate:
   `FIRST_EMPIRICAL_OUTCOME_EXECUTION`.
+
+## MO-R4A-S4-O2 First Empirical Outcome Execution
+
+- The single centrally authorized execution of the frozen O1 evaluator
+  completed successfully from authorization commit
+  `955f3fa004f11616d6aa8c31775447a57ed25b98`. The evaluator and O1 freeze
+  identities were unchanged; all `15/15` parsed-capture hashes passed before
+  JSONL parsing, and no provider/network call or raw BI5 read occurred.
+- Exact result:
+  `status/audits/mo_r4a_s4_o2_outcome_evaluation_result.json` with result hash
+  `53010A50F7C6EBFA09AD5855FE70204126AD40959AE643A8AE91564021B9FD2B`.
+  Report:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_S4_O2_FIRST_EMPIRICAL_OUTCOME_EVALUATION.md`.
+- The fixed primary evaluation is complete at `13/13`, with `H=8`,
+  `H/13=8/13`, inclusive permutation tail `12/40`, `pExact=0.3`, and
+  cluster-balanced hit rate `11/20`. USD is `3/5`; JPY is `5/8`.
+  `H_minus7=6`, `H_plus7=8`, timing specificity was not demonstrated, and
+  `survivalStatus=PILOT_ASSOCIATION_NOT_SURVIVED`.
+- These are preregistered conditional-pilot outputs only; no causation,
+  profitability, production validity, or trading readiness is claimed.
+  `outcomeDataRead=true` and `outcomeUnlocked=true` apply only to this sealed
+  research execution. `executionAllowed=false`, `autoSuggest=false`,
+  `ml=false`, and `mt5=false` remain locked.
+- Next gate:
+  `CENTRAL_REVIEW_BEFORE_ASTRA_POST_OUTCOME_AUDIT`.

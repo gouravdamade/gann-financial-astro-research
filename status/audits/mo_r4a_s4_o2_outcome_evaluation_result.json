@@ -1,0 +1,1317 @@
+{
+  "clusterBalanced": {
+    "clusterCount": 4,
+    "clusters": [
+      {
+        "clusterId": "C1",
+        "eventCount": 5,
+        "hitCount": 3,
+        "hitRate": "0.6",
+        "hitRateFraction": "3/5"
+      },
+      {
+        "clusterId": "C2",
+        "eventCount": 1,
+        "hitCount": 0,
+        "hitRate": "0",
+        "hitRateFraction": "0/1"
+      },
+      {
+        "clusterId": "C3",
+        "eventCount": 2,
+        "hitCount": 2,
+        "hitRate": "1",
+        "hitRateFraction": "1/1"
+      },
+      {
+        "clusterId": "C4",
+        "eventCount": 5,
+        "hitCount": 3,
+        "hitRate": "0.6",
+        "hitRateFraction": "3/5"
+      }
+    ],
+    "equalWeightedHitRate": "0.55",
+    "equalWeightedHitRateFraction": "11/20",
+    "secondaryPValue": null
+  },
+  "contract": "MO_R4A_S4_REAL_OUTCOME_EVALUATION_RESULT_V1",
+  "executionFlags": {
+    "autoSuggest": false,
+    "executionAllowed": false,
+    "ml": false,
+    "mt5": false,
+    "outcomeDataRead": true,
+    "outcomeUnlocked": true
+  },
+  "frozenInputHashes": {
+    "acquisitionContractHash": "BE4C378E368956F46F69D004D0C7522B32EA784C15894106B98DA8AA9A983CAC",
+    "acquisitionFreezeGateHash": "8F800EC0222ECE728E3D78D4F96E65F7FE7DCF7B7C85E1EF72EEEDAB7461804F",
+    "acquisitionManifestHash": "FA336FA0577EB2EC5917E8811BF1918326E130091D56CF7948C401F5405AA71E",
+    "acquisitionSourceSha256": "2448FD3B63FB85645F966609B377AB2C3DDF22CC240BDEBFDCFAB5257832B90A",
+    "aggregateCaptureHash": "F1488479ED7F963F517A0C6BD1FEF393882628A5BFE35B3795A31E8CC119044D",
+    "analysisIntervalSetHash": "3A76939D2597AAE4742587738846987E82EBC73F1A47730F6809303634122465",
+    "analysisPlanInvarianceHash": "C53F5EB8C6ADAB19D090A834FBCFABA6D9207ADC9640C6E08CD8534D137748F9",
+    "astraDispositionHash": "BD7A31104BD339DE032C124A85D1A868021523EFD764789827BFD93371D04D78",
+    "overlapClustersHash": "6D4968B9C7DB7B912FFF2567088AECFEE7AC00C5329BD0245E6BDE3A6613CC0E",
+    "parserContractHash": "18259325D9C8B245C05F4ECF596AD86395406A485E58DF3DF18C6B638C86BABE",
+    "parserSourceSha256": "F3D49AFBC055D9C1CF2E513194C9A98C8D55769FF974343B99A4D00EE4A35BC8",
+    "partitionPlanHash": "5C39D983DD11288B24ABCF0E17F38C862A6B3B283CC68ABC3377C3324BBD738D",
+    "preregistrationHash": "23564E1F41C441EC1FB98B3FBD025F43643AEF75C27AD080550F7DCB7D64F272",
+    "primaryPopulationHash": "7F3CB6DE622A71FDA7F66E89BDAE2D0B7E3228E94BCAC403220DB17CF2686317"
+  },
+  "implementationMilestone": "MO-R4A-S4-O1",
+  "interpretationBoundary": "ASSOCIATION_UNDER_PREREGISTERED_CONDITIONAL_WITHIN_SIDE_PERMUTATION_NULL_IN_THIS_FIXED_PILOT",
+  "intervalResults": [
+    {
+      "endTimestampUtc": "2025-04-01T06:27:37.996Z",
+      "eventId": "TN_4A15CCC7D126313A14BCB562",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_4A15CCC7D126313A14BCB562::ACTUAL",
+      "logReturn": "-0.00063362904807862999891011608708289778168314477848792",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-31T20:48:25.944Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-01T15:35:38.228Z",
+      "eventId": "TN_6E2DD561FB40D45D406F808E",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_6E2DD561FB40D45D406F808E::ACTUAL",
+      "logReturn": "-0.0032756667522882122074440444192575431182750807881891",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-01T05:52:19.076Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-01T20:02:07.065Z",
+      "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_7CCC78DA82BDAC13D3CF60B0::ACTUAL",
+      "logReturn": "0.00097632748159324098396146212905605167874479850318167",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-01T10:16:38.142Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-01T21:39:34.639Z",
+      "eventId": "TN_397A2B053BC76D9D788E5E5E",
+      "expectedDirection": "UP",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_397A2B053BC76D9D788E5E5E::ACTUAL",
+      "logReturn": "0.0032664892896149530286589577390103028388527284219653",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-01T11:55:00.156Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-02T06:09:07.120Z",
+      "eventId": "TN_B24B1690FD8612329198D379",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_B24B1690FD8612329198D379::ACTUAL",
+      "logReturn": "0.0017932372729528918968878929534845189050171421577794",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-01T20:17:57.085Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-02T18:38:54.383Z",
+      "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_8C3582F7101F4F14BC4ECC4F::ACTUAL",
+      "logReturn": "0.0032573644840150623056231494750147702437445098170080",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-02T08:39:52.099Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-03T07:51:42.060Z",
+      "eventId": "TN_B8750233DA923D431E121862",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_B8750233DA923D431E121862::ACTUAL",
+      "logReturn": "-0.012660854974184948014561248681782594264937001481974",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-02T21:43:33.615Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-03T08:04:31.227Z",
+      "eventId": "TN_529E2CBC72B405EAD0990350",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_529E2CBC72B405EAD0990350::ACTUAL",
+      "logReturn": "-0.0097431886553600183622090964841298297008697079086437",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-02T21:56:04.422Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-03T18:51:54.826Z",
+      "eventId": "TN_29BCE2386E5DB19625921587",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_29BCE2386E5DB19625921587::ACTUAL",
+      "logReturn": "-0.0045323887242480348842313573370317706583503431882077",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-03T08:35:23.380Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-03T22:25:13.918Z",
+      "eventId": "TN_6F48D71F91F1382FAA720581",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_6F48D71F91F1382FAA720581::ACTUAL",
+      "logReturn": "-0.0037712089236453125516798921179415625370334891449482",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-03T12:05:58.032Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-04T08:52:32.990Z",
+      "eventId": "TN_97C9294ED13CD6C36FB0840B",
+      "expectedDirection": "UP",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_97C9294ED13CD6C36FB0840B::ACTUAL",
+      "logReturn": "0.0055557791674038680676845222830635167585439653274416",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-03T22:25:06.344Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-04T15:08:11.995Z",
+      "eventId": "TN_574C7A7407B855CD78DF8E0D",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_574C7A7407B855CD78DF8E0D::ACTUAL",
+      "logReturn": "0.00029506622048980717591639542191667476129314119896939",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-04T04:35:46.759Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-04T20:32:37.562Z",
+      "eventId": "TN_A32A6104A917D4918B269910",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "ACTUAL",
+      "intervalId": "TN_A32A6104A917D4918B269910::ACTUAL",
+      "logReturn": "0.0039878576730129724454157202882911384133844306104613",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-04T09:55:52.100Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-25T06:27:36.375Z",
+      "eventId": "TN_4A15CCC7D126313A14BCB562",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_4A15CCC7D126313A14BCB562::MINUS_7",
+      "logReturn": "-0.0010291038078793201321778000707131537763403203032088",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-24T20:48:25.071Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-25T15:35:36.838Z",
+      "eventId": "TN_6E2DD561FB40D45D406F808E",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_6E2DD561FB40D45D406F808E::MINUS_7",
+      "logReturn": "-0.0058719213749028634639654362209508175531054292649635",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-25T05:52:34.125Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-25T20:02:10.650Z",
+      "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_7CCC78DA82BDAC13D3CF60B0::MINUS_7",
+      "logReturn": "-0.0032276734997688627657199316089544864301915070189322",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-25T10:16:38.064Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-25T21:41:00.504Z",
+      "eventId": "TN_397A2B053BC76D9D788E5E5E",
+      "expectedDirection": "UP",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_397A2B053BC76D9D788E5E5E::MINUS_7",
+      "logReturn": "-0.0017064111191269776970629703271843149854961142397159",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-03-25T11:55:00.367Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-26T06:09:07.677Z",
+      "eventId": "TN_B24B1690FD8612329198D379",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_B24B1690FD8612329198D379::MINUS_7",
+      "logReturn": "0.0039917421719919238645000956856089172241614751847352",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-25T20:17:58.155Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-26T18:38:55.736Z",
+      "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_8C3582F7101F4F14BC4ECC4F::MINUS_7",
+      "logReturn": "0.0020148359871129368553099606642669106216418362912542",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-26T08:39:54.012Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-27T07:51:42.402Z",
+      "eventId": "TN_B8750233DA923D431E121862",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_B8750233DA923D431E121862::MINUS_7",
+      "logReturn": "-0.00084392116007575926771346440615575508132699320059618",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-03-26T21:43:28.582Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-27T08:04:30.789Z",
+      "eventId": "TN_529E2CBC72B405EAD0990350",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_529E2CBC72B405EAD0990350::MINUS_7",
+      "logReturn": "0.000039851089766532753795112983544691216865652823708184",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-26T21:56:04.309Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-27T18:51:51.656Z",
+      "eventId": "TN_29BCE2386E5DB19625921587",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_29BCE2386E5DB19625921587::MINUS_7",
+      "logReturn": "0.0037054019235533331529858713239462361538715175992974",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-03-27T08:35:24.268Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-27T22:25:12.364Z",
+      "eventId": "TN_6F48D71F91F1382FAA720581",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_6F48D71F91F1382FAA720581::MINUS_7",
+      "logReturn": "0.00028795694746164041196721613617263960722438413435102",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-27T12:05:58.047Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-28T08:52:30.998Z",
+      "eventId": "TN_97C9294ED13CD6C36FB0840B",
+      "expectedDirection": "UP",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_97C9294ED13CD6C36FB0840B::MINUS_7",
+      "logReturn": "-0.0037899494115096715864897867043523307355461527380155",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-03-27T22:25:06.842Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-28T15:08:11.362Z",
+      "eventId": "TN_574C7A7407B855CD78DF8E0D",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_574C7A7407B855CD78DF8E0D::MINUS_7",
+      "logReturn": "-0.0052649795342233266020909067695727459544466264121700",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-03-28T04:35:49.562Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-03-28T20:32:33.348Z",
+      "eventId": "TN_A32A6104A917D4918B269910",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "MINUS_7",
+      "intervalId": "TN_A32A6104A917D4918B269910::MINUS_7",
+      "logReturn": "-0.0055008130182666406688391182242006478924761573219889",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-03-28T09:55:53.771Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-08T06:27:36.825Z",
+      "eventId": "TN_4A15CCC7D126313A14BCB562",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_4A15CCC7D126313A14BCB562::PLUS_7",
+      "logReturn": "-0.0017364435711877180251391028966227179810523007325991",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-07T20:48:26.792Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-08T15:35:38.935Z",
+      "eventId": "TN_6E2DD561FB40D45D406F808E",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_6E2DD561FB40D45D406F808E::PLUS_7",
+      "logReturn": "-0.0045385882707974633085772447428122361129601127750839",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-08T05:52:20.210Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-08T20:02:11.970Z",
+      "eventId": "TN_7CCC78DA82BDAC13D3CF60B0",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_7CCC78DA82BDAC13D3CF60B0::PLUS_7",
+      "logReturn": "-0.0054513872463331291530630425321817442985431173427362",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-08T10:16:38.011Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-08T21:39:18.455Z",
+      "eventId": "TN_397A2B053BC76D9D788E5E5E",
+      "expectedDirection": "UP",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_397A2B053BC76D9D788E5E5E::PLUS_7",
+      "logReturn": "-0.0048515132432228199077081852417075653141669488881589",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-08T11:55:00.061Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-09T06:09:07.887Z",
+      "eventId": "TN_B24B1690FD8612329198D379",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_B24B1690FD8612329198D379::PLUS_7",
+      "logReturn": "-0.0072652287840545496719327584870681404734428411170978",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-08T20:17:56.085Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-09T18:38:56.805Z",
+      "eventId": "TN_8C3582F7101F4F14BC4ECC4F",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 0,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_8C3582F7101F4F14BC4ECC4F::PLUS_7",
+      "logReturn": "0.016171957784506424087109432441307254898868037449351",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-09T08:39:52.138Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-10T07:51:44.674Z",
+      "eventId": "TN_B8750233DA923D431E121862",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_B8750233DA923D431E121862::PLUS_7",
+      "logReturn": "-0.0076480192692495267863451372457529828279917942816231",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-09T21:44:53.662Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-10T08:04:31.631Z",
+      "eventId": "TN_529E2CBC72B405EAD0990350",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_529E2CBC72B405EAD0990350::PLUS_7",
+      "logReturn": "-0.0078691900345011954368819569384642261413401487000757",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-09T21:56:16.089Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-10T18:51:54.885Z",
+      "eventId": "TN_29BCE2386E5DB19625921587",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_29BCE2386E5DB19625921587::PLUS_7",
+      "logReturn": "-0.012227238578643340218986026800563075657234259105544",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-10T08:35:23.561Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-10T22:25:13.817Z",
+      "eventId": "TN_6F48D71F91F1382FAA720581",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "SUPPORTIVE",
+      "hit": 1,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_6F48D71F91F1382FAA720581::PLUS_7",
+      "logReturn": "-0.0098087034663433250747805846404871457139168379781295",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-10T12:05:58.099Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-11T08:52:32.961Z",
+      "eventId": "TN_97C9294ED13CD6C36FB0840B",
+      "expectedDirection": "UP",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_97C9294ED13CD6C36FB0840B::PLUS_7",
+      "logReturn": "-0.013709320478455697254127055434126193273271283230917",
+      "scorable": true,
+      "sideIdentity": "JPY",
+      "startTimestampUtc": "2025-04-10T22:25:05.054Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-11T15:08:11.938Z",
+      "eventId": "TN_574C7A7407B855CD78DF8E0D",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_574C7A7407B855CD78DF8E0D::PLUS_7",
+      "logReturn": "0.0021700307156384280650501665863423713882355992468891",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-11T04:35:46.163Z",
+      "status": "SCORED"
+    },
+    {
+      "endTimestampUtc": "2025-04-11T20:32:36.468Z",
+      "eventId": "TN_A32A6104A917D4918B269910",
+      "expectedDirection": "DOWN",
+      "frozenLabel": "ADVERSE",
+      "hit": 0,
+      "horizon": "PLUS_7",
+      "intervalId": "TN_A32A6104A917D4918B269910::PLUS_7",
+      "logReturn": "0.0090098737729940060595792216705697631253329131449153",
+      "scorable": true,
+      "sideIdentity": "USD",
+      "startTimestampUtc": "2025-04-11T09:55:52.009Z",
+      "status": "SCORED"
+    }
+  ],
+  "permutation": {
+    "allAssignments": [
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_397A2B053BC76D9D788E5E5E"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_B8750233DA923D431E121862"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 4,
+        "usdSupportiveEventIds": [
+          "TN_29BCE2386E5DB19625921587"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_574C7A7407B855CD78DF8E0D"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 8,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_4A15CCC7D126313A14BCB562",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      },
+      {
+        "jpySupportiveEventIds": [
+          "TN_6E2DD561FB40D45D406F808E",
+          "TN_7CCC78DA82BDAC13D3CF60B0",
+          "TN_B24B1690FD8612329198D379",
+          "TN_8C3582F7101F4F14BC4ECC4F",
+          "TN_529E2CBC72B405EAD0990350",
+          "TN_6F48D71F91F1382FAA720581",
+          "TN_97C9294ED13CD6C36FB0840B"
+        ],
+        "permutationHitCount": 6,
+        "usdSupportiveEventIds": [
+          "TN_A32A6104A917D4918B269910"
+        ]
+      }
+    ],
+    "assignmentCount": 40,
+    "histogram": [
+      {
+        "assignmentCount": 0,
+        "hitCount": 0
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 1
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 2
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 3
+      },
+      {
+        "assignmentCount": 8,
+        "hitCount": 4
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 5
+      },
+      {
+        "assignmentCount": 20,
+        "hitCount": 6
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 7
+      },
+      {
+        "assignmentCount": 12,
+        "hitCount": 8
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 9
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 10
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 11
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 12
+      },
+      {
+        "assignmentCount": 0,
+        "hitCount": 13
+      }
+    ],
+    "inclusiveTailCount": 12,
+    "observedAssignmentIndex": 0,
+    "observedHitCount": 8,
+    "pExact": "0.3"
+  },
+  "primary": {
+    "denominator": 13,
+    "observedHitCount": 8,
+    "primaryHitRate": "0.61538461538461538461538461538461538461538461538462",
+    "scorableEventCount": 13,
+    "status": "COMPLETE"
+  },
+  "resultHash": "53010A50F7C6EBFA09AD5855FE70204126AD40959AE643A8AE91564021B9FD2B",
+  "schemaVersion": 1,
+  "sideDescriptives": {
+    "JPY": {
+      "classification": "DESCRIPTIVE_ONLY",
+      "eventCount": 8,
+      "hitCount": 5,
+      "hitRate": "0.625",
+      "meanExpectedSignedLogReturn": "0.0021190679135268557501818958542400011336123671837178",
+      "medianExpectedSignedLogReturn": "0.0019546479001834211031770802531702204499791127833385"
+    },
+    "USD": {
+      "classification": "DESCRIPTIVE_ONLY",
+      "eventCount": 5,
+      "hitCount": 3,
+      "hitRate": "0.6",
+      "meanExpectedSignedLogReturn": "0.0032353618189090312612238896095233709174925002565434",
+      "medianExpectedSignedLogReturn": "0.0032664892896149530286589577390103028388527284219653"
+    }
+  },
+  "survivalStatus": "PILOT_ASSOCIATION_NOT_SURVIVED",
+  "timing": {
+    "hitCounts": {
+      "ACTUAL": 8,
+      "MINUS_7": 6,
+      "PLUS_7": 8
+    },
+    "secondaryPValue": null,
+    "status": "TIMING_SPECIFICITY_NOT_DEMONSTRATED"
+  }
+}
