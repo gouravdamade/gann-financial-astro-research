@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_A1_EVALUATOR_A_IMPLEMENTATION_FREEZE_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-A1",
+  "status": "FROZEN_CLEAN_ROOM_SYNTHETIC_VALIDATION_ONLY",
+  "baseCommit": "35f6319aa0a984756c5b59bbd88c6ac8a0b5c7ea",
+  "implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b",
+  "branch": "research/candidate-c-evaluator-a-freeze",
+  "experimentId": "R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION",
+  "implementation": {
+    "packagePath": "research_labs/candidate_c_reproduction/evaluator_a",
+    "sourceHashConvention": "SHA-256 uppercase hex of committed UTF-8 source bytes represented by Git LF text.",
+    "aggregateHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':') applied to the sorted source path/hash array.",
+    "sourceFiles": [
+      {
+        "path": "research_labs/candidate_c_reproduction/__init__.py",
+        "sha256": "C005446B2D07F752D738E4786E6DC1A3E0909F35E350E30D67BA42C68D300968"
+      },
+      {
+        "path": "research_labs/candidate_c_reproduction/evaluator_a/__init__.py",
+        "sha256": "0AA90E4BBB7EFEAE8858AA84E2E548D8341675625B10BA8247FDD1E8810857B5"
+      },
+      {
+        "path": "research_labs/candidate_c_reproduction/evaluator_a/canonical.py",
+        "sha256": "21446FF4E0B5931A98F8463FCD425A8531957C53FC03AE9CB5F51DD99C829112"
+      },
+      {
+        "path": "research_labs/candidate_c_reproduction/evaluator_a/contract_loader.py",
+        "sha256": "030C3B310EB3B3DA4EE3B5CF66C142EE6C0A9D9401F7F606BC7F91C41B6D3552"
+      },
+      {
+        "path": "research_labs/candidate_c_reproduction/evaluator_a/evaluator.py",
+        "sha256": "2F445CC54940896341918281A17D7A706E690F12CB76424630A934EE7C888ACF"
+      },
+      {
+        "path": "research_labs/candidate_c_reproduction/evaluator_a/schema.py",
+        "sha256": "8F9DCEB8D050787E8B3834B512FA8D593DEEC73108FFDB25BB9E37A2C5D89175"
+      }
+    ],
+    "aggregateImplementationHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB",
+    "testFiles": [
+      {
+        "path": "research_labs/candidate_c_reproduction/evaluator_a/test_evaluator_a.py",
+        "sha256": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E"
+      }
+    ],
+    "testResult": {
+      "syntheticTestsPassed": 14,
+      "syntheticTestsFailed": 0,
+      "testCommand": "python -m pytest research_labs/candidate_c_reproduction/evaluator_a/test_evaluator_a.py -q"
+    },
+    "outputSchema": {
+      "schemaId": "MO_R4A_CANDIDATE_C_P0_EVALUATOR_OUTPUT_SCHEMA_V1",
+      "schemaHash": "DDBE5164FF93A8A1982891AD24CD40367C2A0F4F0FAA0CDAD0289A74D92A33BC",
+      "rowsPerEvent": 8,
+      "expectedRowCount": 5160,
+      "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580",
+      "fieldOrder": [
+        "eventId",
+        "sourceProfile",
+        "componentId",
+        "sourceContractId",
+        "inputIdentity",
+        "inputIdentityHash",
+        "outputStatus",
+        "sourceValue",
+        "unknownReasonCode",
+        "provenance"
+      ]
+    }
+  },
+  "validatedDependencies": {
+    "p0r1": {
+      "sharedAstronomyInputSnapshot": {
+        "path": "status/research/mo_r4a_candidate_c_p0_shared_astronomy_inputs_v1.json",
+        "selfHash": "F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915",
+        "eventCountValidatedForMetadataOnly": 645
+      },
+      "componentInputBindings": {
+        "path": "status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json",
+        "selfHash": "D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985",
+        "applicabilityMatrixHash": "5C0E627294579FA9C41C5E19B791ED489FFDE2D2700D21AC7AE4C3530C91F4B4",
+        "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580"
+      },
+      "preregistration": {
+        "path": "status/research/mo_r4a_candidate_c_p0_preregistration_v1.json",
+        "selfHash": "5A15DA738B4C349E3C251F0C000960955D955E370F51CC313E52F8D5851C1961"
+      },
+      "populationManifest": {
+        "path": "status/research/mo_r4a_candidate_c_p0_population_manifest_v1.json",
+        "selfHash": "0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092",
+        "exactPopulationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6",
+        "eventCount": 645
+      },
+      "unknownTaxonomyHash": "1B1F6DFF937398F34E787CED256800BC6879D1ABCE989918A24B92DC8E7332B3",
+      "sourceProfileContractHashes": {
+        "TRAILOKYA_DIPIKA_1972": "82C434BDCF68889BC842576151886A4C7A544A8F2581A4D8C046797C80A404C4",
+        "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES": "AAFE7CDB05AFD038D664CE68D1FB9D106ED0A14C25ED736423BC86C1F318B2D5"
+      }
+    },
+    "sourceContracts": {
+      "s1r1Ledger": {
+        "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s1r1_v1.json",
+        "sha256": "4C7D0C4C1A366287A05DD70E9638A27585516240B24C3AEEBFA91889F22E86E8",
+        "contractId": "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+      },
+      "s2r1SaravaliLedger": {
+        "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json",
+        "sha256": "985DA1ECD2FF6631D9624541CEA27F69AC4620207EFE4C6CD79790263E3FAF01",
+        "contractId": "MO_R4A_S2R1_R1_SARAVALI_ADJUDICATED_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1"
+      },
+      "unknownDependencyRegistry": {
+        "path": "configs/research/machine_interpretation/source_operators/source_operator_unresolved_dependencies_v1.json",
+        "sha256": "16292D6655B3BC4BEFEC2A7A39B91C4649F2AF01248020AA1629E7FF56A0D7C6",
+        "contractId": "MO_R4A_S1_SOURCE_OPERATOR_UNRESOLVED_DEPENDENCY_REGISTRY_V1"
+      }
+    },
+    "admittedOperatorIds": [
+      "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1",
+      "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+      "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+      "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+      "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+      "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1",
+      "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1",
+      "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1",
+      "SARAVALI_NATURAL_RELATIONSHIP_V1"
+    ]
+  },
+  "cleanRoom": {
+    "historicalOperatorImplementationImported": false,
+    "historicalOperatorImplementationCalled": false,
+    "evaluatorBPresent": false,
+    "comparatorPresent": false,
+    "sharedABBusinessHelperPresent": false,
+    "expectedOutputFixturePresent": false,
+    "sourceProfilesRemainIsolated": true,
+    "p0r1SourceRulesEncodedLocally": true
+  },
+  "realExecutionGuard": {
+    "REAL_CANDIDATE_C_EXECUTION_ALLOWED": false,
+    "realFrozenPopulationRead": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "futureCentralAuthorizationCreated": false,
+    "syntheticInputMarkerRequired": true
+  },
+  "researchBoundary": {
+    "priceDataRead": false,
+    "returnDataRead": false,
+    "marketOutcomeRead": false,
+    "providerAccessed": false,
+    "swissEphemerisQueried": false,
+    "polarityAssigned": false,
+    "magnitudeAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false,
+    "executionAllowed": false,
+    "sourceDoctrineExpanded": false,
+    "realFrozenPopulationRead": false,
+    "realCandidateCOutputProduced": false
+  },
+  "freezeRecordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude freezeRecordHash.",
+  "freezeRecordHash": "35031F1FB4E83CCAF29DA4290C6D816354D20BAA30772F84598DEB232821E51D"
+}
