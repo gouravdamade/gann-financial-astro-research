@@ -3,7 +3,8 @@
 **Status:** source-first, non-runtime research record.
 **Starting commit:** `142ce10c9c5fd3950f2068ea323096b976c3061a`
 **Machine ledger:** `status/research/mo_r4a_r6_candidate_operator_ledger_v1.json`
-**Next gate:** `CENTRAL_REVIEW_R6_BEFORE_NEXT_EXPERIMENT_IMPLEMENTATION`
+**Final ledger self-hash:** `E957C50FC42B4C06E6B6202A845551AE5DF75DE269AC71804878BBA94D1E676A`
+**Next gate:** `CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION`
 
 ## R6-R1 Central-Review Correction
 
@@ -16,6 +17,122 @@ inherited source-closed contracts, states the exact canonical JSON hash
 convention, and hardens the deterministic independence contract for the future
 Evaluator A/Evaluator B run. No new source doctrine, runtime behavior, market
 operator, or outcome interpretation is introduced.
+
+## Central Multi-Resolution Oscillator Design Note
+
+This is **CENTRAL ENGINEERING / RESEARCH ARCHITECTURE**. It clarifies a future
+design vocabulary only. It does not change source doctrine, authorize an
+implementation, unlock Candidate C, or turn any temporal descriptor into a
+market signal.
+
+### Natural Event Temporal Scale
+
+For each independently defined event:
+
+```text
+D_i = separatingEndUtc_i - applyingStartUtc_i
+```
+
+The future experimental interpretation is:
+
+```text
+longer D_i  -> slower/larger temporal-scale candidate
+shorter D_i -> faster/smaller temporal-scale candidate
+```
+
+This means **duration -> temporal scale** only. It does not mean:
+
+```text
+duration -> strength
+duration -> magnitude
+duration -> predictive importance
+```
+
+The classification is `EXPERIMENTAL_ENGINEERING_HYPOTHESIS`, not Mode 1
+doctrine.
+
+### Timeframe as a Viewing Lens
+
+The market chart timeframe is a viewing lens over natural event scales:
+
+```text
+short-duration event  -> micro structure
+medium-duration event -> meso structure
+long-duration event   -> macro structure
+```
+
+Higher-timeframe waves must not be created merely by smoothing or averaging a
+lower-timeframe oscillator. A possible future engineering descriptor is:
+
+```text
+R_i = D_i / T
+```
+
+where `D_i` is the natural geometric event duration and `T` is the selected
+market-bar duration. `R_i` is a scale descriptor only and is **not implemented
+during Candidate C**.
+
+### Market Response Is Not Astrological Persistence
+
+The three concepts remain separate:
+
+```text
+ASTRONOMICAL_EVENT_INTERVAL != MARKET_RESPONSE_PATH != HYPOTHESIZED_EFFECT_PERSISTENCE
+```
+
+A short aspect might coincide with movement visible inside its interval on an
+hourly chart while continuation appears on a later daily candle. That does not
+prove that astrological efficacy persists after the geometric event ends.
+Source-defined persistence remains `SOURCE_SILENT`.
+
+### Overlapping and Nested Events
+
+Future visualization may preserve simultaneous and nested structure rather than
+immediately collapsing it into one scalar. At the same time `t` there may be:
+
+```text
+macro event(s) + meso event(s) + micro event(s)
+```
+
+R6 does not infer reinforcement, cancellation, dominance, parent-child causal
+inheritance, amplification, net polarity, or combined magnitude. Nested-event
+composition remains `UNRESOLVED`. Visualization may expose the structure before
+a composition operator is known.
+
+### The S4 +/-7-Day Control Limitation
+
+The fixed `+/-7`-day S4 timing diagnostic is valid only as the preregistered S4
+diagnostic. It is not a universal control design. For event duration `D_i` and
+control shift `S`, if `D_i > S`, a shifted control interval may overlap the
+actual geometric event interval. For example, `D_i = 14 days` and `S = 7 days`
+can produce approximately seven days of overlap.
+
+A future temporal-scale experiment therefore needs a separately preregistered,
+duration-aware non-overlapping control design. Its formula must not be selected
+by examining which version improves S4.
+
+### Founder Empirical Hypotheses
+
+The following remain `FOUNDER_EMPIRICAL_HYPOTHESIS`, not classical doctrine,
+and none is tested by R6 or Candidate C:
+
+1. Longer-duration aspects may define broader market regimes whose relevant
+   movement is concentrated substantially within their geometric interval.
+2. Short-duration aspects may produce movement visible during their interval on
+   a low timeframe while appearing as continuation on a higher timeframe.
+3. Apparent post-event continuation may depend on whether another material
+   astronomical event follows immediately.
+4. Multiple overlapping events may be more informative when visualized by
+   temporal scale than when prematurely summed into one scalar.
+
+### Central Future Design Intent
+
+> "Build a multi-scale visual field of independently defined astronomical
+> events. Let natural event duration determine candidate temporal scale, let the
+> chart timeframe act as a viewing lens, preserve simultaneous/nested structures,
+> and postpone mathematical composition until independently justified."
+
+Candidate C remains unchanged and precedes any implementation of this design.
 
 ## Boundary
 
@@ -252,4 +369,4 @@ R6 leaves all product and execution locks in force:
 
 No runtime behavior changed. The next authorized decision point is:
 
-`CENTRAL_REVIEW_R6_BEFORE_NEXT_EXPERIMENT_IMPLEMENTATION`
+`CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION`

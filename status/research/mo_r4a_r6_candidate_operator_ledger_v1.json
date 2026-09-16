@@ -12,7 +12,9 @@
     "marketOutcomeDataRead": false,
     "providerAccessed": false,
     "runtimeBehaviorChanged": false,
-    "executionAllowed": false
+    "executionAllowed": false,
+    "candidateCImplementationStarted": false,
+    "candidateCExecuted": false
   },
   "controllingWitnesses": [
     {
@@ -48,6 +50,61 @@
     "newSourceDoctrineIntroduced": false,
     "runtimeChanged": false
   },
+  "r6r2Addendum": {
+    "milestone": "MO-R4A-R6-R2",
+    "startingCommit": "191fac26dbc6b66c57fe26588fdbbc786387562f",
+    "predecessorR6R1LedgerHash": "309AB8C708EFDB31E57D5E746EA93C747DBDE7A0164F3A61062815BB0CDF9812",
+    "substantiveConclusionChanged": false,
+    "candidateDispositionsChanged": false,
+    "sourceContractsChanged": false,
+    "runtimeChanged": false
+  },
+  "futureMultiResolutionArchitecture": {
+    "classification": "CENTRAL_ENGINEERING_RESEARCH_ARCHITECTURE",
+    "implementationAuthorized": false,
+    "durationToTemporalScale": "EXPERIMENTAL_ENGINEERING_HYPOTHESIS",
+    "durationToStrength": "NOT_AUTHORIZED",
+    "durationToMagnitude": "NOT_AUTHORIZED",
+    "timeframeAsViewingLens": "EXPERIMENTAL_ENGINEERING_HYPOTHESIS",
+    "higherTimeframeByLowerTimeframeSmoothing": "NOT_AUTHORIZED",
+    "marketResponsePersistenceEqualsAstrologicalPersistence": "NOT_AUTHORIZED",
+    "sourceDefinedEffectPersistence": "SOURCE_SILENT",
+    "nestedEventComposition": "UNRESOLVED",
+    "fixedSevenDayControlUniversal": false,
+    "candidateFutureScaleRatio": "R_i = D_i / T",
+    "candidateFutureScaleRatioStatus": "NOT_IMPLEMENTED_EXPERIMENTAL_HYPOTHESIS",
+    "candidateCChanged": false
+  },
+  "founderEmpiricalHypotheses": [
+    {
+      "id": "R6_FOUNDER_HYPOTHESIS_1",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "statement": "Longer-duration aspects may define broader market regimes whose relevant movement is concentrated substantially within their geometric interval.",
+      "testedInR6": false,
+      "sourceDoctrine": false
+    },
+    {
+      "id": "R6_FOUNDER_HYPOTHESIS_2",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "statement": "Short-duration aspects may produce movement visible during their interval on a low timeframe while appearing as continuation on a higher timeframe.",
+      "testedInR6": false,
+      "sourceDoctrine": false
+    },
+    {
+      "id": "R6_FOUNDER_HYPOTHESIS_3",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "statement": "Apparent post-event continuation may depend on whether another material astronomical event follows immediately.",
+      "testedInR6": false,
+      "sourceDoctrine": false
+    },
+    {
+      "id": "R6_FOUNDER_HYPOTHESIS_4",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "statement": "Multiple overlapping events may be more informative when visualized by temporal scale than when prematurely summed into one scalar.",
+      "testedInR6": false,
+      "sourceDoctrine": false
+    }
+  ],
   "evidenceClassificationVocabulary": {
     "SOURCE_EXPLICIT": "The named source directly states the bounded rule or category at the recorded locator.",
     "SOURCE_IMPLIED": "A limited consequence follows from an explicit source statement, but is not a separately stated formula or universal rule.",
@@ -515,6 +572,6 @@
     "noMT5": true,
     "noExecution": true
   },
-  "nextGate": "CENTRAL_REVIEW_R6_BEFORE_NEXT_EXPERIMENT_IMPLEMENTATION",
-  "r6CandidateOperatorLedgerHash": "309AB8C708EFDB31E57D5E746EA93C747DBDE7A0164F3A61062815BB0CDF9812"
+  "nextGate": "CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION",
+  "r6CandidateOperatorLedgerHash": "E957C50FC42B4C06E6B6202A845551AE5DF75DE269AC71804878BBA94D1E676A"
 }

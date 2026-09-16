@@ -12763,3 +12763,39 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   forecast, Fields polarity, Auto Suggest, ML, MT5, or execution.
 - Next gate:
   `CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION`.
+
+## MO-R4A-R6-R2 Central Multi-Resolution Architecture Addendum
+
+- Central review accepted the multi-resolution design clarification as
+  documentation-only engineering/research architecture. It does not change
+  R6 source doctrine, source contracts, Candidates A/B/C, runtime code, or S4.
+- For each independently defined event,
+  `D_i = separatingEndUtc_i - applyingStartUtc_i` remains an
+  `EXPERIMENTAL_ENGINEERING_HYPOTHESIS` for candidate temporal scale only.
+  It is not duration-to-strength, duration-to-magnitude, duration-to-predictive
+  importance, or Mode 1 doctrine.
+- Market timeframe is a viewing lens over micro, meso, and macro natural event
+  scales. Higher-timeframe waves must not be created by smoothing or averaging
+  lower-timeframe oscillators. The proposed `R_i = D_i / T` descriptor is not
+  implemented during Candidate C.
+- Astronomical event interval, market response path, and hypothesized effect
+  persistence remain separate concepts. Source-defined persistence remains
+  `SOURCE_SILENT`.
+- Simultaneous and nested events may be visualized without inferring
+  reinforcement, cancellation, dominance, parent-child inheritance,
+  amplification, net polarity, or combined magnitude. Nested composition is
+  `UNRESOLVED`.
+- The fixed S4 `+/-7`-day diagnostic is not a universal control. A future
+  duration-aware non-overlapping control must be preregistered independently;
+  it must not be selected by inspecting S4 performance.
+- Four founder statements are recorded separately as
+  `FOUNDER_EMPIRICAL_HYPOTHESIS`; none is tested by R6 or Candidate C.
+- R6-R1 ledger predecessor hash:
+  `309AB8C708EFDB31E57D5E746EA93C747DBDE7A0164F3A61062815BB0CDF9812`.
+  Final R6-R2 ledger hash:
+  `E957C50FC42B4C06E6B6202A845551AE5DF75DE269AC71804878BBA94D1E676A`.
+  The canonical hash convention remains sorted-key, compact UTF-8 JSON with
+  `ensure_ascii=true` and the self-hash field excluded.
+- Candidate C remains unchanged, not implemented, and not executed. The next
+  gate remains:
+  `CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION`.
