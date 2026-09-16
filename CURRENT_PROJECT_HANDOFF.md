@@ -12799,3 +12799,54 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Candidate C remains unchanged, not implemented, and not executed. The next
   gate remains:
   `CENTRAL_REVIEW_R6_FREEZE_BEFORE_CANDIDATE_C_IMPLEMENTATION`.
++
+## MO-R4A Candidate C P0 Population and Preregistration Freeze
+
+- P0 is frozen from reviewed commit
+  fe5dde00a8a260dd1fe9866fd670c96d6027d7a4. It freezes the deterministic
+  Candidate C input population, source-profile scope, evaluator output schema,
+  UNKNOWN taxonomy, and clean-room independence contract. No evaluator,
+  comparator, runtime code, or market analysis was implemented.
+- The fixed half-open UTC interval is
+  [2025-05-01T00:00:00Z, 2025-08-01T00:00:00Z), chosen as the first three
+  complete calendar months following the closed April-2025 S4 founder window.
+  The population contains 645 distinct canonical events: USD 317 and JPY 328.
+- Exact population hash:
+  A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6.
+  Population manifest hash:
+  0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092.
+  P0 preregistration hash:
+  1FB698C6420CF5D8F6E950849BF53B9D7BD35AF67DD9EE157DE08161427BD719.
+- The accepted compiler is bound to contract
+  CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1, source commit
+  1b65eee8e01380265e4e2062ffe5e7ad388007fb, and source SHA-256
+  21AB7EE377C8BF2EB5CA798A651678DD9AA1E16EA149523EF13BB9AD6A68EAD0.
+  Astronomy is bound to
+  RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1 with config hash
+  6569213C213B854E4E5CEC7FFF6F96EAABCFF6B15C58309B2F8A0DAC55ACB95C.
+- The two isolated profiles are TRAILOKYA_DIPIKA_1972 and
+  BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES. Exactly seven
+  component families are admitted; no source-profile merging, modifier
+  stacking, precedence inference, score, wave, sign, or magnitude is licensed.
+- Candidate C uses
+  statisticalNull=NOT_APPLICABLE_DETERMINISTIC_REPRODUCTION. A future run
+  passes only with zero discrepancies across source-closed fields and
+  mandatory UNKNOWN decisions. Evaluator A and Evaluator B must be separate
+  clean-room implementations with frozen source hashes before either output
+  is inspected.
+- Population manifest:
+  status/research/mo_r4a_candidate_c_p0_population_manifest_v1.json.
+  Preregistration:
+  status/research/mo_r4a_candidate_c_p0_preregistration_v1.json.
+  Research record:
+  docs/research/MULTI_OSCILLATOR_MO_R4A_CANDIDATE_C_P0_PREREGISTRATION.md.
+- JSON parsing, canonical self-hashes, exact population hash, duplicate checks,
+  half-open interval checks, compiler interval invariant, canonical ordering,
+  seven-component count, and the three-candidate/one-recommendation check
+  passed. No provider, S4, price, return, outcome, or market data was accessed.
+  All product and execution locks remain active, including executionAllowed=false.
+- The multi-resolution firewall remains active: no D_i-to-scale mapping,
+  R_i descriptor, micro/meso/macro lanes, waves, nested aggregation,
+  persistence, or duration-aware market control was implemented.
+- Next gate:
+  CENTRAL_REVIEW_CANDIDATE_C_P0_BEFORE_EVALUATOR_A_OR_B_IMPLEMENTATION

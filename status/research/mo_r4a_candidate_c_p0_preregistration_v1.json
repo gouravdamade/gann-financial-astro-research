@@ -1,0 +1,459 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_P0_PREREGISTRATION_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-P0",
+  "status": "FROZEN_BEFORE_EVALUATOR_IMPLEMENTATION",
+  "startingCommit": "fe5dde00a8a260dd1fe9866fd670c96d6027d7a4",
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude p0PreregistrationHash.",
+  "experimentId": "R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION",
+  "researchQuestion": "Do independently implemented source-closed components and abstention rules reproduce exactly on this fresh, frozen event population?",
+  "populationManifestPath": "status/research/mo_r4a_candidate_c_p0_population_manifest_v1.json",
+  "populationManifestHash": "0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092",
+  "exactPopulationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6",
+  "populationFreeze": {
+    "intervalStartUtc": "2025-05-01T00:00:00Z",
+    "intervalEndUtc": "2025-08-01T00:00:00Z",
+    "intervalSemantics": "[start,end)",
+    "reason": "Fixed by preregistration design as the first three complete calendar months following the closed April-2025 S4 founder window; not chosen from event counts, S4 results, or market data.",
+    "compilerContract": {
+      "contract": "CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1",
+      "schemaVersion": 1,
+      "sourcePath": "research_labs/chart_conditioned_aspects/chart_conditioned_aspects/transits/chart_conditioned_event_compiler.py",
+      "sourceCommit": "1b65eee8e01380265e4e2062ffe5e7ad388007fb",
+      "sourceSha256": "21AB7EE377C8BF2EB5CA798A651678DD9AA1E16EA149523EF13BB9AD6A68EAD0",
+      "version": "chart_conditioned_transit_event_compiler_v1_20260806",
+      "aspectProfileId": "ASPECT_STRENGTH_V0",
+      "eventBoundarySearchPaddingDays": 180,
+      "generatorHash": "8B3F7990F07A7A73AD11B0469C55B657C05908D8566914E008409D81BCC75028",
+      "emittedEventCountsBySide": {
+        "USD": 330,
+        "JPY": 338
+      },
+      "exactUtcInWindowCountsBySide": {
+        "USD": 317,
+        "JPY": 328
+      },
+      "intervalInvariant": "startUtc <= exactUtc < endUtc"
+    },
+    "astronomyConfig": {
+      "configId": "doctrine_v7_20260729_visible_sthana_reconciliation",
+      "configArtifacts": [
+        {
+          "path": "doctrine_config.yaml",
+          "sha256": "64B70EB797F680709F32B6D6D60E2F0255D1B1B4E5531FEAFB743D6163D3DB7C"
+        },
+        {
+          "path": "doctrine_config.py",
+          "sha256": "0988F805B64E2BBFEE4EE41AF374654987E5D091A05BB0413EE94160788D5537"
+        },
+        {
+          "path": "financial_astro_ephemeris.py",
+          "sha256": "7AD647AB27317A9449EA5D0A05083F4FD5293790D44ADE5F106B42BB2D9A97D5"
+        },
+        {
+          "path": "research_labs/chart_conditioned_aspects/profiles/aspect_strength_v0.yaml",
+          "sha256": "766339E51ED9DCDAB89712CBFB1F97F24CA9BF1D82C8108082B845D7D2E0479D"
+        },
+        {
+          "path": "research_labs/chart_conditioned_aspects/profiles/source_manifest.yaml",
+          "sha256": "9832E132DFB7A3CAB831F1BAA76638B70D0FE9390DEB7A3DF0A418EF00BCCE59"
+        }
+      ],
+      "astronomyContractId": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+      "zodiac": "sidereal",
+      "ayanamsha": "Raman",
+      "ayanamshaSwissEphemerisId": "SIDM_RAMAN",
+      "nodeType": "true_node",
+      "coordinateSystem": "geocentric",
+      "ephemerisProvider": "Swiss Ephemeris",
+      "ephemerisVersion": "2.10.03",
+      "timeStandard": "UTC/JD_UT",
+      "displayTimeZone": "Asia/Kolkata",
+      "historicalCivilTimeConversionPolicy": "HISTORICAL_CIVIL_TIME_IANA_ZONEINFO_V1",
+      "calculationFlags": "FLG_SWIEPH|FLG_SPEED|FLG_SIDEREAL",
+      "nodePolicy": "TRUE_NODE_RAHU_KETU_OPPOSITION_V1",
+      "astronomyConfigHash": "6569213C213B854E4E5CEC7FFF6F96EAABCFF6B15C58309B2F8A0DAC55ACB95C"
+    },
+    "chartIdentities": [
+      {
+        "sideIdentity": "USD",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "instrumentIdentity": "FX_CURRENCY:USD",
+        "chartHash": "3A6B5F3EED9CBF0067FCB39EED1191EA66F0C347BE726DDD84424C001B89BCA7"
+      },
+      {
+        "sideIdentity": "JPY",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "instrumentIdentity": "FX_CURRENCY:JPY",
+        "chartHash": "4ED100D71983BE68A24B8306C33D7D2B50504D6F122DF45A5F7707A68B171AF7"
+      }
+    ],
+    "populationEventCount": 645,
+    "sideCounts": {
+      "USD": 317,
+      "JPY": 328
+    }
+  },
+  "sourceProfiles": [
+    {
+      "sourceProfileId": "TRAILOKYA_DIPIKA_1972",
+      "profileIsolation": "TRAILOKYA_SOURCE_PROFILE_ONLY",
+      "sourceContractIds": [
+        "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1",
+        "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1",
+        "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"
+      ],
+      "repositoryArtifacts": [
+        {
+          "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s1r1_v1.json",
+          "sha256": "4C7D0C4C1A366287A05DD70E9638A27585516240B24C3AEEBFA91889F22E86E8",
+          "contractId": "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+          "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S1R1_V1"
+        },
+        {
+          "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_provenance_hardening_s1r1_v1.json",
+          "sha256": "1DA908C0BCD9DE80A36B0DB13A04A9868906D06C336A9871D1EAB20512058A80",
+          "contractId": "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
+        },
+        {
+          "path": "configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml",
+          "sha256": "9F6D7C637A4FF75E5C5C169785B108278CAB622E1ED02CE27D093F1DC58DB99B",
+          "contractId": "TRAILOKYA_1972_CATEGORICAL_PLANET_NATURE_V1"
+        },
+        {
+          "path": "configs/sbc/trailokya/trailokya_1972_vedha_magnitude_v1.yaml",
+          "sha256": "ADBEE77743FA13A1D2173F744A68A8D3E0B6DB6A26FBF549FEE73DFF293898B9",
+          "contractId": "TRAILOKYA_1972_VEDHA_MAGNITUDE_SOURCE_V1"
+        },
+        {
+          "path": "configs/sbc/trailokya/trailokya_1972_sthula_motion_classifier_v1.yaml",
+          "sha256": "AEB4F455C89A11A7B28B694C8EB245D41A981E8A65D09D8CE8D1196614BB893E",
+          "contractId": "TD1972_STHULA_SWIFT_MEAN_CLASSIFICATION_V1"
+        }
+      ],
+      "admittedComponentIds": [
+        "C01_NATURAL_PLANET_CLASS",
+        "C02_NATURAL_RELATIONSHIP",
+        "C06_STHULA_MOTION",
+        "C07_INDIVIDUAL_SOURCE_RECORDS_NO_STACKING"
+      ],
+      "sourceProfileContractHash": "82C434BDCF68889BC842576151886A4C7A544A8F2581A4D8C046797C80A404C4"
+    },
+    {
+      "sourceProfileId": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+      "profileIsolation": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_RETAINED_SEPARATELY",
+      "sourceContractIds": [
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+      ],
+      "repositoryArtifacts": [
+        {
+          "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s1r1_v1.json",
+          "sha256": "4C7D0C4C1A366287A05DD70E9638A27585516240B24C3AEEBFA91889F22E86E8",
+          "contractId": "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_LEDGER_V1",
+          "ledgerId": "CLASSICAL_SOURCE_OPERATOR_LEDGER_S1R1_V1"
+        },
+        {
+          "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_provenance_hardening_s1r1_v1.json",
+          "sha256": "1DA908C0BCD9DE80A36B0DB13A04A9868906D06C336A9871D1EAB20512058A80",
+          "contractId": "MO_R4A_S1R1_CLASSICAL_SOURCE_OPERATOR_PROVENANCE_HARDENING_V1"
+        },
+        {
+          "path": "configs/research/machine_interpretation/source_operators/source_operator_cross_text_matrix_v1.json",
+          "sha256": "407E598D1A5033842369C0ACCB774763ADA5F7B37FF98CE8CEAC0F57A8D65467",
+          "contractId": "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1"
+        }
+      ],
+      "admittedComponentIds": [
+        "C03_TEMPORARY_RELATIONSHIP",
+        "C04_COMPOUND_RELATIONSHIP",
+        "C05_ORDINARY_AND_SPECIAL_DRSTI"
+      ],
+      "sourceProfileContractHash": "AAFE7CDB05AFD038D664CE68D1FB9D106ED0A14C25ED736423BC86C1F318B2D5"
+    }
+  ],
+  "admittedComponents": [
+    {
+      "componentId": "C01_NATURAL_PLANET_CLASS",
+      "description": "Natural planet class with source-bounded Moon and Mercury conditions.",
+      "sourceProfileIds": [
+        "TRAILOKYA_DIPIKA_1972"
+      ],
+      "sourceContractIds": [
+        "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1"
+      ],
+      "compositionPolicy": "INDIVIDUAL_CATEGORICAL_RECORD_ONLY"
+    },
+    {
+      "componentId": "C02_NATURAL_RELATIONSHIP",
+      "description": "Profile-isolated natural relationship.",
+      "sourceProfileIds": [
+        "TRAILOKYA_DIPIKA_1972"
+      ],
+      "sourceContractIds": [
+        "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1"
+      ],
+      "compositionPolicy": "INDIVIDUAL_CATEGORICAL_RECORD_ONLY"
+    },
+    {
+      "componentId": "C03_TEMPORARY_RELATIONSHIP",
+      "description": "Temporary relationship under the separate cross-text contract.",
+      "sourceProfileIds": [
+        "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES"
+      ],
+      "sourceContractIds": [
+        "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1"
+      ],
+      "compositionPolicy": "OWN_CONTRACT_ONLY"
+    },
+    {
+      "componentId": "C04_COMPOUND_RELATIONSHIP",
+      "description": "Compound relationship under the separate cross-text contract.",
+      "sourceProfileIds": [
+        "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES"
+      ],
+      "sourceContractIds": [
+        "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+      ],
+      "compositionPolicy": "OWN_CONTRACT_ONLY"
+    },
+    {
+      "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+      "description": "Ordinary and special Drsti under their separate source contracts.",
+      "sourceProfileIds": [
+        "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES"
+      ],
+      "sourceContractIds": [
+        "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+      ],
+      "compositionPolicy": "OWN_CONTRACTS_ONLY_NO_POOLING"
+    },
+    {
+      "componentId": "C06_STHULA_MOTION",
+      "description": "Sthula motion category only when the source-defined category is determinable.",
+      "sourceProfileIds": [
+        "TRAILOKYA_DIPIKA_1972"
+      ],
+      "sourceContractIds": [
+        "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1"
+      ],
+      "compositionPolicy": "SOURCE_DEFINED_CATEGORY_ONLY"
+    },
+    {
+      "componentId": "C07_INDIVIDUAL_SOURCE_RECORDS_NO_STACKING",
+      "description": "Individual source records, including verse-166 modifier records, without stacking.",
+      "sourceProfileIds": [
+        "TRAILOKYA_DIPIKA_1972"
+      ],
+      "sourceContractIds": [
+        "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"
+      ],
+      "compositionPolicy": "NO_MULTI_MODIFIER_STACKING"
+    }
+  ],
+  "outputSchema": {
+    "schemaId": "MO_R4A_CANDIDATE_C_P0_EVALUATOR_OUTPUT_SCHEMA_V1",
+    "fieldOrder": [
+      "eventId",
+      "sourceProfile",
+      "componentId",
+      "sourceContractId",
+      "inputIdentity",
+      "inputIdentityHash",
+      "outputStatus",
+      "sourceValue",
+      "unknownReasonCode",
+      "provenance"
+    ],
+    "fields": [
+      {
+        "name": "eventId",
+        "type": "string",
+        "required": true,
+        "meaning": "Canonical event identity from the frozen population."
+      },
+      {
+        "name": "sourceProfile",
+        "type": "string",
+        "required": true,
+        "meaning": "One of the two frozen source profiles."
+      },
+      {
+        "name": "componentId",
+        "type": "string",
+        "required": true,
+        "meaning": "One of the seven admitted component families."
+      },
+      {
+        "name": "sourceContractId",
+        "type": "string",
+        "required": true,
+        "meaning": "Existing immutable source operator contract identity."
+      },
+      {
+        "name": "inputIdentity",
+        "type": "object",
+        "required": true,
+        "meaning": "Frozen event and astronomy identity used by the evaluator."
+      },
+      {
+        "name": "inputIdentityHash",
+        "type": "uppercase_sha256",
+        "required": true,
+        "meaning": "Canonical hash of inputIdentity."
+      },
+      {
+        "name": "outputStatus",
+        "type": "enum",
+        "allowed": [
+          "VALUE",
+          "UNKNOWN"
+        ],
+        "required": true,
+        "meaning": "Source value is closed, or fail-closed UNKNOWN."
+      },
+      {
+        "name": "sourceValue",
+        "type": "source_categorical_or_literal_value",
+        "required": false,
+        "meaning": "Present only when the selected source contract closes the value; no expected values are frozen here."
+      },
+      {
+        "name": "unknownReasonCode",
+        "type": "enum",
+        "allowedBy": "MO_R4A_CANDIDATE_C_ALLOWED_UNKNOWN_V1",
+        "requiredWhen": "outputStatus=UNKNOWN"
+      },
+      {
+        "name": "provenance",
+        "type": "object",
+        "required": true,
+        "meaning": "Source contract, locator, and immutable artifact identity supporting the row."
+      }
+    ],
+    "constraints": [
+      "P0 freezes schema and admissible UNKNOWN behavior, not evaluator outputs.",
+      "A mandatory UNKNOWN may not be silently substituted with a value.",
+      "No evaluator may stack modifiers, infer precedence, create a score, create a wave, assign sign, or assign magnitude.",
+      "No price, return, or market-outcome field is part of this schema."
+    ],
+    "schemaHash": "DDBE5164FF93A8A1982891AD24CD40367C2A0F4F0FAA0CDAD0289A74D92A33BC"
+  },
+  "unknownTaxonomy": {
+    "taxonomyId": "MO_R4A_CANDIDATE_C_ALLOWED_UNKNOWN_V1",
+    "sourceRegistryContract": "MO_R4A_S1_SOURCE_OPERATOR_UNRESOLVED_DEPENDENCY_REGISTRY_V1",
+    "sourceRegistryArtifact": {
+      "path": "configs/research/machine_interpretation/source_operators/source_operator_unresolved_dependencies_v1.json",
+      "sha256": "16292D6655B3BC4BEFEC2A7A39B91C4649F2AF01248020AA1629E7FF56A0D7C6"
+    },
+    "allowedOutputStatus": [
+      "VALUE",
+      "UNKNOWN"
+    ],
+    "allowedUnknownReasonCodes": [
+      "UNKNOWN",
+      "MOON_CONDITION_INPUT_UNAVAILABLE",
+      "MERCURY_ASSOCIATION_INPUT_UNAVAILABLE",
+      "MOTION_EXACT_THRESHOLD_EXTERNAL_OR_UNRESOLVED",
+      "RELATIONSHIP_INPUT_BODY_NOT_CLOSED_FOR_TRAILOKYA",
+      "COMPOUND_RELATIONSHIP_INPUT_UNRESOLVED",
+      "TRAILOKYA_STATIONARY_STATE_UNRESOLVED",
+      "ASTA_DIRECTION_UNKNOWN",
+      "MULTI_MODIFIER_STACKING_UNRESOLVED",
+      "UNRESOLVED_MODIFIER_COMBINATION"
+    ],
+    "unknownRule": "Any unavailable input, source-unclosed condition, unsupported context, or unresolved composition remains UNKNOWN with an allowed reason code; it is never imputed, neutralized, omitted, or converted to a value.",
+    "applicabilityRule": "Applicability is determined by the selected source contract. No separate NOT_APPLICABLE output status is introduced in this preregistration.",
+    "taxonomyHash": "1B1F6DFF937398F34E787CED256800BC6879D1ABCE989918A24B92DC8E7332B3"
+  },
+  "applicability": {
+    "status": "SOURCE_CONTRACT_SCOPED",
+    "requiredBehavior": "If a selected source contract does not close a required field for the frozen input, emit UNKNOWN with an allowed reason code.",
+    "notApplicableStatus": "NOT_INTRODUCED"
+  },
+  "verse166Policy": "Retrograde, exalted, swift, and debilitated records remain separate source-certified individual records. MULTI_MODIFIER_STACKING_UNRESOLVED remains UNKNOWN; no composition is licensed.",
+  "evaluatorIndependence": {
+    "topology": "P0 freeze commit -> separate clean Evaluator A and Evaluator B worktrees/branches -> third comparator.",
+    "evaluatorA": "Separate implementation and source hash; no import of Evaluator B code, business logic, helpers, or expected-output fixtures.",
+    "evaluatorB": "Separate implementation and source hash; no import of Evaluator A code, business logic, helpers, or expected-output fixtures.",
+    "sharedOnly": [
+      "Frozen population",
+      "exact astronomy inputs",
+      "immutable source packet and contract identities",
+      "frozen output schema",
+      "declared semantic rules"
+    ],
+    "notShared": [
+      "Evaluator business logic",
+      "source-category helper functions",
+      "expected outputs generated by either evaluator",
+      "post-execution repairs"
+    ],
+    "freezeBeforeInspection": [
+      "Evaluator A implementation identity and source hash",
+      "Evaluator B implementation identity and source hash",
+      "both identities frozen before either output is inspected"
+    ],
+    "mismatchPolicy": "Any disagreement fails the frozen run. Do not patch A or B after inspecting a discrepancy; source or implementation correction requires a new preregistered run.",
+    "interpretationBoundary": "Agreement tests deterministic implementation reproducibility of already source-certified contracts. It does not independently establish historical truth beyond the accepted source packets and does not validate market prediction."
+  },
+  "passFail": {
+    "statisticalNull": "NOT_APPLICABLE_DETERMINISTIC_REPRODUCTION",
+    "failureCondition": "Any disagreement on a declared source-closed field, any unlicensed fallback, or any mandatory UNKNOWN converted into a value fails the frozen run.",
+    "passCriterion": "Zero discrepancies across all preregistered source-closed output fields and mandatory UNKNOWN decisions.",
+    "pValue": "NOT_APPLICABLE",
+    "averagingOrTolerance": "PROHIBITED",
+    "postRunRepair": "PROHIBITED"
+  },
+  "researchBoundary": {
+    "populationIsNotMarketTest": true,
+    "marketOrOutcomeDataUsed": false,
+    "priceOrReturnFieldsPermitted": false,
+    "sign": "NOT_ASSIGNED",
+    "magnitude": "NOT_ASSIGNED",
+    "wave": "NOT_IMPLEMENTED",
+    "score": "NOT_IMPLEMENTED",
+    "durationToScaleMapping": "NOT_IMPLEMENTED",
+    "multiResolutionLanes": "NOT_IMPLEMENTED",
+    "successDoesNotAuthorize": [
+      "market outcome evaluation",
+      "currency polarity",
+      "duration efficacy",
+      "magnitude scoring",
+      "runtime promotion",
+      "execution"
+    ]
+  },
+  "requiredFreezeIdentities": {
+    "populationManifestHash": "0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092",
+    "exactPopulationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6",
+    "compilerSourceHash": "21AB7EE377C8BF2EB5CA798A651678DD9AA1E16EA149523EF13BB9AD6A68EAD0",
+    "astronomyConfigHash": "6569213C213B854E4E5CEC7FFF6F96EAABCFF6B15C58309B2F8A0DAC55ACB95C",
+    "sourceProfileContractHashes": {
+      "TRAILOKYA_DIPIKA_1972": "82C434BDCF68889BC842576151886A4C7A544A8F2581A4D8C046797C80A404C4",
+      "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES": "AAFE7CDB05AFD038D664CE68D1FB9D106ED0A14C25ED736423BC86C1F318B2D5"
+    },
+    "outputSchemaHash": "DDBE5164FF93A8A1982891AD24CD40367C2A0F4F0FAA0CDAD0289A74D92A33BC",
+    "unknownTaxonomyHash": "1B1F6DFF937398F34E787CED256800BC6879D1ABCE989918A24B92DC8E7332B3"
+  },
+  "guardrails": {
+    "priceDataRead": false,
+    "returnDataRead": false,
+    "outcomeDataRead": false,
+    "s4RowsReadForSelection": false,
+    "providerAccessed": false,
+    "polarityAssigned": false,
+    "magnitudeAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false,
+    "executionAllowed": false,
+    "evaluatorImplemented": false,
+    "candidateCExecuted": false
+  },
+  "p0PreregistrationHash": "1FB698C6420CF5D8F6E950849BF53B9D7BD35AF67DD9EE157DE08161427BD719"
+}
