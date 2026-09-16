@@ -1,7 +1,7 @@
 {
   "schemaVersion": "MO_R4A_CANDIDATE_C_P0_PREREGISTRATION_V1",
-  "milestone": "MO-R4A-CANDIDATE-C-P0",
-  "status": "FROZEN_BEFORE_EVALUATOR_IMPLEMENTATION",
+  "milestone": "MO-R4A-CANDIDATE-C-P0-R1",
+  "status": "P0_R1_SHARED_ASTRONOMY_AND_BINDINGS_FROZEN_BEFORE_EVALUATOR_IMPLEMENTATION",
   "startingCommit": "fe5dde00a8a260dd1fe9866fd670c96d6027d7a4",
   "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude p0PreregistrationHash.",
   "experimentId": "R6_CANDIDATE_C_SOURCE_PROFILED_UNSIGNED_REPRODUCTION_AND_ABSTENTION",
@@ -382,11 +382,12 @@
     "evaluatorA": "Separate implementation and source hash; no import of Evaluator B code, business logic, helpers, or expected-output fixtures.",
     "evaluatorB": "Separate implementation and source hash; no import of Evaluator A code, business logic, helpers, or expected-output fixtures.",
     "sharedOnly": [
-      "Frozen population",
-      "exact astronomy inputs",
+      "P0 population manifest",
+      "P0-R1 shared astronomy input snapshot",
+      "P0-R1 component input bindings",
       "immutable source packet and contract identities",
       "frozen output schema",
-      "declared semantic rules"
+      "declared semantic and UNKNOWN rules"
     ],
     "notShared": [
       "Evaluator business logic",
@@ -400,7 +401,8 @@
       "both identities frozen before either output is inspected"
     ],
     "mismatchPolicy": "Any disagreement fails the frozen run. Do not patch A or B after inspecting a discrepancy; source or implementation correction requires a new preregistered run.",
-    "interpretationBoundary": "Agreement tests deterministic implementation reproducibility of already source-certified contracts. It does not independently establish historical truth beyond the accepted source packets and does not validate market prediction."
+    "interpretationBoundary": "Agreement tests deterministic implementation reproducibility of already source-certified contracts. It does not independently establish historical truth beyond the accepted source packets and does not validate market prediction.",
+    "sharedAstronomyPolicy": "Neither evaluator may independently query Swiss Ephemeris during the frozen Candidate C run; the P0-R1 snapshot is the shared astronomy input."
   },
   "passFail": {
     "statisticalNull": "NOT_APPLICABLE_DETERMINISTIC_REPRODUCTION",
@@ -439,7 +441,11 @@
       "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES": "AAFE7CDB05AFD038D664CE68D1FB9D106ED0A14C25ED736423BC86C1F318B2D5"
     },
     "outputSchemaHash": "DDBE5164FF93A8A1982891AD24CD40367C2A0F4F0FAA0CDAD0289A74D92A33BC",
-    "unknownTaxonomyHash": "1B1F6DFF937398F34E787CED256800BC6879D1ABCE989918A24B92DC8E7332B3"
+    "unknownTaxonomyHash": "1B1F6DFF937398F34E787CED256800BC6879D1ABCE989918A24B92DC8E7332B3",
+    "sharedAstronomyInputSnapshotHash": "F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915",
+    "componentInputBindingsHash": "D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985",
+    "applicabilityMatrixHash": "5C0E627294579FA9C41C5E19B791ED489FFDE2D2700D21AC7AE4C3530C91F4B4",
+    "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580"
   },
   "guardrails": {
     "priceDataRead": false,
@@ -453,7 +459,26 @@
     "waveCreated": false,
     "executionAllowed": false,
     "evaluatorImplemented": false,
-    "candidateCExecuted": false
+    "candidateCExecuted": false,
+    "sharedAstronomySnapshotGenerated": true
   },
-  "p0PreregistrationHash": "1FB698C6420CF5D8F6E950849BF53B9D7BD35AF67DD9EE157DE08161427BD719"
+  "p0PreregistrationHash": "5A15DA738B4C349E3C251F0C000960955D955E370F51CC313E52F8D5851C1961",
+  "priorP0PreregistrationHash": "1FB698C6420CF5D8F6E950849BF53B9D7BD35AF67DD9EE157DE08161427BD719",
+  "p0r1InputFreeze": {
+    "sharedAstronomyInputSnapshot": {
+      "path": "status/research/mo_r4a_candidate_c_p0_shared_astronomy_inputs_v1.json",
+      "hash": "F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915",
+      "generatorSpecificationHash": "1E3E46230999B6450A1C7B7675C44063CB06CEB8C655E35970CB38E52CFB2751"
+    },
+    "componentInputBindings": {
+      "path": "status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json",
+      "hash": "D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985",
+      "applicabilityMatrixHash": "5C0E627294579FA9C41C5E19B791ED489FFDE2D2700D21AC7AE4C3530C91F4B4",
+      "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580",
+      "expectedRowCount": 5160
+    },
+    "eventRoleBinding": "event actor/source body=transitBody; event target body=natalTarget; accepted event-bound adapter establishes the mapping.",
+    "evaluatorAstronomyRule": "Evaluator A and Evaluator B consume only the shared snapshot and must not independently query Swiss Ephemeris during the frozen run.",
+    "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_P0_R1_BEFORE_EVALUATOR_IMPLEMENTATION"
+  }
 }

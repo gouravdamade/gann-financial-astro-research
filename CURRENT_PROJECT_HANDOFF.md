@@ -12850,3 +12850,39 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   persistence, or duration-aware market control was implemented.
 - Next gate:
   CENTRAL_REVIEW_CANDIDATE_C_P0_BEFORE_EVALUATOR_A_OR_B_IMPLEMENTATION
+
+## MO-R4A Candidate C P0-R1 Shared Astronomy Input and Binding Freeze
+
+- P0-R1 was frozen from reviewed P0 commit
+  `30138691d79c4ea3f543e9cb4f3a74f16c8a82fb` without regenerating or altering
+  the immutable 645-event population. Population hash remains
+  `A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6` and
+  manifest self-hash remains
+  `0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092`.
+- The shared Raman/Swiss exact-time astronomy input snapshot is
+  `status/research/mo_r4a_candidate_c_p0_shared_astronomy_inputs_v1.json` with
+  self-hash `F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915`.
+  It is a raw and minimally derived input record only, not an evaluator or
+  source-output fixture.
+- Component bindings are frozen in
+  `status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json`
+  with self-hash `D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985`.
+  They establish transitBody as source/actor and natalTarget as target,
+  prohibit aspectType as a relative-place substitute, keep C04 on the
+  independently closed Saravali natural relationship, and retain C07 as
+  mandatory UNKNOWN because no typed Trailokya Sthana-Phala input is admitted.
+- The applicability-matrix hash is
+  `5C0E627294579FA9C41C5E19B791ED489FFDE2D2700D21AC7AE4C3530C91F4B4`.
+  The frozen non-value row-key universe has 5160 unique rows and hash
+  `6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580`.
+  Candidate C still has no expected source values frozen.
+- The P0 preregistration successor hash is
+  `5A15DA738B4C349E3C251F0C000960955D955E370F51CC313E52F8D5851C1961`.
+  Future Evaluator A and Evaluator B must consume the same snapshot and may not
+  independently query Swiss Ephemeris during the frozen run.
+- No evaluator, comparator, runtime code, provider, price, return, outcome,
+  polarity, score, magnitude, wave, market forecast, Fields polarity, Auto
+  Suggest, ML, MT5, or execution work occurred. `executionAllowed=false`
+  remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_P0_R1_BEFORE_EVALUATOR_IMPLEMENTATION`.
