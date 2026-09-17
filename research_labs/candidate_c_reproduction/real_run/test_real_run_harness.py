@@ -19,6 +19,11 @@ from research_labs.candidate_c_reproduction.real_run.admission import (
     load_and_validate_real_population,
 )
 from research_labs.candidate_c_reproduction.real_run.artifacts import output_artifact_paths
+from research_labs.candidate_c_reproduction.real_run.authorization import (
+    issue_real_run_authorization,
+    issue_test_only_fake_event_capability,
+    validate_release_authorization,
+)
 from research_labs.candidate_c_reproduction.real_run.harness import (
     RealCandidateCRunNotAuthorized,
     run_real_population,
@@ -27,9 +32,14 @@ from research_labs.candidate_c_reproduction.real_run.harness import (
 from research_labs.candidate_c_reproduction.real_run.release_a import evaluate_admitted_real_event_a
 from research_labs.candidate_c_reproduction.real_run.release_b import evaluate_admitted_real_event_b
 from research_labs.candidate_c_reproduction.real_run.validation import (
+    PROTECTED_RUNTIME_FILES,
     RealRunValidationError,
+    RUNTIME_MODULE_PATHS,
+    runtime_identity_manifest_entries,
     validate_adapter_equivalence,
     validate_row_keys,
+    verify_runtime_checkout_against_protected_blobs,
+    verify_runtime_module_paths,
 )
 
 
@@ -66,12 +76,14 @@ def fake_real_event() -> dict[str, object]:
     }
 
 
-def test_real_population_validation_is_structure_only() -> None:
-    summary = validate_prerun_inputs(Path(__file__).resolve().parents[3])
+def test_real_population_validation_is_structure_only(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[3]
+    summary = validate_prerun_inputs(root, _runtime_roots_copy(root, tmp_path / "runtime"))
     assert summary.population_event_count == EXPECTED_EVENT_COUNT
     assert summary.expected_row_count == EXPECTED_ROW_COUNT
     assert summary.real_frozen_population_read is True
-    assert summary.real_frozen_population_read_scope == "IDENTITY_STRUCTURE_AND_ADAPTER_VALIDATION_ONLY"
+    assert summary.real_frozen_population_read_scope == "IDENTITY_STRUCTURE_ADAPTER_AND_EXECUTION_BOUNDARY_VALIDATION_ONLY"
+    assert summary.runtime_identity_file_count == len(PROTECTED_RUNTIME_FILES)
     assert summary.real_frozen_population_evaluated is False
     assert summary.real_candidate_c_output_produced is False
     assert summary.real_candidate_c_output_row_count == 0
@@ -110,12 +122,40 @@ def test_thin_release_layers_reuse_frozen_cores_for_fake_only_input() -> None:
     from research_labs.candidate_c_reproduction.evaluator_b.contract_loader import load_frozen_contracts as load_b
 
     a_event = adapt_real_event_for_a(fake_real_event())
-    a_rows = evaluate_admitted_real_event_a(a_event, load_a())
-    b_rows = evaluate_admitted_real_event_b(adapt_real_event_for_b(a_event), load_b())
+    capability = issue_test_only_fake_event_capability("FAKE_REAL_RUN1_001")
+    a_rows = evaluate_admitted_real_event_a(a_event, load_a(), capability)
+    b_rows = evaluate_admitted_real_event_b(adapt_real_event_for_b(a_event), load_b(), capability)
     assert len(a_rows) == 8
     assert len(b_rows) == 8
     assert {row["eventId"] for row in a_rows} == {"FAKE_REAL_RUN1_001"}
     assert {row["eventId"] for row in b_rows} == {"FAKE_REAL_RUN1_001"}
+
+
+@pytest.mark.parametrize("release", [evaluate_admitted_real_event_a, evaluate_admitted_real_event_b])
+def test_release_rejects_missing_authorization_capability(release: object) -> None:
+    a_event = adapt_real_event_for_a(fake_real_event())
+    event = a_event if release is evaluate_admitted_real_event_a else adapt_real_event_for_b(a_event)
+    with pytest.raises(RealCandidateCRunNotAuthorized, match="valid authorization capability"):
+        release(event, object())  # type: ignore[operator]
+
+
+@pytest.mark.parametrize("release", [evaluate_admitted_real_event_a, evaluate_admitted_real_event_b])
+def test_release_rejects_arbitrary_authorization_object(release: object) -> None:
+    a_event = adapt_real_event_for_a(fake_real_event())
+    event = a_event if release is evaluate_admitted_real_event_a else adapt_real_event_for_b(a_event)
+    with pytest.raises(RealCandidateCRunNotAuthorized, match="valid authorization capability"):
+        release(event, object(), object())  # type: ignore[operator]
+
+
+def test_production_authorization_issuance_is_blocked() -> None:
+    with pytest.raises(RealCandidateCRunNotAuthorized, match="cannot be issued"):
+        issue_real_run_authorization()
+
+
+def test_test_only_capability_rejects_a_real_event_identity() -> None:
+    capability = issue_test_only_fake_event_capability("FAKE_REAL_RUN1_001")
+    with pytest.raises(RealCandidateCRunNotAuthorized, match="production authorization"):
+        validate_release_authorization("TN_108BCC96A0896BB5CBBC31E5", capability)
 
 
 def test_adapter_equivalence_rejects_changed_event_hash() -> None:
@@ -190,6 +230,104 @@ def test_v2_projection_has_only_the_frozen_drsti_aliases() -> None:
 
     aliases = PROJECTION_CONTRACT["canonicalSourceValueRules"]["SARAVALI_4_32_ORDINARY_DRSTI_V1"]
     assert aliases == {"DRSTI_1_4": "1/4", "DRSTI_1_2": "1/2", "DRSTI_3_4": "3/4", "DRSTI_FULL": "FULL"}
+
+
+def _historical_blob(root: Path, commit: str, path: str) -> bytes:
+    import subprocess
+
+    return subprocess.check_output(["git", "-C", str(root), "show", f"{commit}:{path}"])
+
+
+def _copy_historical_tree(root: Path, commit: str, prefix: str, destination: Path) -> None:
+    import subprocess
+
+    paths = subprocess.check_output(
+        ["git", "-C", str(root), "ls-tree", "-r", "--name-only", commit, "--", prefix],
+        text=True,
+    ).splitlines()
+    for path in paths:
+        target = destination / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(_historical_blob(root, commit, path))
+
+
+def _runtime_roots_copy(root: Path, destination: Path) -> dict[str, Path]:
+    roots: dict[str, Path] = {}
+    for entry in runtime_identity_manifest_entries(root):
+        runtime_root = destination / entry["runtimeRoot"]
+        roots[entry["runtimeRoot"]] = runtime_root
+        target = runtime_root / entry["path"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(_historical_blob(root, entry["protectedCommit"], entry["path"]))
+        # Package parents allow the import-location probe to run from the same
+        # isolated root without adding unverified scientific modules.
+        parent = target.parent
+        while parent != runtime_root / "research_labs":
+            init_path = parent / "__init__.py"
+            if not init_path.exists():
+                relative = init_path.relative_to(runtime_root).as_posix()
+                init_path.write_bytes(_historical_blob(root, entry["protectedCommit"], relative))
+            parent = parent.parent
+    # Projection import inspection requires its normal package dependencies;
+    # these are scaffolding only and remain outside the V2 protected-file set.
+    _copy_historical_tree(
+        root,
+        "52c3b287a70018370e153a77b84c36e6b0dbfb42",
+        "research_labs/candidate_c_reproduction/comparator_ab",
+        roots["V2_PROJECTION_RUNTIME_ROOT"],
+    )
+    _copy_historical_tree(
+        root,
+        "52c3b287a70018370e153a77b84c36e6b0dbfb42",
+        "research_labs/candidate_c_reproduction/evaluator_a",
+        roots["V2_PROJECTION_RUNTIME_ROOT"],
+    )
+    _copy_historical_tree(
+        root,
+        "52c3b287a70018370e153a77b84c36e6b0dbfb42",
+        "research_labs/candidate_c_reproduction/evaluator_b",
+        roots["V2_PROJECTION_RUNTIME_ROOT"],
+    )
+    return roots
+
+
+def test_runtime_checkout_and_module_paths_verify_in_clean_worktree(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[3]
+    runtime_roots = _runtime_roots_copy(root, tmp_path / "runtime")
+    records = verify_runtime_checkout_against_protected_blobs(root, runtime_roots)
+    resolved = verify_runtime_module_paths(root, runtime_roots)
+    assert len(records) == len(PROTECTED_RUNTIME_FILES)
+    assert len(resolved) == len(RUNTIME_MODULE_PATHS)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "research_labs/candidate_c_reproduction/evaluator_a/evaluator.py",
+        "research_labs/candidate_c_reproduction/evaluator_b/evaluator.py",
+        "research_labs/candidate_c_reproduction/comparator_ab/projection.py",
+    ],
+)
+def test_modified_runtime_bytes_fail_verification(tmp_path: Path, path: str) -> None:
+    root = Path(__file__).resolve().parents[3]
+    runtime_roots = _runtime_roots_copy(root, tmp_path / "runtime")
+    entry = next(entry for entry in runtime_identity_manifest_entries(root) if entry["path"] == path)
+    target = runtime_roots[entry["runtimeRoot"]] / path
+    target.write_bytes(target.read_bytes() + b"\n# mutation\n")
+    with pytest.raises(RealRunValidationError, match="runtime checkout bytes differ"):
+        verify_runtime_checkout_against_protected_blobs(root, runtime_roots)
+
+
+def test_unexpected_runtime_module_path_fails_verification(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[3]
+    runtime_roots = _runtime_roots_copy(root, tmp_path / "runtime")
+    module_paths = {
+        module: runtime_roots[runtime_root] / path
+        for module, (path, runtime_root, _direct_file_import) in RUNTIME_MODULE_PATHS.items()
+    }
+    module_paths["research_labs.candidate_c_reproduction.evaluator_a.evaluator"] = tmp_path / "wrong.py"
+    with pytest.raises(RealRunValidationError, match="outside the expected checkout"):
+        verify_runtime_module_paths(root, runtime_roots, module_paths)
 
 
 def test_harness_contains_no_provider_or_ephemeris_import() -> None:

@@ -5,13 +5,19 @@ from __future__ import annotations
 from typing import Any
 
 from .adapter_b import RealCandidateCEvent
+from .authorization import validate_release_authorization
 
 
-def evaluate_admitted_real_event_b(event: RealCandidateCEvent, contracts: Any) -> list[dict[str, Any]]:
+def evaluate_admitted_real_event_b(
+    event: RealCandidateCEvent,
+    contracts: Any,
+    authorization_capability: object | None = None,
+) -> list[dict[str, Any]]:
     """Future-only bridge: frozen B components, no copied C01-C07 semantics."""
 
-    from ..evaluator_b import evaluator as frozen_b
+    validate_release_authorization(event.event_id, authorization_capability)
 
+    from ..evaluator_b import evaluator as frozen_b
     motion_row, motion_value = frozen_b._motion_row(event, contracts)
     rows = [
         frozen_b._natural_class(event, contracts, motion_value),

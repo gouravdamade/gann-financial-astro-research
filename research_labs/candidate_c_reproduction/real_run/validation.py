@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -38,6 +40,82 @@ B_SOURCE_FILES = (
     "research_labs/candidate_c_reproduction/evaluator_b/evaluator.py",
     "research_labs/candidate_c_reproduction/evaluator_b/models.py",
 )
+V2_RUNTIME_FILES = ("research_labs/candidate_c_reproduction/comparator_ab/projection.py",)
+
+# A and B each froze the package initializer. Their historical bytes differ,
+# so one checkout cannot truthfully satisfy both frozen source manifests.
+RUNTIME_ROOT_A = "EVALUATOR_A_RUNTIME_ROOT"
+RUNTIME_ROOT_B = "EVALUATOR_B_RUNTIME_ROOT"
+RUNTIME_ROOT_V2 = "V2_PROJECTION_RUNTIME_ROOT"
+
+PROTECTED_RUNTIME_FILES = tuple(
+    (path, A_IMPLEMENTATION_COMMIT, RUNTIME_ROOT_A) for path in A_SOURCE_FILES
+) + tuple(
+    (path, B_IMPLEMENTATION_COMMIT, RUNTIME_ROOT_B) for path in B_SOURCE_FILES
+) + tuple((path, V2_PROJECTION_COMMIT, RUNTIME_ROOT_V2) for path in V2_RUNTIME_FILES)
+
+RUNTIME_MODULE_PATHS = {
+    "research_labs.candidate_c_reproduction": (
+        "research_labs/candidate_c_reproduction/__init__.py",
+        RUNTIME_ROOT_A,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_a": (
+        "research_labs/candidate_c_reproduction/evaluator_a/__init__.py",
+        RUNTIME_ROOT_A,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_a.canonical": (
+        "research_labs/candidate_c_reproduction/evaluator_a/canonical.py",
+        RUNTIME_ROOT_A,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_a.contract_loader": (
+        "research_labs/candidate_c_reproduction/evaluator_a/contract_loader.py",
+        RUNTIME_ROOT_A,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_a.evaluator": (
+        "research_labs/candidate_c_reproduction/evaluator_a/evaluator.py",
+        RUNTIME_ROOT_A,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_a.schema": (
+        "research_labs/candidate_c_reproduction/evaluator_a/schema.py",
+        RUNTIME_ROOT_A,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_b": (
+        "research_labs/candidate_c_reproduction/evaluator_b/__init__.py",
+        RUNTIME_ROOT_B,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_b.canonical": (
+        "research_labs/candidate_c_reproduction/evaluator_b/canonical.py",
+        RUNTIME_ROOT_B,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_b.contract_loader": (
+        "research_labs/candidate_c_reproduction/evaluator_b/contract_loader.py",
+        RUNTIME_ROOT_B,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_b.evaluator": (
+        "research_labs/candidate_c_reproduction/evaluator_b/evaluator.py",
+        RUNTIME_ROOT_B,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.evaluator_b.models": (
+        "research_labs/candidate_c_reproduction/evaluator_b/models.py",
+        RUNTIME_ROOT_B,
+        False,
+    ),
+    "research_labs.candidate_c_reproduction.comparator_ab.projection": (
+        "research_labs/candidate_c_reproduction/comparator_ab/projection.py",
+        RUNTIME_ROOT_V2,
+        True,
+    ),
+}
 
 
 class RealRunValidationError(ValueError):
@@ -61,6 +139,108 @@ def _source_set_hash(root: Path, commit: str, paths: Iterable[str]) -> str:
         for path in sorted(paths)
     ]
     return canonical_hash(entries)
+
+
+def runtime_identity_manifest_entries(repository_root: Path | str) -> list[dict[str, str]]:
+    """Return the immutable protected runtime file declaration for RUN1-R1."""
+
+    root = Path(repository_root).resolve()
+    return [
+        {
+            "path": path,
+            "protectedCommit": commit,
+            "protectedBlobSha256": hashlib.sha256(_git_blob_bytes(root, commit, path)).hexdigest().upper(),
+            "runtimeRoot": runtime_root,
+            "expectedRuntimePath": f"${{{runtime_root}}}/{path}",
+        }
+        for path, commit, runtime_root in PROTECTED_RUNTIME_FILES
+    ]
+
+
+def verify_runtime_checkout_against_protected_blobs(
+    repository_root: Path | str,
+    runtime_roots: Mapping[str, Path | str] | None = None,
+) -> list[dict[str, str]]:
+    """Require runtime checkout bytes to exactly match the protected Git blobs."""
+
+    source_root = Path(repository_root).resolve()
+    roots = {
+        RUNTIME_ROOT_A: source_root,
+        RUNTIME_ROOT_B: source_root,
+        RUNTIME_ROOT_V2: source_root,
+        **{name: Path(path).resolve() for name, path in (runtime_roots or {}).items()},
+    }
+    records: list[dict[str, str]] = []
+    for entry in runtime_identity_manifest_entries(source_root):
+        runtime_path = roots[entry["runtimeRoot"]] / entry["path"]
+        if not runtime_path.is_file():
+            raise RealRunValidationError(f"protected runtime file is missing: {entry['path']}")
+        runtime_hash = hashlib.sha256(runtime_path.read_bytes()).hexdigest().upper()
+        if runtime_hash != entry["protectedBlobSha256"]:
+            raise RealRunValidationError(
+                f"runtime checkout bytes differ from protected Git blob: {entry['path']}"
+            )
+        records.append({**entry, "runtimeSha256": runtime_hash})
+    return records
+
+
+def verify_runtime_module_paths(
+    repository_root: Path | str,
+    runtime_roots: Mapping[str, Path | str] | None = None,
+    module_paths: Mapping[str, str | Path] | None = None,
+) -> dict[str, str]:
+    """Reject imports of protected runtime modules from any unexpected checkout."""
+
+    root = Path(repository_root).resolve()
+    resolved: dict[str, str] = {}
+    roots = {
+        RUNTIME_ROOT_A: root,
+        RUNTIME_ROOT_B: root,
+        RUNTIME_ROOT_V2: root,
+        **{name: Path(path).resolve() for name, path in (runtime_roots or {}).items()},
+    }
+    for module_name, (relative_path, runtime_root, direct_file_import) in RUNTIME_MODULE_PATHS.items():
+        if module_paths is not None:
+            actual = Path(module_paths[module_name])
+        else:
+            # Each protected evaluator runs in its own clean-room checkout.
+            # A subprocess proves the interpreter's imported path without
+            # co-loading A and B under one package namespace.
+            module_probe = (
+                "import importlib.util; "
+                f"spec = importlib.util.spec_from_file_location({module_name!r}, {str(roots[runtime_root] / relative_path)!r}); "
+                "module = importlib.util.module_from_spec(spec); "
+                "spec.loader.exec_module(module); "
+                "print(module.__file__ or '')"
+                if direct_file_import
+                else "import importlib; "
+                f"module = importlib.import_module({module_name!r}); "
+                "print(module.__file__ or '')"
+            )
+            probe = subprocess.run(
+                [
+                    sys.executable,
+                    "-c",
+                    module_probe,
+                ],
+                check=False,
+                capture_output=True,
+                cwd=roots[runtime_root],
+                env={**os.environ, "PYTHONPATH": str(roots[runtime_root])},
+            )
+            if probe.returncode != 0:
+                raise RealRunValidationError(
+                    f"cannot import protected runtime module from {runtime_root}: {module_name}: "
+                    f"{probe.stderr.decode('utf-8').strip()}"
+                )
+            actual = Path(probe.stdout.decode("utf-8").strip())
+        expected = (roots[runtime_root] / relative_path).resolve()
+        if actual.resolve() != expected:
+            raise RealRunValidationError(
+                f"protected runtime module resolves outside the expected checkout: {module_name}"
+            )
+        resolved[module_name] = str(actual.resolve())
+    return resolved
 
 
 def verify_protected_identities(root: Path | str) -> dict[str, str]:
