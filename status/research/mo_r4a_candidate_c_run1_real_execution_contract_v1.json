@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_REAL_EXECUTION_CONTRACT_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-RUN1-REAL-EXECUTION-HARNESS-PRERUN-FREEZE",
+  "status": "PRE_RUN_FROZEN_REAL_EXECUTION_NOT_AUTHORIZED",
+  "implementationCommit": "07292fd64d0a163f1c1dc1d02df01e70e420a1cc",
+  "population": {
+    "eventCount": 645,
+    "expectedRowCount": 5160,
+    "rowTemplatesPerEvent": 8,
+    "exactPopulationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6",
+    "populationManifestHash": "0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092",
+    "sharedAstronomyInputSnapshotHash": "F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915",
+    "componentInputBindingsHash": "D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985",
+    "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580"
+  },
+  "admission": {
+    "marker": "REAL_FROZEN_CANDIDATE_C_P0_R1",
+    "realFrozenPopulationRead": true,
+    "readScope": "IDENTITY_STRUCTURE_AND_ADAPTER_VALIDATION_ONLY",
+    "realFrozenPopulationExposedToEvaluator": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0,
+    "syntheticDisguiseProhibited": true
+  },
+  "frozenEvaluators": {
+    "a": {
+      "classification": "THIN_EXECUTION_RELEASE_REQUIRED",
+      "implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b",
+      "implementationAggregateHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB",
+      "testSourceHash": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E",
+      "releaseInvocation": ["evaluator_a.evaluator._templates", "evaluator_a.evaluator._evaluate_template", "evaluator_a.schema.validate_rows"],
+      "businessLogicMirrored": false
+    },
+    "b": {
+      "classification": "THIN_EXECUTION_RELEASE_REQUIRED",
+      "implementationCommit": "267885b84e1d796b438b09d73f3fb9792235a41e",
+      "implementationAggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199",
+      "testSourceHash": "31AA1B525B29AFE4CD206D63A1DA611820D6A87E1C71465645BADEE0B9487CB9",
+      "releaseInvocation": ["evaluator_b.evaluator._motion_row", "evaluator_b.evaluator._natural_class", "evaluator_b.evaluator._relationship_row", "evaluator_b.evaluator._temporary_row", "evaluator_b.evaluator._compound_row", "evaluator_b.evaluator._ordinary_drsti_row", "evaluator_b.evaluator._special_drsti_row", "evaluator_b.evaluator._individual_record_row", "evaluator_b.evaluator.validate_output_rows"],
+      "businessLogicMirrored": false
+    }
+  },
+  "semanticComparison": {
+    "projectionContractId": "MO_R4A_CANDIDATE_C_AB1_R1_SEMANTIC_PROJECTION_V2",
+    "projectionCommit": "52c3b287a70018370e153a77b84c36e6b0dbfb42",
+    "semanticProjectionHash": "1DDFC3B79EC30913254A2FEA117A97EA1761E42D8681EB5D2CB6B2D698187BED",
+    "projectionBlobHash": "4B4828FF09494EA3EAE8ACF57B0004177E6507B8ED8A198871F861E60C2AAF5E",
+    "aliases": {"DRSTI_1_4": "1/4", "DRSTI_1_2": "1/2", "DRSTI_3_4": "3/4", "DRSTI_FULL": "FULL"},
+    "alignmentKey": ["eventId", "sourceProfile", "componentId", "sourceContractId", "operatorId"],
+    "noRunAdjudication": true
+  },
+  "futureOutputArtifacts": {
+    "evaluatorA": "status/research/mo_r4a_candidate_c_run1_evaluator_a_real_output_v1.json",
+    "evaluatorB": "status/research/mo_r4a_candidate_c_run1_evaluator_b_real_output_v1.json",
+    "comparison": "status/research/mo_r4a_candidate_c_run1_ab_comparison_result_v1.json",
+    "populatedDuringPreRun": false
+  },
+  "executionOrder": [
+    "validate all frozen identities",
+    "load 645 frozen events",
+    "construct A and B real adapters",
+    "verify A/B semantic input equivalence",
+    "evaluate all 645 through A and freeze raw output",
+    "evaluate all 645 through B and freeze raw output",
+    "validate 5160 rows on each side",
+    "apply V2 semantic projection and compare",
+    "freeze first comparison result and stop before market/outcome analysis"
+  ],
+  "oneShot": {"rerunAfterDiscrepancyProhibited": true, "successorMilestoneRequiredForAnyCorrection": true},
+  "runImplementation": {
+    "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON over lexicographically sorted {path, sha256} entries; each sha256 is the SHA-256 of exact committed Git blob bytes at implementationCommit.",
+    "sourceSetAggregateHash": "CE71A629A7F700C1B5C7B32F0E00FBAF96669AED402FA609594D73F85DFF0608",
+    "admissionHash": "75DB66FF2B4D1EFC1FAB67F1C1374F22E3507F6675A7D5BE5E2B7D441BB9D0AE",
+    "adapterAHash": "ACB4B86ADDE18322EED539711EF4AE2B50B81D9AC4D832D8CD8140066A8F3895",
+    "adapterBHash": "21A14A9E16FE3813855FFA7B6E915BB3AB708F004AC75FF3515BD3CDF5157C88",
+    "harnessHash": "AB496751E99CA6A26814452539B77190E781F588E89DE63ABFA70B3568AEFC2E",
+    "artifactWriterHash": "CCD6A184133E6EFF3FA6E5B081501C00ECAA6D8C6404CA78B1B11F24D7818B0D",
+    "validationHash": "D50EBC48B593DCA5E723BBD936350D0EE48E950AB02A24E835AB702ED050D49B",
+    "testSourceHash": "FE7105A57CF7377FC2F109ECB2EC84B9D6A9E228F7D30AB43E428532DD29EAA8"
+  },
+  "guardrails": {
+    "realCandidateCRunAuthorized": false,
+    "realCandidateCRunExecuted": false,
+    "realComparisonExecuted": false,
+    "outcomeBlind": true,
+    "marketDataAllowed": false,
+    "providerAccessAllowed": false,
+    "swissEphemerisAllowed": false,
+    "executionAllowed": false,
+    "polarityAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false
+  },
+  "contractHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude contractHash.",
+  "contractHash": "0DD78FBA6FD347DB09778FFDD163FC76F6205070E92928D63A999D5D135B3A5A"
+}

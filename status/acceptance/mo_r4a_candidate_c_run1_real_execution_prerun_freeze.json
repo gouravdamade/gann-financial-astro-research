@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_REAL_EXECUTION_PRERUN_FREEZE_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-RUN1-REAL-EXECUTION-HARNESS-PRERUN-FREEZE",
+  "status": "PRE_RUN_FREEZE_COMPLETE_REAL_RUN_NOT_AUTHORIZED",
+  "implementationCommit": "07292fd64d0a163f1c1dc1d02df01e70e420a1cc",
+  "contractPath": "status/research/mo_r4a_candidate_c_run1_real_execution_contract_v1.json",
+  "contractHash": "0DD78FBA6FD347DB09778FFDD163FC76F6205070E92928D63A999D5D135B3A5A",
+  "admissionFeasibility": {"evaluatorA": "THIN_EXECUTION_RELEASE_REQUIRED", "evaluatorB": "THIN_EXECUTION_RELEASE_REQUIRED", "businessLogicForked": false},
+  "realPopulationBoundary": {"realFrozenPopulationRead": true, "readScope": "IDENTITY_STRUCTURE_AND_ADAPTER_VALIDATION_ONLY", "realFrozenPopulationEvaluated": false, "realCandidateCOutputProduced": false, "realCandidateCOutputInspected": false, "realCandidateCOutputRowCount": 0},
+  "executionBoundary": {"realCandidateCRunAuthorized": false, "realCandidateCRunExecuted": false, "realComparisonExecuted": false, "marketOutcomeRead": false, "marketDataRead": false, "providerAccessed": false, "swissEphemerisAccessed": false, "executionAllowed": false},
+  "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_RUN1_REAL_EXECUTION_PRERUN_FREEZE",
+  "recordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude recordHash.",
+  "recordHash": "E04B67D3307A285D7F2EFCFAB32EF9A343E08B92E24CD6782D54B8FD7999C0FE"
+}

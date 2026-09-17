@@ -12886,3 +12886,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_P0_R1_BEFORE_EVALUATOR_IMPLEMENTATION`.
+
+## MO-R4A Candidate C RUN1 Real Execution Pre-Run Freeze
+
+- An additive, outcome-blind RUN1 harness is frozen from implementation commit
+  `07292fd64d0a163f1c1dc1d02df01e70e420a1cc`. It validates the immutable
+  645-event population, 5,160 expected row keys, source hashes, and semantic
+  equivalence of independent A/B real-input adapters before any future run.
+- Both evaluators require a thin execution release because their historical
+  public interfaces are synthetic-only. The release layer calls frozen C01-C07
+  component functions directly; it does not copy or alter evaluator business
+  logic. The real admission marker is
+  `REAL_FROZEN_CANDIDATE_C_P0_R1`; a real event cannot be disguised as
+  `SYNTHETIC_ONLY`.
+- Real frozen artifacts were read only for identity, structure, and adapter
+  validation. They were not evaluated, no real Candidate C output was
+  produced or inspected, and the real comparison was not executed.
+- The frozen V2 semantic projection retains its exact four Drsti aliases,
+  including `DRSTI_FULL -> FULL`. Future raw A, B, and comparison artifact
+  paths are declared but not populated.
+- `REAL_CANDIDATE_C_RUN_AUTHORIZED=false` and `executionAllowed=false` remain
+  active. No market/outcome/provider/Swiss Ephemeris access occurred; no
+  polarity, score, magnitude, wave, Fields polarity, Auto Suggest, ML, MT5,
+  or execution work is authorized.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_REAL_EXECUTION_PRERUN_FREEZE`.
