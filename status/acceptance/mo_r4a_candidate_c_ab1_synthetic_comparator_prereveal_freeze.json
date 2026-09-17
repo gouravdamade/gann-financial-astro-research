@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_AB1_SYNTHETIC_COMPARATOR_PREREVEAL_FREEZE_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-AB1-SYNTHETIC-COMPARATOR-FREEZE",
+  "status": "FROZEN_BEFORE_FIRST_AB_SYNTHETIC_COMPARISON",
+  "integrationBranch": "research/candidate-c-ab-synthetic-comparator-freeze",
+  "integrationMergeCommit": "04c4e304aab52848a36b5524c14c0263f90ff75e",
+  "comparatorImplementationCommit": "f0f7166c08aa82038be45d15c675b428dd5f19aa",
+  "preRevealFreezeCommit": null,
+  "preRevealFreezeCommitNote": "The enclosing Git commit is reported externally because embedding its own SHA would invalidate this canonical self-hash.",
+  "abComparisonExecuted": false,
+  "sharedBaseline": "35f6319aa0a984756c5b59bbd88c6ac8a0b5c7ea",
+  "protectedEvaluatorVerification": {
+    "verificationMethod": "Recompute each recorded aggregate from exact Git blob bytes at the frozen implementation commit; the integration namespace docstring is not used as a substitute for either frozen implementation identity.",
+    "evaluatorA": {
+      "implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b",
+      "acceptedA1R1BranchHead": "228c71ac3bf715300bcf21aa30de54b51e9f2b6f",
+      "implementationAggregateHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB",
+      "testSourceHash": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E",
+      "verified": true
+    },
+    "evaluatorB": {
+      "implementationCommit": "267885b84e1d796b438b09d73f3fb9792235a41e",
+      "freezeCommit": "64778dd26403faf42d264cdd06ce3fb2fd98ce8f",
+      "implementationAggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199",
+      "testSourceHash": "31AA1B525B29AFE4CD206D63A1DA611820D6A87E1C71465645BADEE0B9487CB9",
+      "verified": true
+    }
+  },
+  "comparatorContract": {
+    "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'). Comparator source sets are sorted path/SHA-256 arrays over exact committed Git blob bytes.",
+    "comparatorImplementationHash": "BEE74AF2E5A946072CE622C2039447F2C0F3E2598255CF01432D1BF7BDE86AB1",
+    "comparatorTestSourceHash": "29F686D23E2DFBF1AE7BC33BCBF647470E0087885BB4A83566C3305B3851F25D",
+    "fixtureCorpusPath": "status/research/mo_r4a_candidate_c_ab1_synthetic_fixture_corpus_v1.json",
+    "fixtureCorpusHash": "1B0AF5D85254C58261286E84F9A8C3EB1C1747F12EBBE35FE95584BEAAD2E5A1",
+    "fixtureCount": 1040,
+    "fixtureFamilyCounts": {
+      "RELATIONSHIP_POSITION_MATRIX": 972,
+      "MOTION_MATRIX": 64,
+      "REPRESENTATION_INVARIANCE_CANARIES": 4
+    },
+    "expectedRowsPerEvaluator": 8320,
+    "aAdapterContractHash": "21F1400B835367A501D3558C2BF55DA2A5C4E12C60CC6C7CC54B7D6A21F6629C",
+    "bAdapterContractHash": "DB6E3FACBBCD07F84907CA7ACFB44B160C4B64AADB57097DCDA0D6D4E8BA5A60",
+    "semanticProjectionContractHash": "68D5EC6D471ECDF8C5FD9F496780048E7AFE920D91FBDA01B6B35D7AAF8EB443",
+    "mismatchTaxonomyContractHash": "948D5590FECFA47593AB3D6BF90B2BAB58274AB577C3AE60343040151A4A771C",
+    "comparisonContractHash": "CF6C290A258E5D3BEDC844566291F0578252D87C8BB4D956484B9BD6982FAE11"
+  },
+  "semanticEquality": {
+    "notAnOracle": "Neither Evaluator A nor Evaluator B is the oracle. Both independently produced rows are compared through the frozen neutral semantic projection.",
+    "compared": [
+      "fixture identity", "sourceProfile", "componentId", "sourceContractId", "provenance.operatorId",
+      "operatorVersion when represented by both", "outputStatus", "canonical sourceValue for VALUE",
+      "unknownReasonCode for UNKNOWN", "sourceStatus when represented by both"
+    ],
+    "excluded": ["inputIdentity bytes", "inputIdentityHash", "evaluator-specific consumed-input representation", "locator formatting", "sourceArtifact representation", "non-semantic explanatory provenance"],
+    "ordinaryDrstiCanonicalization": "The shared Saravali source ledger stores ordinary Drsti as a fraction; DRSTI_3_4 and 3/4 canonicalize to 3/4 only for SARAVALI_4_32_ORDINARY_DRSTI_V1."
+  },
+  "executionBoundaries": {
+    "realFrozenPopulationArtifactReadForValidation": false,
+    "realFrozenPopulationExposedToComparator": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0,
+    "marketOutcomeRead": false,
+    "priceDataRead": false,
+    "providerAccessed": false,
+    "swissEphemerisAccessed": false,
+    "polarityAssigned": false,
+    "magnitudeAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false,
+    "executionAllowed": false
+  },
+  "validation": {
+    "comparatorUnitTests": "8 passed; comparator-owned toy rows only; no A/B corpus comparison executed",
+    "evaluatorSyntheticTestsRunSeparately": "35 passed (A 14 + B 21)",
+    "ruff": "PASS",
+    "pythonCompile": "PASS",
+    "fixtureRegeneration": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "freezeRecordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude freezeRecordHash.",
+  "freezeRecordHash": "FC7DD198E7FFD2865AC96D10EBA09BD2E2BC8AA65B35249EEDE8637B3F8C2DC0"
+}
