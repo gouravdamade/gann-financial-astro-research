@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_A1_R1_EVALUATOR_A_PROVENANCE_CORRECTION_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-A1-R1",
+  "status": "PROVENANCE_CORRECTION_COMPLETE_CENTRAL_REVIEW_REQUIRED",
+  "startingCommit": "d72449f7fb4161cd4061d22e1eaa74d42fbbab48",
+  "branch": "research/candidate-c-evaluator-a-freeze",
+  "successorOf": {
+    "recordPath": "status/acceptance/mo_r4a_candidate_c_evaluator_a_implementation_freeze.json",
+    "historicalFreezeCommit": "d72449f7fb4161cd4061d22e1eaa74d42fbbab48",
+    "historicalFreezeRecordHash": "35031F1FB4E83CCAF29DA4290C6D816354D20BAA30772F84598DEB232821E51D",
+    "historicalRecordPreservedUnchanged": true,
+    "historicalRecordedRealFrozenPopulationRead": false,
+    "historicalRecordedResearchBoundaryRealFrozenPopulationRead": false
+  },
+  "correctionReason": {
+    "defect": "The historical A1 record described realFrozenPopulationRead as false, although load_frozen_contracts parses frozen real artifacts for validation before removing their arrays.",
+    "correctedBoundary": "Artifact access for validation is distinct from exposing the real population to, or evaluating it through, Evaluator A.",
+    "historicalConclusionPreserved": true
+  },
+  "protectedEvaluatorAIdentity": {
+    "implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b",
+    "implementationSourceFileCount": 6,
+    "aggregateImplementationHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB",
+    "testSourcePath": "research_labs/candidate_c_reproduction/evaluator_a/test_evaluator_a.py",
+    "testSourceHash": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E",
+    "implementationSourceUnchanged": true,
+    "testSourceUnchanged": true
+  },
+  "correctedRealPopulationAccessBoundary": {
+    "realFrozenPopulationRead": true,
+    "realFrozenPopulationReadScope": "READ_AND_PARSED_FOR_SELF_HASH_POPULATION_HASH_EVENT_COUNT_AND_CONTRACT_IDENTITY_VALIDATION_ONLY",
+    "realFrozenPopulationArtifactReadForValidation": true,
+    "realFrozenPopulationExposedToEvaluator": false,
+    "realFrozenPopulationArraysExposedToEvaluationPath": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0,
+    "snapshotAndPopulationManifestParsedForValidation": true,
+    "arraysRemovedBeforeFrozenContractsReturned": true,
+    "syntheticTestFixtureInvokedLoader": true
+  },
+  "correctedResearchBoundary": {
+    "priceDataRead": false,
+    "returnDataRead": false,
+    "marketOutcomeRead": false,
+    "providerAccessed": false,
+    "swissEphemerisQueried": false,
+    "polarityAssigned": false,
+    "magnitudeAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false,
+    "executionAllowed": false,
+    "sourceDoctrineExpanded": false,
+    "realFrozenPopulationRead": true,
+    "realFrozenPopulationReadScope": "READ_AND_PARSED_FOR_SELF_HASH_POPULATION_HASH_EVENT_COUNT_AND_CONTRACT_IDENTITY_VALIDATION_ONLY",
+    "realFrozenPopulationArtifactReadForValidation": true,
+    "realFrozenPopulationExposedToEvaluator": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0
+  },
+  "implementationEvidence": {
+    "loaderPath": "research_labs/candidate_c_reproduction/evaluator_a/contract_loader.py",
+    "loaderValidationLocator": "load_frozen_contracts lines 126-154 reads and validates the frozen snapshot and population manifest identities and counts",
+    "loaderArrayRemovalLocator": "load_frozen_contracts lines 279-285 removes events and population before returning FrozenContracts",
+    "syntheticLoaderCallLocator": "research_labs/candidate_c_reproduction/evaluator_a/test_evaluator_a.py line 79",
+    "syntheticArrayAbsenceAssertionLocator": "research_labs/candidate_c_reproduction/evaluator_a/test_evaluator_a.py lines 88-89"
+  },
+  "nonActions": {
+    "realEvaluatorAExecution": false,
+    "realCandidateCOutputGeneration": false,
+    "realCandidateCOutputInspection": false,
+    "evaluatorBCreated": false,
+    "comparatorCreated": false,
+    "marketOrOutcomeDataAccess": false,
+    "providerAccess": false,
+    "implementationSourceModified": false,
+    "testSourceModified": false
+  },
+  "successorRecordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude successorRecordHash.",
+  "successorRecordHash": "3F5FF5BF43AC5F653F3F9708FE5C424018A42AF43742F78C66332DFF5BB7FE0D",
+  "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_A1_R1_PROVENANCE_CORRECTION"
+}
