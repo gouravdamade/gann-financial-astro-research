@@ -12935,3 +12935,23 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   Fields, Auto Suggest, ML, MT5, and execution locks remain active.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R1_EXECUTION_BOUNDARY_HARDENING`.
+
+## MO-R4A Candidate C RUN1-R2 Isolated Runtime Execution Wiring
+
+- RUN1-R2 freezes a controller plus independent A, B, and V2 worker processes.
+  Each worker uses `python -I -B` and performs byte verification, import-path
+  verification, a same-process byte recheck, and only then fake-only frozen
+  function invocation. The controller does not import A/B scientific modules
+  on its execution path.
+- The V2 manifest protects all 18 files observed in the actual comparator
+  import path, including comparator package initialization and its static A/B
+  dependencies. A and B remain separate historical roots.
+- The real frozen population was read only for identity, structure, adapter,
+  denylist, authorization, and wiring validation. No real event was evaluated,
+  no real A/B output or V2 comparison was produced or inspected, and no market,
+  outcome, provider, or Swiss Ephemeris access occurred.
+- Production worker-ticket issuance is disabled. `REAL_CANDIDATE_C_RUN_AUTHORIZED=false`
+  and `executionAllowed=false` remain active; no polarity, score, magnitude,
+  wave, Fields, Auto Suggest, ML, MT5, or execution functionality changed.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R2_ISOLATED_RUNTIME_EXECUTION_WIRING`.
