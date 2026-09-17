@@ -1,1 +1,1 @@
-"""Candidate C reproduction experiments."""
+"""Candidate C reproduction research labs."""
