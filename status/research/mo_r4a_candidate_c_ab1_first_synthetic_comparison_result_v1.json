@@ -1,0 +1,4828 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_AB1_FIRST_SYNTHETIC_COMPARISON_RESULT_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-AB1-SYNTHETIC-COMPARATOR-FREEZE",
+  "preRevealFreezeCommit": "543cb4290bacdc12dbac0105ee67704d388a697f",
+  "aImplementationIdentity": {
+    "implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b",
+    "aggregateHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB",
+    "testSourceHash": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E"
+  },
+  "bImplementationIdentity": {
+    "implementationCommit": "267885b84e1d796b438b09d73f3fb9792235a41e",
+    "aggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199",
+    "testSourceHash": "31AA1B525B29AFE4CD206D63A1DA611820D6A87E1C71465645BADEE0B9487CB9"
+  },
+  "comparatorImplementationIdentity": {
+    "implementationCommit": "f0f7166c08aa82038be45d15c675b428dd5f19aa",
+    "aggregateHash": "BEE74AF2E5A946072CE622C2039447F2C0F3E2598255CF01432D1BF7BDE86AB1",
+    "testSourceHash": "29F686D23E2DFBF1AE7BC33BCBF647470E0087885BB4A83566C3305B3851F25D"
+  },
+  "fixtureCorpusHash": "1B0AF5D85254C58261286E84F9A8C3EB1C1747F12EBBE35FE95584BEAAD2E5A1",
+  "fixtureCount": 1040,
+  "expectedRowsPerEvaluator": 8320,
+  "actualASyntheticRowCount": 8320,
+  "actualBSyntheticRowCount": 8320,
+  "semanticRowsCompared": 8320,
+  "totalMismatches": 81,
+  "mismatchCountsByClass": {
+    "SOURCE_VALUE_MISMATCH": 81
+  },
+  "mismatchRecords": [
+    {
+      "fixtureId": "REL_SUN_SUN_P07",
+      "semanticFixtureIdentityHash": "5F53FB3BF8CE3F587651930C41912FC09FA0ABC8CE497E29F402C1BF9CDF29EF",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_SUN_P07",
+        "semanticFixtureIdentityHash": "5F53FB3BF8CE3F587651930C41912FC09FA0ABC8CE497E29F402C1BF9CDF29EF",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_SUN_P07",
+        "semanticFixtureIdentityHash": "5F53FB3BF8CE3F587651930C41912FC09FA0ABC8CE497E29F402C1BF9CDF29EF",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_MOON_P07",
+      "semanticFixtureIdentityHash": "3DD970839363EAFF7954AFC5B67BCF9645F932600855850A19661BAC29E15481",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_MOON_P07",
+        "semanticFixtureIdentityHash": "3DD970839363EAFF7954AFC5B67BCF9645F932600855850A19661BAC29E15481",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_MOON_P07",
+        "semanticFixtureIdentityHash": "3DD970839363EAFF7954AFC5B67BCF9645F932600855850A19661BAC29E15481",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_MARS_P07",
+      "semanticFixtureIdentityHash": "DF1A9EED959BCA069ABAC796F8C62E4FB0C3412DE56CC215DD824C873E8E70EC",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_MARS_P07",
+        "semanticFixtureIdentityHash": "DF1A9EED959BCA069ABAC796F8C62E4FB0C3412DE56CC215DD824C873E8E70EC",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_MARS_P07",
+        "semanticFixtureIdentityHash": "DF1A9EED959BCA069ABAC796F8C62E4FB0C3412DE56CC215DD824C873E8E70EC",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_MERCURY_P07",
+      "semanticFixtureIdentityHash": "7F55F3F510092BFFEFF962BDADF3F70BB35B1E647E8ABFBD1F472790A28E45ED",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_MERCURY_P07",
+        "semanticFixtureIdentityHash": "7F55F3F510092BFFEFF962BDADF3F70BB35B1E647E8ABFBD1F472790A28E45ED",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_MERCURY_P07",
+        "semanticFixtureIdentityHash": "7F55F3F510092BFFEFF962BDADF3F70BB35B1E647E8ABFBD1F472790A28E45ED",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_JUPITER_P07",
+      "semanticFixtureIdentityHash": "2CFBA1C2ECB3B908C2B720CDE861892D26629B60177E758DC0FD52E91AD00648",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_JUPITER_P07",
+        "semanticFixtureIdentityHash": "2CFBA1C2ECB3B908C2B720CDE861892D26629B60177E758DC0FD52E91AD00648",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_JUPITER_P07",
+        "semanticFixtureIdentityHash": "2CFBA1C2ECB3B908C2B720CDE861892D26629B60177E758DC0FD52E91AD00648",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_VENUS_P07",
+      "semanticFixtureIdentityHash": "A0234C3F102B8CE7B4291C5B342D286D36D3702969B8B6D619458EB00A21FF43",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_VENUS_P07",
+        "semanticFixtureIdentityHash": "A0234C3F102B8CE7B4291C5B342D286D36D3702969B8B6D619458EB00A21FF43",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_VENUS_P07",
+        "semanticFixtureIdentityHash": "A0234C3F102B8CE7B4291C5B342D286D36D3702969B8B6D619458EB00A21FF43",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_SATURN_P07",
+      "semanticFixtureIdentityHash": "3B82B0AF90B3B8164F762AC0ED81A1487C76204D6D99C9156A9709A599EB7137",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_SATURN_P07",
+        "semanticFixtureIdentityHash": "3B82B0AF90B3B8164F762AC0ED81A1487C76204D6D99C9156A9709A599EB7137",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_SATURN_P07",
+        "semanticFixtureIdentityHash": "3B82B0AF90B3B8164F762AC0ED81A1487C76204D6D99C9156A9709A599EB7137",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_RAHU_P07",
+      "semanticFixtureIdentityHash": "9234C99B295F63553A2A8A99199705CC13859296570E506FD0BFB4E7849B6D38",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_RAHU_P07",
+        "semanticFixtureIdentityHash": "9234C99B295F63553A2A8A99199705CC13859296570E506FD0BFB4E7849B6D38",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_RAHU_P07",
+        "semanticFixtureIdentityHash": "9234C99B295F63553A2A8A99199705CC13859296570E506FD0BFB4E7849B6D38",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SUN_KETU_P07",
+      "semanticFixtureIdentityHash": "14E0FC23BC80FA80A39F9391F7265D42357EDE80D0F0BC7D810C317BF3DFAE5D",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SUN_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SUN",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 1,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SUN_KETU_P07",
+        "semanticFixtureIdentityHash": "14E0FC23BC80FA80A39F9391F7265D42357EDE80D0F0BC7D810C317BF3DFAE5D",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SUN_KETU_P07",
+        "semanticFixtureIdentityHash": "14E0FC23BC80FA80A39F9391F7265D42357EDE80D0F0BC7D810C317BF3DFAE5D",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_SUN_P07",
+      "semanticFixtureIdentityHash": "0B16432F5F72DC8F426E1CC4B949E0B570B28A267461F6AC709DE4B014865B96",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_SUN_P07",
+        "semanticFixtureIdentityHash": "0B16432F5F72DC8F426E1CC4B949E0B570B28A267461F6AC709DE4B014865B96",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_SUN_P07",
+        "semanticFixtureIdentityHash": "0B16432F5F72DC8F426E1CC4B949E0B570B28A267461F6AC709DE4B014865B96",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_MOON_P07",
+      "semanticFixtureIdentityHash": "1E3382931FAC8C9E22DCE901A29161E5049768F6424829FE8BCD409A3286E31A",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_MOON_P07",
+        "semanticFixtureIdentityHash": "1E3382931FAC8C9E22DCE901A29161E5049768F6424829FE8BCD409A3286E31A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_MOON_P07",
+        "semanticFixtureIdentityHash": "1E3382931FAC8C9E22DCE901A29161E5049768F6424829FE8BCD409A3286E31A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_MARS_P07",
+      "semanticFixtureIdentityHash": "3BAD6A19F24873B8772E68D0A99C8A08086A8198884D4A2FB26652A877FCE849",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_MARS_P07",
+        "semanticFixtureIdentityHash": "3BAD6A19F24873B8772E68D0A99C8A08086A8198884D4A2FB26652A877FCE849",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_MARS_P07",
+        "semanticFixtureIdentityHash": "3BAD6A19F24873B8772E68D0A99C8A08086A8198884D4A2FB26652A877FCE849",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_MERCURY_P07",
+      "semanticFixtureIdentityHash": "DBC70552662D0559F09C1EC80D18A1B02EBE22FB20AB85001CDE806E0A6356E1",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_MERCURY_P07",
+        "semanticFixtureIdentityHash": "DBC70552662D0559F09C1EC80D18A1B02EBE22FB20AB85001CDE806E0A6356E1",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_MERCURY_P07",
+        "semanticFixtureIdentityHash": "DBC70552662D0559F09C1EC80D18A1B02EBE22FB20AB85001CDE806E0A6356E1",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_JUPITER_P07",
+      "semanticFixtureIdentityHash": "710E8276AFD60ED81A1A4EBA51C56906D858D887B4AFA9FFD99AF1CCDF1115EB",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_JUPITER_P07",
+        "semanticFixtureIdentityHash": "710E8276AFD60ED81A1A4EBA51C56906D858D887B4AFA9FFD99AF1CCDF1115EB",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_JUPITER_P07",
+        "semanticFixtureIdentityHash": "710E8276AFD60ED81A1A4EBA51C56906D858D887B4AFA9FFD99AF1CCDF1115EB",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_VENUS_P07",
+      "semanticFixtureIdentityHash": "020F6C120EF669D0DBD2B602C7A8332A41BA2DC75FE82B4E8B21D76D8A77475F",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_VENUS_P07",
+        "semanticFixtureIdentityHash": "020F6C120EF669D0DBD2B602C7A8332A41BA2DC75FE82B4E8B21D76D8A77475F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_VENUS_P07",
+        "semanticFixtureIdentityHash": "020F6C120EF669D0DBD2B602C7A8332A41BA2DC75FE82B4E8B21D76D8A77475F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_SATURN_P07",
+      "semanticFixtureIdentityHash": "5F4F296EBCFD7FF2FD2DDBA5144EE59DDA09323A60B4AEC258415A2B473C30D0",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_SATURN_P07",
+        "semanticFixtureIdentityHash": "5F4F296EBCFD7FF2FD2DDBA5144EE59DDA09323A60B4AEC258415A2B473C30D0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_SATURN_P07",
+        "semanticFixtureIdentityHash": "5F4F296EBCFD7FF2FD2DDBA5144EE59DDA09323A60B4AEC258415A2B473C30D0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_RAHU_P07",
+      "semanticFixtureIdentityHash": "A43BC5013955B72E18161E8521FFC6FF4F01257212EC260B2F0FC3BC8645AA37",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_RAHU_P07",
+        "semanticFixtureIdentityHash": "A43BC5013955B72E18161E8521FFC6FF4F01257212EC260B2F0FC3BC8645AA37",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_RAHU_P07",
+        "semanticFixtureIdentityHash": "A43BC5013955B72E18161E8521FFC6FF4F01257212EC260B2F0FC3BC8645AA37",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MOON_KETU_P07",
+      "semanticFixtureIdentityHash": "C126725F21B2162B92A7B3F391C251A403700ED8F79529DA33C570BFB4BCC540",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MOON_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MOON",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MOON_KETU_P07",
+        "semanticFixtureIdentityHash": "C126725F21B2162B92A7B3F391C251A403700ED8F79529DA33C570BFB4BCC540",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MOON_KETU_P07",
+        "semanticFixtureIdentityHash": "C126725F21B2162B92A7B3F391C251A403700ED8F79529DA33C570BFB4BCC540",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_SUN_P07",
+      "semanticFixtureIdentityHash": "D4D6B5E257FF8A3364A5F10B26A4DD0E72E01E9A49B993F9FB108CA4C5335EE3",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_SUN_P07",
+        "semanticFixtureIdentityHash": "D4D6B5E257FF8A3364A5F10B26A4DD0E72E01E9A49B993F9FB108CA4C5335EE3",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_SUN_P07",
+        "semanticFixtureIdentityHash": "D4D6B5E257FF8A3364A5F10B26A4DD0E72E01E9A49B993F9FB108CA4C5335EE3",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_MOON_P07",
+      "semanticFixtureIdentityHash": "65DDEDCF095D0AFCB349F45C240C8B67848B32081F4E8E9EF1A0833EECCB0690",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_MOON_P07",
+        "semanticFixtureIdentityHash": "65DDEDCF095D0AFCB349F45C240C8B67848B32081F4E8E9EF1A0833EECCB0690",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_MOON_P07",
+        "semanticFixtureIdentityHash": "65DDEDCF095D0AFCB349F45C240C8B67848B32081F4E8E9EF1A0833EECCB0690",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_MARS_P07",
+      "semanticFixtureIdentityHash": "7A37F6E7D6CB0D5FBCD50373176DC81524B466A4FCF5161828BE265AABF00658",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_MARS_P07",
+        "semanticFixtureIdentityHash": "7A37F6E7D6CB0D5FBCD50373176DC81524B466A4FCF5161828BE265AABF00658",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_MARS_P07",
+        "semanticFixtureIdentityHash": "7A37F6E7D6CB0D5FBCD50373176DC81524B466A4FCF5161828BE265AABF00658",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_MERCURY_P07",
+      "semanticFixtureIdentityHash": "E73D3FE412D9F2D4BB998BA1346716F6FF79AC568EFB3144F683032E28D36AE0",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_MERCURY_P07",
+        "semanticFixtureIdentityHash": "E73D3FE412D9F2D4BB998BA1346716F6FF79AC568EFB3144F683032E28D36AE0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_MERCURY_P07",
+        "semanticFixtureIdentityHash": "E73D3FE412D9F2D4BB998BA1346716F6FF79AC568EFB3144F683032E28D36AE0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_JUPITER_P07",
+      "semanticFixtureIdentityHash": "285DF2CC73E963A265E14AE92CDB54007A0B4497337981A3D890F8E03616F2A1",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_JUPITER_P07",
+        "semanticFixtureIdentityHash": "285DF2CC73E963A265E14AE92CDB54007A0B4497337981A3D890F8E03616F2A1",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_JUPITER_P07",
+        "semanticFixtureIdentityHash": "285DF2CC73E963A265E14AE92CDB54007A0B4497337981A3D890F8E03616F2A1",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_VENUS_P07",
+      "semanticFixtureIdentityHash": "C895A496FB3E791CB64531A9696E00EEA04A41138D674DE632DAD9CD08252F8D",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_VENUS_P07",
+        "semanticFixtureIdentityHash": "C895A496FB3E791CB64531A9696E00EEA04A41138D674DE632DAD9CD08252F8D",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_VENUS_P07",
+        "semanticFixtureIdentityHash": "C895A496FB3E791CB64531A9696E00EEA04A41138D674DE632DAD9CD08252F8D",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_SATURN_P07",
+      "semanticFixtureIdentityHash": "18999162FD59642A4882431F2D83153F15EFBAC47B69FFCA8B921D4918B639F0",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_SATURN_P07",
+        "semanticFixtureIdentityHash": "18999162FD59642A4882431F2D83153F15EFBAC47B69FFCA8B921D4918B639F0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_SATURN_P07",
+        "semanticFixtureIdentityHash": "18999162FD59642A4882431F2D83153F15EFBAC47B69FFCA8B921D4918B639F0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_RAHU_P07",
+      "semanticFixtureIdentityHash": "F220029A3F9ADB7C37F69CA79C9F0E1ADB453309D9CA414E5529AA5C41C92A93",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_RAHU_P07",
+        "semanticFixtureIdentityHash": "F220029A3F9ADB7C37F69CA79C9F0E1ADB453309D9CA414E5529AA5C41C92A93",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_RAHU_P07",
+        "semanticFixtureIdentityHash": "F220029A3F9ADB7C37F69CA79C9F0E1ADB453309D9CA414E5529AA5C41C92A93",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MARS_KETU_P07",
+      "semanticFixtureIdentityHash": "9DB1EA0E9C0D61A9A1960A1DCB0813316CFDEDAE353FF3A62B35F9DF75F89988",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MARS_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MARS",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MARS_KETU_P07",
+        "semanticFixtureIdentityHash": "9DB1EA0E9C0D61A9A1960A1DCB0813316CFDEDAE353FF3A62B35F9DF75F89988",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MARS_KETU_P07",
+        "semanticFixtureIdentityHash": "9DB1EA0E9C0D61A9A1960A1DCB0813316CFDEDAE353FF3A62B35F9DF75F89988",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_SUN_P07",
+      "semanticFixtureIdentityHash": "2E7F9BC883F637B5DEF936334A84C3F7485BCC4C2E64BD488D39E141B734A620",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_SUN_P07",
+        "semanticFixtureIdentityHash": "2E7F9BC883F637B5DEF936334A84C3F7485BCC4C2E64BD488D39E141B734A620",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_SUN_P07",
+        "semanticFixtureIdentityHash": "2E7F9BC883F637B5DEF936334A84C3F7485BCC4C2E64BD488D39E141B734A620",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_MOON_P07",
+      "semanticFixtureIdentityHash": "3697898279966E6313A1C99071B851DA0C887BA92EA76BE87B9E1F5EBB6F7269",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_MOON_P07",
+        "semanticFixtureIdentityHash": "3697898279966E6313A1C99071B851DA0C887BA92EA76BE87B9E1F5EBB6F7269",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_MOON_P07",
+        "semanticFixtureIdentityHash": "3697898279966E6313A1C99071B851DA0C887BA92EA76BE87B9E1F5EBB6F7269",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_MARS_P07",
+      "semanticFixtureIdentityHash": "2F8718497A1713BF60A702917715D610669F899EFEEFBA8B35C2852AD1EBCF32",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_MARS_P07",
+        "semanticFixtureIdentityHash": "2F8718497A1713BF60A702917715D610669F899EFEEFBA8B35C2852AD1EBCF32",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_MARS_P07",
+        "semanticFixtureIdentityHash": "2F8718497A1713BF60A702917715D610669F899EFEEFBA8B35C2852AD1EBCF32",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_MERCURY_P07",
+      "semanticFixtureIdentityHash": "F618752E6EB55EC2440E18C0430EE7A13190CFA7C5BE2532A871BF6FFC609B36",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_MERCURY_P07",
+        "semanticFixtureIdentityHash": "F618752E6EB55EC2440E18C0430EE7A13190CFA7C5BE2532A871BF6FFC609B36",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_MERCURY_P07",
+        "semanticFixtureIdentityHash": "F618752E6EB55EC2440E18C0430EE7A13190CFA7C5BE2532A871BF6FFC609B36",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_JUPITER_P07",
+      "semanticFixtureIdentityHash": "3699F9B6BE88EEC191FA9BE533DAB33D64ACA2B97E879C3AD7BD692F676719FF",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_JUPITER_P07",
+        "semanticFixtureIdentityHash": "3699F9B6BE88EEC191FA9BE533DAB33D64ACA2B97E879C3AD7BD692F676719FF",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_JUPITER_P07",
+        "semanticFixtureIdentityHash": "3699F9B6BE88EEC191FA9BE533DAB33D64ACA2B97E879C3AD7BD692F676719FF",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_VENUS_P07",
+      "semanticFixtureIdentityHash": "B4EDED6CF064F82B25E0863C23F4FB5A95B501DB0DE99E1B451ABA650B027A6B",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_VENUS_P07",
+        "semanticFixtureIdentityHash": "B4EDED6CF064F82B25E0863C23F4FB5A95B501DB0DE99E1B451ABA650B027A6B",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_VENUS_P07",
+        "semanticFixtureIdentityHash": "B4EDED6CF064F82B25E0863C23F4FB5A95B501DB0DE99E1B451ABA650B027A6B",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_SATURN_P07",
+      "semanticFixtureIdentityHash": "A8F15047CC3CF167A0EC7B9A73DCAAE98BC9D51E1BD3B888BB80926C1AF77C02",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_SATURN_P07",
+        "semanticFixtureIdentityHash": "A8F15047CC3CF167A0EC7B9A73DCAAE98BC9D51E1BD3B888BB80926C1AF77C02",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_SATURN_P07",
+        "semanticFixtureIdentityHash": "A8F15047CC3CF167A0EC7B9A73DCAAE98BC9D51E1BD3B888BB80926C1AF77C02",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_RAHU_P07",
+      "semanticFixtureIdentityHash": "389FEB39A29DF22ED9BEF3B0B34D1DB2254F6FC39CD22579F24E6262FF3DDA1C",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_RAHU_P07",
+        "semanticFixtureIdentityHash": "389FEB39A29DF22ED9BEF3B0B34D1DB2254F6FC39CD22579F24E6262FF3DDA1C",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_RAHU_P07",
+        "semanticFixtureIdentityHash": "389FEB39A29DF22ED9BEF3B0B34D1DB2254F6FC39CD22579F24E6262FF3DDA1C",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_MERCURY_KETU_P07",
+      "semanticFixtureIdentityHash": "AA1350BCE28E1675285EBA4425856A4C4A045D7F101B576459C20593E4D46E7A",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_MERCURY_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "MERCURY",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_MERCURY_KETU_P07",
+        "semanticFixtureIdentityHash": "AA1350BCE28E1675285EBA4425856A4C4A045D7F101B576459C20593E4D46E7A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_MERCURY_KETU_P07",
+        "semanticFixtureIdentityHash": "AA1350BCE28E1675285EBA4425856A4C4A045D7F101B576459C20593E4D46E7A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_SUN_P07",
+      "semanticFixtureIdentityHash": "8A70076FEECCABBB7DCD8BBE57D19F65D91AE78E7023A10BE23A22B5E4506420",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_SUN_P07",
+        "semanticFixtureIdentityHash": "8A70076FEECCABBB7DCD8BBE57D19F65D91AE78E7023A10BE23A22B5E4506420",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_SUN_P07",
+        "semanticFixtureIdentityHash": "8A70076FEECCABBB7DCD8BBE57D19F65D91AE78E7023A10BE23A22B5E4506420",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_MOON_P07",
+      "semanticFixtureIdentityHash": "189B09666627C1312340368D84FCA000DFC991CDCD7EC3F629EE6987F4229E8C",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_MOON_P07",
+        "semanticFixtureIdentityHash": "189B09666627C1312340368D84FCA000DFC991CDCD7EC3F629EE6987F4229E8C",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_MOON_P07",
+        "semanticFixtureIdentityHash": "189B09666627C1312340368D84FCA000DFC991CDCD7EC3F629EE6987F4229E8C",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_MARS_P07",
+      "semanticFixtureIdentityHash": "EFC268C558C2A1A427478318B9CCFCDA0B52D8B984E62B7AA89AB3525A10BD29",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_MARS_P07",
+        "semanticFixtureIdentityHash": "EFC268C558C2A1A427478318B9CCFCDA0B52D8B984E62B7AA89AB3525A10BD29",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_MARS_P07",
+        "semanticFixtureIdentityHash": "EFC268C558C2A1A427478318B9CCFCDA0B52D8B984E62B7AA89AB3525A10BD29",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_MERCURY_P07",
+      "semanticFixtureIdentityHash": "8AF53836DBDFA44B32EDE5D6CF595D28EADC8FB135F917EEA842C48D040728F8",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_MERCURY_P07",
+        "semanticFixtureIdentityHash": "8AF53836DBDFA44B32EDE5D6CF595D28EADC8FB135F917EEA842C48D040728F8",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_MERCURY_P07",
+        "semanticFixtureIdentityHash": "8AF53836DBDFA44B32EDE5D6CF595D28EADC8FB135F917EEA842C48D040728F8",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_JUPITER_P07",
+      "semanticFixtureIdentityHash": "A8A8A8E0E95A8D962CDB03188F151A1FA14EC2EEA6644C73D180DA927328CDA6",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_JUPITER_P07",
+        "semanticFixtureIdentityHash": "A8A8A8E0E95A8D962CDB03188F151A1FA14EC2EEA6644C73D180DA927328CDA6",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_JUPITER_P07",
+        "semanticFixtureIdentityHash": "A8A8A8E0E95A8D962CDB03188F151A1FA14EC2EEA6644C73D180DA927328CDA6",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_VENUS_P07",
+      "semanticFixtureIdentityHash": "CD36CD2D69321459A4FDB939D365B89282D064D5632A909CEA5C263498E588C3",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_VENUS_P07",
+        "semanticFixtureIdentityHash": "CD36CD2D69321459A4FDB939D365B89282D064D5632A909CEA5C263498E588C3",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_VENUS_P07",
+        "semanticFixtureIdentityHash": "CD36CD2D69321459A4FDB939D365B89282D064D5632A909CEA5C263498E588C3",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_SATURN_P07",
+      "semanticFixtureIdentityHash": "D1FE48537BBFA9BE19D6ACB791969D09896A640565064C54B1A314DAF7D23179",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_SATURN_P07",
+        "semanticFixtureIdentityHash": "D1FE48537BBFA9BE19D6ACB791969D09896A640565064C54B1A314DAF7D23179",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_SATURN_P07",
+        "semanticFixtureIdentityHash": "D1FE48537BBFA9BE19D6ACB791969D09896A640565064C54B1A314DAF7D23179",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_RAHU_P07",
+      "semanticFixtureIdentityHash": "9B046E2F9795662530E2065771FE7A2015EAE915EF6B9303217055535C69AC81",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_RAHU_P07",
+        "semanticFixtureIdentityHash": "9B046E2F9795662530E2065771FE7A2015EAE915EF6B9303217055535C69AC81",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_RAHU_P07",
+        "semanticFixtureIdentityHash": "9B046E2F9795662530E2065771FE7A2015EAE915EF6B9303217055535C69AC81",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_JUPITER_KETU_P07",
+      "semanticFixtureIdentityHash": "72BD57C2E59390F9C4DC43DA1960FC4AB85D2BBA09007C43D0695FACED010A95",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_JUPITER_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "JUPITER",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_JUPITER_KETU_P07",
+        "semanticFixtureIdentityHash": "72BD57C2E59390F9C4DC43DA1960FC4AB85D2BBA09007C43D0695FACED010A95",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_JUPITER_KETU_P07",
+        "semanticFixtureIdentityHash": "72BD57C2E59390F9C4DC43DA1960FC4AB85D2BBA09007C43D0695FACED010A95",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_SUN_P07",
+      "semanticFixtureIdentityHash": "FA990E3562244ADD642D6A52BDC69B4E368750F97CA4BC43E476D5BF6C66B8BA",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_SUN_P07",
+        "semanticFixtureIdentityHash": "FA990E3562244ADD642D6A52BDC69B4E368750F97CA4BC43E476D5BF6C66B8BA",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_SUN_P07",
+        "semanticFixtureIdentityHash": "FA990E3562244ADD642D6A52BDC69B4E368750F97CA4BC43E476D5BF6C66B8BA",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_MOON_P07",
+      "semanticFixtureIdentityHash": "8E6DB968B12C2F648A6E9D95905257020257B6ECC409F683C0B6F8D5DA00ACF6",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_MOON_P07",
+        "semanticFixtureIdentityHash": "8E6DB968B12C2F648A6E9D95905257020257B6ECC409F683C0B6F8D5DA00ACF6",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_MOON_P07",
+        "semanticFixtureIdentityHash": "8E6DB968B12C2F648A6E9D95905257020257B6ECC409F683C0B6F8D5DA00ACF6",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_MARS_P07",
+      "semanticFixtureIdentityHash": "940FAD72F655ABFBC58A46A83BEA9F20706149847ACDD642D59CD78FA1587726",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_MARS_P07",
+        "semanticFixtureIdentityHash": "940FAD72F655ABFBC58A46A83BEA9F20706149847ACDD642D59CD78FA1587726",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_MARS_P07",
+        "semanticFixtureIdentityHash": "940FAD72F655ABFBC58A46A83BEA9F20706149847ACDD642D59CD78FA1587726",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_MERCURY_P07",
+      "semanticFixtureIdentityHash": "C2B989AD2D5A9018E90BCD41533878B870E1B26320A92A3A8AA4896BE31D6857",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_MERCURY_P07",
+        "semanticFixtureIdentityHash": "C2B989AD2D5A9018E90BCD41533878B870E1B26320A92A3A8AA4896BE31D6857",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_MERCURY_P07",
+        "semanticFixtureIdentityHash": "C2B989AD2D5A9018E90BCD41533878B870E1B26320A92A3A8AA4896BE31D6857",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_JUPITER_P07",
+      "semanticFixtureIdentityHash": "0CE8C4C69492DD588D2A7FA741CFA0F764AB76B688B0C87977C20CDB34B5B167",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_JUPITER_P07",
+        "semanticFixtureIdentityHash": "0CE8C4C69492DD588D2A7FA741CFA0F764AB76B688B0C87977C20CDB34B5B167",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_JUPITER_P07",
+        "semanticFixtureIdentityHash": "0CE8C4C69492DD588D2A7FA741CFA0F764AB76B688B0C87977C20CDB34B5B167",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_VENUS_P07",
+      "semanticFixtureIdentityHash": "58E3F00569422E37314C29668937B4C5577807F48A99CF084A2D54F2ADC1A84D",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_VENUS_P07",
+        "semanticFixtureIdentityHash": "58E3F00569422E37314C29668937B4C5577807F48A99CF084A2D54F2ADC1A84D",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_VENUS_P07",
+        "semanticFixtureIdentityHash": "58E3F00569422E37314C29668937B4C5577807F48A99CF084A2D54F2ADC1A84D",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_SATURN_P07",
+      "semanticFixtureIdentityHash": "6B50668206C0F4B9822248372BAA8C3BC3870E8FCC3CB13BDC2958A4C1B46301",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_SATURN_P07",
+        "semanticFixtureIdentityHash": "6B50668206C0F4B9822248372BAA8C3BC3870E8FCC3CB13BDC2958A4C1B46301",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_SATURN_P07",
+        "semanticFixtureIdentityHash": "6B50668206C0F4B9822248372BAA8C3BC3870E8FCC3CB13BDC2958A4C1B46301",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_RAHU_P07",
+      "semanticFixtureIdentityHash": "9FEB7662DE18394BDD6F98273A8E6C83B084186451C76E0D2DDB6673BCC62EE8",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_RAHU_P07",
+        "semanticFixtureIdentityHash": "9FEB7662DE18394BDD6F98273A8E6C83B084186451C76E0D2DDB6673BCC62EE8",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_RAHU_P07",
+        "semanticFixtureIdentityHash": "9FEB7662DE18394BDD6F98273A8E6C83B084186451C76E0D2DDB6673BCC62EE8",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_VENUS_KETU_P07",
+      "semanticFixtureIdentityHash": "17CE39A98C78B5A02C82876282786B557DA4479C1AE9F9A79EEFBC735EAB7C28",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_VENUS_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "VENUS",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_VENUS_KETU_P07",
+        "semanticFixtureIdentityHash": "17CE39A98C78B5A02C82876282786B557DA4479C1AE9F9A79EEFBC735EAB7C28",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_VENUS_KETU_P07",
+        "semanticFixtureIdentityHash": "17CE39A98C78B5A02C82876282786B557DA4479C1AE9F9A79EEFBC735EAB7C28",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_SUN_P07",
+      "semanticFixtureIdentityHash": "B64E3F0950A98AC85E619AA8C463EC776E4846E108D62E2963C39C662DC1FD22",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_SUN_P07",
+        "semanticFixtureIdentityHash": "B64E3F0950A98AC85E619AA8C463EC776E4846E108D62E2963C39C662DC1FD22",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_SUN_P07",
+        "semanticFixtureIdentityHash": "B64E3F0950A98AC85E619AA8C463EC776E4846E108D62E2963C39C662DC1FD22",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_MOON_P07",
+      "semanticFixtureIdentityHash": "B888F255282145B1D6ED4C2C46CE42C9FEA3835E2288F7D24AC07DF5C21809DA",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_MOON_P07",
+        "semanticFixtureIdentityHash": "B888F255282145B1D6ED4C2C46CE42C9FEA3835E2288F7D24AC07DF5C21809DA",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_MOON_P07",
+        "semanticFixtureIdentityHash": "B888F255282145B1D6ED4C2C46CE42C9FEA3835E2288F7D24AC07DF5C21809DA",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_MARS_P07",
+      "semanticFixtureIdentityHash": "5C297B4861E58F573B44AF05FFB8C1BC0E2A72ED69DADAB2C6530B19C4735622",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_MARS_P07",
+        "semanticFixtureIdentityHash": "5C297B4861E58F573B44AF05FFB8C1BC0E2A72ED69DADAB2C6530B19C4735622",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_MARS_P07",
+        "semanticFixtureIdentityHash": "5C297B4861E58F573B44AF05FFB8C1BC0E2A72ED69DADAB2C6530B19C4735622",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_MERCURY_P07",
+      "semanticFixtureIdentityHash": "45069277913D32566468CE315DD086F6ABC05FEA29C7854111F422FFCA0E2824",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_MERCURY_P07",
+        "semanticFixtureIdentityHash": "45069277913D32566468CE315DD086F6ABC05FEA29C7854111F422FFCA0E2824",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_MERCURY_P07",
+        "semanticFixtureIdentityHash": "45069277913D32566468CE315DD086F6ABC05FEA29C7854111F422FFCA0E2824",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_JUPITER_P07",
+      "semanticFixtureIdentityHash": "B707C211905D3AA37D7868427CB3CD2320881B4EC7763D125A2D489D503BF36C",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_JUPITER_P07",
+        "semanticFixtureIdentityHash": "B707C211905D3AA37D7868427CB3CD2320881B4EC7763D125A2D489D503BF36C",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_JUPITER_P07",
+        "semanticFixtureIdentityHash": "B707C211905D3AA37D7868427CB3CD2320881B4EC7763D125A2D489D503BF36C",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_VENUS_P07",
+      "semanticFixtureIdentityHash": "6AB869B670A346F45B81663817D9F88743295B1B1FF97C55A4A848E4AAF12BBA",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_VENUS_P07",
+        "semanticFixtureIdentityHash": "6AB869B670A346F45B81663817D9F88743295B1B1FF97C55A4A848E4AAF12BBA",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_VENUS_P07",
+        "semanticFixtureIdentityHash": "6AB869B670A346F45B81663817D9F88743295B1B1FF97C55A4A848E4AAF12BBA",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_SATURN_P07",
+      "semanticFixtureIdentityHash": "2FF898BF1C9EEF7F513EB57820B7D5053F4841B71F66CC660F556665B1651C54",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_SATURN_P07",
+        "semanticFixtureIdentityHash": "2FF898BF1C9EEF7F513EB57820B7D5053F4841B71F66CC660F556665B1651C54",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_SATURN_P07",
+        "semanticFixtureIdentityHash": "2FF898BF1C9EEF7F513EB57820B7D5053F4841B71F66CC660F556665B1651C54",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_RAHU_P07",
+      "semanticFixtureIdentityHash": "BA94AE14AF1E6946A47DA6587D7E5C932CEFC07300CC4132861726FE14F1761A",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_RAHU_P07",
+        "semanticFixtureIdentityHash": "BA94AE14AF1E6946A47DA6587D7E5C932CEFC07300CC4132861726FE14F1761A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_RAHU_P07",
+        "semanticFixtureIdentityHash": "BA94AE14AF1E6946A47DA6587D7E5C932CEFC07300CC4132861726FE14F1761A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_SATURN_KETU_P07",
+      "semanticFixtureIdentityHash": "25CD293123246A58A0D8171D367917EE564BFC7E6207EAF0182F1ECFC3470AFE",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_SATURN_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "SATURN",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_SATURN_KETU_P07",
+        "semanticFixtureIdentityHash": "25CD293123246A58A0D8171D367917EE564BFC7E6207EAF0182F1ECFC3470AFE",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_SATURN_KETU_P07",
+        "semanticFixtureIdentityHash": "25CD293123246A58A0D8171D367917EE564BFC7E6207EAF0182F1ECFC3470AFE",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_SUN_P07",
+      "semanticFixtureIdentityHash": "0617C805EE9B1C31E53CD13377634C4E5AA9E726AF31E677C1849C4ED3A4774F",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_SUN_P07",
+        "semanticFixtureIdentityHash": "0617C805EE9B1C31E53CD13377634C4E5AA9E726AF31E677C1849C4ED3A4774F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_SUN_P07",
+        "semanticFixtureIdentityHash": "0617C805EE9B1C31E53CD13377634C4E5AA9E726AF31E677C1849C4ED3A4774F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_MOON_P07",
+      "semanticFixtureIdentityHash": "046EF0D48657AB20F0097235B1CA6221A9C0768C23C258AEB482AD94922C4E9B",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_MOON_P07",
+        "semanticFixtureIdentityHash": "046EF0D48657AB20F0097235B1CA6221A9C0768C23C258AEB482AD94922C4E9B",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_MOON_P07",
+        "semanticFixtureIdentityHash": "046EF0D48657AB20F0097235B1CA6221A9C0768C23C258AEB482AD94922C4E9B",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_MARS_P07",
+      "semanticFixtureIdentityHash": "61C604EDBA67B442C42391622FD51791367C41D7D101232E84F78A002BC0BCA0",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_MARS_P07",
+        "semanticFixtureIdentityHash": "61C604EDBA67B442C42391622FD51791367C41D7D101232E84F78A002BC0BCA0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_MARS_P07",
+        "semanticFixtureIdentityHash": "61C604EDBA67B442C42391622FD51791367C41D7D101232E84F78A002BC0BCA0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_MERCURY_P07",
+      "semanticFixtureIdentityHash": "C30568FCD42D0020C420B012B58ACA6B7CA3F5D8D82A49519D43206A50F46139",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_MERCURY_P07",
+        "semanticFixtureIdentityHash": "C30568FCD42D0020C420B012B58ACA6B7CA3F5D8D82A49519D43206A50F46139",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_MERCURY_P07",
+        "semanticFixtureIdentityHash": "C30568FCD42D0020C420B012B58ACA6B7CA3F5D8D82A49519D43206A50F46139",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_JUPITER_P07",
+      "semanticFixtureIdentityHash": "CA97DED4D9EBC5DFEBD28DE75C523D72555180294980B83FDA7BC23C7702D4E7",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_JUPITER_P07",
+        "semanticFixtureIdentityHash": "CA97DED4D9EBC5DFEBD28DE75C523D72555180294980B83FDA7BC23C7702D4E7",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_JUPITER_P07",
+        "semanticFixtureIdentityHash": "CA97DED4D9EBC5DFEBD28DE75C523D72555180294980B83FDA7BC23C7702D4E7",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_VENUS_P07",
+      "semanticFixtureIdentityHash": "A1BEF0FB56E228D8094B8AFDDFDFA9CA248B0846999D333438BF3EC11F4C1A5A",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_VENUS_P07",
+        "semanticFixtureIdentityHash": "A1BEF0FB56E228D8094B8AFDDFDFA9CA248B0846999D333438BF3EC11F4C1A5A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_VENUS_P07",
+        "semanticFixtureIdentityHash": "A1BEF0FB56E228D8094B8AFDDFDFA9CA248B0846999D333438BF3EC11F4C1A5A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_SATURN_P07",
+      "semanticFixtureIdentityHash": "47183D2EB4F17A7EE09B365F5062E5310056C696954F2DC2D9865FB370CF3614",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_SATURN_P07",
+        "semanticFixtureIdentityHash": "47183D2EB4F17A7EE09B365F5062E5310056C696954F2DC2D9865FB370CF3614",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_SATURN_P07",
+        "semanticFixtureIdentityHash": "47183D2EB4F17A7EE09B365F5062E5310056C696954F2DC2D9865FB370CF3614",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_RAHU_P07",
+      "semanticFixtureIdentityHash": "14DD287E8854777FA12A1004445AE8652D420E252C4559AF0422E22FA01010D0",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_RAHU_P07",
+        "semanticFixtureIdentityHash": "14DD287E8854777FA12A1004445AE8652D420E252C4559AF0422E22FA01010D0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_RAHU_P07",
+        "semanticFixtureIdentityHash": "14DD287E8854777FA12A1004445AE8652D420E252C4559AF0422E22FA01010D0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_RAHU_KETU_P07",
+      "semanticFixtureIdentityHash": "0C6FD63973D594021509EE2F961C25721B537F53760EBD97C8F09AA6AD80C07F",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_RAHU_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "RAHU",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_RAHU_KETU_P07",
+        "semanticFixtureIdentityHash": "0C6FD63973D594021509EE2F961C25721B537F53760EBD97C8F09AA6AD80C07F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_RAHU_KETU_P07",
+        "semanticFixtureIdentityHash": "0C6FD63973D594021509EE2F961C25721B537F53760EBD97C8F09AA6AD80C07F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_SUN_P07",
+      "semanticFixtureIdentityHash": "50FB3F95E43E69C699E9792AF382354A81D9A31025249B6AECCE1BE2750731F4",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_SUN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "SUN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_SUN_P07",
+        "semanticFixtureIdentityHash": "50FB3F95E43E69C699E9792AF382354A81D9A31025249B6AECCE1BE2750731F4",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_SUN_P07",
+        "semanticFixtureIdentityHash": "50FB3F95E43E69C699E9792AF382354A81D9A31025249B6AECCE1BE2750731F4",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_MOON_P07",
+      "semanticFixtureIdentityHash": "FE4D04B78786B8998743360EDA29631E14DAC1673943C0E7A809A6C192C7A8D1",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_MOON_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "MOON",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_MOON_P07",
+        "semanticFixtureIdentityHash": "FE4D04B78786B8998743360EDA29631E14DAC1673943C0E7A809A6C192C7A8D1",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_MOON_P07",
+        "semanticFixtureIdentityHash": "FE4D04B78786B8998743360EDA29631E14DAC1673943C0E7A809A6C192C7A8D1",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_MARS_P07",
+      "semanticFixtureIdentityHash": "6656C659F903457D9600317EF2AE7BEE48113E7B8C434667A713CA20121CCFC0",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_MARS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "MARS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_MARS_P07",
+        "semanticFixtureIdentityHash": "6656C659F903457D9600317EF2AE7BEE48113E7B8C434667A713CA20121CCFC0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_MARS_P07",
+        "semanticFixtureIdentityHash": "6656C659F903457D9600317EF2AE7BEE48113E7B8C434667A713CA20121CCFC0",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_MERCURY_P07",
+      "semanticFixtureIdentityHash": "7284911B5DFC70BF63D1C2DF588DE17C121F8265BA624D4628ACCC18C0E48237",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_MERCURY_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "MERCURY",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_MERCURY_P07",
+        "semanticFixtureIdentityHash": "7284911B5DFC70BF63D1C2DF588DE17C121F8265BA624D4628ACCC18C0E48237",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_MERCURY_P07",
+        "semanticFixtureIdentityHash": "7284911B5DFC70BF63D1C2DF588DE17C121F8265BA624D4628ACCC18C0E48237",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_JUPITER_P07",
+      "semanticFixtureIdentityHash": "FA7F8A5214E8BFD7121ECAA96F032111E5C404BAFF9CF31A885688B1D92B6F8A",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_JUPITER_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "JUPITER",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_JUPITER_P07",
+        "semanticFixtureIdentityHash": "FA7F8A5214E8BFD7121ECAA96F032111E5C404BAFF9CF31A885688B1D92B6F8A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_JUPITER_P07",
+        "semanticFixtureIdentityHash": "FA7F8A5214E8BFD7121ECAA96F032111E5C404BAFF9CF31A885688B1D92B6F8A",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_VENUS_P07",
+      "semanticFixtureIdentityHash": "926736FB33CDD9E756F3A10B2D7DC9CA7F1A55545CA4849DCF8E669DFF9B17F5",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_VENUS_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "VENUS",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_VENUS_P07",
+        "semanticFixtureIdentityHash": "926736FB33CDD9E756F3A10B2D7DC9CA7F1A55545CA4849DCF8E669DFF9B17F5",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_VENUS_P07",
+        "semanticFixtureIdentityHash": "926736FB33CDD9E756F3A10B2D7DC9CA7F1A55545CA4849DCF8E669DFF9B17F5",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_SATURN_P07",
+      "semanticFixtureIdentityHash": "73AF57B15C28A36E7782401C376A3A69FE5FFFC530A049EE4F6DF66B6BCAA338",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_SATURN_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "SATURN",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_SATURN_P07",
+        "semanticFixtureIdentityHash": "73AF57B15C28A36E7782401C376A3A69FE5FFFC530A049EE4F6DF66B6BCAA338",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_SATURN_P07",
+        "semanticFixtureIdentityHash": "73AF57B15C28A36E7782401C376A3A69FE5FFFC530A049EE4F6DF66B6BCAA338",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_RAHU_P07",
+      "semanticFixtureIdentityHash": "94CC59EE984E8ECE550D3136F85A4A6E18E56995201C974F90D3375F2AA2316F",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_RAHU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "RAHU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_RAHU_P07",
+        "semanticFixtureIdentityHash": "94CC59EE984E8ECE550D3136F85A4A6E18E56995201C974F90D3375F2AA2316F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_RAHU_P07",
+        "semanticFixtureIdentityHash": "94CC59EE984E8ECE550D3136F85A4A6E18E56995201C974F90D3375F2AA2316F",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    },
+    {
+      "fixtureId": "REL_KETU_KETU_P07",
+      "semanticFixtureIdentityHash": "CF2E29FAD6E3DDF85C34584972286DEB846670A64FC2829CFF783E33DDAB535E",
+      "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+      "coverageTags": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "RELATIVE_PLACE_7"
+      ],
+      "canonicalSemanticInput": {
+        "fixtureId": "REL_KETU_KETU_P07",
+        "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+        "sourceBody": "KETU",
+        "targetBody": "KETU",
+        "sourceSignIndex": 1,
+        "targetSignIndex": 7,
+        "sunSignIndex": 6,
+        "coverageTags": [
+          "C01",
+          "C02",
+          "C03",
+          "C04",
+          "C05",
+          "C07",
+          "RELATIVE_PLACE_7"
+        ]
+      },
+      "mismatchClassifications": [
+        "SOURCE_VALUE_MISMATCH"
+      ],
+      "aSemanticProjection": {
+        "fixtureId": "REL_KETU_KETU_P07",
+        "semanticFixtureIdentityHash": "CF2E29FAD6E3DDF85C34584972286DEB846670A64FC2829CFF783E33DDAB535E",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "DRSTI_FULL"
+      },
+      "bSemanticProjection": {
+        "fixtureId": "REL_KETU_KETU_P07",
+        "semanticFixtureIdentityHash": "CF2E29FAD6E3DDF85C34584972286DEB846670A64FC2829CFF783E33DDAB535E",
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "operatorVersion": "1",
+        "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+        "sourceValue": "FULL"
+      }
+    }
+  ],
+  "exactAgreement": false,
+  "result": "SYNTHETIC_SEMANTIC_MISMATCH",
+  "executionBoundaries": {
+    "realFrozenPopulationArtifactReadForValidation": true,
+    "realFrozenPopulationExposedToComparator": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0,
+    "marketOutcomeRead": false,
+    "priceDataRead": false,
+    "providerAccessed": false,
+    "swissEphemerisAccessed": false,
+    "executionAllowed": false
+  },
+  "resultHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude resultHash.",
+  "resultHash": "9F6070C90AF0B7851715DEA71354B5C52188BA30A5032AD269BEB74613CF5E40"
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_AB1_FIRST_SYNTHETIC_COMPARISON_ACCEPTANCE_RECORD_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-AB1-SYNTHETIC-COMPARATOR-FREEZE",
+  "status": "FIRST_SYNTHETIC_RESULT_FROZEN_NO_REPAIR",
+  "preRevealFreezeCommit": "543cb4290bacdc12dbac0105ee67704d388a697f",
+  "resultArtifactPath": "status/research/mo_r4a_candidate_c_ab1_first_synthetic_comparison_result_v1.json",
+  "resultArtifactHash": "9F6070C90AF0B7851715DEA71354B5C52188BA30A5032AD269BEB74613CF5E40",
+  "result": "SYNTHETIC_SEMANTIC_MISMATCH",
+  "fixtureCount": 1040,
+  "expectedRowsPerEvaluator": 8320,
+  "actualASyntheticRowCount": 8320,
+  "actualBSyntheticRowCount": 8320,
+  "semanticRowsCompared": 8320,
+  "totalMismatches": 81,
+  "mismatchCountsByClass": {
+    "SOURCE_VALUE_MISMATCH": 81
+  },
+  "frozenObservation": {
+    "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+    "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+    "fixtureFamily": "RELATIONSHIP_POSITION_MATRIX",
+    "relativePlace": 7,
+    "aObservedSourceValue": "DRSTI_FULL",
+    "bObservedSourceValue": "FULL",
+    "adjudication": "NOT_PERFORMED"
+  },
+  "postRevealRepairProhibited": {
+    "evaluatorAModified": false,
+    "evaluatorBModified": false,
+    "comparatorModified": false,
+    "fixtureCorpusModified": false,
+    "adapterModified": false,
+    "projectionModified": false,
+    "rerunPerformed": false
+  },
+  "executionBoundaries": {
+    "realFrozenPopulationArtifactReadForValidation": true,
+    "realFrozenPopulationExposedToComparator": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0,
+    "marketOutcomeRead": false,
+    "priceDataRead": false,
+    "providerAccessed": false,
+    "swissEphemerisAccessed": false,
+    "polarityAssigned": false,
+    "magnitudeAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false,
+    "executionAllowed": false
+  },
+  "realCandidateCRunAuthorized": false,
+  "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_AB1_SYNTHETIC_MISMATCH",
+  "recordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude recordHash.",
+  "recordHash": "FAEB7D139132C23703C1219A9AE7C964481E989BC70B09DA93DF48587E28021F"
+}
