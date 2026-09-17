@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_AB1_R1_DRSTI_REPRESENTATION_ADJUDICATION_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-AB1-R1-DRSTI-REPRESENTATION-ADJUDICATION-AND-SUCCESSOR-COMPARATOR",
+  "status": "ROOT_CAUSE_ADJUDICATED_BEFORE_SUCCESSOR_PROJECTION",
+  "predecessor": {
+    "branchHead": "11c6e430b66ebd171d91a9aa28f42769fc619de5",
+    "result": "SYNTHETIC_SEMANTIC_MISMATCH",
+    "resultArtifactPath": "status/research/mo_r4a_candidate_c_ab1_first_synthetic_comparison_result_v1.json",
+    "resultArtifactHash": "9F6070C90AF0B7851715DEA71354B5C52188BA30A5032AD269BEB74613CF5E40",
+    "acceptanceRecordHash": "FAEB7D139132C23703C1219A9AE7C964481E989BC70B09DA93DF48587E28021F",
+    "mismatchCount": 81,
+    "mismatchClasses": {"SOURCE_VALUE_MISMATCH": 81}
+  },
+  "sourceOperator": {
+    "operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+    "operatorVersion": "1",
+    "sourceStatus": "SOURCE_CLOSED_EXECUTABLE",
+    "ledgerPath": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s1r1_v1.json",
+    "ledgerCommit": "35f6319aa0a984756c5b59bbd88c6ac8a0b5c7ea",
+    "locator": "Saravali 4.32-33 Sanskrit root, printed p.58 / scan p.62; English rendering on the same page remains a translation-editorial mismatch",
+    "ordinaryAspectFractions": {"3": "1/4", "4": "3/4", "5": "1/2", "7": "FULL", "8": "3/4", "9": "1/2", "10": "1/4"},
+    "relativePlace7Literal": "FULL"
+  },
+  "frozenEvaluatorEvidence": {
+    "evaluatorA": {
+      "implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b",
+      "implementationAggregateHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB",
+      "ordinaryDrstiBehavior": "Reads ordinaryAspectFractions[str(place)] and transforms every non-null value with DRSTI_ + fraction.replace('/', '_').",
+      "representations": {"1/4": "DRSTI_1_4", "1/2": "DRSTI_1_2", "3/4": "DRSTI_3_4", "FULL": "DRSTI_FULL"}
+    },
+    "evaluatorB": {
+      "implementationCommit": "267885b84e1d796b438b09d73f3fb9792235a41e",
+      "implementationAggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199",
+      "ordinaryDrstiBehavior": "Reads ordinaryAspectFractions[str(place)] and returns the frozen ledger value directly.",
+      "relativePlace7Representation": "FULL"
+    }
+  },
+  "v1ProjectionEvidence": {
+    "implementationCommit": "f0f7166c08aa82038be45d15c675b428dd5f19aa",
+    "projectionPath": "research_labs/candidate_c_reproduction/comparator_ab/projection.py",
+    "numericAliasesNormalized": {"DRSTI_1_4": "1/4", "DRSTI_1_2": "1/2", "DRSTI_3_4": "3/4"},
+    "omittedAlias": {"DRSTI_FULL": "FULL"},
+    "omissionExplainsAllMismatches": true
+  },
+  "mismatchArithmetic": {
+    "relationshipPositionMatrixSourceBodies": 9,
+    "relationshipPositionMatrixTargetBodies": 9,
+    "relativePlace": 7,
+    "expectedAffectedFixtures": 81,
+    "observedAffectedFixtures": 81,
+    "mismatchesOutsideRepresentationFamily": 0
+  },
+  "rootCause": "REPRESENTATION_CANONICALIZATION_GAP",
+  "conclusion": "The frozen source contract has one place-7 value, FULL. A and B do not disagree on the underlying ordinary-Drsti geometry or source value; V1 failed to canonicalize A's deterministic non-numeric alias DRSTI_FULL.",
+  "immutability": {"evaluatorAModified": false, "evaluatorBModified": false, "originalAB1ArtifactsModified": false},
+  "executionBoundaries": {"realCandidateCRunAuthorized": false, "realFrozenPopulationEvaluated": false, "realCandidateCOutputProduced": false, "marketOutcomeRead": false, "priceDataRead": false, "providerAccessed": false, "swissEphemerisAccessed": false, "executionAllowed": false},
+  "recordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude recordHash.",
+  "recordHash": "114F7892CD5542226DFA3F6322C3D6574C97050346E258367AFF5C534A6C17A0"
+}
