@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_B1_EVALUATOR_B_IMPLEMENTATION_FREEZE_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-B1-CLEAN-ROOM-EVALUATOR-B-IMPLEMENTATION-FREEZE",
+  "status": "CANDIDATE_C_B1_EVALUATOR_B_FROZEN_SYNTHETIC_ONLY",
+  "startingBaseline": "35f6319aa0a984756c5b59bbd88c6ac8a0b5c7ea",
+  "branch": "research/candidate-c-evaluator-b-freeze",
+  "implementationCommit": "267885b84e1d796b438b09d73f3fb9792235a41e",
+  "freezeCommit": null,
+  "implementationFiles": [
+    "research_labs/candidate_c_reproduction/__init__.py",
+    "research_labs/candidate_c_reproduction/evaluator_b/__init__.py",
+    "research_labs/candidate_c_reproduction/evaluator_b/canonical.py",
+    "research_labs/candidate_c_reproduction/evaluator_b/contract_loader.py",
+    "research_labs/candidate_c_reproduction/evaluator_b/evaluator.py",
+    "research_labs/candidate_c_reproduction/evaluator_b/models.py"
+  ],
+  "implementationAggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199",
+  "implementationHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':') over a lexicographically sorted array of {path, sha256} entries; each sha256 is the SHA-256 of the exact Git blob bytes at implementationCommit.",
+  "testSourceFiles": [
+    "research_labs/candidate_c_reproduction/evaluator_b/test_evaluator_b.py"
+  ],
+  "testSourceHash": "31AA1B525B29AFE4CD206D63A1DA611820D6A87E1C71465645BADEE0B9487CB9",
+  "frozenDependencyIdentities": {
+    "populationEventCount": 645,
+    "expectedCandidateCOutputRowCount": 5160,
+    "exactPopulationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6",
+    "populationManifestSelfHash": "0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092",
+    "sharedAstronomySnapshotSelfHash": "F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915",
+    "componentInputBindingsSelfHash": "D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985",
+    "applicabilityMatrixHash": "5C0E627294579FA9C41C5E19B791ED489FFDE2D2700D21AC7AE4C3530C91F4B4",
+    "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580",
+    "candidateCPreregistrationHash": "5A15DA738B4C349E3C251F0C000960955D955E370F51CC313E52F8D5851C1961",
+    "outputSchemaHash": "DDBE5164FF93A8A1982891AD24CD40367C2A0F4F0FAA0CDAD0289A74D92A33BC",
+    "unknownTaxonomyHash": "1B1F6DFF937398F34E787CED256800BC6879D1ABCE989918A24B92DC8E7332B3",
+    "s1r1SourceLedgerBytesHash": "4C7D0C4C1A366287A05DD70E9638A27585516240B24C3AEEBFA91889F22E86E8",
+    "s2r1r1SaravaliLedgerBytesHash": "985DA1ECD2FF6631D9624541CEA27F69AC4620207EFE4C6CD79790263E3FAF01",
+    "unresolvedDependencyRegistryBytesHash": "16292D6655B3BC4BEFEC2A7A39B91C4649F2AF01248020AA1629E7FF56A0D7C6",
+    "sourceProfileContractHashes": {
+      "TRAILOKYA_DIPIKA_1972": "82C434BDCF68889BC842576151886A4C7A544A8F2581A4D8C046797C80A404C4",
+      "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES": "AAFE7CDB05AFD038D664CE68D1FB9D106ED0A14C25ED736423BC86C1F318B2D5"
+    }
+  },
+  "syntheticTestResults": {
+    "command": "python -m pytest -q research_labs/candidate_c_reproduction/evaluator_b",
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "pythonCompilation": "PASS",
+    "ruff": "PASS",
+    "gitDiffCheck": "PASS",
+    "contractValidation": "PASS"
+  },
+  "cleanRoomEvidence": {
+    "evaluatorASourceInspected": false,
+    "evaluatorATestsInspected": false,
+    "evaluatorAImported": false,
+    "evaluatorACopied": false,
+    "evaluatorABranchUsedAsBaseline": false,
+    "sharedCandidateCBusinessLogicWithEvaluatorA": false,
+    "historicalProductionOperatorUsedAsShortcut": false,
+    "comparatorCreated": false,
+    "implementationBasis": "Frozen P0-R1 contracts only; B was created from the authorized baseline in a separate worktree."
+  },
+  "realPopulationAccess": {
+    "realFrozenPopulationRead": true,
+    "realFrozenPopulationReadScope": "READ_AND_PARSED_FOR_IDENTITY_AND_INTEGRITY_VALIDATION_ONLY",
+    "realFrozenPopulationArtifactReadForValidation": true,
+    "realFrozenPopulationExposedToEvaluator": false,
+    "realFrozenPopulationArraysExposedToEvaluationPath": false,
+    "realFrozenPopulationEvaluated": false,
+    "realCandidateCOutputProduced": false,
+    "realCandidateCOutputInspected": false,
+    "realCandidateCOutputRowCount": 0,
+    "syntheticFixtureOnly": true
+  },
+  "guardrails": {
+    "marketDataRead": false,
+    "outcomeDataRead": false,
+    "providerAccessed": false,
+    "swissEphemerisQueried": false,
+    "priceDataRead": false,
+    "returnDataRead": false,
+    "polarityAssigned": false,
+    "magnitudeAssigned": false,
+    "scoreCreated": false,
+    "waveCreated": false,
+    "sourceDoctrineExpanded": false,
+    "executionAllowed": false
+  },
+  "worktreeClean": true,
+  "originMasterUnchanged": true,
+  "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_B1_IMPLEMENTATION_FREEZE",
+  "freezeRecordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude freezeRecordHash.",
+  "freezeRecordHash": "D26BA13AD10F559EB2AFE8D30F93393473A28157FB0C75AF942E87C2F75C6F5D"
+}
