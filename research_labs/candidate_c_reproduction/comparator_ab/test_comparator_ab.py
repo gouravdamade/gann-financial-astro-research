@@ -122,7 +122,7 @@ def test_irrelevant_provenance_format_is_excluded_but_semantic_change_is_not() -
     assert "SOURCE_VALUE_MISMATCH" in _classes(compare_projected_batches(fixture, project_rows(fixture, [raw]), project_rows(fixture, [alternate])))
 
 
-def test_ordinary_drsti_representation_is_canonicalized_from_source_fraction_form() -> None:
+def test_ordinary_drsti_representation_aliases_are_closed_and_source_justified() -> None:
     fixture = _fixture()
     row = {
         "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
@@ -132,9 +132,27 @@ def test_ordinary_drsti_representation_is_canonicalized_from_source_fraction_for
         "sourceValue": "DRSTI_3_4",
         "provenance": {"operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1", "operatorVersion": "1", "sourceStatus": "SOURCE_CLOSED_CATEGORICAL"},
     }
+    for alias, literal in (("DRSTI_1_4", "1/4"), ("DRSTI_1_2", "1/2"), ("DRSTI_3_4", "3/4"), ("DRSTI_FULL", "FULL")):
+        aliased = deepcopy(row)
+        literal_row = deepcopy(row)
+        aliased["sourceValue"] = alias
+        literal_row["sourceValue"] = literal
+        assert compare_projected_batches(fixture, project_rows(fixture, [aliased]), project_rows(fixture, [literal_row])) == []
+
+
+def test_ordinary_drsti_non_admitted_alias_is_not_silently_normalized() -> None:
+    fixture = _fixture()
+    row = {
+        "sourceProfile": "BJ_SARAVALI_CROSS_TEXT_CONTRACTS_AS_SEPARATE_PROFILES",
+        "componentId": "C05_ORDINARY_AND_SPECIAL_DRSTI",
+        "sourceContractId": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+        "outputStatus": "VALUE",
+        "sourceValue": "DRSTI_UNKNOWN_LABEL",
+        "provenance": {"operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1", "operatorVersion": "1", "sourceStatus": "SOURCE_CLOSED_CATEGORICAL"},
+    }
     alternate = deepcopy(row)
-    alternate["sourceValue"] = "3/4"
-    assert compare_projected_batches(fixture, project_rows(fixture, [row]), project_rows(fixture, [alternate])) == []
+    alternate["sourceValue"] = "UNKNOWN_LABEL"
+    assert "SOURCE_VALUE_MISMATCH" in _classes(compare_projected_batches(fixture, project_rows(fixture, [row]), project_rows(fixture, [alternate])))
 
 
 def test_mismatch_taxonomy_and_fixtures_exclude_market_and_real_population_fields() -> None:

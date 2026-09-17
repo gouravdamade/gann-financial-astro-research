@@ -8,7 +8,7 @@ from .models import NeutralFixture, SemanticRow
 
 
 PROJECTION_CONTRACT = {
-    "contractId": "MO_R4A_CANDIDATE_C_AB1_SEMANTIC_PROJECTION_V1",
+    "contractId": "MO_R4A_CANDIDATE_C_AB1_R1_SEMANTIC_PROJECTION_V2",
     "comparedFields": [
         "fixtureId", "semanticFixtureIdentityHash", "sourceProfile", "componentId", "sourceContractId",
         "provenance.operatorId", "provenance.operatorVersion_when_present_in_both", "outputStatus",
@@ -19,16 +19,21 @@ PROJECTION_CONTRACT = {
         "explanatoryProvenanceFields",
     ],
     "canonicalSourceValueRules": {
-        "SARAVALI_4_32_ORDINARY_DRSTI_V1": "DRSTI_<numerator>_<denominator> and <numerator>/<denominator> both canonicalize to <numerator>/<denominator>; source ledger rule stores a fraction.",
+        "SARAVALI_4_32_ORDINARY_DRSTI_V1": {
+            "DRSTI_1_4": "1/4",
+            "DRSTI_1_2": "1/2",
+            "DRSTI_3_4": "3/4",
+            "DRSTI_FULL": "FULL"
+        },
     },
 }
 
+_ORDINARY_DRSTI_VALUE_ALIASES = PROJECTION_CONTRACT["canonicalSourceValueRules"]["SARAVALI_4_32_ORDINARY_DRSTI_V1"]
+
 
 def _canonical_source_value(operator_id: str, value: Any) -> Any:
-    if operator_id == "SARAVALI_4_32_ORDINARY_DRSTI_V1" and isinstance(value, str) and value.startswith("DRSTI_"):
-        parts = value.removeprefix("DRSTI_").split("_")
-        if len(parts) == 2 and all(part.isdigit() for part in parts):
-            return f"{parts[0]}/{parts[1]}"
+    if operator_id == "SARAVALI_4_32_ORDINARY_DRSTI_V1" and isinstance(value, str):
+        return _ORDINARY_DRSTI_VALUE_ALIASES.get(value, value)
     return value
 
 
