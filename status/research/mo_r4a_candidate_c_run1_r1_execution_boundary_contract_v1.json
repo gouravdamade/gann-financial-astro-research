@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R1_EXECUTION_BOUNDARY_CONTRACT_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-RUN1-R1-EXECUTION-BOUNDARY-HARDENING",
+  "status": "PRE_AUTHORIZATION_HARDENED_REAL_EXECUTION_NOT_AUTHORIZED",
+  "predecessorFreezeCommit": "7c06123e5fc5362cbeb7a7b84008af584fee8e18",
+  "predecessorContractPath": "status/research/mo_r4a_candidate_c_run1_real_execution_contract_v1.json",
+  "predecessorContractHash": "0DD78FBA6FD347DB09778FFDD163FC76F6205070E92928D63A999D5D135B3A5A",
+  "implementationCommit": "f8345e752b908c702be8d320e9d16c92353708a3",
+  "authorizationBoundary": {
+    "modulePath": "research_labs/candidate_c_reproduction/real_run/authorization.py",
+    "moduleSha256": "54A43DA01D7898232D6C42470881D2054159C3BEA57508DD3D2123EFBC47681A",
+    "capabilityType": "RealRunAuthorizationCapability",
+    "requiredBindings": ["milestone", "executionContractHash", "populationHash", "aImplementationHash", "bImplementationHash", "v2ProjectionHash", "oneShotExecutionIntent", "eventId", "testOnly"],
+    "validationPrecedesScientificImport": true,
+    "ordinaryModuleGlobalBypassAvailable": false,
+    "productionCapabilityIssuanceEnabled": false,
+    "realCandidateCRunAuthorized": false,
+    "testOnlyCapability": {"allowedEventIdPrefix": "FAKE_REAL_RUN1_", "cannotAuthorizeFrozenPopulation": true, "productionAdmissionMarkerDistinct": true}
+  },
+  "releaseLayers": {
+    "releaseA": {"path": "research_labs/candidate_c_reproduction/real_run/release_a.py", "sha256": "A71970F8EFA268967951EA532602818D11838EEF506C18C6009420BFABCB3B63", "frozenCoreInvocationUnchanged": true},
+    "releaseB": {"path": "research_labs/candidate_c_reproduction/real_run/release_b.py", "sha256": "7839360DE947F902B4FFE8CF48ED22ED5D5E53D6A72742C210AD5318012C5C14", "frozenCoreInvocationUnchanged": true},
+    "topLevelRunner": {"blocked": true, "authorizationFlag": "REAL_CANDIDATE_C_RUN_AUTHORIZED=false"}
+  },
+  "runtimeIdentity": {
+    "manifestPath": "status/research/mo_r4a_candidate_c_run1_r1_runtime_identity_manifest_v1.json",
+    "manifestHash": "DC7215032C2C2A9DEDDCE77734662A74228B6681B0D9EEAE3487FE5E39C09F3D",
+    "exactByteComparison": true,
+    "normalizationForbidden": ["line endings", "whitespace", "encoding", "comments"],
+    "separateRuntimeRootsRequired": true,
+    "modulePathVerificationRequired": true,
+    "sharedInitializerHistoricalConflict": "A and B protect different package initializer blobs; each evaluator must execute from its own verified root."
+  },
+  "protectedIdentities": {
+    "evaluatorA": {"implementationCommit": "e581c499d3a3872cd88d6d17bf92c39a5c95185b", "implementationAggregateHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB", "testSourceHash": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E"},
+    "evaluatorB": {"implementationCommit": "267885b84e1d796b438b09d73f3fb9792235a41e", "implementationAggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199", "testSourceHash": "31AA1B525B29AFE4CD206D63A1DA611820D6A87E1C71465645BADEE0B9487CB9"},
+    "v2Projection": {"projectionCommit": "52c3b287a70018370e153a77b84c36e6b0dbfb42", "semanticProjectionHash": "1DDFC3B79EC30913254A2FEA117A97EA1761E42D8681EB5D2CB6B2D698187BED", "projectionBlobHash": "4B4828FF09494EA3EAE8ACF57B0004177E6507B8ED8A198871F861E60C2AAF5E"}
+  },
+  "population": {"eventCount": 645, "exactPopulationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6", "populationManifestHash": "0B384FF0131BF19EFB842A3D4AEE4F7D1F9A923469281A65D6326B76CC39A092", "sharedAstronomyInputSnapshotHash": "F5CC39224D61D01D74B1C43EF838D3EDCA7999E11CE878B06EE115BAA2802915", "componentInputBindingsHash": "D3219C1E6A8B7C791064F50E2CF23C211D4DE859AA73978B689C97E650DF5985"},
+  "rowUniverse": {"expectedRowCountPerEvaluator": 5160, "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580"},
+  "researchBoundary": {"realFrozenPopulationRead": true, "readScope": "IDENTITY_STRUCTURE_ADAPTER_AND_EXECUTION_BOUNDARY_VALIDATION_ONLY", "realFrozenPopulationEvaluated": false, "realCandidateCOutputProduced": false, "realCandidateCOutputInspected": false, "realCandidateCOutputRowCount": 0, "realComparisonExecuted": false, "marketOutcomeRead": false, "providerAccessed": false, "swissEphemerisAccessed": false, "executionAllowed": false},
+  "futureResultPathsMustRemainUnpopulated": ["status/research/mo_r4a_candidate_c_run1_evaluator_a_real_output_v1.json", "status/research/mo_r4a_candidate_c_run1_evaluator_b_real_output_v1.json", "status/research/mo_r4a_candidate_c_run1_ab_comparison_result_v1.json"],
+  "contractHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude contractHash.",
+  "contractHash": "70B3DA5277E8242F1291759A89B724D8A314E7E36784E9A7368775E3DD37A9E1"
+}

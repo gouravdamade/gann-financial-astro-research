@@ -12911,3 +12911,27 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   or execution work is authorized.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_REAL_EXECUTION_PRERUN_FREEZE`.
+
+## MO-R4A Candidate C RUN1-R1 Execution Boundary Hardening
+
+- RUN1-R1 is a successor to the historical pre-run freeze; it does not alter
+  source doctrine, evaluator science, the 645-event population, or output
+  schema. Direct A/B release calls now require a capability bound to the
+  frozen RUN1 identities before the frozen scientific modules are imported.
+- Production capability issuance and the top-level runner remain blocked:
+  `REAL_CANDIDATE_C_RUN_AUTHORIZED=false`. The limited test-only capability
+  accepts only `FAKE_REAL_RUN1_` event identifiers and cannot authorize a
+  frozen population event.
+- Exact runtime checkout verification is recorded in
+  `status/research/mo_r4a_candidate_c_run1_r1_runtime_identity_manifest_v1.json`
+  with self-hash
+  `DC7215032C2C2A9DEDDCE77734662A74228B6681B0D9EEAE3487FE5E39C09F3D`.
+  A and B require distinct verified runtime roots because their full frozen
+  manifests protect different bytes for the shared package initializer.
+- The real population was read only for identity, structure, adapter, and
+  execution-boundary validation. No event was evaluated; no real row or
+  comparison was produced or inspected. No market, outcome, provider, or
+  Swiss Ephemeris access occurred. All polarity, score, magnitude, wave,
+  Fields, Auto Suggest, ML, MT5, and execution locks remain active.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R1_EXECUTION_BOUNDARY_HARDENING`.

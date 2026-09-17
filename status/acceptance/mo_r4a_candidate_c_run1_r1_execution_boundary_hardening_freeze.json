@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R1_EXECUTION_BOUNDARY_HARDENING_FREEZE_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-RUN1-R1-EXECUTION-BOUNDARY-HARDENING",
+  "status": "FROZEN_PRE_AUTHORIZATION_REAL_EXECUTION_NOT_AUTHORIZED",
+  "predecessorFreezeCommit": "7c06123e5fc5362cbeb7a7b84008af584fee8e18",
+  "predecessorContractHash": "0DD78FBA6FD347DB09778FFDD163FC76F6205070E92928D63A999D5D135B3A5A",
+  "implementationCommit": "f8345e752b908c702be8d320e9d16c92353708a3",
+  "runtimeIdentityManifest": {"path": "status/research/mo_r4a_candidate_c_run1_r1_runtime_identity_manifest_v1.json", "selfHash": "DC7215032C2C2A9DEDDCE77734662A74228B6681B0D9EEAE3487FE5E39C09F3D", "protectedFileRecords": 13, "separateRuntimeRootsRequired": true, "modulePathVerificationRequired": true},
+  "executionBoundaryContract": {"path": "status/research/mo_r4a_candidate_c_run1_r1_execution_boundary_contract_v1.json", "selfHash": "70B3DA5277E8242F1291759A89B724D8A314E7E36784E9A7368775E3DD37A9E1"},
+  "implementationSource": {
+    "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':') over lexicographically sorted {path, sha256} entries; each sha256 is the exact committed Git blob bytes at implementationCommit.",
+    "authorizationModuleHash": "54A43DA01D7898232D6C42470881D2054159C3BEA57508DD3D2123EFBC47681A",
+    "releaseAHash": "A71970F8EFA268967951EA532602818D11838EEF506C18C6009420BFABCB3B63",
+    "releaseBHash": "7839360DE947F902B4FFE8CF48ED22ED5D5E53D6A72742C210AD5318012C5C14",
+    "harnessHash": "A78EEE6F15E5E8BAA174AF8BACF52D712096765D7450528EDEAFB448531AADCA",
+    "validationHash": "2F1C58F907C95A8D5E929C1E448ABC06ADB385D7ED930EC031228FEC8EE44DBA",
+    "testSourceHash": "821DCD459294CFF9CD6A2DC8A0EF41A9043718EBB8E828CA18AABAC37ACF2BD1",
+    "sourceSetAggregateHash": "FB4F1587C6D0595C86547B848D15FB66012C80499671F0577272534A26B4DD34"
+  },
+  "protectedIdentities": {"aImplementationAggregateHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB", "bImplementationAggregateHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199", "v2SemanticProjectionHash": "1DDFC3B79EC30913254A2FEA117A97EA1761E42D8681EB5D2CB6B2D698187BED", "v2ProjectionBlobHash": "4B4828FF09494EA3EAE8ACF57B0004177E6507B8ED8A198871F861E60C2AAF5E"},
+  "population": {"eventCount": 645, "populationHash": "A486D0045DC233207C0A2A50D50CFEFAC0B6493A6775630A068791B919F1F2A6", "expectedRowCountPerEvaluator": 5160, "expectedRowKeyUniverseHash": "6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580"},
+  "verification": {"focusedRun1Tests": "PASS", "candidateCRegression": "70 passed", "historicalGitIdentity": "PASS", "runtimeCheckoutBytes": "PASS_IN_ISOLATED_SEPARATE_RUNTIME_ROOTS", "runtimeModulePaths": "PASS_IN_ISOLATED_SEPARATE_RUNTIME_ROOTS", "pythonCompile": "PASS", "ruff": "PASS", "jsonCanonicalSelfHashes": "PASS"},
+  "researchBoundary": {"realFrozenPopulationRead": true, "readScope": "IDENTITY_STRUCTURE_ADAPTER_AND_EXECUTION_BOUNDARY_VALIDATION_ONLY", "realFrozenPopulationEvaluated": false, "realCandidateCOutputProduced": false, "realCandidateCOutputInspected": false, "realCandidateCOutputRowCount": 0, "realComparisonExecuted": false, "marketOutcomeRead": false, "providerAccessed": false, "swissEphemerisAccessed": false, "executionAllowed": false},
+  "productionCapabilityIssuanceEnabled": false,
+  "realCandidateCRunAuthorized": false,
+  "realCandidateCRunExecuted": false,
+  "futureResultPathsUnpopulated": true,
+  "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_RUN1_R1_EXECUTION_BOUNDARY_HARDENING",
+  "freezeRecordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude freezeRecordHash.",
+  "freezeRecordHash": "21C9EDF9F878DB9F71C8BC5CC9A68B8A12C89554ADCC7550717460CEBA56F5B5"
+}
