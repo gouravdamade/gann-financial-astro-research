@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_AB1_R1_SUCCESSOR_COMPARATOR_PRERUN_FREEZE_V1",
+  "milestone": "MO-R4A-CANDIDATE-C-AB1-R1-DRSTI-REPRESENTATION-ADJUDICATION-AND-SUCCESSOR-COMPARATOR",
+  "status": "FROZEN_BEFORE_ONE_SUCCESSOR_SYNTHETIC_COMPARISON",
+  "predecessorAB1": {"branchHead": "11c6e430b66ebd171d91a9aa28f42769fc619de5", "resultHash": "9F6070C90AF0B7851715DEA71354B5C52188BA30A5032AD269BEB74613CF5E40", "result": "SYNTHETIC_SEMANTIC_MISMATCH", "mismatchCount": 81},
+  "adjudicationCommit": "7536386e41271a5c36afa72df68ca6aca41fd8a4",
+  "rootCause": "REPRESENTATION_CANONICALIZATION_GAP",
+  "sourceContractCanonicalValue": {"operatorId": "SARAVALI_4_32_ORDINARY_DRSTI_V1", "relativePlace": 7, "literal": "FULL"},
+  "allowedSuccessorChange": {"projectionVersion": "MO_R4A_CANDIDATE_C_AB1_R1_SEMANTIC_PROJECTION_V2", "exactAlias": {"DRSTI_FULL": "FULL"}, "existingAliasesPreserved": {"DRSTI_1_4": "1/4", "DRSTI_1_2": "1/2", "DRSTI_3_4": "3/4"}, "unrestrictedPrefixStripping": false},
+  "successorComparatorImplementationCommit": "52c3b287a70018370e153a77b84c36e6b0dbfb42",
+  "successorComparatorImplementationHash": "2586A2B0DF9A2AF84AD12B7A5720E399585BA5DBE063DE68EFB0C9ECDBAEAA05",
+  "successorComparatorTestSourceHash": "6962B7951077EDDD6E4F83731F648B42D8630832964E87E223AC1B3A72752719",
+  "successorSemanticProjectionHash": "1DDFC3B79EC30913254A2FEA117A97EA1761E42D8681EB5D2CB6B2D698187BED",
+  "unchangedContracts": {"fixtureCorpusHash": "1B0AF5D85254C58261286E84F9A8C3EB1C1747F12EBBE35FE95584BEAAD2E5A1", "fixtureFamilyCounts": {"RELATIONSHIP_POSITION_MATRIX": 972, "MOTION_MATRIX": 64, "REPRESENTATION_INVARIANCE_CANARIES": 4}, "aAdapterHash": "21F1400B835367A501D3558C2BF55DA2A5C4E12C60CC6C7CC54B7D6A21F6629C", "bAdapterHash": "DB6E3FACBBCD07F84907CA7ACFB44B160C4B64AADB57097DCDA0D6D4E8BA5A60", "mismatchTaxonomyHash": "948D5590FECFA47593AB3D6BF90B2BAB58274AB577C3AE60343040151A4A771C"},
+  "protectedEvaluators": {"aImplementationHash": "93ECB7BDB684C9F9788F63BADAE8D297453F02557D7BB89DB2621CF9E257DCFB", "aTestSourceHash": "93BF61F16BB9CF44B44D0F251418D9CFDC7F8E74557556F802B2F9B6D144A25E", "bImplementationHash": "0A3266F754939D2408B4B7646A1E36A1CEC7338EDADE5844E831BCF6EB4CD199", "bTestSourceHash": "31AA1B525B29AFE4CD206D63A1DA611820D6A87E1C71465645BADEE0B9487CB9", "verified": true},
+  "successorComparisonExecuted": false,
+  "realCandidateCRunAuthorized": false,
+  "executionBoundaries": {"realFrozenPopulationArtifactReadForValidation": false, "realFrozenPopulationExposedToComparator": false, "realFrozenPopulationEvaluated": false, "realCandidateCOutputProduced": false, "realCandidateCOutputInspected": false, "realCandidateCOutputRowCount": 0, "marketOutcomeRead": false, "priceDataRead": false, "providerAccessed": false, "swissEphemerisAccessed": false, "executionAllowed": false},
+  "recordHashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude recordHash.",
+  "recordHash": "0A458F7D9DC1CE334A750B90256D9438EABC567274B16BB20F9C7EE3D7AB5131"
+}
