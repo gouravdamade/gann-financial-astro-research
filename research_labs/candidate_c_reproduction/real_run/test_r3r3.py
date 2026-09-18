@@ -12,7 +12,8 @@ import pytest
 from .artifacts_r3r3 import ArtifactWriteError, verify_artifact, write_first_artifact
 from .authorization_record_r3r3 import ExternalAuthorizationError, validate_external_authorization
 from .canonical import canonical_hash, self_hash
-from .controller_r3r3 import FUTURE_RESULT_PATHS, _order, future_result_paths_are_unpopulated, run_fake_dry_run
+from .audit_r3r3_r1 import MismatchAccountingError, RowUniverseValidationError, mismatch_counts_by_class, row_identity, validate_complete_row_universe
+from .controller_r3r3 import FUTURE_RESULT_PATHS, REAL_RESULT_PATHS, _order, future_result_paths_are_unpopulated, resolved_result_paths, run_fake_dry_run
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -36,8 +37,12 @@ def test_fake_subprocess_chain_is_one_worker_per_role_and_preserves_first_artifa
     assert result["a"]["runtimeVerificationStatus"].endswith("SAME_PROCESS")
     assert verify_artifact(result["aArtifact"]) and verify_artifact(result["bArtifact"]) and verify_artifact(result["comparison"])
     assert result["aArtifact"]["runSessionId"] == result["bArtifact"]["runSessionId"] == result["comparison"]["runSessionId"]
+    paths = resolved_result_paths(tmp_path)
+    assert set(paths) == {"EVALUATOR_A", "EVALUATOR_B", "V2_COMPARISON"}
+    assert all(path.exists() for path in paths.values())
+    assert not any((tmp_path / name).exists() for name in ("a.json", "b.json", "comparison.json"))
     with pytest.raises(ArtifactWriteError):
-        write_first_artifact(tmp_path / "a.json", {"test": True})
+        run_fake_dry_run(ROOT, [_event(1), _event(2), _event(3)], runtime_roots=RUNTIMES, temp_root=tmp_path)
 
 
 def test_authorization_self_hash_and_all_real_paths_remain_locked() -> None:
@@ -47,6 +52,34 @@ def test_authorization_self_hash_and_all_real_paths_remain_locked() -> None:
     assert future_result_paths_are_unpopulated(ROOT)
     assert all(not (ROOT / path).exists() for path in FUTURE_RESULT_PATHS)
     assert _order([_event(1), _event(2)]) != "91B8BF4FE842876F7EC70640A75342E7E58B5D17EA16D5CFE6A4DCFB3308C7C3"
+
+
+def _rows() -> list[dict[str, object]]:
+    return [{"eventId": "FAKE_REAL_RUN1_001", "sourceProfile": "PROFILE", "componentId": f"C{value}", "sourceContractId": "CONTRACT", "provenance": {"operatorId": f"OP{value}"}} for value in range(8)]
+
+
+def test_full_batch_universe_rejects_missing_duplicate_extra_and_wrong_identity() -> None:
+    expected = _rows()
+    assert validate_complete_row_universe(expected, expected)["rowUniverseValidated"] is True
+    for malformed in (expected[:-1], [*expected, expected[0]], [*expected, {**expected[0], "componentId": "EXTRA", "provenance": {"operatorId": "EXTRA"}}], [{**expected[0], "eventId": "FAKE_REAL_RUN1_CHANGED"}, *expected[1:]], [{**expected[0], "sourceProfile": "OTHER"}, *expected[1:]], [{**expected[0], "componentId": "OTHER"}, *expected[1:]], [{**expected[0], "sourceContractId": "OTHER"}, *expected[1:]], [{**expected[0], "provenance": {"operatorId": "OTHER"}}, *expected[1:]]):
+        with pytest.raises(RowUniverseValidationError):
+            validate_complete_row_universe(malformed, expected)
+
+
+def test_mismatch_accounting_is_deterministic_and_fail_closed() -> None:
+    assert mismatch_counts_by_class([]) == {}
+    records = [{"mismatchClassifications": ["SOURCE_VALUE_MISMATCH"]}, {"mismatchClassifications": ["OUTPUT_STATUS_MISMATCH"]}, {"mismatchClassifications": ["SOURCE_VALUE_MISMATCH"]}]
+    assert mismatch_counts_by_class(records) == {"OUTPUT_STATUS_MISMATCH": 1, "SOURCE_VALUE_MISMATCH": 2}
+    assert mismatch_counts_by_class(list(reversed(records))) == {"OUTPUT_STATUS_MISMATCH": 1, "SOURCE_VALUE_MISMATCH": 2}
+    with pytest.raises(MismatchAccountingError):
+        mismatch_counts_by_class([{"mismatchClassifications": ["UNKNOWN_CLASS"]}])
+    with pytest.raises(MismatchAccountingError):
+        mismatch_counts_by_class([{"mismatchClassifications": ["ROW_MISSING_A", "ROW_MISSING_B"]}])
+
+
+def test_preflight_and_writer_use_one_exact_result_path_mapping(tmp_path: Path) -> None:
+    assert set(REAL_RESULT_PATHS.values()) == set(FUTURE_RESULT_PATHS)
+    assert set(resolved_result_paths(tmp_path).values()) == {tmp_path / value for value in FUTURE_RESULT_PATHS}
 
 
 def test_r3r3_status_documents_are_canonical_self_hashed() -> None:

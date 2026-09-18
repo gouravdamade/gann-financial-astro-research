@@ -16,14 +16,19 @@ from .authorization_record_r3r3 import ValidatedRealRunAuthorization, validate_e
 from .canonical import canonical_hash
 from .contract_bundle_r3r2 import verify_bundle
 from .real_v2_bridge_r3r2 import bridge_event, bridge_population_identity
+from .audit_r3r3_r1 import (
+    MismatchAccountingError, RowUniverseValidationError, fake_expected_universe,
+    mismatch_counts_by_class, validate_complete_row_universe,
+)
 from .worker_protocol_r3r3 import IPC_SCHEMA_VERSION, issue_ticket, new_ephemeral_session_secret, new_session_id, protocol_bytes, request_hash
 
 
-FUTURE_RESULT_PATHS = (
-    "status/research/mo_r4a_candidate_c_run1_evaluator_a_real_output_v1.json",
-    "status/research/mo_r4a_candidate_c_run1_evaluator_b_real_output_v1.json",
-    "status/research/mo_r4a_candidate_c_run1_ab_comparison_result_v1.json",
-)
+REAL_RESULT_PATHS = {
+    "EVALUATOR_A": "status/research/mo_r4a_candidate_c_run1_evaluator_a_real_output_v1.json",
+    "EVALUATOR_B": "status/research/mo_r4a_candidate_c_run1_evaluator_b_real_output_v1.json",
+    "V2_COMPARISON": "status/research/mo_r4a_candidate_c_run1_ab_comparison_result_v1.json",
+}
+FUTURE_RESULT_PATHS = tuple(REAL_RESULT_PATHS.values())
 RUNTIME_MANIFEST_PATH = Path("status/research/mo_r4a_candidate_c_run1_r3r3_runtime_manifest_v1.json")
 WORKERS = {"EVALUATOR_A": "worker_a_r3r3.py", "EVALUATOR_B": "worker_b_r3r3.py", "V2_COMPARATOR": "worker_v2_r3r3.py"}
 REAL_READ_SCOPE = "IDENTITY_STRUCTURE_ADAPTER_AUTHORIZATION_BUNDLE_AND_REAL_V2_BRIDGE_VALIDATION_ONLY"
@@ -46,7 +51,11 @@ def _order(events: Sequence[Mapping[str, Any]]) -> str:
     return canonical_hash([{"eventId": item["eventId"], "eventHash": item["eventHash"]} for item in events])
 
 def future_result_paths_are_unpopulated(root: Path | str) -> bool:
-    base = _root(root); return all(not (base / value).exists() for value in FUTURE_RESULT_PATHS)
+    return all(not path.exists() for path in resolved_result_paths(root).values())
+
+def resolved_result_paths(root: Path | str) -> dict[str, Path]:
+    base = _root(root)
+    return {role: base / relative for role, relative in REAL_RESULT_PATHS.items()}
 
 def structural_real_preflight(root: Path | str, population: Any) -> dict[str, Any]:
     bundle = verify_bundle(root); bridge, bridge_hash = bridge_population_identity(population.events)
@@ -87,35 +96,47 @@ def _group(rows: Sequence[Mapping[str, Any]]) -> dict[str, list[Mapping[str, Any
     if any(len(value) != 8 for value in answer.values()): raise ControllerR3R3Error("worker did not return exactly eight rows per event")
     return answer
 
-def _artifact(role: str, response: Mapping[str, Any], rows: Sequence[Mapping[str, Any]], *, session: str, auth_hash: str, runtime: Mapping[str, Any], bindings: Mapping[str, Any]) -> dict[str, Any]:
-    return {"schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R3R3_RAW_OUTPUT_V1", "milestone": "MO-R4A-CANDIDATE-C-RUN1-R3R3", "runSessionId": session, "authorizationRecordHash": auth_hash, "workerRole": role, "workerRequestHash": response["requestHash"], "workerResponseHash": response["responseHash"], "workerImplementationHash": runtime["workerImplementationHashes"][role], "protectedScientificCommit": runtime["runtimeRoots"][role]["protectedCommit"], "protectedScientificIdentity": bindings[{"EVALUATOR_A": "aProtectedIdentity", "EVALUATOR_B": "bProtectedIdentity"}[role]], "runtimeManifestHash": runtime["runtimeManifestHash"], "bundleManifestHash": bindings["bundleManifestHash"], "canonicalGitBundleAggregateHash": bindings["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bindings["loaderViewBundleAggregateHash"], "populationHash": bindings["populationHash"], "populationOrderHash": bindings["populationOrderHash"], "rowUniverseHash": bindings["rowUniverseHash"], "rowCount": len(rows), "rows": list(rows)}
+def _artifact(role: str, response: Mapping[str, Any], rows: Sequence[Mapping[str, Any]], universe: Mapping[str, Any], *, session: str, auth_hash: str, runtime: Mapping[str, Any], bindings: Mapping[str, Any]) -> dict[str, Any]:
+    return {"schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R3R3_RAW_OUTPUT_V1", "milestone": "MO-R4A-CANDIDATE-C-RUN1-R3R3", "runSessionId": session, "authorizationRecordHash": auth_hash, "workerRole": role, "workerRequestHash": response["requestHash"], "workerResponseHash": response["responseHash"], "workerImplementationHash": runtime["workerImplementationHashes"][role], "protectedScientificCommit": runtime["runtimeRoots"][role]["protectedCommit"], "protectedScientificIdentity": bindings[{"EVALUATOR_A": "aProtectedIdentity", "EVALUATOR_B": "bProtectedIdentity"}[role]], "runtimeManifestHash": runtime["runtimeManifestHash"], "bundleManifestHash": bindings["bundleManifestHash"], "canonicalGitBundleAggregateHash": bindings["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bindings["loaderViewBundleAggregateHash"], "populationHash": bindings["populationHash"], "populationOrderHash": bindings["populationOrderHash"], "rowUniverseHash": bindings["rowUniverseHash"], **universe, "rowCount": len(rows), "rows": list(rows)}
 
-def _execute(root: Path, *, events: Sequence[Mapping[str, Any]], bindings: Mapping[str, Any], runtime_roots: Mapping[str, Path], contract_root: Path, output_root: Path, test_only: bool, authorization_hash: str) -> dict[str, Any]:
+def _execute(root: Path, *, events: Sequence[Mapping[str, Any]], expected_universe: Sequence[Mapping[str, Any]], bindings: Mapping[str, Any], runtime_roots: Mapping[str, Path], contract_root: Path, output_root: Path, test_only: bool, authorization_hash: str) -> dict[str, Any]:
     runtime = _manifest(root); secret, session = new_ephemeral_session_secret(), new_session_id(); bridge, _ = bridge_population_identity(events)
     a_request = _request("EVALUATOR_A", {"events": list(events)}, session=session, runtime=runtime, bindings=bindings, secret=secret, test_only=test_only, authorization_hash=authorization_hash)
+    paths = resolved_result_paths(output_root)
     a_response = _run_worker(root, "EVALUATOR_A", runtime_roots["EVALUATOR_A"], contract_root, a_request, secret); a_rows = a_response["outputPayload"]["result"]; _group(a_rows)
-    a_artifact = write_first_artifact(output_root / "a.json", _artifact("EVALUATOR_A", a_response, a_rows, session=session, auth_hash=authorization_hash, runtime=runtime, bindings=bindings))
+    a_universe = validate_complete_row_universe(a_rows, expected_universe, expected_hash=bindings["rowUniverseHash"])
+    a_artifact = write_first_artifact(paths["EVALUATOR_A"], _artifact("EVALUATOR_A", a_response, a_rows, a_universe, session=session, auth_hash=authorization_hash, runtime=runtime, bindings=bindings))
+    if not verify_artifact(a_artifact): raise ControllerR3R3Error("A artifact self-hash verification failed")
     b_request = _request("EVALUATOR_B", {"events": list(events)}, session=session, runtime=runtime, bindings=bindings, secret=secret, test_only=test_only, authorization_hash=authorization_hash)
     b_response = _run_worker(root, "EVALUATOR_B", runtime_roots["EVALUATOR_B"], contract_root, b_request, secret); b_rows = b_response["outputPayload"]["result"]; _group(b_rows)
-    b_artifact = write_first_artifact(output_root / "b.json", _artifact("EVALUATOR_B", b_response, b_rows, session=session, auth_hash=authorization_hash, runtime=runtime, bindings=bindings))
+    b_universe = validate_complete_row_universe(b_rows, expected_universe, expected_hash=bindings["rowUniverseHash"])
+    b_artifact = write_first_artifact(paths["EVALUATOR_B"], _artifact("EVALUATOR_B", b_response, b_rows, b_universe, session=session, auth_hash=authorization_hash, runtime=runtime, bindings=bindings))
+    if not verify_artifact(b_artifact): raise ControllerR3R3Error("B artifact self-hash verification failed")
     a_by, b_by = _group(a_rows), _group(b_rows)
     extra = {"aRawArtifactHash": a_artifact["artifactSelfHash"], "bRawArtifactHash": b_artifact["artifactSelfHash"], "realV2BridgeHash": bindings["realV2BridgeHash"], "realV2BridgePopulationHash": bindings["realV2BridgePopulationHash"]}
     v2_payload = {"fixtures": bridge, "aRowsByEvent": a_by, "bRowsByEvent": b_by}
     v2_request = _request("V2_COMPARATOR", v2_payload, session=session, runtime=runtime, bindings=bindings, secret=secret, test_only=test_only, authorization_hash=authorization_hash, extra=extra)
     v2_response = _run_worker(root, "V2_COMPARATOR", runtime_roots["V2_COMPARATOR"], contract_root, v2_request, secret); result = v2_response["outputPayload"]["result"]
-    comparison = write_first_artifact(output_root / "comparison.json", {"schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R3R3_COMPARISON_V1", "milestone": "MO-R4A-CANDIDATE-C-RUN1-R3R3", "runSessionId": session, "authorizationRecordHash": authorization_hash, "runtimeManifestHash": runtime["runtimeManifestHash"], "bundleManifestHash": bindings["bundleManifestHash"], "canonicalGitBundleAggregateHash": bindings["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bindings["loaderViewBundleAggregateHash"], "populationHash": bindings["populationHash"], "populationOrderHash": bindings["populationOrderHash"], "rowUniverseHash": bindings["rowUniverseHash"], **extra, "aRawRowCount": len(a_rows), "bRawRowCount": len(b_rows), "aProjectedRowCount": result["projectedARowCount"], "bProjectedRowCount": result["projectedBRowCount"], "semanticRowsCompared": result["semanticRowsCompared"], "totalMismatches": len(result["mismatches"]), "mismatchCountsByClass": {}, "mismatchRecords": result["mismatches"], "exactAgreement": not result["mismatches"], "result": "REAL_SOURCE_REPRODUCTION_SEMANTIC_AGREEMENT" if not result["mismatches"] else "REAL_SOURCE_REPRODUCTION_SEMANTIC_MISMATCH"})
+    mismatches = result["mismatches"]
+    counts = mismatch_counts_by_class(mismatches)
+    total = len(mismatches)
+    exact = total == 0
+    if sum(counts.values()) != total: raise ControllerR3R3Error("mismatch accounting invariant failed")
+    comparison = write_first_artifact(paths["V2_COMPARISON"], {"schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R3R3_COMPARISON_V1", "milestone": "MO-R4A-CANDIDATE-C-RUN1-R3R3", "runSessionId": session, "authorizationRecordHash": authorization_hash, "runtimeManifestHash": runtime["runtimeManifestHash"], "bundleManifestHash": bindings["bundleManifestHash"], "canonicalGitBundleAggregateHash": bindings["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bindings["loaderViewBundleAggregateHash"], "populationHash": bindings["populationHash"], "populationOrderHash": bindings["populationOrderHash"], "rowUniverseHash": bindings["rowUniverseHash"], **extra, "v2WorkerRequestHash": v2_response["requestHash"], "v2WorkerResponseHash": v2_response["responseHash"], "v2WorkerImplementationHash": runtime["workerImplementationHashes"]["V2_COMPARATOR"], "v2ProtectedImplementationCommit": runtime["runtimeRoots"]["V2_COMPARATOR"]["protectedCommit"], "v2ProtectedScientificIdentity": bindings["v2ProtectedIdentity"], "v2ProjectionBlobHash": "4B4828FF09494EA3EAE8ACF57B0004177E6507B8ED8A198871F861E60C2AAF5E", "v2SemanticProjectionHash": bindings["v2ProtectedIdentity"], "v2ProtectedPathSetHash": runtime["fullV2ProtectedPathSetHash"], "aRawRowCount": len(a_rows), "bRawRowCount": len(b_rows), "aProjectedRowCount": result["projectedARowCount"], "bProjectedRowCount": result["projectedBRowCount"], "semanticRowsCompared": result["semanticRowsCompared"], "totalMismatches": total, "mismatchCountsByClass": counts, "mismatchRecords": mismatches, "exactAgreement": exact, "result": "REAL_SOURCE_REPRODUCTION_SEMANTIC_AGREEMENT" if exact else "REAL_SOURCE_REPRODUCTION_SEMANTIC_MISMATCH"})
     return {"runSessionId": session, "a": a_response, "b": b_response, "v2": v2_response, "aArtifact": a_artifact, "bArtifact": b_artifact, "comparison": comparison}
 
 def run_fake_dry_run(root: Path | str, events: Sequence[Mapping[str, Any]], *, runtime_roots: Mapping[str, Path], temp_root: Path) -> dict[str, Any]:
     base, runtime = _root(root), _manifest(_root(root)); bundle = verify_bundle(root)
     if len(events) < 3 or any(not str(event.get("eventId", "")).startswith("FAKE_REAL_RUN1_") for event in events): raise ControllerR3R3Error("fake dry run requires three FAKE_REAL_RUN1 events")
     fake_hash, fake_order = canonical_hash(list(events)), _order(events)
-    bindings = {"populationHash": fake_hash, "populationOrderHash": fake_order, "rowUniverseHash": canonical_hash([event["eventId"] for event in events]), "bundleManifestHash": bundle["bundleManifestHash"], "canonicalGitBundleAggregateHash": bundle["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bundle["loaderViewBundleAggregateHash"], "realV2BridgeHash": runtime["realV2BridgeHash"], "realV2BridgePopulationHash": canonical_hash([bridge_event(event) for event in events]), "aProtectedIdentity": runtime["aProtectedIdentity"], "bProtectedIdentity": runtime["bProtectedIdentity"], "v2ProtectedIdentity": runtime["v2ProtectedIdentity"]}
-    return _execute(base, events=events, bindings=bindings, runtime_roots=runtime_roots, contract_root=Path(bundle["loaderView"]), output_root=temp_root, test_only=True, authorization_hash="TEST_ONLY_NOT_REAL_AUTHORIZATION")
+    frozen_universe = json.loads((Path(bundle["loaderView"]) / "status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json").read_text(encoding="utf-8"))["outputCardinality"]["expectedRowKeyUniverse"]
+    expected_universe = fake_expected_universe(frozen_universe=frozen_universe, fake_event_ids=[str(event["eventId"]) for event in events])
+    bindings = {"populationHash": fake_hash, "populationOrderHash": fake_order, "rowUniverseHash": canonical_hash(expected_universe), "bundleManifestHash": bundle["bundleManifestHash"], "canonicalGitBundleAggregateHash": bundle["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bundle["loaderViewBundleAggregateHash"], "realV2BridgeHash": runtime["realV2BridgeHash"], "realV2BridgePopulationHash": canonical_hash([bridge_event(event) for event in events]), "aProtectedIdentity": runtime["aProtectedIdentity"], "bProtectedIdentity": runtime["bProtectedIdentity"], "v2ProtectedIdentity": runtime["v2ProtectedIdentity"]}
+    return _execute(base, events=events, expected_universe=expected_universe, bindings=bindings, runtime_roots=runtime_roots, contract_root=Path(bundle["loaderView"]), output_root=temp_root, test_only=True, authorization_hash="TEST_ONLY_NOT_REAL_AUTHORIZATION")
 
 def run_authorized_real_population(authorization_record: Mapping[str, Any] | None, *, controller_root: Path | str, a_runtime_root: Path, b_runtime_root: Path, v2_runtime_root: Path, contract_bundle_root: Path | str) -> dict[str, Any]:
     base = _root(controller_root); bindings = expected_bindings(base); authorization: ValidatedRealRunAuthorization = validate_external_authorization(authorization_record, bindings)
     if not future_result_paths_are_unpopulated(base): raise ControllerR3R3Error("a first-result path already exists; no resume-as-success")
     population = load_and_validate_real_population(contract_bundle_root)
     if len(population.events) != EXPECTED_EVENT_COUNT or population.manifest["exactPopulationHash"] != EXPECTED_POPULATION_HASH or _order(population.events) != bindings["populationOrderHash"]: raise ControllerR3R3Error("frozen real population identity mismatch")
-    return _execute(base, events=population.events, bindings=bindings, runtime_roots={"EVALUATOR_A": a_runtime_root, "EVALUATOR_B": b_runtime_root, "V2_COMPARATOR": v2_runtime_root}, contract_root=Path(verify_bundle(base)["loaderView"]), output_root=base / "status/research", test_only=False, authorization_hash=authorization.authorization_hash)
+    return _execute(base, events=population.events, expected_universe=population.bindings["outputCardinality"]["expectedRowKeyUniverse"], bindings=bindings, runtime_roots={"EVALUATOR_A": a_runtime_root, "EVALUATOR_B": b_runtime_root, "V2_COMPARATOR": v2_runtime_root}, contract_root=Path(verify_bundle(base)["loaderView"]), output_root=base, test_only=False, authorization_hash=authorization.authorization_hash)
