@@ -13023,3 +13023,21 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   access occurred; `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3R3_R1_FIRST_RESULT_PATH_AND_AUDIT_CLOSURE`.
+
+## MO-R4A Candidate C RUN1-R3R3-R2 Frozen V2 Multi-Class Accounting
+
+- R3R3-R2 corrects one successor audit compatibility defect only: protected V2
+  mismatch records may have a sorted, duplicate-free list of multiple frozen
+  taxonomy classifications. The audit now preserves each record and reports
+  both record count and classification-occurrence count; the latter may exceed
+  the former.
+- The protected V2 runtime at `52c3b287a70018370e153a77b84c36e6b0dbfb42`
+  was exercised only with synthetic data and emitted a five-class record. The
+  successor accounting accepted that unmodified record. Protected A/B/V2,
+  workers, bundle, 645-event population, 5,160-row universe, and exact result
+  paths remain unchanged.
+- The corrected controller is bound by the R3R3-R2 runtime manifest. No real
+  Candidate C event reached science, no real result artifact exists, no
+  authorization record or production ticket exists, and `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3R3_R2_FROZEN_V2_MULTICLASS_MISMATCH_ACCOUNTING`.
