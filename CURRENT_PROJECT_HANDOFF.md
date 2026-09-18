@@ -13058,3 +13058,11 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - AUTH1 artifacts, authorization, comparison result, row counts, mismatch accounting, and replay block remain unchanged. No rerun or market/outcome access occurred. Candidate C source reproduction is `CLOSED_PENDING_CENTRAL_CONFIRMATION`; `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_AUTH1_R1_PID_EVIDENCE_CLARIFICATION`.
+
+## MO-R4A Candidate C EMP0 Outcome-Blind Market-Test Preregistration
+
+- Central review has additively closed the Candidate C source-reproduction phase. EMP0 freezes the 5,160-row canonical source-state snapshot, source-only eligibility, future USDJPY bid/ask admission requirements, return anchors, deterministic unsigned association statistic, 4,999 temporal-shift null, and multiplicity rules before any market data is read.
+- Source-only eligibility retains USD and JPY as separate strata. UNKNOWN is `SOURCE_UNKNOWN_ABSTAIN`, rare VALUE states remain unmerged descriptive records, and no source value has a numeric weight, market sign, or USDJPY mapping. Eight of sixteen side/row-slot cells meet the pre-market source testability gate.
+- EMP0 code accepts only `FAKE_MARKET_` fixtures for schema, return, and statistical tests. No provider is selected or queried; no price, quote, return, market outcome, or real p-value was accessed or computed. `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP0_OUTCOME_BLIND_MARKET_TEST_PREREGISTRATION`.
