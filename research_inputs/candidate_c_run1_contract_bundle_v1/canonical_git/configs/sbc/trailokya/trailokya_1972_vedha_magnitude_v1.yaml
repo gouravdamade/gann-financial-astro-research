@@ -1,0 +1,113 @@
+schemaVersion: TRAILOKYA_1972_VEDHA_MAGNITUDE_SOURCE_V1
+contractId: TRAILOKYA_1972_VEDHA_MAGNITUDE_SOURCE_V1
+milestone: PFR-V2B-R6-SBC-TD2R
+status: SOURCE_CLOSED_ISOLATED_RECORDS_ONLY
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+  readingWitness:
+    sourceId: TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT
+    sha256: 19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8
+    role: SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING
+  ocrUse: NAVIGATION_AND_DRAFT_TRANSLATION_ONLY
+semantics:
+  - id: TD1972_V161_STHANA_BALA_FRACTIONS
+    locator: {scanPage: 53, printedPage: 37, verse: 161, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    literalSummary: "Sthana bala is four padas in own sign, three in friend sign, two in sama sign, and one in enemy sign."
+    values: {OWN: '4/4', FRIEND: '3/4', SAMA_RELATIONSHIP: '2/4', ENEMY: '1/4'}
+    sourceStatus: SOURCE_CLOSED
+  - id: TD1972_V162_BALA_AND_PHALA_ARE_DISTINCT
+    locator: {scanPage: 54, printedPage: 38, verse: 162, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    rule: BALA_IS_NOT_PHALA
+    sourceStatus: SOURCE_CLOSED
+  - id: TD1972_V163_SAUMYA_STHANA_PHALA
+    locator: {scanPage: 54, printedPage: 38, verse: 163, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    values: {OWN: 20, FRIEND: 15, SAMA_RELATIONSHIP: 10, ENEMY: 5}
+    unit: SOURCE_PHALA_PARTS
+    sourceStatus: SOURCE_CLOSED
+  - id: TD1972_V164_KRURA_STHANA_PHALA
+    locator: {scanPage: 54, printedPage: 38, verse: 164, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    values: {OWN: 5, FRIEND: 10, SAMA_RELATIONSHIP: 15, ENEMY: 20}
+    unit: SOURCE_PHALA_PARTS
+    sourceStatus: SOURCE_CLOSED
+  - id: TD1972_V165_STHANA_TO_VEDHA_RESULT_BRIDGE
+    locator: {scanPage: 54, printedPage: 38, verse: 165, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    rule: OBTAINED_PLANETARY_STHANA_PHALA_IS_THE_SOURCE_RESULT_MAGNITUDE_FOR_THE_STRUCK_TARGET
+    sourceStatus: SOURCE_CLOSED
+isolatedResultModifiers:
+  locator: {scanPage: 54, printedPage: 38, verse: 166, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  rules:
+    RETROGRADE: {sourceResultFactor: 2, sourceStatus: SOURCE_CLOSED}
+    EXALTATION: {sourceResultFactor: 3, sourceStatus: SOURCE_CLOSED}
+    SWIFT: {sourceResult: BASE_SOURCE_RESULT, numericalFactor: NOT_STATED_AS_1_0, sourceStatus: SOURCE_CLOSED}
+    DEBILITATION: {sourceResultFactor: 0.5, sourceStatus: SOURCE_CLOSED}
+  combinationPolicy: NOT_SOURCE_CLOSED
+  prohibitedInterpretation: COMBINED_FINANCIAL_MULTIPLIER
+factorInventory:
+  locator: {scanPage: 54, printedPage: 38, verse: 167, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  factors: [PLANET_CLASS, RETROGRADE, SWIFT, EXALTATION, DEBILITATION, OWN_FRIEND_SAMA_ENEMY_STHANA]
+  precedence: NOT_SOURCE_CLOSED
+  sourceStatus: SOURCE_CLOSED_INVENTORY_ONLY
+friendshipMatrix:
+  locator: {scanPage: 55, printedPage: 39, verses: '168-171', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  SUN: {friends: [MOON, MARS, JUPITER], neutral: [MERCURY], enemies: [VENUS, SATURN]}
+  MOON: {friends: [SUN, MERCURY], neutral: [MARS, JUPITER, VENUS, SATURN], enemies: []}
+  MARS: {friends: [SUN, MOON, JUPITER], neutral: [VENUS, SATURN], enemies: [MERCURY]}
+  MERCURY: {friends: [SUN, VENUS], neutral: [MARS, JUPITER, SATURN], enemies: [MOON]}
+  JUPITER: {friends: [SUN, MOON, MARS], neutral: [SATURN], enemies: [MERCURY, VENUS]}
+  VENUS: {friends: [MERCURY, SATURN], neutral: [MARS, JUPITER], enemies: [SUN, MOON]}
+  SATURN: {friends: [MERCURY, VENUS], neutral: [JUPITER], enemies: [SUN, MOON, MARS]}
+  sourceStatus: SOURCE_CLOSED
+signLords:
+  locator: {scanPage: 56, printedPage: 40, verses: '172-174', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  ARIES: MARS
+  TAURUS: VENUS
+  GEMINI: MERCURY
+  CANCER: MOON
+  LEO: SUN
+  VIRGO: MERCURY
+  LIBRA: VENUS
+  SCORPIO: MARS
+  SAGITTARIUS: JUPITER
+  CAPRICORN: SATURN
+  AQUARIUS: SATURN
+  PISCES: JUPITER
+  sourceStatus: SOURCE_CLOSED
+dignity:
+  exaltationLocator: {scanPage: 57, printedPage: 41, verse: 175, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  paramoccaLocator: {scanPage: 57, printedPage: 41, verse: 176, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  samaSthanaLocator: {scanPage: 57, printedPage: 41, verse: 177, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  planets:
+    SUN: {exaltationSign: ARIES, debilitationSign: LIBRA, paramoccaDegrees: 10}
+    MOON: {exaltationSign: TAURUS, debilitationSign: SCORPIO, paramoccaDegrees: 3}
+    MARS: {exaltationSign: CAPRICORN, debilitationSign: CANCER, paramoccaDegrees: 28}
+    MERCURY: {exaltationSign: VIRGO, debilitationSign: PISCES, paramoccaDegrees: 15}
+    JUPITER: {exaltationSign: CANCER, debilitationSign: CAPRICORN, paramoccaDegrees: 5}
+    VENUS: {exaltationSign: PISCES, debilitationSign: VIRGO, paramoccaDegrees: 27}
+    SATURN: {exaltationSign: LIBRA, debilitationSign: ARIES, paramoccaDegrees: 20}
+  samaSthana: FOURTH_FROM_EXALTATION_AND_FOURTH_FROM_DEBILITATION
+  samaSthanaNotEquivalentTo: SAMA_RELATIONSHIP
+  sourceStatus: SOURCE_CLOSED
+nodes:
+  RAHU:
+    locator: {scanPages: [57, 58], printedPages: [41, 42], verse: 178, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    ownSign: VIRGO
+    exaltationSign: GEMINI
+    debilitationSign: SAGITTARIUS
+    resultsAndNatureLike: SATURN
+  KETU:
+    locator: {scanPage: 58, printedPage: 42, verse: 179, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    ownSign: PISCES
+    exaltationSign: SAGITTARIUS
+    debilitationSign: GEMINI
+    resultsLike: RAHU
+    relationship: {mutualWithRahu: FRIEND, withOtherPlanets: ENEMY}
+  sourceStatus: SOURCE_CLOSED
+unresolved:
+  - TD1972_V166_MULTI_MODIFIER_STACKING_NOT_SOURCE_CLOSED
+  - TD1972_EXACT_SWIFT_MEAN_VELOCITY_THRESHOLD_NOT_SOURCE_CLOSED
+  - TD1972_STATIONARY_STATE_UNRESOLVED
+prohibitedUses: [RUNTIME_SCORE, POLARITY, PRICE_FORECAST, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+runtimeBehaviorChanged: false
+executionAllowed: false
