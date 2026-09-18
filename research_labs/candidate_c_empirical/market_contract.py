@@ -1,4 +1,4 @@
-"""Fake-only validation for the frozen future bid/ask snapshot contract."""
+"""Provider-neutral validation for a future immutable bid/ask market snapshot."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ MAX_RESOLUTION_SECONDS = 60
 
 
 class MarketContractError(ValueError):
-    """Raised for a future-snapshot schema violation."""
+    """Raised for a market-snapshot schema violation."""
 
 
 def parse_utc(value: str) -> datetime:
@@ -26,14 +26,20 @@ def parse_utc(value: str) -> datetime:
     return parsed
 
 
-def validate_fake_market_snapshot(snapshot: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Validate synthetic bid/ask data; EMP0 never admits a real provider snapshot."""
+def validate_market_snapshot(snapshot: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Validate supplied bid/ask data without selecting or contacting a provider.
+
+    This pure schema core deliberately accepts a future admitted provider and
+    dataset identity. It has no network capability; a separate future
+    authorization must bind the immutable admitted snapshot before a real
+    statistical run can use these normalized quotes.
+    """
 
     provider, dataset = snapshot.get("providerId"), snapshot.get("datasetId")
-    if not isinstance(provider, str) or not provider.startswith("FAKE_MARKET_"):
-        raise MarketContractError("EMP0 validator accepts FAKE_MARKET_ providers only")
-    if not isinstance(dataset, str) or not dataset.startswith("FAKE_MARKET_"):
-        raise MarketContractError("EMP0 validator accepts FAKE_MARKET_ datasets only")
+    if not isinstance(provider, str) or not provider.strip():
+        raise MarketContractError("providerId must be a non-empty provider identity")
+    if not isinstance(dataset, str) or not dataset.strip():
+        raise MarketContractError("datasetId must be a non-empty dataset identity")
     if snapshot.get("instrumentId") != "FX_SPOT_USDJPY":
         raise MarketContractError("instrument must be FX_SPOT_USDJPY")
     if snapshot.get("timezone") != "UTC":
@@ -61,3 +67,14 @@ def validate_fake_market_snapshot(snapshot: Mapping[str, Any]) -> list[dict[str,
             raise MarketContractError("MARKET_DATA_SNAPSHOT_INVALID: conflicting timestamp duplicate")
         deduped[timestamp] = normalized
     return [deduped[key] for key in sorted(deduped)]
+
+
+def validate_fake_market_snapshot(snapshot: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Test-fixture adapter; the reusable validation core is provider-neutral."""
+
+    provider, dataset = snapshot.get("providerId"), snapshot.get("datasetId")
+    if not isinstance(provider, str) or not provider.startswith("FAKE_MARKET_"):
+        raise MarketContractError("test fixture provider must start with FAKE_MARKET_")
+    if not isinstance(dataset, str) or not dataset.startswith("FAKE_MARKET_"):
+        raise MarketContractError("test fixture dataset must start with FAKE_MARKET_")
+    return validate_market_snapshot(snapshot)

@@ -8,11 +8,11 @@ from pathlib import Path
 
 import pytest
 
-from .market_contract import MarketContractError, validate_fake_market_snapshot
+from .market_contract import MarketContractError, validate_fake_market_snapshot, validate_market_snapshot
 from .multiplicity import benjamini_hochberg, holm_bonferroni
 from .returns import extract_forward_log_return
 from .source_state import build_source_state_eligibility, build_source_state_snapshot
-from .statistics import PERMUTATION_COUNT, between_state_explained_variance, circular_shifted_observations, deterministic_permutation_test, market_eligible_testable
+from .statistics import PERMUTATION_COUNT, StatisticalContractError, between_state_explained_variance, circular_shifted_observations, deterministic_monthly_offsets, deterministic_permutation_test, market_eligible_testable, run_authorized_market_analysis
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,6 +30,10 @@ def eligibility(snapshot):
 
 def fake_snapshot(quotes, resolution=60):
     return {"providerId": "FAKE_MARKET_PROVIDER", "datasetId": "FAKE_MARKET_DATASET", "instrumentId": "FX_SPOT_USDJPY", "timezone": "UTC", "resolutionSeconds": resolution, "quotes": quotes}
+
+
+def synthetic_admitted_snapshot(quotes, resolution=60):
+    return {"providerId": "SYNTHETIC_ADMITTED_PROVIDER", "datasetId": "SYNTHETIC_IMMUTABLE_DATASET", "instrumentId": "FX_SPOT_USDJPY", "timezone": "UTC", "resolutionSeconds": resolution, "quotes": quotes}
 
 
 def quote(timestamp, bid=150.0, ask=150.2):
@@ -90,6 +94,13 @@ def test_valid_fake_bid_ask_and_duplicate_deduplication_passes():
     assert len(quotes) == 2
 
 
+def test_provider_neutral_core_accepts_a_future_admitted_identity_without_provider_access():
+    quotes = validate_market_snapshot(synthetic_admitted_snapshot([quote("2025-05-01T00:00:00Z")]))
+    assert quotes == [{"timestampUtc": "2025-05-01T00:00:00Z", "bid": 150.0, "ask": 150.2}]
+    with pytest.raises(MarketContractError):
+        validate_fake_market_snapshot(synthetic_admitted_snapshot([]))
+
+
 @pytest.mark.parametrize("quotes", [[quote("2025-05-01T00:00:00Z", 151, 150)], [quote("2025-05-01T00:00:00Z", 0, 150)], [quote("2025-05-01T00:00:00+05:30")], [quote("2025-05-01T00:00:00Z"), quote("2025-05-01T00:00:00Z", 149, 150.2)]])
 def test_invalid_fake_market_schema_rejects(quotes):
     with pytest.raises(MarketContractError):
@@ -126,6 +137,20 @@ def test_between_state_statistic_and_deterministic_null():
     assert isclose(first["pRaw"] * 5000, round(first["pRaw"] * 5000))
 
 
+def test_generic_core_is_reusable_but_the_market_execution_wrapper_requires_future_authorization():
+    observations = [{**item, "eventId": item["eventId"].replace("FAKE_SOURCE", "SYNTHETIC_EVENT")} for item in fake_observations([("A", 0.0), ("A", 0.0), ("B", 2.0), ("B", 2.0)])]
+    assert deterministic_permutation_test(observations, 86400)["status"] == "PREREGISTERED_STATISTICAL_RESULT"
+    with pytest.raises(StatisticalContractError, match="outcomeAnalysisAuthorized"):
+        run_authorized_market_analysis(observations, 86400, {})
+    authorized = {
+        "outcomeAnalysisAuthorized": True,
+        "marketSnapshotAdmitted": True,
+        "marketSnapshotHash": "SYNTHETIC_SNAPSHOT_HASH",
+        "analysisImplementationManifestHash": "SYNTHETIC_MANIFEST_HASH",
+    }
+    assert run_authorized_market_analysis(observations, 86400, authorized)["status"] == "PREREGISTERED_STATISTICAL_RESULT"
+
+
 def test_circular_shifts_preserve_counts_and_month_strata_without_side_inversion():
     observations = fake_observations([("A", 0.0), ("A", 1.0), ("B", 2.0), ("B", 3.0)])
     observations += [{**item, "eventId": item["eventId"].replace("FAKE_SOURCE", "FAKE_SOURCE_JPY"), "sideIdentity": "JPY"} for item in observations]
@@ -133,6 +158,14 @@ def test_circular_shifts_preserve_counts_and_month_strata_without_side_inversion
     assert Counter(item["stateTokenCanonicalJson"] for item in shifted if item["sideIdentity"] == "USD") == Counter(item["stateTokenCanonicalJson"] for item in observations if item["sideIdentity"] == "USD")
     assert Counter(item["stateTokenCanonicalJson"] for item in shifted if item["sideIdentity"] == "JPY") == Counter(item["stateTokenCanonicalJson"] for item in observations if item["sideIdentity"] == "JPY")
     assert all(item["sideIdentity"] in {"USD", "JPY"} for item in shifted)
+
+
+def test_temporal_null_allows_zero_in_an_individual_month_but_excludes_global_identity():
+    observations = fake_observations([("A", 0.0), ("B", 1.0), ("A", 2.0), ("B", 3.0)])
+    observations += [{**item, "eventId": f"FAKE_SOURCE_JUNE_{index}", "exactUtc": f"2025-06-{index + 1:02d}T00:00:00Z"} for index, item in enumerate(fake_observations([("A", 0.0), ("B", 1.0), ("A", 2.0), ("B", 3.0)]))]
+    vectors = [deterministic_monthly_offsets(observations, 86400, index) for index in range(1, 32)]
+    assert all(any(offset != 0 for offset in vector.values()) for vector in vectors)
+    assert any(any(offset == 0 for offset in vector.values()) for vector in vectors)
 
 
 def test_multiplicity_and_sample_gates():

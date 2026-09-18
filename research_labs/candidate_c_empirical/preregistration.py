@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,9 @@ from .source_state import build_source_state_eligibility, build_source_state_sna
 
 EMP0_MILESTONE = "MO-R4A-CANDIDATE-C-EMP0-OUTCOME-BLIND-MARKET-TEST-PREREGISTRATION-AND-ANALYSIS-FREEZE"
 STARTING_COMMIT = "a2fec654d7c6ea0d72b79d9ee11c39fdaf20c6ea"
+EMP0_R1_MILESTONE = "MO-R4A-CANDIDATE-C-EMP0-R1-PRE-DATA-REAL-ANALYSIS-PATH-AND-TEMPORAL-NULL-CLOSURE"
+EMP0_HISTORICAL_FREEZE_COMMIT = "91a501c78613ad5c83dd95013cbba83387cdd041"
+EMP0_HISTORICAL_FREEZE_HASH = "215BDD5803F48D8755307599853F14FE3EFC710D6EE7D5C87870CCB4A62C344F"
 
 
 def _hashed(document: dict[str, Any], field: str) -> dict[str, Any]:
@@ -159,3 +163,136 @@ def render_emp0_artifacts(root: Path | str, implementation_commit: str) -> dict[
     for path, document in documents.items():
         _write(path, document)
     return {"snapshot": snapshot, "eligibility": eligibility, "closure": closure, "admission": admission, "schema": schema, "preregistration": preregistration, "manifest": manifest, "acceptance": acceptance}
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def render_emp0_r1_artifacts(root: Path | str, implementation_commit: str) -> dict[str, Any]:
+    """Render successor records without rewriting the historical EMP0 freeze."""
+
+    base = Path(root).resolve()
+    historical = _read_json(base / "status/acceptance/mo_r4a_candidate_c_emp0_outcome_blind_market_preregistration_freeze.json")
+    snapshot = _read_json(base / "status/research/mo_r4a_candidate_c_emp0_canonical_source_state_snapshot_v1.json")
+    eligibility = _read_json(base / "status/research/mo_r4a_candidate_c_emp0_source_state_eligibility_v1.json")
+    admission = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R1_MARKET_DATA_ADMISSION_CONTRACT_V1",
+        "milestone": EMP0_R1_MILESTONE,
+        "historicalEmp0FreezeCommit": EMP0_HISTORICAL_FREEZE_COMMIT,
+        "historicalEmp0FreezeHash": EMP0_HISTORICAL_FREEZE_HASH,
+        "instrumentId": "FX_SPOT_USDJPY",
+        "providerSelected": False,
+        "marketDataAcquisitionAllowed": False,
+        "providerIndependentValidationCoreFrozen": True,
+        "futureImmutableSnapshotAuthorizationRequired": True,
+        "requiredProviderEvidence": ["providerIdentity", "datasetProductIdentity", "instrumentIdentity", "bidAskAvailability", "resolutionAtMost60Seconds", "utcTimestampSemantics", "coverage", "rawDataImmutability", "licensingUsageMetadata", "acquisitionTimestamp", "rawFileHashes"],
+        "requiredCoverageStartUtc": "2025-05-01T01:58:38Z",
+        "requiredCoverageEndUtc": "2025-08-01T23:20:56Z",
+        "requiredResolutionSecondsMaximum": 60,
+        "requiredQuoteFields": ["timestampUtc", "bid", "ask"],
+        "midOnlySufficient": False,
+        "marketDataAdmissionContractHash": None,
+    }, "marketDataAdmissionContractHash")
+    schema = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R1_MARKET_SNAPSHOT_SCHEMA_V1",
+        "milestone": EMP0_R1_MILESTONE,
+        "instrumentId": "FX_SPOT_USDJPY",
+        "providerIdentityRule": "NON_EMPTY_FUTURE_ADMITTED_PROVIDER_IDENTITY",
+        "datasetIdentityRule": "NON_EMPTY_FUTURE_IMMUTABLE_DATASET_IDENTITY",
+        "requiredFields": ["providerId", "datasetId", "instrumentId", "timezone", "resolutionSeconds", "coverageStartUtc", "coverageEndUtc", "rawArtifactHashes", "quoteCount", "quotes"],
+        "quoteRequiredFields": ["timestampUtc", "bid", "ask"],
+        "timestampPolicy": "UNAMBIGUOUS_UTC_ONLY",
+        "duplicatePolicy": "IDENTICAL_TIMESTAMP_BID_ASK_DEDUPLICATE;_CONFLICTING_TIMESTAMP_REJECT",
+        "containsActualQuotes": False,
+        "marketSnapshotSchemaHash": None,
+    }, "marketSnapshotSchemaHash")
+    preregistration = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R1_MARKET_ASSOCIATION_PREREGISTRATION_V1",
+        "milestone": EMP0_R1_MILESTONE,
+        "historicalEmp0FreezeHash": EMP0_HISTORICAL_FREEZE_HASH,
+        "researchQuestion": "For each eligible sideIdentity x rowSlot, do mean forward USDJPY log returns differ across frozen categorical Candidate C VALUE states?",
+        "sourceInputs": "IMMUTABLE_AUTH1_A_B_OUTPUTS_PROJECTED_BY_FROZEN_V2",
+        "unknownSourceDisposition": "ABSTAIN_NOT_MARKET_FEATURE",
+        "minStateCount": 20,
+        "minTotalTestCount": 60,
+        "instrumentId": "FX_SPOT_USDJPY",
+        "priceDefinition": "MID_BID_ASK",
+        "p0Rule": "FIRST_QUOTE_AT_OR_AFTER_EVENT_WITHIN_60_SECONDS",
+        "phRule": "FIRST_QUOTE_AT_OR_AFTER_EVENT_PLUS_HORIZON_WITHIN_60_SECONDS",
+        "quoteToleranceSeconds": 60,
+        "returnDefinition": "LN_PH_OVER_P0",
+        "primaryHorizonSeconds": 86400,
+        "secondaryHorizonSeconds": [3600, 21600],
+        "primaryStatistic": "BETWEEN_STATE_EXPLAINED_VARIANCE",
+        "zeroVarianceDisposition": "ZERO_OUTCOME_VARIANCE_NOT_TESTABLE",
+        "permutationMethod": "WITHIN_SIDE_WITHIN_UTC_MONTH_DETERMINISTIC_CIRCULAR_STATE_SHIFT_V2",
+        "permutationCount": 4999,
+        "temporalNull": {
+            "monthlyOffsetRule": "SHA256(contractId|sideIdentity|canonicalRowSlotId|horizonSeconds|YYYY-MM|replicateIndex|attemptIndex) mod m",
+            "monthlyZeroOffsetAllowed": True,
+            "globalAllZeroJointOffsetExcluded": True,
+            "allZeroResolution": "INCREMENT_ATTEMPT_INDEX_DETERMINISTICALLY_UNTIL_AT_LEAST_ONE_MONTH_SHIFTS",
+            "observedArrangementAccounting": "OBSERVED_ARRANGEMENT_SEPARATELY_COUNTED_BY_PLUS_ONE_P_VALUE_CORRECTION",
+        },
+        "primaryMultiplicity": {"method": "HOLM_BONFERRONI", "alpha": 0.05},
+        "secondaryMultiplicity": {"method": "BENJAMINI_HOCHBERG", "q": 0.10},
+        "usdJpySideSignMappingAssigned": False,
+        "marketDirectionAssigned": False,
+        "sourceWeightsAssigned": False,
+        "pairFieldConstructed": False,
+        "realMarketStatisticalExecutionAllowed": False,
+        "marketOutcomeRead": False,
+        "interpretationBoundary": "EMPIRICAL_ASSOCIATION_DISCOVERY_NOT_FORECAST_OR_TRADING_VALIDATION",
+        "marketAssociationPreregistrationHash": None,
+    }, "marketAssociationPreregistrationHash")
+    package = base / "research_labs/candidate_c_empirical"
+    source_files = ["source_state.py", "market_contract.py", "returns.py", "statistics.py", "multiplicity.py", "preregistration.py"]
+    manifest = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R1_ANALYSIS_IMPLEMENTATION_MANIFEST_V1",
+        "milestone": EMP0_R1_MILESTONE,
+        "implementationCommit": implementation_commit,
+        "hashConvention": HASH_CONVENTION,
+        "implementationHashes": {name: _file_hash(package / name) for name in source_files},
+        "testSourceHash": _file_hash(package / "test_emp0.py"),
+        "marketProviderImports": [],
+        "providerIndependentValidationCoreFrozen": True,
+        "genericStatisticalCoreFrozen": True,
+        "futureExecutionAuthorizationRequired": True,
+        "realMarketStatisticalExecutionAllowed": False,
+        "analysisImplementationManifestHash": None,
+    }, "analysisImplementationManifestHash")
+    acceptance = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R1_PRE_DATA_ANALYSIS_PATH_AND_TEMPORAL_NULL_CLOSURE_V1",
+        "milestone": EMP0_R1_MILESTONE,
+        "startingCommit": EMP0_HISTORICAL_FREEZE_COMMIT,
+        "implementationCommit": implementation_commit,
+        "historicalEmp0FreezePreserved": True,
+        "historicalEmp0FreezeHash": historical["acceptanceRecordHash"],
+        "canonicalSourceStateSnapshotHash": snapshot["canonicalSourceStateSnapshotHash"],
+        "sourceStateEligibilityHash": eligibility["sourceStateEligibilityHash"],
+        "marketDataAdmissionContractHash": admission["marketDataAdmissionContractHash"],
+        "marketSnapshotSchemaHash": schema["marketSnapshotSchemaHash"],
+        "marketAssociationPreregistrationHash": preregistration["marketAssociationPreregistrationHash"],
+        "analysisImplementationManifestHash": manifest["analysisImplementationManifestHash"],
+        "providerIndependentAnalysisPathFrozen": True,
+        "temporalNullCorrected": True,
+        "marketDataAcquisitionAllowed": False,
+        "providerSelected": False,
+        "marketDataSnapshotPresent": False,
+        "marketOutcomeRead": False,
+        "realMarketStatisticalExecutionAllowed": False,
+        "executionAllowed": False,
+        "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_EMP0_R1_PRE_DATA_REAL_ANALYSIS_PATH_AND_TEMPORAL_NULL_CLOSURE",
+        "acceptanceRecordHash": None,
+    }, "acceptanceRecordHash")
+    documents = {
+        base / "status/research/mo_r4a_candidate_c_emp0_r1_market_data_admission_contract_v1.json": admission,
+        base / "status/research/mo_r4a_candidate_c_emp0_r1_market_snapshot_schema_v1.json": schema,
+        base / "status/research/mo_r4a_candidate_c_emp0_r1_market_association_preregistration_v1.json": preregistration,
+        base / "status/research/mo_r4a_candidate_c_emp0_r1_analysis_implementation_manifest_v1.json": manifest,
+        base / "status/acceptance/mo_r4a_candidate_c_emp0_r1_pre_data_analysis_path_and_temporal_null_closure_v1.json": acceptance,
+    }
+    for path, document in documents.items():
+        _write(path, document)
+    return {"admission": admission, "schema": schema, "preregistration": preregistration, "manifest": manifest, "acceptance": acceptance}
