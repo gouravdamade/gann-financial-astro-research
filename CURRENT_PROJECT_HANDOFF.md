@@ -12978,3 +12978,26 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   ML, MT5, or execution work occurred. `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3_PRODUCTION_PATH_CLOSURE`.
+
+## MO-R4A Candidate C RUN1-R3R3 Authorization-Ready Execution Machinery
+
+- R3R3 preserves the R3R2A twelve-artifact bundle and seven-path rendering
+  policy, while adding an executable, data-authorized controller and actual
+  canonical IPC workers for full-population A, B, and V2 batches. The external
+  record is self-hashed; its validated identity is bound into ephemeral HMAC
+  worker tickets and the immutable first-result artifact chain.
+- The historical R2 18-file transitive V2 runtime surface is restored in the
+  successor runtime manifest. A uses a truthful real-context adapter rather
+  than synthetic admission; B preserves its frozen component sequence; V2
+  receives exact eight-row event groups and performs no market operation.
+- A production-shaped fake-only dry run completed through one A subprocess,
+  one B subprocess, and one V2 subprocess with three `FAKE_REAL_RUN1_` events,
+  24 raw rows per evaluator, 24 semantic comparisons, canonical temporary
+  artifacts, and overwrite rejection. It did not read, evaluate, or inspect a
+  real Candidate C event or result.
+- `productionAuthorizationRecordPresent=false`, `productionAuthorized=false`,
+  real result paths are absent, and `executionAllowed=false` remains locked.
+  No market/outcome/provider/broker/Swiss access, polarity, score, magnitude,
+  wave, Fields, Auto Suggest, ML, MT5, or execution was enabled.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3R3_AUTHORIZATION_READY_EXECUTION_MACHINERY`.
