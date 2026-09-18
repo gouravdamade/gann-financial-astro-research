@@ -9,8 +9,9 @@ from .canonical import canonical_hash
 
 
 ROW_KEY_FIELDS = ("eventId", "sourceProfile", "componentId", "sourceContractId", "operatorId")
-# Read from the accepted frozen V2 comparator taxonomy.  A record with several
-# classes cannot satisfy the required one-record/one-count audit invariant.
+# Read from the accepted frozen V2 comparator taxonomy.  The protected V2
+# comparator emits sorted, unique lists, and one mismatch record may carry
+# several independently observed classifications.
 FROZEN_MISMATCH_TAXONOMY = frozenset({
     "ROW_MISSING_A", "ROW_MISSING_B", "ROW_DUPLICATE_A", "ROW_DUPLICATE_B",
     "PROFILE_MISMATCH", "COMPONENT_MISMATCH", "CONTRACT_MISMATCH", "OPERATOR_MISMATCH",
@@ -66,13 +67,37 @@ def fake_expected_universe(*, frozen_universe: Sequence[Mapping[str, Any]], fake
     return [{**item, "eventId": event_id} for event_id in fake_event_ids for item in template]
 
 
-def mismatch_counts_by_class(records: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+def summarize_mismatches(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     counts: dict[str, int] = {}
     for record in records:
         classes = record.get("mismatchClassifications")
-        if not isinstance(classes, list) or len(classes) != 1 or not isinstance(classes[0], str) or classes[0] not in FROZEN_MISMATCH_TAXONOMY:
-            raise MismatchAccountingError("frozen V2 mismatch record lacks one valid auditable classification")
-        counts[classes[0]] = counts.get(classes[0], 0) + 1
-    if sum(counts.values()) != len(records):
-        raise MismatchAccountingError("mismatch accounting does not assign each record exactly once")
-    return dict(sorted(counts.items()))
+        if not isinstance(classes, list) or not classes:
+            raise MismatchAccountingError("frozen V2 mismatch record lacks classifications")
+        if any(not isinstance(item, str) or item not in FROZEN_MISMATCH_TAXONOMY for item in classes):
+            raise MismatchAccountingError("frozen V2 mismatch record has an unrecognized classification")
+        if classes != sorted(set(classes)):
+            raise MismatchAccountingError("frozen V2 mismatch classifications are not sorted and unique")
+        for item in classes:
+            counts[item] = counts.get(item, 0) + 1
+    sorted_counts = dict(sorted(counts.items()))
+    classification_total = sum(sorted_counts.values())
+    record_total = len(records)
+    if classification_total != sum(len(record["mismatchClassifications"]) for record in records):
+        raise MismatchAccountingError("mismatch classification occurrence accounting failed")
+    return {
+        "totalMismatches": record_total,
+        "totalMismatchClassifications": classification_total,
+        "mismatchCountsByClass": sorted_counts,
+    }
+
+
+def mismatch_counts_by_class(records: Sequence[Mapping[str, Any]]) -> dict[str, int]:
+    """Compatibility accessor for the frozen-V2-compatible audit summary."""
+
+    return summarize_mismatches(records)["mismatchCountsByClass"]
+
+
+def terminal_result(summary: Mapping[str, Any]) -> str:
+    if summary.get("totalMismatches") == 0:
+        return "REAL_SOURCE_REPRODUCTION_SEMANTIC_AGREEMENT"
+    return "REAL_SOURCE_REPRODUCTION_SEMANTIC_MISMATCH"

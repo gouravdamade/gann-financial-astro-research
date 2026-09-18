@@ -12,7 +12,7 @@ import pytest
 from .artifacts_r3r3 import ArtifactWriteError, verify_artifact, write_first_artifact
 from .authorization_record_r3r3 import ExternalAuthorizationError, validate_external_authorization
 from .canonical import canonical_hash, self_hash
-from .audit_r3r3_r1 import MismatchAccountingError, RowUniverseValidationError, mismatch_counts_by_class, row_identity, validate_complete_row_universe
+from .audit_r3r3_r1 import MismatchAccountingError, RowUniverseValidationError, mismatch_counts_by_class, summarize_mismatches, terminal_result, validate_complete_row_universe
 from .controller_r3r3 import FUTURE_RESULT_PATHS, REAL_RESULT_PATHS, _order, future_result_paths_are_unpopulated, resolved_result_paths, run_fake_dry_run
 
 
@@ -37,6 +37,9 @@ def test_fake_subprocess_chain_is_one_worker_per_role_and_preserves_first_artifa
     assert result["a"]["runtimeVerificationStatus"].endswith("SAME_PROCESS")
     assert verify_artifact(result["aArtifact"]) and verify_artifact(result["bArtifact"]) and verify_artifact(result["comparison"])
     assert result["aArtifact"]["runSessionId"] == result["bArtifact"]["runSessionId"] == result["comparison"]["runSessionId"]
+    assert result["comparison"]["totalMismatches"] == 0
+    assert result["comparison"]["totalMismatchClassifications"] == 0
+    assert result["comparison"]["mismatchCountsByClass"] == {}
     paths = resolved_result_paths(tmp_path)
     assert set(paths) == {"EVALUATOR_A", "EVALUATOR_B", "V2_COMPARISON"}
     assert all(path.exists() for path in paths.values())
@@ -67,14 +70,50 @@ def test_full_batch_universe_rejects_missing_duplicate_extra_and_wrong_identity(
 
 
 def test_mismatch_accounting_is_deterministic_and_fail_closed() -> None:
-    assert mismatch_counts_by_class([]) == {}
-    records = [{"mismatchClassifications": ["SOURCE_VALUE_MISMATCH"]}, {"mismatchClassifications": ["OUTPUT_STATUS_MISMATCH"]}, {"mismatchClassifications": ["SOURCE_VALUE_MISMATCH"]}]
-    assert mismatch_counts_by_class(records) == {"OUTPUT_STATUS_MISMATCH": 1, "SOURCE_VALUE_MISMATCH": 2}
-    assert mismatch_counts_by_class(list(reversed(records))) == {"OUTPUT_STATUS_MISMATCH": 1, "SOURCE_VALUE_MISMATCH": 2}
+    assert summarize_mismatches([]) == {"totalMismatches": 0, "totalMismatchClassifications": 0, "mismatchCountsByClass": {}}
+    single = [{"mismatchClassifications": ["SOURCE_VALUE_MISMATCH"]}]
+    assert summarize_mismatches(single) == {"totalMismatches": 1, "totalMismatchClassifications": 1, "mismatchCountsByClass": {"SOURCE_VALUE_MISMATCH": 1}}
+    two_classes = [{"mismatchClassifications": ["ROW_MISSING_A", "ROW_MISSING_B"]}]
+    assert summarize_mismatches(two_classes) == {"totalMismatches": 1, "totalMismatchClassifications": 2, "mismatchCountsByClass": {"ROW_MISSING_A": 1, "ROW_MISSING_B": 1}}
+    assert terminal_result(summarize_mismatches(two_classes)) == "REAL_SOURCE_REPRODUCTION_SEMANTIC_MISMATCH"
+    records = [{"mismatchClassifications": ["COMPONENT_MISMATCH", "PROFILE_MISMATCH"]}, {"mismatchClassifications": ["SOURCE_VALUE_MISMATCH"]}, {"mismatchClassifications": ["PROFILE_MISMATCH", "SOURCE_STATUS_MISMATCH"]}]
+    assert summarize_mismatches(records) == {"totalMismatches": 3, "totalMismatchClassifications": 5, "mismatchCountsByClass": {"COMPONENT_MISMATCH": 1, "PROFILE_MISMATCH": 2, "SOURCE_STATUS_MISMATCH": 1, "SOURCE_VALUE_MISMATCH": 1}}
+    assert mismatch_counts_by_class(list(reversed(records))) == {"COMPONENT_MISMATCH": 1, "PROFILE_MISMATCH": 2, "SOURCE_STATUS_MISMATCH": 1, "SOURCE_VALUE_MISMATCH": 1}
     with pytest.raises(MismatchAccountingError):
         mismatch_counts_by_class([{"mismatchClassifications": ["UNKNOWN_CLASS"]}])
     with pytest.raises(MismatchAccountingError):
-        mismatch_counts_by_class([{"mismatchClassifications": ["ROW_MISSING_A", "ROW_MISSING_B"]}])
+        mismatch_counts_by_class([{"mismatchClassifications": []}])
+    with pytest.raises(MismatchAccountingError):
+        mismatch_counts_by_class([{"mismatchClassifications": ["SOURCE_VALUE_MISMATCH", "SOURCE_VALUE_MISMATCH"]}])
+    with pytest.raises(MismatchAccountingError):
+        mismatch_counts_by_class([{"mismatchClassifications": "SOURCE_VALUE_MISMATCH"}])
+    with pytest.raises(MismatchAccountingError):
+        mismatch_counts_by_class([{"mismatchClassifications": ["SOURCE_VALUE_MISMATCH", "PROFILE_MISMATCH"]}])
+
+
+def test_actual_protected_v2_multiclass_record_is_accepted_without_mutation() -> None:
+    script = '''
+import json, sys
+from pathlib import Path
+runtime = Path(sys.argv[1]); sys.path.insert(0, str(runtime))
+from research_labs.candidate_c_reproduction.comparator_ab.comparator import compare_projected_batches
+from research_labs.candidate_c_reproduction.comparator_ab.models import NeutralFixture, SemanticRow
+fixture = NeutralFixture("FAKE_REAL_RUN1_MULTICLASS", "FAKE", "MARS", "JUPITER", 3, 5, 1, ("FAKE",), semantic_fixture_identity_hash="FAKE_SEMANTIC")
+def row(profile, component, contract, operator, value):
+    return SemanticRow(fixture.fixture_id, fixture.semantic_fixture_identity_hash, fixture.fixture_family, fixture.coverage_tags, profile, component, contract, operator, "V1", "VALUE", value, None, "SOURCE_CLOSED", {})
+records = compare_projected_batches(fixture, [row("PROFILE_A", "COMPONENT_A", "CONTRACT_A", "OPERATOR_A", "A")], [row("PROFILE_B", "COMPONENT_B", "CONTRACT_B", "OPERATOR_B", "B")])
+assert len(records) == 1 and len(records[0]["mismatchClassifications"]) > 1
+print(json.dumps(records[0], sort_keys=True, separators=(",", ":")))
+'''
+    completed = subprocess.run([sys.executable, "-I", "-B", "-c", script, str(RUNTIMES["V2_COMPARATOR"])], text=True, capture_output=True, timeout=60)
+    assert completed.returncode == 0, completed.stderr
+    record = json.loads(completed.stdout)
+    before = canonical_hash(record)
+    summary = summarize_mismatches([record])
+    assert canonical_hash(record) == before
+    assert summary["totalMismatches"] == 1
+    assert summary["totalMismatchClassifications"] == len(record["mismatchClassifications"])
+    assert summary["totalMismatchClassifications"] > summary["totalMismatches"]
 
 
 def test_preflight_and_writer_use_one_exact_result_path_mapping(tmp_path: Path) -> None:
@@ -83,7 +122,7 @@ def test_preflight_and_writer_use_one_exact_result_path_mapping(tmp_path: Path) 
 
 
 def test_r3r3_status_documents_are_canonical_self_hashed() -> None:
-    for path, field in (("status/research/mo_r4a_candidate_c_run1_r3r3_runtime_manifest_v1.json", "runtimeManifestHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_worker_ipc_contract_v1.json", "workerIpcContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_external_authorization_contract_v1.json", "externalAuthorizationContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_worker_ticket_contract_v1.json", "workerTicketContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_output_artifact_contract_v1.json", "outputArtifactContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_final_execution_contract_v1.json", "finalExecutionContractHash")):
+    for path, field in (("status/research/mo_r4a_candidate_c_run1_r3r3_runtime_manifest_v1.json", "runtimeManifestHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_r2_runtime_manifest_v1.json", "runtimeManifestHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_worker_ipc_contract_v1.json", "workerIpcContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_external_authorization_contract_v1.json", "externalAuthorizationContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_worker_ticket_contract_v1.json", "workerTicketContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_output_artifact_contract_v1.json", "outputArtifactContractHash"), ("status/research/mo_r4a_candidate_c_run1_r3r3_final_execution_contract_v1.json", "finalExecutionContractHash")):
         document = json.loads((ROOT / path).read_text(encoding="utf-8"))
         assert document[field] == self_hash(document, field)
 

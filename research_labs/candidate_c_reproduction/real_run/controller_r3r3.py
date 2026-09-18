@@ -17,8 +17,8 @@ from .canonical import canonical_hash
 from .contract_bundle_r3r2 import verify_bundle
 from .real_v2_bridge_r3r2 import bridge_event, bridge_population_identity
 from .audit_r3r3_r1 import (
-    MismatchAccountingError, RowUniverseValidationError, fake_expected_universe,
-    mismatch_counts_by_class, validate_complete_row_universe,
+    fake_expected_universe,
+    summarize_mismatches, terminal_result, validate_complete_row_universe,
 )
 from .worker_protocol_r3r3 import IPC_SCHEMA_VERSION, issue_ticket, new_ephemeral_session_secret, new_session_id, protocol_bytes, request_hash
 
@@ -29,7 +29,7 @@ REAL_RESULT_PATHS = {
     "V2_COMPARISON": "status/research/mo_r4a_candidate_c_run1_ab_comparison_result_v1.json",
 }
 FUTURE_RESULT_PATHS = tuple(REAL_RESULT_PATHS.values())
-RUNTIME_MANIFEST_PATH = Path("status/research/mo_r4a_candidate_c_run1_r3r3_runtime_manifest_v1.json")
+RUNTIME_MANIFEST_PATH = Path("status/research/mo_r4a_candidate_c_run1_r3r3_r2_runtime_manifest_v1.json")
 WORKERS = {"EVALUATOR_A": "worker_a_r3r3.py", "EVALUATOR_B": "worker_b_r3r3.py", "V2_COMPARATOR": "worker_v2_r3r3.py"}
 REAL_READ_SCOPE = "IDENTITY_STRUCTURE_ADAPTER_AUTHORIZATION_BUNDLE_AND_REAL_V2_BRIDGE_VALIDATION_ONLY"
 
@@ -118,11 +118,14 @@ def _execute(root: Path, *, events: Sequence[Mapping[str, Any]], expected_univer
     v2_request = _request("V2_COMPARATOR", v2_payload, session=session, runtime=runtime, bindings=bindings, secret=secret, test_only=test_only, authorization_hash=authorization_hash, extra=extra)
     v2_response = _run_worker(root, "V2_COMPARATOR", runtime_roots["V2_COMPARATOR"], contract_root, v2_request, secret); result = v2_response["outputPayload"]["result"]
     mismatches = result["mismatches"]
-    counts = mismatch_counts_by_class(mismatches)
-    total = len(mismatches)
+    accounting = summarize_mismatches(mismatches)
+    total = accounting["totalMismatches"]
+    classification_total = accounting["totalMismatchClassifications"]
+    counts = accounting["mismatchCountsByClass"]
     exact = total == 0
-    if sum(counts.values()) != total: raise ControllerR3R3Error("mismatch accounting invariant failed")
-    comparison = write_first_artifact(paths["V2_COMPARISON"], {"schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R3R3_COMPARISON_V1", "milestone": "MO-R4A-CANDIDATE-C-RUN1-R3R3", "runSessionId": session, "authorizationRecordHash": authorization_hash, "runtimeManifestHash": runtime["runtimeManifestHash"], "bundleManifestHash": bindings["bundleManifestHash"], "canonicalGitBundleAggregateHash": bindings["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bindings["loaderViewBundleAggregateHash"], "populationHash": bindings["populationHash"], "populationOrderHash": bindings["populationOrderHash"], "rowUniverseHash": bindings["rowUniverseHash"], **extra, "v2WorkerRequestHash": v2_response["requestHash"], "v2WorkerResponseHash": v2_response["responseHash"], "v2WorkerImplementationHash": runtime["workerImplementationHashes"]["V2_COMPARATOR"], "v2ProtectedImplementationCommit": runtime["runtimeRoots"]["V2_COMPARATOR"]["protectedCommit"], "v2ProtectedScientificIdentity": bindings["v2ProtectedIdentity"], "v2ProjectionBlobHash": "4B4828FF09494EA3EAE8ACF57B0004177E6507B8ED8A198871F861E60C2AAF5E", "v2SemanticProjectionHash": bindings["v2ProtectedIdentity"], "v2ProtectedPathSetHash": runtime["fullV2ProtectedPathSetHash"], "aRawRowCount": len(a_rows), "bRawRowCount": len(b_rows), "aProjectedRowCount": result["projectedARowCount"], "bProjectedRowCount": result["projectedBRowCount"], "semanticRowsCompared": result["semanticRowsCompared"], "totalMismatches": total, "mismatchCountsByClass": counts, "mismatchRecords": mismatches, "exactAgreement": exact, "result": "REAL_SOURCE_REPRODUCTION_SEMANTIC_AGREEMENT" if exact else "REAL_SOURCE_REPRODUCTION_SEMANTIC_MISMATCH"})
+    if total != len(mismatches) or classification_total != sum(counts.values()) or classification_total != sum(len(record["mismatchClassifications"]) for record in mismatches):
+        raise ControllerR3R3Error("frozen V2 multi-class mismatch accounting invariant failed")
+    comparison = write_first_artifact(paths["V2_COMPARISON"], {"schemaVersion": "MO_R4A_CANDIDATE_C_RUN1_R3R3_R2_COMPARISON_V1", "milestone": "MO-R4A-CANDIDATE-C-RUN1-R3R3-R2", "runSessionId": session, "authorizationRecordHash": authorization_hash, "runtimeManifestHash": runtime["runtimeManifestHash"], "bundleManifestHash": bindings["bundleManifestHash"], "canonicalGitBundleAggregateHash": bindings["canonicalGitBundleAggregateHash"], "loaderViewBundleAggregateHash": bindings["loaderViewBundleAggregateHash"], "populationHash": bindings["populationHash"], "populationOrderHash": bindings["populationOrderHash"], "rowUniverseHash": bindings["rowUniverseHash"], **extra, "v2WorkerRequestHash": v2_response["requestHash"], "v2WorkerResponseHash": v2_response["responseHash"], "v2WorkerImplementationHash": runtime["workerImplementationHashes"]["V2_COMPARATOR"], "v2ProtectedImplementationCommit": runtime["runtimeRoots"]["V2_COMPARATOR"]["protectedCommit"], "v2ProtectedScientificIdentity": bindings["v2ProtectedIdentity"], "v2ProjectionBlobHash": "4B4828FF09494EA3EAE8ACF57B0004177E6507B8ED8A198871F861E60C2AAF5E", "v2SemanticProjectionHash": bindings["v2ProtectedIdentity"], "v2ProtectedPathSetHash": runtime["fullV2ProtectedPathSetHash"], "aRawRowCount": len(a_rows), "bRawRowCount": len(b_rows), "aProjectedRowCount": result["projectedARowCount"], "bProjectedRowCount": result["projectedBRowCount"], "semanticRowsCompared": result["semanticRowsCompared"], "totalMismatches": total, "totalMismatchClassifications": classification_total, "mismatchCountsByClass": counts, "mismatchRecords": mismatches, "exactAgreement": exact, "result": terminal_result(accounting)})
     return {"runSessionId": session, "a": a_response, "b": b_response, "v2": v2_response, "aArtifact": a_artifact, "bArtifact": b_artifact, "comparison": comparison}
 
 def run_fake_dry_run(root: Path | str, events: Sequence[Mapping[str, Any]], *, runtime_roots: Mapping[str, Path], temp_root: Path) -> dict[str, Any]:
