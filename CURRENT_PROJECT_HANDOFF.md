@@ -13050,3 +13050,11 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - There were zero scientific retries and no second controller invocation. The now-populated immutable first-result paths block replay. No market outcome, provider, broker, or Swiss Ephemeris access occurred; no polarity, score, wave, forecast, Fields, Auto Suggest, ML, MT5, or execution function was enabled. `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_AUTH1_FIRST_EXECUTION`.
+
+## MO-R4A Candidate C RUN1-AUTH1-R1 PID Evidence Clarification
+
+- Central review accepted the frozen AUTH1 scientific/execution result. This additive record corrects only the historical PID-retention explanation: the frozen worker responses exposed `pid`, `verificationPid`, and `executionPid`, and the frozen controller returned A/B/V2 responses; those fields were not retained in the surviving AUTH1 evidence.
+- The historical `null` worker PID values remain immutable and have not been reconstructed. The corrected status is `AVAILABLE_IN_EPHEMERAL_CONTROLLER_RETURN_BUT_NOT_RETAINED_IN_AUTH1_EVIDENCE`.
+- AUTH1 artifacts, authorization, comparison result, row counts, mismatch accounting, and replay block remain unchanged. No rerun or market/outcome access occurred. Candidate C source reproduction is `CLOSED_PENDING_CENTRAL_CONFIRMATION`; `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_AUTH1_R1_PID_EVIDENCE_CLARIFICATION`.
