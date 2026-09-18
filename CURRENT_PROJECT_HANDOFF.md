@@ -13041,3 +13041,12 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   authorization record or production ticket exists, and `executionAllowed=false`.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3R3_R2_FROZEN_V2_MULTICLASS_MISMATCH_ACCOUNTING`.
+
+## MO-R4A Candidate C RUN1-AUTH1 First Authorized Source-Reproduction Execution
+
+- AUTH1 consumed an external, self-hashed authorization while controller HEAD was exactly `1d884b93ba9f5b619c3b21cdb8d215bf5faefb5b`; the identical authorization bytes were committed only after execution.
+- One frozen A worker and one frozen B worker each produced a source-reproduction artifact with 5,160 validated rows for the 645-event frozen population. One frozen V2 comparison bound both artifact hashes and compared all 5,160 semantic rows.
+- The preserved first comparison terminal is `REAL_SOURCE_REPRODUCTION_SEMANTIC_AGREEMENT`, with `totalMismatches=0`, `totalMismatchClassifications=0`, and no mismatch records. This establishes deterministic source-contract agreement only; it is not market or forecast validation.
+- There were zero scientific retries and no second controller invocation. The now-populated immutable first-result paths block replay. No market outcome, provider, broker, or Swiss Ephemeris access occurred; no polarity, score, wave, forecast, Fields, Auto Suggest, ML, MT5, or execution function was enabled. `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_AUTH1_FIRST_EXECUTION`.
