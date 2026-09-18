@@ -22,6 +22,15 @@ class MarketContractError(ValueError):
 
 
 @dataclass(frozen=True)
+class FrozenMarketQuote:
+    """Deeply immutable normalized quote value used after snapshot validation."""
+
+    timestamp_utc: str
+    bid: float
+    ask: float
+
+
+@dataclass(frozen=True)
 class ValidatedMarketSnapshot:
     market_snapshot_hash: str
     provider_id: str
@@ -33,7 +42,7 @@ class ValidatedMarketSnapshot:
     raw_artifact_hashes: tuple[tuple[str, str], ...]
     raw_quote_count: int
     admitted_quote_count: int
-    quotes: tuple[dict[str, Any], ...]
+    quotes: tuple[FrozenMarketQuote, ...]
 
 
 @dataclass(frozen=True)
@@ -109,7 +118,7 @@ def validate_market_snapshot(snapshot: Mapping[str, Any]) -> ValidatedMarketSnap
         raise MarketContractError("MARKET_DATA_SNAPSHOT_INVALID: quotes must be an array")
     if isinstance(snapshot["quoteCount"], bool) or not isinstance(snapshot["quoteCount"], int) or snapshot["quoteCount"] != len(quotes):
         raise MarketContractError("MARKET_DATA_SNAPSHOT_INVALID: quoteCount must equal raw quotes array length")
-    deduped: dict[datetime, dict[str, Any]] = {}
+    deduped: dict[datetime, FrozenMarketQuote] = {}
     for quote in quotes:
         if not isinstance(quote, Mapping):
             raise MarketContractError("MARKET_DATA_SNAPSHOT_INVALID: quote must be an object")
@@ -124,7 +133,7 @@ def validate_market_snapshot(snapshot: Mapping[str, Any]) -> ValidatedMarketSnap
         bid, ask = float(bid), float(ask)
         if not isfinite(bid) or not isfinite(ask) or bid <= 0 or ask <= 0 or ask < bid:
             raise MarketContractError("MARKET_DATA_SNAPSHOT_INVALID: bid/ask must be positive finite values with ask >= bid")
-        normalized = {"timestampUtc": quote["timestampUtc"], "bid": bid, "ask": ask}
+        normalized = FrozenMarketQuote(timestamp_utc=quote["timestampUtc"], bid=bid, ask=ask)
         previous = deduped.get(timestamp)
         if previous is not None and previous != normalized:
             raise MarketContractError("MARKET_DATA_SNAPSHOT_INVALID: conflicting timestamp duplicate")
@@ -157,9 +166,11 @@ def validate_market_admission_record(
     required = {
         "schemaVersion", "admissionId", "admitted", "marketSnapshotHash", "providerId", "datasetId",
         "instrumentId", "coverageStartUtc", "coverageEndUtc", "resolutionSeconds", "rawArtifactHashes",
-        "emp0R2MarketSnapshotSchemaHash", "emp0R2MarketDataAdmissionContractHash", "admissionRecordHash",
+        "admissionRecordHash",
     }
-    missing = sorted(required - set(record))
+    snapshot_schema_field = "emp0R3MarketSnapshotSchemaHash" if "emp0R3MarketSnapshotSchemaHash" in record else "emp0R2MarketSnapshotSchemaHash"
+    admission_contract_field = "emp0R3MarketDataAdmissionContractHash" if "emp0R3MarketDataAdmissionContractHash" in record else "emp0R2MarketDataAdmissionContractHash"
+    missing = sorted((required | {snapshot_schema_field, admission_contract_field}) - set(record))
     if missing:
         raise MarketContractError(f"MARKET_ADMISSION_RECORD_INVALID: missing required fields {missing}")
     expected_hash = _require_hash(record["admissionRecordHash"], "admissionRecordHash")
@@ -181,9 +192,9 @@ def validate_market_admission_record(
             raise MarketContractError(f"MARKET_ADMISSION_RECORD_INVALID: {field} does not bind the validated snapshot")
     if tuple(sorted(_validate_raw_artifact_hashes(record["rawArtifactHashes"]))) != snapshot.raw_artifact_hashes:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: rawArtifactHashes do not bind the validated snapshot")
-    if record["emp0R2MarketSnapshotSchemaHash"] != expected_snapshot_schema_hash:
+    if record[snapshot_schema_field] != expected_snapshot_schema_hash:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: market snapshot schema binding mismatch")
-    if record["emp0R2MarketDataAdmissionContractHash"] != expected_market_data_admission_contract_hash:
+    if record[admission_contract_field] != expected_market_data_admission_contract_hash:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: market admission contract binding mismatch")
     if not isinstance(record["admissionId"], str) or not record["admissionId"].strip():
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: admissionId must be non-empty")

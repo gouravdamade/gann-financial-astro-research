@@ -13,13 +13,15 @@ class EmpiricalAuthorizationError(ValueError):
 
 
 @dataclass(frozen=True)
-class EmpiricalAuthorizationExpectedBindings:
-    emp0_r2_implementation_commit: str
-    emp0_r2_freeze_commit: str
+class _EmpiricalAuthorizationExpectedBindings:
+    emp0_r3_implementation_commit: str
+    emp0_r3_acceptance_record_hash: str
     analysis_implementation_manifest_hash: str
     preregistration_hash: str
     temporal_null_contract_hash: str
     empirical_execution_contract_hash: str
+    result_schema_hash: str
+    test_ledger_contract_hash: str
     canonical_source_state_snapshot_hash: str
     source_state_eligibility_hash: str
     market_snapshot_hash: str
@@ -29,28 +31,29 @@ class EmpiricalAuthorizationExpectedBindings:
 
 
 @dataclass(frozen=True)
-class ValidatedEmpiricalExecutionAuthorization:
+class _ValidatedEmpiricalAuthorization:
     authorization_id: str
     authorization_record_hash: str
-    bindings: EmpiricalAuthorizationExpectedBindings
+    bindings: _EmpiricalAuthorizationExpectedBindings
 
 
-def validate_empirical_execution_authorization(
+def _validate_empirical_execution_authorization(
     record: Mapping[str, Any],
-    expected: EmpiricalAuthorizationExpectedBindings,
-) -> ValidatedEmpiricalExecutionAuthorization:
+    expected: _EmpiricalAuthorizationExpectedBindings,
+) -> _ValidatedEmpiricalAuthorization:
     """Convert only a verified canonical authorization into an immutable type."""
 
     required = {
         "schemaVersion", "authorizationId", "authorized", "authorizationRecordHash",
-        "EMP0R2ImplementationCommit", "EMP0R2FreezeCommit", "EMP0R2AnalysisImplementationManifestHash",
-        "EMP0R2PreregistrationHash", "EMP0R2TemporalNullContractHash", "EMP0R2EmpiricalExecutionContractHash",
+        "EMP0R3ImplementationCommit", "EMP0R3AcceptanceRecordHash", "EMP0R3AnalysisImplementationManifestHash",
+        "EMP0R3PreregistrationHash", "EMP0R3TemporalNullContractHash", "EMP0R3EmpiricalExecutionContractHash",
+        "EMP0R3ResultSchemaHash", "EMP0R3TestLedgerContractHash",
         "canonicalSourceStateSnapshotHash", "sourceStateEligibilityHash", "marketSnapshotHash",
         "marketAdmissionRecordHash", "marketSnapshotSchemaHash", "marketDataAdmissionContractHash",
         "instrumentId", "allowedHorizonSeconds", "permutationCount", "primaryStatistic",
         "primaryMultiplicity", "primaryAlpha", "secondaryMultiplicity", "secondaryQ", "oneShotExecutionIntent",
         "marketOutcomeAccess", "providerRequeryAllowed", "postHocTuningAllowed",
-        "sourceEligibilityChangesAllowed", "newHorizonsAllowed",
+        "sourceEligibilityChangesAllowed", "newHorizonsAllowed", "newSourceStatesAllowed",
     }
     missing = sorted(required - set(record))
     if missing:
@@ -60,16 +63,18 @@ def validate_empirical_execution_authorization(
         raise EmpiricalAuthorizationError("EMPIRICAL_AUTHORIZATION_INVALID: authorizationRecordHash mismatch")
     if record["authorized"] is not True or record["oneShotExecutionIntent"] is not True or record["marketOutcomeAccess"] is not True:
         raise EmpiricalAuthorizationError("EMPIRICAL_AUTHORIZATION_INVALID: required authorization switches are not true")
-    for field in ("providerRequeryAllowed", "postHocTuningAllowed", "sourceEligibilityChangesAllowed", "newHorizonsAllowed"):
+    for field in ("providerRequeryAllowed", "postHocTuningAllowed", "sourceEligibilityChangesAllowed", "newHorizonsAllowed", "newSourceStatesAllowed"):
         if record[field] is not False:
             raise EmpiricalAuthorizationError(f"EMPIRICAL_AUTHORIZATION_INVALID: {field} must be false")
     required_values = {
-        "EMP0R2ImplementationCommit": expected.emp0_r2_implementation_commit,
-        "EMP0R2FreezeCommit": expected.emp0_r2_freeze_commit,
-        "EMP0R2AnalysisImplementationManifestHash": expected.analysis_implementation_manifest_hash,
-        "EMP0R2PreregistrationHash": expected.preregistration_hash,
-        "EMP0R2TemporalNullContractHash": expected.temporal_null_contract_hash,
-        "EMP0R2EmpiricalExecutionContractHash": expected.empirical_execution_contract_hash,
+        "EMP0R3ImplementationCommit": expected.emp0_r3_implementation_commit,
+        "EMP0R3AcceptanceRecordHash": expected.emp0_r3_acceptance_record_hash,
+        "EMP0R3AnalysisImplementationManifestHash": expected.analysis_implementation_manifest_hash,
+        "EMP0R3PreregistrationHash": expected.preregistration_hash,
+        "EMP0R3TemporalNullContractHash": expected.temporal_null_contract_hash,
+        "EMP0R3EmpiricalExecutionContractHash": expected.empirical_execution_contract_hash,
+        "EMP0R3ResultSchemaHash": expected.result_schema_hash,
+        "EMP0R3TestLedgerContractHash": expected.test_ledger_contract_hash,
         "canonicalSourceStateSnapshotHash": expected.canonical_source_state_snapshot_hash,
         "sourceStateEligibilityHash": expected.source_state_eligibility_hash,
         "marketSnapshotHash": expected.market_snapshot_hash,
@@ -90,4 +95,4 @@ def validate_empirical_execution_authorization(
             raise EmpiricalAuthorizationError(f"EMPIRICAL_AUTHORIZATION_INVALID: {field} binding mismatch")
     if not isinstance(record["authorizationId"], str) or not record["authorizationId"].strip():
         raise EmpiricalAuthorizationError("EMPIRICAL_AUTHORIZATION_INVALID: authorizationId must be non-empty")
-    return ValidatedEmpiricalExecutionAuthorization(record["authorizationId"], expected_hash, expected)
+    return _ValidatedEmpiricalAuthorization(record["authorizationId"], expected_hash, expected)

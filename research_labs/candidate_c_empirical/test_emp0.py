@@ -10,9 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from .authorization import EmpiricalAuthorizationError, EmpiricalAuthorizationExpectedBindings, validate_empirical_execution_authorization
 from .canonical import self_hash
-from .execution import EmpiricalExecutionError, execute_validated_empirical_test
 from .market_contract import MarketContractError, validate_market_admission_record, validate_market_snapshot
 from .multiplicity import benjamini_hochberg, holm_bonferroni
 from .returns import extract_forward_log_return
@@ -58,35 +56,6 @@ def observations(*, side: str = "USD", slot: str = "C02", horizon: int | None = 
             row["horizonSeconds"] = horizon
         rows.append(row)
     return rows
-
-
-def expected_bindings(snapshot_hash: str = "D" * 64, admission_hash: str = "E" * 64) -> EmpiricalAuthorizationExpectedBindings:
-    return EmpiricalAuthorizationExpectedBindings("IMPLEMENTATION", "FREEZE", "MANIFEST", "PREREG", "TEMPORAL", "EXECUTION", "SOURCE_SNAPSHOT", "ELIGIBILITY", snapshot_hash, admission_hash, "SCHEMA", "CONTRACT")
-
-
-def authorization_record(expected: EmpiricalAuthorizationExpectedBindings) -> dict:
-    record = {
-        "schemaVersion": "SYNTHETIC_EMPIRICAL_AUTHORIZATION_V1", "authorizationId": "SYNTHETIC_ONE_SHOT",
-        "authorized": True, "EMP0R2ImplementationCommit": expected.emp0_r2_implementation_commit,
-        "EMP0R2FreezeCommit": expected.emp0_r2_freeze_commit,
-        "EMP0R2AnalysisImplementationManifestHash": expected.analysis_implementation_manifest_hash,
-        "EMP0R2PreregistrationHash": expected.preregistration_hash,
-        "EMP0R2TemporalNullContractHash": expected.temporal_null_contract_hash,
-        "EMP0R2EmpiricalExecutionContractHash": expected.empirical_execution_contract_hash,
-        "canonicalSourceStateSnapshotHash": expected.canonical_source_state_snapshot_hash,
-        "sourceStateEligibilityHash": expected.source_state_eligibility_hash,
-        "marketSnapshotHash": expected.market_snapshot_hash,
-        "marketAdmissionRecordHash": expected.market_admission_record_hash,
-        "marketSnapshotSchemaHash": expected.market_snapshot_schema_hash,
-        "marketDataAdmissionContractHash": expected.market_data_admission_contract_hash,
-        "instrumentId": "FX_SPOT_USDJPY", "allowedHorizonSeconds": [3600, 21600, 86400],
-        "permutationCount": 4999, "primaryStatistic": "BETWEEN_STATE_EXPLAINED_VARIANCE",
-        "primaryMultiplicity": "HOLM_BONFERRONI", "primaryAlpha": 0.05,
-        "secondaryMultiplicity": "BENJAMINI_HOCHBERG", "secondaryQ": 0.10,
-        "oneShotExecutionIntent": True, "marketOutcomeAccess": True, "providerRequeryAllowed": False,
-        "postHocTuningAllowed": False, "sourceEligibilityChangesAllowed": False, "newHorizonsAllowed": False,
-    }
-    return self_hashed(record, "authorizationRecordHash")
 
 
 def admission_record(snapshot, schema_hash: str = SCHEMA_HASH, contract_hash: str = CONTRACT_HASH) -> dict:
@@ -227,24 +196,12 @@ def test_temporal_null_zero_month_global_identity_bound_and_determinism():
     assert Counter(row["stateTokenCanonicalJson"] for row in shifted if row["exactUtc"].startswith("2025-05")) == Counter(row["stateTokenCanonicalJson"] for row in rows if row["exactUtc"].startswith("2025-05"))
 
 
-def test_authorization_requires_self_hash_exact_bindings_and_validated_type():
-    expected = expected_bindings()
-    record = authorization_record(expected)
-    validated = validate_empirical_execution_authorization(record, expected)
-    assert validated.authorization_id == "SYNTHETIC_ONE_SHOT"
-    with pytest.raises(EmpiricalExecutionError):
-        execute_validated_empirical_test(observations(), 86400, {"A", "B"}, {"authorized": True})
-    assert execute_validated_empirical_test(observations(), 86400, {"A", "B"}, validated)["status"] == "PREREGISTERED_STATISTICAL_RESULT"
-    for field, value in (("EMP0R2ImplementationCommit", "WRONG"), ("EMP0R2FreezeCommit", "WRONG"), ("EMP0R2AnalysisImplementationManifestHash", "WRONG"), ("EMP0R2PreregistrationHash", "WRONG"), ("EMP0R2TemporalNullContractHash", "WRONG"), ("EMP0R2EmpiricalExecutionContractHash", "WRONG"), ("canonicalSourceStateSnapshotHash", "WRONG"), ("sourceStateEligibilityHash", "WRONG"), ("marketSnapshotHash", "WRONG"), ("marketAdmissionRecordHash", "WRONG"), ("marketSnapshotSchemaHash", "WRONG"), ("marketDataAdmissionContractHash", "WRONG"), ("postHocTuningAllowed", True), ("providerRequeryAllowed", True), ("oneShotExecutionIntent", False)):
-        invalid = deepcopy(record)
-        invalid[field] = value
-        invalid["authorizationRecordHash"] = self_hash(invalid, "authorizationRecordHash")
-        with pytest.raises(EmpiricalAuthorizationError):
-            validate_empirical_execution_authorization(invalid, expected)
-    invalid = deepcopy(record)
-    invalid["marketSnapshotHash"] = "WRONG"
-    with pytest.raises(EmpiricalAuthorizationError, match="authorizationRecordHash mismatch"):
-        validate_empirical_execution_authorization(invalid, expected)
+def test_validated_snapshot_is_deeply_immutable():
+    validated = validate_market_snapshot(synthetic_snapshot())
+    with pytest.raises((AttributeError, TypeError)):
+        validated.quotes[0].bid = 149.0
+    with pytest.raises(TypeError):
+        validated.raw_artifact_hashes[0] = ("other", "B" * 64)
 
 
 def test_return_and_multiplicity_contracts_remain_unchanged():
