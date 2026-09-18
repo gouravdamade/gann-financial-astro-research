@@ -13066,3 +13066,10 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - EMP0 code accepts only `FAKE_MARKET_` fixtures for schema, return, and statistical tests. No provider is selected or queried; no price, quote, return, market outcome, or real p-value was accessed or computed. `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_EMP0_OUTCOME_BLIND_MARKET_TEST_PREREGISTRATION`.
+
+## MO-R4A Candidate C EMP0-R1 Pre-Data Analysis Path and Temporal Null Closure
+
+- Preserved the historical EMP0 freeze at `91a501c78613ad5c83dd95013cbba83387cdd041` unchanged. EMP0-R1 corrects only the central-review pre-data findings: the analysis/schema core is provider-neutral and reusable with a future immutable authorization, while real market execution remains unavailable without that authorization and an admitted snapshot.
+- The within-side, UTC-month circular null now permits a zero offset in an individual monthly block. It excludes only the global all-zero offset vector, deterministically advancing an attempt index when necessary. The 4,999-replicate count and `(1 + exceedances) / 5000` p-value rule remain fixed.
+- The immutable source state remains 645 events by eight slots = 5,160 rows, with A/B semantic equality, source UNKNOWN abstention, separate USD/JPY strata, and the 8-of-16 pre-market testability set unchanged. No provider, price, quote, return, outcome, real p-value, direction, source weight, score, pair field, forecast, Auto Suggest, ML, MT5, or execution operation occurred.
+- Next gate: `CENTRAL_REVIEW_CANDIDATE_C_EMP0_R1_PRE_DATA_REAL_ANALYSIS_PATH_AND_TEMPORAL_NULL_CLOSURE`.
