@@ -12955,3 +12955,26 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   wave, Fields, Auto Suggest, ML, MT5, or execution functionality changed.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R2_ISOLATED_RUNTIME_EXECUTION_WIRING`.
+
+## MO-R4A Candidate C RUN1-R3R2A Loader-Compatible Production-Path Closure
+
+- The canonical LF Git-byte source bundle and its deterministic CRLF
+  loader-compatible execution view are frozen separately. The bounded policy
+  admits only already-frozen A/B dependencies whose exact LF-to-CRLF bytes
+  match the historical loader checksum and invert exactly to committed Git
+  bytes. Seven of twelve dependencies require that representation; no rendered
+  byte sequence is represented as a Git blob.
+- Both unchanged frozen A and B contract loaders accept the complete loader
+  view. The protected A, B, and V2 source identities remain unchanged.
+- Successor-owned wiring freezes a truthful A context, a structural real-to-V2
+  identity bridge, ordered population identity, one-worker-per-role future
+  shape, and an external authorization contract. No authorization record
+  exists, real tickets cannot issue, and the future real-output paths remain
+  unpopulated.
+- The 645-event frozen population was read only for
+  `IDENTITY_STRUCTURE_ADAPTER_AUTHORIZATION_BUNDLE_AND_REAL_V2_BRIDGE_VALIDATION_ONLY`.
+  No scientific evaluation, A/B output, V2 comparison, market/outcome/provider/
+  broker/Swiss access, polarity, score, magnitude, wave, Fields, Auto Suggest,
+  ML, MT5, or execution work occurred. `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3_PRODUCTION_PATH_CLOSURE`.
