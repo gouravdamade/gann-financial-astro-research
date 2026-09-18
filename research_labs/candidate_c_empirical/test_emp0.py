@@ -1,178 +1,256 @@
-"""EMP0 source-only and FAKE_MARKET_ regression coverage."""
+"""Synthetic-only EMP0-R2 integrity, authorization, and test-cell regression."""
 
 from __future__ import annotations
 
 from collections import Counter
+from copy import deepcopy
+import json
 from math import isclose, log
 from pathlib import Path
 
 import pytest
 
-from .market_contract import MarketContractError, validate_fake_market_snapshot, validate_market_snapshot
+from .authorization import EmpiricalAuthorizationError, EmpiricalAuthorizationExpectedBindings, validate_empirical_execution_authorization
+from .canonical import self_hash
+from .execution import EmpiricalExecutionError, execute_validated_empirical_test
+from .market_contract import MarketContractError, validate_market_admission_record, validate_market_snapshot
 from .multiplicity import benjamini_hochberg, holm_bonferroni
 from .returns import extract_forward_log_return
-from .source_state import build_source_state_eligibility, build_source_state_snapshot
-from .statistics import PERMUTATION_COUNT, StatisticalContractError, between_state_explained_variance, circular_shifted_observations, deterministic_monthly_offsets, deterministic_permutation_test, market_eligible_testable, run_authorized_market_analysis
+from .statistics import ALLOWED_HORIZON_SECONDS, StatisticalContractError, circular_shifted_observations, deterministic_monthly_offsets, deterministic_permutation_test, market_eligible_testable
 
 
 ROOT = Path(__file__).resolve().parents[2]
+RAW_HASH = "A" * 64
+SCHEMA_HASH = "B" * 64
+CONTRACT_HASH = "C" * 64
 
 
-@pytest.fixture(scope="module")
-def snapshot():
-    return build_source_state_snapshot(ROOT)
+def self_hashed(document: dict, field: str) -> dict:
+    document[field] = self_hash(document, field)
+    return document
 
 
-@pytest.fixture(scope="module")
-def eligibility(snapshot):
-    return build_source_state_eligibility(snapshot)
-
-
-def fake_snapshot(quotes, resolution=60):
-    return {"providerId": "FAKE_MARKET_PROVIDER", "datasetId": "FAKE_MARKET_DATASET", "instrumentId": "FX_SPOT_USDJPY", "timezone": "UTC", "resolutionSeconds": resolution, "quotes": quotes}
-
-
-def synthetic_admitted_snapshot(quotes, resolution=60):
-    return {"providerId": "SYNTHETIC_ADMITTED_PROVIDER", "datasetId": "SYNTHETIC_IMMUTABLE_DATASET", "instrumentId": "FX_SPOT_USDJPY", "timezone": "UTC", "resolutionSeconds": resolution, "quotes": quotes}
-
-
-def quote(timestamp, bid=150.0, ask=150.2):
+def quote(timestamp: str, bid: float = 150.0, ask: float = 150.2) -> dict:
     return {"timestampUtc": timestamp, "bid": bid, "ask": ask}
 
 
-def fake_observations(values):
-    return [{"eventId": f"FAKE_SOURCE_{index}", "sideIdentity": "USD", "canonicalRowSlotId": "{\\\"componentId\\\":\\\"C01\\\"}", "exactUtc": f"2025-05-{index + 1:02d}T00:00:00Z", "stateTokenCanonicalJson": state, "logReturn": result} for index, (state, result) in enumerate(values)]
-
-
-def test_source_snapshot_preserves_frozen_population_and_projection(snapshot):
-    records = snapshot["sourceStateRecords"]
-    assert snapshot["populationEventCount"] == 645
-    assert len(records) == 5160
-    assert snapshot["rowSlotsPerEvent"] == 8
-    assert snapshot["aBSemanticProjectionAgreement"] is True
-    assert len({record["eventId"] for record in records}) == 645
-    assert len({(record["eventId"], record["canonicalRowSlotId"]) for record in records}) == 5160
-
-
-def test_source_states_keep_slots_sides_values_and_abstention(snapshot):
-    records = snapshot["sourceStateRecords"]
-    slots = {record["canonicalRowSlotId"] for record in records}
-    assert len(slots) == 8
-    assert {record["sideIdentity"] for record in records} == {"USD", "JPY"}
-    assert all(set(record["rowSlot"]) == {"sourceProfile", "componentId", "sourceContractId", "operatorId"} for record in records)
-    assert all("aspectType" not in record for record in records)
-    values = [record for record in records if record["outputStatus"] == "VALUE"]
-    unknowns = [record for record in records if record["outputStatus"] == "UNKNOWN"]
-    assert all(set(record["stateToken"]) == {"outputStatus", "sourceValue"} for record in values)
-    assert all(record["inferentialDisposition"] == "VALUE_STATE_CANDIDATE" for record in values)
-    assert all(record["inferentialDisposition"] == "SOURCE_UNKNOWN_ABSTAIN" and "stateToken" not in record for record in unknowns)
-
-
-def test_eligibility_is_source_only_and_rare_states_are_not_merged(eligibility):
-    assert eligibility["minStateCount"] == 20
-    assert eligibility["minTotalTestCount"] == 60
-    assert eligibility["unknownDisposition"] == "SOURCE_UNKNOWN_ABSTAIN"
-    assert len(eligibility["cells"]) == 16
-    for cell in eligibility["cells"]:
-        assert all(item["count"] < 20 and item["disposition"] == "RARE_VALUE_STATE_DESCRIPTIVE_ONLY" for item in cell["rareValueStates"])
-        assert all(item["count"] >= 20 for item in cell["eligibleValueStates"])
-        assert cell["unknownCount"] == sum(cell["unknownReasonCounts"].values())
-    c07 = [cell for cell in eligibility["cells"] if cell["rowSlot"]["componentId"] == "C07_INDIVIDUAL_SOURCE_RECORDS_NO_STACKING"]
-    assert c07 and all(not cell["sourceTestable"] and cell["nonTestableReason"] == "NOT_EMPIRICALLY_TESTABLE_SOURCE_ABSTENTION" for cell in c07)
-
-
-def test_protected_drsti_alias_contract_is_preserved(snapshot):
-    ordinary = [record for record in snapshot["sourceStateRecords"] if record["operatorId"] == "SARAVALI_4_32_ORDINARY_DRSTI_V1" and record["outputStatus"] == "VALUE"]
-    assert ordinary
-    values = {record["sourceValue"] for record in ordinary}
-    assert {"1/4", "1/2", "3/4", "FULL"} <= values
-    assert not values.intersection({"DRSTI_1_4", "DRSTI_1_2", "DRSTI_3_4", "DRSTI_FULL"})
-
-
-def test_valid_fake_bid_ask_and_duplicate_deduplication_passes():
-    quotes = validate_fake_market_snapshot(fake_snapshot([quote("2025-05-01T00:00:00Z"), quote("2025-05-01T00:00:00Z"), quote("2025-05-01T00:01:00Z")]))
-    assert len(quotes) == 2
-
-
-def test_provider_neutral_core_accepts_a_future_admitted_identity_without_provider_access():
-    quotes = validate_market_snapshot(synthetic_admitted_snapshot([quote("2025-05-01T00:00:00Z")]))
-    assert quotes == [{"timestampUtc": "2025-05-01T00:00:00Z", "bid": 150.0, "ask": 150.2}]
-    with pytest.raises(MarketContractError):
-        validate_fake_market_snapshot(synthetic_admitted_snapshot([]))
-
-
-@pytest.mark.parametrize("quotes", [[quote("2025-05-01T00:00:00Z", 151, 150)], [quote("2025-05-01T00:00:00Z", 0, 150)], [quote("2025-05-01T00:00:00+05:30")], [quote("2025-05-01T00:00:00Z"), quote("2025-05-01T00:00:00Z", 149, 150.2)]])
-def test_invalid_fake_market_schema_rejects(quotes):
-    with pytest.raises(MarketContractError):
-        validate_fake_market_snapshot(fake_snapshot(quotes))
-
-
-def test_coarse_fake_market_resolution_rejects():
-    with pytest.raises(MarketContractError):
-        validate_fake_market_snapshot(fake_snapshot([], resolution=61))
-
-
-def test_return_anchors_tolerance_and_no_interpolation():
-    quotes = validate_fake_market_snapshot(fake_snapshot([
-        quote("2025-05-01T00:00:59Z", 99, 101), quote("2025-05-01T00:01:00Z", 100, 102),
-        quote("2025-05-01T01:00:00Z", 110, 112),
-    ]))
-    result = extract_forward_log_return("2025-05-01T00:00:00Z", 3600, quotes)
-    assert result["p0TimestampUtc"] == "2025-05-01T00:00:59Z"
-    assert result["phTimestampUtc"] == "2025-05-01T01:00:00Z"
-    assert isclose(result["logReturn"], log(111 / 100))
-    unavailable = extract_forward_log_return("2025-05-01T00:02:00Z", 3600, quotes)
-    assert unavailable["status"] == "MARKET_QUOTE_UNAVAILABLE"
-
-
-def test_between_state_statistic_and_deterministic_null():
-    equal = fake_observations([("A", 0.0), ("A", 2.0), ("B", 0.0), ("B", 2.0)])
-    separated = fake_observations([("A", 0.0), ("A", 0.0), ("B", 2.0), ("B", 2.0)])
-    assert between_state_explained_variance(equal) == 0.0
-    assert between_state_explained_variance(separated) > 0
-    first = deterministic_permutation_test(separated, 86400)
-    second = deterministic_permutation_test(separated, 86400)
-    assert first["permutationCount"] == PERMUTATION_COUNT
-    assert first["nullStatistics"] == second["nullStatistics"] and first["pRaw"] == second["pRaw"]
-    assert isclose(first["pRaw"] * 5000, round(first["pRaw"] * 5000))
-
-
-def test_generic_core_is_reusable_but_the_market_execution_wrapper_requires_future_authorization():
-    observations = [{**item, "eventId": item["eventId"].replace("FAKE_SOURCE", "SYNTHETIC_EVENT")} for item in fake_observations([("A", 0.0), ("A", 0.0), ("B", 2.0), ("B", 2.0)])]
-    assert deterministic_permutation_test(observations, 86400)["status"] == "PREREGISTERED_STATISTICAL_RESULT"
-    with pytest.raises(StatisticalContractError, match="outcomeAnalysisAuthorized"):
-        run_authorized_market_analysis(observations, 86400, {})
-    authorized = {
-        "outcomeAnalysisAuthorized": True,
-        "marketSnapshotAdmitted": True,
-        "marketSnapshotHash": "SYNTHETIC_SNAPSHOT_HASH",
-        "analysisImplementationManifestHash": "SYNTHETIC_MANIFEST_HASH",
+def synthetic_snapshot(quotes: list[dict] | None = None) -> dict:
+    snapshot = {
+        "providerId": "SYNTHETIC_PROVIDER_IDENTITY",
+        "datasetId": "SYNTHETIC_IMMUTABLE_DATASET",
+        "instrumentId": "FX_SPOT_USDJPY",
+        "timezone": "UTC",
+        "resolutionSeconds": 60,
+        "coverageStartUtc": "2025-05-01T01:58:38Z",
+        "coverageEndUtc": "2025-08-01T23:20:56Z",
+        "rawArtifactHashes": {"synthetic.raw": RAW_HASH},
+        "quotes": quotes or [quote("2025-05-01T01:58:38Z"), quote("2025-08-01T23:20:56Z", 151.0, 151.2)],
     }
-    assert run_authorized_market_analysis(observations, 86400, authorized)["status"] == "PREREGISTERED_STATISTICAL_RESULT"
+    snapshot["quoteCount"] = len(snapshot["quotes"])
+    return self_hashed(snapshot, "marketSnapshotHash")
 
 
-def test_circular_shifts_preserve_counts_and_month_strata_without_side_inversion():
-    observations = fake_observations([("A", 0.0), ("A", 1.0), ("B", 2.0), ("B", 3.0)])
-    observations += [{**item, "eventId": item["eventId"].replace("FAKE_SOURCE", "FAKE_SOURCE_JPY"), "sideIdentity": "JPY"} for item in observations]
-    shifted = circular_shifted_observations(observations, 86400, 1)
-    assert Counter(item["stateTokenCanonicalJson"] for item in shifted if item["sideIdentity"] == "USD") == Counter(item["stateTokenCanonicalJson"] for item in observations if item["sideIdentity"] == "USD")
-    assert Counter(item["stateTokenCanonicalJson"] for item in shifted if item["sideIdentity"] == "JPY") == Counter(item["stateTokenCanonicalJson"] for item in observations if item["sideIdentity"] == "JPY")
-    assert all(item["sideIdentity"] in {"USD", "JPY"} for item in shifted)
+def observations(*, side: str = "USD", slot: str = "C02", horizon: int | None = 86400) -> list[dict]:
+    rows = []
+    for index, (state, result) in enumerate((("A", 0.0), ("A", 0.0), ("B", 2.0), ("B", 2.0))):
+        row = {"eventId": f"SYNTHETIC_EVENT_{index}", "sideIdentity": side, "canonicalRowSlotId": slot, "exactUtc": f"2025-05-{index + 1:02d}T00:00:00Z", "stateTokenCanonicalJson": state, "logReturn": result}
+        if horizon is not None:
+            row["horizonSeconds"] = horizon
+        rows.append(row)
+    return rows
 
 
-def test_temporal_null_allows_zero_in_an_individual_month_but_excludes_global_identity():
-    observations = fake_observations([("A", 0.0), ("B", 1.0), ("A", 2.0), ("B", 3.0)])
-    observations += [{**item, "eventId": f"FAKE_SOURCE_JUNE_{index}", "exactUtc": f"2025-06-{index + 1:02d}T00:00:00Z"} for index, item in enumerate(fake_observations([("A", 0.0), ("B", 1.0), ("A", 2.0), ("B", 3.0)]))]
-    vectors = [deterministic_monthly_offsets(observations, 86400, index) for index in range(1, 32)]
-    assert all(any(offset != 0 for offset in vector.values()) for vector in vectors)
-    assert any(any(offset == 0 for offset in vector.values()) for vector in vectors)
+def expected_bindings(snapshot_hash: str = "D" * 64, admission_hash: str = "E" * 64) -> EmpiricalAuthorizationExpectedBindings:
+    return EmpiricalAuthorizationExpectedBindings("IMPLEMENTATION", "FREEZE", "MANIFEST", "PREREG", "TEMPORAL", "EXECUTION", "SOURCE_SNAPSHOT", "ELIGIBILITY", snapshot_hash, admission_hash, "SCHEMA", "CONTRACT")
 
 
-def test_multiplicity_and_sample_gates():
-    raw = {"a": 0.01, "b": 0.04, "c": 0.04}
-    assert holm_bonferroni(raw) == {"a": 0.03, "b": 0.08, "c": 0.08}
-    assert benjamini_hochberg(raw) == {"a": 0.03, "b": 0.04, "c": 0.04}
-    observations = fake_observations([("A", 0.0)] * 20 + [("B", 1.0)] * 40)
-    assert market_eligible_testable(observations, {"A", "B"})
-    assert not market_eligible_testable(observations[:-1], {"A", "B"})
-    assert not market_eligible_testable(fake_observations([("A", 0.0)] * 20 + [("B", 1.0)] * 19), {"A", "B"})
+def authorization_record(expected: EmpiricalAuthorizationExpectedBindings) -> dict:
+    record = {
+        "schemaVersion": "SYNTHETIC_EMPIRICAL_AUTHORIZATION_V1", "authorizationId": "SYNTHETIC_ONE_SHOT",
+        "authorized": True, "EMP0R2ImplementationCommit": expected.emp0_r2_implementation_commit,
+        "EMP0R2FreezeCommit": expected.emp0_r2_freeze_commit,
+        "EMP0R2AnalysisImplementationManifestHash": expected.analysis_implementation_manifest_hash,
+        "EMP0R2PreregistrationHash": expected.preregistration_hash,
+        "EMP0R2TemporalNullContractHash": expected.temporal_null_contract_hash,
+        "EMP0R2EmpiricalExecutionContractHash": expected.empirical_execution_contract_hash,
+        "canonicalSourceStateSnapshotHash": expected.canonical_source_state_snapshot_hash,
+        "sourceStateEligibilityHash": expected.source_state_eligibility_hash,
+        "marketSnapshotHash": expected.market_snapshot_hash,
+        "marketAdmissionRecordHash": expected.market_admission_record_hash,
+        "marketSnapshotSchemaHash": expected.market_snapshot_schema_hash,
+        "marketDataAdmissionContractHash": expected.market_data_admission_contract_hash,
+        "instrumentId": "FX_SPOT_USDJPY", "allowedHorizonSeconds": [3600, 21600, 86400],
+        "permutationCount": 4999, "primaryStatistic": "BETWEEN_STATE_EXPLAINED_VARIANCE",
+        "primaryMultiplicity": "HOLM_BONFERRONI", "primaryAlpha": 0.05,
+        "secondaryMultiplicity": "BENJAMINI_HOCHBERG", "secondaryQ": 0.10,
+        "oneShotExecutionIntent": True, "marketOutcomeAccess": True, "providerRequeryAllowed": False,
+        "postHocTuningAllowed": False, "sourceEligibilityChangesAllowed": False, "newHorizonsAllowed": False,
+    }
+    return self_hashed(record, "authorizationRecordHash")
+
+
+def admission_record(snapshot, schema_hash: str = SCHEMA_HASH, contract_hash: str = CONTRACT_HASH) -> dict:
+    record = {
+        "schemaVersion": "SYNTHETIC_MARKET_ADMISSION_V1", "admissionId": "SYNTHETIC_ADMISSION", "admitted": True,
+        "marketSnapshotHash": snapshot.market_snapshot_hash, "providerId": snapshot.provider_id,
+        "datasetId": snapshot.dataset_id, "instrumentId": snapshot.instrument_id,
+        "coverageStartUtc": snapshot.coverage_start_utc, "coverageEndUtc": snapshot.coverage_end_utc,
+        "resolutionSeconds": snapshot.resolution_seconds, "rawArtifactHashes": dict(snapshot.raw_artifact_hashes),
+        "emp0R2MarketSnapshotSchemaHash": schema_hash, "emp0R2MarketDataAdmissionContractHash": contract_hash,
+    }
+    return self_hashed(record, "admissionRecordHash")
+
+
+def test_historical_source_snapshot_and_eligibility_remain_frozen():
+    snapshot = json.loads((ROOT / "status/research/mo_r4a_candidate_c_emp0_canonical_source_state_snapshot_v1.json").read_text())
+    eligibility = json.loads((ROOT / "status/research/mo_r4a_candidate_c_emp0_source_state_eligibility_v1.json").read_text())
+    assert snapshot["canonicalSourceStateSnapshotHash"] == "9EE0D825773D07306DD7B25E1AB26FE9384C6D278C1F95897199B6A6831AD284"
+    assert snapshot["populationEventCount"] == 645 and snapshot["canonicalSourceStateRowCount"] == 5160
+    assert eligibility["sourceStateEligibilityHash"] == "ADC3F5F527B1973C5D9493ECA8555E3EC3F94993A48B92A532EEF73F4F3A97B1"
+    assert len(eligibility["cells"]) == 16 and sum(cell["sourceTestable"] for cell in eligibility["cells"]) == 8
+
+
+@pytest.mark.parametrize("field", ["providerId", "datasetId", "instrumentId", "timezone", "resolutionSeconds", "coverageStartUtc", "coverageEndUtc", "rawArtifactHashes", "quoteCount", "quotes", "marketSnapshotHash"])
+def test_snapshot_required_fields_and_self_hash_are_executable(field):
+    snapshot = synthetic_snapshot()
+    if field == "marketSnapshotHash":
+        snapshot.pop(field)
+    else:
+        snapshot.pop(field)
+        snapshot["marketSnapshotHash"] = self_hash(snapshot, "marketSnapshotHash")
+    with pytest.raises(MarketContractError):
+        validate_market_snapshot(snapshot)
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda value: value["quotes"][0].update(bid=149.0),
+    lambda value: value.update(providerId="MUTATED_PROVIDER"),
+    lambda value: value["rawArtifactHashes"].update({"synthetic.raw": "F" * 64}),
+])
+def test_snapshot_hash_covers_all_provenance_and_quote_content(mutation):
+    snapshot = synthetic_snapshot()
+    mutation(snapshot)
+    with pytest.raises(MarketContractError, match="marketSnapshotHash mismatch"):
+        validate_market_snapshot(snapshot)
+
+
+def test_snapshot_coverage_count_hashes_and_input_immutability():
+    snapshot = synthetic_snapshot([quote("2025-05-01T01:58:38Z"), quote("2025-05-01T01:58:38Z"), quote("2025-08-01T23:20:56Z")])
+    original = deepcopy(snapshot)
+    validated = validate_market_snapshot(snapshot)
+    assert snapshot == original and validated.raw_quote_count == 3 and validated.admitted_quote_count == 2
+    for field, value in (("coverageStartUtc", "2025-05-01T01:58:39Z"), ("coverageEndUtc", "2025-08-01T23:20:55Z"), ("quoteCount", 1)):
+        invalid = deepcopy(snapshot)
+        invalid[field] = value
+        invalid["marketSnapshotHash"] = self_hash(invalid, "marketSnapshotHash")
+        with pytest.raises(MarketContractError):
+            validate_market_snapshot(invalid)
+    for raw_hashes in ({}, {"": RAW_HASH}, {"a": "a" * 64}, {"a": "Z" * 64}):
+        invalid = deepcopy(snapshot)
+        invalid["rawArtifactHashes"] = raw_hashes
+        invalid["marketSnapshotHash"] = self_hash(invalid, "marketSnapshotHash")
+        with pytest.raises(MarketContractError):
+            validate_market_snapshot(invalid)
+
+
+def test_snapshot_rejects_outside_coverage_and_bad_coverage_order():
+    invalid = synthetic_snapshot([quote("2025-05-01T01:58:37Z")])
+    with pytest.raises(MarketContractError):
+        validate_market_snapshot(invalid)
+    invalid = synthetic_snapshot()
+    invalid["coverageStartUtc"] = "2025-05-01T01:58:38+00:00"
+    invalid["marketSnapshotHash"] = self_hash(invalid, "marketSnapshotHash")
+    with pytest.raises(MarketContractError):
+        validate_market_snapshot(invalid)
+    invalid = synthetic_snapshot()
+    invalid["coverageStartUtc"], invalid["coverageEndUtc"] = invalid["coverageEndUtc"], invalid["coverageStartUtc"]
+    invalid["marketSnapshotHash"] = self_hash(invalid, "marketSnapshotHash")
+    with pytest.raises(MarketContractError):
+        validate_market_snapshot(invalid)
+
+
+def test_admission_record_binds_exact_validated_snapshot_and_contracts():
+    snapshot = validate_market_snapshot(synthetic_snapshot())
+    record = admission_record(snapshot)
+    validated = validate_market_admission_record(record, snapshot, expected_snapshot_schema_hash=SCHEMA_HASH, expected_market_data_admission_contract_hash=CONTRACT_HASH)
+    assert validated.market_snapshot_hash == snapshot.market_snapshot_hash
+    for field, value in (("marketSnapshotHash", "F" * 64), ("providerId", "OTHER"), ("rawArtifactHashes", {"synthetic.raw": "F" * 64}), ("emp0R2MarketSnapshotSchemaHash", "G" * 64)):
+        invalid = deepcopy(record)
+        invalid[field] = value
+        invalid["admissionRecordHash"] = self_hash(invalid, "admissionRecordHash")
+        with pytest.raises(MarketContractError):
+            validate_market_admission_record(invalid, snapshot, expected_snapshot_schema_hash=SCHEMA_HASH, expected_market_data_admission_contract_hash=CONTRACT_HASH)
+    invalid = deepcopy(record)
+    invalid["providerId"] = "MUTATED_WITHOUT_REHASH"
+    with pytest.raises(MarketContractError, match="admissionRecordHash mismatch"):
+        validate_market_admission_record(invalid, snapshot, expected_snapshot_schema_hash=SCHEMA_HASH, expected_market_data_admission_contract_hash=CONTRACT_HASH)
+
+
+def test_test_cell_and_horizon_contracts_reject_cross_hypothesis_inputs():
+    rows = observations()
+    tokens = {"A", "B"}
+    assert set(ALLOWED_HORIZON_SECONDS) == {3600, 21600, 86400}
+    for horizon in sorted(ALLOWED_HORIZON_SECONDS):
+        adapted = [{**row, "horizonSeconds": horizon} for row in rows]
+        assert deterministic_permutation_test(adapted, horizon, tokens)["permutationCount"] == 4999
+    with pytest.raises(StatisticalContractError, match="UNREGISTERED_HORIZON"):
+        deterministic_permutation_test(rows, 7200, tokens)
+    mixed_side = rows + [{**rows[0], "eventId": "J", "sideIdentity": "JPY"}]
+    with pytest.raises(StatisticalContractError, match="MIXED_OR_INVALID_SIDE"):
+        deterministic_permutation_test(mixed_side, 86400, tokens)
+    mixed_slot = rows + [{**rows[0], "eventId": "C03", "canonicalRowSlotId": "C03"}]
+    with pytest.raises(StatisticalContractError, match="MIXED_ROW_SLOT"):
+        deterministic_permutation_test(mixed_slot, 86400, tokens)
+
+
+def test_temporal_null_zero_month_global_identity_bound_and_determinism():
+    rows = observations()
+    rows += [{**row, "eventId": f"JUNE_{index}", "exactUtc": f"2025-06-{index + 1:02d}T00:00:00Z"} for index, row in enumerate(observations())]
+    offsets = deterministic_monthly_offsets(rows, 86400, 1)
+    assert any(value != 0 for value in offsets.values())
+    calls = []
+    def resolver(*args):
+        calls.append(args[-1])
+        return 0 if args[-1] == 0 else (1 if args[3] == "2025-05" else 0)
+    offsets = deterministic_monthly_offsets(rows, 86400, 2, offset_resolver=resolver)
+    assert offsets[("USD", "2025-05")] == 1 and offsets[("USD", "2025-06")] == 0
+    assert calls[:2] == [0, 0] and calls[2:] == [1, 1]
+    with pytest.raises(StatisticalContractError, match="TEMPORAL_NULL_GENERATION_FAILURE"):
+        deterministic_monthly_offsets(rows, 86400, 3, offset_resolver=lambda *_: 0, max_attempts=3)
+    with pytest.raises(StatisticalContractError, match="NO_NONTRIVIAL_TEMPORAL_SHIFT_AVAILABLE"):
+        deterministic_monthly_offsets([observations()[0]], 86400, 1)
+    first = deterministic_permutation_test(rows, 86400, {"A", "B"})
+    second = deterministic_permutation_test(rows, 86400, {"A", "B"})
+    assert first["nullStatistics"] == second["nullStatistics"] and isclose(first["pRaw"] * 5000, round(first["pRaw"] * 5000))
+    shifted = circular_shifted_observations(rows, 86400, {"A", "B"}, 1)
+    assert {row["eventId"]: row["logReturn"] for row in shifted} == {row["eventId"]: row["logReturn"] for row in rows}
+    assert Counter(row["stateTokenCanonicalJson"] for row in shifted if row["exactUtc"].startswith("2025-05")) == Counter(row["stateTokenCanonicalJson"] for row in rows if row["exactUtc"].startswith("2025-05"))
+
+
+def test_authorization_requires_self_hash_exact_bindings_and_validated_type():
+    expected = expected_bindings()
+    record = authorization_record(expected)
+    validated = validate_empirical_execution_authorization(record, expected)
+    assert validated.authorization_id == "SYNTHETIC_ONE_SHOT"
+    with pytest.raises(EmpiricalExecutionError):
+        execute_validated_empirical_test(observations(), 86400, {"A", "B"}, {"authorized": True})
+    assert execute_validated_empirical_test(observations(), 86400, {"A", "B"}, validated)["status"] == "PREREGISTERED_STATISTICAL_RESULT"
+    for field, value in (("EMP0R2ImplementationCommit", "WRONG"), ("EMP0R2FreezeCommit", "WRONG"), ("EMP0R2AnalysisImplementationManifestHash", "WRONG"), ("EMP0R2PreregistrationHash", "WRONG"), ("EMP0R2TemporalNullContractHash", "WRONG"), ("EMP0R2EmpiricalExecutionContractHash", "WRONG"), ("canonicalSourceStateSnapshotHash", "WRONG"), ("sourceStateEligibilityHash", "WRONG"), ("marketSnapshotHash", "WRONG"), ("marketAdmissionRecordHash", "WRONG"), ("marketSnapshotSchemaHash", "WRONG"), ("marketDataAdmissionContractHash", "WRONG"), ("postHocTuningAllowed", True), ("providerRequeryAllowed", True), ("oneShotExecutionIntent", False)):
+        invalid = deepcopy(record)
+        invalid[field] = value
+        invalid["authorizationRecordHash"] = self_hash(invalid, "authorizationRecordHash")
+        with pytest.raises(EmpiricalAuthorizationError):
+            validate_empirical_execution_authorization(invalid, expected)
+    invalid = deepcopy(record)
+    invalid["marketSnapshotHash"] = "WRONG"
+    with pytest.raises(EmpiricalAuthorizationError, match="authorizationRecordHash mismatch"):
+        validate_empirical_execution_authorization(invalid, expected)
+
+
+def test_return_and_multiplicity_contracts_remain_unchanged():
+    quotes = validate_market_snapshot(synthetic_snapshot([quote("2025-05-01T01:58:38Z", 99, 101), quote("2025-05-01T02:58:38Z", 110, 112)])).quotes
+    result = extract_forward_log_return("2025-05-01T01:58:38Z", 3600, quotes)
+    assert isclose(result["logReturn"], log(111 / 100))
+    assert holm_bonferroni({"a": 0.01, "b": 0.04, "c": 0.04}) == {"a": 0.03, "b": 0.08, "c": 0.08}
+    assert benjamini_hochberg({"a": 0.01, "b": 0.04, "c": 0.04}) == {"a": 0.03, "b": 0.04, "c": 0.04}
+    assert market_eligible_testable(observations() * 20, {"A", "B"})

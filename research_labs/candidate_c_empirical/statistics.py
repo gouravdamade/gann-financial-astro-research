@@ -1,4 +1,4 @@
-"""Deterministic, unsigned EMP0-R1 association statistics with no data access."""
+"""Frozen, unsigned EMP0-R2 test-cell statistics with no market data access."""
 
 from __future__ import annotations
 
@@ -7,16 +7,54 @@ from collections import Counter, defaultdict
 from datetime import datetime
 from math import isfinite
 from statistics import fmean
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 
+ALLOWED_HORIZON_SECONDS = frozenset({3600, 21600, 86400})
+HORIZON_ROLES = {3600: "SECONDARY_EXPLORATORY", 21600: "SECONDARY_EXPLORATORY", 86400: "PRIMARY_CONFIRMATORY"}
 PERMUTATION_COUNT = 4999
 PRIMARY_STATISTIC = "BETWEEN_STATE_EXPLAINED_VARIANCE"
-PERMUTATION_CONTRACT_ID = "CANDIDATE_C_EMP0_R1_WITHIN_SIDE_WITHIN_UTC_MONTH_CIRCULAR_SHIFT_V2"
+TEMPORAL_NULL_CONTRACT_ID = "CANDIDATE_C_EMP0_R1_WITHIN_SIDE_WITHIN_UTC_MONTH_CIRCULAR_SHIFT_V2"
+MAX_IDENTITY_REJECTION_ATTEMPTS = 100000
 
 
 class StatisticalContractError(ValueError):
-    """Raised for an invalid frozen statistical input or authorization."""
+    """Raised when a frozen empirical test-cell contract is violated."""
+
+
+OffsetResolver = Callable[[str, str, int, str, int, int, int], int]
+
+
+def validate_test_cell_observations(
+    observations: Sequence[Mapping[str, Any]],
+    horizon_seconds: int,
+    eligible_state_tokens: set[str],
+) -> tuple[str, str]:
+    """Require exactly one frozen side, row slot, horizon, and eligible state set."""
+
+    if horizon_seconds not in ALLOWED_HORIZON_SECONDS:
+        raise StatisticalContractError("UNREGISTERED_HORIZON")
+    if not observations:
+        raise StatisticalContractError("test cell observations are required")
+    if not eligible_state_tokens:
+        raise StatisticalContractError("eligible source state tokens are required")
+    sides = {str(item.get("sideIdentity")) for item in observations}
+    if len(sides) != 1 or not sides <= {"USD", "JPY"}:
+        raise StatisticalContractError("TEST_CELL_MIXED_OR_INVALID_SIDE")
+    row_slots = {str(item.get("canonicalRowSlotId")) for item in observations}
+    if len(row_slots) != 1:
+        raise StatisticalContractError("TEST_CELL_MIXED_ROW_SLOT")
+    for item in observations:
+        item_horizon = item.get("horizonSeconds")
+        if item_horizon is not None and item_horizon != horizon_seconds:
+            raise StatisticalContractError("TEST_CELL_HORIZON_BINDING_MISMATCH")
+        token = str(item.get("stateTokenCanonicalJson"))
+        if token not in eligible_state_tokens:
+            raise StatisticalContractError("TEST_CELL_NON_ELIGIBLE_SOURCE_STATE")
+        value = item.get("logReturn")
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not isfinite(float(value)):
+            raise StatisticalContractError("TEST_CELL_LOG_RETURN_NOT_FINITE")
+    return next(iter(sides)), next(iter(row_slots))
 
 
 def between_state_explained_variance(observations: Sequence[Mapping[str, Any]]) -> float | None:
@@ -41,21 +79,11 @@ def deterministic_offset(
     month: str,
     replicate_index: int,
     block_size: int,
-    attempt_index: int = 0,
+    attempt_index: int,
 ) -> int:
-    """Derive one monthly circular offset; zero is an admitted monthly shift."""
-
     if block_size <= 1:
         return 0
-    payload = "|".join((
-        PERMUTATION_CONTRACT_ID,
-        side_identity,
-        canonical_row_slot_id,
-        str(horizon_seconds),
-        month,
-        str(replicate_index),
-        str(attempt_index),
-    ))
+    payload = "|".join((TEMPORAL_NULL_CONTRACT_ID, side_identity, canonical_row_slot_id, str(horizon_seconds), month, str(replicate_index), str(attempt_index)))
     return int(hashlib.sha256(payload.encode("utf-8")).hexdigest(), 16) % block_size
 
 
@@ -67,48 +95,39 @@ def _ordered_blocks(observations: Sequence[Mapping[str, Any]]) -> dict[tuple[str
     blocks: dict[tuple[str, str], list[Mapping[str, Any]]] = defaultdict(list)
     for item in observations:
         blocks[(str(item["sideIdentity"]), _month(str(item["exactUtc"])))].append(item)
-    return {
-        key: sorted(block, key=lambda item: (str(item["exactUtc"]), str(item["eventId"])))
-        for key, block in blocks.items()
-    }
+    return {key: sorted(block, key=lambda item: (str(item["exactUtc"]), str(item["eventId"]))) for key, block in blocks.items()}
 
 
 def deterministic_monthly_offsets(
     observations: Sequence[Mapping[str, Any]],
     horizon_seconds: int,
     replicate_index: int,
+    *,
+    offset_resolver: OffsetResolver = deterministic_offset,
+    max_attempts: int = MAX_IDENTITY_REJECTION_ATTEMPTS,
 ) -> dict[tuple[str, str], int]:
-    """Return a non-identity joint monthly shift vector for one replicate.
-
-    Every month may legitimately receive offset zero. Only the all-zero vector
-    is excluded, because the observed arrangement is separately counted by the
-    plus-one p-value correction. The attempt index is part of the SHA-256 input,
-    making a retry deterministic rather than data-dependent.
-    """
+    """Generate a finite, non-identity joint monthly vector without biasing a block."""
 
     blocks = _ordered_blocks(observations)
     if not blocks or not any(len(block) > 1 for block in blocks.values()):
-        raise StatisticalContractError("a non-identity monthly circular shift requires a block with at least two observations")
-    attempt_index = 0
-    while True:
+        raise StatisticalContractError("NO_NONTRIVIAL_TEMPORAL_SHIFT_AVAILABLE")
+    for attempt_index in range(max_attempts):
         offsets = {
-            (side, month): deterministic_offset(
-                side,
-                str(block[0]["canonicalRowSlotId"]),
-                horizon_seconds,
-                month,
-                replicate_index,
-                len(block),
-                attempt_index,
-            )
+            (side, month): offset_resolver(side, str(block[0]["canonicalRowSlotId"]), horizon_seconds, month, replicate_index, len(block), attempt_index)
             for (side, month), block in sorted(blocks.items())
         }
         if any(offset != 0 for offset in offsets.values()):
             return offsets
-        attempt_index += 1
+    raise StatisticalContractError("TEMPORAL_NULL_GENERATION_FAILURE")
 
 
-def circular_shifted_observations(observations: Sequence[Mapping[str, Any]], horizon_seconds: int, replicate_index: int) -> list[dict[str, Any]]:
+def circular_shifted_observations(
+    observations: Sequence[Mapping[str, Any]],
+    horizon_seconds: int,
+    eligible_state_tokens: set[str],
+    replicate_index: int,
+) -> list[dict[str, Any]]:
+    validate_test_cell_observations(observations, horizon_seconds, eligible_state_tokens)
     blocks = _ordered_blocks(observations)
     offsets = deterministic_monthly_offsets(observations, horizon_seconds, replicate_index)
     shifted: list[dict[str, Any]] = []
@@ -121,46 +140,25 @@ def circular_shifted_observations(observations: Sequence[Mapping[str, Any]], hor
     return shifted
 
 
-def deterministic_permutation_test(observations: Sequence[Mapping[str, Any]], horizon_seconds: int) -> dict[str, Any]:
-    """Pure frozen core; callers must separately hold a data-execution authorization."""
+def deterministic_permutation_test(
+    observations: Sequence[Mapping[str, Any]],
+    horizon_seconds: int,
+    eligible_state_tokens: set[str],
+) -> dict[str, Any]:
+    """Run one validated side x row-slot x horizon omnibus test."""
 
-    if not observations:
-        raise StatisticalContractError("observations are required")
+    validate_test_cell_observations(observations, horizon_seconds, eligible_state_tokens)
     observed = between_state_explained_variance(observations)
     if observed is None:
         return {"status": "ZERO_OUTCOME_VARIANCE_NOT_TESTABLE"}
     null_statistics = [
-        between_state_explained_variance(circular_shifted_observations(observations, horizon_seconds, index))
+        between_state_explained_variance(circular_shifted_observations(observations, horizon_seconds, eligible_state_tokens, index))
         for index in range(1, PERMUTATION_COUNT + 1)
     ]
     if any(value is None for value in null_statistics):
         raise StatisticalContractError("shift must preserve nonzero outcome variance")
     exceedances = sum(value >= observed for value in null_statistics)
-    return {
-        "status": "PREREGISTERED_STATISTICAL_RESULT",
-        "statistic": observed,
-        "permutationCount": PERMUTATION_COUNT,
-        "nullStatistics": null_statistics,
-        "pRaw": (1 + exceedances) / (1 + PERMUTATION_COUNT),
-    }
-
-
-def run_authorized_market_analysis(
-    observations: Sequence[Mapping[str, Any]],
-    horizon_seconds: int,
-    execution_authorization: Mapping[str, Any],
-) -> dict[str, Any]:
-    """Invoke the frozen core only after a future immutable authorization binds data."""
-
-    if execution_authorization.get("outcomeAnalysisAuthorized") is not True:
-        raise StatisticalContractError("market analysis requires a future outcomeAnalysisAuthorized record")
-    if execution_authorization.get("marketSnapshotAdmitted") is not True:
-        raise StatisticalContractError("market analysis requires an admitted immutable market snapshot")
-    if not isinstance(execution_authorization.get("marketSnapshotHash"), str) or not execution_authorization["marketSnapshotHash"]:
-        raise StatisticalContractError("market analysis authorization must bind a marketSnapshotHash")
-    if not isinstance(execution_authorization.get("analysisImplementationManifestHash"), str) or not execution_authorization["analysisImplementationManifestHash"]:
-        raise StatisticalContractError("market analysis authorization must bind an analysisImplementationManifestHash")
-    return deterministic_permutation_test(observations, horizon_seconds)
+    return {"status": "PREREGISTERED_STATISTICAL_RESULT", "statistic": observed, "permutationCount": PERMUTATION_COUNT, "nullStatistics": null_statistics, "pRaw": (1 + exceedances) / 5000}
 
 
 def market_eligible_testable(observations: Sequence[Mapping[str, Any]], eligible_tokens: set[str], min_state_count: int = 20, min_total_count: int = 60) -> bool:

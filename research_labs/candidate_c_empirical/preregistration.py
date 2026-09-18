@@ -16,6 +16,8 @@ STARTING_COMMIT = "a2fec654d7c6ea0d72b79d9ee11c39fdaf20c6ea"
 EMP0_R1_MILESTONE = "MO-R4A-CANDIDATE-C-EMP0-R1-PRE-DATA-REAL-ANALYSIS-PATH-AND-TEMPORAL-NULL-CLOSURE"
 EMP0_HISTORICAL_FREEZE_COMMIT = "91a501c78613ad5c83dd95013cbba83387cdd041"
 EMP0_HISTORICAL_FREEZE_HASH = "215BDD5803F48D8755307599853F14FE3EFC710D6EE7D5C87870CCB4A62C344F"
+EMP0_R2_MILESTONE = "MO-R4A-CANDIDATE-C-EMP0-R2-PRE-DATA-SNAPSHOT-INTEGRITY-AUTHORIZATION-AND-TEST-CELL-CLOSURE"
+EMP0_R1_FREEZE_COMMIT = "eabe9cb983aa42f3f7b8375edb92a68de571c678"
 
 
 def _hashed(document: dict[str, Any], field: str) -> dict[str, Any]:
@@ -296,3 +298,114 @@ def render_emp0_r1_artifacts(root: Path | str, implementation_commit: str) -> di
     for path, document in documents.items():
         _write(path, document)
     return {"admission": admission, "schema": schema, "preregistration": preregistration, "manifest": manifest, "acceptance": acceptance}
+
+
+def render_emp0_r2_artifacts(root: Path | str, implementation_commit: str) -> dict[str, Any]:
+    """Freeze R2 integrity contracts without opening a market snapshot or provider."""
+
+    base = Path(root).resolve()
+    snapshot = _read_json(base / "status/research/mo_r4a_candidate_c_emp0_canonical_source_state_snapshot_v1.json")
+    eligibility = _read_json(base / "status/research/mo_r4a_candidate_c_emp0_source_state_eligibility_v1.json")
+    predecessor = _read_json(base / "status/acceptance/mo_r4a_candidate_c_emp0_r1_pre_data_analysis_path_and_temporal_null_closure_v1.json")
+    if snapshot["canonicalSourceStateSnapshotHash"] != "9EE0D825773D07306DD7B25E1AB26FE9384C6D278C1F95897199B6A6831AD284" or snapshot["populationEventCount"] != 645 or snapshot["canonicalSourceStateRowCount"] != 5160:
+        raise ValueError("historical Candidate C source snapshot changed")
+    if eligibility["sourceStateEligibilityHash"] != "ADC3F5F527B1973C5D9493ECA8555E3EC3F94993A48B92A532EEF73F4F3A97B1" or len(eligibility["cells"]) != 16 or sum(cell["sourceTestable"] for cell in eligibility["cells"]) != 8:
+        raise ValueError("historical Candidate C source eligibility changed")
+    market_schema = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_MARKET_SNAPSHOT_SCHEMA_V1", "milestone": EMP0_R2_MILESTONE,
+        "requiredFields": ["providerId", "datasetId", "instrumentId", "timezone", "resolutionSeconds", "coverageStartUtc", "coverageEndUtc", "rawArtifactHashes", "quoteCount", "quotes", "marketSnapshotHash"],
+        "instrumentId": "FX_SPOT_USDJPY", "timezone": "UTC", "resolutionSecondsRange": [1, 60],
+        "coverageStartMaximumUtc": "2025-05-01T01:58:38Z", "coverageEndMinimumUtc": "2025-08-01T23:20:56Z",
+        "quoteCountMeaning": "RAW_QUOTES_ARRAY_LENGTH_BEFORE_EXACT_DUPLICATE_NORMALIZATION",
+        "admittedQuoteCountMeaning": "DERIVED_COUNT_AFTER_IDENTICAL_TIMESTAMP_BID_ASK_NORMALIZATION",
+        "rawArtifactHashesRequired": True, "marketSnapshotCanonicalSelfHashRequired": True,
+        "canonicalHashField": "marketSnapshotHash", "duplicatePolicy": "IDENTICAL_DEDUPLICATE_CONFLICT_REJECT", "marketSnapshotSchemaHash": None,
+    }, "marketSnapshotSchemaHash")
+    market_contract = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_MARKET_DATA_ADMISSION_CONTRACT_V1", "milestone": EMP0_R2_MILESTONE,
+        "instrumentId": "FX_SPOT_USDJPY", "providerSelected": False, "marketDataAcquisitionAllowed": False,
+        "requiredCoverageStartUtc": "2025-05-01T01:58:38Z", "requiredCoverageEndUtc": "2025-08-01T23:20:56Z", "requiredResolutionSecondsMaximum": 60,
+        "requiredQuoteFields": ["timestampUtc", "bid", "ask"], "requiredProviderEvidence": ["providerIdentity", "datasetProductIdentity", "rawArtifactHashes", "licensingUsageMetadata", "acquisitionTimestamp"],
+        "marketDataAdmissionContractHash": None,
+    }, "marketDataAdmissionContractHash")
+    admission_record_contract = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_MARKET_ADMISSION_RECORD_CONTRACT_V1", "milestone": EMP0_R2_MILESTONE,
+        "requiredFields": ["schemaVersion", "admissionId", "admitted", "marketSnapshotHash", "providerId", "datasetId", "instrumentId", "coverageStartUtc", "coverageEndUtc", "resolutionSeconds", "rawArtifactHashes", "emp0R2MarketSnapshotSchemaHash", "emp0R2MarketDataAdmissionContractHash", "admissionRecordHash"],
+        "admissionRecordCanonicalSelfHashRequired": True, "realMarketAdmissionRecordPresent": False, "marketAdmissionRecordContractHash": None,
+    }, "marketAdmissionRecordContractHash")
+    temporal = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_TEMPORAL_NULL_CONTRACT_V1", "contractId": "CANDIDATE_C_EMP0_R1_WITHIN_SIDE_WITHIN_UTC_MONTH_CIRCULAR_SHIFT_V2",
+        "blockDefinition": "SINGLE_SIDE_X_SINGLE_ROW_SLOT_X_UTC_MONTH", "monthOrdering": "LEXICAL_YYYY_MM", "eventOrdering": "EXACT_UTC_THEN_EVENT_ID",
+        "individualOffsetDomain": "0_TO_M_MINUS_1", "individualMonthZeroOffsetAllowed": True, "globalIdentityTransformAllowed": False,
+        "globalIdentityRejection": "DETERMINISTIC_FULL_VECTOR_REGENERATION_WITH_ATTEMPT_INDEX", "maxIdentityRejectionAttempts": 100000,
+        "permutationCount": 4999, "pValueRule": "ONE_PLUS_EXCEEDANCES_DIVIDED_BY_5000", "returnsShifted": False, "stateLabelsShifted": True,
+        "withinMonthStateCountsPreserved": True, "semanticNullDistributionChanged": False, "safetyBoundAdded": True, "temporalNullContractHash": None,
+    }, "temporalNullContractHash")
+    testable_cells = sorted((cell for cell in eligibility["cells"] if cell["sourceTestable"]), key=lambda cell: (cell["sideIdentity"], cell["canonicalRowSlotId"]))
+    ledger_entries = [{"sideIdentity": cell["sideIdentity"], "canonicalRowSlotId": cell["canonicalRowSlotId"], "horizonSeconds": horizon, "horizonRole": "PRIMARY_CONFIRMATORY" if horizon == 86400 else "SECONDARY_EXPLORATORY", "status": "PENDING_MARKET_ADMISSION"} for cell in testable_cells for horizon in (3600, 21600, 86400)]
+    ledger = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_FUTURE_TEST_LEDGER_CONTRACT_V1", "sourceTestableCellCount": 8,
+        "allowedHorizonSeconds": [3600, 21600, 86400], "futureTestLedgerEntryCount": 24, "entries": ledger_entries,
+        "statusEnum": ["PENDING_MARKET_ADMISSION", "EXECUTED", "INSUFFICIENT_MARKET_ELIGIBLE_SAMPLE", "ZERO_OUTCOME_VARIANCE_NOT_TESTABLE", "NO_NONTRIVIAL_TEMPORAL_SHIFT_AVAILABLE", "TEMPORAL_NULL_GENERATION_FAILURE", "MARKET_QUOTE_UNAVAILABLE_FOR_ALL_ELIGIBLE_STATES", "MARKET_DATA_SNAPSHOT_INVALID"],
+        "testLedgerContractHash": None,
+    }, "testLedgerContractHash")
+    execution = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_EMPIRICAL_EXECUTION_CONTRACT_V1", "milestone": EMP0_R2_MILESTONE,
+        "sequence": ["VERIFY_FREEZE_BINDING", "VERIFY_SOURCE_SNAPSHOT", "VERIFY_SOURCE_ELIGIBILITY", "VERIFY_MARKET_SNAPSHOT", "VERIFY_ADMISSION_RECORD", "VERIFY_VALIDATED_AUTHORIZATION", "BUILD_FROZEN_TEST_LEDGER", "EXECUTE_24H_PRIMARY", "EXECUTE_1H_6H_SECONDARY", "APPLY_FROZEN_MULTIPLICITY", "FREEZE_FIRST_RESULT", "STOP"],
+        "providerRequeryAllowed": False, "EMP1AnalysisCodeChangesAllowed": False, "EMP2AnalysisCodeChangesAllowed": False,
+        "EMP1SourceStateChangesAllowed": False, "EMP2SourceStateChangesAllowed": False, "EMP2PreregistrationChangesAllowed": False,
+        "EMP2TemporalNullChangesAllowed": False, "EMP2MultiplicityChangesAllowed": False, "empiricalExecutionContractHash": None,
+    }, "empiricalExecutionContractHash")
+    preregistration = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_MARKET_ASSOCIATION_PREREGISTRATION_V1", "milestone": EMP0_R2_MILESTONE,
+        "supersedesPreregistrationHash": "A5AD430B92C67303170FD36A08C2212121C44F2F7A3240D4045A2F651D02B0DC",
+        "supersessionReason": "PRE_DATA_SNAPSHOT_INTEGRITY_AUTHORIZATION_AND_TEST_CELL_CLOSURE", "outcomeDataSeenBeforeSupersession": False,
+        "providerSelectedBeforeSupersession": False, "marketSnapshotPresentBeforeSupersession": False,
+        "researchQuestion": "For each eligible sideIdentity x rowSlot, do mean forward USDJPY log returns differ across frozen categorical Candidate C VALUE states?",
+        "unknownSourceDisposition": "ABSTAIN_NOT_MARKET_FEATURE", "minStateCount": 20, "minTotalTestCount": 60, "instrumentId": "FX_SPOT_USDJPY",
+        "priceDefinition": "MID_BID_ASK", "p0Rule": "FIRST_QUOTE_AT_OR_AFTER_EVENT_WITHIN_60_SECONDS", "phRule": "FIRST_QUOTE_AT_OR_AFTER_EVENT_PLUS_HORIZON_WITHIN_60_SECONDS", "quoteToleranceSeconds": 60, "returnDefinition": "LN_PH_OVER_P0",
+        "primaryHorizonSeconds": 86400, "secondaryHorizonSeconds": [3600, 21600], "primaryStatistic": "BETWEEN_STATE_EXPLAINED_VARIANCE", "permutationCount": 4999,
+        "temporalNullContractHash": temporal["temporalNullContractHash"], "primaryMultiplicity": {"method": "HOLM_BONFERRONI", "alpha": 0.05}, "secondaryMultiplicity": {"method": "BENJAMINI_HOCHBERG", "q": 0.10},
+        "marketDirectionAssigned": False, "sourceWeightsAssigned": False, "usdJpySideSignMappingAssigned": False, "pairFieldConstructed": False, "marketOutcomeRead": False, "realMarketStatisticalExecutionAllowed": False,
+        "marketAssociationPreregistrationHash": None,
+    }, "marketAssociationPreregistrationHash")
+    package = base / "research_labs/candidate_c_empirical"
+    source_files = ["market_contract.py", "returns.py", "statistics.py", "multiplicity.py", "authorization.py", "execution.py", "preregistration.py"]
+    manifest = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_ANALYSIS_IMPLEMENTATION_MANIFEST_V1", "milestone": EMP0_R2_MILESTONE, "implementationCommit": implementation_commit,
+        "hashConvention": HASH_CONVENTION, "implementationHashes": {name: _file_hash(package / name) for name in source_files}, "testSourceHash": _file_hash(package / "test_emp0.py"),
+        "marketProviderImports": [], "marketFileDiscoveryImplemented": False, "validatedAuthorizationTypeRequired": True, "analysisImplementationManifestHash": None,
+    }, "analysisImplementationManifestHash")
+    authorization = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_EMPIRICAL_AUTHORIZATION_CONTRACT_V1", "milestone": EMP0_R2_MILESTONE,
+        "requiredFields": ["schemaVersion", "authorizationId", "authorized", "authorizationRecordHash", "EMP0R2ImplementationCommit", "EMP0R2FreezeCommit", "EMP0R2AnalysisImplementationManifestHash", "EMP0R2PreregistrationHash", "EMP0R2TemporalNullContractHash", "EMP0R2EmpiricalExecutionContractHash", "canonicalSourceStateSnapshotHash", "sourceStateEligibilityHash", "marketSnapshotHash", "marketAdmissionRecordHash", "marketSnapshotSchemaHash", "marketDataAdmissionContractHash", "instrumentId", "allowedHorizonSeconds", "permutationCount", "primaryStatistic", "primaryMultiplicity", "primaryAlpha", "secondaryMultiplicity", "secondaryQ", "oneShotExecutionIntent", "marketOutcomeAccess", "providerRequeryAllowed", "postHocTuningAllowed", "sourceEligibilityChangesAllowed", "newHorizonsAllowed"],
+        "plainMappingAuthorizationAllowed": False, "validatedAuthorizationTypeRequired": True, "authorizationCanonicalSelfHashRequired": True, "oneShotExecutionRequired": True,
+        "marketSnapshotBindingRequired": True, "marketAdmissionBindingRequired": True, "sourceSnapshotBindingRequired": True, "sourceEligibilityBindingRequired": True, "preregistrationBindingRequired": True, "temporalNullBindingRequired": True,
+        "empiricalExecutionAuthorizationPresent": False, "empiricalExecutionAuthorized": False, "empiricalAuthorizationContractHash": None,
+    }, "empiricalAuthorizationContractHash")
+    acceptance = _hashed({
+        "schemaVersion": "MO_R4A_CANDIDATE_C_EMP0_R2_PRE_DATA_SNAPSHOT_INTEGRITY_AUTHORIZATION_TEST_CELL_FREEZE_V1", "milestone": EMP0_R2_MILESTONE,
+        "predecessorEmp0R1FreezeCommit": EMP0_R1_FREEZE_COMMIT, "implementationCommit": implementation_commit, "historicalSourceSnapshotHash": snapshot["canonicalSourceStateSnapshotHash"], "historicalSourceEligibilityHash": eligibility["sourceStateEligibilityHash"],
+        "predecessorEmp0R1PreregistrationHash": "A5AD430B92C67303170FD36A08C2212121C44F2F7A3240D4045A2F651D02B0DC", "successorPreregistrationHash": preregistration["marketAssociationPreregistrationHash"],
+        "marketSnapshotSchemaHash": market_schema["marketSnapshotSchemaHash"], "marketDataAdmissionContractHash": market_contract["marketDataAdmissionContractHash"], "marketAdmissionRecordContractHash": admission_record_contract["marketAdmissionRecordContractHash"], "temporalNullContractHash": temporal["temporalNullContractHash"], "empiricalAuthorizationContractHash": authorization["empiricalAuthorizationContractHash"], "empiricalExecutionContractHash": execution["empiricalExecutionContractHash"], "analysisImplementationManifestHash": manifest["analysisImplementationManifestHash"], "testLedgerContractHash": ledger["testLedgerContractHash"],
+        "populationEventCount": 645, "canonicalSourceStateRowCount": 5160, "sourceTestableCellCount": 8, "futureTestLedgerEntryCount": 24, "allowedHorizonSeconds": [3600, 21600, 86400], "singleSidePerTestRequired": True, "singleRowSlotPerTestRequired": True, "unregisteredHorizonAllowed": False,
+        "marketSnapshotCanonicalSelfHashRequired": True, "rawArtifactHashesRequired": True, "quoteCountMeansRawQuoteArrayLength": True, "coverageIntegrityRequired": True, "marketAdmissionRecordRequired": True, "plainMappingAuthorizationAllowed": False, "validatedAuthorizationTypeRequired": True, "authorizationCanonicalSelfHashRequired": True, "marketSnapshotBindingRequired": True, "marketAdmissionBindingRequired": True, "sourceSnapshotBindingRequired": True, "sourceEligibilityBindingRequired": True, "preregistrationBindingRequired": True, "temporalNullBindingRequired": True, "oneShotExecutionRequired": True,
+        "temporalNullSemanticDistributionChanged": False, "individualMonthZeroOffsetAllowed": True, "globalIdentityTransformAllowed": False, "maxIdentityRejectionAttempts": 100000, "permutationCount": 4999, "primaryHorizonSeconds": 86400, "secondaryHorizonSeconds": [3600, 21600], "primaryStatistic": "BETWEEN_STATE_EXPLAINED_VARIANCE", "primaryMultiplicity": "HOLM_BONFERRONI", "primaryAlpha": 0.05, "secondaryMultiplicity": "BENJAMINI_HOCHBERG", "secondaryQ": 0.10,
+        "EMP1AnalysisCodeChangesAllowed": False, "EMP2AnalysisCodeChangesAllowed": False, "providerSelected": False, "marketDataAcquisitionAllowed": False, "marketSnapshotPresent": False, "marketAdmissionRecordPresent": False, "marketOutcomeRead": False, "realMarketReturnComputed": False, "realMarketStatisticComputed": False, "realMarketPValueComputed": False, "realMarketStatisticalExecutionAllowed": False, "empiricalExecutionAuthorizationPresent": False, "empiricalExecutionAuthorized": False, "sourceWeightsAssigned": False, "marketDirectionAssigned": False, "usdJpySideSignMappingAssigned": False, "executionAllowed": False,
+        "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_EMP0_R2_PRE_DATA_SNAPSHOT_INTEGRITY_AUTHORIZATION_AND_TEST_CELL_CLOSURE", "acceptanceRecordHash": None,
+    }, "acceptanceRecordHash")
+    documents = {
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_market_snapshot_schema_v1.json": market_schema,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_market_data_admission_contract_v1.json": market_contract,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_market_admission_record_contract_v1.json": admission_record_contract,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_temporal_null_contract_v1.json": temporal,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_future_test_ledger_contract_v1.json": ledger,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_empirical_execution_contract_v1.json": execution,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_market_association_preregistration_v1.json": preregistration,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_analysis_implementation_manifest_v1.json": manifest,
+        base / "status/research/mo_r4a_candidate_c_emp0_r2_empirical_authorization_contract_v1.json": authorization,
+        base / "status/acceptance/mo_r4a_candidate_c_emp0_r2_pre_data_snapshot_integrity_authorization_test_cell_freeze.json": acceptance,
+    }
+    for path, document in documents.items():
+        _write(path, document)
+    return {"schema": market_schema, "marketContract": market_contract, "admissionContract": admission_record_contract, "temporal": temporal, "ledger": ledger, "execution": execution, "preregistration": preregistration, "manifest": manifest, "authorization": authorization, "acceptance": acceptance, "predecessor": predecessor}
