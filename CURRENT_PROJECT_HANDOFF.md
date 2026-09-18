@@ -13001,3 +13001,25 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   wave, Fields, Auto Suggest, ML, MT5, or execution was enabled.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3R3_AUTHORIZATION_READY_EXECUTION_MACHINERY`.
+
+## MO-R4A Candidate C RUN1-R3R3-R1 First-Result Path and Audit Closure
+
+- R3R3-R1 corrects only execution-audit wiring. A single immutable result-path
+  map now supplies preflight, production writer, fake temporary writer, and
+  replay/overwrite checks. All destinations use the frozen long-form
+  `status/research` paths; production no longer uses generic `a.json`,
+  `b.json`, or `comparison.json` destinations.
+- The controller now validates every A/B batch against the pre-frozen full row
+  universe before artifact freeze. The real identity is 5,160 rows with hash
+  `6AC975EE4DA32A3872399C68F514BA19E63FFAC5F565018A2DF15CECA27A4580`.
+  Missing, duplicate, extra, or altered canonical row identities fail closed.
+- Comparison records now contain deterministic mismatch accounting from the
+  protected V2 `mismatchClassifications` taxonomy and bind V2 request/response,
+  V2 implementation/projection/protected-path provenance, and verified A/B
+  artifact self-hashes.
+- The three-event fake subprocess run retains separate A/B/V2 workers and
+  production-equivalent temporary paths. No real population event reached
+  science; real outputs remain absent; no market/outcome/provider/broker/Swiss
+  access occurred; `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_RUN1_R3R3_R1_FIRST_RESULT_PATH_AND_AUDIT_CLOSURE`.
