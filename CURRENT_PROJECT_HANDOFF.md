@@ -13101,6 +13101,31 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_RUN1_AUTH1_R1_PID_EVIDENCE_CLARIFICATION`.
 
+## MO-R4A Candidate C EMP1 Market-Data Provider Admission And Raw Snapshot Freeze
+
+- EMP1 admitted the single Dukascopy USDJPY spot requester-pays daily BI5
+  dataset under the frozen R3-R1 market contract. Eighty raw daily objects and
+  thirteen documented Saturday closures cover the frozen 2025-05-01 through
+  2025-08-01 temporal interval. Raw provider bytes and the full quote snapshot
+  remain in the durable private source store because redistribution permission
+  is not established; their identities are committed as metadata only.
+- The private snapshot has 7,880,695 admitted UTC bid/ask quotes, binds 80 raw
+  SHA-256 identities, and passed the frozen R3-R1 snapshot validator at
+  `0F04578F8BB9FE08558889B3BBAC50F19DCE6702093856842B8A12ED32ACCEEC`.
+  Its exact admission record passed with hash
+  `2EC34D56151E18CE17FC13F47CFB95007B9FDA86BF5F59B3416D65AF9455160A`.
+- The terminal Friday interval after `2025-08-01T21:00:00Z` is recorded as a
+  documented market closure inside declared coverage, without fabricated
+  quotes. Generic inter-quote intervals are reported separately from provider
+  partition integrity.
+- No Candidate C event was joined to market data. No event-time quote lookup,
+  P0/PH, return, statistic, p-value, multiplicity step, direction, source
+  weight, pair field, EMP2 authorization, or empirical execution occurred.
+  Protected R3-R1 runtime and source identities remain unchanged and
+  `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP1_MARKET_DATA_PROVIDER_ADMISSION_AND_RAW_SNAPSHOT_FREEZE`.
+
 ## MO-R4A Candidate C EMP0 Outcome-Blind Market-Test Preregistration
 
 - Central review has additively closed the Candidate C source-reproduction phase. EMP0 freezes the 5,160-row canonical source-state snapshot, source-only eligibility, future USDJPY bid/ask admission requirements, return anchors, deterministic unsigned association statistic, 4,999 temporal-shift null, and multiplicity rules before any market data is read.
