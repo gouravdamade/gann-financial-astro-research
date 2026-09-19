@@ -15,6 +15,11 @@ MAX_RESOLUTION_SECONDS = 60
 REQUIRED_COVERAGE_START_UTC = "2025-05-01T01:58:38Z"
 REQUIRED_COVERAGE_END_UTC = "2025-08-01T23:20:56Z"
 _SHA256 = re.compile(r"^[0-9A-F]{64}$")
+_ADMISSION_REQUIRED_FIELDS = frozenset({
+    "schemaVersion", "admissionId", "admitted", "marketSnapshotHash", "providerId", "datasetId",
+    "instrumentId", "coverageStartUtc", "coverageEndUtc", "resolutionSeconds", "rawArtifactHashes",
+    "emp0R3R1MarketSnapshotSchemaHash", "emp0R3R1MarketDataAdmissionContractHash", "admissionRecordHash",
+})
 
 
 class MarketContractError(ValueError):
@@ -163,16 +168,12 @@ def validate_market_admission_record(
 ) -> ValidatedMarketAdmissionRecord:
     """Validate a future self-hashed admission record against one snapshot."""
 
-    required = {
-        "schemaVersion", "admissionId", "admitted", "marketSnapshotHash", "providerId", "datasetId",
-        "instrumentId", "coverageStartUtc", "coverageEndUtc", "resolutionSeconds", "rawArtifactHashes",
-        "admissionRecordHash",
-    }
-    snapshot_schema_field = "emp0R3MarketSnapshotSchemaHash" if "emp0R3MarketSnapshotSchemaHash" in record else "emp0R2MarketSnapshotSchemaHash"
-    admission_contract_field = "emp0R3MarketDataAdmissionContractHash" if "emp0R3MarketDataAdmissionContractHash" in record else "emp0R2MarketDataAdmissionContractHash"
-    missing = sorted((required | {snapshot_schema_field, admission_contract_field}) - set(record))
+    missing = sorted(_ADMISSION_REQUIRED_FIELDS - set(record))
     if missing:
         raise MarketContractError(f"MARKET_ADMISSION_RECORD_INVALID: missing required fields {missing}")
+    extras = sorted(set(record) - _ADMISSION_REQUIRED_FIELDS)
+    if extras:
+        raise MarketContractError(f"MARKET_ADMISSION_RECORD_INVALID: unregistered fields {extras}")
     expected_hash = _require_hash(record["admissionRecordHash"], "admissionRecordHash")
     if self_hash(dict(record), "admissionRecordHash") != expected_hash:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: admissionRecordHash mismatch")
@@ -192,9 +193,9 @@ def validate_market_admission_record(
             raise MarketContractError(f"MARKET_ADMISSION_RECORD_INVALID: {field} does not bind the validated snapshot")
     if tuple(sorted(_validate_raw_artifact_hashes(record["rawArtifactHashes"]))) != snapshot.raw_artifact_hashes:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: rawArtifactHashes do not bind the validated snapshot")
-    if record[snapshot_schema_field] != expected_snapshot_schema_hash:
+    if record["emp0R3R1MarketSnapshotSchemaHash"] != expected_snapshot_schema_hash:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: market snapshot schema binding mismatch")
-    if record[admission_contract_field] != expected_market_data_admission_contract_hash:
+    if record["emp0R3R1MarketDataAdmissionContractHash"] != expected_market_data_admission_contract_hash:
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: market admission contract binding mismatch")
     if not isinstance(record["admissionId"], str) or not record["admissionId"].strip():
         raise MarketContractError("MARKET_ADMISSION_RECORD_INVALID: admissionId must be non-empty")

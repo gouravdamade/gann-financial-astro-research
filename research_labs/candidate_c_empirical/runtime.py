@@ -1,4 +1,4 @@
-"""Repository-bound EMP0-R3 runtime identity and authorization validation."""
+"""Repository-bound EMP0-R3-R1 runtime identity and authorization validation."""
 
 from __future__ import annotations
 
@@ -19,19 +19,19 @@ from .market_contract import ValidatedMarketAdmissionRecord, ValidatedMarketSnap
 
 SOURCE_SNAPSHOT_PATH = "status/research/mo_r4a_candidate_c_emp0_canonical_source_state_snapshot_v1.json"
 SOURCE_ELIGIBILITY_PATH = "status/research/mo_r4a_candidate_c_emp0_source_state_eligibility_v1.json"
-R3_PATHS = {
-    "manifest": "status/research/mo_r4a_candidate_c_emp0_r3_analysis_implementation_manifest_v1.json",
-    "preregistration": "status/research/mo_r4a_candidate_c_emp0_r3_market_association_preregistration_v1.json",
-    "temporal": "status/research/mo_r4a_candidate_c_emp0_r3_temporal_null_contract_v1.json",
-    "execution": "status/research/mo_r4a_candidate_c_emp0_r3_empirical_execution_contract_v1.json",
-    "authorization": "status/research/mo_r4a_candidate_c_emp0_r3_empirical_authorization_contract_v1.json",
-    "result_schema": "status/research/mo_r4a_candidate_c_emp0_r3_emp2_result_schema_v1.json",
+R3_R1_PATHS = {
+    "manifest": "status/research/mo_r4a_candidate_c_emp0_r3_r1_analysis_implementation_manifest_v1.json",
+    "preregistration": "status/research/mo_r4a_candidate_c_emp0_r3_r1_market_association_preregistration_v1.json",
+    "temporal": "status/research/mo_r4a_candidate_c_emp0_r3_r1_temporal_null_contract_v1.json",
+    "execution": "status/research/mo_r4a_candidate_c_emp0_r3_r1_empirical_execution_contract_v1.json",
+    "authorization": "status/research/mo_r4a_candidate_c_emp0_r3_r1_empirical_authorization_contract_v1.json",
+    "result_schema": "status/research/mo_r4a_candidate_c_emp0_r3_r1_emp2_result_schema_v1.json",
     "ledger": "status/research/mo_r4a_candidate_c_emp0_r2_future_test_ledger_contract_v1.json",
-    "market_schema": "status/research/mo_r4a_candidate_c_emp0_r3_market_snapshot_schema_v1.json",
-    "market_contract": "status/research/mo_r4a_candidate_c_emp0_r3_market_data_admission_contract_v1.json",
-    "admission_contract": "status/research/mo_r4a_candidate_c_emp0_r3_market_admission_record_contract_v1.json",
-    "runtime": "status/research/mo_r4a_candidate_c_emp0_r3_runtime_identity_contract_v1.json",
-    "acceptance": "status/acceptance/mo_r4a_candidate_c_emp0_r3_pre_data_end_to_end_execution_binding_immutability_freeze.json",
+    "market_schema": "status/research/mo_r4a_candidate_c_emp0_r3_r1_market_snapshot_schema_v1.json",
+    "market_contract": "status/research/mo_r4a_candidate_c_emp0_r3_r1_market_data_admission_contract_v1.json",
+    "admission_contract": "status/research/mo_r4a_candidate_c_emp0_r3_r1_market_admission_record_contract_v1.json",
+    "runtime": "status/research/mo_r4a_candidate_c_emp0_r3_r1_runtime_identity_contract_v1.json",
+    "acceptance": "status/acceptance/mo_r4a_candidate_c_emp0_r3_r1_pre_data_one_shot_result_root_contract_seal_freeze.json",
 }
 SOURCE_SNAPSHOT_HASH = "9EE0D825773D07306DD7B25E1AB26FE9384C6D278C1F95897199B6A6831AD284"
 SOURCE_ELIGIBILITY_HASH = "ADC3F5F527B1973C5D9493ECA8555E3EC3F94993A48B92A532EEF73F4F3A97B1"
@@ -103,11 +103,11 @@ def _source_shape(snapshot: Mapping[str, Any], eligibility: Mapping[str, Any], l
         raise FrozenRuntimeError("EMP0_R3_RUNTIME_INVALID: frozen ledger shape mismatch")
 
 
-def verify_emp0_r3_runtime(repo_root: Path | str) -> FrozenEmpiricalRuntimeIdentity:
-    """Verify all fixed EMP0-R3 contracts and protected implementation bytes."""
+def verify_emp0_r3_r1_runtime(repo_root: Path | str) -> FrozenEmpiricalRuntimeIdentity:
+    """Verify all fixed EMP0-R3-R1 contracts and protected implementation bytes."""
 
     root = Path(repo_root).resolve()
-    documents = {name: _read(root / relative) for name, relative in R3_PATHS.items()}
+    documents = {name: _read(root / relative) for name, relative in R3_R1_PATHS.items()}
     fields = {
         "manifest": "analysisImplementationManifestHash",
         "preregistration": "marketAssociationPreregistrationHash",
@@ -129,17 +129,17 @@ def verify_emp0_r3_runtime(repo_root: Path | str) -> FrozenEmpiricalRuntimeIdent
     manifest = documents["manifest"]
     implementation_hashes = manifest.get("implementationHashes")
     if not isinstance(implementation_hashes, dict) or not implementation_hashes:
-        raise FrozenRuntimeError("EMP0_R3_RUNTIME_INVALID: missing implementation hashes")
+        raise FrozenRuntimeError("EMP0_R3_R1_RUNTIME_INVALID: missing implementation hashes")
     package = root / "research_labs/candidate_c_empirical"
     for name, expected in implementation_hashes.items():
         if _sha256(package / name) != expected:
-            raise FrozenRuntimeError(f"EMP0_R3_RUNTIME_INVALID: protected implementation byte mismatch for {name}")
+            raise FrozenRuntimeError(f"EMP0_R3_R1_RUNTIME_INVALID: protected implementation byte mismatch for {name}")
     test_hashes = manifest.get("testSourceHashes")
     if not isinstance(test_hashes, dict) or not test_hashes:
-        raise FrozenRuntimeError("EMP0_R3_RUNTIME_INVALID: missing protected test hashes")
+        raise FrozenRuntimeError("EMP0_R3_R1_RUNTIME_INVALID: missing protected test hashes")
     for name, expected in test_hashes.items():
         if _sha256(package / name) != expected:
-            raise FrozenRuntimeError(f"EMP0_R3_RUNTIME_INVALID: protected test byte mismatch for {name}")
+            raise FrozenRuntimeError(f"EMP0_R3_R1_RUNTIME_INVALID: protected test byte mismatch for {name}")
     contract = documents["runtime"]
     expected_contract = {
         "analysisManifestHash": hashes["manifest"], "preregistrationHash": hashes["preregistration"],
@@ -151,7 +151,7 @@ def verify_emp0_r3_runtime(repo_root: Path | str) -> FrozenEmpiricalRuntimeIdent
     }
     for field, expected in expected_contract.items():
         if contract.get(field) != expected:
-            raise FrozenRuntimeError(f"EMP0_R3_RUNTIME_INVALID: runtime contract binding mismatch for {field}")
+            raise FrozenRuntimeError(f"EMP0_R3_R1_RUNTIME_INVALID: runtime contract binding mismatch for {field}")
     return FrozenEmpiricalRuntimeIdentity(
         implementation_commit=str(manifest["implementationCommit"]), acceptance_record_hash=hashes["acceptance"],
         analysis_manifest_hash=hashes["manifest"], preregistration_hash=hashes["preregistration"],
@@ -172,13 +172,13 @@ def validate_empirical_authorization_for_runtime(
 ) -> _ValidatedEmpiricalAuthorization:
     """Derive authorization expectations only from verified runtime and supplied market identities."""
 
-    runtime = verify_emp0_r3_runtime(repo_root)
+    runtime = verify_emp0_r3_r1_runtime(repo_root)
     expected = _EmpiricalAuthorizationExpectedBindings(
         runtime.implementation_commit, runtime.acceptance_record_hash, runtime.analysis_manifest_hash,
         runtime.preregistration_hash, runtime.temporal_null_contract_hash, runtime.execution_contract_hash,
         runtime.result_schema_hash, runtime.test_ledger_contract_hash, runtime.canonical_source_state_snapshot_hash,
         runtime.source_state_eligibility_hash, validated_market_snapshot.market_snapshot_hash,
         validated_market_admission.admission_record_hash, runtime.market_snapshot_schema_hash,
-        runtime.market_data_admission_contract_hash,
+        runtime.market_data_admission_contract_hash, runtime.market_admission_record_contract_hash,
     )
     return _validate_empirical_execution_authorization(authorization_record, expected)

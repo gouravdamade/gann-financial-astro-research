@@ -12,10 +12,23 @@ class EmpiricalAuthorizationError(ValueError):
     """Raised when a future empirical authorization is not exactly bound."""
 
 
+_AUTHORIZATION_REQUIRED_FIELDS = frozenset({
+    "schemaVersion", "authorizationId", "authorized", "authorizationRecordHash",
+    "EMP0R3R1ImplementationCommit", "EMP0R3R1AcceptanceRecordHash", "EMP0R3R1AnalysisImplementationManifestHash",
+    "EMP0R3R1PreregistrationHash", "EMP0R3R1TemporalNullContractHash", "EMP0R3R1EmpiricalExecutionContractHash",
+    "EMP0R3R1ResultSchemaHash", "EMP0R3R1TestLedgerContractHash", "canonicalSourceStateSnapshotHash",
+    "sourceStateEligibilityHash", "marketSnapshotHash", "marketAdmissionRecordHash", "marketSnapshotSchemaHash",
+    "marketDataAdmissionContractHash", "marketAdmissionRecordContractHash", "instrumentId", "allowedHorizonSeconds",
+    "permutationCount", "primaryStatistic", "primaryMultiplicity", "primaryAlpha", "secondaryMultiplicity",
+    "secondaryQ", "oneShotExecutionIntent", "marketOutcomeAccess", "providerRequeryAllowed", "postHocTuningAllowed",
+    "sourceEligibilityChangesAllowed", "newHorizonsAllowed", "newSourceStatesAllowed",
+})
+
+
 @dataclass(frozen=True)
 class _EmpiricalAuthorizationExpectedBindings:
-    emp0_r3_implementation_commit: str
-    emp0_r3_acceptance_record_hash: str
+    emp0_r3_r1_implementation_commit: str
+    emp0_r3_r1_acceptance_record_hash: str
     analysis_implementation_manifest_hash: str
     preregistration_hash: str
     temporal_null_contract_hash: str
@@ -28,6 +41,7 @@ class _EmpiricalAuthorizationExpectedBindings:
     market_admission_record_hash: str
     market_snapshot_schema_hash: str
     market_data_admission_contract_hash: str
+    market_admission_record_contract_hash: str
 
 
 @dataclass(frozen=True)
@@ -43,21 +57,12 @@ def _validate_empirical_execution_authorization(
 ) -> _ValidatedEmpiricalAuthorization:
     """Convert only a verified canonical authorization into an immutable type."""
 
-    required = {
-        "schemaVersion", "authorizationId", "authorized", "authorizationRecordHash",
-        "EMP0R3ImplementationCommit", "EMP0R3AcceptanceRecordHash", "EMP0R3AnalysisImplementationManifestHash",
-        "EMP0R3PreregistrationHash", "EMP0R3TemporalNullContractHash", "EMP0R3EmpiricalExecutionContractHash",
-        "EMP0R3ResultSchemaHash", "EMP0R3TestLedgerContractHash",
-        "canonicalSourceStateSnapshotHash", "sourceStateEligibilityHash", "marketSnapshotHash",
-        "marketAdmissionRecordHash", "marketSnapshotSchemaHash", "marketDataAdmissionContractHash",
-        "instrumentId", "allowedHorizonSeconds", "permutationCount", "primaryStatistic",
-        "primaryMultiplicity", "primaryAlpha", "secondaryMultiplicity", "secondaryQ", "oneShotExecutionIntent",
-        "marketOutcomeAccess", "providerRequeryAllowed", "postHocTuningAllowed",
-        "sourceEligibilityChangesAllowed", "newHorizonsAllowed", "newSourceStatesAllowed",
-    }
-    missing = sorted(required - set(record))
+    missing = sorted(_AUTHORIZATION_REQUIRED_FIELDS - set(record))
     if missing:
         raise EmpiricalAuthorizationError(f"EMPIRICAL_AUTHORIZATION_INVALID: missing fields {missing}")
+    extras = sorted(set(record) - _AUTHORIZATION_REQUIRED_FIELDS)
+    if extras:
+        raise EmpiricalAuthorizationError(f"EMPIRICAL_AUTHORIZATION_INVALID: unregistered fields {extras}")
     expected_hash = record["authorizationRecordHash"]
     if not isinstance(expected_hash, str) or self_hash(dict(record), "authorizationRecordHash") != expected_hash:
         raise EmpiricalAuthorizationError("EMPIRICAL_AUTHORIZATION_INVALID: authorizationRecordHash mismatch")
@@ -67,20 +72,21 @@ def _validate_empirical_execution_authorization(
         if record[field] is not False:
             raise EmpiricalAuthorizationError(f"EMPIRICAL_AUTHORIZATION_INVALID: {field} must be false")
     required_values = {
-        "EMP0R3ImplementationCommit": expected.emp0_r3_implementation_commit,
-        "EMP0R3AcceptanceRecordHash": expected.emp0_r3_acceptance_record_hash,
-        "EMP0R3AnalysisImplementationManifestHash": expected.analysis_implementation_manifest_hash,
-        "EMP0R3PreregistrationHash": expected.preregistration_hash,
-        "EMP0R3TemporalNullContractHash": expected.temporal_null_contract_hash,
-        "EMP0R3EmpiricalExecutionContractHash": expected.empirical_execution_contract_hash,
-        "EMP0R3ResultSchemaHash": expected.result_schema_hash,
-        "EMP0R3TestLedgerContractHash": expected.test_ledger_contract_hash,
+        "EMP0R3R1ImplementationCommit": expected.emp0_r3_r1_implementation_commit,
+        "EMP0R3R1AcceptanceRecordHash": expected.emp0_r3_r1_acceptance_record_hash,
+        "EMP0R3R1AnalysisImplementationManifestHash": expected.analysis_implementation_manifest_hash,
+        "EMP0R3R1PreregistrationHash": expected.preregistration_hash,
+        "EMP0R3R1TemporalNullContractHash": expected.temporal_null_contract_hash,
+        "EMP0R3R1EmpiricalExecutionContractHash": expected.empirical_execution_contract_hash,
+        "EMP0R3R1ResultSchemaHash": expected.result_schema_hash,
+        "EMP0R3R1TestLedgerContractHash": expected.test_ledger_contract_hash,
         "canonicalSourceStateSnapshotHash": expected.canonical_source_state_snapshot_hash,
         "sourceStateEligibilityHash": expected.source_state_eligibility_hash,
         "marketSnapshotHash": expected.market_snapshot_hash,
         "marketAdmissionRecordHash": expected.market_admission_record_hash,
         "marketSnapshotSchemaHash": expected.market_snapshot_schema_hash,
         "marketDataAdmissionContractHash": expected.market_data_admission_contract_hash,
+        "marketAdmissionRecordContractHash": expected.market_admission_record_contract_hash,
         "instrumentId": "FX_SPOT_USDJPY",
         "allowedHorizonSeconds": [3600, 21600, 86400],
         "permutationCount": 4999,

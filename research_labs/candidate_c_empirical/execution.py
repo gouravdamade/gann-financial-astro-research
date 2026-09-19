@@ -12,7 +12,7 @@ from .artifact import finalize_result, write_first_result
 from .market_contract import MarketContractError, validate_market_admission_record, validate_market_snapshot
 from .multiplicity import benjamini_hochberg, holm_bonferroni
 from .returns import extract_forward_log_return
-from .runtime import R3_PATHS, FrozenRuntimeError, validate_empirical_authorization_for_runtime, verify_emp0_r3_runtime
+from .runtime import R3_R1_PATHS, FrozenRuntimeError, validate_empirical_authorization_for_runtime, verify_emp0_r3_r1_runtime
 from .statistics import StatisticalContractError, deterministic_permutation_test
 
 
@@ -73,18 +73,18 @@ def _family(family_id: str, method: str, threshold_key: str, threshold: float, r
     return {"familyId": family_id, "method": method, threshold_key: threshold, "executedTestCount": len(raw), "testIds": sorted(raw), "rawPValues": {key: raw[key] for key in sorted(raw)}, "adjustedPValues": {key: adjusted[key] for key in sorted(adjusted)}}
 
 
-def execute_emp2_once(
+def _execute_emp2_once_to_root_for_test(
     repo_root: Path | str,
     market_snapshot_record: Mapping[str, Any],
     market_admission_record: Mapping[str, Any],
     authorization_record: Mapping[str, Any],
-    output_root: Path | str | None = None,
+    result_root: Path | str,
 ) -> dict[str, Any]:
-    """Perform the exact future EMP2 run after internally validating all frozen identities."""
+    """Private test seam; production must use ``execute_emp2_once`` only."""
 
     root = Path(repo_root).resolve()
-    runtime = verify_emp0_r3_runtime(root)
-    target_root = root if output_root is None else Path(output_root).resolve()
+    runtime = verify_emp0_r3_r1_runtime(root)
+    target_root = Path(result_root).resolve()
     target = target_root / "status/research/mo_r4a_candidate_c_emp2_market_association_result_v1.json"
     if target.exists():
         raise EmpiricalExecutionError("EMPIRICAL_FIRST_RESULT_ALREADY_EXISTS")
@@ -95,7 +95,7 @@ def execute_emp2_once(
     except (MarketContractError, FrozenRuntimeError, ValueError) as exc:
         raise EmpiricalExecutionError(str(exc)) from exc
     eligibility = _eligibility_map(runtime.source_eligibility)
-    ledger_contract = json.loads((root / R3_PATHS["ledger"]).read_text(encoding="utf-8"))
+    ledger_contract = json.loads((root / R3_R1_PATHS["ledger"]).read_text(encoding="utf-8"))
     rows: list[dict[str, Any]] = []
     for ledger_entry in ledger_contract["entries"]:
         side, slot, horizon = ledger_entry["sideIdentity"], ledger_entry["canonicalRowSlotId"], ledger_entry["horizonSeconds"]
@@ -127,6 +127,18 @@ def execute_emp2_once(
             row.update({"pAdjusted": primary_adjusted[row["testId"]], "multiplicityMethod": "HOLM_BONFERRONI", "familyId": "PRIMARY_ALL_EXECUTED_24H"})
         if row["testId"] in secondary_adjusted:
             row.update({"pAdjusted": secondary_adjusted[row["testId"]], "multiplicityMethod": "BENJAMINI_HOCHBERG", "familyId": "SECONDARY_ALL_EXECUTED_1H_6H"})
-    document = finalize_result({"schemaVersion": "MO_R4A_CANDIDATE_C_EMP2_MARKET_ASSOCIATION_RESULT_V1", "milestone": "MO-R4A-CANDIDATE-C-EMP2", "executionId": f"EMP2::{authorization.authorization_id}", "executionCheckoutCommit": _checkout_commit(root), "authorizationId": authorization.authorization_id, "authorizationRecordHash": authorization.authorization_record_hash, "EMP0R3AcceptanceRecordHash": runtime.acceptance_record_hash, "EMP0R3AnalysisImplementationManifestHash": runtime.analysis_manifest_hash, "EMP0R3PreregistrationHash": runtime.preregistration_hash, "EMP0R3TemporalNullContractHash": runtime.temporal_null_contract_hash, "EMP0R3EmpiricalExecutionContractHash": runtime.execution_contract_hash, "EMP0R3TestLedgerContractHash": runtime.test_ledger_contract_hash, "EMP0R3ResultSchemaHash": runtime.result_schema_hash, "canonicalSourceStateSnapshotHash": runtime.canonical_source_state_snapshot_hash, "sourceStateEligibilityHash": runtime.source_state_eligibility_hash, "marketSnapshotHash": snapshot.market_snapshot_hash, "marketAdmissionRecordHash": admission.admission_record_hash, "providerId": snapshot.provider_id, "datasetId": snapshot.dataset_id, "instrumentId": snapshot.instrument_id, "marketCoverageStartUtc": snapshot.coverage_start_utc, "marketCoverageEndUtc": snapshot.coverage_end_utc, "marketRawArtifactHashes": dict(snapshot.raw_artifact_hashes), "testLedgerEntryCount": 24, "testLedger": rows, "primaryFamily": _family("PRIMARY_ALL_EXECUTED_24H", "HOLM_BONFERRONI", "alpha", 0.05, primary_raw, primary_adjusted), "secondaryFamily": _family("SECONDARY_ALL_EXECUTED_1H_6H", "BENJAMINI_HOCHBERG", "q", 0.10, secondary_raw, secondary_adjusted), "scientificRetryCount": 0, "marketDirectionAssigned": False, "sourceWeightsAssigned": False, "usdJpySideSignMappingAssigned": False, "postHocTuningPerformed": False, "providerRequeryPerformed": False, "interpretationBoundary": "EMPIRICAL_ASSOCIATION_DISCOVERY_NOT_FORECAST_OR_TRADING_VALIDATION", "resultSelfHash": None})
+    document = finalize_result({"schemaVersion": "MO_R4A_CANDIDATE_C_EMP2_MARKET_ASSOCIATION_RESULT_V1", "milestone": "MO-R4A-CANDIDATE-C-EMP2", "executionId": f"EMP2::{authorization.authorization_id}", "executionCheckoutCommit": _checkout_commit(root), "authorizationId": authorization.authorization_id, "authorizationRecordHash": authorization.authorization_record_hash, "EMP0R3R1AcceptanceRecordHash": runtime.acceptance_record_hash, "EMP0R3R1AnalysisImplementationManifestHash": runtime.analysis_manifest_hash, "EMP0R3R1PreregistrationHash": runtime.preregistration_hash, "EMP0R3R1TemporalNullContractHash": runtime.temporal_null_contract_hash, "EMP0R3R1EmpiricalExecutionContractHash": runtime.execution_contract_hash, "EMP0R3R1TestLedgerContractHash": runtime.test_ledger_contract_hash, "EMP0R3R1ResultSchemaHash": runtime.result_schema_hash, "canonicalSourceStateSnapshotHash": runtime.canonical_source_state_snapshot_hash, "sourceStateEligibilityHash": runtime.source_state_eligibility_hash, "marketSnapshotHash": snapshot.market_snapshot_hash, "marketAdmissionRecordHash": admission.admission_record_hash, "providerId": snapshot.provider_id, "datasetId": snapshot.dataset_id, "instrumentId": snapshot.instrument_id, "marketCoverageStartUtc": snapshot.coverage_start_utc, "marketCoverageEndUtc": snapshot.coverage_end_utc, "marketRawArtifactHashes": dict(snapshot.raw_artifact_hashes), "testLedgerEntryCount": 24, "testLedger": rows, "primaryFamily": _family("PRIMARY_ALL_EXECUTED_24H", "HOLM_BONFERRONI", "alpha", 0.05, primary_raw, primary_adjusted), "secondaryFamily": _family("SECONDARY_ALL_EXECUTED_1H_6H", "BENJAMINI_HOCHBERG", "q", 0.10, secondary_raw, secondary_adjusted), "scientificRetryCount": 0, "marketDirectionAssigned": False, "sourceWeightsAssigned": False, "usdJpySideSignMappingAssigned": False, "postHocTuningPerformed": False, "providerRequeryPerformed": False, "interpretationBoundary": "EMPIRICAL_ASSOCIATION_DISCOVERY_NOT_FORECAST_OR_TRADING_VALIDATION", "resultSelfHash": None})
     write_first_result(target_root, document)
     return document
+
+
+def execute_emp2_once(
+    repo_root: Path | str,
+    market_snapshot_record: Mapping[str, Any],
+    market_admission_record: Mapping[str, Any],
+    authorization_record: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Run the future EMP2 process only at its canonical verified-repository root."""
+
+    root = Path(repo_root).resolve()
+    return _execute_emp2_once_to_root_for_test(root, market_snapshot_record, market_admission_record, authorization_record, root)

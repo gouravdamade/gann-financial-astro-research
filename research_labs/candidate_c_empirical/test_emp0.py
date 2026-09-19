@@ -65,7 +65,7 @@ def admission_record(snapshot, schema_hash: str = SCHEMA_HASH, contract_hash: st
         "datasetId": snapshot.dataset_id, "instrumentId": snapshot.instrument_id,
         "coverageStartUtc": snapshot.coverage_start_utc, "coverageEndUtc": snapshot.coverage_end_utc,
         "resolutionSeconds": snapshot.resolution_seconds, "rawArtifactHashes": dict(snapshot.raw_artifact_hashes),
-        "emp0R2MarketSnapshotSchemaHash": schema_hash, "emp0R2MarketDataAdmissionContractHash": contract_hash,
+        "emp0R3R1MarketSnapshotSchemaHash": schema_hash, "emp0R3R1MarketDataAdmissionContractHash": contract_hash,
     }
     return self_hashed(record, "admissionRecordHash")
 
@@ -143,7 +143,7 @@ def test_admission_record_binds_exact_validated_snapshot_and_contracts():
     record = admission_record(snapshot)
     validated = validate_market_admission_record(record, snapshot, expected_snapshot_schema_hash=SCHEMA_HASH, expected_market_data_admission_contract_hash=CONTRACT_HASH)
     assert validated.market_snapshot_hash == snapshot.market_snapshot_hash
-    for field, value in (("marketSnapshotHash", "F" * 64), ("providerId", "OTHER"), ("rawArtifactHashes", {"synthetic.raw": "F" * 64}), ("emp0R2MarketSnapshotSchemaHash", "G" * 64)):
+    for field, value in (("marketSnapshotHash", "F" * 64), ("providerId", "OTHER"), ("rawArtifactHashes", {"synthetic.raw": "F" * 64}), ("emp0R3R1MarketSnapshotSchemaHash", "G" * 64)):
         invalid = deepcopy(record)
         invalid[field] = value
         invalid["admissionRecordHash"] = self_hash(invalid, "admissionRecordHash")
