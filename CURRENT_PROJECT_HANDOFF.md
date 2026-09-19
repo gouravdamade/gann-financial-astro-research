@@ -1,10 +1,34 @@
 # Current Project Handoff
 
-Last updated: 2026-09-11 IST
+Last updated: 2026-09-19 IST
 
 Use this file to recover context in a new chat if PyCharm/Codex chat history is lost.
 
-## Latest Update - 2026-09-19 (Candidate C EMP0-R3 Pre-Data End-to-End Execution Binding)
+## Latest Update - 2026-09-19 (Candidate C EMP0-R3-R1 One-Shot Result Root And Contract Seal)
+
+- Historical EMP0-R3 remains unchanged. Its public future EMP2 surface was
+  superseded before market data by a canonical-root-only R3-R1 entrypoint:
+  `execute_emp2_once(repo_root, market_snapshot_record,
+  market_admission_record, authorization_record)`. It can write only
+  `status/research/mo_r4a_candidate_c_emp2_market_association_result_v1.json`
+  under the verified repository root. The test-only alternate-root seam is
+  private and is not a production entrypoint.
+- R3-R1 freezes exact future authorization and market-admission schemas. The
+  authorization contract has an exact required-field set, rejects extras, and
+  binds `marketAdmissionRecordContractHash`; new admissions require only the
+  `emp0R3R1...` schema and contract fields. Predecessor R2/R3 field fallbacks
+  are not accepted for a new EMP1 admission.
+- The source snapshot and eligibility remain byte-identical at
+  `9EE0D825773D07306DD7B25E1AB26FE9384C6D278C1F95897199B6A6831AD284`
+  and `ADC3F5F527B1973C5D9493ECA8555E3EC3F94993A48B92A532EEF73F4F3A97B1`:
+  645 events, 5,160 canonical source rows, eight source-testable cells, and
+  the unchanged 24-entry ledger. No provider was selected; no market data,
+  quote, return, statistic, p-value, authorization record, or result was
+  created. `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP0_R3_R1_PRE_DATA_ONE_SHOT_RESULT_ROOT_AND_CONTRACT_SEAL`.
+
+## Historical Update - 2026-09-19 (Candidate C EMP0-R3 Pre-Data End-to-End Execution Binding)
 
 - Preserved EMP0-R2 and the historical source-state artifacts exactly. EMP0-R3
   freezes a complete future 24-entry empirical executor without selecting a
