@@ -41,7 +41,8 @@ def read_json(path: Path) -> dict[str, Any]:
 def write_hashed(path: Path, document: dict[str, Any], field: str) -> str:
     document[field] = canonical_hash(document, field)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(document, ensure_ascii=True, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    with path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(document, ensure_ascii=True, indent=2, sort_keys=True) + "\n")
     return document[field]
 
 
@@ -178,7 +179,8 @@ def main() -> int:
     }
     quality_record_hash = write_hashed(status_dir / "mo_r4a_candidate_c_emp1_market_data_quality_report_v1.json", quality_record, "marketDataQualityStatusRecordHash")
     admission_path = status_dir / "mo_r4a_candidate_c_emp1_market_admission_record_v1.json"
-    admission_path.write_text(json.dumps(admission, ensure_ascii=True, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    with admission_path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(admission, ensure_ascii=True, indent=2, sort_keys=True) + "\n")
     acquisition_manifest = {
         "schemaVersion": "MO_R4A_CANDIDATE_C_EMP1_MARKET_ACQUISITION_MANIFEST_V1",
         "providerId": PROVIDER_ID,
