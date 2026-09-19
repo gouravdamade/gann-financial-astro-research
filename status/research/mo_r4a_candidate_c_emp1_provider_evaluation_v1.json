@@ -1,0 +1,29 @@
+{
+  "candidates": [
+    {
+      "acquisitionMethod": "S3 GetObject requester-pays daily BI5 partitions",
+      "admissionFailureReasons": [],
+      "admissionStatus": "ADMITTED",
+      "askAvailable": true,
+      "authenticationRequired": true,
+      "bidAvailable": true,
+      "costStatus": "REQUESTER_PAYS",
+      "datasetId": "DUKASCOPY_USDJPY_DAILY_TICKS_BI5",
+      "historicalCoverage": "2025-05-01T01:58:38Z through 2025-08-01T23:20:56Z declared temporal coverage",
+      "instrumentId": "FX_SPOT_USDJPY",
+      "licensingUsage": "RAW_BYTES_NOT_COMMITTED_DUE_TO_PROVIDER_LICENSE; redistribution permission not established",
+      "marketType": "FX_SPOT_USDJPY",
+      "officialDocumentation": [
+        "https://www.dukascopy.com/wiki/en/development/data-export/",
+        "https://www.dukascopy.com/wiki/en/development/strategy-api/historical-data/overview-historical-data/",
+        "https://www.dukascopy.com/client/javadoc/com/dukascopy/api/LoadingDataListener.html"
+      ],
+      "providerIdCandidate": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+      "providerName": "Dukascopy",
+      "resolutionSeconds": 1,
+      "timestampTimezone": "UTC"
+    }
+  ],
+  "providerEvaluationHash": "2012EA53F5FD79E6D1359BE4FF5420493E0F20B876F9569A6F87EF851C6B5698",
+  "schemaVersion": "MO_R4A_CANDIDATE_C_EMP1_PROVIDER_EVALUATION_V1"
+}

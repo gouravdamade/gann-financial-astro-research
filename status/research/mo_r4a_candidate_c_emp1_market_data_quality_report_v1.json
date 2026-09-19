@@ -1,0 +1,33 @@
+{
+  "admittedQuoteCount": 7880695,
+  "conflictingDuplicateCount": 0,
+  "datasetId": "DUKASCOPY_USDJPY_DAILY_TICKS_BI5",
+  "declaredCoverageEndUtc": "2025-08-01T23:20:56Z",
+  "declaredCoverageStartUtc": "2025-05-01T01:58:38Z",
+  "documentedClosedMarketIntervals": [
+    {
+      "endUtc": "2025-08-01T23:20:56Z",
+      "reason": "DUKASCOPY_DOCUMENTED_FRIDAY_FX_MARKET_CLOSE",
+      "startUtc": "2025-08-01T21:00:00Z"
+    }
+  ],
+  "documentedWeekendGapCount": 13,
+  "exactDuplicateCount": 0,
+  "firstObservedQuoteUtc": "2025-05-01T00:00:00.021000Z",
+  "instrumentId": "FX_SPOT_USDJPY",
+  "invalidBidAskCount": 0,
+  "invalidTimestampCount": 0,
+  "lastObservedQuoteUtc": "2025-08-01T20:59:54.038000Z",
+  "marketDataQualityReportHash": "17E9DB45EA73AB23DEB9A6A28F9CDF406257F07EEF656B88AFDD9F64294DDFFB",
+  "marketDataQualityStatusRecordHash": "581C8D863698A8200CF407A164B46E1CE9E46B5B745A6BCE57A3026901BC3D44",
+  "marketSnapshotHash": "0F04578F8BB9FE08558889B3BBAC50F19DCE6702093856842B8A12ED32ACCEEC",
+  "maximumInterQuoteGapMilliseconds": 173100105,
+  "minimumPositiveInterQuoteGapMilliseconds": 50,
+  "observedInterQuoteGapOver60SecondsCount": 762,
+  "providerId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+  "rawArtifactInventoryHash": "B4D07BF5A960ADF4828271D1F009D769CBB2A3122D0CC172CAB80AC23A040534",
+  "rawQuoteCount": 7888953,
+  "schemaVersion": "MO_R4A_CANDIDATE_C_EMP1_MARKET_DATA_QUALITY_REPORT_V1",
+  "unexpectedDataGapAssessment": "NO_ABSENT_OR_MALFORMED_OPEN_SESSION_DAILY_PARTITION_OBSERVED; INTER_QUOTE_INTERVALS_ARE_REPORTED_SEPARATELY",
+  "unexpectedDataGaps": []
+}

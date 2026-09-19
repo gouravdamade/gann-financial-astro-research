@@ -1,0 +1,10 @@
+{
+  "datasetId": "DUKASCOPY_USDJPY_DAILY_TICKS_BI5",
+  "decision": "ADMITTED",
+  "providerAdmissionDecisionHash": "3D49FBDFA893DB239539B6A34B1C3022C4736817023B16740D55993204C022E8",
+  "providerEvaluationHash": "2012EA53F5FD79E6D1359BE4FF5420493E0F20B876F9569A6F87EF851C6B5698",
+  "providerId": "DUKASCOPY_HISTORICAL_PRICE_DATA_S3_REQUESTER_PAYS_DAILY_BI5_OBJECT_STORE",
+  "reason": "Single-provider USDJPY spot daily BI5 route supplied raw bid/ask UTC observations across the frozen temporal coverage and passed frozen snapshot and admission validation.",
+  "schemaVersion": "MO_R4A_CANDIDATE_C_EMP1_PROVIDER_ADMISSION_DECISION_V1",
+  "selectedProvider": "Dukascopy"
+}
