@@ -13183,3 +13183,22 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   produced. The canonical result path remains absent and `executionAllowed=false`.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R1_R1_LOW_MEMORY_ONE_SHOT_EXECUTOR_AND_RUNTIME_SEAL`.
+
+## MO-R4A Candidate C EMP2-R2 Low-Memory One-Shot Empirical Execution
+
+- The first authorized public low-memory execution is frozen. Authorization
+  commit `ee84a12a441ccf7ac2bc23006490772b0cda750d` bound the sealed runtime,
+  source snapshot, eligibility, market snapshot, and market admission before
+  the single invocation. Result commit
+  `ef691e75151bc2c296f98a84383e8e30adf6bb9e` preserves the canonical first
+  result with self-hash `FBF5307EE7BCD298F6AB1A2E77F6DC7A0D95D6EB1242279C46E7445FD5F4209F`.
+- All 24 frozen test-ledger rows executed. The eight primary 24-hour
+  Holm-Bonferroni adjusted p-values are `1.0`; the sixteen secondary 1-hour/
+  6-hour Benjamini-Hochberg adjusted p-values are `0.959`. This is an unsigned
+  empirical association discovery record, not a forecast or trading result.
+- The run used the low-memory executor exactly once, did not overwrite the
+  canonical result, did not query or re-query a provider, and made no market
+  direction, source-weight, or USD/JPY side-sign assignment. No post-hoc
+  tuning or scientific retry occurred; `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_LOW_MEMORY_ONE_SHOT_AUTHORIZATION_AND_EMPIRICAL_EXECUTION`.
