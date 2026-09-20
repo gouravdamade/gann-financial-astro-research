@@ -13166,3 +13166,20 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   was created. Provider calls remained zero and `executionAllowed=false`.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R1_OUTCOME_BLIND_LOW_MEMORY_EXECUTION_SUCCESSOR`.
+
+## MO-R4A Candidate C EMP2-R1-R1 Low-Memory One-Shot Executor And Runtime Seal
+
+- EMP2-R1-R1 additively seals a future production entry point that validates
+  the accepted bounded market layer, frozen admission, frozen authorization,
+  and canonical first-result absence before traversing source records. It
+  delegates the frozen permutation, multiplicity, finalization, and atomic
+  result-writing behavior to the historical R3-R1 implementation.
+- The successor binds its own code/tests, the accepted R1 market layer, the
+  frozen Dukascopy parser, and all source, market, authorization, ledger, and
+  result-schema identities. Synthetic-only old/new equivalence exercises all
+  24 ledger rows and uses the real frozen 4,999-replicate permutation method.
+- No real authorization was created and no real Candidate C event timestamp,
+  P0, PH, return, statistic, p-value, provider call, or EMP2 result was
+  produced. The canonical result path remains absent and `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R1_R1_LOW_MEMORY_ONE_SHOT_EXECUTOR_AND_RUNTIME_SEAL`.
