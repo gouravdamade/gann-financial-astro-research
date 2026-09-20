@@ -13147,3 +13147,22 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - R2 freezes a separate future market-admission record, a 24-row future test ledger, a temporal-null contract, an empirical authorization contract, and an execution contract. A future executor accepts only a canonical validated immutable authorization type; ordinary mappings cannot authorize analysis. It requires exactly one USD/JPY side, one row slot, and one allowed horizon (3600/21600/86400) per invocation.
 - The source snapshot remains 645 events / 5,160 rows at `9EE0D825773D07306DD7B25E1AB26FE9384C6D278C1F95897199B6A6831AD284`; eligibility remains 16 cells / 8 source-testable at `ADC3F5F527B1973C5D9493ECA8555E3EC3F94993A48B92A532EEF73F4F3A97B1`. Direction, source weights, pair fields, scores, forecasts, Auto Suggest, ML, MT5, and execution remain false/disabled.
 - Next gate: `CENTRAL_REVIEW_CANDIDATE_C_EMP0_R2_PRE_DATA_SNAPSHOT_INTEGRITY_AUTHORIZATION_AND_TEST_CELL_CLOSURE`.
+
+## MO-R4A Candidate C EMP2-R1 Outcome-Blind Low-Memory Execution Successor
+
+- EMP2-R1 is an additive, semantics-preserving implementation successor for the
+  prior 16 GB memory hold. The historical R3-R1 protected runtime remains
+  unchanged. The successor parses and validates one preserved BI5 partition at
+  a time, reproduces the canonical snapshot hash through a bounded stream, and
+  provides a future first-quote-within-60-seconds resolver without accessing
+  real Candidate C anchors during this phase.
+- The real market-only check verified all 80 raw SHA-256 identities, reproduced
+  7,888,953 raw and 7,880,695 admitted quotes, and reproduced snapshot hash
+  `0F04578F8BB9FE08558889B3BBAC50F19DCE6702093856842B8A12ED32ACCEEC` and
+  admission hash `2EC34D56151E18CE17FC13F47CFB95007B9FDA86BF5F59B3416D65AF9455160A`.
+  Measured peak RSS was 119,943,168 bytes, below the 4 GiB engineering target.
+- No Candidate C event timestamp, P0, PH, return, statistic, p-value,
+  multiplicity outcome, direction, source weight, authorization, or EMP2 result
+  was created. Provider calls remained zero and `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R1_OUTCOME_BLIND_LOW_MEMORY_EXECUTION_SUCCESSOR`.
