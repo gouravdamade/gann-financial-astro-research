@@ -13202,3 +13202,36 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   tuning or scientific retry occurred; `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_LOW_MEMORY_ONE_SHOT_AUTHORIZATION_AND_EMPIRICAL_EXECUTION`.
+
+## MO-R4A Candidate C EMP2-R2 Astra Post-Outcome Audit Freeze
+
+- The independent Astra post-outcome audit completed with
+  `POST_OUTCOME_SCIENTIFIC_AUDIT_PASS_WITH_LIMITATIONS`. Its immutable target is
+  `cb8b40896274e5a14e5ca0ba23c64d9082c8b988`; the Astra disposition
+  self-hash is
+  `9CDEA628C078883A3C1B3BDDE540708C44F6C8BCACFAEA4FBD99727B696487D6`.
+- Independent read-only reconstruction verified all 80 raw market artifacts,
+  decoded 7,888,953 raw quotes, and reproduced 7,880,695 admitted canonical
+  quotes and the frozen market snapshot identity. All 24 statistics, 24 raw
+  p-values, and 24 multiplicity adjustments reproduced exactly. There were
+  zero result-integrity defects.
+- Four inferential limitations remain: shift exchangeability is not established;
+  ordinary BH dependence conditions are not established; quote attrition is
+  substantial and can vary by state and horizon; and the statistic tests
+  category-conditioned mean returns, not every possible distributional
+  difference. One minor reporting ambiguity concerns the public executor's
+  internal delegation to a helper named `_for_test`. The inherited Evaluator B
+  line-ending/hash issue remains technical debt and did not affect the frozen
+  EMP2 input in this audit.
+- No experiment repair or tuning occurred. No direction, weights, forecast, or
+  trading interpretation was assigned. Candidate C EMP2-R2 and its result,
+  authorization, runtime, source snapshot, eligibility, and market identity
+  remain unchanged. `executionAllowed=false`; Candidate C is not promoted to
+  product logic.
+- The full report is
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_CANDIDATE_C_EMP2_R2_ASTRA_A1_POST_OUTCOME_SCIENTIFIC_AUDIT.md`;
+  the self-hashed machine record is
+  `status/audits/mo_r4a_candidate_c_emp2_r2_astra_a1_post_outcome_scientific_audit.json`.
+  Candidate C EMP2-R2 awaits final central experiment closure.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_EXPERIMENT_CLOSE_AND_NEXT_RESEARCH_DECISION`.
