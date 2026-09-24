@@ -13235,3 +13235,27 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   Candidate C EMP2-R2 awaits final central experiment closure.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_EXPERIMENT_CLOSE_AND_NEXT_RESEARCH_DECISION`.
+
+## MO-R4A Candidate C EMP2-R2 Final Scientific Closure
+
+- Candidate C EMP2-R2 is `SCIENTIFICALLY_CLOSED`. Astra's post-outcome audit
+  passed with limitations; result integrity passed with zero defects, and the
+  independent private-witness reconstruction reproduced the frozen result.
+- All 24 rows executed. No preregistered multiplicity-adjusted family threshold
+  was met: all eight primary 24h Holm-Bonferroni adjusted p-values are 1.000,
+  and all sixteen secondary 1h/6h Benjamini-Hochberg adjusted p-values are
+  0.959. This is limited to the frozen experiment and tested question; it is
+  not a general claim about prediction, Jyotisa, causation, or trading.
+- The four Astra inference limitations and one reporting ambiguity remain
+  attached. Candidate C remains `FROZEN_HISTORICAL_EMPIRICAL_EVIDENCE`; no
+  empirical/product promotion, directional mapping, source weighting,
+  oscillator/Fields integration, or trading use is authorized. No EMP3 is
+  authorized. `executionAllowed=false` remains locked.
+- The next nominated program is `MO-R4A-ASTRA-A1`, a read-only full classical
+  assumption and hidden-premise audit. It is not started by this closure.
+- Closure record:
+  `status/research/mo_r4a_candidate_c_emp2_r2_final_scientific_close_v1.json`;
+  report:
+  `docs/research/MULTI_OSCILLATOR_MO_R4A_CANDIDATE_C_EMP2_R2_FINAL_SCIENTIFIC_CLOSE.md`.
+- Next gate:
+  `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_FINAL_SCIENTIFIC_CLOSE`.

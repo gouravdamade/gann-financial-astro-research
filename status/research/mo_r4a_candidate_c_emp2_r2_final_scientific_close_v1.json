@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "MO_R4A_CANDIDATE_C_EMP2_R2_FINAL_SCIENTIFIC_CLOSE_V1",
+  "closureId": "MO-R4A-CANDIDATE-C-EMP2-R2-CLOSE-F1",
+  "closureStatus": "SCIENTIFICALLY_CLOSED",
+  "startingCommit": "1b22476b2adc3b7f3096639966cbdc95c19ec6ec",
+  "startingBranch": "research/candidate-c-emp2-r2-astra-a1-post-outcome-audit-freeze",
+  "emp2R2": {
+    "executionCommit": "cb8b40896274e5a14e5ca0ba23c64d9082c8b988",
+    "resultCommit": "ef691e75151bc2c296f98a84383e8e30adf6bb9e",
+    "authorizationCommit": "ee84a12a441ccf7ac2bc23006490772b0cda750d",
+    "resultSelfHash": "FBF5307EE7BCD298F6AB1A2E77F6DC7A0D95D6EB1242279C46E7445FD5F4209F",
+    "resultFileSha256": "035AB0AC4A195047A35920F86674293893C44DD738829EA43AA44313B3157983",
+    "acceptanceHash": "C2B78614781C3ED24921ED4C0E6A09A54841B09AA2ADE2FA144658DECB6A4A36",
+    "authorizationRecordHash": "7389B0DF4F3C36542C7B0F70C29E536F4BF4373B90A2ED8A8D8CA12EF85C5652",
+    "executedLedgerRows": 24,
+    "sourceSnapshotHash": "9EE0D825773D07306DD7B25E1AB26FE9384C6D278C1F95897199B6A6831AD284",
+    "sourceEligibilityHash": "ADC3F5F527B1973C5D9493ECA8555E3EC3F94993A48B92A532EEF73F4F3A97B1",
+    "marketSnapshotHash": "0F04578F8BB9FE08558889B3BBAC50F19DCE6702093856842B8A12ED32ACCEEC"
+  },
+  "astraAudit": {
+    "freezeCommit": "1b22476b2adc3b7f3096639966cbdc95c19ec6ec",
+    "verdict": "POST_OUTCOME_SCIENTIFIC_AUDIT_PASS_WITH_LIMITATIONS",
+    "dispositionHash": "9CDEA628C078883A3C1B3BDDE540708C44F6C8BCACFAEA4FBD99727B696487D6",
+    "auditRecordHash": "5A68E042155DBC2A794295FCF67CFA6D395091E00B2E358CA0D74F5522C4BEAE",
+    "resultIntegrity": "PASS",
+    "independentPrivateWitnessReproduction": "PASS",
+    "resultIntegrityDefectCount": 0,
+    "inferenceLimitationCount": 4,
+    "reportingAmbiguityCount": 1,
+    "retainedLimitations": [
+      "L1_SHIFT_EXCHANGEABILITY",
+      "L2_BH_DEPENDENCE",
+      "L3_MARKET_ATTRITION",
+      "L4_STATISTIC_SCOPE"
+    ]
+  },
+  "resultDisposition": {
+    "rowsExecuted": "24/24",
+    "testedHorizonsSeconds": [3600, 21600, 86400],
+    "primaryFamily": {
+      "rows": 8,
+      "horizonSeconds": 86400,
+      "method": "HOLM_BONFERRONI",
+      "alpha": 0.05,
+      "adjustedPValues": "ALL_1.000"
+    },
+    "secondaryFamily": {
+      "rows": 16,
+      "horizonSeconds": [3600, 21600],
+      "method": "BENJAMINI_HOCHBERG",
+      "q": 0.1,
+      "adjustedPValues": "ALL_0.959"
+    },
+    "rawPValueRange": [0.1788, 0.959],
+    "frozenFamilyThresholdMet": false,
+    "interpretation": "Candidate C EMP2-R2 found no association meeting its preregistered multiplicity-adjusted thresholds between the frozen source-state categories and USDJPY forward returns at the tested 1h, 6h and 24h horizons. Independent post-outcome reconstruction reproduced the result exactly. This conclusion applies to the frozen experiment and its tested question."
+  },
+  "interpretationBoundary": {
+    "doesNotEstablish": [
+      "GENERAL_PREDICTIVE_VALIDITY",
+      "GENERAL_PREDICTIVE_INVALIDITY",
+      "CAUSATION",
+      "ABSENCE_OF_EVERY_POSSIBLE_MARKET_RELATIONSHIP",
+      "VALIDITY_OR_INVALIDITY_OF_JYOTISA_GENERALLY",
+      "VALIDITY_OR_INVALIDITY_OF_UNTESTED_SOURCE_OPERATORS",
+      "VALIDITY_OR_INVALIDITY_AT_OTHER_HORIZONS",
+      "PROFITABILITY",
+      "TRADING_READINESS"
+    ],
+    "interpretationBoundary": "EMPIRICAL_ASSOCIATION_DISCOVERY_NOT_FORECAST_OR_TRADING_VALIDATION"
+  },
+  "candidateCDisposition": {
+    "preservationStatus": "FROZEN_HISTORICAL_EMPIRICAL_EVIDENCE",
+    "empiricalPromotion": "NOT_AUTHORIZED",
+    "productPromotion": "NOT_AUTHORIZED",
+    "directionalMapping": "NOT_AUTHORIZED",
+    "sourceWeighting": "NOT_AUTHORIZED",
+    "oscillatorIntegration": "NOT_AUTHORIZED",
+    "fieldsIntegration": "NOT_AUTHORIZED",
+    "tradingUse": "NOT_AUTHORIZED",
+    "emp3Authorized": false
+  },
+  "closureBoundary": {
+    "existingResultChanged": false,
+    "authorizationChanged": false,
+    "acceptanceChanged": false,
+    "astraAuditChanged": false,
+    "sourceSnapshotChanged": false,
+    "eligibilityChanged": false,
+    "marketSnapshotChanged": false,
+    "runtimeChanged": false,
+    "providerAccessed": false,
+    "empiricalExecutionPerformed": false,
+    "newStatisticsProduced": false,
+    "newPValuesProduced": false,
+    "newHypothesisCreated": false,
+    "executionAllowed": false,
+    "marketDirectionAssigned": false,
+    "sourceWeightsAssigned": false,
+    "usdJpySideSignMappingAssigned": false,
+    "forecastProduced": false,
+    "tradingClaimProduced": false
+  },
+  "nextResearchProgram": {
+    "id": "MO-R4A-ASTRA-A1",
+    "title": "FULL_CLASSICAL_ASSUMPTION_AND_HIDDEN_PREMISE_AUDIT",
+    "status": "NOMINATED_NOT_STARTED",
+    "mode": "READ_ONLY"
+  },
+  "nextGate": "CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_FINAL_SCIENTIFIC_CLOSE",
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude closureRecordHash.",
+  "closureRecordHash": "527B7AACB5E2A3ED84B1C412A7152BE4834663BCA5750D05DB7ED29EE637F8DA"
+}
