@@ -233,9 +233,7 @@ def _actor(value: Any) -> ChakraLabActorSelection:
     if not isinstance(value, dict):
         raise ValueError("each actor must be an object")
     _reject_unknown(value, ACTOR_KEYS, "actor")
-    dignity = _optional_enum(
-        DignityState, value.get("dignity") or "ORDINARY", "dignity"
-    )
+    dignity = _optional_enum(DignityState, value.get("dignity"), "dignity")
     return ChakraLabActorSelection(
         body=_required_text(value.get("body"), "actor.body").upper(),
         motion_class=_optional_enum(

@@ -28,6 +28,7 @@ from strict_shadbala_doctrine import (
     saptavargaja_bala,
     shadbala_components_for_planet,
     strict_drik_bala_for_planet,
+    aggregate_components,
     tribhaga_bala_virupa,
     yuddha_bala_virupa,
 )
@@ -117,6 +118,24 @@ def test_saptavargaja_detail_shape() -> None:
         detail["label"] not in {"exaltation", "debilitation"}
         for detail in out["saptavarga_details"]
     )
+
+
+def test_partial_saptavargaja_is_not_reported_complete() -> None:
+    out = saptavargaja_bala("SUN", 10.0, {"SUN": 10.0})
+    assert out["coverage_state"] == "PARTIAL"
+    assert out["known_varga_count"] == 3
+    assert out["unresolved_vargas"]
+
+
+def test_avg_all_surfaces_missing_population_members() -> None:
+    out = aggregate_components(
+        [{"body": "SUN", "implemented_total_complete": True, "kaala_complete": True}],
+        expected_member_names=("SUN", "MOON"),
+    )
+    assert out["coverage_state"] == "PARTIAL"
+    assert out["expected_member_count"] == 2
+    assert out["known_member_count"] == 1
+    assert out["unresolved_members"] == ["MOON"]
 
 
 def test_jhora_visible_saptavargaja_respects_moolatrikona_degree_range() -> None:

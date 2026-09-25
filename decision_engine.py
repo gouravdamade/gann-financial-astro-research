@@ -120,6 +120,33 @@ def currency_pair_evidence(
     return _json_safe(score_currency_pair_for_row(pd.Series(scorer_input)))
 
 
+def _pair_evidence_states(scores: Mapping[str, Any]) -> tuple[str, str, bool, str]:
+    allowed = {"KNOWN", "MIXED", "PARTIAL", "UNKNOWN", "BLOCKED_MAPPING"}
+
+    def state(prefix: str, mapping_key: str, legacy_default: bool = False) -> tuple[str, str]:
+        if not bool(scores.get(mapping_key, legacy_default)):
+            return "BLOCKED_MAPPING", "reference_mapping_absent"
+        declared = str(scores.get(f"fx_{prefix}_evidence_state") or "").upper()
+        reason = str(scores.get(f"fx_{prefix}_evidence_reason") or "")
+        if declared in allowed:
+            return declared, reason
+        try:
+            count = int(scores.get(f"fx_{prefix}_candidate_hit_count") or 0)
+        except (TypeError, ValueError):
+            count = 0
+        return ("KNOWN", "legacy_contract_fallback") if count > 0 else ("UNKNOWN", "no_usable_evidence")
+
+    base_state, base_reason = state("base", "fx_base_reference_available")
+    quote_state, quote_reason = state("quote", "fx_quote_reference_available", legacy_default=True)
+    eligible = base_state in {"KNOWN", "MIXED"} and quote_state in {"KNOWN", "MIXED"}
+    reason = (
+        "both_sides_resolved"
+        if eligible
+        else f"base={base_state}:{base_reason};quote={quote_state}:{quote_reason}"
+    )
+    return base_state, quote_state, eligible, reason
+
+
 def _finite_or_none(value: Any) -> float | None:
     try:
         number = float(value)
@@ -154,6 +181,17 @@ def currency_pair_evidence_contract(
     scores = currency_pair_evidence(value)
     base_reference_available = bool(scores.get("fx_base_reference_available"))
 
+    def declared_state(prefix: str, mapping_available: bool, eligible_count: int) -> tuple[str, str]:
+        if not mapping_available:
+            return "BLOCKED_MAPPING", "reference_mapping_absent"
+        state = str(scores.get(f"fx_{prefix}_evidence_state") or "").upper()
+        reason = str(scores.get(f"fx_{prefix}_evidence_reason") or "")
+        if state in {"KNOWN", "MIXED", "PARTIAL", "UNKNOWN", "BLOCKED_MAPPING"}:
+            return state, reason
+        if eligible_count <= 0:
+            return "UNKNOWN", "no_usable_evidence"
+        return "KNOWN", "legacy_contract_fallback"
+
     def side(prefix: str, currency: str, mapping_available: bool) -> dict[str, Any]:
         supportive = _finite_or_none(scores.get(f"fx_doctrine_{prefix}_supportive_units"))
         adverse = _finite_or_none(scores.get(f"fx_doctrine_{prefix}_adverse_units"))
@@ -163,12 +201,7 @@ def currency_pair_evidence_contract(
         eligible_count = int(eligible) if eligible is not None else 0
         scored_count = int(scored) if scored is not None else 0
         unresolved_count = max(0, eligible_count - scored_count)
-        if not mapping_available:
-            state = "BLOCKED_MAPPING"
-        elif eligible_count <= 0:
-            state = "UNKNOWN"
-        else:
-            state = "KNOWN"
+        state, state_reason = declared_state(prefix, mapping_available, eligible_count)
         if gross is None and supportive is not None and adverse is not None:
             gross = supportive + adverse
         conflict_ratio = (
@@ -181,6 +214,7 @@ def currency_pair_evidence_contract(
             "label": currency,
             "referenceLabel": str(scores.get(f"fx_{prefix}_reference_label") or currency),
             "state": state,
+            "stateReason": state_reason,
             "supportiveUnits": supportive,
             "adverseUnits": adverse,
             "netUnits": _finite_or_none(scores.get(f"fx_doctrine_{prefix}_net_score")),
@@ -199,26 +233,27 @@ def currency_pair_evidence_contract(
             "doctrineDignityVirupaAvg": _finite_or_none(scores.get(f"fx_doctrine_{prefix}_dignity_virupa_avg")),
         }
 
+    quote_reference_available = bool(scores.get("fx_quote_reference_available", True))
     base = side("base", base_currency, base_reference_available)
-    quote = side("quote", quote_currency, True)
-    both_known = base["state"] == "KNOWN" and quote["state"] == "KNOWN"
+    quote = side("quote", quote_currency, quote_reference_available)
+    both_resolved = base["state"] in {"KNOWN", "MIXED"} and quote["state"] in {"KNOWN", "MIXED"}
     base_gross = base["grossActivationUnits"] or 0.0
     quote_gross = quote["grossActivationUnits"] or 0.0
-    pair_gross = base_gross + quote_gross if both_known else None
+    pair_gross = base_gross + quote_gross if both_resolved else None
     pair_net = (
         float(base["netUnits"] or 0.0) - float(quote["netUnits"] or 0.0)
-        if both_known
+        if both_resolved
         else None
     )
     joint_net = (
         (abs(float(base["netUnits"] or 0.0)) + abs(float(quote["netUnits"] or 0.0))) / 2
-        if both_known
+        if both_resolved
         else None
     )
     return {
         "contract": CURRENCY_PAIR_EVIDENCE_CONTRACT,
-        "status": "provisional_research_only" if both_known else (
-            "blocked_mapping" if base["state"] == "BLOCKED_MAPPING" else "insufficient_pair_evidence"
+        "status": "provisional_research_only" if both_resolved else (
+            "blocked_mapping" if "BLOCKED_MAPPING" in {base["state"], quote["state"]} else "insufficient_pair_evidence"
         ),
         "profileId": POLICY_VERSION,
         "asOfUtc": _event_cutoff_utc(evidence_cutoff),
@@ -227,14 +262,16 @@ def currency_pair_evidence_contract(
         "base": base,
         "quote": quote,
         "pair": {
-            "state": "KNOWN" if both_known else "UNKNOWN",
+            "state": "MIXED" if both_resolved and "MIXED" in {base["state"], quote["state"]} else ("KNOWN" if both_resolved else "UNKNOWN"),
+            "directionEligible": both_resolved,
+            "directionReason": "both_sides_resolved" if both_resolved else f"base={base['state']};quote={quote['state']}",
             "netDifferenceUnits": pair_net,
             "jointNetStrengthUnits": joint_net,
             "commonActivationUnits": pair_gross / 2 if pair_gross is not None else None,
             "grossActivationUnits": pair_gross,
             "conflictRatio": (
                 ((base["conflictRatio"] or 0.0) + (quote["conflictRatio"] or 0.0)) / 2
-                if both_known
+                if both_resolved
                 else None
             ),
             # Legacy fields are retained only so existing diagnostic consumers remain stable.
@@ -420,6 +457,12 @@ def validate_decision_packet(packet: Mapping[str, Any]) -> dict[str, Any]:
     if guardrails.get("executionAllowed") is not False:
         raise ValueError("decision packets cannot enable execution")
     if mode == LIVE_INFERENCE:
+        if guardrails.get("experimentalDirectionalDiagnostic") is not True:
+            raise ValueError("live inference must be marked as an experimental directional diagnostic")
+        if guardrails.get("forecastValidated") is not False:
+            raise ValueError("live inference cannot be forecast validated")
+        if guardrails.get("directionCertification") != "UNCERTIFIED":
+            raise ValueError("live inference direction certification must remain UNCERTIFIED")
         if guardrails.get("timestampSafe") is not True or guardrails.get("noLookahead") is not True:
             raise ValueError("live inference packet is not timestamp safe")
         if guardrails.get("outcomeLabelConsumed") is not False:
@@ -594,6 +637,9 @@ class TimestampSafeDecisionEngine:
         doctrine_direction = "UNKNOWN"
         if not reasons:
             scores = _json_safe(score_currency_pair_for_row(pd.Series(safe_features)))
+            base_state, quote_state, pair_direction_eligible, pair_direction_reason = _pair_evidence_states(scores)
+            if not pair_direction_eligible:
+                reasons.append("pair_evidence_incomplete")
             raw_direction = str(scores.get("fx_hypothesis_direction") or "UNKNOWN").upper()
             doctrine_direction = str(scores.get("fx_doctrine_hypothesis_direction") or "UNKNOWN").upper()
             if raw_direction not in {"BULLISH", "BEARISH"}:
@@ -626,6 +672,10 @@ class TimestampSafeDecisionEngine:
                 "fx_doctrine_pair_conflict_ratio",
                 "fx_base_scored_hit_count",
                 "fx_quote_scored_hit_count",
+                "fx_base_evidence_state",
+                "fx_quote_evidence_state",
+                "fx_pair_direction_eligible",
+                "fx_pair_direction_reason",
             )
             if key in scores
         }
@@ -701,6 +751,9 @@ class TimestampSafeDecisionEngine:
                 "futurePricesConsumed": False,
                 "liveEligible": status == "watch",
                 "executionAllowed": False,
+                "experimentalDirectionalDiagnostic": True,
+                "forecastValidated": False,
+                "directionCertification": "UNCERTIFIED",
                 "violations": [],
             },
             "policyLocks": {

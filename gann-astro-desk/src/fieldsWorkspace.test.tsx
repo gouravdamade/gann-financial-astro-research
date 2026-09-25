@@ -264,6 +264,8 @@ describe('FieldsWorkspace', () => {
       sideIdentities: ['USD', 'JPY'],
       aspectProfileId: 'ASPECT_STRENGTH_V0',
     }))
+    const firstRangeRequest = apiMocks.fetchSynchronizedIndependentRange.mock.calls[0][0]
+    expect(firstRangeRequest.sbcRange.boundaries[0].request.actors.every((actor: Record<string, unknown>) => !('dignity' in actor))).toBe(true)
     expect(screen.getByText(/2\/2 known/)).toBeInTheDocument()
     expect(await screen.findByText('Multi Oscillator / Event Activity')).toBeInTheDocument()
     expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()

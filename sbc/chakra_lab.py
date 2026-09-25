@@ -51,7 +51,7 @@ class ChakraLabActorSelection:
     body: str
     motion_class: MotionClass | str | None = None
     nature: PlanetNature | str | None = None
-    dignity: DignityState | str = DignityState.ORDINARY
+    dignity: DignityState | str | None = None
     mercury_association_nature: PlanetNature | str | None = None
 
 
@@ -91,6 +91,7 @@ class ChakraLabActorReadiness:
     source_nakshatra: str
     motion_class: str | None
     reason: str
+    dignity_status: str = "UNSPECIFIED"
 
 
 @dataclass(frozen=True)
@@ -281,6 +282,19 @@ def _resolve_actors(
                 )
             )
             continue
+        if selection.dignity is None:
+            readiness.append(
+                ChakraLabActorReadiness(
+                    body=body,
+                    requested=True,
+                    status="DIGNITY_REQUIRED",
+                    source_nakshatra=source,
+                    motion_class=supplied_motion,
+                    reason="selected source-profile guidance requires an explicit dignity value",
+                    dignity_status="UNSPECIFIED",
+                )
+            )
+            continue
         actor = VedhaActor(
             body=body,
             source_nakshatra=source,
@@ -303,6 +317,7 @@ def _resolve_actors(
                     if body in VEDHA_FIXED_BODIES
                     else "explicit caller-supplied motion class"
                 ),
+                dignity_status="EXPLICIT",
             )
         )
     return tuple(actors), tuple(readiness)

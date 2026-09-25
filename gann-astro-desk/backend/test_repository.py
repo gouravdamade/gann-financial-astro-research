@@ -215,9 +215,9 @@ class AstroRepositoryTests(unittest.TestCase):
             pair["status"],
             {"provisional_research_only", "insufficient_pair_evidence", "blocked_mapping"},
         )
-        self.assertIn(pair["base"]["state"], {"KNOWN", "UNKNOWN", "BLOCKED_MAPPING"})
-        self.assertIn(pair["quote"]["state"], {"KNOWN", "UNKNOWN"})
-        self.assertIn(pair["pair"]["state"], {"KNOWN", "UNKNOWN"})
+        self.assertIn(pair["base"]["state"], {"KNOWN", "MIXED", "PARTIAL", "UNKNOWN", "BLOCKED_MAPPING"})
+        self.assertIn(pair["quote"]["state"], {"KNOWN", "MIXED", "PARTIAL", "UNKNOWN", "BLOCKED_MAPPING"})
+        self.assertIn(pair["pair"]["state"], {"KNOWN", "MIXED", "UNKNOWN"})
         self.assertIn("commonActivationUnits", pair["pair"])
         certification = {item["key"]: item for item in detail["evidenceCertifications"]}
         self.assertEqual(certification["astronomy_geometry"]["status"], "versioned")

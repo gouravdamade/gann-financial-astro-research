@@ -166,6 +166,15 @@ def _from_jd(value: float | int | None) -> datetime | None:
     return datetime(int(year), int(month), int(day), tzinfo=timezone.utc) + timedelta(seconds=seconds)
 
 
+def _utc_display_from_jd(value: float | int | None) -> datetime | None:
+    """Convert Swiss UT1 JD to the distinct UTC display representation."""
+    if value is None or float(value) == 0:
+        return None
+    year, month, day, hour, minute, second = swe.jdut1_to_utc(float(value), swe.GREG_CAL)
+    base = datetime(int(year), int(month), int(day), int(hour), int(minute), tzinfo=timezone.utc)
+    return base + timedelta(seconds=float(second))
+
+
 def _iso(value: datetime | None) -> str | None:
     return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z") if value else None
 
@@ -720,16 +729,37 @@ def _local_type(flags: int, event_type: str, local_max: datetime | None) -> str:
     return "LOCAL_CIRCUMSTANCE_AVAILABLE"
 
 
+def _contacts(
+    times: tuple[float, ...],
+    entries: tuple[tuple[str, int], ...],
+    converter: Any,
+) -> dict[str, str | None]:
+    return {name: _iso(converter(times[index])) for name, index in entries}
+
+
+_SOLAR_GLOBAL_CONTACTS = (("C1", 2), ("C2", 4), ("MAX", 0), ("C3", 5), ("C4", 3))
+_SOLAR_LOCAL_CONTACTS = (("C1", 1), ("C2", 2), ("MAX", 0), ("C3", 3), ("C4", 4))
+_LUNAR_CONTACTS = (("P1", 6), ("U1", 2), ("U2", 4), ("MAX", 0), ("U3", 5), ("U4", 3), ("P4", 7))
+
+
 def _solar_global_contacts(times: tuple[float, ...]) -> dict[str, str | None]:
-    return {name: _iso(_from_jd(times[index])) for name, index in (("C1", 2), ("C2", 4), ("MAX", 0), ("C3", 5), ("C4", 3))}
+    return _contacts(times, _SOLAR_GLOBAL_CONTACTS, _from_jd)
+
+
+def _solar_global_contacts_utc_display(times: tuple[float, ...]) -> dict[str, str | None]:
+    return _contacts(times, _SOLAR_GLOBAL_CONTACTS, _utc_display_from_jd)
 
 
 def _solar_local_contacts(times: tuple[float, ...]) -> dict[str, str | None]:
-    return {name: _iso(_from_jd(times[index])) for name, index in (("C1", 1), ("C2", 2), ("MAX", 0), ("C3", 3), ("C4", 4))}
+    return _contacts(times, _SOLAR_LOCAL_CONTACTS, _utc_display_from_jd)
 
 
 def _lunar_contacts(times: tuple[float, ...]) -> dict[str, str | None]:
-    return {name: _iso(_from_jd(times[index])) for name, index in (("P1", 6), ("U1", 2), ("U2", 4), ("MAX", 0), ("U3", 5), ("U4", 3), ("P4", 7))}
+    return _contacts(times, _LUNAR_CONTACTS, _from_jd)
+
+
+def _lunar_local_contacts(times: tuple[float, ...]) -> dict[str, str | None]:
+    return _contacts(times, _LUNAR_CONTACTS, _utc_display_from_jd)
 
 
 def _topocentric_body_states(event_max: datetime, locality: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
@@ -803,8 +833,8 @@ def _visibility_summary(
         rise_label, set_label = "moonrise", "moonset"
         rise_index, set_index = 8, 9
 
-    rise = _from_jd(times[rise_index]) if times is not None else None
-    set_time = _from_jd(times[set_index]) if times is not None else None
+    rise = _utc_display_from_jd(times[rise_index]) if times is not None else None
+    set_time = _utc_display_from_jd(times[set_index]) if times is not None else None
 
     phase_start = _parse_utc(contacts[phase_start_key], phase_start_key) if contacts.get(phase_start_key) else None
     phase_end = _parse_utc(contacts[phase_end_key], phase_end_key) if contacts.get(phase_end_key) else None
@@ -853,9 +883,9 @@ def _local_circumstances(project_root: Path, event_type: str, global_max: dateti
             "visibility": visibility_details["status"],
             "visibilityDetails": visibility_details,
             "contacts": contact_map,
-            "localMaxUtc": _iso(local_max),
-            "sunriseDuring": _iso(_from_jd(times[5])) if local_max is not None else None,
-            "sunsetDuring": _iso(_from_jd(times[6])) if local_max is not None else None,
+            "localMaxUtc": _iso(_utc_display_from_jd(times[0])) if local_max is not None else None,
+            "sunriseDuring": _iso(_utc_display_from_jd(times[5])) if local_max is not None else None,
+            "sunsetDuring": _iso(_utc_display_from_jd(times[6])) if local_max is not None else None,
             "magnitude": _finite(local_attrs[0]),
             "obscuration": _finite(local_attrs[2]),
             "apparentDiameterRatio": _finite(local_attrs[1]),
@@ -867,7 +897,7 @@ def _local_circumstances(project_root: Path, event_type: str, global_max: dateti
             "rawAttributes": [_finite(value) for value in attrs],
         }
     next_flags, times, attrs = swe.lun_eclipse_when_loc(event_max_jd - 1.0, coordinates, flags)
-    contact_map = _lunar_contacts(times)
+    contact_map = _lunar_local_contacts(times)
     local_max = _from_jd(times[0])
     if local_max is None or abs((local_max - global_max).total_seconds()) > 172800:
         next_flags = 0
@@ -882,21 +912,27 @@ def _local_circumstances(project_root: Path, event_type: str, global_max: dateti
         "visibility": visibility_details["status"],
         "visibilityDetails": visibility_details,
         "contacts": contact_map,
-        "localMaxUtc": _iso(local_max),
+        "localMaxUtc": _iso(_utc_display_from_jd(times[0])) if local_max is not None else None,
         "moonAltitudeAzimuth": observer["moon"],
         "sunAltitudeAzimuth": observer["sun"],
         "umbralMagnitude": _finite(magnitude_attrs[0]),
         "penumbralMagnitude": _finite(magnitude_attrs[1]),
         "magnitudeReference": "SWISSEPH_LUNAR_ECLIPSE_HOW_AT_EVENT_MAX_SWISSEPH_UT",
         "distanceFromOppositionDeg": _finite(magnitude_attrs[7]),
-        "moonriseDuring": _iso(_from_jd(times[8])) if local_max is not None else None,
-        "moonsetDuring": _iso(_from_jd(times[9])) if local_max is not None else None,
+        "moonriseDuring": _iso(_utc_display_from_jd(times[8])) if local_max is not None else None,
+        "moonsetDuring": _iso(_utc_display_from_jd(times[9])) if local_max is not None else None,
         "rawAttributes": [_finite(value) for value in magnitude_attrs],
     }
 
 
-def _event_identity(event_type: str, global_max: datetime, global_type: str) -> dict[str, Any]:
+def _event_identity(
+    event_type: str,
+    global_max: datetime,
+    global_type: str,
+    global_max_utc_display: datetime | None = None,
+) -> dict[str, Any]:
     swiss_ut = _iso(global_max)
+    utc_display = _iso(global_max_utc_display or global_max)
     identity = {"eventType": event_type, "globalMaxSwissUt": swiss_ut, "globalType": global_type}
     return {
         "causalEventId": f"CGVO-{event_type}-{_hash(identity)[:20]}",
@@ -905,7 +941,8 @@ def _event_identity(event_type: str, global_max: datetime, global_type: str) -> 
             # Backward-compatible display alias.  It is never used to derive
             # the causal hash; the identity hash uses globalMaxSwissUt above.
             "globalMaxUtc": swiss_ut,
-            "globalMaxUtcDisplay": swiss_ut,
+            "globalMaxUtcDisplay": utc_display,
+            "legacyGlobalMaxUtcSemantics": "LEGACY_ALIAS_OF_SWISSEPH_UT_NOT_CIVIL_UTC",
             "identityTimeScale": "SWISSEPH_UT",
             "displayTimeScale": "UTC",
             "displayTimezone": "UTC",
@@ -918,11 +955,14 @@ def _build_event(project_root: Path, event_type: str, flags: int, times: tuple[f
     if global_max is None:
         raise RuntimeError("Swiss Ephemeris returned an eclipse without a global maximum")
     global_type = _global_type(int(flags), event_type)
-    identity = _event_identity(event_type, global_max, global_type)
+    global_max_utc_display = _utc_display_from_jd(times[0])
+    identity = _event_identity(event_type, global_max, global_type, global_max_utc_display)
     if event_type == "SOLAR":
-        global_contacts = _solar_global_contacts(times)
+        global_contacts_swiss_ut = _solar_global_contacts(times)
+        global_contacts_utc_display = _solar_global_contacts_utc_display(times)
     else:
-        global_contacts = _lunar_contacts(times)
+        global_contacts_swiss_ut = _lunar_contacts(times)
+        global_contacts_utc_display = _contacts(times, _LUNAR_CONTACTS, _utc_display_from_jd)
     event = {
         **identity,
         "astronomyEventIdentity": {
@@ -930,10 +970,12 @@ def _build_event(project_root: Path, event_type: str, flags: int, times: tuple[f
             "globalType": global_type,
             "globalMaxSwissUt": _iso(global_max),
             "globalMaxUtc": _iso(global_max),
-            "globalMaxUtcDisplay": _iso(global_max),
-            "globalContacts": global_contacts,
-            "globalContactsSwissUt": global_contacts,
-            "globalContactsUtcDisplay": global_contacts,
+            "globalMaxUtcDisplay": _iso(global_max_utc_display),
+            "legacyGlobalMaxUtcSemantics": "LEGACY_ALIAS_OF_SWISSEPH_UT_NOT_CIVIL_UTC",
+            "globalContacts": global_contacts_swiss_ut,
+            "globalContactsSwissUt": global_contacts_swiss_ut,
+            "globalContactsUtcDisplay": global_contacts_utc_display,
+            "legacyGlobalContactsSemantics": "GLOBAL_CONTACTS_ALIAS_OF_SWISSEPH_UT_NOT_CIVIL_UTC",
             "astronomyContract": MODERN_ASTRONOMY_CONTRACT,
             "ephemeris": "Swiss Ephemeris",
             "ephemerisVersion": str(getattr(swe, "version", "unknown")),
@@ -957,6 +999,7 @@ def _build_event(project_root: Path, event_type: str, flags: int, times: tuple[f
                 "displayTimeScale": "UTC",
                 "displayTimezone": "UTC",
                 "timezoneRole": "DISPLAY_ONLY",
+                "legacyAliasSemantics": "globalMaxUtc_and_globalContacts_are_SWISSEPH_UT_COMPATIBILITY_ALIASES",
             },
         ],
         "guardrails": _guardrails(),

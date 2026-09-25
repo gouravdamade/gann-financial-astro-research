@@ -87,6 +87,58 @@ def test_mercury_nature_uses_same_sign_associations_and_nearest_tie_breaker() ->
     assert tied_nearest_benefic["MERCURY"].nearest_tie_breaker == "JUPITER"
 
 
+def test_missing_mercury_is_unknown_not_alone_benefic() -> None:
+    natures = classify_planet_natures(
+        {
+            "SUN": 10.0,
+            "MOON": 80.0,
+            "MARS": 120.0,
+            "JUPITER": 160.0,
+            "VENUS": 200.0,
+            "SATURN": 240.0,
+        }
+    )
+    assert natures["MERCURY"].nature == "unknown"
+    assert "missing" in natures["MERCURY"].reason
+
+
+def test_missing_moon_phase_input_is_unknown_not_benefic() -> None:
+    natures = classify_planet_natures(
+        {
+            "SUN": 10.0,
+            "MARS": 120.0,
+            "MERCURY": 160.0,
+            "JUPITER": 200.0,
+            "VENUS": 240.0,
+            "SATURN": 300.0,
+        }
+    )
+    assert natures["MOON"].nature == "unknown"
+    assert "unresolved" in natures["MOON"].reason
+
+
+def test_missing_aspector_is_not_a_genuine_zero_contribution() -> None:
+    longitudes = {
+        "SUN": 10.0,
+        "MOON": 80.0,
+        "MARS": 100.0,
+        "MERCURY": 160.0,
+        "JUPITER": 250.0,
+        "VENUS": 300.0,
+        "SATURN": 330.0,
+    }
+    missing = calculate_drik_bala("SUN", {**longitudes, "MOON": None})
+    missing_moon = next(item for item in missing.contributions if item.aspector == "MOON")
+    assert missing.coverage_state == "PARTIAL"
+    assert missing_moon.available is False
+    assert missing_moon.gross_virupa is None
+
+    genuine_zero = calculate_drik_bala("SUN", {**longitudes, "VENUS": 10.0})
+    zero_venus = next(item for item in genuine_zero.contributions if item.aspector == "VENUS")
+    assert zero_venus.available is True
+    assert zero_venus.gross_virupa == 0.0
+
+
 def test_drik_result_preserves_six_contribution_audit_ledger_and_raw_values() -> None:
     longitudes = {
         "SUN": 10.0,

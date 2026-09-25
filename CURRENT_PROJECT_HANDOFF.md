@@ -13280,3 +13280,23 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   records, and validation record alongside it.
 - Next gate:
   `CENTRAL_REVIEW_MO_R4A_ASTRA_A1_R2_FINAL_AUDIT_FREEZE`.
+
+## MO-R4A CONT-1 P1 Bounded Hidden-Premise Containment
+
+- CONT-1 P1 containment is implemented on the dedicated branch
+  `research/mo-r4a-cont-1-p1-bounded-containment`, starting from
+  `74a018a482d1ef95236ec036dd0719cee589ab35`.
+- Directional diagnostics now require explicit user intent and remain
+  experimental, uncertified, not forecast-validated, and execution-disabled.
+  Missing and partial evidence are explicit; pair direction requires resolved
+  USD and JPY evidence on both sides.
+- Drik, Shadbala, Fields dignity, and CGVO identity/display missingness paths
+  are fail-closed without changing source doctrine, legacy scoring constants,
+  Candidate C closure, or the immutable A1-R2 audit files.
+- Focused and frontend checks passed. The broad repository pytest command still
+  encounters the pre-existing immutable Candidate C Evaluator B source-ledger
+  hash mismatch; it was not repaired by this milestone.
+- No provider, market, outcome, empirical execution, polarity, forecast, or
+  MT5 path was accessed. `executionAllowed=false` remains locked.
+- Next gate:
+  `CENTRAL_REVIEW_MO_R4A_CONT_1_P1_BOUNDED_CONTAINMENT`.

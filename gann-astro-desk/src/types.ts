@@ -986,7 +986,7 @@ export type AstroEvidence = {
 export type CurrencySideEvidence = {
   label: string
   referenceLabel: string
-  state: 'KNOWN' | 'UNKNOWN' | 'BLOCKED_MAPPING'
+  state: 'KNOWN' | 'MIXED' | 'PARTIAL' | 'UNKNOWN' | 'BLOCKED_MAPPING'
   supportiveUnits: number | null
   adverseUnits: number | null
   netUnits: number | null
@@ -1014,7 +1014,9 @@ export type CurrencyPairEvidence = {
   base: CurrencySideEvidence
   quote: CurrencySideEvidence
   pair: {
-    state: 'KNOWN' | 'UNKNOWN'
+    state: 'KNOWN' | 'MIXED' | 'UNKNOWN'
+    directionEligible?: boolean
+    directionReason?: string
     netDifferenceUnits: number | null
     jointNetStrengthUnits: number | null
     commonActivationUnits: number | null
@@ -1308,6 +1310,9 @@ export type DecisionPacket = {
     futurePricesConsumed: boolean
     liveEligible: boolean
     executionAllowed: false
+    experimentalDirectionalDiagnostic: true
+    forecastValidated: false
+    directionCertification: 'UNCERTIFIED'
     violations: string[]
   }
   policyLocks?: {

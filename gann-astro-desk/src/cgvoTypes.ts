@@ -110,6 +110,7 @@ export type CgvoEvent = {
     globalMaxUtc: string
     globalMaxSwissUt?: string
     globalMaxUtcDisplay?: string
+    legacyGlobalMaxUtcSemantics?: string
     globalType: string
     identityTimeScale?: string
     displayTimeScale?: string
@@ -121,9 +122,11 @@ export type CgvoEvent = {
     globalMaxUtc: string
     globalMaxSwissUt?: string
     globalMaxUtcDisplay?: string
+    legacyGlobalMaxUtcSemantics?: string
     globalContacts: Record<string, string | null>
     globalContactsSwissUt?: Record<string, string | null>
     globalContactsUtcDisplay?: Record<string, string | null>
+    legacyGlobalContactsSemantics?: string
     astronomyContract: string
     ephemeris: string
     ephemerisVersion: string

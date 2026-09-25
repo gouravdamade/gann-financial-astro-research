@@ -52,9 +52,9 @@ class ChakraLabServiceTests(unittest.TestCase):
             "altitudeM": 216.0,
             "bodies": ["SUN", "MOON", "JUPITER"],
             "actors": [
-                {"body": "SUN"},
-                {"body": "MOON"},
-                {"body": "JUPITER", "motionClass": "MEAN"},
+                {"body": "SUN", "dignity": "ORDINARY"},
+                {"body": "MOON", "dignity": "ORDINARY"},
+                {"body": "JUPITER", "motionClass": "MEAN", "dignity": "ORDINARY"},
             ],
         }
         return {
@@ -88,9 +88,9 @@ class ChakraLabServiceTests(unittest.TestCase):
                 "altitudeM": 216.0,
                 "bodies": ["SUN", "MOON", "JUPITER"],
                 "actors": [
-                    {"body": "SUN"},
-                    {"body": "MOON"},
-                    {"body": "JUPITER", "motionClass": "MEAN"},
+                    {"body": "SUN", "dignity": "ORDINARY"},
+                    {"body": "MOON", "dignity": "ORDINARY"},
+                    {"body": "JUPITER", "motionClass": "MEAN", "dignity": "ORDINARY"},
                 ],
             }
         )
@@ -151,8 +151,28 @@ class ChakraLabServiceTests(unittest.TestCase):
             item["body"]: item["status"] for item in snapshot["actor_readiness"]
         }
         self.assertEqual(readiness["SATURN"], "MOTION_REQUIRED")
-        resolved = {item["body"] for item in snapshot["guidance"]["actor_resolutions"]}
-        self.assertNotIn("SATURN", resolved)
+        self.assertIsNone(snapshot["guidance"])
+
+    def test_omitted_dignity_is_unresolved_but_explicit_ordinary_is_accepted(self) -> None:
+        unresolved = build_chakra_lab_snapshot(
+            {
+                "at": "2026-07-17T12:00:00+05:30",
+                "actors": [{"body": "JUPITER", "motionClass": "MEAN"}],
+            }
+        )
+        readiness = {item["body"]: item for item in unresolved["actor_readiness"]}
+        self.assertEqual(readiness["JUPITER"]["status"], "DIGNITY_REQUIRED")
+        self.assertEqual(readiness["JUPITER"]["dignity_status"], "UNSPECIFIED")
+
+        resolved = build_chakra_lab_snapshot(
+            {
+                "at": "2026-07-17T12:00:00+05:30",
+                "actors": [{"body": "JUPITER", "motionClass": "MEAN", "dignity": "ORDINARY"}],
+            }
+        )
+        ready = {item["body"]: item for item in resolved["actor_readiness"]}
+        self.assertEqual(ready["JUPITER"]["status"], "READY")
+        self.assertEqual(ready["JUPITER"]["dignity_status"], "EXPLICIT")
 
     def test_naive_timestamp_and_unknown_fields_fail_closed(self) -> None:
         with self.assertRaisesRegex(ValueError, "UTC offset"):

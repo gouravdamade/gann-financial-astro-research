@@ -1,0 +1,112 @@
+{
+  "contract": "MO_R4A_CONT_1_P1_BOUNDED_CONTAINMENT_V1",
+  "schemaVersion": 1,
+  "milestone": "MO-R4A-CONT-1-P1",
+  "status": "IMPLEMENTED_PENDING_CENTRAL_REVIEW",
+  "startingBranch": "research/mo-r4a-astra-a1-r2-final-audit-freeze",
+  "startingCommit": "74a018a482d1ef95236ec036dd0719cee589ab35",
+  "implementationBranch": "research/mo-r4a-cont-1-p1-bounded-containment",
+  "purpose": "Bounded containment of uncertified directional output, missing evidence, two-sided pair eligibility, and CGVO time-scale display semantics.",
+  "scope": {
+    "automaticDirectionalDiagnosticRemoved": true,
+    "explicitDiagnosticCommand": "Run experimental directional diagnostic",
+    "directionalDiagnostic": {
+      "experimental": true,
+      "forecastValidated": false,
+      "directionCertification": "UNCERTIFIED",
+      "executionAllowed": false,
+      "rawHistoricalActionRetainedForAudit": true,
+      "staleResultClearedOnEventChange": true
+    },
+    "sideEvidenceStates": ["KNOWN", "MIXED", "PARTIAL", "UNKNOWN", "BLOCKED_MAPPING"],
+    "payloadParseStates": ["ABSENT", "MALFORMED", "VALID_EMPTY", "VALID_NONEMPTY"],
+    "pairEligibility": {
+      "requiredStatesPerSide": ["KNOWN", "MIXED"],
+      "ineligibleDirection": "UNKNOWN",
+      "ineligibleAction": "ABSTAIN",
+      "ineligibleReason": "pair_evidence_incomplete",
+      "newFormula": false,
+      "newWeights": false,
+      "newThresholds": false
+    },
+    "drikMissingness": {
+      "missingMercury": "UNKNOWN_NATURE",
+      "missingSunOrMoonPhase": "UNKNOWN_NATURE",
+      "missingAspectorLongitude": "UNAVAILABLE_CONTRIBUTION",
+      "coverageStates": ["KNOWN", "PARTIAL", "UNKNOWN"]
+    },
+    "fieldsDignity": {
+      "frontendDefaultOrdinaryRemoved": true,
+      "omittedDignityPreserved": true,
+      "omittedReadinessStatus": "DIGNITY_REQUIRED",
+      "omittedDignityStatus": "UNSPECIFIED",
+      "explicitOrdinaryPreserved": true
+    },
+    "cgvo": {
+      "identityTimeScale": "SWISSEPH_UT",
+      "displayTimeScale": "UTC",
+      "displayConversion": "swe.jdut1_to_utc",
+      "causalEventIdInputChanged": false,
+      "globalMaxSwissUtPreserved": true,
+      "globalContactsSwissUtPreserved": true,
+      "legacyAliasesReadable": true
+    }
+  },
+  "behaviorBeforeAfter": {
+    "before": [
+      "Detail loading automatically invoked the timestamp-safe directional diagnostic.",
+      "Missing or incomplete pair evidence could be presented through legacy direction fields.",
+      "Several missing Drik inputs could look like neutral or benefic observations.",
+      "CGVO identity and civil display semantics were not fully separated in the client contract."
+    ],
+    "after": [
+      "Directional diagnostic requires explicit user intent and remains uncertified.",
+      "Pair direction is gated on resolved evidence on both USD and JPY sides.",
+      "Missingness is represented as explicit coverage/state metadata and no missing input becomes positive or neutral evidence.",
+      "CGVO identity hashes remain Swiss-UT while UTC display fields use explicit conversion."
+    ]
+  },
+  "invariants": {
+    "candidateCScientificClosureChanged": false,
+    "emp3Authorized": false,
+    "sourceDoctrineChanged": false,
+    "legacyScoringConstantsChanged": false,
+    "fullyKnownNumericalFixturesPreserved": true,
+    "executionAllowed": false,
+    "automaticOrderPlacement": false,
+    "providerAccessed": false,
+    "marketDataAccessed": false,
+    "outcomeAnalysisPerformed": false,
+    "empiricalExecutionPerformed": false,
+    "mt5Invoked": false
+  },
+  "frozenAuditIntegrity": {
+    "a1r2ArtifactsChanged": false,
+    "a1r2FinalAuditFreezeSha256": "A436223E73FE48818B85FC8FBEE1BBB0DC09D33B0F9CB4847A98143BD7A5E327",
+    "candidateCArtifactsChanged": false
+  },
+  "verification": {
+    "focusedPythonPassed": 57,
+    "focusedBackendUnittestPassed": 66,
+    "frontendFilesPassed": 44,
+    "frontendTestsPassed": 203,
+    "typescriptBuild": "PASSED",
+    "productionFrontendBuild": "PASSED",
+    "oxlint": "PASSED",
+    "gitDiffCheck": "PASSED",
+    "broadRepositoryPytest": "BLOCKED_BY_PRE_EXISTING_EVALUATOR_B_FROZEN_HASH_MISMATCH",
+    "broadRepositoryPytestExpectedHash": "4C7D0C4C1A366287A05DD70E9638A27585516240B24C3AEEBFA91889F22E86E8",
+    "broadRepositoryPytestActualHash": "979B194E5045B104E3DB3CC203B46AC62C65BE541DB993C3F7CA0C2B2303BE3F"
+  },
+  "locks": {
+    "noPolarity": true,
+    "noScore": true,
+    "noPriceForecast": true,
+    "noFieldsPolarity": true,
+    "noAutoSuggest": true,
+    "noML": true,
+    "noMT5": true,
+    "noExecution": true
+  },
+  "nextGate": "CENTRAL_REVIEW_MO_R4A_CONT_1_P1_BOUNDED_CONTAINMENT"
+}

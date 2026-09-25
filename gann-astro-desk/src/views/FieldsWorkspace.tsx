@@ -161,7 +161,7 @@ export function FieldsWorkspace({
       longitude: defaultLongitude,
       altitudeM: 0,
       bodies: [...BODIES],
-      actors: BODIES.map((body) => ({ body, dignity: 'ORDINARY' })),
+      actors: BODIES.map((body) => ({ body })),
       foundationProfileId: 'sbc_raman_foundation_v1',
       gridProfileId: 'sbc_81_rotation_normalized_partial_v1',
       vedhaProfileId,

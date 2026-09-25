@@ -35,6 +35,14 @@ SCORES = {
     "fx_doctrine_hypothesis_direction": "BEARISH",
     "fx_doctrine_pair_net_score": -0.15,
     "fx_doctrine_pair_conflict_ratio": 0.0,
+    "fx_base_reference_available": 1,
+    "fx_quote_reference_available": 1,
+    "fx_base_candidate_hit_count": 1,
+    "fx_quote_candidate_hit_count": 1,
+    "fx_base_evidence_state": "KNOWN",
+    "fx_quote_evidence_state": "KNOWN",
+    "fx_pair_direction_eligible": True,
+    "fx_pair_direction_reason": "both_sides_resolved",
 }
 
 

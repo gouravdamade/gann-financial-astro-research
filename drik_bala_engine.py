@@ -38,13 +38,13 @@ class DrikContribution:
     target: str
     available: bool
     angle_deg: float | None
-    base_virupa: float
-    special_bonus_virupa: float
-    gross_virupa: float
+    base_virupa: float | None
+    special_bonus_virupa: float | None
+    gross_virupa: float | None
     nature: str
     nature_reason: str
-    raw_signed_virupa: float
-    normalized_signed_virupa: float
+    raw_signed_virupa: float | None
+    normalized_signed_virupa: float | None
 
 
 @dataclass(frozen=True)
@@ -66,6 +66,10 @@ class DrikResult:
     status: str
     aspector_natures: tuple[PlanetNature, ...]
     contributions: tuple[DrikContribution, ...]
+    coverage_state: str = "UNKNOWN"
+    expected_contributor_count: int = 0
+    known_contributor_count: int = 0
+    unresolved_contributors: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -172,8 +176,8 @@ def classify_planet_natures(
     sun = normalize_longitude(normalized.get("SUN"))
     moon = normalize_longitude(normalized.get("MOON"))
     if sun is None or moon is None:
-        moon_nature = "benefic"
-        moon_reason = "Moon phase was unavailable; compatibility fallback treats Moon as benefic."
+        moon_nature = "unknown"
+        moon_reason = "Moon phase is unresolved because Sun or Moon longitude is missing."
     else:
         elongation = (moon - sun) % 360.0
         moon_nature = "benefic" if elongation <= 180.0 else "malefic"
@@ -183,6 +187,11 @@ def classify_planet_natures(
 
     mercury_lon = normalize_longitude(normalized.get("MERCURY"))
     mercury_sign = _sign_index(mercury_lon)
+    missing_companion_data = tuple(
+        planet
+        for planet in CLASSICAL_PLANETS
+        if planet != "MERCURY" and normalize_longitude(normalized.get(planet)) is None
+    )
     companions = [
         planet
         for planet in CLASSICAL_PLANETS
@@ -197,7 +206,16 @@ def classify_planet_natures(
         planet for planet in companions if natures.get(planet) and natures[planet].nature == "malefic"
     )
     nearest: str | None = None
-    if not companions or len(benefic_companions) > len(malefic_companions):
+    if mercury_lon is None:
+        mercury_nature = "unknown"
+        mercury_reason = "Mercury nature is unresolved because Mercury longitude is missing."
+    elif missing_companion_data:
+        mercury_nature = "unknown"
+        mercury_reason = (
+            "Mercury association is unresolved because same-sign companion data is missing: "
+            + ", ".join(missing_companion_data)
+        )
+    elif not companions or len(benefic_companions) > len(malefic_companions):
         mercury_nature = "benefic"
         if not companions:
             mercury_reason = "Mercury is alone in its sign, so it is treated as benefic."
@@ -275,26 +293,33 @@ def calculate_drik_bala(
     benefic_raw = 0.0
     malefic_raw = 0.0
     contributions: list[DrikContribution] = []
+    unresolved_contributors: list[str] = []
     for aspector in CLASSICAL_PLANETS:
         if aspector == target_body:
             continue
         aspector_lon = normalize_longitude(normalized.get(aspector))
         nature = natures[aspector]
         angle = forward_angle(aspector_lon, target_lon)
-        if angle is None:
+        if angle is None or nature.nature == "unknown":
+            reason = (
+                "aspector longitude is missing"
+                if angle is None
+                else f"aspector nature is unresolved: {nature.reason}"
+            )
+            unresolved_contributors.append(aspector)
             contributions.append(
                 DrikContribution(
                     aspector,
                     target_body,
                     False,
                     None,
-                    0.0,
-                    0.0,
-                    0.0,
+                    None,
+                    None,
+                    None,
                     nature.nature,
-                    nature.reason,
-                    0.0,
-                    0.0,
+                    reason,
+                    None,
+                    None,
                 )
             )
             continue
@@ -329,6 +354,12 @@ def calculate_drik_bala(
     malefic_raw = round(malefic_raw, 2)
     raw_net = round(benefic_raw + malefic_raw, 2)
     normalized_unrounded = raw_net / DRIK_NORMALIZATION_DIVISOR
+    known_contributor_count = len(contributions) - len(unresolved_contributors)
+    coverage_state = (
+        "KNOWN"
+        if not unresolved_contributors
+        else "PARTIAL" if known_contributor_count > 0 else "UNKNOWN"
+    )
     return DrikResult(
         target_body,
         True,
@@ -347,4 +378,8 @@ def calculate_drik_bala(
         DRIK_ENGINE_STATUS,
         ordered_natures,
         tuple(contributions),
+        coverage_state,
+        len(CLASSICAL_PLANETS) - 1,
+        known_contributor_count,
+        tuple(unresolved_contributors),
     )

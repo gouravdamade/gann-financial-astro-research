@@ -121,6 +121,10 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
   }
 
   useEffect(() => {
+    setDetail(null)
+    setDecisionPacket(null)
+    setDecisionError('')
+    setDecisionLoading(false)
     fetchFamily(familyKey, initialEventId ?? undefined)
       .then((value) => {
         setFamily(value)
@@ -135,6 +139,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
     setSelectedAnnotation(null)
     setDecisionPacket(null)
     setDecisionError('')
+    setDecisionLoading(false)
     fetchEventDetail(selectedEventId)
       .then(setDetail)
       .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)))
@@ -152,11 +157,6 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
       setDecisionLoading(false)
     }
   }, [])
-
-  useEffect(() => {
-    if (!detail) return
-    void runCutoffDecision(detail.event.eventId, evidenceCutoff(detail))
-  }, [detail, runCutoffDecision])
 
   const selectedOccurrence = useMemo(
     () => family?.occurrences.find((item) => item.eventId === selectedEventId) ?? null,
@@ -425,20 +425,26 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
               <HistoricalFamilyEvidence summary={detail.historicalFamilySummary} />
               <section className={`live-decision ${decisionPacket?.status ?? 'loading'}`}>
                 <header>
-                  <div><ShieldCheck size={16} /><strong>Timestamp-safe inference</strong></div>
+                  <div><ShieldCheck size={16} /><strong>Experimental directional diagnostic</strong></div>
                   <button
-                    className="icon-button"
+                    className="secondary-command"
                     onClick={() => runCutoffDecision(selectedEventId, evidenceCutoff(detail))}
                     disabled={decisionLoading}
-                    title="Recalculate when the selected touch candle is closed"
+                    title="Run the explicit experimental diagnostic for the selected event"
                   >
-                    {decisionLoading ? <LoaderCircle size={15} /> : <RefreshCw size={15} />}
+                    {decisionLoading ? <LoaderCircle size={15} /> : <RefreshCw size={15} />} Run diagnostic
                   </button>
                 </header>
+                <div className="decision-guards">
+                  <span>experimental</span>
+                  <span>uncertified</span>
+                  <span>not forecast-validated</span>
+                  <span>execution disabled</span>
+                </div>
                 {decisionPacket ? (
                   <>
                     <div className="live-decision-result">
-                      <strong>{decisionPacket.decision.action.replace('_', ' ')}</strong>
+                      <strong>Result: {decisionPacket.decision.direction}</strong>
                       <span>{decisionPacket.status}</span>
                     </div>
                     <p>{decisionPacket.decision.reason}</p>
@@ -454,6 +460,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                       <span className={decisionPacket.guardrails.noLookahead ? 'is-safe' : ''}>no lookahead</span>
                       <span>outcome excluded</span>
                       <span>execution locked</span>
+                      <span>historical token: {decisionPacket.decision.action}</span>
                     </div>
                     {decisionPacket.policyLocks && (
                       <div className="decision-validation-lock">
@@ -470,7 +477,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                     )}
                   </>
                 ) : (
-                  <p>{decisionError || 'Calculating from evidence available at the event cutoff.'}</p>
+                  <p>{decisionError || 'No diagnostic has been run. Select the explicit command to inspect timestamp-safe evidence.'}</p>
                 )}
               </section>
               <div className="evidence-list">
@@ -492,7 +499,7 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                     {[detail.currencyPairEvidence.base, detail.currencyPairEvidence.quote].map((side) => (
                       <div key={side.label}>
                         <strong>{side.label}</strong>
-                        <small>{side.referenceLabel}</small>
+                        <small>{side.referenceLabel} · evidence {side.state.replaceAll('_', ' ')}</small>
                         <span>{(side.doctrineNetScore ?? 0) > 0 ? 'supportive' : (side.doctrineNetScore ?? 0) < 0 ? 'stressful' : 'mixed / unavailable'}</span>
                         <dl>
                           <dt>Raw score</dt><dd>{side.netScore?.toFixed(3) ?? '-'}</dd>
@@ -505,6 +512,8 @@ export function AnalyzeAspectWindow({ familyKey, initialEventId }: AnalyzeAspect
                     ))}
                   </div>
                   <dl>
+                    <div><dt>Evidence state</dt><dd>{detail.currencyPairEvidence.pair.state}</dd></div>
+                    <div><dt>Direction eligible</dt><dd>{detail.currencyPairEvidence.pair.directionEligible ? 'YES' : 'NO'}</dd></div>
                     <div><dt>Relative direction</dt><dd>{detail.currencyPairEvidence.pair.doctrineDirection ?? 'UNKNOWN'}</dd></div>
                     <div><dt>Base-minus-quote score</dt><dd>{detail.currencyPairEvidence.pair.doctrineNetScore?.toFixed(3) ?? '-'}</dd></div>
                     <div><dt>Conflict ratio</dt><dd>{detail.currencyPairEvidence.pair.doctrineConflictRatio == null ? '-' : `${(detail.currencyPairEvidence.pair.doctrineConflictRatio * 100).toFixed(1)}%`}</dd></div>

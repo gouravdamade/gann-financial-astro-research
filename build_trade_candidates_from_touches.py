@@ -257,6 +257,112 @@ def safe_json_list(value: Any) -> list[dict[str, Any]]:
     return [item for item in parsed if isinstance(item, dict)]
 
 
+def parse_evidence_payload(value: Any) -> dict[str, Any]:
+    """Parse a side-evidence payload without changing legacy safe_json_list."""
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return {"parse_state": "ABSENT", "items": [], "reason": "payload_absent"}
+    text = str(value).strip()
+    if not text or text.lower() in {"nan", "none", "nat"}:
+        return {"parse_state": "ABSENT", "items": [], "reason": "payload_absent"}
+    try:
+        parsed = json.loads(text)
+    except Exception:
+        return {"parse_state": "MALFORMED", "items": [], "reason": "payload_invalid_json"}
+    if not isinstance(parsed, list):
+        return {"parse_state": "MALFORMED", "items": [], "reason": "payload_not_list"}
+    if not parsed:
+        return {"parse_state": "VALID_EMPTY", "items": [], "reason": "payload_valid_empty"}
+    items = [item for item in parsed if isinstance(item, dict)]
+    if len(items) != len(parsed):
+        return {
+            "parse_state": "MALFORMED",
+            "items": items,
+            "reason": "payload_contains_non_object_item",
+        }
+    return {"parse_state": "VALID_NONEMPTY", "items": items, "reason": "payload_valid_nonempty"}
+
+
+def _finite_hit_strength(hit: dict[str, Any]) -> bool:
+    for key in ("bphs_strength", "score"):
+        if key not in hit or hit.get(key) in (None, ""):
+            continue
+        try:
+            return bool(np.isfinite(float(hit[key])))
+        except (TypeError, ValueError):
+            return False
+    return False
+
+
+def _positive_finite_score(value: Any) -> bool:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return False
+    return bool(np.isfinite(numeric) and numeric > 0.0)
+
+
+def _filtered_evidence_items(
+    items: list[dict[str, Any]],
+    event_aspect: Any,
+    event_bodies: set[str],
+) -> list[dict[str, Any]]:
+    filtered = items
+    expanded_bodies = expand_scoring_bodies(event_bodies)
+    aspect_name = comparable_aspect_name(event_aspect)
+    if expanded_bodies:
+        body_hits = [
+            hit for hit in filtered
+            if normalize_body(hit.get("transit_planet")) in expanded_bodies
+        ]
+        aspect_hits = [
+            hit for hit in body_hits
+            if aspect_name and comparable_aspect_name(hit.get("aspect")) == aspect_name
+        ]
+        filtered = aspect_hits or body_hits
+    return filtered
+
+
+def evidence_state_for_side(
+    value: Any,
+    *,
+    event_aspect: Any,
+    event_bodies: set[str],
+    score: dict[str, Any],
+    mapping_required: bool = True,
+) -> tuple[str, str]:
+    parsed = parse_evidence_payload(value)
+    parse_state = parsed["parse_state"]
+    if parse_state == "ABSENT":
+        return (
+            "BLOCKED_MAPPING" if mapping_required else "UNKNOWN",
+            "reference_mapping_absent" if mapping_required else "evidence_absent",
+        )
+    if parse_state == "MALFORMED":
+        return "PARTIAL", str(parsed["reason"])
+    if parse_state == "VALID_EMPTY":
+        return "UNKNOWN", "valid_empty_evidence"
+    items = _filtered_evidence_items(parsed["items"], event_aspect, event_bodies)
+    if not items:
+        return "UNKNOWN", "no_relevant_evidence_after_pair_filter"
+    required_fields = ("transit_planet", "natal_planet", "aspect", "natal_house")
+    unresolved = [
+        index
+        for index, item in enumerate(items)
+        if any(item.get(field) in (None, "") for field in required_fields)
+        or not _finite_hit_strength(item)
+    ]
+    if unresolved:
+        return "PARTIAL", f"unresolved_evidence_fields:items={','.join(map(str, unresolved))}"
+    if (
+        str(score.get("jyotish_hypothesis_direction") or "").upper() == "CONFLICT"
+        or str(score.get("doctrine_hypothesis_direction") or "").upper() == "CONFLICT"
+        or _positive_finite_score(score.get("jyotish_conflict_score"))
+        or _positive_finite_score(score.get("doctrine_conflict_score"))
+    ):
+        return "MIXED", "resolved_conflicting_evidence"
+    return "KNOWN", "resolved_evidence"
+
+
 def numeric_series(df: pd.DataFrame, col: str, default: float = 0.0) -> pd.Series:
     if col not in df.columns:
         return pd.Series(default, index=df.index, dtype=float)
@@ -588,6 +694,7 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
     bodies = pair_bodies(row.get("pair_key"))
     base_hits_raw = row.get("base_tn_hits_json")
     has_base_reference = has_nonempty_value(base_hits_raw)
+    has_quote_reference = has_nonempty_value(row.get("tn_hits_json"))
     has_padmanabhan_evidence = has_nonempty_value(row.get("event_padmanabhan_pair_prosperity_index_i"))
     quote = score_transit_natal_hits(
         row.get("tn_hits_json"),
@@ -600,35 +707,54 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         event_bodies=bodies,
     )
 
+    base_evidence_state, base_evidence_reason = evidence_state_for_side(
+        base_hits_raw,
+        event_aspect=event_aspect,
+        event_bodies=bodies,
+        score=base,
+    )
+    quote_evidence_state, quote_evidence_reason = evidence_state_for_side(
+        row.get("tn_hits_json"),
+        event_aspect=event_aspect,
+        event_bodies=bodies,
+        score=quote,
+    )
+    pair_direction_eligible = base_evidence_state in {"KNOWN", "MIXED"} and quote_evidence_state in {"KNOWN", "MIXED"}
+    pair_direction_reason = (
+        "both_sides_resolved"
+        if pair_direction_eligible
+        else f"base={base_evidence_state}:{base_evidence_reason};quote={quote_evidence_state}:{quote_evidence_reason}"
+    )
+
     base_net = float(base["jyotish_net_score"])
     quote_net = float(quote["jyotish_net_score"])
-    pair_net = base_net - quote_net if has_base_reference else 0.0
+    pair_net = base_net - quote_net if pair_direction_eligible else float("nan")
     doctrine_base_net = float(base["doctrine_net_score"])
     doctrine_quote_net = float(quote["doctrine_net_score"])
-    doctrine_pair_net = doctrine_base_net - doctrine_quote_net if has_base_reference else 0.0
+    doctrine_pair_net = doctrine_base_net - doctrine_quote_net if pair_direction_eligible else float("nan")
     base_total = float(base["jyotish_bullish_score"]) + float(base["jyotish_bearish_score"])
     quote_total = float(quote["jyotish_bullish_score"]) + float(quote["jyotish_bearish_score"])
     conflict = float(base["jyotish_conflict_score"]) + float(quote["jyotish_conflict_score"])
     total_directional = base_total + quote_total
-    conflict_ratio = conflict / total_directional if has_base_reference and total_directional > 0 else 0.0
+    conflict_ratio = conflict / total_directional if pair_direction_eligible and total_directional > 0 else float("nan")
     doctrine_base_total = float(base["doctrine_bullish_score"]) + float(base["doctrine_bearish_score"])
     doctrine_quote_total = float(quote["doctrine_bullish_score"]) + float(quote["doctrine_bearish_score"])
     doctrine_conflict = float(base["doctrine_conflict_score"]) + float(quote["doctrine_conflict_score"])
     doctrine_total_directional = doctrine_base_total + doctrine_quote_total
     doctrine_conflict_ratio = (
         doctrine_conflict / doctrine_total_directional
-        if has_base_reference and doctrine_total_directional > 0
-        else 0.0
+        if pair_direction_eligible and doctrine_total_directional > 0
+        else float("nan")
     )
     direction = (
         "UNKNOWN"
-        if not has_base_reference
+        if not pair_direction_eligible
         or (int(base["jyotish_scored_hit_count"]) <= 0 and int(quote["jyotish_scored_hit_count"]) <= 0)
         else direction_from_net_score(pair_net, conflict_ratio)
     )
     doctrine_direction = (
         "UNKNOWN"
-        if not has_base_reference
+        if not pair_direction_eligible
         or (int(base["jyotish_scored_hit_count"]) <= 0 and int(quote["jyotish_scored_hit_count"]) <= 0)
         else direction_from_net_score(doctrine_pair_net, doctrine_conflict_ratio)
     )
@@ -655,6 +781,13 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
         "fx_base_candidate_hit_count": int(base["candidate_hit_count"]),
         "fx_quote_candidate_hit_count": int(quote["candidate_hit_count"]),
         "fx_base_reference_available": int(has_base_reference),
+        "fx_quote_reference_available": int(has_quote_reference),
+        "fx_base_evidence_state": base_evidence_state,
+        "fx_quote_evidence_state": quote_evidence_state,
+        "fx_base_evidence_reason": base_evidence_reason,
+        "fx_quote_evidence_reason": quote_evidence_reason,
+        "fx_pair_direction_eligible": bool(pair_direction_eligible),
+        "fx_pair_direction_reason": pair_direction_reason,
         "fx_doctrine_base_supportive_units": float(base["doctrine_bullish_score"]),
         "fx_doctrine_base_adverse_units": float(base["doctrine_bearish_score"]),
         "fx_doctrine_base_gross_activation_units": float(doctrine_base_total),
@@ -686,8 +819,8 @@ def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:
             "padmanabhan_timing_index_is_parallel_evidence_only_not_signal_input;"
             "shadbala_and_strict_drik_provisional_uncertified;ml_must_validate"
             ";avg_all_scoring_expands_to_7_classical_planets"
-            if has_base_reference
-            else "base_reference_missing;pair_hypothesis_not_scored"
+            if pair_direction_eligible
+            else "pair_evidence_incomplete;pair_hypothesis_not_scored"
         ),
     }
     out.update(prefixed_score(base, "base_"))

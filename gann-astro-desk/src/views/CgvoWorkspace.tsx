@@ -30,6 +30,10 @@ function dateLabel(value: string | null | undefined): string {
   return new Date(value).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC'
 }
 
+function identityLabel(value: string | null | undefined): string {
+  return value ?? 'Unknown'
+}
+
 function numberLabel(value: number | null | undefined, suffix = ''): string {
   return value == null || !Number.isFinite(value) ? 'Unknown' : `${value.toFixed(4)}${suffix}`
 }
@@ -45,13 +49,16 @@ function StatusChip({ children, className = '' }: { children: React.ReactNode; c
 function ModernFacts({ event }: { event: CgvoEvent }) {
   const modern = event.modernAstronomy
   const identity = event.astronomyEventIdentity
+  const hasUtcDisplayMaximum = Boolean(identity.globalMaxUtcDisplay)
+  const phaseContacts = modern?.contacts ?? identity.globalContactsUtcDisplay ?? identity.globalContacts
+  const phaseContactsAreUtcDisplay = Boolean(modern?.contacts || identity.globalContactsUtcDisplay)
   return <>
     <section className="cgvo-panel" aria-label="Modern astronomy facts">
       <div className="cgvo-panel-heading"><div><span>Modern astronomy</span><strong>Topocentric local circumstances</strong></div><StatusChip>FACTUAL ENGINE OUTPUT</StatusChip></div>
       <div className="cgvo-fact-grid">
         <div><span>Global identity</span><strong>{identity.eventType} · {identity.globalType}</strong></div>
-        <div><span>Global maximum (UTC display)</span><strong>{dateLabel(identity.globalMaxUtcDisplay ?? identity.globalMaxUtc)}</strong></div>
-        <div><span>Swiss UT identity</span><strong>{dateLabel(identity.globalMaxSwissUt ?? identity.globalMaxUtc)}</strong><small>Identity time scale: {event.eventIdentity.identityTimeScale ?? 'SWISSEPH_UT'} · display timezone is not used for hashing</small></div>
+        <div><span>Global maximum ({hasUtcDisplayMaximum ? 'UTC display' : 'legacy Swiss UT alias'})</span><strong>{dateLabel(identity.globalMaxUtcDisplay ?? identity.globalMaxUtc)}</strong>{!hasUtcDisplayMaximum && <small>Legacy payload: this value is not newly certified civil UTC.</small>}</div>
+        <div><span>Swiss UT identity</span><strong>{identityLabel(identity.globalMaxSwissUt ?? identity.globalMaxUtc)}</strong><small>Identity time scale: {event.eventIdentity.identityTimeScale ?? 'SWISSEPH_UT'} · the legacy globalMaxUtc field is a Swiss-UT alias; UTC display is separate and is not used for hashing</small></div>
         <div><span>Local type</span><strong>{modern?.localEclipseType ?? 'Not calculated'}</strong></div>
         <div><span>Local visibility</span><strong>{modern?.visibility ?? 'Not calculated'}</strong></div>
         {identity.eventType === 'LUNAR' ? <>
@@ -70,7 +77,7 @@ function ModernFacts({ event }: { event: CgvoEvent }) {
     </section>
     <section className="cgvo-panel" aria-label="Eclipse phase timeline">
       <div className="cgvo-panel-heading"><div><span>Phase timeline</span><strong>{identity.eventType === 'SOLAR' ? 'C1 / C2 / MAX / C3 / C4' : 'P1 / U1 / U2 / MAX / U3 / U4 / P4'}</strong></div><small>Null means the phase is not present or not locally visible.</small></div>
-      <div className="cgvo-phase-timeline">{Object.entries(modern?.contacts ?? identity.globalContacts).map(([key, value]) => <div key={key}><span>{key}</span><strong>{dateLabel(value)}</strong></div>)}</div>
+      <div className="cgvo-phase-timeline">{Object.entries(phaseContacts).map(([key, value]) => <div key={key}><span>{key}</span><strong>{phaseContactsAreUtcDisplay ? dateLabel(value) : identityLabel(value)}</strong><small>{phaseContactsAreUtcDisplay ? 'UTC display' : 'legacy Swiss UT alias'}</small></div>)}</div>
     </section>
   </>
 }

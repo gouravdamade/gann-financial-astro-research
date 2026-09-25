@@ -468,6 +468,10 @@ def saptavargaja_bala(
             "saptavargaja_virupa": np.nan,
             "saptavarga_details": [],
             "profile": profile,
+            "coverage_state": "UNKNOWN",
+            "expected_varga_count": 7,
+            "known_varga_count": 0,
+            "unresolved_vargas": [],
         }
     d1_sign = sign_from_lon(value)
     details: list[dict[str, Any]] = []
@@ -494,10 +498,16 @@ def saptavargaja_bala(
                 "profile": profile,
             }
         )
+    known_varga_count = sum(1 for item in details if item["virupa"] is not None)
+    coverage_state = "KNOWN" if known_varga_count == 7 else "PARTIAL" if known_varga_count else "UNKNOWN"
     return {
         "saptavargaja_virupa": float(total),
         "saptavarga_details": details,
         "profile": profile,
+        "coverage_state": coverage_state,
+        "expected_varga_count": 7,
+        "known_varga_count": known_varga_count,
+        "unresolved_vargas": [item["varga"] for item in details if item["virupa"] is None],
     }
 
 
@@ -551,7 +561,12 @@ def sthana_bala_from_longitudes(
     body = normalize_body(planet)
     value = normalize_longitude(lon)
     if body not in CLASSICAL_PLANETS or value is None:
-        return {"total_virupa": np.nan, "profile": profile}
+        return {
+            "total_virupa": np.nan,
+            "profile": profile,
+            "complete": False,
+            "saptavarga_coverage_state": "UNKNOWN",
+        }
     house = whole_sign_house(value, asc_lon)
     saptavargaja = saptavargaja_bala(
         body,
@@ -569,7 +584,10 @@ def sthana_bala_from_longitudes(
         "kendradi_virupa": kendradi_bala_virupa(house),
         "drekkana_virupa": drekkana_bala_virupa(body, value),
     }
-    complete = all(np.isfinite(float(item)) for item in parts.values())
+    complete = (
+        all(np.isfinite(float(item)) for item in parts.values())
+        and saptavargaja.get("coverage_state") == "KNOWN"
+    )
     return {
         **parts,
         "total_virupa": (
@@ -581,6 +599,10 @@ def sthana_bala_from_longitudes(
         "profile": profile,
         "complete": complete,
         "saptavarga_details": saptavargaja.get("saptavarga_details", []),
+        "saptavarga_coverage_state": saptavargaja.get("coverage_state", "UNKNOWN"),
+        "saptavarga_expected_count": saptavargaja.get("expected_varga_count", 7),
+        "saptavarga_known_count": saptavargaja.get("known_varga_count", 0),
+        "saptavarga_unresolved": saptavargaja.get("unresolved_vargas", []),
     }
 
 
@@ -1002,6 +1024,13 @@ def yuddha_bala_virupa(planet: Any, longitudes: dict[str, float], latitudes: dic
     if value is None:
         return np.nan, "missing_longitude"
     latitudes = latitudes or {}
+    missing_candidates = [
+        other
+        for other in YUDDHA_PLANETS
+        if other != body and normalize_longitude(longitudes.get(other)) is None
+    ]
+    if missing_candidates:
+        return np.nan, "potential_yuddha_participants_unobserved_fail_closed:" + ",".join(missing_candidates)
     for other in YUDDHA_PLANETS:
         if other == body:
             continue
@@ -1388,6 +1417,10 @@ def strict_drik_bala_for_planet(
             "normalization_divisor": DRIK_NORMALIZATION_DIVISOR,
             "aspector_natures": result["aspector_natures"],
             "aspects": result["contributions"],
+            "coverage_state": result.get("coverage_state", "UNKNOWN"),
+            "expected_contributor_count": result.get("expected_contributor_count", 6),
+            "known_contributor_count": result.get("known_contributor_count", 0),
+            "unresolved_contributors": result.get("unresolved_contributors", []),
         }
     return {
         "drik_bala_virupa": result["drik_bala_virupa"],
@@ -1400,6 +1433,10 @@ def strict_drik_bala_for_planet(
         "normalization_divisor": result["normalization_divisor"],
         "aspector_natures": result["aspector_natures"],
         "aspects": result["contributions"],
+        "coverage_state": result.get("coverage_state", "KNOWN"),
+        "expected_contributor_count": result.get("expected_contributor_count", 6),
+        "known_contributor_count": result.get("known_contributor_count", 6),
+        "unresolved_contributors": result.get("unresolved_contributors", []),
     }
 
 
@@ -1445,6 +1482,10 @@ def shadbala_components_for_planet(
         "saptavargaja_virupa": sthana_source["saptavargaja_virupa"],
         "saptavarga_details": sthana_source["saptavarga_details"],
         "profile": sthana_source["profile"],
+        "coverage_state": sthana_source.get("saptavarga_coverage_state", "UNKNOWN"),
+        "expected_varga_count": sthana_source.get("saptavarga_expected_count", 7),
+        "known_varga_count": sthana_source.get("saptavarga_known_count", 0),
+        "unresolved_vargas": sthana_source.get("saptavarga_unresolved", []),
     }
     saptavargaja_comparator = {
         "saptavargaja_virupa": sthana_comparator_context[
@@ -1498,7 +1539,7 @@ def shadbala_components_for_planet(
     implemented_complete = all(
         value is not None and np.isfinite(float(value))
         for value in implemented_values
-    )
+    ) and drik.get("coverage_state", "UNKNOWN") == "KNOWN" and sthana_source.get("complete", False)
     implemented_total = (
         float(sum(float(value) for value in implemented_values))
         if implemented_complete
@@ -1519,6 +1560,10 @@ def shadbala_components_for_planet(
         "saptavargaja_virupa": saptavargaja.get("saptavargaja_virupa", np.nan),
         "saptavarga_details": saptavargaja.get("saptavarga_details", []),
         "saptavargaja_profile": saptavargaja.get("profile", ""),
+        "saptavargaja_coverage_state": saptavargaja.get("coverage_state", "UNKNOWN"),
+        "saptavargaja_expected_varga_count": saptavargaja.get("expected_varga_count", 7),
+        "saptavargaja_known_varga_count": saptavargaja.get("known_varga_count", 0),
+        "saptavargaja_unresolved_vargas": saptavargaja.get("unresolved_vargas", []),
         "saptavargaja_comparator_virupa": saptavargaja_comparator.get(
             "saptavargaja_virupa",
             np.nan,
@@ -1543,6 +1588,10 @@ def shadbala_components_for_planet(
             "normalization_divisor",
             DRIK_NORMALIZATION_DIVISOR,
         ),
+        "drik_coverage_state": drik.get("coverage_state", "UNKNOWN"),
+        "drik_expected_contributor_count": drik.get("expected_contributor_count", 6),
+        "drik_known_contributor_count": drik.get("known_contributor_count", 0),
+        "drik_unresolved_contributors": drik.get("unresolved_contributors", []),
         "nathonnatha_virupa": kaala.get("nathonnatha_virupa", np.nan),
         "paksha_virupa": kaala.get("paksha_virupa", np.nan),
         "paksha_nature": kaala.get("paksha_nature", ""),
@@ -1595,7 +1644,11 @@ def shadbala_components_for_planet(
     }
 
 
-def aggregate_components(components: list[dict[str, Any]]) -> dict[str, Any]:
+def aggregate_components(
+    components: list[dict[str, Any]],
+    *,
+    expected_member_names: tuple[str, ...] = CLASSICAL_PLANETS,
+) -> dict[str, Any]:
     if not components:
         return {}
     out: dict[str, Any] = {"body": "AVG(ALL)"}
@@ -1638,9 +1691,24 @@ def aggregate_components(components: list[dict[str, Any]]) -> dict[str, Any]:
         "implemented_total_ratio",
         "dignity_virupa",
     ]
+    expected_count = len(expected_member_names)
+    known_body_count = len(components)
+    out["coverage_state"] = "KNOWN" if known_body_count == expected_count else "PARTIAL" if known_body_count else "UNKNOWN"
+    out["expected_member_count"] = expected_count
+    out["known_member_count"] = known_body_count
+    out["unresolved_members"] = [
+        body for body in expected_member_names
+        if body not in {str(item.get("body") or "") for item in components}
+    ]
+    out["component_coverage"] = {}
     for key in keys:
         values = [float(item[key]) for item in components if key in item and np.isfinite(float(item[key]))]
         out[key] = float(sum(values) / len(values)) if values else np.nan
+        out["component_coverage"][key] = {
+            "expectedMemberCount": expected_count,
+            "knownMemberCount": len(values),
+            "coverageState": "KNOWN" if len(values) == expected_count else "PARTIAL" if values else "UNKNOWN",
+        }
     out["house"] = ""
     out["sign"] = ""
     out["dignity_label"] = "avg_all"
@@ -1704,7 +1772,10 @@ def components_for_body(
             for planet in CLASSICAL_PLANETS
             if longitudes.get(planet) is not None
         ]
-        return aggregate_components([item for item in members if item])
+        return aggregate_components(
+            [item for item in members if item],
+            expected_member_names=CLASSICAL_PLANETS,
+        )
     return shadbala_components_for_planet(
         name,
         longitudes.get(name),
@@ -1766,6 +1837,19 @@ def prefix_components(prefix: str, components: dict[str, Any]) -> dict[str, Any]
         "implemented_total_virupa": "strict_shadbala_implemented_total_virupa",
         "minimum_total_virupa": "strict_shadbala_minimum_total_virupa",
         "implemented_total_ratio": "strict_shadbala_implemented_total_ratio",
+        "coverage_state": "strict_component_coverage_state",
+        "expected_member_count": "strict_component_expected_member_count",
+        "known_member_count": "strict_component_known_member_count",
+        "unresolved_members": "strict_component_unresolved_members",
+        "component_coverage": "strict_component_coverage",
+        "saptavargaja_coverage_state": "strict_saptavargaja_coverage_state",
+        "saptavargaja_expected_varga_count": "strict_saptavargaja_expected_varga_count",
+        "saptavargaja_known_varga_count": "strict_saptavargaja_known_varga_count",
+        "saptavargaja_unresolved_vargas": "strict_saptavargaja_unresolved_vargas",
+        "drik_coverage_state": "strict_drik_coverage_state",
+        "drik_expected_contributor_count": "strict_drik_expected_contributor_count",
+        "drik_known_contributor_count": "strict_drik_known_contributor_count",
+        "drik_unresolved_contributors": "strict_drik_unresolved_contributors",
         "dignity_label": "strict_dignity_label",
         "dignity_virupa": "strict_dignity_virupa",
         "chesta_status": "strict_chesta_status",

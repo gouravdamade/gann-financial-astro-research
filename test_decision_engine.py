@@ -74,6 +74,12 @@ SCORES = {
     "fx_doctrine_pair_conflict_ratio": 0.0,
     "fx_base_scored_hit_count": 1,
     "fx_quote_scored_hit_count": 1,
+    "fx_base_reference_available": 1,
+    "fx_quote_reference_available": 1,
+    "fx_base_evidence_state": "KNOWN",
+    "fx_quote_evidence_state": "KNOWN",
+    "fx_pair_direction_eligible": True,
+    "fx_pair_direction_reason": "both_sides_resolved",
 }
 
 
@@ -159,6 +165,9 @@ def test_live_packet_excludes_future_labels_and_unclosed_bars() -> None:
     assert first["exit"]["price"] is None
     assert first["guardrails"]["timestampSafe"] is True
     assert first["guardrails"]["executionAllowed"] is False
+    assert first["guardrails"]["experimentalDirectionalDiagnostic"] is True
+    assert first["guardrails"]["forecastValidated"] is False
+    assert first["guardrails"]["directionCertification"] == "UNCERTIFIED"
     assert first["policyLocks"]["historicalValidationStatus"] == (
         "failed_retrospective_statistical_gate_20260713"
     )

@@ -46,6 +46,33 @@ class CgvoServiceTests(unittest.TestCase):
         self.assertTrue(demo["causalEventId"].startswith("CGVO-SOLAR-"))
         self.assertEqual(demo["guardrails"]["executionAllowed"], False)
 
+    def test_swiss_ut_identity_and_utc_display_are_separate_without_changing_causal_id(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        identity = event["astronomyEventIdentity"]
+        self.assertEqual(event["causalEventId"], "CGVO-SOLAR-B1265AFAF8178B2C2480")
+        self.assertEqual(identity["globalMaxSwissUt"], identity["globalMaxUtc"])
+        self.assertNotEqual(identity["globalMaxSwissUt"], identity["globalMaxUtcDisplay"])
+        self.assertEqual(identity["legacyGlobalMaxUtcSemantics"], "LEGACY_ALIAS_OF_SWISSEPH_UT_NOT_CIVIL_UTC")
+        self.assertEqual(identity["globalContacts"], identity["globalContactsSwissUt"])
+        self.assertNotEqual(identity["globalContactsSwissUt"]["MAX"], identity["globalContactsUtcDisplay"]["MAX"])
+        self.assertEqual(identity["legacyGlobalContactsSemantics"], "GLOBAL_CONTACTS_ALIAS_OF_SWISSEPH_UT_NOT_CIVIL_UTC")
+
+    def test_local_horizon_and_phase_times_use_utc_display_conversion(self) -> None:
+        event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
+        local = build_cgvo_local_circumstances(PROJECT_ROOT, {
+            "eventType": "SOLAR",
+            "globalMaxSwissUt": event["astronomyEventIdentity"]["globalMaxSwissUt"],
+            "causalEventId": event["causalEventId"],
+            "localityId": "UJJAIN",
+            "label": "Ujjain",
+            "latitude": 23.1765,
+            "longitude": 75.7885,
+            "elevationM": 0,
+            "timezone": "Asia/Kolkata",
+        })["event"]["modernAstronomy"]
+        self.assertIsNotNone(local["localMaxUtc"])
+        self.assertIn(".", local["localMaxUtc"])
+
     def test_locality_changes_local_facts_but_not_global_identity(self) -> None:
         event = next(item for item in self.solar_search()["events"] if item["astronomyEventIdentity"]["globalMaxUtc"].startswith("2027-08-02"))
         common = {

@@ -161,7 +161,7 @@ export function InspectorPanel({
               <div className="currency-side-evidence">
                 <div>
                   <strong>{detail.currencyPairEvidence.base.label}</strong>
-                  <small>{detail.currencyPairEvidence.base.referenceLabel}</small>
+                  <small>{detail.currencyPairEvidence.base.referenceLabel} · evidence {detail.currencyPairEvidence.base.state.replaceAll('_', ' ')}</small>
                   <span>{scoreTone(detail.currencyPairEvidence.base.doctrineNetScore)}</span>
                   <dl>
                     <dt>Raw score</dt><dd>{detail.currencyPairEvidence.base.netScore?.toFixed(3) ?? '-'}</dd>
@@ -173,7 +173,7 @@ export function InspectorPanel({
                 </div>
                 <div>
                   <strong>{detail.currencyPairEvidence.quote.label}</strong>
-                  <small>{detail.currencyPairEvidence.quote.referenceLabel}</small>
+                  <small>{detail.currencyPairEvidence.quote.referenceLabel} · evidence {detail.currencyPairEvidence.quote.state.replaceAll('_', ' ')}</small>
                   <span>{scoreTone(detail.currencyPairEvidence.quote.doctrineNetScore)}</span>
                   <dl>
                     <dt>Raw score</dt><dd>{detail.currencyPairEvidence.quote.netScore?.toFixed(3) ?? '-'}</dd>
@@ -185,6 +185,8 @@ export function InspectorPanel({
                 </div>
               </div>
               <dl className="property-grid pair-balance">
+                <dt>Evidence state</dt><dd>{detail.currencyPairEvidence.pair.state}</dd>
+                <dt>Direction eligible</dt><dd>{detail.currencyPairEvidence.pair.directionEligible ? 'YES' : 'NO'}</dd>
                 <dt>Direction</dt><dd>{detail.currencyPairEvidence.pair.doctrineDirection ?? 'UNKNOWN'}</dd>
                 <dt>Pair score</dt><dd>{detail.currencyPairEvidence.pair.doctrineNetScore?.toFixed(3) ?? '-'}</dd>
                 <dt>Conflict</dt><dd>{detail.currencyPairEvidence.pair.doctrineConflictRatio == null ? '-' : `${(detail.currencyPairEvidence.pair.doctrineConflictRatio * 100).toFixed(1)}%`}</dd>
