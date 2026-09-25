@@ -156,6 +156,18 @@ STHANA_VIRUPA_BY_DIGNITY = {
     "unknown": 0.0,
 }
 
+# These fields are consumed by the doctrine directional scorer.  A raw score
+# may still be calculated for compatibility, but missing factual context must
+# keep the side out of the eligible doctrine/pair path.
+DOCTRINE_REQUIRED_EVIDENCE_FIELDS = (
+    "transit_planet",
+    "natal_planet",
+    "aspect",
+    "natal_house",
+    "natal_sign",
+    "transit_sign",
+)
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -344,11 +356,10 @@ def evidence_state_for_side(
     items = _filtered_evidence_items(parsed["items"], event_aspect, event_bodies)
     if not items:
         return "UNKNOWN", "no_relevant_evidence_after_pair_filter"
-    required_fields = ("transit_planet", "natal_planet", "aspect", "natal_house")
     unresolved = [
         index
         for index, item in enumerate(items)
-        if any(item.get(field) in (None, "") for field in required_fields)
+        if any(item.get(field) in (None, "") for field in DOCTRINE_REQUIRED_EVIDENCE_FIELDS)
         or not _finite_hit_strength(item)
     ]
     if unresolved:
