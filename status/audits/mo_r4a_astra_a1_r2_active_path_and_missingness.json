@@ -1,0 +1,377 @@
+{
+  "auditTargetCommit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60",
+  "route": [
+    {
+      "path": "gann-astro-desk/src/views/AnalyzeAspectWindow.tsx",
+      "line": 143,
+      "anchor": "  const runCutoffDecision = useCallback(async (eventId: string, decisionTime: string) => {",
+      "note": "runCutoffDecision calls fetchLiveDecision; useEffect below triggers on detail.",
+      "fileSha256": "7F7E9EF95144FB734A77951630E1B186C3F2E7DF329F43B488488C8EE99CF158",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/src/api.ts",
+      "line": 502,
+      "anchor": "export async function fetchLiveDecision(",
+      "note": "Canonical frontend decision request.",
+      "fileSha256": "73E2996AB24CE59FB6783EF9D062FC1D7801F993BDADACE804B98C19E5798941",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/backend/server.py",
+      "line": 1394,
+      "anchor": "@app.post(\"/api/decisions\")",
+      "note": "POST route accepts live_inference only.",
+      "fileSha256": "0AAFA47107635D0AE859C64F5B07DCB0F28715262CB169CA4D490E12D82CB786",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/backend/repository.py",
+      "line": 1900,
+      "anchor": "    def live_decision_packet(",
+      "note": "Selected event/touch and timeframe route to ENGINE; not invoked by audit.",
+      "fileSha256": "075C83EF6063676494FA130C39BD083303D932F42CB97E089C4841F83674C897",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "decision_engine.py",
+      "line": 554,
+      "anchor": "    def live_inference_packet(",
+      "note": "Timing-safe inference and abstention gates; calls legacy scorer if eligible.",
+      "fileSha256": "0E7E65B4E80295E61737BE235D73466BA947DF00A98FA3E67F43183499D8020E",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "build_trade_candidates_from_touches.py",
+      "line": 586,
+      "anchor": "def score_currency_pair_for_row(row: pd.Series) -> dict[str, Any]:",
+      "note": "Legacy independent base/quote score; engineering market mapping.",
+      "fileSha256": "16470BC49C3DC2907D90EAEB98AE6A3EB3AA9061EC78C41D42722D5920130970",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "decision_engine.py",
+      "line": 394,
+      "anchor": "        return \"WATCH_LONG\", \"bullish\"",
+      "note": "BULLISH/BEARISH maps to WATCH_LONG/SHORT.",
+      "fileSha256": "0E7E65B4E80295E61737BE235D73466BA947DF00A98FA3E67F43183499D8020E",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/src/views/AnalyzeAspectWindow.tsx",
+      "line": 426,
+      "anchor": "              <section className={`live-decision ${decisionPacket?.status ?? 'loading'}`}>",
+      "note": "Timestamp-safe inference, WATCH action, cutoff and packet shown.",
+      "fileSha256": "7F7E9EF95144FB734A77951630E1B186C3F2E7DF329F43B488488C8EE99CF158",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/src/views/AnalyzeAspectWindow.tsx",
+      "line": 458,
+      "anchor": "                    {decisionPacket.policyLocks && (",
+      "note": "Failed historical gate and research-watch warning shown if policyLocks exists.",
+      "fileSha256": "7F7E9EF95144FB734A77951630E1B186C3F2E7DF329F43B488488C8EE99CF158",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "mt5_trade_executor.py",
+      "line": 231,
+      "anchor": "    result = mt5.order_send(request)",
+      "note": "Separate manually armed CLI order_send, not a WATCH consumer.",
+      "fileSha256": "19F624D3DDB8B04BB0D6837001571C0CE3128ED13CF47F2B5EED3FB5FFA9E727",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    }
+  ],
+  "autoRunsOnLoadedDetail": true,
+  "userVisibleAction": "WATCH LONG / WATCH SHORT or ABSTAIN",
+  "backendDirection": "bullish / bearish or abstention",
+  "warnings": [
+    "execution locked",
+    "Historical gate failed",
+    "Research watch only"
+  ],
+  "warningLimits": "Warnings mitigate but do not erase the signal-like action and inference label. Static rendering inspection only, not a launched UI.",
+  "automaticOrderConsumerLocated": false,
+  "manualMt5Separate": true,
+  "manualMt5Arming": "--live --confirm LIVE",
+  "candidateCExecutionAllowed": false,
+  "missingness": [
+    {
+      "assumptionId": "BAL11",
+      "condition": "missing Mercury longitude",
+      "result": "BENEFIC",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "drik_bala_engine.py",
+        "line": 184,
+        "anchor": "    mercury_lon = normalize_longitude(normalized.get(\"MERCURY\"))",
+        "note": "No sign -> no companions -> alone explanation; absence is not observed isolation.",
+        "fileSha256": "616AACC5983EC257F5702A487396E7AFFC8869256EC547222E9758BBA31C6C21",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R1UN01",
+      "condition": "missing Sun or Moon phase",
+      "result": "BENEFIC",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "drik_bala_engine.py",
+        "line": 174,
+        "anchor": "    if sun is None or moon is None:",
+        "note": "Explicit compatibility fallback; no observed lunar phase.",
+        "fileSha256": "616AACC5983EC257F5702A487396E7AFFC8869256EC547222E9758BBA31C6C21",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "BAL12",
+      "condition": "missing aspector; known target",
+      "result": "ZERO; AVAILABLE_NUMERIC",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "drik_bala_engine.py",
+        "line": 284,
+        "anchor": "        if angle is None:",
+        "note": "Unavailable zero contributor is retained; total still available, with no all-contributors completeness gate.",
+        "fileSha256": "616AACC5983EC257F5702A487396E7AFFC8869256EC547222E9758BBA31C6C21",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "BAL12",
+      "condition": "missing target longitude",
+      "result": "UNKNOWN",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "drik_bala_engine.py",
+        "line": 254,
+        "anchor": "    if target_body not in CLASSICAL_PLANETS or target_lon is None:",
+        "note": "Target unavailable; not a numeric target result.",
+        "fileSha256": "616AACC5983EC257F5702A487396E7AFFC8869256EC547222E9758BBA31C6C21",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R1UN02",
+      "condition": "unresolved individual varga dignity",
+      "result": "AVAILABLE_NUMERIC",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "strict_shadbala_doctrine.py",
+        "line": 486,
+        "anchor": "        if np.isfinite(float(virupa)):",
+        "note": "Nonfinite terms omitted from sum; details keep null. Aggregate finite check does not detect omitted terms.",
+        "fileSha256": "A78FD24D365FBE95CAF4EAE587F5626C0A3C3365CECA97742146FE1EAB47B46A",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R1UN03",
+      "condition": "missing potential war participant",
+      "result": "ZERO",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "strict_shadbala_doctrine.py",
+        "line": 1008,
+        "anchor": "        other_lon = normalize_longitude(longitudes.get(other))",
+        "note": "Missing other planet skipped; no candidate may be reported. Known within-one-degree war candidate remains fail-closed NaN.",
+        "fileSha256": "A78FD24D365FBE95CAF4EAE587F5626C0A3C3365CECA97742146FE1EAB47B46A",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R1UN04",
+      "condition": "malformed present maximum cusp",
+      "result": "EXCEPTION",
+      "classification": "ENGINEERING_MAPPING",
+      "evidence": {
+        "path": "strict_shadbala_doctrine.py",
+        "line": 1327,
+        "anchor": "    if house_cusps and max_house in house_cusps:",
+        "note": "float(None) possible; absent key instead uses ascendant + whole-sign offsets. This is not UNKNOWN.",
+        "fileSha256": "A78FD24D365FBE95CAF4EAE587F5626C0A3C3365CECA97742146FE1EAB47B46A",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "BAL16",
+      "condition": "nonfinite listed Shadbala aggregate component",
+      "result": "UNKNOWN",
+      "classification": "ENGINEERING_MAPPING",
+      "evidence": {
+        "path": "strict_shadbala_doctrine.py",
+        "line": 1498,
+        "anchor": "    implemented_complete = all(",
+        "note": "Implemented total NaN; this guard does not restore component-internal completeness.",
+        "fileSha256": "A78FD24D365FBE95CAF4EAE587F5626C0A3C3365CECA97742146FE1EAB47B46A",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R1UN05",
+      "condition": "partial AVG(ALL) components",
+      "result": "AVAILABLE_NUMERIC; UNKNOWN_TOTAL",
+      "classification": "ENGINEERING_MAPPING",
+      "evidence": {
+        "path": "strict_shadbala_doctrine.py",
+        "line": 1642,
+        "anchor": "        values = [float(item[key]) for item in components if key in item and np.isfinite(float(item[key]))]",
+        "note": "Per-component finite means may have different populations; total and Kala guards retained.",
+        "fileSha256": "A78FD24D365FBE95CAF4EAE587F5626C0A3C3365CECA97742146FE1EAB47B46A",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R1UN06",
+      "condition": "one empty or malformed side with textually present base",
+      "result": "ZERO; AVAILABLE_NUMERIC",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "build_trade_candidates_from_touches.py",
+        "line": 623,
+        "anchor": "    direction = (",
+        "note": "At least one scored side suffices; [] string passes base presence. Both zero sides or absent base -> UNKNOWN.",
+        "fileSha256": "16470BC49C3DC2907D90EAEB98AE6A3EB3AA9061EC78C41D42722D5920130970",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "LEG14",
+      "condition": "missing strength source field",
+      "result": "ZERO",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "build_trade_candidates_from_touches.py",
+        "line": 410,
+        "anchor": "def hit_strength(hit: dict[str, Any]) -> float:",
+        "note": "Falls through bphs_strength/score; no finite value ->0, hit skipped. Name bphs does not certify provenance.",
+        "fileSha256": "16470BC49C3DC2907D90EAEB98AE6A3EB3AA9061EC78C41D42722D5920130970",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "LEG07",
+      "condition": "missing dignity fields",
+      "result": "ZERO",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "build_trade_candidates_from_touches.py",
+        "line": 386,
+        "anchor": "    avg_virupa = float(np.mean(virupas)) if virupas else 0.0",
+        "note": "Unknown dignity average zero, then engineering factor0.5. Not a source-certified neutral state.",
+        "fileSha256": "16470BC49C3DC2907D90EAEB98AE6A3EB3AA9061EC78C41D42722D5920130970",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "FLD11",
+      "condition": "missing supplied actor dignity in Fields request",
+      "result": "ORDINARY",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "gann-astro-desk/src/views/FieldsWorkspace.tsx",
+        "line": 164,
+        "anchor": "      actors: BODIES.map((body) => ({ body, dignity: 'ORDINARY' })),",
+        "note": "Frontend constructs each actor ORDINARY; software default, not observed dignity.",
+        "fileSha256": "46898774E8D625BFDC74B7F082C3A0FB24EECBAEC87F99F85C9B2040D56C148B",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "LEG11",
+      "condition": "missing touch/closed evidence or unusable timing",
+      "result": "ABSTAIN",
+      "classification": "ENGINEERING_MAPPING",
+      "evidence": {
+        "path": "decision_engine.py",
+        "line": 554,
+        "anchor": "    def live_inference_packet(",
+        "note": "Timing/touch gates block scorer; missing/unknown chart category is not repaired by this temporal gate.",
+        "fileSha256": "0E7E65B4E80295E61737BE235D73466BA947DF00A98FA3E67F43183499D8020E",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "CH09",
+      "condition": "missing required founder chart fields or hash mismatch",
+      "result": "REJECT_EXCEPTION",
+      "classification": "ENGINEERING_MAPPING",
+      "evidence": {
+        "path": "research_labs/chart_conditioned_aspects/chart_conditioned_aspects/founder_chart_registry.py",
+        "line": 57,
+        "anchor": "def _chart_from_record(record: dict[str, object], astronomy_contract: str) -> OrganizationChartHypothesis:",
+        "note": "Required fields indexed; location/provenance types checked; chart hash checked. No synthetic replacement chart is created.",
+        "fileSha256": "31DC7FC4E31481E009E8BCC2935407D002CD2ADC37BAAD71505F8B4BC6957601",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "FLD09",
+      "condition": "missing required source fields or unsupported source closure",
+      "result": "REJECT_EXCEPTION",
+      "classification": "SOURCE_SILENT",
+      "evidence": {
+        "path": "gann-astro-desk/backend/classical_source_operators.py",
+        "line": 350,
+        "anchor": "        missing = REQUIRED_LEDGER_FIELDS - set(operator)",
+        "note": "Required field/locator/status validation rejects; PARTIAL or SILENT cannot be marked executable. This is different from legacy strength-field fallback.",
+        "fileSha256": "AAF86B92C38BAC12BAC2763F2BECCD5C81E2F5D89D17731A733D72F8349FBBFB",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    },
+    {
+      "assumptionId": "R2UN01",
+      "condition": "Paksha missing Mercury with known phase / missing phase",
+      "result": "BENEFIC / UNKNOWN",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "evidence": {
+        "path": "strict_shadbala_doctrine.py",
+        "line": 746,
+        "anchor": "    if body not in CLASSICAL_PLANETS or sun is None or moon is None:",
+        "note": "Missing phase fails closed; missing Mercury association defaults benefic.",
+        "fileSha256": "A78FD24D365FBE95CAF4EAE587F5626C0A3C3365CECA97742146FE1EAB47B46A",
+        "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+      }
+    }
+  ],
+  "cgvoTimeScaleDisposition": "CGVO_TIME_ALIAS_MISLABELLED_REQUIRES_REMEDIATION",
+  "cgvoEvidence": [
+    {
+      "path": "gann-astro-desk/backend/cgvo_service.py",
+      "line": 155,
+      "anchor": "def _jd(value: datetime) -> float:",
+      "note": "UTC calendar fields passed to julday without utc_to_jd.",
+      "fileSha256": "6B0500E63D0783CEAE75279BA9EDDDF0810516F68C9B98325AC6E1A7FEF74A36",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/backend/cgvo_service.py",
+      "line": 161,
+      "anchor": "def _from_jd(value: float | int | None) -> datetime | None:",
+      "note": "revjul output tagged timezone.utc and rounded seconds.",
+      "fileSha256": "6B0500E63D0783CEAE75279BA9EDDDF0810516F68C9B98325AC6E1A7FEF74A36",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    },
+    {
+      "path": "gann-astro-desk/backend/cgvo_service.py",
+      "line": 898,
+      "anchor": "def _event_identity(event_type: str, global_max: datetime, global_type: str) -> dict[str, Any]:",
+      "note": "Causal identity hashes SwissUt; UTC alias repeats same string.",
+      "fileSha256": "6B0500E63D0783CEAE75279BA9EDDDF0810516F68C9B98325AC6E1A7FEF74A36",
+      "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+    }
+  ],
+  "officialDocumentation": {
+    "url": "https://www.astro.com/swisseph/swephprg.htm",
+    "sections": [
+      "9.1",
+      "9.2"
+    ],
+    "accessDate": "2026-09-25",
+    "finding": "revjul reverses calendar/JD conversion. Separate jdut1_to_utc converts UT1 Julian dates to UTC; the inspected alias does not call it."
+  },
+  "noTimeRecalculation": true,
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude the named self-hash field only.",
+  "pathAuditHash": "457986F8B62E592E3B0E51C58C4136A8371911EC2C62DD283C20637FBF59B166"
+}

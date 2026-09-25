@@ -1,0 +1,2682 @@
+{
+  "schemaVersion": "MO_R4A_ASTRA_A1_R2_DEPENDENCY_GRAPH_V1",
+  "auditTargetCommit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60",
+  "nodes": [
+    {
+      "id": "AST01",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Raman selection"
+    },
+    {
+      "id": "AST02",
+      "classification": "SOURCE_SILENT",
+      "name": "Raman necessity"
+    },
+    {
+      "id": "AST03",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Swiss engine"
+    },
+    {
+      "id": "AST04",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Geocentric frame"
+    },
+    {
+      "id": "AST05",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "True node"
+    },
+    {
+      "id": "AST06",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Ketu opposition"
+    },
+    {
+      "id": "AST07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "UTC as JD-UT input"
+    },
+    {
+      "id": "AST08",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Naive legacy timezone"
+    },
+    {
+      "id": "AST09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Compiler timezone rejection"
+    },
+    {
+      "id": "AST10",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Moshier fallback"
+    },
+    {
+      "id": "AST11",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Recorded SBC fallback"
+    },
+    {
+      "id": "AST12",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Default tropical helper"
+    },
+    {
+      "id": "AST13",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Provisional house model"
+    },
+    {
+      "id": "CH01",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "USD entity choice"
+    },
+    {
+      "id": "CH02",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "USD exact noon"
+    },
+    {
+      "id": "CH03",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "USD coordinates"
+    },
+    {
+      "id": "CH04",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "JPY entity choice"
+    },
+    {
+      "id": "CH05",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "JPY exact midnight"
+    },
+    {
+      "id": "CH06",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "JPY coordinates"
+    },
+    {
+      "id": "CH07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Historical civil time"
+    },
+    {
+      "id": "CH08",
+      "classification": "SOURCE_SILENT",
+      "name": "Currency natal applicability"
+    },
+    {
+      "id": "CH09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Approval is not history"
+    },
+    {
+      "id": "EV01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Mixed-time roles"
+    },
+    {
+      "id": "EV02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Role authority overclaim"
+    },
+    {
+      "id": "EV03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Nine-body universe"
+    },
+    {
+      "id": "EV04",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Five angular aspects"
+    },
+    {
+      "id": "EV05",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Uniform three-degree orb"
+    },
+    {
+      "id": "EV06",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Conjunction identity"
+    },
+    {
+      "id": "EV07",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Sampling step"
+    },
+    {
+      "id": "EV08",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Search horizon"
+    },
+    {
+      "id": "EV09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Exactness minimizer"
+    },
+    {
+      "id": "EV10",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Identity audit"
+    },
+    {
+      "id": "EV11",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Numerical tolerance"
+    },
+    {
+      "id": "EV12",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Rounded second"
+    },
+    {
+      "id": "EV13",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Content hash identity"
+    },
+    {
+      "id": "EV14",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Relative sign place"
+    },
+    {
+      "id": "EV15",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Relative Sun place"
+    },
+    {
+      "id": "EV16",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Angular activation labels"
+    },
+    {
+      "id": "EV17",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Angular volatility labels"
+    },
+    {
+      "id": "EV18",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Structural direction"
+    },
+    {
+      "id": "EV19",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Confidence constants"
+    },
+    {
+      "id": "EV20",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Propagation depth"
+    },
+    {
+      "id": "EV21",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Conjunction graph symmetry"
+    },
+    {
+      "id": "EV22",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Tests encode priors"
+    },
+    {
+      "id": "SRC01",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Trailokya base nature"
+    },
+    {
+      "id": "SRC02",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Moon condition gap"
+    },
+    {
+      "id": "SRC03",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Mercury association"
+    },
+    {
+      "id": "SRC04",
+      "classification": "SOURCE_SILENT",
+      "name": "Maha not a number"
+    },
+    {
+      "id": "SRC05",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "TD directed friendship"
+    },
+    {
+      "id": "SRC06",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Saravali directed friendship"
+    },
+    {
+      "id": "SRC07",
+      "classification": "SOURCE_SILENT",
+      "name": "Unstated self relationship"
+    },
+    {
+      "id": "SRC08",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Temporary friend places"
+    },
+    {
+      "id": "SRC09",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Compound relation root"
+    },
+    {
+      "id": "SRC10",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Compound relation commentary"
+    },
+    {
+      "id": "SRC11",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Quarter Drsti"
+    },
+    {
+      "id": "SRC12",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Half Drsti"
+    },
+    {
+      "id": "SRC13",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Three-quarter Drsti"
+    },
+    {
+      "id": "SRC14",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Full seventh Drsti"
+    },
+    {
+      "id": "SRC15",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Drsti translation conflict"
+    },
+    {
+      "id": "SRC16",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Mars special Drsti"
+    },
+    {
+      "id": "SRC17",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Jupiter special Drsti"
+    },
+    {
+      "id": "SRC18",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Saturn special Drsti"
+    },
+    {
+      "id": "SRC19",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Dignity profile"
+    },
+    {
+      "id": "SRC20",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Sthana bala"
+    },
+    {
+      "id": "SRC21",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Sthana phala"
+    },
+    {
+      "id": "SRC22",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "V166 retrograde"
+    },
+    {
+      "id": "SRC23",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "V166 exaltation"
+    },
+    {
+      "id": "SRC24",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "V166 debilitation"
+    },
+    {
+      "id": "SRC25",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "No modifier stack"
+    },
+    {
+      "id": "SRC26",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Sthula motion"
+    },
+    {
+      "id": "SRC27",
+      "classification": "SOURCE_SILENT",
+      "name": "Continuous speed not sthula"
+    },
+    {
+      "id": "SRC28",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Dik categorical directions"
+    },
+    {
+      "id": "SRC29",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Dik interpolation gap"
+    },
+    {
+      "id": "SRC30",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Positional inventory gap"
+    },
+    {
+      "id": "SRC31",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Naisargika locator gap"
+    },
+    {
+      "id": "SRC32",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Latta counting gap"
+    },
+    {
+      "id": "SRC33",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Arghya scope"
+    },
+    {
+      "id": "SRC34",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Context-specific exceptions"
+    },
+    {
+      "id": "SRC35",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Universal cancellation gap"
+    },
+    {
+      "id": "TMP01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Phase geometry"
+    },
+    {
+      "id": "TMP02",
+      "classification": "SOURCE_SILENT",
+      "name": "Phase efficacy silence"
+    },
+    {
+      "id": "TMP03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Duration definition"
+    },
+    {
+      "id": "TMP04",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Duration scale hypothesis"
+    },
+    {
+      "id": "TMP05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Scale ratio"
+    },
+    {
+      "id": "TMP06",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Viewing lens"
+    },
+    {
+      "id": "TMP07",
+      "classification": "SOURCE_SILENT",
+      "name": "No persistence doctrine"
+    },
+    {
+      "id": "TMP08",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Nested composition"
+    },
+    {
+      "id": "TMP09",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "Long regime hypothesis"
+    },
+    {
+      "id": "TMP10",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "Short event hypothesis"
+    },
+    {
+      "id": "TMP11",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "Following-event persistence"
+    },
+    {
+      "id": "TMP12",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "Overlap usefulness"
+    },
+    {
+      "id": "TMP13",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Legacy duration buckets"
+    },
+    {
+      "id": "FLD01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Known side balance"
+    },
+    {
+      "id": "FLD02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Side UNKNOWN"
+    },
+    {
+      "id": "FLD03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Pair subtraction"
+    },
+    {
+      "id": "FLD04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Pair half scaling"
+    },
+    {
+      "id": "FLD05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Pair clamp"
+    },
+    {
+      "id": "FLD06",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Categorical coverage"
+    },
+    {
+      "id": "FLD07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "SBC independence"
+    },
+    {
+      "id": "FLD08",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Trailokya range block"
+    },
+    {
+      "id": "FLD09",
+      "classification": "SOURCE_SILENT",
+      "name": "Market-sign silence"
+    },
+    {
+      "id": "FLD10",
+      "classification": "SOURCE_SILENT",
+      "name": "Magnitude silence"
+    },
+    {
+      "id": "MO01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Raw activity"
+    },
+    {
+      "id": "MO02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Coverage conservatism"
+    },
+    {
+      "id": "MO03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Malformed rejection"
+    },
+    {
+      "id": "MO04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Shared count axis"
+    },
+    {
+      "id": "MO05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Exact pixel ratio"
+    },
+    {
+      "id": "MO06",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Invalid display value"
+    },
+    {
+      "id": "SBC01",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Editor supplement authority"
+    },
+    {
+      "id": "SBC02",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Figure rays"
+    },
+    {
+      "id": "SBC03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Engineering signed unit"
+    },
+    {
+      "id": "SBC04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Net over gross"
+    },
+    {
+      "id": "SBC05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Unresolved score exclusion"
+    },
+    {
+      "id": "SBC06",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "No modifier stacking"
+    },
+    {
+      "id": "SBC07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Fixed phasor"
+    },
+    {
+      "id": "SBC08",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Source-only scalar surface"
+    },
+    {
+      "id": "SBC09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Native enumeration"
+    },
+    {
+      "id": "SBC10",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Restored Jyeshtha"
+    },
+    {
+      "id": "SBC11",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Verse48 glyph identity"
+    },
+    {
+      "id": "SBC12",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Agarwal board only"
+    },
+    {
+      "id": "SBC13",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Agarwal strength scope"
+    },
+    {
+      "id": "SBC14",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Agarwal missing operator"
+    },
+    {
+      "id": "SBC15",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Civil-midnight vara"
+    },
+    {
+      "id": "SBC16",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Abhijit placement choice"
+    },
+    {
+      "id": "BPHS01",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Tara remains blocked"
+    },
+    {
+      "id": "BPHS02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Calendar engineering boundary"
+    },
+    {
+      "id": "BPHS03",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Shadbala not certified"
+    },
+    {
+      "id": "LEG01",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Body bias"
+    },
+    {
+      "id": "LEG02",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "House bias"
+    },
+    {
+      "id": "LEG03",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Soft-hard bonuses"
+    },
+    {
+      "id": "LEG04",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Weight asymmetry"
+    },
+    {
+      "id": "LEG05",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Dignity average"
+    },
+    {
+      "id": "LEG06",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Dignity strength factor"
+    },
+    {
+      "id": "LEG07",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Unknown dignity zero"
+    },
+    {
+      "id": "LEG08",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Sign-to-market conversion"
+    },
+    {
+      "id": "LEG09",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Dominance threshold"
+    },
+    {
+      "id": "LEG10",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Consensus double-use"
+    },
+    {
+      "id": "LEG11",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Live path reachable"
+    },
+    {
+      "id": "LEG12",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Watch labels"
+    },
+    {
+      "id": "LEG13",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Malformed hit list"
+    },
+    {
+      "id": "LEG14",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Missing numerics zero"
+    },
+    {
+      "id": "LEG15",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Aspect fallback"
+    },
+    {
+      "id": "LEG16",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Execution prohibition"
+    },
+    {
+      "id": "GANN01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Degree-to-price line"
+    },
+    {
+      "id": "GANN02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Mirror convention"
+    },
+    {
+      "id": "GANN03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Collective longitude"
+    },
+    {
+      "id": "GANN04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Square orientation"
+    },
+    {
+      "id": "GANN05",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Gann confirmation coefficient"
+    },
+    {
+      "id": "CGVO01",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Raw geographic names"
+    },
+    {
+      "id": "CGVO02",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Site inference boundary"
+    },
+    {
+      "id": "CC01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Reproduction scope"
+    },
+    {
+      "id": "CC02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Closed experiment scope"
+    },
+    {
+      "id": "CC03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Null not premise diagnosis"
+    },
+    {
+      "id": "CC04",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Inference limitations"
+    },
+    {
+      "id": "META01",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Drsti locator drift"
+    },
+    {
+      "id": "BAL01",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Fixed sunrise fallback"
+    },
+    {
+      "id": "BAL02",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Fixed obliquity"
+    },
+    {
+      "id": "BAL03",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Dik continuous interpolation"
+    },
+    {
+      "id": "BAL04",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Dik cusp fallback"
+    },
+    {
+      "id": "BAL05",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Drik piecewise production"
+    },
+    {
+      "id": "BAL06",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Drik special ranges"
+    },
+    {
+      "id": "BAL07",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Drik divisor four"
+    },
+    {
+      "id": "BAL08",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Dynamic Moon rule"
+    },
+    {
+      "id": "BAL09",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Mercury majority"
+    },
+    {
+      "id": "BAL10",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Mercury tie-break"
+    },
+    {
+      "id": "BAL11",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Missing Mercury position default"
+    },
+    {
+      "id": "BAL12",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Drik incomplete total"
+    },
+    {
+      "id": "BAL13",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Drik early rounding"
+    },
+    {
+      "id": "BAL14",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Chesta mean-true model"
+    },
+    {
+      "id": "BAL15",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Luminary Chesta total"
+    },
+    {
+      "id": "BAL16",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Finite component total"
+    },
+    {
+      "id": "BAL17",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Threshold ratio"
+    },
+    {
+      "id": "BAL18",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Strength UI words"
+    },
+    {
+      "id": "BAL19",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Drik tests are conformance"
+    },
+    {
+      "id": "FLD11",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Ordinary dignity default"
+    },
+    {
+      "id": "FLD12",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Empty letter targets"
+    },
+    {
+      "id": "MO07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Step interpolation"
+    },
+    {
+      "id": "MO08",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Time parse zero"
+    },
+    {
+      "id": "MO09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Minimum hit width"
+    },
+    {
+      "id": "MO10",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Plot margins"
+    },
+    {
+      "id": "BPHS04",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Commentary Muhurta list"
+    },
+    {
+      "id": "BPHS05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Calendar label boundaries"
+    },
+    {
+      "id": "CGVO03",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Topocentric observer"
+    },
+    {
+      "id": "CGVO04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Azimuth convention"
+    },
+    {
+      "id": "CGVO05",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Refraction defaults"
+    },
+    {
+      "id": "CGVO06",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Meridian tolerance"
+    },
+    {
+      "id": "CGVO07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Visibility clipping"
+    },
+    {
+      "id": "CGVO08",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Lunar magnitude distinction"
+    },
+    {
+      "id": "CGVO09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "UT-to-UTC display alias"
+    },
+    {
+      "id": "CGVO10",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Gregorian conversion"
+    },
+    {
+      "id": "CGVO11",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Purnimanta inference"
+    },
+    {
+      "id": "CGVO12",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Full-moon boundary helper"
+    },
+    {
+      "id": "CGVO13",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Intercalation guard"
+    },
+    {
+      "id": "CGVO14",
+      "classification": "CLASSICAL_SOURCE_EXPLICIT",
+      "name": "Kurma root reference"
+    },
+    {
+      "id": "CGVO15",
+      "classification": "SOURCE_SILENT",
+      "name": "No regional extrapolation"
+    },
+    {
+      "id": "CGVO16",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Phase mapping gap"
+    },
+    {
+      "id": "CC05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "C07 mandatory abstention"
+    },
+    {
+      "id": "CC06",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "B UNKNOWN exclusivity"
+    },
+    {
+      "id": "CC07",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Frozen semantic projection"
+    },
+    {
+      "id": "CC08",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Projection exclusions"
+    },
+    {
+      "id": "CC09",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Artifact read versus evaluation"
+    },
+    {
+      "id": "CC10",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "C07 tests preserve UNKNOWN"
+    },
+    {
+      "id": "MACH01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Unclosed source abstention"
+    },
+    {
+      "id": "MACH02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Unresolved bridge blocked"
+    },
+    {
+      "id": "RAS01",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Rasmi scope gap"
+    },
+    {
+      "id": "TEST01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Exact-time test boundary"
+    },
+    {
+      "id": "TEST02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Civil-time conversion test"
+    },
+    {
+      "id": "META02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Handoff closure supersession"
+    },
+    {
+      "id": "AST14",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "Sign boundary convention"
+    },
+    {
+      "id": "AST15",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Station diagnostic threshold"
+    },
+    {
+      "id": "CGVO17",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Reconstructed event ID"
+    },
+    {
+      "id": "R1EV01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Compiler fields"
+    },
+    {
+      "id": "R1EV02",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Computational orientation"
+    },
+    {
+      "id": "R1EV03",
+      "classification": "SOURCE_CONFLICT_OR_UNRESOLVED",
+      "name": "Textual orientation"
+    },
+    {
+      "id": "R1EV04",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Transit natal context"
+    },
+    {
+      "id": "R1EV05",
+      "classification": "FOUNDER_EMPIRICAL_HYPOTHESIS",
+      "name": "Currency natal context"
+    },
+    {
+      "id": "R1EV06",
+      "classification": "SOURCE_SILENT",
+      "name": "Market applicability"
+    },
+    {
+      "id": "R1EX01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Manual order CLI"
+    },
+    {
+      "id": "R1EX02",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Default market connection"
+    },
+    {
+      "id": "R1EX03",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Automatic detail request"
+    },
+    {
+      "id": "R1EX04",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Shadow default startup"
+    },
+    {
+      "id": "R1UN01",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Missing Moon phase"
+    },
+    {
+      "id": "R1UN02",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Saptavarga omission"
+    },
+    {
+      "id": "R1UN03",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Missing war participant"
+    },
+    {
+      "id": "R1UN04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Dig malformed cusp"
+    },
+    {
+      "id": "R1UN05",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Incomplete average components"
+    },
+    {
+      "id": "R1UN06",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Partial legacy side"
+    },
+    {
+      "id": "R1BL01",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Saptavarga weight profiles"
+    },
+    {
+      "id": "R1BL02",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Paksha nature difference"
+    },
+    {
+      "id": "R1BL03",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "name": "Kala time construction"
+    },
+    {
+      "id": "R1BL04",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Motion diagnostic bins"
+    },
+    {
+      "id": "R1LG01",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Pair cutoffs"
+    },
+    {
+      "id": "R1ML01",
+      "classification": "ENGINEERING_MAPPING",
+      "name": "Legacy imputation"
+    },
+    {
+      "id": "R1ML02",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Legacy feature selection"
+    },
+    {
+      "id": "R1CH01",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "name": "Bitcoin genesis chart"
+    },
+    {
+      "id": "R1TM01",
+      "classification": "MODERN_ASTRONOMICAL_CONVENTION",
+      "name": "UT display bound"
+    },
+    {
+      "id": "evidence:build_btc_weekly_astro_chart.py:23",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:1026",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:248",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:263",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:312",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:326",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:330",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:344",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:386",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:397",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:401",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:435",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:460",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:466",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:508",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:557",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:build_trade_candidates_from_touches.py:586",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:configs/research/cgvo/cgvo_calendar_r1_lunar_month_profile_v1.json:36",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:configs/research/cgvo/cgvo_g3_s1_readiness_matrix_v1.json:11",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:1140",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:282",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:72",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:75",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:decision_engine.py:421",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:decision_engine.py:608",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:13",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:17",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:174",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:179",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:200",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:211",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:284",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:301",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:drik_bala_engine.py:99",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:evaluate_transitsign_walk_forward.py:117",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:evaluate_transitsign_walk_forward.py:135",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/backend/cgvo_service.py:161",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/backend/cgvo_service.py:900",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/backend/server.py:134",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/backend/server.py:1394",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/backend/server.py:140",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/src/components/AspectEvidenceTracePanel.tsx:77",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/src/views/AnalyzeAspectWindow.tsx:143",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/src/views/AnalyzeAspectWindow.tsx:441",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:gann-astro-desk/src/visualizationModes.ts:78",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:mt5_trade_executor.py:231",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:12",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:24",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:30",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:63",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:69",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:9",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:110",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1148",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1221",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1310",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1321",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1327",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1333",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1498",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1509",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:1642",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:486",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:660",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:713",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:749",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "evidence:strict_shadbala_doctrine.py:997",
+      "kind": "STATIC_CODE_OR_CONTRACT_EVIDENCE"
+    },
+    {
+      "id": "R2UN01",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "name": "Paksha missing Mercury association"
+    }
+  ],
+  "edges": [
+    {
+      "from": "AST01",
+      "to": "AST02",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST05",
+      "to": "AST06",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST10",
+      "to": "AST11",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH01",
+      "to": "CH02",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH01",
+      "to": "CH03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH04",
+      "to": "CH05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH04",
+      "to": "CH06",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH02",
+      "to": "CH07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH05",
+      "to": "CH07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH01",
+      "to": "CH08",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH04",
+      "to": "CH08",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH02",
+      "to": "CH09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH05",
+      "to": "CH09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH08",
+      "to": "EV01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH01",
+      "to": "EV01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH04",
+      "to": "EV01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV01",
+      "to": "EV02",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST01",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST03",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST04",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST05",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST06",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH01",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH04",
+      "to": "EV03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "EV05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "EV06",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "EV09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV05",
+      "to": "EV09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV07",
+      "to": "EV09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV08",
+      "to": "EV09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST07",
+      "to": "EV09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV09",
+      "to": "EV10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV01",
+      "to": "EV13",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV03",
+      "to": "EV13",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "EV13",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV05",
+      "to": "EV13",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV09",
+      "to": "EV13",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV12",
+      "to": "EV13",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV01",
+      "to": "EV14",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST14",
+      "to": "EV14",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "AST14",
+      "to": "EV15",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "EV16",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "EV17",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV16",
+      "to": "EV22",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV17",
+      "to": "EV22",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SRC06",
+      "to": "SRC09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SRC08",
+      "to": "SRC09",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV15",
+      "to": "SRC26",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV05",
+      "to": "TMP01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV09",
+      "to": "TMP01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "TMP01",
+      "to": "TMP03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "TMP03",
+      "to": "TMP04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "TMP03",
+      "to": "TMP05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "FLD01",
+      "to": "FLD03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "FLD03",
+      "to": "FLD04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "FLD04",
+      "to": "FLD05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV03",
+      "to": "MO01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV04",
+      "to": "MO01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "EV05",
+      "to": "MO01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "MO04",
+      "to": "MO05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC01",
+      "to": "SBC02",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC01",
+      "to": "SBC03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC02",
+      "to": "SBC03",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC03",
+      "to": "SBC04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC04",
+      "to": "SBC05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC03",
+      "to": "SBC07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC03",
+      "to": "SBC08",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SBC04",
+      "to": "SBC08",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG01",
+      "to": "LEG04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG02",
+      "to": "LEG04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG03",
+      "to": "LEG04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG05",
+      "to": "LEG06",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG05",
+      "to": "LEG07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG04",
+      "to": "LEG08",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG06",
+      "to": "LEG08",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG04",
+      "to": "LEG10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG06",
+      "to": "LEG10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG08",
+      "to": "LEG10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG09",
+      "to": "LEG10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG10",
+      "to": "LEG11",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG11",
+      "to": "LEG12",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "GANN01",
+      "to": "GANN02",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL03",
+      "to": "BAL04",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL05",
+      "to": "BAL06",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL05",
+      "to": "BAL07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL06",
+      "to": "BAL07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL09",
+      "to": "BAL10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL05",
+      "to": "BAL12",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL06",
+      "to": "BAL12",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL07",
+      "to": "BAL12",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL01",
+      "to": "BAL16",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL12",
+      "to": "BAL16",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL14",
+      "to": "BAL16",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL15",
+      "to": "BAL16",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL16",
+      "to": "BAL17",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL17",
+      "to": "BAL18",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL06",
+      "to": "BAL19",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL07",
+      "to": "BAL19",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL13",
+      "to": "BAL19",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CGVO03",
+      "to": "CGVO07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CGVO11",
+      "to": "CGVO12",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CGVO14",
+      "to": "CGVO15",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SRC25",
+      "to": "CC05",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "SRC14",
+      "to": "CC07",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CC05",
+      "to": "CC10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CC06",
+      "to": "CC10",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH02",
+      "to": "TEST01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH05",
+      "to": "TEST01",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "CH07",
+      "to": "TEST02",
+      "relationship": "DEPENDS_ON_PREMISE_NOT_PROOF_OF_VALIDITY"
+    }
+  ],
+  "untracedEdgesRemain": true,
+  "theoryCodeUiTraces": [
+    {
+      "id": "TRACE01",
+      "premises": [
+        "CH01",
+        "CH04",
+        "CH08",
+        "EV01",
+        "EV02",
+        "EV14"
+      ],
+      "chain": [
+        "founder_chart_hypotheses_v1.json",
+        "chart_conditioned_event_compiler.py",
+        "component_input_bindings_v1.json",
+        "classical_source_operators.py"
+      ],
+      "boundary": "Software role binding does not supply missing currency-natal source authority."
+    },
+    {
+      "id": "TRACE02",
+      "premises": [
+        "LEG01",
+        "LEG02",
+        "LEG03",
+        "LEG04",
+        "LEG06",
+        "LEG08",
+        "LEG10",
+        "LEG11",
+        "LEG12"
+      ],
+      "chain": [
+        "build_trade_candidates_from_touches.score_transit_natal_hits",
+        "score_currency_pair_for_row",
+        "decision_engine",
+        "server.decision_packet",
+        "AnalyzeAspectWindow"
+      ],
+      "boundary": "Modern heuristic market bridge remains reachable; watch-only and execution false do not make it classical."
+    },
+    {
+      "id": "TRACE03",
+      "premises": [
+        "SBC01",
+        "SBC03",
+        "SBC04",
+        "SBC05",
+        "SBC08"
+      ],
+      "chain": [
+        "phaladeepika_editor_vedha_guidance_v1.yaml",
+        "sbc.vedha.evaluate",
+        "visualizationModes.ts"
+      ],
+      "boundary": "Editor source layers -> engineering score -> source-only-labelled mode; formula needs engineering distinction."
+    },
+    {
+      "id": "TRACE04",
+      "premises": [
+        "EV04",
+        "EV05",
+        "MO01",
+        "MO02",
+        "MO04",
+        "MO05"
+      ],
+      "chain": [
+        "aspect_strength_v0.yaml",
+        "chart_conditioned_event_compiler.py",
+        "multi_oscillator_activity_service.py",
+        "MultiOscillatorActivityScale.ts"
+      ],
+      "boundary": "Wave height is count display, not classical intensity."
+    },
+    {
+      "id": "TRACE05",
+      "premises": [
+        "SBC12",
+        "SBC13",
+        "SBC14"
+      ],
+      "chain": [
+        "immutable Agarwal evidence packets",
+        "agarwal_source_inspector.py",
+        "AgarwalSourceInspectorWorkspace.tsx"
+      ],
+      "boundary": "Current wording correctly separates geometry closure, strength records and missing Vedha."
+    }
+  ],
+  "predecessorLedgerHash": "9130C771F35EB67C82FA93BF35AACA8D34F56AD1C573BDA35D55B2D73C28A401",
+  "auditComplete": false,
+  "r1Edges": [
+    {
+      "from": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:12",
+      "to": "AST02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:24",
+      "to": "CH01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:30",
+      "to": "CH02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:63",
+      "to": "CH04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:69",
+      "to": "CH05",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json:9",
+      "to": "CH08",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "EV02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:75",
+      "to": "SRC04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:282",
+      "to": "SRC07",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:1140",
+      "to": "SRC27",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:312",
+      "to": "TMP13",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:75",
+      "to": "FLD09",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json:72",
+      "to": "FLD10",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/src/visualizationModes.ts:78",
+      "to": "SBC08",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:326",
+      "to": "LEG01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:330",
+      "to": "LEG02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:401",
+      "to": "LEG03",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:460",
+      "to": "LEG04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:386",
+      "to": "LEG05",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:397",
+      "to": "LEG06",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:344",
+      "to": "LEG07",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:466",
+      "to": "LEG08",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:508",
+      "to": "LEG09",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:decision_engine.py:608",
+      "to": "LEG10",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/backend/server.py:1394",
+      "to": "LEG11",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/src/views/AnalyzeAspectWindow.tsx:441",
+      "to": "LEG12",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:248",
+      "to": "LEG13",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:263",
+      "to": "LEG14",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:435",
+      "to": "LEG15",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:decision_engine.py:421",
+      "to": "LEG16",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:1026",
+      "to": "GANN05",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:660",
+      "to": "BAL01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1321",
+      "to": "BAL03",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1333",
+      "to": "BAL04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:99",
+      "to": "BAL05",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:17",
+      "to": "BAL06",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:13",
+      "to": "BAL07",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:179",
+      "to": "BAL08",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:200",
+      "to": "BAL09",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:211",
+      "to": "BAL10",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:200",
+      "to": "BAL11",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:284",
+      "to": "BAL12",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:301",
+      "to": "BAL13",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1221",
+      "to": "BAL14",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1310",
+      "to": "BAL15",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1498",
+      "to": "BAL16",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1509",
+      "to": "BAL17",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/src/components/AspectEvidenceTracePanel.tsx:77",
+      "to": "BAL18",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/backend/cgvo_service.py:900",
+      "to": "CGVO09",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/cgvo/cgvo_calendar_r1_lunar_month_profile_v1.json:36",
+      "to": "CGVO11",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:configs/research/cgvo/cgvo_g3_s1_readiness_matrix_v1.json:11",
+      "to": "CGVO15",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "R1EV01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "R1EV02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "R1EV03",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "R1EV04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "R1EV05",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:status/research/mo_r4a_candidate_c_p0_component_input_bindings_v1.json:15",
+      "to": "R1EV06",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:mt5_trade_executor.py:231",
+      "to": "R1EX01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/backend/server.py:134",
+      "to": "R1EX02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/src/views/AnalyzeAspectWindow.tsx:143",
+      "to": "R1EX03",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/backend/server.py:140",
+      "to": "R1EX04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:drik_bala_engine.py:174",
+      "to": "R1UN01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:486",
+      "to": "R1UN02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:997",
+      "to": "R1UN03",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1327",
+      "to": "R1UN04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1642",
+      "to": "R1UN05",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:586",
+      "to": "R1UN06",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:110",
+      "to": "R1BL01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:749",
+      "to": "R1BL02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:713",
+      "to": "R1BL03",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:strict_shadbala_doctrine.py:1148",
+      "to": "R1BL04",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_trade_candidates_from_touches.py:557",
+      "to": "R1LG01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:evaluate_transitsign_walk_forward.py:135",
+      "to": "R1ML01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:evaluate_transitsign_walk_forward.py:117",
+      "to": "R1ML02",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:build_btc_weekly_astro_chart.py:23",
+      "to": "R1CH01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "evidence:gann-astro-desk/backend/cgvo_service.py:161",
+      "to": "R1TM01",
+      "relation": "STATIC_EVIDENCE",
+      "scope": "Not classical certification"
+    },
+    {
+      "from": "R1EV01",
+      "to": "R1EV02",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "R1EV02",
+      "to": "R1EV04",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "R1EV04",
+      "to": "R1EV05",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG01",
+      "to": "LEG08",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG02",
+      "to": "LEG08",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG08",
+      "to": "LEG10",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG10",
+      "to": "LEG11",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG11",
+      "to": "LEG12",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL11",
+      "to": "BAL12",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "R1UN01",
+      "to": "BAL12",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL12",
+      "to": "BAL16",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "BAL16",
+      "to": "BAL18",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "R1UN02",
+      "to": "BAL16",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "R1UN03",
+      "to": "BAL16",
+      "relation": "DEPENDENCY_OR_CONTEXT_RISK_NOT_PROOF_OF_VALIDITY"
+    },
+    {
+      "from": "LEG12",
+      "to": "R1EX01",
+      "relation": "NO_AUTOMATIC_CALL_EDGE_FOUND",
+      "negativeEdge": true
+    }
+  ],
+  "predecessorDependencyGraphHash": "371E692C6E4A2F6A6E80D18642F2361CBD5EC84CA08EBFAE090035883C6B9F04",
+  "r2TypedPaths": [
+    {
+      "from": "AnalyzeAspectWindow.useEffect",
+      "to": "/api/decisions",
+      "type": "AUTO_REQUEST"
+    },
+    {
+      "from": "/api/decisions",
+      "to": "repository.live_decision_packet",
+      "type": "API"
+    },
+    {
+      "from": "repository.live_decision_packet",
+      "to": "ENGINE.live_inference_packet",
+      "type": "CALL"
+    },
+    {
+      "from": "ENGINE.live_inference_packet",
+      "to": "score_currency_pair_for_row",
+      "type": "GATED_CALL"
+    },
+    {
+      "from": "score_currency_pair_for_row",
+      "to": "WATCH_LONG_OR_SHORT",
+      "type": "EXPERIMENTAL_MAPPING"
+    },
+    {
+      "from": "WATCH_LONG_OR_SHORT",
+      "to": "AnalyzeAspectWindow",
+      "type": "DISPLAY"
+    },
+    {
+      "from": "mt5_trade_executor",
+      "to": "order_send",
+      "type": "SEPARATELY_MANUALLY_ARMED_NOT_DESKTOP_WATCH"
+    },
+    {
+      "from": "R2UN01",
+      "to": "R1BL02",
+      "type": "MISSINGNESS_DEFAULT_WITHIN_PAKSHA"
+    }
+  ],
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude the named self-hash field only.",
+  "dependencyGraphHash": "EF58E3F4BEC2089DA458228B26DD07481ED547A896A22FAF5AD1B0EE9D61A9DC"
+}

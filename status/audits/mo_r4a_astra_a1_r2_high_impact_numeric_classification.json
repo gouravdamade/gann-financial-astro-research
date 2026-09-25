@@ -1,0 +1,638 @@
+{
+  "auditTargetCommit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60",
+  "records": [
+    {
+      "assumptionId": "SBC03",
+      "rule": "A matched SBC target receives base unit times benefic/malefic sign times a selected modifier.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "sbc/vedha.py",
+          "line": 909,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "SBC04",
+      "rule": "SBC normalized score is scored net over absolute scored units, not a source numerical formula.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "sbc/vedha.py",
+          "line": 941,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG01",
+      "rule": "Legacy scoring maps natural bodies to numerical directional biases with unknown body default zero.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 326,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG02",
+      "rule": "Legacy scoring maps natal houses to numerical market-direction bias with invalid house default zero.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 330,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG03",
+      "rule": "Soft aspects add 0.25 and hard aspects subtract 0.25 in the legacy directional heuristic.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 401,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG04",
+      "rule": "Legacy bias weights natal body by 0.50 and transit body by 0.25; no source rule is supplied for these market weights.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 460,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG05",
+      "rule": "Legacy scoring averages natal and available transit dignity values.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 386,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG06",
+      "rule": "Legacy doctrine score multiplies by 0.5 plus average dignity divided by 60.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 397,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG07",
+      "rule": "Unknown dignity receives zero virupa before averaging; that is a default, not an unknown source measure.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 344,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG08",
+      "rule": "Legacy positive signed units become bullish and negative units bearish.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 466,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG09",
+      "rule": "Legacy directional resolution requires a 1.25 relative bullish/bearish dominance threshold.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 508,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG10",
+      "rule": "Live decision code requires raw and dignity-modified versions of related evidence to agree; this is not independent corroboration.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "decision_engine.py",
+          "line": 608,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG11",
+      "rule": "The native API accepts live_inference and calls live_decision_packet; legacy scoring is reachable, not safely presumed dead.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "gann-astro-desk/backend/server.py",
+          "line": 1412,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG12",
+      "rule": "Analyze Aspect renders WATCH actions and direction source from the live decision packet.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "gann-astro-desk/src/views/AnalyzeAspectWindow.tsx",
+          "line": 441,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG13",
+      "rule": "Malformed legacy hit JSON becomes an empty list.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 248,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG14",
+      "rule": "The legacy numeric_series helper fills missing/non-numeric entries with a default zero.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 263,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG15",
+      "rule": "If no matching aspect hits exist, the scorer falls back to all body hits.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 435,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "LEG16",
+      "rule": "Decision packets explicitly reject enabled execution; watch output is not order authorization.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "decision_engine.py",
+          "line": 421,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL01",
+      "rule": "Strict Shadbala returns 06:00/18:00 when coordinates or Swiss rise/set calculations are unavailable.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 660,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL02",
+      "rule": "Ayana-bala uses a fixed 23 degrees 27 minutes obliquity constant.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 175,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL03",
+      "rule": "Strict Shadbala computes direction strength from angular separation divided by three, bounded to 60 virupa.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1321,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": true,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL04",
+      "rule": "If a maximum-direction cusp is unavailable, Dig bala substitutes ascendant plus whole-sign offsets.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1333,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL05",
+      "rule": "Drik uses a piecewise angular production function rather than the categorical sign-place fractions.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 99,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL06",
+      "rule": "Special Drik bonuses use the named PyJHora 4.8.7 angular ranges and additive constants.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 17,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL07",
+      "rule": "Net Drik is divided by four under an explicit reconciliation rule.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 13,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL08",
+      "rule": "Drik nature treats Sun-Moon elongation <=180 as benefic and >180 as malefic.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 179,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL09",
+      "rule": "Drik nature uses same-sign benefic/malefic majority for Mercury.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 200,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL10",
+      "rule": "Equal same-sign association counts are resolved by nearest companion in the Drik helper.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 211,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL11",
+      "rule": "Without a Mercury sign, companions is empty and the nature helper labels Mercury benefic; missing position is not an observed alone-in-sign state.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 200,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL12",
+      "rule": "Missing aspector longitude creates unavailable zero contributions, but a known target can still receive available=True and a numeric total.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 284,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL13",
+      "rule": "Drik rounds input angle to two decimals before piecewise strength and bonus selection.",
+      "classification": "SOFTWARE_CONVENIENCE_DEFAULT",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "drik_bala_engine.py",
+          "line": 301,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL14",
+      "rule": "Chesta for nonluminaries uses a provisional Swiss osculating mean/true/seegrocha model rather than the separate speed diagnostic.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "SOURCE_PARTIAL",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1221,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL15",
+      "rule": "Sun/Moon Chesta values are displayed via Ayana/Paksha aliases but contribute zero separately to the strict total.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1310,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL16",
+      "rule": "The strict implemented total becomes NaN if any listed component is nonfinite.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1498,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL17",
+      "rule": "Implemented Shadbala total is divided by the configured minimum for its planet.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1509,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL18",
+      "rule": "The trace panel labels values Planet strength and Drik pressure while separately showing provisional certification.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "gann-astro-desk/src/components/AspectEvidenceTracePanel.tsx",
+          "line": 77,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "BAL19",
+      "rule": "The Drik tests assert specific PyJHora-aligned ranges, bonuses and rounded totals; they do not certify textual authority.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "test_drik_bala_engine.py",
+          "line": 12,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "R1BL01",
+      "rule": "Source-named weights 45/30/20/15/10/4/2 and PyJHora comparator 45/30/22.5/15/7.5/3.75/1.875 are distinct; names alone do not certify numerical provenance.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "DERIVATION_NOT_FRESHLY_VERIFIED",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 110,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "R1BL02",
+      "rule": "Strict Paksha uses Moon phase 90..270 as benefic whereas Drik uses <=180; neither can silently substitute for Trailokya tithi conditions.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "DERIVATION_NOT_FRESHLY_VERIFIED",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 749,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "R1BL03",
+      "rule": "Nathonnatha local-mean-time, sunrise thirds, equal clock-hour Hora and anchored Ahargana are distinct constructions; every historical numerical derivation is not yet independently page-closed.",
+      "classification": "COMMENTARY_OR_LATER_INTERPRETATION",
+      "sourceStatus": "DERIVATION_NOT_FRESHLY_VERIFIED",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 713,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "R1BL04",
+      "rule": "Speed-ratio Chesta diagnostic bins are separate from the provisional osculating mean/true/seegrocha total input and Trailokya coarse motion classes.",
+      "classification": "ENGINEERING_MAPPING",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "strict_shadbala_doctrine.py",
+          "line": 1148,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    },
+    {
+      "assumptionId": "R1LG01",
+      "rule": "Legacy pair direction uses abs(net)<=0.05 and conflict ratio>=0.45 as conflict thresholds, separate from within-side dominance1.25.",
+      "classification": "EXPERIMENTAL_RESEARCH_HYPOTHESIS",
+      "sourceStatus": "NOT_APPLICABLE",
+      "codeLocations": [
+        {
+          "path": "build_trade_candidates_from_touches.py",
+          "line": 557,
+          "commit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60"
+        }
+      ],
+      "freshPageInspection": false,
+      "boundary": "Classification is not a source or numerical certification. Named BPHS/PyJHora lineage alone is insufficient."
+    }
+  ],
+  "unclosedDerivationDisposition": "Explicitly classified later/commentary, software, engineering, or experimental; no fallback to CLASSICAL_SOURCE_EXPLICIT. Exact full Shadbala derivations remain D08.",
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude the named self-hash field only.",
+  "numericClassificationHash": "159CE8B587E027C928330338FA700F6B79F28BF1C6CE98EB5924D7F7F0DB5892"
+}

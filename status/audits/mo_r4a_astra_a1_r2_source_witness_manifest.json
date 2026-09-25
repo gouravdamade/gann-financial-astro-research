@@ -1,0 +1,173 @@
+{
+  "auditTargetCommit": "865e99e372bdea9cf53c0b4f61426b241b1d6e60",
+  "exactWitnessRecovery": "BOTH_FOUND_HASH_MATCH",
+  "witnesses": [
+    {
+      "witnessId": "SARAVALI_RANJAN_SANTHANAM_1983_HELD_PARTIAL",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "identity": "Kalyana Varma; Saravali Vol I; R. Santhanam; Ranjan Publications New Delhi; First Edition1983",
+      "identityPages": [
+        5,
+        6
+      ],
+      "freshDigitalPages": [
+        5,
+        6,
+        59,
+        60,
+        61,
+        62
+      ],
+      "freshPrintedContentPages": [
+        55,
+        56,
+        57,
+        58
+      ],
+      "layers": [
+        "ROOT",
+        "ENGLISH_TRANSLATION",
+        "SANTHANAM_NOTES"
+      ],
+      "finding": "Exact controlling bytes recovered. Root/translation fractions conflict; notes describe numerical Dig interpolation. No edition substitution.",
+      "bytes": 17278726
+    },
+    {
+      "witnessId": "BRIHAT_JATAKA_BHATTOTPALA_EXACT_HELD",
+      "path": "D:\\dektop-pdf\\Varahmira-brihtasamhita\\brihat jataka (varahamihira)_text.pdf",
+      "sha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+      "identity": "Brihajjataka of Varahamihira with Bhattotpala Sanskrit commentary; edited Pandit Sri Sita Rama Jha; Sri Hari Krishna Nibandha Bhavana Benares City; title prints1934",
+      "identityPages": [
+        1
+      ],
+      "freshDigitalPages": [
+        1,
+        43,
+        44,
+        50
+      ],
+      "freshPrintedContentPages": [
+        31,
+        32,
+        38
+      ],
+      "layers": [
+        "ROOT",
+        "BHATTOTPALA_COMMENTARY",
+        "EDITORIAL_NOTES"
+      ],
+      "finding": "II.13 on scan43/printed31 continues commentary on scan44/printed32. II.19 and preceding II.18 commentary on scan50/printed38. Root II.18 earlier page NOT freshly inspected. Fresh title-year observation does not rewrite repository provenance.",
+      "bytes": 21334181
+    }
+  ],
+  "pageImages": [
+    {
+      "witness": "SARAVALI",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "digitalPage": 5,
+      "renderFile": "SARAVALI_5.png",
+      "renderHash": "B3D74FCAB59425618606F690359413D32ED40437D4BA3D7B37A1DC9A0A9EB041",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "SARAVALI",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "digitalPage": 6,
+      "renderFile": "SARAVALI_6.png",
+      "renderHash": "7E5F9C73D2D0965EEBD780F5160F92D94A0033D401514A82E34BCF49C497C5D9",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "SARAVALI",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "digitalPage": 59,
+      "renderFile": "SARAVALI_59.png",
+      "renderHash": "62AC3A04BCDF3E8E3D67FFF5E56923CDFEE5073181C8DD143AD1FFBF66ED1439",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "SARAVALI",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "digitalPage": 60,
+      "renderFile": "SARAVALI_60.png",
+      "renderHash": "F893F112C043D57D45ABE4059606788EFD9BAC0FE376C7E94C4DC11466394590",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "SARAVALI",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "digitalPage": 61,
+      "renderFile": "SARAVALI_61.png",
+      "renderHash": "5962D7635BA4752B796209582484EDB6C2418DF75DC08E87F8D0D7E7553E5046",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "SARAVALI",
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "digitalPage": 62,
+      "renderFile": "SARAVALI_62.png",
+      "renderHash": "46DE7AEC3C8DF61EF585921533DE3BB924F2EFF90937C36BE47568AFE8EDC5CA",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "BRIHAT_JATAKA",
+      "path": "D:\\dektop-pdf\\Varahmira-brihtasamhita\\brihat jataka (varahamihira)_text.pdf",
+      "sha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+      "digitalPage": 1,
+      "renderFile": "BRIHAT_JATAKA_1.png",
+      "renderHash": "B0C6F92E06E73D82CB1A9BC4A1087EDD966F865214D5724A70F0C3BA70851E64",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "BRIHAT_JATAKA",
+      "path": "D:\\dektop-pdf\\Varahmira-brihtasamhita\\brihat jataka (varahamihira)_text.pdf",
+      "sha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+      "digitalPage": 43,
+      "renderFile": "BRIHAT_JATAKA_43.png",
+      "renderHash": "B9EF1FA72AD70A0DF4B8FC3C051CBD674077A3D98E8BB85B2463ACC0F6EAB907",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "BRIHAT_JATAKA",
+      "path": "D:\\dektop-pdf\\Varahmira-brihtasamhita\\brihat jataka (varahamihira)_text.pdf",
+      "sha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+      "digitalPage": 44,
+      "renderFile": "BRIHAT_JATAKA_44.png",
+      "renderHash": "F7EC22846AED78AF99499471656190D2A343B82D71C3DAB0A40A2C75498A5E5B",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    },
+    {
+      "witness": "BRIHAT_JATAKA",
+      "path": "D:\\dektop-pdf\\Varahmira-brihtasamhita\\brihat jataka (varahamihira)_text.pdf",
+      "sha256": "D1D2DD8FA2F6DB2BE1D4DFEE559E6929945AEA57EB24BCF8A4951AD0153FBE4A",
+      "digitalPage": 50,
+      "renderFile": "BRIHAT_JATAKA_50.png",
+      "renderHash": "F37A230CDFA638241B0EF1E6875531A85179D91ACCD2D876E1C8690F6C8F43E2",
+      "inspectionStatus": "VISUALLY_INSPECTED_R2",
+      "notOcrCertified": true
+    }
+  ],
+  "inheritedWitnesses": {
+    "manifestHash": "ADCC8FB561D067507F89E85F83F9EC57347282EF534A6D164673159D69005E76",
+    "scope": "R1 Trailokya1972 and Brihat Samhita1946 image readings retained as prior inspection; not recounted as fresh R2 pages."
+  },
+  "sourcePromotionAuthorized": false,
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude the named self-hash field only.",
+  "sourceWitnessManifestHash": "F0AD81156ED083F33F0F8E98B914AA87A4CCB23DF354F34483A79B971839F2B4"
+}

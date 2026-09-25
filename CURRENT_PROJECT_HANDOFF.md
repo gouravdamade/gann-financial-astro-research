@@ -13259,3 +13259,24 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `docs/research/MULTI_OSCILLATOR_MO_R4A_CANDIDATE_C_EMP2_R2_FINAL_SCIENTIFIC_CLOSE.md`.
 - Next gate:
   `CENTRAL_REVIEW_CANDIDATE_C_EMP2_R2_FINAL_SCIENTIFIC_CLOSE`.
+
+## MO-R4A Astra A1-R2 Final Hidden-Premise Audit Freeze
+
+- Astra A1-R2 is complete and centrally accepted for its bounded audit scope:
+  237 propositions classified, 12 unresolved doctrine groups, and 0
+  unfinished audit-coverage items within that scope. Audit completion does not
+  mean doctrine is resolved or establish a theory verdict.
+- No A1-R3 is planned. The next phase is bounded containment/remediation; it
+  has not begun. This freeze makes no code, runtime, product, or source-doctrine
+  changes.
+- The audit preserves the EV02 authorization gap, reachable legacy directional
+  WATCH output with predictive validity unestablished, substantive/partial
+  missingness, the CGVO time-alias mislabel, the source-witness and Saravali
+  conflict findings, and the separate manual MT5 CLI boundary.
+- Frozen evidence is in
+  `docs/research/MO_R4A_ASTRA_A1_R2_FINAL_BOUNDED_COVERAGE_CLOSURE.md` and
+  `status/audits/mo_r4a_astra_a1_r2_final_audit_freeze.json`, with the complete
+  ledger, summary, manifests, dependency graph, test mapping, supplementary
+  records, and validation record alongside it.
+- Next gate:
+  `CENTRAL_REVIEW_MO_R4A_ASTRA_A1_R2_FINAL_AUDIT_FREEZE`.
