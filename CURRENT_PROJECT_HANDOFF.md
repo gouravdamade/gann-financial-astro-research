@@ -13300,3 +13300,26 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   MT5 path was accessed. `executionAllowed=false` remains locked.
 - Next gate:
   `CENTRAL_REVIEW_MO_R4A_CONT_1_P1_BOUNDED_CONTAINMENT`.
+
+## MO-R4A CONT-1 Final Containment Closure
+
+- Central disposition: `MO-R4A-CONT-1-P1=SUPERSEDED_BY_P1_R1`,
+  `MO-R4A-CONT-1-P1-R1=CENTRAL_PASS`, and
+  `MO-R4A-CONT-1=CONTAINMENT_COMPLETE`.
+- The accepted implementation chain is
+  `74a018a482d1ef95236ec036dd0719cee589ab35` ->
+  `978ef30215437c89ef7d1c64bcd53b6493e05bf3` ->
+  `d03942cac01a304086f1edef56c6596c0ab07867`.
+- The final containment record preserves the six doctrine factual fields,
+  fail-closed `PARTIAL`/`ABSTAIN` behavior for missing signs, valid finite-zero
+  evidence, and the fully resolved regression scores. It records
+  `executionAllowed=false`, `emp3Authorized=false`, and the inherited frozen
+  Evaluator B hash limitation without repairing it.
+- Hidden-premise audit and CONT-1 containment are closed. No further
+  containment iteration is planned. The next phase is
+  `FOUNDER_VISIBLE_PRODUCT_AND_RESEARCH_WORK`; no provider, market, empirical,
+  or MT5 path was accessed.
+- Closure record:
+  `status/research/mo_r4a_cont_1_final_close.json`.
+- Next gate:
+  `CENTRAL_REVIEW_MO_R4A_CONT_1_FINAL_CLOSE`.

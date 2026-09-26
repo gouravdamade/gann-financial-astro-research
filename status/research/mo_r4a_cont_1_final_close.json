@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "MO_R4A_CONT_1_FINAL_CLOSE_V1",
+  "closureId": "MO-R4A-CONT-1-F1",
+  "closureStatus": "CONTAINMENT_COMPLETE",
+  "startingBranch": "research/mo-r4a-cont-1-p1-r1-fx-doctrine-completeness",
+  "startingCommit": "d03942cac01a304086f1edef56c6596c0ab07867",
+  "closureBranch": "research/mo-r4a-cont-1-final-close",
+  "centralDisposition": {
+    "MO-R4A-CONT-1-P1": "SUPERSEDED_BY_P1_R1",
+    "MO-R4A-CONT-1-P1-R1": "CENTRAL_PASS",
+    "MO-R4A-CONT-1": "CONTAINMENT_COMPLETE"
+  },
+  "acceptedImplementationChain": [
+    "74a018a482d1ef95236ec036dd0719cee589ab35",
+    "978ef30215437c89ef7d1c64bcd53b6493e05bf3",
+    "d03942cac01a304086f1edef56c6596c0ab07867"
+  ],
+  "finalInvariants": {
+    "automaticDirectionalDiagnostic": false,
+    "explicitExperimentalDiagnostic": true,
+    "forecastValidated": false,
+    "executionAllowed": false,
+    "automaticOrderPlacement": false,
+    "pairRequiresResolvedBaseAndQuote": true,
+    "acceptedPairEvidenceStates": ["KNOWN", "MIXED"],
+    "ineligiblePairEvidenceStates": ["PARTIAL", "UNKNOWN", "BLOCKED_MAPPING"],
+    "missingNatalSignFailsClosed": true,
+    "missingTransitSignFailsClosed": true,
+    "validFiniteZeroIsNotMissing": true,
+    "missingMercuryDoesNotBecomeBenefic": true,
+    "missingMoonPhaseDoesNotBecomeBenefic": true,
+    "fieldsMissingDignityDoesNotBecomeOrdinary": true,
+    "cgvoSwissUtIdentityPreserved": true,
+    "cgvoUtcDisplaySeparated": true,
+    "candidateCChanged": false,
+    "emp3Authorized": false
+  },
+  "r1Correction": {
+    "doctrineRequiredFields": [
+      "transit_planet",
+      "natal_planet",
+      "aspect",
+      "natal_house",
+      "natal_sign",
+      "transit_sign"
+    ],
+    "missingDoctrineFactualField": {
+      "sideState": "PARTIAL",
+      "pairDirectionEligible": false,
+      "liveDiagnosticAction": "ABSTAIN"
+    },
+    "fullyResolvedRegressionFixture": {
+      "rawUsd": 1.65,
+      "rawJpy": -1.075,
+      "rawPair": 2.725,
+      "rawDirection": "BULLISH",
+      "doctrineUsd": 2.0625,
+      "doctrineJpy": -0.940625,
+      "doctrinePair": 3.003125,
+      "doctrineDirection": "BULLISH",
+      "isRegressionPreservationEvidenceOnly": true,
+      "isForecastValidation": false
+    }
+  },
+  "cgvo": {
+    "representativeCausalEventId": "CGVO-SOLAR-B1265AFAF8178B2C2480",
+    "historicalIdsRecalculated": false
+  },
+  "knownRegressionLimitation": {
+    "status": "INHERITED_NOT_REPAIRED",
+    "frozenEvaluatorBExpectedHash": "4C7D0C4C1A366287A05DD70E9638A27585516240B24C3AEEBFA91889F22E86E8",
+    "repositoryBytesHash": "979B194E5045B104E3DB3CC203B46AC62C65BE541DB993C3F7CA0C2B2303BE3F"
+  },
+  "integrity": {
+    "implementationCommit": "d03942cac01a304086f1edef56c6596c0ab07867",
+    "implementationParent": "978ef30215437c89ef7d1c64bcd53b6493e05bf3",
+    "a1r2ArtifactsChanged": false,
+    "candidateCArtifactsChanged": false,
+    "sourceChanges": false,
+    "runtimeChanges": false,
+    "marketDataAccessed": false,
+    "providerAccessed": false,
+    "empiricalExecutionPerformed": false,
+    "mt5Invoked": false
+  },
+  "nextPhase": {
+    "hiddenPremiseAudit": "CLOSED",
+    "containment": "CLOSED",
+    "furtherContainmentIterationPlanned": false,
+    "phase": "FOUNDER_VISIBLE_PRODUCT_AND_RESEARCH_WORK",
+    "emp3Authorized": false
+  },
+  "nextGate": "CENTRAL_REVIEW_MO_R4A_CONT_1_FINAL_CLOSE",
+  "hashConvention": "SHA-256 uppercase hex of UTF-8 canonical JSON: ensure_ascii=true, sort_keys=true, separators=(',',':'); exclude closureRecordHash.",
+  "closureRecordHash": "D7DB65D9ABF8E001BDC79CC3E7F40DD6446DF47285FBF5DFE0DCF6B69EB5998A"
+}
