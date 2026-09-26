@@ -148,63 +148,69 @@ export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, range
   return <section className={`categorical-step-pane${suppressed ? ' is-suppressed' : ''}`} aria-label={`${label} categorical stepped field`}>
     <header>
       <strong>{label}</strong>
-      <span>{note} | {knownCount}/{blocks.length} known</span>
+      <span>{suppressed ? 'DIRECTIONAL FIELD WITHHELD BY CURRENT MODE' : `${note} | ${knownCount}/${blocks.length} known`}</span>
     </header>
-    {suppressed && <p className="categorical-step-suppressed">{suppressionMessage}</p>}
-    <svg viewBox="0 0 1000 100" preserveAspectRatio="none" role="img" aria-label={`${field} categorical state over the shared range`}>
-      <defs>
-        <pattern id={gapPatternId} width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <rect width="12" height="12" fill="#26313a" />
-          <line x1="0" x2="0" y1="0" y2="12" stroke="#64717a" strokeWidth="3" opacity=".5" />
-        </pattern>
-      </defs>
-      <line className="categorical-step-axis" x1="0" x2="1000" y1="50" y2="50" />
-      <line className="categorical-step-guide" x1="0" x2="1000" y1="18" y2="18" />
-      <line className="categorical-step-guide" x1="0" x2="1000" y1="82" y2="82" />
-      {unknown.map((block) => <rect
-        key={block.id}
-        fill={`url(#${gapPatternId})`}
-        x={xFor(block.startUtc, start, end)}
-        width={Math.max(1, xFor(block.endUtc, start, end) - xFor(block.startUtc, start, end))}
-        y="0"
-        height="100"
-        className={`categorical-step-gap${selectedInterval?.field === field && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
-        role="button"
-        aria-label={`Select ${field} interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
-        tabIndex={0}
-        onClick={() => onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault()
-            onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })
-          }
-        }}
-      ><title>{`UNKNOWN: ${block.detail}`}</title></rect>)}
-      {blocks.filter((block) => valueForBlock(block) != null).map((block) => <rect
-        key={`${block.id}-selection`}
-        className={`categorical-step-hitbox${selectedInterval?.field === field && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
-        x={xFor(block.startUtc, start, end)}
-        width={Math.max(1, xFor(block.endUtc, start, end) - xFor(block.startUtc, start, end))}
-        y="0"
-        height="100"
-        role="button"
-        aria-label={`Select ${field} interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
-        tabIndex={0}
-        onClick={() => onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault()
-            onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })
-          }
-        }}
-      ><title>{`${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}. ${block.detail}`}</title></rect>)}
-      {!suppressed && supportive && <path className="categorical-step-supportive-component" d={supportive} />}
-      {!suppressed && adverse && <path className="categorical-step-adverse-component" d={adverse} />}
-      {!suppressed && balance && <path className="categorical-step-balance" d={balance} />}
-      {crosshairX != null && <line className="categorical-step-crosshair" x1={crosshairX} x2={crosshairX} y1="0" y2="100" />}
-    </svg>
-    <div className="categorical-step-legend"><span className="supportive">Supportive</span><span className="neutral">Neutral</span><span className="adverse">Adverse</span><span className="gap">Unknown gap</span></div>
-    {unknownReasons.length > 0 && <p className="categorical-step-gap-reason">Unknown evidence: {unknownReasons.join(' | ')}</p>}
+    {suppressed ? <>
+      <p className="categorical-step-suppressed">{suppressionMessage}</p>
+      <div className="categorical-step-withheld-surface" aria-hidden="true">
+        {crosshairX != null && <span className="categorical-step-withheld-crosshair" style={{ left: `${crosshairX / 10}%` }} />}
+      </div>
+    </> : <>
+      <svg viewBox="0 0 1000 100" preserveAspectRatio="none" role="img" aria-label={`${field} categorical state over the shared range`}>
+        <defs>
+          <pattern id={gapPatternId} width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="12" height="12" fill="#26313a" />
+            <line x1="0" x2="0" y1="0" y2="12" stroke="#64717a" strokeWidth="3" opacity=".5" />
+          </pattern>
+        </defs>
+        <line className="categorical-step-axis" x1="0" x2="1000" y1="50" y2="50" />
+        <line className="categorical-step-guide" x1="0" x2="1000" y1="18" y2="18" />
+        <line className="categorical-step-guide" x1="0" x2="1000" y1="82" y2="82" />
+        {unknown.map((block) => <rect
+          key={block.id}
+          fill={`url(#${gapPatternId})`}
+          x={xFor(block.startUtc, start, end)}
+          width={Math.max(1, xFor(block.endUtc, start, end) - xFor(block.startUtc, start, end))}
+          y="0"
+          height="100"
+          className={`categorical-step-gap${selectedInterval?.field === field && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
+          role="button"
+          aria-label={`Select ${field} interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
+          tabIndex={0}
+          onClick={() => onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })
+            }
+          }}
+        ><title>{`UNKNOWN: ${block.detail}`}</title></rect>)}
+        {blocks.filter((block) => valueForBlock(block) != null).map((block) => <rect
+          key={`${block.id}-selection`}
+          className={`categorical-step-hitbox${selectedInterval?.field === field && selectedInterval.intervalId === block.id ? ' is-selected' : ''}`}
+          x={xFor(block.startUtc, start, end)}
+          width={Math.max(1, xFor(block.endUtc, start, end) - xFor(block.startUtc, start, end))}
+          y="0"
+          height="100"
+          role="button"
+          aria-label={`Select ${field} interval ${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}`}
+          tabIndex={0}
+          onClick={() => onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              onSelectInterval?.({ field, intervalId: block.id, startUtc: block.startUtc, endUtc: block.endUtc })
+            }
+          }}
+        ><title>{`${block.state}: ${compactUtc(block.startUtc)} to ${compactUtc(block.endUtc)}. ${block.detail}`}</title></rect>)}
+        {supportive && <path className="categorical-step-supportive-component" d={supportive} />}
+        {adverse && <path className="categorical-step-adverse-component" d={adverse} />}
+        {balance && <path className="categorical-step-balance" d={balance} />}
+        {crosshairX != null && <line className="categorical-step-crosshair" x1={crosshairX} x2={crosshairX} y1="0" y2="100" />}
+      </svg>
+      <div className="categorical-step-legend"><span className="supportive">Supportive</span><span className="neutral">Neutral</span><span className="adverse">Adverse</span><span className="gap">Unknown gap</span></div>
+      {unknownReasons.length > 0 && <p className="categorical-step-gap-reason">Unknown evidence: {unknownReasons.join(' | ')}</p>}
+    </>}
   </section>
 }
 

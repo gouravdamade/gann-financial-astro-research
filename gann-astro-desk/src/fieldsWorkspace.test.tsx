@@ -90,6 +90,20 @@ const synchronizedRange = {
   guardrails: { readOnly: true, executionAllowed: false, automaticOrderPlacement: false, financiallyValidated: false, fieldsFused: false, actsAsSbcConfirmation: false, marketDirectionInferred: false },
 } as unknown as SynchronizedIndependentRange
 
+const allDirectionalStatesRange = {
+  ...synchronizedRange,
+  aspectFields: {
+    ...synchronizedRange.aspectFields,
+    USD: {
+      ...synchronizedRange.aspectFields.USD,
+      intervals: [
+        ...synchronizedRange.aspectFields.USD.intervals,
+        { intervalId: 'usd-adverse', startUtc, endUtc, polarityState: 'ADVERSE', supportiveActive: false, adverseActive: true, activeEventIds: ['usd-event-3'], unknownEventIds: [], reason: 'Adverse fixture state.' },
+      ],
+    },
+  },
+} as unknown as SynchronizedIndependentRange
+
 const geometryOnlyRange = {
   ...synchronizedRange,
   sbcField: {
@@ -181,6 +195,20 @@ function renderFields(
       {...overrides}
     />),
   }
+}
+
+function expectDirectionalPresentationWithheld() {
+  const statePattern = /\b(SUPPORTIVE|ADVERSE|NEUTRAL|MIXED)\b/i
+  expect(screen.queryByText(/^Supportive$/i)).not.toBeInTheDocument()
+  expect(screen.queryByText(/^Adverse$/i)).not.toBeInTheDocument()
+  expect(screen.queryByText(/^Neutral$/i)).not.toBeInTheDocument()
+  expect(screen.queryByText(/^Mixed$/i)).not.toBeInTheDocument()
+  expect(document.querySelectorAll('.categorical-step-balance, .categorical-step-supportive-component, .categorical-step-adverse-component, .categorical-step-hitbox, .categorical-step-gap')).toHaveLength(0)
+  const labelledDirectionalNodes = [...document.querySelectorAll<HTMLElement>('[aria-label], [title]')]
+    .filter((node) => statePattern.test(`${node.getAttribute('aria-label') ?? ''} ${node.getAttribute('title') ?? ''}`))
+  expect(labelledDirectionalNodes).toHaveLength(0)
+  const directionalButtons = screen.getAllByRole('button').filter((button) => statePattern.test(`${button.getAttribute('aria-label') ?? ''} ${button.textContent ?? ''}`))
+  expect(directionalButtons).toHaveLength(0)
 }
 
 function ProfileSwitchHarness() {
@@ -433,14 +461,14 @@ describe('FieldsWorkspace', () => {
   })
 
   it('suppresses directional paths rather than producing a visual-only wave', async () => {
-    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(allDirectionalStatesRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
 
     renderFields({ visualizationMode: 'VISUAL_ONLY_NO_SCORE' })
 
     await screen.findByText('USD categorical field')
     expect(screen.getAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(3)
-    expect(document.querySelectorAll('.categorical-step-balance')).toHaveLength(0)
+    expectDirectionalPresentationWithheld()
     expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
     expect(screen.queryByText(/signed pair resultant/i)).not.toBeInTheDocument()
   })
@@ -453,7 +481,8 @@ describe('FieldsWorkspace', () => {
 
     await screen.findByText('USD categorical field')
     expect(screen.getAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(3)
-    expect(document.querySelectorAll('.categorical-step-balance')).toHaveLength(0)
+    expectDirectionalPresentationWithheld()
+    expect(screen.getByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
     expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
   })
 
@@ -477,6 +506,27 @@ describe('FieldsWorkspace', () => {
     expect(document.querySelectorAll('.mo-event-span')).toHaveLength(eventCount)
   })
 
+  it('does not refetch range, activity, or BPHS data when presentation mode changes', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    apiMocks.fetchBphsClassicalCalendarRange.mockResolvedValue(bphsCalendarRange)
+    window.sessionStorage.setItem('gann-astro.fields.bphs-calendar.enabled.v1', 'true')
+    const user = userEvent.setup()
+
+    render(<ModeSwitchHarness />)
+    await screen.findByLabelText('BPHS Classical Calendar')
+    const rangeCalls = apiMocks.fetchSynchronizedIndependentRange.mock.calls.length
+    const activityCalls = apiMocks.fetchMultiOscillatorActivityRange.mock.calls.length
+    const bphsCalls = apiMocks.fetchBphsClassicalCalendarRange.mock.calls.length
+
+    await user.click(screen.getByRole('tab', { name: 'Mode 2' }))
+    await user.click(screen.getByRole('tab', { name: 'Mode 3' }))
+
+    expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(rangeCalls)
+    expect(apiMocks.fetchMultiOscillatorActivityRange).toHaveBeenCalledTimes(activityCalls)
+    expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalledTimes(bphsCalls)
+  })
+
   it('keeps the unified inspector empty until an explicit item is selected', async () => {
     apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
@@ -498,8 +548,30 @@ describe('FieldsWorkspace', () => {
     await user.click(screen.getByRole('button', { name: /Select PAIR interval SUPPORTIVE/i }))
     expect(screen.getByText('Selected: PAIR INTERVAL')).toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: 'Mode 3' }))
-    expect(screen.getByText(/WITHHELD BY CURRENT MODE/)).toBeInTheDocument()
+    expect(screen.getByText('PAIR_INTERVAL | WITHHELD BY CURRENT MODE')).toBeInTheDocument()
+    expectDirectionalPresentationWithheld()
     expect(screen.queryByText('Pair display')).not.toBeInTheDocument()
+    expect(screen.queryByText('Pair raw')).not.toBeInTheDocument()
+    expect(screen.queryByText('USD balance')).not.toBeInTheDocument()
+    expect(screen.queryByText('JPY balance')).not.toBeInTheDocument()
+  })
+
+  it('retains a selected USD field identity while withholding its directional state', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    render(<ModeSwitchHarness />)
+    await screen.findByText('USD categorical field')
+    await user.click(screen.getByRole('button', { name: /Select USD interval SUPPORTIVE/i }))
+    expect(screen.getByText('Selected: FIELD INTERVAL')).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Mode 3' }))
+
+    expect(screen.getByText('FIELD_INTERVAL | USD | WITHHELD BY CURRENT MODE')).toBeInTheDocument()
+    expectDirectionalPresentationWithheld()
+    expect(screen.queryByText('State')).not.toBeInTheDocument()
+    expect(screen.queryByText('Supportive active')).not.toBeInTheDocument()
+    expect(screen.queryByText('Adverse active')).not.toBeInTheDocument()
   })
 
   it('lifts explicit BPHS selection into the unified inspector without changing field data', async () => {
@@ -536,7 +608,21 @@ describe('FieldsWorkspace', () => {
 
     await screen.findByText('USD categorical field')
     expect(screen.getAllByText('DIRECTIONAL FIELDS WITHHELD BY RESOLVED SOURCE POLICY')).toHaveLength(3)
-    expect(document.querySelectorAll('.categorical-step-balance')).toHaveLength(0)
+    expectDirectionalPresentationWithheld()
+  })
+
+  it('preserves directional labels and hitboxes in Mode 1', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields()
+
+    await screen.findByText('USD categorical field')
+    expect(screen.getAllByText('Supportive')).toHaveLength(3)
+    expect(screen.getAllByText('Neutral')).toHaveLength(3)
+    expect(screen.getByRole('button', { name: /Select USD interval SUPPORTIVE/i })).toBeInTheDocument()
+    expect(document.querySelectorAll('.categorical-step-hitbox')).not.toHaveLength(0)
+    expect(document.querySelectorAll('.categorical-step-balance')).not.toHaveLength(0)
   })
 
   it('keeps the founder workstation in the accepted reading order and exposes its context controls', async () => {
@@ -550,11 +636,13 @@ describe('FieldsWorkspace', () => {
     await screen.findByText('BPHS Classical Calendar')
 
     const price = screen.getByLabelText('Synchronized price chart')
+    const summary = screen.getByLabelText('Shared time and research selection summary')
     const fields = screen.getByLabelText('Synchronized independent fields')
     const activity = screen.getByLabelText('Unsigned multi-oscillator activity')
     const bphs = screen.getByLabelText('BPHS Classical Calendar')
     const inspector = screen.getByLabelText('Unified Fields research inspector')
-    expect(price.compareDocumentPosition(fields) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(price.compareDocumentPosition(summary) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(summary.compareDocumentPosition(fields) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(fields.compareDocumentPosition(activity) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(activity.compareDocumentPosition(bphs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(bphs.compareDocumentPosition(inspector) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()

@@ -5,7 +5,7 @@
   "startingCommit": "4c2a6a769670024dcbc72e405169ca2cca798a64",
   "implementationBranch": "research/pfr-v2b-r5-f3-p1-founder-visible-fields-waves",
   "implementationCommitRecordedInGit": true,
-  "centralDisposition": "FRONTEND_BOUNDED_IMPLEMENTATION_COMPLETE_PENDING_CENTRAL_REVIEW",
+  "centralDisposition": "PFR-V2B-R5-F3-P1=SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW",
   "product": {
     "surface": "FIELDS_RESEARCH_WORKSTATION",
     "inspector": "READ_ONLY_UNIFIED_RESEARCH_INSPECTOR",
@@ -47,6 +47,29 @@
     "hiddenSelectionLabel": "WITHHELD BY CURRENT MODE",
     "unknownPrecedesNeutral": true,
     "mixedDistinctFromNeutral": true
+  },
+  "successorCorrection": {
+    "milestone": "PFR-V2B-R5-F3-P1-R1",
+    "startingCommit": "6db704d10f5e6d4fd51b74bc57394574c0942b04",
+    "implementationBranch": "research/pfr-v2b-r5-f3-p1-r1-withheld-direction-presentation",
+    "policyWithholdingIncludesAccessibleDom": true,
+    "suppressedDirectionalHitboxesRendered": false,
+    "suppressedDirectionalStateInSummary": false,
+    "mode1DirectionalInspectionPreserved": true,
+    "centralReviewStatus": "PENDING_CENTRAL_REVIEW",
+    "verification": {
+      "focusedFrontend": "33/33 passed",
+      "fullFrontend": "44 files, 213 passed",
+      "typescript": "passed",
+      "lint": "passed",
+      "productionBuild": "passed",
+      "gitDiffCheck": "passed",
+      "visualReview": "Mode 1/2/3 bounded local browser check passed; exact 1280x800 viewport not available",
+      "backendChanged": false,
+      "backendRegression": "not run by directive",
+      "rust": "not touched",
+      "windowsCandidateBuilt": false
+    }
   },
   "sourceAndExecutionLocks": {
     "candidateCAccessed": false,

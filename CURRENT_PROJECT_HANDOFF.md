@@ -13354,3 +13354,28 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
    `status/research/pfr_v2b_r5_f3_p1_founder_visible_fields_waves.json`.
  - Next gate:
    `CENTRAL_REVIEW_PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES`.
+
+## PFR-V2B-R5-F3-P1-R1 Withheld-Direction Presentation Correction
+
+- The prior P1 state is superseded as
+  `PFR-V2B-R5-F3-P1=SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW`.
+- The successor branch
+  `research/pfr-v2b-r5-f3-p1-r1-withheld-direction-presentation` starts at
+  `6db704d10f5e6d4fd51b74bc57394574c0942b04` and closes the narrow frontend
+  presentation leak. When `scoringVisible=false`, USD, JPY, and pair lanes
+  expose only the lane identity, withholding reason, and optional time
+  crosshair; directional paths, state hitboxes, legends, titles, ARIA labels,
+  gap structure, and directional inspector/summary values are withheld.
+- Mode 1 labels and hitboxes remain available. Mode 2 continues to show
+  `CALIBRATION SOURCE MISSING` with unsigned activity accessible. Trailokya
+  remains source-only and withheld. Retained selections preserve identity but
+  show `WITHHELD BY CURRENT MODE` in the shared summary and inspector.
+- No backend, pair math, activity compiler, BPHS calculation, SBC engine,
+  source doctrine, Candidate C, provider, market, outcome, or execution path
+  changed. `executionAllowed=false` remains locked.
+- R1 verification: focused Fields tests 33/33, full frontend 213/213 across
+  44 files, TypeScript, Oxlint, Vite production build, and `git diff --check`
+  passed. Mode 1/2/3 received a bounded local browser check; backend and Rust
+  were not run because no corresponding source changed.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F3_P1_R1_WITHHELD_DIRECTION_PRESENTATION`.

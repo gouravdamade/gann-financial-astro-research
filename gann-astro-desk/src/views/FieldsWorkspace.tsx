@@ -88,11 +88,13 @@ function selectionTime(selection: FieldsResearchSelection): string {
   return selection.interval.startUtc
 }
 
-function selectionLabel(selection: FieldsResearchSelection | null): string {
+function selectionLabel(selection: FieldsResearchSelection | null, directionalFieldsVisible: boolean): string {
   if (!selection) return 'NO RESEARCH ITEM SELECTED'
   if (selection.kind === 'ACTIVITY_EVENT') return `ACTIVITY_EVENT | ${selection.event.sideIdentity} | ${selection.event.transitBody} ${selection.event.aspectType}`
   if (selection.kind === 'BPHS_INTERVAL') return `BPHS_INTERVAL | ${selection.selection.category} | ${selection.selection.value}`
   if (selection.kind === 'SBC_INTERVAL') return `SBC_INTERVAL | ${selection.interval.guidance_availability}`
+  if (!directionalFieldsVisible && selection.kind === 'PAIR_INTERVAL') return 'PAIR_INTERVAL | WITHHELD BY CURRENT MODE'
+  if (!directionalFieldsVisible && selection.kind === 'FIELD_INTERVAL') return `FIELD_INTERVAL | ${selection.selection.field} | WITHHELD BY CURRENT MODE`
   if (selection.kind === 'PAIR_INTERVAL') return `PAIR_INTERVAL | ${selection.interval.state}`
   return `FIELD_INTERVAL | ${selection.selection.field} | ${selection.interval.polarityState}`
 }
@@ -153,6 +155,7 @@ export function FieldsWorkspace({
         : 'DIRECTIONAL FIELDS WITHHELD BY RESOLVED SOURCE POLICY'
 
   const selectFieldInterval = useCallback((selection: ResearchFieldIntervalSelection) => {
+    if (!visualizationPolicy.scoringVisible && (selection.field === 'USD' || selection.field === 'JPY' || selection.field === 'PAIR')) return
     onSelectFieldInterval(selection)
     if (!range) return
     if (selection.field === 'USD' || selection.field === 'JPY') {
@@ -192,7 +195,7 @@ export function FieldsWorkspace({
         sourceGapIds,
       })
     }
-  }, [isFxPair, onSelectFieldInterval, range, sourceGapIds, vedhaProfileId])
+  }, [isFxPair, onSelectFieldInterval, range, sourceGapIds, vedhaProfileId, visualizationPolicy.scoringVisible])
 
   const selectActivityEvent = useCallback((event: MultiOscillatorActivityEvent) => {
     const side = activity?.fields[event.sideIdentity]
@@ -436,19 +439,19 @@ export function FieldsWorkspace({
       <div><b>Research range</b><span>{researchWindow ? 'Shared 14-day Fields page; price viewport remains visual only' : 'No usable loaded chart range'}</span></div>
     </section>
 
+    <section className="fields-price-context" aria-label="Synchronized price chart">
+      <header><Activity size={14} /><div><strong>Price and aspect context</strong><span>Shared crosshair, selected candle, and visible UTC range</span></div></header>
+      <div className="fields-price-chart">{priceChart}</div>
+    </section>
+
     <section className="fields-selection-summary" aria-label="Shared time and research selection summary">
       <div><b>Crosshair UTC</b><span>{crosshairTimestampUtc ?? 'not selected'}</span></div>
-      <div><b>Selected research item</b><span>{selectionLabel(researchSelection)}</span></div>
+      <div><b>Selected research item</b><span>{selectionLabel(researchSelection, visualizationPolicy.scoringVisible)}</span></div>
       <div><b>Selection time</b><span>{researchSelection ? selectionTime(researchSelection) : 'none'}</span></div>
       <details className="fields-source-gaps">
         <summary>Source gaps ({sourceGaps.length})</summary>
         {sourceGaps.length ? <div>{sourceGaps.map((gap) => <article key={gap.gapId}><strong>{gap.gapId}</strong><span>{gap.title} | {gap.status}</span><small>{gap.explanation}</small></article>)}</div> : <span>No configured visualization-source gaps.</span>}
       </details>
-    </section>
-
-    <section className="fields-price-context" aria-label="Synchronized price chart">
-      <header><Activity size={14} /><div><strong>Price and aspect context</strong><span>Shared crosshair, selected candle, and visible UTC range</span></div></header>
-      <div className="fields-price-chart">{priceChart}</div>
     </section>
 
     <section className="fields-panes" aria-label="Synchronized independent fields">

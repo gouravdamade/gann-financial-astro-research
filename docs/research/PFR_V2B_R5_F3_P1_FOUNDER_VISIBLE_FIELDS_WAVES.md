@@ -120,3 +120,44 @@ change. No Windows candidate is built by this milestone.
 ## Next Gate
 
 `CENTRAL_REVIEW_PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES`
+
+## P1-R1 Withheld-Direction Presentation Correction
+
+P1 is superseded for central review by
+`PFR-V2B-R5-F3-P1-R1-WITHHELD-DIRECTION-PRESENTATION`. The correction is
+frontend-only and preserves the P1 source, pair, activity, BPHS, Founder
+Review, Candidate C, and execution boundaries.
+
+When `visualizationPolicy.scoringVisible` is false, the USD, JPY, and pair
+categorical lanes now render a non-directional withheld surface. Their state
+rectangles, directional SVG paths, SVG/HTML titles, ARIA state labels,
+selection hitboxes, ordinary Supportive/Neutral/Adverse legend, gap structure,
+and state-derived details are absent from the DOM. The shared crosshair may
+remain as time synchronization only. Retained directional selections remain
+identity-stable, while the shared summary and unified inspector report only
+`WITHHELD BY CURRENT MODE`.
+
+Mode 1 continues to expose the source-profiled categorical labels and
+hitboxes, including distinct `UNKNOWN` and `MIXED` behavior. Mode 2 continues
+to show `CALIBRATION SOURCE MISSING` while unsigned activity events remain
+inspectable. Trailokya remains source-only and withheld by the resolved policy.
+The workstation order is now explicitly price context, selection summary,
+independent fields, activity, BPHS, inspector, and audit details.
+
+The P1 status is:
+`PFR-V2B-R5-F3-P1=SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW`.
+The successor remains pending central review; it is not a central-pass or
+founder-acceptance record.
+
+### P1-R1 Verification
+
+- Focused Fields workspace tests: 33 passed
+- Full frontend suite: 44 files, 213 tests passed
+- TypeScript: passed
+- Oxlint: passed
+- Vite production build: passed
+- `git diff --check`: passed
+- Bounded local browser check: Mode 1, Mode 2, and Mode 3 verified; the
+  available browser surface was not an exact 1280x800 viewport.
+- Backend regression was not run because this correction is frontend-only and
+  the directive requires no backend changes. Rust/Tauri was not touched.
