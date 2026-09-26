@@ -5,7 +5,8 @@
   "startingCommit": "4c2a6a769670024dcbc72e405169ca2cca798a64",
   "implementationBranch": "research/pfr-v2b-r5-f3-p1-founder-visible-fields-waves",
   "implementationCommitRecordedInGit": true,
-  "centralDisposition": "PFR-V2B-R5-F3-P1=SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW",
+  "centralDisposition": "PFR-V2B-R5-F3-P1=SUPERSEDED_BY_P1_R1",
+  "implementationStatus": "PFR-V2B-R5-F3-P1=PRODUCT_IMPLEMENTATION_COMPLETE",
   "product": {
     "surface": "FIELDS_RESEARCH_WORKSTATION",
     "inspector": "READ_ONLY_UNIFIED_RESEARCH_INSPECTOR",
@@ -56,7 +57,7 @@
     "suppressedDirectionalHitboxesRendered": false,
     "suppressedDirectionalStateInSummary": false,
     "mode1DirectionalInspectionPreserved": true,
-    "centralReviewStatus": "PENDING_CENTRAL_REVIEW",
+    "centralReviewStatus": "CENTRAL_PASS",
     "verification": {
       "focusedFrontend": "33/33 passed",
       "fullFrontend": "44 files, 213 passed",
@@ -68,7 +69,8 @@
       "backendChanged": false,
       "backendRegression": "not run by directive",
       "rust": "not touched",
-      "windowsCandidateBuilt": false
+      "windowsCandidateBuilt": false,
+      "candidateDisposition": "FOUNDER_INSPECTION_PENDING"
     }
   },
   "sourceAndExecutionLocks": {
@@ -93,5 +95,5 @@
     "rust": "not touched",
     "windowsCandidateBuilt": false
   },
-  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES"
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE"
 }
