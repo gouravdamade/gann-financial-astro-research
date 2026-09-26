@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE_V1",
+  "milestone": "PFR-V2B-R5-F3-P2",
+  "candidateVersion": "0.10.65-pfr-v2b-r5-f3-p1-r1",
+  "status": "FOUNDER_INSPECTION_CANDIDATE",
+  "source": {
+    "acceptedP1R1Commit": "8eba91df3d074be093f53d06be107f133638eecf",
+    "prepCommit": "0454b2e77d2f8abf20b548e505ee4fa4f6a158cc",
+    "packagingBranch": "research/pfr-v2b-r5-f3-p2-windows-founder-candidate",
+    "sourceGitDirty": false,
+    "implementationSourceCommit": "0454b2e77d2f8abf20b548e505ee4fa4f6a158cc"
+  },
+  "productDisposition": {
+    "p1R1": "CENTRAL_PASS",
+    "p1": "PRODUCT_IMPLEMENTATION_COMPLETE",
+    "founderAcceptance": "PENDING_PHYSICAL_INSPECTION",
+    "newMath": false,
+    "backendContractChanged": false,
+    "sourceDoctrineChanged": false
+  },
+  "artifacts": {
+    "candidateRoot": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.65-pfr-v2b-r5-f3-p1-r1-tauri",
+    "portableExeSha256": "402775FC3A3DABD8BC03BB5C4873B7715045A34BE47FB85E10E9C9D0E7EFCC2C",
+    "installerSha256": "3DC20999BB87239859161BC5742621BC1585F6BAE93C973A5FD2AD9B7E542895",
+    "sidecarExeSha256": "7928659ACF79FD8E3F5963FEB5423FEE161DFA0365EE2959F2400819614B6D76",
+    "immutableResourceTreeSha256": "178930DAED66C73A064EFCC8E72BF737EB79E1442F9FD9541C0CB2425B762C27",
+    "buildReceiptSha256": "4B8C1E9821ECA4170756D59D1BF8A75AFBF0A54192F9C19035D810AF4E078A18",
+    "releaseManifestSha256": "97781E87A21EF44E26FE02414CF6CED79E52787A57C03A1C7E452FDEF9BB6B2B",
+    "sourceGitDirty": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "npmCi": "passed",
+    "focusedP1R1Frontend": "33/33 passed",
+    "fullFrontend": "44 files, 213 passed",
+    "typescript": "passed",
+    "oxlint": "passed",
+    "viteBuild": "passed",
+    "cargoFmtCheck": "passed",
+    "cargoMetadata": "passed",
+    "cargoCheck": "passed",
+    "tauriNsisBuild": "passed",
+    "gitDiffCheck": "passed",
+    "privateSourceImagesOrPdfsBundled": false
+  },
+  "nativeSmoke": {
+    "runCount": 2,
+    "run1": {
+      "report": "D:\\GannFinancialAstro\\soak\\tauri_0.10.65-pfr-v2b-r5-f3-p1-r1_20260926_171946\\logs\\native_soak_report.json",
+      "result": "CONDITIONAL_BLOCKED_BY_INHERITED_HARNESS_ASSERTION",
+      "failedChecks": ["chakra_jupiter_motion_explicit"],
+      "relevantChecksPassed": true,
+      "descendantSurvivors": 0
+    },
+    "run2": {
+      "report": "D:\\GannFinancialAstro\\soak\\tauri_0.10.65-pfr-v2b-r5-f3-p1-r1_20260926_172108\\logs\\native_soak_report.json",
+      "result": "CONDITIONAL_BLOCKED_BY_INHERITED_HARNESS_ASSERTION",
+      "failedChecks": ["chakra_jupiter_motion_explicit"],
+      "relevantChecksPassed": true,
+      "descendantSurvivors": 0
+    },
+    "agarwalSourceProfileCells": 81,
+    "agarwalVedhaStatus": "DEPENDENCY_NOT_READY",
+    "executionLocksPassed": true,
+    "nativeVisual1280x800": "NOT_EXECUTED_CUA_NATIVE_TARGET_UNAVAILABLE",
+    "founderAcceptance": "NOT_CLAIMED"
+  },
+  "locks": {
+    "executionAllowed": false,
+    "automaticOrderPlacement": false,
+    "polarityAssigned": false,
+    "scoreAggregationEnabled": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "candidateCAccessed": false,
+    "emp3Accessed": false,
+    "providerAccessed": false,
+    "outcomesAccessed": false
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE",
+  "qaRecordCommitRecordedInGit": true
+}

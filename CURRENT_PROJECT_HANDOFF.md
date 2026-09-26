@@ -13387,3 +13387,30 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   boundaries.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE`.
+
+## PFR-V2B-R5-F3-P2 Windows Founder-Inspection Candidate
+
+- The clean packaging checkout was created from accepted P1-R1 commit
+  `8eba91df3d074be093f53d06be107f133638eecf` on branch
+  `research/pfr-v2b-r5-f3-p2-windows-founder-candidate`.
+- Version metadata, Tauri entrypoint, and the P1 status transition were frozen
+  in prep commit `0454b2e77d2f8abf20b548e505ee4fa4f6a158cc`. The immutable
+  candidate is `0.10.65-pfr-v2b-r5-f3-p1-r1`; sourceGitDirty is false and
+  executionAllowed is false.
+- Frontend, lint, Vite, Rust fmt/check, and the native Tauri/NSIS build passed.
+  Artifact hashes and the founder checklist are recorded in
+  `docs/research/PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE.md` and
+  `status/research/pfr_v2b_r5_f3_p2_windows_founder_candidate.json`.
+- The actual portable smoke harness ran twice. Both launches verified sidecar
+  health, the 81-cell Agarwal profile, recovery, locks, and zero descendants.
+  Both repeat the inherited `chakra_jupiter_motion_explicit` harness failure;
+  this P2 record does not claim an all-green native smoke result and does not
+  change that unrelated behavior.
+- Native screenshot-level 1280x800 review was unavailable because the current
+  computer-use surface exposed browser targets only. Founder acceptance is
+  not claimed; physical inspection of the candidate remains pending.
+- No new math, backend contract, provider, outcome, Candidate C, EMP3, source
+  doctrine, polarity, score, Auto Suggest, ML, MT5, or execution behavior was
+  introduced.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE`.
