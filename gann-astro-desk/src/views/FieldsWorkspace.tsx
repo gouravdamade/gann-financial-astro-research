@@ -9,10 +9,12 @@ import type {
   ChakraLabRequest,
   ChartPayload,
   FxSidePilotStatus,
+  MultiOscillatorActivityEvent,
   MultiOscillatorActivityRange,
   ResearchFieldIntervalSelection,
   SynchronizedIndependentRange,
 } from '../types'
+import { compileFxPairRelativeCategoricalField } from '../pairRelativeField'
 import {
   VISUALIZATION_ENGINE_MODES,
   visualizationModePolicy,
@@ -23,6 +25,8 @@ import { IndependentFieldStack } from './IndependentFieldStack'
 import { FounderReviewWorkbench } from './FounderReviewWorkbench'
 import { BphsClassicalTimingPane } from './BphsClassicalTimingPane'
 import { MultiOscillatorActivityPanel } from './MultiOscillatorActivityPanel'
+import { FieldsResearchInspector } from './FieldsResearchInspector'
+import type { BphsResearchSelection, FieldsResearchSelection } from './fieldsResearchSelection'
 import {
   fieldsResearchWindowFor,
   isTimestampInsideResearchWindow,
@@ -46,6 +50,7 @@ type Props = {
   crosshairTimestampUtc: string | null
   selectedFieldInterval: ResearchFieldIntervalSelection | null
   onSelectFieldInterval: (selection: ResearchFieldIntervalSelection) => void
+  onClearFieldInterval?: () => void
   onSelectActivityTimestampUtc: (timestampUtc: string) => void
   onFounderReviewActiveChange?: (active: boolean) => void
   onFounderReviewDirtyChange?: (dirty: boolean) => void
@@ -68,6 +73,30 @@ function initialClassicalTimingEnabled(): boolean {
   }
 }
 
+function founderModeLabel(mode: VisualizationEngineMode): string {
+  switch (mode) {
+    case 'SOURCE_ONLY_BASELINE': return 'Mode 1 — Source / Classical baseline'
+    case 'CALIBRATED_RESEARCH': return 'Mode 2 — Experimental / Calibrated research'
+    case 'VISUAL_ONLY_NO_SCORE': return 'Mode 3 — Geometry / Exploration'
+  }
+}
+
+function selectionTime(selection: FieldsResearchSelection): string {
+  if (selection.kind === 'ACTIVITY_EVENT') return selection.event.exactUtc
+  if (selection.kind === 'BPHS_INTERVAL') return selection.selection.startUtc
+  if (selection.kind === 'SBC_INTERVAL') return selection.interval.start_utc
+  return selection.interval.startUtc
+}
+
+function selectionLabel(selection: FieldsResearchSelection | null): string {
+  if (!selection) return 'NO RESEARCH ITEM SELECTED'
+  if (selection.kind === 'ACTIVITY_EVENT') return `ACTIVITY_EVENT | ${selection.event.sideIdentity} | ${selection.event.transitBody} ${selection.event.aspectType}`
+  if (selection.kind === 'BPHS_INTERVAL') return `BPHS_INTERVAL | ${selection.selection.category} | ${selection.selection.value}`
+  if (selection.kind === 'SBC_INTERVAL') return `SBC_INTERVAL | ${selection.interval.guidance_availability}`
+  if (selection.kind === 'PAIR_INTERVAL') return `PAIR_INTERVAL | ${selection.interval.state}`
+  return `FIELD_INTERVAL | ${selection.selection.field} | ${selection.interval.polarityState}`
+}
+
 export function FieldsWorkspace({
   chart,
   priceChart,
@@ -80,6 +109,7 @@ export function FieldsWorkspace({
   crosshairTimestampUtc,
   selectedFieldInterval,
   onSelectFieldInterval,
+  onClearFieldInterval,
   onSelectActivityTimestampUtc,
   onFounderReviewActiveChange,
   onFounderReviewDirtyChange,
@@ -96,12 +126,14 @@ export function FieldsWorkspace({
   const [founderReviewOpen, setFounderReviewOpen] = useState(false)
   const [classicalTimingEnabled, setClassicalTimingEnabled] = useState(initialClassicalTimingEnabled)
   const [researchPageIndex, setResearchPageIndex] = useState(0)
+  const [researchSelection, setResearchSelection] = useState<FieldsResearchSelection | null>(null)
   const requestSequence = useRef(0)
   const rangeCache = useRef(new Map<string, SynchronizedIndependentRange>())
   const activityCache = useRef(new Map<string, MultiOscillatorActivityRange>())
   const activityRequestSequence = useRef(0)
   const isFxPair = isSupportedFxPair(chart.symbol)
   const datasetSignature = `${chart.symbol}:${chart.timeframe}:${chart.candles[0]?.time ?? ''}:${chart.candles.at(-1)?.time ?? ''}`
+  const previousDatasetSignature = useRef(datasetSignature)
   const researchWindow = useMemo(
     () => fieldsResearchWindowFor(chart, researchPageIndex),
     [chart, researchPageIndex],
@@ -111,6 +143,95 @@ export function FieldsWorkspace({
     && !isTimestampInsideResearchWindow(researchWindow, crosshairTimestampUtc)
   const visualizationPolicy = visualizationModePolicy(visualizationMode, vedhaProfileId)
   const sourceGaps = sourceGapsForVisualizationMode(visualizationMode, vedhaProfileId)
+  const sourceGapIds = useMemo(() => sourceGaps.map((gap) => gap.gapId), [sourceGaps])
+  const directionalSuppressionMessage = visualizationPolicy.scoringVisible
+    ? undefined
+    : visualizationMode === 'VISUAL_ONLY_NO_SCORE'
+      ? 'DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE'
+      : visualizationMode === 'CALIBRATED_RESEARCH'
+        ? 'CALIBRATION SOURCE MISSING'
+        : 'DIRECTIONAL FIELDS WITHHELD BY RESOLVED SOURCE POLICY'
+
+  const selectFieldInterval = useCallback((selection: ResearchFieldIntervalSelection) => {
+    onSelectFieldInterval(selection)
+    if (!range) return
+    if (selection.field === 'USD' || selection.field === 'JPY') {
+      const interval = range.aspectFields[selection.field].intervals.find((candidate) => candidate.intervalId === selection.intervalId)
+      if (interval) setResearchSelection({
+        kind: 'FIELD_INTERVAL',
+        selection,
+        interval,
+        profileId: 'ASPECT_STRENGTH_V0',
+        classification: 'SOURCE_PROFILED_PARTIAL',
+        sourceGapIds,
+      })
+      return
+    }
+    if (selection.field === 'PAIR') {
+      const interval = isFxPair
+        ? compileFxPairRelativeCategoricalField(range).intervals.find((candidate) => candidate.intervalId === selection.intervalId)
+        : null
+      if (interval) setResearchSelection({
+        kind: 'PAIR_INTERVAL',
+        selection,
+        interval,
+        profileId: 'FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1',
+        classification: 'MODERN_ENGINEERING_RESEARCH_TRANSFORM',
+        sourceGapIds,
+      })
+      return
+    }
+    if (range.sbcField.contract === 'SBC_ATOMIC_VISIBLE_RANGE_V1') {
+      const interval = range.sbcField.intervals.find((candidate) => candidate.interval_id === selection.intervalId)
+      if (interval) setResearchSelection({
+        kind: 'SBC_INTERVAL',
+        selection,
+        interval,
+        profileId: vedhaProfileId,
+        classification: interval.classification,
+        sourceGapIds,
+      })
+    }
+  }, [isFxPair, onSelectFieldInterval, range, sourceGapIds, vedhaProfileId])
+
+  const selectActivityEvent = useCallback((event: MultiOscillatorActivityEvent) => {
+    const side = activity?.fields[event.sideIdentity]
+    setResearchSelection({
+      kind: 'ACTIVITY_EVENT',
+      event,
+      coverage: side?.coverage ?? 'UNKNOWN',
+      unknownReason: side?.unknownReason ?? null,
+      profileId: 'ASPECT_STRENGTH_V0',
+      classification: 'EXPLORATORY_UNSIGNED',
+      sourceGapIds,
+    })
+  }, [activity, sourceGapIds])
+
+  const selectBphsInterval = useCallback((selection: BphsResearchSelection) => {
+    setResearchSelection({
+      kind: 'BPHS_INTERVAL',
+      selection,
+      profileId: selection.sourceProfileId,
+      classification: selection.availability,
+      sourceGapIds,
+    })
+    onSelectActivityTimestampUtc(selection.startUtc)
+  }, [onSelectActivityTimestampUtc, sourceGapIds])
+
+  useEffect(() => {
+    if (!researchSelection || !researchWindow) return
+    if (!isTimestampInsideResearchWindow(researchWindow, selectionTime(researchSelection))) {
+      setResearchSelection(null)
+      onClearFieldInterval?.()
+    }
+  }, [onClearFieldInterval, researchSelection, researchWindow])
+
+  useEffect(() => {
+    if (previousDatasetSignature.current === datasetSignature) return
+    previousDatasetSignature.current = datasetSignature
+    setResearchSelection(null)
+    onClearFieldInterval?.()
+  }, [datasetSignature, onClearFieldInterval])
 
   useEffect(() => {
     onFounderReviewActiveChange?.(founderReviewOpen)
@@ -303,16 +424,26 @@ export function FieldsWorkspace({
             className={visualizationMode === mode ? 'is-active' : ''}
             title={visualizationModePolicy(mode, vedhaProfileId).explanation}
             onClick={() => onVisualizationModeChange(mode)}
-          >{visualizationModePolicy(mode, vedhaProfileId).shortLabel}</button>)}
+          >{founderModeLabel(mode).split(' — ')[0]}</button>)}
         </div>
       </div>
     </header>
     {founderReviewOpen ? <FounderReviewWorkbench onClose={() => setFounderReviewOpen(false)} onDirtyChange={onFounderReviewDirtyChange} /> : <>
     <section className="fields-context-card" aria-label="Field contract and context">
       <div><b>Instrument</b><span>{chart.symbol} {isFxPair ? 'FX base/quote' : 'single instrument'}</span></div>
-      <div><b>Mode</b><span>{visualizationPolicy.label}</span></div>
+      <div><b>Mode</b><span>{founderModeLabel(visualizationMode)}</span></div>
       <div><b>Chart identities</b><span>{isFxPair ? 'USD and JPY founder-approved research hypotheses' : 'No FX side identity required'}</span></div>
       <div><b>Research range</b><span>{researchWindow ? 'Shared 14-day Fields page; price viewport remains visual only' : 'No usable loaded chart range'}</span></div>
+    </section>
+
+    <section className="fields-selection-summary" aria-label="Shared time and research selection summary">
+      <div><b>Crosshair UTC</b><span>{crosshairTimestampUtc ?? 'not selected'}</span></div>
+      <div><b>Selected research item</b><span>{selectionLabel(researchSelection)}</span></div>
+      <div><b>Selection time</b><span>{researchSelection ? selectionTime(researchSelection) : 'none'}</span></div>
+      <details className="fields-source-gaps">
+        <summary>Source gaps ({sourceGaps.length})</summary>
+        {sourceGaps.length ? <div>{sourceGaps.map((gap) => <article key={gap.gapId}><strong>{gap.gapId}</strong><span>{gap.title} | {gap.status}</span><small>{gap.explanation}</small></article>)}</div> : <span>No configured visualization-source gaps.</span>}
+      </details>
     </section>
 
     <section className="fields-price-context" aria-label="Synchronized price chart">
@@ -332,9 +463,11 @@ export function FieldsWorkspace({
         pilotError={pilotError}
         onLoadPilot={() => void loadPilotStatus()}
         selectedInterval={selectedFieldInterval}
-        onSelectInterval={onSelectFieldInterval}
+        onSelectInterval={selectFieldInterval}
         crosshairTimestampUtc={crosshairTimestampUtc}
         visualizationMode={visualizationMode}
+        directionalFieldsVisible={visualizationPolicy.scoringVisible}
+        suppressionMessage={directionalSuppressionMessage}
         isFxPair={isFxPair}
       />
     </section>
@@ -347,6 +480,7 @@ export function FieldsWorkspace({
       crosshairTimestampUtc={crosshairTimestampUtc}
       onLoad={() => void loadActivity()}
       onSelectEventTimestamp={onSelectActivityTimestampUtc}
+      onSelectEvent={selectActivityEvent}
     />
 
     {classicalTimingEnabled && researchWindow ? <BphsClassicalTimingPane
@@ -357,7 +491,15 @@ export function FieldsWorkspace({
       longitude={defaultLongitude}
       crosshairTimestampUtc={crosshairTimestampUtc}
       researchPageLabel={`page ${researchWindow.pageIndex + 1}/${researchWindow.pageCount}`}
+      onSelectInterval={selectBphsInterval}
     /> : null}
+
+    <FieldsResearchInspector
+      selection={researchSelection}
+      crosshairTimestampUtc={crosshairTimestampUtc}
+      visualizationPolicy={visualizationPolicy}
+      sourceProfileId={vedhaProfileId}
+    />
 
     <section className="fields-audit-details" aria-label="Field audit details">
       <div><ShieldCheck size={14} /><div><strong>Pair-relative field contract</strong><span>FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1 is a transparent modern research transform: USD side balance minus JPY side balance. It is not classical doctrine, a forecast, or SBC confirmation.</span></div></div>

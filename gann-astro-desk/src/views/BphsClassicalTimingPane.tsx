@@ -2,6 +2,7 @@ import { BookOpenText, CalendarDays, RefreshCw } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchBphsClassicalCalendarRange } from '../api'
 import type { BphsClassicalCalendarInterval, BphsClassicalCalendarRange } from '../types'
+import type { BphsResearchSelection } from './fieldsResearchSelection'
 
 const PROFILE_ID = 'BPHS_1899_CLASSICAL_CALENDAR_RESEARCH_V1' as const
 const BPHS_VISIBLE_WINDOW_DAYS = 3
@@ -24,6 +25,7 @@ type Props = {
   longitude: number
   crosshairTimestampUtc: string | null
   researchPageLabel?: string
+  onSelectInterval?: (selection: BphsResearchSelection) => void
 }
 
 type DisplaySegment = {
@@ -36,6 +38,7 @@ type DisplaySegment = {
   sourceLocator: string
   calculationProfile: string
   dependency: string | null
+  category: keyof BphsClassicalCalendarInterval['categories']
 }
 
 function intervalContains(interval: BphsClassicalCalendarInterval, at: string): boolean {
@@ -109,6 +112,7 @@ function displaySegments(range: BphsClassicalCalendarRange, category: keyof type
       sourceLocator: state.sourceLocator,
       calculationProfile: state.calculationProfile,
       dependency: state.dependency,
+      category,
     })
   }
   return segments
@@ -253,7 +257,10 @@ export function BphsClassicalTimingPane(props: Props) {
                     style={{ width: `${intervalPercent(segment.startUtc, segment.endUtc, calendar.rangeStartUtc, calendar.rangeEndUtc)}%` }}
                     title={`${LABELS[category]}: ${segment.value}\n${localTime(segment.startUtc, calendar.timezone)} to ${localTime(segment.endUtc, calendar.timezone)}\n${segment.detail}`}
                     aria-label={`Select ${LABELS[category]} ${segment.value} from ${segment.startUtc} to ${segment.endUtc}`}
-                    onClick={() => setSelected(segment)}
+                    onClick={() => {
+                      setSelected(segment)
+                      props.onSelectInterval?.({ ...segment, sourceProfileId: calendar.sourceProfile.profileId })
+                    }}
                   >{segment.value}</button>)}
                 </div>
               </div>

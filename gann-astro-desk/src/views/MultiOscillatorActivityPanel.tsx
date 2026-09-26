@@ -1,4 +1,4 @@
-import { Activity, Eye, Filter, ShieldCheck } from 'lucide-react'
+import { Activity, Filter, ShieldCheck } from 'lucide-react'
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import type {
   MultiOscillatorActivityEvent,
@@ -29,6 +29,7 @@ type Props = {
   crosshairTimestampUtc: string | null
   onLoad: () => void
   onSelectEventTimestamp: (timestampUtc: string) => void
+  onSelectEvent?: (event: MultiOscillatorActivityEvent) => void
 }
 
 const BODY_COLORS: Record<string, string> = {
@@ -297,30 +298,6 @@ function UnsignedActivityWaveSurface({
   </section>
 }
 
-function EventInspector({ event }: { event: MultiOscillatorActivityEvent | null }) {
-  if (!event) return <div className="mo-event-inspector is-empty"><Eye size={14} /><span>Select an event span or exact marker to inspect immutable provenance.</span></div>
-  return <div className="mo-event-inspector" aria-label="Selected multi-oscillator event provenance">
-    <header><strong>Selected event provenance</strong><span>{event.sideIdentity} | CANONICAL_COMPILER_EVENT</span></header>
-    <dl>
-      <div><dt>Event ID</dt><dd>{event.eventId}</dd></div>
-      <div><dt>Event hash</dt><dd>{event.eventHash}</dd></div>
-      <div><dt>Exact UTC</dt><dd>{formatUtc(event.exactUtc)}</dd></div>
-      <div><dt>Applying start</dt><dd>{formatUtc(event.applyingStartUtc)}</dd></div>
-      <div><dt>Separating end</dt><dd>{formatUtc(event.separatingEndUtc)}</dd></div>
-      <div><dt>Transit body</dt><dd>{event.transitBody}</dd></div>
-      <div><dt>Natal target</dt><dd>{event.natalTarget}</dd></div>
-      <div><dt>Aspect</dt><dd>{event.aspectType}</dd></div>
-      <div><dt>Event contract</dt><dd>{event.eventContract || 'CHART_CONDITIONED_TRANSIT_EVENT_RANGE_V1'}</dd></div>
-      <div><dt>Astronomy</dt><dd>{event.astronomyContract || 'Canonical compiler contract'}</dd></div>
-      <div><dt>Generator</dt><dd>{event.generatorVersion || 'Canonical event compiler'}</dd></div>
-      <div><dt>Chart</dt><dd>{event.chartId}</dd></div>
-      <div><dt>Hypothesis</dt><dd>{event.chartHypothesisId}</dd></div>
-      <div><dt>Polarity</dt><dd>NOT ASSIGNED</dd></div>
-      <div><dt>Magnitude</dt><dd>NOT CONFIGURED</dd></div>
-    </dl>
-  </div>
-}
-
 function SideActivity({
   side,
   events,
@@ -362,6 +339,7 @@ export function MultiOscillatorActivityPanel({
   crosshairTimestampUtc,
   onLoad,
   onSelectEventTimestamp,
+  onSelectEvent,
 }: Props) {
   const [selectedBodies, setSelectedBodies] = useState<string[] | null>(null)
   const [selectedAspects, setSelectedAspects] = useState<string[] | null>(null)
@@ -409,17 +387,12 @@ export function MultiOscillatorActivityPanel({
     [filteredIntervals],
   )
 
-  const selectedEvent = activity
-    ? activity.fields.USD.events.find((event) => event.eventId === selectedEventId)
-      || activity.fields.JPY.events.find((event) => event.eventId === selectedEventId)
-      || null
-    : null
-
   if (!isFxPair) return <section className="multi-oscillator-panel" aria-label="Unsigned multi-oscillator activity"><header><Activity size={16} /><div><strong>Multi Oscillator</strong><span>Unsigned event activity</span></div></header><p className="mo-unavailable">This activity inspector is bounded to the accepted USDJPY FX side identities. Stock instruments keep their existing independent field contract.</p></section>
 
   const selectActivityEvent = (event: MultiOscillatorActivityEvent) => {
     setSelectedEventId(event.eventId)
     onSelectEventTimestamp(event.exactUtc)
+    onSelectEvent?.(event)
   }
 
   return <section className="multi-oscillator-panel" aria-label="Unsigned multi-oscillator activity">
@@ -438,7 +411,6 @@ export function MultiOscillatorActivityPanel({
       <div className="mo-scale-note" role="note" title="Activity fill and trace are observed raw counts. Coverage is independent and does not represent magnitude."><span>Filtered interval detail</span><span>Count bars = raw active events</span><span>Coverage hatch = incomplete coverage</span></div>
       <SideActivity side={activity.fields.USD} events={selectedEventsBySide.USD} intervals={filteredIntervals.USD} sharedAxisMax={sharedRawAxisMax} selectedEventId={selectedEventId} onSelectEvent={selectActivityEvent} onSelectTimestamp={onSelectEventTimestamp} />
       <SideActivity side={activity.fields.JPY} events={selectedEventsBySide.JPY} intervals={filteredIntervals.JPY} sharedAxisMax={sharedRawAxisMax} selectedEventId={selectedEventId} onSelectEvent={selectActivityEvent} onSelectTimestamp={onSelectEventTimestamp} />
-      <EventInspector event={selectedEvent} />
       <div className="mo-footer-locks"><span>Event IDs and hashes remain immutable.</span><span>Selected crosshair updates the shared research controller.</span><span>No pair-relative unsigned field is created.</span></div>
     </> : null}
   </section>

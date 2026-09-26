@@ -17,6 +17,8 @@ type Props = {
   onSelectInterval?: (selection: ResearchFieldIntervalSelection) => void
   crosshairTimestampUtc?: string | null
   visualizationMode?: VisualizationEngineMode
+  directionalFieldsVisible?: boolean
+  suppressionMessage?: string
   isFxPair?: boolean
 }
 
@@ -55,15 +57,6 @@ function valueForBlock(block: LaneBlock): number | null {
     case 'MIXED': return 0
     default: return null
   }
-}
-
-function compactNumber(value: number | null): string {
-  return value == null ? 'unknown' : value.toFixed(3)
-}
-
-function activitySummary(supportive: boolean, adverse: boolean, gross: number): string {
-  const components = [supportive ? 'supportive' : null, adverse ? 'adverse' : null].filter(Boolean)
-  return `${components.join(' + ') || 'neutral'} | gross ${gross}`
 }
 
 function xFor(value: string, rangeStart: number, rangeEnd: number): number {
@@ -129,7 +122,7 @@ function StateLane({ label, note, blocks, selectedInterval, onSelectInterval }: 
   </div>
 }
 
-export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, rangeEndUtc, selectedInterval, onSelectInterval, crosshairTimestampUtc, suppressed = false, note = 'MAGNITUDE NOT CONFIGURED' }: {
+export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, rangeEndUtc, selectedInterval, onSelectInterval, crosshairTimestampUtc, suppressed = false, suppressionMessage = 'DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE', note = 'MAGNITUDE NOT CONFIGURED' }: {
   label: string
   field: 'USD' | 'JPY' | 'PAIR'
   blocks: LaneBlock[]
@@ -139,6 +132,7 @@ export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, range
   onSelectInterval?: (selection: ResearchFieldIntervalSelection) => void
   crosshairTimestampUtc: string | null
   suppressed?: boolean
+  suppressionMessage?: string
   note?: string
 }) {
   const start = Date.parse(rangeStartUtc)
@@ -156,7 +150,7 @@ export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, range
       <strong>{label}</strong>
       <span>{note} | {knownCount}/{blocks.length} known</span>
     </header>
-    {suppressed && <p className="categorical-step-suppressed">DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE</p>}
+    {suppressed && <p className="categorical-step-suppressed">{suppressionMessage}</p>}
     <svg viewBox="0 0 1000 100" preserveAspectRatio="none" role="img" aria-label={`${field} categorical state over the shared range`}>
       <defs>
         <pattern id={gapPatternId} width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -217,7 +211,7 @@ export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, range
 export function IndependentFieldStack({
   range, rangeSource = null, busy, error, onLoad, pilotStatus, pilotBusy, pilotError, onLoadPilot,
   selectedInterval = null, onSelectInterval, crosshairTimestampUtc = null,
-  visualizationMode = 'SOURCE_ONLY_BASELINE', isFxPair = true,
+  visualizationMode = 'SOURCE_ONLY_BASELINE', directionalFieldsVisible, suppressionMessage, isFxPair = true,
 }: Props) {
   const usdBlocks: LaneBlock[] = range?.aspectFields.USD.intervals.map((interval) => ({
     id: interval.intervalId,
@@ -248,10 +242,9 @@ export function IndependentFieldStack({
     adverseActive: interval.baseAdverseActive || interval.quoteAdverseActive,
     displayValue: interval.pairDisplay,
   })) ?? []
-  const selectedPairInterval = pairField?.intervals.find((interval) => (
-    selectedInterval?.field === 'PAIR' && selectedInterval.intervalId === interval.intervalId
-  )) ?? pairField?.intervals[0] ?? null
-  const suppressDirectionalPaths = visualizationMode === 'VISUAL_ONLY_NO_SCORE'
+  const suppressDirectionalPaths = directionalFieldsVisible === undefined
+    ? visualizationMode === 'VISUAL_ONLY_NO_SCORE'
+    : !directionalFieldsVisible
   const sbcGeometryOnlyRange = range && 'state' in range.sbcField
     ? range.sbcField
     : null
@@ -281,29 +274,11 @@ export function IndependentFieldStack({
     {!range && !busy && !error && <p className="independent-field-stack-empty">Open this workspace from a chart. Its current visible range will load automatically.</p>}
     {range && <>
       <div className="independent-field-stack-range"><span>{compactUtc(range.rangeStartUtc)}</span><b>Shared UTC range</b><span>{compactUtc(range.rangeEndUtc)}</span></div>
-      <CategoricalStepPane label="USD categorical field" field="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} />
-      <CategoricalStepPane label="JPY categorical field" field="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} />
+      <CategoricalStepPane label="USD categorical field" field="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} suppressionMessage={suppressionMessage} />
+      <CategoricalStepPane label="JPY categorical field" field="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} suppressionMessage={suppressionMessage} />
       {pairField && <>
-        <CategoricalStepPane label="USDJPY pair-relative field" field="PAIR" blocks={pairBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} note="MODERN RESEARCH TRANSFORM | MAGNITUDE NOT CONFIGURED" />
+        <CategoricalStepPane label="USDJPY pair-relative field" field="PAIR" blocks={pairBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} suppressionMessage={suppressionMessage} note="MODERN ENGINEERING RESEARCH TRANSFORM | MAGNITUDE NOT CONFIGURED" />
         <p className="independent-field-stack-source">FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1: base balance minus quote balance, divided by two and clamped. It uses only stored side boundaries; it is not classical doctrine, an SBC confirmation, or a market forecast.</p>
-        {selectedPairInterval && <section className="pair-relative-audit" aria-label="Selected pair-relative interval audit">
-          <header>
-            <strong>Selected pair interval</strong>
-            <span>{compactUtc(selectedPairInterval.startUtc)} to {compactUtc(selectedPairInterval.endUtc)}</span>
-          </header>
-          <dl>
-            <div><dt>USD balance</dt><dd>{compactNumber(selectedPairInterval.baseBalance)}</dd></div>
-            <div><dt>JPY balance</dt><dd>{compactNumber(selectedPairInterval.quoteBalance)}</dd></div>
-            <div><dt>Pair display</dt><dd>{compactNumber(selectedPairInterval.pairDisplay)}</dd></div>
-            <div><dt>USD activity</dt><dd>{activitySummary(selectedPairInterval.baseSupportiveActive, selectedPairInterval.baseAdverseActive, selectedPairInterval.baseGrossActivity ?? 0)}</dd></div>
-            <div><dt>JPY activity</dt><dd>{activitySummary(selectedPairInterval.quoteSupportiveActive, selectedPairInterval.quoteAdverseActive, selectedPairInterval.quoteGrossActivity ?? 0)}</dd></div>
-            <div><dt>Common activity</dt><dd>{selectedPairInterval.commonActivity == null ? 'unknown' : `${selectedPairInterval.commonActivity} shared active component(s)`}</dd></div>
-            <div><dt>Conflict</dt><dd>{selectedPairInterval.conflict ? 'present' : 'none'}</dd></div>
-            <div><dt>Coverage</dt><dd>{selectedPairInterval.coverage}</dd></div>
-            <div><dt>Input intervals</dt><dd>{selectedPairInterval.sourceIntervalIds.base ?? 'none'} | {selectedPairInterval.sourceIntervalIds.quote ?? 'none'}</dd></div>
-            {selectedPairInterval.unknownReason && <div><dt>Unknown reason</dt><dd>{selectedPairInterval.unknownReason}</dd></div>}
-          </dl>
-        </section>}
       </>}
       {!isFxPair && <p className="independent-field-stack-empty">Single-stock contract: no automatic base-minus-quote field is created. A chart-conditioned stock field requires an explicit stock evidence profile.</p>}
       <StateLane label="SBC atomic field" note={sbcLaneNote} blocks={sbcBlocks} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} />

@@ -346,6 +346,11 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     }))
     chartRef.current?.setCrosshairTime(Math.floor(epoch / 1000))
   }, [])
+  const clearResearchFieldInterval = useCallback(() => {
+    setResearchTimeSelection((current) => current.selectedFieldInterval == null
+      ? current
+      : { ...current, selectedFieldInterval: null })
+  }, [])
   const researchTimeController = useMemo<ResearchTimeControllerV1>(() => ({
     contract: 'RESEARCH_TIME_CONTROLLER_V1',
     visibleRangeStartUtc: chartLayouts.chartState.visibleStartUtc ?? null,
@@ -1238,6 +1243,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             crosshairTimestampUtc={researchTimeController.crosshairTimestampUtc}
             selectedFieldInterval={researchTimeSelection.selectedFieldInterval}
             onSelectFieldInterval={selectResearchFieldInterval}
+            onClearFieldInterval={clearResearchFieldInterval}
             onSelectActivityTimestampUtc={(timestampUtc) => selectResearchTimestampUtc(timestampUtc, 'COLLECTIVE_INSPECTOR')}
             onFounderReviewActiveChange={setOutcomeBlindReviewActive}
             onFounderReviewDirtyChange={setFounderReviewDirty}

@@ -13321,5 +13321,36 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   or MT5 path was accessed.
 - Closure record:
   `status/research/mo_r4a_cont_1_final_close.json`.
-- Next gate:
-  `CENTRAL_REVIEW_MO_R4A_CONT_1_FINAL_CLOSE`.
+ - Next gate:
+   `CENTRAL_REVIEW_MO_R4A_CONT_1_FINAL_CLOSE`.
+
+## PFR-V2B-R5-F3-P1 Founder-Visible Fields and Waves Workstation
+
+ - The bounded frontend-only Fields workstation is implemented on dedicated
+   branch `research/pfr-v2b-r5-f3-p1-founder-visible-fields-waves`, starting
+   from `4c2a6a769670024dcbc72e405169ca2cca798a64`.
+ - The existing Fields view now composes price/aspect context, explicit shared
+   crosshair and selection summary, independent USD/JPY/pair/SBC fields,
+   unsigned activity waves, optional BPHS context, and a unified read-only
+   inspector. Founder Review remains a separate workflow.
+ - Selection is explicit and typed across field, pair, activity-event, SBC, and
+   BPHS interval records. Crosshair is not selection; no first pair interval is
+   auto-selected; dataset/page changes clear stale selections. Activity filters
+   remain display-only.
+ - Directional visibility is gated by resolved `visualizationPolicy.scoringVisible`.
+   Mode 2 calibration gaps and Mode 3 directional suppression remain explicit;
+   `UNKNOWN`, `MIXED`, and `NEUTRAL` retain distinct semantics. Existing pair
+   math and all backend contracts are unchanged.
+ - Focused frontend checks passed 30/30; full frontend passed 210/210 across
+   44 files; lint and production build passed. No backend or Rust files changed.
+   The broad legacy backend command surfaced unrelated failures and did not
+   complete; no backend pass is claimed for this milestone.
+ - Candidate C, EMP3, provider, outcome, polarity, score, Auto Suggest, ML,
+   MT5, and execution remain inaccessible; `executionAllowed=false` remains
+   locked. No Windows candidate is built here.
+ - Design/implementation record:
+   `docs/research/PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES.md`;
+   machine record:
+   `status/research/pfr_v2b_r5_f3_p1_founder_visible_fields_waves.json`.
+ - Next gate:
+   `CENTRAL_REVIEW_PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES`.

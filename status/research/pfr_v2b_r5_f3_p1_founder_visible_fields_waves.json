@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES_V1",
+  "milestone": "PFR-V2B-R5-F3-P1",
+  "startingBranch": "research/mo-r4a-cont-1-final-close",
+  "startingCommit": "4c2a6a769670024dcbc72e405169ca2cca798a64",
+  "implementationBranch": "research/pfr-v2b-r5-f3-p1-founder-visible-fields-waves",
+  "implementationCommitRecordedInGit": true,
+  "centralDisposition": "FRONTEND_BOUNDED_IMPLEMENTATION_COMPLETE_PENDING_CENTRAL_REVIEW",
+  "product": {
+    "surface": "FIELDS_RESEARCH_WORKSTATION",
+    "inspector": "READ_ONLY_UNIFIED_RESEARCH_INSPECTOR",
+    "backendChanged": false,
+    "newEndpoints": false,
+    "founderReviewSeparate": true,
+    "selectionDoesNotMutateReviewDecisions": true
+  },
+  "workstationOrder": [
+    "HEADER_AND_MODE_CONTROLS",
+    "PRICE_AND_ASPECT_CONTEXT",
+    "SHARED_CROSSHAIR_AND_SELECTION_SUMMARY",
+    "INDEPENDENT_USD_JPY_PAIR_SBC_STACK",
+    "UNSIGNED_ACTIVITY_WAVES",
+    "BPHS_CLASSICAL_CONTEXT",
+    "UNIFIED_RESEARCH_INSPECTOR",
+    "AUDIT_DETAILS"
+  ],
+  "selectionKinds": [
+    "FIELD_INTERVAL",
+    "PAIR_INTERVAL",
+    "ACTIVITY_EVENT",
+    "SBC_INTERVAL",
+    "BPHS_INTERVAL"
+  ],
+  "selectionContract": {
+    "crosshairCreatesSelection": false,
+    "firstPairAutoSelected": false,
+    "clearsOnDatasetChange": true,
+    "clearsWhenOutsideResearchPage": true,
+    "activityFiltersTriggerFetch": false,
+    "bphsSelectionUsesSharedTimestamp": true
+  },
+  "modePolicy": {
+    "gate": "visualizationPolicy.scoringVisible",
+    "mode1": "SOURCE_CLASSICAL_BASELINE",
+    "mode2": "CALIBRATION_SOURCE_MISSING_FAIL_CLOSED",
+    "mode3": "DIRECTIONAL_FIELDS_WITHHELD",
+    "hiddenSelectionLabel": "WITHHELD BY CURRENT MODE",
+    "unknownPrecedesNeutral": true,
+    "mixedDistinctFromNeutral": true
+  },
+  "sourceAndExecutionLocks": {
+    "candidateCAccessed": false,
+    "emp3Accessed": false,
+    "marketProviderAccessed": false,
+    "outcomesAccessed": false,
+    "polarityEnabled": false,
+    "scoreAggregationEnabled": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "focusedFrontend": "30/30 passed",
+    "fullFrontend": "44 files, 210 passed",
+    "lint": "passed",
+    "productionBuild": "passed",
+    "visualReview": "bounded local wide-browser review passed; exact 1280x800 viewport not available",
+    "backend": "not completed; no backend changes; unrelated legacy failures surfaced",
+    "rust": "not touched",
+    "windowsCandidateBuilt": false
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F3_P1_FOUNDER_VISIBLE_FIELDS_WAVES"
+}

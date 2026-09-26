@@ -203,6 +203,26 @@ function ProfileSwitchHarness() {
   />
 }
 
+function ModeSwitchHarness() {
+  const [mode, setMode] = useState<'SOURCE_ONLY_BASELINE' | 'CALIBRATED_RESEARCH' | 'VISUAL_ONLY_NO_SCORE'>('SOURCE_ONLY_BASELINE')
+  return <FieldsWorkspace
+    chart={chart}
+    priceChart={<div data-testid="fields-price-chart">shared chart</div>}
+    visibleRangeStartUtc={startUtc}
+    visibleRangeEndUtc={endUtc}
+    defaultLatitude={18.5204}
+    defaultLongitude={73.8567}
+    vedhaProfileId="phaladeepika_editor_vedha_guidance_v1"
+    onVedhaProfileIdChange={() => undefined}
+    visualizationMode={mode}
+    onVisualizationModeChange={setMode}
+    crosshairTimestampUtc={startUtc}
+    selectedFieldInterval={null}
+    onSelectFieldInterval={() => undefined}
+    onSelectActivityTimestampUtc={() => undefined}
+  />
+}
+
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
@@ -425,6 +445,78 @@ describe('FieldsWorkspace', () => {
     expect(screen.queryByText(/signed pair resultant/i)).not.toBeInTheDocument()
   })
 
+  it('uses the resolved policy to withhold calibrated directional fields', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields({ visualizationMode: 'CALIBRATED_RESEARCH' })
+
+    await screen.findByText('USD categorical field')
+    expect(screen.getAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(3)
+    expect(document.querySelectorAll('.categorical-step-balance')).toHaveLength(0)
+    expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
+  })
+
+  it('keeps mode changes presentation-only and preserves loaded event identities', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    render(<ModeSwitchHarness />)
+    await screen.findByRole('button', { name: /Inspect USD MARS SQUARE event/i })
+    const rangeCalls = apiMocks.fetchSynchronizedIndependentRange.mock.calls.length
+    const activityCalls = apiMocks.fetchMultiOscillatorActivityRange.mock.calls.length
+    const eventCount = document.querySelectorAll('.mo-event-span').length
+
+    await user.click(screen.getByRole('tab', { name: 'Mode 2' }))
+    expect(await screen.findAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(3)
+    await user.click(screen.getByRole('tab', { name: 'Mode 3' }))
+    expect(await screen.findAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(3)
+    expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(rangeCalls)
+    expect(apiMocks.fetchMultiOscillatorActivityRange).toHaveBeenCalledTimes(activityCalls)
+    expect(document.querySelectorAll('.mo-event-span')).toHaveLength(eventCount)
+  })
+
+  it('keeps the unified inspector empty until an explicit item is selected', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields()
+
+    await screen.findByText('USDJPY pair-relative field')
+    expect(screen.getAllByText('NO RESEARCH ITEM SELECTED')).toHaveLength(2)
+    expect(screen.queryByText('Selected pair interval')).not.toBeInTheDocument()
+  })
+
+  it('withholds a selected pair value in Mode 3 instead of exposing hidden directional data', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    render(<ModeSwitchHarness />)
+    await screen.findByText('USDJPY pair-relative field')
+    await user.click(screen.getByRole('button', { name: /Select PAIR interval SUPPORTIVE/i }))
+    expect(screen.getByText('Selected: PAIR INTERVAL')).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Mode 3' }))
+    expect(screen.getByText(/WITHHELD BY CURRENT MODE/)).toBeInTheDocument()
+    expect(screen.queryByText('Pair display')).not.toBeInTheDocument()
+  })
+
+  it('lifts explicit BPHS selection into the unified inspector without changing field data', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    apiMocks.fetchBphsClassicalCalendarRange.mockResolvedValue(bphsCalendarRange)
+    const user = userEvent.setup()
+    const { activitySelection } = renderFields()
+
+    await user.click(screen.getByRole('switch', { name: /BPHS Calendar/i }))
+    await screen.findByText('BPHS Classical Calendar')
+    await user.click(screen.getByRole('button', { name: /Select Muhurta/i }))
+    expect(screen.getByText('Selected: BPHS INTERVAL')).toBeInTheDocument()
+    expect(screen.getByText('NO MARKET ROLE')).toBeInTheDocument()
+    expect(activitySelection).toHaveBeenCalledWith(startUtc)
+  })
+
   it('shows Trailokya as geometry-only availability without a scored fallback', async () => {
     apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(geometryOnlyRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
@@ -434,6 +526,42 @@ describe('FieldsWorkspace', () => {
     expect((await screen.findAllByText(/GEOMETRY_ONLY_RANGE_NOT_IMPLEMENTED/)).length).toBeGreaterThan(0)
     expect(screen.getByText(/No score, polarity, wave, or fallback/)).toBeInTheDocument()
     expect(screen.queryByText(/Guidance score/i)).not.toBeInTheDocument()
+  })
+
+  it('uses Trailokya policy scoringVisible=false as the directional gate', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(geometryOnlyRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields({ vedhaProfileId: 'SBC_TRAILOKYA_1972_V1' })
+
+    await screen.findByText('USD categorical field')
+    expect(screen.getAllByText('DIRECTIONAL FIELDS WITHHELD BY RESOLVED SOURCE POLICY')).toHaveLength(3)
+    expect(document.querySelectorAll('.categorical-step-balance')).toHaveLength(0)
+  })
+
+  it('keeps the founder workstation in the accepted reading order and exposes its context controls', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    renderFields()
+    await screen.findByText('USD categorical field')
+    await user.click(screen.getByRole('switch', { name: /BPHS Calendar/i }))
+    await screen.findByText('BPHS Classical Calendar')
+
+    const price = screen.getByLabelText('Synchronized price chart')
+    const fields = screen.getByLabelText('Synchronized independent fields')
+    const activity = screen.getByLabelText('Unsigned multi-oscillator activity')
+    const bphs = screen.getByLabelText('BPHS Classical Calendar')
+    const inspector = screen.getByLabelText('Unified Fields research inspector')
+    expect(price.compareDocumentPosition(fields) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(fields.compareDocumentPosition(activity) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(activity.compareDocumentPosition(bphs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(bphs.compareDocumentPosition(inspector) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'Mode 1' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Source profile')).toBeInTheDocument()
+    expect(screen.getAllByText(/Source gaps \(/).length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByRole('button', { name: /Founder Review/i })).toBeInTheDocument()
   })
 
   it('refreshes the shared field range when the selected source profile changes', async () => {
