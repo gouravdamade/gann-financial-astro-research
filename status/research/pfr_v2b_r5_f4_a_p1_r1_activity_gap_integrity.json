@@ -1,7 +1,7 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY_V1",
   "milestone": "PFR-V2B-R5-F4-A-P1-R1",
-  "status": "IMPLEMENTED_PENDING_CENTRAL_REVIEW",
+  "status": "CENTRAL_PASS",
   "branch": "research/pfr-v2b-r5-f4-a-p1-r1-activity-gap-integrity",
   "startingCommit": "789fdf6d9619ac9c0a24b13ba4b5e0e7b4e55925",
   "parentImplementationCommit": "231250f347b71842fa0001127f47d6df5a276547",
@@ -13,7 +13,7 @@
   "testCommit": "c9d1b05b9efa21fc3ae5fe06c8d1319abd0a31b8",
   "predecessorStatus": {
     "milestone": "PFR-V2B-R5-F4-A-P1",
-    "status": "SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW",
+    "status": "SUPERSEDED_BY_P1_R1_CENTRAL_PASS",
     "historicalReportPreserved": true
   },
   "activityIntegrity": {
@@ -78,5 +78,6 @@
     "status/research/pfr_v2b_r5_f4_a_p1_chart_native_activity.json",
     "CURRENT_PROJECT_HANDOFF.md"
   ],
-  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY"
+  "centralDisposition": "PFR-V2B-R5-F4-A-P1-R1=CENTRAL_PASS",
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE"
 }

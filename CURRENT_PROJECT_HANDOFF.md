@@ -13456,7 +13456,7 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   window is labeled `bounded_partial`; the UI states that history outside it is
   not loaded rather than reporting `ready`.
 - P1 is preserved historically and its current status is
-  `SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW`. R1 implementation commit:
+  `SUPERSEDED_BY_P1_R1_CENTRAL_PASS`. R1 implementation commit:
   `f25cbc4e066870b8af02ec855aaa94ccdcb210d8` (with initial UI/rendering commit
   `8fbe646cfc1ab184a1887c5e104ef895704a9636`; epoch-order test commit
   `c9d1b05b9efa21fc3ae5fe06c8d1319abd0a31b8`) on branch
@@ -13471,5 +13471,14 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - Report and machine status:
   `docs/research/PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY.md` and
   `status/research/pfr_v2b_r5_f4_a_p1_r1_activity_gap_integrity.json`.
+- PFR-V2B-R5-F4-A-P1-R1 is accepted as `CENTRAL_PASS`; the chart-native
+  unsigned activity implementation is accepted as
+  `PFR-V2B-R5-F4-A=PRODUCT_IMPLEMENTATION_ACCEPTED`.
+- The next step is a clean native Windows founder-inspection candidate for
+  price plus USD/JPY unsigned activity. F4-B directional chart fields and F4-C
+  polarity admission remain unauthorized; the catalogue remains empty and
+  execution remains locked.
+- P2 version preparation is frozen as `0.10.66-pfr-v2b-r5-f4-a-p1-r1` with
+  entry URL `index.html?v=0.10.66-pfr-v2b-r5-f4-a-p1-r1`.
 - Next gate:
-  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY`.
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE`.
