@@ -13414,3 +13414,31 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   introduced.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F3_P2_WINDOWS_FOUNDER_CANDIDATE`.
+
+## PFR-V2B-R5-F4-A-P1 Chart-Native Unsigned Activity
+
+- Chart-native unsigned USD/JPY activity is implemented on dedicated branch
+  `research/pfr-v2b-r5-f4-a-p1-chart-native-activity`, from
+  `5ae4df13b042b1eaa309a7ac0ab6c36850bd50e9`. It reuses the existing chart
+  instance and activity-range contract; no backend endpoint was added.
+- The lower activity pane is unsigned raw count only, with exact-event markers,
+  common time/crosshair, fixed 14-day visible-range caching, and explicit
+  incomplete-coverage rendering. Activity defaults hidden in old and new chart
+  layouts. The existing Fields tab remains unchanged as the detailed research
+  workspace.
+- Directional chart fields are NOT implemented. The polarity catalogue remains
+  empty; F4-C is not authorized. Pair math, source doctrine, Candidate C, EMP3,
+  provider, outcome, and execution paths are unchanged.
+- Focused checks passed 54/54, full frontend passed 229/229 across 47 files,
+  Oxlint and TypeScript/Vite production build passed, and a synthetic local
+  browser review covered visible/hidden, RSI-combined, known-zero, and
+  incomplete-coverage states. The existing chart capture returned a PNG data
+  URL containing the native multi-pane chart. No backend or Rust/Tauri source
+  changed.
+- No provider access, market capture/read, outcome analysis, empirical
+  execution, or MT5 order invocation occurred. `executionAllowed=false`.
+- Design and verification record:
+  `docs/research/PFR_V2B_R5_F4_A_P1_CHART_NATIVE_ACTIVITY.md`; machine status:
+  `status/research/pfr_v2b_r5_f4_a_p1_chart_native_activity.json`.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P1_CHART_NATIVE_ACTIVITY`.

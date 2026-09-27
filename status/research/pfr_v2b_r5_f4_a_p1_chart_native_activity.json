@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P1_CHART_NATIVE_ACTIVITY_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P1",
+  "status": "IMPLEMENTED_PENDING_CENTRAL_REVIEW",
+  "branch": "research/pfr-v2b-r5-f4-a-p1-chart-native-activity",
+  "startingCommit": "5ae4df13b042b1eaa309a7ac0ab6c36850bd50e9",
+  "implementationCommit": "231250f347b71842fa0001127f47d6df5a276547",
+  "implementationCommitMeaning": "Source and tests commit; documentation and status are recorded in its successor metadata commit.",
+  "scope": {
+    "chartNativeUnsignedActivity": true,
+    "usdDirectionalPane": false,
+    "jpyDirectionalPane": false,
+    "pairDirectionalPane": false,
+    "polarityCatalogueAdmission": false,
+    "founderReviewPromotion": false,
+    "f4bAuthorized": false,
+    "f4cAuthorized": false
+  },
+  "chartContract": {
+    "chartInstance": "EXISTING_SINGLE_LIGHTWEIGHT_CHARTS_I_CHART_API",
+    "paneOwners": ["PRICE", "RSI", "FIELDS_ACTIVITY"],
+    "paneOwnership": "RESOLVED_FROM_RUNTIME_PANE_AND_SERIES_IDENTITY",
+    "persistedPaneIndexes": false,
+    "activityContract": "MO_UNSIGNED_EVENT_ACTIVITY_RANGE_V1_1",
+    "series": ["USD_RAW_ACTIVE_EVENT_COUNT", "JPY_RAW_ACTIVE_EVENT_COUNT"],
+    "seriesTransformations": [],
+    "chunkSeconds": 1209600,
+    "chunkInterval": "UTC_HALF_OPEN",
+    "requestDebounceMs": 180,
+    "maxChunksPerVisibleRange": 12,
+    "cacheCapacity": 12,
+    "cacheEviction": "LRU",
+    "inFlightDeduplication": true,
+    "adjacentPrefetch": false,
+    "markerGroupLimit": 500
+  },
+  "coverageSemantics": {
+    "knownZero": "0 observed | coverage known",
+    "knownPositive": "Raw observed count with coverage known",
+    "unknownPositive": "Raw observed count retained and coverage incomplete",
+    "unknownZero": "Coverage incomplete | no confirmed events",
+    "unknownCoverageTreatment": "HATCHED_ACTIVITY_COVERAGE_ONLY"
+  },
+  "layout": {
+    "fieldsWaves": {
+      "activityVisible": false,
+      "activityMarkersVisible": true,
+      "activityPaneHeight": 136
+    },
+    "legacyLayoutMigration": "SAFE_DEFAULTS_WITHOUT_REWRITING_STORED_JSON",
+    "activityDataPersisted": false
+  },
+  "tests": {
+    "focused": { "files": 5, "passed": 54 },
+    "frontend": { "files": 47, "passed": 229 },
+    "typescriptProjectBuild": "PASS",
+    "oxlint": "PASS",
+    "viteProductionBuild": "PASS",
+    "browserVisualReview": "PASS_SYNTHETIC_FIXTURE",
+    "nativeChartCapture": "PASS_NONEMPTY_PNG_DATA_URL_WITH_ACTIVITY_PANE",
+    "backendChanged": false,
+    "rustTauriChanged": false
+  },
+  "changedFiles": [
+    "gann-astro-desk/src/App.css",
+    "gann-astro-desk/src/chartLayouts.test.ts",
+    "gann-astro-desk/src/chartLayouts.ts",
+    "gann-astro-desk/src/chartPaneRegistry.test.ts",
+    "gann-astro-desk/src/chartPaneRegistry.ts",
+    "gann-astro-desk/src/components/MarketChart.tsx",
+    "gann-astro-desk/src/fieldsWorkspace.test.tsx",
+    "gann-astro-desk/src/fieldsWavesActivity.test.ts",
+    "gann-astro-desk/src/fieldsWavesActivity.ts",
+    "gann-astro-desk/src/types.ts",
+    "gann-astro-desk/src/useChartLayouts.ts",
+    "gann-astro-desk/src/useFieldsWavesActivity.test.tsx",
+    "gann-astro-desk/src/useFieldsWavesActivity.ts",
+    "gann-astro-desk/src/views/MainWorkspace.tsx",
+    "docs/research/PFR_V2B_R5_F4_A_P1_CHART_NATIVE_ACTIVITY.md",
+    "status/research/pfr_v2b_r5_f4_a_p1_chart_native_activity.json",
+    "CURRENT_PROJECT_HANDOFF.md"
+  ],
+  "locks": {
+    "providerAccessed": false,
+    "marketDataCapturePerformed": false,
+    "outcomeAnalysisPerformed": false,
+    "empiricalExecutionPerformed": false,
+    "mt5OrderInvoked": false,
+    "executionAllowed": false
+  }
+}
