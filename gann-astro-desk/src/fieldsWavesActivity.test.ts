@@ -247,6 +247,11 @@ describe('chart-native Fields & Waves activity data', () => {
   it('merges chunk records by immutable event and interval identity without averaging', () => {
     const first = activityRange(0, 10, 'shared', 3, 'UNKNOWN')
     const second = activityRange(10, 20, 'next', 1, 'KNOWN')
+    const epochEquivalentDuplicate = {
+      ...first.fields.USD.activityIntervals[0],
+      startUtc: '1970-01-01T01:00:00+01:00',
+      endUtc: '1970-01-01T01:00:10+01:00',
+    }
     const duplicated = {
       ...second,
       fields: {
@@ -254,7 +259,7 @@ describe('chart-native Fields & Waves activity data', () => {
         USD: {
           ...second.fields.USD,
           events: [...second.fields.USD.events, first.fields.USD.events[0]],
-          activityIntervals: [...second.fields.USD.activityIntervals, first.fields.USD.activityIntervals[0]],
+          activityIntervals: [...second.fields.USD.activityIntervals, epochEquivalentDuplicate],
         },
       },
     }

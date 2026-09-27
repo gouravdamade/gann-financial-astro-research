@@ -214,11 +214,18 @@ export function mergeActivityRanges(
     for (const field of sideRanges) {
       for (const event of field.events) eventMap.set(event.eventId, event)
       for (const interval of field.activityIntervals) {
-        intervalMap.set(`${interval.intervalId}|${interval.startUtc}|${interval.endUtc}`, interval)
+        const startEpochMs = Date.parse(interval.startUtc)
+        const endEpochMs = Date.parse(interval.endUtc)
+        const epochIdentity = Number.isFinite(startEpochMs) && Number.isFinite(endEpochMs)
+          ? `${startEpochMs}|${endEpochMs}`
+          : `${interval.startUtc}|${interval.endUtc}`
+        intervalMap.set(`${interval.intervalId}|${epochIdentity}`, interval)
       }
     }
     const events = [...eventMap.values()].sort((left, right) => left.exactUtc.localeCompare(right.exactUtc))
-    const activityIntervals = [...intervalMap.values()].sort((left, right) => left.startUtc.localeCompare(right.startUtc))
+    const activityIntervals = [...intervalMap.values()].sort((left, right) =>
+      Date.parse(left.startUtc) - Date.parse(right.startUtc)
+      || Date.parse(left.endUtc) - Date.parse(right.endUtc))
     const coverage = sideRanges.some((field) => field.coverage === 'UNKNOWN')
       || activityIntervals.some((interval) => interval.coverage === 'UNKNOWN')
       ? 'UNKNOWN' as const
