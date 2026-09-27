@@ -13442,3 +13442,34 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `status/research/pfr_v2b_r5_f4_a_p1_chart_native_activity.json`.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P1_CHART_NATIVE_ACTIVITY`.
+
+## PFR-V2B-R5-F4-A-P1-R1 Activity Gap Integrity (2026-09-27)
+
+- Corrected native activity rendering so noncontiguous loaded intervals have a
+  Lightweight Charts whitespace break at the previous interval's epoch end.
+  Adjacent intervals compare by epoch and remain connected; no zero or
+  interpolated activity is introduced across unloaded time.
+- A missing interval now reads `DATA NOT LOADED`, separate from both known zero
+  and loaded `UNKNOWN` coverage. Unknown hatching stays within returned unknown
+  intervals, and exact-event markers cannot appear in unloaded gaps.
+- When a visible range intersects more than 12 chunks, the centered bounded
+  window is labeled `bounded_partial`; the UI states that history outside it is
+  not loaded rather than reporting `ready`.
+- P1 is preserved historically and its current status is
+  `SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW`. R1 implementation commit:
+  `f25cbc4e066870b8af02ec855aaa94ccdcb210d8` (with initial UI/rendering commit
+  `8fbe646cfc1ab184a1887c5e104ef895704a9636`; epoch-order test commit
+  `c9d1b05b9efa21fc3ae5fe06c8d1319abd0a31b8`) on branch
+  `research/pfr-v2b-r5-f4-a-p1-r1-activity-gap-integrity`.
+- Verification: focused activity/controller tests 16/16; full frontend 233/233
+  across 47 files; TypeScript, Oxlint, Vite production build, and
+  `git diff --check` passed. No backend or Rust/Tauri source changed.
+- No polarity, evidence/catalogue, pair-field, directional Fields, F4-B/F4-C,
+  Candidate C, EMP3, provider, outcome, MT5, or execution behavior changed.
+  No provider access, market/outcome read, or MT5 order occurred;
+  `executionAllowed=false`.
+- Report and machine status:
+  `docs/research/PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY.md` and
+  `status/research/pfr_v2b_r5_f4_a_p1_r1_activity_gap_integrity.json`.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY`.

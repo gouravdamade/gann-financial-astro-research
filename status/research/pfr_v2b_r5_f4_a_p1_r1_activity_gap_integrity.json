@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P1-R1",
+  "status": "IMPLEMENTED_PENDING_CENTRAL_REVIEW",
+  "branch": "research/pfr-v2b-r5-f4-a-p1-r1-activity-gap-integrity",
+  "startingCommit": "789fdf6d9619ac9c0a24b13ba4b5e0e7b4e55925",
+  "parentImplementationCommit": "231250f347b71842fa0001127f47d6df5a276547",
+  "implementationCommit": "f25cbc4e066870b8af02ec855aaa94ccdcb210d8",
+  "implementationCommits": [
+    "8fbe646cfc1ab184a1887c5e104ef895704a9636",
+    "f25cbc4e066870b8af02ec855aaa94ccdcb210d8"
+  ],
+  "testCommit": "c9d1b05b9efa21fc3ae5fe06c8d1319abd0a31b8",
+  "predecessorStatus": {
+    "milestone": "PFR-V2B-R5-F4-A-P1",
+    "status": "SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW",
+    "historicalReportPreserved": true
+  },
+  "activityIntegrity": {
+    "nonContiguousCacheRenderedAsGap": true,
+    "gapRepresentation": "LIGHTWEIGHT_CHARTS_WHITESPACE_DATA_AT_PRIOR_INTERVAL_EPOCH_END",
+    "unloadedTimeDistinctFromUnknownCoverage": true,
+    "unloadedTimeDistinctFromKnownZero": true,
+    "crosshairOnUnloadedTime": "DATA NOT LOADED",
+    "markersInUnloadedGaps": false,
+    "unknownCoverageHatchCrossesUnloadedTime": false,
+    "epochAdjacentIntervalsStayConnected": true,
+    "duplicateIntervalEdgesDeduplicated": true,
+    "cacheMergeUsesEpochIntervalIdentity": true,
+    "wideVisibleRangeTruncationExplicit": true,
+    "wideRangeStatus": "bounded_partial",
+    "wideRangeVisibleWarning": "Visible history outside the centered 12-chunk window is DATA NOT LOADED.",
+    "maxChunksPerVisibleRange": 12,
+    "activityInterpolationAcrossUnloadedTime": false
+  },
+  "tests": {
+    "focused": {
+      "files": 2,
+      "passed": 16
+    },
+    "frontend": {
+      "files": 47,
+      "passed": 233
+    },
+    "typescriptProjectBuild": "PASS",
+    "oxlint": "PASS",
+    "viteProductionBuild": "PASS",
+    "gitDiffCheck": "PASS",
+    "backendChanged": false,
+    "rustTauriChanged": false
+  },
+  "locks": {
+    "sourceCatalogueChanged": false,
+    "evidenceRegistryChanged": false,
+    "fieldsDirectionalLogicChanged": false,
+    "polarityRulesChanged": false,
+    "pairFieldLogicChanged": false,
+    "f4bAuthorized": false,
+    "f4cAuthorized": false,
+    "candidateCChanged": false,
+    "emp3Changed": false,
+    "providerAccessed": false,
+    "marketDataRead": false,
+    "outcomeAnalysisPerformed": false,
+    "mt5OrderInvoked": false,
+    "executionAllowed": false
+  },
+  "changedFiles": [
+    "gann-astro-desk/src/App.css",
+    "gann-astro-desk/src/components/MarketChart.tsx",
+    "gann-astro-desk/src/fieldsWavesActivity.test.ts",
+    "gann-astro-desk/src/fieldsWavesActivity.ts",
+    "gann-astro-desk/src/useFieldsWavesActivity.test.tsx",
+    "gann-astro-desk/src/useFieldsWavesActivity.ts",
+    "gann-astro-desk/src/views/MainWorkspace.tsx",
+    "docs/research/PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY.md",
+    "status/research/pfr_v2b_r5_f4_a_p1_r1_activity_gap_integrity.json",
+    "status/research/pfr_v2b_r5_f4_a_p1_chart_native_activity.json",
+    "CURRENT_PROJECT_HANDOFF.md"
+  ],
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P1_R1_ACTIVITY_GAP_INTEGRITY"
+}

@@ -1,11 +1,16 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P1_CHART_NATIVE_ACTIVITY_V1",
   "milestone": "PFR-V2B-R5-F4-A-P1",
-  "status": "IMPLEMENTED_PENDING_CENTRAL_REVIEW",
+  "status": "SUPERSEDED_BY_P1_R1_PENDING_CENTRAL_REVIEW",
   "branch": "research/pfr-v2b-r5-f4-a-p1-chart-native-activity",
   "startingCommit": "5ae4df13b042b1eaa309a7ac0ab6c36850bd50e9",
   "implementationCommit": "231250f347b71842fa0001127f47d6df5a276547",
   "implementationCommitMeaning": "Source and tests commit; documentation and status are recorded in its successor metadata commit.",
+  "supersededBy": {
+    "milestone": "PFR-V2B-R5-F4-A-P1-R1",
+    "status": "IMPLEMENTED_PENDING_CENTRAL_REVIEW",
+    "implementationCommit": "f25cbc4e066870b8af02ec855aaa94ccdcb210d8"
+  },
   "scope": {
     "chartNativeUnsignedActivity": true,
     "usdDirectionalPane": false,
