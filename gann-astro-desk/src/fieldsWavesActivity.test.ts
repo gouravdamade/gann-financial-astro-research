@@ -268,6 +268,8 @@ describe('chart-native Fields & Waves activity data', () => {
     expect(merged?.fields.USD.activityIntervals).toHaveLength(2)
     expect(merged?.fields.USD.coverage).toBe('UNKNOWN')
     expect(merged?.fields.USD.activityIntervals.map((interval) => interval.rawActiveEventCount)).toEqual([3, 1])
+    expect(merged?.fields.USD.activityIntervals.map((interval) => Date.parse(interval.startUtc))).toEqual([0, 10_000])
+    expect(activityIntervalAt(merged!.fields.USD.activityIntervals, 5)?.intervalId).toBe('interval-shared')
     expect(activityIntervalAt(merged!.fields.USD.activityIntervals, 10)?.intervalId).toBe('interval-next')
     expect(activityIntervalAt(merged!.fields.USD.activityIntervals, 20)).toBeNull()
   })
