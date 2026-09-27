@@ -144,6 +144,12 @@ export type RsiPaneSettings = {
   levels: number[]
 }
 
+export type FieldsWavesChartSettings = {
+  activityVisible: boolean
+  activityMarkersVisible: boolean
+  activityPaneHeight: number
+}
+
 export type RsiPoint = {
   time: number
   value: number
@@ -633,6 +639,7 @@ export type ChartLayoutState = {
   showSrLines: boolean
   drawingPreferences?: DrawingPreferences
   rsi?: RsiPaneSettings
+  fieldsWaves?: FieldsWavesChartSettings
   planetaryLines?: PlanetaryLineOverlaySettings
   squareOfNine?: SquareOfNineWorkspaceState
   collectiveAuditSnapshots?: PlanetaryCollectiveAuditSnapshot[]

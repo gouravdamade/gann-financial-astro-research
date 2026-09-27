@@ -6265,6 +6265,146 @@ html.android-runtime .loading-state {
 .rsi-pane-legend em { color: #c9d4dc; font-style: normal; font-weight: 700; }
 .rsi-pane-legend em.is-high { color: #ed8d8d; }
 .rsi-pane-legend em.is-low { color: #65c9af; }
+.fields-waves-popover {
+  position: absolute;
+  z-index: 18;
+  top: 39px;
+  right: 70px;
+  width: min(320px, calc(100% - 20px));
+  display: grid;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid #40576a;
+  border-radius: 5px;
+  background: #111c29;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 38%);
+  color: #b9c8d4;
+}
+
+.fields-waves-popover header,
+.activity-event-details header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fields-waves-popover header > div,
+.activity-event-details header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.fields-waves-popover header strong,
+.activity-event-details header strong { color: #e5edf2; font-size: 10px; }
+.fields-waves-popover header span,
+.activity-event-details header span { color: #8296a8; font-size: 8px; }
+
+.fields-waves-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 33px;
+  padding: 5px 6px;
+  border: 1px solid #2c4152;
+  border-radius: 3px;
+  background: #0e1823;
+  cursor: pointer;
+}
+
+.fields-waves-toggle.is-secondary { margin-left: 16px; }
+.fields-waves-toggle input { accent-color: #56bea2; }
+.fields-waves-toggle span { display: grid; gap: 2px; }
+.fields-waves-toggle strong { color: #c9d7e0; font-size: 9px; }
+.fields-waves-toggle small { color: #8296a8; font-size: 8px; }
+
+.fields-waves-availability {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid #263747;
+}
+
+.fields-waves-availability > div { display: flex; justify-content: space-between; gap: 8px; font-size: 8px; }
+.fields-waves-availability strong { color: #90a4b4; }
+.fields-waves-availability span { color: #d2a95e; }
+.fields-waves-fetch-state { margin: 0; color: #86a2b3; font-size: 8px; overflow-wrap: anywhere; }
+.fields-waves-fetch-state.is-data_unavailable { color: #e38e82; }
+
+.fields-waves-open {
+  min-height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 1px solid #416276;
+  border-radius: 3px;
+  background: #18303c;
+  color: #9bd9cf;
+  cursor: pointer;
+  font-size: 9px;
+}
+
+.fields-waves-open:hover { background: #234554; }
+
+.activity-pane-legend {
+  position: absolute;
+  z-index: 9;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 20px);
+  min-height: 22px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgb(13 20 30 / 82%);
+  color: #93a5b5;
+  pointer-events: none;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.activity-pane-legend strong { color: #dce8ee; }
+.activity-pane-legend > span { color: #859bab; }
+.activity-pane-legend em { font-style: normal; font-variant-numeric: tabular-nums; }
+.activity-pane-legend .activity-usd-readout { color: #65c9ab; }
+.activity-pane-legend .activity-jpy-readout { color: #e3bd68; }
+.activity-pane-legend small { color: #e3bd68; }
+
+.activity-coverage-layer {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.activity-event-details {
+  position: absolute;
+  z-index: 19;
+  top: 42px;
+  right: 12px;
+  width: min(365px, calc(100% - 24px));
+  display: grid;
+  gap: 7px;
+  padding: 9px;
+  border: 1px solid #435a6b;
+  border-radius: 4px;
+  background: rgb(14 23 33 / 96%);
+  box-shadow: 0 8px 20px rgb(0 0 0 / 35%);
+}
+
+.activity-event-record { display: grid; gap: 3px; padding-top: 6px; border-top: 1px solid #293c4a; }
+.activity-event-record strong { font-size: 9px; }
+.activity-event-record strong.is-usd { color: #65c9ab; }
+.activity-event-record strong.is-jpy { color: #e3bd68; }
+.activity-event-record span,
+.activity-event-record small,
+.activity-event-details > small { color: #a6b5bf; font: 8px Consolas, monospace; overflow-wrap: anywhere; }
+
 .chart-ohlc-legend > small { color: #6f7885; font-size: 8px; }
 .chart-ohlc-legend dl { display: flex; gap: 6px; margin: 0; }
 .chart-ohlc-legend dl > div { display: flex; gap: 2px; }

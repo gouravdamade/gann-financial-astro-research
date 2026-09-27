@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   createChartDrawing,
   defaultDrawingPreferences,
+  defaultFieldsWavesChartSettings,
   defaultFibonacciSettings,
   defaultRsiPaneSettings,
   defaultSquareOfNineSettings,
@@ -78,6 +79,7 @@ describe('layout import guardrails', () => {
     expect(imported.drawings[0].pane).toBe('price')
     expect(imported.chartState.drawingPreferences).toEqual(defaultDrawingPreferences())
     expect(imported.chartState.rsi).toEqual(defaultRsiPaneSettings())
+    expect(imported.chartState.fieldsWaves).toEqual(defaultFieldsWavesChartSettings())
     expect(imported.chartState.planetaryLines).toEqual(defaultPlanetaryLineOverlaySettings())
   })
 
@@ -109,5 +111,52 @@ describe('layout import guardrails', () => {
     expect(imported.chartState.rsi).toMatchObject({ visible: true, period: 21, levels: [20, 50, 80] })
     expect(imported.drawings[0].pane).toBe('rsi')
     expect(imported.drawings[0].anchors[0].price).toBe(63.5)
+  })
+
+  it('defaults older layouts to hidden activity and persists only bounded display settings', () => {
+    const oldLayout = validateImportedLayout({
+      contract: 'GANN_CHART_LAYOUT_V1',
+      schemaVersion: 1,
+      layoutId: 'old-layout',
+      name: 'Old chart',
+      workspaceKind: 'main',
+      symbol: 'USDJPY',
+      timeframe: 'H1',
+      familyKey: '',
+      revision: 1,
+      isDefault: false,
+      autosave: true,
+      chartState: { showAspects: true, showSrLines: true },
+      drawings: [],
+    })
+    expect(oldLayout.chartState.fieldsWaves).toEqual(defaultFieldsWavesChartSettings())
+
+    const configured = validateImportedLayout({
+      contract: 'GANN_CHART_LAYOUT_V1',
+      schemaVersion: 1,
+      layoutId: 'activity-layout',
+      name: 'Activity chart',
+      workspaceKind: 'main',
+      symbol: 'USDJPY',
+      timeframe: 'H1',
+      familyKey: '',
+      revision: 1,
+      isDefault: false,
+      autosave: true,
+      chartState: {
+        showAspects: true,
+        showSrLines: true,
+        fieldsWaves: { activityVisible: true, activityMarkersVisible: false, activityPaneHeight: 158 },
+      },
+      drawings: [],
+    })
+    expect(configured.chartState.fieldsWaves).toEqual({
+      activityVisible: true,
+      activityMarkersVisible: false,
+      activityPaneHeight: 158,
+    })
+    const serialized = JSON.stringify(configured.chartState.fieldsWaves)
+    expect(serialized).not.toContain('events')
+    expect(serialized).not.toContain('coverage')
   })
 })

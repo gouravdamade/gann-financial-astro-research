@@ -515,6 +515,11 @@ describe('FieldsWorkspace', () => {
 
     render(<ModeSwitchHarness />)
     await screen.findByLabelText('BPHS Classical Calendar')
+    await waitFor(() => {
+      expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalled()
+      expect(apiMocks.fetchMultiOscillatorActivityRange).toHaveBeenCalled()
+      expect(apiMocks.fetchBphsClassicalCalendarRange).toHaveBeenCalled()
+    })
     const rangeCalls = apiMocks.fetchSynchronizedIndependentRange.mock.calls.length
     const activityCalls = apiMocks.fetchMultiOscillatorActivityRange.mock.calls.length
     const bphsCalls = apiMocks.fetchBphsClassicalCalendarRange.mock.calls.length

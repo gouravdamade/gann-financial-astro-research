@@ -11,8 +11,10 @@ import {
 } from './api'
 import {
   defaultDrawingPreferences,
+  defaultFieldsWavesChartSettings,
   defaultRsiPaneSettings,
   layoutSignature,
+  normalizeFieldsWavesChartSettings,
   validateImportedLayout,
   type ChartLayoutScope,
 } from './chartLayouts'
@@ -110,6 +112,9 @@ export function useChartLayouts({
         ...defaultRsiPaneSettings(),
         ...(migratedChartState.rsi ?? {}),
       },
+      fieldsWaves: normalizeFieldsWavesChartSettings(
+        migratedChartState.fieldsWaves ?? defaultFieldsWavesChartSettings(),
+      ),
       planetaryLines: normalizePlanetaryLineSettings(migratedChartState.planetaryLines),
       collectiveAuditSnapshots: normalizeCollectiveAuditSnapshots(
         migratedChartState.collectiveAuditSnapshots,

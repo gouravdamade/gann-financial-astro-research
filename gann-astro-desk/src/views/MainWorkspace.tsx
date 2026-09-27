@@ -44,7 +44,7 @@ import {
   scanCandlestickShadow,
 } from '../api'
 import { replayCutoffForCandle } from '../barReplay'
-import { defaultDrawingPreferences, downloadLayoutJson } from '../chartLayouts'
+import { defaultDrawingPreferences, defaultFieldsWavesChartSettings, downloadLayoutJson, normalizeFieldsWavesChartSettings } from '../chartLayouts'
 import {
   createCollectiveAuditSnapshot,
   downloadCollectiveAuditSnapshot,
@@ -74,6 +74,7 @@ import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnosticsPanel'
 import { ShadowLedgerPanel } from '../components/ShadowLedgerPanel'
 import { ToolRail } from '../components/ToolRail'
 import { useChartLayouts } from '../useChartLayouts'
+import { useFieldsWavesActivity } from '../useFieldsWavesActivity'
 import { usePlanetaryLineOverlay } from '../usePlanetaryLineOverlay'
 import { useVisibilityPolling } from '../useVisibilityPolling'
 import type {
@@ -280,9 +281,23 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     initialChartState: {
       showAspects: workspace.showAspects,
       showSrLines: workspace.showSrLines,
+      fieldsWaves: defaultFieldsWavesChartSettings(),
     },
     onRestoreChartState: restoreLayoutState,
   })
+  const fieldsWavesSettings = useMemo(
+    () => normalizeFieldsWavesChartSettings(chartLayouts.chartState.fieldsWaves),
+    [chartLayouts.chartState.fieldsWaves],
+  )
+  const fieldsWavesActivity = useFieldsWavesActivity(
+    activeSurface === 'chart' && fieldsWavesSettings.activityVisible,
+    chart?.symbol ?? parameters?.symbol ?? 'USDJPY',
+  )
+  const updateFieldsWavesSettings = useCallback((update: Partial<ReturnType<typeof normalizeFieldsWavesChartSettings>>) => {
+    chartLayouts.updateChartState({
+      fieldsWaves: normalizeFieldsWavesChartSettings({ ...fieldsWavesSettings, ...update }),
+    })
+  }, [chartLayouts, fieldsWavesSettings])
   const activeChartLayout = chartLayouts.activeLayout
   const updateLayoutChartState = chartLayouts.updateChartState
   const planetaryLineSettings = useMemo(
@@ -1089,6 +1104,13 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             selectedDrawingId={chartLayouts.selectedDrawingId}
             layoutKey={chartLayouts.activeLayout?.layoutId}
             viewState={chartLayouts.chartState}
+            fieldsWavesEnabled
+            activity={fieldsWavesActivity.activity}
+            activityRequestStatus={fieldsWavesActivity.requestStatus}
+            activityError={fieldsWavesActivity.error}
+            onActivityVisibleRangeChange={fieldsWavesActivity.requestVisibleRange}
+            onFieldsWavesSettingsChange={updateFieldsWavesSettings}
+            onOpenFieldsResearch={() => navigateSurface('fields')}
             onDrawingsChange={chartLayouts.replaceDrawings}
             onSelectDrawing={(drawingId) => {
               chartLayouts.setSelectedDrawingId(drawingId)

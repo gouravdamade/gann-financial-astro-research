@@ -10,6 +10,7 @@ import type {
   DrawingTemplate,
   DrawingPreferences,
   FibonacciSettings,
+  FieldsWavesChartSettings,
   RsiPaneSettings,
   SquareOfNineSettings,
 } from './types'
@@ -52,6 +53,28 @@ export function defaultRsiPaneSettings(): RsiPaneSettings {
     source: 'close',
     timeframe: 'chart',
     levels: [30, 50, 70],
+  }
+}
+
+export function defaultFieldsWavesChartSettings(): FieldsWavesChartSettings {
+  return {
+    activityVisible: false,
+    activityMarkersVisible: true,
+    activityPaneHeight: 136,
+  }
+}
+
+export function normalizeFieldsWavesChartSettings(
+  settings?: Partial<FieldsWavesChartSettings> | null,
+): FieldsWavesChartSettings {
+  const defaults = defaultFieldsWavesChartSettings()
+  const requestedHeight = Number(settings?.activityPaneHeight)
+  return {
+    activityVisible: settings?.activityVisible === true,
+    activityMarkersVisible: settings?.activityMarkersVisible !== false,
+    activityPaneHeight: Number.isFinite(requestedHeight)
+      ? Math.max(110, Math.min(240, Math.round(requestedHeight)))
+      : defaults.activityPaneHeight,
   }
 }
 
@@ -223,6 +246,7 @@ export function validateImportedLayout(value: unknown): Omit<ChartLayout, 'layou
         ...defaultRsiPaneSettings(),
         ...(chartState.rsi ?? {}),
       },
+      fieldsWaves: normalizeFieldsWavesChartSettings(chartState.fieldsWaves),
       planetaryLines: normalizePlanetaryLineSettings(chartState.planetaryLines),
       collectiveAuditSnapshots: normalizeCollectiveAuditSnapshots(
         chartState.collectiveAuditSnapshots,

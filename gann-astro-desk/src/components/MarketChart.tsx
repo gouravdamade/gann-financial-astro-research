@@ -3,11 +3,13 @@ import {
   ColorType,
   CrosshairMode,
   LineSeries,
+  LineType,
   LineStyle,
+  createSeriesMarkers,
   createChart,
   type IChartApi,
-  type IPaneApi,
   type IPriceLine,
+  type ISeriesMarkersPluginApi,
   type ISeriesApi,
   type MouseEventParams,
   type Time,
@@ -17,6 +19,7 @@ import { toPng } from 'html-to-image'
 import {
   Activity,
   ChevronLeft,
+  ChevronDown,
   ChevronRight,
   Eye,
   EyeOff,
@@ -28,12 +31,14 @@ import {
   SlidersHorizontal,
   Trash2,
   Unlock,
+  Waves,
   X,
 } from 'lucide-react'
 import {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -47,8 +52,18 @@ import {
   nextAspectAtTime,
 } from '../aspectPresentation'
 import { clipAspectWindowToViewport } from '../chartAspectBands'
-import { createChartDrawing, defaultRsiPaneSettings } from '../chartLayouts'
+import { createChartDrawing, defaultFieldsWavesChartSettings, defaultRsiPaneSettings, normalizeFieldsWavesChartSettings } from '../chartLayouts'
+import { ChartPaneRegistry, drawingAllowedInPane } from '../chartPaneRegistry'
 import { chooseMagnetCandidate, type MagnetCandidate } from '../drawingMagnet'
+import {
+  activityCoverageLabel,
+  activityIntervalAt,
+  activityStepPoints,
+  groupActivityEventsForMarkers,
+  unknownActivityCoverageRanges,
+  type ActivityVisibleRange,
+  type ActivityMarkerGroup,
+} from '../fieldsWavesActivity'
 import {
   isChartNavigationProximity,
   MIN_CHART_BAR_SPACING,
@@ -64,11 +79,15 @@ import type {
   ChartDrawing,
   ChartDrawingAnchor,
   DrawingPreferences,
+  FieldsWavesChartSettings,
   ChartLayoutState,
   ChartPayload,
   ChartTool,
+  MultiOscillatorActivityEvent,
+  MultiOscillatorActivityRange,
   PlanetaryLineSeries,
 } from '../types'
+import type { FieldsWavesActivityStatus } from '../useFieldsWavesActivity'
 
 type BandPosition = { event: AspectWindow; left: number; width: number }
 type Point = { time: number; price: number }
@@ -82,6 +101,12 @@ type OverlapPickerState = {
   eventIds: string[]
 }
 type PaneBounds = { top: number; height: number }
+type ActivityReadout = {
+  time: number | null
+  usd: string
+  jpy: string
+  events: MultiOscillatorActivityEvent[]
+}
 
 export type MarketChartHandle = {
   capture: () => Promise<string>
@@ -120,6 +145,13 @@ type MarketChartProps = {
   onViewStateChange?: (state: Partial<ChartLayoutState>) => void
   onUndo?: () => void
   drawingPreferences?: DrawingPreferences
+  activity?: MultiOscillatorActivityRange | null
+  fieldsWavesEnabled?: boolean
+  activityRequestStatus?: FieldsWavesActivityStatus
+  activityError?: string
+  onActivityVisibleRangeChange?: (range: ActivityVisibleRange) => void
+  onFieldsWavesSettingsChange?: (settings: Partial<FieldsWavesChartSettings>) => void
+  onOpenFieldsResearch?: () => void
 }
 
 function nearestTime(times: number[], value: number): number {
@@ -170,6 +202,13 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     onSelectDrawing,
     onViewStateChange,
     onUndo,
+    activity = null,
+    fieldsWavesEnabled = false,
+    activityRequestStatus = 'disabled',
+    activityError = '',
+    onActivityVisibleRangeChange,
+    onFieldsWavesSettingsChange,
+    onOpenFieldsResearch,
     drawingPreferences = {
       favoriteTools: ['horizontal', 'gann', 'fibonacci'],
       magnetMode: 'weak',
@@ -186,13 +225,27 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const rsiLevels = normalizeRsiLevels(rsiSettings.levels)
   const rsiLevelsKey = rsiLevels.join(',')
   const rsiVisible = rsiSettings.visible
+  const fieldsWavesSettings = normalizeFieldsWavesChartSettings(
+    viewState?.fieldsWaves ?? defaultFieldsWavesChartSettings(),
+  )
+  const activityVisible = fieldsWavesEnabled && fieldsWavesSettings.activityVisible && payload.symbol === 'USDJPY'
   const rootRef = useRef<HTMLDivElement>(null)
   const hostRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
   const rsiSeriesRef = useRef<ISeriesApi<'Line'> | null>(null)
+  const activityUsdSeriesRef = useRef<ISeriesApi<'Line'> | null>(null)
+  const activityJpySeriesRef = useRef<ISeriesApi<'Line'> | null>(null)
+  const activityUsdMarkersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null)
+  const activityJpyMarkersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null)
+  const paneRegistryRef = useRef<ChartPaneRegistry | null>(null)
+  const activityMarkerGroupsRef = useRef<Map<string, ActivityMarkerGroup>>(new Map())
+  const fieldsWavesSettingsChangeRef = useRef(onFieldsWavesSettingsChange)
+  const activityVisibleRangeChangeRef = useRef(onActivityVisibleRangeChange)
+  const openFieldsResearchRef = useRef(onOpenFieldsResearch)
+  const activityRef = useRef(activity)
+  const fieldsWavesSettingsRef = useRef(fieldsWavesSettings)
   const planetarySeriesRef = useRef<Map<string, ISeriesApi<'Line'>>>(new Map())
-  const rsiPaneRef = useRef<IPaneApi<Time> | null>(null)
   const priceLinesRef = useRef<IPriceLine[]>([])
   const rsiPriceLinesRef = useRef<IPriceLine[]>([])
   const toolRef = useRef(activeTool)
@@ -206,6 +259,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const replayCutoffSelectRef = useRef(onReplayCutoffSelect)
   const crosshairTimeChangeRef = useRef(onCrosshairTimeChange)
   const pinTimeRef = useRef(onPinTime)
+  const paneBoundsRefreshRef = useRef<() => void>(() => undefined)
   const toolCompleteRef = useRef(onToolComplete)
   const drawingPreferencesRef = useRef(drawingPreferences)
   const drawingsRef = useRef(drawings)
@@ -228,6 +282,12 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const viewStateDebounceRef = useRef<number | null>(null)
   const pendingViewStateRef = useRef<Pick<ChartLayoutState, 'visibleStartUtc' | 'visibleEndUtc'> | null>(null)
   const pendingLegendRef = useRef<Candle | null>(null)
+  const pendingActivityLegendRef = useRef<ActivityReadout | null>(null)
+  const pendingRsiLegendRef = useRef<number | null>(null)
+  const pendingCrosshairTimeRef = useRef<number | null>(null)
+  const [chartRevision, setChartRevision] = useState(0)
+  const [rsiSeriesRevision, setRsiSeriesRevision] = useState(0)
+  const [activitySeriesRevision, setActivitySeriesRevision] = useState(0)
   const [bands, setBands] = useState<BandPosition[]>([])
   const [hoveredAspectId, setHoveredAspectId] = useState<string | null>(null)
   const [overlapPicker, setOverlapPicker] = useState<OverlapPickerState | null>(null)
@@ -240,6 +300,11 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const [navigationVisible, setNavigationVisible] = useState(false)
   const [overlayRevision, setOverlayRevision] = useState(0)
   const [rsiPaneBounds, setRsiPaneBounds] = useState<PaneBounds | null>(null)
+  const [activityPaneBounds, setActivityPaneBounds] = useState<PaneBounds | null>(null)
+  const [activityReadout, setActivityReadout] = useState<ActivityReadout | null>(null)
+  const [selectedActivityEvents, setSelectedActivityEvents] = useState<MultiOscillatorActivityEvent[]>([])
+  const [fieldsWavesMenuOpen, setFieldsWavesMenuOpen] = useState(false)
+  const coveragePatternId = useId().replaceAll(':', '')
   const [rsiLegendValue, setRsiLegendValue] = useState<number | null>(null)
   const [rsiSettingsOpen, setRsiSettingsOpen] = useState(false)
   const [rsiLevelsInput, setRsiLevelsInput] = useState(rsiLevels.join(', '))
@@ -282,6 +347,14 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     reviewAspectRef.current = onReviewAspect
     showAspectsRef.current = showAspects
   }, [onReviewAspect, onSelectAspect, onShowAspectDetails, showAspects])
+
+  useEffect(() => {
+    fieldsWavesSettingsChangeRef.current = onFieldsWavesSettingsChange
+    activityVisibleRangeChangeRef.current = onActivityVisibleRangeChange
+    openFieldsResearchRef.current = onOpenFieldsResearch
+    activityRef.current = activity
+    fieldsWavesSettingsRef.current = fieldsWavesSettings
+  }, [activity, fieldsWavesSettings, onActivityVisibleRangeChange, onFieldsWavesSettingsChange, onOpenFieldsResearch])
 
   useEffect(() => {
     payloadRef.current = payload
@@ -462,50 +535,36 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       priceLineVisible: false,
       lastValueVisible: true,
     })
-    const rsiSeries = rsiVisible
-      ? chart.addSeries(LineSeries, {
-          color: '#d6a84b',
-          lineWidth: 2,
-          priceLineVisible: false,
-          lastValueVisible: true,
-          crosshairMarkerVisible: true,
-          priceFormat: {
-            type: 'custom',
-            minMove: 0.1,
-            formatter: (value: number) => value.toFixed(1),
-          },
-          autoscaleInfoProvider: () => ({
-            priceRange: { minValue: 0, maxValue: 100 },
-          }),
-        }, 1)
-      : null
-    const panes = chart.panes()
-    if (rsiSeries && panes[1]) {
-      panes[0].setStretchFactor(3)
-      panes[1].setStretchFactor(1)
-    }
     chartRef.current = chart
     seriesRef.current = series
-    rsiSeriesRef.current = rsiSeries
-    rsiPaneRef.current = rsiSeries?.getPane() ?? null
+    rsiSeriesRef.current = null
+    activityUsdSeriesRef.current = null
+    activityJpySeriesRef.current = null
+    paneRegistryRef.current = new ChartPaneRegistry(chart, series)
+    setChartRevision((revision) => revision + 1)
 
     const refreshPaneBounds = () => {
       const root = rootRef.current
-      const paneElement = rsiPaneRef.current?.getHTMLElement()
-      if (!root || !paneElement) {
+      const registry = paneRegistryRef.current
+      if (!root || !registry) {
         setRsiPaneBounds(null)
+        setActivityPaneBounds(null)
         return
       }
       const rootBounds = root.getBoundingClientRect()
-      const paneBounds = paneElement.getBoundingClientRect()
-      const next = {
-        top: paneBounds.top - rootBounds.top,
-        height: paneBounds.height,
+      const measure = (owner: 'RSI' | 'FIELDS_ACTIVITY'): PaneBounds | null => {
+        const paneElement = registry.pane(owner)?.getHTMLElement?.()
+        if (!paneElement) return null
+        const bounds = paneElement.getBoundingClientRect()
+        return { top: bounds.top - rootBounds.top, height: bounds.height }
       }
-      setRsiPaneBounds((current) => (
-        current?.top === next.top && current?.height === next.height ? current : next
-      ))
+      const updateBounds = (setter: typeof setRsiPaneBounds, next: PaneBounds | null) => {
+        setter((current) => current?.top === next?.top && current?.height === next?.height ? current : next)
+      }
+      updateBounds(setRsiPaneBounds, measure('RSI'))
+      updateBounds(setActivityPaneBounds, measure('FIELDS_ACTIVITY'))
     }
+    paneBoundsRefreshRef.current = refreshPaneBounds
 
     const flushSavedView = () => {
       viewStateDebounceRef.current = null
@@ -534,6 +593,9 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         if (applyingViewRef.current) return
         const visible = chart.timeScale().getVisibleRange()
         if (!visible || typeof visible.from !== 'number' || typeof visible.to !== 'number') return
+        if (fieldsWavesSettingsRef.current.activityVisible && payloadRef.current.symbol === 'USDJPY') {
+          activityVisibleRangeChangeRef.current?.({ from: Number(visible.from), to: Number(visible.to) })
+        }
         queueSavedView({
           visibleStartUtc: new Date(Number(visible.from) * 1000).toISOString(),
           visibleEndUtc: new Date(Number(visible.to) * 1000).toISOString(),
@@ -564,7 +626,30 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const clickHandler = (params: MouseEventParams<Time>) => {
       if (!params.point || params.time == null) return
       const time = Number(params.time)
-      const rsiPaneClicked = Boolean(rsiSeries && params.paneIndex === 1)
+      const hoveredId = typeof params.hoveredObjectId === 'string' ? params.hoveredObjectId : null
+      const markerGroup = hoveredId ? activityMarkerGroupsRef.current.get(hoveredId) : null
+      if (markerGroup) {
+        setSelectedActivityEvents(markerGroup.events)
+        pinTimeRef.current?.(markerGroup.time)
+        return
+      }
+      const owner = paneRegistryRef.current?.ownerAtRuntimeIndex(params.paneIndex) ?? null
+      if (owner === 'FIELDS_ACTIVITY') {
+        const markerTime = Math.floor(time)
+        const clickedEvents = (['USD', 'JPY'] as const).flatMap((side) =>
+          activityMarkerGroupsRef.current.get(`activity-${side}-${markerTime}`)?.events ?? [],
+        )
+        if (clickedEvents.length) {
+          setSelectedActivityEvents(clickedEvents)
+          pinTimeRef.current?.(markerTime)
+        }
+        return
+      }
+      const tool = toolRef.current
+      if (!drawingAllowedInPane(owner, tool)) return
+      const rsiSeries = rsiSeriesRef.current
+      const rsiPaneClicked = owner === 'RSI'
+      if (owner !== 'PRICE' && !rsiPaneClicked) return
       const rawValue = rsiPaneClicked
         ? rsiSeries?.coordinateToPrice(params.point.y)
         : series.coordinateToPrice(params.point.y)
@@ -580,7 +665,6 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             params.point.x,
             params.point.y,
           )
-      const tool = toolRef.current
       if (tool === 'replay') {
         replayCutoffSelectRef.current?.(time)
       } else if (tool === 'horizontal') {
@@ -679,34 +763,65 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       }
     }
     chart.subscribeClick(clickHandler)
-    const scheduleLegendUpdate = (candle: Candle | null) => {
-      pendingLegendRef.current = candle
+    const scheduleLegendUpdate = (
+      candle: Candle | undefined,
+      readout: ActivityReadout,
+      rsiValue: number | null,
+      crosshairTime: number | null,
+    ) => {
+      if (candle !== undefined) pendingLegendRef.current = candle
+      pendingActivityLegendRef.current = readout
+      pendingRsiLegendRef.current = rsiValue
+      pendingCrosshairTimeRef.current = crosshairTime
       if (crosshairFrameRef.current != null) return
       crosshairFrameRef.current = window.requestAnimationFrame(() => {
         crosshairFrameRef.current = null
         setLegendCandle(pendingLegendRef.current)
+        setActivityReadout(pendingActivityLegendRef.current)
+        setRsiLegendValue(pendingRsiLegendRef.current)
+        crosshairTimeChangeRef.current?.(pendingCrosshairTimeRef.current)
       })
+    }
+    const readoutAt = (time: number | null, markerId?: string): ActivityReadout => {
+      const current = activityRef.current
+      const usd = current
+        ? activityCoverageLabel(time == null ? null : activityIntervalAt(current.fields.USD.activityIntervals, time))
+        : 'No loaded activity interval'
+      const jpy = current
+        ? activityCoverageLabel(time == null ? null : activityIntervalAt(current.fields.JPY.activityIntervals, time))
+        : 'No loaded activity interval'
+      return {
+        time,
+        usd,
+        jpy,
+        events: markerId ? activityMarkerGroupsRef.current.get(markerId)?.events ?? [] : [],
+      }
     }
     chart.subscribeCrosshairMove((params) => {
       if (!params.point || params.time == null) {
-        crosshairTimeChangeRef.current?.(null)
-        scheduleLegendUpdate(payloadRef.current.candles[payloadRef.current.candles.length - 1] ?? null)
-        setRsiLegendValue(rsiPointsRef.current.at(-1)?.value ?? null)
+        const latest = payloadRef.current.candles[payloadRef.current.candles.length - 1] ?? null
+        scheduleLegendUpdate(
+          latest,
+          readoutAt(latest?.time ?? null),
+          rsiPointsRef.current.at(-1)?.value ?? null,
+          null,
+        )
         return
       }
-      crosshairTimeChangeRef.current?.(Number(params.time))
+      const time = Number(params.time)
+      const hoveredId = typeof params.hoveredObjectId === 'string' ? params.hoveredObjectId : undefined
+      const readout = readoutAt(time, hoveredId)
       const candle = params.seriesData.get(series)
-      if (!candle || !('close' in candle)) return
-      scheduleLegendUpdate({
-        time: Number(params.time),
+      const rsiSeries = rsiSeriesRef.current
+      const rsiPoint = rsiSeries ? params.seriesData.get(rsiSeries) : null
+      scheduleLegendUpdate(candle && 'close' in candle ? {
+        time,
         open: candle.open,
         high: candle.high,
         low: candle.low,
         close: candle.close,
         volume: 0,
-      })
-      const rsiPoint = rsiSeries ? params.seriesData.get(rsiSeries) : null
-      setRsiLegendValue(rsiPoint && 'value' in rsiPoint ? Number(rsiPoint.value) : null)
+      } : undefined, readout, rsiPoint && 'value' in rsiPoint ? Number(rsiPoint.value) : null, time)
     })
 
     return () => {
@@ -734,8 +849,14 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       chartRef.current = null
       seriesRef.current = null
       rsiSeriesRef.current = null
+      activityUsdSeriesRef.current = null
+      activityJpySeriesRef.current = null
+      activityUsdMarkersRef.current = null
+      activityJpyMarkersRef.current = null
+      activityMarkerGroupsRef.current.clear()
       planetarySeries.clear()
-      rsiPaneRef.current = null
+      paneRegistryRef.current = null
+      paneBoundsRefreshRef.current = () => undefined
       priceLinesRef.current = []
       rsiPriceLinesRef.current = []
       renderedCandlesRef.current = []
@@ -743,8 +864,147 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       srLinesSignatureRef.current = ''
       appliedLayoutViewRef.current = ''
       setRsiPaneBounds(null)
+      setActivityPaneBounds(null)
     }
-  }, [compact, rsiVisible])
+  }, [compact])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    const registry = paneRegistryRef.current
+    if (!chart || !registry) return
+    const existing = rsiSeriesRef.current
+    if (rsiVisible && !existing) {
+      const series = chart.addSeries(LineSeries, {
+        color: '#d6a84b',
+        lineWidth: 2,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        crosshairMarkerVisible: true,
+        priceFormat: {
+          type: 'custom',
+          minMove: 0.1,
+          formatter: (value: number) => value.toFixed(1),
+        },
+        autoscaleInfoProvider: () => ({ priceRange: { minValue: 0, maxValue: 100 } }),
+      }, chart.panes().length)
+      rsiSeriesRef.current = series
+      registry.registerIndicator({
+        id: 'RSI',
+        series,
+        preferredHeight: 120,
+        classification: 'oscillator',
+        modeEligible: true,
+      })
+      registry.pane('RSI')?.setStretchFactor?.(1)
+      registry.pane('PRICE')?.setStretchFactor?.(3)
+      setRsiSeriesRevision((revision) => revision + 1)
+    } else if (!rsiVisible && existing) {
+      rsiPriceLinesRef.current.forEach((line) => existing.removePriceLine(line))
+      rsiPriceLinesRef.current = []
+      registry.unregisterIndicator('RSI')
+      chart.removeSeries(existing)
+      rsiSeriesRef.current = null
+      setRsiLegendValue(null)
+      setRsiSeriesRevision((revision) => revision + 1)
+    }
+    window.requestAnimationFrame(() => {
+      paneBoundsRefreshRef.current()
+      setOverlayRevision((revision) => revision + 1)
+    })
+  }, [chartRevision, rsiVisible])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    const registry = paneRegistryRef.current
+    if (!chart || !registry) return
+    const existing = activityUsdSeriesRef.current
+    if (activityVisible && !existing) {
+      const paneIndex = chart.panes().length
+      const usd = chart.addSeries(LineSeries, {
+        color: '#55c2a4',
+        lineWidth: 2,
+        lineType: LineType.WithSteps,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: false,
+        priceFormat: {
+          type: 'custom',
+          minMove: 1,
+          formatter: (value: number) => String(Math.round(value)),
+        },
+        title: 'USD',
+      }, paneIndex)
+      const jpy = chart.addSeries(LineSeries, {
+        color: '#e2b34e',
+        lineWidth: 2,
+        lineType: LineType.WithSteps,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: false,
+        priceFormat: {
+          type: 'custom',
+          minMove: 1,
+          formatter: (value: number) => String(Math.round(value)),
+        },
+        title: 'JPY',
+      }, usd.getPane().paneIndex())
+      activityUsdSeriesRef.current = usd
+      activityJpySeriesRef.current = jpy
+      activityUsdMarkersRef.current = createSeriesMarkers(usd, [])
+      activityJpyMarkersRef.current = createSeriesMarkers(jpy, [])
+      registry.registerIndicator({
+        id: 'FIELDS_ACTIVITY',
+        series: usd,
+        preferredHeight: fieldsWavesSettingsRef.current.activityPaneHeight,
+        classification: 'unsigned_activity',
+        modeEligible: true,
+      })
+      registry.pane('PRICE')?.setStretchFactor?.(3)
+      registry.pane('FIELDS_ACTIVITY')?.setHeight?.(fieldsWavesSettingsRef.current.activityPaneHeight)
+      setActivitySeriesRevision((revision) => revision + 1)
+    } else if (!activityVisible && existing) {
+      activityUsdMarkersRef.current?.detach()
+      activityJpyMarkersRef.current?.detach()
+      activityUsdMarkersRef.current = null
+      activityJpyMarkersRef.current = null
+      const jpy = activityJpySeriesRef.current
+      if (jpy) chart.removeSeries(jpy)
+      chart.removeSeries(existing)
+      activityJpySeriesRef.current = null
+      activityUsdSeriesRef.current = null
+      activityMarkerGroupsRef.current.clear()
+      registry.unregisterIndicator('FIELDS_ACTIVITY')
+      setActivitySeriesRevision((revision) => revision + 1)
+      setActivityReadout(null)
+      setSelectedActivityEvents([])
+    }
+    if (activityVisible) {
+      const visible = chart.timeScale().getVisibleRange()
+      if (typeof visible?.from === 'number' && typeof visible.to === 'number') {
+        activityVisibleRangeChangeRef.current?.({ from: Number(visible.from), to: Number(visible.to) })
+      }
+    }
+    window.requestAnimationFrame(() => {
+      paneBoundsRefreshRef.current()
+      setOverlayRevision((revision) => revision + 1)
+    })
+  }, [activityVisible, chartRevision])
+
+  useEffect(() => {
+    const pane = paneRegistryRef.current?.pane('FIELDS_ACTIVITY')
+    if (!activityVisible || !pane) return
+    const requestedHeight = fieldsWavesSettings.activityPaneHeight
+    pane.setHeight?.(requestedHeight)
+    const element = pane.getHTMLElement?.()
+    if (!element) return
+    const observer = new ResizeObserver((entries) => {
+      const height = Math.round(entries[0]?.contentRect.height ?? 0)
+      if (height < 90 || Math.abs(height - fieldsWavesSettingsRef.current.activityPaneHeight) < 8) return
+      fieldsWavesSettingsChangeRef.current?.({ activityPaneHeight: Math.max(110, Math.min(240, height)) })
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [activitySeriesRevision, activityVisible, fieldsWavesSettings.activityPaneHeight])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -884,7 +1144,66 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
         ? current
         : latest
     })
-  }, [compact, layoutKey, payload, rsiLevelsKey, rsiPoints, rsiVisible, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
+  }, [compact, layoutKey, payload, rsiLevelsKey, rsiPoints, rsiSeriesRevision, rsiVisible, showSrLines, viewState?.visibleEndUtc, viewState?.visibleStartUtc])
+
+  useEffect(() => {
+    const chart = chartRef.current
+    const usdSeries = activityUsdSeriesRef.current
+    const jpySeries = activityJpySeriesRef.current
+    const usdMarkers = activityUsdMarkersRef.current
+    const jpyMarkers = activityJpyMarkersRef.current
+    if (!chart || !usdSeries || !jpySeries || !usdMarkers || !jpyMarkers || !activityVisible) return
+    const firstCandle = payload.candles[0]
+    const lastCandle = payload.candles[payload.candles.length - 1]
+    const start = firstCandle?.time
+    const end = lastCandle ? lastCandle.time + 1 : null
+    if (!activity || start == null || end == null) {
+      usdSeries.setData([])
+      jpySeries.setData([])
+      usdMarkers.setMarkers([])
+      jpyMarkers.setMarkers([])
+      activityMarkerGroupsRef.current.clear()
+      return
+    }
+    const dataRange = { from: start, to: end }
+    usdSeries.setData(activityStepPoints(activity.fields.USD.activityIntervals, dataRange).map((point) => ({
+      time: Math.floor(point.time) as UTCTimestamp,
+      value: point.value,
+    })))
+    jpySeries.setData(activityStepPoints(activity.fields.JPY.activityIntervals, dataRange).map((point) => ({
+      time: Math.floor(point.time) as UTCTimestamp,
+      value: point.value,
+    })))
+
+    if (!fieldsWavesSettings.activityMarkersVisible) {
+      usdMarkers.setMarkers([])
+      jpyMarkers.setMarkers([])
+      activityMarkerGroupsRef.current.clear()
+      return
+    }
+    const visible = chart.timeScale().getVisibleRange()
+    const visibleFrom = typeof visible?.from === 'number' ? Number(visible.from) : start
+    const visibleTo = typeof visible?.to === 'number' ? Number(visible.to) : end
+    const markerGroups = groupActivityEventsForMarkers(
+      activity.fields,
+      dataRange,
+      { from: visibleFrom, to: visibleTo },
+    )
+    activityMarkerGroupsRef.current = new Map(markerGroups.map((group) => [group.markerId, group]))
+    const markersFor = (side: 'USD' | 'JPY') => markerGroups
+      .filter((group) => group.side === side)
+      .map((group) => ({
+        id: group.markerId,
+        time: group.time as UTCTimestamp,
+        position: side === 'USD' ? 'aboveBar' as const : 'belowBar' as const,
+        shape: side === 'USD' ? 'circle' as const : 'square' as const,
+        color: side === 'USD' ? '#55c2a4' : '#e2b34e',
+        text: side,
+        size: 1,
+      }))
+    usdMarkers.setMarkers(markersFor('USD'))
+    jpyMarkers.setMarkers(markersFor('JPY'))
+  }, [activity, activitySeriesRevision, activityVisible, fieldsWavesSettings.activityMarkersVisible, overlayRevision, payload.candles])
 
   useEffect(() => {
     const chart = chartRef.current
@@ -948,11 +1267,39 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     return { change, percent, positive: change >= 0 }
   }, [legendCandle, payload.candles])
 
+  // The native chart time scale is mutable; overlayRevision invalidates coordinates after pan/zoom.
+  const activityCoverageBands = useMemo(() => {
+    if (!activityVisible || !activityPaneBounds || !rootRef.current) return []
+    const chart = chartRef.current
+    if (!chart) return []
+    const visible = chart.timeScale().getVisibleRange()
+    const visibleFrom = typeof visible?.from === 'number' ? Number(visible.from) : -Infinity
+    const visibleTo = typeof visible?.to === 'number' ? Number(visible.to) : Infinity
+    const width = rootRef.current.clientWidth
+    return unknownActivityCoverageRanges(activity)
+      .filter((range) => range.to > visibleFrom && range.from < visibleTo)
+      .flatMap((range) => {
+        const clippedFrom = Math.max(range.from, visibleFrom)
+        const clippedTo = Math.min(range.to, visibleTo)
+        const fromX = chart.timeScale().timeToCoordinate(clippedFrom as UTCTimestamp)
+        const toX = chart.timeScale().timeToCoordinate(clippedTo as UTCTimestamp)
+        if (fromX == null || toX == null) return []
+        const left = Math.max(0, Math.min(Number(fromX), Number(toX)))
+        const right = Math.min(width, Math.max(Number(fromX), Number(toX)))
+        return right > left ? [{ left, width: right - left }] : []
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activity, activityPaneBounds, activityVisible, overlayRevision])
+
+  const activityDetails = selectedActivityEvents.length
+    ? selectedActivityEvents
+    : activityReadout?.events ?? []
+
   const paneBounds = (pane: ChartDrawing['pane']): PaneBounds => {
     const root = rootRef.current
-    const chart = chartRef.current
-    const paneIndex = pane === 'rsi' ? 1 : 0
-    const paneElement = chart?.panes()[paneIndex]?.getHTMLElement()
+    const paneElement = paneRegistryRef.current
+      ?.paneForDrawing(pane === 'rsi' ? 'RSI' : 'PRICE')
+      ?.getHTMLElement?.()
     if (!root || !paneElement) {
       return { top: 0, height: root?.clientHeight ?? 0 }
     }
@@ -971,7 +1318,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     pane: ChartDrawing['pane'] = 'price',
   ) => {
     const chart = chartRef.current
-    const series = pane === 'rsi' ? rsiSeriesRef.current : seriesRef.current
+    const series = paneRegistryRef.current?.series(pane === 'rsi' ? 'RSI' : 'PRICE') as ISeriesApi<'Line'> | ISeriesApi<'Candlestick'> | null
     if (!chart || !series) return null
     const pointTime = 'timeUtc' in point
       ? Math.floor(new Date(point.timeUtc).getTime() / 1000)
@@ -1007,7 +1354,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     const root = rootRef.current
     const drawing = drawingsRef.current.find((item) => item.drawingId === session?.drawingId)
     const pane = drawing ? drawingPane(drawing) : 'price'
-    const series = pane === 'rsi' ? rsiSeriesRef.current : seriesRef.current
+    const series = paneRegistryRef.current?.series(pane === 'rsi' ? 'RSI' : 'PRICE') as ISeriesApi<'Line'> | ISeriesApi<'Candlestick'> | null
     if (!session || !chart || !series || !root) return
     const bounds = root.getBoundingClientRect()
     const x = Math.max(0, Math.min(bounds.width, clientX - bounds.left))
@@ -1315,7 +1662,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       onPointerLeave={() => setNavigationVisible(false)}
     >
       <div className="market-chart-host" ref={hostRef} />
-      <div className="rsi-indicator-control" role="toolbar" aria-label="RSI indicator controls">
+      <div className="rsi-indicator-control" role="toolbar" aria-label="Chart indicator controls">
         <button
           type="button"
           className={rsiVisible ? 'is-active' : ''}
@@ -1333,7 +1680,59 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             aria-label="RSI settings"
           ><SlidersHorizontal size={14} /></button>
         )}
+        {fieldsWavesEnabled && (
+          <button
+            type="button"
+            className={fieldsWavesSettings.activityVisible ? 'is-active' : ''}
+            onClick={() => setFieldsWavesMenuOpen((open) => !open)}
+            aria-expanded={fieldsWavesMenuOpen}
+            title="Fields & Waves unsigned activity controls"
+          ><Waves size={13} /> Fields & Waves <ChevronDown size={12} /></button>
+        )}
       </div>
+      {fieldsWavesMenuOpen && fieldsWavesEnabled && (
+        <aside className="fields-waves-popover" aria-label="Fields and Waves chart indicators">
+          <header>
+            <div><strong>Fields &amp; Waves</strong><span>Chart-native research indicators</span></div>
+            <button type="button" className="icon-button" onClick={() => setFieldsWavesMenuOpen(false)} title="Close Fields & Waves controls" aria-label="Close Fields & Waves controls"><X size={14} /></button>
+          </header>
+          <label className="fields-waves-toggle">
+            <input
+              type="checkbox"
+              checked={fieldsWavesSettings.activityVisible}
+              disabled={payload.symbol !== 'USDJPY'}
+              onChange={(event) => onFieldsWavesSettingsChange?.({ activityVisible: event.target.checked })}
+            />
+            <span><strong>USD / JPY Activity</strong><small>Unsigned raw active-event count</small></span>
+          </label>
+          <label className="fields-waves-toggle is-secondary">
+            <input
+              type="checkbox"
+              checked={fieldsWavesSettings.activityMarkersVisible}
+              disabled={!fieldsWavesSettings.activityVisible || payload.symbol !== 'USDJPY'}
+              onChange={(event) => onFieldsWavesSettingsChange?.({ activityMarkersVisible: event.target.checked })}
+            />
+            <span><strong>Exact-event markers</strong><small>USD circles · JPY squares</small></span>
+          </label>
+          <div className="fields-waves-availability" aria-label="Directional field availability">
+            <div><strong>USD FIELD</strong><span>No admitted polarity entries</span></div>
+            <div><strong>JPY FIELD</strong><span>No admitted polarity entries</span></div>
+            <div><strong>PAIR</strong><span>Unavailable</span></div>
+          </div>
+          {fieldsWavesSettings.activityVisible && (
+            <p className={`fields-waves-fetch-state is-${activityRequestStatus}`}>
+              {activityRequestStatus === 'loading' && 'Loading the visible 14-day activity chunk'}
+              {activityRequestStatus === 'ready' && 'Visible activity chunk ready'}
+              {activityRequestStatus === 'idle' && 'Waiting for a settled visible range'}
+              {activityRequestStatus === 'disabled' && 'Activity request disabled'}
+              {activityRequestStatus === 'data_unavailable' && `DATA UNAVAILABLE${activityError ? `: ${activityError}` : ''}`}
+            </p>
+          )}
+          <button type="button" className="fields-waves-open" onClick={() => openFieldsResearchRef.current?.()}>
+            <Waves size={13} /> Open Fields Research
+          </button>
+        </aside>
+      )}
       {rsiSettingsOpen && rsiVisible && (
         <aside className="rsi-settings-popover" aria-label="RSI settings panel">
           <header><div><strong>Relative Strength Index</strong><span>Wilder close</span></div><button className="icon-button" onClick={() => setRsiSettingsOpen(false)} title="Close RSI settings"><X size={14} /></button></header>
@@ -1366,6 +1765,66 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             {rsiLegendValue == null ? 'warming up' : rsiLegendValue.toFixed(2)}
           </em>
         </div>
+      )}
+      {activityVisible && activityPaneBounds && (
+        <div className="activity-pane-legend" style={{ top: activityPaneBounds.top + 5 }}>
+          <strong>USD / JPY EVENT ACTIVITY</strong>
+          <span>UNSIGNED RAW ACTIVE EVENT COUNT</span>
+          {activityReadout && (
+            <>
+              <em className="activity-usd-readout">USD {activityReadout.usd}</em>
+              <em className="activity-jpy-readout">JPY {activityReadout.jpy}</em>
+            </>
+          )}
+          {activityRequestStatus === 'loading' && <small>Loading visible UTC chunk</small>}
+          {activityRequestStatus === 'data_unavailable' && <small>DATA UNAVAILABLE</small>}
+        </div>
+      )}
+      {activityVisible && activityPaneBounds && activityCoverageBands.length > 0 && (
+        <svg
+          className="activity-coverage-layer"
+          style={{ top: activityPaneBounds.top, height: activityPaneBounds.height }}
+          width="100%"
+          aria-hidden="true"
+        >
+          <defs>
+            <pattern id={`activity-coverage-${coveragePatternId}`} width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="8" height="8" fill="rgba(224,179,78,0.035)" />
+              <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(224,179,78,0.24)" strokeWidth="3" />
+            </pattern>
+          </defs>
+          {activityCoverageBands.map((band, index) => (
+            <rect
+              key={`activity-coverage-${index}`}
+              x={band.left}
+              y="0"
+              width={band.width}
+              height="100%"
+              fill={`url(#activity-coverage-${coveragePatternId})`}
+            />
+          ))}
+        </svg>
+      )}
+      {activityDetails.length > 0 && (
+        <aside className="activity-event-details" aria-live="polite" aria-label="Exact activity event details">
+          <header>
+            <div><strong>{selectedActivityEvents.length ? 'Selected exact event' : 'Exact event at crosshair'}</strong><span>Immutable unsigned activity record</span></div>
+            <button type="button" className="icon-button" onClick={() => setSelectedActivityEvents([])} title="Close event details" aria-label="Close event details"><X size={13} /></button>
+          </header>
+          {activityDetails.slice(0, 4).map((event) => (
+            <div className="activity-event-record" key={`${event.sideIdentity}-${event.eventId}`}>
+              <strong className={event.sideIdentity === 'USD' ? 'is-usd' : 'is-jpy'}>
+                {event.sideIdentity} · {event.transitBody} to {event.natalTarget} · {event.aspectType}
+              </strong>
+              <span>Exact {event.exactUtc}</span>
+              <small>Applying {event.applyingStartUtc} · Separating {event.separatingEndUtc}</small>
+            </div>
+          ))}
+          {activityDetails.length > 4 && <small>Showing 4 of {activityDetails.length} simultaneous events</small>}
+          <button type="button" className="fields-waves-open" onClick={() => openFieldsResearchRef.current?.()}>
+            <Waves size={13} /> Open Fields Research
+          </button>
+        </aside>
       )}
       <div className="aspect-window-layer" aria-hidden="true">
         {bands.map(({ event, left, width }) => {
