@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P2",
+  "candidateVersion": "0.10.66-pfr-v2b-r5-f4-a-p1-r1",
+  "status": "FOUNDER_INSPECTION_CANDIDATE",
+  "source": {
+    "acceptedP1R1Commit": "7168486ad9e9d83ce7438584e0ba7df5fd1ea7bd",
+    "prepCommit": "0488c70bbed876fbd80780b71d61638f0d052bed",
+    "packagingBranch": "research/pfr-v2b-r5-f4-a-p2-windows-founder-candidate",
+    "sourceGitDirty": false,
+    "implementationSourceCommit": "0488c70bbed876fbd80780b71d61638f0d052bed",
+    "entryUrl": "index.html?v=0.10.66-pfr-v2b-r5-f4-a-p1-r1"
+  },
+  "productDisposition": {
+    "p1R1": "CENTRAL_PASS",
+    "p1": "PRODUCT_IMPLEMENTATION_ACCEPTED",
+    "founderAcceptance": "PENDING_PHYSICAL_INSPECTION",
+    "newMath": false,
+    "backendContractChanged": false,
+    "sourceDoctrineChanged": false,
+    "f4bAuthorized": false,
+    "f4cAuthorized": false
+  },
+  "artifacts": {
+    "candidateRoot": "D:\\GannFinancialAstro\\release_candidate\\GannAstroDesk-0.10.66-pfr-v2b-r5-f4-a-p1-r1-tauri-clean",
+    "portableExeSha256": "9BA7A66313E04FF91E1C426EDAA03A14307FB870402ACF47FB006A3737A4EEB0",
+    "installerSha256": "E384930019ECB93AF7D09FD23639DFCF1343F580A04807C2BEC8751FED467CF9",
+    "sidecarExeSha256": "B68E4B5EAB51382CB592F47AC6A7D9DE6027AAF1F82495BE822B58D423E368BE",
+    "immutableResourceTreeSha256": "B3AF7B4BD29DABFAAE4FB03802B1E1D93C3C4089AABC9082D4C1FA57A14CBBE2",
+    "buildReceiptSha256": "37C207092158279205D945296F09169C4ADC411F582663D6589F365E12386041",
+    "releaseManifestSha256": "CCED6F2382EAC579ABD31A5A63CDF0F7D419946272AB0BC477DC895645577BFC",
+    "sourceGitDirty": false,
+    "executionAllowed": false,
+    "privateSourceImagesOrPdfsBundled": false
+  },
+  "verification": {
+    "npmCi": "PASSED_WITH_EXISTING_AUDIT_ADVISORY_2_MODERATE_5_HIGH",
+    "focusedFrontend": "16/16 passed",
+    "fullFrontend": "47 files, 233/233 passed",
+    "typescript": "PASSED",
+    "oxlint": "PASSED",
+    "viteBuild": "PASSED",
+    "focusedBackendActivity": "15/15 passed",
+    "fullBackend": "INCOMPLETE_TIMEOUT_AFTER_EARLY_FAILURES_NO_SUMMARY",
+    "fullBackendPriorAcceptedR1Baseline": "319 passed, 1 skipped",
+    "cargoFmtCheck": "PASSED",
+    "cargoMetadata": "PASSED",
+    "cargoCheck": "PASSED",
+    "cargoTest": "19 passed",
+    "tauriNsisBuild": "PASSED",
+    "gitDiffCheck": "PASSED"
+  },
+  "packagedSmoke": {
+    "focusedProbeRunCount": 2,
+    "focusedProbeRun1": {
+      "report": "D:\\GannFinancialAstro\\packaged_smoke\\f4a_p2_focus_20260927_154012\\f4a_p2_focus_probe.json",
+      "result": "PASSED",
+      "activityContentType": "application/json",
+      "usdEligible": 56,
+      "jpyEligible": 51,
+      "executionAllowed": false
+    },
+    "focusedProbeRun2": {
+      "report": "D:\\GannFinancialAstro\\packaged_smoke\\f4a_p2_focus_20260927_154149\\f4a_p2_focus_probe.json",
+      "result": "PASSED",
+      "activityContentType": "application/json",
+      "usdEligible": 56,
+      "jpyEligible": 51,
+      "executionAllowed": false
+    },
+    "establishedSoakRun1": {
+      "report": "D:\\GannFinancialAstro\\soak\\tauri_0.10.66-pfr-v2b-r5-f4-a-p1-r1_20260927_153616\\logs\\native_soak_report.json",
+      "result": "CONDITIONAL_BLOCKED_BY_INHERITED_HARNESS_ASSERTION",
+      "failedChecks": ["chakra_jupiter_motion_explicit"],
+      "relevantChecksPassed": true,
+      "descendantSurvivors": 0
+    },
+    "establishedSoakRun2": {
+      "report": "D:\\GannFinancialAstro\\soak\\tauri_0.10.66-pfr-v2b-r5-f4-a-p1-r1_20260927_154038\\logs\\native_soak_report.json",
+      "result": "CONDITIONAL_BLOCKED_BY_INHERITED_HARNESS_ASSERTION",
+      "failedChecks": ["chakra_jupiter_motion_explicit"],
+      "relevantChecksPassed": true,
+      "descendantSurvivors": 0
+    },
+    "nativeVisual1280x800": "NOT_EXECUTED_CUA_NATIVE_TARGET_UNAVAILABLE",
+    "nativeVisualWideDesktop": "NOT_EXECUTED_CUA_NATIVE_TARGET_UNAVAILABLE",
+    "founderAcceptance": "NOT_CLAIMED"
+  },
+  "locks": {
+    "executionAllowed": false,
+    "automaticOrderPlacement": false,
+    "polarityAssigned": false,
+    "scoreAggregationEnabled": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5ExecutionEnabled": false,
+    "candidateCAccessed": false,
+    "emp3Accessed": false,
+    "providerAccessed": false,
+    "outcomesAccessed": false
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE",
+  "qaRecordCommitRecordedInGit": true
+}

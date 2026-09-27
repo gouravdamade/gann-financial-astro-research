@@ -13480,5 +13480,19 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   execution remains locked.
 - P2 version preparation is frozen as `0.10.66-pfr-v2b-r5-f4-a-p1-r1` with
   entry URL `index.html?v=0.10.66-pfr-v2b-r5-f4-a-p1-r1`.
+- P2 Windows candidate `0.10.66-pfr-v2b-r5-f4-a-p1-r1` is built from prep
+  commit `0488c70bbed876fbd80780b71d61638f0d052bed` with
+  `sourceGitDirty=false` and `executionAllowed=false`. Portable and installer
+  hashes, focused packaged activity probes, and the explicit visual-QA
+  limitation are recorded in
+  `docs/research/PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE.md` and
+  `status/research/pfr_v2b_r5_f4_a_p2_windows_founder_candidate.json`.
+- Two focused packaged probes returned HTTP 200 JSON for the chart and
+  `/api/multi-oscillator/activity-range`, with both USD/JPY lanes and all
+  activity guardrails locked. The established generic soak also passed launch,
+  sidecar, layout, recovery, locks, and clean shutdown checks, but retains the
+  inherited `chakra_jupiter_motion_explicit` conditional failure. Native
+  1280x800 and wide visual capture was unavailable in this session; founder
+  physical inspection remains pending.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE`.
