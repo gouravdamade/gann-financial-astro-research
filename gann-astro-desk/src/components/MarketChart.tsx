@@ -148,6 +148,7 @@ type MarketChartProps = {
   activity?: MultiOscillatorActivityRange | null
   fieldsWavesEnabled?: boolean
   activityRequestStatus?: FieldsWavesActivityStatus
+  activityRangeBounded?: boolean
   activityError?: string
   onActivityVisibleRangeChange?: (range: ActivityVisibleRange) => void
   onFieldsWavesSettingsChange?: (settings: Partial<FieldsWavesChartSettings>) => void
@@ -205,6 +206,7 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
     activity = null,
     fieldsWavesEnabled = false,
     activityRequestStatus = 'disabled',
+    activityRangeBounded = false,
     activityError = '',
     onActivityVisibleRangeChange,
     onFieldsWavesSettingsChange,
@@ -786,10 +788,10 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       const current = activityRef.current
       const usd = current
         ? activityCoverageLabel(time == null ? null : activityIntervalAt(current.fields.USD.activityIntervals, time))
-        : 'No loaded activity interval'
+        : activityCoverageLabel(null)
       const jpy = current
         ? activityCoverageLabel(time == null ? null : activityIntervalAt(current.fields.JPY.activityIntervals, time))
-        : 'No loaded activity interval'
+        : activityCoverageLabel(null)
       return {
         time,
         usd,
@@ -1166,14 +1168,16 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       return
     }
     const dataRange = { from: start, to: end }
-    usdSeries.setData(activityStepPoints(activity.fields.USD.activityIntervals, dataRange).map((point) => ({
-      time: Math.floor(point.time) as UTCTimestamp,
-      value: point.value,
-    })))
-    jpySeries.setData(activityStepPoints(activity.fields.JPY.activityIntervals, dataRange).map((point) => ({
-      time: Math.floor(point.time) as UTCTimestamp,
-      value: point.value,
-    })))
+    usdSeries.setData(activityStepPoints(activity.fields.USD.activityIntervals, dataRange).map((point) => (
+      'value' in point
+        ? { time: Math.floor(point.time) as UTCTimestamp, value: point.value }
+        : { time: Math.floor(point.time) as UTCTimestamp }
+    )))
+    jpySeries.setData(activityStepPoints(activity.fields.JPY.activityIntervals, dataRange).map((point) => (
+      'value' in point
+        ? { time: Math.floor(point.time) as UTCTimestamp, value: point.value }
+        : { time: Math.floor(point.time) as UTCTimestamp }
+    )))
 
     if (!fieldsWavesSettings.activityMarkersVisible) {
       usdMarkers.setMarkers([])
@@ -1723,9 +1727,15 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             <p className={`fields-waves-fetch-state is-${activityRequestStatus}`}>
               {activityRequestStatus === 'loading' && 'Loading the visible 14-day activity chunk'}
               {activityRequestStatus === 'ready' && 'Visible activity chunk ready'}
+              {activityRequestStatus === 'bounded_partial' && 'PARTIAL: bounded central activity window loaded; other visible history is DATA NOT LOADED'}
               {activityRequestStatus === 'idle' && 'Waiting for a settled visible range'}
               {activityRequestStatus === 'disabled' && 'Activity request disabled'}
               {activityRequestStatus === 'data_unavailable' && `DATA UNAVAILABLE${activityError ? `: ${activityError}` : ''}`}
+            </p>
+          )}
+          {activityRangeBounded && activityRequestStatus !== 'bounded_partial' && (
+            <p className="fields-waves-fetch-state is-bounded_partial">
+              PARTIAL VISIBLE HISTORY: only the centered 12-chunk window is loaded; time outside it is DATA NOT LOADED.
             </p>
           )}
           <button type="button" className="fields-waves-open" onClick={() => openFieldsResearchRef.current?.()}>
@@ -1777,6 +1787,8 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
             </>
           )}
           {activityRequestStatus === 'loading' && <small>Loading visible UTC chunk</small>}
+          {activityRequestStatus === 'bounded_partial' && <small>PARTIAL: history outside the bounded window is DATA NOT LOADED</small>}
+          {activityRangeBounded && activityRequestStatus !== 'bounded_partial' && <small>PARTIAL VISIBLE HISTORY: bounded window only</small>}
           {activityRequestStatus === 'data_unavailable' && <small>DATA UNAVAILABLE</small>}
         </div>
       )}

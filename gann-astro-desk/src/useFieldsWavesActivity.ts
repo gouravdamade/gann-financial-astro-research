@@ -3,11 +3,12 @@ import { fetchMultiOscillatorActivityRange } from './api'
 import {
   ActivityChunkCache,
   activityChunksForVisibleRange,
+  activityVisibleRangeIsBounded,
   type ActivityVisibleRange,
 } from './fieldsWavesActivity'
 import type { MultiOscillatorActivityRange } from './types'
 
-export type FieldsWavesActivityStatus = 'disabled' | 'idle' | 'loading' | 'ready' | 'data_unavailable'
+export type FieldsWavesActivityStatus = 'disabled' | 'idle' | 'loading' | 'ready' | 'bounded_partial' | 'data_unavailable'
 
 export function useFieldsWavesActivity(enabled: boolean, chartSymbol: string) {
   const cacheRef = useRef<ActivityChunkCache | null>(null)
@@ -18,6 +19,7 @@ export function useFieldsWavesActivity(enabled: boolean, chartSymbol: string) {
   const currentRangeKeyRef = useRef<string | null>(null)
   const [activity, setActivity] = useState<MultiOscillatorActivityRange | null>(null)
   const [requestStatus, setRequestStatus] = useState<FieldsWavesActivityStatus>('disabled')
+  const [activityRangeBounded, setActivityRangeBounded] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export function useFieldsWavesActivity(enabled: boolean, chartSymbol: string) {
       window.clearTimeout(timerRef.current)
       timerRef.current = null
     }
+    if (!enabled || chartSymbol !== 'USDJPY') setActivityRangeBounded(false)
     setRequestStatus(enabled && chartSymbol === 'USDJPY' ? 'idle' : 'disabled')
   }, [enabled, chartSymbol])
 
@@ -43,20 +46,25 @@ export function useFieldsWavesActivity(enabled: boolean, chartSymbol: string) {
       const cache = cacheRef.current
       if (!cache) return
       let chunks
+      let isRangeBounded: boolean
       try {
         chunks = activityChunksForVisibleRange(range)
+        isRangeBounded = activityVisibleRangeIsBounded(range)
       } catch {
         return
       }
       const requestKey = chunks.map((chunk) => chunk.key).join('||')
       currentRangeKeyRef.current = requestKey
+      setActivityRangeBounded(isRangeBounded)
       setError('')
       const allCached = chunks.every((chunk) => cache.has(chunk))
       setActivity(cache.getMerged())
-      setRequestStatus(allCached ? 'ready' : 'loading')
+      setRequestStatus(allCached ? (isRangeBounded ? 'bounded_partial' : 'ready') : 'loading')
       void Promise.all(chunks.map((chunk) => cache.request(chunk))).then(() => {
         setActivity(cache.getMerged())
-        if (currentRangeKeyRef.current === requestKey && enabledRef.current) setRequestStatus('ready')
+        if (currentRangeKeyRef.current === requestKey && enabledRef.current) {
+          setRequestStatus(isRangeBounded ? 'bounded_partial' : 'ready')
+        }
       }).catch((requestError: unknown) => {
         if (currentRangeKeyRef.current !== requestKey || !enabledRef.current) return
         setActivity(cache.getMerged())
@@ -66,5 +74,5 @@ export function useFieldsWavesActivity(enabled: boolean, chartSymbol: string) {
     }, 180)
   }, [])
 
-  return { activity, requestStatus, error, requestVisibleRange }
+  return { activity, requestStatus, activityRangeBounded, error, requestVisibleRange }
 }

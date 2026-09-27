@@ -19,7 +19,7 @@ export type ActivityChunk = {
 
 export type ActivityVisibleRange = { from: number; to: number }
 
-export type ActivityStepPoint = { time: number; value: number }
+export type ActivityStepPoint = { time: number; value: number } | { time: number }
 export type ActivityMarkerGroup = {
   markerId: string
   side: 'USD' | 'JPY'
@@ -54,7 +54,7 @@ export function activityChunksForVisibleRange(range: ActivityVisibleRange): Acti
     throw new Error('Activity visible range must be a non-empty UTC interval')
   }
   const first = activityChunkAt(range.from)
-  const last = activityChunkAt(range.to - 0.001)
+  const last = activityChunkAt((Math.ceil(range.to / ACTIVITY_CHUNK_SECONDS) - 1) * ACTIVITY_CHUNK_SECONDS)
   const chunkCount = Math.floor((last.startSeconds - first.startSeconds) / ACTIVITY_CHUNK_SECONDS) + 1
   const boundedCount = Math.min(chunkCount, ACTIVITY_CACHE_CAPACITY)
   const center = activityChunkForVisibleRange(range)
@@ -63,6 +63,15 @@ export function activityChunksForVisibleRange(range: ActivityVisibleRange): Acti
   const maxStart = last.startSeconds - (boundedCount - 1) * ACTIVITY_CHUNK_SECONDS
   const start = Math.max(minStart, Math.min(centeredStart, maxStart))
   return Array.from({ length: boundedCount }, (_, index) => activityChunkAt(start + index * ACTIVITY_CHUNK_SECONDS))
+}
+
+export function activityVisibleRangeIsBounded(range: ActivityVisibleRange): boolean {
+  if (!Number.isFinite(range.from) || !Number.isFinite(range.to) || range.to <= range.from) {
+    throw new Error('Activity visible range must be a non-empty UTC interval')
+  }
+  const first = activityChunkAt(range.from)
+  const lastStart = (Math.ceil(range.to / ACTIVITY_CHUNK_SECONDS) - 1) * ACTIVITY_CHUNK_SECONDS
+  return Math.floor((lastStart - first.startSeconds) / ACTIVITY_CHUNK_SECONDS) + 1 > ACTIVITY_CACHE_CAPACITY
 }
 
 export function adjacentActivityChunk(chunk: ActivityChunk, direction: -1 | 1): ActivityChunk {
@@ -90,7 +99,7 @@ export function activityIntervalAt(
 export function activityCoverageLabel(
   interval: MultiOscillatorActivityInterval | null,
 ): string {
-  if (!interval) return 'No loaded activity interval'
+  if (!interval) return 'DATA NOT LOADED'
   if (interval.coverage === 'KNOWN') {
     return interval.rawActiveEventCount === 0
       ? '0 observed | coverage known'
@@ -107,14 +116,34 @@ export function activityStepPoints(
 ): ActivityStepPoint[] {
   const start = visibleRange.from
   const end = visibleRange.to
-  const ordered = [...intervals].sort((left, right) => left.startUtc.localeCompare(right.startUtc))
+  const ordered = [...intervals]
+    .map((interval) => ({
+      interval,
+      start: Date.parse(interval.startUtc) / 1000,
+      end: Date.parse(interval.endUtc) / 1000,
+    }))
+    .filter(({ start: intervalStart, end: intervalEnd }) =>
+      Number.isFinite(intervalStart) && Number.isFinite(intervalEnd) && intervalEnd > intervalStart)
+    .sort((left, right) => left.start - right.start || left.end - right.end)
+  const unique = ordered.filter((entry, index) => {
+    const previous = ordered[index - 1]
+    return !previous || entry.start !== previous.start || entry.end !== previous.end
+  })
   const points: ActivityStepPoint[] = []
-  const first = activityIntervalAt(ordered, start)
-  if (first) points.push({ time: start, value: first.rawActiveEventCount })
-  for (const interval of ordered) {
-    const intervalStart = Date.parse(interval.startUtc) / 1000
-    if (intervalStart <= start || intervalStart >= end) continue
-    points.push({ time: intervalStart, value: interval.rawActiveEventCount })
+  let coveredThrough: number | null = null
+  let lastPointTime = Number.NEGATIVE_INFINITY
+  for (const { interval, start: intervalStart, end: intervalEnd } of unique) {
+    if (intervalEnd <= start || intervalStart >= end) continue
+    if (coveredThrough != null && intervalStart > coveredThrough && coveredThrough > start && coveredThrough < end) {
+      points.push({ time: coveredThrough })
+      lastPointTime = coveredThrough
+    }
+    const pointTime = intervalStart < start ? start : intervalStart
+    if (pointTime < end && pointTime > lastPointTime) {
+      points.push({ time: pointTime, value: interval.rawActiveEventCount })
+      lastPointTime = pointTime
+    }
+    coveredThrough = coveredThrough == null ? intervalEnd : Math.max(coveredThrough, intervalEnd)
   }
   return points
 }
@@ -153,6 +182,7 @@ export function groupActivityEventsForMarkers(
     for (const event of fields[side].events) {
       const exact = Date.parse(event.exactUtc) / 1000
       if (!Number.isFinite(exact) || exact < dataRange.from || exact >= dataRange.to) continue
+      if (!activityIntervalAt(fields[side].activityIntervals, exact)) continue
       const time = Math.floor(exact)
       const markerId = `activity-${side}-${time}`
       const group = groups.get(markerId) ?? { markerId, side, time, events: [] }

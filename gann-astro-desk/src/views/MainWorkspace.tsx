@@ -1107,6 +1107,7 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             fieldsWavesEnabled
             activity={fieldsWavesActivity.activity}
             activityRequestStatus={fieldsWavesActivity.requestStatus}
+            activityRangeBounded={fieldsWavesActivity.activityRangeBounded}
             activityError={fieldsWavesActivity.error}
             onActivityVisibleRangeChange={fieldsWavesActivity.requestVisibleRange}
             onFieldsWavesSettingsChange={updateFieldsWavesSettings}

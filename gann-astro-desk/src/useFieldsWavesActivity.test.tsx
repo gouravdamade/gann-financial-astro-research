@@ -8,6 +8,7 @@ const { fetchMock } = vi.hoisted(() => ({ fetchMock: vi.fn() }))
 vi.mock('./api', () => ({ fetchMultiOscillatorActivityRange: (request: MultiOscillatorActivityRangeRequest) => fetchMock(request) }))
 
 import { useFieldsWavesActivity } from './useFieldsWavesActivity'
+import { ACTIVITY_CACHE_CAPACITY, ACTIVITY_CHUNK_SECONDS } from './fieldsWavesActivity'
 
 function emptyRange(request: MultiOscillatorActivityRangeRequest): MultiOscillatorActivityRange {
   const side = (sideIdentity: 'USD' | 'JPY') => ({
@@ -54,6 +55,7 @@ describe('visible-range activity controller', () => {
     expect(request.sideIdentities).toEqual(['USD', 'JPY'])
     expect(Date.parse(request.rangeEndUtc) - Date.parse(request.rangeStartUtc)).toBe(14 * 24 * 60 * 60 * 1000)
     expect(result.current.requestStatus).toBe('ready')
+    expect(result.current.activityRangeBounded).toBe(false)
   })
 
   it('does not refetch on crosshair-only render, mode change, marker toggle, or pan inside a cached chunk', async () => {
@@ -111,6 +113,26 @@ describe('visible-range activity controller', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
     expect(new Set(fetchMock.mock.calls.map(([request]) => request.rangeStartUtc)).size).toBe(2)
     expect(result.current.requestStatus).toBe('ready')
+    expect(result.current.activityRangeBounded).toBe(false)
+  })
+
+  it('reports a bounded partial state when more chunks intersect the visible range than the cache limit', async () => {
+    const { result } = renderHook(() => useFieldsWavesActivity(true, 'USDJPY'))
+    await act(async () => {
+      result.current.requestVisibleRange({ from: 0, to: ACTIVITY_CHUNK_SECONDS * (ACTIVITY_CACHE_CAPACITY + 8) })
+      await vi.advanceTimersByTimeAsync(180)
+    })
+
+    expect(fetchMock).toHaveBeenCalledTimes(ACTIVITY_CACHE_CAPACITY)
+    expect(result.current.requestStatus).toBe('bounded_partial')
+    expect(result.current.activityRangeBounded).toBe(true)
+
+    await act(async () => {
+      result.current.requestVisibleRange({ from: 0, to: ACTIVITY_CHUNK_SECONDS * ACTIVITY_CACHE_CAPACITY })
+      await vi.advanceTimersByTimeAsync(180)
+    })
+    expect(result.current.requestStatus).toBe('ready')
+    expect(result.current.activityRangeBounded).toBe(false)
   })
 
   it('does not request activity while disabled or for a non-USDJPY chart', async () => {

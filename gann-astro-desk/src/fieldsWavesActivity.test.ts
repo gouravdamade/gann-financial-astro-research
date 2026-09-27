@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { MultiOscillatorActivityRange } from './types'
 import {
   ACTIVITY_CHUNK_SECONDS,
+  ACTIVITY_CACHE_CAPACITY,
   ActivityChunkCache,
   activityChunkAt,
   activityChunksForVisibleRange,
@@ -9,6 +10,7 @@ import {
   activityCoverageLabel,
   activityIntervalAt,
   activityStepPoints,
+  activityVisibleRangeIsBounded,
   adjacentActivityChunk,
   groupActivityEventsForMarkers,
   mergeActivityRanges,
@@ -103,11 +105,14 @@ describe('chart-native Fields & Waves activity data', () => {
       .toHaveLength(2)
     expect(activityChunksForVisibleRange({ from: 0, to: ACTIVITY_CHUNK_SECONDS * 20 }))
       .toHaveLength(12)
+    expect(activityVisibleRangeIsBounded({ from: 0, to: ACTIVITY_CHUNK_SECONDS * 20 })).toBe(true)
+    expect(activityVisibleRangeIsBounded({ from: 0, to: ACTIVITY_CHUNK_SECONDS * ACTIVITY_CACHE_CAPACITY })).toBe(false)
     expect(adjacentActivityChunk(chunk, 1).startSeconds).toBe(ACTIVITY_CHUNK_SECONDS)
     expect(chunk.key).toContain('USDJPY|USD+JPY|ASPECT_STRENGTH_V0')
   })
 
   it('distinguishes known zero, known count, and incomplete observed counts', () => {
+    expect(activityCoverageLabel(null)).toBe('DATA NOT LOADED')
     expect(activityCoverageLabel({ rawActiveEventCount: 0, coverage: 'KNOWN' } as never))
       .toBe('0 observed | coverage known')
     expect(activityCoverageLabel({ rawActiveEventCount: 3, coverage: 'KNOWN' } as never))
@@ -133,6 +138,26 @@ describe('chart-native Fields & Waves activity data', () => {
     ])
   })
 
+  it('breaks the native line across unloaded intervals but not at epoch-adjacent edges', () => {
+    const first = activityRange(90, 105, 'gap-a', 0).fields.USD.activityIntervals[0]
+    const adjacent = activityRange(105, 120, 'gap-b', 3).fields.USD.activityIntervals[0]
+    const disjoint = activityRange(115, 125, 'gap-c', 2).fields.USD.activityIntervals[0]
+    const epochEquivalentEnd = { ...first, endUtc: '1970-01-01T00:01:45+00:00' }
+
+    expect(Date.parse(epochEquivalentEnd.endUtc)).toBe(Date.parse(adjacent.startUtc))
+    expect(activityStepPoints([epochEquivalentEnd, adjacent], { from: 100, to: 120 })).toEqual([
+      { time: 100, value: 0 },
+      { time: 105, value: 3 },
+    ])
+    expect(activityStepPoints([first, disjoint], { from: 100, to: 130 })).toEqual([
+      { time: 100, value: 0 },
+      { time: 105 },
+      { time: 115, value: 2 },
+    ])
+    expect(activityStepPoints([first, { ...first, intervalId: 'duplicate-edge' }], { from: 90, to: 105 }))
+      .toEqual([{ time: 90, value: 0 }])
+  })
+
   it('unions incomplete coverage spans across USD and JPY without changing observations', () => {
     const usd = activityRange(0, 10, 'usd-gap', 3, 'UNKNOWN')
     const jpy = activityRange(5, 15, 'jpy-gap', 1, 'UNKNOWN')
@@ -151,6 +176,34 @@ describe('chart-native Fields & Waves activity data', () => {
     expect(range.fields.USD.activityIntervals[0].rawActiveEventCount).toBe(3)
   })
 
+  it('keeps unknown-coverage hatching separate from an unloaded hole', () => {
+    const left = activityRange(0, 5, 'unknown-left', 0, 'UNKNOWN')
+    const right = activityRange(10, 15, 'unknown-right', 2, 'UNKNOWN')
+    const range = {
+      ...left,
+      fields: {
+        ...left.fields,
+        USD: {
+          ...left.fields.USD,
+          activityIntervals: [
+            left.fields.USD.activityIntervals[0],
+            right.fields.USD.activityIntervals[0],
+          ],
+        },
+        JPY: { ...left.fields.JPY, activityIntervals: [] },
+      },
+    } as unknown as MultiOscillatorActivityRange
+
+    expect(unknownActivityCoverageRanges(range)).toEqual([
+      { from: 0, to: 5 },
+      { from: 10, to: 15 },
+    ])
+    expect(activityCoverageLabel(activityIntervalAt(range.fields.USD.activityIntervals, 7)))
+      .toBe('DATA NOT LOADED')
+    expect(activityCoverageLabel(activityIntervalAt(range.fields.USD.activityIntervals, 12)))
+      .toBe('2 observed | coverage incomplete')
+  })
+
   it('groups exact markers by side and UTC second, bounds them to the visible half-open data range', () => {
     const usd = activityRange(0, 10, 'usd', 1)
     const jpy = activityRange(0, 10, 'jpy', 1)
@@ -166,6 +219,29 @@ describe('chart-native Fields & Waves activity data', () => {
       ['activity-USD-4', 'USD', 4, 1],
       ['activity-JPY-4', 'JPY', 4, 1],
     ])
+  })
+
+  it('does not place exact-event markers in an unloaded interval gap', () => {
+    const loaded = activityRange(0, 5, 'marker-loaded', 1)
+    const inGap = { ...loaded.fields.USD.events[0], eventId: 'event-in-gap', exactUtc: iso(7) }
+    const laterLoaded = { ...loaded.fields.USD.events[0], eventId: 'event-later', exactUtc: iso(12) }
+    const fields = {
+      USD: {
+        ...loaded.fields.USD,
+        events: [loaded.fields.USD.events[0], inGap, laterLoaded],
+        activityIntervals: [
+          loaded.fields.USD.activityIntervals[0],
+          activityRange(10, 15, 'marker-later', 1).fields.USD.activityIntervals[0],
+        ],
+      },
+      JPY: { ...loaded.fields.JPY, activityIntervals: [] },
+    } as unknown as MultiOscillatorActivityRange['fields']
+
+    expect(groupActivityEventsForMarkers(fields, { from: 0, to: 15 }, { from: 0, to: 15 })
+      .flatMap((group) => group.events.map((event) => event.eventId)))
+      .toEqual(['event-marker-loaded', 'event-later'])
+    expect(activityCoverageLabel(activityIntervalAt(fields.USD.activityIntervals, 7))).toBe('DATA NOT LOADED')
+    expect(activityCoverageLabel(activityIntervalAt(fields.USD.activityIntervals, 2))).toBe('1 observed | coverage known')
   })
 
   it('merges chunk records by immutable event and interval identity without averaging', () => {

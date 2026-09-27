@@ -6331,6 +6331,7 @@ html.android-runtime .loading-state {
 .fields-waves-availability span { color: #d2a95e; }
 .fields-waves-fetch-state { margin: 0; color: #86a2b3; font-size: 8px; overflow-wrap: anywhere; }
 .fields-waves-fetch-state.is-data_unavailable { color: #e38e82; }
+.fields-waves-fetch-state.is-bounded_partial { color: #d2a95e; }
 
 .fields-waves-open {
   min-height: 27px;
