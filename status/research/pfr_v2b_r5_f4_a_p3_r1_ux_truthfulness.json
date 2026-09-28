@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P3-R1",
+  "status": "IMPLEMENTED_CENTRAL_REVIEW_PENDING",
+  "source": {
+    "startingCommit": "c8a4f84a7c0c909688aedeae770f236dc651226c",
+    "p3ImplementationCommit": "be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a",
+    "implementationCommit": "1ad35e0",
+    "branch": "research/pfr-v2b-r5-f4-a-p3-r1-ux-truthfulness",
+    "sourceGitDirty": false,
+    "backendChanged": false,
+    "rustChanged": false,
+    "packageMetadataChanged": false
+  },
+  "product": {
+    "symbolGatedActivityCta": true,
+    "parentSymbolGuard": true,
+    "unsupportedSymbolMutatesLayout": false,
+    "dirtyFounderReviewPrecedence": true,
+    "zeroKnownDoesNotImplyCatalogueEmpty": true,
+    "zeroCoverageGenericWording": true,
+    "strongCatalogueWordingRequiresAuthoritativeStatus": true,
+    "withheldPolicyPreserved": true,
+    "knownDirectionalCoverageRemainsDetailed": true,
+    "researchDetailsExpandable": true,
+    "activityMathChanged": false,
+    "pairMathChanged": false,
+    "polarityCatalogueChanged": false,
+    "evidenceRegistryChanged": false
+  },
+  "verification": {
+    "focusedFrontend": "44/44 passed",
+    "fullFrontend": "49 files, 244/244 passed",
+    "typescript": "PASSED",
+    "oxlint": "PASSED",
+    "viteBuild": "PASSED",
+    "gitDiffCheck": "PASSED",
+    "browserSmoke": "PASSED_LOCAL_DEV_USDJPY_CTA_ZERO_COVERAGE",
+    "unsupportedSymbolBrowserSmoke": "NOT_AVAILABLE_IN_LOCAL_SYMBOL_SELECTOR; COVERED_BY_FOCUSED_TESTS",
+    "nativeWindowsPackaging": "NOT_EXECUTED_SOURCE_ONLY_MILESTONE"
+  },
+  "locks": {
+    "executionAllowed": false,
+    "automaticOrderPlacement": false,
+    "polarityAssigned": false,
+    "scoreAggregationEnabled": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5ExecutionEnabled": false,
+    "candidateCAccessed": false,
+    "emp3Accessed": false,
+    "providerAccessed": false,
+    "outcomeAnalysis": false,
+    "outcomesAccessed": false
+  },
+  "historicalP3": {
+    "status": "SUPERSEDED_BY_P3_R1_PENDING_CENTRAL_REVIEW",
+    "p3DocumentationCommit": "c8a4f84a7c0c909688aedeae770f236dc651226c",
+    "p3ImplementationCommit": "be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a"
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS"
+}

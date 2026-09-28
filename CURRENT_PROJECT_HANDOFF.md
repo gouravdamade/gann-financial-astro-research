@@ -13524,3 +13524,31 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `status/research/pfr_v2b_r5_f4_a_p3_founder_ux_compaction.json`.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_FOUNDER_UX_COMPACTION`.
+
+## PFR-V2B-R5-F4-A-P3-R1 UX Truthfulness (2026-09-28)
+
+- R1 is a narrow successor to P3 on
+  `research/pfr-v2b-r5-f4-a-p3-r1-ux-truthfulness`, starting from
+  `c8a4f84a7c0c909688aedeae770f236dc651226c`; source implementation commit:
+  `1ad35e0`.
+- The chart-native activity CTA is now visibly disabled for symbols other than
+  exact `USDJPY`, with the explanation
+  `Chart-native USD/JPY activity is available only for USDJPY.` The parent
+  callback rejects unsupported symbols before layout mutation or navigation.
+  Dirty Founder Review remains the higher-priority block.
+- Zero known categorical records no longer imply an empty catalogue. Generic
+  zero coverage says `NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE`; the
+  stronger `NO ADMITTED POLARITY ENTRIES` wording requires the existing loaded
+  pilot status to explicitly report `catalogueEntryCount=0`.
+- Focused frontend tests passed 44/44; full frontend passed 244/244 across 49
+  files; TypeScript, Oxlint, Vite build, and `git diff --check` passed. Local
+  browser smoke confirmed the enabled USDJPY CTA, chart activation, unsigned
+  activity surface, authoritative zero-coverage wording, and compact pair
+  wording. Unsupported-symbol behavior is covered by focused tests.
+- P3 status is preserved historically and marked
+  `SUPERSEDED_BY_P3_R1_PENDING_CENTRAL_REVIEW`. No backend, Rust/Tauri, package,
+  activity math, pair math, polarity catalogue, evidence registry, F4-B/F4-C,
+  Candidate C, EMP3, provider, outcome, MT5, or execution behavior changed.
+  `executionAllowed=false`.
+- Native Windows packaging was not executed. Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS`.
