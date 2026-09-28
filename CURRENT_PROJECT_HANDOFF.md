@@ -13496,3 +13496,31 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   physical inspection remains pending.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P2_WINDOWS_FOUNDER_CANDIDATE`.
+
+## PFR-V2B-R5-F4-A-P3 Founder UX Compaction (2026-09-28)
+
+- Implemented on `research/pfr-v2b-r5-f4-a-p3-founder-ux-compaction` from
+  `8afde8acec6d48c9cf7e7ce7c3962f13e80363f3`; implementation commit:
+  `be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a`.
+- The chart indicator control now exposes a visible `INDICATORS` label and
+  accessible `Indicators` toolbar. Fields now has a parent-owned `Add USD/JPY
+  Activity to Chart` action that uses the existing chart layout state and
+  preserves the existing chart context. A dirty Founder Review blocks that
+  navigation before any mutation.
+- Mode 1 zero-coverage directional fields are compacted into an explicit
+  availability summary with expandable existing research details. Mode 2/3
+  and source-policy-withheld directional surfaces use a policy summary without
+  leaking directional states, known counts, pair values, or detail ARIA.
+  Known data, SBC, pilot, and unsigned activity remain detailed/unchanged.
+- Focused tests passed 38/38; full frontend passed 238/238 across 48 files;
+  TypeScript, Oxlint, Vite build, and `git diff --check` passed. Browser smoke
+  confirmed the toolbar, CTA, and chart activation. No backend, Rust/Tauri,
+  package, math, polarity, provider, outcome, Candidate C, EMP3, MT5, or
+  execution behavior changed. `executionAllowed=false`.
+- P3 does not create a Windows candidate. The prior immutable P2 candidate is
+  preserved. Founder acceptance is not claimed.
+- Research and machine status:
+  `docs/research/PFR_V2B_R5_F4_A_P3_FOUNDER_UX_COMPACTION.md` and
+  `status/research/pfr_v2b_r5_f4_a_p3_founder_ux_compaction.json`.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_FOUNDER_UX_COMPACTION`.

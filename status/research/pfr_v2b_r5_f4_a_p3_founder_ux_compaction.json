@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P3_FOUNDER_UX_COMPACTION_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P3",
+  "status": "IMPLEMENTED_CENTRAL_REVIEW_PENDING",
+  "source": {
+    "startingCommit": "8afde8acec6d48c9cf7e7ce7c3962f13e80363f3",
+    "implementationCommit": "be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a",
+    "branch": "research/pfr-v2b-r5-f4-a-p3-founder-ux-compaction",
+    "sourceGitDirty": false,
+    "backendChanged": false,
+    "rustChanged": false,
+    "packageMetadataChanged": false
+  },
+  "product": {
+    "indicatorToolbarLabel": "INDICATORS",
+    "indicatorToolbarAriaLabel": "Indicators",
+    "activityCta": "Add USD/JPY Activity to Chart",
+    "activityCtaUsesExistingLayoutState": true,
+    "activityCtaAddsFetch": false,
+    "dirtyFounderReviewBlocksNavigation": true,
+    "zeroCoverageCompaction": true,
+    "withheldDirectionalCompaction": true,
+    "knownDirectionalCoverageRemainsDetailed": true,
+    "researchDetailsExpandable": true,
+    "sbcSurfaceChanged": false,
+    "pilotSurfaceChanged": false,
+    "activityMathChanged": false
+  },
+  "verification": {
+    "focusedFrontend": "38/38 passed",
+    "fullFrontend": "48 files, 238/238 passed",
+    "typescript": "PASSED",
+    "oxlint": "PASSED",
+    "viteBuild": "PASSED",
+    "gitDiffCheck": "PASSED",
+    "browserVisualSmoke": "PASSED_LOCAL_FRONTEND_BACKEND",
+    "nativeWindows1280x800VisualQA": "NOT_EXECUTED_SOURCE_ONLY_MILESTONE"
+  },
+  "locks": {
+    "executionAllowed": false,
+    "polarityAssigned": false,
+    "scoreAggregationEnabled": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5ExecutionEnabled": false,
+    "automaticOrderPlacement": false,
+    "candidateCAccessed": false,
+    "emp3Accessed": false,
+    "providerAccessed": false,
+    "outcomesAccessed": false
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_FOUNDER_UX_COMPACTION"
+}
