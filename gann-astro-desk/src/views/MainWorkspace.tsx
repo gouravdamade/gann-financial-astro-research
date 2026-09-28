@@ -77,6 +77,7 @@ import { useChartLayouts } from '../useChartLayouts'
 import { useFieldsWavesActivity } from '../useFieldsWavesActivity'
 import { usePlanetaryLineOverlay } from '../usePlanetaryLineOverlay'
 import { useVisibilityPolling } from '../useVisibilityPolling'
+import { canAddActivityToChart } from './activityChartEligibility'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -299,12 +300,12 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
     })
   }, [chartLayouts, fieldsWavesSettings])
   const addActivityToChart = useCallback(() => {
-    if (founderReviewDirty && activeSurface === 'fields') return
+    if (!canAddActivityToChart(chart?.symbol, founderReviewDirty, activeSurface)) return
     updateFieldsWavesSettings({ activityVisible: true })
     setActiveSurface('chart')
     setFocusMode(false)
     setObjectsOpen(false)
-  }, [activeSurface, founderReviewDirty, updateFieldsWavesSettings])
+  }, [activeSurface, chart?.symbol, founderReviewDirty, updateFieldsWavesSettings])
   const activeChartLayout = chartLayouts.activeLayout
   const updateLayoutChartState = chartLayouts.updateChartState
   const planetaryLineSettings = useMemo(

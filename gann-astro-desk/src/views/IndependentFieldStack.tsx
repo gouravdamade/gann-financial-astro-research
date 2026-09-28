@@ -64,6 +64,12 @@ function knownCountForBlocks(blocks: LaneBlock[]): number {
   return blocks.filter((block) => valueForBlock(block) != null).length
 }
 
+function zeroCoverageReason(side: 'USD' | 'JPY', pilotStatus: FxSidePilotStatus | null): string {
+  return pilotStatus?.sides[side]?.catalogueEntryCount === 0
+    ? 'NO ADMITTED POLARITY ENTRIES'
+    : 'NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE'
+}
+
 function xFor(value: string, rangeStart: number, rangeEnd: number): number {
   const instant = Date.parse(value)
   return Math.max(0, Math.min(1000, ((instant - rangeStart) / Math.max(1, rangeEnd - rangeStart)) * 1000))
@@ -303,9 +309,9 @@ export function IndependentFieldStack({
       </section> : zeroDirectionalCoverage && !researchDetailsOpen ? <section className="directional-availability-summary" aria-label="Directional field availability">
         <header><strong>Directional field availability</strong><span>UNKNOWN until an admissible polarity entry exists</span></header>
         <div className="directional-availability-rows">
-          <div><strong>USD FIELD</strong><span>{usdKnownCount} / {usdBlocks.length} known</span><small>NO ADMITTED POLARITY ENTRIES</small></div>
-          <div><strong>JPY FIELD</strong><span>{jpyKnownCount} / {jpyBlocks.length} known</span><small>NO ADMITTED POLARITY ENTRIES</small></div>
-          {pairField && <div><strong>USDJPY PAIR</strong><span>{pairKnownCount} / {pairBlocks.length} known</span><small>MODERN ENGINEERING RESEARCH TRANSFORM · NO ADMISSIBLE PAIR INTERVALS BECAUSE SIDE EVIDENCE IS UNRESOLVED</small></div>}
+          <div><strong>USD FIELD</strong><span>{usdKnownCount} / {usdBlocks.length} known</span><small>{zeroCoverageReason('USD', pilotStatus)}</small></div>
+          <div><strong>JPY FIELD</strong><span>{jpyKnownCount} / {jpyBlocks.length} known</span><small>{zeroCoverageReason('JPY', pilotStatus)}</small></div>
+          {pairField && <div><strong>USDJPY PAIR</strong><span>{pairKnownCount} / {pairBlocks.length} known</span><small>MODERN ENGINEERING RESEARCH TRANSFORM · NO RESOLVED PAIR INTERVALS BECAUSE SIDE EVIDENCE IS UNRESOLVED</small></div>}
         </div>
         <button type="button" onClick={() => setResearchDetailsOpen(true)} aria-controls="directional-research-details">Show research details</button>
       </section> : <section id="directional-research-details" className={zeroDirectionalCoverage ? 'directional-research-details is-expanded' : undefined} aria-label={zeroDirectionalCoverage ? 'Directional field research details' : undefined}>

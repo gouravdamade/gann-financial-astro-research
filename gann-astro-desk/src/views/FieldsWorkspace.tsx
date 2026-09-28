@@ -32,6 +32,7 @@ import {
   isTimestampInsideResearchWindow,
   researchWindowPageForTimestamp,
 } from '../fieldsResearchWindow'
+import { isActivityChartSupported } from './activityChartEligibility'
 
 const BODIES = ['SUN', 'MOON', 'MARS', 'MERCURY', 'JUPITER', 'VENUS', 'SATURN', 'RAHU', 'KETU'] as const
 const CLASSICAL_TIMING_SESSION_KEY = 'gann-astro.fields.bphs-calendar.enabled.v1'
@@ -138,6 +139,13 @@ export function FieldsWorkspace({
   const activityCache = useRef(new Map<string, MultiOscillatorActivityRange>())
   const activityRequestSequence = useRef(0)
   const isFxPair = isSupportedFxPair(chart.symbol)
+  const activityChartSupported = isActivityChartSupported(chart.symbol)
+  const activityCtaDisabled = founderReviewDirty || !activityChartSupported
+  const activityCtaMessage = founderReviewDirty
+    ? 'Save or discard Founder Review changes before leaving Fields.'
+    : !activityChartSupported
+      ? 'Chart-native USD/JPY activity is available only for USDJPY.'
+      : 'Existing chart layout, markers, range, drawings, and RSI settings are preserved.'
   const datasetSignature = `${chart.symbol}:${chart.timeframe}:${chart.candles[0]?.time ?? ''}:${chart.candles.at(-1)?.time ?? ''}`
   const previousDatasetSignature = useRef(datasetSignature)
   const researchWindow = useMemo(
@@ -443,11 +451,11 @@ export function FieldsWorkspace({
       <button
         type="button"
         onClick={() => onAddActivityToChart?.()}
-        disabled={founderReviewDirty}
+        disabled={activityCtaDisabled}
         aria-describedby="fields-activity-cta-help"
-        title={founderReviewDirty ? 'Save or discard Founder Review changes before leaving Fields' : 'Show USD / JPY unsigned activity on the Chart surface'}
+        title={activityCtaMessage}
       ><Waves size={13} /> Add USD/JPY Activity to Chart</button>
-      <span id="fields-activity-cta-help">{founderReviewDirty ? 'Save or discard Founder Review changes before leaving Fields.' : 'Existing chart layout, markers, range, drawings, and RSI settings are preserved.'}</span>
+      <span id="fields-activity-cta-help">{activityCtaMessage}</span>
     </section>
     {founderReviewOpen ? <FounderReviewWorkbench onClose={() => setFounderReviewOpen(false)} onDirtyChange={onFounderReviewDirtyChange} /> : <>
     <section className="fields-context-card" aria-label="Field contract and context">

@@ -5,7 +5,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { ChartPayload, MultiOscillatorActivityRange, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from './types'
+import type { ChartPayload, FxSidePilotStatus, MultiOscillatorActivityRange, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from './types'
 import { FieldsWorkspace } from './views/FieldsWorkspace'
 import { canonicalAspectFilterKey, eventMatchesActivityFilters } from './views/MultiOscillatorActivityFilter'
 import { deriveSharedRawActivityAxisMax, rawActivityHeightPercent } from './views/MultiOscillatorActivityScale'
@@ -39,6 +39,11 @@ const chart = {
     { time: Date.parse(startUtc) / 1000, open: 150, high: 151, low: 149, close: 150.5 },
     { time: Date.parse(endUtc) / 1000, open: 150.5, high: 151.5, low: 150, close: 151 },
   ],
+} as unknown as ChartPayload
+
+const stockChart = {
+  ...chart,
+  symbol: 'AAPL',
 } as unknown as ChartPayload
 
 const longChart = {
@@ -164,6 +169,32 @@ const zeroCoverageRange = {
     },
   },
 } as unknown as SynchronizedIndependentRange
+
+const noActiveAspectRange = {
+  ...zeroCoverageRange,
+  aspectFields: {
+    ...zeroCoverageRange.aspectFields,
+    USD: {
+      ...zeroCoverageRange.aspectFields.USD,
+      intervals: zeroCoverageRange.aspectFields.USD.intervals.map((interval) => ({ ...interval, reason: 'NO_ACTIVE_SIDE_CHART_ASPECT' })),
+    },
+    JPY: {
+      ...zeroCoverageRange.aspectFields.JPY,
+      intervals: zeroCoverageRange.aspectFields.JPY.intervals.map((interval) => ({ ...interval, reason: 'NO_ACTIVE_SIDE_CHART_ASPECT' })),
+    },
+  },
+} as unknown as SynchronizedIndependentRange
+
+const zeroCataloguePilotStatus = {
+  contract: 'FX_SIDE_POLARITY_PILOT_STATUS_V1', schemaVersion: 1,
+  status: 'PILOT_EVIDENCE_PENDING', requiredStates: ['SUPPORTIVE', 'ADVERSE'], eligibleSides: ['USD', 'JPY'],
+  sides: {
+    USD: { sideIdentity: 'USD', instrumentId: 'FX_CURRENCY:USD', reviewedPacketCount: 0, catalogueEntryCount: 0, observedStates: [], missingRequiredStates: ['SUPPORTIVE', 'ADVERSE'], unknownGapsRetained: true, pilotEvidenceComplete: false, blockers: ['NO_ADMITTED_POLARITY_ENTRIES'] },
+    JPY: { sideIdentity: 'JPY', instrumentId: 'FX_CURRENCY:JPY', reviewedPacketCount: 0, catalogueEntryCount: 0, observedStates: [], missingRequiredStates: ['SUPPORTIVE', 'ADVERSE'], unknownGapsRetained: true, pilotEvidenceComplete: false, blockers: ['NO_ADMITTED_POLARITY_ENTRIES'] },
+  },
+  unknownGapPolicy: 'UNREVIEWED_SIDE_EVENTS_REMAIN_UNKNOWN', summary: 'No side has the minimum reviewed categorical examples yet.',
+  guardrails: { readOnly: true, executionAllowed: false, automaticOrderPlacement: false, financiallyValidated: false, createsCatalogueEntry: false, marketDirectionInferred: false, fieldsFused: false, actsAsSbcConfirmation: false },
+} as unknown as FxSidePilotStatus
 
 const bphsCalendarRange = {
   contract: 'BPHS_CLASSICAL_CALENDAR_RANGE_V1', schemaVersion: 1, rangeStartUtc: startUtc, rangeEndUtc: endUtc,
@@ -389,6 +420,29 @@ describe('FieldsWorkspace', () => {
     expect(addActivity).not.toHaveBeenCalled()
   })
 
+  it('keeps the activity CTA visible but disabled for unsupported symbols', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+    const { addActivity } = renderFields({ chart: stockChart })
+
+    const action = await screen.findByRole('button', { name: 'Add USD/JPY Activity to Chart' })
+    expect(action).toBeDisabled()
+    expect(screen.getByText('Chart-native USD/JPY activity is available only for USDJPY.')).toBeInTheDocument()
+    await user.click(action)
+    expect(addActivity).not.toHaveBeenCalled()
+  })
+
+  it('gives dirty Founder Review precedence over unsupported-symbol wording', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    renderFields({ chart: stockChart, founderReviewDirty: true })
+
+    await screen.findByRole('button', { name: 'Add USD/JPY Activity to Chart' })
+    expect(screen.getByText('Save or discard Founder Review changes before leaving Fields.')).toBeInTheDocument()
+    expect(screen.queryByText('Chart-native USD/JPY activity is available only for USDJPY.')).not.toBeInTheDocument()
+  })
+
   it('compacts zero-coverage directional fields without mounting their detail panes', async () => {
     apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(zeroCoverageRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
@@ -398,8 +452,9 @@ describe('FieldsWorkspace', () => {
     const summary = await screen.findByLabelText('Directional field availability')
     expect(summary).toBeInTheDocument()
     expect(summary).toHaveTextContent('0 / 2 known')
-    expect(summary).toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
-    expect(summary).toHaveTextContent('NO ADMISSIBLE PAIR INTERVALS BECAUSE SIDE EVIDENCE IS UNRESOLVED')
+    expect(summary).toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
+    expect(summary).toHaveTextContent('NO RESOLVED PAIR INTERVALS BECAUSE SIDE EVIDENCE IS UNRESOLVED')
+    expect(summary).not.toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
     expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(0)
     expect(document.querySelectorAll('.categorical-step-hitbox, .categorical-step-gap')).toHaveLength(0)
     expect(screen.getByRole('button', { name: 'Show research details' })).toBeInTheDocument()
@@ -423,6 +478,28 @@ describe('FieldsWorkspace', () => {
     await user.click(screen.getByRole('button', { name: 'Hide research details' }))
     expect(screen.getByLabelText('Directional field availability')).toBeInTheDocument()
     expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(0)
+  })
+
+  it('uses stronger zero-catalogue wording only when authoritative pilot status is loaded', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(zeroCoverageRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(zeroCataloguePilotStatus)
+
+    renderFields()
+
+    const summary = await screen.findByLabelText('Directional field availability')
+    expect(summary).toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
+    expect(summary).not.toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
+  })
+
+  it('keeps no-active-aspect zero coverage generic when pilot status is unavailable', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(noActiveAspectRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields()
+
+    const summary = await screen.findByLabelText('Directional field availability')
+    expect(summary).toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
+    expect(summary).not.toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
   })
 
   it('shows every backend event with all filters selected despite canonical lowercase aspects', async () => {
