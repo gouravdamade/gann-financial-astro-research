@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P3-R2",
+  "status": "IMPLEMENTED_CENTRAL_REVIEW_PENDING",
+  "source": {
+    "startingCommit": "a10901fd7e7ef2dab1b38d45fef8140f839fb5db",
+    "r1ImplementationCommit": "1ad35e02d3e9654a77f5bc869dd06e15ef5f7ed0",
+    "implementationCommit": "e9b97ceb5129943809ea7af4ae207642df0bb6b8",
+    "branch": "research/pfr-v2b-r5-f4-a-p3-r2-zero-coverage-header",
+    "sourceGitDirty": false,
+    "backendChanged": false,
+    "rustChanged": false,
+    "packageMetadataChanged": false
+  },
+  "product": {
+    "zeroCoverageHeaderCauseNeutral": true,
+    "zeroKnownDoesNotImplyCatalogueCause": true,
+    "authoritativeSideCatalogueWordingPreserved": true,
+    "compactHeaderText": "NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE",
+    "oldCauseSpecificHeaderRemoved": true,
+    "activityMathChanged": false,
+    "pairMathChanged": false,
+    "symbolGatingUnchanged": true,
+    "parentSymbolGuardUnchanged": true,
+    "withheldModesUnchanged": true,
+    "knownDataUnchanged": true,
+    "ctaUnchanged": true,
+    "founderReviewUnchanged": true
+  },
+  "verification": {
+    "focusedFrontend": "41/41 passed",
+    "fullFrontend": "49 files, 244/244 passed",
+    "typescript": "PASSED",
+    "oxlint": "PASSED",
+    "viteBuild": "PASSED",
+    "gitDiffCheck": "PASSED",
+    "backend": "NOT_RUN_SOURCE_ONLY_MILESTONE",
+    "nativeWindowsPackaging": "NOT_EXECUTED_NOT_REQUIRED"
+  },
+  "locks": {
+    "executionAllowed": false,
+    "automaticOrderPlacement": false,
+    "polarityAssigned": false,
+    "scoreAggregationEnabled": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5ExecutionEnabled": false,
+    "candidateCAccessed": false,
+    "emp3Accessed": false,
+    "providerAccessed": false,
+    "outcomeAnalysis": false,
+    "outcomesAccessed": false,
+    "f4BImplemented": false,
+    "f4CImplemented": false,
+    "pairMathChanged": false,
+    "polarityCatalogueChanged": false,
+    "evidenceRegistryChanged": false
+  },
+  "historicalR1": {
+    "status": "SUPERSEDED_BY_P3_R2_PENDING_CENTRAL_REVIEW",
+    "disposition": "REQUIRES_MICRO_TRUTHFULNESS_CORRECTION",
+    "correction": "The R1 compact header was too specific about catalogue admission; R2 replaces it with neutral range-level wording."
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER"
+}

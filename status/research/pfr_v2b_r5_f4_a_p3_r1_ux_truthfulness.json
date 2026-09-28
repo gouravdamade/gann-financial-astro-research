@@ -1,7 +1,7 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS_V1",
   "milestone": "PFR-V2B-R5-F4-A-P3-R1",
-  "status": "IMPLEMENTED_CENTRAL_REVIEW_PENDING",
+  "status": "SUPERSEDED_BY_P3_R2_PENDING_CENTRAL_REVIEW",
   "source": {
     "startingCommit": "c8a4f84a7c0c909688aedeae770f236dc651226c",
     "p3ImplementationCommit": "be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a",
@@ -58,5 +58,11 @@
     "p3DocumentationCommit": "c8a4f84a7c0c909688aedeae770f236dc651226c",
     "p3ImplementationCommit": "be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a"
   },
-  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS"
+  "supersededBy": {
+    "milestone": "PFR-V2B-R5-F4-A-P3-R2",
+    "branch": "research/pfr-v2b-r5-f4-a-p3-r2-zero-coverage-header",
+    "implementationCommit": "e9b97ceb5129943809ea7af4ae207642df0bb6b8",
+    "reason": "R2 neutralizes the compact zero-coverage header while preserving R1 side-level authoritative wording."
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER"
 }

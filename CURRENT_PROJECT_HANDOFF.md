@@ -13552,3 +13552,29 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `executionAllowed=false`.
 - Native Windows packaging was not executed. Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS`.
+
+## PFR-V2B-R5-F4-A-P3-R2 Zero-Coverage Header Truthfulness (2026-09-28)
+
+- R2 starts from the reviewed R1 documentation commit
+  `a10901fd7e7ef2dab1b38d45fef8140f839fb5db` on the isolated branch
+  `research/pfr-v2b-r5-f4-a-p3-r2-zero-coverage-header`. The source correction
+  commit is `e9b97ceb5129943809ea7af4ae207642df0bb6b8`.
+- The compact zero-coverage header now says
+  `NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE`. It no longer claims that
+  an admissible polarity entry is the cause or that adding one resolves every
+  interval. This is a range-level unresolved state, not a neutral value.
+- R1's authoritative side-level wording remains intact: when loaded pilot
+  status explicitly reports `catalogueEntryCount=0`, side rows may say
+  `NO ADMITTED POLARITY ENTRIES`; unavailable pilot status keeps the generic
+  wording. Pair wording remains
+  `MODERN ENGINEERING RESEARCH TRANSFORM` with unresolved side evidence.
+- Focused Fields tests passed 41/41; the full frontend passed 244/244 across
+  49 files; TypeScript, Oxlint, Vite build, and `git diff --check` passed.
+  The no-active-aspect test now rejects the old cause-specific header and the
+  authoritative catalogue wording when pilot status is unavailable.
+- No backend, Rust/Tauri, package, activity math, pair math, polarity
+  catalogue, evidence registry, F4-B/F4-C, Candidate C, EMP3, provider,
+  outcome, MT5, or execution behavior changed. `executionAllowed=false`.
+  No Windows candidate was built.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER`.
