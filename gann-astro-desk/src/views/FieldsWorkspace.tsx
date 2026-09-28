@@ -1,4 +1,4 @@
-import { Activity, ClipboardCheck, Layers3, RefreshCw, ShieldCheck } from 'lucide-react'
+import { Activity, ClipboardCheck, Layers3, RefreshCw, ShieldCheck, Waves } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   fetchFxSidePilotStatus,
@@ -52,6 +52,8 @@ type Props = {
   onSelectFieldInterval: (selection: ResearchFieldIntervalSelection) => void
   onClearFieldInterval?: () => void
   onSelectActivityTimestampUtc: (timestampUtc: string) => void
+  onAddActivityToChart?: () => void
+  founderReviewDirty?: boolean
   onFounderReviewActiveChange?: (active: boolean) => void
   onFounderReviewDirtyChange?: (dirty: boolean) => void
 }
@@ -113,6 +115,8 @@ export function FieldsWorkspace({
   onSelectFieldInterval,
   onClearFieldInterval,
   onSelectActivityTimestampUtc,
+  onAddActivityToChart,
+  founderReviewDirty = false,
   onFounderReviewActiveChange,
   onFounderReviewDirtyChange,
 }: Props) {
@@ -431,6 +435,20 @@ export function FieldsWorkspace({
         </div>
       </div>
     </header>
+    <section className="fields-activity-cta" aria-label="Chart-native activity shortcut">
+      <div>
+        <Waves size={16} />
+        <div><strong>Chart-native activity</strong><span>Keep the detailed Fields workspace here and add the unsigned USD / JPY activity pane to the existing chart.</span></div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onAddActivityToChart?.()}
+        disabled={founderReviewDirty}
+        aria-describedby="fields-activity-cta-help"
+        title={founderReviewDirty ? 'Save or discard Founder Review changes before leaving Fields' : 'Show USD / JPY unsigned activity on the Chart surface'}
+      ><Waves size={13} /> Add USD/JPY Activity to Chart</button>
+      <span id="fields-activity-cta-help">{founderReviewDirty ? 'Save or discard Founder Review changes before leaving Fields.' : 'Existing chart layout, markers, range, drawings, and RSI settings are preserved.'}</span>
+    </section>
     {founderReviewOpen ? <FounderReviewWorkbench onClose={() => setFounderReviewOpen(false)} onDirtyChange={onFounderReviewDirtyChange} /> : <>
     <section className="fields-context-card" aria-label="Field contract and context">
       <div><b>Instrument</b><span>{chart.symbol} {isFxPair ? 'FX base/quote' : 'single instrument'}</span></div>

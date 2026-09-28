@@ -155,6 +155,56 @@ type MarketChartProps = {
   onOpenFieldsResearch?: () => void
 }
 
+export function ChartIndicatorToolbar({
+  rsiVisible,
+  rsiPeriod,
+  fieldsWavesEnabled,
+  activityVisible,
+  fieldsWavesMenuOpen,
+  onToggleRsi,
+  onToggleRsiSettings,
+  onToggleFieldsWavesMenu,
+}: {
+  rsiVisible: boolean
+  rsiPeriod: number
+  fieldsWavesEnabled: boolean
+  activityVisible: boolean
+  fieldsWavesMenuOpen: boolean
+  onToggleRsi: () => void
+  onToggleRsiSettings: () => void
+  onToggleFieldsWavesMenu: () => void
+}) {
+  return <div className="chart-indicator-control" role="toolbar" aria-label="Indicators">
+    <span className="chart-indicator-label">Indicators</span>
+    <button
+      type="button"
+      className={rsiVisible ? 'is-active' : ''}
+      onClick={onToggleRsi}
+      title={rsiVisible ? 'Hide RSI pane' : 'Show RSI pane'}
+    >
+      <Activity size={14} /> RSI {rsiPeriod}
+    </button>
+    {rsiVisible && (
+      <button
+        type="button"
+        className="icon-button"
+        onClick={onToggleRsiSettings}
+        title="RSI settings"
+        aria-label="RSI settings"
+      ><SlidersHorizontal size={14} /></button>
+    )}
+    {fieldsWavesEnabled && (
+      <button
+        type="button"
+        className={activityVisible ? 'is-active' : ''}
+        onClick={onToggleFieldsWavesMenu}
+        aria-expanded={fieldsWavesMenuOpen}
+        title="Fields & Waves unsigned activity controls"
+      ><Waves size={13} /> Fields &amp; Waves <ChevronDown size={12} /></button>
+    )}
+  </div>
+}
+
 function nearestTime(times: number[], value: number): number {
   if (!times.length) return value
   let low = 0
@@ -1666,34 +1716,16 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
       onPointerLeave={() => setNavigationVisible(false)}
     >
       <div className="market-chart-host" ref={hostRef} />
-      <div className="rsi-indicator-control" role="toolbar" aria-label="Chart indicator controls">
-        <button
-          type="button"
-          className={rsiVisible ? 'is-active' : ''}
-          onClick={() => updateRsiSettings({ visible: !rsiVisible })}
-          title={rsiVisible ? 'Hide RSI pane' : 'Show RSI pane'}
-        >
-          <Activity size={14} /> RSI {rsiPeriod}
-        </button>
-        {rsiVisible && (
-          <button
-            type="button"
-            className="icon-button"
-            onClick={() => setRsiSettingsOpen((value) => !value)}
-            title="RSI settings"
-            aria-label="RSI settings"
-          ><SlidersHorizontal size={14} /></button>
-        )}
-        {fieldsWavesEnabled && (
-          <button
-            type="button"
-            className={fieldsWavesSettings.activityVisible ? 'is-active' : ''}
-            onClick={() => setFieldsWavesMenuOpen((open) => !open)}
-            aria-expanded={fieldsWavesMenuOpen}
-            title="Fields & Waves unsigned activity controls"
-          ><Waves size={13} /> Fields & Waves <ChevronDown size={12} /></button>
-        )}
-      </div>
+      <ChartIndicatorToolbar
+        rsiVisible={rsiVisible}
+        rsiPeriod={rsiPeriod}
+        fieldsWavesEnabled={fieldsWavesEnabled}
+        activityVisible={fieldsWavesSettings.activityVisible}
+        fieldsWavesMenuOpen={fieldsWavesMenuOpen}
+        onToggleRsi={() => updateRsiSettings({ visible: !rsiVisible })}
+        onToggleRsiSettings={() => setRsiSettingsOpen((value) => !value)}
+        onToggleFieldsWavesMenu={() => setFieldsWavesMenuOpen((open) => !open)}
+      />
       {fieldsWavesMenuOpen && fieldsWavesEnabled && (
         <aside className="fields-waves-popover" aria-label="Fields and Waves chart indicators">
           <header>

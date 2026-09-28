@@ -134,6 +134,37 @@ const multiOscillatorActivityRange = {
   guardrails: { readOnly: true, unsigned: true, nonPredictive: true, polarityAssigned: false, magnitudeAssigned: false, priceDataRead: false, priceOutcomeRead: false, sbcRead: false, llmRead: false, executionAllowed: false, automaticOrderPlacement: false, pairDifferenceComputed: false, normalizationUsed: false, dataNormalizationUsed: false, displayAxisScaling: { mode: 'SHARED_RAW_COUNT_AXIS', derivedFrom: 'CURRENT_FILTERED_VISIBLE_COUNTS', changesDataValues: false }, smoothingUsed: false },
 } as unknown as MultiOscillatorActivityRange
 
+const zeroCoverageRange = {
+  ...synchronizedRange,
+  aspectFields: {
+    ...synchronizedRange.aspectFields,
+    USD: {
+      ...synchronizedRange.aspectFields.USD,
+      intervals: synchronizedRange.aspectFields.USD.intervals.map((interval) => ({
+        ...interval,
+        polarityState: 'UNKNOWN',
+        supportiveActive: false,
+        adverseActive: false,
+        activeEventIds: [],
+        unknownEventIds: [`${interval.intervalId}-gap`],
+        reason: 'POLARITY_CATALOGUE_MISSING',
+      })),
+    },
+    JPY: {
+      ...synchronizedRange.aspectFields.JPY,
+      intervals: synchronizedRange.aspectFields.JPY.intervals.map((interval) => ({
+        ...interval,
+        polarityState: 'UNKNOWN',
+        supportiveActive: false,
+        adverseActive: false,
+        activeEventIds: [],
+        unknownEventIds: [`${interval.intervalId}-gap`],
+        reason: 'POLARITY_CATALOGUE_MISSING',
+      })),
+    },
+  },
+} as unknown as SynchronizedIndependentRange
+
 const bphsCalendarRange = {
   contract: 'BPHS_CLASSICAL_CALENDAR_RANGE_V1', schemaVersion: 1, rangeStartUtc: startUtc, rangeEndUtc: endUtc,
   timezone: 'Asia/Kolkata', location: { latitude: 18.5204, longitude: 73.8567 },
@@ -171,12 +202,14 @@ function renderFields(
   const profile = vi.fn()
   const mode = vi.fn()
   const activitySelection = vi.fn()
+  const addActivity = vi.fn()
   apiMocks.fetchMultiOscillatorActivityRange.mockResolvedValue(activityRange)
   return {
     selected,
     profile,
     mode,
     activitySelection,
+    addActivity,
     ...render(<FieldsWorkspace
       chart={chart}
       priceChart={<div data-testid="fields-price-chart">shared chart</div>}
@@ -192,6 +225,7 @@ function renderFields(
       selectedFieldInterval={null}
       onSelectFieldInterval={selected}
       onSelectActivityTimestampUtc={activitySelection}
+      onAddActivityToChart={addActivity}
       {...overrides}
     />),
   }
@@ -330,6 +364,67 @@ describe('FieldsWorkspace', () => {
     expect(screen.getByRole('button', { name: /JPY activity interval 0 active events/i }).getAttribute('style')).toContain('--mo-activity-height: 0%')
   })
 
+  it('offers a top-level Add Activity to Chart action through the parent callback', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+    const { addActivity } = renderFields()
+
+    const action = await screen.findByRole('button', { name: 'Add USD/JPY Activity to Chart' })
+    expect(action).toBeVisible()
+    await user.click(action)
+    expect(addActivity).toHaveBeenCalledTimes(1)
+  })
+
+  it('disables Add Activity to Chart while Founder Review is dirty', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+    const { addActivity } = renderFields({ founderReviewDirty: true })
+
+    const action = await screen.findByRole('button', { name: 'Add USD/JPY Activity to Chart' })
+    expect(action).toBeDisabled()
+    expect(screen.getByText('Save or discard Founder Review changes before leaving Fields.')).toBeInTheDocument()
+    await user.click(action)
+    expect(addActivity).not.toHaveBeenCalled()
+  })
+
+  it('compacts zero-coverage directional fields without mounting their detail panes', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(zeroCoverageRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+
+    renderFields()
+
+    const summary = await screen.findByLabelText('Directional field availability')
+    expect(summary).toBeInTheDocument()
+    expect(summary).toHaveTextContent('0 / 2 known')
+    expect(summary).toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
+    expect(summary).toHaveTextContent('NO ADMISSIBLE PAIR INTERVALS BECAUSE SIDE EVIDENCE IS UNRESOLVED')
+    expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(0)
+    expect(document.querySelectorAll('.categorical-step-hitbox, .categorical-step-gap')).toHaveLength(0)
+    expect(screen.getByRole('button', { name: 'Show research details' })).toBeInTheDocument()
+  })
+
+  it('expands and collapses zero-coverage research details without inventing a directional value', async () => {
+    apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(zeroCoverageRange)
+    apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
+    const user = userEvent.setup()
+
+    renderFields()
+
+    await user.click(await screen.findByRole('button', { name: 'Show research details' }))
+    expect(screen.getAllByText('USD categorical field')).toHaveLength(1)
+    expect(screen.getAllByText('JPY categorical field')).toHaveLength(1)
+    expect(screen.getAllByText('USDJPY pair-relative field')).toHaveLength(1)
+    expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(3)
+    expect(screen.getAllByText(/Unknown evidence: POLARITY_CATALOGUE_MISSING/).length).toBeGreaterThan(0)
+    expect(screen.getByRole('button', { name: 'Hide research details' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Hide research details' }))
+    expect(screen.getByLabelText('Directional field availability')).toBeInTheDocument()
+    expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(0)
+  })
+
   it('shows every backend event with all filters selected despite canonical lowercase aspects', async () => {
     apiMocks.fetchSynchronizedIndependentRange.mockResolvedValue(synchronizedRange)
     apiMocks.fetchFxSidePilotStatus.mockResolvedValue(null)
@@ -466,9 +561,10 @@ describe('FieldsWorkspace', () => {
 
     renderFields({ visualizationMode: 'VISUAL_ONLY_NO_SCORE' })
 
-    await screen.findByText('USD categorical field')
-    expect(screen.getAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(3)
+    await screen.findByLabelText('Directional fields')
+    expect(screen.getAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(1)
     expectDirectionalPresentationWithheld()
+    expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(0)
     expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
     expect(screen.queryByText(/signed pair resultant/i)).not.toBeInTheDocument()
   })
@@ -479,9 +575,10 @@ describe('FieldsWorkspace', () => {
 
     renderFields({ visualizationMode: 'CALIBRATED_RESEARCH' })
 
-    await screen.findByText('USD categorical field')
-    expect(screen.getAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(3)
+    await screen.findByLabelText('Directional fields')
+    expect(screen.getAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(1)
     expectDirectionalPresentationWithheld()
+    expect(document.querySelectorAll('.categorical-step-pane')).toHaveLength(0)
     expect(screen.getByRole('button', { name: /Inspect USD MARS SQUARE event/i })).toBeInTheDocument()
     expect(screen.getByText('Unsigned Activity Waves')).toBeInTheDocument()
   })
@@ -498,9 +595,9 @@ describe('FieldsWorkspace', () => {
     const eventCount = document.querySelectorAll('.mo-event-span').length
 
     await user.click(screen.getByRole('tab', { name: 'Mode 2' }))
-    expect(await screen.findAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(3)
+    expect(await screen.findAllByText('CALIBRATION SOURCE MISSING')).toHaveLength(1)
     await user.click(screen.getByRole('tab', { name: 'Mode 3' }))
-    expect(await screen.findAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(3)
+    expect(await screen.findAllByText('DIRECTIONAL FIELD SUPPRESSED BY VISUAL-ONLY MODE')).toHaveLength(1)
     expect(apiMocks.fetchSynchronizedIndependentRange).toHaveBeenCalledTimes(rangeCalls)
     expect(apiMocks.fetchMultiOscillatorActivityRange).toHaveBeenCalledTimes(activityCalls)
     expect(document.querySelectorAll('.mo-event-span')).toHaveLength(eventCount)
@@ -611,8 +708,8 @@ describe('FieldsWorkspace', () => {
 
     renderFields({ vedhaProfileId: 'SBC_TRAILOKYA_1972_V1' })
 
-    await screen.findByText('USD categorical field')
-    expect(screen.getAllByText('DIRECTIONAL FIELDS WITHHELD BY RESOLVED SOURCE POLICY')).toHaveLength(3)
+    await screen.findByLabelText('Directional fields')
+    expect(screen.getAllByText('DIRECTIONAL FIELDS WITHHELD BY RESOLVED SOURCE POLICY')).toHaveLength(1)
     expectDirectionalPresentationWithheld()
   })
 

@@ -298,6 +298,13 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
       fieldsWaves: normalizeFieldsWavesChartSettings({ ...fieldsWavesSettings, ...update }),
     })
   }, [chartLayouts, fieldsWavesSettings])
+  const addActivityToChart = useCallback(() => {
+    if (founderReviewDirty && activeSurface === 'fields') return
+    updateFieldsWavesSettings({ activityVisible: true })
+    setActiveSurface('chart')
+    setFocusMode(false)
+    setObjectsOpen(false)
+  }, [activeSurface, founderReviewDirty, updateFieldsWavesSettings])
   const activeChartLayout = chartLayouts.activeLayout
   const updateLayoutChartState = chartLayouts.updateChartState
   const planetaryLineSettings = useMemo(
@@ -1268,6 +1275,8 @@ export function MainWorkspace({ showCompanionGateway = false }: { showCompanionG
             onSelectFieldInterval={selectResearchFieldInterval}
             onClearFieldInterval={clearResearchFieldInterval}
             onSelectActivityTimestampUtc={(timestampUtc) => selectResearchTimestampUtc(timestampUtc, 'COLLECTIVE_INSPECTOR')}
+            onAddActivityToChart={addActivityToChart}
+            founderReviewDirty={founderReviewDirty}
             onFounderReviewActiveChange={setOutcomeBlindReviewActive}
             onFounderReviewDirtyChange={setFounderReviewDirty}
           />

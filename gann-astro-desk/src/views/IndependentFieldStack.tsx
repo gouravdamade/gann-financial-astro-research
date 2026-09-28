@@ -1,4 +1,5 @@
 import { Layers3, ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
 import type { FxSidePilotStatus, ResearchFieldIntervalSelection, SynchronizedIndependentRange } from '../types'
 import { compileFxPairRelativeCategoricalField } from '../pairRelativeField'
 import type { VisualizationEngineMode } from '../visualizationModes'
@@ -57,6 +58,10 @@ function valueForBlock(block: LaneBlock): number | null {
     case 'MIXED': return 0
     default: return null
   }
+}
+
+function knownCountForBlocks(blocks: LaneBlock[]): number {
+  return blocks.filter((block) => valueForBlock(block) != null).length
 }
 
 function xFor(value: string, rangeStart: number, rangeEnd: number): number {
@@ -142,7 +147,7 @@ export function CategoricalStepPane({ label, field, blocks, rangeStartUtc, range
   const adverse = steppedPath(blocks, start, end, 'adverse')
   const unknown = blocks.filter((block) => valueForBlock(block) == null)
   const unknownReasons = [...new Set(unknown.map((block) => block.detail).filter(Boolean))]
-  const knownCount = blocks.length - unknown.length
+  const knownCount = knownCountForBlocks(blocks)
   const gapPatternId = `categorical-gap-${field.toLowerCase()}`
   const crosshairX = crosshairTimestampUtc ? xFor(crosshairTimestampUtc, start, end) : null
   return <section className={`categorical-step-pane${suppressed ? ' is-suppressed' : ''}`} aria-label={`${label} categorical stepped field`}>
@@ -269,6 +274,14 @@ export function IndependentFieldStack({
       ? `Missing evidence: ${interval.missing_evidence_ids.join(', ')}`
       : 'Existing SBC atomic interval availability only.',
   })) ?? []
+  const usdKnownCount = knownCountForBlocks(usdBlocks)
+  const jpyKnownCount = knownCountForBlocks(jpyBlocks)
+  const pairKnownCount = knownCountForBlocks(pairBlocks)
+  const [researchDetailsOpen, setResearchDetailsOpen] = useState(false)
+  const zeroDirectionalCoverage = !suppressDirectionalPaths
+    && usdKnownCount === 0
+    && jpyKnownCount === 0
+    && (!pairField || pairKnownCount === 0)
 
   return <section className="independent-field-stack" aria-label="Independent synchronized field stack">
     <header>
@@ -280,12 +293,30 @@ export function IndependentFieldStack({
     {!range && !busy && !error && <p className="independent-field-stack-empty">Open this workspace from a chart. Its current visible range will load automatically.</p>}
     {range && <>
       <div className="independent-field-stack-range"><span>{compactUtc(range.rangeStartUtc)}</span><b>Shared UTC range</b><span>{compactUtc(range.rangeEndUtc)}</span></div>
-      <CategoricalStepPane label="USD categorical field" field="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} suppressionMessage={suppressionMessage} />
-      <CategoricalStepPane label="JPY categorical field" field="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} suppressionMessage={suppressionMessage} />
-      {pairField && <>
-        <CategoricalStepPane label="USDJPY pair-relative field" field="PAIR" blocks={pairBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressed={suppressDirectionalPaths} suppressionMessage={suppressionMessage} note="MODERN ENGINEERING RESEARCH TRANSFORM | MAGNITUDE NOT CONFIGURED" />
-        <p className="independent-field-stack-source">FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1: base balance minus quote balance, divided by two and clamped. It uses only stored side boundaries; it is not classical doctrine, an SBC confirmation, or a market forecast.</p>
-      </>}
+      {suppressDirectionalPaths ? <section className="directional-withheld-summary" aria-label="Directional fields">
+        <header><strong>Directional fields</strong><span>{suppressionMessage}</span></header>
+        <div className="directional-withheld-summary-rows">
+          <div><strong>USD</strong><span>WITHHELD BY CURRENT MODE</span></div>
+          <div><strong>JPY</strong><span>WITHHELD BY CURRENT MODE</span></div>
+          {pairField && <div><strong>USDJPY</strong><span>WITHHELD BY CURRENT MODE</span></div>}
+        </div>
+      </section> : zeroDirectionalCoverage && !researchDetailsOpen ? <section className="directional-availability-summary" aria-label="Directional field availability">
+        <header><strong>Directional field availability</strong><span>UNKNOWN until an admissible polarity entry exists</span></header>
+        <div className="directional-availability-rows">
+          <div><strong>USD FIELD</strong><span>{usdKnownCount} / {usdBlocks.length} known</span><small>NO ADMITTED POLARITY ENTRIES</small></div>
+          <div><strong>JPY FIELD</strong><span>{jpyKnownCount} / {jpyBlocks.length} known</span><small>NO ADMITTED POLARITY ENTRIES</small></div>
+          {pairField && <div><strong>USDJPY PAIR</strong><span>{pairKnownCount} / {pairBlocks.length} known</span><small>MODERN ENGINEERING RESEARCH TRANSFORM · NO ADMISSIBLE PAIR INTERVALS BECAUSE SIDE EVIDENCE IS UNRESOLVED</small></div>}
+        </div>
+        <button type="button" onClick={() => setResearchDetailsOpen(true)} aria-controls="directional-research-details">Show research details</button>
+      </section> : <section id="directional-research-details" className={zeroDirectionalCoverage ? 'directional-research-details is-expanded' : undefined} aria-label={zeroDirectionalCoverage ? 'Directional field research details' : undefined}>
+        <CategoricalStepPane label="USD categorical field" field="USD" blocks={usdBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressionMessage={suppressionMessage} />
+        <CategoricalStepPane label="JPY categorical field" field="JPY" blocks={jpyBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressionMessage={suppressionMessage} />
+        {pairField && <>
+          <CategoricalStepPane label="USDJPY pair-relative field" field="PAIR" blocks={pairBlocks} rangeStartUtc={range.rangeStartUtc} rangeEndUtc={range.rangeEndUtc} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} crosshairTimestampUtc={crosshairTimestampUtc} suppressionMessage={suppressionMessage} note="MODERN ENGINEERING RESEARCH TRANSFORM | MAGNITUDE NOT CONFIGURED" />
+          <p className="independent-field-stack-source">FX_PAIR_RELATIVE_CATEGORICAL_FIELD_V1: base balance minus quote balance, divided by two and clamped. It uses only stored side boundaries; it is not classical doctrine, an SBC confirmation, or a market forecast.</p>
+        </>}
+        {zeroDirectionalCoverage && <button type="button" onClick={() => setResearchDetailsOpen(false)} aria-controls="directional-research-details">Hide research details</button>}
+      </section>}
       {!isFxPair && <p className="independent-field-stack-empty">Single-stock contract: no automatic base-minus-quote field is created. A chart-conditioned stock field requires an explicit stock evidence profile.</p>}
       <StateLane label="SBC atomic field" note={sbcLaneNote} blocks={sbcBlocks} selectedInterval={selectedInterval} onSelectInterval={onSelectInterval} />
       {sbcGeometryOnlyState && <p className="independent-field-stack-error">SBC source-only geometry has no compiled range or score. USD and JPY remain independent descriptive fields.</p>}
