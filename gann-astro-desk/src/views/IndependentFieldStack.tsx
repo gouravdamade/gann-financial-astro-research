@@ -307,7 +307,7 @@ export function IndependentFieldStack({
           {pairField && <div><strong>USDJPY</strong><span>WITHHELD BY CURRENT MODE</span></div>}
         </div>
       </section> : zeroDirectionalCoverage && !researchDetailsOpen ? <section className="directional-availability-summary" aria-label="Directional field availability">
-        <header><strong>Directional field availability</strong><span>UNKNOWN until an admissible polarity entry exists</span></header>
+        <header><strong>Directional field availability</strong><span>NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE</span></header>
         <div className="directional-availability-rows">
           <div><strong>USD FIELD</strong><span>{usdKnownCount} / {usdBlocks.length} known</span><small>{zeroCoverageReason('USD', pilotStatus)}</small></div>
           <div><strong>JPY FIELD</strong><span>{jpyKnownCount} / {jpyBlocks.length} known</span><small>{zeroCoverageReason('JPY', pilotStatus)}</small></div>

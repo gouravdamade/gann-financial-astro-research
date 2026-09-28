@@ -488,7 +488,7 @@ describe('FieldsWorkspace', () => {
 
     const summary = await screen.findByLabelText('Directional field availability')
     expect(summary).toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
-    expect(summary).not.toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
+    expect(summary.querySelector('header')).toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
   })
 
   it('keeps no-active-aspect zero coverage generic when pilot status is unavailable', async () => {
@@ -499,6 +499,8 @@ describe('FieldsWorkspace', () => {
 
     const summary = await screen.findByLabelText('Directional field availability')
     expect(summary).toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
+    expect(summary.querySelector('header')).toHaveTextContent('NO RESOLVED CATEGORICAL POLARITY IN THIS RANGE')
+    expect(summary).not.toHaveTextContent('until an admissible polarity entry exists')
     expect(summary).not.toHaveTextContent('NO ADMITTED POLARITY ENTRIES')
   })
 
