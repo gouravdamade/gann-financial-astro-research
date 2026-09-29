@@ -13578,3 +13578,22 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   No Windows candidate was built.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER`.
+
+## PFR-V2B-R5-F4-A-P4 Founder Candidate Preparation (2026-09-29)
+
+- PFR-V2B-R5-F4-A-P3-R2 is recorded as `CENTRAL_PASS`; the accepted F4-A
+  chart-native activity and compact Fields UX are ready for native founder
+  inspection. P3 is product-UX accepted through R2; there is no P3-R3.
+- Version preparation is frozen as
+  `0.10.67-pfr-v2b-r5-f4-a-p3-r2`, with Tauri entry URL
+  `index.html?v=0.10.67-pfr-v2b-r5-f4-a-p3-r2`. The packaging source is the
+  clean P3-R2 commit `1adc15ee3bdb764187fdc5d5948d24f45896bddf` on the
+  dedicated P4 packaging branch.
+- The candidate includes the accepted visible `INDICATORS` toolbar, chart
+  activity control, Fields CTA, exact USDJPY symbol gate, dirty Founder Review
+  guard, compact zero-coverage card, expandable research details, compact
+  Mode 2/3 withholding, and neutral range-level zero-coverage wording.
+- F4-B and F4-C remain unauthorized. The polarity catalogue and evidence
+  registry are unchanged. Candidate C and EMP3 are untouched; provider and
+  outcome access remain false. `executionAllowed=false`.
+- Next step is native Windows founder inspection of the immutable P4 candidate.

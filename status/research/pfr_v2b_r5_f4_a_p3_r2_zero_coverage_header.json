@@ -1,7 +1,7 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER_V1",
   "milestone": "PFR-V2B-R5-F4-A-P3-R2",
-  "status": "IMPLEMENTED_CENTRAL_REVIEW_PENDING",
+  "status": "CENTRAL_PASS",
   "source": {
     "startingCommit": "a10901fd7e7ef2dab1b38d45fef8140f839fb5db",
     "r1ImplementationCommit": "1ad35e02d3e9654a77f5bc869dd06e15ef5f7ed0",
@@ -61,5 +61,5 @@
     "disposition": "REQUIRES_MICRO_TRUTHFULNESS_CORRECTION",
     "correction": "The R1 compact header was too specific about catalogue admission; R2 replaces it with neutral range-level wording."
   },
-  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R2_ZERO_COVERAGE_HEADER"
+  "nextGate": "PFR_V2B_R5_F4_A_P4_WINDOWS_FOUNDER_CANDIDATE"
 }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P3_FOUNDER_UX_COMPACTION_V1",
   "milestone": "PFR-V2B-R5-F4-A-P3",
-  "status": "SUPERSEDED_BY_P3_R1_PENDING_CENTRAL_REVIEW",
+  "status": "SUPERSEDED_BY_P3_R2_CENTRAL_PASS",
   "source": {
     "startingCommit": "8afde8acec6d48c9cf7e7ce7c3962f13e80363f3",
     "implementationCommit": "be3e4fcd6061b2e92022c7ef7b2f3b304f0dee1a",
@@ -49,11 +49,18 @@
     "providerAccessed": false,
     "outcomesAccessed": false
   },
-  "supersededBy": {
+  "historicalSupersededBy": {
     "milestone": "PFR-V2B-R5-F4-A-P3-R1",
     "branch": "research/pfr-v2b-r5-f4-a-p3-r1-ux-truthfulness",
     "implementationCommit": "1ad35e0",
-    "reason": "R1 corrects symbol eligibility and zero-coverage wording while preserving the P3 UX architecture."
+    "reason": "R1 corrected symbol eligibility and zero-coverage wording while preserving the P3 UX architecture."
   },
-  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P3_R1_UX_TRUTHFULNESS"
+  "supersededBy": {
+    "milestone": "PFR-V2B-R5-F4-A-P3-R2",
+    "branch": "research/pfr-v2b-r5-f4-a-p3-r2-zero-coverage-header",
+    "implementationCommit": "e9b97ceb5129943809ea7af4ae207642df0bb6b8",
+    "status": "CENTRAL_PASS",
+    "reason": "R2 completed the narrow zero-coverage header truthfulness correction."
+  },
+  "nextGate": "PFR_V2B_R5_F4_A_P4_WINDOWS_FOUNDER_CANDIDATE"
 }
