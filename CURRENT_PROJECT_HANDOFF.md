@@ -13597,3 +13597,26 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   registry are unchanged. Candidate C and EMP3 are untouched; provider and
   outcome access remain false. `executionAllowed=false`.
 - Next step is native Windows founder inspection of the immutable P4 candidate.
+
+## PFR-V2B-R5-F4-A-P4 Windows Candidate QA (2026-09-29)
+
+- Immutable candidate `0.10.67-pfr-v2b-r5-f4-a-p3-r2` was packaged from
+  `87e5a0b72818be7a30908bbe3bb4a74b47e542ea`, with
+  `sourceGitDirty=false` and `executionAllowed=false`.
+- Frontend, TypeScript, Oxlint, Vite, Cargo formatting/metadata/check, and
+  packaging verification passed. Two isolated packaged native soak runs passed
+  launch, sidecar health/recovery, layout persistence, execution locks, and
+  descendant cleanup with no runtime errors. The inherited optional
+  `chakra_jupiter_motion_explicit` readiness check remains reported separately
+  as `DIGNITY_REQUIRED`/not configured; it was not changed in P4.
+- Native CUA screenshot/control tooling was unavailable in this session.
+  Therefore INDICATORS discoverability, chart/Fields visual composition,
+  1280x800 and wide-viewport inspection, and screenshot capture remain pending
+  founder physical inspection. Automated smoke is not founder acceptance.
+- P4 report/status:
+  `docs/research/PFR_V2B_R5_F4_A_P4_WINDOWS_FOUNDER_CANDIDATE.md` and
+  `status/research/pfr_v2b_r5_f4_a_p4_windows_founder_candidate.json`.
+- F4-B/F4-C remain unauthorized; Candidate C, provider/outcome access, MT5
+  orders, polarity, scoring, Auto Suggest, ML, and execution remain locked.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_WINDOWS_FOUNDER_CANDIDATE`.
