@@ -82,6 +82,16 @@ the chart viewport.
   **not claimed as passed**.
 - Native Windows visual control was unavailable in this session. No founder
   acceptance is claimed, and the immutable P4 candidate was not overwritten.
+- A separate local Tauri development/native build completed from source commit
+  `89c6dacf70dacfc76af5b6695c4c345aa5ea2561`. It used the inherited package
+  metadata version `0.10.67-pfr-v2b-r5-f4-a-p3-r2` and was written outside the
+  immutable P4 candidate directory. Portable output:
+  `D:\Rust\targets\release\gann-astro-desk.exe`, SHA-256
+  `3F0AC20B0558F5EC3E155A51E81B3599F38A6D23CD69938EAA862C037C65B4FE`.
+  Installer output:
+  `D:\Rust\targets\release\bundle\nsis\Gann Astro Desk_0.10.67-pfr-v2b-r5-f4-a-p3-r2_x64-setup.exe`,
+  SHA-256 `0B646A7F4003BD3DFF0602C8143B6B99304325742651079F5DC67A4A44A87BD6`.
+  This build is a verification artifact, not a new immutable release candidate.
 
 ## Preserved Locks
 
