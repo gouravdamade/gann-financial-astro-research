@@ -852,6 +852,10 @@ export type Candle = {
   volume: number
 }
 
+export type ChartIndicatorHistory = {
+  candles: Candle[]
+}
+
 export type AspectWindow = {
   eventId: string
   caseId: number | null
@@ -902,6 +906,7 @@ export type ChartPayload = {
   start: string
   end: string
   candles: Candle[]
+  indicatorHistory?: ChartIndicatorHistory
   aspects: AspectWindow[]
   srLines: SrLine[]
   astronomyContract: string

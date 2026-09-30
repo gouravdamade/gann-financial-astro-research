@@ -134,7 +134,14 @@ def build_rsi_evidence(
         raise ValueError("RSI period must be between 2 and 200")
     event = detail.get("event") if isinstance(detail.get("event"), dict) else {}
     chart = detail.get("chart") if isinstance(detail.get("chart"), dict) else {}
-    frame = _validated_frame(chart.get("candles") if isinstance(chart.get("candles"), list) else [])
+    visible_candles = chart.get("candles") if isinstance(chart.get("candles"), list) else []
+    indicator_history = chart.get("indicatorHistory")
+    history_candles = (
+        indicator_history.get("candles")
+        if isinstance(indicator_history, dict) and isinstance(indicator_history.get("candles"), list)
+        else []
+    )
+    frame = _validated_frame([*history_candles, *visible_candles])
     timeframe = str(chart.get("timeframe") or "H1").upper()
     symbol = str(chart.get("symbol") or "USDJPY").upper()
     bar_seconds = _bar_seconds(frame, timeframe)

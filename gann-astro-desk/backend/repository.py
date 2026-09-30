@@ -191,6 +191,8 @@ CHART_TIMEFRAME_DURATION = {
     "W1": pd.Timedelta(days=7),
 }
 
+INDICATOR_HISTORY_MAX_BARS = 1000
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -1582,6 +1584,24 @@ class AstroRepository:
             }
             for index, row in price.iterrows()
         ]
+        indicator_history_source = price_source.loc[price_source.index < start_utc]
+        if replay_cutoff_utc is not None:
+            history_close_times = indicator_history_source.index + timeframe_duration
+            indicator_history_source = indicator_history_source.loc[
+                history_close_times <= replay_cutoff_utc
+            ]
+        indicator_history_source = indicator_history_source.tail(INDICATOR_HISTORY_MAX_BARS)
+        indicator_history = [
+            {
+                "time": int(index.timestamp()),
+                "open": round(float(row.open), 5),
+                "high": round(float(row.high), 5),
+                "low": round(float(row.low), 5),
+                "close": round(float(row.close), 5),
+                "volume": int(row.tick_volume) if "tick_volume" in row else 0,
+            }
+            for index, row in indicator_history_source.iterrows()
+        ]
         visible_end_local = (
             min(end_local, replay_cutoff_utc.tz_convert(IST))
             if replay_cutoff_utc is not None
@@ -1677,6 +1697,7 @@ class AstroRepository:
             "start": start_local.isoformat(),
             "end": end_local.isoformat(),
             "candles": candles,
+            "indicatorHistory": {"candles": indicator_history},
             "aspects": event_records,
             "srLines": sr_lines[:8],
             "astronomyContract": ASTRO_CONTRACT,

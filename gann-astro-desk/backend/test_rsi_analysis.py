@@ -46,6 +46,25 @@ class WilderRsiTests(unittest.TestCase):
 
 
 class RsiEvidenceTests(unittest.TestCase):
+    def test_indicator_history_initializes_short_visible_window(self) -> None:
+        visible_start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        history = [
+            {
+                "time": int((visible_start - timedelta(hours=100 - index)).timestamp()),
+                "open": 100 + index,
+                "high": 100 + index,
+                "low": 100 + index,
+                "close": 100 + index,
+                "volume": 1,
+            }
+            for index in range(100)
+        ]
+        payload = detail([200 + index for index in range(12)], event_start_index=1, event_end_index=11)
+        payload["chart"]["indicatorHistory"] = {"candles": history}
+        evidence = build_rsi_evidence(payload, period=14)
+        self.assertTrue(evidence["ready"])
+        self.assertGreater(evidence["closedBarCountAtCutoff"], 15)
+
     def test_packet_is_closed_bar_timestamp_safe(self) -> None:
         evidence = build_rsi_evidence(detail([100 + index for index in range(30)]), period=14)
         self.assertEqual(evidence["contract"], RSI_EVIDENCE_CONTRACT)

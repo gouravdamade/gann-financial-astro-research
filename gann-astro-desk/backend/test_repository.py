@@ -67,6 +67,10 @@ class AstroRepositoryTests(unittest.TestCase):
                 for item in payload["aspects"]
             )
         )
+        self.assertIn("indicatorHistory", payload)
+        history = payload["indicatorHistory"]["candles"]
+        self.assertGreaterEqual(len(history), 100)
+        self.assertLess(max(item["time"] for item in history), payload["candles"][0]["time"])
 
     def test_health_reports_corrected_touch_source(self) -> None:
         health = self.repository.health()
@@ -143,6 +147,12 @@ class AstroRepositoryTests(unittest.TestCase):
         self.assertEqual(len(replay["candles"]), 20)
         self.assertTrue(replay["replay"]["timestampSafe"])
         self.assertTrue(replay["replay"]["noLookahead"])
+        self.assertTrue(
+            all(
+                item["time"] + 60 * 60 <= int(cutoff.timestamp())
+                for item in replay["indicatorHistory"]["candles"]
+            )
+        )
         self.assertLessEqual(
             max(item["time"] + 60 * 60 for item in replay["candles"]),
             int(cutoff.timestamp()),

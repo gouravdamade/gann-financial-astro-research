@@ -70,7 +70,7 @@ import {
   navigateChartLogicalRange,
   type ChartNavigationAction,
 } from '../chartViewport'
-import { closedCandlesAt, normalizeRsiLevels, normalizeRsiPeriod, wilderRsiPoints } from '../rsi'
+import { normalizeRsiLevels, normalizeRsiPeriod, visibleRsiPoints } from '../rsi'
 import type {
   AnnotationDraft,
   AspectWindow,
@@ -363,11 +363,14 @@ export const MarketChart = forwardRef<MarketChartHandle, MarketChartProps>(funct
   const candleTimes = useMemo(() => payload.candles.map((item) => item.time), [payload.candles])
   const rsiPoints = useMemo(() => {
     const cutoff = payload.replay?.cutoffUtc ?? payload.generatedAt
-    return wilderRsiPoints(
-      closedCandlesAt(payload.candles, payload.timeframe, cutoff),
+    return visibleRsiPoints(
+      payload.candles,
+      payload.indicatorHistory?.candles ?? [],
+      payload.timeframe,
+      cutoff,
       rsiPeriod,
     )
-  }, [payload.candles, payload.generatedAt, payload.replay?.cutoffUtc, payload.timeframe, rsiPeriod])
+  }, [payload.candles, payload.generatedAt, payload.indicatorHistory?.candles, payload.replay?.cutoffUtc, payload.timeframe, rsiPeriod])
   const rsiPointsRef = useRef(rsiPoints)
   const activeCounts = useMemo(
     () => activeAspectCountsAtPeak(payload.aspects),
