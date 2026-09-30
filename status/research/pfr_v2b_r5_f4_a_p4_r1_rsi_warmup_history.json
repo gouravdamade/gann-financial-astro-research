@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P4_R1_RSI_WARMUP_HISTORY_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P4-R1",
+  "startingCommit": "353c6ad057a6478696a97cc54f5d802ff1692d89",
+  "branch": "research/pfr-v2b-r5-f4-a-p4-r1-rsi-warmup-history",
+  "implementationCommit": "93ddb9e",
+  "founderObservation": {
+    "candidateVersion": "0.10.67-pfr-v2b-r5-f4-a-p3-r2",
+    "visibleRange": "2026-09-16/2026-09-30",
+    "visibleBars": 12,
+    "rsiPeriod": 14,
+    "p4F4AUx": "PASSED",
+    "rsiHistoryDefect": "OBSERVED"
+  },
+  "rootCause": "INSUFFICIENT_INDICATOR_HISTORY_IN_VISIBLE_PAYLOAD",
+  "historyContract": {
+    "field": "ChartPayload.indicatorHistory.candles",
+    "source": "existing bounded OHLC chart price source",
+    "backendMaxBars": 1000,
+    "warmupBars": "max(100, RSI_PERIOD * 5)",
+    "visibleCandlesSeparate": true,
+    "deduplicationKey": "candle open timestamp",
+    "finiteOhlcValidation": true,
+    "visibleBoundaryWins": true
+  },
+  "replayContract": {
+    "historyCloseTimeMustBeAtOrBeforeCutoff": true,
+    "futureCandlesUsed": false,
+    "openCandleUsed": false,
+    "lookAheadAllowed": false
+  },
+  "displayContract": {
+    "visiblePriceBarsBefore": 12,
+    "visiblePriceBarsAfter": 12,
+    "visibleRangeChanged": false,
+    "fitContentCalled": false,
+    "warmupCandlesRendered": false,
+    "activityRangeChanged": false
+  },
+  "testResults": {
+    "focusedFrontend": "75/75",
+    "fullFrontend": "254/254",
+    "focusedBackend": "21/21",
+    "typescript": "PASS",
+    "oxlint": "PASS",
+    "viteBuild": "PASS",
+    "fullBackendDiscovery": "NOT_CERTIFIED_INHERITED_CPU_HEAVY_TEST_INTERRUPTED",
+    "gitDiffCheck": "PASS"
+  },
+  "nativeQa": {
+    "nativeVisualControlAvailable": false,
+    "founderCaseReproducedVisually": false,
+    "founderAcceptanceClaimed": false,
+    "priorP4CandidateOverwritten": false
+  },
+  "locks": {
+    "rsiFormulaChanged": false,
+    "closedBarSemanticsChanged": false,
+    "lookAheadAllowed": false,
+    "visibleRangeChanged": false,
+    "fieldsWavesChanged": false,
+    "activityMathChanged": false,
+    "pairMathChanged": false,
+    "polarityCatalogueChanged": false,
+    "evidenceRegistryChanged": false,
+    "f4bImplemented": false,
+    "f4cImplemented": false,
+    "candidateCChanged": false,
+    "emp3Authorized": false,
+    "providerAccess": false,
+    "outcomeAnalysis": false,
+    "mt5OrderInvocation": false,
+    "executionAllowed": false
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_R1_RSI_WARMUP_HISTORY"
+}

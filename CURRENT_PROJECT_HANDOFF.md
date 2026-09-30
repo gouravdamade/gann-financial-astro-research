@@ -13620,3 +13620,37 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   orders, polarity, scoring, Auto Suggest, ML, and execution remain locked.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_WINDOWS_FOUNDER_CANDIDATE`.
+
+## PFR-V2B-R5-F4-A-P4-R1 RSI History / Warm-Up Correction (2026-09-30)
+
+- Starting from `353c6ad057a6478696a97cc54f5d802ff1692d89` on isolated branch
+  `research/pfr-v2b-r5-f4-a-p4-r1-rsi-warmup-history`, the R1 correction adds a
+  bounded read-only `indicatorHistory` OHLC channel for RSI initialization.
+  Implementation commit: `93ddb9e`.
+- Root cause was `INSUFFICIENT_INDICATOR_HISTORY_IN_VISIBLE_PAYLOAD`: the P4
+  founder case exposed 12 D1 candles while RSI 14 requires at least 15 closed
+  candles. Wilder math was not changed. Hidden context is bounded by
+  `max(100, RSI_PERIOD * 5)` and backend history is capped at 1,000 candles.
+- Visible candles remain separate from calculation history. History is finite-
+  OHLC validated, deduplicated by open timestamp, clipped to closed candles,
+  replay-safe by candle close time, and RSI points are clipped back to the
+  visible range. No range movement, `fitContent`, open-bar use, or lookahead was
+  introduced.
+- Verification: focused frontend 75/75; full frontend 254/254; focused backend
+  chart/RSI 21/21; TypeScript, Oxlint, Vite build, and `git diff --check`
+  passed. Full backend discovery was not certified because an inherited
+  CPU-heavy S3R1 manifest test did not complete; no R1-focused failure was
+  observed. Native Windows visual control was unavailable, so no founder
+  acceptance is claimed and the immutable P4 candidate remains unchanged.
+- R1 status/report:
+  `docs/research/PFR_V2B_R5_F4_A_P4_R1_RSI_WARMUP_HISTORY.md` and
+  `status/research/pfr_v2b_r5_f4_a_p4_r1_rsi_warmup_history.json`.
+- `rsiFormulaChanged=false`, `closedBarSemanticsChanged=false`,
+  `lookAheadAllowed=false`, `visibleRangeChanged=false`,
+  `fieldsWavesChanged=false`, `activityMathChanged=false`,
+  `pairMathChanged=false`, `polarityCatalogueChanged=false`,
+  `evidenceRegistryChanged=false`, `providerAccess=false`,
+  `outcomeAnalysis=false`, `MT5OrderInvocation=false`,
+  `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_R1_RSI_WARMUP_HISTORY`.
