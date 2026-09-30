@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-01",
+  "task": "DRIK_BALA_AUTHORITY_AND_PROFILE_BINDING",
+  "status": "RESEARCH_ONLY",
+  "productionBindingAuthorized": false,
+  "operatorChanged": false,
+  "profileChanged": false,
+  "runtimeChanged": false,
+  "polarityCatalogueChanged": false,
+  "evidenceRegistryChanged": false,
+  "providerAccess": false,
+  "outcomeAnalysis": false,
+  "executionAllowed": false,
+  "findings": {
+    "classicalAspectualStrengthAuthority": true,
+    "beneficQuarterAdditionTextualSupport": true,
+    "maleficQuarterSubtractionTextualSupport": true,
+    "mercuryJupiterClauseTranslationStable": false,
+    "conditionalMoonMercuryResolved": false,
+    "transitToMarketDirectionAuthorized": false,
+    "stackingPrecedenceResolved": false,
+    "applicationSeparationResolved": false,
+    "persistenceDurationResolved": false
+  },
+  "primaryTextAnchor": "BPHS 27.19",
+  "primaryOpenIssue": "Resolve jñejyadṛkyuktam arithmetic/interpretation from a reliable commentary or scan-based edition before machine binding.",
+  "nextEvidenceTarget": "Printed/scan-based BPHS 27.19 commentary comparison, then conditional Moon/Mercury benefic-malefic authority.",
+  "packet": "docs/research/nightly/2026-10-01_drik-bala-authority-profile-binding.md"
+}
