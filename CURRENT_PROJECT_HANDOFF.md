@@ -13695,3 +13695,35 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - F4-B and F4-C remain unauthorized. `executionAllowed=false`.
 - Next gate: build, smoke, and document the P5 candidate before
   `FOUNDER_PHYSICAL_INSPECTION_PFR_V2B_R5_F4_A_P5`.
+
+## PFR-V2B-R5-F4-A-P5 Windows Founder Candidate QA (2026-10-01)
+
+- Candidate `0.10.68-pfr-v2b-r5-f4-a-p4-r2` was built from packaging-prep
+  commit `622802d14cc770d799f887119cfd7530ef102eaa` on branch
+  `research/pfr-v2b-r5-f4-a-p5-post-rsi-windows-founder-candidate`.
+- Final candidate root is
+  `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.68-pfr-v2b-r5-f4-a-p4-r2-tauri-clean-r2`.
+  Portable SHA-256 is
+  `D2413A35CF978E677A19A01A545AA5BEA4FBFD5022F8A719809E825319113B11`;
+  installer SHA-256 is
+  `BC1870F491482B737F9FB1C0B9FF82F62A072CACC2C4AA31969D7361D6934F9D`.
+  Sidecar, resource tree, receipt, and manifest hashes are recorded in the P5
+  report and status file.
+- Focused frontend 86/86, full frontend 254/254, focused backend 47/47
+  (live route 6/6), TypeScript, Oxlint, Vite, Cargo fmt/metadata/release
+  check, and packaged live RSI history probe passed. Full backend discovery and
+  Rust tests were not run/claimed.
+- Two isolated native smoke reports pass startup, sidecar health/recovery,
+  layout persistence, RSI evidence/lock checks, execution locks, and zero
+  descendant cleanup. Each harness returns non-pass only for inherited
+  `chakra_jupiter_motion_explicit=false`; it was not changed. The optional
+  candlestick specialist remains unconfigured.
+- Native visual control is unavailable. Founder visual inspection and
+  acceptance remain pending; no physical acceptance is implied.
+- P4-R2 remains `CENTRAL_PASS`; RSI math, visible range, Fields/Waves, polarity,
+  Candidate C, outcome research, MT5 orders, and execution behavior are
+  unchanged. `executionAllowed=false`.
+- P5 report/status:
+  `docs/research/PFR_V2B_R5_F4_A_P5_POST_RSI_WINDOWS_FOUNDER_CANDIDATE.md` and
+  `status/research/pfr_v2b_r5_f4_a_p5_post_rsi_windows_founder_candidate.json`.
+- Next gate: `FOUNDER_PHYSICAL_INSPECTION_PFR_V2B_R5_F4_A_P5`.
