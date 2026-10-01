@@ -5,6 +5,7 @@ This index records isolated overnight evidence work. Entries are non-production 
 | Date | Topic | Disposition | Packet | Highest remaining issue |
 |---|---|---|---|---|
 | 2026-10-01 | Drik/Bala authority and profile binding | RESEARCH_ONLY | `2026-10-01_drik-bala-authority-profile-binding.md` | Resolve BPHS 27.19 Mercury/Jupiter clause from reliable commentary/scan; then source conditional Moon/Mercury classification |
+| 2026-10-02 | Drik Bala multi-aspect aggregation / stacking / precedence | RESEARCH_ONLY | `2026-10-02_drik-bala-multi-aspect-aggregation.md` | Ordinary aggregation/no-precedence substantially closed; adjudicate Jha/Santhanam Mercury-Jupiter full-extra reading against Pathak and additional printed witnesses before any profile binding |
 
 ## Locks
 
