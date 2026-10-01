@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "NIGHTLY_RESEARCH_DRIK_BALA_MULTI_ASPECT_V1",
+  "date": "2026-10-02",
+  "topic": "DRIK_BALA_MULTI_ASPECT_AGGREGATION_STACKING_PRECEDENCE",
+  "status": "RESEARCH_ONLY",
+  "packet": "docs/research/nightly/2026-10-02_drik-bala-multi-aspect-aggregation.md",
+  "sourceClosed": {
+    "ordinarySignedAccumulation": true,
+    "beneficMaleficCoexistence": true,
+    "precedenceRuleAbsentInCheckedWitnesses": true,
+    "ordinaryQuarterTreatment": true,
+    "fixedMercuryJupiterPlus60Unsupported": true,
+    "marketDirectionUnauthorized": true
+  },
+  "profileDependentOrUnresolved": {
+    "planetaryMercuryJupiterFullExtra": true,
+    "jnaIjyaDoubleCountInterpretation": true,
+    "conditionalMercuryInteractionWithJnaIjyaExtra": true,
+    "pathakRecensionDirectlyVerified": false,
+    "jhaPageImageDirectlyVerified": false
+  },
+  "witnessFamilies": {
+    "bphsJhaSanthanam": {
+      "ordinaryTerm": "0.25 * (sumBeneficAspectMagnitude - sumMaleficAspectMagnitude)",
+      "jnaIjyaClause": "add computed Mercury/Jupiter drishti after ordinary quarter term",
+      "fixedPlus60": false,
+      "bindingStatus": "RESEARCH_ONLY"
+    },
+    "sripatiRamanJainPlanetary": {
+      "drishtiPinda": "sum(signed computed aspect magnitudes)",
+      "drikBala": "0.25 * drishtiPinda",
+      "planetaryMercuryJupiterExtra": 0,
+      "bindingStatus": "RESEARCH_ONLY"
+    }
+  },
+  "candidateProfiles": [
+    "BPHS_JHA_27_19_LITERAL_RESEARCH",
+    "SRIPATI_RAMAN_JAIN_NET_QUARTER_RESEARCH"
+  ],
+  "productionBindingAuthorized": false,
+  "marketDirection": "WITHHELD",
+  "testsRun": [],
+  "codeTouched": false,
+  "locks": {
+    "productionOperatorsChanged": false,
+    "scoringChanged": false,
+    "polarityCatalogueChanged": false,
+    "evidenceRegistryChanged": false,
+    "sourceProfilesChanged": false,
+    "runtimeChanged": false,
+    "candidateCChanged": false,
+    "emp3Authorized": false,
+    "providerOutcomeAccess": false,
+    "mt5ExecutionChanged": false,
+    "executionAllowed": false
+  },
+  "nextEvidenceTarget": "Directly inspect Ganesh Datt Pathak and additional printed BPHS witnesses for the jnejyadrkyuktam clause; verify Jha page image/worked arithmetic before human profile adjudication."
+}
