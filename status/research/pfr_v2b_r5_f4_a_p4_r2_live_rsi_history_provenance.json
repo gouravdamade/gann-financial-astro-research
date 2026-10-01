@@ -1,7 +1,8 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P4_R2_LIVE_RSI_HISTORY_PROVENANCE_V1",
   "milestone": "PFR-V2B-R5-F4-A-P4-R2",
-  "status": "CENTRAL_REVIEW_REQUIRED",
+  "status": "CENTRAL_PASS",
+  "liveSourceProvenanceClosed": true,
   "startingCommit": "b126714387085e8cb1047f9c0c70c89d6735d7ec",
   "implementationCommit": "136e42c6f473146bae24c3654e8df150622189df",
   "branch": "research/pfr-v2b-r5-f4-a-p4-r2-live-rsi-history-provenance",

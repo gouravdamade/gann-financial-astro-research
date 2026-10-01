@@ -13682,3 +13682,16 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   execution behavior changed. `executionAllowed=false`.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_R2_LIVE_RSI_HISTORY_PROVENANCE`.
+
+## PFR-V2B-R5-F4-A-P5 Candidate Preparation (2026-10-01)
+
+- Central review disposition for P4-R2 is `CENTRAL_PASS`; live RSI source
+  provenance is closed. R1 research history remains accepted, and founder
+  visual RSI confirmation remains pending.
+- P5 is preparing immutable candidate
+  `0.10.68-pfr-v2b-r5-f4-a-p4-r2` from the accepted R2 source state. This
+  preparation commit changes version/package metadata and records the accepted
+  R2 status only; no product behavior is changed.
+- F4-B and F4-C remain unauthorized. `executionAllowed=false`.
+- Next gate: build, smoke, and document the P5 candidate before
+  `FOUNDER_PHYSICAL_INSPECTION_PFR_V2B_R5_F4_A_P5`.
