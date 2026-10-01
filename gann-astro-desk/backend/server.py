@@ -85,7 +85,7 @@ from market_synthesis import MarketSynthesisService
 from mt5_gateway import Mt5Gateway
 from planetary_lines import build_planetary_line_overlay
 from prospective_refresh import ProspectiveArtifactRefreshSupervisor
-from repository import AstroRepository
+from repository import INDICATOR_HISTORY_MAX_BARS, AstroRepository
 from rsi_analysis import build_rsi_evidence
 from runtime_diagnostics import RuntimeDiagnostics
 from shadow_ledger import ShadowLedgerSupervisor
@@ -124,6 +124,26 @@ from decision_engine import (  # noqa: E402
 
 
 app = Flask(__name__)
+
+
+def split_live_indicator_bars(
+    bars: list[dict[str, Any]],
+    visible_count: int,
+    history_limit: int = INDICATOR_HISTORY_MAX_BARS,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Keep live price and RSI context on the same bounded MT5 source."""
+    if visible_count < 1:
+        raise ValueError("liveBarCount must be positive")
+    if history_limit < 0:
+        raise ValueError("history_limit must not be negative")
+    visible = bars[-visible_count:]
+    preceding = bars[:-visible_count] if len(bars) > visible_count else []
+    history = preceding[-history_limit:] if history_limit else []
+    if history and visible and int(history[-1]["time"]) >= int(visible[0]["time"]):
+        raise ValueError("MT5 live history overlaps the visible candle boundary")
+    return visible, history
+
+
 repository = AstroRepository()
 runtime_diagnostics = RuntimeDiagnostics(
     repository.paths.annotation_db.parent / "logs" / "runtime_diagnostics.jsonl"
@@ -1277,11 +1297,19 @@ def chart() -> Any:
         source = str(request.args.get("source") or "research").strip().lower()
         filters = chart_filter_arguments()
         if source == "live":
-            bars = gateway.bars(
+            requested_visible_count = int(request.args.get("liveBarCount", "500"))
+            visible_count = max(1, min(requested_visible_count, 5000))
+            all_live_bars = gateway.bars(
                 symbol=symbol,
                 timeframe=timeframe,
-                count=int(request.args.get("liveBarCount", "500")),
+                count=visible_count + INDICATOR_HISTORY_MAX_BARS,
             )
+            bars, indicator_history = split_live_indicator_bars(
+                all_live_bars,
+                visible_count,
+            )
+            if not bars:
+                raise ValueError("MT5 returned no live candles")
             start_iso = datetime.fromtimestamp(
                 bars[0]["time"], tz=timezone.utc
             ).isoformat()
@@ -1327,6 +1355,7 @@ def chart() -> Any:
                     },
                 }
             payload["candles"] = bars
+            payload["indicatorHistory"] = {"candles": indicator_history}
             payload["dataSource"] = "mt5_live"
             payload["generatedAt"] = datetime.now(timezone.utc).isoformat(
                 timespec="seconds"
