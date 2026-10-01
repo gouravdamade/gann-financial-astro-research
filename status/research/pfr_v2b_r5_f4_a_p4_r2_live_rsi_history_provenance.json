@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F4_A_P4_R2_LIVE_RSI_HISTORY_PROVENANCE_V1",
+  "milestone": "PFR-V2B-R5-F4-A-P4-R2",
+  "status": "CENTRAL_REVIEW_REQUIRED",
+  "startingCommit": "b126714387085e8cb1047f9c0c70c89d6735d7ec",
+  "implementationCommit": "136e42c6f473146bae24c3654e8df150622189df",
+  "branch": "research/pfr-v2b-r5-f4-a-p4-r2-live-rsi-history-provenance",
+  "priorRecord": "status/research/pfr_v2b_r5_f4_a_p4_r1_rsi_warmup_history.json",
+  "r1DispositionCorrection": {
+    "status": "REQUIRES_LIVE_SOURCE_PROVENANCE_CORRECTION",
+    "researchPath": "SOURCE_CLOSED",
+    "livePath": "REQUIRES_LIVE_SOURCE_PROVENANCE_CORRECTION",
+    "finding": "research warmup is correct; live warmup source mismatch"
+  },
+  "rootCause": {
+    "route": "/api/chart?source=live",
+    "defect": "MT5 visible candles replaced repository payload candles while repository indicatorHistory remained",
+    "sourceMismatch": true,
+    "scientificFormulaDefect": false
+  },
+  "liveSourceContract": {
+    "gateway": "Mt5Gateway.bars",
+    "fetchesPerLiveChart": 1,
+    "requestedVisibleCount": "clamp(liveBarCount, 1, 5000)",
+    "requestedGatewayCount": "visibleCount + INDICATOR_HISTORY_MAX_BARS",
+    "historyLimit": 1000,
+    "visibleBars": "final N returned MT5 bars",
+    "indicatorHistory": "latest preceding MT5 bars, capped at 1000",
+    "strictBoundary": true,
+    "duplicateBoundaryAllowed": false,
+    "insufficientHistory": "all returned bars remain visible; history is empty",
+    "liveDataSource": "mt5_live",
+    "openBarSemanticsChanged": false
+  },
+  "symbolScope": {
+    "usdjpy": "repository may supply overlays only; MT5 overrides candles and indicatorHistory",
+    "nonUsdjpy": "MT5 candles and indicatorHistory; repository chart payload not requested",
+    "timeframesTested": ["H1", "H4", "D1", "W1"]
+  },
+  "researchPath": {
+    "source": "corrected research price source",
+    "changed": false,
+    "r1Accepted": true
+  },
+  "verification": {
+    "focusedLiveBackend": "6/6",
+    "focusedBackend": "47/47",
+    "r1FocusedFrontend": "75/75",
+    "fullFrontend": "49 files, 254/254",
+    "typescript": "PASS",
+    "oxlint": "PASS",
+    "viteBuild": "PASS",
+    "cargoFmtCheck": "PASS",
+    "cargoCheckRelease": "PASS",
+    "nativeDevelopmentBuild": "PASS",
+    "fullBackendDiscovery": "NOT_CERTIFIED_INHERITED_CPU_HEAVY_TEST_NOT_RUN_IN_R2",
+    "nativeVisualControl": "UNAVAILABLE",
+    "gitDiffCheck": "PASS"
+  },
+  "developmentNativeBuild": {
+    "sourceCommit": "136e42c6f473146bae24c3654e8df150622189df",
+    "versionMetadata": "0.10.67-pfr-v2b-r5-f4-a-p3-r2",
+    "portablePath": "D:\\Rust\\targets\\release\\gann-astro-desk.exe",
+    "portableSha256": "612D2A64741950E5676CBEFC40C80EFA4690C6BD2BF5C248CCF7C3018E66DD46",
+    "installerPath": "D:\\Rust\\targets\\release\\bundle\\nsis\\Gann Astro Desk_0.10.67-pfr-v2b-r5-f4-a-p3-r2_x64-setup.exe",
+    "installerSha256": "E9F1BBDF9743554CC80F094D4485ABE9074DDF8C665C3B31F1E27C97A14EB72E",
+    "immutableP4CandidateOverwritten": false,
+    "nativeVisualControl": "UNAVAILABLE"
+  },
+  "locks": {
+    "rsiFormulaChanged": false,
+    "closedBarSemanticsChanged": false,
+    "lookAheadAllowed": false,
+    "visibleRangeChanged": false,
+    "fieldsWavesChanged": false,
+    "activityMathChanged": false,
+    "pairMathChanged": false,
+    "polarityCatalogueChanged": false,
+    "evidenceRegistryChanged": false,
+    "f4bImplemented": false,
+    "f4cImplemented": false,
+    "candidateCChanged": false,
+    "emp3Authorized": false,
+    "providerAccess": false,
+    "outcomeAnalysis": false,
+    "mt5OrderInvocation": false,
+    "executionAllowed": false
+  },
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_R2_LIVE_RSI_HISTORY_PROVENANCE"
+}

@@ -13654,3 +13654,31 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `executionAllowed=false`.
 - Next gate:
   `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_R1_RSI_WARMUP_HISTORY`.
+
+## PFR-V2B-R5-F4-A-P4-R2 Live RSI History Source Provenance (2026-10-01)
+
+- R1's research warm-up correction remains valid, but review found a live-path
+  provenance defect: the live route replaced visible candles with MT5 data
+  while retaining repository-derived `indicatorHistory` for USDJPY.
+- R2 binds both live channels to one bounded `Mt5Gateway.bars` response. It
+  requests the visible count plus at most 1,000 history bars, keeps the final
+  N bars visible, keeps only the immediately preceding bounded bars as RSI
+  history, and enforces a strict no-overlap boundary. If history is
+  insufficient, no bars are fabricated. `dataSource=mt5_live` remains
+  explicit.
+- USDJPY may still use repository data for overlays only; repository candles
+  and repository indicator history are overwritten. Non-USDJPY live charts do
+  not request the repository chart payload. Research-mode source behavior is
+  unchanged.
+- Focused live-route backend coverage passed **6/6**. R1 frontend results
+  remain **75/75 focused** and **254/254 full**; R2 adds no frontend source
+  change. Native visual control is unavailable, so no founder acceptance is
+  claimed and the immutable P4 candidate remains untouched.
+- R1 status is explicitly
+  `REQUIRES_LIVE_SOURCE_PROVENANCE_CORRECTION`; it is not marked
+  `CENTRAL_PASS`. R2 is a source-provenance correction only.
+- No RSI formula, closed-bar semantics, visible range, Fields/Waves/activity,
+  pair, polarity, Candidate C, EMP3, provider, outcome, MT5 order, or
+  execution behavior changed. `executionAllowed=false`.
+- Next gate:
+  `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P4_R2_LIVE_RSI_HISTORY_PROVENANCE`.

@@ -1,6 +1,7 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P4_R1_RSI_WARMUP_HISTORY_V1",
   "milestone": "PFR-V2B-R5-F4-A-P4-R1",
+  "status": "REQUIRES_LIVE_SOURCE_PROVENANCE_CORRECTION",
   "startingCommit": "353c6ad057a6478696a97cc54f5d802ff1692d89",
   "branch": "research/pfr-v2b-r5-f4-a-p4-r1-rsi-warmup-history",
   "implementationCommit": "93ddb9e",
@@ -13,6 +14,12 @@
     "rsiHistoryDefect": "OBSERVED"
   },
   "rootCause": "INSUFFICIENT_INDICATOR_HISTORY_IN_VISIBLE_PAYLOAD",
+  "currentFinding": {
+    "researchPath": "SOURCE_CLOSED",
+    "livePath": "REQUIRES_LIVE_SOURCE_PROVENANCE_CORRECTION",
+    "finding": "research warmup is correct; live warmup source mismatch",
+    "supersededBy": "PFR-V2B-R5-F4-A-P4-R2"
+  },
   "historyContract": {
     "field": "ChartPayload.indicatorHistory.candles",
     "source": "existing bounded OHLC chart price source",
