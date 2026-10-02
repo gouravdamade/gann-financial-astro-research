@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "NIGHTLY_RESEARCH_DRIK_BALA_JNEJYA_ADJUDICATION_V1",
+  "date": "2026-10-03",
+  "topic": "DRIK_BALA_JNEJYA_RECENSION_ADJUDICATION",
+  "status": "RESEARCH_ONLY",
+  "packet": "docs/research/nightly/2026-10-03_drik-bala-jnejya-recension-adjudication.md",
+  "startingBranchTip": "9446ab19c9d5d283e3677ba8526cf5fe18ef28a4",
+  "sourceClosed": {
+    "ordinarySignedAccumulation": true,
+    "beneficMaleficCoexistence": true,
+    "precedenceRuleAbsentInCheckedWitnesses": true,
+    "ordinaryQuarterTreatment": true,
+    "fixedMercuryJupiterPlus60Unsupported": true,
+    "marketDirectionUnauthorized": true
+  },
+  "newEvidence": {
+    "pathakScanLocated": true,
+    "pathakTargetPageDirectlyInspected": false,
+    "padmanabhSharmaScanLocated": true,
+    "padmanabhTargetPageDirectlyInspected": false,
+    "sureshMishraScanLocated": true,
+    "sureshMishraTargetPageDirectlyInspected": false,
+    "jhaScanLocated": true,
+    "jhaTargetPageImageDirectlyInspected": false,
+    "archiveDeliveryHostBlockedInReader": true,
+    "commonSanskritJnejyaClauseStableInDigitalWitnesses": true
+  },
+  "profileDependentOrUnresolved": {
+    "planetaryMercuryJupiterFullExtra": true,
+    "jnaIjyaDoubleCountInterpretation": true,
+    "conditionalMercuryInteractionWithJnaIjyaExtra": true,
+    "canonicalDrikBalaStrengthProfile": true
+  },
+  "candidateProfiles": [
+    "BPHS_JHA_27_19_LITERAL_RESEARCH",
+    "SRIPATI_RAMAN_JAIN_NET_QUARTER_RESEARCH"
+  ],
+  "productionBindingAuthorized": false,
+  "marketDirection": "WITHHELD",
+  "testsRun": [],
+  "codeTouched": false,
+  "handoffUpdate": "NOT_ATTEMPTED_AS_WHOLE_FILE_REPLACEMENT_BECAUSE_PRIOR_CONNECTED_READER_TRUNCATION_MADE_DESTRUCTIVE_UPDATE_RISKY; PACKET_STATUS_INDEX_ARE_CANONICAL_NIGHTLY_POINTERS",
+  "locks": {
+    "productionOperatorsChanged": false,
+    "scoringChanged": false,
+    "polarityCatalogueChanged": false,
+    "evidenceRegistryChanged": false,
+    "sourceProfilesChanged": false,
+    "runtimeChanged": false,
+    "candidateCChanged": false,
+    "emp3Authorized": false,
+    "providerOutcomeAccess": false,
+    "mt5ExecutionChanged": false,
+    "executionAllowed": false
+  },
+  "nextEvidenceTarget": "Directly inspect the located Ganesh Datt Pathak, Padmanabh Sharma, Suresh Chandra Mishra and Devachandra Jha scan pages for BPHS 27.19 using a runtime able to access the Internet Archive delivery host; seek worked arithmetic for jnejyadrkyuktam."
+}
