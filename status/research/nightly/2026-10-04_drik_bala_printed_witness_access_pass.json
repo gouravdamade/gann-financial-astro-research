@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-04",
+  "topic": "drik_bala_printed_witness_access_pass",
+  "status": "RESEARCH_ONLY",
+  "packet_commit": "56dacae8e17edcc4490534dcdfdf100bd6e5e58a",
+  "ordinary_aggregation": "SUBSTANTIALLY_SOURCE_CLOSED",
+  "ordinary_quarter_treatment": "SUPPORTED",
+  "precedence_rule": "NONE_FOUND",
+  "fixed_mercury_jupiter_60": "NOT_SUPPORTED",
+  "jna_ijya_special_term": "UNRESOLVED",
+  "direct_print_pages_inspected": 0,
+  "access_blocker": "Internet Archive PDFs redirect to delivery hosts inaccessible to current web reader",
+  "witnesses": {
+    "ganesh_datt_pathak": "SCAN_IDENTIFIED_TARGET_PAGE_NOT_INSPECTED",
+    "devachandra_jha": "PRIOR_OCR_DEPENDENT_PAGE_IMAGE_NOT_INSPECTED",
+    "suresh_chandra_mishra": "SCAN_IDENTIFIED_TARGET_PAGE_NOT_INSPECTED",
+    "padmanabh_sharma": "SCAN_IDENTIFIED_TARGET_PAGE_NOT_INSPECTED"
+  },
+  "canonical_drik_bala_strength": "NOT_SAFE_TO_BIND",
+  "market_direction": "WITHHELD",
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE",
+  "next_target": "direct page-image inspection of Pathak, Jha, Mishra, Sharma; if access remains blocked preserve UNKNOWN and advance lower-priority doctrine without closing this blocker"
+}
