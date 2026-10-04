@@ -1,6 +1,6 @@
 {
   "schemaVersion": "PFR_V2B_R5_F4_A_P5_WINDOWS_FOUNDER_CANDIDATE_V1",
-  "status": "FOUNDER_INSPECTION_CANDIDATE_PENDING_NATIVE_REVIEW",
+  "status": "FOUNDER_ACCEPTED",
   "milestone": "PFR-V2B-R5-F4-A-P5",
   "startingCommit": "706f8b5ee5e994f92c92cd41554aab8a47961cb1",
   "packagingPrepCommit": "622802d14cc770d799f887119cfd7530ef102eaa",
@@ -29,9 +29,28 @@
   "f4cImplemented": false,
   "sourceGitDirty": false,
   "executionAllowed": false,
-  "founderAcceptance": false,
+  "founderAcceptance": true,
   "nativeVisualControlAvailable": false,
-  "founderInspectionPending": true,
+  "founderInspectionPending": false,
+  "founderInspection": {
+    "inspectionDate": "2026-10-04",
+    "candidateVersion": "0.10.68-pfr-v2b-r5-f4-a-p4-r2",
+    "result": "ACCEPTED",
+    "requiredVisualItemsAccepted": 4,
+    "requiredVisualItemsTotal": 4,
+    "checklist": [
+      "USDJPY D1 live RSI 14 shows a numeric value and visible line, without a permanent warming-up state",
+      "Hidden RSI warm-up bars do not change the visible price range",
+      "RSI 14 and Fields & Waves activity coexist with aligned crosshair/time axis and usable sizing/viewport",
+      "INDICATORS toolbar is discoverable and compact Fields UX is unchanged"
+    ]
+  },
+  "inheritedSmokeFailureDisposition": {
+    "check": "chakra_jupiter_motion_explicit",
+    "unchanged": true,
+    "rsiOrP5AcceptanceDefect": false,
+    "smokeHarnessOverallPassed": false
+  },
   "portableExeSha256": "D2413A35CF978E677A19A01A545AA5BEA4FBFD5022F8A719809E825319113B11",
   "installerSha256": "BC1870F491482B737F9FB1C0B9FF82F62A072CACC2C4AA31969D7361D6934F9D",
   "sidecarSha256": "E2D0116504AB4C529F44F98157062B21D60C99DBDD369B4888D5143614C9D4BC",
@@ -66,5 +85,5 @@
       "executionLocksPassed": true
     }
   ],
-  "nextGate": "FOUNDER_PHYSICAL_INSPECTION_PFR_V2B_R5_F4_A_P5"
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P5_FOUNDER_ACCEPTANCE_CLOSE"
 }

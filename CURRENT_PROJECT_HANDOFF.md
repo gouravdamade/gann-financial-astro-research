@@ -13727,3 +13727,13 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
   `docs/research/PFR_V2B_R5_F4_A_P5_POST_RSI_WINDOWS_FOUNDER_CANDIDATE.md` and
   `status/research/pfr_v2b_r5_f4_a_p5_post_rsi_windows_founder_candidate.json`.
 - Next gate: `FOUNDER_PHYSICAL_INSPECTION_PFR_V2B_R5_F4_A_P5`.
+
+## PFR-V2B-R5-F4-A-P5 Founder Physical Inspection Close (2026-10-04)
+
+- Founder physically inspected the final immutable `0.10.68-pfr-v2b-r5-f4-a-p4-r2` candidate and accepted all four required visual checks: live USDJPY D1 RSI 14 is numeric/visible; hidden warm-up leaves the price range unchanged; RSI and Fields & Waves coexist with aligned crosshair/time axis and usable viewport; and the INDICATORS toolbar is discoverable without changing compact Fields UX.
+- P5 status is now `FOUNDER_ACCEPTED`; `founderAcceptance=true` and `founderInspectionPending=false`. This closes only the P5 physical-inspection gate.
+- All previously recorded candidate hashes were rechecked and are unchanged: portable executable, installer, backend sidecar, 3,541-file immutable backend resource tree, build receipt, and release manifest. No rebuild or repackage was performed.
+- The inherited `chakra_jupiter_motion_explicit=false` smoke check remains unchanged and is not an RSI/P5 acceptance defect. Both smoke harnesses remain recorded as non-passing for that inherited check; no claim of full smoke success is added.
+- No application behavior, RSI formula, closed-bar semantics, visible-range/history behavior, Fields & Waves, activity/pair math, polarity/evidence registries, Candidate C, or MT5 invocation changed. EMP3, F4-B, F4-C, and execution remain unauthorized; `executionAllowed=false`.
+- P5 acceptance report/status: `docs/research/PFR_V2B_R5_F4_A_P5_POST_RSI_WINDOWS_FOUNDER_CANDIDATE.md` and `status/research/pfr_v2b_r5_f4_a_p5_post_rsi_windows_founder_candidate.json`.
+- Next authorized gate: `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P5_FOUNDER_ACCEPTANCE_CLOSE` (closeout-record review only; no later implementation scope is authorized by this entry).

@@ -10,11 +10,11 @@ Date: 2026-10-01
 - Packaging-prep commit: `622802d14cc770d799f887119cfd7530ef102eaa`
 - QA documentation commit: the commit containing this report; its exact SHA is the final branch tip reported in the release closeout.
 - Version: `0.10.68-pfr-v2b-r5-f4-a-p4-r2`
-- Candidate status: `FOUNDER_INSPECTION_CANDIDATE_PENDING_NATIVE_REVIEW`
+- Candidate status: `FOUNDER_ACCEPTED` (physical inspection closed 2026-10-04)
 - Candidate root: `D:\GannFinancialAstro\release_candidate\GannAstroDesk-0.10.68-pfr-v2b-r5-f4-a-p4-r2-tauri-clean-r2`
 - `sourceGitDirty=false`; `executionAllowed=false`.
 
-P4-R2 remains `CENTRAL_PASS`; live RSI source provenance is closed. R1 research-history architecture remains accepted. Founder visual RSI confirmation is pending. F4-B and F4-C remain unauthorized.
+P4-R2 remains `CENTRAL_PASS`; live RSI source provenance is closed. R1 research-history architecture remains accepted. Founder visual RSI confirmation is accepted as recorded below. F4-B and F4-C remain unauthorized.
 
 ## Source Diff
 
@@ -79,7 +79,7 @@ The accepted bounded limit remains: `Mt5Gateway.bars` clamps the total request t
 
 ## Visual Review
 
-`NATIVE_VISUAL_CONTROL_UNAVAILABLE`. Automated native screenshot/control inspection was unavailable; no visual acceptance is claimed. `FOUNDER_PHYSICAL_INSPECTION_PENDING`.
+`NATIVE_VISUAL_CONTROL_UNAVAILABLE` records the earlier automated QA limitation; the founder subsequently completed physical inspection. The prior pending state is superseded by the dated acceptance record below.
 
 Founder checklist:
 
@@ -88,8 +88,21 @@ Founder checklist:
 - Enable RSI 14 and Fields & Waves activity: confirm all panes coexist, crosshair/time axis align, and sizing/viewport remain usable.
 - Confirm the INDICATORS toolbar is visible and discoverable, and compact Fields UX is unchanged.
 
+## Founder Physical Inspection Close (2026-10-04)
+
+Founder reported physical inspection of the final immutable `-r2` candidate and confirmed all four required visual items accepted:
+
+1. USDJPY D1 live RSI 14 shows a numeric value and visible line, without a permanent warming-up state: **ACCEPTED**.
+2. Hidden RSI warm-up bars do not change the visible price range: **ACCEPTED**.
+3. RSI 14 and Fields & Waves activity coexist with aligned crosshair/time axis and usable sizing/viewport: **ACCEPTED**.
+4. The INDICATORS toolbar is discoverable and compact Fields UX is unchanged: **ACCEPTED**.
+
+The acceptance applies only to the founder-inspection candidate and the listed visual checks. It does not authorize F4-B, F4-C, EMP3, execution, or any application behavior change. `executionAllowed=false` remains in force.
+
+The two packaged smoke harnesses retain their inherited `chakra_jupiter_motion_explicit=false` result. This check and its reports are unchanged; it is not an RSI/P5 acceptance defect. The smoke harnesses are not recharacterized as fully passing.
+
 ## Locked State
 
-`r1Included=true`; `r2Included=true`; `rsiFormulaChanged=false`; `closedBarSemanticsChanged=false`; `researchHistorySourceClosed=true`; `liveHistorySourceClosed=true`; `crossSourceRsiMixingAllowed=false`; `visibleRangeChanged=false`; `fieldsWavesChanged=false`; `activityMathChanged=false`; `pairMathChanged=false`; `polarityCatalogueChanged=false`; `evidenceRegistryChanged=false`; `candidateCChanged=false`; `emp3Authorized=false`; `outcomeAnalysis=false`; `mt5OrderInvocation=false`; `F4BImplemented=false`; `F4CImplemented=false`; `executionAllowed=false`; `founderAcceptance=false`.
+`r1Included=true`; `r2Included=true`; `rsiFormulaChanged=false`; `closedBarSemanticsChanged=false`; `researchHistorySourceClosed=true`; `liveHistorySourceClosed=true`; `crossSourceRsiMixingAllowed=false`; `visibleRangeChanged=false`; `fieldsWavesChanged=false`; `activityMathChanged=false`; `pairMathChanged=false`; `polarityCatalogueChanged=false`; `evidenceRegistryChanged=false`; `candidateCChanged=false`; `emp3Authorized=false`; `outcomeAnalysis=false`; `mt5OrderInvocation=false`; `F4BImplemented=false`; `F4CImplemented=false`; `executionAllowed=false`; `founderAcceptance=true`.
 
-Next gate: `FOUNDER_PHYSICAL_INSPECTION_PFR_V2B_R5_F4_A_P5`.
+Next gate: `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P5_FOUNDER_ACCEPTANCE_CLOSE`. This is a closeout-record review only; no subsequent implementation scope is authorized here.
