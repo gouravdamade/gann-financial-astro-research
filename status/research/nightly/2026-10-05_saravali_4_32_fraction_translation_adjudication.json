@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-05",
+  "topic": "saravali_4_32_fraction_translation_adjudication",
+  "status": "RESEARCH_ONLY",
+  "branch": "research/nightly-project-work",
+  "baseline_verified": "8ce3cddd6e8e317c126bcc7c27c043762f5d4fc9",
+  "packet": "docs/research/nightly/2026-10-05_saravali-4-32-fraction-translation-adjudication.md",
+  "packet_commit": "a3c982aeb19fd3699989419bd3afac981443342c",
+  "operator_under_review": "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+  "root_fraction_verdict": {
+    "3": "1/4",
+    "10": "1/4",
+    "5": "1/2",
+    "9": "1/2",
+    "4": "3/4",
+    "8": "3/4",
+    "7": "FULL"
+  },
+  "santhanam_english": {
+    "direct_page_image_verified_this_run": true,
+    "current_accessible_scan_locator": "PDF_INDEX_49_VISIBLE_PRINTED_PAGE_51",
+    "repository_held_scan_locator": "ROOT_PRINTED_57_SCAN_61_ENGLISH_PRINTED_58_SCAN_62",
+    "printed_sequence": {
+      "3_10": "1/4",
+      "4_8": "1/2",
+      "5_9": "3/4",
+      "7": "FULL"
+    },
+    "verdict": "MIDDLE_PLACE_PAIR_TRANSLATION_EDITORIAL_TRANSPOSITION"
+  },
+  "sanskrit_root": {
+    "key_terms": [
+      "CARANA_VRDDHI",
+      "TRIDASA",
+      "TRIKONA",
+      "CATURASRA",
+      "SAPTAMA",
+      "KRAMENA"
+    ],
+    "ordered_mapping": "3_10_THEN_5_9_THEN_4_8_THEN_7_WITH_QUARTER_INCREMENT",
+    "source_closed_for_research": true
+  },
+  "independent_witnesses": {
+    "sanskrit_wikisource": "AGREES_WITH_ROOT_ORDER_MINOR_TEXTUAL_OCR_VARIANTS_NON_MATERIAL",
+    "vedicpupil_sanskrit_translation": "AGREES_WITH_ROOT_ORDER_AND_QUARTER_INCREMENT",
+    "brihat_jataka_2_13": "CROSS_TEXT_CORROBORATION_ONLY_SAME_SEQUENCE",
+    "uou_majy_606": "SECONDARY_CROSS_TEXT_CORROBORATION_ONLY"
+  },
+  "alternative_explanations": {
+    "santhanam_translation_editorial_error": "SUPPORTED_HIGH_CONFIDENCE",
+    "sanskrit_recension_variant": "NO_EVIDENCE_LOCATED",
+    "repository_grammar_parse_error": "NOT_SUPPORTED",
+    "pagination_or_verse_alignment_cause": "REJECTED_AS_DOCTRINAL_EXPLANATION"
+  },
+  "known_translation_issue": {
+    "current_label": "SANTHANAM_ENGLISH_4_32_TRANSLATION_EDITORIAL_MISMATCH",
+    "recommended_human_review_refinement": "SANTHANAM_ENGLISH_4_32_MIDDLE_PAIR_TRANSLATION_TRANSPOSITION"
+  },
+  "special_drishti_operator_impact": "NONE_KEEP_ORDINARY_AND_SPECIAL_DISTINCT",
+  "research_profile_binding": "READY_FOR_SEPARATE_HUMAN_REVIEW",
+  "production_binding": false,
+  "ledger_modified": false,
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE",
+  "market_direction": "WITHHELD",
+  "market_magnitude": "WITHHELD",
+  "oscillator_amplitude": "WITHHELD",
+  "remaining_unknown": [
+    "UNEXAMINED_MANUSCRIPT_STEMMA_COULD_IN_PRINCIPLE_CONTAIN_VARIANT_BUT_NONE_LOCATED",
+    "DEGREE_EXACT_SPHUTA_DRSTI_INTERPOLATION_NOT_ADJUDICATED_BY_THIS_PACKET"
+  ],
+  "next_queue_target": "CONDITIONAL_MOON_MERCURY_IF_MATERIALLY_UNRESOLVED_ELSE_TRAILOKYA_SBC_MECHANICS"
+}
