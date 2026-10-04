@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-04",
+  "topic": "drik_bala_print_adjudication_mercury_edge",
+  "status": "RESEARCH_ONLY",
+  "packet_commit": "3a26e137d0b16cdb13d73369ec9342bb11878963",
+  "direct_print_pages_inspected": true,
+  "access_pass_superseded_for_inspected_pages": true,
+  "ordinary_aggregation": "SUBSTANTIALLY_SOURCE_CLOSED",
+  "ordinary_quarter_treatment": "SUPPORTED",
+  "precedence_rule": "NONE_FOUND",
+  "fixed_mercury_jupiter_60": "NOT_SUPPORTED",
+  "pathak_net_quarter_profile": "DIRECT_PRINT_AND_WORKED_NUMERIC_VERIFIED",
+  "jna_ijya_family": "DISTINCT_TEXTUAL_COMPUTATIONAL_FAMILY_SUPPORTED",
+  "mishra_bhava_a1": "DIRECT_WORKED_BHAVA_NUMERIC_VERIFIED",
+  "planetary_a1_worked_example": "NOT_YET_FOUND",
+  "mercury_profiles": {
+    "raman": "CONDITIONAL_BY_ASSOCIATION_WITH_DIRECT_MALEFIC_WORKED_EXAMPLE",
+    "sripati_sastri": "ALWAYS_BENEFIC_COMMENTARIAL_CONVENTION",
+    "jain": "DIRECT_CLASSIFICATION_SOURCE_STILL_REQUIRED"
+  },
+  "bphs_jnejya_a1_research": {
+    "ordinary_mercury_drik_component": "mercury_nature_sign * computed_drishti_mercury / 4",
+    "jnejya_mercury_special_component": "+ computed_drishti_mercury",
+    "benefic_mercury_candidate": "+1.25M",
+    "malefic_mercury_candidate": "+0.75M",
+    "malefic_mercury_candidate_status": "INFERRED_NOT_WORKED_VERIFIED"
+  },
+  "deprecated_research_label": "SRIPATI_RAMAN_JAIN_NET_QUARTER_RESEARCH",
+  "successor_profiles": [
+    "PATHAK_NET_QUARTER_RESEARCH",
+    "RAMAN_NET_QUARTER_RESEARCH",
+    "SRIPATI_SASTRI_NET_QUARTER_RESEARCH",
+    "JAIN_NET_QUARTER_RESEARCH",
+    "BPHS_JNEJYA_A1_RESEARCH"
+  ],
+  "canonical_drik_bala_strength": "NOT_SAFE_TO_BIND_AS_SINGLE_UNIVERSAL_OPERATOR",
+  "market_direction": "WITHHELD",
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE",
+  "remaining": [
+    "planetary Jha/Padmanabh/Mishra worked example with Mercury or Jupiter",
+    "direct conditionally-malefic Mercury plus jnejya arithmetic",
+    "direct Jupiter double-participation worked example",
+    "exact Mercury nature trigger per source profile",
+    "Jain Mercury classification source",
+    "conditional Moon nature boundary",
+    "decide whether final architecture exposes multiple source profiles rather than one canonical synthesis"
+  ]
+}
