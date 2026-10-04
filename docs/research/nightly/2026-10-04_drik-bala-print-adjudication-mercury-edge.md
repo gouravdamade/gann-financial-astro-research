@@ -92,6 +92,32 @@ Raman also explicitly states in the Bhāva-Bala procedure that, even though Merc
 
 The Subrahmanya Sastri commentary on Śrīpati Paddhati records a different convention: although some treat Mercury as malefic when associated with a malefic, that Śrīpati commentary treats Mercury as always benefic. Therefore the previously combined research label `SRIPATI_RAMAN_JAIN_NET_QUARTER_RESEARCH` is too coarse.
 
+## Deeper edge-case pass — later 2026-10-04
+
+### Mishra's planetary example is real but non-discriminating
+
+The Suresh Chandra Mishra text does contain a planetary worked continuation immediately after verse 36. He states that the five pre-Drik strengths total `6.29.22`, then says the Drik adjustment leaves the planet at roughly 6 because pāpa dṛṣṭi predominates. However, he does **not** numerically show a separate Mercury/Jupiter planetary extra in that calculation.
+
+This is useful negative/limiting evidence, not proof that the extra is absent: in Mishra's example the target is the Moon/lagneśa, the prose identifies Mars/Saturn, Sun/Mercury and Venus as the relevant aspectors, and Jupiter does not contribute a material dṛṣṭi to that target. Mercury's contribution is small enough that either ordinary-quarter-only or quarter-plus-full would still round descriptively to "about 6." Therefore this worked passage cannot adjudicate planetary A1.
+
+### Mishra's Bhāva example proves a stronger override than previously recorded
+
+The same worked Bhāva example gives Sun at 9.11.15 and Mercury at 9.15.53 — only about 4°38′ apart in the same sign. Despite that close solar association, Mishra puts Mercury's 31.46 dṛṣṭi in the **śubha** aggregate with Venus, quarters the ordinary śubha/pāpa difference, and then adds Mercury's full dṛṣṭi again.
+
+So for **Mishra Bhāva Bala**, the special Mercury rule is not merely whole-vs-quarter; it demonstrably overrides the ordinary expectation that close association with a malefic/Sun might make Mercury pāpa. This strengthens the architectural separation:
+
+```text
+ordinary planetary Mercury nature classifier
+!=
+Bhāva special Mercury override
+```
+
+It still does **not** prove that the planetary `jñejya` clause applies the same override.
+
+### Jain's mixed-association example narrows the nature-classifier problem
+
+Jain explicitly defines planetary Drik Bala using well-associated Mercury as śubha and badly-associated Mercury as aśubha. His standard worked horoscope then classifies Mercury as śubha despite simultaneous close Saturn and Jupiter association. This directly closes Jain's high-level Mercury convention, but leaves the **general mixed-association precedence rule** unresolved.
+
 ## Research profile split
 
 The old combined label is **deprecated for research use**. Do not delete historical packets; interpret them through the successor split below.
@@ -135,7 +161,23 @@ The old combined label is **deprecated for research use**. Do not delete histori
 
 ### `JAIN_NET_QUARTER_RESEARCH`
 
-Keep Jain separate until its Mercury-nature convention is directly sourced. Do not silently inherit either Raman's conditional Mercury or the Śrīpati-Sastri always-benefic convention.
+V. P. Jain is now directly sourced rather than left UNKNOWN:
+
+```json
+{
+  "ordinarySignedDrishti": "sum(+computedDrishti for SHUBHA, -computedDrishti for ASHUBHA)",
+  "mercuryNature": "CONDITIONAL_BY_ASSOCIATION: well-associated Mercury = SHUBHA; badly-associated Mercury = ASHUBHA",
+  "drikBalaStrength": "0.25 * drishtiPinda",
+  "planetaryMercuryJupiterExtra": 0,
+  "bhavaOverride": "Mercury ALWAYS_BENEFIC irrespective of association; Mercury/Jupiter dṛṣṭi taken FULL",
+  "exactAssociationTrigger": "UNRESOLVED",
+  "mixedAssociationGeneralRule": "UNRESOLVED",
+  "verification": "DIRECT_TEXT_PLUS_STANDARD_HOROSCOPE_WORKED_TABLE",
+  "marketDirection": "WITHHELD"
+}
+```
+
+Jain's standard horoscope creates a useful mixed-association test. Mercury is at 170.53°, Jupiter at 170.45°, and Saturn at 166.43°: Mercury is simultaneously in extremely close conjunction with benefic Jupiter (~0.08°) and same-sign/close to malefic Saturn (~4.10°). In Jain's planetary Drik table the positive total for the Moon is 78.75. It decomposes exactly as Mercury 11.03 + Jupiter 40.95 + Venus 26.77 = 78.75, proving that Jain classifies Mercury as **SHUBHA in this mixed-association example**. The text does not state the general tie-break rule. The extreme closeness of Jupiter is a plausible explanation, but "closest association wins" is **NOT SOURCE-ESTABLISHED** and must not be coded.
 
 ### `BPHS_JNEJYA_A1_RESEARCH`
 
@@ -181,6 +223,9 @@ The same provenance discipline applies to Jupiter: ordinary benefic quarter comp
 - fixed Mercury/Jupiter `+60` for aspect is unsupported;
 - Raman directly demonstrates conditionally-malefic Mercury in planetary Drik Bala;
 - Śrīpati-Sastri and Raman must not share one Mercury-nature profile;
+- Jain is now directly verified as conditional-by-association for planetary Drik Bala, with an explicit always-benefic Mercury override for Bhāva Drishti Bala;
+- Jain's standard worked chart proves a mixed Jupiter/Saturn association can still resolve Mercury as śubha, but the general mixed-association tie-break rule remains UNKNOWN;
+- Mishra's worked Bhāva example treats a Mercury only ~4°38′ from the Sun as śubha and then adds its whole dṛṣṭi, directly strengthening the Bhāva override;
 - market bullish/bearish direction remains unauthorized.
 
 ## What remains unresolved
@@ -189,7 +234,7 @@ The same provenance discipline applies to Jupiter: ordinary benefic quarter comp
 2. **Malefic-Mercury + jñejya edge:** directly verify whether a conditionally-malefic Mercury contributes `-M/4` in the ordinary pool and then still receives `+M` as the special `jña` term. Current `+0.75M` is the best-supported inference, not direct worked proof.
 3. **Exact Mercury nature trigger per profile:** distinguish BPHS's conjunction/association rule from Raman's close-Sun/combust treatment and from broader modern rules based merely on malefic aspect. Do not merge them.
 4. **Jupiter double-participation:** obtain direct planetary worked arithmetic confirming whether Jupiter is quarter-counted in the ordinary benefic aggregate and then added whole in the `ijya` family.
-5. **Jain Mercury convention:** source it directly rather than inheriting Raman/Śrīpati semantics.
+5. **Mixed-association Mercury precedence:** Jain's worked chart proves one mixed case resolves SHUBHA (very close Jupiter plus close Saturn), but no general rule has been sourced for multiple simultaneous benefic/malefic associations.
 6. **Repository evidence archival:** the manually supplied scan pages were inspected outside the repository; preserve page references/transcriptions and, if desired later, add permitted evidence snapshots or hashes without bloating the repo with entire books.
 7. **Canonical policy:** there may be no single universal Drik-Bala operator. The scientifically cleaner endpoint may be multiple named source profiles with explicit provenance rather than forcing one synthesis.
 8. **Conditional Moon boundary:** after Mercury is exhausted, the exact waxing/waning nature boundary remains a separate source-profile question before a fully classical nature classifier is safe to bind.
@@ -213,6 +258,7 @@ as distinct traceable stages. No market-direction sign may be derived from Drik 
 
 - B. V. Raman, *Graha and Bhava Balas*: planetary Drishti Pinda/Drik Bala, conditional Mercury worked example, and Bhāva Mercury full-benefic special treatment.
 - V. Subrahmanya Sastri, *Sripati Paddhati*: commentary records the always-benefic Mercury convention despite acknowledging another association-dependent convention.
+- V. P. Jain, *Text Book for Shadbala (Grahas) and Bhavabala*: planetary Drik uses well-associated Mercury as śubha and badly-associated Mercury as aśubha; Bhāva Drishti explicitly overrides Mercury to always benefic and takes Mercury/Jupiter dṛṣṭi full. Jain's standard worked table supplies a mixed Jupiter/Saturn association case classified śubha.
 - Printed BPHS witnesses: Ganesh Datt Pathak, Padmanabh Sharma, Devachandra Jha, Suresh Chandra Mishra.
 
 ## Guards against overclaiming
