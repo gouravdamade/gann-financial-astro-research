@@ -2,7 +2,7 @@
   "date": "2026-10-04",
   "topic": "drik_bala_print_adjudication_mercury_edge",
   "status": "RESEARCH_ONLY",
-  "packet_commit": "78931692362b7302dfc3209f16efac927c39f71d",
+  "packet_commit": "31648004af3e983d9ac0eb9d37a192cdf4a45fea",
   "direct_print_pages_inspected": true,
   "access_pass_superseded_for_inspected_pages": true,
   "ordinary_aggregation": "SUBSTANTIALLY_SOURCE_CLOSED",
@@ -12,7 +12,7 @@
   "pathak_net_quarter_profile": "DIRECT_PRINT_AND_WORKED_NUMERIC_VERIFIED",
   "jna_ijya_family": "DISTINCT_TEXTUAL_COMPUTATIONAL_FAMILY_SUPPORTED",
   "mishra_bhava_a1": "DIRECT_WORKED_BHAVA_NUMERIC_VERIFIED",
-  "planetary_a1_worked_example": "NOT_YET_FOUND",
+  "planetary_a1_worked_example": "NOT_YET_FOUND_AFTER_EXTENDED_PRIMARY_ADJACENT_SEARCH",
   "mercury_profiles": {
     "raman": "CONDITIONAL_BY_ASSOCIATION_WITH_DIRECT_MALEFIC_WORKED_EXAMPLE",
     "sripati_sastri": "ALWAYS_BENEFIC_COMMENTARIAL_CONVENTION",
@@ -33,18 +33,18 @@
     "JAIN_NET_QUARTER_RESEARCH",
     "BPHS_JNEJYA_A1_RESEARCH"
   ],
-  "canonical_drik_bala_strength": "NOT_SAFE_TO_BIND_AS_SINGLE_UNIVERSAL_OPERATOR",
+  "canonical_drik_bala_strength": "MULTIPLE_SOURCE_PROFILES_INCREASINGLY_SUPPORTED; SINGLE_UNIVERSAL_BINDING_NOT_SAFE",
   "market_direction": "WITHHELD",
   "code_touched": false,
   "tests": "NOT_APPLICABLE",
   "remaining": [
-    "planetary Jha/Padmanabh/Mishra worked example that numerically exposes Mercury or Jupiter jnejya extra",
+    "discriminating planetary worked example from Jha/Padmanabh/Mishra or another jnejya recension witness with material Mercury/Jupiter aspect",
     "direct conditionally-malefic Mercury plus planetary jnejya arithmetic",
-    "direct Jupiter double-participation planetary worked example",
+    "direct Jupiter double-participation planetary jnejya worked example",
     "exact Mercury association trigger per source profile",
     "general mixed benefic/malefic Mercury association precedence/tie-break rule",
     "conditional Moon nature boundary",
-    "decide whether final architecture exposes multiple source profiles rather than one canonical synthesis"
+    "human decision whether final architecture should expose multiple named source profiles as the canonical research representation"
   ],
   "jain_mixed_association_example": {
     "mercury_deg": 170.53,
@@ -69,5 +69,38 @@
     "mercury_in_ordinary_pool": "SHUBHA",
     "mercury_full_extra_added": true,
     "implication": "DIRECT_BHAVA_OVERRIDE_EVIDENCE_NOT_PLANETARY_PROOF"
+  },
+  "keshaviya": {
+    "planetary_net_quarter": "DIRECT_TEXT_AND_WORKED_PLANETARY_TABLE",
+    "bhava_full_mercury_jupiter": "EXPLICIT",
+    "mercury_nature_rule": "BENEFIC_WITH_BENEFIC_ASSOCIATION_MALEFIC_WITH_MALEFIC_ASSOCIATION",
+    "mixed_association_example": "WORKED_ARITHMETIC_CONSISTENT_WITH_MERCURY_SHUBHA_DESPITE_CLOSE_SATURN; GENERAL_TIEBREAK_UNKNOWN",
+    "planetary_mercury_jupiter_extra": 0
+  },
+  "sripati_sastri": {
+    "planetary_net_quarter": "DIRECT_FORMULA_PLUS_WORKED_PLANETARY_SHADBALA_TABLE",
+    "bhava_full_mercury_jupiter": "EXPLICIT",
+    "mercury_nature": "ALWAYS_BENEFIC_IN_THIS_COMMENTARY_PROFILE",
+    "planetary_mercury_jupiter_extra": 0
+  },
+  "phaladeepika": {
+    "jnejya_drigbala_index": "IV-6",
+    "context": "LAGNA_BHAVA_STRENGTH",
+    "evidentiary_weight": "TERMINOLOGICAL_CLUE_ONLY_NOT_PLANETARY_ARITHMETIC_PROOF"
+  },
+  "computational_families": {
+    "planetary_net_quarter_directly_worked": [
+      "PATHAK",
+      "SRIPATI_SASTRI",
+      "RAMAN",
+      "JAIN",
+      "KESHAVIYA"
+    ],
+    "bphs_jnejya_literal_commentarial": [
+      "DEVACHANDRA_JHA",
+      "PADMANABH_SHARMA",
+      "SURESH_CHANDRA_MISHRA",
+      "SANTHANAM_FAMILY"
+    ]
   }
 }
