@@ -118,6 +118,117 @@ It still does **not** prove that the planetary `jñejya` clause applies the same
 
 Jain explicitly defines planetary Drik Bala using well-associated Mercury as śubha and badly-associated Mercury as aśubha. His standard worked horoscope then classifies Mercury as śubha despite simultaneous close Saturn and Jupiter association. This directly closes Jain's high-level Mercury convention, but leaves the **general mixed-association precedence rule** unresolved.
 
+## Extended computational-tradition pass — same-day continuation
+
+The search was extended specifically for a **planetary worked example that numerically exposes the `jñejya` Mercury/Jupiter special term**. No decisive Jha/Padmanabh/Mishra planetary A1 worked calculation was found. However, three additional witnesses materially sharpen the profile split.
+
+### Keśavīya Jātaka Paddhati: worked planetary net-quarter, Bhāva full-M/J
+
+A detailed Sanskrit/Hindi computational edition of *Keśavīya Jātaka Paddhati* explicitly states the planetary Drig rule in aggregate form:
+
+```text
++ 1/4 * śubha-dṛṣṭi-yoga
+- 1/4 * pāpa-dṛṣṭi-yoga
+```
+
+and then prints the individual Drig-bala contributions inside a complete seven-planet ṣaḍbala worked table. No separate whole Mercury/Jupiter planetary term is introduced in that worked planetary computation.
+
+The same work later gives the Bhāva rule separately:
+
+```text
++ 1/4 * benefic aspect aggregate
+- 1/4 * malefic aspect aggregate
++ whole Mercury/Jupiter dṛṣṭi on the Bhāva
+```
+
+This is another direct computational witness for the same structural distinction already visible in Śrīpati/Raman/Jain:
+
+```text
+PLANETARY DRIK  = quarter-net only
+BHĀVA DRIK      = quarter ordinary + whole M/J
+```
+
+Disposition:
+
+`KESHAVIYA_NET_QUARTER_RESEARCH = DIRECT_TEXT_AND_WORKED_PLANETARY_TABLE`
+
+`KESHAVIYA_BHAVA_FULL_MJ = EXPLICIT`
+
+#### Keśavīya Mercury association edge
+
+The text explicitly says Mercury becomes śubha in association (`yoga`) with a benefic and pāpa in association with a malefic. In its worked chart Mercury and Saturn are in the same sign and only about 1°52′ apart, while Jupiter gives Mercury a strong dṛṣṭi. The printed planetary Drig arithmetic for the Moon is consistent with Mercury being placed on the śubha side in that example.
+
+This is evidence for **one mixed-association outcome**, not for a general precedence algorithm. In particular, do **not** infer or code any rule such as “closest association wins,” “Jupiter overrides Saturn,” or “aspect overrides conjunction.” The exact semantics of `yoga` and the mixed-association tie-break remain unresolved.
+
+### Śrīpati Paddhati: exact worked planetary table confirms the separation
+
+The V. Subrahmanya Sastri edition/commentary of *Śrīpati Paddhati* explicitly states:
+
+- planetary ṣaḍbala: add one quarter of benefic aspect and subtract one quarter of malefic aspect;
+- Bhāva bala: separately superadd the **entire** aspect of Jupiter and Mercury.
+
+The edition also prints a complete planetary ṣaḍbala table with separate `Subhadrishti` and `Papadrishti` rows before the final total. This upgrades the Śrīpati profile from merely commentarial/formula evidence to a **worked computational planetary witness**.
+
+Disposition:
+
+`SRIPATI_SASTRI_NET_QUARTER_RESEARCH = DIRECT_FORMULA_PLUS_WORKED_PLANETARY_TABLE`
+
+The same commentary explicitly records the author/commentator's Mercury convention as always benefic, while acknowledging that some authorities treat Mercury as malefic when associated with malefics. That convention remains profile-local and must not be projected into Raman, Jain, BPHS, or Keśavīya.
+
+### Phaladīpikā index clue: `JNEJYA DRIGBALA` points to a Lagna/Bhāva context
+
+V. Subrahmanya Sastri's *Phaladīpikā* index contains the entry:
+
+`JNEJYA DRIGBALA — IV-6`
+
+Chapter IV verse 6 is a **Lagna-strength / house-strength context**, including strengthening by the lord, Jupiter or Mercury. This does not resolve BPHS 27.19 and does not prove that the planetary `jñejya` clause is secondary. It is nevertheless a useful terminological clue: in this translation/index tradition, the named `JNEJYA DRIGBALA` concept is indexed to a Bhāva/Lagna-strength passage rather than to a separate planetary double-add worked rule.
+
+Status:
+
+`PHALADEEPIKA_JNEJYA_INDEX_CONTEXT = BHAVA_LAGNA_CLUE_ONLY`
+
+### Secondary implementation audit
+
+Modern teaching/software sources remain internally divergent and are not promoted to doctrine:
+
+- some repeat the Santhanam-family “super add the entire Mercury/Jupiter dṛṣṭi” wording;
+- some computational examples use already quarter-scaled aspect magnitudes, so “full” there does not establish a second raw whole-aspect addition;
+- some modern implementations explicitly implement A1 as quarter ordinary net plus whole Mercury/Jupiter;
+- other teaching material reads more like A2 (Mercury/Jupiter taken whole instead of quarter).
+
+This divergence strengthens the need for named source profiles rather than resolving the primary-text issue.
+
+### Consequence of the extended pass
+
+The evidence now supports **two durable computational families** more strongly than before:
+
+#### Planetary net-quarter family — directly worked
+
+- Ganesh Datt Pathak;
+- Śrīpati Paddhati / Subrahmanya Sastri;
+- B. V. Raman;
+- V. P. Jain;
+- Keśavīya Jātaka Paddhati.
+
+Core planetary operator:
+
+```text
+drik_bala = 1/4 * (Σ śubha computed dṛṣṭi - Σ pāpa computed dṛṣṭi)
+```
+
+No separate whole Mercury/Jupiter planetary term is used in these worked planetary computations. Several of these same traditions explicitly use whole Mercury/Jupiter dṛṣṭi in **Bhāva** strength instead.
+
+#### BPHS `jñejya` literal/commentarial family — textually strong, planetary worked proof still missing
+
+- Devachandra Jha: quarter ordinary aggregate, then add M/J dṛṣṭi;
+- Padmanabh Sharma: planetary verse retains `jñejya`; Bhāva parallel says `sampūrṇa`;
+- Suresh Chandra Mishra: planetary verse retains `jñejya`; Bhāva worked arithmetic verifies ordinary-quarter + whole Mercury;
+- Santhanam-family rendering: “super add” whole Mercury/Jupiter dṛṣṭi.
+
+What is still missing is the decisive item: **a planetary worked numeric example from this family where a material Mercury/Jupiter dṛṣṭi is visibly carried through the final bala and distinguishes A1 from A2/net-quarter**.
+
+This makes a forced single “canonical BPHS Drik Bala operator” scientifically less defensible. The likely clean endpoint is a source-profiled operator family with provenance-visible components and no synthesis by market outcomes.
+
 ## Research profile split
 
 The old combined label is **deprecated for research use**. Do not delete historical packets; interpret them through the successor split below.
@@ -225,12 +336,15 @@ The same provenance discipline applies to Jupiter: ordinary benefic quarter comp
 - Śrīpati-Sastri and Raman must not share one Mercury-nature profile;
 - Jain is now directly verified as conditional-by-association for planetary Drik Bala, with an explicit always-benefic Mercury override for Bhāva Drishti Bala;
 - Jain's standard worked chart proves a mixed Jupiter/Saturn association can still resolve Mercury as śubha, but the general mixed-association tie-break rule remains UNKNOWN;
+- Keśavīya supplies another direct worked planetary net-quarter tradition and separately gives whole Mercury/Jupiter treatment only for Bhāva strength;
+- Śrīpati-Sastri now has an explicitly checked worked planetary ṣaḍbala table supporting the net-quarter planetary profile;
+- the Phaladīpikā index's `JNEJYA DRIGBALA IV-6` entry points to a Lagna/Bhāva-strength context and is retained only as a terminological clue;
 - Mishra's worked Bhāva example treats a Mercury only ~4°38′ from the Sun as śubha and then adds its whole dṛṣṭi, directly strengthening the Bhāva override;
 - market bullish/bearish direction remains unauthorized.
 
 ## What remains unresolved
 
-1. **Planetary A1 worked arithmetic:** find a Jha, Padmanabh, or Mishra planetary Drik-Bala example where Mercury or Jupiter actually aspects the tested planet and the final planetary strength is numerically shown.
+1. **Planetary A1 worked arithmetic:** despite the broader search, no discriminating Jha/Padmanabh/Mishra planetary example has surfaced. Continue only with primary/near-primary worked tables where a material Mercury/Jupiter aspect is numerically visible.
 2. **Malefic-Mercury + jñejya edge:** directly verify whether a conditionally-malefic Mercury contributes `-M/4` in the ordinary pool and then still receives `+M` as the special `jña` term. Current `+0.75M` is the best-supported inference, not direct worked proof.
 3. **Exact Mercury nature trigger per profile:** distinguish BPHS's conjunction/association rule from Raman's close-Sun/combust treatment and from broader modern rules based merely on malefic aspect. Do not merge them.
 4. **Jupiter double-participation:** obtain direct planetary worked arithmetic confirming whether Jupiter is quarter-counted in the ordinary benefic aggregate and then added whole in the `ijya` family.
@@ -259,6 +373,8 @@ as distinct traceable stages. No market-direction sign may be derived from Drik 
 - B. V. Raman, *Graha and Bhava Balas*: planetary Drishti Pinda/Drik Bala, conditional Mercury worked example, and Bhāva Mercury full-benefic special treatment.
 - V. Subrahmanya Sastri, *Sripati Paddhati*: commentary records the always-benefic Mercury convention despite acknowledging another association-dependent convention.
 - V. P. Jain, *Text Book for Shadbala (Grahas) and Bhavabala*: planetary Drik uses well-associated Mercury as śubha and badly-associated Mercury as aśubha; Bhāva Drishti explicitly overrides Mercury to always benefic and takes Mercury/Jupiter dṛṣṭi full. Jain's standard worked table supplies a mixed Jupiter/Saturn association case classified śubha.
+- *Keśavīya Jātaka Paddhati*, Chandrama Pandey-edited Sanskrit/Hindi computational edition: planetary quarter-net formula plus worked ṣaḍbala table; Bhāva rule separately adds whole Mercury/Jupiter dṛṣṭi.
+- *Phaladīpikā*, V. Subrahmanya Sastri edition/index: `JNEJYA DRIGBALA IV-6` points to a Lagna/Bhāva-strength context; clue only, not planetary arithmetic proof.
 - Printed BPHS witnesses: Ganesh Datt Pathak, Padmanabh Sharma, Devachandra Jha, Suresh Chandra Mishra.
 
 ## Guards against overclaiming
