@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-04",
+  "topic": "drik_bala_final_planetary_jnejya_pass",
+  "status": "RESEARCH_ONLY",
+  "branch": "research/nightly-project-work",
+  "baseline_verified": "59cb3c4e00fb2f4569ae2a7480e95cbb6c4c7065",
+  "packet": "docs/research/nightly/2026-10-04_drik-bala-final-planetary-jnejya-pass.md",
+  "packet_commit": "601abeca6353697623990e3768f9c025ba206c91",
+  "primary_result": "PLANETARY_JNEJYA_WORKED_ARITHMETIC_NOT_LOCATED_AFTER_BOUNDED_EXHAUSTIVE_PASS",
+  "stop_condition_reached": true,
+  "primary_targets": {
+    "devachandra_jha_sudha": {
+      "verse_commentary": "DIRECT_PAGE_BASELINE_PLUS_CURRENT_OCR_CORROBORATION",
+      "planetary_discriminating_worked_example": "NOT_LOCATED",
+      "current_pdf_image_access": "ARCHIVE_DELIVERY_HOST_INACCESSIBLE"
+    },
+    "padmanabh_sharma_bhavabodhini": {
+      "planetary_jnejya_text": "DIRECT_PAGE_BASELINE_PLUS_CURRENT_OCR_CORROBORATION",
+      "planetary_discriminating_worked_example": "NOT_LOCATED",
+      "current_pdf_image_access": "ARCHIVE_DELIVERY_HOST_INACCESSIBLE"
+    },
+    "suresh_chandra_mishra": {
+      "planetary_worked_example": "KNOWN_BUT_NON_DISCRIMINATING",
+      "bhava_A1_worked_example": "DIRECTLY_VERIFIED_IN_PREDECESSOR_NOT_PLANETARY_PROOF",
+      "planetary_discriminating_worked_example": "NOT_LOCATED"
+    },
+    "santhanam_family": {
+      "planetary_wording": "SUPERADD_ENTIRE_MERCURY_JUPITER_ASPECT",
+      "planetary_discriminating_worked_example": "NOT_LOCATED"
+    }
+  },
+  "candidate_verdicts": {
+    "NET_QUARTER": "VERIFIED_FOR_NAMED_NET_QUARTER_SOURCE_PROFILES_NOT_UNIVERSAL_BPHS_JNEJYA",
+    "A1": "TEXTUALLY_COMMENTARIALLY_PLAUSIBLE_BHAVA_WORKED_PLANETARY_NOT_WORKED_VERIFIED",
+    "A2": "NOT_WORKED_VERIFIED",
+    "fixed_plus_60": "NO_EVIDENCE_UNSUPPORTED"
+  },
+  "mercury_nature_edge": {
+    "bphs_3_11": {
+      "cruel_planets": [
+        "SUN",
+        "SATURN",
+        "MARS",
+        "WANING_MOON",
+        "RAHU",
+        "KETU"
+      ],
+      "mercury_rule": "MERCURY_BECOMES_CRUEL_WHEN_JOINED_YUTA_WITH_A_CRUEL_PLANET",
+      "aspect_only_conversion": "NOT_STATED",
+      "proximity_or_orb_threshold": "NOT_STATED",
+      "sun_combustion_as_independent_switch": "NOT_STATED",
+      "sun_conjunction": "COVERED_BY_CRUEL_JOINED_WORDING",
+      "rahu_ketu_conjunction": "LITERAL_RULE_APPLIES_BECAUSE_BOTH_ARE_EXPLICITLY_IN_CRUEL_LIST",
+      "mixed_benefic_malefic_association_tiebreak": "NOT_EXPLICITLY_ADJUDICATED"
+    },
+    "conditionally_malefic_mercury_plus_jnejya": "UNKNOWN_NOT_WORKED_VERIFIED",
+    "candidate_plus_0_75M": "NOT_VERIFIED"
+  },
+  "jupiter_edge": {
+    "planetary_jnejya_double_participation": "UNKNOWN_NOT_WORKED_VERIFIED",
+    "candidate_plus_1_25J": "NOT_VERIFIED"
+  },
+  "recommended_profiles_for_human_review": [
+    "PATHAK_NET_QUARTER",
+    "SRIPATI_SASTRI_NET_QUARTER",
+    "RAMAN_NET_QUARTER",
+    "JAIN_NET_QUARTER",
+    "KESHAVIYA_NET_QUARTER",
+    "BPHS_JNEJYA_LITERAL_RESEARCH"
+  ],
+  "bphs_jnejya_literal_research": {
+    "ordinary_signed_quarter_component": "TRACE_SEPARATELY",
+    "ordinary_mercury_pool_membership": "UNKNOWN_A1_VS_A2",
+    "ordinary_jupiter_pool_membership": "UNKNOWN_A1_VS_A2",
+    "jnejya_special_component": "TRACE_SEPARATELY_AS_FULL_COMPUTED_MERCURY_JUPITER_DRISHTI_LITERAL_COMMENTARIAL_COMPONENT",
+    "conditionally_malefic_mercury_combination": "UNKNOWN",
+    "jupiter_double_participation": "UNKNOWN",
+    "market_direction": "WITHHELD"
+  },
+  "canonical_single_drik_bala_operator": "NOT_SAFE",
+  "multiple_named_source_profiles": "RECOMMENDED_FOR_SEPARATE_HUMAN_REVIEW",
+  "further_generic_drik_search": "STOP_UNTIL_GENUINELY_NEW_PRIMARY_OR_NEAR_PRIMARY_WORKED_MATERIAL",
+  "diminishing_returns": true,
+  "market_direction": "WITHHELD",
+  "production_changes": false,
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE",
+  "next_queue_target": "SARAVALI_FRACTION_TRANSLATION_DISCREPANCY"
+}
