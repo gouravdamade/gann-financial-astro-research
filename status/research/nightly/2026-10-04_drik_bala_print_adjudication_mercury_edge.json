@@ -2,7 +2,7 @@
   "date": "2026-10-04",
   "topic": "drik_bala_print_adjudication_mercury_edge",
   "status": "RESEARCH_ONLY",
-  "packet_commit": "3a26e137d0b16cdb13d73369ec9342bb11878963",
+  "packet_commit": "78931692362b7302dfc3209f16efac927c39f71d",
   "direct_print_pages_inspected": true,
   "access_pass_superseded_for_inspected_pages": true,
   "ordinary_aggregation": "SUBSTANTIALLY_SOURCE_CLOSED",
@@ -16,7 +16,7 @@
   "mercury_profiles": {
     "raman": "CONDITIONAL_BY_ASSOCIATION_WITH_DIRECT_MALEFIC_WORKED_EXAMPLE",
     "sripati_sastri": "ALWAYS_BENEFIC_COMMENTARIAL_CONVENTION",
-    "jain": "DIRECT_CLASSIFICATION_SOURCE_STILL_REQUIRED"
+    "jain": "CONDITIONAL_BY_ASSOCIATION_DIRECTLY_SOURCED; WORKED_MIXED_JUPITER_SATURN_CASE_RESOLVES_SHUBHA; BHAVA_ALWAYS_BENEFIC_OVERRIDE_EXPLICIT"
   },
   "bphs_jnejya_a1_research": {
     "ordinary_mercury_drik_component": "mercury_nature_sign * computed_drishti_mercury / 4",
@@ -38,12 +38,36 @@
   "code_touched": false,
   "tests": "NOT_APPLICABLE",
   "remaining": [
-    "planetary Jha/Padmanabh/Mishra worked example with Mercury or Jupiter",
-    "direct conditionally-malefic Mercury plus jnejya arithmetic",
-    "direct Jupiter double-participation worked example",
-    "exact Mercury nature trigger per source profile",
-    "Jain Mercury classification source",
+    "planetary Jha/Padmanabh/Mishra worked example that numerically exposes Mercury or Jupiter jnejya extra",
+    "direct conditionally-malefic Mercury plus planetary jnejya arithmetic",
+    "direct Jupiter double-participation planetary worked example",
+    "exact Mercury association trigger per source profile",
+    "general mixed benefic/malefic Mercury association precedence/tie-break rule",
     "conditional Moon nature boundary",
     "decide whether final architecture exposes multiple source profiles rather than one canonical synthesis"
-  ]
+  ],
+  "jain_mixed_association_example": {
+    "mercury_deg": 170.53,
+    "jupiter_deg": 170.45,
+    "saturn_deg": 166.43,
+    "mercury_jupiter_separation_deg": 0.08,
+    "mercury_saturn_separation_deg": 4.1,
+    "worked_classification": "SHUBHA",
+    "proof": "Moon positive Drishti total 78.75 = Mercury 11.03 + Jupiter 40.95 + Venus 26.77",
+    "general_tiebreak_rule": "UNKNOWN"
+  },
+  "mishra_planetary_example": {
+    "pre_drik_five_bala_total": "6.29.22",
+    "result_description": "approximately 6 after pāpa-dṛṣṭi-dominant adjustment",
+    "explicit_planetary_jnejya_extra_shown": false,
+    "discriminates_A1_vs_net_quarter": false
+  },
+  "mishra_bhava_close_sun_mercury": {
+    "sun": "9.11.15",
+    "mercury": "9.15.53",
+    "separation_approx": "4°38′",
+    "mercury_in_ordinary_pool": "SHUBHA",
+    "mercury_full_extra_added": true,
+    "implication": "DIRECT_BHAVA_OVERRIDE_EVIDENCE_NOT_PLANETARY_PROOF"
+  }
 }
