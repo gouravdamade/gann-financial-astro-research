@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-05",
+  "topic": "trailokya_modifier_precedence",
+  "status": "RESEARCH_ONLY",
+  "branch": "research/nightly-project-work",
+  "baseline_verified": "0f2651edc243fcab1ff0241078931c17dd593e83",
+  "packet": "docs/research/nightly/2026-10-05_trailokya-modifier-precedence.md",
+  "packet_commit": "ed4e84d8eaae799888d2a71cbb4a57fd1912a636",
+  "primary_source": {
+    "source_id": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+    "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+    "direct_pages_inspected": {
+      "scan_pages": [52,53,54,55,56,57,58,59,60,61,62],
+      "printed_pages": [36,37,38,39,40,41,42,43,44,45,46],
+      "primary_verses": "160-179"
+    }
+  },
+  "same_lineage_witness": {
+    "source_id": "TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT",
+    "sha256": "19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8",
+    "role": "SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING",
+    "combination_rule_added": false
+  },
+  "isolated_modifiers": {
+    "retrograde": {
+      "factor": 2,
+      "status": "SOURCE_CLOSED_ISOLATED"
+    },
+    "exaltation": {
+      "factor": 3,
+      "status": "SOURCE_CLOSED_ISOLATED"
+    },
+    "swift": {
+      "result": "BASE_SOURCE_RESULT",
+      "literal_numeric_factor_1_0": "NOT_STATED",
+      "status": "SOURCE_CLOSED_ISOLATED"
+    },
+    "debilitation": {
+      "factor": 0.5,
+      "status": "SOURCE_CLOSED_ISOLATED"
+    }
+  },
+  "verse_167": {
+    "classification": "FACTOR_INVENTORY_AND_EVALUATION_INSTRUCTION",
+    "factors": [
+      "PLANET_CLASS",
+      "MOTION_STATE",
+      "EXALTATION_DEBILITATION",
+      "OWN_FRIEND_SAMA_ENEMY_STHANA"
+    ],
+    "ordered_precedence": "NOT_STATED",
+    "multiplication": "NOT_STATED",
+    "addition": "NOT_STATED",
+    "strongest_wins": "NOT_STATED",
+    "override": "NOT_STATED",
+    "cancellation": "NOT_STATED"
+  },
+  "worked_combination_search": {
+    "retrograde_plus_exaltation": "NOT_LOCATED",
+    "retrograde_plus_debilitation": "NOT_LOCATED",
+    "dignity_plus_planet_class": "NOT_LOCATED_AS_GENERIC_NUMERIC_COMPOSITION",
+    "motion_plus_sthana": "NOT_LOCATED_AS_GENERIC_NUMERIC_COMPOSITION",
+    "dignity_plus_sthana_phala": "NOT_LOCATED_AS_GENERIC_NUMERIC_COMPOSITION",
+    "multiple_simultaneous_modifiers": "NOT_LOCATED"
+  },
+  "context_specific_rules": {
+    "mercury_override_v146": "SCOPED_ONLY",
+    "jupiter_venus_adverse_association": "SCOPED_ONLY",
+    "disease_motion_v188": "SCOPED_ONLY",
+    "war_first_mover_v209": "SCOPED_ONLY",
+    "prashna_mixed_v213": "SCOPED_ONLY",
+    "country_commodity_stronger_result_v246": "SCOPED_ONLY",
+    "latta_compound_v275": "SEPARATE_LATTA_CONTEXT",
+    "arghya_owner_strength_v357_plus": "SEPARATE_ARGHYA_PIPELINE"
+  },
+  "decisive_outcome": {
+    "TD1972_MODIFIER_COMBINATION": "NO_GENERAL_RULE_LOCATED",
+    "TRAILOKYA_MODIFIER_PRECEDENCE": "NOT_SOURCE_CLOSED_AFTER_BOUNDED_REVIEW"
+  },
+  "combination_policy": "NOT_SOURCE_CLOSED",
+  "precedence": "NOT_SOURCE_CLOSED",
+  "combined_scalar_authorized": false,
+  "runtime_binding_authorized": false,
+  "next_trailokya_sbc_target": {
+    "id": "TD1_EXACT_SPEED_AND_STATIONARY_CONTRACT",
+    "reason": "motion family drives Vedha direction and verse-166 swift/base-result state while continuous swift/mean threshold and stationary state remain unresolved",
+    "known_gaps": [
+      "continuousSwiftMeanThreshold = NOT_SOURCE_CLOSED",
+      "stationaryState = SOURCE_SILENT_UNRESOLVED",
+      "aticara literal maximum-motion unit interpretation unresolved"
+    ]
+  },
+  "market_direction": "WITHHELD",
+  "market_magnitude": "WITHHELD",
+  "oscillator_amplitude": "WITHHELD",
+  "executionAllowed": false,
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE"
+}
