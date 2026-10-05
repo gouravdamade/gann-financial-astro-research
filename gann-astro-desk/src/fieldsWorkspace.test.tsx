@@ -766,7 +766,7 @@ describe('FieldsWorkspace', () => {
     await screen.findByText('BPHS Classical Calendar')
     await user.click(screen.getByRole('button', { name: /Select Muhurta/i }))
     expect(screen.getByText('Selected: BPHS INTERVAL')).toBeInTheDocument()
-    expect(screen.getByText('NO MARKET ROLE')).toBeInTheDocument()
+    expect(screen.getAllByText('NO MARKET ROLE').length).toBeGreaterThan(0)
     expect(activitySelection).toHaveBeenCalledWith(startUtc)
   })
 

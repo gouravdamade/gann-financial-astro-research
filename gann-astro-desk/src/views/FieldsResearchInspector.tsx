@@ -1,6 +1,7 @@
 import { Eye, ShieldCheck } from 'lucide-react'
 import type { VisualizationModePolicy } from '../visualizationModes'
 import type { FieldsResearchSelection } from './fieldsResearchSelection'
+import { buildFieldsResearchExplanation } from './fieldsResearchExplanation'
 
 type Props = {
   selection: FieldsResearchSelection | null
@@ -106,8 +107,32 @@ function BphsDetails({ selection }: { selection: Extract<FieldsResearchSelection
   </dl>
 }
 
+function ExplanationAndProvenance({ model }: { model: NonNullable<ReturnType<typeof buildFieldsResearchExplanation>> }) {
+  const entries = [
+    ['What is happening?', model.headline],
+    ['Why is it visible?', model.whyThisIsVisible],
+    ['Astronomy fact', model.astronomyFact],
+    ['Source doctrine', model.sourceDoctrine],
+    ['Astrology interpretation', model.astrologyInterpretation],
+    ['Engineering transform', model.engineeringTransform],
+    ['Market bridge', model.marketBridge],
+    ['Financial validation', model.financialValidation],
+    ['Magnitude', model.magnitude],
+    ['Unknowns and withheld', model.unknownsAndWithheld],
+    ['Execution', model.execution],
+  ] as const
+
+  return <section className="fields-inspector-explanation" aria-label="Explanation and provenance">
+    <h3>Explanation and provenance</h3>
+    <dl className="fields-inspector-explanation-grid">
+      {entries.map(([label, detail]) => <div key={label}><dt>{label}</dt><dd>{detail}</dd></div>)}
+    </dl>
+  </section>
+}
+
 export function FieldsResearchInspector({ selection, crosshairTimestampUtc, visualizationPolicy, sourceProfileId }: Props) {
   const directionalFieldsVisible = visualizationPolicy.scoringVisible
+  const explanation = buildFieldsResearchExplanation(selection, visualizationPolicy)
   return <section className="fields-research-inspector" aria-label="Unified Fields research inspector">
     <header>
       <div><Eye size={15} /><div><strong>Unified Research Inspector</strong><span>Read-only selected source and engineering detail</span></div></div>
@@ -124,6 +149,7 @@ export function FieldsResearchInspector({ selection, crosshairTimestampUtc, visu
       {selection.kind === 'ACTIVITY_EVENT' ? <EventDetails selection={selection} /> : null}
       {selection.kind === 'SBC_INTERVAL' ? <SbcDetails selection={selection} /> : null}
       {selection.kind === 'BPHS_INTERVAL' ? <BphsDetails selection={selection} /> : null}
+      {explanation ? <ExplanationAndProvenance model={explanation} /> : null}
       <Metadata selection={selection} sourceProfileId={sourceProfileId} />
     </>}
   </section>

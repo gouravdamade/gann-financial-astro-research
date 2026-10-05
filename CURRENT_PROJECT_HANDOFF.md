@@ -13737,3 +13737,13 @@ Please read D:\PycharmProjects\CURRENT_PROJECT_HANDOFF.md and continue from ther
 - No application behavior, RSI formula, closed-bar semantics, visible-range/history behavior, Fields & Waves, activity/pair math, polarity/evidence registries, Candidate C, or MT5 invocation changed. EMP3, F4-B, F4-C, and execution remain unauthorized; `executionAllowed=false`.
 - P5 acceptance report/status: `docs/research/PFR_V2B_R5_F4_A_P5_POST_RSI_WINDOWS_FOUNDER_CANDIDATE.md` and `status/research/pfr_v2b_r5_f4_a_p5_post_rsi_windows_founder_candidate.json`.
 - Next authorized gate: `CENTRAL_REVIEW_PFR_V2B_R5_F4_A_P5_FOUNDER_ACCEPTANCE_CLOSE` (closeout-record review only; no later implementation scope is authorized by this entry).
+
+## PFR-V2B-R5-F5-P1 Research Explanation Implementation (2026-10-05)
+
+- Implemented the centrally authorized frontend-only explanation/provenance adapter inside the existing Unified Research Inspector on branch `research/pfr-v2b-r5-f5-p1-explanation-implementation`, from P0 tip `3fa20691b668b028d7c8c24e4076fa4ee509c5b4`.
+- Covers the existing field, pair, unsigned activity, SBC, and BPHS selections. Reuses `FieldsResearchSelection` and `visualizationPolicy`; no selection lifecycle, API request/payload, backend, source admission, or calculation changed.
+- Mode 2/3 guarded tests prove directional interval state/value is not read into explanation state and is absent from rendered text and attributes. `UNKNOWN`, `MIXED`, `NEUTRAL`, and `WITHHELD BY CURRENT MODE` remain distinct; missing locators are never inferred.
+- Focused frontend is 60/60; full frontend is 273/273 across 50 files using the Windows-stable Vitest thread pool; TypeScript, Oxlint, and production Vite build pass. Backend/Rust tests were not run because those layers were untouched. Vite retains its existing large-chunk advisory.
+- Report/status: `docs/research/PFR_V2B_R5_F5_P1_FOUNDER_VISIBLE_RESEARCH_EXPLANATION.md` and `status/research/pfr_v2b_r5_f5_p1_founder_visible_research_explanation.json`. No package or founder candidate was created; physical founder inspection remains pending.
+- F4-B/F4-C, signed activity, polarity admission, Candidate C product reuse, EMP3, Auto Suggest, ML, MT5, and execution remain locked; `executionAllowed=false`.
+- Next gate: `CENTRAL_REVIEW_PFR_V2B_R5_F5_P1_FOUNDER_VISIBLE_RESEARCH_EXPLANATION`.

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "PFR_V2B_R5_F5_P1_FOUNDER_VISIBLE_RESEARCH_EXPLANATION_V1",
+  "milestone": "PFR-V2B-R5-F5-P1",
+  "status": "P1_IMPLEMENTATION_COMPLETE_PENDING_CENTRAL_REVIEW",
+  "branch": "research/pfr-v2b-r5-f5-p1-explanation-implementation",
+  "startingCommit": "3fa20691b668b028d7c8c24e4076fa4ee509c5b4",
+  "acceptedProductAncestor": "c52c22916b9c1dc6610f99c678d732ec2117f557",
+  "finalBranchTip": "ENCLOSING_IMPLEMENTATION_COMMIT; exact SHA is reported in the implementation closeout",
+  "implementation": {
+    "frontendOnly": true,
+    "selectionContractReused": "FieldsResearchSelection",
+    "visualizationPolicyReused": true,
+    "unifiedInspectorReused": true,
+    "selectionLifecycleChanged": false,
+    "newSelectionSystem": false,
+    "newApiRequest": false,
+    "newBackendRoute": false,
+    "newApiContract": false,
+    "sourceAdmissionChanged": false,
+    "visualizationModeAdded": false,
+    "candidateCProductReuse": false,
+    "explanationSelectionKinds": [
+      "FIELD_INTERVAL",
+      "PAIR_INTERVAL",
+      "ACTIVITY_EVENT",
+      "SBC_INTERVAL",
+      "BPHS_INTERVAL"
+    ]
+  },
+  "modeLeakageTests": {
+    "mode2": {
+      "hiddenStateAbsentFromModel": true,
+      "hiddenValueAbsentFromModel": true,
+      "hiddenValuesAbsentFromVisibleText": true,
+      "hiddenValuesAbsentFromDomAttributes": true,
+      "hiddenValuesAbsentFromTitleAndAria": true,
+      "adapterAvoidsReadingDirectionalInterval": true
+    },
+    "mode3": {
+      "hiddenStateAbsentFromModel": true,
+      "hiddenValueAbsentFromModel": true,
+      "hiddenValuesAbsentFromVisibleText": true,
+      "hiddenValuesAbsentFromDomAttributes": true,
+      "hiddenValuesAbsentFromTitleAndAria": true,
+      "adapterAvoidsReadingDirectionalInterval": true
+    }
+  },
+  "semantics": {
+    "sourceCertifiedRequiresExactUpstreamClassification": true,
+    "missingLocatorState": "NOT_PRESENT_IN_CURRENT_SELECTION_CONTRACT",
+    "unknownDistinctFromNeutral": true,
+    "mixedDistinctFromNeutral": true,
+    "withheldDistinctFromUnknown": true,
+    "pairClassification": "MODERN_ENGINEERING_RESEARCH_TRANSFORM",
+    "activityEvidenceMode": "EXPLORATORY_UNSIGNED",
+    "activityPolarity": "NOT_ASSIGNED",
+    "activityMagnitude": "MAGNITUDE_NOT_CONFIGURED",
+    "financialValidation": "NOT_FINANCIALLY_VALIDATED",
+    "executionAllowed": false
+  },
+  "locks": {
+    "f4bAuthorized": false,
+    "f4cAuthorized": false,
+    "signedActivityCountV0Authorized": false,
+    "usdJpySignedResultantAuthorized": false,
+    "polarityCatalogueChanged": false,
+    "reviewedEvidenceRegistryChanged": false,
+    "normalizationPresent": false,
+    "smoothingPresent": false,
+    "sourceWeightingPresent": false,
+    "emp3Authorized": false,
+    "autoSuggestEnabled": false,
+    "mlEnabled": false,
+    "mt5Enabled": false,
+    "executionAllowed": false
+  },
+  "verification": {
+    "focusedFrontend": "60/60 across 2 files",
+    "fullFrontend": "273/273 across 50 files",
+    "typescript": "PASS",
+    "oxlint": "PASS",
+    "viteProductionBuild": "PASS",
+    "backendTests": "NOT_RUN_NO_BACKEND_CHANGE",
+    "rustTests": "NOT_RUN_NO_RUST_CHANGE",
+    "defaultForkPoolStartup": "TIMED_OUT_BEFORE_TEST_DISCOVERY",
+    "stableThreadPool": "PASS"
+  },
+  "packageBuilt": false,
+  "founderInspection": "NOT_PERFORMED",
+  "executionAllowed": false,
+  "nextGate": "CENTRAL_REVIEW_PFR_V2B_R5_F5_P1_FOUNDER_VISIBLE_RESEARCH_EXPLANATION"
+}
