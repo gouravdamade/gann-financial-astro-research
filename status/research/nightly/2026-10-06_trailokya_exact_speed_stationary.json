@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-06",
+  "topic": "trailokya_exact_speed_stationary_contract",
+  "status": "RESEARCH_ONLY",
+  "packet": "docs/research/nightly/2026-10-06_trailokya-exact-speed-stationary-contract.md",
+  "packet_commit": "9d131bf52a403a17ce1ff6b7ad72ec2b3b59b8f5",
+  "controlling_source": {
+    "source_id": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+    "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+    "scan_pages": [32, 33, 34, 35, 36],
+    "printed_pages": [16, 17, 18, 19, 20],
+    "verses": "65-79",
+    "direct_page_images_inspected": true
+  },
+  "findings": {
+    "coarse_motion_families": "SOURCE_CLOSED_EXISTING",
+    "continuous_shighra_sama_threshold": "NOT_SOURCE_CLOSED_AFTER_BOUNDED_REVIEW",
+    "stationary_vedha_direction": "NOT_SOURCE_CLOSED_AFTER_BOUNDED_REVIEW",
+    "exact_astronomy": "EXTERNAL_GANITA_DELEGATED_BY_V79",
+    "aticara_value_notation": "ARC_MINUTE_ARC_SECOND_READING_HIGH_CONFIDENCE",
+    "aticara_values": {
+      "MARS": "46|11",
+      "MERCURY": "113|32",
+      "JUPITER": "14|4",
+      "VENUS": "75|42",
+      "SATURN": "7|45"
+    },
+    "new_source_correction": {
+      "field": "aticara.literalMaximumMotionValues.JUPITER",
+      "live_contract_value": "14|14",
+      "controlling_page_value": "14|4",
+      "action": "QUEUE_FOR_SEPARATE_HUMAN_REVIEW_DO_NOT_MUTATE_CONTRACT_THIS_RUN"
+    }
+  },
+  "prohibitions": [
+    "NO_ATICARA_MAXIMUM_AS_GENERIC_SHIGHRA_THRESHOLD",
+    "NO_INTERPOLATED_SAMA_SHIGHRA_BOUNDARY",
+    "NO_STATIONARY_TO_SAMA_DEFAULT",
+    "NO_STATIONARY_DIRECTION_INFERENCE",
+    "NO_RUNTIME_BINDING",
+    "NO_POLARITY",
+    "NO_SCORE",
+    "NO_PRICE_MAPPING",
+    "NO_MT5",
+    "NO_EXECUTION"
+  ],
+  "next_target": "TRAILOKYA_LATTA_COUNTING_ORIGIN_CONTRACT",
+  "market_direction": "WITHHELD",
+  "market_magnitude": "WITHHELD",
+  "oscillator_amplitude": "WITHHELD",
+  "executionAllowed": false,
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE"
+}
