@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-05",
+  "topic": "trailokya_moon_shukla_panchami_boundary",
+  "status": "RESEARCH_ONLY",
+  "branch": "research/nightly-project-work",
+  "baseline_verified": "11eafce8aa16c1a80a3b4587f62f76f78766969d",
+  "packet": "docs/research/nightly/2026-10-05_trailokya-moon-shukla-panchami-boundary.md",
+  "packet_commit": "7d59e166747c90dfb3263e79cc9abe7287f24373",
+  "source_contract": "configs/sbc/trailokya/trailokya_1972_planet_nature_conditions_v1.yaml",
+  "primary_source": {
+    "source_id": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+    "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+    "locator": {
+      "scan_pages": [29, 30],
+      "printed_pages": [13, 14],
+      "verse": 55
+    },
+    "current_run_page_image_access": "UNAVAILABLE_ARCHIVE_DELIVERY_HOST",
+    "repository_prior_page_image_audit": "DIRECT_AGREEMENT",
+    "ocr_corroboration": "ACCESSIBLE_MATCHING"
+  },
+  "same_lineage_witness": {
+    "source_id": "TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT",
+    "sha256": "19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8",
+    "role": "SAME_LINEAGE_READING_WITNESS_NOT_CONTROLLING",
+    "verse_55_range_reading": "SAME_SHARED_SHUKLA_PANCHAMI_ENDPOINT",
+    "resolves_boundary": false
+  },
+  "root_findings": {
+    "krishna_dashami": "PURNA_SAUMYA_RANGE_SOURCE_CLOSED",
+    "after_krishna_dashami": "KSHINA_KRURA_BEGINS_SOURCE_CLOSED",
+    "shukla_panchami_named_in_root": false,
+    "inclusive_exclusive_semantics": "NOT_STATED",
+    "transition_state": "NOT_STATED",
+    "tithi_fraction_rule": "NOT_STATED"
+  },
+  "commentary_findings": {
+    "purna_saumya_range": "SHUKLA_PANCHAMI_THROUGH_KRISHNA_DASHAMI",
+    "kshina_krura_range": "KRISHNA_EKADASHI_THROUGH_SHUKLA_PANCHAMI",
+    "shared_endpoint": "SHUKLA_PANCHAMI",
+    "overlap_reproduced_in_2016": true,
+    "ocr_only_artifact": false,
+    "punctuation_resolution_found": false
+  },
+  "verdict": {
+    "trailokya_moon_shukla_panchami_boundary": "UNKNOWN_AFTER_BOUNDED_SOURCE_REVIEW",
+    "shukla_panchami": "UNKNOWN_AFTER_BOUNDED_ADJUDICATION",
+    "current_fail_closed_result": "CORRECT_RETAIN_UNKNOWN_AT_OVERLAP_BOUNDARY"
+  },
+  "rejected_unsourced_resolutions": [
+    "SHUKLA_PANCHAMI_ALWAYS_SAUMYA",
+    "SHUKLA_PANCHAMI_ALWAYS_KRURA",
+    "HALF_TITHI_SPLIT",
+    "SUNRISE_RULE",
+    "GHATI_THRESHOLD",
+    "LUNAR_DEGREE_OR_ELONGATION_THRESHOLD",
+    "MODERN_CONVENTION_REPAIR"
+  ],
+  "contract_revision": {
+    "production_or_runtime_change_authorized": false,
+    "later_research_provenance_refinement_possible": true,
+    "recommended_boundary_label": "UNKNOWN_SHARED_ENDPOINT"
+  },
+  "secondary_inventory_performed": false,
+  "next_trailokya_sbc_target": {
+    "id": "TD1_MODIFIER_PRECEDENCE",
+    "source_scope": "1972 scan pages 52-62 / printed pages 36-46",
+    "status": "CARRIED_FORWARD_NOT_RESEARCHED_IN_THIS_PASS"
+  },
+  "market_direction": "WITHHELD",
+  "market_magnitude": "WITHHELD",
+  "oscillator_amplitude": "WITHHELD",
+  "executionAllowed": false,
+  "code_touched": false,
+  "tests": "NOT_APPLICABLE"
+}
