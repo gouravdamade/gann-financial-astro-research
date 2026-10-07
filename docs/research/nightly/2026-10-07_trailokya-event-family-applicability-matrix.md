@@ -56,7 +56,7 @@ Allowed classification vocabulary is restricted to:
 | Sthāna Bala / Sthāna Phala | vv.161-165; scan 53-54 / printed 37-38 | acting planet's current sign relationship/state | magnitude/result attached to the struck target | EXPLICIT_TRANSIT_CURRENT | false | true | not a natal-chart house/aspect rule |
 | Isolated result modifiers | vv.166-167; scan 54 / printed 38 | acting planet's retrograde/swift/dignity state | previously obtained Vedha result | EXPLICIT_TRANSIT_CURRENT | false | true | combination/precedence not source-closed |
 | Ubhayato Vedha | vv.220-223; scan 66-67 / printed 50-51 | two distinct krura planets producing simultaneous directional Vedhas | person's fivefold identity in v.220; name in v.221; place entities in v.223 | EXPLICIT_CONTEXT_SPECIFIC | NOT_ESTABLISHED as universal requirement | true | target identity changes by verse; no universal arithmetic |
-| Graha Latta base rule | vv.261-265; scan 74-75 / printed 58-59 | planet's current nakshatra; forward/backward ordinal | derived Latta target nakshatra | GENERAL_GEOMETRY_ONLY | NOT_ESTABLISHED | true | vv.261-265 do not state Janma Nakshatra as the construction input |
+| Graha Latta base rule | vv.261-265; scan 74-75 / printed 58-59 | planet's current nakshatra; forward/backward ordinal | derived Latta target nakshatra | EXPLICIT_TRANSIT_CURRENT | false | true | vv.261-265 derive the target from the planet's present/current nakshatra and do not state Janma Nakshatra as the construction input |
 | Latta compound cases | vv.266-274; scan 75-77 / printed 59-61 | Latta plus named occupant(s) | explicitly Janma Nakshatra in commentary | EXPLICIT_NATAL | true | true | birth-specific compound/occupant effects; do not universalize backward to base Latta construction |
 | Latta + Upagraha + krura | v.275; scan 77 / printed 61 | Upagraha + Latta + krura planet at a nakshatra | that nakshatra | EXPLICIT_CONTEXT_SPECIFIC | NOT_ESTABLISHED | true | direct compound only; not automatically Janma |
 | Janma/Karma/etc. nakshatra family | vv.276-290; scan 77 onward / printed 61-64 | planetary Vedha/dṛṣṭi | Janma-derived birth-reference nakshatras; name-nakshatra fallback when birth time unknown | EXPLICIT_NATAL | true, subject to explicit name fallback | true | source explicitly derives Karma, Ādhāna, Vināśa, Sāmudāyika, Saṅghātika etc. from Janma |
@@ -68,6 +68,26 @@ Allowed classification vocabulary is restricted to:
 | Arghya | vv.345-376; scan 92-102 / printed 76-86 | current Vedha planets plus context rulers/strengths | country/place, time and commodity (deśa/kāla/paṇya) | EXPLICIT_CONTEXT_SPECIFIC | false | true | historical commodity Arghya only; not generic market operator |
 
 `crossFamilyInheritanceAllowed = false` for every row unless a source passage explicitly links the families.
+
+## Bounded source-wording ledger
+
+The matrix above is controlled by the page-certified repository records. To make the applicability reading auditable without reproducing long source passages, the following short source markers are retained with their locators:
+
+- Practical introduction, scan pp.9-11: the subject/object identity is placed first, then the planets are placed at the nakshatras they occupy **at the time of judging Vedha**. This is the clearest explicit current/transit actor instruction.
+- Vedha reach, vv.16-17 / scan 21 / printed 5: the source names five struck layers — nakshatra, letter, vowel, tithi and rashi — and distinguishes side reach from the single opposite front nakshatra.
+- Motion-direction, vv.12-14 / scan 20 / printed 4: retrograde -> right, swift -> left, mean -> front for the five variable-motion planets.
+- Prashna, v.213 / scan 65 / printed 49: the root opens with the query-time marker `praśnakāle`; the struck reference is the Prashna Lagna.
+- War, v.209 / scan 64 / printed 48: the conditional resolver is the bounded phrase `pūrvayāyī jayī bhavet` — the first mover wins — only after the stated equal-condition setup.
+- Ubhayato Vedha, v.220 / scan 66 / printed 50: the struck identity is the subject's letter/tithi/vowel/rashi/nakshatra pentad under simultaneous two-sided cruel-planet Vedha.
+- Country/commodity, v.246 / scan 71-72 / printed 55-56: the root explicitly joins `deśa`, `dravya` and `akṣara`; the commentary applies this to country and commodity name letters.
+- Latta base, vv.261-262 / scan 74-75 / printed 58-59: the commentary reckons from the nakshatra on which the planet is situated and from its `vartamān nakṣatra sthān` (present nakshatra position).
+- Latta natal compounds, v.266 onward: the source uses `janmarkṣe` / Janma Nakshatra in the compound layer; this natal qualifier is not present in the base construction rule.
+- Janma-reference family, vv.276 onward: Janma, Karma and the other named reference nakshatras are explicitly derived as a separate target family, with name-nakshatra fallback where birth time is unknown.
+- Arghya, vv.345-346 / scan 92 / printed 76: the pipeline is explicitly framed by `deśaḥ kālas tataḥ paṇyam` — country/place, time and commodity — rather than natal identity.
+- Sthana Phala, vv.161-165 / scan 53-54 / printed 37-38: the obtained planetary place-result is explicitly bridged to the already struck target; the passage does not redefine that target's identity.
+- Isolated modifiers, v.166 / scan 54 / printed 38: retrograde, exaltation, swift and debilitation transform the previously obtained source result; they do not create a new target class.
+
+These wording markers are sufficient for applicability classification. No longer passage is needed for this packet, and no same-lineage reading is allowed to override the controlling 1972 page-certified contracts.
 
 ## Special Vedha finding
 
@@ -105,7 +125,7 @@ The Hindi commentary repeatedly says the Latta is on **Janma Nakshatra** in the 
 
 Therefore:
 
-`LATTA_BASE_CONSTRUCTION = GENERAL_GEOMETRY_ONLY`
+`LATTA_BASE_CONSTRUCTION = EXPLICIT_TRANSIT_CURRENT`
 
 `LATTA_V266_TO_V274_COMPOUNDS = EXPLICIT_NATAL`
 
