@@ -1,1 +1,11 @@
-{"date":"2026-10-08","status":"RESEARCH_ONLY"}
+{
+  "date": "2026-10-08",
+  "status": "RESEARCH_ONLY",
+  "packet": "docs/research/nightly/2026-10-08_trailokya-exact-speed-stationary-closure.md",
+  "exactSpeedThreshold": "NOT_SOURCE_CLOSED",
+  "stationaryState": "SOURCE_SILENT_OR_EXTERNALLY_DELEGATED",
+  "aticaraUnit": "UNKNOWN_AFTER_BOUNDED_REVIEW",
+  "jupiterLiteral": "14|4",
+  "tests": "NOT_APPLICABLE",
+  "executionAllowed": false
+}
