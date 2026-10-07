@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-07",
+  "status": "RESEARCH_ONLY_CORRECTION_READY_FOR_HUMAN_REVIEW",
+  "task": "TRAILOKYA_LATTA_COUNTING_ORIGIN",
+  "baseline": "09e5157d1003d9e0a98ce269680cf74dabb596fc",
+  "finding": "TRAILOKYA_LATTA_COUNTING_ORIGIN = INCLUSIVE_OCCUPIED_STAR_IS_1_HIGH_CONFIDENCE",
+  "provenance": {
+    "trailokya1972TextualRule": "SOURCE_CLOSED",
+    "inclusiveOrigin": "TRAILOKYA_WORDING_PLUS_INDEPENDENT_WORKED_TRADITION_CORROBORATED",
+    "controllingPages": {
+      "scan": [
+        74,
+        75,
+        76,
+        77
+      ],
+      "printed": [
+        58,
+        59,
+        60,
+        61
+      ],
+      "verses": "261-275"
+    }
+  },
+  "domain": {
+    "nakshatras": 27,
+    "abhijit": "EXCLUDED"
+  },
+  "unresolved": [
+    "1972 vv.261-275 contain no named-star arithmetic fixture",
+    "DIMINISHED_MOON_LATTA_NOT_ESTABLISHED"
+  ],
+  "contractMutation": false,
+  "runtimeBehaviorChanged": false,
+  "MARKET_DIRECTION": "WITHHELD",
+  "MARKET_MAGNITUDE": "WITHHELD",
+  "OSCILLATOR_AMPLITUDE": "WITHHELD",
+  "executionAllowed": false
+}
