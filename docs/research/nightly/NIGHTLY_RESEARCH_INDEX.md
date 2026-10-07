@@ -17,7 +17,7 @@ This index records isolated overnight evidence work. Entries are non-production 
 
 | 2026-10-07 | Trailokya Graha-Latta counting origin | RESEARCH_ONLY; CORRECTION READY FOR HUMAN REVIEW | `2026-10-07_trailokya-latta-counting-origin.md` | `TRAILOKYA_LATTA_COUNTING_ORIGIN=INCLUSIVE_OCCUPIED_STAR_IS_1_HIGH_CONFIDENCE`; 1972 wording plus independent forward/backward worked tradition corroborate inclusive origin. No source-contract mutation. Diminished-Moon Latta remains unestablished. Next: event-family applicability matrix. |
 
-| 2026-10-07 | Trailokya/SBC event-family applicability matrix | RESEARCH_ONLY; CONTEXT-SPECIFIC APPLICABILITY CLOSED | `2026-10-07_trailokya-event-family-applicability-matrix.md` | `TRAILOKYA_UNIVERSAL_TRANSIT_TO_NATAL_MODEL=CONTEXT_SPECIFIC_ONLY`: current planets are explicit, but native Vedha geometry, natal/janma, Prashna, war, country/name/commodity and Arghya targets remain separately scoped. Base Latta is current-star derived geometry; vv.266-274 compounds are explicitly natal. No source-contract/runtime change. Next: application/exact/separation timing efficacy. |
+| 2026-10-07 | Trailokya/SBC event-family applicability matrix | RESEARCH_ONLY; CONTEXT-SPECIFIC APPLICABILITY CLOSED | `2026-10-07_trailokya-event-family-applicability-matrix.md` | `TRAILOKYA_UNIVERSAL_TRANSIT_TO_NATAL_MODEL=CONTEXT_SPECIFIC_ONLY`: native Vedha target map is `GENERAL_GEOMETRY_ONLY`, while applied current planets are explicit; base Latta is `EXPLICIT_TRANSIT_CURRENT`; vv.266-274 are natal-specific. Prashna, war, country/name/commodity and Arghya remain separately scoped. Recheck 1972 scan p.77 before any contract mutation to encode the vv.271-274 Janma qualifier. Next: application/exact/separation timing efficacy. |
 
 ## Locks
 
