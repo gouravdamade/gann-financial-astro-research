@@ -21,6 +21,8 @@ This index records isolated overnight evidence work. Entries are non-production 
 
 | 2026-10-07 | Trailokya application/exact/separation timing efficacy | RESEARCH_ONLY; FAMILY-SPECIFIC PHASE RULE ONLY | `2026-10-07_trailokya-application-exact-separation-timing-efficacy.md` | `TRAILOKYA_APPLICATION_EXACT_SEPARATION_EFFICACY=FAMILY_SPECIFIC_ONLY`: ordinary Vedha, Latta, Janma-reference, Prashna, war and Arghya aspect mechanics do not source-close a generic applying/exact/separating kernel. Arghya v.359 alone gives a scoped beginning-middle-end strength rule for Vakra/Udaya Bala (zero/full/zero by trairāśika), not geometric-contact exactness. `APPLICATION_EXACT_SEPARATION_EFFICACY_V1=SOURCE_SILENT`; `GEOMETRIC_EVENT_INTERVAL_V1=ENGINEERING_MAPPING`. Next: persistence/duration. |
 
+| 2026-10-07 | Trailokya persistence / duration | RESEARCH_ONLY; FAMILY-SPECIFIC DURATION ONLY | `2026-10-07_trailokya-persistence-duration.md` | `TRAILOKYA_PERSISTENCE_DURATION=FAMILY_SPECIFIC_ONLY`: generic Vedha has no fixed duration but v.343 source-closes deferred fruition on a later Moon-Vedha day; Arghya year/month/day is context-bound; v.359 has no post-condition persistence; vv.379-406 directly page-checked fixed 7d/60d/1m/2m/8m durations owned by directional commodity results after named nakshatra Vedha. `GEOMETRIC_EVENT_INTERVAL_V1=ENGINEERING_MAPPING`; `DURATION_TO_TEMPORAL_SCALE_HYPOTHESIS_V1=NOT_SOURCE_AUTHORIZED_GENERIC`. |
+
 ## Locks
 
 Nightly research does not itself authorize production operators, polarity admission, scoring, Candidate C/EMP3, provider/outcome access, MT5, Auto Suggest, ML, or execution.
