@@ -19,6 +19,8 @@ This index records isolated overnight evidence work. Entries are non-production 
 
 | 2026-10-07 | Trailokya/SBC event-family applicability matrix | RESEARCH_ONLY; CONTEXT-SPECIFIC APPLICABILITY CLOSED | `2026-10-07_trailokya-event-family-applicability-matrix.md` | `TRAILOKYA_UNIVERSAL_TRANSIT_TO_NATAL_MODEL=CONTEXT_SPECIFIC_ONLY`: native Vedha target map is `GENERAL_GEOMETRY_ONLY`, while applied current planets are explicit; base Latta is `EXPLICIT_TRANSIT_CURRENT`; vv.266-274 are natal-specific. Prashna, war, country/name/commodity and Arghya remain separately scoped. Recheck 1972 scan p.77 before any contract mutation to encode the vv.271-274 Janma qualifier. Next: application/exact/separation timing efficacy. |
 
+| 2026-10-07 | Trailokya application/exact/separation timing efficacy | RESEARCH_ONLY; FAMILY-SPECIFIC PHASE RULE ONLY | `2026-10-07_trailokya-application-exact-separation-timing-efficacy.md` | `TRAILOKYA_APPLICATION_EXACT_SEPARATION_EFFICACY=FAMILY_SPECIFIC_ONLY`: ordinary Vedha, Latta, Janma-reference, Prashna, war and Arghya aspect mechanics do not source-close a generic applying/exact/separating kernel. Arghya v.359 alone gives a scoped beginning-middle-end strength rule for Vakra/Udaya Bala (zero/full/zero by trairāśika), not geometric-contact exactness. `APPLICATION_EXACT_SEPARATION_EFFICACY_V1=SOURCE_SILENT`; `GEOMETRIC_EVENT_INTERVAL_V1=ENGINEERING_MAPPING`. Next: persistence/duration. |
+
 ## Locks
 
 Nightly research does not itself authorize production operators, polarity admission, scoring, Candidate C/EMP3, provider/outcome access, MT5, Auto Suggest, ML, or execution.
