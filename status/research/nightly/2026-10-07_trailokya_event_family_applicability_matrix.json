@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-07",
+  "task": "TRAILOKYA_SBC_EVENT_FAMILY_APPLICABILITY_MATRIX",
+  "status": "RESEARCH_ONLY",
+  "baselineAtStart": "09e5157d1003d9e0a98ce269680cf74dabb596fc",
+  "packet": "docs/research/nightly/2026-10-07_trailokya-event-family-applicability-matrix.md",
+  "verdict": "TRAILOKYA_UNIVERSAL_TRANSIT_TO_NATAL_MODEL = CONTEXT_SPECIFIC_ONLY",
+  "findings": {
+    "nativeVedha": "GENERAL_GEOMETRY_ONLY_WITH_EXPLICIT_CURRENT_PLANET_PLACEMENT",
+    "semanticExpansions": "GENERAL_GEOMETRY_ONLY",
+    "planetNatureMotion": "EXPLICIT_TRANSIT_CURRENT",
+    "sthanaBalaPhala": "EXPLICIT_TRANSIT_CURRENT",
+    "isolatedModifiers": "EXPLICIT_TRANSIT_CURRENT",
+    "ubhayatoVedha": "EXPLICIT_CONTEXT_SPECIFIC",
+    "lattaBase": "GENERAL_GEOMETRY_ONLY",
+    "lattaCompoundsV266ToV274": "EXPLICIT_NATAL",
+    "janmaKarmaFamilyV276ToV290": "EXPLICIT_NATAL_WITH_NAME_FALLBACK",
+    "prashna": "EXPLICIT_CONTEXT_SPECIFIC",
+    "war": "EXPLICIT_CONTEXT_SPECIFIC",
+    "countryCommodityName": "EXPLICIT_CONTEXT_SPECIFIC",
+    "arghya": "EXPLICIT_CONTEXT_SPECIFIC"
+  },
+  "guards": {
+    "crossFamilyInheritanceAllowed": false,
+    "sourceContractMutation": false,
+    "runtimeBehaviorChanged": false,
+    "MARKET_DIRECTION": "WITHHELD",
+    "MARKET_MAGNITUDE": "WITHHELD",
+    "OSCILLATOR_AMPLITUDE": "WITHHELD",
+    "executionAllowed": false
+  },
+  "unresolved": [
+    "DIMINISHED_MOON_LATTA_NOT_ESTABLISHED",
+    "UNIVERSAL_NATIVE_VEDHA_NATAL_TARGET_NOT_ESTABLISHED",
+    "MODERN_TRANSIT_TO_NATAL_ANGULAR_ASPECT_BRIDGE_NOT_SOURCE_ESTABLISHED"
+  ],
+  "nextTarget": "APPLICATION_EXACT_SEPARATION_TIMING_EFFICACY"
+}
