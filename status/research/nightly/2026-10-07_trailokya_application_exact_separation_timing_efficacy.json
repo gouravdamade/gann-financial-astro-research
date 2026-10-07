@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-07",
+  "task": "APPLICATION_EXACT_SEPARATION_TIMING_EFFICACY",
+  "status": "RESEARCH_ONLY",
+  "baselineAtStart": "cbe46ebb1504e636121ea4d484ef08649416fd1d",
+  "packet": "docs/research/nightly/2026-10-07_trailokya-application-exact-separation-timing-efficacy.md",
+  "verdict": "TRAILOKYA_APPLICATION_EXACT_SEPARATION_EFFICACY = FAMILY_SPECIFIC_ONLY",
+  "genericContract": "APPLICATION_EXACT_SEPARATION_EFFICACY_V1 = SOURCE_SILENT",
+  "engineeringInterval": "GEOMETRIC_EVENT_INTERVAL_V1 = ENGINEERING_MAPPING",
+  "findings": {
+    "nativeVedha": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "motionDependentVedha": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "sthanaBalaPhala": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "isolatedModifiers": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "ubhayatoVedha": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "grahaLatta": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "janmaReferenceFamily": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "prashna": "SOURCE_EXPLICIT_TIME_CONTEXT_ONLY",
+    "war": "SOURCE_EXPLICIT_TIME_CONTEXT_ONLY",
+    "countryPlaceCommodity": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY",
+    "arghyaContextClock": "SOURCE_EXPLICIT_TIME_CONTEXT_ONLY",
+    "arghyaVakraUdayaBala": "SOURCE_EXPLICIT_PHASE_RULE",
+    "arghyaDrstiAspectGate": "SOURCE_EXPLICIT_DISCRETE_STATE_ONLY"
+  },
+  "scopedPhaseRule": {
+    "sourceLocator": {
+      "scanPage": 96,
+      "printedPage": 80,
+      "verse": 359
+    },
+    "scope": [
+      "VAKRA_BALA",
+      "UDAYA_BALA"
+    ],
+    "onset": "ZERO_AT_CONDITION_BEGINNING",
+    "exactEquivalent": "FULL_AT_CONDITION_MIDPOINT_NOT_GEOMETRIC_CONTACT",
+    "separation": "DECLINES_TOWARD_CONDITION_END_BY_TRAIRASHIKA",
+    "cessation": "ZERO_AT_CONDITION_END",
+    "postConditionPersistence": "NOT_STATED"
+  },
+  "workedBeforeExactAfterExample": "NOT_LOCATED_FOR_GENERIC_VEDHA_LATTA_DRSTI",
+  "unresolved": [
+    "GENERIC_VEDHA_PHASE_MODEL_NOT_SOURCE_CLOSED",
+    "GENERIC_LATTA_PHASE_MODEL_NOT_SOURCE_CLOSED",
+    "GENERIC_DRSTI_TEMPORAL_ORB_OR_PHASE_NOT_SOURCE_CLOSED",
+    "APPLYING_VS_SEPARATING_ASYMMETRY_NOT_SOURCE_CLOSED",
+    "ARGHYA_VAKRA_UDAYA_TIMESTAMP_BOUNDARIES_PROVIDER_NOT_SOURCE_CLOSED",
+    "POST_EVENT_PERSISTENCE_DEFERRED_TO_NEXT_TASK"
+  ],
+  "nextTarget": "PERSISTENCE_DURATION",
+  "guards": {
+    "sourceContractMutation": false,
+    "runtimeBehaviorChanged": false,
+    "fieldsChanged": false,
+    "candidateCChanged": false,
+    "emp3Changed": false,
+    "providerOutcomeAccess": false,
+    "mt5Changed": false,
+    "MARKET_DIRECTION": "WITHHELD",
+    "MARKET_MAGNITUDE": "WITHHELD",
+    "OSCILLATOR_AMPLITUDE": "WITHHELD",
+    "executionAllowed": false
+  }
+}
