@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-07",
+  "task": "PERSISTENCE_DURATION",
+  "status": "RESEARCH_ONLY",
+  "baselineAtStart": "0e7f62217d0920c85075ebfd8f407026f6ae0c9a",
+  "packet": "docs/research/nightly/2026-10-07_trailokya-persistence-duration.md",
+  "verdict": "TRAILOKYA_PERSISTENCE_DURATION = FAMILY_SPECIFIC_ONLY",
+  "scopedVerdicts": {
+    "genericVedhaPersistence": "NOT_SOURCE_CLOSED_AS_FIXED_DURATION",
+    "vedhaResultRipeningV343": "SOURCE_EXPLICIT_POST_TRIGGER_PERSISTENCE_CONDITIONAL_ON_LATER_MOON_VEDHA",
+    "genericLattaPersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "lattaNatalCompoundPersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "janmaReferencePersistence": "SOURCE_EXPLICIT_CONDITION_BOUND_ONLY",
+    "prashnaPersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "warPersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "countryPlacePersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "arghyaContextDuration": "SOURCE_EXPLICIT_CONTEXT_BOUND_DURATION",
+    "arghyaV359PostConditionPersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "arghyaDrstiPostConditionPersistence": "SOURCE_SILENT_FOR_PERSISTENCE",
+    "nakshatraCommodityDuration": "SOURCE_EXPLICIT_FIXED_DURATION"
+  },
+  "commodityDurationAudit": {
+    "controllingPages": {
+      "scanPages": [
+        103,
+        104,
+        105,
+        106,
+        107,
+        108
+      ],
+      "printedPages": [
+        87,
+        88,
+        89,
+        90,
+        91,
+        92
+      ],
+      "verses": "379-406"
+    },
+    "directPageImageInspection": true,
+    "durationOwner": "DIRECTIONAL_COMMODITY_RESULT_AFTER_NAMED_NAKSHATRA_VEDHA",
+    "distinctDurations": [
+      "7_DAYS",
+      "60_DAYS",
+      "1_MONTH",
+      "2_MONTHS",
+      "8_MONTHS"
+    ],
+    "mrigaDuration": {
+      "root": "60_DAYS",
+      "hindiCommentary": "2_MONTHS"
+    },
+    "notGenericEventDuration": true
+  },
+  "specialTimingDistinctions": {
+    "v160": "SOURCE_EXPLICIT_RESULT_TIMING_SCALE_NOT_PERSISTENCE",
+    "v343": "DEFERRED_FRUITION_ON_LATER_MOON_VEDHA_DAY_NO_FIXED_MAX_INTERVAL",
+    "v359": "CONDITION_PROGRESS_STRENGTH_ONLY_NO_POST_CONDITION_PERSISTENCE",
+    "prashna": "FORECAST_TIMING_NOT_PERSISTENCE",
+    "upagrahaV256V257": "TEN_DAY_OUTCOME_TIMING_NOT_LATTA_DURATION"
+  },
+  "engineeringImplications": {
+    "geometricEventIntervalV1": "ENGINEERING_MAPPING",
+    "durationToTemporalScaleHypothesisV1": "NOT_SOURCE_AUTHORIZED_GENERIC"
+  },
+  "unresolved": [
+    "V343_MAX_LATENT_INTERVAL_NOT_STATED",
+    "V343_POST_FRUITION_DURATION_NOT_STATED",
+    "GENERIC_NATIVE_VEDHA_POST_CONDITION_CARRYOVER_NOT_SOURCE_CLOSED_OUTSIDE_V343",
+    "GENERIC_LATTA_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "LATTA_NATAL_COMPOUND_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "JANMA_REFERENCE_POST_VEDHA_CARRYOVER_NOT_SOURCE_CLOSED",
+    "PRASHNA_RESULT_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "WAR_AFTERMATH_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "COUNTRY_PLACE_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "ARGHYA_V359_POST_CONDITION_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "ARGHYA_DRSTI_POST_CONDITION_PERSISTENCE_NOT_SOURCE_CLOSED",
+    "COMMODITY_FIXED_DURATION_EXACT_TIMESTAMP_START_CONVENTION_NOT_SOURCE_CLOSED",
+    "GENERIC_DURATION_TO_TEMPORAL_SCALE_MAPPING_NOT_SOURCE_AUTHORIZED"
+  ],
+  "guards": {
+    "sourceContractMutation": false,
+    "runtimeBehaviorChanged": false,
+    "fieldsChanged": false,
+    "candidateCChanged": false,
+    "emp3Changed": false,
+    "providerOutcomeAccess": false,
+    "mt5Changed": false,
+    "MARKET_DIRECTION": "WITHHELD",
+    "MARKET_MAGNITUDE": "WITHHELD",
+    "OSCILLATOR_AMPLITUDE": "WITHHELD",
+    "executionAllowed": false
+  }
+}
