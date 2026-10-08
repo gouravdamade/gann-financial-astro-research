@@ -1,7 +1,7 @@
 schemaVersion: TRAILOKYA_1972_GRAHA_LATTA_SOURCE_V1
 contractId: TRAILOKYA_1972_GRAHA_LATTA_SOURCE_V1
 milestone: PFR-V2B-R6-SBC-TD2R
-status: SOURCE_CLOSED_OFFSETS_WITH_UNRESOLVED_ORIGIN
+status: SOURCE_CLOSED_WITH_PROVENANCE_QUALIFIED_INCLUSIVE_ORIGIN
 source:
   sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
   sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
@@ -13,7 +13,32 @@ topology:
   abhijit: EXCLUDED
   geometry: FORWARD_BACKWARD_ORDINAL_ONLY
   notEquivalentTo: [LEFT_FRONT_RIGHT_VEDHA, TD1_SEMANTIC_EXPANSIONS]
-  countingOrigin: UNRESOLVED
+  countingOrigin: INCLUSIVE_OCCUPIED_STAR_IS_1
+  countingOriginProvenance:
+    decision: SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE
+    evidenceClass: TRAILOKYA_WORDING_PLUS_INDEPENDENT_WORKED_TRADITION_CORROBORATED
+    trailokya1972WorkedNamedStarFixture: NOT_PRESENT
+    sourceWording: FROM_OCCUPIED_OR_CURRENT_NAKSHATRA_POSITION
+    independentWorkedFixtures:
+      - {direction: FORWARD, fixture: SUN_AT_MULA_12TH_TO_KRITTIKA}
+      - {direction: BACKWARD, fixture: VENUS_AT_SHRAVANA_5TH_TO_JYESHTHA}
+      - {direction: FORWARD, fixture: SUN_AT_KRITTIKA_12TH_TO_CHITRA}
+    ordinalSemantics: OCCUPIED_STAR_COUNTS_AS_1
+    displacementSemantics: N_MINUS_1
+    runtimePromotionAuthorized: false
+applicability:
+  baseConstruction:
+    classification: EXPLICIT_TRANSIT_CURRENT
+    locator: {scanPage: 75, printedPage: 59, verses: '261-262', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    actorReference: CURRENT_PLANET_NAKSHATRA
+    natalRequired: false
+  natalCompounds:
+    classification: EXPLICIT_NATAL
+    locator: {scanPages: [76, 77], printedPages: [60, 61], verses: '266-274', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+    targetReference: JANMA_NAKSHATRA
+    natalRequired: true
+  inheritanceGuard: DO_NOT_PROPAGATE_JANMA_SEMANTICS_TO_BASE_LATTA
+
 offsets:
   locator: {scanPage: 75, printedPage: 59, verses: '261-262', layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
   SUN: {direction: FORWARD, offset: 12}
@@ -64,6 +89,9 @@ sunLattaOccupantTable:
   SATURN: LOSS_OF_GOLD_GEMS_LARGE_ANIMALS_WEALTH_AND_GRAIN
   RAHU: LOSS_OF_ALL
   KETU: WEAPON_FEAR
+  targetReference: JANMA_NAKSHATRA
+  applicability: EXPLICIT_NATAL
+  primaryRecheck: {libraryPdfPage: 77, printedPage: 61, verses: '271-274', decision: SOURCE_CORRECTION_ACCEPTED}
   sourceStatus: SOURCE_CLOSED_DESCRIPTIVE_ONLY
 upagrahaCompound:
   locator: {scanPage: 77, printedPage: 61, verse: 275, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
@@ -72,7 +100,6 @@ upagrahaCompound:
   RETROGRADE: DEATH
   sourceStatus: SOURCE_CLOSED_NAMED_COMPOUND_ONLY
 unresolved:
-  - TD1972_LATTA_COUNTING_ORIGIN_UNRESOLVED
   - TD1972_DIMINISHED_MOON_LATTA_NOT_ESTABLISHED
   - TD1972_LATTA_GENERAL_TARGET_CONSTRUCTION_NOT_IMPLEMENTED
 prohibitedUses: [RUNTIME_LATTA_TARGETING, SCORE, POLARITY, PRICE_FORECAST, AUTO_SUGGEST, ML, MT5, EXECUTION]
