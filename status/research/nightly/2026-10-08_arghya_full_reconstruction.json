@@ -1,0 +1,122 @@
+{
+  "gate": "ARGHYA_FULL_WORKED_CALCULATION_RECONSTRUCTION",
+  "date": "2026-10-08",
+  "status": "RESEARCH_ONLY",
+  "researchVerdict": "ARGHYA_NO_NEW_DISCRIMINATING_EVIDENCE",
+  "startingCommit": "1d70e26e133f1e63d1bd430897543c2ffed94377",
+  "finalCommit": "RECORDED_BY_THE_CONTAINING_GIT_COMMIT_AFTER_VALIDATION",
+  "plannedTaskAlreadyCompleteAtStart": false,
+  "packet": "docs/research/nightly/2026-10-08_arghya_full_worked_calculation_reconstruction.md",
+  "controllingSourceId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+  "controllingSourceSha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+  "witnessesInspected": [
+    {
+      "classification": "PRIMARY_1972_DIRECT",
+      "sourceId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+      "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+      "pageCoverage": {
+        "scanPdfPages": "92-112",
+        "printedPages": "76-96",
+        "verses": "345-423"
+      },
+      "originalImagesInspected": true
+    },
+    {
+      "classification": "SAME_LINEAGE_2016",
+      "sourceId": "TRAILOKYA_DIPIKA_VYAS_KHEMRAJ_2016_REPRINT",
+      "sha256": "19CC2387C6C6B80E9A1F5A63BB9A71090A10FB17F3BD8BB56058210667F61ED8",
+      "pageCoverage": {
+        "pdfPages": "77-86",
+        "printedPages": "67-76",
+        "verses": "344-376"
+      },
+      "originalImagesInspected": true
+    },
+    {
+      "classification": "SECONDARY_EXPOSITION",
+      "sourceId": "TRAILOKYA_ARGHYA_INDEPENDENT_WITNESS_AUDIT_20260723",
+      "freshDirectPageInspection": false,
+      "role": "INHERITED_BOUNDED_1951_SILVER_EXAMPLE_LIMITATION"
+    },
+    {
+      "classification": "MODERN_INTERPRETATION",
+      "sourceId": "HOWISYOURDAYTODAY_SBC_QUANTIFICATION_FAQ",
+      "freshDirectPageInspection": false,
+      "role": "BIBLIOGRAPHIC_LEAD_ONLY_NO_PRIMARY_PAGE_ACQUIRED"
+    }
+  ],
+  "sourcePageCoverage": {
+    "controllingArghyaPassage": {
+      "scanPdfPages": "92-103",
+      "printedPages": "76-87",
+      "verses": "345-378"
+    },
+    "adjacentCommodityMaterial": {
+      "scanPdfPages": "103-108",
+      "printedPages": "87-92",
+      "verses": "379-406"
+    },
+    "postLedgerDirectCheck": {
+      "scanPdfPages": "109-112",
+      "printedPages": "93-96",
+      "verses": "407-423",
+      "workedCalculationFound": false
+    }
+  },
+  "workedExamplesLocated": [
+    {
+      "id": "TD1972_V345_TO_V378",
+      "classification": "COMMENTARY_EXPLANATION_WITHOUT_ARITHMETIC",
+      "complete": false
+    },
+    {
+      "id": "TD1972_V379_TO_V406",
+      "classification": "COMPONENT_ONLY_EXAMPLE",
+      "complete": false
+    },
+    {
+      "id": "BOMBAY_SILVER_1951_INHERITED_AUDIT",
+      "classification": "PARTIAL_SOURCE_WORKED_EXAMPLE",
+      "complete": false,
+      "missing": "FULL_CANDIDATE_SELECTION_AND_FINAL_SCORE_TO_PRICE_WORKING"
+    }
+  ],
+  "workedExampleCompleteness": "FULL_SOURCE_WORKED_EXAMPLE_NOT_LOCATED",
+  "fourStrengthComponentsStatus": "SOURCE_CLOSED_AS_SEPARATE_COMPONENT_RECORDS",
+  "fourStrengthCombinationStatus": "NOT_SOURCE_CLOSED",
+  "rulerSelectionStatus": "SOURCE_EXPLICIT_GREATER_STRENGTH_REQUIREMENT_WITH_UNCLOSED_COMPARISON_FUNCTION",
+  "rulerTiePolicyStatus": "SOURCE_SILENT",
+  "astronomicalInputCompletenessStatus": "NOT_SOURCE_CLOSED",
+  "vakraUdayaTimestampStatus": "ASTRONOMICAL_BOUNDARY_CONVENTION_NOT_SOURCE_CLOSED",
+  "aspectGateStatus": "SOURCE_EXPLICIT_REQUIRED_ZODIACAL_ASPECT_WITH_INCOMPLETE_APPLIED_TRAVERSAL",
+  "simultaneousHitPrecedenceStatus": "NOT_SOURCE_CLOSED",
+  "viswaTableLiteralStatus": "SOURCE_CLOSED_LITERAL_VALUES_RETAINED_ANOMALIES_UNRESOLVED",
+  "netResidualStatus": "SOURCE_CLOSED_ARGHYA_ONLY",
+  "commodityBasisStatus": "SOURCE_CLOSED_HISTORICAL_AVAILABILITY_BASIS_ONLY",
+  "completeOperatorStatus": "NOT_SOURCE_CLOSED",
+  "td3rArghaSourceCalculatorReady": false,
+  "remainingUnknowns": [
+    "FOUR_STRENGTH_COMBINATION_FUNCTION",
+    "CANDIDATE_RULER_TIE_POLICY",
+    "VAKRA_UDAYA_ASTRONOMICAL_BOUNDARY_PROVIDER",
+    "UCCHA_AND_KSHETRA_APPLIED_ASTRONOMICAL_INPUT_BINDING",
+    "COMPLETE_ARGHYA_VEDHA_TRAVERSAL_AND_ADMISSION_CONTRACT",
+    "SIMULTANEOUS_HIT_AGGREGATION_PRECEDENCE_AND_CANCELLATION",
+    "COMPLETE_PRIMARY_OR_NEAR_PRIMARY_WORKED_CALCULATION",
+    "HISTORICAL_COMMODITY_BASIS_TO_MODERN_FINANCIAL_INSTRUMENT_BRIDGE"
+  ],
+  "proposedSourceContractCorrection": null,
+  "nextResearchGate": {
+    "id": "ARGHYA_HISTORICAL_WORKED_EXAMPLE_PRIMARY_PAGE_ACQUISITION",
+    "scope": "Acquire an edition-identified original or near-primary worked case with page-visible inputs and arithmetic from ruler selection through twenty-part commodity basis.",
+    "priorityLead": "MISSING_FINAL_CALCULATION_LEAF_FOR_THE_DATED_1951_BOMBAY_SILVER_SEQUENCE",
+    "runtimeOrContractMutationAuthorized": false
+  },
+  "sourceContractsChanged": false,
+  "runtimeBehaviorChanged": false,
+  "marketDirectionAuthorized": false,
+  "marketMagnitudeAuthorized": false,
+  "oscillatorAmplitudeAuthorized": false,
+  "providerOutcomeAccess": false,
+  "executionAllowed": false
+}
