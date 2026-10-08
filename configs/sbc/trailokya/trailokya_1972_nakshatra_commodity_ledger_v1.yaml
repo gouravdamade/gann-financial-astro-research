@@ -36,6 +36,17 @@ entries:
   - {verse: 404, nakshatra: REVATI, literalCommodityGroup: 'coconut; betel nut; pearls and gems; uncertain grocery term; kirana goods', direction: WEST, duration: '1_MONTH', sourceResultClass: FAVOURABLE_SOURCE_DESCRIPTION, locator: {scanPage: 108, printedPage: 92}}
   - {verse: 405, nakshatra: ASHVINI, literalCommodityGroup: 'rice; grain products; mules; camels; ghee; grains; cloth', direction: NORTH, duration: '2_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 108, printedPage: 92}}
   - {verse: 406, nakshatra: BHARANI, literalCommodityGroup: 'coarse grains; yugandhari; pepper; medicines', direction: SOUTH, duration: '8_MONTHS', sourceResultClass: ADVERSE_AFFLICTIVE, locator: {scanPage: 108, printedPage: 92}}
+durationSemantics:
+  decision: SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE
+  durationOwner: DIRECTIONAL_COMMODITY_RESULT_AFTER_NAMED_NAKSHATRA_VEDHA
+  genericEventDuration: NOT_AUTHORIZED
+  astronomicalResidenceDurationEquivalent: false
+  mrigaDuration:
+    rootLiteral: 60_DAYS
+    hindiCommentaryGloss: 2_MONTHS
+    normalizationPolicy: PRESERVE_ROOT_LITERAL_DO_NOT_NORMALIZE_TO_MONTHS
+  controllingPages: {scanPages: [103, 104, 105, 106, 107, 108], printedPages: [87, 88, 89, 90, 91, 92], verses: '379-406'}
+  runtimePromotionAuthorized: false
 normalizationPolicy: PRESERVE_ARCHAIC_COMMODITY_IDENTITY_NO_MODERN_INSTRUMENT_MAPPING
 prohibitedUses: [MARKET_MAPPING, FX_MAPPING, POLARITY, SCORE, PRICE_FORECAST, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
 runtimeBehaviorChanged: false
