@@ -1,0 +1,75 @@
+schemaVersion: TRAILOKYA_1972_ACCUMULATED_SOURCE_CORRECTION_REVIEW_V1
+gate: TRAILOKYA_1972_ACCUMULATED_SOURCE_CORRECTION_REVIEW
+status: SOURCE_CONTRACT_REVIEW_COMPLETE
+baseline: a6d19499ee539373b9b9d98efb1a9657864534d6
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+items:
+  A_ATICARA_JUPITER_LITERAL:
+    decision: SOURCE_CORRECTION_ACCEPTED
+    before: '14|14'
+    after: '14|4'
+    locator: {repositoryScanPage: 36, libraryPdfPage: 35, printedPage: 19, verse: 77}
+    correctionScope: LITERAL_SOURCE_VALUE_ONLY
+    preserved:
+      unitInterpretation: SOURCE_UNRESOLVED
+      continuousSwiftMeanThreshold: NOT_SOURCE_CLOSED
+      stationaryState: SOURCE_SILENT_UNRESOLVED
+  B_LATTA_COUNTING_ORIGIN:
+    decision: SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE
+    value: INCLUSIVE_OCCUPIED_STAR_IS_1
+    provenance: TRAILOKYA_WORDING_PLUS_INDEPENDENT_WORKED_TRADITION_CORROBORATED
+    trailokya1972WorkedNamedStarFixture: NOT_PRESENT
+    domain: {count: 27, abhijit: EXCLUDED}
+  C_LATTA_APPLICABILITY:
+    decision: SOURCE_CORRECTION_ACCEPTED
+    baseConstruction: EXPLICIT_TRANSIT_CURRENT
+    compoundsV266ToV274: EXPLICIT_NATAL
+    primaryRecheck: {libraryPdfPages: [75, 76, 77], printedPages: [59, 60, 61], verses: '261-274'}
+    guards:
+      propagateJanmaBackwardIntoBase: false
+      diminishedMoonLattaInferred: false
+  D_VEDHA_RESULT_RIPENING_V343:
+    decision: SOURCE_CORRECTION_ACCEPTED
+    contract: configs/sbc/trailokya/trailokya_1972_vedha_result_ripening_v1.yaml
+    locator: {libraryPdfPages: [91, 92], printedPages: [75, 76], verse: 343}
+    semantics:
+      priorVedhaEstablishesResult: true
+      laterMoonVedhaSameIdentityTriggersFruition: true
+      fruitionDay: MOON_VEDHA_DAY
+      maximumLatentInterval: NOT_STATED
+      continuousEfficacyWhileWaiting: NOT_STATED
+      postFruitionDuration: NOT_STATED
+  E_COMMODITY_DURATIONS:
+    decision: SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE
+    valuesRewritten: false
+    durationOwner: DIRECTIONAL_COMMODITY_RESULT_AFTER_NAMED_NAKSHATRA_VEDHA
+    genericEventDuration: NOT_AUTHORIZED
+    mriga:
+      root: 60_DAYS
+      hindiCommentaryGloss: 2_MONTHS
+      normalizeRootToTwoMonths: false
+  F_TEMPORAL_NON_INHERITANCE:
+    decision: SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE
+    preserve:
+      GEOMETRIC_EVENT_INTERVAL_V1: ENGINEERING_MAPPING
+      APPLICATION_EXACT_SEPARATION_EFFICACY_V1: SOURCE_SILENT_GENERICALLY
+      TRAILOKYA_PERSISTENCE_DURATION: FAMILY_SPECIFIC_ONLY
+      DURATION_TO_TEMPORAL_SCALE_HYPOTHESIS_V1: NOT_SOURCE_AUTHORIZED_GENERIC
+    prohibitedDerivations: [DECAY, HALF_LIFE, SMOOTHING, WAVE_PERIOD, TEMPORAL_NORMALIZATION, REPEATED_HIT_AMPLIFICATION, NESTED_WAVE_INHERITANCE]
+scopeLocks:
+  runtimePromotion: false
+  scoring: false
+  polarity: false
+  fieldsChange: false
+  candidateC: false
+  emp3: false
+  providerOutcomeAccess: false
+  mt5: false
+  marketMapping: false
+  executionAllowed: false
+nextGate:
+  id: ARGHYA_FULL_WORKED_CALCULATION_RECONSTRUCTION
+  status: NOT_STARTED_BY_THIS_REVIEW
