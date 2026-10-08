@@ -126,14 +126,33 @@ def test_contexts_are_explicitly_scoped_and_not_a_generic_resolver() -> None:
     assert "TD1972_CONTEXT_RULES_ARE_NOT_A_GENERIC_RESOLVER" in context["unresolved"]
 
 
-def test_latta_offsets_are_27_star_ordinal_rules_without_an_invented_origin() -> None:
+def test_latta_offsets_use_admitted_inclusive_origin_with_scoped_applicability() -> None:
     latta = _load("trailokya_1972_graha_latta_v1.yaml")
-    assert latta["topology"] == {
-        "eventType": "LATTA", "nakshatras": "ASHVINI_THROUGH_REVATI", "count": 27,
-        "abhijit": "EXCLUDED", "geometry": "FORWARD_BACKWARD_ORDINAL_ONLY",
-        "notEquivalentTo": ["LEFT_FRONT_RIGHT_VEDHA", "TD1_SEMANTIC_EXPANSIONS"],
-        "countingOrigin": "UNRESOLVED",
+    topology = latta["topology"]
+    assert topology["eventType"] == "LATTA"
+    assert topology["nakshatras"] == "ASHVINI_THROUGH_REVATI"
+    assert topology["count"] == 27
+    assert topology["abhijit"] == "EXCLUDED"
+    assert topology["geometry"] == "FORWARD_BACKWARD_ORDINAL_ONLY"
+    assert topology["countingOrigin"] == "INCLUSIVE_OCCUPIED_STAR_IS_1"
+    provenance = topology["countingOriginProvenance"]
+    assert provenance["decision"] == "SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE"
+    assert provenance["evidenceClass"] == "TRAILOKYA_WORDING_PLUS_INDEPENDENT_WORKED_TRADITION_CORROBORATED"
+    assert provenance["trailokya1972WorkedNamedStarFixture"] == "NOT_PRESENT"
+    assert provenance["ordinalSemantics"] == "OCCUPIED_STAR_COUNTS_AS_1"
+    assert provenance["displacementSemantics"] == "N_MINUS_1"
+    assert provenance["runtimePromotionAuthorized"] is False
+
+    assert latta["applicability"]["baseConstruction"] == {
+        "classification": "EXPLICIT_TRANSIT_CURRENT",
+        "locator": {"scanPage": 75, "printedPage": 59, "verses": "261-262", "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY"},
+        "actorReference": "CURRENT_PLANET_NAKSHATRA",
+        "natalRequired": False,
     }
+    assert latta["applicability"]["natalCompounds"]["classification"] == "EXPLICIT_NATAL"
+    assert latta["applicability"]["natalCompounds"]["targetReference"] == "JANMA_NAKSHATRA"
+    assert latta["applicability"]["inheritanceGuard"] == "DO_NOT_PROPAGATE_JANMA_SEMANTICS_TO_BASE_LATTA"
+
     assert latta["offsets"] == {
         "locator": {"scanPage": 75, "printedPage": 59, "verses": "261-262", "layer": "ROOT_VERSE_AND_HINDI_COMMENTARY"},
         "SUN": {"direction": "FORWARD", "offset": 12},
@@ -147,9 +166,10 @@ def test_latta_offsets_are_27_star_ordinal_rules_without_an_invented_origin() ->
         "FULL_MOON": {"direction": "BACKWARD", "offset": 22},
         "sourceStatus": "SOURCE_CLOSED",
     }
+    assert latta["sunLattaOccupantTable"]["targetReference"] == "JANMA_NAKSHATRA"
+    assert latta["sunLattaOccupantTable"]["applicability"] == "EXPLICIT_NATAL"
     assert latta["moonQualification"]["diminishedMoon"] == "NOT_ESTABLISHED_IN_HELD_LATTA_PASSAGE"
-    assert "TD1972_LATTA_COUNTING_ORIGIN_UNRESOLVED" in latta["unresolved"]
-
+    assert "TD1972_LATTA_COUNTING_ORIGIN_UNRESOLVED" not in latta["unresolved"]
 
 def test_latta_outcomes_are_descriptive_and_the_upagraha_case_is_named_only() -> None:
     latta = _load("trailokya_1972_graha_latta_v1.yaml")
@@ -167,6 +187,7 @@ def test_td2_readiness_preserves_all_fail_closed_boundaries() -> None:
     assert readiness["TD1972_VEDHA_MAGNITUDE_SOURCE_CONTRACT_TRUSTED"] is True
     assert readiness["TD1972_CONTEXT_RESOLUTION_SOURCE_CONTRACT_TRUSTED"] is True
     assert readiness["TD1972_GRAHA_LATTA_SOURCE_CONTRACT_TRUSTED"] is True
+    assert readiness["TD1972_LATTA_COUNTING_ORIGIN"] == "INCLUSIVE_OCCUPIED_STAR_IS_1_PROVENANCE_QUALIFIED"
     assert readiness["TD1972_RUNTIME_PROMOTION"] == "NOT_AUTHORIZED"
     assert readiness["TD1972_EXECUTION_ALLOWED"] is False
     assert readiness["readyForTD3ArghyaWorkedReconstruction"] is False
@@ -175,6 +196,6 @@ def test_td2_readiness_preserves_all_fail_closed_boundaries() -> None:
 def test_td2_audit_says_no_runtime_or_market_capability_was_added() -> None:
     audit = _load("trailokya_1972_td2_source_audit_v1.yaml")
     assert audit["auditedPassages"]["magnitude"]["status"] == "SOURCE_CLOSED"
-    assert audit["auditedPassages"]["latta"]["status"] == "SOURCE_CLOSED_WITH_UNRESOLVED_COUNTING_ORIGIN"
+    assert audit["auditedPassages"]["latta"]["status"] == "SOURCE_CLOSED_WITH_PROVENANCE_QUALIFIED_INCLUSIVE_ORIGIN"
     assert all(value is False for value in audit["locks"].values())
     assert "TD2_20_15_10_5_VEDHA_PHALA_MUST_NOT_BE_MERGED_WITH_LATER_ARGHYA_VISWA_OR_VIMSOPAKA" in audit["nonMergeRules"]
