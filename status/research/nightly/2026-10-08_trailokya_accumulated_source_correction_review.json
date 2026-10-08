@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-08",
+  "gate": "TRAILOKYA_1972_ACCUMULATED_SOURCE_CORRECTION_REVIEW",
+  "status": "SOURCE_CONTRACT_REVIEW_COMPLETE",
+  "baseline": "a6d19499ee539373b9b9d98efb1a9657864534d6",
+  "decisions": {
+    "A_ATICARA_JUPITER_LITERAL": "SOURCE_CORRECTION_ACCEPTED",
+    "B_LATTA_COUNTING_ORIGIN": "SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE",
+    "C_LATTA_APPLICABILITY": "SOURCE_CORRECTION_ACCEPTED",
+    "D_VEDHA_RESULT_RIPENING_V343": "SOURCE_CORRECTION_ACCEPTED",
+    "E_COMMODITY_DURATIONS": "SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE",
+    "F_TEMPORAL_NON_INHERITANCE": "SOURCE_CORRECTION_ACCEPTED_WITH_PROVENANCE_NOTE"
+  },
+  "corrected": {
+    "jupiterAticaraLiteral": "14|4",
+    "lattaCountingOrigin": "INCLUSIVE_OCCUPIED_STAR_IS_1",
+    "lattaBaseApplicability": "EXPLICIT_TRANSIT_CURRENT",
+    "lattaNatalCompounds": "EXPLICIT_NATAL",
+    "vedhaResultRipeningV343": "SOURCE_EXPLICIT_POST_TRIGGER_PERSISTENCE_CONDITIONAL_ON_LATER_MOON_VEDHA",
+    "commodityDurationOwner": "DIRECTIONAL_COMMODITY_RESULT_AFTER_NAMED_NAKSHATRA_VEDHA"
+  },
+  "preserved": {
+    "aticaraUnitInterpretation": "SOURCE_UNRESOLVED",
+    "continuousSwiftMeanThreshold": "NOT_SOURCE_CLOSED",
+    "stationaryState": "SOURCE_SILENT_UNRESOLVED",
+    "diminishedMoonLatta": "NOT_ESTABLISHED",
+    "geometricEventIntervalV1": "ENGINEERING_MAPPING",
+    "applicationExactSeparationEfficacyV1": "SOURCE_SILENT_GENERICALLY",
+    "trailokyaPersistenceDuration": "FAMILY_SPECIFIC_ONLY",
+    "durationToTemporalScaleHypothesisV1": "NOT_SOURCE_AUTHORIZED_GENERIC"
+  },
+  "nextGate": {
+    "id": "ARGHYA_FULL_WORKED_CALCULATION_RECONSTRUCTION",
+    "started": false
+  },
+  "runtimeBehaviorChanged": false,
+  "executionAllowed": false
+}
