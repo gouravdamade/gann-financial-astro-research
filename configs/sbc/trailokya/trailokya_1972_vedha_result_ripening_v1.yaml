@@ -1,0 +1,32 @@
+schemaVersion: TRAILOKYA_1972_VEDHA_RESULT_RIPENING_V1
+contractId: TRAILOKYA_1972_VEDHA_RESULT_RIPENING_V1
+status: SOURCE_CLOSED_SCOPED_ONLY
+source:
+  sourceId: TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN
+  sha256: 1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194
+  citationAuthority: ORIGINAL_1972_PAGE_IMAGE_ONLY
+rule:
+  id: TD1972_V343_LATER_MOON_VEDHA_FRUITION
+  locator: {scanPages: [91, 92], printedPages: [75, 76], verse: 343, layer: ROOT_VERSE_AND_HINDI_COMMENTARY}
+  classification: SOURCE_EXPLICIT_POST_TRIGGER_PERSISTENCE
+  initialTrigger:
+    event: PRIOR_VEDHA
+    targetDomain: [TITHI, NAKSHATRA, VOWEL, RASHI, AKSHARA]
+    establishes: PRIOR_AUSPICIOUS_OR_ADVERSE_VEDHA_RESULT
+  fruitionTrigger:
+    event: LATER_MOON_VEDHA
+    identityConstraint: SAME_FIVEFOLD_SBC_IDENTITY_AS_PRIOR_VEDHA
+    fruitionTime: THAT_MOON_VEDHA_DAY
+  maximumLatentInterval: NOT_STATED
+  continuousEfficacyWhileWaiting: NOT_STATED
+  postFruitionDuration: NOT_STATED
+  fixedDuration: NOT_AUTHORIZED
+  applyingExactSeparatingKernel: NOT_AUTHORIZED
+  sourceStatus: SOURCE_CLOSED_SCOPED_ONLY
+nonInheritance:
+  genericVedhaFixedDuration: NOT_SOURCE_CLOSED
+  genericEventIntervalMapping: NOT_AUTHORIZED
+  durationToTemporalScaleMapping: NOT_AUTHORIZED
+prohibitedUses: [DECAY, HALF_LIFE, SMOOTHING, WAVE_PERIOD, TEMPORAL_NORMALIZATION, REPEATED_HIT_AMPLIFICATION, NESTED_WAVE_INHERITANCE, MARKET_MAPPING, SCORE, POLARITY, FIELDS_POLARITY, AUTO_SUGGEST, ML, MT5, EXECUTION]
+runtimeBehaviorChanged: false
+executionAllowed: false
