@@ -43,10 +43,17 @@ aticara:
   literalMaximumMotionValues:
     MARS: '46|11'
     MERCURY: '113|32'
-    JUPITER: '14|14'
+    JUPITER: '14|4'
     VENUS: '75|42'
     SATURN: '7|45'
   unitInterpretation: SOURCE_UNRESOLVED
+  correctionProvenance:
+    reviewGate: TRAILOKYA_1972_ACCUMULATED_SOURCE_CORRECTION_REVIEW
+    decision: SOURCE_CORRECTION_ACCEPTED
+    controllingRecheck: {libraryPdfPage: 35, printedPage: 19, verse: 77, literal: '14|4'}
+    previousLiteral: '14|14'
+    correctionScope: LITERAL_SOURCE_VALUE_ONLY
+    unitInferenceAuthorized: false
   sourceStatus: SOURCE_CLOSED_LITERAL_VALUES_UNIT_PENDING
   twoPassAudit: DIRECT_AGREEMENT
 exactMotionBoundaries:
