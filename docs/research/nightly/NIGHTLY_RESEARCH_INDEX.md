@@ -25,6 +25,8 @@ This index records isolated overnight evidence work. Entries are non-production 
 
 | 2026-10-08 | Trailokya exact-speed / stationary closure revalidation | UNRESOLVED / RESEARCH_ONLY; BOUNDED STOP | `2026-10-08_trailokya-exact-speed-stationary-closure.md` | `TRAILOKYA_EXACT_SPEED_THRESHOLD=NOT_SOURCE_CLOSED`; `TRAILOKYA_STATIONARY_STATE=SOURCE_SILENT_OR_EXTERNALLY_DELEGATED`; stricter source-only unit verdict `TRAILOKYA_ATICARA_UNIT=UNKNOWN_AFTER_BOUNDED_REVIEW`. Literal 1972 image values retained as 46|11, 113|32, **14|4**, 75|42, 7|45; Jupiter 14|4 remains a separate human-review correction. 2016 TD1-D location pp.23-27 corroborates Aticara concept but does not source-close unit/stationary/threshold. Modern ephemeris mapping requires a separate human-reviewed research profile. |
 
+| 2026-10-08 | Trailokya accumulated source-correction review | SOURCE-CONTRACT REVIEW COMPLETE; NO RUNTIME PROMOTION | `../../sbc/TRAILOKYA_1972_ACCUMULATED_SOURCE_CORRECTION_REVIEW.md` | A `14|4` accepted literal-only; B inclusive Latta origin accepted with explicit independent-fixture provenance; C base Latta current vs vv.266-274 natal accepted; D v.343 later-Moon same-identity fruition source-record admitted; E commodity duration-owner provenance added without changing durations; F temporal non-inheritance preserved. Next separate gate: `ARGHYA_FULL_WORKED_CALCULATION_RECONSTRUCTION` (not started). |
+
 ## Locks
 
 Nightly research does not itself authorize production operators, polarity admission, scoring, Candidate C/EMP3, provider/outcome access, MT5, Auto Suggest, ML, or execution.
