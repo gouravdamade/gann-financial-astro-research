@@ -97,6 +97,16 @@ def test_sthula_motion_is_closed_only_at_source_granularity() -> None:
     asta = motion["marsJupiterSaturnRelativeSun"]["relativeSignCases"]["SAME_SIGN_OR_COMBUST"]
     assert asta["astronomicalVisibilityState"] == "ASTA"
     assert asta["vedhaDirection"] == "UNKNOWN_NOT_SOURCE_ESTABLISHED"
+    assert motion["aticara"]["literalMaximumMotionValues"] == {
+        "MARS": "46|11",
+        "MERCURY": "113|32",
+        "JUPITER": "14|4",
+        "VENUS": "75|42",
+        "SATURN": "7|45",
+    }
+    assert motion["aticara"]["unitInterpretation"] == "SOURCE_UNRESOLVED"
+    assert motion["aticara"]["correctionProvenance"]["correctionScope"] == "LITERAL_SOURCE_VALUE_ONLY"
+    assert motion["aticara"]["correctionProvenance"]["unitInferenceAuthorized"] is False
     assert motion["exactMotionBoundaries"] == {
         "continuousSwiftMeanThreshold": "NOT_SOURCE_CLOSED",
         "stationaryState": "SOURCE_SILENT_UNRESOLVED",
