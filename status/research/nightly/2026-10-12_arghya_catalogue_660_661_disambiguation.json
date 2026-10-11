@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-12",
+  "gate": "ARGHYA_1951_TITLE_WRAPPER_AND_CONTIGUOUS_LEAF_ACQUISITION",
+  "status": "RESEARCH_ONLY",
+  "verdict": "ARGHYA_EDITION_IDENTITY_NOT_CLOSED",
+  "verifiedLiveBaseline": "6aa563b22eb4b342595dd4f0e8d594e84bf5b157",
+  "packet": "docs/research/nightly/2026-10-12_arghya_catalogue_660_661_disambiguation.md",
+  "catalogueNo660": "SARVATOBHADRA_TEXT_AND_COMMENTARY_BIBLIOGRAPHIC_ONLY",
+  "catalogueNo661": "FIFTH_CHAPTER_BALABALA_NOT_PROVEN_ARGHAKAND",
+  "cataloguePageImageVerified": false,
+  "newPrimarySourceAcquired": false,
+  "editionIdentified": false,
+  "completeWorkedCalculationLocated": false,
+  "td3rArghaSourceCalculatorReady": false,
+  "exactSpeedThreshold": "NOT_SOURCE_CLOSED",
+  "stationaryState": "SOURCE_SILENT_OR_EXTERNALLY_DELEGATED",
+  "aticaraUnit": "UNKNOWN_AFTER_BOUNDED_REVIEW",
+  "nextGate": "ARGHYA_1951_TITLE_WRAPPER_AND_CONTIGUOUS_LEAF_ACQUISITION",
+  "executionAllowed": false
+}
