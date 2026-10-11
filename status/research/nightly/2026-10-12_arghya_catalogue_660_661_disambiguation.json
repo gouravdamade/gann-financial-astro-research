@@ -16,5 +16,19 @@
   "stationaryState": "SOURCE_SILENT_OR_EXTERNALLY_DELEGATED",
   "aticaraUnit": "UNKNOWN_AFTER_BOUNDED_REVIEW",
   "nextGate": "ARGHYA_1951_TITLE_WRAPPER_AND_CONTIGUOUS_LEAF_ACQUISITION",
-  "executionAllowed": false
+  "executionAllowed": false,
+  "sourceContractsChanged": false,
+  "runtimeBehaviorChanged": false,
+  "productionOperatorsChanged": false,
+  "scoringChanged": false,
+  "polarityChanged": false,
+  "fieldsChanged": false,
+  "candidateCChanged": false,
+  "emp3Changed": false,
+  "providerOutcomeAccess": false,
+  "mt5Changed": false,
+  "executionChanged": false,
+  "marketDirection": "WITHHELD",
+  "marketMagnitude": "WITHHELD",
+  "oscillatorAmplitude": "WITHHELD"
 }
