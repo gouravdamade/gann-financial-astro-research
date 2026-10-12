@@ -30,6 +30,7 @@ This index records isolated overnight evidence work. Entries are non-production 
 | 2026-10-08 | Arghya historical worked-example primary-page acquisition | RESEARCH_ONLY; PARTIAL_HISTORICAL_WORKED_LEAVES_CONFIRMED_NO_COMPLETE_OPERATOR | `2026-10-08_arghya_historical_worked_example_acquisition.md` | Seven private Bombay silver leaves, printed pp.61-67, were hash-authenticated and directly inspected. They show partial historical calculation material but no edition identity, full chain, or score-to-price conversion. Public Evernote access did not yield the linked notes; its FAQ remains a secondary lead. Next: ARGHYA_EDITION_IDENTIFICATION_AND_MISSING_LEAF_ACQUISITION. |
 
 | 2026-10-12 | Arghya catalogue entry disambiguation (Nos. 660 and 661) | RESEARCH_ONLY; EDITION UNKNOWN | `2026-10-12_arghya_catalogue_660_661_disambiguation.md` | Catalogue pp.119-121 distinguish No. 660 Sarvatobhadra text/commentary from No. 661 Balabala fifth chapter; neither identifies 1951 silver worksheets. Next: edition wrapper and contiguous leaves. |
+| 2026-10-13 | Arghya complete-manuscript catalogue leads | RESEARCH_ONLY; EDITION UNKNOWN | `2026-10-13_arghya_complete_manuscript_catalogue_leads.md` | BORI catalogue Nos. 664 and 665 are labelled complete (viewer pp.124-126, printed pp.113-115), but neither is verified to contain Arghakand or the 1951 silver pages. No original page image, edition wrapper, or calculation continuation acquired. Next: edition wrapper and contiguous leaves. |
 
 ## Locks
 
