@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-13",
+  "gate": "ARGHYA_1951_TITLE_WRAPPER_AND_CONTIGUOUS_LEAF_ACQUISITION",
+  "status": "RESEARCH_ONLY",
+  "disposition": "UNRESOLVED",
+  "verdict": "ARGHYA_1951_EDITION_IDENTITY_NOT_CLOSED",
+  "verifiedLiveBaseline": "8cc86283447eb2b05512f5812015023681f4c79d",
+  "packet": "docs/research/nightly/2026-10-13_arghya_complete_manuscript_catalogue_leads.md",
+  "catalogueWitnesses": [
+    {
+      "number": 664,
+      "viewerPages": [
+        124
+      ],
+      "printedPages": [
+        113
+      ],
+      "extentLeaves": 104,
+      "describedComplete": true,
+      "sourceClass": "SECONDARY_CATALOGUE_TEXT",
+      "pageImageVerified": false,
+      "arghakandVerified": false
+    },
+    {
+      "number": 665,
+      "viewerPages": [
+        125,
+        126
+      ],
+      "printedPages": [
+        114,
+        115
+      ],
+      "extentLeaves": 154,
+      "describedComplete": true,
+      "sourceClass": "SECONDARY_CATALOGUE_TEXT",
+      "pageImageVerified": false,
+      "arghakandVerified": false
+    }
+  ],
+  "newPrimarySourceAcquired": false,
+  "editionIdentified": false,
+  "contiguousCalculationAcquired": false,
+  "completeWorkedCalculationLocated": false,
+  "fourStrengthCompositionClosed": false,
+  "scoreToPriceConversionClosed": false,
+  "td3rArghaSourceCalculatorReady": false,
+  "mathematicalAdjudication": "NOT_PERMITTED_INCOMPLETE_SOURCE_CHAIN",
+  "td1PagesReinspected": false,
+  "exactSpeedThreshold": "NOT_SOURCE_CLOSED",
+  "stationaryState": "SOURCE_SILENT_OR_EXTERNALLY_DELEGATED",
+  "aticaraUnit": "UNKNOWN_AFTER_BOUNDED_REVIEW",
+  "nextGate": "ARGHYA_1951_TITLE_WRAPPER_AND_CONTIGUOUS_LEAF_ACQUISITION",
+  "sourceContractsChanged": false,
+  "runtimeBehaviorChanged": false,
+  "productionOperatorsChanged": false,
+  "scoringChanged": false,
+  "polarityChanged": false,
+  "fieldsChanged": false,
+  "candidateCChanged": false,
+  "emp3Changed": false,
+  "providerOutcomeAccess": false,
+  "mt5Changed": false,
+  "autoSuggestChanged": false,
+  "mlChanged": false,
+  "executionChanged": false,
+  "marketDirection": "WITHHELD",
+  "marketMagnitude": "WITHHELD",
+  "oscillatorAmplitude": "WITHHELD",
+  "executionAllowed": false
+}
