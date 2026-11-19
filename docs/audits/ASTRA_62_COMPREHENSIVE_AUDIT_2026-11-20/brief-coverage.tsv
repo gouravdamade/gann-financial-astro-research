@@ -1,0 +1,95 @@
+﻿brief_item	subject	report	coverage	evidence_boundary
+1	Build a chronological project history	02	Partial	Earliest reachable May commit through November working files. Incomplete unnumbered exports.
+2	Identify original objectives	02,11	Partial	Source and founder vision reconstructed from records. Earliest private conception uncertain.
+3	Detect forgotten requirements	03,13	Partial	Topic index and unresolved-doctrine lists. Missing attachment contents prevent completeness.
+4	Identify superseded conclusions	12	Examined	Seven vs ten populations, old state, source and product revisions adjudicated.
+5	Distinguish reports from implementation	04	Examined	Service executed, native screenshot inspected, R7A implementation absent at declared milestone.
+6	Reconstruct the dependency history	02,17	Examined	Astronomy-to-geometry-to-sampler and textual-rule-to-effect dependencies traced.
+7	Audit completeness of uploaded conversations	03	Examined	Nine file identities and extraction audit. Unrecoverable images and counts identified.
+8	Repository inventory	04	Partial	Published tree and key local components inventoried. No file-by-file semantic certification.
+9	Branch and worktree analysis	04	Partial	All advertised heads and worktree registrations listed. Dirty feature and sibling checked. Other dirty trees not individually adjudicated.
+10	Detect duplicated functionality	16	Partial	Repeated vector computation and ephemeris caller families examined. Code clone coverage incomplete.
+11	Identify abandoned implementations	04,13	Partial	Legacy research and frozen branches identified. No whole-program dead-code proof.
+12	Review architectural complexity	16	Examined	Duplicate sample traversal and differing provenance contracts demonstrated.
+13	Swiss Ephemeris configuration	06	Examined	Modes, requested and effective flags, path and hashes checked. Full native caller migration open.
+14	R7A/R7B provenance discrepancy	06,12	Examined	Same UTC reproduced under distinct modes. Frozen feature impact independently tested.
+15	Independent astronomical reference	06	Examined	Three external Horizons comparisons at one epoch. No global precision claim.
+16	Time standards	06,15	Partial	1,076 candidate call sites captured. Key conversions checked. Historical Delta T and leap-second audit incomplete.
+17	Coordinate systems	06	Partial	Working phase and JPL frames inspected. No comprehensive topocentric/heliocentric audit.
+18	Planetary populations	05,06	Examined	Membership, excluded nodes, Ketu antipode and subset/order checked.
+19	Ephemeris numerical precision	06	Partial	External residuals and provider sensitivity quantified at benchmark epoch. More bodies/epochs needed.
+20	Natal reference data	06	Examined	UTC and assigned local coordinates traced. Absence of an established exact event time is retained.
+21	Review the complete mathematical architecture	05,09	Partial	Principal numerical constructions and units covered. No claim to enumerate every historical proposal.
+22	Seven-body experimental geometry	05,15	Examined	Independent derivation, full 2022–24 reference reproduction and bounds.
+23	Factorization	05	Examined	Factorization, rank, sufficiency and explicit information-loss counterexample.
+24	Ten-body collective geometry	05,13,15	Examined	R1/R2 and thresholds read. Real API fixture returned unstable headings.
+25	Ten-by-seven currency projection	05,15	Examined	70-term oracle, seed tests, real projection service equality.
+26	USD-minus-JPY resultant	05	Examined	Pair bound, swap, rotation, sign, zero crossing and chosen natal axes.
+27	Individual planetary contributions	09	Examined	Labelled terms reconstruct D and expose attribution lost in the mean.
+28	Circular mathematics	05,09,11	Examined	Wrapping, axial angles, missingness, near-zero and segmented unwrapping.
+29	Frequency and temporal behavior	09	Partial	Temporal alternatives compared. No periodogram of all product outputs.
+30	Sampling and aliasing	09,11	Partial	Cadence and gap criteria derived. No measured spectral bandwidth for every quantity.
+31	Mathematical alternatives	09	Examined	Alternatives distinguished by new information, time context or reparameterization.
+32	Primary-source hierarchy	07,14	Partial	Selected images and source layers compared. Complete witness collation open.
+33	BPHS	07,14	Partial	1899 timing page inspected. Cross-recension strength passages not fully collated.
+34	Raman	07	Examined	Held printed tables and 1935 D30 rule compared. Later edition unresolved.
+35	Śrīpati	07,14	Partial	Sastri translation ch. II p.15 inspected. Full branch and variant adjudication unfinished.
+36	Saptavargaja Bala	07,15	Examined	All 49 conditional scores reproduced independently. D30 sensitivity separately checked.
+37	Sun Sthāna Bala	07	Examined	Exact Uccha and conditional total, with scope by component.
+38	Dṛk Bala	07	Partial	35 residuals reconstructed from witness CSV. No independently closed per-aspector chain.
+39	Raman's numerical anomalies	07,12	Examined	Seven sums, exact strengths and printed anomalies preserved.
+40	Motion and Ceṣṭā Bala	07,13	Partial	Defined astronomical sign vs source-bound motion states. Full Cesta sources unresolved.
+41	Trailokya research	07,13,14	Partial	1972 exact literal verified; nightly correction and scoped later-Moon rule identified. Modifier precedence open.
+42	Classical-source temporal semantics	07,13	Partial	Distinguish sample, condition, later trigger and commodity duration. Complete operator inventory unfinished.
+43	Source-defined planetary influence	07,09	Partial	No primary authorization identified for modern projected currency influence. Universal negative not claimed.
+44	Classical-to-modern compatibility	06,07	Partial	Profile and mixed-epoch context gaps traced. No comprehensive calibration of all classical quantities.
+45	Missing classical sources	14	Examined	Witness-specific acquisition priorities and unresolved loci supplied.
+46	Original Gann sources	08,14	Partial	1927 book and compiled lesson inspected. Original charts/course provenance open.
+47	Mathematical interpretation	08	Examined	Grid parameters, scaling and contemporary projection attribution distinguished.
+48	Historical example reconstruction	08	Examined	Arithmetic reproduced for historical narrative transaction and 1954 angular example. Original forecasting procedure unresolved.
+49	Price/time scaling	08	Examined	Unit and scale counterexample, session/calendar and split requirements.
+50	Gann and planetary calculations	08	Examined	Named planetary pricing example distinguished from modern 10x7 formulation.
+51	Audit historical datasets	10,15	Examined	All canonical FXCM rows checked against weekly files. BTC historical and synthetic sources identified.
+52	Frozen research populations	10	Examined	2022 split membership independently reconstructed with strict endpoint rule.
+53	Original model comparisons	10,15	Examined	M0–M4 refit for reproduction and re-evaluated on every original origin.
+54	Out-of-sample replication	10,15	Examined	Frozen-coefficient replications and paired intervals reproduced for both years.
+55	Statistical methodology	10	Examined	Dependence, attrition, multiple testing, baseline and overlap assessed.
+56	Appropriate null models	10	Examined	Null-model assumptions and a future preregistration specified. No new fitting experiment run.
+57	Economic significance	10	Examined	No costed decision rule established; midpoint forecast accuracy has limited economic scope.
+58	Currency natal hypotheses	05,06	Examined	One-hour sensitivity quantified. Historically selected replacement remains unjustified.
+59	Bitcoin and lunar research	10,13	Partial	BTC ranking script and outputs found. Specific lunar/recovery hypothesis lacks located frozen evaluation.
+60	Financial interpretation boundaries	01,10	Examined	Geometric sign and measured incremental forecast gain explicitly distinguished.
+61	Planetary gravitational-wave hypothesis	09	Partial	Physical observables distinguished; no detector data or physical market coupling supplied.
+62	Fixed-location observer model	09	Examined	Site-sensitive quantities distinguished from geocentric geometry.
+63	Gravitational and astronomical overlays	09	Partial	Physical overlay feasibility evaluated conceptually. No experimental physical measurements.
+64	Alternative physical hypotheses	09	Examined	Equal-weight cosine cannot represent acceleration, tidal field or strain without additional physical inputs.
+65	Original product vision	02,11	Partial	Founder-visible requirements recovered from export and implementation record; missing originals limit history.
+66	Fields workspace	11	Partial	Existing native screenshot and working service observed separately. Fresh matching native build unverified.
+67	Wave readability	11	Partial	Scale compression and R7 records examined. Native UX acceptance outstanding.
+68	Longer astronomical timelines	11,17	Examined	7/30/90/365-day requirement and 1,200 sample cap examined.
+69	Chart-native oscillator	04,11	Examined	Unsigned chart activity distinguished from proposed chart-native currency phase.
+70	Data-source distinction	04,11	Examined	Synthetic candles, historical quotes and independently computable astronomy distinguished.
+71	Circular longitude visualization	09,11	Examined	Display wrapping, reliability and tooltip policy compared with R7 evidence.
+72	Missing values	05,11	Examined	Invalid population, missing candle, undefined heading and valid zero distinguished.
+73	Visualization performance	11	Partial	Backend timed on grids through 1,200 hours. YAML parse costs and fixed-configuration equivalence measured. Native rendering and end-to-end latency remain open.
+74	Product coherence	11,16	Partial	Design traced to workflow. Current founder interaction/restart still unverified.
+75	Historical milestone review	02,04,13	Partial	Main workstream sequence and frozen branches traced. Not every milestone was independently rerun.
+76	Review previously frozen research	10,13	Examined	Scope and reopening conditions for EMP, G3, FIRMAMENT and old geometries preserved.
+77	Classical modes	07,11,16	Partial	Mode and overlay boundary reviewed. Complete producer-to-mode runtime matrix open.
+78	CGVO backlog	13	Examined	Named backlog tied to dependencies and source disagreement.
+79	Historical proposition audits	13	Partial	Two historical ledgers inventoried and 12 groups recovered. Leaf-by-leaf independent recertification open.
+80	Abandoned or forgotten experiments	13,17	Partial	Selected missing hypotheses ranked. Full semantic read of every unnumbered conversation remains incomplete.
+81	Contradiction matrix	12	Examined	Competing claims, producing artifacts and dispositions provided.
+82	Mathematical test oracles	15	Partial	Independent numerical oracles for main geometry, source example, market results and astronomy. Full classical collection open.
+83	Property-based tests	05,15	Examined	Bounds, order, rotation, cancellation examples and random checks.
+84	Metamorphic tests	05,15	Examined	Timeframe invariance of actual service and multiple fresh-process checks. Native restart open.
+85	Numerical sensitivity	05,06,09	Partial	Membership, timestamp, mode, provider and D30 sensitivity. Broader scenario grid open.
+86	Independent implementation	15,17	Examined	Second implementations provided for main tested calculations. Next independent traces specified.
+87	Regression fixture quality	15	Partial	Mocked and shared-reference tests distinguished from external witnesses. Full suite fixture audit open.
+88	Reproducibility	04,15	Partial	Reproducible pack and hashes supplied; historical file lineage and whole native environment incomplete.
+89	Are we using the right mathematical abstraction?	05,09	Examined	Vector basis suitable for first moments; labelled contributions and higher moments available.
+90	Are we averaging incompatible quantities?	07,09,16	Examined	Units and source/time semantics required per operator and aggregation.
+91	Are some waves mathematically redundant?	05,09	Examined	Three traces have rank at most two; variance is a deterministic transform.
+92	Are we losing important information?	05,09	Examined	Explicit counterexample and body attribution demonstrate losses.
+93	What would a minimal complete oscillator look like?	11,17,20	Examined	Minimum end-user instrument, dependencies and acceptance samples specified.
+94	What would a mature research platform look like?	16,20	Examined	Proposed architecture retains authoritative samples, distinct samplers and domain-specific operators.
