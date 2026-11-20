@@ -1,0 +1,1424 @@
+{
+  "packet": "AIW-MASTER-01",
+  "date": "2026-11-20",
+  "purpose": "Offline proposed research operators; no runtime admission",
+  "decision": "AIW_MASTER_SOURCE_BACKED_FIRST_WAVE_READY",
+  "repository": "gouravdamade/gann-financial-astro-research",
+  "localRepositoryHead": "e1b2f6350932165cdac8022314c78ebccad1a211",
+  "hashConvention": "SHA-256 of exact file bytes, uppercase hex; inherited canonical hashes retain their own convention",
+  "locks": {
+    "executionAllowed": false,
+    "financiallyValidated": false,
+    "marketDirectionAssigned": false
+  },
+  "classes": [
+    "SOURCE_EXPLICIT",
+    "SOURCE_IMPLIED",
+    "COMMENTARY",
+    "CROSS_SOURCE_RECONSTRUCTION",
+    "MATHEMATICAL_ENGINEERING",
+    "EXPERIMENTAL_HYPOTHESIS",
+    "SOURCE_SILENT",
+    "UNRESOLVED",
+    "NOT_FINANCIALLY_VALIDATED"
+  ],
+  "witnesses": {
+    "IYER": {
+      "path": "D:\\GannFinancialAstro\\sources\\classical\\BRIHAT_SAMHITA_1884_N_C_IYER.pdf",
+      "sha256": "9E0E8B4DD7D611F22B29ED65B7ED635D806D831407B27695D8128EB804983E27",
+      "freshPdfPages": [
+        477,
+        480,
+        481,
+        485,
+        486
+      ],
+      "basis": "fresh page-image reading"
+    },
+    "PHALA": {
+      "path": "D:\\GannFinancialAstro\\sources\\classical\\PHALADEEPIKA_1937_SUBRAHMANYA_SASTRI.pdf",
+      "sha256": "795DDB67D7416188B2272D2021B2B798561FAAAC08067A986AF0FACFD0552FCB",
+      "freshPdfPages": [
+        71,
+        144,
+        146,
+        154,
+        324,
+        325,
+        355
+      ],
+      "basis": "fresh page-image reading, root translation and editorial material separated"
+    },
+    "VYAS": {
+      "path": "D:\\GannFinancialAstro\\sources\\private\\TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN_1EF82899.pdf",
+      "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+      "freshPdfPages": [
+        53,
+        54
+      ],
+      "basis": "fresh page-image reading for these pages, inherited R6 elsewhere"
+    },
+    "BPHS": {
+      "path": "D:\\GannFinancialAstro\\sources\\classical\\BPHS_1899_GOVIND_SHARMA_SHASTRI.pdf",
+      "sha256": "BB556804D8D546ACC39C43A22CECDBE2C29E3A7BA157E60EEC810C478EB645A4",
+      "freshPdfPages": [],
+      "basis": "inventory and inherited review"
+    },
+    "BJ1905": {
+      "path": "D:\\GannFinancialAstro\\sources\\classical\\BRIHAT_JATAKA_1905_CHIDAMBARAM_AIYAR.pdf",
+      "sha256": "CEAFC2FE3E385FB834B94FA4F464406DA3BA42AB01B3A2AC42A2749ABDA9F1D9",
+      "freshPdfPages": [],
+      "basis": "inventory; do not substitute for the 1934 central binding"
+    },
+    "SAR": {
+      "path": "D:\\dektop-pdf\\saravaliofkalyan01kalyuoft.pdf",
+      "sha256": "3BFD4F7F717798F87B7EFD6FA5A3DE2E28E7E09FC2520F0F05AE12B2E1BF9A58",
+      "freshPdfPages": [],
+      "basis": "held Sanskrit volume, no fresh full collation"
+    }
+  },
+  "repositoryEvidence": [
+    {
+      "path": "CURRENT_PROJECT_HANDOFF.md",
+      "sha256": "0BB4D07D00DDA909941AB69C7495FB32FADC816076B3FC7C915AB4DF49B621E4"
+    },
+    {
+      "path": "docs/research/CLASSICAL_OSCILLATOR_COVERAGE_MATRIX_V1.md",
+      "sha256": "B6295CFB3F7AC8FDE49142CFE6AC8A42D1A682BB72F4FA9692AE871A3FBC321A"
+    },
+    {
+      "path": "docs/research/CLASSICAL_SOURCE_PROFILE_BOUNDARIES_V1.md",
+      "sha256": "226F81F5ABAC482847BFB7B8A593AD6362C2A635A8AA5C83B5AC352C9C6D2EB6"
+    },
+    {
+      "path": "docs/research/SOURCE_ACQUISITION_QUEUE_V1.md",
+      "sha256": "1424815C93A52797DB5DFCA5E40D14B01D6ABBF6CEC004F6128F18E56939E0F2"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_COMPLETION_LEDGER_V1.md",
+      "sha256": "07E73D35C975E24290B322ECE3A55915C08E2FAB998267204E32E70EF8FF7E81"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_SIGNED_PAIR_WAVE_ARCHITECTURE_RND_V1.md",
+      "sha256": "858A13A2D5479B92B3C2E1AC99CBC0794FE7CAF06D8830D3B0A439CF6207DCF4"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R2_POLARITY_ADMISSION_READINESS.md",
+      "sha256": "322E8AFF4172CDD65769C3258924A40188B35894227A61360CF44AC9A347B5AB"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R4A_S1_CLASSICAL_SOURCE_OPERATOR_CLOSURE.md",
+      "sha256": "46947FC3F72471C04129268334C6CBAADF666D7197853044AC70676C222F47E7"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R4A_S1R1_R1_REAL_24_SOURCE_OPERATOR_COVERAGE.md",
+      "sha256": "FAE11C0418CBE4C69DCE581EEDBC70FFAE45F07482353157FF7A73B8D92C6C0A"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R4A_S2_BLINDED_MARKET_BRIDGE_HYPOTHESIS_FREEZE.md",
+      "sha256": "1A20CC1EF00E9003739E5F491A98F88D60BA7D575D0A412941D0CF369C06A0FF"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R4A_S2R1_R1_REAL_24_EVENT_PREDICTION_FREEZE.md",
+      "sha256": "E05D834001CFAF7821C69800FE2E43DB471F493783EBCE30236F27E6AD22BB11"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R4A_S4_O2_FIRST_EMPIRICAL_OUTCOME_EVALUATION.md",
+      "sha256": "02B133A0E29CE0F7F6626B0BDEFC67B14AC8C3120A80F4E29F8BE346287C6682"
+    },
+    {
+      "path": "docs/research/MULTI_OSCILLATOR_MO_R4A_R6_CLASSICAL_OPERATOR_TEMPORAL_SCALE_RESEARCH.md",
+      "sha256": "0D2186C98EF1AA6B6095812733921280571212521F76F521028856D605B32D4A"
+    },
+    {
+      "path": "status/research/mo_r4a_r6_candidate_operator_ledger_v1.json",
+      "sha256": "8C762D9CE1EAA54DB3ACBDBD7D1714667AC4FFE56567A960EFE8EDE81D473E2A"
+    },
+    {
+      "path": "configs/research/machine_interpretation/source_operators/source_operator_cross_text_matrix_v1.json",
+      "sha256": "E569F3FE0FE61DF14F5BCBE3731D911B3019E271289174BD4D1D90B7C9C77A69"
+    },
+    {
+      "path": "configs/research/machine_interpretation/source_operators/classical_source_operator_ledger_s2r1_r1_saravali_adjudicated_v1.json",
+      "sha256": "985DA1ECD2FF6631D9624541CEA27F69AC4620207EFE4C6CD79790263E3FAF01"
+    },
+    {
+      "path": "research_labs/chart_conditioned_aspects/profiles/founder_chart_hypotheses_v1.json",
+      "sha256": "C6EA72503311FBC0D5C6B9FF7C7CC7D1B47D4F97273A43261FB9FD7111A76AFC"
+    },
+    {
+      "path": "gann-astro-desk/backend/avg_all_currency_phase.py",
+      "sha256": "D4A437DD24931A6E24F35DCF6CC122BBFD442735874574CD37374C14AC802409"
+    },
+    {
+      "path": "gann-astro-desk/backend/classical_source_operators.py",
+      "sha256": "AAF86B92C38BAC12BAC2763F2BECCD5C81E2F5D89D17731A733D72F8349FBBFB"
+    },
+    {
+      "path": "research_labs/chart_conditioned_aspects/chart_conditioned_aspects/transits/chart_conditioned_event_compiler.py",
+      "sha256": "A0DF21B2941B9AEE480C66774608CF96CA0883512EECF75C2072CA69F774ACB6"
+    }
+  ],
+  "chartFixture": {
+    "path": "D:\\GannFinancialAstro\\research_outputs\\MO_PRODUCT_02_R7B_R2B_20261120\\astra_utc_backend_sample.json",
+    "sha256": "249A7D22E32974999F9514E41A8050A8536ED30424B3A0386DDC864F6F44073F",
+    "timestampUtc": "2025-05-31T17:00:00+00:00",
+    "transitField": "response.phaseSamples[0].transitLongitudesDeg",
+    "natalField": "response.natalReferences[side].targets.MOON",
+    "chartAstronomyContract": "RAMAN_SIDEREAL_SWISSEPH_TRUE_NODE_GEOCENTRIC_V1",
+    "transitLongitudesDeg": {
+      "MERCURY": 49.62844098580377,
+      "SUN": 47.72537662586008,
+      "VENUS": 1.881656064294836
+    },
+    "sides": {
+      "JPY": {
+        "chartHash": "4ED100D71983BE68A24B8306C33D7D2B50504D6F122DF45A5F7707A68B171AF7",
+        "chartId": "FX_CURRENCY_JPY_YEN_IPO_18890210T150000Z_V1",
+        "chartHypothesisId": "JPY_YEN_IPO_TOKYO_EXACT_TIME_RESEARCH_V1",
+        "timestampUtc": "1889-02-10T15:00:00Z",
+        "natalMoonLongitude": 61.08767031037019,
+        "mercuryPlace": 12,
+        "venusPlace": 11
+      },
+      "USD": {
+        "chartHash": "3A6B5F3EED9CBF0067FCB39EED1191EA66F0C347BE726DDD84424C001B89BCA7",
+        "chartId": "FX_CURRENCY_USD_US_INDEPENDENCE_17760704T165602Z_V1",
+        "chartHypothesisId": "USD_US_INDEPENDENCE_PHILADELPHIA_EXACT_TIME_RESEARCH_V1",
+        "timestampUtc": "1776-07-04T16:56:02Z",
+        "natalMoonLongitude": 304.72447764829604,
+        "mercuryPlace": 4,
+        "venusPlace": 3
+      }
+    }
+  },
+  "operators": [
+    {
+      "id": "BS-GENERAL",
+      "profile": "IYER",
+      "locator": "PDF 477, printed 235, gocara v4",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "base polarity",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit graha",
+        "birth Moon sign",
+        "inclusive relative place"
+      ],
+      "consequence": "general favorable or adverse placement as enumerated",
+      "limits": "other places need their specific descriptions; nodes excluded from this proposal",
+      "favorable": {
+        "SUN": [
+          6,
+          3,
+          10,
+          11
+        ],
+        "MOON": [
+          3,
+          6,
+          10,
+          7,
+          1,
+          11
+        ],
+        "JUPITER": [
+          7,
+          9,
+          2,
+          5,
+          11
+        ],
+        "MARS": [
+          6,
+          3,
+          11
+        ],
+        "SATURN": [
+          6,
+          3,
+          11
+        ],
+        "MERCURY": [
+          6,
+          2,
+          4,
+          10,
+          8,
+          11
+        ],
+        "VENUS": [
+          11
+        ]
+      },
+      "adverse": {
+        "VENUS": [
+          7,
+          6,
+          10
+        ]
+      }
+    },
+    {
+      "id": "BS-MERCURY-01",
+      "profile": "IYER",
+      "locator": "gocara v19, PDF 480",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 1"
+      ],
+      "consequence": "wealth loss and distressing news",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 1,
+      "descriptiveCategory": "ADVERSE"
+    },
+    {
+      "id": "BS-MERCURY-02",
+      "profile": "IYER",
+      "locator": "gocara v20, PDF 480",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 2"
+      ],
+      "consequence": "disgrace together with success and wealth",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 2,
+      "descriptiveCategory": "MIXED"
+    },
+    {
+      "id": "BS-MERCURY-03",
+      "profile": "IYER",
+      "locator": "gocara v20, PDF 480",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 3"
+      ],
+      "consequence": "friends, fear and displacement",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 3,
+      "descriptiveCategory": "MIXED"
+    },
+    {
+      "id": "BS-MERCURY-04",
+      "profile": "IYER",
+      "locator": "gocara v21, PDF 480–481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 4"
+      ],
+      "consequence": "kin and family increase, gain",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 4,
+      "descriptiveCategory": "FAVORABLE"
+    },
+    {
+      "id": "BS-MERCURY-05",
+      "profile": "IYER",
+      "locator": "gocara v21, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 5"
+      ],
+      "consequence": "household disputes and separation",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 5,
+      "descriptiveCategory": "ADVERSE"
+    },
+    {
+      "id": "BS-MERCURY-06",
+      "profile": "IYER",
+      "locator": "gocara v22, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 6"
+      ],
+      "consequence": "regard and renown",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 6,
+      "descriptiveCategory": "FAVORABLE"
+    },
+    {
+      "id": "BS-MERCURY-07",
+      "profile": "IYER",
+      "locator": "gocara v22, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 7"
+      ],
+      "consequence": "diminished appearance and quarrels",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 7,
+      "descriptiveCategory": "ADVERSE"
+    },
+    {
+      "id": "BS-MERCURY-08",
+      "profile": "IYER",
+      "locator": "gocara v22, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 8"
+      ],
+      "consequence": "offspring, success and material gains",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 8,
+      "descriptiveCategory": "FAVORABLE"
+    },
+    {
+      "id": "BS-MERCURY-09",
+      "profile": "IYER",
+      "locator": "gocara v23, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 9"
+      ],
+      "consequence": "obstacles to work",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 9,
+      "descriptiveCategory": "ADVERSE"
+    },
+    {
+      "id": "BS-MERCURY-10",
+      "profile": "IYER",
+      "locator": "gocara v23, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 10"
+      ],
+      "consequence": "enemies defeated and gains for native",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 10,
+      "descriptiveCategory": "FAVORABLE"
+    },
+    {
+      "id": "BS-MERCURY-11",
+      "profile": "IYER",
+      "locator": "gocara v24, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 11"
+      ],
+      "consequence": "material gains, associates and good news",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 11,
+      "descriptiveCategory": "FAVORABLE"
+    },
+    {
+      "id": "BS-MERCURY-12",
+      "profile": "IYER",
+      "locator": "gocara v24, PDF 481",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "named personal outcomes",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "transit Mercury",
+        "inclusive place 12"
+      ],
+      "consequence": "disgrace, illness and loss of companionship",
+      "limits": "category is a descriptive engineering encoding; preserve domain-specific text and the general base separately",
+      "place": 12,
+      "descriptiveCategory": "ADVERSE"
+    },
+    {
+      "id": "BS-DASA",
+      "profile": "IYER",
+      "locator": "gocara v46, PDF 485",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "realization qualifier",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "benefit assigned"
+      ],
+      "consequence": "realization conditioned by period and station",
+      "limits": "no quantitative mapping"
+    },
+    {
+      "id": "BS-HALF",
+      "profile": "IYER",
+      "locator": "gocara v49, PDF 485",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "timing",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "Sun/Mars or Moon/Saturn transiting"
+      ],
+      "consequence": "first or latter sign half respectively",
+      "limits": "degree implementation and Saturn v54 require declared reading"
+    },
+    {
+      "id": "BS-WHOLE",
+      "profile": "IYER",
+      "locator": "gocara v50, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "timing",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "Mercury transiting a sign"
+      ],
+      "consequence": "throughout the sign",
+      "limits": "does not fix exact realization or amplitude"
+    },
+    {
+      "id": "BS-MIDDLE",
+      "profile": "IYER",
+      "locator": "gocara v51, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "timing qualification",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "Jupiter traversing middle of odd sign"
+      ],
+      "consequence": "specific adverse consequence",
+      "limits": "middle width unresolved"
+    },
+    {
+      "id": "BS-EQUIV",
+      "profile": "IYER",
+      "locator": "gocara v52, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "interaction",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "opposing character aspect or paired occupancy"
+      ],
+      "consequence": "specified mixed cases have like effects in this English reading",
+      "limits": "no number specified; compare 1946 v52"
+    },
+    {
+      "id": "BS-DEFEAT",
+      "profile": "IYER",
+      "locator": "gocara v53, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "suppression",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "assigned good and any named disabling condition"
+      ],
+      "consequence": "assigned good effect fails",
+      "limits": "visibility threshold, hostile aspect and friendship require pinned definitions"
+    },
+    {
+      "id": "BS-SATURN",
+      "profile": "IYER",
+      "locator": "gocara v55, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "specific qualification",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "Saturn disappears near Sun, eligible subject qualification"
+      ],
+      "consequence": "stated Saturn misery withheld in specified case",
+      "limits": "do not universalize"
+    },
+    {
+      "id": "BS-MOON",
+      "profile": "IYER",
+      "locator": "gocara v56, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "character modifier",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "Moon and a characterized companion together"
+      ],
+      "consequence": "companion qualifies Moon character",
+      "limits": "multiple competing companions unresolved"
+    },
+    {
+      "id": "BS-GENERALGOOD",
+      "profile": "IYER",
+      "locator": "gocara v58, PDF 486",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "general proposition",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "occupies a favorable place"
+      ],
+      "consequence": "good effects assigned",
+      "limits": "scope of exceptions preserved"
+    },
+    {
+      "id": "BS-ALT52",
+      "profile": "SASTRI_BHAT_1946",
+      "locator": "CIV.52 pp786–787",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "alternative translation of suppression",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "opposing strong grahas in aspect"
+      ],
+      "consequence": "specified effect neutralized in this translation",
+      "limits": "strength test unresolved; keep separate from Iyer equivalence"
+    },
+    {
+      "id": "PD-MERCURY-VEDHA",
+      "profile": "PHALA",
+      "locator": "XXVI.6 PDF 325 printed 288",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "obstruction guard",
+      "subject": "person whose birth Moon supplies the reference sign",
+      "requires": [
+        "favorable Mercury place",
+        "corresponding vedha place occupied by a graha other than Moon"
+      ],
+      "consequence": "favorable assignment does not clear the occupancy condition",
+      "limits": "to assert clearance need full eligible universe",
+      "pairedPlaces": {
+        "2": 5,
+        "4": 3,
+        "6": 9,
+        "8": 1,
+        "10": 8,
+        "11": 12
+      },
+      "exempt": "MOON"
+    },
+    {
+      "id": "PD-SBC-BATTLE",
+      "profile": "PHALA_EDITOR",
+      "locator": "editorial exposition PDF 355 printed 318",
+      "evidenceClass": "COMMENTARY",
+      "role": "explicit count-to-category map",
+      "subject": "battle in editorial SBC setting",
+      "requires": [
+        "1..5 malefic Vedhas"
+      ],
+      "consequence": "different named outcomes by count",
+      "limits": "no generic scalar or currency subject"
+    },
+    {
+      "id": "PD-MARRIAGE-LORD",
+      "profile": "PHALA",
+      "locator": "X.6 PDF 144 printed 107",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "qualified functional outcome",
+      "subject": "native's spouse",
+      "requires": [
+        "malefic in seventh",
+        "same planet owns seventh"
+      ],
+      "consequence": "beneficial for spouse in that condition",
+      "limits": "one subject and one domain; neither general benefic status nor currency advantage"
+    },
+    {
+      "id": "PD-STRONGEST",
+      "profile": "PHALA",
+      "locator": "X.12 PDF 146 printed 109",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "selection by strength",
+      "subject": "direction associated with spouse's country",
+      "requires": [
+        "occupant of seventh",
+        "lord of seventh",
+        "Venus",
+        "comparable native strengths"
+      ],
+      "consequence": "select strongest of these three for the specified outcome",
+      "limits": "tie and exact metric not settled by this clause"
+    },
+    {
+      "id": "PD-FIFTH",
+      "profile": "PHALA",
+      "locator": "XII.3 PDF 154 printed 117",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "house-specific qualification",
+      "subject": "offspring in nativity",
+      "requires": [
+        "house five",
+        "ownership",
+        "character",
+        "dignity"
+      ],
+      "consequence": "named combinations can override generic expectations based on nature",
+      "limits": "preserve antecedent and personal domain"
+    },
+    {
+      "id": "PD-UCCA",
+      "profile": "PHALA",
+      "locator": "IV.2 PDF 71 printed 34",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "strength extremum",
+      "subject": "graha's exaltation strength",
+      "requires": [
+        "highest exaltation"
+      ],
+      "consequence": "full ucca bala",
+      "limits": "no generally signed efficacy curve established by this maximum"
+    },
+    {
+      "id": "TD-BALA",
+      "profile": "VYAS",
+      "locator": "PDF 53 pp37 vv161–162",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "strength",
+      "subject": "planet in Vedha setting",
+      "requires": [
+        "own/friend/neutral/enemy sign"
+      ],
+      "consequence": "full, three quarters, half, quarter for positional strength",
+      "limits": "does not give outcome direction"
+    },
+    {
+      "id": "TD-PHALA",
+      "profile": "VYAS",
+      "locator": "PDF 53–54 pp37–38 vv162–165",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "native result",
+      "subject": "object affected by Vedha",
+      "requires": [
+        "class",
+        "relationship of occupied sign",
+        "applicable Vedha"
+      ],
+      "consequence": "separate positional-result tables",
+      "limits": "numerical examples in Hindi explanatory layer",
+      "order": [
+        "own",
+        "friend",
+        "neutral",
+        "enemy"
+      ],
+      "beneficResult": [
+        20,
+        15,
+        10,
+        5
+      ],
+      "maleficResult": [
+        5,
+        10,
+        15,
+        20
+      ]
+    },
+    {
+      "id": "TD-MOD",
+      "profile": "VYAS",
+      "locator": "PDF 54 p38 v166",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "individual result modifier",
+      "subject": "specified positional result",
+      "requires": [
+        "established native result",
+        "isolated applicable state"
+      ],
+      "consequence": "modify native result",
+      "limits": "simultaneous modifiers unresolved",
+      "factor": {
+        "retrograde": 2,
+        "exalted": 3,
+        "swift": 1,
+        "debilitated": 0.5
+      }
+    },
+    {
+      "id": "SAR-NATAL-FIVE",
+      "profile": "SAR_TRANSLATION_LEAD",
+      "locator": "Sārāvalī ch18 v20, English vol I p201",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "higher-order outcome candidate",
+      "subject": "native at birth",
+      "requires": [
+        "Mercury, Moon, Mars, Venus and Saturn together at birth"
+      ],
+      "consequence": "distinct social and personal outcomes",
+      "limits": "translation locator, membership criterion and controlling image require certification"
+    },
+    {
+      "id": "BS-MUNDANE",
+      "profile": "IYER_WEB",
+      "locator": "ch42 vv1–4,13–14",
+      "evidenceClass": "SOURCE_EXPLICIT",
+      "role": "commodity-specific contextual rule",
+      "subject": "named commodity, time and transaction",
+      "requires": [
+        "relevant phenomena",
+        "lunation/sign",
+        "named goods and timing"
+      ],
+      "consequence": "specific outcome within its commodity setting",
+      "limits": "no modern FX target or aggregation"
+    },
+    {
+      "id": "FUNCTIONAL",
+      "profile": "BPHS",
+      "locator": "coverage matrix, lordship family; precise recension pending",
+      "evidenceClass": "UNRESOLVED",
+      "role": "functional polarity",
+      "subject": "profile-specific chart",
+      "requires": [
+        "house lord, ascendant, house scheme and dependencies"
+      ],
+      "consequence": "undetermined",
+      "limits": "no blanket label by planet"
+    },
+    {
+      "id": "DRIK",
+      "profile": "BPHS",
+      "locator": "coverage matrix DRIK_BALA / SHADBALA_TOTAL",
+      "evidenceClass": "UNRESOLVED",
+      "role": "strength",
+      "subject": "profile-specific chart",
+      "requires": [
+        "certified component algorithms and units"
+      ],
+      "consequence": "native strength only if certified",
+      "limits": "provisional profile cannot grant favorability"
+    },
+    {
+      "id": "ISHTA",
+      "profile": "BPHS",
+      "locator": "coverage matrix ISHTA_KASHTA_PHALA",
+      "evidenceClass": "UNRESOLVED",
+      "role": "result measure",
+      "subject": "profile-specific chart",
+      "requires": [
+        "exact pages and independent example"
+      ],
+      "consequence": "unresolved measure",
+      "limits": "cannot reuse as portfolio unit"
+    },
+    {
+      "id": "NESTING",
+      "profile": "TAJIKA",
+      "locator": "Hāyanaratna §§7–8 esp. 8.3",
+      "evidenceClass": "UNRESOLVED",
+      "role": "timing profile",
+      "subject": "profile-specific chart",
+      "requires": [
+        "casting and chosen parent/child period system"
+      ],
+      "consequence": "candidate relationship in annual horoscopy",
+      "limits": "edition available; no imported gochara hierarchy"
+    },
+    {
+      "id": "CHART-ANALOGY",
+      "profile": "AIW_EXPERIMENT",
+      "locator": "founder currency-chart hypothesis; no classical locator",
+      "evidenceClass": "EXPERIMENTAL_HYPOTHESIS",
+      "role": "subject transfer",
+      "subject": "USD or JPY institutional chart",
+      "requires": [
+        "frozen natal chart",
+        "named personal-domain rule"
+      ],
+      "consequence": "display as an explicitly labelled analogy",
+      "limits": "no traditional institution-to-person identity or price sign"
+    },
+    {
+      "id": "OCCUPANCY",
+      "profile": "AIW_ENGINEERING",
+      "locator": "definition in time and pair contracts",
+      "evidenceClass": "MATHEMATICAL_ENGINEERING",
+      "role": "display statistic",
+      "subject": "matched chart lane",
+      "requires": [
+        "identified window",
+        "typed state intervals"
+      ],
+      "consequence": "fraction of observed window in state",
+      "limits": "report unknown fraction; no intensity"
+    },
+    {
+      "id": "UNIVERSAL-SUM",
+      "profile": "AIW_RESEARCH",
+      "locator": "no universal rule in inspected materials",
+      "evidenceClass": "SOURCE_SILENT",
+      "role": "missing composition",
+      "subject": "complete chart",
+      "requires": [
+        "common units",
+        "joint resolution",
+        "all eligible targets"
+      ],
+      "consequence": "unidentified",
+      "limits": "absence is scoped to reviewed evidence"
+    }
+  ],
+  "inheritedR6": {
+    "controllingWitnesses": [
+      {
+        "sourceId": "TRAILOKYA_DIPIKA_VYAS_1972_ORIGINAL_SCAN",
+        "sha256": "1EF82899F8FEC6165E7F0514253EA0BE39D991226F9CD3773C9AF8D829892194",
+        "citationAuthority": "ORIGINAL_1972_PAGE_IMAGE_ONLY",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "inspectedScanPages": [
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          53,
+          54,
+          55
+        ],
+        "inspectedPrintedPages": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          37,
+          38,
+          39
+        ],
+        "r6Inspection": "These PDF pages were inspected as page images during R6; the ledger does not treat OCR as controlling evidence."
+      },
+      {
+        "sourceId": "SARAVALI_ROOT_AND_BRIHAT_JATAKA_ROOT_BOUND_OPERATORS",
+        "citationAuthority": "EXISTING_SOURCE_CLOSED_OPERATOR_CONTRACTS",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+          "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+          "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+          "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+          "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+        ],
+        "r6Use": "Existing exact source contracts and cross-text matrix only; no witness is collapsed into Trailokya."
+      }
+    ],
+    "sourceCoverageMatrix": [
+      {
+        "id": "R6_NATURAL_PLANET_CLASS",
+        "topic": "Natural planet class, including bounded Moon and Mercury conditions",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1"
+        ],
+        "locator": "Trailokya 1972 scan pages 29-30; printed pages 13-14; verses 54-58",
+        "established": "The named planet classes and the source-specific conditional Moon and Mercury qualifications are separately recorded.",
+        "notEstablished": "A currency, market, bullish/bearish, or numerical polarity translation.",
+        "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+      },
+      {
+        "id": "R6_NATURAL_RELATIONSHIP",
+        "topic": "Trailokya natural relationship table",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1"
+        ],
+        "locator": "Trailokya 1972 scan page 55; printed page 39; verses 168-171",
+        "established": "A source-profiled natural relationship category.",
+        "notEstablished": "A merger with Brihat Jataka or Saravali, a signed market contribution, or a scalar score.",
+        "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+      },
+      {
+        "id": "R6_TEMPORARY_AND_COMPOUND_RELATIONSHIP",
+        "topic": "Temporary and five-state compound relationship",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+          "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+          "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1"
+        ],
+        "locator": "Brihat Jataka II.18; Saravali 4.30-4.31; source-operator cross-text matrix",
+        "established": "The named cross-text contracts, with their witness provenance preserved.",
+        "notEstablished": "Inheritance into Trailokya, a replacement for unresolved event context, or a market sign.",
+        "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+      },
+      {
+        "id": "R6_DRSTI_GEOMETRY",
+        "topic": "Ordinary fractions and special full-aspect geometry",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1",
+          "SARAVALI_4_32_ORDINARY_DRSTI_V1",
+          "CLASSICAL_SPECIAL_DRSTI_GEOMETRY_V1"
+        ],
+        "locator": "Saravali 4.32-4.33; Brihat Jataka II.13; cross-text matrix retains the separate Trailokya Arghya scope",
+        "established": "The stated geometry and fractions within their named source contracts.",
+        "notEstablished": "A replacement event universe, a market magnitude curve, or a license to pool Arghya with ordinary Drsti.",
+        "admission": "SOURCE_CERTIFIED_GEOMETRY_ONLY"
+      },
+      {
+        "id": "R6_STHULA_MOTION",
+        "topic": "Sthula motion classes and descriptive residence material",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1"
+        ],
+        "locator": "Trailokya 1972 scan pages 32-36; printed pages 16-20; verses 65-79",
+        "established": "Bounded Vakra, Shighra, Sama and related source classes, plus descriptive residence material and a requirement for local/time-appropriate astronomical calculation.",
+        "notEstablished": "A continuous modern speed threshold, stationary handling, a universal transit effect duration, or a market effect size.",
+        "admission": "SOURCE_CERTIFIED_CATEGORICAL_ANNOTATION_ONLY"
+      },
+      {
+        "id": "R6_STHANA_BALA_AND_PHALA",
+        "topic": "Sthana Bala and Sthana Phala",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_STHANA_BALA_V1",
+          "TRAILOKYA_1972_STHANA_PHALA_V1"
+        ],
+        "locator": "Trailokya 1972 scan pages 53-54; printed pages 37-38; verses 161-165",
+        "established": "Separate source measurements and categorical states; Bala and Phala are not interchangeable.",
+        "notEstablished": "A total strength engine, a financial magnitude, or a generic composition rule.",
+        "admission": "SOURCE_CERTIFIED_COMPONENT_RECORDS_ONLY"
+      },
+      {
+        "id": "R6_DIGNITY",
+        "topic": "Dignity records",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "TRAILOKYA_1972_DIGNITY_V1"
+        ],
+        "locator": "Trailokya 1972 scan pages 56-58; printed pages 40-42; verses 172-179",
+        "established": "The existing source-closed dignity categories are retained under their named contract.",
+        "notEstablished": "A total strength engine, a financial magnitude, or a generic composition rule.",
+        "admission": "SOURCE_CERTIFIED_COMPONENT_RECORDS_ONLY"
+      },
+      {
+        "id": "R6_V166_INDIVIDUAL_MODIFIERS",
+        "topic": "Retrograde, swift, exalted and debilitated individual source-result modifiers",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"
+        ],
+        "locator": "Trailokya 1972 scan page 54; printed page 38; verse 166",
+        "established": "Each stated modifier in its individual source-result context.",
+        "notEstablished": "A universal multiplier stack, a combined financial multiplier, or a polarity map.",
+        "admission": "SOURCE_CERTIFIED_ISOLATED_RECORDS_ONLY"
+      },
+      {
+        "id": "R6_CONTEXT_AND_PRECEDENCE",
+        "topic": "Named context-specific conflict and precedence rules",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "TRAILOKYA_1972_CONTEXT_RESOLUTION_SOURCE_V1"
+        ],
+        "locator": "Trailokya verses 125, 146, 148-149, 152, 209, 213, 220-223, 246, and Arghya verses 357-376; context-resolution contract",
+        "established": "The listed contexts only, each with its source scope preserved.",
+        "notEstablished": "A universal multi-planet precedence resolver, generic cancellation rule, or FX operator.",
+        "admission": "SOURCE_CERTIFIED_NAMED_CONTEXTS_ONLY"
+      },
+      {
+        "id": "R6_APPLICATION_EXACT_SEPARATION",
+        "topic": "Applying, exact and separating efficacy",
+        "classification": "SOURCE_SILENT",
+        "verificationBasis": "SOURCE_GAP_AUDIT",
+        "sourceContracts": [
+          "classical_oscillator_coverage_matrix_v1.yaml:ASPECT_PHASE_KERNEL",
+          "classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"
+        ],
+        "locator": "No admitted page-bound timing rule or worked timing example closes this operator; existing coverage matrix ASPECT_PHASE_KERNEL.",
+        "established": "Nothing beyond geometric event-state boundaries supplied by a separately identified engineering contract.",
+        "notEstablished": "A source duration, onset, cessation, persistence, decay, or amplitude rule.",
+        "admission": "BLOCKED_BY_SOURCE"
+      },
+      {
+        "id": "R6_DURATION_TO_SCALE",
+        "topic": "Event duration mapped to a temporal scale",
+        "classification": "ENGINEERING_MAPPING",
+        "verificationBasis": "ENGINEERING_MAPPING",
+        "locator": "R6 proposed hypothesis only; no classical locator asserts the mapping.",
+        "established": "For a separately frozen geometric event, D_i = separatingEndUtc - applyingStartUtc can be calculated reproducibly.",
+        "notEstablished": "That D_i means strength, magnitude, persistence, profitability, or a classical effect duration.",
+        "admission": "MODE3_EXPERIMENTAL_ONLY"
+      },
+      {
+        "id": "R6_WAVES_WITHIN_WAVES",
+        "topic": "Nested, repeated, or multi-scale wave hierarchy",
+        "classification": "SOURCE_SILENT",
+        "verificationBasis": "SOURCE_GAP_AUDIT",
+        "sourceContracts": [
+          "classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"
+        ],
+        "locator": "No admitted source packet closes a hierarchy connecting nested geometric events to a common causal wave.",
+        "established": "Only separately enumerated exact events and their atomic half-open intervals.",
+        "notEstablished": "Nested causal inheritance, repeated-hit amplification, a multi-scale aggregation, or smoothing.",
+        "admission": "BLOCKED_BY_SOURCE"
+      }
+    ],
+    "temporalOperatorLedger": [
+      {
+        "operatorId": "TD1972_STHULA_MOTION_STATE_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_STHULA_MOTION_CLASS_V1"
+        ],
+        "role": "CATEGORICAL_STATE",
+        "sourceLocator": "Trailokya 1972 scan pages 32-36; printed pages 16-20; verses 65-79",
+        "closedContent": "Source-named motion classes and descriptive residence material.",
+        "failClosedBoundary": "No automatic continuous threshold, stationary state, transit-influence onset/cessation, or effect persistence is admitted."
+      },
+      {
+        "operatorId": "GEOMETRIC_EVENT_INTERVAL_V1",
+        "classification": "ENGINEERING_MAPPING",
+        "verificationBasis": "ENGINEERING_MAPPING",
+        "role": "HALF_OPEN_EVENT_GEOMETRY",
+        "formula": "[applyingStartUtc, separatingEndUtc)",
+        "closedContent": "A deterministic event-compiler interval when its independent geometry contract provides the endpoints.",
+        "failClosedBoundary": "The interval is not claimed to be a source-defined Vedha or Drsti efficacy period."
+      },
+      {
+        "operatorId": "DURATION_TO_TEMPORAL_SCALE_HYPOTHESIS_V1",
+        "classification": "ENGINEERING_MAPPING",
+        "verificationBasis": "ENGINEERING_MAPPING",
+        "role": "EXPERIMENTAL_TEMPORAL_SCALE",
+        "formula": "D_i = separatingEndUtc - applyingStartUtc",
+        "proposedUse": "A future, separately preregistered scale label or ablation covariate only.",
+        "prohibitions": [
+          "NOT_A_CLASSICAL_MAGNITUDE",
+          "NOT_A_STRENGTH_INFERENCE",
+          "NOT_A_MODE1_OPERATOR",
+          "NOT_A_MARKET_DIRECTION_RULE",
+          "NOT_A_SMOOTHING_OR_DECAY_KERNEL"
+        ]
+      },
+      {
+        "operatorId": "APPLICATION_EXACT_SEPARATION_EFFICACY_V1",
+        "classification": "SOURCE_SILENT",
+        "verificationBasis": "SOURCE_GAP_AUDIT",
+        "sourceContracts": [
+          "classical_oscillator_coverage_matrix_v1.yaml:ASPECT_PHASE_KERNEL",
+          "classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"
+        ],
+        "role": "TEMPORAL_EFFECT_PROFILE",
+        "closedContent": "None.",
+        "requiredBeforeAdmission": [
+          "page-bound timing rule",
+          "source-defined boundary semantics",
+          "worked timing reproduction",
+          "scope and precedence evidence"
+        ]
+      },
+      {
+        "operatorId": "WAVES_WITHIN_WAVES_HIERARCHY_V1",
+        "classification": "SOURCE_SILENT",
+        "verificationBasis": "SOURCE_GAP_AUDIT",
+        "sourceContracts": [
+          "classical_oscillator_coverage_matrix_v1.yaml:VEDHA_DURATION_KERNEL"
+        ],
+        "role": "NESTED_EVENT_COMPOSITION",
+        "closedContent": "None.",
+        "prohibitions": [
+          "NO_REPEATED_HIT_AMPLIFICATION",
+          "NO_PARENT_CHILD_EFFECT_INHERITANCE",
+          "NO_MULTI_SCALE_WAVE_SCORE",
+          "NO_SMOOTHING"
+        ]
+      }
+    ],
+    "polarityQualificationLedger": [
+      {
+        "operatorId": "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_NATURAL_PLANET_CLASS_V1"
+        ],
+        "output": "SOURCE_PROFILED_CATEGORICAL_CLASS",
+        "marketDirectionAuthorized": false,
+        "notes": "Moon and Mercury remain conditional exactly as source-bounded; unresolved inputs remain UNKNOWN."
+      },
+      {
+        "operatorId": "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_NATURAL_RELATIONSHIP_V1"
+        ],
+        "output": "DIRECTED_SOURCE_RELATIONSHIP_CATEGORY",
+        "marketDirectionAuthorized": false,
+        "notes": "Do not merge with the Brihat Jataka/Saravali relationship profile."
+      },
+      {
+        "operatorId": "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "BJ_SARAVALI_TEMPORARY_RELATIONSHIP_V1",
+          "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1"
+        ],
+        "output": "TEMPORARY_RELATIONSHIP_CATEGORY",
+        "marketDirectionAuthorized": false,
+        "notes": "Retained under its own cross-text contract."
+      },
+      {
+        "operatorId": "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "INHERITED_SOURCE_CLOSED_CONTRACT",
+        "sourceContracts": [
+          "BJ_SARAVALI_COMPOUND_RELATIONSHIP_V1",
+          "MO_R4A_S1_SOURCE_OPERATOR_CROSS_TEXT_MATRIX_V1"
+        ],
+        "output": "FIVE_STATE_COMPOUND_CATEGORY",
+        "marketDirectionAuthorized": false,
+        "notes": "Inputs, witness layer, and unresolved context must remain visible."
+      },
+      {
+        "operatorId": "CURRENCY_OR_MARKET_POLARITY_BRIDGE_V1",
+        "classification": "SOURCE_SILENT",
+        "verificationBasis": "SOURCE_GAP_AUDIT",
+        "output": "NONE",
+        "marketDirectionAuthorized": false,
+        "notes": "No admitted source translates any source class to currency or market polarity."
+      }
+    ],
+    "magnitudeGateModifierLedger": [
+      {
+        "operatorId": "TRAILOKYA_1972_STHANA_BALA_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_STHANA_BALA_V1"
+        ],
+        "role": "SOURCE_MEASUREMENT_RECORD",
+        "marketMagnitudeAuthorized": false,
+        "compositionStatus": "UNRESOLVED"
+      },
+      {
+        "operatorId": "TRAILOKYA_1972_STHANA_PHALA_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_STHANA_PHALA_V1"
+        ],
+        "role": "SOURCE_RESULT_MEASUREMENT_RECORD",
+        "marketMagnitudeAuthorized": false,
+        "compositionStatus": "UNRESOLVED"
+      },
+      {
+        "operatorId": "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1",
+        "classification": "SOURCE_EXPLICIT",
+        "verificationBasis": "R6_PAGE_IMAGE_RECHECK",
+        "sourceContracts": [
+          "TRAILOKYA_1972_V166_INDIVIDUAL_MODIFIER_V1"
+        ],
+        "role": "ISOLATED_MODIFIER_RECORD",
+        "marketMagnitudeAuthorized": false,
+        "compositionStatus": "UNRESOLVED_NO_STACKING_RULE"
+      },
+      {
+        "operatorId": "MULTI_PLANET_PRECEDENCE_AND_CANCELLATION_V1",
+        "classification": "UNRESOLVED",
+        "verificationBasis": "SOURCE_GAP_AUDIT",
+        "role": "GATE_AND_CONFLICT_RESOLUTION",
+        "marketMagnitudeAuthorized": false,
+        "compositionStatus": "UNIVERSAL_RULE_NOT_SOURCE_CLOSED"
+      }
+    ],
+    "unresolvedSourceGaps": [
+      "SOURCE_DEFINED_APPLICATION_EXACT_SEPARATION_EFFICACY",
+      "SOURCE_DEFINED_EFFECT_ONSET_CESSATION_AND_PERSISTENCE",
+      "SOURCE_DEFINED_DURATION_OR_DECAY_KERNEL",
+      "CONTINUOUS_SWIFT_MEAN_THRESHOLD",
+      "STATIONARY_AND_DIRECT_SLOW_TREATMENT",
+      "UNIVERSAL_MULTI_PLANET_PRECEDENCE",
+      "UNIVERSAL_CANCELLATION_OR_OBSTRUCTION_ORDER",
+      "MULTI_MODIFIER_STACKING",
+      "REPEATED_OR_NESTED_EVENT_COMPOSITION",
+      "CLASSICAL_CURRENCY_OR_MARKET_POLARITY_BRIDGE",
+      "CLASSICAL_MARKET_MAGNITUDE_BRIDGE"
+    ],
+    "r6CandidateOperatorLedgerHash": "E957C50FC42B4C06E6B6202A845551AE5DF75DE269AC71804878BBA94D1E676A"
+  },
+  "inheritedCrossTextMatrix": [
+    {
+      "topicId": "ORDINARY_DRSTI_FRACTIONS",
+      "relationshipStatus": "CROSS_TEXT_AGREEMENT_WITH_TRANSLATION_EDITORIAL_MISMATCH",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit ordinary drsti proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "3/10 = 1/4; 5/9 = 1/2; 4/8 = 3/4; 7 = full"
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "SANSKRIT_ROOT_CONTROLLING_FOR_THIS_PROPOSITION",
+          "locator": "Saravali 4.32 Sanskrit root",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "3/10 = 1/4; 5/9 = 1/2; 4/8 = 3/4; 7 = full"
+        },
+        {
+          "sourceFamily": "SANTHANAM_TRANSLATION",
+          "witnessRole": "READING_TRANSLATION_NOT_CONTROLLING_OVER_SANSKRIT_ROOT",
+          "locator": "Santhanam English rendering of Saravali 4.32",
+          "status": "TRANSLATION_EDITORIAL_MISMATCH",
+          "claim": "The English descriptions swap the 4/8 and 5/9 fractions.",
+          "doesNotAlter": "SARAVALI_4_32_ORDINARY_DRSTI_V1"
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 98 and 100; printed pages 82 and 84; verses 365-371",
+          "status": "SOURCE_CLOSED_CATEGORICAL",
+          "claim": "The same padas are recorded inside the separate Arghya aspect gate.",
+          "scopeLimit": "ARGHYA_ONLY"
+        }
+      ],
+      "machineDisposition": "Use the Saravali Sanskrit root operator for ordinary drsti fractions; preserve the translation mismatch separately."
+    },
+    {
+      "topicId": "SPECIAL_DRSTI_GEOMETRY",
+      "relationshipStatus": "CROSS_TEXT_AGREEMENT",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit special drsti proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Saturn 3/10, Jupiter 5/9, Mars 4/8 special full aspects."
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_ROOT_WITNESS",
+          "locator": "Central source-audit special drsti proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Saturn 3/10, Jupiter 5/9, Mars 4/8 special full aspects."
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 98 and 100; printed pages 82 and 84; verses 365-371",
+          "status": "SOURCE_CLOSED_CATEGORICAL",
+          "claim": "Same special full-aspect geometry in the Arghya context.",
+          "scopeLimit": "ARGHYA_ONLY"
+        }
+      ],
+      "machineDisposition": "Evaluate special full geometry on frozen events only; do not change the five-aspect experimental event compiler."
+    },
+    {
+      "topicId": "TEMPORARY_AND_COMPOUND_RELATIONSHIP",
+      "relationshipStatus": "CROSS_TEXT_AGREEMENT",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit relationship proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Temporary positions and five-state compound relationship."
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_ROOT_WITNESS",
+          "locator": "Central source-audit relationship proposition",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Temporary positions and five-state compound relationship."
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan page 55; printed page 39; verses 168-171",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Trailokya has its own seven-planet natural relationship table.",
+          "scopeLimit": "TRAILOKYA_VEDHA_SOURCE_RELATIONSHIP"
+        }
+      ],
+      "machineDisposition": "Keep Trailokya natural relationship distinct from the BJ/Saravali temporary and compound contracts."
+    },
+    {
+      "topicId": "POSITIONAL_STRENGTH",
+      "relationshipStatus": "PARTIAL_OVERLAP",
+      "records": [
+        {
+          "sourceFamily": "BRIHAT_JATAKA_ROOT",
+          "witnessRole": "CENTRAL_AUDIT_BINDING_TO_HELD_1934_WITNESS",
+          "locator": "Central source-audit positional-strength record",
+          "status": "SOURCE_PARTIAL",
+          "claim": "Do not attribute later expanded components to the root without exact provenance."
+        },
+        {
+          "sourceFamily": "SARAVALI_ROOT",
+          "witnessRole": "ROOT_TEXT_WITH_COMMENTARY_SEPARATED",
+          "locator": "Central source-audit Saravali component inventory",
+          "status": "SOURCE_PARTIAL",
+          "claim": "Uccha, Sapta-Vargaja, Ojayugma-Rasyamsa, Kendra, and Drekkana are distinct components."
+        },
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 53-54; printed pages 37-38; verses 161-165",
+          "status": "SOURCE_CLOSED_EXECUTABLE",
+          "claim": "Sthana-bala and sthana-phala are distinct source measurements within Trailokya Vedha."
+        }
+      ],
+      "machineDisposition": "Do not merge strength families into a scalar or substitute modern Shadbala."
+    },
+    {
+      "topicId": "MOTION_AND_MODIFIERS",
+      "relationshipStatus": "SOURCE_ONLY_IN_TRAILOKYA_FOR_IMPLEMENTED_SCOPE",
+      "records": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 32-36 and 54; printed pages 16-19 and 38; verses 65-77 and 166",
+          "status": "SOURCE_CLOSED_CATEGORICAL",
+          "claim": "Bounded sthula motion classifications and isolated source-result modifiers.",
+          "unresolved": "Exact continuous thresholds, stationary state, and multi-modifier stacking."
+        }
+      ],
+      "machineDisposition": "No external modern speed threshold or universal modifier stack is permitted."
+    },
+    {
+      "topicId": "LATTA_AND_ARGHYA_BOUNDARIES",
+      "relationshipStatus": "SOURCE_ONLY_IN_TRAILOKYA_FOR_IMPLEMENTED_SCOPE",
+      "records": [
+        {
+          "sourceFamily": "TRAILOKYA_DIPIKA_1972",
+          "witnessRole": "CONTROLLING_ORIGINAL_1972_PAGE_IMAGE",
+          "locator": "1972 scan pages 75-77 and 92-103; printed pages 59-61 and 76-87",
+          "status": "SOURCE_PARTIAL",
+          "claim": "Latta and Arghya are separately scoped doctrines.",
+          "unresolved": "Latta counting origin; Arghya generalization and FX mapping."
+        }
+      ],
+      "machineDisposition": "Neither doctrine becomes an ordinary Vedha vote, generic reducer, or market operator."
+    }
+  ],
+  "inferenceExamples": {
+    "SOURCE_IMPLIED": "scope v53 as an exception to the general assignment in Iyer, without ordering other schools",
+    "CROSS_SOURCE_RECONSTRUCTION": "mapping Iyer placement to Phaladipika obstruction in one synthetic profile would need an explicit reconstruction; not used in the separate-profile examples"
+  },
+  "financialInterpretation": "NOT_FINANCIALLY_VALIDATED"
+}
