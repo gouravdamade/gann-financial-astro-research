@@ -1,0 +1,20 @@
+# What can be evaluated at an arbitrary instant
+
+| Level | Quantity and operator | Boundary and interpretation |
+|---|---|---|
+| 1 | Whole-sign place from longitude; apply BS vv4–45 | Changes on sign ingress/egress. Base label, realized timing separate. |
+| 2 | BJ IX raw marks of the occupied sign | Integer step function 0–8 for a fixed planet and reference chart. Retrograde re-entry retrieves the same cell. |
+| 3 | BPHS ch27.1 folded distance/3; ch28.2–6 paired lunar ray tendencies | Continuous piecewise-linear dependence on angular arguments. A sequence of cast charts gives a computable field of strengths or tendencies. Applying it to the native between epochs requires a timing doctrine. |
+| 4 | Realized smooth favorable/adverse phala of a specified native and domain | No closed generic function in the witnesses inspected. Need values within the interval and rules for direction, persistence, release and interacting modifiers. |
+
+Take an unwrapped angle moving 177°→180°→183° from deepest fall. Ucca strength runs 59→60→59. It has a cusp. Endpoints alone would permit many other curves; here the source actually specifies division by three. Aṣṭakavarga has the opposite boundary behavior, e.g. USD Sun's raw marks jump from 3 to 5 at Gemini. Interpolation across that step changes the calculation.
+
+**Applying versus separating.** Hāyanaratna §§3.3–4 makes relative speed and position within the stated orb relevant. The ancient commentator cited in §3.4 retains application just after exactitude until a full degree of passage; another cited tradition qualifies separating benefics. These are discrete conditions. They do not define a universal symmetric peak at perfect aspect. Vyas v343 supplies a separate delayed lunar fruition test keyed to the earlier Vedha identity. The unobstructed-place test in Phaladīpikā has no comparable demonstrated delay. [Tājika applying aspect](https://www.wisdomlib.org/hinduism/book/hayanaratna-the-jewel-of-annual-astrology/d/doc1500905.html) · [Separating aspect](https://www.wisdomlib.org/hinduism/book/hayanaratna-the-jewel-of-annual-astrology/d/doc1500906.html)
+
+**Exact event evaluation.** Split monotone longitude segments at stations, bracket every sign or degree-boundary crossing, refine to a stated tolerance and classify either side. Tangency may touch a boundary without creating a lasting change. Record boundary uncertainty as an interval. If two events cannot be ordered within tolerance, evaluate both orders or report unknown. Use half-open intervals solely to choose one owner of an instant. A one-minute sampling grid can miss an entire return; interpolation between bars cannot prove its absence.
+
+**Experimental kernels.** For a frozen event window [a,b] with known peak p, a triangular tent with linear rise/fall and a raised cosine on each half are two declared hypotheses. At one-quarter of the rise they give .25 versus (1−cos(π/4))/2 ≈ .146. Both agree at onset, peak and end. An exponentially decaying state after a trigger needs a chosen half-life and initial magnitude; doubling the half-life changes retention at the old half-life from .5 to .707. A source-worked interior value, asymmetric paired ingress/egress observation or explicit termination would discriminate among them. Without it, retain exact categorical events and the genuinely calculable raw count. No market series was used to select a shape.
+
+## Check at two dated instants
+
+At 17:00 UTC on 31 May and 1 June 2025 respectively, an independent Raman/Moshier research calculation gives Moon 108.874942° then 121.922354° and Sun 47.725377° then 48.684031°. Applying ch27.1 to Moon gives 34.708353 then 30.359215 virūpas. The ch28 lunar ray tendency pair changes from (27.545770, 32.454230) to (27.385995, 32.614005). These are two freshly cast planetary evaluations in the selected witness. A currency chart’s natal tendency does not acquire that time dependence without a further doctrine. The [ledger](AIW_MASTER_02_RESEARCH_CANDIDATES.json) preserves the inputs, method, unrounded results and a separate one-second solar-ingress bracket.

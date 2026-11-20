@@ -1,0 +1,18 @@
+# Comparing architectures on the same inputs
+
+Use the same synthetic scene throughout: target H has eligible testimonies B₁+, B₂+, M₁−; a separate target J has M₂−. A duplicate proof of B₁ enters from its dignity. A favorable placement at J also has a possible blocker. All numerical intensities below are explicitly experimental except indicated source calculations.
+
+| Architecture | Operation on this scene | Source dependency and failure |
+|---|---|---|
+| A · concurrent categories | H={favorable,adverse}; J={adverse,conditional favorable}. Store each graha/domain and both proofs for B₁. | Works for base gochara. A conflicting pair is intelligible without deciding which dominates. |
+| B · guarded hypergraph | Canonical facts → conjunctive predicates → conclusions. In a qualifying BPHS ch74 aspect-only branch H resolves favorable by 2:1. In a PD-specific branch the J placement can fail its own test. | Every edge names its profile. These are two evaluations with distinct subjects. One profile cannot silently override the other. |
+| C · constrained numerical projection | For differences on two homologous channels Δ=(+2,−1), shared weights (w,1−w), w∈[0,1], give 3w−1∈[−1,2]. At w=1/3 sign is zero. | No unique sign. Counting the duplicate B₁ again would bias the interval. Bounds are contingent on nonnegative normalized weights. |
+| D · typed hybrid | The A/B results coexist with raw Mars count 4/8 if chart inputs warrant. A display can show all three typed results. Only an expressly compatible projection can reduce them. | Qualify each component separately. Unsupported edges stay unknown. This best supports expansion without redefining old results. |
+| E · product order and set-valued state | For Δ=(+2,−1) neither side dominates. For Δ=(+2,0) USD weakly dominates on those two dimensions, assuming identical domain meanings. | Does not require a distance between ordered labels. An unordered label such as “mixed” may preclude the comparison. |
+
+**Reevaluation and proofs.** Index rules by input predicate and scope. At a boundary remove expired facts, add new ones, recalculate the closure for affected targets and retain minimal sufficient proof sets. With two obstructors, each gives a separate sufficient proof for one blocked assertion. Removing either alone leaves the assertion. With a five-planet conjunction all five are needed for one proof. If a cycle has no independently observed input or declared fixed-point semantics, withhold the derived state. Raw counts have eight contributor identities and cannot be inflated by graph paths.
+
+**Joint uncertainty.** For shared unknown w, let USD = 1+2w and JPY = 1+w. Marginal intervals [1,3] and [1,2] give a loose difference [−1,2]. Evaluating within each common scenario gives exactly [0,1]. If chart-time uncertainty is independent on each side, cross the time scenarios while sharing edition and weighting. A pair of independent intervals misses these dependencies. Confidence weights require calibration distinct from the size of a source effect. No weighting is needed to implement A or the branch of B above.
+
+**Tests for identifiability.** Swap equal-strength opponents, remove one of two blockers, inject a duplicate path, insert an extra graha into a five-way pattern, shift ingress across a display boundary and swap chart labels. Expect respectively mixed at the source-defined tie, still blocked, unchanged tally, abstention on supersets absent authority, stable state at the same instant and opposite signed difference only on a compatible count. A candidate that changes with view resolution fails before any empirical study.
+
