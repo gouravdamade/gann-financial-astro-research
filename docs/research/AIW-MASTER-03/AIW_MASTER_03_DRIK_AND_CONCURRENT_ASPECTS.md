@@ -1,0 +1,11 @@
+# Addition is licensed for a specific target and unit
+
+Read drik_bala_engine.py: PARASHARA_DRIK_BALA_RECONCILIATION_V2, DRIK_NET_DIVIDE_BY_FOUR_V1, PVR_TITHI_SIGN_ASSOCIATION_NATURE_V1 and PYJHORA_4_8_7_ACTIVE_SPECIAL_ASPECT_RANGES_V1. This is an explicitly provisional comparator profile, not a certified reading of all BPHS witnesses.
+
+For directed x=(target-aspector) mod 360, base D(x) on half-open bins [0,30,60,90,120,150,180,300,360) is respectively 0, (x-30)/2, x-45, (120-x)/2+30, 150-x, 2(x-150), (300-x)/2, 0. Add Saturn +45 on [60,90) or [270,300), Mars +15 on [90,120) or [210,240), Jupiter +30 on [120,150) or [240,270). Opposite orientation is not interchangeable. Sign each contributor by the selected nature rule; normalize net /4. Conditional lunar phase and Mercury association must be adjudicated with complete inputs. Missing source positions do not mean an aspect of zero.
+
+Synthetic same-target demonstration: target 0°, Venus 180° => +60; Saturn 300° => directed 60°, -(15+45)=-60; Jupiter 240° => directed 120°, +(30+30)=60. Three-term net/4=15 virupas, **partial subtotal**, not a target's full Drik. Counting Jupiter's special bonus as another independent aspect would add an erroneous 7.5. Require all six unique aspectors for a seven-planet target total. Scope the contribution ID to chart, epoch, source profile, target, aspector. Source-defined conjunctions, Tajika aspects and these fractional strengths are different relations.
+
+Raman pp85-89 Ex54/55: inherited provisional Sun net 63.491667/4=15.872917 versus printed 63.45/4=15.8625 (printed 15.86). The difference starts above the final rounding layer. BPHS English 27.19's special Jupiter/Mercury wording must not be implemented as a second full addition to already included rows without witness-specific adjudication. Distinguish aspect *by* and aspect *to* a body. Comparing a new ephemeris to a printed score without identical input longitudes cannot identify a formula defect.
+
+Alternative conflict resolution is source-specific: Sudarsana occupation, aspect and lord testimony use a decision order; the Subodhini worked testimony 2+4+1 vs 1+3 resolves 7:4 in quarters, not virupas or AV marks. If the tie/strongest rule lacks a resolved strength, return an unresolved judgment. These procedures do not prove universal cancellation.

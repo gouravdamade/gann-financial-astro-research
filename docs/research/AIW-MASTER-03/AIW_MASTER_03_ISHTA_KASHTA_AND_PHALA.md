@@ -1,0 +1,7 @@
+# Two tendency labels can contain only one independent number
+
+Inherited MASTER-02 BPHS English ch28.2-6 lunar witness. Let f(x)=min(x mod 360,360-(x mod 360)); a=f(lambda_Moon-213°), c=f(lambda_Moon-lambda_Sun). Rays U=1+a/30 and C=1+c/30 (each 1..7); auspicious rays=(U+C)/2, adverse rays=8-(U+C)/2. Lunar I=5[(U-1)+(C-1)] and K=60-I. Both are in 0..60; K adds no independent degree of freedom. I-K=2I-60, a mathematical contrast, not a sourced market or universal phala net. This is the audited lunar reconstruction only; do not silently substitute a different edition's product/square-root formulation.
+
+At 2025-05-31 17:00 UTC Moon 108.874942°, Sun 47.725377°, a=104.125058°, c=61.149565°. I=(a+c)/6=27.545771; K=32.454229. On the next day at the same UTC, a=91.077646°, c=73.238323°, I=27.385995 and K=32.614005. This is a changing sky-wide tendency proxy for a sequence of charts under the named witness. The same two angles give the same I,K in USD and JPY; subtracting yields zero by identity, not neutral market pressure.
+
+The result terminology is closer to auspicious/adverse judgment than total strength, but the linked house/lord and period statements (ch28.11-12) still specify the subject. Use the pair with a dependency link, not two votes. Distinguish root, translator definitions and this numerical reconstruction. Not interchangeable with probability, outcome size, time-to-effect or empirically validated direction.

@@ -1,0 +1,121 @@
+{
+  "researchOnly": true,
+  "executionAllowed": false,
+  "financiallyValidated": false,
+  "marketDirectionAssigned": false,
+  "candidates": [
+    {
+      "id": "S",
+      "name": "Single-sign cumulative lookup",
+      "formula": "S(c,z)=sum_p H(p,c,z); optional S(c,z_anchor(t))",
+      "status": "SOURCE_EXPLICIT",
+      "sources": "Aiyar IX masks; Phaladipika XXIII.20 and BPHS Samudaya 72 support column operation, not cross-edition thresholds",
+      "inputs": "Seven recipient counts at one sign",
+      "rangeAndUnits": "0..56 unreduced marks per sign",
+      "assumptions": "Anchor choice is engineering; no weighting",
+      "temporalAndConcurrent": "Atomic change at ingress of selected anchor; same sign, same result regardless of other transits",
+      "example": "USD Aries 43 versus JPY 31: difference 12 marks",
+      "counterexample": "All planets occupy different signs: S does not describe all their occupied signs",
+      "pairContract": "Subtract same sign/stage/profile only"
+    },
+    {
+      "id": "E",
+      "name": "Equal-weight moving-sign mean",
+      "formula": "E(c,t)=sum_p H(p,c,z_p(t))/7",
+      "status": "ENGINEERING_TRANSFORMATION",
+      "sources": "Aiyar IX unreduced only; universal phala interpretation SOURCE_SILENT",
+      "inputs": "Seven simultaneous recipient counts at their own signs",
+      "rangeAndUnits": "0..8 mean marks; pair -8..8",
+      "assumptions": "Interchangeable unit of counting, not realized effect; all weights 1/7",
+      "temporalAndConcurrent": "Half-open step; evaluate all new signs before publishing a simultaneous transition",
+      "example": "32/7 vs 28/7; difference 4/7",
+      "counterexample": "One cell +4 offsets four -1 changes; identities and triggers disappear in sum",
+      "pairContract": "Yes for descriptive mean marks"
+    },
+    {
+      "id": "P",
+      "name": "Weight envelope and dominance",
+      "formula": "P(t)={w dot (B_U-B_J): w>=0, sum w=1}=[min d,max d]",
+      "status": "ENGINEERING_TRANSFORMATION",
+      "sources": "Same inputs as E; no classical probability for weights",
+      "inputs": "Seven paired differences of raw counts",
+      "rangeAndUnits": "Closed interval in -8..8 marks",
+      "assumptions": "Same unknown nonnegative weights on both sides, unconstrained except simplex; not a confidence interval",
+      "temporalAndConcurrent": "Piecewise extrema; ties may produce flat envelope while components change",
+      "example": "Scene [0,2]; any positive weights give a positive difference, boundary weights may tie",
+      "counterexample": "Opposing changes yield both signs: no unique ordering",
+      "pairContract": "Paired projection only; difference of separately optimized envelopes is incorrect"
+    },
+    {
+      "id": "H",
+      "name": "Source-governed interaction field",
+      "formula": "H(c,t,topic)=evaluate applicable source predicates in their own stated order; return set of compatible verdicts",
+      "status": "SOURCE_SUPPORTED_RECONSTRUCTION",
+      "sources": "Phaladipika XXVI.6 obstruction; Sudarsana house rules; Saravali natal conjunctions remain separate profiles",
+      "inputs": "Named predicates, target, actor set, house, exceptions, phase and profile",
+      "rangeAndUnits": "Categorical: inapplicable, supported, obstructed, mixed, unresolved; no universal amplitude",
+      "assumptions": "Only a text-specified priority can resolve a conflict. Simultaneous testimony enters as a set",
+      "temporalAndConcurrent": "Change when any premise changes; exact-time if persistence not proven",
+      "example": "Mercury 4 with nonexempt blocker at 3: favorable judgment obstructed",
+      "counterexample": "Counting benefic aspects cannot rule out an overriding obstruction; missing blocker data cannot prove absence",
+      "pairContract": "Compare named states side by side; subtracting categories undefined"
+    },
+    {
+      "id": "W",
+      "name": "Strength-weighted marks",
+      "formula": "W(c,t)=sum_p k_p(t)*B_pc(t)/sum_p k_p(t)",
+      "status": "EXPERIMENTAL_HYPOTHESIS",
+      "sources": "Named strength component only; no source bridge to AV",
+      "inputs": "Counts and a single commensurate nonnegative strength per planet",
+      "rangeAndUnits": "0..8 weighted marks; pair -8..8 with common k",
+      "assumptions": "No negative, missing or all-zero k. Weighting is a hypothesis, not an explicit effect",
+      "temporalAndConcurrent": "Piecewise continuous for continuous k, jumps at AV or strength-rule boundaries",
+      "example": "Synthetic 2x Venus gives 39/8 vs 33/8",
+      "counterexample": "Large strength on a low-mark planet reduces the average; stronger is not necessarily favorable",
+      "pairContract": "Only identical weighting policy; disclose any chart-specific weight composition"
+    },
+    {
+      "id": "G",
+      "name": "Geometry-modulated count contrast",
+      "formula": "G*(c,t)=R1(t)*E(c,t)",
+      "status": "EXPERIMENTAL_HYPOTHESIS",
+      "sources": "AVG10 geometry + E; attenuation has no classical authority",
+      "inputs": "Counts and dimensionless R1",
+      "rangeAndUnits": "0..8 mark-equivalents; pair -8..8",
+      "assumptions": "Concentration, not sign-bearing phase, chosen for nonnegative scaling",
+      "temporalAndConcurrent": "Continuous geometry where evaluated; jumps in E; no interpolation of sampled inputs",
+      "example": "Scene pair .573790*(4/7)=.327880",
+      "counterexample": "Equal antipodal clusters erase nonzero E; attenuation is not evidence of cancellation",
+      "pairContract": "Common R1 preserves weak ordering; zero collapses strict ordering"
+    },
+    {
+      "id": "V",
+      "name": "Typed multiscale state with selective projections",
+      "formula": "V(c,t)=(B_1..B_7, S_components, motion, geometry, scoped rule states, validity); return pi_topic(V) only when licensed",
+      "status": "ENGINEERING_TRANSFORMATION",
+      "sources": "Per-coordinate evidence from Aiyar, named Bala profile, astronomy and named contextual rules",
+      "inputs": "Counts, virupas, deg/day, dimensionless moments, categories remain separate",
+      "rangeAndUnits": "Product space with per-coordinate domains; no universal scalar",
+      "assumptions": "No hidden projection or rescaling; keyed identities and evidence stages",
+      "temporalAndConcurrent": "Union of proven transition sets, exact-only observations and evaluated continuous coordinates; simultaneous changes atomic",
+      "example": "(USD B=[3,5,4,5,5,7,3], lunar Uccha=34.708353, R1=.573790)",
+      "counterexample": "Collapsing this tuple erases domain and unit; one absent source should not blank independent coordinates",
+      "pairContract": "Only typed comparable coordinates subtract; category pairs do not"
+    }
+  ],
+  "missing": "No silent defaults. Required inputs missing => projection unavailable. H uses explicit partial information; V preserves other lanes.",
+  "interpretation": "Descriptive, not market pressure",
+  "operationExceptions": {
+    "sourceDefinedMark": "SOURCE_EXPLICIT",
+    "signedExcess": "ENGINEERING_TRANSFORMATION",
+    "plateExample": "COMMENTARY_SPECIFIC",
+    "universalComposition": "SOURCE_SILENT",
+    "unknownModifierPriority": "UNRESOLVED",
+    "weightAsPhala": "EXPERIMENTAL_HYPOTHESIS"
+  },
+  "ranking": {
+    "source": "S",
+    "transparentExperimental": "E + P",
+    "longTerm": "V with scoped H"
+  }
+}
