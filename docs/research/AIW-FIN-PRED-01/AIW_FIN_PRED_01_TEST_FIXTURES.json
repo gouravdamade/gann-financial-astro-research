@@ -1,0 +1,1338 @@
+{
+  "packet": "AIW_FIN_PRED_01",
+  "baseline": "ab792e4b1b476a2597df78425817636c331fbc96",
+  "sources": {
+    "R44": {
+      "work": "Raman, How to Judge a Horoscope I",
+      "locator": "Chapter 5, Chart 44, print 102–103, PDF 111–112"
+    },
+    "H12": {
+      "work": "Raman, Hindu Predictive Astrology",
+      "locator": "XII, balance methods, tables of dasas and bhuktis"
+    },
+    "P42": {
+      "work": "BPHS, Santhanam I",
+      "locator": "XLII.13, print 415, PDF 414"
+    },
+    "P41": {
+      "work": "BPHS, Santhanam I",
+      "locator": "XLI.9,16–17, print 404,406"
+    },
+    "J8": {
+      "work": "Brihat Jataka, Aiyar 1905",
+      "locator": "VIII.11,20,23, print 88,91,94"
+    },
+    "J8S": {
+      "work": "Brihat Jataka, V. Subrahmanya Sastri 1956",
+      "locator": "VIII.23, print 195–196"
+    },
+    "Haya": {
+      "work": "Balabhadra, Gansten 2020",
+      "locator": "VI.3, print 581,585"
+    },
+    "Ph": {
+      "work": "Phaladipika, Kapoor",
+      "locator": "XXIII.10 and XXVI.7, pp.225,247"
+    },
+    "BS": {
+      "work": "Brihat Samhita, Iyer 1884",
+      "locator": "XLII.1,7,14"
+    },
+    "S33": {
+      "work": "Saravali, English e-text",
+      "locator": "XXXIII.82, p.124"
+    }
+  },
+  "sourceDerived": {
+    "R44.caption": {
+      "dualDate": "29/30 September 1888",
+      "LT": "04:35",
+      "latitude": 26.5,
+      "longitudeEast": 74.75,
+      "openingLord": "Jupiter",
+      "balanceYMD": [
+        13,
+        1,
+        20
+      ]
+    },
+    "signsZeroBased": [
+      "Aries",
+      "Taurus",
+      "Gemini",
+      "Cancer",
+      "Leo",
+      "Virgo",
+      "Libra",
+      "Scorpio",
+      "Sagittarius",
+      "Capricorn",
+      "Aquarius",
+      "Pisces"
+    ],
+    "R44.rasi": {
+      "Sun": 5,
+      "Moon": 2,
+      "Mercury": 6,
+      "Venus": 6,
+      "Mars": 7,
+      "Jupiter": 7,
+      "Saturn": 3,
+      "Rahu": 3,
+      "Ketu": 9,
+      "Lagna": 4
+    },
+    "R44.navamsa": {
+      "Sun": 1,
+      "Moon": 0,
+      "Mercury": 8,
+      "Venus": 7,
+      "Mars": 9,
+      "Jupiter": 6,
+      "Saturn": 11,
+      "Rahu": 4,
+      "Ketu": 10,
+      "Lagna": 8
+    },
+    "lordsLeoHouses1to12": [
+      "Sun",
+      "Mercury",
+      "Venus",
+      "Mars",
+      "Jupiter",
+      "Saturn",
+      "Saturn",
+      "Jupiter",
+      "Mars",
+      "Venus",
+      "Mercury",
+      "Moon"
+    ],
+    "R44.reading": {
+      "period": [
+        "Ketu",
+        "Venus"
+      ],
+      "topic": "loss and debt",
+      "reportedAmountRupees": 50000,
+      "computedAmount": null,
+      "evidenceLevel": "B",
+      "source": "R44"
+    },
+    "H12": {
+      "order": [
+        "Ketu",
+        "Venus",
+        "Sun",
+        "Moon",
+        "Mars",
+        "Rahu",
+        "Jupiter",
+        "Saturn",
+        "Mercury"
+      ],
+      "years": {
+        "Ketu": 7,
+        "Venus": 20,
+        "Sun": 6,
+        "Moon": 10,
+        "Mars": 7,
+        "Rahu": 18,
+        "Jupiter": 16,
+        "Saturn": 19,
+        "Mercury": 17
+      },
+      "partsPerConventionalYear": 360
+    },
+    "R44.periods": {
+      "origin": "birth",
+      "interval": "[start,end)",
+      "majorStartYMD": {
+        "JupiterRemaining": [
+          0,
+          0,
+          0
+        ],
+        "Saturn": [
+          13,
+          1,
+          20
+        ],
+        "Mercury": [
+          32,
+          1,
+          20
+        ],
+        "Ketu": [
+          49,
+          1,
+          20
+        ],
+        "Venus": [
+          56,
+          1,
+          20
+        ]
+      },
+      "ketuChildren": [
+        {
+          "child": "Ketu",
+          "length": 147,
+          "startAgeParts": 17690,
+          "endAgeParts": 17837,
+          "startYMD": [
+            49,
+            1,
+            20
+          ],
+          "endYMD": [
+            49,
+            6,
+            17
+          ]
+        },
+        {
+          "child": "Venus",
+          "length": 420,
+          "startAgeParts": 17837,
+          "endAgeParts": 18257,
+          "startYMD": [
+            49,
+            6,
+            17
+          ],
+          "endYMD": [
+            50,
+            8,
+            17
+          ]
+        },
+        {
+          "child": "Sun",
+          "length": 126,
+          "startAgeParts": 18257,
+          "endAgeParts": 18383,
+          "startYMD": [
+            50,
+            8,
+            17
+          ],
+          "endYMD": [
+            51,
+            0,
+            23
+          ]
+        },
+        {
+          "child": "Moon",
+          "length": 210,
+          "startAgeParts": 18383,
+          "endAgeParts": 18593,
+          "startYMD": [
+            51,
+            0,
+            23
+          ],
+          "endYMD": [
+            51,
+            7,
+            23
+          ]
+        },
+        {
+          "child": "Mars",
+          "length": 147,
+          "startAgeParts": 18593,
+          "endAgeParts": 18740,
+          "startYMD": [
+            51,
+            7,
+            23
+          ],
+          "endYMD": [
+            52,
+            0,
+            20
+          ]
+        },
+        {
+          "child": "Rahu",
+          "length": 378,
+          "startAgeParts": 18740,
+          "endAgeParts": 19118,
+          "startYMD": [
+            52,
+            0,
+            20
+          ],
+          "endYMD": [
+            53,
+            1,
+            8
+          ]
+        },
+        {
+          "child": "Jupiter",
+          "length": 336,
+          "startAgeParts": 19118,
+          "endAgeParts": 19454,
+          "startYMD": [
+            53,
+            1,
+            8
+          ],
+          "endYMD": [
+            54,
+            0,
+            14
+          ]
+        },
+        {
+          "child": "Saturn",
+          "length": 399,
+          "startAgeParts": 19454,
+          "endAgeParts": 19853,
+          "startYMD": [
+            54,
+            0,
+            14
+          ],
+          "endYMD": [
+            55,
+            1,
+            23
+          ]
+        },
+        {
+          "child": "Mercury",
+          "length": 357,
+          "startAgeParts": 19853,
+          "endAgeParts": 20210,
+          "startYMD": [
+            55,
+            1,
+            23
+          ],
+          "endYMD": [
+            56,
+            1,
+            20
+          ]
+        }
+      ]
+    },
+    "R44.replay": {
+      "backend": "Swiss Ephemeris 2.10.03 Moshier, Raman sidereal, mean node, Gregorian UT, W houses",
+      "LTAssumption": "local mean solar time",
+      "trials": [
+        {
+          "localSeptemberDay": 29,
+          "jdUT": 2410909.4833333334,
+          "degrees": {
+            "Sun": 165.39149281682216,
+            "Moon": 82.41221487424421,
+            "Mercury": 188.86309133375994,
+            "Venus": 186.73561698919482,
+            "Mars": 231.5370599853448,
+            "Jupiter": 221.83305035880127,
+            "Saturn": 116.11453625904508,
+            "Rahu": 95.99369601832582,
+            "Ketu": 275.9936960183258,
+            "Lagna": 147.43649586663975
+          },
+          "rasi": {
+            "Sun": 5,
+            "Moon": 2,
+            "Mercury": 6,
+            "Venus": 6,
+            "Mars": 7,
+            "Jupiter": 7,
+            "Saturn": 3,
+            "Rahu": 3,
+            "Ketu": 9,
+            "Lagna": 4
+          },
+          "navamsa": {
+            "Sun": 1,
+            "Moon": 0,
+            "Mercury": 8,
+            "Venus": 8,
+            "Mars": 9,
+            "Jupiter": 6,
+            "Saturn": 10,
+            "Rahu": 4,
+            "Ketu": 10,
+            "Lagna": 8
+          },
+          "rasiDisagreements": [],
+          "navamsaDisagreements": [
+            "Venus",
+            "Saturn"
+          ],
+          "star": "Punarvasu",
+          "openingLord": "Jupiter",
+          "starEntryJD": 2410909.285556703,
+          "starExitJD": 2410910.367660084,
+          "angularBalanceYears": 13.105342150906937,
+          "timeBalanceYears": 13.075671193630733
+        },
+        {
+          "localSeptemberDay": 30,
+          "jdUT": 2410910.4833333334,
+          "degrees": {
+            "Sun": 166.37516212815132,
+            "Moon": 94.78018423495546,
+            "Mercury": 190.13943785752105,
+            "Venus": 187.97066356588732,
+            "Mars": 232.23724619661706,
+            "Jupiter": 222.00099142631248,
+            "Saturn": 116.21250634752924,
+            "Rahu": 95.94070389984068,
+            "Ketu": 275.9407038998407,
+            "Lagna": 148.31688554653442
+          },
+          "rasi": {
+            "Sun": 5,
+            "Moon": 3,
+            "Mercury": 6,
+            "Venus": 6,
+            "Mars": 7,
+            "Jupiter": 7,
+            "Saturn": 3,
+            "Rahu": 3,
+            "Ketu": 9,
+            "Lagna": 4
+          },
+          "navamsa": {
+            "Sun": 1,
+            "Moon": 4,
+            "Mercury": 9,
+            "Venus": 8,
+            "Mars": 9,
+            "Jupiter": 6,
+            "Saturn": 10,
+            "Rahu": 4,
+            "Ketu": 10,
+            "Lagna": 8
+          },
+          "rasiDisagreements": [
+            "Moon"
+          ],
+          "navamsaDisagreements": [
+            "Moon",
+            "Mercury",
+            "Venus",
+            "Saturn"
+          ],
+          "star": "Pushya",
+          "openingLord": "Saturn"
+        }
+      ]
+    },
+    "Raman.financialTiming": "How to Judge a Horoscope I, ch.5, pp.91–93 / PDF 100–102",
+    "R38.control": {
+      "provenance": "Raman lists all six inputs and both rulers on pp.91–92. Relative ages calculated here.",
+      "sixChannels": {
+        "lordOfSecond": [
+          "Venus"
+        ],
+        "aspectorsOfSecond": [],
+        "occupantsOfSecond": [
+          "Mercury",
+          "Sun"
+        ],
+        "aspectorsOfSecondLord": [
+          "Jupiter"
+        ],
+        "companionsOfSecondLord": [],
+        "lunarSecondLord": [
+          "Saturn"
+        ]
+      },
+      "expectedEligible": [
+        "Venus",
+        "Saturn",
+        "Jupiter",
+        "Mercury",
+        "Sun"
+      ],
+      "parent": "Saturn",
+      "child": "Venus",
+      "expectedTopic": "EMPHASIZED",
+      "birthBalance": [
+        "Mars",
+        4,
+        2,
+        14
+      ],
+      "saturnStartAgeYMD": [
+        38,
+        2,
+        14
+      ],
+      "precedingChildParts": [
+        1083,
+        969,
+        399
+      ],
+      "venusChildLengthParts": 1140,
+      "expectedIntervalAgeYMD": [
+        [
+          45,
+          0,
+          5
+        ],
+        [
+          48,
+          2,
+          5
+        ]
+      ],
+      "authorReported": "appointment as Speaker",
+      "amount": null
+    },
+    "R44.sixChannels": {
+      "source": "Raman.financialTiming",
+      "chart": "R44.rasi",
+      "aspectProfile": "full classical-planet aspects; nodes not included as aspect sources",
+      "sets": {
+        "lordOfSecond": [
+          "Mercury"
+        ],
+        "aspectorsOfSecond": [
+          "Saturn"
+        ],
+        "occupantsOfSecond": [
+          "Sun"
+        ],
+        "aspectorsOfSecondLord": [],
+        "companionsOfSecondLord": [
+          "Venus"
+        ],
+        "lunarSecondLord": [
+          "Moon"
+        ]
+      },
+      "positiveChildWitness": "Venus joins Mercury",
+      "conditionalTopic": "LIMITED under direct seven-graha coverage; certainty about all node links withheld"
+    }
+  },
+  "syntheticTests": {
+    "profile": "whole sign, graha full aspects, trines 1/5/9, distinct conjunction partners",
+    "adversity": [
+      {
+        "id": "trigger",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {},
+        "subject": "human",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": true,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Jupiter": true,
+            "Moon": false
+          },
+          "protectiveAspects": {
+            "Sun": false,
+            "Jupiter": false,
+            "Mars": false
+          }
+        },
+        "expected": [
+          "CONDITION_PRESENT",
+          "UNFAVORABLE"
+        ]
+      },
+      {
+        "id": "protected",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {
+          "Sun": 1
+        },
+        "subject": "human",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": true,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Jupiter": true,
+            "Moon": false
+          },
+          "protectiveAspects": {
+            "Sun": true,
+            "Jupiter": false,
+            "Mars": false
+          }
+        },
+        "expected": [
+          "CONDITION_ABSENT",
+          "NO_JUDGMENT"
+        ]
+      },
+      {
+        "id": "incomplete",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {
+          "Sun": null
+        },
+        "subject": "human",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": true,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Jupiter": true,
+            "Moon": false
+          },
+          "protectiveAspects": {
+            "Sun": null,
+            "Jupiter": false,
+            "Mars": false
+          }
+        },
+        "expected": [
+          "UNKNOWN",
+          "UNKNOWN"
+        ]
+      },
+      {
+        "id": "quote",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {},
+        "subject": "USD/JPY",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": true,
+        "proof": {},
+        "expected": [
+          "NOT_APPLICABLE",
+          "NOT_APPLICABLE"
+        ]
+      },
+      {
+        "id": "outside-period",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {},
+        "subject": "human",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": false,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Jupiter": true,
+            "Moon": false
+          },
+          "protectiveAspects": {
+            "Sun": false,
+            "Jupiter": false,
+            "Mars": false
+          }
+        },
+        "expected": [
+          "CONDITION_ABSENT",
+          "NO_JUDGMENT"
+        ]
+      },
+      {
+        "id": "actual-ketu-conjunction-control",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {},
+        "subject": "human",
+        "governingPlanet": "Ketu",
+        "ownPeriodActive": true,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Jupiter": false,
+            "Moon": false
+          },
+          "protectiveAspects": {
+            "Sun": false,
+            "Jupiter": false,
+            "Mars": false
+          }
+        },
+        "expected": [
+          "CONDITION_ABSENT",
+          "NO_JUDGMENT"
+        ]
+      },
+      {
+        "id": "fifth-lord-protects",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {
+          "Moon": 7,
+          "Jupiter": 3
+        },
+        "subject": "human",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": true,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Moon": true,
+            "Jupiter": false
+          },
+          "protectiveAspects": {
+            "Sun": false,
+            "Mars": false,
+            "Jupiter": true
+          }
+        },
+        "expected": [
+          "CONDITION_ABSENT",
+          "NO_JUDGMENT"
+        ]
+      },
+      {
+        "id": "fifth-lord-unobserved",
+        "source": "P42",
+        "chartBase": "R44.rasi",
+        "overrides": {
+          "Moon": 7,
+          "Jupiter": null
+        },
+        "subject": "human",
+        "governingPlanet": "Mars",
+        "ownPeriodActive": true,
+        "proof": {
+          "conjunctions": {
+            "Saturn": false,
+            "Moon": true,
+            "Jupiter": null
+          },
+          "protectiveAspects": {
+            "Sun": false,
+            "Mars": false,
+            "Jupiter": null
+          }
+        },
+        "expected": [
+          "UNKNOWN",
+          "UNKNOWN"
+        ]
+      }
+    ],
+    "otherBranches": [
+      {
+        "rule": "P41.9",
+        "inputs": {
+          "leoRising": true,
+          "sunInLeo": true,
+          "marsParticipates": true,
+          "jupiterParticipates": true
+        },
+        "expected": "YOGA_PRESENT"
+      },
+      {
+        "rule": "P41.9",
+        "inputs": {
+          "leoRising": true,
+          "sunInLeo": false,
+          "marsParticipates": null,
+          "jupiterParticipates": null
+        },
+        "expected": "YOGA_ABSENT"
+      },
+      {
+        "rule": "P41.9",
+        "inputs": {
+          "leoRising": true,
+          "sunInLeo": true,
+          "marsParticipates": true,
+          "jupiterParticipates": null
+        },
+        "expected": "YOGA_UNKNOWN"
+      },
+      {
+        "rule": "J8.23.Aiyar",
+        "inputs": {
+          "samePlanet": true,
+          "sameMatter": true,
+          "gainCanonicalProofs": [
+            "a"
+          ],
+          "lossCanonicalProofs": [
+            "b"
+          ]
+        },
+        "expected": "BOTH_EFFECTS_WITHHELD"
+      },
+      {
+        "rule": "J8.23.Aiyar",
+        "inputs": {
+          "samePlanet": true,
+          "sameMatter": true,
+          "gainCanonicalProofs": [
+            "a",
+            "a"
+          ],
+          "lossCanonicalProofs": [
+            "b"
+          ]
+        },
+        "expected": "BOTH_EFFECTS_WITHHELD"
+      },
+      {
+        "rule": "J8.23.Aiyar",
+        "inputs": {
+          "samePlanet": true,
+          "sameMatter": true,
+          "gainCanonicalProofs": [
+            "a",
+            "c"
+          ],
+          "lossCanonicalProofs": [
+            "b"
+          ]
+        },
+        "expected": "FAVORABLE"
+      },
+      {
+        "rule": "J8.23.Aiyar",
+        "inputs": {
+          "samePlanet": true,
+          "sameMatter": true,
+          "gainCanonicalProofs": [
+            "a"
+          ],
+          "lossCanonicalProofs": [
+            "b",
+            "c"
+          ]
+        },
+        "expected": "UNFAVORABLE"
+      },
+      {
+        "rule": "J8.23.Aiyar",
+        "inputs": {
+          "samePlanet": true,
+          "sameMatter": true,
+          "gainCanonicalProofs": [
+            "a",
+            "b"
+          ],
+          "lossCanonicalProofs": [
+            "c",
+            "d"
+          ]
+        },
+        "expected": "UNRESOLVED_CONFLICT"
+      },
+      {
+        "rule": "J8.23",
+        "inputs": {
+          "gainPlanet": "Venus",
+          "lossPlanet": "Saturn",
+          "sameMatter": true
+        },
+        "expected": {
+          "Venus period": "FAVORABLE",
+          "Saturn period": "UNFAVORABLE"
+        }
+      },
+      {
+        "rule": "J8S.23",
+        "inputs": {
+          "samePlanet": true,
+          "opposed": true,
+          "relativeStrength": "unknown",
+          "bothEstablished": true
+        },
+        "expected": "UNRESOLVED_CONFLICT"
+      },
+      {
+        "rule": "J8S.23",
+        "inputs": {
+          "samePlanet": true,
+          "opposed": true,
+          "relativeStrength": "adverse stronger"
+        },
+        "expected": "UNFAVORABLE"
+      },
+      {
+        "rule": "J8.23",
+        "inputs": {
+          "sameMatter": true,
+          "samePlanet": null
+        },
+        "expected": "UNKNOWN"
+      },
+      {
+        "rule": "Haya6.3.opening",
+        "inputs": {
+          "annualChart": true,
+          "secondHouseTestimony": "mixed, adjudicated"
+        },
+        "expected": "MIXED"
+      },
+      {
+        "rule": "Haya6.3.Varshatantra",
+        "inputs": {
+          "natalWealthGiverCorruptInYear": true,
+          "secondLordCorruptInYear": true
+        },
+        "expected": "UNFAVORABLE"
+      },
+      {
+        "rule": "Ph26.7",
+        "inputs": [
+          2,
+          12,
+          "empty, complete"
+        ],
+        "expected": "ELIGIBLE_JUPITER_TRANSIT"
+      },
+      {
+        "rule": "Ph26.7",
+        "inputs": [
+          2,
+          12,
+          "occupied"
+        ],
+        "expected": "TRANSIT_BENEFIT_OBSTRUCTED"
+      },
+      {
+        "rule": "Ph26.7",
+        "inputs": [
+          2,
+          12,
+          "unexamined"
+        ],
+        "expected": "UNKNOWN"
+      },
+      {
+        "rule": "J8.11",
+        "inputs": {
+          "periodClock": "chapter VIII",
+          "MoonAtCommencement": "Cancer"
+        },
+        "expected": "FAVORABLE: wealth"
+      },
+      {
+        "rule": "J8.20",
+        "inputs": {
+          "yoga": "Nabhasa",
+          "claimedStrongestParticipant": "Mars"
+        },
+        "expected": "EXCLUDED_FROM_THIS_ASSIGNMENT"
+      },
+      {
+        "rule": "S33.82.English",
+        "inputs": {
+          "ascendantOccupied": false,
+          "secondOccupied": true,
+          "eleventhOccupied": true
+        },
+        "expected": "CONDITION_ABSENT"
+      },
+      {
+        "rule": "BS42.1+7",
+        "inputs": {
+          "commodity": "horse",
+          "sun": "Virgo",
+          "omenPhase": null,
+          "otherConditions": true
+        },
+        "expected": "UNKNOWN"
+      },
+      {
+        "rule": "P41.16+17",
+        "inputs": {
+          "active": "ninth lord",
+          "natalDisposition": null,
+          "strength": null
+        },
+        "expected": "PERIOD_CANDIDATE_REALIZATION_UNKNOWN"
+      },
+      {
+        "rule": "R44.periods",
+        "inputs": {
+          "ageParts": 18256
+        },
+        "expected": [
+          "Ketu",
+          "Venus"
+        ]
+      },
+      {
+        "rule": "R44.periods",
+        "inputs": {
+          "ageParts": 18257
+        },
+        "expected": [
+          "Ketu",
+          "Sun"
+        ]
+      },
+      {
+        "rule": "Raman.financialTiming",
+        "inputs": {
+          "parentQualifies": true,
+          "childQualifies": true
+        },
+        "expected": "EMPHASIZED"
+      },
+      {
+        "rule": "Raman.financialTiming",
+        "inputs": {
+          "parentQualifies": false,
+          "childQualifies": true
+        },
+        "expected": "LIMITED"
+      },
+      {
+        "rule": "Raman.financialTiming",
+        "inputs": {
+          "parentQualifies": true,
+          "childQualifies": false
+        },
+        "expected": "FEEBLE"
+      },
+      {
+        "rule": "Raman.financialTiming",
+        "inputs": {
+          "parentQualifies": false,
+          "childQualifies": false
+        },
+        "expected": "NO_SELECTION"
+      },
+      {
+        "rule": "Raman.financialTiming",
+        "inputs": {
+          "parentQualifies": null,
+          "childQualifies": true
+        },
+        "expected": [
+          "LIMITED",
+          "EMPHASIZED"
+        ]
+      }
+    ]
+  },
+  "outputRecordSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": [
+      "schemaVersion",
+      "recordId",
+      "sourceRefs",
+      "ruleId",
+      "subjectId",
+      "subjectType",
+      "horoscopeId",
+      "financialQuestion",
+      "planets",
+      "houses",
+      "evidenceRefs",
+      "period",
+      "predicateStatus",
+      "interpretationStatus",
+      "assertionType",
+      "exceptions",
+      "missingEvidence",
+      "conflictRefs",
+      "calculationProvenance",
+      "reconstructionConfidence",
+      "executionAllowed",
+      "financiallyValidated",
+      "marketDirectionAssigned"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "schemaVersion": {
+        "const": "1.0"
+      },
+      "recordId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "sourceRefs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "ruleId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "subjectId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "subjectType": {
+        "type": "string",
+        "minLength": 1
+      },
+      "horoscopeId": {
+        "type": "string",
+        "minLength": 1
+      },
+      "financialQuestion": {
+        "type": "string",
+        "minLength": 1
+      },
+      "planets": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "houses": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        }
+      },
+      "evidenceRefs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "period": {
+        "type": "object",
+        "properties": {
+          "system": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lineage": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "balanceRef": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "startAgeYMD": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "endAgeYMD": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "calendar": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "utcStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "utcEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "eventUTC": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "system",
+          "lineage",
+          "balanceRef",
+          "startAgeYMD",
+          "endAgeYMD",
+          "calendar",
+          "utcStart",
+          "utcEnd",
+          "eventUTC"
+        ],
+        "additionalProperties": false
+      },
+      "predicateStatus": {
+        "enum": [
+          "CONDITION_PRESENT",
+          "CONDITION_ABSENT",
+          "UNKNOWN",
+          "NOT_APPLICABLE"
+        ]
+      },
+      "interpretationStatus": {
+        "enum": [
+          "FAVORABLE",
+          "UNFAVORABLE",
+          "BOTH_EFFECTS_WITHHELD",
+          "MIXED",
+          "UNRESOLVED_CONFLICT",
+          "UNKNOWN",
+          "NO_JUDGMENT",
+          "NOT_APPLICABLE"
+        ]
+      },
+      "assertionType": {
+        "type": "string",
+        "minLength": 1
+      },
+      "exceptions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "missingEvidence": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "conflictRefs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "calculationProvenance": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "reconstructionConfidence": {
+        "type": "string",
+        "minLength": 1
+      },
+      "executionAllowed": {
+        "const": false
+      },
+      "financiallyValidated": {
+        "const": false
+      },
+      "marketDirectionAssigned": {
+        "const": false
+      }
+    }
+  },
+  "exampleOutputRecord": {
+    "schemaVersion": "1.0",
+    "recordId": "r44-ketu-venus",
+    "sourceRefs": [
+      "R44",
+      "H12"
+    ],
+    "ruleId": "R44.AUTHOR_DEBT_ATTRIBUTION",
+    "subjectId": "anonymous-native-44",
+    "subjectType": "human",
+    "horoscopeId": "R44.rasi",
+    "financialQuestion": "personal debt crisis",
+    "planets": [
+      "Ketu",
+      "Venus",
+      "Saturn"
+    ],
+    "houses": [
+      2,
+      6,
+      12
+    ],
+    "evidenceRefs": [
+      "R44.caption",
+      "R44.rasi",
+      "R44.reading",
+      "H12",
+      "R44.periods",
+      "R44.sixChannels",
+      "Raman.financialTiming"
+    ],
+    "period": {
+      "system": "Vimshottari",
+      "lineage": [
+        "Ketu",
+        "Venus"
+      ],
+      "balanceRef": "R44.caption",
+      "startAgeYMD": [
+        49,
+        6,
+        17
+      ],
+      "endAgeYMD": [
+        50,
+        8,
+        17
+      ],
+      "calendar": "Raman period Y/M/D, 12 x 30 arithmetic parts",
+      "utcStart": null,
+      "utcEnd": null,
+      "eventUTC": null
+    },
+    "predicateStatus": "CONDITION_PRESENT",
+    "interpretationStatus": "UNFAVORABLE",
+    "assertionType": "author-attributed retrospective judgment",
+    "exceptions": [
+      "Simultaneous natal capacity for gain concerns a different question."
+    ],
+    "missingEvidence": [
+      "historical Moon/balance worksheet",
+      "civil conversion",
+      "unique Venus selection for an adverse result, beyond demonstrated topical eligibility",
+      "exact event date"
+    ],
+    "conflictRefs": [],
+    "calculationProvenance": [
+      "R44.periods",
+      "R44.replay"
+    ],
+    "reconstructionConfidence": "high for period arithmetic conditional on printed balance; limited for independent historical trigger",
+    "executionAllowed": false,
+    "financiallyValidated": false,
+    "marketDirectionAssigned": false
+  },
+  "executionAllowed": false,
+  "financiallyValidated": false,
+  "marketDirectionAssigned": false
+}

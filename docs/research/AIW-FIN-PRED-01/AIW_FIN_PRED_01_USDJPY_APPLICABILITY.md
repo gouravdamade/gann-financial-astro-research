@@ -1,0 +1,13 @@
+# Who owns the financial result?
+
+| Rule | Original subject and financial question | Comparison or numerical operator in the text | USD/JPY disposition |
+|---|---|---|---|
+| Raman R44; BPHS XLI.9,16–17, XLII.13; Sārāvalī XXXIII.82 | Human native. Earning capacity, retaining wealth, incurring loss or debt. | One nativity and one matter. Chart 44's Rs. 50,000 is a reported debt balance. It supplies no formula even for a second individual. | NOT_APPLICABLE |
+| Bṛhat Jātaka VIII.11,20,23; X.1–3 | Native's prosperity, periods, conflict or occupation. X follows a native's source of livelihood. | VIII.23 compares opposed effects *within* a judgment. No subtraction of two nativities. | NOT_APPLICABLE |
+| Hāyanaratna VI.3 | Individual merchant or other native's annual income. The annual chart can be related to that same person's nativity. | Gansten's opening branch admits mixed testimony. The cited Varṣatantra branch joins annual conditions with natal roles. Neither specifies a company-incorporation chart or two merchants' relative prices. | NOT_APPLICABLE |
+| Bṛhat Saṃhitā XLII.1,7,14 | Named goods, locality of observation, trader, calendar of acquisition and disposal. | A textual factor of two compares the same goods across the stipulated horizon. It does not compare the fortunes of two issuers. | NOT_APPLICABLE |
+| Phaladīpikā XXIII.10, XXVI.7; accepted Aṣṭakavarga counts | Native and named transit result. Numerical marks count contributors under an edition. | A same-planet comparison across registered research charts can be computed descriptively. The comparator and its units are documented by AIW-P0. | Count differences have a research meaning. Direct exchange-rate financial judgment is NOT_APPLICABLE. |
+
+For a company one would first need a source assigning the question to that legal entity and identifying a chart. For USD/JPY one would also need to define what the USD and JPY epochs represent, whose finances could improve, what observable measures that improvement, how the sides are paired, how the quote orientation is handled, and what horizon the result covers. Neither a person's debt nor a merchant's annual income entails a direction for the quotation. A difference of raw marks has no accepted conversion to a return.
+
+**Result record for the requested control.** Subject = USD/JPY quotation. Requested rule = BPHS XLII.13. Financial question = quotation movement. Predicate and interpretation = NOT_APPLICABLE. Inputs evaluated = subject type and rule scope only. The two project currency epochs remain research hypotheses. No price series, outcomes or backtest enter this decision.
