@@ -1,5 +1,7 @@
 # How the candidates trade off
 
+**Financial-interpretation amendment.** The ranking below compares numerical/descriptive research candidates, not their ability to forecast money. For a financial *question*, prefer V (typed field) containing H (a named source rule); E/P is an adjacent numerical reference, not an answer. BJ VIII.23 can resolve certain opposed wealth judgments without assigning them weights. A naked numeric curve loses that distinction; a categorical-only display loses the original marks. See the [hybrid comparison](AIW_MASTER_03_HYBRID_INFLUENCE_ARCHITECTURE.md).
+
 Criterion | S: same sign | E: moving mean | P: envelope | H: rules | W: weighted | G: R1 hybrid | V: typed field
 ---|---|---|---|---|---|---|---
 1 Source fidelity | column explicit | raw only | raw only | named subjects | weights unsourced | fusion unsourced | separate sources

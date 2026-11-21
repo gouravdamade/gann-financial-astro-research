@@ -1,5 +1,9 @@
 # AIW-MASTER-03 Research Packet
 
+## Local founder addendum: financial interpretation
+
+The original ZIP is preserved. The [complete packet with the financial addendum](AIW-MASTER-03-with-financial-addendum.zip) includes all reports and supporting research files. Start with the [financial framework](AIW_MASTER_03_FINANCIAL_PREDICTION_FRAMEWORK.md), then [periods and yogas](AIW_MASTER_03_FINANCIAL_DASHA_AND_YOGA.md), [categorical rendering](AIW_MASTER_03_CATEGORICAL_BINARY_INFLUENCE.md), [hybrid architecture](AIW_MASTER_03_HYBRID_INFLUENCE_ARCHITECTURE.md), and [source gaps and 18 founder answers](AIW_MASTER_03_FINANCIAL_SOURCE_GAPS.md).
+
 **Status:** research synthesis, no implementation authorization  
 **Prepared:** 2026-11-21  
 **Destination:** `docs/research/AIW-MASTER-03`  

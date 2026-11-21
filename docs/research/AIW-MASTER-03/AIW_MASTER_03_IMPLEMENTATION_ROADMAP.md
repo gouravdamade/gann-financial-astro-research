@@ -1,5 +1,7 @@
 # Shortest responsible path (proposal only)
 
+**Finance-first order for the new scope.** Before any financial UI, reproduce BPHS XLII.13 on a documented native's period chart and prove the trinal-aspect exception, incomplete coverage and wrong-subject cases. Retain the original E/P proposal as a descriptive track only. After independent reproduction and separate authorization, add a labelled period lane to the shared selection and UTC inspector, with no change to E/P. Defer commodity rules until dated omen/locality inputs exist. See [financial evidence gates](AIW_MASTER_03_FINANCIAL_SOURCE_GAPS.md).
+
 ## Track A: source-governed comparator
 Model S. Input: versioned 7x8 masks, ordered natal contributors, sign, reduction stage, source edition and topic. Build the 7x12 table by inclusive modular counting, then S(z)=column sum. Show a sign selector and seven contributions; a Moon-following query is labeled as an anchor choice. First accept arithmetic on one printed plate and both registered charts. Test total=337 for the Aiyar edition, cross-check all 12 columns, ensure stage and mask hash mismatch reject comparison. Never assign Phaladipika thresholds to an Aiyar replay by default. Fail if moving diagonal is substituted or labels imply universal phala.
  
