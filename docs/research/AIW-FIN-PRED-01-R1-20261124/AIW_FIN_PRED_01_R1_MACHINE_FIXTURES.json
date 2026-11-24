@@ -1,0 +1,1765 @@
+Warning: truncated output (original token count: 22533)
+Total output lines: 3529
+
+{
+  "gate": "AIW_FIN_PRED_01_R1_SOURCE_CLOSURE",
+  "baseline": "44b76cd857b3a60b4ff1f8e177bf0d2b7c683da0",
+  "verdict": "AIW_FIN_PRED_01_R1_ARITHMETIC_ADVANCED_SELECTION_UNRESOLVED",
+  "selection": "VENUS_AMONG_MULTIPLE_ELIGIBLE_PERIODS",
+  "executionAllowed": false,
+  "financiallyValidated": false,
+  "marketDirectionAssigned": false,
+  "sourceRegister": [
+    {
+      "id": "HJ",
+      "title": "How to Judge a Horoscope I",
+      "edition": "Motilal Banarsidass 12th ed. 1995, reprints through 2006",
+      "locator": "V, printed 91–94, 97–103 / PDF 100–103,106–112",
+      "access": "digital text and embedded raster charts examined",
+      "url": "https://elibraryofyoga.com/server/api/core/bitstreams/2271a6e2-f4ca-49bd-9706-89cec2d6f5f5/content"
+    },
+    {
+      "id": "BR",
+      "title": "Sree Bhavartha Ratnakara, English translation and notes by B.V. Raman",
+      "edition": "Raman Publications, Bangalore, second edition 1947",
+      "locator": "IX.6, Chart 45, printed 78–79 / PDF 86–87, title PDF 1",
+      "access": "printed diagram and commentary image inspected",
+      "url": "https://archive.org/details/in.ernet.dli.2015.134838/page/n86/mode/1up"
+    },
+    {
+      "id": "BR2",
+      "title": "Bhavartha Ratnakara, expanded Raman translation and notes",
+      "edition": "indexed copy has tenth-edition preface, impression unverified",
+      "locator": "Chart 44, printed 137 / scan ordinal unknown",
+      "access": "indexed English only for this page, provisional caption and balance",
+      "url": "https://www.scribd.com/document/836755738/Jyotish-B-v-Raman-Bhavartha-Ratnakara-1922-Ed"
+    },
+    {
+      "id": "HPA",
+      "title": "Hindu Predictive Astrology",
+      "edition": "UBS, 20th ed. 1992, imprint lists reprints through 1996",
+      "locator": "VI 19–20/35–36, IX 37–39/53–55, X 44–45/60–61, XII 52–58/68–74, XIII 59/75, XXIV 140–143,165–167/156–159,181–183, Appendix 278–279,283,285–286/294–295,299,301–302",
+      "access": "page images and text, worked examples for other nativities",
+      "url": "https://archive.org/details/hindu-predictive-astrology-b.-v.-raman"
+    },
+    {
+      "id": "AE",
+      "title": "American Ephemeris and Nautical Almanac for 1888",
+      "edition": "Washington Bureau of Navigation, first edition 1885",
+      "locator": "title PDF 10, Moon 156–157/173–174, Venus 228/245, Saturn 246/263",
+      "access": "directly transcribed table images, independent historical control",
+      "url": "https://archive.org/details/americanephemer00docgoog"
+    },
+    {
+      "id": "BP",
+      "title": "Brihat Parasara Hora Sastra I",
+      "edition": "Santhanam, Ranjan, bilingual annotated translation, impression unverified",
+      "locator": "XXXIV.2–7,11–12 and XLII.6–13, printed 341,344–345,414–415 / PDF 340,343–344,413–414",
+      "access": "verse 13 image inspected and adjacent English compared",
+      "url": "https://storage.yandexcloud.net/j108/library/hr6fkynz/Maharishi_Parashara_-_Brihat_Parasara_Hora_Sastra_%28Vol._1%29.pdf"
+    },
+    {
+      "id": "BP2",
+      "title": "Brihat Parasara Hora Sastra II",
+      "edition": "Santhanam, Ranjan, bilingual extract, impression unverified",
+      "locator": "LIX.7–15 pp. 718–719 / extract PDF 135–136",
+      "access": "bilingual pages inspected, conditional translation",
+      "url": "https://sanjayrath.com/wp-content/uploads/BPHS-BJC2.pdf"
+    },
+    {
+      "id": "PH",
+      "title": "Mantreswara’s Phaladeepika",
+      "edition": "V. Subrahmanya Sastri, Aruna Press, 1937 catalogue witness",
+      "locator": "XXI.1–2,66–74, pp. 221,238–240 / PDF 258,275–277",
+      "access": "bilingual page images inspected",
+      "url": "https://archive.org/details/in.ernet.dli.2015.92117"
+    },
+    {
+      "id": "BJ",
+      "title": "Brihat Jataka",
+      "edition": "N. Chidambaram Aiyar, 1905",
+      "locator": "VIII.20 and notes pp. 91–92/PDF 135–136, VIII.23 and ensuing note pp. 94–96/PDF 138–140",
+      "access": "English translation and notes, volume consulted",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/The_Brihat_jataka_%28IA_brihatjataka00varaiala%29.pdf"
+    },
+    {
+      "id": "JS",
+      "title": "Brihat Jataka",
+      "edition": "V. Subrahmanya Sastri, 2nd edition 1956",
+      "locator": "VIII.2–3,20, pp. 169–172,192–193 / scan 204–207,227–228",
+      "access": "English translation and notes in searchable OCR, Sanskrit not adjudicated here",
+      "url": "https://astrojyotish.info/literature/brihat-jataka-sastri/"
+    }
+  ],
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+      "baselineJudgment": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "recordId",
+          "sourceRefs",
+          "ruleId",
+          "subjectId",
+          "subjectType",
+          "horoscopeId",
+          "financialQuestion",
+          "planets",
+          "houses",
+          "evidenceRefs",
+          "period",
+          "predicateStatus",
+          "interpretationStatus",
+          "assertionType",
+          "exceptions",
+          "missingEvidence",
+          "conflictRefs",
+          "calculationProvenance",
+          "reconstructionConfidence",
+          "executionAllowed",
+          "financiallyValidated",
+          "marketDirectionAssigned"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "schemaVersion": {
+            "const": "1.0"
+          },
+          "recordId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceRefs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "ruleId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subjectId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subjectType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "horoscopeId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "financialQuestion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "planets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "houses": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "period": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lineage": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "balanceRef": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "startAgeYMD": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "endAgeYMD": {
+                "type": [
+                  "null",
+                  "array"
+                ],
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "calendar": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "utcStart": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "format": "date-time"
+              },
+              "utcEnd": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "format": "date-time"
+              },
+              "eventUTC": {
+                "type": [
+                  "null",
+                  "string"
+                ],
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "system",
+              "lineage",
+              "balanceRef",
+              "startAgeYMD",
+              "endAgeYMD",
+              "calendar",
+              "utcStart",
+              "utcEnd",
+              "eventUTC"
+            ],
+            "additionalProperties": false
+          },
+          "predicateStatus": {
+            "enum": [
+              "CONDITION_PRESENT",
+              "CONDITION_ABSENT",
+              "UNKNOWN",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "interpretationStatus": {
+            "enum": [
+              "FAVORABLE",
+              "UNFAVORABLE",
+              "BOTH_EFFECTS_WITHHELD",
+              "MIXED",
+              "UNRESOLVED_CONFLICT",
+              "UNKNOWN",
+              "NO_JUDGMENT",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "assertionType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "missingEvidence": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "conflictRefs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "calculationProvenance": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "reconstructionConfidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "executionAllowed": {
+            "const": false
+          },
+          "financiallyValidated": {
+            "const": false
+          },
+          "marketDirectionAssigned": {
+            "const": false
+          }
+        }
+      }
+    },
+    "properties": {
+      "judgment": {
+        "$ref": "#/$defs/baselineJudgment"
+      },
+      "sourceId": {
+        "type": "string"
+      },
+      "sourceEdition": {
+        "type": "string"
+      },
+      "birthInputProfile": {
+        "type": "string"
+      },
+      "planetaryPositionProfile": {
+        "type": "string"
+      },
+      "divisionalCalculationProfile": {
+        "type": "string"
+      },
+      "dashaCalculationProfile": {
+        "type": "string"
+      },
+      "parent": {
+        "type": "string"
+      },
+      "child": {
+        "type": "string"
+      },
+      "natalFinancialConditions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "selectionRules": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "competingEligibleChildren": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string"
+        }
+      },
+      "qualifications": {
+        "type": "object"
+      },
+      "finalSupportedJudgment": {
+        "type": "string"
+      },
+      "origin": {
+        "enum": [
+          "source-rule-replay",
+          "author-retrospective"
+        ]
+      },
+      "historicalOutcomeDisclosure": {
+        "enum": [
+          "known-to-investigator-excluded-from-operator",
+          "attached-after-selection"
+        ]
+      },
+      "unresolvedPremises": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "sourceProvenance": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      }
+    },
+    "required": [
+      "judgment",
+      "sourceId",
+      "sourceEdition",
+      "birthInputProfile",
+      "planetaryPositionProfile",
+      "divisionalCalculationProfile",
+      "dashaCalculationProfile",
+      "parent",
+      "child",
+      "natalFinancialConditions",
+      "selectionRules",
+      "competingEligibleChildren",
+      "qualifications",
+      "finalSupportedJudgment",
+      "origin",
+      "historicalOutcomeDisclosure",
+      "unresolvedPremises",
+      "sourceProvenance"
+    ]
+  },
+  "profiles": {
+    "HJ.caption.29-or-30": {
+      "localDate": [
+        "1888-09-29",
+        "1888-09-30"
+      ],
+      "time": "04:35",
+      "clockLabel": "L.T.",
+      "trialClock": "local mean time",
+      "latitude": 26.5,
+      "longitudeEast": 74.75,
+      "offsetMinutes": 299,
+      "calendarTrial": "Gregorian"
+    },
+    "HJ.R44.plate": {
+      "sourceId": "HJ",
+      "sourcePage": "102/111",
+      "vector": {
+        "Sun": 5,
+        "Moon": 2,
+        "Mercury": 6,
+        "Venus": 6,
+        "Mars": 7,
+        "Jupiter": 7,
+        "Saturn": 3,
+        "Rahu": 3,
+        "Ketu": 9,
+        "Asc": 4
+      },
+      "zeroBasedAries": true
+    },
+    "HJ.R44.printedD9": {
+      "Sun": "Taurus",
+      "Moon": "Aries",
+      "Mercury": "Sagittarius",
+      "Venus": "Scorpio",
+      "Mars": "Capricorn",
+      "Jupiter": "Libra",
+      "Saturn": "Pisces",
+      "Rahu": "Leo",
+      "Ketu": "Aquarius",
+      "Asc": "Sagittarius"
+    },
+    "modernMoshier": {
+      "engine": "2.10.03",
+      "binding": 20230604,
+      "algorithm": "geocentric Moshier, SIDM_RAMAN, mean ascending node, whole-sign houses, UT; D9=floor(9*longitude/30)%12"
+    },
+    "HJ.Jupiter.13-1-20.360parts": {
+      "sourceId": "HJ",
+      "ymd": [
+        13,
+        1,
+        20
+      ],
+      "partsPerYear": 360,
+      "partsPerMonth": 30,
+      "actualCivilYearLength": null
+    },
+    "BR2.Jupiter.5-5-23": {
+      "sourceId": "BR2",
+      "ymd": [
+        5,
+        5,
+        23
+      ],
+      "status": "unverified-page-image",
+      "impliedAngularMoonDeg": 88.7662037037037,
+      "usedForHJTiming": false
+    }
+  },
+  "modernAndManualReplays": {
+    "engine": "2.10.03",
+    "binding": 20230604,
+    "charts": {
+      "38": {
+        "signs": {
+          "Sun": 6,
+          "Moon": 9,
+          "Mercury": 6,
+          "Venus": 7,
+          "Mars": 5,
+          "Jupiter": 1,
+          "Saturn": 5,
+          "Rahu": 11,
+          "Ketu": 5,
+          "Asc": 5
+        },
+        "routes": {
+          "A": [
+            "Venus"
+          ],
+          "B": [],
+          "C": [
+            "Sun",
+            "Mercury"
+          ],
+          "D": [
+            "Jupiter",
+            "Saturn"
+          ],
+          "E": [],
+          "F": [
+            "Saturn"
+          ]
+        },
+        "eligible": [
+          "Venus",
+          "Sun",
+          "Jupiter",
+          "Saturn",
+          "Mercury"
+        ]
+      },
+      "40": {
+        "signs": {
+          "Sun": 7,
+          "Moon": 7,
+          "Mercury": 7,
+          "Venus": 6,
+          "Mars": 7,
+          "Jupiter": 3,
+          "Saturn": 6,
+          "Rahu": 10,
+          "Ketu": 4,
+          "Asc": 6
+        },
+        "routes": {
+          "A": [
+            "Mars"
+          ],
+          "B": [
+            "Jupiter"
+          ],
+          "C": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury"
+          ],
+          "D": [
+            "Jupiter"
+          ],
+          "E": [
+            "Sun",
+            "Moon",
+            "Mercury"
+          ],
+          "F": [
+            "Jupiter"
+          ]
+        },
+        "eligible": [
+          "Sun",
+          "Moon",
+          "Mars",
+          "Jupiter",
+          "Mercury"
+        ]
+      },
+      "41": {
+        "signs": {
+          "Sun": 9,
+          "Moon": 10,
+          "Mercury": 9,
+          "Venus": 10,
+          "Mars": 9,
+          "Jupiter": 7,
+          "Saturn": 8,
+          "Rahu": 7,
+          "Ketu": 1,
+          "Asc": 8
+        },
+        "routes": {
+          "A": [
+            "Saturn"
+          ],
+          "B": [],
+          "C": [
+            "Sun",
+            "Mars",
+            "Mercury"
+          ],
+          "D": [],
+          "E": [],
+          "F": [
+            "Jupiter"
+          ]
+        },
+        "eligible": [
+          "Sun",
+          "Mars",
+          "Jupiter",
+          "Saturn",
+          "Mercury"
+        ]
+      },
+      "44": {
+        "signs": {
+          "Sun": 5,
+          "Moon": 2,
+          "Mercury": 6,
+          "Venus": 6,
+          "Mars": 7,
+          "Jupiter": 7,
+          "Saturn": 3,
+          "Rahu": 3,
+          "Ketu": 9,
+          "Asc": 4
+        },
+        "routes": {
+          "A": [
+            "Mercury"
+          ],
+          "B": [
+            "Saturn"
+          ],
+          "C": [
+            "Sun"
+          ],
+          "D": [],
+          "E": [
+            "Venus"
+          ],
+          "F": [
+            "Moon"
+          ]
+        },
+        "eligible": [
+          "Venus",
+          "Sun",
+          "Moon",
+          "Saturn",
+          "Mercury"
+        ]
+      }
+    },
+    "dateProfiles": {
+      "29": {
+        "jdUT": 2410909.4833333334,
+        "longitude": {
+          "Sun": 165.39149281682216,
+          "Moon": 82.41221487424421,
+          "Mercury": 188.86309133375994,
+          "Venus": 186.73561698919482,
+          "Mars": 231.5370599853448,
+          "Jupiter": 221.83305035880127,
+          "Saturn": 116.11453625904508,
+          "Rahu": 95.99369601832582,
+          "Ketu": 275.9936960183258,
+          "Asc": 147.43649586663975
+        },
+        "rasi": {
+          "Sun": "Virgo",
+          "Moon": "Gemini",
+          "Mercury": "Libra",
+          "Venus": "Libra",
+          "Mars": "Scorpio",
+          "Jupiter": "Scorpio",
+          "Saturn": "Cancer",
+          "Rahu": "Cancer",
+          "Ketu": "Capricorn",
+          "Asc": "Leo"
+        },
+        "d9": {
+          "Sun": "Taurus",
+          "Moon": "Aries",
+          "Mercury": "Sagittarius",
+          "Venus": "Sagittarius",
+          "Mars": "Capricorn",
+          "Jupiter": "Libra",
+          "Saturn": "Aquarius",
+          "Rahu": "Leo",
+          "Ketu": "Aquarius",
+          "Asc": "Sagittarius"
+        },
+        "rasiMismatch": [],
+        "d9Mismatch": [
+          "Venus",
+          "Saturn"
+        ],
+        "birthStarIndex1": 7
+      },
+      "30": {
+        "jdUT": 2410910.4833333334,
+        "longitude": {
+          "Sun": 166.37516212815132,
+          "Moon": 94.78018423495546,
+          "Mercury": 190.13943785752105,
+          "Venus": 187.97066356588732,
+          "Mars": 232.23724619661706,
+          "Jupiter": 222.00099142631248,
+          "Saturn": 116.21250634752924,
+          "Rahu": 95.94070389984068,
+          "Ketu": 275.9407038998407,
+          "Asc": 148.31688554653442
+        },
+        "rasi": {
+          "Sun": "Virgo",
+          "Moon": "Cancer",
+          "Mercury": "Libra",
+          "Venus": "Libra",
+          "Mars": "Scorpio",
+          "Jupiter": "Scorpio",
+          "Saturn": "Cancer",
+          "Rahu": "Cancer",
+          "Ketu": "Capricorn",
+          "Asc": "Leo"
+        },
+        "d9": {
+          "Sun": "Taurus",
+          "Moon": "Leo",
+          "Mercury": "Capricorn",
+          "Venus": "Sagittarius",
+          "Mars": "Capricorn",
+          "Jupiter": "Libra",
+          "Saturn": "Aquarius",
+          "Rahu": "Leo",
+          "Ketu": "Aquarius",
+          "Asc": "Sagittarius"
+        },
+        "rasiMismatch": [
+          "Moon"
+        ],
+        "d9Mismatch": [
+          "Moon",
+          "Mercury",
+          "Venus",
+          "Saturn"
+        ],
+        "birthStarIndex1": 8
+      }
+    },
+    "clocks": {
+      "modern": {
+        "lambda": 82.41221487424421,
+        "crossingJD": [
+          2410909.285556703,
+          2410910.367660084
+        ],
+        "angularYears": 13.105342150906937,
+        "timeYears": 13.075671193630733,
+        "shortfallPartsAngle": 12.076825673502825,
+        "shortfallPartsTime": 22.758370292936405
+      },
+      "manualAtBirth": {
+        "lambda": 82.41846944394956,
+        "crossingJD": [
+          2410909.2850435833,
+          2410910.3671561256
+        ],
+        "angularYears": 13.09783666726052,
+        "timeYears": 13.068109019971473,
+        "shortfallPartsAngle": 14.778799786213028,
+        "shortfallPartsTime": 25.48075281026982
+      },
+      "manualNoonLinear": {
+        "lambda": 82.45139604909096,
+        "crossingJD": [
+          2410909.2828952586,
+          2410910.3639589967
+        ],
+        "angularYears": 13.058324741090843,
+        "timeYears": 13.033468903564131,
+        "shortfallPartsAngle": 29.003093207296757,
+        "shortfallPartsTime": 37.95119471691294
+      }
+    },
+    "annualOffset": 20.84638888888889,
+    "alternateD9Input": {
+      "Venus": [
+        186.74187155890021,
+        186.74186542429726
+      ],
+      "Saturn": [
+        116.12079082875044,
+        116.12065909265482
+      ]
+    },
+    "printedD9": {
+      "Sun": "Taurus",
+      "Moon": "Aries",
+      "Mercury": "Sagittarius",
+      "Venus": "Scorpio",
+      "Mars": "Capricorn",
+      "Jupiter": "Libra",
+      "Saturn": "Pisces",
+      "Rahu": "Leo",
+      "Ketu": "Aquarius",
+      "Asc": "Sagittarius"
+    },
+    "d9Adjacent": {
+      "printed": [
+        "Sun/Moon",
+        "Moon/Saturn",
+        "Mercury/Venus",
+        "Mercury/Mars",
+        "Venus/Jupiter",
+        "Mars/Ketu",
+        "Saturn/Ketu"
+      ],
+      "modern": [
+        "Sun/Moon",
+        "Mercury/Mars",
+        "Venus/Mars",
+        "Mars/Saturn",
+        "Mars/Ketu"
+      ]
+    },
+    "subperiods": {
+      "Ketu": {
+        "channels": [],
+        "parentDirect": false,
+        "owned": [],
+        "occupies": 6,
+        "fromParent": 1,
+        "joined": [],
+        "incomingFull": [
+          "Saturn"
+        ],
+        "HPA13starOrdinal": null,
+        "HPA14adverseGeometry": false,
+        "age": [
+          [
+            49,
+            1,
+            20
+          ],
+          [
+            49,
+            6,
+            17
+          ]
+        ]
+      },
+      "Venus": {
+        "channels": [
+          "E"
+        ],
+        "parentDirect": false,
+        "owned": [
+          10,
+          3
+        ],
+        "occupies": 3,
+        "fromParent": 10,
+        "joined": [
+          "Mercury"
+        ],
+        "incomingFull": [],
+        "HPA13starOrdinal": 5,
+        "HPA14adverseGeometry": false,
+        "age": [
+          [
+            49,
+            6,
+            17
+          ],
+          [
+           …10533 tokens truncated…al three longitudes and star passage times",
+        "Actual chart worksheet, clock derivation and rounding",
+        "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+        "Rule distinguishing debt-producing Venus from competing children",
+        "Historical civil period-year conversion and event date"
+      ],
+      "sourceProvenance": [
+        "HJ",
+        "HPA",
+        "PH"
+      ]
+    },
+    {
+      "judgment": {
+        "schemaVersion": "1.0",
+        "recordId": "R1.R44.direct.Jupiter",
+        "sourceRefs": [
+          "HJ",
+          "HPA"
+        ],
+        "ruleId": "HJ.6",
+        "subjectId": "anonymous-native-44",
+        "subjectType": "human",
+        "horoscopeId": "R44.rasi",
+        "financialQuestion": "personal second-house period eligibility",
+        "planets": [
+          "Ketu",
+          "Jupiter"
+        ],
+        "houses": [
+          2
+        ],
+        "evidenceRefs": [
+          "R44.sixChannels",
+          "R44.periods"
+        ],
+        "period": {
+          "system": "Vimshottari",
+          "lineage": [
+            "Ketu",
+            "Jupiter"
+          ],
+          "balanceRef": "R44.caption",
+          "startAgeYMD": [
+            53,
+            1,
+            8
+          ],
+          "endAgeYMD": [
+            54,
+            0,
+            14
+          ],
+          "calendar": "Raman period Y/M/D, 12 x 30 arithmetic parts",
+          "utcStart": null,
+          "utcEnd": null,
+          "eventUTC": null
+        },
+        "predicateStatus": "CONDITION_ABSENT",
+        "interpretationStatus": "NO_JUDGMENT",
+        "assertionType": "conditional source-rule replay",
+        "exceptions": [
+          "Seven visible full aspectors. No node proxy in the direct profile."
+        ],
+        "missingEvidence": [
+          "Source of original three longitudes and star passage times",
+          "Actual chart worksheet, clock derivation and rounding",
+          "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+          "Rule distinguishing debt-producing Venus from competing children",
+          "Historical civil period-year conversion and event date"
+        ],
+        "conflictRefs": [],
+        "calculationProvenance": [
+          "evidence/replay.py",
+          "HJ pp. 91–92,102"
+        ],
+        "reconstructionConfidence": "high conditional on the direct profile",
+        "executionAllowed": false,
+        "financiallyValidated": false,
+        "marketDirectionAssigned": false
+      },
+      "sourceId": "HJ",
+      "sourceEdition": "Motilal Banarsidass 12th ed. 1995, reprints through 2006",
+      "birthInputProfile": "HJ.caption.29-or-30",
+      "planetaryPositionProfile": "HJ.R44.plate",
+      "divisionalCalculationProfile": "HJ.R44.printedD9",
+      "dashaCalculationProfile": "HJ.Jupiter.13-1-20.360parts",
+      "parent": "Ketu",
+      "child": "Jupiter",
+      "natalFinancialConditions": [
+        "second Virgo",
+        "Mercury with Venus in Libra",
+        "Saturn aspects second",
+        "Ketu sixth",
+        "Saturn twelfth and second from Moon"
+      ],
+      "selectionRules": [
+        "HJ.6",
+        "HPA.13",
+        "HPA.14"
+      ],
+      "competingEligibleChildren": [
+        "Venus",
+        "Sun",
+        "Moon",
+        "Saturn",
+        "Mercury"
+      ],
+      "qualifications": {
+        "channels": [],
+        "parentDirect": false,
+        "owned": [
+          5,
+          8
+        ],
+        "occupies": 4,
+        "fromParent": 11,
+        "joined": [
+          "Mars"
+        ],
+        "incomingFull": [],
+        "HPA13starOrdinal": null,
+        "HPA14adverseGeometry": false,
+        "age": [
+          [
+            53,
+            1,
+            8
+          ],
+          [
+            54,
+            0,
+            14
+          ]
+        ],
+        "topicExtent": "NO_SELECTION",
+        "HPAKetuCatalogue": "land gains and profitable transactions",
+        "PhaladipikaKetuCatalogue": {
+          "verse": 72,
+          "reading": "land income, gifts and wealth"
+        }
+      },
+      "finalSupportedJudgment": "no direct second-house participation",
+      "origin": "source-rule-replay",
+      "historicalOutcomeDisclosure": "known-to-investigator-excluded-from-operator",
+      "unresolvedPremises": [
+        "Source of original three longitudes and star passage times",
+        "Actual chart worksheet, clock derivation and rounding",
+        "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+        "Rule distinguishing debt-producing Venus from competing children",
+        "Historical civil period-year conversion and event date"
+      ],
+      "sourceProvenance": [
+        "HJ",
+        "HPA",
+        "PH"
+      ]
+    },
+    {
+      "judgment": {
+        "schemaVersion": "1.0",
+        "recordId": "R1.R44.direct.Saturn",
+        "sourceRefs": [
+          "HJ",
+          "HPA"
+        ],
+        "ruleId": "HJ.6",
+        "subjectId": "anonymous-native-44",
+        "subjectType": "human",
+        "horoscopeId": "R44.rasi",
+        "financialQuestion": "personal second-house period eligibility",
+        "planets": [
+          "Ketu",
+          "Saturn"
+        ],
+        "houses": [
+          2
+        ],
+        "evidenceRefs": [
+          "R44.sixChannels",
+          "R44.periods"
+        ],
+        "period": {
+          "system": "Vimshottari",
+          "lineage": [
+            "Ketu",
+            "Saturn"
+          ],
+          "balanceRef": "R44.caption",
+          "startAgeYMD": [
+            54,
+            0,
+            14
+          ],
+          "endAgeYMD": [
+            55,
+            1,
+            23
+          ],
+          "calendar": "Raman period Y/M/D, 12 x 30 arithmetic parts",
+          "utcStart": null,
+          "utcEnd": null,
+          "eventUTC": null
+        },
+        "predicateStatus": "CONDITION_PRESENT",
+        "interpretationStatus": "NO_JUDGMENT",
+        "assertionType": "conditional source-rule replay",
+        "exceptions": [
+          "Seven visible full aspectors. No node proxy in the direct profile."
+        ],
+        "missingEvidence": [
+          "Source of original three longitudes and star passage times",
+          "Actual chart worksheet, clock derivation and rounding",
+          "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+          "Rule distinguishing debt-producing Venus from competing children",
+          "Historical civil period-year conversion and event date"
+        ],
+        "conflictRefs": [],
+        "calculationProvenance": [
+          "evidence/replay.py",
+          "HJ pp. 91–92,102"
+        ],
+        "reconstructionConfidence": "high conditional on the direct profile",
+        "executionAllowed": false,
+        "financiallyValidated": false,
+        "marketDirectionAssigned": false
+      },
+      "sourceId": "HJ",
+      "sourceEdition": "Motilal Banarsidass 12th ed. 1995, reprints through 2006",
+      "birthInputProfile": "HJ.caption.29-or-30",
+      "planetaryPositionProfile": "HJ.R44.plate",
+      "divisionalCalculationProfile": "HJ.R44.printedD9",
+      "dashaCalculationProfile": "HJ.Jupiter.13-1-20.360parts",
+      "parent": "Ketu",
+      "child": "Saturn",
+      "natalFinancialConditions": [
+        "second Virgo",
+        "Mercury with Venus in Libra",
+        "Saturn aspects second",
+        "Ketu sixth",
+        "Saturn twelfth and second from Moon"
+      ],
+      "selectionRules": [
+        "HJ.6",
+        "HPA.13",
+        "HPA.14"
+      ],
+      "competingEligibleChildren": [
+        "Venus",
+        "Sun",
+        "Moon",
+        "Mercury"
+      ],
+      "qualifications": {
+        "channels": [
+          "B"
+        ],
+        "parentDirect": false,
+        "owned": [
+          6,
+          7
+        ],
+        "occupies": 12,
+        "fromParent": 7,
+        "joined": [
+          "Rahu"
+        ],
+        "incomingFull": [
+          "Jupiter"
+        ],
+        "HPA13starOrdinal": null,
+        "HPA14adverseGeometry": false,
+        "age": [
+          [
+            54,
+            0,
+            14
+          ],
+          [
+            55,
+            1,
+            23
+          ]
+        ],
+        "topicExtent": "LIMITED",
+        "HPAKetuCatalogue": "heavy losses and property risk",
+        "PhaladipikaKetuCatalogue": {
+          "verse": 73,
+          "reading": "money and position loss"
+        }
+      },
+      "finalSupportedJudgment": "limited second-house relevance",
+      "origin": "source-rule-replay",
+      "historicalOutcomeDisclosure": "known-to-investigator-excluded-from-operator",
+      "unresolvedPremises": [
+        "Source of original three longitudes and star passage times",
+        "Actual chart worksheet, clock derivation and rounding",
+        "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+        "Rule distinguishing debt-producing Venus from competing children",
+        "Historical civil period-year conversion and event date"
+      ],
+      "sourceProvenance": [
+        "HJ",
+        "HPA",
+        "PH"
+      ]
+    },
+    {
+      "judgment": {
+        "schemaVersion": "1.0",
+        "recordId": "R1.R44.direct.Mercury",
+        "sourceRefs": [
+          "HJ",
+          "HPA"
+        ],
+        "ruleId": "HJ.6",
+        "subjectId": "anonymous-native-44",
+        "subjectType": "human",
+        "horoscopeId": "R44.rasi",
+        "financialQuestion": "personal second-house period eligibility",
+        "planets": [
+          "Ketu",
+          "Mercury"
+        ],
+        "houses": [
+          2
+        ],
+        "evidenceRefs": [
+          "R44.sixChannels",
+          "R44.periods"
+        ],
+        "period": {
+          "system": "Vimshottari",
+          "lineage": [
+            "Ketu",
+            "Mercury"
+          ],
+          "balanceRef": "R44.caption",
+          "startAgeYMD": [
+            55,
+            1,
+            23
+          ],
+          "endAgeYMD": [
+            56,
+            1,
+            20
+          ],
+          "calendar": "Raman period Y/M/D, 12 x 30 arithmetic parts",
+          "utcStart": null,
+          "utcEnd": null,
+          "eventUTC": null
+        },
+        "predicateStatus": "CONDITION_PRESENT",
+        "interpretationStatus": "NO_JUDGMENT",
+        "assertionType": "conditional source-rule replay",
+        "exceptions": [
+          "Seven visible full aspectors. No node proxy in the direct profile."
+        ],
+        "missingEvidence": [
+          "Source of original three longitudes and star passage times",
+          "Actual chart worksheet, clock derivation and rounding",
+          "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+          "Rule distinguishing debt-producing Venus from competing children",
+          "Historical civil period-year conversion and event date"
+        ],
+        "conflictRefs": [],
+        "calculationProvenance": [
+          "evidence/replay.py",
+          "HJ pp. 91–92,102"
+        ],
+        "reconstructionConfidence": "high conditional on the direct profile",
+        "executionAllowed": false,
+        "financiallyValidated": false,
+        "marketDirectionAssigned": false
+      },
+      "sourceId": "HJ",
+      "sourceEdition": "Motilal Banarsidass 12th ed. 1995, reprints through 2006",
+      "birthInputProfile": "HJ.caption.29-or-30",
+      "planetaryPositionProfile": "HJ.R44.plate",
+      "divisionalCalculationProfile": "HJ.R44.printedD9",
+      "dashaCalculationProfile": "HJ.Jupiter.13-1-20.360parts",
+      "parent": "Ketu",
+      "child": "Mercury",
+      "natalFinancialConditions": [
+        "second Virgo",
+        "Mercury with Venus in Libra",
+        "Saturn aspects second",
+        "Ketu sixth",
+        "Saturn twelfth and second from Moon"
+      ],
+      "selectionRules": [
+        "HJ.6",
+        "HPA.13",
+        "HPA.14"
+      ],
+      "competingEligibleChildren": [
+        "Venus",
+        "Sun",
+        "Moon",
+        "Saturn"
+      ],
+      "qualifications": {
+        "channels": [
+          "A"
+        ],
+        "parentDirect": false,
+        "owned": [
+          11,
+          2
+        ],
+        "occupies": 3,
+        "fromParent": 10,
+        "joined": [
+          "Venus"
+        ],
+        "incomingFull": [],
+        "HPA13starOrdinal": 3,
+        "HPA14adverseGeometry": false,
+        "age": [
+          [
+            55,
+            1,
+            23
+          ],
+          [
+            56,
+            1,
+            20
+          ]
+        ],
+        "topicExtent": "LIMITED",
+        "HPAKetuCatalogue": "gains from learning, failed plans possible",
+        "PhaladipikaKetuCatalogue": {
+          "verse": 74,
+          "reading": "land gain, cattle and agricultural loss"
+        }
+      },
+      "finalSupportedJudgment": "limited second-house relevance",
+      "origin": "source-rule-replay",
+      "historicalOutcomeDisclosure": "known-to-investigator-excluded-from-operator",
+      "unresolvedPremises": [
+        "Source of original three longitudes and star passage times",
+        "Actual chart worksheet, clock derivation and rounding",
+        "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+        "Rule distinguishing debt-producing Venus from competing children",
+        "Historical civil period-year conversion and event date"
+      ],
+      "sourceProvenance": [
+        "HJ",
+        "HPA",
+        "PH"
+      ]
+    },
+    {
+      "judgment": {
+        "schemaVersion": "1.0",
+        "recordId": "r44-ketu-venus",
+        "sourceRefs": [
+          "HJ",
+          "HPA"
+        ],
+        "ruleId": "R44.AUTHOR_DEBT_ATTRIBUTION",
+        "subjectId": "anonymous-native-44",
+        "subjectType": "human",
+        "horoscopeId": "R44.rasi",
+        "financialQuestion": "personal debt crisis",
+        "planets": [
+          "Ketu",
+          "Venus",
+          "Saturn"
+        ],
+        "houses": [
+          2,
+          6,
+          12
+        ],
+        "evidenceRefs": [
+          "R44.caption",
+          "R44.rasi",
+          "R44.reading",
+          "H12",
+          "R44.periods",
+          "R44.sixChannels",
+          "Raman.financialTiming"
+        ],
+        "period": {
+          "system": "Vimshottari",
+          "lineage": [
+            "Ketu",
+            "Venus"
+          ],
+          "balanceRef": "R44.caption",
+          "startAgeYMD": [
+            49,
+            6,
+            17
+          ],
+          "endAgeYMD": [
+            50,
+            8,
+            17
+          ],
+          "calendar": "Raman period Y/M/D, 12 x 30 arithmetic parts",
+          "utcStart": null,
+          "utcEnd": null,
+          "eventUTC": null
+        },
+        "predicateStatus": "CONDITION_PRESENT",
+        "interpretationStatus": "UNFAVORABLE",
+        "assertionType": "author-attributed retrospective judgment",
+        "exceptions": [
+          "Simultaneous natal capacity for gain concerns a different question."
+        ],
+        "missingEvidence": [
+          "historical Moon/balance worksheet",
+          "civil conversion",
+          "unique Venus selection for an adverse result, beyond demonstrated topical eligibility",
+          "exact event date"
+        ],
+        "conflictRefs": [],
+        "calculationProvenance": [
+          "R44.periods",
+          "R44.replay"
+        ],
+        "reconstructionConfidence": "high for period arithmetic conditional on printed balance; limited for independent historical trigger",
+        "executionAllowed": false,
+        "financiallyValidated": false,
+        "marketDirectionAssigned": false
+      },
+      "sourceId": "HJ",
+      "sourceEdition": "Motilal Banarsidass 12th ed. 1995, reprints through 2006",
+      "birthInputProfile": "HJ.caption.29-or-30",
+      "planetaryPositionProfile": "HJ.R44.plate",
+      "divisionalCalculationProfile": "HJ.R44.printedD9",
+      "dashaCalculationProfile": "HJ.Jupiter.13-1-20.360parts",
+      "parent": "Ketu",
+      "child": "Venus",
+      "natalFinancialConditions": [
+        "second Virgo",
+        "Mercury with Venus in Libra",
+        "Saturn aspects second",
+        "Ketu sixth",
+        "Saturn twelfth and second from Moon"
+      ],
+      "selectionRules": [
+        "HJ.44"
+      ],
+      "competingEligibleChildren": [
+        "Sun",
+        "Moon",
+        "Saturn",
+        "Mercury"
+      ],
+      "qualifications": {
+        "channels": [
+          "E"
+        ],
+        "parentDirect": false,
+        "owned": [
+          10,
+          3
+        ],
+        "occupies": 3,
+        "fromParent": 10,
+        "joined": [
+          "Mercury"
+        ],
+        "incomingFull": [],
+        "HPA13starOrdinal": 5,
+        "HPA14adverseGeometry": false,
+        "age": [
+          [
+            49,
+            6,
+            17
+          ],
+          [
+            50,
+            8,
+            17
+          ]
+        ],
+        "topicExtent": "LIMITED",
+        "HPAKetuCatalogue": "wealth and success, later illness and quarrels",
+        "PhaladipikaKetuCatalogue": {
+          "verse": 67,
+          "reading": "interpersonal difficulty, no stated financial harm"
+        }
+      },
+      "finalSupportedJudgment": "Raman attributes debt of Rs. 50,000 to Ketu–Venus",
+      "origin": "author-retrospective",
+      "historicalOutcomeDisclosure": "attached-after-selection",
+      "unresolvedPremises": [
+        "Source of original three longitudes and star passage times",
+        "Actual chart worksheet, clock derivation and rounding",
+        "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+        "Rule distinguishing debt-producing Venus from competing children",
+        "Historical civil period-year conversion and event date"
+      ],
+      "sourceProvenance": [
+        "HJ"
+      ]
+    }
+  ],
+  "controls": {
+    "38": {
+      "authorSet": [
+        "Venus",
+        "Saturn",
+        "Jupiter",
+        "Mercury",
+        "Sun"
+      ],
+      "authorParent": "Saturn",
+      "authorChild": "Venus",
+      "authorNamedRulerInDirectSet": true,
+      "allAuthorChannelsMatch": false,
+      "directSetMatches": true,
+      "routeDifference": "D adds Saturn from Virgo",
+      "periodAge": [
+        [
+          45,
+          0,
+          5
+        ],
+        [
+          48,
+          2,
+          5
+        ]
+      ],
+      "historicalReport": "appointed Speaker",
+      "plateAndReplay": {
+        "signs": {
+          "Sun": 6,
+          "Moon": 9,
+          "Mercury": 6,
+          "Venus": 7,
+          "Mars": 5,
+          "Jupiter": 1,
+          "Saturn": 5,
+          "Rahu": 11,
+          "Ketu": 5,
+          "Asc": 5
+        },
+        "routes": {
+          "A": [
+            "Venus"
+          ],
+          "B": [],
+          "C": [
+            "Sun",
+            "Mercury"
+          ],
+          "D": [
+            "Jupiter",
+            "Saturn"
+          ],
+          "E": [],
+          "F": [
+            "Saturn"
+          ]
+        },
+        "eligible": [
+          "Venus",
+          "Sun",
+          "Jupiter",
+          "Saturn",
+          "Mercury"
+        ]
+      },
+      "uniqueEventSelected": false
+    },
+    "40": {
+      "authorSet": [
+        "Mars",
+        "Mercury",
+        "Moon",
+        "Sun",
+        "Jupiter",
+        "Ketu"
+      ],
+      "authorParent": "Ketu",
+      "authorChild": "Mercury",
+      "directSetMatches": false,
+      "authorNamedRulerInDirectSet": true,
+      "authorizedProxy": {
+        "Ketu": "Sun"
+      },
+      "proxySetMatches": true,
+      "periodAge": [
+        [
+          41,
+          2,
+          21
+        ],
+        [
+          42,
+          2,
+          18
+        ]
+      ],
+      "historicalReport": "inherited an empire",
+      "plateAndReplay": {
+        "signs": {
+          "Sun": 7,
+          "Moon": 7,
+          "Mercury": 7,
+          "Venus": 6,
+          "Mars": 7,
+          "Jupiter": 3,
+          "Saturn": 6,
+          "Rahu": 10,
+          "Ketu": 4,
+          "Asc": 6
+        },
+        "routes": {
+          "A": [
+            "Mars"
+          ],
+          "B": [
+            "Jupiter"
+          ],
+          "C": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury"
+          ],
+          "D": [
+            "Jupiter"
+          ],
+          "E": [
+            "Sun",
+            "Moon",
+            "Mercury"
+          ],
+          "F": [
+            "Jupiter"
+          ]
+        },
+        "eligible": [
+          "Sun",
+          "Moon",
+          "Mars",
+          "Jupiter",
+          "Mercury"
+        ]
+      },
+      "uniqueEventSelected": false
+    },
+    "41": {
+      "authorSet": [
+        "Saturn",
+        "Mercury",
+        "Mars",
+        "Sun",
+        "Moon"
+      ],
+      "authorParent": "Mercury",
+      "authorChild": null,
+      "directSetMatches": false,
+      "authorNamedRulerInDirectSet": true,
+      "periodAgeIfMajor": [
+        [
+          24,
+          5,
+          2
+        ],
+        [
+          41,
+          5,
+          2
+        ]
+      ],
+      "historicalReport": "financial improvement",
+      "missing": "named child and dated event",
+      "plateAndReplay": {
+        "signs": {
+          "Sun": 9,
+          "Moon": 10,
+          "Mercury": 9,
+          "Venus": 10,
+          "Mars": 9,
+          "Jupiter": 7,
+          "Saturn": 8,
+          "Rahu": 7,
+          "Ketu": 1,
+          "Asc": 8
+        },
+        "routes": {
+          "A": [
+            "Saturn"
+          ],
+          "B": [],
+          "C": [
+            "Sun",
+            "Mars",
+            "Mercury"
+          ],
+          "D": [],
+          "E": [],
+          "F": [
+            "Jupiter"
+          ]
+        },
+        "eligible": [
+          "Sun",
+          "Mars",
+          "Jupiter",
+          "Saturn",
+          "Mercury"
+        ]
+      },
+      "uniqueEventSelected": false
+    }
+  },
+  "birthBalanceBaselineToleranceYears": 1e-06,
+  "tests": {
+    "knownAgeParts": {
+      "18256": "Venus",
+      "18257": "Sun"
+    },
+    "KetuParentDirect": false,
+    "BP42_13_Ketu": {
+      "joinedToDistinctTrikaLord": false,
+      "predicate": "CONDITION_ABSENT",
+      "interpretation": "NO_JUDGMENT",
+      "guardNeedNotDecide": true
+    },
+    "BP59_7_15_Venus": {
+      "ownSign": true,
+      "fromKetu": 10,
+      "fromAsc": 3,
+      "debilitated": false,
+      "joinedDebilitated": false,
+      "explicitRelativeLossBranch": false,
+      "parentRelativeFavorableBranch": true
+    },
+    "chart44D9Disagreements": [
+      "Venus",
+      "Saturn"
+    ],
+    "controlCounts": {
+      "inspected": 3,
+      "namedRulerIncluded": 3,
+      "exactDirectSet": 1,
+      "setWithExplicitExceptions": 2,
+      "uniquelyDerivedEvents": 0
+    }
+  },
+  "retrospectiveAttribution": {
+    "sourceId": "HJ",
+    "amount": 50000,
+    "currencyAsPrinted": "Rs.",
+    "computed": false,
+    "independentEventDate": null
+  },
+  "unresolvedPremises": [
+    "Source of original three longitudes and star passage times",
+    "Actual chart worksheet, clock derivation and rounding",
+    "Earliest How to Judge plate and expanded Bhavartha p.137 image",
+    "Rule distinguishing debt-producing Venus from competing children",
+    "Historical civil period-year conversion and event date"
+  ]
+}

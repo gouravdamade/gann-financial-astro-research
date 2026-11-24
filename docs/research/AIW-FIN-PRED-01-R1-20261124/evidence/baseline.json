@@ -1,0 +1,50 @@
+{
+  "AIW_FIN_PRED_01_CONFLICT_RESOLUTION.md": {
+    "diffTextMatched": true,
+    "localSHA256": "6b0eea7e372bf9810f62c174b075043df1e0f33b105158875fde4f4d3ff9ed30"
+  },
+  "AIW_FIN_PRED_01_DASHA_TIMING_RECONSTRUCTION.md": {
+    "diffTextMatched": true,
+    "localSHA256": "912c6d5b9e31096fc037f488c3ee6df8ad962ac832b95e3ebbc02b99d7ed8cbc"
+  },
+  "AIW_FIN_PRED_01_EXECUTABLE_DECISION_SPEC.md": {
+    "diffTextMatched": true,
+    "localSHA256": "d31d44f15bd1d30b543f8db3a04704788eea2b9979a97ddbe1647d2219c586e6"
+  },
+  "AIW_FIN_PRED_01_EXECUTIVE_DECISION.md": {
+    "diffTextMatched": true,
+    "localSHA256": "1c2e5ea3e42e6336dad3365ac41f34d3de3efd7d2b1322266813630976d65481"
+  },
+  "AIW_FIN_PRED_01_FINAL_RESEARCH_DECISION.md": {
+    "diffTextMatched": true,
+    "localSHA256": "fb1e47b4d6c669e185cdcb163481d9ef58b862abf84115f14c1d12f1cd028cd3"
+  },
+  "AIW_FIN_PRED_01_FINANCIAL_ADVERSITY_BPHS.md": {
+    "diffTextMatched": true,
+    "localSHA256": "e401f287b61c57caf1c3d58a86f9459402c68e710588fe66a1eb9dd01651299f"
+  },
+  "AIW_FIN_PRED_01_NATAL_YOGA_AND_STRENGTH.md": {
+    "diffTextMatched": true,
+    "localSHA256": "88425084e8bf6f8adb8895c4cc2abcc2641679798103e3e050b2900683702eff"
+  },
+  "AIW_FIN_PRED_01_PARAMETER_CLASSIFICATION.md": {
+    "diffTextMatched": true,
+    "localSHA256": "f9533a58c73153c517973d93143942dc0b861313478e39db00bcba1f2b017340"
+  },
+  "AIW_FIN_PRED_01_SOURCE_EVIDENCE.md": {
+    "diffTextMatched": true,
+    "localSHA256": "0390892383afe4e892b7228e1702ad2f876c1e76903afb8c8d595aaa57a767f4"
+  },
+  "AIW_FIN_PRED_01_TEST_FIXTURES.json": {
+    "diffTextMatched": true,
+    "localSHA256": "f7d8f202f4f96f39a46f2d23dcb21961d354fa840a0305cf3cd0327983e23237"
+  },
+  "AIW_FIN_PRED_01_USDJPY_APPLICABILITY.md": {
+    "diffTextMatched": true,
+    "localSHA256": "88f9be27634dad0c8f081d111c62a71cfb8475a24cf811316947e6917f896456"
+  },
+  "AIW_FIN_PRED_01_WORKED_FINANCIAL_HOROSCOPE.md": {
+    "diffTextMatched": true,
+    "localSHA256": "ae97ae8a04726468c5cbd64f26e07f2782e088288f2533e505dbca851261caee"
+  }
+}

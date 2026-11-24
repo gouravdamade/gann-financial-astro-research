@@ -1,0 +1,20 @@
+{
+  "passed": [
+    "Thirteen requested root deliverables, exact names",
+    "Twelve original files unchanged",
+    "Original typed judgment schema preserved verbatim",
+    "Draft 2020-12 metaschema and ten example records validated",
+    "Three flags false on packet and all ten records",
+    "Full independent chart and timing replay matches fixture",
+    "1888 table coordinate reduction and balances match fixture",
+    "Nine contiguous half-open periods spanning seven 360-part years",
+    "Boundary passes from Venus to Sun on part 18257",
+    "Five eligible children; three general-difficulty candidates",
+    "Rasi and D9 differences checked by date",
+    "Controls counted directly against author lists",
+    "Retrospective baseline record preserved except normalized citations",
+    "No civil event or period timestamps asserted",
+    "All Markdown local file links resolve"
+  ],
+  "schemaValidator": "jsonschema-rs 0.63.1 / Draft 2020-12"
+}

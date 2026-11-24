@@ -1,0 +1,23 @@
+# What an inspector can reproduce
+
+| Operation | Classification | Supported contract |
+|---|---|---|
+| Read the imprint, plate and printed balance in this witness | SOURCE_ACCEPTED | Return the exact evidence reference, including chart number, page, edition, scan identity and asserted value. |
+| Whole-sign house and ordinary lord lookup, co-occupation, directed full graha aspects | CONDITIONALLY_ACCEPTED | Deterministic under named chart/geometry. Expose reference (ascendant or Moon), body universe, direction and completeness. |
+| Six channels and three positive parent/child categories | SOURCE_ACCEPTED | Emit a set and channel proofs from fully specified relational testimony. Use NO_SELECTION for the complement. Missing geometry retains UNKNOWN when it could change a result. No counts as strength. |
+| R44 Venus membership and absence of direct Ketu route | SOURCE_ACCEPTED for the printed association, CONDITIONALLY_ACCEPTED for the closed negative | E proves Venus even if a node’s aspects are unknown. Direct negative for Ketu requires declared completeness. A proxy result has a separate rule ID. |
+| Ketu–Venus age from *How to Judge* balance | SOURCE_ACCEPTED | Accumulate exact fractional allotments. Emit native-age interval and balance identity with null civil endpoints. |
+| Modern ephemeris and HPA/1888 table replay | CONDITIONALLY_ACCEPTED | Profiles identify date conversion, engine or table rows, interpolation, ayanāṃśa and division. Each repeats its own result. |
+| Exact historical Moon/balance and D9 for Venus/Saturn | RECONSTRUCTION_FAILED for the tested forward profiles, SOURCE_UNRESOLVED for the historical explanation | Retain residuals and both observed placements. No fitted zero point or time. |
+| Chapter XXIV rules 13–14 | CONDITIONALLY_ACCEPTED | Require malefic parent for 13, natal star and inclusive counting. Rule 14 requires both signs. Outputs are general difficulty and relationship-specific adversity, with no debt code. |
+| BPHS LIX Venus branches and Phaladīpikā XXI children | CONDITIONALLY_ACCEPTED | Expose text, edition, input testimony, sign of indicated result and domain. In LIX keep each disjunction/conjunction and its scope. Do not infer a common precedence across catalogues. |
+| XLII.13 personal-financial adversity | SOURCE_ACCEPTED on complete adjudicated premises, CONDITIONALLY_ACCEPTED with chart-derived geometry | Own period, difficult lord joined, no protecting aspect. Failure yields NO_JUDGMENT. Baseline exclusions and eight checks stand. |
+| Specific unique Venus–debt selector, graph-wide conflict precedence and UTC event time | SOURCE_UNRESOLVED | Final prospective interpretation UNKNOWN. Distinguish independent absence of a rule from a false natal predicate. |
+| ₹50,000 as source observation | SOURCE_ACCEPTED | Assertion type author-attributed retrospective judgment. Monetary prediction from the chart, currency and market direction are NOT_APPLICABLE. |
+| Empirical predictive validation | NOT_APPLICABLE | This packet compares historical witnesses and computations. |
+
+**Smallest justified future software change.** A research-only inspector could take a plate and balance ID, list each period, show all channels, both parent and child membership, civil-time uncertainty, rule-specific qualifiers, and the set of competitors. It could display an explicitly attributed historical result alongside the independently supported result. There is no justified operation returning a unique adverse child for Chart 44. This packet implements no product change.
+
+**Record design.** The fixture file includes the baseline judgment schema verbatim inside a versioned envelope. A baseline record retains its original three-valued predicate and interpretation vocabulary. Extra fields live on the envelope so the closed baseline schema remains valid. The sample carries birth, position, division and clock profiles, separate provenance rows for source wording, modern replay and retrospective attribution, qualification evidence, unresolved premises and outcome disclosure. Nine separate eligibility envelopes and the historical case envelope are provided. The source register gives the corresponding precedents. [Fixture file](AIW_FIN_PRED_01_R1_MACHINE_FIXTURES.json) · [Rule register](AIW_FIN_PRED_01_R1_SOURCE_RULE_REGISTER.md)
+
+The [verification receipt](evidence/verification.json) records the independent script replays, original-packet hash check, Draft 2020-12 validation of all ten records, timing-boundary checks and control counts. The [verification script](evidence/verify.py) accepts the adjacent original packet and uses pyswisseph 2.10.3.2 and jsonschema-rs 0.63.1.

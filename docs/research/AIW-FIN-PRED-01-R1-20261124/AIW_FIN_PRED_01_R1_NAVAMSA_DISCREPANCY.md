@@ -1,0 +1,21 @@
+# Two verified D9 differences
+
+The accessible *How to Judge* PDF contains a bitmap of the two diagrams on p. 102. Reading the right-hand diagram clockwise from the upper-left gives Pisces, Aries, Taurus, Gemini across the top, Cancer and Leo down the right, Virgo through Sagittarius along the bottom from right to left, then Capricorn and Aquarius up the left. Saturn is in the upper-left cell. Venus is in the bottom row, second cell from the left. Mercury and Lagna occupy the bottom-left cell. The corresponding independent transcription of all ten labels is in the fixture. The 1947 parallel has only a rāśi chart. No independently dated early printing of the D9 was available. [Chart 44, p. 102/PDF 111](https://elibraryofyoga.com/server/api/core/bitstreams/2271a6e2-f4ca-49bd-9706-89cec2d6f5f5/content#page=111) · [Parallel, p. 79/PDF 87](https://archive.org/details/in.ernet.dli.2015.134838/page/n86/mode/1up)
+
+Each navāṃśa has width 3°20′. Start Libra’s sequence in Libra and Cancer’s sequence in Cancer. Equivalently take floor(9λ/30) mod 12 with Aries = 0. Endpoints belong to the incoming division. No original degree values accompany the two cells. [Raman, HPA X, pp. 44–45/PDF 60–61](https://archive.org/details/hindu-predictive-astrology-b.-v.-raman/page/n59/mode/1up)
+
+| Body | Printed D9 and implied D1 longitude interval | Modern D1 → D9 | Annual offset + noon interpolation, modern input | Annual offset + actual 1888 table | Closure |
+|---|---|---|---|---|---|
+| Venus | Scorpio, [183°20′, 186°40′) | 186.735617° → Sagittarius | 186.741865° → Sagittarius | 186.741838° → Sagittarius | Placement visibly differs. To enter the printed interval needs a decrease **greater than 4.137′** from modern. Cause open. |
+| Saturn | Pisces, [116°40′, 120°) | 116.114536° → Aquarius | 116.120659° → Aquarius | 116.123490° → Aquarius | Placement visibly differs. To enter the printed interval needs an increase of at least **33.128′** from modern. Cause open. |
+
+Holding the rāśi fixed, the two admissible corrections have opposite signs. A single common change in the longitude zero cannot explain both. Ordinary rounding to the nearest arcminute leaves both in their calculated cells. The alternative historical calculation uses the actual 28–29 September apparent RA and declination at Greenwich noon with one identified annual precession convention. Its sexagesimal inputs are in `evidence/almanac.py`. The hourly birth-position variant of the annual-offset test also leaves the two signs unchanged. An alternative divisional sequence or a correction to a label requires a source specifying it. [American Ephemeris, Venus p. 228/PDF 245, Saturn p. 246/PDF 263](https://archive.org/details/americanephemer00docgoog/page/n244/mode/1up)
+
+| Part of Raman’s judgment | Materiality |
+|---|---|
+| Ketu in 6, sixth lord Saturn in 12 and in the lunar second, Venus with Mercury | All are rāśi facts. All ten rāśi labels match. Both D9 profiles preserve this debt explanation and Venus’s topical eligibility. |
+| Mercury in D9 Lagna | Verified in both profiles. Mercury is Sagittarius, as is D9 Lagna. The fifth lord Jupiter is in D9 Libra, so Mercury is third from it in both profiles. |
+| Adjacent signs in both diagrams as a qualification for instability | The specific supporting pairs change. With nine grahas including nodes, excluding Lagna, seven unordered adjacent pairs occur on the plate and five in the replay. Mercury–Venus changes from adjacent to co-occupants. Moon–Saturn and Venus–Jupiter cease to be adjacent. Venus–Mars and Mars–Saturn become adjacent. Examples survive in both diagrams, including Sun–Moon and Mercury–Mars. Raman gives neither a required pair nor a threshold. No resulting change in the strength of instability can be quantified. |
+| Unique loss judgment | No identified rule uses either disputed cell to select Ketu–Venus for debt. No supported reversal of a child judgment follows. |
+
+Raman explicitly invokes divisional Mercury and adjacent signs on p. 103. A change to a supporting qualification warrants two versioned records even though the principal rāśi argument survives. The specific original longitudes or a corrected physical plate are still required. [Case conclusion, p. 103/PDF 112](https://elibraryofyoga.com/server/api/core/bitstreams/2271a6e2-f4ca-49bd-9706-89cec2d6f5f5/content#page=112)
